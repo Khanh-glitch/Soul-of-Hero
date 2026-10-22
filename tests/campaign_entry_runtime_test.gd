@@ -276,10 +276,14 @@ func _verify_layout(
 				continue
 			var authored_entity: Dictionary = raw_entity
 			var authored_id := String(authored_entity.get("id", ""))
+			var deferred_and_waiting := (
+				deferred_enemy_ids.has(authored_id)
+				and not (chapter_two_directed and live_entity_id_counts.has(authored_id))
+			)
 			if (
 				authored_id.is_empty()
 				or String(authored_entity.get("type", "")) == "player"
-				or deferred_enemy_ids.has(authored_id)
+				or deferred_and_waiting
 			):
 				continue
 			expected_entity_ids[authored_id] = true
