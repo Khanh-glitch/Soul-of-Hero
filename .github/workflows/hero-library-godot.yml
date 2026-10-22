@@ -149,4 +149,5 @@ jobs:
             hero-equipment-preview-test.log
             roster_visual_*.log
             .artifacts/hero_roster_*.png
-          if-no-files-found: ignore
+          if-no-files-found: error
+          include-hidden-files: true
