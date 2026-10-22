@@ -1,0 +1,64 @@
+name: Hero Library Godot QA
+
+on:
+  pull_request:
+    paths:
+      - "game/heroes/hero_library_catalog.gd"
+      - "game/ui/screens/hub/tabs/components/hero_library_panel.gd"
+      - "game/ui/screens/hub/tabs/components/hero_library_panel.tscn"
+      - "tests/hero_library_coverage_test.gd"
+      - ".github/workflows/hero-library-godot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hero-library:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install official Godot 4.7 Linux editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 \
+            "https://github.com/godotengine/godot/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip" \
+            --output /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot-bin
+          chmod +x /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64
+          /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 --version
+
+      - name: Import project with actual Godot engine
+        shell: bash
+        run: |
+          set -euo pipefail
+          /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+            --headless --editor --path . --import 2>&1 | tee godot-import.log
+
+      - name: Verify Hero Library profiles and scene navigation
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/hero_library_qa_ci.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+            --headless --path . --script res://tests/hero_library_coverage_test.gd \
+            2>&1 | tee hero-library-test.log
+          grep -q "HERO LIBRARY COVERAGE TEST PASSED" hero-library-test.log
+          if grep -Eq '^(SCRIPT ERROR|ERROR):' hero-library-test.log; then
+            echo "Godot reported an engine/script error."
+            exit 1
+          fi
+
+      - name: Upload Godot logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hero-library-godot-qa
+          path: |
+            godot-import.log
+            hero-library-test.log
+          if-no-files-found: ignore
