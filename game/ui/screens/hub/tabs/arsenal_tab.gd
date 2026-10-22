@@ -9,6 +9,7 @@ const AUX := preload("res://game/meta/equipment/auxiliary_equipment_definitions.
 const AUX_RULES := preload("res://game/meta/equipment/auxiliary_equipment_rules.gd")
 const AUX_PRESENTATION := preload("res://game/meta/equipment/auxiliary_equipment_presentation.gd")
 const TEAM_QUICK_LOOK := preload("res://game/ui/screens/hub/tabs/components/hero_team_quicklook.gd")
+const EQUIPMENT_PREVIEW := preload("res://game/ui/screens/hub/tabs/components/hero_equipment_preview.gd")
 const TEXT_SCENE := preload("res://game/ui/screens/hub/tabs/components/arsenal_runtime_text.tscn")
 const ACTION_BUTTON_SCENE := preload("res://game/ui/screens/hub/tabs/components/arsenal_action_button.tscn")
 const DATA_ROW_SCENE := preload("res://game/ui/screens/hub/tabs/components/arsenal_data_row.tscn")
@@ -40,6 +41,8 @@ var _save: Node
 var _selected_soul_id := ""
 var _selected_skill_hero_id := ""
 var _selected_equipment_hero_id := ""
+var _equipment_preview_slot := ""
+var _equipment_preview_instance := ""
 var _fusion_ids: Array[String] = []
 var _status: Label
 var _tabs: TabContainer
@@ -641,6 +644,7 @@ func _render_soul_detail(
 
 func _refresh_aux(level: int) -> void:
 	_clear(_aux_list)
+	var preview_save_snapshot := _full_save_snapshot()
 	_aux_list.add_child(_label("4 Ô RIÊNG MỖI HERO  •  HERO WEAPON  •  GIÁP  •  GIÀY  •  TRANG SỨC", 11, Color("7ed7ff")))
 	var inventory: Dictionary = _save.get_value(_path("inventory"), {})
 	var gear: Array = inventory.get("auxiliary_equipment", inventory.get("auxiliary_items", []))
@@ -677,6 +681,8 @@ func _refresh_aux(level: int) -> void:
 		"ĐANG XẾP TRANG BỊ CHO %s  •  MỖI INSTANCE CHỈ THUỘC MỘT HERO" % _identity_name(_selected_equipment_hero_id),
 		9, Color("91e6b3"),
 	))
+	if not _equipment_preview_instance.is_empty():
+		_render_equipment_preview(preview_save_snapshot)
 	var all_loadouts: Dictionary = _save.get_value(_path("hero_loadouts"), {})
 	var loadout: Dictionary = all_loadouts.get(_selected_equipment_hero_id, {})
 	var supports_mutation := _save.has_method("equip_hero_item") \
@@ -732,6 +738,11 @@ func _refresh_aux(level: int) -> void:
 			equip_weapon.disabled = is_equipped_weapon or not _save.has_method("equip_hero_item")
 			equip_weapon.pressed.connect(_equip_weapon_for_selected_hero.bind(instance_id))
 			row.add_child(equip_weapon)
+			var compare_weapon := _action_button()
+			compare_weapon.text = "XEM ±"
+			compare_weapon.tooltip_text = "So sánh sát thương, HP, Mana và chỉ số phụ trước khi trang bị."
+			compare_weapon.pressed.connect(_select_equipment_preview.bind("hero_weapon", instance_id))
+			row.add_child(compare_weapon)
 			_aux_list.add_child(row)
 	for slot_id: String in AUX.SLOT_IDS:
 		var hero_slot := _hero_loadout_slot(slot_id)
@@ -768,6 +779,11 @@ func _refresh_aux(level: int) -> void:
 			)
 			summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			visual_row.add_child(summary)
+			var compare_gear := _action_button()
+			compare_gear.text = "XEM ±"
+			compare_gear.tooltip_text = "Xem thay đổi combat chính xác cho Hero được chọn."
+			compare_gear.pressed.connect(_select_equipment_preview.bind(hero_slot, uuid))
+			visual_row.add_child(compare_gear)
 			item_box.add_child(visual_row)
 			var actions := _data_row()
 			var equip := _action_button()
@@ -864,7 +880,67 @@ func _select_skill_identity(hero_id: String) -> void:
 
 func _select_equipment_hero(hero_id: String) -> void:
 	_selected_equipment_hero_id = hero_id
+	_equipment_preview_slot = ""
+	_equipment_preview_instance = ""
 	_refresh()
+
+
+func _select_equipment_preview(slot: String, instance_id: String) -> void:
+	_equipment_preview_slot = slot
+	_equipment_preview_instance = instance_id
+	_refresh()
+
+
+func _render_equipment_preview(save_snapshot: Dictionary) -> void:
+	var panel := _data_stack()
+	panel.name = "EquipmentComparisonPanel"
+	var preview: Dictionary = EQUIPMENT_PREVIEW.compare(
+		save_snapshot, _selected_equipment_hero_id,
+		_equipment_preview_slot, _equipment_preview_instance
+	)
+	if preview.is_empty():
+		panel.add_child(_label(
+			"SO SÁNH • Không còn item hợp lệ trong túi hoặc Hero chưa mở. Chỉ đọc.",
+			9, Color("d6aa72")
+		))
+		_aux_list.add_child(panel)
+		return
+	var delta: Dictionary = preview.get("delta", {})
+	panel.add_child(_label("THAY ĐỔI NẾU TRANG BỊ • %s" % _identity_name(
+		_selected_equipment_hero_id
+	), 10, Color("f2cf74")))
+	var primary_line := "HP %s  •  MANA %s  •  POWER %s  •  ĐÒN VŨ KHÍ %s" % [
+		_signed_number_copy(float(delta.get("hp", 0.0))),
+		_signed_number_copy(float(delta.get("mana", 0.0))),
+		_signed_number_copy(float(delta.get("character_damage", 0.0))),
+		_signed_number_copy(float(delta.get("damage", 0.0))),
+	]
+	var output := _label(primary_line, 9, Color("9fd7ba"))
+	output.name = "EquipmentComparisonDelta"
+	panel.add_child(output)
+	var other_hero := String(preview.get("transferred_from", ""))
+	if not other_hero.is_empty():
+		panel.add_child(_label(
+			"LƯU Ý • Item sẽ tháo khỏi %s." % _identity_name(other_hero),
+			8, Color("d6aa72")
+		))
+	var secondary: Dictionary = preview.get("secondary_delta", {})
+	var keys := secondary.keys()
+	keys.sort()
+	var changes: Array[String] = []
+	for key_value: Variant in keys:
+		var key := String(key_value)
+		var value := float(secondary[key])
+		var unit := "%" if key.ends_with("_percent") else ""
+		changes.append("%s %s%s" % [
+			key.replace("_", " ").to_upper(), _signed_number_copy(value), unit
+		])
+	if not changes.is_empty():
+		panel.add_child(_label(
+			"HIỆU ỨNG KHÁC • " + "  |  ".join(PackedStringArray(changes)),
+			8, Color("a9bdd7")
+		))
+	_aux_list.add_child(panel)
 
 
 func _equip_weapon_for_selected_hero(instance_id: String) -> void:
