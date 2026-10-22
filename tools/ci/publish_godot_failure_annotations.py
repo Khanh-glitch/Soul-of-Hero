@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Expose concise Godot test failure context as GitHub Actions annotations."""
+"""Expose concise Godot test summaries and failure context as Actions annotations."""
 
 from __future__ import annotations
 
@@ -8,6 +8,10 @@ import sys
 from pathlib import Path
 
 FAILURE = re.compile(r"(?:SCRIPT ERROR|ERROR:|FAIL(?:ED)?|CRASH|Parse Error)", re.IGNORECASE)
+SUMMARY = re.compile(
+    r"(?:\b(?:PASSED|FAILED)\b|\b\d+/\d+ checks? failed\b|\bexit code:\s*\d+)",
+    re.IGNORECASE,
+)
 CONTEXT = re.compile(
     r"(?:Godot|version|campaign|level|chapter|test|check|passed|failed|error|warning)",
     re.IGNORECASE,
@@ -26,11 +30,21 @@ def main() -> int:
         if not path.is_file():
             continue
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        failures = [line for line in lines if FAILURE.search(line)]
-        context = [line for line in lines[-240:] if CONTEXT.search(line)]
-        selected = list(dict.fromkeys(failures[-20:] + context[-5:]))
+        summaries = [line for line in lines if SUMMARY.search(line)]
+        diagnostics = [line for line in lines if "CAMPAIGN_ENTRY_POPULATION_DETAIL" in line]
+        failures = [
+            line
+            for line in lines
+            if FAILURE.search(line) and not line.lstrip().startswith("PASS")
+        ]
+        # Reserve space for each test's exact count and a representative runtime
+        # diagnostic before publishing a small sample of individual assertions.
+        selected = list(dict.fromkeys(
+            summaries[-1:] + diagnostics[-1:] + failures[-2:]
+        ))[:4]
         if not selected:
-            selected = lines[-12:]
+            context = [line for line in lines[-240:] if CONTEXT.search(line)]
+            selected = context[-3:] or lines[-3:]
         for line in selected:
             is_failure = FAILURE.search(line) and not line.lstrip().startswith("PASS")
             command = "error" if is_failure else "notice"
