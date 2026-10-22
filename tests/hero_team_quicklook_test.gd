@@ -79,7 +79,7 @@ func _run() -> void:
 		"Active summary names the actual Hero")
 	_expect("HIẾM L5" in String(sword.get("hero", "")),
 		"Active Soul summary reads canonical rarity and item level")
-	_expect("MA THUẬT L2" in String(archer.get("hero", "")),
+	_expect("PHÉP THUẬT L2" in String(archer.get("hero", "")),
 		"Reserve Soul summary reads a different selected instance")
 	_expect("GIÁP ✓" in String(sword.get("gear", "")),
 		"Correct armor UUID shows as equipped")
