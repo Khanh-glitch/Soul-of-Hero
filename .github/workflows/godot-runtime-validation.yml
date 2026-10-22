@@ -1,0 +1,159 @@
+name: Godot 4.7 Runtime Validation
+
+on:
+  push:
+    branches:
+      - main
+      - "arena/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  headless-runtime:
+    name: Import and headless runtime tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record exact Godot version
+        run: |
+          mkdir -p .artifacts
+          godot --version | tee .artifacts/godot-version.txt
+
+      - name: Import project in the Godot Editor
+        shell: bash
+        run: |
+          set -uo pipefail
+          godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          echo "Editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Run Chapter 2 map design and loader checks
+        run: |
+          set -uo pipefail
+          godot --headless --path . --script res://tests/chapter_2_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-2-map-design.log
+          result=${PIPESTATUS[0]}
+          echo "Chapter 2 map test exit code: ${result}"
+          exit "${result}"
+
+      - name: Run Chapter 2 campaign entry and scenario runtime checks
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_campaign_entry_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
+          result=${PIPESTATUS[0]}
+          echo "Campaign entry runtime test exit code: ${result}"
+          exit "${result}"
+
+      - name: Run production gameplay smoke test
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
+          result=${PIPESTATUS[0]}
+          echo "Gameplay smoke test exit code: ${result}"
+          exit "${result}"
+
+      - name: Run combat regression checks
+        run: |
+          set -uo pipefail
+          godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
+          result=${PIPESTATUS[0]}
+          echo "Axe combat test exit code: ${result}"
+          if [[ ${result} -ne 0 ]]; then exit "${result}"; fi
+          godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
+          result=${PIPESTATUS[0]}
+          echo "Chapter 1 Level 5 boss/combat test exit code: ${result}"
+          exit "${result}"
+
+      - name: Upload runtime logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-headless-logs
+          path: .artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+
+  rendered-gameplay:
+    name: Xvfb rendered gameplay captures
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Install software-rendering display support
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes xvfb libgl1-mesa-dri
+
+      - name: Import project in the Godot Editor
+        run: |
+          mkdir -p .artifacts
+          godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          echo "Editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Capture production Chapter 2 gameplay maps
+        shell: bash
+        run: |
+          set -uo pipefail
+          for slot in 11 15 20; do
+            echo "Capturing production gameplay scene for Chapter 2 Level ${slot}"
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}.json" \
+              godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tests/chapter_2_level_visual_capture.tscn -- \
+              --level-slot="${slot}" --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/chapter-2-level-${slot}-visual.log"
+            result=${PIPESTATUS[0]}
+            echo "Chapter 2 Level ${slot} rendered capture exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then exit "${result}"; fi
+          done
+
+      - name: Capture the existing production Level 10 boss scene
+        shell: bash
+        run: |
+          set -uo pipefail
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            SOUL_OF_HERO_SAVE_PATH="user://tests/ci_level10_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json" \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://tests/chapter_1_level_10_visual_capture.tscn -- \
+            --expected-width=1280 --expected-height=720 \
+            2>&1 | tee .artifacts/chapter-1-level-10-visual.log
+          result=${PIPESTATUS[0]}
+          echo "Chapter 1 Level 10 rendered capture exit code: ${result}"
+          exit "${result}"
+
+      - name: Upload screenshots and rendered logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-rendered-gameplay
+          path: .artifacts/
+          if-no-files-found: warn
+          retention-days: 14

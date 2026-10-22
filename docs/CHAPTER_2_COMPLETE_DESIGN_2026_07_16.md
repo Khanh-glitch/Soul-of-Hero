@@ -641,6 +641,33 @@ active cùng lúc. Medium/Hard chỉ thêm tối đa một Wraith trong một s�
 - Retry vào thẳng Wizard arena.
 - Boss, Soul pickup và replay tuân Mục 9; không có thêm cutscene dài sau pickup.
 
+### 10.12 Đợt tái thiết kế map campaign — dấu ấn chiến thuật riêng
+
+JSON runtime hiện có silhouette sàn/vật cản khác nhau cho từng level Chapter 2.
+Mỗi profile dùng các vùng cắt sàn 16 px: viền tiếp giáp được dựng thành tường trong
+`Geometry`, phần hố sâu hơn thành void. Trục lưu thông giữa rộng 6 ô, toàn bộ marker,
+objective, safe landing và exit vẫn nằm trên đường đi kết nối; đây không phải hố
+trang trí đặt đè lên sàn có thể đi bộ.
+
+| Level | Dấu ấn không gian | Quyết định gameplay được hỗ trợ |
+|---:|---|---|
+| 11 | Khoang cầu gãy, cover lệch nhịp | Đọc hai góc tiếp cận và chọn cánh trước khi tới ward |
+| 12 | Hai rãnh độc dài | Bám vai đường khô, vòng cánh qua rãnh rồi trở lại purifier |
+| 13 | Lùm cây hai bên tuyến đèn | Hộ tống Ember theo làn giữa thông thoáng; dùng túi bên để lấy nhịp |
+| 14 | Các đảo bàn giả kim | Đổi lane giữa hai lab, tránh biến đấu trường thành một đường bắn thẳng |
+| 15 | Bốn trụ gãy quanh đấu trường | Giữ vòng đấu Axe dễ đọc và đủ chỗ né quỹ đạo đi/về |
+| 16 | Tường cổng so le | Học nhịp mê cung có vòng lặp thay vì một hành lang dài |
+| 17 | Cover tỏa tâm | Thủ lửa từ nhiều hướng nhưng không che objective trung tâm |
+| 18 | Cổ chai quanh vault | Chọn một trong hai cánh quanh relic; có đường hồi phục nếu đánh rơi |
+| 19 | Cổng gãy theo vành ngoài | Di chuyển giữa các khu săn rõ ràng, không nhốt Elite dai dẳng |
+| 20 | Trụ hai bên đối xứng | Giữ trục giữa Wizard thoáng để đọc Passage/Eclipse telegraph |
+
+Các vùng cắt tránh marker và giữ một thành phần sàn liên thông. Chapter 1 Lv1–10
+được giữ nguyên vì đã có tiến trình phòng riêng, route ba tầng, objective beacon /
+reliquary / gate và boss arena được kiểm thử theo contract riêng. Chạy
+`tools/run_chapter_2_map_design_tests.ps1` để kiểm tra marker an toàn, liên thông,
+tách biệt tường–sàn, quy mô tối thiểu và độ khác biệt silhouette từng cặp map.
+
 ## 11. Spawn director và encounter intelligence
 
 Fallback hiện tại của `EncounterPackRules` có thể đẩy Level 11 lên khoảng 72 actor
