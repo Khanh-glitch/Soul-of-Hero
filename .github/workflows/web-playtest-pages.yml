@@ -1,0 +1,215 @@
+name: Soul of Hero — Web Playtest
+
+on:
+  push:
+    branches:
+      - feat/web-playtest-deploy
+    paths:
+      - "export_presets.cfg"
+      - ".github/workflows/web-playtest-pages.yml"
+      - "docs/WEB_PLAYTEST.md"
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: "Which Git branch to export? (No merge; exported directly.)"
+        required: true
+        type: choice
+        default: feat/hero-systems-completion
+        options:
+          - feat/hero-systems-completion
+          - arena/0b97b037-soul-of-hero
+          - main
+          - feat/web-playtest-deploy
+
+concurrency:
+  group: web-playtest-pages
+  cancel-in-progress: true
+
+jobs:
+  export-web:
+    name: Export Godot 4.7 Web (source branch)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    outputs:
+      source_sha: ${{ steps.source.outputs.sha }}
+      source_name: ${{ steps.source.outputs.name }}
+    steps:
+      - name: Checkout selected game branch (not merged)
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || 'feat/hero-systems-completion' }}
+          path: game-src
+          persist-credentials: false
+
+      - name: Checkout isolated Web Playtest configuration
+        uses: actions/checkout@v4
+        with:
+          ref: feat/web-playtest-deploy
+          path: .playtest-config
+          persist-credentials: false
+
+      - name: Record exported revision
+        id: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "sha=$(git -C game-src rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "name=${{ inputs.source_ref || 'feat/hero-systems-completion' }}" >> "$GITHUB_OUTPUT"
+          cp .playtest-config/export_presets.cfg game-src/export_presets.cfg
+          mkdir -p game-src/build/web
+
+      - name: Install official Godot 4.7 editor
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 30 --max-time 360 \
+            https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip \
+            -o "$RUNNER_TEMP/godot.zip"
+          mkdir -p "$RUNNER_TEMP/godot"
+          unzip -q "$RUNNER_TEMP/godot.zip" -d "$RUNNER_TEMP/godot"
+          chmod +x "$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          "$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64" --version
+
+      - name: Restore Web-only export templates cache
+        id: templates-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/godot/export_templates/4.7.stable
+          key: godot-4.7-stable-web-nothreads-v1-${{ runner.os }}
+
+      - name: Install official single-thread Web templates (cold-cache only)
+        if: steps.templates-cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 3 --connect-timeout 30 --max-time 1100 \
+            https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz \
+            -o "$RUNNER_TEMP/templates.tpz"
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os, shutil
+          archive = Path(os.environ["RUNNER_TEMP"]) / "templates.tpz"
+          target = Path.home() / ".local/share/godot/export_templates/4.7.stable"
+          target.mkdir(parents=True, exist_ok=True)
+          names = ("web_nothreads_release.zip", "web_nothreads_debug.zip", "version.txt")
+          with ZipFile(archive) as z:
+              index = {Path(n).name: n for n in z.namelist() if not n.endswith("/")}
+              for n in names:
+                  if n not in index:
+                      raise RuntimeError(f"Official templates archive lacks {n}")
+                  with z.open(index[n]) as src, (target / n).open("wb") as dst:
+                      shutil.copyfileobj(src, dst)
+                  print(f"Installed official export template {n} -> {target}", flush=True)
+          PY
+          rm -f "$RUNNER_TEMP/templates.tpz"
+
+      - name: Import production resources
+        shell: bash
+        working-directory: game-src
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 120s \
+            "$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64" \
+            --headless --audio-driver Dummy --editor --path . --import \
+            2>&1 | tee ../web-import.log
+
+      - name: Export browser build
+        shell: bash
+        working-directory: game-src
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 240s \
+            "$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64" \
+            --headless --audio-driver Dummy --path . \
+            --export-release "Web Playtest" build/web/index.html \
+            2>&1 | tee ../web-export.log
+
+      - name: Validate Web export and label source commit
+        shell: bash
+        working-directory: game-src
+        env:
+          SOURCE_SHA: ${{ steps.source.outputs.sha }}
+          SOURCE_BRANCH: ${{ steps.source.outputs.name }}
+        run: |
+          set -euo pipefail
+          test -s build/web/index.html
+          test -s build/web/index.js
+          test -s build/web/index.wasm
+          test -s build/web/index.pck
+          test -s ../web-export.log
+          # Godot 4 Web export is a static site; guard accidental placeholder publication.
+          if grep -Eiq 'SCRIPT ERROR:|ERROR:.*(Export|Template|Failed to load|Failed to save)' ../web-export.log; then
+            echo "Godot logged export errors."
+            exit 1
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          pack = Path("build/web/index.pck")
+          assert pack.stat().st_size > 1024, "Exported game pack is too small"
+          data = pack.read_bytes()
+          # PCK path entries are stored as strings in its index; validate authored
+          # campaign JSON inclusion. Abort rather than deploy a menu-only build.
+          required = [b"data/levels/chapter_2_level_11.json"]
+          for entry in required:
+              if entry not in data:
+                  raise SystemExit(f"Missing runtime level in export PCK: {entry.decode()}")
+          print("Web pack contains runtime Chapter 2 level JSON.")
+          PY
+          printf 'Soul of Hero Web Playtest\nBranch: %s\nCommit: %s\n' \
+            "$SOURCE_BRANCH" "$SOURCE_SHA" > build/web/BUILD_INFO.txt
+          touch build/web/.nojekyll
+          du -h build/web/* | sort -h
+          echo "WEB EXPORT VALIDATED: $SOURCE_BRANCH $SOURCE_SHA"
+
+      - name: Upload playable Web build and QA logs
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: soul-of-hero-web-build
+          path: |
+            game-src/build/web/
+            web-import.log
+            web-export.log
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload GitHub Pages package
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: game-src/build/web
+
+  deploy-pages:
+    name: Publish stable Playtest URL
+    needs: export-web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages (first-time enablement)
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Published source identity
+        env:
+          SOURCE_BRANCH: ${{ needs.export-web.outputs.source_name }}
+          SOURCE_SHA: ${{ needs.export-web.outputs.source_sha }}
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          echo "Playtest URL: $PAGE_URL"
+          echo "Game branch: $SOURCE_BRANCH"
+          echo "Game commit: $SOURCE_SHA"
