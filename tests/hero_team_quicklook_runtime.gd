@@ -73,7 +73,7 @@ func _run() -> void:
 			_expect(compare.is_visible_in_tree() and compare.size.x >= 65.0,
 				"Compare action has readable width in the actual Roster scene")
 			var bounds := compare.get_global_rect()
-			var host_bounds := roster.get_global_rect()
+			var host_bounds: Rect2 = roster.get_global_rect()
 			_expect(bounds.position.x >= host_bounds.position.x
 				and bounds.end.x <= host_bounds.end.x + 1.0,
 				"Compare action is not clipped beyond the Roster horizontal bounds")
