@@ -175,12 +175,15 @@ func _capture_campaign_state(game: Node2D) -> void:
 			player.global_position = target_position
 	player.set_physics_process(false)
 	var tutorial := game.get_node_or_null("LevelOneTutorial") as CanvasLayer
+	var tutorial_panel := (
+		tutorial.get_node_or_null("TutorialPanel") as Control if tutorial != null else null
+	)
 	_expect(
 		(
-			(_slot == 1 and tutorial != null and tutorial.visible)
-			or (_slot > 1 and (tutorial == null or not tutorial.visible))
+			(_slot == 1 and tutorial_panel != null and tutorial_panel.visible)
+			or (_slot > 1 and (tutorial_panel == null or not tutorial_panel.visible))
 		),
-		"tutorial is present only on the actual Level 1 campaign route",
+		"tutorial prompt is visible only on the actual Level 1 campaign route",
 	)
 	var camera := player.get_node_or_null("Camera") as Camera2D
 	if camera != null:

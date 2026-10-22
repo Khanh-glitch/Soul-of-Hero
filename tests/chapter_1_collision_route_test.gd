@@ -130,9 +130,13 @@ func _test_map(map_spec: Dictionary) -> void:
 		query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
 		if space.intersect_shape(query, 1).is_empty():
 			collision_clear_floor[cell] = true
+	var spawn_clear := collision_clear_floor.has(player_cell)
 	_expect(
-		collision_clear_floor.has(player_cell),
-		"%s spawn fits the live Knight-sized collision footprint" % map_id
+		spawn_clear,
+		(
+			"%s spawn fits the live Knight-sized collision footprint; blockers=%s"
+			% [map_id, ", ".join(_collision_names_at_cell(dungeon, body_shape, player_cell))]
+		),
 	)
 	if not collision_clear_floor.has(player_cell):
 		game.queue_free()
@@ -145,7 +149,22 @@ func _test_map(map_spec: Dictionary) -> void:
 		for destination_value: Variant in door_targets[source]:
 			var destination: Vector2i = destination_value
 			if not collision_clear_floor.has(source) or not collision_clear_floor.has(destination):
-				invalid_door_transitions.append("%s->%s" % [source, destination])
+				(
+					invalid_door_transitions
+					. append(
+						(
+							"%s->%s source_blockers=[%s] target_blockers=[%s]"
+							% [
+								source,
+								destination,
+								", ".join(_collision_names_at_cell(dungeon, body_shape, source)),
+								", ".join(
+									_collision_names_at_cell(dungeon, body_shape, destination)
+								),
+							]
+						)
+					)
+				)
 	_expect(
 		invalid_door_transitions.is_empty(),
 		(
@@ -336,6 +355,25 @@ func _test_level_8_branch_routes() -> void:
 		print("CHAPTER 1 COLLISION ROUTE: slot=8 branch=%s reachable=%d" % [branch, reached.size()])
 		game.queue_free()
 		await process_frame
+
+
+func _collision_names_at_cell(
+	dungeon: DungeonLevel,
+	shape: RectangleShape2D,
+	cell: Vector2i,
+) -> PackedStringArray:
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape
+	query.collision_mask = 1
+	query.collide_with_areas = false
+	var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
+	query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
+	var names := PackedStringArray()
+	for result: Dictionary in dungeon.get_world_2d().direct_space_state.intersect_shape(query, 8):
+		var collider: Variant = result.get("collider")
+		if collider is Node:
+			names.append(String((collider as Node).get_path()))
+	return names
 
 
 func _cells_by_position(value: Variant) -> Dictionary:
