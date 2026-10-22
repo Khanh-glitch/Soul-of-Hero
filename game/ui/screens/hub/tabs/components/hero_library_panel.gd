@@ -71,14 +71,18 @@ func _build_header(profile: Dictionary) -> void:
 	row.add_theme_constant_override(&"separation", 12)
 	margin.add_child(row)
 	var portrait := TextureRect.new()
-	portrait.name = "KNightPortrait" if String(profile.get("hero_id", "")) == "sword_hero" \
-		else "%sPortrait" % String(profile.get("hero_id", "")).to_pascal_case()
+	if String(profile.get("hero_id", "")) == "sword_hero":
+		portrait.name = "KNightPortrait"
+	else:
+		portrait.name = "%sPortrait" % String(profile.get("hero_id", "")).to_pascal_case()
 	portrait.custom_minimum_size = Vector2(76.0, 76.0)
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	var portrait_path := String(profile.get("portrait", ""))
-	var portrait_texture := load(portrait_path) as Texture2D if not portrait_path.is_empty() else null
+	var portrait_texture: Texture2D
+	if not portrait_path.is_empty():
+		portrait_texture = load(portrait_path) as Texture2D
 	if portrait_texture != null:
 		var atlas := AtlasTexture.new()
 		atlas.atlas = portrait_texture
