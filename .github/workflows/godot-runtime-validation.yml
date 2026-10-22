@@ -77,6 +77,76 @@ jobs:
           if [[ ${campaign_result} -ne 0 ]]; then exit "${campaign_result}"; fi
           exit "${legacy_result}"
 
+      - name: Run live collision-clear routes through Chapter 1
+        if: always()
+        timeout-minutes: 10
+        shell: bash
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --path . --script res://tests/chapter_1_collision_route_test.gd 2>&1 | tee .artifacts/chapter-1-collision-routes.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 live collision-route exit code: ${result}"
+          grep -E '^CHAPTER 1 COLLISION ROUTE(TEST)? (PASSED|FAILED)|^CHAPTER 1 COLLISION ROUTE: slot=' .artifacts/chapter-1-collision-routes.log >> "${GITHUB_STEP_SUMMARY}" || true
+          exit "${result}"
+
+      - name: Run Chapter 1 objective, route, and Training gates
+        if: always()
+        timeout-minutes: 30
+        shell: bash
+        run: |
+          set -uo pipefail
+          failures=0
+          tests=(
+            "res://tests/content/content_contracts_test.gd"
+            "res://tests/level_one_tutorial_learning_test.gd"
+            "res://tests/chapter_1_level_6_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_6_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_6_promotion_route_test.gd"
+            "res://tests/chapter_1_level_7_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_7_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_7_promotion_route_test.gd"
+            "res://tests/chapter_1_level_8_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_8_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_8_authority_failure_test.tscn"
+            "res://tests/chapter_1_level_8_fresh_route_test.gd"
+            "res://tests/chapter_1_level_9_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_9_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_9_authority_failure_test.tscn"
+            "res://tests/chapter_1_level_9_fresh_route_test.gd"
+            "res://tests/chapter_1_level_10_vertical_slice_test.gd"
+            "res://tests/chapter_1_level_10_live_runtime_test.tscn"
+            "res://tests/chapter_1_level_10_fresh_route_test.gd"
+          )
+          for test_path in "${tests[@]}"; do
+            test_name=${test_path##*/}
+            test_name=${test_name%.*}
+            echo "Running Chapter 1/Training gate: ${test_path}"
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${test_name}.json"
+            export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+            set +e
+            if [[ ${test_path} == *.tscn ]]; then
+              timeout --signal=TERM --kill-after=10s 180s godot --headless --path . "${test_path}" 2>&1 | tee ".artifacts/${test_name}.log"
+              result=${PIPESTATUS[0]}
+            else
+              timeout --signal=TERM --kill-after=10s 180s godot --headless --path . --script "${test_path}" 2>&1 | tee ".artifacts/${test_name}.log"
+              result=${PIPESTATUS[0]}
+            fi
+            set -e
+            echo "${test_path} exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then failures=$((failures + 1)); fi
+          done
+          {
+            echo "### Chapter 1 / Training runtime gates: $(( ${#tests[@]} - failures ))/${#tests[@]} passed"
+            for test_path in "${tests[@]}"; do
+              test_name=${test_path##*/}
+              test_name=${test_name%.*}
+              grep -E 'PASSED|FAILED' ".artifacts/${test_name}.log" || true
+            done
+          } >> "${GITHUB_STEP_SUMMARY}"
+          exit "${failures}"
+
       - name: Run Chapter 2 campaign entry and scenario runtime checks
         timeout-minutes: 3
         run: |
@@ -334,25 +404,31 @@ jobs:
         run: |
           set -uo pipefail
           capture_failures=0
+          capture_count=0
           for slot in {1..10}; do
-            echo "Capturing production gameplay scene for Chapter 1 Level ${slot}"
-            set +e
-            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
-              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}.json" \
-              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
-              --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
-              --level-slot="${slot}" --expected-width=1280 --expected-height=720 \
-              2>&1 | tee ".artifacts/chapter-1-level-${slot}-visual.log"
-            result=${PIPESTATUS[0]}
-            set -e
-            echo "Chapter 1 Level ${slot} rendered capture exit code: ${result}"
-            if [[ ${result} -ne 0 ]]; then capture_failures=$((capture_failures + 1)); fi
+            for point in spawn mid end; do
+              echo "Capturing real campaign route: Chapter 1 Level ${slot}, ${point}"
+              set +e
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}_${point}.json" \
+                LIVING_ARSENAL_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}_${point}.json" \
+                timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="${slot}" --capture-point="${point}" --expected-width=1280 --expected-height=720 \
+                2>&1 | tee ".artifacts/chapter-1-level-${slot}-${point}-visual.log"
+              result=${PIPESTATUS[0]}
+              set -e
+              echo "Chapter 1 Level ${slot} ${point} capture exit code: ${result}"
+              if [[ ${result} -ne 0 ]]; then capture_failures=$((capture_failures + 1)); else capture_count=$((capture_count + 1)); fi
+            done
           done
-          echo "Chapter 1 rendered map captures failed: ${capture_failures}"
+          echo "Chapter 1 route captures passed: ${capture_count}/30; failed: ${capture_failures}"
           {
-            echo "### Chapter 1 production-scene captures: $((10 - capture_failures))/10 passed"
+            echo "### Chapter 1 production route captures: ${capture_count}/30 passed (spawn, mid, end for each level)"
             for slot in {1..10}; do
-              grep -E '^CHAPTER 1 GAMEPLAY CAPTURE PASSED' ".artifacts/chapter-1-level-${slot}-visual.log" || true
+              for point in spawn mid end; do
+                grep -E '^CHAPTER 1 CAMPAIGN CAPTURE PASSED' ".artifacts/chapter-1-level-${slot}-${point}-visual.log" || true
+              done
             done
           } >> "${GITHUB_STEP_SUMMARY}"
           exit "${capture_failures}"
