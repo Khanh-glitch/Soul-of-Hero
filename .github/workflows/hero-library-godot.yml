@@ -125,7 +125,7 @@ jobs:
             xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
               timeout --kill-after=5s 70s \
               /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
-              --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
               --resolution "$dimensions" res://tests/hero_roster_visual_capture.tscn \
               -- "--expected-width=$width" "--expected-height=$height" \
               2>&1 | tee "roster_visual_${dimensions}.log"
