@@ -98,6 +98,15 @@ jobs:
           retention-days: 14
           include-hidden-files: true
 
+      - name: Publish concise Godot failure context
+        if: always()
+        run: |
+          python3 tools/ci/publish_godot_failure_annotations.py \
+            .artifacts/campaign-entry-runtime.log "Campaign entry runtime" \
+            .artifacts/gameplay-smoke.log "Production gameplay smoke" \
+            .artifacts/axe-combat.log "Axe combat regression" \
+            .artifacts/chapter-1-level-5-miniboss.log "Chapter 1 Level 5 combat"
+
   rendered-gameplay:
     name: Xvfb rendered gameplay captures
     runs-on: ubuntu-latest
