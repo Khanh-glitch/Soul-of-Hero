@@ -96,7 +96,12 @@ func _test_map(map_spec: Dictionary) -> void:
 	_expect(player_entities.size() == 1, "%s has exactly one player start" % map_id)
 	_expect(exit_entities.size() == 1, "%s has exactly one explicit exit" % map_id)
 	_expect(_count_enemy_entities(entities_by_type) > 0, "%s has authored combat pressure" % map_id)
-	_expect(_all_entities_on_floor(entities, floor, width, height), "%s keeps every spawn and objective on walkable cells" % map_id)
+	var off_floor_entities := _off_floor_entities(entities, floor, width, height)
+	_expect(
+		off_floor_entities.is_empty(),
+		"%s keeps every spawn, pickup, and objective on walkable cells: %s"
+		% [map_id, ", ".join(off_floor_entities)],
+	)
 	_expect(_entity_positions_use_tile_centers(entities), "%s aligns entity anchors to tile centers" % map_id)
 
 	var doors: Array = entities_by_type.get("floor_door", [])
@@ -215,25 +220,35 @@ func _count_enemy_entities(entities_by_type: Dictionary) -> int:
 	return result
 
 
-func _all_entities_on_floor(entities: Array, floor: Dictionary, width: int, height: int) -> bool:
+func _off_floor_entities(
+		entities: Array,
+		floor: Dictionary,
+		width: int,
+		height: int,
+) -> Array[String]:
+	var result: Array[String] = []
 	for raw_entity: Variant in entities:
 		if not raw_entity is Dictionary:
-			return false
+			result.append("<non-object entity>")
+			continue
 		var entity := raw_entity as Dictionary
+		var entity_id := String(entity.get("id", "<missing-id>"))
 		var position: Array = entity.get("position", [])
 		if position.size() < 2:
-			return false
+			result.append("%s has no position" % entity_id)
+			continue
 		var cell := Vector2i(floori(float(position[0]) / TILE_SIZE), floori(float(position[1]) / TILE_SIZE))
 		if not floor.has(cell) or cell.x < 0 or cell.y < 0 or cell.x >= width or cell.y >= height:
-			return false
+			result.append("%s at %s" % [entity_id, cell])
 		if entity.has("target_position"):
 			var target: Array = entity.get("target_position", [])
 			if target.size() < 2:
-				return false
+				result.append("%s has no valid target position" % entity_id)
+				continue
 			var target_cell := Vector2i(floori(float(target[0]) / TILE_SIZE), floori(float(target[1]) / TILE_SIZE))
 			if not floor.has(target_cell):
-				return false
-	return true
+				result.append("%s target at %s" % [entity_id, target_cell])
+	return result
 
 
 func _entity_positions_use_tile_centers(entities: Array) -> bool:
