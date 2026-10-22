@@ -69,6 +69,11 @@ jobs:
           legacy_result=${PIPESTATUS[0]}
           set -e
           echo "Chapter 1 three-floor map design exit code: ${legacy_result}"
+          {
+            echo "### Chapter 1 map design results"
+            grep -E '^CHAPTER 1 CAMPAIGN MAP DESIGN (PASSED|FAILED)' .artifacts/chapter-1-campaign-map-design.log || true
+            grep -E '^CHAPTER 1 MAP DESIGN [0-9]+/[0-9]+' .artifacts/chapter-1-three-floor-map-design.log || true
+          } >> "${GITHUB_STEP_SUMMARY}"
           if [[ ${campaign_result} -ne 0 ]]; then exit "${campaign_result}"; fi
           exit "${legacy_result}"
 
@@ -344,6 +349,12 @@ jobs:
             if [[ ${result} -ne 0 ]]; then capture_failures=$((capture_failures + 1)); fi
           done
           echo "Chapter 1 rendered map captures failed: ${capture_failures}"
+          {
+            echo "### Chapter 1 production-scene captures: $((10 - capture_failures))/10 passed"
+            for slot in {1..10}; do
+              grep -E '^CHAPTER 1 GAMEPLAY CAPTURE PASSED' ".artifacts/chapter-1-level-${slot}-visual.log" || true
+            done
+          } >> "${GITHUB_STEP_SUMMARY}"
           exit "${capture_failures}"
 
       - name: Upload screenshots and rendered logs
