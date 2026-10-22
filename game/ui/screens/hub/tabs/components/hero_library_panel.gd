@@ -2,7 +2,6 @@ class_name HeroLibraryPanel
 extends HSplitContainer
 
 const CATALOG := preload("res://game/heroes/hero_library_catalog.gd")
-const KNIGHT_IDLE: Texture2D = preload("res://assets/characters/knight/_Idle.png")
 
 @onready var hero_list: VBoxContainer = %HeroList
 @onready var detail: VBoxContainer = %HeroDetail
@@ -29,8 +28,9 @@ func _build_hero_list() -> void:
 		var profile := CATALOG.profile(hero_id)
 		var button := Button.new()
 		button.name = "%sLibraryButton" % String(hero_id).to_pascal_case()
-		button.custom_minimum_size = Vector2(172.0, 58.0)
+		button.custom_minimum_size = Vector2(148.0, 50.0)
 		button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.clip_text = true
 		button.text = "%s\n%s" % [
 			String(profile.get("display_name", "")),
 			String(profile.get("title", "")),
@@ -50,7 +50,7 @@ func _show_hero(hero_id: StringName) -> void:
 	_build_rarity_strip(profile)
 	_build_stats(profile)
 	_build_bullets("BẢN SẮC", profile.get("identity", []), Color("e5bd72"))
-	_build_entries("NỘI TẠI • TỨ KIẾM ÂM GIỚI", profile.get("combo", []), Color("f07870"))
+	_build_entries(String(profile.get("combo_title", "CHUỖI TẤN CÔNG")), profile.get("combo", []), Color("f07870"))
 	_build_entries("BỂ KỸ NĂNG • THƯỜNG–HIẾM", profile.get("basic_skills", []), Color("76a9ff"))
 	_build_entries("BỂ KỸ NĂNG • SỬ THI+", profile.get("advanced_skills", []), Color("bd7dff"))
 	_build_entries("DẠNG LINH HỒN • Q", profile.get("soul_skills", []), Color("55dfc4"))
@@ -71,15 +71,20 @@ func _build_header(profile: Dictionary) -> void:
 	row.add_theme_constant_override(&"separation", 12)
 	margin.add_child(row)
 	var portrait := TextureRect.new()
-	portrait.name = "KNightPortrait"
+	portrait.name = "KNightPortrait" if String(profile.get("hero_id", "")) == "sword_hero" \
+		else "%sPortrait" % String(profile.get("hero_id", "")).to_pascal_case()
 	portrait.custom_minimum_size = Vector2(76.0, 76.0)
 	portrait.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var atlas := AtlasTexture.new()
-	atlas.atlas = KNIGHT_IDLE
-	atlas.region = Rect2(0.0, 0.0, 48.0, 48.0)
-	portrait.texture = atlas
+	var portrait_path := String(profile.get("portrait", ""))
+	var portrait_texture := load(portrait_path) as Texture2D if not portrait_path.is_empty() else null
+	if portrait_texture != null:
+		var atlas := AtlasTexture.new()
+		atlas.atlas = portrait_texture
+		var frame_size: Vector2 = profile.get("portrait_frame_size", Vector2(120, 80))
+		atlas.region = Rect2(Vector2.ZERO, frame_size)
+		portrait.texture = atlas
 	row.add_child(portrait)
 	var copy := VBoxContainer.new()
 	copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
