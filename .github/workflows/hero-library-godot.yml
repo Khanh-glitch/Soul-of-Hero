@@ -18,7 +18,7 @@ permissions:
 jobs:
   hero-library:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 8
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +61,8 @@ jobs:
           set -euo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/hero_team_quicklook_qa_ci.json"
           export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
-          /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+          timeout --kill-after=5s 60s \
+            /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
             --headless --path . --script res://tests/hero_team_quicklook_test.gd \
             2>&1 | tee hero-team-test.log
           grep -q "HERO TEAM QUICK LOOK TEST PASSED" hero-team-test.log
