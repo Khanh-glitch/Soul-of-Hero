@@ -162,5 +162,5 @@ static func _skill_entry(raw_skill: Variant, label: String) -> Dictionary:
 		details.append("Chỉ số thực tế phụ thuộc rarity, rank và Hero Weapon.")
 	return {
 		"name": "%s • %s" % [label, name],
-		"copy": " • ".join(details),
+		"copy": " • ".join(PackedStringArray(details)),
 	}
