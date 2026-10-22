@@ -14,6 +14,7 @@ on:
       - "game/ui/screens/hub/tabs/components/hero_team_quicklook.gd"
       - "game/ui/screens/hub/tabs/components/hero_equipment_preview.gd"
       - "tests/hero_equipment_preview_test.gd"
+      - "tests/hero_skill_kit_matrix_test.gd"
       - "tests/hero_roster_visual_capture.gd"
       - "tests/hero_roster_visual_capture.tscn"
       - ".github/workflows/hero-library-godot.yml"
@@ -110,6 +111,20 @@ jobs:
             exit 1
           fi
 
+      - name: Validate four-Hero eight-rarity skill-kit matrix
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --kill-after=5s 60s \
+            /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+            --headless --path . --script res://tests/hero_skill_kit_matrix_test.gd \
+            2>&1 | tee hero-skill-matrix-test.log
+          grep -q "H2 SKILL MATRIX TEST PASSED" hero-skill-matrix-test.log
+          if grep -Eq '^(SCRIPT ERROR|ERROR):' hero-skill-matrix-test.log; then
+            echo "Godot reported a skill matrix script error."
+            exit 1
+          fi
+
       - name: Capture production Hero Roster at three viewports
         shell: bash
         run: |
@@ -147,6 +162,7 @@ jobs:
             hero-team-test.log
             hero-team-scene-test.log
             hero-equipment-preview-test.log
+            hero-skill-matrix-test.log
             roster_visual_*.log
             .artifacts/hero_roster_*.png
           if-no-files-found: error
