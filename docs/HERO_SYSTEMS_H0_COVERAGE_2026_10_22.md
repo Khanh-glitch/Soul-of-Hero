@@ -2,14 +2,14 @@
 
 **Branch:** `feat/hero-systems-completion`  
 **Base for source audit:** `main@5214788933b1a827f3a177d11ff486433dfe5e8a`  
-**Status:** source-level verification + targeted Hero Library implementation. **Godot runtime, visual and manual playtesting not executed in this audit environment.**
+**Status:** source-level verification + targeted Hero Library implementation; **GitHub Actions Godot 4.7 runtime import and focused 55/55 coverage checks PASS**. Visual and human gameplay playtesting remain unverified.
 
 ## Status semantics
 
 - **DEFINED**: definition/resource or canonical rules exist.
 - **WIRED (source)**: identified actual gameplay/UI/save consumer or function path. Not a claim that the path executes successfully.
 - **TEST EXISTS**: runner/test script found. Not a claim that it passed on this commit.
-- **PLAYTESTED**: requires engine execution plus observed gameplay evidence; currently **UNVERIFIED** for every row in this branch.
+- **PLAYTESTED**: requires observed gameplay/visual evidence; currently **UNVERIFIED** for all rows. Hero Library automated engine test is **PASS**, which does not equal visual/manual playtesting.
 
 ## Coverage matrix
 
@@ -23,11 +23,11 @@
 | 6 progression tracks | `game/meta/progression/player_progression_rules.gd` and `hero_progression_rules.gd` | `SaveService.allocate_hero_skill`, `respec_hero_skills`, Arsenal screen, runtime hero stats | `run_player_progression_tests.ps1`, `run_mana_meta_core_tests.ps1` | Rank 0–20, affordability, reset, persistence and in-combat parity |
 | Hero Soul exact instances | `hero_soul_rules.gd`, `hero_soul_combat_affixes.gd` | `SaveService` exact-instance equip/fuse/sell, HeroSoulManager and Arsenal | `run_hero_soul_instance_live_tests.ps1`, `run_hero_soul_fusion_live_affix_tests.ps1` | Verify equip → live stat → remove/swap → reload and protected-item fail-close |
 | Armor / Boots / Jewelry | `auxiliary_equipment_definitions.gd` (`soul_vessel`, `soul_boots`, `soul_trace`) | Equipment combat projection, SaveService equipment API, Arsenal, loot catalog | Auxiliary equipment, combat, upgrade/migration runners | Validate all generator LIVE affixes against combat, preview delta, upgrade +5 and ownership |
-| Hero Library | `hero_library_catalog.gd`, `hero_library_panel.gd/.tscn` | Home → Hero Roster → Library compendium | **New:** `tests/hero_library_coverage_test.gd` | Run newly added coverage and visual QA at 640×360, 847×437, 1280×720 |
+| Hero Library | `hero_library_catalog.gd`, `hero_library_panel.gd/.tscn` | Home → Hero Roster → Library compendium | **PASS 55/55 on Godot 4.7:** `tests/hero_library_coverage_test.gd` | Visual QA still required at 640×360, 847×437, 1280×720 |
 | Hero Variant | Partial schema/rules | Production variant inventory, art, kit, loot and persistence not confirmed | None established in H0 | H4 design+implementation; do not mark LIVE |
 | Monster Soul / Parts | Foundation only / roadmap | Complete production loop not confirmed | Monster Soul rule test exists | Out of scope during Hero Systems H1 |
 
-## H1 delivered on branch (not yet runtime certified)
+## H1 delivered on branch (engine-tested; visual QA pending)
 
 ### Before
 
@@ -61,6 +61,15 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 4. **H3**: equipment lifecycle regression using isolated saves; escalate any necessary SaveService/loot change as a distinct PR.
 5. After the Chapter 2 agent publishes its branch, rebase and run combined regression with the real Godot binary.
 
+## Actual Godot 4.7 GitHub Actions evidence
+
+- **Workflow:** [Hero Library Godot QA run #1](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39783645282).
+- **Commit tested:** `fc37bd1740b31531406f3bebaf7e9882d5f3bce7` (includes source + test + workflow).
+- **Engine reported:** `Godot Engine v4.7.stable.official.5b4e0cb0f`.
+- **Project import:** completed successfully on GitHub Actions Ubuntu runner.
+- **Focused runtime test:** `HERO LIBRARY COVERAGE TEST PASSED - 55 checks`, job conclusion `success`.
+- **Limitations:** no image capture or manual input/UX playtest; other Hero/gear/skill regression suites have not yet been executed on this branch. The subsequent documentation-only commit does not change tested game source.
+
 ## Exit criteria
 
-No H1 completion claim until new focused test passes, existing Hero/UI regressions pass, and visuals are inspected at requested viewports. No user-facing `LIVE` label for authored-but-unproven mechanics. Keep this PR draft until those conditions are satisfied.
+Focused test has passed; **do not claim H1 complete** until existing Hero/UI regressions pass and visuals are inspected at requested viewports. No user-facing `LIVE` label for authored-but-unproven mechanics. Keep this PR draft until those conditions are satisfied.
