@@ -233,7 +233,7 @@ func _verify_layout(
 		var live_entity_id_counts: Dictionary = {}
 		var pack_family_presence := {}
 		var objective_used_as_pack_source := false
-		var live_player := game.get_node_or_null("Knight")
+		var live_player := game.get_node_or_null("Level/Entities/Knight")
 		var excluded_pack_sources := _get_deferred_enemy_ids(metadata, authored_entities)
 		for field: String in ["boss_entity_id", "crimson_reaper_id"]:
 			var special_id := String(metadata.get(field, ""))

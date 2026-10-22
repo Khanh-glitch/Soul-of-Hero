@@ -132,11 +132,17 @@ jobs:
           ref: 5214788933b1a827f3a177d11ff486433dfe5e8a
           path: original-main
 
-      - name: Check out current-branch log annotator
+      - name: Check out current-branch validation tools
         uses: actions/checkout@v4
         with:
           ref: ${{ github.sha }}
           path: validation-tools
+
+      - name: Apply the identical corrected campaign-entry test to baseline
+        run: |
+          source_test="validation-tools/tests/campaign_entry_runtime_test.gd"
+          target_test="original-main/tests/campaign_entry_runtime_test.gd"
+          cp "${source_test}" "${target_test}"
 
       - name: Install the same Godot 4.7 stable binary
         uses: chickensoft-games/setup-godot@v2
