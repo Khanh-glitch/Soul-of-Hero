@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/characters/archer/archer_boss_sheet.png" id="2_preview"]
+
+[node name="HoodedArcherMiniboss" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "hooded_archer_miniboss"
+patrol_distance = 24.0
+display_name = "KINGDOMARCHER"
+marker_color = Color(0.72, 0.42, 1, 1)
+preview_texture = ExtResource("2_preview")
+preview_columns = 11
+preview_rows = 5
+preview_scale = Vector2(1.12, 1.12)
+preview_offset = Vector2(0, -24)

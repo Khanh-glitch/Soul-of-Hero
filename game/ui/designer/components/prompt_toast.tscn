@@ -1,0 +1,32 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/input_prompts/tilemap_packed.png" id="2_prompts"]
+
+[sub_resource type="AtlasTexture" id="PromptE"]
+atlas = ExtResource("2_prompts")
+region = Rect2(304, 32, 16, 16)
+
+[node name="PromptToast" type="PanelContainer"]
+custom_minimum_size = Vector2(274, 36)
+theme = ExtResource("1_theme")
+theme_type_variation = &"PromptPanel"
+
+[node name="Row" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="Glyph" type="TextureRect" parent="Row"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptE")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Text" type="Label" parent="Row"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.58, 1)
+text = "Nhặt đuốc  •  Không thể tấn công khi đang cầm"
+vertical_alignment = 1

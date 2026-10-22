@@ -1,0 +1,88 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/screens/home/home_storage_screen.gd" id="1_script"]
+
+[node name="HomeStorageScreen" type="VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 7
+script = ExtResource("1_script")
+
+[node name="CapacityLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.78, 0.38, 1)
+theme_override_font_sizes/font_size = 13
+text = "TÚI 0 / 30  â€¢  KHO 0 / 50"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.8, 0.84, 1)
+theme_override_font_sizes/font_size = 9
+text = "Chỉ đổi đồ tại Home. Trang bị đang mang phải thạo ra trước khi cất."
+horizontal_alignment = 1
+
+[node name="XpRow" type="HBoxContainer" parent="."]
+layout_mode = 2
+alignment = 1
+
+[node name="XpLabel" type="Label" parent="XpRow"]
+layout_mode = 2
+text = "HERO NHAN DA XP:"
+
+[node name="XpHeroSelector" type="OptionButton" parent="XpRow"]
+unique_name_in_owner = true
+layout_mode = 2
+custom_minimum_size = Vector2(180, 0)
+
+[node name="Columns" type="HSplitContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 345
+
+[node name="BagPanel" type="PanelContainer" parent="Columns"]
+layout_mode = 2
+
+[node name="BagRoot" type="VBoxContainer" parent="Columns/BagPanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Columns/BagPanel/BagRoot"]
+layout_mode = 2
+text = "TÚI ĐỒ TRONG TRẬN (30)"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Columns/BagPanel/BagRoot"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="BagList" type="VBoxContainer" parent="Columns/BagPanel/BagRoot/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="StoragePanel" type="PanelContainer" parent="Columns"]
+layout_mode = 2
+
+[node name="StorageRoot" type="VBoxContainer" parent="Columns/StoragePanel"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Columns/StoragePanel/StorageRoot"]
+layout_mode = 2
+text = "RƯƠNG KHO HOME (50)"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Columns/StoragePanel/StorageRoot"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="StorageList" type="VBoxContainer" parent="Columns/StoragePanel/StorageRoot/Scroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3

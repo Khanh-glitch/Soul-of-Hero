@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/source_reference.png" id="1_dungeon"]
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/items/torch/torch_1.png" id="2_torch"]
+
+[node name="DungeonBackdrop" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DungeonArt" type="TextureRect" parent="."]
+modulate = Color(0.34, 0.28, 0.42, 0.68)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture_repeat = 2
+texture = ExtResource("1_dungeon")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Veil" type="TextureRect" parent="."]
+modulate = Color(0.08, 0.04, 0.11, 0.62)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture_repeat = 2
+texture = ExtResource("1_dungeon")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="TorchLeft" type="TextureRect" parent="."]
+modulate = Color(1, 0.69, 0.38, 0.35)
+layout_mode = 1
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 52.0
+offset_bottom = 52.0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("2_torch")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TorchRight" type="TextureRect" parent="."]
+modulate = Color(1, 0.69, 0.38, 0.26)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -52.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = 52.0
+grow_horizontal = 0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("2_torch")
+expand_mode = 1
+stretch_mode = 5

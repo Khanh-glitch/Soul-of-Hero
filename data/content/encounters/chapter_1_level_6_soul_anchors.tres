@@ -1,0 +1,142 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" load_steps=19 format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="3"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="4"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="5"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="6"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="7"]
+
+[sub_resource type="Resource" id="Camp1Swords"]
+script = ExtResource("2")
+entry_id = &"anchor_one_skeleton_guards"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l6_c1_skeleton_01", "l6_c1_skeleton_02", "l6_c1_skeleton_03")
+formation_id = &"anchor_screen"
+maximum_alive = 3
+
+[sub_resource type="Resource" id="Anchor1"]
+script = ExtResource("2")
+entry_id = &"soul_anchor_manifestation_one"
+enemy_id = &"bone_reaper"
+spawn_marker_ids = PackedStringArray("l6_soul_anchor_01")
+formation_id = &"stationary_anchor"
+maximum_alive = 1
+defeat_event_id = &"soul_anchor_destroyed"
+
+[sub_resource type="Resource" id="Camp1"]
+script = ExtResource("3")
+group_id = &"soul_anchor_cluster_one"
+spawn_entries = Array[ExtResource("2")]([SubResource("Camp1Swords"), SubResource("Anchor1")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Camp2Swords"]
+script = ExtResource("2")
+entry_id = &"anchor_two_skeleton_guards"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l6_c2_skeleton_01", "l6_c2_skeleton_02", "l6_c2_skeleton_03")
+formation_id = &"anchor_screen"
+maximum_alive = 3
+
+[sub_resource type="Resource" id="Anchor2"]
+script = ExtResource("2")
+entry_id = &"soul_anchor_manifestation_two"
+enemy_id = &"bone_reaper"
+spawn_marker_ids = PackedStringArray("l6_soul_anchor_02")
+formation_id = &"stationary_anchor"
+maximum_alive = 1
+defeat_event_id = &"soul_anchor_destroyed"
+
+[sub_resource type="Resource" id="Camp2"]
+script = ExtResource("3")
+group_id = &"soul_anchor_cluster_two"
+spawn_entries = Array[ExtResource("2")]([SubResource("Camp2Swords"), SubResource("Anchor2")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Camp3Swords"]
+script = ExtResource("2")
+entry_id = &"anchor_three_skeleton_guards"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l6_c3_skeleton_01", "l6_c3_skeleton_02", "l6_c3_skeleton_03")
+formation_id = &"anchor_screen"
+maximum_alive = 3
+
+[sub_resource type="Resource" id="Anchor3"]
+script = ExtResource("2")
+entry_id = &"soul_anchor_manifestation_three"
+enemy_id = &"bone_reaper"
+spawn_marker_ids = PackedStringArray("l6_soul_anchor_03")
+formation_id = &"stationary_anchor"
+maximum_alive = 1
+defeat_event_id = &"soul_anchor_destroyed"
+
+[sub_resource type="Resource" id="Camp3"]
+script = ExtResource("3")
+group_id = &"soul_anchor_cluster_three"
+spawn_entries = Array[ExtResource("2")]([SubResource("Camp3Swords"), SubResource("Anchor3")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Wave"]
+script = ExtResource("4")
+wave_id = &"three_soul_anchor_route"
+groups = Array[ExtResource("3")]([SubResource("Camp1"), SubResource("Camp2"), SubResource("Camp3")])
+inter_group_delay_seconds = 0.4
+
+[sub_resource type="Resource" id="AnchorObjective"]
+script = ExtResource("6")
+objective_id = &"destroy_three_soul_anchors"
+objective_type = 6
+description_key = "objective.destroy_three_soul_anchors"
+target_id = &"soul_anchor_destroyed"
+target_count = 3
+
+[sub_resource type="Resource" id="ClearObjective"]
+script = ExtResource("6")
+objective_id = &"clear_anchor_guards"
+description_key = "objective.clear_anchor_guards"
+
+[sub_resource type="Resource" id="SwordToArcherObjective"]
+script = ExtResource("6")
+objective_id = &"practice_sword_to_archer_relay"
+objective_type = 6
+description_key = "objective.practice_sword_to_archer_relay"
+target_id = &"relay_sword_hero_to_archer_hero"
+target_count = 1
+required = false
+
+[sub_resource type="Resource" id="ArcherToSwordObjective"]
+script = ExtResource("6")
+objective_id = &"practice_archer_to_sword_relay"
+objective_type = 6
+description_key = "objective.practice_archer_to_sword_relay"
+target_id = &"relay_archer_hero_to_sword_hero"
+target_count = 1
+required = false
+
+[sub_resource type="Resource" id="RelayWarning"]
+script = ExtResource("5")
+warning_id = &"level_6_relay_lesson"
+message_key = "encounter.warning.practice_relay_both_directions"
+visible_seconds = 2.0
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("7")
+required_objective_ids = PackedStringArray("destroy_three_soul_anchors", "clear_anchor_guards")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l6_exit")
+
+[resource]
+resource_name = "Chapter 1 Level 6 - Three Soul Anchors"
+script = ExtResource("1")
+encounter_id = &"chapter_1_level_6_soul_anchors"
+display_name = "Three Soul Anchors"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "relay", "soul_anchor")
+authoring_notes = "Runtime-ready draft encounter: three Bone Reaper manifestations emit counted Soul Anchor events, all nine guards must also fall, and both Relay directions are tracked as optional non-blocking lesson objectives."
+waves = Array[ExtResource("4")]([SubResource("Wave")])
+warnings = Array[ExtResource("5")]([SubResource("RelayWarning")])
+objectives = Array[ExtResource("6")]([SubResource("AnchorObjective"), SubResource("ClearObjective"), SubResource("SwordToArcherObjective"), SubResource("ArcherToSwordObjective")])
+completion = SubResource("Completion")

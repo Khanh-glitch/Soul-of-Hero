@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://pli06qwp68le"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1_roster"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2_entry"]
+
+[sub_resource type="Resource" id="SkeletonOne"]
+script = ExtResource("2_entry")
+entry_id = &"skeleton_1"
+combatant_id = &"skeleton_swordsman"
+count = 12
+authoring_notes = "Skeleton 1. Level 1 has no elite promotion."
+
+[resource]
+resource_name = "Chapter 1 Level 1 Roster"
+script = ExtResource("1_roster")
+roster_id = &"chapter_1_level_1_roster"
+authoring_notes = "Map-independent design lock. Does not mutate the current Level 1 JSON entities until camps and positions are authored."
+entries = Array[ExtResource("2_entry")]([SubResource("SkeletonOne")])

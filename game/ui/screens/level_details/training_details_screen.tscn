@@ -1,0 +1,193 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/level_details/training_details_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/branding/chapter_1_key_art_imagen.png" id="4_key_art"]
+
+[node name="TrainingDetailsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="ChapterKeyArt" type="TextureRect" parent="."]
+modulate = Color(0.64, 0.6, 0.68, 0.55)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4_key_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 14.0
+offset_top = 10.0
+offset_right = -14.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Header" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+
+[node name="Heading" type="VBoxContainer" parent="Margin/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Kicker" type="Label" parent="Margin/Layout/Header/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.67, 0.55, 0.72, 1)
+text = "LUYỆN TẬP • SÂN THỬ • KHÔNG TÍNH CHIẾN DỊCH"
+
+[node name="Title" type="Label" parent="Margin/Layout/Header/Heading"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.78, 0.39, 1)
+theme_override_font_sizes/font_size = 20
+text = "LỐI VÀO HẦM MỘ"
+
+[node name="BackButton" type="Button" parent="Margin/Layout/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 40)
+layout_mode = 2
+text = "QUAY LẠI"
+
+[node name="Content" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="Mission" type="PanelContainer" parent="Margin/Layout/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Body" type="VBoxContainer" parent="Margin/Layout/Content/Mission"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="ObjectiveHeader" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.67, 0.38, 1)
+text = "MỤC TIÊU"
+
+[node name="Objective" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Thu thập đủ ấn ký, mở cổng và sống sót. Luyện lướt, chuỗi đòn Kiếm sĩ 1–4 và Soul Echo."
+autowrap_mode = 2
+
+[node name="EnemiesHeader" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.67, 0.38, 1)
+text = "ĐỐI THỦ & BẪY"
+
+[node name="Enemies" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+layout_mode = 2
+text = "Chiến binh Xương • Tử thần Xương • Ma cà rồng • Chông • hầm ngục nhìn từ trên"
+autowrap_mode = 2
+
+[node name="RewardHeader" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.67, 0.38, 1)
+text = "PHẦN THƯỞNG"
+
+[node name="Reward" type="Label" parent="Margin/Layout/Content/Mission/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Không có phần thưởng chiến dịch. Đây là sân luyện cơ chế cốt lõi của Kiếm sĩ."
+autowrap_mode = 2
+
+[node name="Loadout" type="PanelContainer" parent="Margin/Layout/Content"]
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="Body" type="VBoxContainer" parent="Margin/Layout/Content/Loadout"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Header" type="Label" parent="Margin/Layout/Content/Loadout/Body"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.67, 0.38, 1)
+text = "CẶP HERO HIỆN TẠI"
+
+[node name="LoadoutValue" type="Label" parent="Margin/Layout/Content/Loadout/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "HERO CHỦ LỰC: KIẾM SĨ\nHERO DỰ BỊ: TRỐNG"
+
+[node name="DifficultySection" type="VBoxContainer" parent="Margin/Layout/Content/Loadout/Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Header" type="Label" parent="Margin/Layout/Content/Loadout/Body/DifficultySection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.86, 0.67, 0.38, 1)
+text = "ĐỘ KHÓ"
+
+[node name="Buttons" type="HBoxContainer" parent="Margin/Layout/Content/Loadout/Body/DifficultySection"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="DifficultyEasy" type="Button" parent="Margin/Layout/Content/Loadout/Body/DifficultySection/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "DỄ"
+
+[node name="DifficultyMedium" type="Button" parent="Margin/Layout/Content/Loadout/Body/DifficultySection/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "TRUNG BÌNH"
+
+[node name="DifficultyHard" type="Button" parent="Margin/Layout/Content/Loadout/Body/DifficultySection/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "KHÓ"
+
+[node name="LoadoutButton" type="Button" parent="Margin/Layout/Content/Loadout/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+text = "XEM ĐỘI HÌNH & TRANG BỊ"
+
+[node name="StartButton" type="Button" parent="Margin/Layout/Content/Loadout/Body"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "BẮT ĐẦU LUYỆN TẬP"

@@ -1,0 +1,71 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/hero_definition.gd" id="1_definition"]
+[ext_resource type="Resource" path="res://game/weapons/data/wizard_staff.tres" id="2_staff"]
+
+[resource]
+resource_name = "Wizard Hero"
+script = ExtResource("1_definition")
+hero_id = &"wizard_hero"
+display_name = "Wizard"
+role_summary = "Technical dark controller. Weak Shades seed a network of Dark Points, then Dark Passage converts a packed room into extreme conditional AoE. As a Reserve Soul, kills turn Dash into a return-and-summon loop."
+production_ready = true
+minimum_rarity = 0
+affinity = "Magician"
+base_max_hp = 800.0
+base_power = 17.0
+base_max_mana = 140.0
+base_move_speed_multiplier = 0.96
+primary_weapon = ExtResource("2_staff")
+base_damage = 17
+combo_names = Array[String](["Wandering Shade"])
+combo_damage_multipliers = Array[float]([0.15])
+combo_action_durations = Array[float]([0.44])
+combo_hit_windows = Array[Vector2]([Vector2(0.20, 0.22)])
+combo_animation_names = Array[StringName]([&"wizard_attack"])
+combo_continuation_seconds = 0.44
+normal_attack_behavior_id = &"wizard_wandering_shade"
+active_skill_enabled = true
+active_skill_name = "Dark Passage"
+active_skill_behavior_id = &"wizard_dark_passage"
+active_skill_cooldown_seconds = 14.0
+active_skill_mana_cost = 36.0
+wizard_shade_damage_ratio = 0.72
+wizard_shade_speed = 136.0
+wizard_shade_lifetime_seconds = 10.0
+wizard_shade_hit_radius = 10.0
+wizard_shade_explosion_radius = 64.0
+wizard_shade_target_cap = 6
+wizard_shade_max_active = 4
+wizard_dark_point_lifetime_seconds = 10.0
+wizard_dark_point_maximum = 8
+wizard_false_trail_lifetime_seconds = 6.0
+wizard_rmb_chain_stacks = 3
+wizard_rmb_internal_cooldown_seconds = 1.0
+wizard_rmb_window_seconds = 2.0
+wizard_rmb_radius = 96.0
+wizard_rmb_target_cap = 6
+wizard_rmb_density_damage_ratios = PackedFloat32Array(0, 1.2, 1.55, 2.2, 2.95, 3.9, 5.0)
+wizard_rmb_repeat_multiplier = 0.55
+wizard_frenzy_seconds = 10.0
+wizard_soul_icon_max = 5
+wizard_soul_anchor_seconds_per_icon = 2.0
+wizard_soul_summon_damage_ratios = PackedFloat32Array(0, 0.6, 0.85, 1.15, 1.55, 2.1)
+wizard_soul_summon_duration_seconds = 2.0
+wizard_departure_damage_ratios = PackedFloat32Array(0.7, 0.9, 1.15, 1.45, 1.8, 2.2)
+wizard_departure_radius = 104.0
+wizard_departure_point_radius = 160.0
+ultimate_name = "Triệu Hồi"
+ultimate_behavior_id = &"wizard_raise_defeated"
+ultimate_mana_cost = 30.0
+ultimate_cooldown_seconds = 20.0
+ultimate_duration_seconds = 0.0
+ready_condition_behavior_id = &"wizard_soul_icons"
+summon_skill_name = "Soul Reversal"
+summon_behavior_id = &"wizard_soul_reversal"
+summon_duration_seconds = 2.0
+takeover_windows = Array[Vector2]([Vector2(0.10, 1.90)])
+unused_support_cooldown_seconds = 10.0
+departure_skill_name = "Grave Collapse"
+departure_behavior_id = &"wizard_grave_collapse"
+departure_duration_seconds = 0.9

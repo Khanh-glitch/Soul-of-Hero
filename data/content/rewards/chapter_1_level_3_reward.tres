@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" format=3 uid="uid://c8qn68udakdh8"]
+
+[ext_resource type="Script" uid="uid://cwyy1kepvibi6" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+[ext_resource type="Script" uid="uid://d0ng874g4f1i4" path="res://game/content/rewards/reward_item_stack.gd" id="2_item"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_auxiliary_equipment_grant.gd" id="3_aux"]
+[ext_resource type="Resource" path="res://data/content/items/reaper_essence.tres" id="4_definition"]
+
+[sub_resource type="Resource" id="ReaperEssence"]
+script = ExtResource("2_item")
+item_id = &"reaper_essence"
+item_definition = ExtResource("4_definition")
+
+[sub_resource type="Resource" id="TutorialSoulBoots"]
+script = ExtResource("3_aux")
+grant_id = &"level_3_tutorial_soul_boots"
+source_id = &"chapter_1_level_3_first_clear"
+stable_instance_id = "43986abd-1311-8633-c8ff-90139b2d74a2"
+slot_id = "soul_boots"
+rarity_id = "magic"
+item_level = 4
+seed = 13003
+allowed_affix_ids = PackedStringArray("movement_speed_percent")
+equip_if_slot_empty = true
+
+[resource]
+resource_name = "Chapter 1 Level 3 First Clear Reward"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_1_level_3_reward"
+account_currency = 220
+hero_materials = 4
+monster_fragments = 1
+player_level_grant = 1
+item_stacks = Array[ExtResource("2_item")]([SubResource("ReaperEssence")])
+auxiliary_equipment_grants = Array[Resource]([SubResource("TutorialSoulBoots")])

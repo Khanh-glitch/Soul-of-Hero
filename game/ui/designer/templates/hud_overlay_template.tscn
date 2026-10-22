@@ -1,0 +1,68 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/stat_cluster.tscn" id="2_stats"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/action_deck.tscn" id="3_actions"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/prompt_toast.tscn" id="4_toast"]
+
+[node name="HUDOverlayTemplate" type="Control"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_theme")
+
+[node name="StatCluster" parent="." instance=ExtResource("2_stats")]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 226.0
+offset_bottom = 99.0
+
+[node name="Objective" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 8.0
+offset_right = 487.0
+offset_bottom = 40.0
+theme_type_variation = &"HudPanel"
+
+[node name="Text" type="Label" parent="Objective"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "MỤC TIÊU  •  Tìm 3 ấn ký"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Score" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_left = 490.0
+offset_top = 8.0
+offset_right = 632.0
+offset_bottom = 40.0
+theme_type_variation = &"HudPanel"
+
+[node name="Value" type="Label" parent="Score"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "ĐIỂM  001245"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="PromptToast" parent="." instance=ExtResource("4_toast")]
+layout_mode = 0
+offset_left = 183.0
+offset_top = 47.0
+offset_right = 457.0
+offset_bottom = 83.0
+
+[node name="ActionDeck" parent="." instance=ExtResource("3_actions")]
+layout_mode = 0
+offset_left = 149.0
+offset_top = 288.0
+offset_right = 491.0
+offset_bottom = 352.0

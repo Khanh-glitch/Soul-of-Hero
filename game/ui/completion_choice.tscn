@@ -1,0 +1,313 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://game/ui/completion_choice.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Popup01a.png" id="2_popup"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Line01a.png" id="3_line"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconStar01c.png" id="4_star"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconPlay01a.png" id="5_play"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconRestart01a.png" id="6_restart"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconHome01a.png" id="7_home"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconArrow01a.png" id="8_arrow"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/rpg_essentials/ui_confirm.wav" id="9_victory"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kenney/rpg_audio/bookFlip2.ogg" id="10_page"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="11_theme"]
+
+[node name="CompletionChoice" type="Control"]
+visible = false
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme = ExtResource("11_theme")
+script = ExtResource("1_script")
+
+[node name="SoftDim" type="TextureRect" parent="."]
+modulate = Color(0.08, 0.04, 0.11, 0.62)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("2_popup")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Card" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -222.0
+offset_top = -145.0
+offset_right = 222.0
+offset_bottom = 145.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Paper" type="TextureRect" parent="Card"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_popup")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.56, 0.39, 0.27, 0.98)
+
+[node name="StarLeft" type="TextureRect" parent="Card"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 18.0
+offset_right = 53.0
+offset_bottom = 47.0
+mouse_filter = 2
+texture = ExtResource("4_star")
+expand_mode = 1
+stretch_mode = 5
+modulate = Color(1, 0.85, 0.35, 1)
+
+[node name="StarRight" type="TextureRect" parent="Card"]
+layout_mode = 0
+offset_left = 391.0
+offset_top = 18.0
+offset_right = 420.0
+offset_bottom = 47.0
+mouse_filter = 2
+texture = ExtResource("4_star")
+expand_mode = 1
+stretch_mode = 5
+modulate = Color(1, 0.85, 0.35, 1)
+
+[node name="TitleLabel" type="Label" parent="Card"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 56.0
+offset_top = 16.0
+offset_right = 388.0
+offset_bottom = 47.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.91, 0.5, 1)
+theme_override_colors/font_outline_color = Color(0.18, 0.06, 0.04, 1)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 18
+text = "ẢI ĐÃ HOÀN TẤT"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HeaderLine" type="TextureRect" parent="Card"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 50.0
+offset_right = 404.0
+offset_bottom = 56.0
+mouse_filter = 2
+texture = ExtResource("3_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.46, 0.22, 0.12, 1)
+
+[node name="MainChoices" type="Control" parent="Card"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 36.0
+offset_top = 61.0
+offset_right = -36.0
+offset_bottom = -23.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="QuestionLabel" type="Label" parent="Card/MainChoices"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 3.0
+offset_right = 372.0
+offset_bottom = 31.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.24, 0.1, 0.06, 1)
+theme_override_font_sizes/font_size = 12
+text = "Bạn muốn đi tiếp qua ải sau hay trở về nhà?"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Buttons" type="VBoxContainer" parent="Card/MainChoices"]
+layout_mode = 0
+offset_left = 47.0
+offset_top = 40.0
+offset_right = 325.0
+offset_bottom = 184.0
+mouse_filter = 1
+theme_override_constants/separation = 7
+
+[node name="NextButton" type="Button" parent="Card/MainChoices/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/icon_max_width = 18
+theme_override_font_sizes/font_size = 11
+text = "ĐI ẢI KẾ"
+icon = ExtResource("5_play")
+
+[node name="PickerButton" type="Button" parent="Card/MainChoices/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/icon_max_width = 18
+theme_override_font_sizes/font_size = 11
+text = "CHỌN ẢI ĐÃ MỞ"
+icon = ExtResource("6_restart")
+
+[node name="HomeButton" type="Button" parent="Card/MainChoices/Buttons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/icon_max_width = 18
+theme_override_font_sizes/font_size = 11
+text = "TRỞ VỀ NHÀ"
+icon = ExtResource("7_home")
+
+[node name="FlowHint" type="Label" parent="Card/MainChoices"]
+layout_mode = 0
+offset_top = 192.0
+offset_right = 372.0
+offset_bottom = 209.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 8
+text = "Không có bảng tổng kết • phần thưởng đã được lưu"
+horizontal_alignment = 1
+
+[node name="Picker" type="Control" parent="Card"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 27.0
+offset_top = 62.0
+offset_right = -27.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DifficultyTitle" type="Label" parent="Card/Picker"]
+layout_mode = 0
+offset_right = 390.0
+offset_bottom = 17.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.3, 0.12, 0.07, 1)
+theme_override_font_sizes/font_size = 9
+text = "CHỌN ĐỘ KHÓ"
+horizontal_alignment = 1
+
+[node name="DifficultyButtons" type="HBoxContainer" parent="Card/Picker"]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 20.0
+offset_right = 351.0
+offset_bottom = 51.0
+mouse_filter = 1
+theme_override_constants/separation = 5
+
+[node name="EasyButton" type="Button" parent="Card/Picker/DifficultyButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 31)
+layout_mode = 2
+mouse_filter = 0
+toggle_mode = true
+button_pressed = true
+theme_override_font_sizes/font_size = 9
+text = "DỄ"
+
+[node name="MediumButton" type="Button" parent="Card/Picker/DifficultyButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 31)
+layout_mode = 2
+mouse_filter = 0
+toggle_mode = true
+theme_override_font_sizes/font_size = 9
+text = "TRUNG BÌNH"
+
+[node name="HardButton" type="Button" parent="Card/Picker/DifficultyButtons"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 31)
+layout_mode = 2
+mouse_filter = 0
+toggle_mode = true
+theme_override_font_sizes/font_size = 9
+text = "KHÓ"
+
+[node name="PickerStatus" type="Label" parent="Card/Picker"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 55.0
+offset_right = 390.0
+offset_bottom = 71.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.32, 0.24, 0.13, 1)
+theme_override_font_sizes/font_size = 8
+text = "Độ khó: DỄ • chọn một ải đã mở"
+horizontal_alignment = 1
+
+[node name="LevelScroll" type="ScrollContainer" parent="Card/Picker"]
+layout_mode = 0
+offset_left = 70.0
+offset_top = 75.0
+offset_right = 320.0
+offset_bottom = 195.0
+mouse_filter = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="PickerList" type="VBoxContainer" parent="Card/Picker/LevelScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 3
+
+[node name="BackButton" type="Button" parent="Card/Picker"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 141.0
+offset_top = 200.0
+offset_right = 249.0
+offset_bottom = 227.0
+mouse_filter = 0
+theme_override_constants/icon_max_width = 12
+theme_override_font_sizes/font_size = 8
+text = "QUAY LẠI"
+icon = ExtResource("8_arrow")
+
+[node name="VictorySfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("9_victory")
+volume_db = -5.0
+bus = &"UI"
+
+[node name="PageSfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("10_page")
+volume_db = -8.0
+bus = &"UI"

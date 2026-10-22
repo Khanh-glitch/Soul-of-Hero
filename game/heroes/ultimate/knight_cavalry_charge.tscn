@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/ultimate/knight_cavalry_charge.gd" id="1_charge"]
+
+[node name="KnightCavalryCharge" type="Node2D"]
+script = ExtResource("1_charge")

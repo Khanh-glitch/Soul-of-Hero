@@ -1,0 +1,119 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://d2dl58fdtvw4r"]
+
+[ext_resource type="Script" uid="uid://oabdelyhktnc" path="res://game/weapons/weapon_definition.gd" id="1_definition"]
+[ext_resource type="Script" uid="uid://0ltldcjxkaxw" path="res://game/weapons/weapon_attack_profile.gd" id="2_attack"]
+[ext_resource type="Script" uid="uid://8o6hyovmkvms" path="res://game/weapons/weapon_skill_profile.gd" id="3_skill"]
+[ext_resource type="Script" uid="uid://66g66y7jfnse" path="res://game/weapons/spirit_trigger_definition.gd" id="4_trigger"]
+[ext_resource type="Script" uid="uid://dfrks53y32d5g" path="res://game/weapons/spirit_action_definition.gd" id="5_action"]
+[ext_resource type="Script" uid="uid://bid81wdm4sr6s" path="res://game/weapons/weapon_target_rules.gd" id="6_target"]
+
+[sub_resource type="Resource" id="TargetSkill"]
+script = ExtResource("6_target")
+mode = 3
+range = 12000.0
+facing_cone_degrees = 150.0
+maximum_targets = 1
+require_target = true
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("3_skill")
+skill_id = &"soul_mark"
+behavior_id = &"mark_next_confirmed_hit_soul_line"
+display_name = "Soul Mark"
+description = "Marks one target for four seconds. The next confirmed normal shot consumes the mark and releases a piercing Soul Line."
+cooldown_seconds = 8.0
+mana_cost = 14.0
+damage = 44.0
+stagger = 14.0
+knockback = 4.0
+movement_allowed = true
+movement_speed_multiplier = 0.8
+projectile_count = 1
+piercing = true
+target_rules = SubResource("TargetSkill")
+animation_name = &"archer_soul_mark"
+action_duration = 0.22
+damage_tags = PackedStringArray("ranged", "soul_mark", "piercing", "line")
+
+[sub_resource type="Resource" id="TargetAttack"]
+script = ExtResource("6_target")
+mode = 1
+range = 12000.0
+facing_cone_degrees = 140.0
+maximum_targets = 1
+require_target = false
+
+[sub_resource type="Resource" id="Attack"]
+script = ExtResource("2_attack")
+attack_id = &"archer_focus_chain"
+display_name = "Quick Shot / Split Step / Armor Piercer"
+description = "Two mobile setup shots build Focus from the intended range; the third consumes Focus for damage and extra piercing targets."
+combo_count = 3
+combo_damage = PackedFloat32Array(18, 20, 30)
+combo_stagger = PackedFloat32Array(6, 8, 14)
+combo_knockback = PackedFloat32Array(2, 3, 4)
+combo_hit_stop = PackedFloat32Array(0.025, 0.03, 0.055)
+animation_names = PackedStringArray("archer_quick_shot", "archer_split_step", "archer_armor_piercer")
+action_durations = PackedFloat32Array(0.32, 0.4, 0.7)
+hit_window_starts = PackedFloat32Array(0.13, 0.16, 0.4)
+hit_window_ends = PackedFloat32Array(0.18, 0.22, 0.48)
+cadence_seconds = 0.28
+combo_reset_seconds = 2.0
+mana_cost = 2.0
+movement_allowed = true
+movement_speed_multiplier = 0.8
+target_rules = SubResource("TargetAttack")
+damage_tags = PackedStringArray("ranged", "projectile", "focus")
+
+[sub_resource type="Resource" id="TargetSpirit"]
+script = ExtResource("6_target")
+mode = 5
+range = 12000.0
+facing_cone_degrees = 360.0
+maximum_targets = 0
+require_target = false
+
+[sub_resource type="Resource" id="Action"]
+script = ExtResource("5_action")
+action_id = &"reverse_piercing_shot"
+behavior_id = &"piercing_projectile_along_confirmed_event_vector"
+display_name = "Reverse Piercing Shot"
+description = "A confirmed Dash leaves the Reserve Archer at its origin for a two-second reverse shot and Q takeover opportunity."
+damage = 24.0
+stagger = 12.0
+knockback = 4.0
+piercing = true
+reverse_confirmed_event_vector = true
+confirmed_event_vector_key = &"dash_vector"
+target_rules = SubResource("TargetSpirit")
+animation_name = &"reverse_piercing_shot"
+damage_tags = PackedStringArray("spirit", "ranged", "projectile", "piercing")
+
+[sub_resource type="Resource" id="Trigger"]
+script = ExtResource("4_trigger")
+trigger_id = &"confirmed_player_dash"
+confirmed_event = &"dash_started"
+description = "A confirmed Dash calls the Reserve Archer into a reverse-shot takeover opportunity."
+required_context_key = &"dash_vector"
+require_nonzero_vector = true
+
+[resource]
+resource_name = "Archer Bow"
+script = ExtResource("1_definition")
+weapon_id = &"bow"
+display_name = "Archer Bow"
+short_description = "The canonical Archer Hand form: ranged Focus chain and Soul Mark."
+unlock_feature = &"bow"
+unlock_condition = "Collect 50 Archer shards and unlock the Archer Hero; the boss grants 10 shards, never an item."
+unlock_campaign_level = 5
+normal_attack = SubResource("Attack")
+hand_skill = SubResource("Skill")
+spirit_trigger = SubResource("Trigger")
+spirit_action = SubResource("Action")
+hand_animation_library = &"archer_hero_form"
+spirit_animation_library = &"weapon_spirit_bow"
+monster_part_compatibility_tags = PackedStringArray("bow", "ranged", "projectile", "spirit_projectile")
+rarity_compatibility_tags = PackedStringArray("attack", "skill", "spirit", "projectile")
+weapon_tags = PackedStringArray("chapter_1", "archer", "bow", "ranged", "focus", "mobile_attack")
+hand_ui_description = "Attack: Quick Shot → Split Step → Armor Piercer. Skill: Soul Mark."
+spirit_ui_description = "Dash leaves Archer shooting at the origin for 2 seconds; press Q during the window to take over."

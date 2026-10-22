@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "treasure_chests_1_2a",
+    "archive":  "19.07c - Treasure Chests 1.2a.zip",
+    "sha256":  "7F1ADDFE7E821A10936B661DC9E46FD28269E3DFE614D43566C89DBA043D8E91",
+    "imported_at":  "2026-07-15T16:51:22.2540454Z",
+    "files":  2,
+    "bytes":  13905,
+    "categories":  [
+                       "prop",
+                       "reward",
+                       "environment"
+                   ],
+    "license_status":  "bundled_readme"
+}

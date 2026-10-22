@@ -1,0 +1,163 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/results/training_results_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+
+[node name="TrainingResultsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="Center"]
+custom_minimum_size = Vector2(600, 340)
+layout_mode = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Layout" type="VBoxContainer" parent="Center/Card"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 6
+
+[node name="Kicker" type="Label" parent="Center/Card/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.67, 0.55, 0.72, 1)
+text = "KẾT QUẢ LUYỆN TẬP • KHÔNG CÓ PHẦN THƯỞNG CHIẾN DỊCH"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Center/Card/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 23
+text = "ĐÃ VƯỢT HẦM MỘ"
+horizontal_alignment = 1
+
+[node name="Stats" type="GridContainer" parent="Center/Card/Layout"]
+layout_mode = 2
+columns = 3
+theme_override_constants/h_separation = 70
+
+[node name="ScoreLabel" type="Label" parent="Center/Card/Layout/Stats"]
+layout_mode = 2
+text = "ĐIỂM"
+horizontal_alignment = 1
+
+[node name="SigilLabel" type="Label" parent="Center/Card/Layout/Stats"]
+layout_mode = 2
+text = "ẤN KÝ"
+horizontal_alignment = 1
+
+[node name="TimeLabel" type="Label" parent="Center/Card/Layout/Stats"]
+layout_mode = 2
+text = "THỜI GIAN"
+horizontal_alignment = 1
+
+[node name="ScoreValue" type="Label" parent="Center/Card/Layout/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "000000"
+horizontal_alignment = 1
+
+[node name="SigilValue" type="Label" parent="Center/Card/Layout/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "0/0"
+horizontal_alignment = 1
+
+[node name="TimeValue" type="Label" parent="Center/Card/Layout/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+text = "00:00"
+horizontal_alignment = 1
+
+[node name="RewardSummary" type="HBoxContainer" parent="Center/Card/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 28
+
+[node name="RewardState" type="Label" parent="Center/Card/Layout/RewardSummary"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.47, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 14
+text = "LẦN ĐẦU VƯỢT ẢI • ĐÃ NHẬN"
+
+[node name="LevelProgress" type="Label" parent="Center/Card/Layout/RewardSummary"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.4, 1)
+theme_override_font_sizes/font_size = 14
+text = "CẤP NHÂN VẬT 1 → 2  (+1)"
+
+[node name="RewardPanel" type="PanelContainer" parent="Center/Card/Layout"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"InsetPanel"
+
+[node name="RewardList" type="RichTextLabel" parent="Center/Card/Layout/RewardPanel"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "[b]Phần thưởng vừa nhận:[/b]\n• +120 Vàng\n• VẬT LIỆU  [color=#67a9ff][b]TINH CHẤT LINH HỒN[/b][/color] x2"
+fit_content = false
+scroll_active = true
+scroll_following = false
+selection_enabled = false
+
+[node name="Notice" type="Label" parent="Center/Card/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sân tập dùng để luyện chuỗi đòn Kiếm sĩ, Soul Echo và chiến đấu hiện tại. Kết quả này không mở ải hoặc cộng tiền."
+horizontal_alignment = 1
+autowrap_mode = 2
+theme_override_font_sizes/font_size = 13
+
+[node name="Actions" type="HBoxContainer" parent="Center/Card/Layout"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 7
+
+[node name="RetryButton" type="Button" parent="Center/Card/Layout/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 38)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "CHƠI LẠI"
+
+[node name="ArsenalButton" type="Button" parent="Center/Card/Layout/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 38)
+layout_mode = 2
+text = "DANH SÁCH HERO"
+
+[node name="HubButton" type="Button" parent="Center/Card/Layout/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 38)
+layout_mode = 2
+text = "VỀ THÁNH ĐỊA"

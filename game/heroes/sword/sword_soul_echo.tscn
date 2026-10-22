@@ -1,0 +1,39 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/sword/sword_soul_echo.gd" id="1_echo"]
+[ext_resource type="Shader" path="res://game/heroes/sword/soul_echo_silhouette.gdshader" id="2_silhouette"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_unshaded"]
+light_mode = 1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_silhouette"]
+resource_local_to_scene = true
+shader = ExtResource("2_silhouette")
+shader_parameter/echo_color = Color(1, 0.99, 0.93, 0.72)
+
+[node name="SwordSoulEcho" type="Node2D"]
+z_index = 8
+script = ExtResource("1_echo")
+play_procedural_audio_fallback = false
+
+[node name="Trail" type="Line2D" parent="."]
+show_behind_parent = true
+visible = false
+material = SubResource("CanvasItemMaterial_unshaded")
+width = 4.5
+default_color = Color(1, 1, 1, 0.32)
+joint_mode = 2
+begin_cap_mode = 2
+end_cap_mode = 2
+antialiased = false
+
+[node name="EchoVisual" type="Node2D" parent="."]
+visible = false
+
+[node name="Sprite" type="AnimatedSprite2D" parent="EchoVisual"]
+texture_filter = 1
+material = SubResource("ShaderMaterial_silhouette")
+
+[node name="Sfx" type="AudioStreamPlayer2D" parent="."]
+bus = &"SFX"
+max_distance = 420.0

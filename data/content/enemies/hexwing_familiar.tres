@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/coven_wraith_enemy.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Hexwing Familiar"
+script = ExtResource("1_definition")
+enemy_id = &"hexwing_familiar"
+layout_type_ids = PackedStringArray("hexwing_familiar")
+display_name = "Hexwing Familiar"
+bestiary_summary = "The named flying familiar of the Coven Foundry. It circles while telegraphing a magenta dive."
+role_tags = PackedStringArray("chapter_2", "hexwing", "elite", "miniboss", "flying")
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"hexwing_dive"
+target_logic_id = &"nearest_player"
+max_health = 620.0
+movement_speed = 92.0
+preferred_range = 118.0
+attack_range = 196.0
+awareness_range = 570.0
+telegraph_seconds = 0.82
+recovery_seconds = 0.90
+attack_cooldown_seconds = 2.45
+attack_damage = 31.0
+stagger_damage = 25.0
+crowd_control_resistance = 0.52
+loot_table_id = &"chapter_2_hexwing"
+mastery_reward = 700
+score_reward = 1050
+audio_profile_id = &"hexwing"
+authoring_notes = "Uses the licensed Flying Demon silhouette only for this named Chapter 2 elite; no generic elite applicator is involved."

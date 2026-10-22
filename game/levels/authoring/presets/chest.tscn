@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/treasure_chests_1_2a/treasure chests.png" id="2_atlas"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_regular_normal"]
+atlas = ExtResource("2_atlas")
+region = Rect2(0, 0, 32, 32)
+
+[node name="Chest" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "chest"
+display_name = "REWARD CHEST"
+marker_color = Color(1, 0.64, 0.22, 1)
+preview_texture = SubResource("AtlasTexture_regular_normal")
+preview_offset = Vector2(0, -16)

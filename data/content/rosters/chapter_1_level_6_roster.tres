@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://bmb6yc7ut6cgs"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="A"]
+script = ExtResource("2")
+entry_id = &"skeleton_guards"
+combatant_id = &"skeleton_swordsman"
+count = 9
+elite_eligible = true
+
+[sub_resource type="Resource" id="B"]
+script = ExtResource("2")
+entry_id = &"reaper_anchors"
+combatant_id = &"bone_reaper"
+count = 3
+elite_eligible = true
+
+[resource]
+script = ExtResource("1")
+roster_id = &"chapter_1_level_6_roster"
+campaign_slot = 6
+authoring_status = 1
+authoring_notes = "Runtime-ready 9 Swordsman + 3 Bone Reaper manifestation roster, placed as three four-unit Soul Anchor clusters in the internal-playable Level 6 map."
+entries = Array[ExtResource("2")]([SubResource("A"), SubResource("B")])

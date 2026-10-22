@@ -1,0 +1,58 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/characters/enemies/bone_reaper_captain.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="2_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_echo_anchor_32x32_8.png" id="3_anchor"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_body"]
+radius = 7.0
+height = 18.0
+
+[node name="BoneReaperCaptain" type="CharacterBody2D" groups=["enemies", "minibosses"]]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_script")
+archetype = 0
+patrol_distance = 24.0
+
+[node name="GroundShadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -1)
+color = Color(0.04, 0.02, 0.09, 0.58)
+polygon = PackedVector2Array(-12, -4, 12, -4, 15, 0, 12, 4, -12, 4, -15, 0)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -24)
+scale = Vector2(1.8, 1.8)
+self_modulate = Color(0.88, 0.76, 1, 1)
+
+[node name="TelegraphLine" type="Line2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 3
+points = PackedVector2Array(0, 0, 1, 0)
+width = 2.0
+default_color = Color(0.2, 0.95, 1, 0.82)
+
+[node name="TelegraphOrigin" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 3
+texture_filter = 1
+texture = ExtResource("3_anchor")
+hframes = 8
+
+[node name="TelegraphEndpoint" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 3
+texture_filter = 1
+texture = ExtResource("2_sparkle")
+hframes = 8
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -7)
+shape = SubResource("Capsule_body")

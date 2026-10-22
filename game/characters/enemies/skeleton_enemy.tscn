@@ -1,0 +1,45 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/characters/enemies/skeleton_enemy.gd" id="1_script"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_body"]
+radius = 7.0
+height = 18.0
+
+[sub_resource type="RectangleShape2D" id="Rectangle_attack"]
+size = Vector2(30, 20)
+
+[node name="SkeletonEnemy" type="CharacterBody2D" groups=["enemies"]]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="GroundShadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -1)
+color = Color(0.015, 0.008, 0.025, 0.42)
+polygon = PackedVector2Array(-9, -3, 9, -3, 11, 0, 9, 3, -9, 3, -11, 0)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -24)
+scale = Vector2(1.5, 1.5)
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -7)
+shape = SubResource("Capsule_body")
+
+[node name="AttackArea" type="Area2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(-24, 0)
+collision_layer = 16
+collision_mask = 2
+monitoring = true
+monitorable = false
+
+[node name="AttackCollision" type="CollisionShape2D" parent="AttackArea"]
+unique_name_in_owner = true
+shape = SubResource("Rectangle_attack")
+disabled = true

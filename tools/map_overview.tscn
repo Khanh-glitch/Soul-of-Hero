@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="1_level"]
+[ext_resource type="Script" path="res://tools/map_overview.gd" id="2_script"]
+
+[node name="MapOverview" type="Node2D"]
+script = ExtResource("2_script")
+
+[node name="Level" parent="." instance=ExtResource("1_level")]
+
+[node name="OverviewCamera" type="Camera2D" parent="."]
+position = Vector2(800, 448)
+zoom = Vector2(0.38, 0.38)
+enabled = true

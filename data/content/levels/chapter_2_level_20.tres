@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_19")
+required_feature_ids = PackedStringArray("challenge")
+
+[resource]
+resource_name = "Chapter 2 Level 20 - Trái Tim Xưởng Hắc Phù"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_20"
+display_name = "Trái Tim Xưởng Hắc Phù"
+content_status = 2
+objective_summary = "Hạ Wizard rồi tự tay nhặt Wizard Soul vật lý trước khi lối ra mở."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "wizard", "final_boss", "physical_soul_pickup")
+authoring_notes = "Chapter 2 data contract. Gate combat is six Wraith with at most one Leech add, then a checkpoint heals at least 75 percent and records loadout before Wizard's arena. Wizard death clears harmful actors but does not unlock exit or grant hero ownership. Runtime must spawn a recoverable physical Wizard Soul at a safe anchor and commit campaign:chapter_2_level_20:wizard_soul_pickup:v1 only on interaction; explicit Equip remains separate. This completion bundle grants economy plus Depth only and must never contain wizard_hero or a Hero Soul grant."
+campaign_slot = 20
+chapter_number = 2
+chapter_level_number = 10
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_20.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_20_wizard_foundry_heart")
+entry_encounter_id = &"chapter_2_level_20_wizard_foundry_heart"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("depth")
+completion_reward_bundle_id = &"chapter_2_level_20_reward"
+completion_transaction_id = &"campaign:chapter_2_level_20:first_clear:v1"
+recommended_mastery = 7100

@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://cquuaa4sl2xjb"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1_roster"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/content/elite_policies/elite_20_percent_guaranteed.tres" id="3_policy"]
+
+[sub_resource type="Resource" id="SkeletonOne"]
+script = ExtResource("2_entry")
+entry_id = &"skeleton_1"
+combatant_id = &"skeleton_swordsman"
+count = 15
+elite_eligible = true
+
+[resource]
+resource_name = "Chapter 1 Level 2 Roster"
+script = ExtResource("1_roster")
+roster_id = &"chapter_1_level_2_roster"
+campaign_slot = 2
+authoring_notes = "15 Skeleton 1. Each camp rolls 20%; stage guarantee promotes at least one Skeleton 1."
+entries = Array[ExtResource("2_entry")]([SubResource("SkeletonOne")])
+elite_policy = ExtResource("3_policy")

@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" load_steps=12 format=3 uid="uid://d222jexbl52w8"]
+
+[ext_resource type="Script" uid="uid://d0ve8acy3o36l" path="res://game/content/encounters/encounter_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://djdgambkorbaa" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2"]
+[ext_resource type="Script" uid="uid://bo1m3mwr2j2r2" path="res://game/content/encounters/encounter_group_definition.gd" id="3"]
+[ext_resource type="Script" uid="uid://bm7kwws06w4ph" path="res://game/content/encounters/encounter_wave_definition.gd" id="4"]
+[ext_resource type="Script" uid="uid://bkuyjsemgao7e" path="res://game/content/encounters/encounter_objective_definition.gd" id="5"]
+[ext_resource type="Script" uid="uid://b4d371ibkdcmy" path="res://game/content/encounters/encounter_completion_contract.gd" id="6"]
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("6")
+required_objective_ids = PackedStringArray("collect_three_gate_seals", "defeat_crimson_reaper")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l9_exit")
+
+[sub_resource type="Resource" id="SealObjective"]
+script = ExtResource("5")
+objective_id = &"collect_three_gate_seals"
+objective_type = 6
+description_key = "objective.collect_three_gate_seals"
+target_id = &"gate_seal_collected"
+target_count = 3
+
+[sub_resource type="Resource" id="BossObjective"]
+script = ExtResource("5")
+objective_id = &"defeat_crimson_reaper"
+objective_type = 1
+description_key = "objective.defeat_crimson_reaper"
+target_id = &"crimson_reaper"
+target_count = 1
+
+[sub_resource type="Resource" id="Elite"]
+script = ExtResource("2")
+entry_id = &"crimson_reaper"
+enemy_id = &"crimson_reaper"
+count = 1
+spawn_marker_ids = PackedStringArray("l9_crimson_reaper")
+formation_id = &"named_elite_center"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="Group"]
+script = ExtResource("3")
+group_id = &"crimson_gate_elite"
+spawn_entries = Array[ExtResource("2")]([SubResource("Elite")])
+
+[sub_resource type="Resource" id="Wave"]
+script = ExtResource("4")
+wave_id = &"crimson_gate_showdown"
+groups = Array[ExtResource("3")]([SubResource("Group")])
+
+[resource]
+script = ExtResource("1")
+encounter_id = &"chapter_1_level_9_crimson_gate"
+display_name = "The Crimson Gate"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "gate_seal", "named_elite", "crimson_reaper")
+authoring_notes = "Production P0 contract: the physical GateSeal runtime records exactly three gate_seal_collected events before spawning one dedicated Crimson Reaper marker. Completion requires both the counted interactions and that exact named enemy death; only then may l9_exit unlock."
+waves = Array[ExtResource("4")]([SubResource("Wave")])
+objectives = Array[ExtResource("5")]([SubResource("SealObjective"), SubResource("BossObjective")])
+completion = SubResource("Completion")

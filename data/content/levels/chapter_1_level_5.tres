@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://dc27uql4mrllq"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" uid="uid://c3lrnx8knqrr1" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_1_level_4")
+
+[resource]
+resource_name = "Chapter 1 Level 5 - Archer's Crucible"
+script = ExtResource("1_level")
+level_id = &"chapter_1_level_5"
+display_name = "Lò Hiến Tế Huyết Cốt"
+content_status = 2
+objective_summary = "Clear the three guardian camps, defeat KingdomArcher, then physically recover the dropped Archer Hero Soul."
+level_tags = PackedStringArray("campaign", "chapter_1", "crypt", "blood_crucible", "archer", "hero_soul_pickup", "miniboss")
+authoring_notes = "KingdomArcher is the required seventeenth combatant. Boss death alone does not recruit Archer: the exit also requires the physical Soul pickup transaction."
+campaign_slot = 5
+chapter_number = 1
+chapter_level_number = 5
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_1_level_5.json"
+encounter_ids = PackedStringArray("chapter_1_level_5_crypt")
+entry_encounter_id = &"chapter_1_level_5_crypt"
+unlock_requirements = SubResource("UnlockRequirements")
+completion_reward_bundle_id = &"chapter_1_level_5_reward"
+completion_transaction_id = &"campaign:chapter_1_level_5:complete"
+recommended_mastery = 560

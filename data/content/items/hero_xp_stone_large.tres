@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/rpg_icons_400/Icon105.png" id="2_icon"]
+
+[resource]
+resource_name = "Large Hero XP Stone"
+script = ExtResource("1_item")
+item_id = &"hero_xp_stone_large"
+display_name = "Da kinh nghiem Hero lon"
+description = "Tang 500 XP cho mot Hero duoc chon, khong vuot cap trung binh quai cua ai cao nhat da mo."
+item_kind = "consumable"
+icon = ExtResource("2_icon")
+rarity_id = &"epic"
+stack_capacity = 50
+authoring_notes = "High-tier XP stone. Hero target is selected when consumed at Home."
+hero_xp_value = 500

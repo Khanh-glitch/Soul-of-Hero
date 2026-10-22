@@ -1,0 +1,80 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="1_prvjh"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="2_0op1t"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="3_55q0p"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_ylxf8"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="5_hunjd"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="6_1gdre"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="7_6ia1s"]
+
+[sub_resource type="Resource" id="Resource_jitta"]
+script = ExtResource("1_prvjh")
+required_objective_ids = PackedStringArray("clear_foundry_route", "wizard_hero_soul_collected")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l20_exit")
+
+[sub_resource type="Resource" id="Resource_jbuyg"]
+script = ExtResource("2_0op1t")
+objective_id = &"clear_foundry_route"
+description_key = "objective.chapter_2.clear_foundry_route"
+
+[sub_resource type="Resource" id="Resource_s8ixk"]
+script = ExtResource("2_0op1t")
+objective_id = &"wizard_hero_soul_collected"
+objective_type = 6
+description_key = "objective.chapter_2.wizard_hero_soul_collected"
+target_id = &"wizard_hero_soul_collected"
+target_count = 1
+
+[sub_resource type="Resource" id="Resource_xtd70"]
+script = ExtResource("7_6ia1s")
+entry_id = &"coven_wraith"
+enemy_id = &"coven_wraith"
+count = 5
+spawn_marker_ids = PackedStringArray("l20_coven_01", "l20_coven_02", "l20_coven_03", "l20_coven_04", "l20_coven_05")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_ve8tt"]
+script = ExtResource("6_1gdre")
+group_id = &"coven_wraith_group"
+spawn_entries = Array[ExtResource("7_6ia1s")]([SubResource("Resource_xtd70")])
+
+[sub_resource type="Resource" id="Resource_nkuss"]
+script = ExtResource("7_6ia1s")
+entry_id = &"spirit_leech"
+enemy_id = &"spirit_leech"
+spawn_marker_ids = PackedStringArray("l20_leech_01")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_xjd8r"]
+script = ExtResource("6_1gdre")
+group_id = &"spirit_leech_group"
+spawn_entries = Array[ExtResource("7_6ia1s")]([SubResource("Resource_nkuss")])
+
+[sub_resource type="Resource" id="Resource_rs7oi"]
+script = ExtResource("7_6ia1s")
+entry_id = &"wizard_hero_boss"
+enemy_id = &"wizard_hero_boss"
+spawn_marker_ids = PackedStringArray("l20_wizard")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_ud4tc"]
+script = ExtResource("6_1gdre")
+group_id = &"wizard_hero_boss_group"
+spawn_entries = Array[ExtResource("7_6ia1s")]([SubResource("Resource_rs7oi")])
+
+[sub_resource type="Resource" id="Resource_ef65y"]
+script = ExtResource("5_hunjd")
+wave_id = &"directed_foundry_route"
+groups = Array[ExtResource("6_1gdre")]([SubResource("Resource_ve8tt"), SubResource("Resource_xjd8r"), SubResource("Resource_ud4tc")])
+
+[resource]
+script = ExtResource("3_55q0p")
+encounter_id = &"chapter_2_level_20_wizard_foundry_heart"
+display_name = "Chapter 2 — Wizard Foundry Heart"
+encounter_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry")
+authoring_notes = "Generated from the Chapter 2 map markers. Deferred marker IDs remain the stable encounter authority."
+waves = Array[ExtResource("5_hunjd")]([SubResource("Resource_ef65y")])
+objectives = Array[ExtResource("2_0op1t")]([SubResource("Resource_jbuyg"), SubResource("Resource_s8ixk")])
+completion = SubResource("Resource_jitta")

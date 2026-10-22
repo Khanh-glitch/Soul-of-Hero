@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" format=3 uid="uid://dweql6mppcwcq"]
+
+[ext_resource type="Script" uid="uid://cwyy1kepvibi6" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+[ext_resource type="Script" uid="uid://d0ng874g4f1i4" path="res://game/content/rewards/reward_item_stack.gd" id="2_item"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_auxiliary_equipment_grant.gd" id="3_aux"]
+[ext_resource type="Resource" path="res://data/content/items/crypt_bone_shard.tres" id="4_definition"]
+
+[sub_resource type="Resource" id="CryptBoneShard"]
+script = ExtResource("2_item")
+item_id = &"crypt_bone_shard"
+quantity = 2
+item_definition = ExtResource("4_definition")
+
+[sub_resource type="Resource" id="TutorialSoulVessel"]
+script = ExtResource("3_aux")
+grant_id = &"level_1_tutorial_soul_vessel"
+source_id = &"chapter_1_level_1_first_clear"
+stable_instance_id = "fba8e191-1d1e-ee33-4c24-13a374822f17"
+slot_id = "soul_vessel"
+rarity_id = "magic"
+item_level = 2
+seed = 11001
+allowed_affix_ids = PackedStringArray("health_regen")
+equip_if_slot_empty = true
+
+[resource]
+resource_name = "Chapter 1 Level 1 First Clear Reward"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_1_level_1_reward"
+account_currency = 120
+hero_materials = 2
+player_level_grant = 1
+item_stacks = Array[ExtResource("2_item")]([SubResource("CryptBoneShard")])
+auxiliary_equipment_grants = Array[Resource]([SubResource("TutorialSoulVessel")])

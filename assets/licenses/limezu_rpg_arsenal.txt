@@ -1,0 +1,24 @@
+Promoted runtime icons in assets/ui/loot originate from RPG Arsenal v1.1.
+
+Original author: LimeZu (Edoardo)
+Source credit: https://limezu.itch.io/
+Bundled source license: "you can do anything but claiming the art as yours"
+
+Promoted files:
+- soul_vessel.png      <- Icons_no_background/consumables/rpg_icons129.png
+- soul_trace.png       <- Icons_no_background/rings_and_necklaces/rpg_icons13.png
+- soul_focus.png       <- Icons_no_background/staffs/rpg_icons69.png
+- hero_soul.png        <- Icons_no_background/swords/rpg_icons25.png (legacy fallback)
+- hero_soul_sword.png  <- Icons_no_background/swords/rpg_icons25.png
+- hero_soul_axe.png    <- Icons_no_background/axes/rpg_icons89.png
+- soul_ember.png       <- Icons_no_background/consumables/rpg_icons132.png
+
+These promoted inventory/world-loot icons intentionally use transparent
+cutouts. TravelBookLite or the rarity aura supplies the surrounding frame.
+
+Direct runtime references:
+- WeaponVisual2D / Flying Sword <- Icons_no_background/swords/rpg_icons30.png
+- WeaponVisual2D Axe            <- Icons_no_background/axes/rpg_icons89.png
+
+The original LICENSE AND REQUESTS.txt remains in the local imported package at
+assets/library/downloaded/rpg_arsenal_1_1/.

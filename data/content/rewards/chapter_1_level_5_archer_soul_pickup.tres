@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+
+[resource]
+resource_name = "Chapter 1 Level 5 Archer Soul Physical Pickup"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_1_level_5_archer_soul_pickup"
+hero_shards = {"archer_hero": 10}

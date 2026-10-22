@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/ui/loot/soul_focus.png" id="2_icon"]
+
+[resource]
+resource_name = "Blood Crucible Blueprint"
+script = ExtResource("1_item")
+item_id = &"blood_crucible_blueprint"
+display_name = "Bản Vẽ Lò Huyết Cốt"
+description = "Bản thiết kế mở ra bí mật của nghi lễ luyện hồn."
+item_kind = "blueprint"
+icon = ExtResource("2_icon")
+authoring_notes = "Chapter 1 key blueprint reward."

@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/feedback/pixel_damage_number.gd" id="1_script"]
+[ext_resource type="Script" path="res://game/feedback/pixel_glyph_sprite_text.gd" id="2_glyphs"]
+
+[node name="PixelDamageNumber" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="GlyphText" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_glyphs")

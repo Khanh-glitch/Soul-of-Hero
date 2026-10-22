@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_entry.gd" id="1_acbm1"]
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_definition.gd" id="2_8jv22"]
+
+[sub_resource type="Resource" id="Resource_2gy3p"]
+script = ExtResource("1_acbm1")
+entry_id = &"coven_wraith"
+combatant_id = &"coven_wraith"
+count = 5
+elite_eligible = true
+authoring_notes = "5 authored marker(s) in chapter_2_level_19."
+
+[sub_resource type="Resource" id="Resource_mf0pr"]
+script = ExtResource("1_acbm1")
+entry_id = &"spirit_leech"
+combatant_id = &"spirit_leech"
+count = 4
+authoring_notes = "4 authored marker(s) in chapter_2_level_19."
+
+[sub_resource type="Resource" id="Resource_3eal7"]
+script = ExtResource("1_acbm1")
+entry_id = &"hexwing_familiar"
+combatant_id = &"hexwing_familiar"
+unique = true
+miniboss = true
+authoring_notes = "1 authored marker(s) in chapter_2_level_19."
+
+[resource]
+script = ExtResource("2_8jv22")
+roster_id = &"chapter_2_level_19_roster"
+campaign_slot = 19
+authoring_status = 1
+authoring_notes = "Runtime-ready Chapter 2 roster generated from deterministic directed markers."
+entries = Array[ExtResource("1_acbm1")]([SubResource("Resource_2gy3p"), SubResource("Resource_mf0pr"), SubResource("Resource_3eal7")])

@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_entry.gd" id="1_kppkj"]
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_definition.gd" id="2_vanlv"]
+
+[sub_resource type="Resource" id="Resource_64w8r"]
+script = ExtResource("1_kppkj")
+entry_id = &"coven_wraith"
+combatant_id = &"coven_wraith"
+count = 3
+authoring_notes = "3 authored marker(s) in chapter_2_level_16."
+
+[sub_resource type="Resource" id="Resource_ulqpc"]
+script = ExtResource("1_kppkj")
+entry_id = &"venom_bound_wraith"
+combatant_id = &"venom_bound_wraith"
+count = 3
+authoring_notes = "3 authored marker(s) in chapter_2_level_16."
+
+[sub_resource type="Resource" id="Resource_n702k"]
+script = ExtResource("1_kppkj")
+entry_id = &"spirit_leech"
+combatant_id = &"spirit_leech"
+count = 3
+authoring_notes = "3 authored marker(s) in chapter_2_level_16."
+
+[resource]
+script = ExtResource("2_vanlv")
+roster_id = &"chapter_2_level_16_roster"
+campaign_slot = 16
+authoring_status = 1
+authoring_notes = "Runtime-ready Chapter 2 roster generated from deterministic directed markers."
+entries = Array[ExtResource("1_kppkj")]([SubResource("Resource_64w8r"), SubResource("Resource_ulqpc"), SubResource("Resource_n702k")])

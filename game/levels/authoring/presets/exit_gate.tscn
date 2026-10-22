@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/fantasy_portal_64x64_12.png" id="2_preview"]
+
+[node name="ExitGate" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "exit_gate"
+entity_id = "exit"
+display_name = "EXIT GATE"
+marker_color = Color(0.28, 0.92, 0.95, 1)
+preview_texture = ExtResource("2_preview")
+preview_columns = 12
+preview_scale = Vector2(0.72, 0.72)
+preview_offset = Vector2(0, -25)
+preview_tint = Color(0.5, 0.95, 1, 0.88)

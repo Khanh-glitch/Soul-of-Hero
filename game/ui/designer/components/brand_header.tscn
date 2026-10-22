@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="2_emblem"]
+
+[node name="BrandHeader" type="PanelContainer"]
+custom_minimum_size = Vector2(560, 58)
+theme = ExtResource("1_theme")
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Row" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Emblem" type="TextureRect" parent="Row"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("2_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Identity" type="VBoxContainer" parent="Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -1
+
+[node name="Kicker" type="Label" parent="Row/Identity"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "CHƯƠNG I  •  THÁNH ĐƯỜNG ĐỔ NÁT"
+
+[node name="Title" type="Label" parent="Row/Identity"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_font_sizes/font_size = 21
+text = "SOUL OF HERO"
+
+[node name="Meta" type="VBoxContainer" parent="Row"]
+layout_mode = 2
+alignment = 1
+
+[node name="Value" type="Label" parent="Row/Meta"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "01 / 20"
+horizontal_alignment = 2
+
+[node name="Caption" type="Label" parent="Row/Meta"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "TIẾN ĐỘ"
+horizontal_alignment = 2

@@ -1,0 +1,40 @@
+.godot/
+.tools/
+.inspect_assets/
+.inspect_*.gd
+.artifacts/
+.backups/
+tmp/
+*.log
+*.write.lock/
+user_data/
+tools/mcp/node_modules/
+
+# Local downloaded asset libraries remain ignored by default.  The selected
+# production subsets below are explicitly tracked because runtime scenes and
+# scripts reference them; this keeps a clone runnable in Godot without shipping
+# the entire exploratory source library.
+assets/library/downloaded/*
+!assets/library/downloaded/complete_ui_book_styles_free/
+!assets/library/downloaded/complete_ui_book_styles_free/**
+!assets/library/downloaded/dark_vfx_01_02/
+!assets/library/downloaded/dark_vfx_01_02/**
+!assets/library/downloaded/flying_demon_2d_pixel_art/
+!assets/library/downloaded/flying_demon_2d_pixel_art/**
+!assets/library/downloaded/free_topdown_pixel_dungeon/
+!assets/library/downloaded/free_topdown_pixel_dungeon/PNG/
+!assets/library/downloaded/free_topdown_pixel_dungeon/PNG/doors_lever_chest_animation.png
+!assets/library/downloaded/rpg_arsenal_1_1/
+!assets/library/downloaded/rpg_arsenal_1_1/**
+!assets/library/downloaded/rpg_icons_400/
+!assets/library/downloaded/rpg_icons_400/**
+!assets/library/downloaded/treasure_chests_1_2a/
+!assets/library/downloaded/treasure_chests_1_2a/treasure chests.png
+!assets/library/downloaded/wizard_pack/
+!assets/library/downloaded/wizard_pack/**
+Free Bow and Crossbow Icons/
+GandalfHardcore Archer/
+Martial Hero/
+Super Pixel Effects Gigapack (Free Version) v2.6.0/
+VFX Free Pack/
+Waterfalls/

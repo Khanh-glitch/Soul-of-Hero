@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://4ovpvkm6shf8"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="A"]
+script = ExtResource("2")
+entry_id = &"reaper_branch"
+combatant_id = &"bone_reaper"
+count = 6
+elite_eligible = true
+
+[sub_resource type="Resource" id="B"]
+script = ExtResource("2")
+entry_id = &"vampire_branch"
+combatant_id = &"blood_vampire"
+count = 3
+elite_eligible = true
+
+[resource]
+script = ExtResource("1")
+roster_id = &"chapter_1_level_8_roster"
+campaign_slot = 8
+authoring_notes = "Exclusive branch pool. Level 8 runtime spawns exactly one selected entry and promotes its first deterministic marker with triple_stat_elite; no roster roll may add an Elite or spawn the unselected entry."
+entries = Array[ExtResource("2")]([SubResource("A"), SubResource("B")])

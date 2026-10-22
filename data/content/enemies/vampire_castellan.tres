@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_enemy"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/vampire_castellan.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Vampire Castellan"
+script = ExtResource("1_enemy")
+enemy_id = &"vampire_castellan"
+layout_type_ids = PackedStringArray("vampire_castellan")
+display_name = "Vampire Castellan"
+bestiary_summary = "Lord of the Sealed Crypt. His continuous duel changes from measured blood lunges to blink lanes and spectral-disc fans at 55% health."
+role_tags = PackedStringArray("boss", "vampire", "two_phase", "chapter_guardian")
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"castellan_two_phase_runtime"
+target_logic_id = &"nearest_player"
+max_health = 720.0
+movement_speed = 58.0
+preferred_range = 82.0
+attack_range = 270.0
+awareness_range = 560.0
+telegraph_seconds = 0.72
+recovery_seconds = 0.62
+attack_cooldown_seconds = 1.55
+attack_damage = 14.0
+stagger_damage = 18.0
+crowd_control_resistance = 0.65
+loot_table_id = &"chapter_1_castellan_first_clear"
+mastery_reward = 1800
+score_reward = 1800
+authoring_notes = "Dedicated runtime actor, not a Blood Vampire proxy. One 720-HP encounter crosses at 55% into a new blink-lane/disc-fan pattern set. Existing in-repo Vampire animation is a visibly scaled/tinted prototype presentation; a distinct final boss sheet remains an art replacement task."

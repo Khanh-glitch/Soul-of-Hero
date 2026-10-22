@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/skeleton_enemy.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Skeleton Swordsman"
+script = ExtResource("1_definition")
+enemy_id = &"skeleton_swordsman"
+layout_type_ids = PackedStringArray("skeleton")
+display_name = "Skeleton Swordsman"
+bestiary_summary = "A relentless crypt guard that closes distance and punishes careless positioning."
+role_tags = PackedStringArray("melee", "chaser", "crypt")
+development_only = false
+density_eligible = true
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"telegraphed_melee"
+target_logic_id = &"nearest_player"
+max_health = 70.0
+movement_speed = 58.0
+preferred_range = 24.0
+attack_range = 38.0
+awareness_range = 184.0
+telegraph_seconds = 0.33
+recovery_seconds = 0.85
+attack_cooldown_seconds = 0.85
+attack_damage = 14.0
+stagger_damage = 8.0
+mastery_reward = 5
+score_reward = 100
+authoring_notes = "Production Level 01 identity for the authored skeleton entities in crypt_entrance.json."

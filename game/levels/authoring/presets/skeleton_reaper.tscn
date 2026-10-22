@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/characters/enemies/enemies-skeleton2_idle.png" id="2_preview"]
+
+[node name="SkeletonReaper" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "skeleton_reaper"
+display_name = "BONE REAPER"
+marker_color = Color(0.73, 0.56, 0.92, 1)
+preview_texture = ExtResource("2_preview")
+preview_columns = 6
+preview_scale = Vector2(1.5, 1.5)
+preview_offset = Vector2(0, -24)

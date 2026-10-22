@@ -1,0 +1,49 @@
+{
+  "built_in_tool": "image_gen",
+  "input_references": [],
+  "source_path": "C:\\Users\\LE QUOC KHANH\\Documents\\Where I am\\assets\\characters\\archer\\generated\\archer_hero_soul_icon_chroma.png",
+  "transparent_intermediate_path": "C:\\Users\\LE QUOC KHANH\\Documents\\Where I am\\assets\\characters\\archer\\generated\\archer_hero_soul_icon_rgba.png",
+  "runtime_path": "C:\\Users\\LE QUOC KHANH\\Documents\\Where I am\\assets\\characters\\archer\\archer_hero_soul_icon_64.png",
+  "source_dimensions": [
+    1254,
+    1254
+  ],
+  "source_mode": "RGB",
+  "transparent_dimensions": [
+    1254,
+    1254
+  ],
+  "transparent_mode": "RGBA",
+  "transparent_content_bounds": [
+    314,
+    108,
+    939,
+    1124
+  ],
+  "runtime_dimensions": [
+    64,
+    64
+  ],
+  "runtime_mode": "RGBA",
+  "runtime_alpha_corners": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "runtime_all_corners_transparent": true,
+  "runtime_content_bounds": [
+    16,
+    6,
+    48,
+    57
+  ],
+  "runtime_visible_pixels": 1061,
+  "runtime_opaque_pixels": 1060,
+  "runtime_semitransparent_pixels": 1,
+  "runtime_content_coverage": 0.259033,
+  "runtime_visible_key_green_pixels": 0,
+  "resize_filter": "nearest-neighbor",
+  "chroma_key_command": "remove_chroma_key.py --auto-key border --soft-matte --transparent-threshold 12 --opaque-threshold 220 --despill",
+  "prompt": "Use case: stylized-concept\nAsset type: square 2D game pickup and inventory icon\nPrimary request: create one single centered pixel-art Archer Hero Soul\nScene/backdrop: a perfectly flat solid chroma-key green #00FF00 background, edge-to-edge\nSubject: one faceted pale-cyan soul crystal containing a simple, unmistakable golden bow-and-arrow sigil; a subtle violet core is visible inside the crystal; no character likeness\nStyle/medium: polished 16-bit fantasy pixel art, limited palette, crisp hard pixel edges, chunky intentional pixel clusters, nearest-neighbor feel, readable when reduced to 32-64 pixels, no antialiasing\nComposition/framing: square canvas, icon centered, front-facing, generous even padding, floating object only, strong clean silhouette\nColor palette: pale cyan crystal, golden-yellow bow-and-arrow sigil, restrained violet inner core; do not use green anywhere in the subject\nConstraints: background must be one perfectly uniform #00FF00 color with no gradients, texture, lighting variation, floor plane, shadow, reflection, aura, particles, or glow spill; keep subject fully separated from background; no cast shadow or contact shadow; no text, letters, numbers, frame, border, UI panel, watermark, logo, extra objects, or scenery"
+}

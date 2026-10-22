@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://cbabbri3wkpqa"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" uid="uid://c3lrnx8knqrr1" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+
+[resource]
+resource_name = "Crypt Entrance Sandbox"
+script = ExtResource("1_level")
+level_id = &"crypt_entrance_sandbox"
+display_name = "Crypt Entrance Sandbox"
+objective_summary = "Validate top-down traversal, existing skeleton behavior, weapon flow, and content contracts."
+level_tags = PackedStringArray("crypt", "sandbox", "vertical_slice")
+authoring_notes = "SANDBOX / NOT CAMPAIGN-COMPLETE. campaign_slot is intentionally zero. This definition catalogs existing content without claiming any of the twenty campaign levels."
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/crypt_entrance.json"
+encounter_ids = PackedStringArray("crypt_skeleton_sandbox")
+entry_encounter_id = &"crypt_skeleton_sandbox"
+unlock_requirements = SubResource("UnlockRequirements")

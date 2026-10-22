@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="1_level"]
+
+[node name="LevelWorkbench" type="Node2D"]
+
+[node name="LevelPreview" parent="." instance=ExtResource("1_level")]
+editable_children = true

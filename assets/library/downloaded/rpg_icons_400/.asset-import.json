@@ -1,0 +1,14 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "rpg_icons_400",
+    "archive":  "RPG Icons.zip",
+    "sha256":  "58AE442347212DECDB29D01BF3F2755856190B16EBB6BBC23D0867A8F30815C9",
+    "imported_at":  "2026-07-15T16:51:24.0033809Z",
+    "files":  400,
+    "bytes":  276557,
+    "categories":  [
+                       "ui",
+                       "icon"
+                   ],
+    "license_status":  "missing_local_proof"
+}

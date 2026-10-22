@@ -1,0 +1,13 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "complete_ui_book_styles_free",
+    "archive":  "Complete_UI_Book_Styles_Pack_Free.7z",
+    "sha256":  "7278B830DAF46F49BC5CE21E7D93DCB98879B324A1BAEDF99B56339AC1769760",
+    "imported_at":  "2026-07-15T16:50:26.4165328Z",
+    "files":  119,
+    "bytes":  72481,
+    "categories":  [
+                       "ui"
+                   ],
+    "license_status":  "bundled_license"
+}

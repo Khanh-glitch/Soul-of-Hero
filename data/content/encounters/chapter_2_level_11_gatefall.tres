@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="1_74l0m"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="2_xl0hs"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="3_l5r1d"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_ywxhu"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="5_2gu1o"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="6_1i8el"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="7_06jss"]
+
+[sub_resource type="Resource" id="Resource_6857b"]
+script = ExtResource("1_74l0m")
+required_objective_ids = PackedStringArray("clear_foundry_route")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l11_exit")
+
+[sub_resource type="Resource" id="Resource_jxi7m"]
+script = ExtResource("2_xl0hs")
+objective_id = &"clear_foundry_route"
+description_key = "objective.chapter_2.clear_foundry_route"
+
+[sub_resource type="Resource" id="Resource_xycwf"]
+script = ExtResource("7_06jss")
+entry_id = &"coven_wraith"
+enemy_id = &"coven_wraith"
+count = 9
+spawn_marker_ids = PackedStringArray("l11_coven_01", "l11_coven_02", "l11_coven_03", "l11_coven_04", "l11_coven_05", "l11_coven_06", "l11_coven_07", "l11_coven_08", "l11_coven_09")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_uj10u"]
+script = ExtResource("6_1i8el")
+group_id = &"coven_wraith_group"
+spawn_entries = Array[ExtResource("7_06jss")]([SubResource("Resource_xycwf")])
+
+[sub_resource type="Resource" id="Resource_2f7gy"]
+script = ExtResource("5_2gu1o")
+wave_id = &"directed_foundry_route"
+groups = Array[ExtResource("6_1i8el")]([SubResource("Resource_uj10u")])
+
+[resource]
+script = ExtResource("3_l5r1d")
+encounter_id = &"chapter_2_level_11_gatefall"
+display_name = "Chapter 2 — Gatefall Recovery"
+encounter_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry")
+authoring_notes = "Generated from the Chapter 2 map markers. Deferred marker IDs remain the stable encounter authority."
+waves = Array[ExtResource("5_2gu1o")]([SubResource("Resource_2f7gy")])
+objectives = Array[ExtResource("2_xl0hs")]([SubResource("Resource_jxi7m")])
+completion = SubResource("Resource_6857b")

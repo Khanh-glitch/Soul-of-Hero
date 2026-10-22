@@ -1,0 +1,377 @@
+[gd_resource type="Resource" script_class="VfxLibrary" load_steps=32 format=3]
+
+[ext_resource type="Script" path="res://game/vfx/vfx_library.gd" id="1_library"]
+[ext_resource type="Script" path="res://game/vfx/vfx_definition.gd" id="2_definition"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/symmetrical_impact_001_small_yellow.png" id="3_impact"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/round_sparkle_burst_001_small_blue.png" id="4_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/vfx/axe/axe_charge_64x64_12.png" id="5_axe_charge"]
+[ext_resource type="Texture2D" path="res://assets/vfx/axe/axe_cleave_64x48_6.png" id="6_axe_cleave"]
+[ext_resource type="Texture2D" path="res://assets/vfx/axe/axe_trail_32x16_6.png" id="7_axe_trail"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/directional_impact_001_large_blue.png" id="8_directional_impact"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_pursuit_marker_24x24_6.png" id="9_pursuit"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_echo_ribbon_48x24_6.png" id="10_ribbon"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_echo_anchor_32x32_8.png" id="11_anchor"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/directional_splatter_001_small_red.png" id="12_blood"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/world_smoke_32x32_8.png" id="13_smoke"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/directional_smoke_burst_001_small_white.png" id="14_spectral_smoke"]
+[ext_resource type="Texture2D" path="res://assets/vfx/enemy/reaper_trail_32x16_6.png" id="15_reaper"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/stylized_skull_smoke_burst_001_small_white.png" id="16_skull"]
+[ext_resource type="Texture2D" path="res://assets/vfx/untied/spell_absorb_001_small_violet.png" id="17_absorb"]
+[ext_resource type="Texture2D" path="res://assets/vfx/enemy/vampire_blink_departure_48x48_10.png" id="18_depart"]
+[ext_resource type="Texture2D" path="res://assets/vfx/enemy/vampire_blink_arrival_48x48_10.png" id="19_arrive"]
+[ext_resource type="Texture2D" path="res://assets/vfx/enemy/vampire_tether_32x16_4.png" id="20_tether"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/fantasy_portal_64x64_12.png" id="21_portal"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="22_world_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/characters/archer/generated/archer_boss_quick_vfx.png" id="23_archer_quick"]
+[ext_resource type="Texture2D" path="res://assets/characters/archer/generated/archer_boss_pierce_vfx.png" id="24_archer_pierce"]
+[ext_resource type="Texture2D" path="res://assets/characters/archer/generated/archer_boss_dash_trail_vfx.png" id="25_archer_dash"]
+[ext_resource type="Texture2D" path="res://assets/vfx/axe/axe_spin_32x32_8.png" id="26_axe_spin"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/dark_vfx_01_02/Dark VFX 1/Dark VFX 1 (40x32).png" id="27_dark_rift"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/dark_vfx_01_02/Dark VFX 2/Dark VFX 2 (48x64).png" id="28_dark_burst"]
+[ext_resource type="Texture2D" path="res://assets/vfx/codemanu/Effect_BigHit_1_557x553.png" id="29_big_hit"]
+
+[sub_resource type="Resource" id="BladeImpact"]
+script = ExtResource("2_definition")
+effect_id = &"blade_impact"
+display_name = "Blade impact"
+texture = ExtResource("3_impact")
+cell_size = Vector2i(48, 48)
+frame_count = 7
+columns = 7
+frames_per_second = 18.0
+base_scale = Vector2(0.72, 0.72)
+tint = Color(1, 0.960784, 0.839216, 1)
+
+[sub_resource type="Resource" id="BowImpact"]
+script = ExtResource("2_definition")
+effect_id = &"bow_impact"
+display_name = "Bow impact"
+texture = ExtResource("4_sparkle")
+frame_count = 14
+columns = 14
+frames_per_second = 28.0
+base_scale = Vector2(0.84, 0.84)
+tint = Color(0.486275, 0.901961, 1, 1)
+
+[sub_resource type="Resource" id="AxeImpact"]
+script = ExtResource("2_definition")
+effect_id = &"axe_impact"
+display_name = "Axe impact"
+texture = ExtResource("3_impact")
+cell_size = Vector2i(48, 48)
+frame_count = 7
+columns = 7
+frames_per_second = 18.0
+base_scale = Vector2(0.92, 0.92)
+tint = Color(1, 0.678431, 0.258824, 1)
+
+[sub_resource type="Resource" id="AxeCharge"]
+script = ExtResource("2_definition")
+effect_id = &"axe_charge"
+display_name = "Axe charge"
+texture = ExtResource("5_axe_charge")
+cell_size = Vector2i(64, 64)
+frame_count = 12
+columns = 12
+frames_per_second = 18.0
+base_scale = Vector2(0.76, 0.76)
+tint = Color(1, 0.701961, 0.219608, 1)
+
+[sub_resource type="Resource" id="AxeCleave"]
+script = ExtResource("2_definition")
+effect_id = &"axe_cleave"
+display_name = "Axe cleave"
+texture = ExtResource("6_axe_cleave")
+cell_size = Vector2i(64, 48)
+frame_count = 6
+columns = 6
+frames_per_second = 22.0
+base_scale = Vector2(0.92, 0.92)
+tint = Color(1, 0.678431, 0.258824, 1)
+
+[sub_resource type="Resource" id="AxeTrail"]
+script = ExtResource("2_definition")
+effect_id = &"axe_trail"
+display_name = "Axe trail"
+texture = ExtResource("7_axe_trail")
+cell_size = Vector2i(32, 16)
+frame_count = 6
+columns = 6
+frames_per_second = 20.0
+base_scale = Vector2(0.78, 0.78)
+tint = Color(1, 0.72, 0.28, 0.34)
+
+[sub_resource type="Resource" id="BoneImpact"]
+script = ExtResource("2_definition")
+effect_id = &"bone_impact"
+display_name = "Bone impact"
+texture = ExtResource("3_impact")
+cell_size = Vector2i(48, 48)
+frame_count = 7
+columns = 7
+frames_per_second = 18.0
+base_scale = Vector2(0.68, 0.68)
+tint = Color(0.847059, 0.882353, 0.815686, 1)
+
+[sub_resource type="Resource" id="EchoImpact"]
+script = ExtResource("2_definition")
+effect_id = &"echo_impact"
+display_name = "Soul echo impact"
+texture = ExtResource("8_directional_impact")
+cell_size = Vector2i(64, 64)
+frame_count = 7
+columns = 7
+frames_per_second = 18.0
+base_scale = Vector2(0.62, 0.62)
+tint = Color(1, 0.98, 0.9, 0.78)
+
+[sub_resource type="Resource" id="PursuitMarker"]
+script = ExtResource("2_definition")
+effect_id = &"pursuit_marker"
+display_name = "Pursuit marker"
+texture = ExtResource("9_pursuit")
+cell_size = Vector2i(24, 24)
+frame_count = 6
+columns = 6
+frames_per_second = 14.0
+tint = Color(1, 1, 1, 0.84)
+
+[sub_resource type="Resource" id="EchoRibbon"]
+script = ExtResource("2_definition")
+effect_id = &"echo_ribbon"
+display_name = "Soul echo ribbon"
+texture = ExtResource("10_ribbon")
+cell_size = Vector2i(48, 24)
+frame_count = 6
+columns = 6
+frames_per_second = 24.0
+base_scale = Vector2(0.92, 0.92)
+tint = Color(1, 1, 1, 0.64)
+
+[sub_resource type="Resource" id="EchoAnchor"]
+script = ExtResource("2_definition")
+effect_id = &"echo_anchor"
+display_name = "Soul echo anchor"
+texture = ExtResource("11_anchor")
+frame_count = 8
+columns = 8
+frames_per_second = 18.0
+base_scale = Vector2(0.86, 0.86)
+tint = Color(1, 1, 1, 0.74)
+
+[sub_resource type="Resource" id="BloodImpact"]
+script = ExtResource("2_definition")
+effect_id = &"blood_impact"
+display_name = "Blood impact"
+texture = ExtResource("12_blood")
+frame_count = 8
+columns = 8
+frames_per_second = 18.0
+base_scale = Vector2(0.9, 0.9)
+tint = Color(0.92, 0.58, 0.64, 0.88)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="SmokePuff"]
+script = ExtResource("2_definition")
+effect_id = &"smoke_puff"
+display_name = "Smoke puff"
+texture = ExtResource("13_smoke")
+frame_count = 8
+columns = 8
+frames_per_second = 20.0
+base_scale = Vector2(0.7, 0.7)
+tint = Color(0.76, 0.82, 0.86, 0.62)
+
+[sub_resource type="Resource" id="SpectralSmoke"]
+script = ExtResource("2_definition")
+effect_id = &"spectral_smoke"
+display_name = "Spectral smoke"
+texture = ExtResource("14_spectral_smoke")
+frame_count = 21
+columns = 21
+frames_per_second = 24.0
+base_scale = Vector2(0.44, 0.44)
+tint = Color(0.64, 0.96, 1, 0.44)
+
+[sub_resource type="Resource" id="ReaperTrail"]
+script = ExtResource("2_definition")
+effect_id = &"reaper_trail"
+display_name = "Reaper trail"
+texture = ExtResource("15_reaper")
+cell_size = Vector2i(32, 16)
+frame_count = 6
+columns = 6
+frames_per_second = 20.0
+base_scale = Vector2(0.84, 0.84)
+tint = Color(0.68, 0.82, 1, 0.42)
+
+[sub_resource type="Resource" id="SkeletonDeath"]
+script = ExtResource("2_definition")
+effect_id = &"skeleton_death"
+display_name = "Skeleton death"
+texture = ExtResource("16_skull")
+frame_count = 12
+columns = 12
+frames_per_second = 15.0
+base_scale = Vector2(1.25, 1.25)
+tint = Color(0.76, 0.86, 0.8, 0.88)
+
+[sub_resource type="Resource" id="VampireAbsorb"]
+script = ExtResource("2_definition")
+effect_id = &"vampire_absorb"
+display_name = "Vampire absorb"
+texture = ExtResource("17_absorb")
+cell_size = Vector2i(64, 64)
+frame_count = 31
+columns = 31
+frames_per_second = 24.0
+base_scale = Vector2(0.78, 0.78)
+tint = Color(0.86, 0.08, 0.3, 0.84)
+
+[sub_resource type="Resource" id="VampireDeparture"]
+script = ExtResource("2_definition")
+effect_id = &"vampire_blink_departure"
+display_name = "Vampire blink departure"
+texture = ExtResource("18_depart")
+cell_size = Vector2i(48, 48)
+frame_count = 10
+columns = 10
+frames_per_second = 24.0
+tint = Color(1, 0.64, 0.7, 0.78)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="VampireArrival"]
+script = ExtResource("2_definition")
+effect_id = &"vampire_blink_arrival"
+display_name = "Vampire blink arrival"
+texture = ExtResource("19_arrive")
+cell_size = Vector2i(48, 48)
+frame_count = 10
+columns = 10
+frames_per_second = 24.0
+tint = Color(1, 0.64, 0.7, 0.78)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="VampireTether"]
+script = ExtResource("2_definition")
+effect_id = &"vampire_tether"
+display_name = "Vampire tether"
+texture = ExtResource("20_tether")
+cell_size = Vector2i(32, 16)
+frame_count = 4
+columns = 4
+frames_per_second = 22.0
+tint = Color(0.92, 0.08, 0.25, 0.72)
+
+[sub_resource type="Resource" id="WorldPortal"]
+script = ExtResource("2_definition")
+effect_id = &"world_portal"
+display_name = "World portal"
+texture = ExtResource("21_portal")
+cell_size = Vector2i(64, 64)
+frame_count = 12
+columns = 12
+frames_per_second = 20.0
+base_scale = Vector2(0.92, 0.92)
+tint = Color(0.58, 0.84, 1, 0.72)
+
+[sub_resource type="Resource" id="WorldSparkle"]
+script = ExtResource("2_definition")
+effect_id = &"world_sparkle"
+display_name = "World sparkle"
+texture = ExtResource("22_world_sparkle")
+frame_count = 8
+columns = 8
+frames_per_second = 18.0
+tint = Color(1, 0.82, 0.3, 0.92)
+
+[sub_resource type="Resource" id="ArcherQuick"]
+script = ExtResource("2_definition")
+effect_id = &"archer_quick"
+display_name = "Archer quick shot"
+texture = ExtResource("23_archer_quick")
+cell_size = Vector2i(128, 64)
+frame_count = 1
+columns = 1
+frames_per_second = 20.0
+base_scale = Vector2(0.72, 0.72)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="ArcherPierce"]
+script = ExtResource("2_definition")
+effect_id = &"archer_pierce"
+display_name = "Archer piercing shot"
+texture = ExtResource("24_archer_pierce")
+cell_size = Vector2i(192, 96)
+frame_count = 1
+columns = 1
+frames_per_second = 20.0
+base_scale = Vector2(0.66, 0.66)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="ArcherDashTrail"]
+script = ExtResource("2_definition")
+effect_id = &"archer_dash_trail"
+display_name = "Archer dash trail"
+texture = ExtResource("25_archer_dash")
+cell_size = Vector2i(96, 48)
+frame_count = 1
+columns = 1
+frames_per_second = 20.0
+base_scale = Vector2(0.72, 0.72)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="AxeSpin"]
+script = ExtResource("2_definition")
+effect_id = &"axe_spin"
+display_name = "Axe spin"
+texture = ExtResource("26_axe_spin")
+cell_size = Vector2i(32, 32)
+frame_count = 8
+columns = 8
+frames_per_second = 24.0
+base_scale = Vector2(1.15, 1.15)
+tint = Color(1, 0.72, 0.28, 0.9)
+
+[sub_resource type="Resource" id="DarkRift"]
+script = ExtResource("2_definition")
+effect_id = &"dark_rift"
+display_name = "Wizard dark rift"
+texture = ExtResource("27_dark_rift")
+cell_size = Vector2i(40, 32)
+frame_count = 10
+columns = 10
+frames_per_second = 20.0
+base_scale = Vector2(1.1, 1.1)
+tint = Color(0.7, 0.4, 1, 0.9)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="DarkBurst"]
+script = ExtResource("2_definition")
+effect_id = &"dark_burst"
+display_name = "Wizard dark burst"
+texture = ExtResource("28_dark_burst")
+cell_size = Vector2i(48, 64)
+frame_count = 16
+columns = 16
+frames_per_second = 24.0
+base_scale = Vector2(1.05, 1.05)
+tint = Color(0.76, 0.46, 1, 0.92)
+use_monochrome_tint = false
+
+[sub_resource type="Resource" id="BigHit"]
+script = ExtResource("2_definition")
+effect_id = &"big_hit"
+display_name = "Heavy finisher impact"
+texture = ExtResource("29_big_hit")
+cell_size = Vector2i(557, 553)
+frame_count = 30
+columns = 6
+frames_per_second = 30.0
+base_scale = Vector2(0.22, 0.22)
+use_monochrome_tint = false
+
+[resource]
+resource_name = "Soul of Hero VFX Library"
+script = ExtResource("1_library")
+profiles = Array[ExtResource("2_definition")]([SubResource("BladeImpact"), SubResource("BowImpact"), SubResource("AxeImpact"), SubResource("AxeCharge"), SubResource("AxeCleave"), SubResource("AxeTrail"), SubResource("BoneImpact"), SubResource("EchoImpact"), SubResource("PursuitMarker"), SubResource("EchoRibbon"), SubResource("EchoAnchor"), SubResource("BloodImpact"), SubResource("SmokePuff"), SubResource("SpectralSmoke"), SubResource("ReaperTrail"), SubResource("SkeletonDeath"), SubResource("VampireAbsorb"), SubResource("VampireDeparture"), SubResource("VampireArrival"), SubResource("VampireTether"), SubResource("WorldPortal"), SubResource("WorldSparkle"), SubResource("ArcherQuick"), SubResource("ArcherPierce"), SubResource("ArcherDashTrail"), SubResource("AxeSpin"), SubResource("DarkRift"), SubResource("DarkBurst"), SubResource("BigHit")])

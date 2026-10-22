@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/world/interactables/soul_beacon.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_echo_anchor_32x32_8.png" id="2_texture"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="3_sparkle"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Bar01a.png" id="4_bar"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Fill01a.png" id="5_fill"]
+
+[sub_resource type="CircleShape2D" id="Circle_beacon"]
+radius = 18.0
+
+[node name="SoulBeacon" type="StaticBody2D" groups=["defense_objective"]]
+z_index = 2
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node name="GroundBase" type="Polygon2D" parent="."]
+z_index = -1
+color = Color(0.12, 0.08, 0.19, 0.94)
+polygon = PackedVector2Array(-24, -7, 24, -7, 29, 0, 24, 7, -24, 7, -29, 0)
+
+[node name="PulseAura" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = -1
+position = Vector2(0, -18)
+texture_filter = 1
+texture = ExtResource("3_sparkle")
+hframes = 8
+modulate = Color(0.66, 0.3, 1, 0.32)
+
+[node name="BeaconSprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -18)
+texture_filter = 1
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("2_texture")
+hframes = 8
+
+[node name="HealthBar" type="TextureProgressBar" parent="."]
+unique_name_in_owner = true
+z_index = 3
+offset_left = -18.0
+offset_top = -7.0
+offset_right = 18.0
+offset_bottom = 1.0
+mouse_filter = 2
+texture_under = ExtResource("4_bar")
+texture_progress = ExtResource("5_fill")
+value = 100.0
+show_percentage = false
+tint_under = Color(0.18, 0.10, 0.24, 0.95)
+tint_progress = Color(0.84, 0.58, 1, 0.94)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -7)
+shape = SubResource("Circle_beacon")

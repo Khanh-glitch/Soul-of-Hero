@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_17")
+required_feature_ids = PackedStringArray("crafting")
+
+[resource]
+resource_name = "Chapter 2 Level 18 - Di Vật Biết Thở"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_18"
+display_name = "Di Vật Biết Thở"
+content_status = 2
+objective_summary = "Chọn một lời nguyền/phần thưởng, mang Di Vật ra ngoài và thu hồi nếu đánh rơi."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "breathing_relic", "carry_recover", "elite")
+authoring_notes = "Chapter 2 data contract. The curse/reward choice must preview two equal-power profiles. A dropped relic returns to its last-safe anchor after one second if it falls into void or geometry. Hexwing reaches 70 percent, steals relic energy, and retreats while persistent HP/state is saved for Level 19; no death, loot, or mastery event occurs here. First clear unlocks Challenge."
+campaign_slot = 18
+chapter_number = 2
+chapter_level_number = 8
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_18.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_18_breathing_relic")
+entry_encounter_id = &"chapter_2_level_18_breathing_relic"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("challenge")
+completion_reward_bundle_id = &"chapter_2_level_18_reward"
+completion_transaction_id = &"campaign:chapter_2_level_18:first_clear:v1"
+recommended_mastery = 6200

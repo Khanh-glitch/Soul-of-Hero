@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_15")
+required_feature_ids = PackedStringArray("rarity_loot")
+
+[resource]
+resource_name = "Chapter 2 Level 16 - Mê Lộ Cổng Nguyền"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_16"
+display_name = "Mê Lộ Cổng Nguyền"
+content_status = 2
+objective_summary = "Đi qua chuỗi ba cổng đúng để tới sanctum; sai tối đa hai lần."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "cursed_gate_maze", "portal", "memory_route")
+authoring_notes = "Chapter 2 data contract. Portal symbols and shapes, not color alone, define the three-step route. A wrong choice creates one short ambush, returns to the hub, and records a mistake; after two mistakes the correct symbol pulses and a hint prevents loops. No director spawn may land on a portal destination or within 96 px of it. First clear unlocks Salvage."
+campaign_slot = 16
+chapter_number = 2
+chapter_level_number = 6
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_16.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_16_cursed_gate_maze")
+entry_encounter_id = &"chapter_2_level_16_cursed_gate_maze"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("salvage")
+completion_reward_bundle_id = &"chapter_2_level_16_reward"
+completion_transaction_id = &"campaign:chapter_2_level_16:first_clear:v1"
+recommended_mastery = 5200

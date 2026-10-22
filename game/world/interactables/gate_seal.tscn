@@ -1,0 +1,69 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/world/interactables/gate_seal.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="2_sparkle"]
+
+[sub_resource type="CircleShape2D" id="Circle_interaction"]
+radius = 28.0
+
+[node name="GateSeal" type="Area2D"]
+collision_layer = 32
+collision_mask = 2
+monitorable = true
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -19)
+scale = Vector2(1.35, 1.35)
+z_index = 1
+
+[node name="Glow" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -6)
+energy = 0.88
+texture_scale = 1.25
+
+[node name="SealAura" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -5)
+z_index = 2
+texture_filter = 1
+texture = ExtResource("2_sparkle")
+hframes = 8
+modulate = Color(1, 0.3, 0.43, 0.6)
+
+[node name="SealHorizontal" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 3
+points = PackedVector2Array(-11, -5, 11, -5)
+width = 2.0
+default_color = Color(1, 0.3, 0.43, 0.92)
+
+[node name="SealVertical" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 3
+points = PackedVector2Array(0, -16, 0, 6)
+width = 2.0
+default_color = Color(1, 0.3, 0.43, 0.92)
+
+[node name="SealLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -48.0
+offset_top = 19.0
+offset_right = 48.0
+offset_bottom = 44.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_font_sizes/font_size = 8
+text = "PHONG ẤN CỔNG\nCHUỘT TRÁI"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -4)
+shape = SubResource("Circle_interaction")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

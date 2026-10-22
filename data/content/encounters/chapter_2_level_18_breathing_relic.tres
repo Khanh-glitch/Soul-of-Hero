@@ -1,0 +1,81 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="1_u3pov"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="2_xjhmf"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="3_u1wob"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_2og2n"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="5_1yov7"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="6_lvdmx"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="7_ntcs0"]
+
+[sub_resource type="Resource" id="Resource_qeuk5"]
+script = ExtResource("1_u3pov")
+required_objective_ids = PackedStringArray("clear_foundry_route", "hexwing_retreated")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l18_exit")
+
+[sub_resource type="Resource" id="Resource_31mqw"]
+script = ExtResource("2_xjhmf")
+objective_id = &"clear_foundry_route"
+description_key = "objective.chapter_2.clear_foundry_route"
+
+[sub_resource type="Resource" id="Resource_s5eve"]
+script = ExtResource("2_xjhmf")
+objective_id = &"hexwing_retreated"
+objective_type = 6
+description_key = "objective.chapter_2.hexwing_retreated"
+target_id = &"hexwing_retreated"
+target_count = 1
+
+[sub_resource type="Resource" id="Resource_pcq5b"]
+script = ExtResource("7_ntcs0")
+entry_id = &"coven_wraith"
+enemy_id = &"coven_wraith"
+count = 3
+spawn_marker_ids = PackedStringArray("l18_coven_01", "l18_coven_02", "l18_coven_03")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_tqm0i"]
+script = ExtResource("6_lvdmx")
+group_id = &"coven_wraith_group"
+spawn_entries = Array[ExtResource("7_ntcs0")]([SubResource("Resource_pcq5b")])
+
+[sub_resource type="Resource" id="Resource_xokov"]
+script = ExtResource("7_ntcs0")
+entry_id = &"spirit_leech"
+enemy_id = &"spirit_leech"
+count = 3
+spawn_marker_ids = PackedStringArray("l18_leech_01", "l18_leech_02", "l18_leech_03")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_nq362"]
+script = ExtResource("6_lvdmx")
+group_id = &"spirit_leech_group"
+spawn_entries = Array[ExtResource("7_ntcs0")]([SubResource("Resource_xokov")])
+
+[sub_resource type="Resource" id="Resource_403at"]
+script = ExtResource("7_ntcs0")
+entry_id = &"hexwing_familiar"
+enemy_id = &"hexwing_familiar"
+spawn_marker_ids = PackedStringArray("l18_hexwing")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_3rg1e"]
+script = ExtResource("6_lvdmx")
+group_id = &"hexwing_familiar_group"
+spawn_entries = Array[ExtResource("7_ntcs0")]([SubResource("Resource_403at")])
+
+[sub_resource type="Resource" id="Resource_016uf"]
+script = ExtResource("5_1yov7")
+wave_id = &"directed_foundry_route"
+groups = Array[ExtResource("6_lvdmx")]([SubResource("Resource_tqm0i"), SubResource("Resource_nq362"), SubResource("Resource_3rg1e")])
+
+[resource]
+script = ExtResource("3_u1wob")
+encounter_id = &"chapter_2_level_18_breathing_relic"
+display_name = "Chapter 2 — Breathing Relic"
+encounter_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry")
+authoring_notes = "Generated from the Chapter 2 map markers. Deferred marker IDs remain the stable encounter authority."
+waves = Array[ExtResource("5_1yov7")]([SubResource("Resource_016uf")])
+objectives = Array[ExtResource("2_xjhmf")]([SubResource("Resource_31mqw"), SubResource("Resource_s5eve")])
+completion = SubResource("Resource_qeuk5")

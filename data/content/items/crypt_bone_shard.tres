@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/ui/loot/soul_ember.png" id="2_icon"]
+
+[resource]
+resource_name = "Crypt Bone Shard"
+script = ExtResource("1_item")
+item_id = &"crypt_bone_shard"
+display_name = "Mảnh Xương Hầm Mộ"
+description = "Vật liệu còn vương linh lực từ những người gác mộ cổ."
+icon = ExtResource("2_icon")
+authoring_notes = "Reward material used by Chapter 1 crypt levels."

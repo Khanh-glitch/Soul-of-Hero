@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/characters/knight/_Idle.png" id="2_preview"]
+
+[node name="PlayerSpawn" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "player"
+entity_id = "player_spawn"
+display_name = "PLAYER SPAWN"
+marker_color = Color(0.3, 0.95, 0.68, 1)
+preview_texture = ExtResource("2_preview")
+preview_columns = 10
+preview_scale = Vector2(0.5, 0.5)
+preview_offset = Vector2(0, -18)

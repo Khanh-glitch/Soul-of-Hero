@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://bbvevsi55o6vi"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3"]
+
+[sub_resource type="Resource" id="Unlock"]
+script = ExtResource("2")
+prerequisite_level_ids = PackedStringArray("chapter_1_level_7")
+
+[resource]
+resource_name = "Chapter 1 Level 8 - The Divided Reliquary"
+script = ExtResource("1")
+level_id = &"chapter_1_level_8"
+display_name = "The Divided Reliquary"
+content_status = 2
+objective_summary = "Choose a Reaper or Vampire branch, then claim the elite chest."
+level_tags = PackedStringArray("campaign", "chapter_1", "crypt", "branch", "elite_chest")
+authoring_notes = "CAMPAIGN_READY internal vertical slice: two physical branch seals enforce one irreversible choice; only selected markers spawn; exactly one selected guardian receives the shared explicit Elite pressure axes; branch clear unlocks one manually interacted chest; its custom event opens the exit. Static, live both-branch, fresh AppRoot, reward, and campaign-entry gates cover promotion."
+campaign_slot = 8
+chapter_number = 1
+chapter_level_number = 8
+level_scene = ExtResource("3")
+layout_data_path = "res://data/levels/chapter_1_level_8.json"
+encounter_ids = PackedStringArray("chapter_1_level_8_divided_reliquary")
+entry_encounter_id = &"chapter_1_level_8_divided_reliquary"
+unlock_requirements = SubResource("Unlock")
+granted_feature_ids = PackedStringArray("hero_soul_inventory", "hero_soul_sell")
+completion_reward_bundle_id = &"chapter_1_level_8_reward"
+completion_transaction_id = &"campaign:chapter_1_level_8:complete"
+recommended_mastery = 1120

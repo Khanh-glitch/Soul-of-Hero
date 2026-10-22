@@ -1,0 +1,146 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/hub/hub_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="4_emblem"]
+
+[node name="HubScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="SafeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 6.0
+offset_right = -8.0
+offset_bottom = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="SafeMargin"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="TopBar" type="PanelContainer" parent="SafeMargin/Layout"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_type_variation = &"HudPanel"
+
+[node name="TopRow" type="HBoxContainer" parent="SafeMargin/Layout/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Emblem" type="TextureRect" parent="SafeMargin/Layout/TopBar/TopRow"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("4_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="SafeMargin/Layout/TopBar/TopRow"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.79, 0.39, 1)
+theme_override_font_sizes/font_size = 17
+text = "SOUL OF HERO"
+
+[node name="SectionLabel" type="Label" parent="SafeMargin/Layout/TopBar/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.67, 0.57, 0.72, 1)
+text = "CHIẾN DỊCH"
+
+[node name="ProfileLabel" type="Label" parent="SafeMargin/Layout/TopBar/TopRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CHƯƠNG 1  •  0000 VÀNG"
+
+[node name="TitleButton" type="Button" parent="SafeMargin/Layout/TopBar/TopRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 28)
+layout_mode = 2
+text = "MÀN HÌNH CHÍNH"
+
+[node name="Body" type="PanelContainer" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"ElevatedPanel"
+
+[node name="BodyMargin" type="MarginContainer" parent="SafeMargin/Layout/Body"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ContentHost" type="Control" parent="SafeMargin/Layout/Body/BodyMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Navigation" type="HBoxContainer" parent="SafeMargin/Layout"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="CampaignButton" type="Button" parent="SafeMargin/Layout/Navigation"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_type_variation = &"NavigationButton"
+text = "CHIẾN DỊCH"
+
+[node name="ArsenalButton" type="Button" parent="SafeMargin/Layout/Navigation"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_type_variation = &"NavigationButton"
+text = "ĐỘI HÌNH"
+
+[node name="ModesButton" type="Button" parent="SafeMargin/Layout/Navigation"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_type_variation = &"NavigationButton"
+text = "CHẾ ĐỘ"
+
+[node name="BestiaryButton" type="Button" parent="SafeMargin/Layout/Navigation"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(90, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_type_variation = &"NavigationButton"
+text = "QUÁI VẬT"
+
+[node name="SettingsButton" type="Button" parent="SafeMargin/Layout/Navigation"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(88, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_type_variation = &"NavigationButton"
+text = "CÀI ĐẶT"

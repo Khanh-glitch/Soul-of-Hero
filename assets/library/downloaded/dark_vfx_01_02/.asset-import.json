@@ -1,0 +1,14 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "dark_vfx_01_02",
+    "archive":  "Dark VFX 01 - 02.rar",
+    "sha256":  "E048F669155D383C67876BB1515E843BF4555D221173379444412650EF15C6CB",
+    "imported_at":  "2026-07-15T16:50:37.6393576Z",
+    "files":  35,
+    "bytes":  18232,
+    "categories":  [
+                       "vfx",
+                       "dark_magic"
+                   ],
+    "license_status":  "missing_local_proof"
+}

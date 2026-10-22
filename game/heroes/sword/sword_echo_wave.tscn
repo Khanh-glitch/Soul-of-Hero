@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/sword/sword_echo_wave.gd" id="1_wave"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_crescent_wave.png" id="2_crescent"]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_unshaded"]
+light_mode = 1
+
+[node name="SwordEchoWave" type="Node2D"]
+z_index = 7
+script = ExtResource("1_wave")
+
+[node name="CrescentSprite" type="Sprite2D" parent="."]
+texture_filter = 1
+material = SubResource("CanvasItemMaterial_unshaded")
+texture = ExtResource("2_crescent")
+modulate = Color(1, 0.98, 0.9, 0.66)
+scale = Vector2(0.48, 0.31)

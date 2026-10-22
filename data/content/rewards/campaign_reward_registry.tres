@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="RewardBundleRegistry" load_steps=23 format=3]
+
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_registry.gd" id="1_registry"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="2_bundle"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_1_reward.tres" id="3_level_1"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_2_reward.tres" id="4_level_2"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_3_reward.tres" id="5_level_3"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_4_reward.tres" id="6_level_4"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_5_reward.tres" id="7_level_5"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_6_reward.tres" id="8_level_6"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_7_reward.tres" id="9_level_7"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_8_reward.tres" id="10_level_8"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_9_reward.tres" id="11_level_9"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_1_level_10_reward.tres" id="12_level_10"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_11_reward.tres" id="c2_level_11"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_12_reward.tres" id="c2_level_12"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_13_reward.tres" id="c2_level_13"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_14_reward.tres" id="c2_level_14"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_15_reward.tres" id="c2_level_15"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_16_reward.tres" id="c2_level_16"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_17_reward.tres" id="c2_level_17"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_18_reward.tres" id="c2_level_18"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_19_reward.tres" id="c2_level_19"]
+[ext_resource type="Resource" path="res://data/content/rewards/chapter_2_level_20_reward.tres" id="c2_level_20"]
+
+[resource]
+resource_name = "Campaign First Clear Reward Registry"
+script = ExtResource("1_registry")
+registry_id = &"campaign_reward_bundles"
+bundles = Array[ExtResource("2_bundle")]([ExtResource("3_level_1"), ExtResource("4_level_2"), ExtResource("5_level_3"), ExtResource("6_level_4"), ExtResource("7_level_5"), ExtResource("8_level_6"), ExtResource("9_level_7"), ExtResource("10_level_8"), ExtResource("11_level_9"), ExtResource("12_level_10"), ExtResource("c2_level_11"), ExtResource("c2_level_12"), ExtResource("c2_level_13"), ExtResource("c2_level_14"), ExtResource("c2_level_15"), ExtResource("c2_level_16"), ExtResource("c2_level_17"), ExtResource("c2_level_18"), ExtResource("c2_level_19"), ExtResource("c2_level_20")])

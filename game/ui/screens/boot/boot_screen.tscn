@@ -1,0 +1,99 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="2_backdrop"]
+[ext_resource type="Script" path="res://game/ui/screens/boot/boot_screen.gd" id="3_script"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="4_emblem"]
+
+[node name="BootScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("3_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("2_backdrop")]
+layout_mode = 1
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Content" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(290, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Sigil" type="TextureRect" parent="Center/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 74)
+layout_mode = 2
+texture = ExtResource("4_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Studio" type="Label" parent="Center/Content"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.74, 0.61, 0.39, 1)
+theme_override_font_sizes/font_size = 10
+text = "SOUL FORGE GIỚI THIỆU"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="Center/Content"]
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+theme_override_colors/font_color = Color(1, 0.84, 0.48, 1)
+theme_override_font_sizes/font_size = 24
+text = "SOUL OF HERO"
+horizontal_alignment = 1
+
+[node name="Loading" type="Label" parent="Center/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.68, 0.75, 1)
+text = "Đang triệu hồi các linh hồn Hero…"
+horizontal_alignment = 1
+
+[node name="ProgressRow" type="HBoxContainer" parent="Center/Content"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="LoadingBar" type="ProgressBar" parent="Center/Content/ProgressRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(242, 8)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 100.0
+show_percentage = false
+
+[node name="Percent" type="Label" parent="Center/Content/ProgressRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.38, 0.86, 0.88, 1)
+theme_override_font_sizes/font_size = 9
+text = "00%"
+horizontal_alignment = 2
+
+[node name="LoadingStatus" type="Label" parent="Center/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.78, 0.64, 0.41, 1)
+theme_override_font_sizes/font_size = 9
+text = "Đang dựng Thánh Địa"
+horizontal_alignment = 1
+
+[node name="Tip" type="Label" parent="Center/Content"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 8
+text = "Mỗi cư dân trong Thánh Địa phụ trách một chức năng."
+horizontal_alignment = 1

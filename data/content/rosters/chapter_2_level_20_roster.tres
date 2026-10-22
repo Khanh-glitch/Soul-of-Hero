@@ -1,0 +1,34 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_entry.gd" id="1_bbcc0"]
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_definition.gd" id="2_5c8xy"]
+
+[sub_resource type="Resource" id="Resource_3p073"]
+script = ExtResource("1_bbcc0")
+entry_id = &"coven_wraith"
+combatant_id = &"coven_wraith"
+count = 5
+elite_eligible = true
+authoring_notes = "5 authored marker(s) in chapter_2_level_20."
+
+[sub_resource type="Resource" id="Resource_4o4jk"]
+script = ExtResource("1_bbcc0")
+entry_id = &"spirit_leech"
+combatant_id = &"spirit_leech"
+authoring_notes = "1 authored marker(s) in chapter_2_level_20."
+
+[sub_resource type="Resource" id="Resource_dhhdu"]
+script = ExtResource("1_bbcc0")
+entry_id = &"wizard_hero_boss"
+combatant_id = &"wizard_hero_boss"
+unique = true
+miniboss = true
+authoring_notes = "1 authored marker(s) in chapter_2_level_20."
+
+[resource]
+script = ExtResource("2_5c8xy")
+roster_id = &"chapter_2_level_20_roster"
+campaign_slot = 20
+authoring_status = 1
+authoring_notes = "Runtime-ready Chapter 2 roster generated from deterministic directed markers."
+entries = Array[ExtResource("1_bbcc0")]([SubResource("Resource_3p073"), SubResource("Resource_4o4jk"), SubResource("Resource_dhhdu")])

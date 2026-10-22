@@ -1,0 +1,741 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-07-22",
+  "library_root": "assets/library/downloaded",
+  "import_policy": "local_candidate_media_only",
+  "packages": [
+    {
+      "id": "legacy_knight_candidate",
+      "archive": "Knight.rar",
+      "sha256": "E8342007440930A433C68EFC7DD8FCF2B699075D9A701AF9E3E6AF324228E1C8",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "rpg_essentials_full",
+      "archive": "RPG_Essentials_Free.zip",
+      "sha256": "68CCA9EA2ABF49E100AC3081C7068EEF88C02662FB44D2F77296B1966316D234",
+      "categories": ["audio", "sfx"],
+      "license_status": "source_page_reviewed_no_bundled_license"
+    },
+    {
+      "id": "project_fonts_full",
+      "archive": "Grenze_Gotisch,Handjet,VT323.zip",
+      "sha256": "B9305E1741BF8579EB343F20AD607F1C779423FF8BEC9489D4DDD7A4E7DE8A7F",
+      "categories": ["font", "ui"],
+      "license_status": "bundled_ofl"
+    },
+    {
+      "id": "kenney_input_prompts_full",
+      "archive": "kenney_input-prompts-pixel.zip",
+      "sha256": "64478174064B77E9C0EBB8271FD38AF598CEC922650157CE1E564DF1272575CC",
+      "categories": ["ui", "input_prompts"],
+      "license_status": "cc0"
+    },
+    {
+      "id": "kenney_rpg_audio_full",
+      "archive": "kenney_rpg-audio.zip",
+      "sha256": "6DBEAF8544DA958D8F2ADCB4A4A4B76C1ADE34A05F8AB9EDCCD327DA7375F38B",
+      "categories": ["audio", "sfx"],
+      "license_status": "cc0"
+    },
+    {
+      "id": "kenney_impact_sounds_full",
+      "archive": "kenney_impact-sounds.zip",
+      "sha256": "029D734AF1582474EDF3A694D1B0CEBC97C1C152F2F39FA34D4C2BAFC5DE77F8",
+      "categories": ["audio", "sfx"],
+      "license_status": "cc0"
+    },
+    {
+      "id": "card_sheen_fx",
+      "archive": "cardSHEENfx.7z",
+      "sha256": "989D904C78AA0DBD4B0DB4F2C0DAC880483ACE013CB5CE42862B39C342EEC868",
+      "categories": ["vfx", "ui"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "card_rip_fx",
+      "archive": "cardRIPfx.7z",
+      "sha256": "8659C080568D226BAD9C1C086D3795BBBA5F0238510FF066F6B2BF094C9B1C3B",
+      "categories": ["vfx", "ui"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "tiny_swords_free",
+      "archive": "Tiny Swords (Free Pack).zip",
+      "sha256": "764A511F6CD5D0B844D93DC02CF39F9EA3F5F3B9B0F19AFBBA2DFAB6BD2A0464",
+      "categories": ["character", "enemy", "environment", "vfx"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "pixel_crawler_free_2_11",
+      "archive": "Pixel Crawler - Free Pack 2.11.zip",
+      "sha256": "B7B228CA232DA9958F191B01DB87764DDDB67610116151E06E8DD8ADE6DE94B8",
+      "categories": ["character", "enemy", "environment", "ui"],
+      "license_status": "bundled_terms"
+    },
+    {
+      "id": "legacy_collection",
+      "archive": "Legacy Collection.zip",
+      "sha256": "BB7F2432FED1EE9BC9EE5DB11F95ADD24B11C70F70A74700139A6EF4AB1559B0",
+      "categories": ["character", "enemy", "environment", "vfx", "ui"],
+      "license_status": "bundled_public_license_pdf"
+    },
+    {
+      "id": "complete_ui_book_styles_free",
+      "archive": "Complete_UI_Book_Styles_Pack_Free.7z",
+      "sha256": "7278B830DAF46F49BC5CE21E7D93DCB98879B324A1BAEDF99B56339AC1769760",
+      "categories": ["ui"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "topdown_fantasy_forest",
+      "archive": "TopDownFantasy_Forest_v1.zip",
+      "sha256": "CFD6EE48B84DBA73FA915CAA6E17B99067F5C3A6AD65CBEE00DDDA45934C7970",
+      "categories": ["environment", "map"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "monsters_creatures_fantasy_v1",
+      "archive": "Monsters_Creatures_Fantasy.zip",
+      "sha256": "31F90C4C825FC214359289BB654372DD84889A761A10C04F45DA266D6F025359",
+      "categories": ["enemy", "monster"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "monster_creatures_fantasy_v1_3",
+      "archive": "Monster_Creatures_Fantasy(Version 1.3).zip",
+      "sha256": "9DFA7ECA528E2FA7463994BF03642D5A599EF467B93A2E8B87E06FB717C28C6B",
+      "categories": ["enemy", "monster"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "knight_2d_pixel_art",
+      "archive": "Knight 2D Pixel Art.zip",
+      "sha256": "C61E402F2C22CE9E1BFF4C241C69768BD357B9317C9A0048A2C286A420E73983",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "samurai_2d_pixel_art",
+      "archive": "FREE_Samurai 2D Pixel Art v1.2.zip",
+      "sha256": "5D839DC9BD830C65804DD0FA9C44E887491AB243410DF7644491BF33FB05582A",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "kobold_warrior_2d_pixel_art",
+      "archive": "FREE_Kobold Warrior 2D Pixel Art.zip",
+      "sha256": "784F4621605196CADE8E98F9180E89971764DD1809832AF017518561CFA9D6A8",
+      "categories": ["enemy", "monster", "hero_candidate"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "forest_monsters_free",
+      "archive": "Forest_Monsters_FREE.zip",
+      "sha256": "6D692167FF6647AA579BF9D2C0F35C00CB06AEF57E35E200A0BFF2BD7883DAC7",
+      "categories": ["enemy", "monster"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "rpg_worlds_caves_2_1",
+      "archive": "RPGW_Caves_v2.1.zip",
+      "sha256": "05B6C55BF430EF586F2E3CC518400A21BD0645BE9C47291D4B63BE8E4D9FCF98",
+      "categories": ["environment", "map"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "bringer_of_death",
+      "archive": "Bringer-Of-Death.zip",
+      "sha256": "56F76076156A834580B01CE41DB7E77C93BA8A412FFD738A6A0202DBEB2640F5",
+      "categories": ["enemy", "boss"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "free_topdown_pixel_dungeon",
+      "archive": "free-2d-top-down-pixel-dungeon-asset-pack.zip",
+      "sha256": "4344FEEF186C63D926F788D40EDA2DD37DFD480F869D8D88FD4DDFF5075E0CCD",
+      "categories": ["environment", "map", "props"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "tiny_rpg_town",
+      "archive": "tiny-rpg-town-files.zip",
+      "sha256": "B28690B45EFB3216EFCED5615F636ECA10EC721F82C60F593C0D2DE5A29C91E6",
+      "categories": ["environment", "map", "npc"],
+      "license_status": "bundled_public_license_pdf"
+    },
+    {
+      "id": "dark_vfx_01_02",
+      "archive": "Dark VFX 01 - 02.rar",
+      "sha256": "E048F669155D383C67876BB1515E843BF4555D221173379444412650EF15C6CB",
+      "categories": ["vfx", "dark_magic"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "flying_demon_2d_pixel_art",
+      "archive": "Flying Demon 2D Pixel Art.zip",
+      "sha256": "6946F23532D925EC874FB1D0D270BA12EC6B9439ED7DDD7CF99A8BEA7AF01645",
+      "categories": ["enemy", "monster", "boss"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "skeleton_army",
+      "archive": "blpixelartist_Skeleton Army.rar",
+      "sha256": "3145BF70F3058D25D3061C736B80F0FC9DBBFE9860E01F3EA176BBCEB461E217",
+      "categories": ["enemy", "monster", "boss"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "fantasy_warrior",
+      "archive": "Fantasy Warrior.zip",
+      "sha256": "71D54600C37D403D34F95EB703849D1FF1504E376C8189AC2BAF007FFBE8002A",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "lightning_skill_animations",
+      "archive": "Pixel Art Skill Animations - Lightning.zip",
+      "sha256": "3478860F1B0CD00C163313D768110D49F4413AC7E421B1293B789601E418C3C0",
+      "categories": ["vfx", "lightning", "skill"],
+      "license_status": "bundled_license_docx"
+    },
+    {
+      "id": "wizard_pack",
+      "archive": "Wizard Pack.zip",
+      "sha256": "41167557A3401E7156B6557CFEC932457D333059C6F6393BF958B6B4FE3A2291",
+      "categories": ["character", "hero_candidate", "magic"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "magic_cliffs_gamekit",
+      "archive": "Magic-Cliffs-Gamekit.zip",
+      "sha256": "BEB1603085B3AB17CB7845023251D8E3CDFB610EE47EB058B1D021E9440E8739",
+      "categories": ["environment", "map", "character", "audio"],
+      "license_status": "bundled_public_license_pdf"
+    },
+    {
+      "id": "magic_cliffs_godot_media",
+      "archive": "MagicCliffsGodot.zip",
+      "sha256": "05AC4B56D79E6245CD0DCDF9B24EC6C912C6FDB7F14FDED85FDAE5483D45CC2C",
+      "categories": ["environment", "map", "reference_project"],
+      "license_status": "bundled_public_license"
+    },
+    {
+      "id": "golems_free",
+      "archive": "Golems_Free_Version.zip",
+      "sha256": "043292BEF0F94AC9D7EF5FF9630F3C8A5DBC1558B3E4C1107637C2A1C302E83D",
+      "categories": ["enemy", "monster", "boss"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "raven_fantasy_armor_icons",
+      "archive": "Raven Fantasy HD - RPG Icons, Pixel Art Icons, Textures and Sprites - Armor.zip",
+      "sha256": "8969BA881BEA1C6E459547DC290E2D1DFACCB53206A8D396C06F740C18EE5380",
+      "categories": ["ui", "icon", "equipment"],
+      "license_status": "bundled_text_unclassified"
+    },
+    {
+      "id": "medieval_warrior_1_2",
+      "archive": "Medieval Warrior (Version 1.2).zip",
+      "sha256": "B5986CD361727F824234414CDA881C6189E9FF8A8D281DEB914FE3DFEA76B2E2",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "martial_hero_2",
+      "archive": "Martial Hero 2.zip",
+      "sha256": "0D12088A43072BF84FD07A43407DC114A747F661050DEC80BBC134D54B2DFE39",
+      "categories": ["character", "hero_candidate"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "blacksmith_2d_pixel_art",
+      "archive": "FREE - Blacksmith 2D Pixel Art.zip",
+      "sha256": "A9DDABE13CE5270CCC4C20373B35885E9EEF20FF61F00E0AAC190F3669677989",
+      "categories": ["npc", "town"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "water_effect_2",
+      "archive": "Water Effect 2.rar",
+      "sha256": "59C0691C3DE5E948B2B52F6A467132D3619C4BF82A413FDE02D27A7402CFB95B",
+      "categories": ["vfx", "water", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "treasure_chests_1_2a",
+      "archive": "19.07c - Treasure Chests 1.2a.zip",
+      "sha256": "7F1ADDFE7E821A10936B661DC9E46FD28269E3DFE614D43566C89DBA043D8E91",
+      "categories": ["prop", "reward", "environment"],
+      "license_status": "bundled_readme"
+    },
+    {
+      "id": "rpg_icons_400",
+      "archive": "RPG Icons.zip",
+      "sha256": "58AE442347212DECDB29D01BF3F2755856190B16EBB6BBC23D0867A8F30815C9",
+      "categories": ["ui", "icon"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "huntress",
+      "archive": "Huntress.zip",
+      "sha256": "EECD8D0F471E4C9F6024325F337A3636C5446EBE0CF94BD4BCEEF7CCF41368B1",
+      "categories": ["character", "hero_candidate", "ranged"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "rpg_arsenal_1_1",
+      "archive": "RPG_ARSENAL_V1.1.zip",
+      "sha256": "641E40C6988A57AD25CD15AA46E760F16F6F185C65DB2DF1232958FFB0887903",
+      "categories": ["ui", "icon", "weapon"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "huntress_2",
+      "archive": "Huntress 2.zip",
+      "sha256": "EC1A3515D3D9D1D4756012C38C0ECC6C160344504125A5CF32218430237C0C76",
+      "categories": ["character", "hero_candidate", "ranged"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "necromancer",
+      "archive": "Necromancer.rar",
+      "sha256": "F7C74AB39D0C8D0C5482EEF9FA43FAB9E4FC4A43C158E48A2DEA35DBAA8B4423",
+      "categories": ["enemy", "boss", "hero_candidate", "dark_magic"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "monsters_creatures_fantasy_2",
+      "archive": "Monsters Creatures Fantasy 2.zip",
+      "sha256": "781C7E1003DD179BA56C72C0099FBDA301F4571C99552E0A916332F3D33E4B7E",
+      "categories": ["enemy", "monster"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "tiny_rpg_soldier_orc",
+      "archive": "Tiny RPG Character Asset Pack 01 v2.0 -Free Soldier&Orc.zip",
+      "sha256": "9F1818C7DDC17B99E4BAE81FEAE8B25A3692BF6BC269BB2797E36BD7FAEC3BA2",
+      "categories": ["character", "hero_candidate", "enemy", "monster", "top_down"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "free_inventory_ui",
+      "archive": "Free Inventory.zip",
+      "sha256": "AAC44051557014AF3CB1E284CE0B6FF5AC229E8CD9A345F5DB9FBB90D3F02486",
+      "categories": ["ui", "inventory", "panel"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "ocean_cainos_exact",
+      "archive": "Lưu trữ.zip",
+      "sha256": "A5D676FFA9108756D5109784C3185B991FC9F678E02204129AF31D472EA0CD78",
+      "categories": ["environment", "map", "ocean", "tileset"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "pixel_art_top_down_basic_1_2_3",
+      "archive": "Pixel Art Top Down - Basic v1.2.3.zip",
+      "sha256": "1307DDF193B5D6B1F0FF93C78DCE2D793B4FA471D805EAA2164D072CE449AFDE",
+      "categories": ["environment", "map", "character", "props", "tileset"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "free_bow_crossbow_icons",
+      "archive": "Free Bow and Crossbow Icons (1).zip",
+      "sha256": "AF6C505251B623B33607F4420FDB57B4C5A9DDD139BC0ADA95CBAF49C6A85574",
+      "categories": ["ui", "icon", "bow", "crossbow", "weapon"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "mage_icons_big_pack_batareya",
+      "archive": "MAGE ICONS BIG PACk (by Batareya).rar",
+      "sha256": "C0DEF69C97751B6E369BBE540A40C8C9C8A1CE7291327E25D34E59D77C4C4253",
+      "categories": ["ui", "icon", "magic", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "fire_effect_2",
+      "archive": "Fire Effect 2.rar",
+      "sha256": "38931A7F52434A483191C3497BBC8266038ACF6AD18DB19EC8EF1CBBFD5FD1FB",
+      "categories": ["vfx", "fire", "explosion", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "wind_effect_01",
+      "archive": "Wind Effect 01.rar",
+      "sha256": "20F556A5AEF7A9E8E5EA37DCED34350735790355DF19C9D944C939F3BC2384F0",
+      "categories": ["vfx", "wind", "projectile", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "bandits",
+      "archive": "Bandits.zip",
+      "sha256": "A95AB77A07136945B5B948CA433684C127564134263CD6423363E8AB151AEDD6",
+      "categories": ["character", "enemy", "environment"],
+      "license_status": "bundled_eula"
+    },
+    {
+      "id": "blue_witch",
+      "archive": "Blue Witch.zip",
+      "sha256": "289806C63C33A57CD0922B8D7A5F7BBD18FDFD715A64F89640A84B301E342BAB",
+      "categories": ["character", "enemy", "witch", "magic"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "cultist_priest_sprite_pack",
+      "archive": "cultist_priest_sprite_pack.zip",
+      "sha256": "5B716CA7B3AB2064EC1B28A837417D0882FFDE372064F8D696477FDB1468852E",
+      "categories": ["character", "enemy", "cultist", "priest"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "debts_in_the_depths_assets",
+      "archive": "DebtsInTheDepthsAssets.zip",
+      "sha256": "F4655B3F88CC6BD8C727030940AAF8D7C3FF98D64AF7F8333E99606096BDD17C",
+      "categories": ["character", "enemy", "environment", "source"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "fire_effect_1",
+      "archive": "Fire Effect 1.rar",
+      "sha256": "25307575A98A4B00F55B3E3EC1983438FBAD1B6A5641807884E5389211C23336",
+      "categories": ["vfx", "fire", "projectile", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "fire_warrior",
+      "archive": "Fire_Warrior.rar",
+      "sha256": "9BD1FBCD63AB8F1C05431D56B0D0C090853C4A117E51A81DF5254E0655392EF9",
+      "categories": ["character", "hero_candidate", "warrior", "fire"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "fire_warrior_aseprite",
+      "archive": "Fire_WarriorAseprite.rar",
+      "sha256": "1066C72948AD7BD731674FBF41CC90EF43AFA1D639618073910A13ECC184224D",
+      "categories": ["character", "hero_candidate", "warrior", "fire", "source"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "free_gorgon_pixel_art_character",
+      "archive": "free-gorgon-pixel-art-character-sprite-sheets.zip",
+      "sha256": "D5F8834C9474B37244C867F48F2B3C2A0525932FBC6C34B3297796DE7D682331",
+      "categories": ["character", "enemy", "monster", "gorgon"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "free_pixel_magic_sprite_effects",
+      "archive": "free-pixel-magic-sprite-effects-pack.zip",
+      "sha256": "559137C76026FF8F54CE8B576B4CBC021171E58DCBF7CB273BF0D4D46AC5AEA1",
+      "categories": ["vfx", "magic", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "holy_vfx_01_02",
+      "archive": "Holy VFX 01-02.rar",
+      "sha256": "C66BB9C289FB608B6F9415DE838BF7FA3B800B4EEF0755E56E385C877B6D0846",
+      "categories": ["vfx", "holy", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "magic_shader_all",
+      "archive": "Magic Shader All.zip",
+      "sha256": "B3A73A9F8D631675ECE6DA7E84757F711D5078FB1A438F1B1891A2870946E37A",
+      "categories": ["vfx", "magic", "reference"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "magic_projectiles_vfx",
+      "archive": "MagicProjectilesVFX.zip",
+      "sha256": "821FDADA7D111BC05A0014734B3B76AF3A40B84E568372AD47DDC8990BCDE78D",
+      "categories": ["vfx", "magic", "projectile", "godot"],
+      "include_extensions": [".gd", ".gdshader", ".gdshaderinc", ".ptex", ".tres", ".tscn", ".uid"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "martial_hero_3",
+      "archive": "Martial Hero 3.zip",
+      "sha256": "45CA3C5F89E7FDBDFF1E1FD0B5C67DB2ECAA8AD6CA061FD7F5AC740DB18A8696",
+      "categories": ["character", "hero_candidate", "martial_artist"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "medieval_warrior_pack_2",
+      "archive": "Medieval Warrior Pack 2.zip",
+      "sha256": "CF53D9437C29D481EDE48EDCA47B24015C505FB9E3A115A97A69987E63EEB2AD",
+      "categories": ["character", "hero_candidate", "warrior"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "archer_no_background_color",
+      "archive": "NoBackgroundColor.rar",
+      "sha256": "95ADB28BD31997828E10568EE70141EA902A42427B1D2AC072F856D09E963D16",
+      "categories": ["character", "hero_candidate", "archer"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "paladin",
+      "archive": "Paladin.rar",
+      "sha256": "8C4E470118203BA129F02B3DA856343685F08F0EE01C50224DE6ABADD18977E5",
+      "categories": ["character", "hero_candidate", "paladin", "holy"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "super_pixel_effects_mini_pack_1",
+      "archive": "Super Pixel Effects Mini Pack 1.zip",
+      "sha256": "CA9EFF1900339FE48C256CB7DC7E4F91D5202CB6C338F8D0D26EA89F6EF99828",
+      "categories": ["vfx", "explosion", "fire", "magic"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "top_down_collection_pack",
+      "archive": "top-down-collection-pack.zip",
+      "sha256": "F8A327BABFE4C05F846F651FDA3956821C73015807F661BF955043F2DA1492A2",
+      "categories": ["character", "environment", "map", "audio", "vfx"],
+      "license_status": "bundled_public_license"
+    },
+    {
+      "id": "undead_executioner",
+      "archive": "Undead executioner.zip",
+      "sha256": "883C6F810E4139E125266B69CE330D4755FB3C7316F4AF408FAD99E96AC5B883",
+      "categories": ["character", "enemy", "undead", "boss"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "water_effect_01",
+      "archive": "Water Effect 01.rar",
+      "sha256": "9E447E65B1D7DC3EDC4987D85F1F9753DFD63EF31A39192A7A9C13E648198783",
+      "categories": ["vfx", "water", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_water_priestess_free_v1_1",
+      "archive": "Elementals_water_priestess_FREE_v1.1.zip",
+      "sha256": "E41505EDF4B4CB49D41C84D2E7F2EB5B739423122C29A7E5AF72B3EAE38FBAA5",
+      "categories": ["character", "hero_candidate", "elemental", "water", "priestess"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_wind_hashashin_free_v1_1",
+      "archive": "elementals_wind_hashashin_FREE_v1.1.zip",
+      "sha256": "C85528E2D15EA39AFC5E5C46C1B52881FB61350D6B3F5F0DA2A1FCAE12943C6E",
+      "categories": ["character", "hero_candidate", "elemental", "wind", "assassin"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_ground_monk_free_v1_3_1",
+      "archive": "Elementals_ground_monk_FREE_v1.3.1.zip",
+      "sha256": "E0E5720C020F6399181441572F67B8EDB8420323E130E292276AA5A97DCBA7DD",
+      "categories": ["character", "hero_candidate", "elemental", "ground", "monk"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_leaf_ranger_free_v1_0",
+      "archive": "Elementals_Leaf_ranger_Free_v1.0.zip",
+      "sha256": "FAFD8B0753C2089EC3A65340A87231303A7B434F2104B4D5A35A3BD981F82A36",
+      "categories": ["character", "hero_candidate", "elemental", "nature", "ranger"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_fire_knight_free_v1_1",
+      "archive": "Elementals_fire_knight_FREE_v1.1.zip",
+      "sha256": "1B34FFD962A80713BAF9695C4FA31F1BF59B0B1AB301FFCAFDB59DE4184B9F80",
+      "categories": ["character", "hero_candidate", "elemental", "fire", "knight"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "boss_demon_slime_free_v1_0",
+      "archive": "boss_demon_slime_FREE_v1.0.zip",
+      "sha256": "4D3C2662DB6249E4EE984F39F6668B6D0E6D2E5AB6C7511356708689A625AC31",
+      "categories": ["enemy", "boss", "demon", "slime"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_metal_bladekeeper_free_v1_1",
+      "archive": "Elementals_metal_bladekeeper_FREE_v1.1.zip",
+      "sha256": "4E00A4897434A393AEB75DF022A70A564CDC25CCE17AA34B0C741CC989E19263",
+      "categories": ["character", "hero_candidate", "elemental", "metal", "warrior"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "evil_wizard_2",
+      "archive": "EVil Wizard 2.zip",
+      "sha256": "438EE456BF4F6FDE3CFF1BD80A0356174756C46788911703F4AD7096C120029A",
+      "categories": ["character", "enemy", "wizard", "magic"],
+      "license_status": "bundled_license"
+    },
+    {
+      "id": "nightborne",
+      "archive": "NightBorne.zip",
+      "sha256": "7AD4F229BE547DAAA8868FB5B6F46BF0C4525DC716F2E3BF285ACD86C8D52929",
+      "categories": ["character", "enemy", "dark"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "flying_obelisk_simple",
+      "archive": "FlyingObelisk_Simple.zip",
+      "sha256": "517CDC75D65FFC3371F4FEFD63E01EF67AC1ADE392B0E00BF6458BF4C0611349",
+      "categories": ["enemy", "environment", "obelisk", "magic"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "blood_moon_tower_free",
+      "archive": "BloodMoonTower_free_version.zip",
+      "sha256": "991015DBB87CC9E962C49EB7FEFFDDF884E767CCD16F21BA1656213388CBB10E",
+      "categories": ["enemy", "environment", "tower", "dark"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "elementals_crystal_mauler_free_v1_0",
+      "archive": "Elementals_Crystal_Mauler_Free_v1.0.zip",
+      "sha256": "D21F5E4BAF8F57B3C87D83245E87C437B7D3ADFB5803079151C034A2C9BB83D7",
+      "categories": ["character", "hero_candidate", "elemental", "crystal", "warrior"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "acid_vfx_01_02",
+      "archive": "Acid VFX 01 - 02.rar",
+      "sha256": "CB58E7F68C29D48499D5C340E818328AB0A8B1C0B68D8560E890EF3820618803",
+      "categories": ["vfx", "acid", "poison", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "earth_effect_01",
+      "archive": "Earth Effect 01.rar",
+      "sha256": "45FC3A727F871D568A7011E4E53C43B00169157EA6FDB730559702756D5AEB92",
+      "categories": ["vfx", "earth", "projectile", "skill"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "smear_vfx_01",
+      "archive": "Smear VFX 01.rar",
+      "sha256": "A67756CEE2F991DD0BAF0353CEE9640C92B10CEA95DEA67C758D0F00D5EEA406",
+      "categories": ["vfx", "smear", "motion", "source"],
+      "license_status": "missing_local_proof"
+    }
+  ],
+  "directories": [
+    {
+      "id": "human_warriors_free",
+      "directory": "Human Warriors [FREE]",
+      "sha256": "86A5AEEDCFA424DD70F665444AAE9A4235619C4A3C0F8F0D3C0BBEF7BBB05B67",
+      "categories": ["character", "hero_candidate", "warrior"],
+      "license_status": "missing_local_proof"
+    }
+  ],
+  "loose_files": [
+    {
+      "id": "flame_demon_single_frame",
+      "file": "FlameDemon.png",
+      "target_name": "flame_demon.png",
+      "sha256": "537D0DBBBA5ADFF0CD2B9AF2B7B6709244BA0F272E3F298A62883745B41E9867",
+      "categories": ["enemy", "monster", "icon"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "blacksmith_idle_working",
+      "file": "Idle Working.png",
+      "target_name": "blacksmith_idle_working.png",
+      "sha256": "E1C056EA61D736EC55D3E0AFFE3F81285A00BED4B3D3B302C23F134407FB8F97",
+      "categories": ["npc", "town", "animation"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "pixel_card_asset_atlas",
+      "file": "pixelCardAssest_V01.png",
+      "target_name": "pixel_card_asset_atlas.png",
+      "sha256": "8EB22784F7028682D8278A896FAD65D0A2AD48505F8DCCF9A919D9B096BDA1F5",
+      "categories": ["ui", "card", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "card_backs_2021_atlas",
+      "file": "cardbacks4092021.png",
+      "target_name": "card_backs_2021_atlas.png",
+      "sha256": "42591139F80BEA9DB4D213EDEC91DD29EE10ECC32EB876F7A4D9645A9D14BF93",
+      "categories": ["ui", "card", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "card_rip_fx_sheet_loose",
+      "file": "cardripFX_spritesheet.png",
+      "target_name": "card_rip_fx_spritesheet.png",
+      "sha256": "2AFA17B73EEC0549F8FFEC9F765F9C725E580ECF6699F183697C7AE70087A37F",
+      "categories": ["ui", "card", "vfx"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "square_circle_ui_vector_atlas",
+      "file": "squareCircle_vector.png",
+      "target_name": "square_circle_ui_vector_atlas.png",
+      "sha256": "9F634DC9EE42811903BDF0169AC3C3D5D68F23B6543A22DF89FEFD75F32F91ED",
+      "categories": ["ui", "button", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "card_backs_pixel_atlas",
+      "file": "cardBacks.png",
+      "target_name": "card_backs_pixel_atlas.png",
+      "sha256": "597DF35D66113284DEFD2F24CA11AF0327846E60C96535D1D43D3F2A8A4B3279",
+      "categories": ["ui", "card", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "soul_hero_brand_icon_variant",
+      "file": "ChatGPT Image 04_50_21 15 thg 7, 2026.png",
+      "target_name": "soul_hero_brand_icon_variant.png",
+      "sha256": "33896362791F37BA7EC077F3004E2A146D27AFA3FC51FEF9F03635F588806051",
+      "categories": ["branding", "generated", "reference"],
+      "license_status": "generated_project_source"
+    },
+    {
+      "id": "soul_hero_logo_variant_color",
+      "file": "ChatGPT Image 04_50_51 15 thg 7, 2026.png",
+      "target_name": "soul_hero_logo_variant_color.png",
+      "sha256": "076DE29DB87AA5FC7006855A5851968CACE16A08A61F06E15013123A0AFB589C",
+      "categories": ["branding", "generated", "reference"],
+      "license_status": "generated_project_source"
+    },
+    {
+      "id": "soul_hero_logo_variant_white",
+      "file": "ChatGPT Image 04_50_59 15 thg 7, 2026.png",
+      "target_name": "soul_hero_logo_variant_white.png",
+      "sha256": "BDB77329BD570BBA98497A4C58AC18A6A41AE5043AAD4DDADD63F4E5B8B4C155",
+      "categories": ["branding", "generated", "reference"],
+      "license_status": "generated_project_source"
+    },
+    {
+      "id": "soul_hero_emblem_variant",
+      "file": "ChatGPT Image 04_51_10 15 thg 7, 2026.png",
+      "target_name": "soul_hero_emblem_variant.png",
+      "sha256": "3E6978D1505D48962217CA26968DD751B5B38B299303E6167686EF167BBC0D9B",
+      "categories": ["branding", "generated", "reference"],
+      "license_status": "generated_project_source"
+    },
+    {
+      "id": "pixel_weapons_32x32_free",
+      "file": "32x32_PixelWeapons_Free.png",
+      "target_name": "pixel_weapons_32x32_free.png",
+      "sha256": "0B7D45BEC142AF6D4D984A88E8D8D401196B73E6198309C5D1B22A4495AD1F9B",
+      "categories": ["weapon", "ui", "icon", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "free_skills_atlas",
+      "file": "Free_Skills.png",
+      "target_name": "free_skills.png",
+      "sha256": "BE4F7401BFCEF56FBA67C1914472A08D832711314295A19E14E3AEDB0ED9ABF0",
+      "categories": ["ui", "icon", "skill", "atlas"],
+      "license_status": "missing_local_proof"
+    },
+    {
+      "id": "necromancer_creativekind_sheet",
+      "file": "Necromancer_creativekind-Sheet.png",
+      "target_name": "necromancer_creativekind_sheet.png",
+      "sha256": "46DB78BAA972BC2E541CACE0BB9877DCAEDEADE242665EB6E090B8B131A59742",
+      "categories": ["character", "enemy", "necromancer", "spritesheet"],
+      "license_status": "missing_local_proof"
+    }
+  ]
+}

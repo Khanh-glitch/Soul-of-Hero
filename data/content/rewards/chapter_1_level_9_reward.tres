@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=4 format=3]
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_hero_soul_grant.gd" id="2_soul"]
+
+[sub_resource type="Resource" id="RareSwordSoul"]
+script = ExtResource("2_soul")
+grant_id = &"level_9_rare_sword_duplicate"
+hero_id = &"sword_hero"
+rarity = 2
+item_level = 9
+source_id = &"chapter_1_level_9_first_clear"
+seed = 19001
+affinity = "warrior"
+supported_action_tags = PackedStringArray("normal_attack", "active", "summon", "departure", "relay")
+
+[resource]
+resource_name = "Chapter 1 Level 9 First Clear Reward"
+script = ExtResource("1")
+bundle_id = &"chapter_1_level_9_reward"
+account_currency = 820
+hero_materials = 18
+monster_fragments = 8
+player_level_grant = 1
+hero_soul_grants = Array[Resource]([SubResource("RareSwordSoul")])

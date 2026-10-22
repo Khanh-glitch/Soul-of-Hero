@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "free_topdown_pixel_dungeon",
+    "archive":  "free-2d-top-down-pixel-dungeon-asset-pack.zip",
+    "sha256":  "4344FEEF186C63D926F788D40EDA2DD37DFD480F869D8D88FD4DDFF5075E0CCD",
+    "imported_at":  "2026-07-15T16:50:35.6436242Z",
+    "files":  40,
+    "bytes":  5025012,
+    "categories":  [
+                       "environment",
+                       "map",
+                       "props"
+                   ],
+    "license_status":  "bundled_license"
+}

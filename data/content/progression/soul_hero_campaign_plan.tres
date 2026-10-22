@@ -1,0 +1,51 @@
+[gd_resource type="Resource" script_class="CampaignProgressionPlan" format=3 uid="uid://bqi0p2i4d7a8v"]
+
+[ext_resource type="Script" uid="uid://ch76mwnufrryh" path="res://game/content/progression/campaign_progression_plan.gd" id="1_plan"]
+[ext_resource type="Script" uid="uid://vrj1sd11end3" path="res://game/content/progression/campaign_milestone_definition.gd" id="2_milestone"]
+[ext_resource type="Script" uid="uid://cyl3ku07avona" path="res://game/content/progression/campaign_narrative_phase_definition.gd" id="3_phase"]
+
+[sub_resource type="Resource" id="ArcherRecruitment"]
+script = ExtResource("2_milestone")
+milestone_id = &"chapter_1_level_5_archer_recruitment"
+implementation_status = 1
+status_note = "CONTENT READY: the Level 5 boss declares a guaranteed loot profile consumed by the generic LootDirector and GroundLoot reward core. The Level 5 runtime only observes the physical pickup for its objective. The pickup transaction grants a Normal level-1 Archer Soul and ownership without changing the team; CampaignProgressionService remains disabled because milestone completion alone is not entitlement."
+campaign_slot = 5
+level_id = &"chapter_1_level_5"
+boss_enemy_id = &"hooded_archer_miniboss"
+recruited_hero_id = &"archer_hero"
+granted_feature_ids = PackedStringArray("soul_hero", "soul_relay")
+reward_transaction_id = &"campaign:chapter_1_level_5:archer_soul_pickup:v1"
+assign_recruited_hero_to_first_reserve = false
+narrative_summary = "Sword defeats the hostile KingdomArcher, then must physically recover the dropped base Hero Soul. Pickup stores Archer in inventory without effect; the player's explicit Equip action in the wardrobe is the sole activation trigger, including during the current run when the wardrobe is available."
+
+[sub_resource type="Resource" id="WizardRecruitmentFuture"]
+script = ExtResource("2_milestone")
+milestone_id = &"chapter_2_level_20_wizard_recruitment"
+implementation_status = 2
+status_note = "PLAYABLE: Level 20 defeats the Wizard boss, then generic LootDirector and GroundLoot resolve a separate physical Wizard Soul pickup. ChapterTwoLevelRuntime only observes that pickup to unlock the exit. Axe only retreats at 50% on Level 15 and grants no Hero entitlement."
+campaign_slot = 20
+chapter_number = 2
+level_id = &"chapter_2_level_20"
+boss_enemy_id = &"wizard_hero_boss"
+recruited_hero_id = &"wizard_hero"
+granted_feature_ids = PackedStringArray("wizard_hero")
+reward_transaction_id = &"campaign:chapter_2_level_20:wizard_soul_pickup:v1"
+narrative_summary = "Wizard dies at the heart of the Coven Foundry, then the player must physically collect the released Wizard Hero Soul. Pickup adds the Soul to inventory without changing Active or Reserve; explicit wardrobe Equip is the only activation trigger."
+
+[sub_resource type="Resource" id="SwordArcherEscape"]
+script = ExtResource("3_phase")
+phase_id = &"chapter_1_sword_archer_escape"
+implementation_status = 1
+status_note = "PARTIAL: Level 5 establishes Sword and Archer; Levels 6-10 retain authored encounter contracts while their story copy is being retargeted from Axe to Archer."
+start_campaign_slot = 5
+end_campaign_slot = 10
+party_rule = 1
+featured_hero_ids = PackedStringArray("sword_hero", "archer_hero")
+required_feature_ids = PackedStringArray("soul_hero", "soul_relay")
+narrative_goal = "Sword and Archer cooperate through the escape route, using Soul Relay as a close-range/ranged partnership rather than a power upgrade."
+
+[resource]
+resource_name = "Soul of Hero Campaign Progression Plan"
+script = ExtResource("1_plan")
+milestones = Array[ExtResource("2_milestone")]([SubResource("ArcherRecruitment"), SubResource("WizardRecruitmentFuture")])
+narrative_phases = Array[ExtResource("3_phase")]([SubResource("SwordArcherEscape")])

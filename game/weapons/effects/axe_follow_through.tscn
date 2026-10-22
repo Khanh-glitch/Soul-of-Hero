@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/weapons/effects/axe_follow_through.gd" id="1_script"]
+[node name="AxeFollowThrough" type="Node2D"]
+z_index = 8
+script = ExtResource("1_script")
+
+[node name="AxeSprite" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+modulate = Color(1, 0.76, 0.32, 0.72)
+scale = Vector2(0.72, 0.72)

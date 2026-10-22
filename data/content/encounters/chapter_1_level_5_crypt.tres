@@ -1,0 +1,161 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3 uid="uid://cauewh1274n56"]
+
+[ext_resource type="Script" uid="uid://d0ve8acy3o36l" path="res://game/content/encounters/encounter_definition.gd" id="1_encounter"]
+[ext_resource type="Script" uid="uid://djdgambkorbaa" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2_spawn"]
+[ext_resource type="Script" uid="uid://bo1m3mwr2j2r2" path="res://game/content/encounters/encounter_group_definition.gd" id="3_group"]
+[ext_resource type="Script" uid="uid://bm7kwws06w4ph" path="res://game/content/encounters/encounter_wave_definition.gd" id="4_wave"]
+[ext_resource type="Script" uid="uid://cavdtginx1582" path="res://game/content/encounters/encounter_warning_definition.gd" id="5_warning"]
+[ext_resource type="Script" uid="uid://bkuyjsemgao7e" path="res://game/content/encounters/encounter_objective_definition.gd" id="6_objective"]
+[ext_resource type="Script" uid="uid://b4d371ibkdcmy" path="res://game/content/encounters/encounter_completion_contract.gd" id="7_completion"]
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("7_completion")
+required_objective_ids = PackedStringArray("clear_level_5_crypt", "defeat_hooded_archer_miniboss", "collect_archer_hero_soul")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l5_exit")
+
+[sub_resource type="Resource" id="ClearObjective"]
+script = ExtResource("6_objective")
+objective_id = &"clear_level_5_crypt"
+description_key = "objective.clear_level_5_crypt"
+
+[sub_resource type="Resource" id="ArcherObjective"]
+script = ExtResource("6_objective")
+objective_id = &"defeat_hooded_archer_miniboss"
+description_key = "objective.defeat_hooded_archer_miniboss"
+objective_type = 1
+target_id = &"hooded_archer_miniboss"
+target_count = 1
+
+[sub_resource type="Resource" id="CollectArcherSoulObjective"]
+script = ExtResource("6_objective")
+objective_id = &"collect_archer_hero_soul"
+description_key = "objective.collect_archer_hero_soul"
+objective_type = 6
+target_id = &"archer_hero_soul_collected"
+target_count = 1
+
+[sub_resource type="Resource" id="EntryWarning"]
+script = ExtResource("5_warning")
+warning_id = &"level_5_crypt_warning"
+message_key = "encounter.warning.hooded_archer"
+visible_seconds = 1.25
+
+[sub_resource type="Resource" id="CampOneSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_1_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l5_c1_skeleton_01", "l5_c1_skeleton_02", "l5_c1_skeleton_03", "l5_c1_skeleton_04")
+formation_id = &"double_anchor_screen"
+interval_seconds = 0.1
+maximum_alive = 4
+
+[sub_resource type="Resource" id="CampOneReapers"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_1_reapers"
+enemy_id = &"bone_reaper"
+count = 2
+spawn_marker_ids = PackedStringArray("l5_c1_reaper_01", "l5_c1_reaper_02")
+formation_id = &"double_anchor"
+maximum_alive = 2
+
+[sub_resource type="Resource" id="CampOne"]
+script = ExtResource("3_group")
+group_id = &"level_5_camp_1"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampOneSwords"), SubResource("CampOneReapers")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CampTwoSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_2_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l5_c2_skeleton_01", "l5_c2_skeleton_02", "l5_c2_skeleton_03")
+formation_id = &"blood_court_screen"
+interval_seconds = 0.1
+maximum_alive = 3
+
+[sub_resource type="Resource" id="CampTwoReapers"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_2_reapers"
+enemy_id = &"bone_reaper"
+count = 2
+spawn_marker_ids = PackedStringArray("l5_c2_reaper_01", "l5_c2_reaper_02")
+formation_id = &"blood_court_anchors"
+maximum_alive = 2
+
+[sub_resource type="Resource" id="CampTwoVampire"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_2_vampire"
+enemy_id = &"blood_vampire"
+spawn_marker_ids = PackedStringArray("l5_c2_vampire")
+formation_id = &"blood_court_center"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="CampTwo"]
+script = ExtResource("3_group")
+group_id = &"level_5_camp_2"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampTwoSwords"), SubResource("CampTwoReapers"), SubResource("CampTwoVampire")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CampThreeSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_3_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l5_c3_skeleton_01", "l5_c3_skeleton_02", "l5_c3_skeleton_03")
+formation_id = &"last_guard_screen"
+interval_seconds = 0.1
+maximum_alive = 3
+
+[sub_resource type="Resource" id="CampThreeReaper"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_camp_3_reaper"
+enemy_id = &"bone_reaper"
+spawn_marker_ids = PackedStringArray("l5_c3_reaper_01")
+formation_id = &"last_guard_anchor"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="CampThree"]
+script = ExtResource("3_group")
+group_id = &"level_5_camp_3"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampThreeSwords"), SubResource("CampThreeReaper")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CryptWave"]
+script = ExtResource("4_wave")
+wave_id = &"level_5_three_blood_camps"
+groups = Array[ExtResource("3_group")]([SubResource("CampOne"), SubResource("CampTwo"), SubResource("CampThree")])
+inter_group_delay_seconds = 0.5
+
+[sub_resource type="Resource" id="ArcherSpawn"]
+script = ExtResource("2_spawn")
+entry_id = &"level_5_hooded_archer_miniboss"
+enemy_id = &"hooded_archer_miniboss"
+spawn_marker_ids = PackedStringArray("l5_hooded_archer_miniboss")
+formation_id = &"blood_crucible_center"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="ArcherGroup"]
+script = ExtResource("3_group")
+group_id = &"level_5_hooded_archer_miniboss"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("ArcherSpawn")])
+
+[sub_resource type="Resource" id="ArcherWave"]
+script = ExtResource("4_wave")
+wave_id = &"level_5_archer_finale"
+groups = Array[ExtResource("3_group")]([SubResource("ArcherGroup")])
+start_delay_seconds = 0.5
+
+[resource]
+resource_name = "Chapter 1 Level 5 - Blood Crucible"
+script = ExtResource("1_encounter")
+encounter_id = &"chapter_1_level_5_crypt"
+display_name = "Blood Crucible and KingdomArcher"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "crypt", "blood", "dense_camps", "archer", "miniboss", "physical_soul_pickup")
+authoring_notes = "Sixteen guardians lead into KingdomArcher. The exit requires both boss defeat and a successful physical pickup of the Normal Level 1 Archer Hero Soul."
+waves = Array[ExtResource("4_wave")]([SubResource("CryptWave"), SubResource("ArcherWave")])
+warnings = Array[ExtResource("5_warning")]([SubResource("EntryWarning")])
+objectives = Array[ExtResource("6_objective")]([SubResource("ClearObjective"), SubResource("ArcherObjective"), SubResource("CollectArcherSoulObjective")])
+completion = SubResource("Completion")

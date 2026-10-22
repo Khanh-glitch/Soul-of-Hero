@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://b4c2kpxtftgp4"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="A"]
+script = ExtResource("2")
+entry_id = &"crimson_reaper"
+combatant_id = &"crimson_reaper"
+unique = true
+miniboss = true
+authoring_notes = "Dedicated named Level 9 identity. The live runtime defers this exact marker until all three physical Gate Seals and then applies crimson_reaper_elite through explicit durability, damage, cadence, movement, reach, and reward axes."
+
+[resource]
+script = ExtResource("1")
+roster_id = &"chapter_1_level_9_roster"
+campaign_slot = 9
+authoring_status = 1
+authoring_notes = "Production one-unit boss-gate roster: exactly one dedicated Crimson Reaper, no proxy and no random elite roll."
+entries = Array[ExtResource("2")]([SubResource("A")])

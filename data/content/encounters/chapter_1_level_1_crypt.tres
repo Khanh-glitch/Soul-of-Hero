@@ -1,0 +1,89 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3 uid="uid://ck75l68xrxu4r"]
+
+[ext_resource type="Script" uid="uid://d0ve8acy3o36l" path="res://game/content/encounters/encounter_definition.gd" id="1_encounter"]
+[ext_resource type="Script" uid="uid://djdgambkorbaa" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2_spawn"]
+[ext_resource type="Script" uid="uid://bo1m3mwr2j2r2" path="res://game/content/encounters/encounter_group_definition.gd" id="3_group"]
+[ext_resource type="Script" uid="uid://bm7kwws06w4ph" path="res://game/content/encounters/encounter_wave_definition.gd" id="4_wave"]
+[ext_resource type="Script" uid="uid://cavdtginx1582" path="res://game/content/encounters/encounter_warning_definition.gd" id="5_warning"]
+[ext_resource type="Script" uid="uid://bkuyjsemgao7e" path="res://game/content/encounters/encounter_objective_definition.gd" id="6_objective"]
+[ext_resource type="Script" uid="uid://b4d371ibkdcmy" path="res://game/content/encounters/encounter_completion_contract.gd" id="7_completion"]
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("7_completion")
+required_objective_ids = PackedStringArray("clear_level_1_crypt")
+gate_action = 1
+gate_entity_ids = PackedStringArray("exit")
+
+[sub_resource type="Resource" id="ClearObjective"]
+script = ExtResource("6_objective")
+objective_id = &"clear_level_1_crypt"
+description_key = "objective.clear_level_1_crypt"
+
+[sub_resource type="Resource" id="EntryWarning"]
+script = ExtResource("5_warning")
+warning_id = &"level_1_crypt_warning"
+message_key = "encounter.warning.crypt_first_oath"
+visible_seconds = 1.25
+
+[sub_resource type="Resource" id="SpawnCampOne"]
+script = ExtResource("2_spawn")
+entry_id = &"level_1_camp_1_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l1_c1_skeleton_01", "l1_c1_skeleton_02", "l1_c1_skeleton_03", "l1_c1_skeleton_04")
+formation_id = &"opening_square"
+interval_seconds = 0.12
+maximum_alive = 4
+
+[sub_resource type="Resource" id="CampOne"]
+script = ExtResource("3_group")
+group_id = &"level_1_camp_1"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("SpawnCampOne")])
+
+[sub_resource type="Resource" id="SpawnCampTwo"]
+script = ExtResource("2_spawn")
+entry_id = &"level_1_camp_2_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l1_c2_skeleton_01", "l1_c2_skeleton_02", "l1_c2_skeleton_03", "l1_c2_skeleton_04")
+formation_id = &"training_ring"
+interval_seconds = 0.12
+maximum_alive = 4
+
+[sub_resource type="Resource" id="CampTwo"]
+script = ExtResource("3_group")
+group_id = &"level_1_camp_2"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("SpawnCampTwo")])
+
+[sub_resource type="Resource" id="SpawnCampThree"]
+script = ExtResource("2_spawn")
+entry_id = &"level_1_camp_3_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l1_c3_skeleton_01", "l1_c3_skeleton_02", "l1_c3_skeleton_03", "l1_c3_skeleton_04")
+formation_id = &"final_wedge"
+interval_seconds = 0.12
+maximum_alive = 4
+
+[sub_resource type="Resource" id="CampThree"]
+script = ExtResource("3_group")
+group_id = &"level_1_camp_3"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("SpawnCampThree")])
+
+[sub_resource type="Resource" id="CryptWave"]
+script = ExtResource("4_wave")
+wave_id = &"level_1_three_camps"
+groups = Array[ExtResource("3_group")]([SubResource("CampOne"), SubResource("CampTwo"), SubResource("CampThree")])
+inter_group_delay_seconds = 0.5
+
+[resource]
+resource_name = "Chapter 1 Level 1 - First Oath Crypt"
+script = ExtResource("1_encounter")
+encounter_id = &"chapter_1_level_1_crypt"
+display_name = "First Oath Skeleton Camps"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "crypt", "dense_camps")
+authoring_notes = "Runtime remains JSON-driven. The catalog mirrors three authored camps of four Skeleton Swordsmen."
+waves = Array[ExtResource("4_wave")]([SubResource("CryptWave")])
+warnings = Array[ExtResource("5_warning")]([SubResource("EntryWarning")])
+objectives = Array[ExtResource("6_objective")]([SubResource("ClearObjective")])
+completion = SubResource("Completion")

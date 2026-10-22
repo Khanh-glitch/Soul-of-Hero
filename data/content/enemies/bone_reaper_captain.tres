@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/bone_reaper_captain.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Bone Reaper Captain"
+script = ExtResource("1_definition")
+enemy_id = &"bone_reaper_captain"
+layout_type_ids = PackedStringArray("bone_reaper_captain")
+display_name = "Bone Reaper Captain"
+bestiary_summary = "A veteran Reaper whose heavier returning disc seals the Blood Crucible and guards the imprisoned Axe Soul."
+role_tags = PackedStringArray("ranged", "returning_projectile", "miniboss", "boss", "crypt", "chapter_1")
+development_only = false
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"captain_returning_disc"
+target_logic_id = &"nearest_player"
+max_health = 258.0
+movement_speed = 52.0
+preferred_range = 113.0
+attack_range = 204.0
+awareness_range = 230.0
+telegraph_seconds = 0.64
+recovery_seconds = 0.68
+attack_cooldown_seconds = 1.8
+attack_damage = 18.0
+stagger_damage = 14.0
+stagger_resistance = 0.25
+crowd_control_resistance = 0.2
+mastery_reward = 24
+score_reward = 650
+authoring_notes = "V0.4 Level 5 canon miniboss. Reuses the existing Bone Reaper sprite strips, SpectralDisc, VFX and collision footprint; only the controller profile and presentation scale differ."

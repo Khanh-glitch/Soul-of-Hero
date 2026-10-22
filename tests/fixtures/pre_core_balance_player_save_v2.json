@@ -1,0 +1,76 @@
+{
+	"schema_version": 2,
+	"revision": 37,
+	"progression": {
+		"unlocked_heroes": {
+			"sword_hero": true
+		},
+		"player": {
+			"level": 100,
+			"xp": 0,
+			"stat_allocation": {
+				"hp": 200,
+				"damage": 150,
+				"mana": 150
+			},
+			"skill_allocations": {
+				"sword_hero": {
+					"normal_attack": 20,
+					"active_skill": 20,
+					"dash": 20,
+					"soul_ready_condition": 20,
+					"summon_skill": 20,
+					"departure_skill": 20
+				}
+			}
+		}
+	},
+	"soul_team": {
+		"active_hero": "sword_hero",
+		"reserve_souls": ["", ""],
+		"capacity": 2,
+		"selected_soul_instances": {
+			"sword_hero": "pre_core_balance_sword_001"
+		}
+	},
+	"inventory": {
+		"hero_soul_rules_version": 2,
+		"hero_souls": [
+			{
+				"instance_id": "pre_core_balance_sword_001",
+				"hero_id": "sword_hero",
+				"rarity": 0,
+				"item_level": 100,
+				"affinity": "warrior",
+				"variant_id": "",
+				"affixes": [],
+				"monster_soul_id": "",
+				"locked": true,
+				"favorite": true,
+				"equipped": true,
+				"source_id": "pre_core_balance"
+			}
+		],
+		"auxiliary_equipment": [
+			{
+				"uuid": "11111111-2222-3333-4444-555555555555",
+				"slot": "soul_vessel",
+				"rarity": "normal",
+				"item_level": 100,
+				"primary": {
+					"stat_id": "max_hp_flat",
+					"unit": "flat",
+					"value": 21.5
+				},
+				"affixes": [],
+				"favorite": true,
+				"locked": true
+			}
+		]
+	},
+	"auxiliary_loadout": {
+		"soul_vessel": "11111111-2222-3333-4444-555555555555",
+		"soul_trace": "",
+		"soul_focus": ""
+	}
+}

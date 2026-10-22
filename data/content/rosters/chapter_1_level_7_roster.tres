@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://1jpj1xuf48th"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="A"]
+script = ExtResource("2")
+entry_id = &"beacon_swords"
+combatant_id = &"skeleton_swordsman"
+count = 12
+elite_eligible = true
+
+[sub_resource type="Resource" id="B"]
+script = ExtResource("2")
+entry_id = &"beacon_reapers"
+combatant_id = &"bone_reaper"
+count = 4
+elite_eligible = true
+
+[resource]
+script = ExtResource("1")
+roster_id = &"chapter_1_level_7_roster"
+campaign_slot = 7
+authoring_notes = "Runtime-authored three-wave Beacon defense roster: 4+1, 4+1, then 4+2. All sixteen markers use existing project-owned Skeleton and Bone Reaper assets."
+entries = Array[ExtResource("2")]([SubResource("A"), SubResource("B")])

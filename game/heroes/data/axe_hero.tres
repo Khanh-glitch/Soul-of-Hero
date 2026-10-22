@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/hero_definition.gd" id="1"]
+[ext_resource type="Resource" path="res://game/weapons/data/axe.tres" id="2_weapon"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"axe_hero"
+display_name = "Axe"
+role_summary = "Committed area controller using charge and outbound/return geometry."
+production_ready = true
+minimum_rarity = 1
+affinity = "Warrior"
+base_max_hp = 1450.0
+base_power = 30.0
+base_max_mana = 70.0
+base_move_speed_multiplier = 0.88
+primary_weapon = ExtResource("2_weapon")
+base_damage = 30
+active_skill_enabled = true
+ready_condition_behavior_id = &"crowd_pressure"
+ready_lifetime_seconds = 0.25
+crowd_hostiles_required = 3
+crowd_pressure_radius = 150.0
+crowd_requires_active_threat = true
+summon_skill_name = "Reaper Drop"
+summon_behavior_id = &"reaper_drop"
+summon_duration_seconds = 1.2
+takeover_windows = Array[Vector2]([Vector2(0.12, 0.24), Vector2(0.43, 0.58), Vector2(0.94, 1.12)])
+unused_support_cooldown_seconds = 12.0
+departure_skill_name = "Last Orbit"
+departure_behavior_id = &"last_orbit"
+departure_duration_seconds = 0.7

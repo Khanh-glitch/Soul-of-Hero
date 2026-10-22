@@ -1,0 +1,168 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/ui/screens/hub/tabs/arsenal_tab.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://game/ui/screens/hub/tabs/components/hero_library_panel.tscn" id="2_library"]
+
+[node name="HeroRosterTab" type="VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+script = ExtResource("1_script")
+
+[node name="RosterSummary" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Title" type="Label" parent="RosterSummary"]
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.780392, 0.396078, 1)
+theme_override_font_sizes/font_size = 14
+text = "ĐỘI HÌNH / KHO TRANG BỊ"
+autowrap_mode = 0
+
+[node name="PlayerSummary" type="Label" parent="RosterSummary"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 9
+text = "ĐANG ĐỌC HỒ SƠ…"
+text_overrun_behavior = 3
+autowrap_mode = 0
+horizontal_alignment = 2
+
+[node name="RosterTabs" type="TabContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+clip_tabs = true
+
+[node name="HERO LIBRARY" parent="RosterTabs" instance=ExtResource("2_library")]
+layout_mode = 2
+
+[node name="TEAM & SOULS" type="MarginContainer" parent="RosterTabs"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 4
+
+[node name="SoulRoot" type="VBoxContainer" parent="RosterTabs/TEAM & SOULS"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="SoulTeamSummary" type="VBoxContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="SectionDivider" type="HSeparator" parent="RosterTabs/TEAM & SOULS/SoulRoot"]
+layout_mode = 2
+
+[node name="SoulInventorySplit" type="HSplitContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+split_offset = 228
+
+[node name="InventoryScroll" type="ScrollContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot/SoulInventorySplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SoulInventoryList" type="VBoxContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot/SoulInventorySplit/InventoryScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(190, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="DetailScroll" type="ScrollContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot/SoulInventorySplit"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="SoulDetail" type="VBoxContainer" parent="RosterTabs/TEAM & SOULS/SoulRoot/SoulInventorySplit/DetailScroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="PLAYER STATS" type="ScrollContainer" parent="RosterTabs"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Margin" type="MarginContainer" parent="RosterTabs/PLAYER STATS"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+
+[node name="StatsList" type="VBoxContainer" parent="RosterTabs/PLAYER STATS/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="SKILLS" type="ScrollContainer" parent="RosterTabs"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Margin" type="MarginContainer" parent="RosterTabs/SKILLS"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+
+[node name="SkillsList" type="VBoxContainer" parent="RosterTabs/SKILLS/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="AUX GEAR" type="ScrollContainer" parent="RosterTabs"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Margin" type="MarginContainer" parent="RosterTabs/AUX GEAR"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 6
+
+[node name="AuxList" type="VBoxContainer" parent="RosterTabs/AUX GEAR/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+
+[node name="SwordHeroButton" type="Button" parent="."]
+visible = false
+layout_mode = 2
+text = "K-NIGHT • CHIẾN BINH ÂM GIỚI"
+
+[node name="SkillSummary" type="Label" parent="."]
+visible = false
+layout_mode = 2
+text = "KỸ NĂNG CHỦ ĐỘNG • LINH HỒN CHIẾN BINH"
+
+[node name="ReserveTwoLabel" type="Label" parent="."]
+visible = false
+layout_mode = 2
+text = "CHỈ DÙNG MỘT CẶP HERO"
+metadata/_production_locked = true

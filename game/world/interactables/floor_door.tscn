@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/world/interactables/floor_door.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="Rectangle_interaction"]
+size = Vector2(22, 28)
+
+[node name="FloorDoor" type="Area2D"]
+collision_layer = 32
+collision_mask = 2
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -18)
+scale = Vector2(1.6, 1.6)
+texture_filter = 1
+
+[node name="Glow" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -14)
+texture_scale = 1.6
+shadow_enabled = true
+shadow_filter = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -12)
+shape = SubResource("Rectangle_interaction")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

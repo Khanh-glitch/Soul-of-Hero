@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/hooded_archer_miniboss.tscn" id="2_scene"]
+
+[resource]
+resource_name = "KingdomArcher"
+script = ExtResource("1_definition")
+enemy_id = &"hooded_archer_miniboss"
+layout_type_ids = PackedStringArray("hooded_archer_miniboss")
+display_name = "KingdomArcher"
+bestiary_summary = "A ranged duelist who controls distance with readable line shots. Defeating them releases the base Archer Hero Soul as a physical pickup."
+role_tags = PackedStringArray("ranged", "projectile", "spacing", "miniboss", "boss", "crypt", "chapter_1")
+development_only = false
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"hooded_archer_rhythm"
+target_logic_id = &"preferred_range_player"
+max_health = 360.0
+movement_speed = 72.0
+preferred_range = 182.0
+attack_range = 360.0
+awareness_range = 360.0
+telegraph_seconds = 0.44
+recovery_seconds = 0.60
+attack_cooldown_seconds = 0.85
+attack_damage = 12.0
+stagger_damage = 8.0
+stagger_resistance = 0.25
+crowd_control_resistance = 0.25
+mastery_reward = 24
+score_reward = 650
+authoring_notes = "Level 5 Archer recruitment boss. Bow-local charge cues, target-bound Soul Mark, wall-stopped projectiles and a 50-point poise budget make Sword counterplay readable without screen-wide aim lines or inflated one-hit damage."

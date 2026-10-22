@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[node name="AuxItemIcon" type="TextureRect"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 2
+texture_filter = 1
+expand_mode = 1
+stretch_mode = 5

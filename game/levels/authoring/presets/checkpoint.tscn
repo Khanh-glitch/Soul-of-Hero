@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/items/flag/flag_1.png" id="2_preview"]
+
+[node name="Checkpoint" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "checkpoint"
+display_name = "CHECKPOINT"
+marker_color = Color(0.34, 1, 0.62, 1)
+preview_texture = ExtResource("2_preview")
+preview_scale = Vector2(2, 2)
+preview_offset = Vector2(0, -16)
+preview_tint = Color(0.45, 1, 0.7, 1)

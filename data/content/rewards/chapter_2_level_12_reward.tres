@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_item_stack.gd" id="2_item"]
+[ext_resource type="Resource" path="res://data/content/items/venom_spine.tres" id="3_definition"]
+
+[sub_resource type="Resource" id="VenomSpine"]
+script = ExtResource("2_item")
+item_id = &"venom_spine"
+quantity = 1
+item_definition = ExtResource("3_definition")
+
+[resource]
+resource_name = "Chapter 2 Level 12 First Clear Reward"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_2_level_12_reward"
+account_currency = 1150
+hero_materials = 31
+monster_fragments = 14
+player_level_grant = 1
+item_stacks = Array[ExtResource("2_item")]([SubResource("VenomSpine")])

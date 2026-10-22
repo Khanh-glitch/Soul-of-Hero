@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/wizard_hero_boss.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Wizard of the Foundry Heart"
+script = ExtResource("1_definition")
+enemy_id = &"wizard_hero_boss"
+layout_type_ids = PackedStringArray("wizard_hero_boss")
+display_name = "Wizard — Foundry Heart"
+bestiary_summary = "The Chapter 2 final boss. His real death releases a separate physical Wizard Soul pickup."
+role_tags = PackedStringArray("chapter_2", "wizard", "boss", "final_boss", "two_phase")
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"wizard_foundry_heart"
+target_logic_id = &"nearest_player"
+max_health = 1480.0
+movement_speed = 74.0
+preferred_range = 150.0
+attack_range = 286.0
+awareness_range = 680.0
+telegraph_seconds = 0.82
+recovery_seconds = 0.72
+attack_cooldown_seconds = 1.92
+attack_damage = 37.0
+stagger_damage = 30.0
+crowd_control_resistance = 0.78
+loot_table_id = &"chapter_2_wizard_first_clear"
+mastery_reward = 2100
+score_reward = 3000
+audio_profile_id = &"wizard_foundry"
+authoring_notes = "Physical Soul ownership is deliberately handled by level_20_wizard_soul in LootDirector after this actor emits a real death."

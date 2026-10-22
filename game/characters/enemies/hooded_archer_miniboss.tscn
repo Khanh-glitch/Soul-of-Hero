@@ -1,0 +1,55 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/characters/enemies/hooded_archer_miniboss.gd" id="1_script"]
+
+[sub_resource type="CapsuleShape2D" id="BodyShape"]
+radius = 7.0
+height = 18.0
+
+[node name="KingdomArcher" type="CharacterBody2D" groups=["enemies", "minibosses"]]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="GroundShadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -1)
+color = Color(0.04, 0.02, 0.09, 0.58)
+polygon = PackedVector2Array(-11, -4, 11, -4, 14, 0, 11, 4, -11, 4, -14, 0)
+
+[node name="AimChargeVfx" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 5
+texture_filter = 1
+
+[node name="SoulMarkVfx" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 6
+texture_filter = 1
+
+[node name="CastAuraVfx" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 1
+position = Vector2(0, -20)
+texture_filter = 1
+
+[node name="DashTrailVfx" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 2
+texture_filter = 1
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+texture_filter = 1
+position = Vector2(0, -24)
+scale = Vector2(1.12, 1.12)
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -7)
+shape = SubResource("BodyShape")

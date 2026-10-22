@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "flying_demon_2d_pixel_art",
+    "archive":  "Flying Demon 2D Pixel Art.zip",
+    "sha256":  "6946F23532D925EC874FB1D0D270BA12EC6B9439ED7DDD7CF99A8BEA7AF01645",
+    "imported_at":  "2026-07-15T16:50:38.0440485Z",
+    "files":  12,
+    "bytes":  65016,
+    "categories":  [
+                       "enemy",
+                       "monster",
+                       "boss"
+                   ],
+    "license_status":  "bundled_license"
+}

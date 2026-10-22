@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_16")
+required_feature_ids = PackedStringArray("salvage")
+
+[resource]
+resource_name = "Chapter 2 Level 17 - Nghi Lễ Giữ Lửa"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_17"
+display_name = "Nghi Lễ Giữ Lửa"
+content_status = 2
+objective_summary = "Hộ tống Flame qua hai trạm phòng thủ để đến sanctum."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "firekeeping", "carry_escort", "mobile_defense")
+authoring_notes = "Chapter 2 data contract. CarryEscort keeps Flame with the player between stations. Each defense lasts 20 to 25 seconds and starts future waves only when threat budget permits. Enemies must telegraph their integrity channel, Flame takes no friendly damage, and zero integrity resets only the current station while healing the player to at least 50 percent. First clear unlocks controlled Crafting/reroll."
+campaign_slot = 17
+chapter_number = 2
+chapter_level_number = 7
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_17.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_17_firekeeping_rite")
+entry_encounter_id = &"chapter_2_level_17_firekeeping_rite"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("crafting")
+completion_reward_bundle_id = &"chapter_2_level_17_reward"
+completion_transaction_id = &"campaign:chapter_2_level_17:first_clear:v1"
+recommended_mastery = 5750

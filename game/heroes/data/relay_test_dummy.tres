@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="HeroDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/heroes/hero_definition.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"relay_test_dummy"
+display_name = "Relay Test Dummy"
+role_summary = "Developer-only ownership target for Soul Relay verification."
+debug_only = true
+base_damage = 1
+combo_names = Array[String](["Debug Tap"])
+combo_damage_multipliers = Array[float]([1.0])
+combo_action_durations = Array[float]([0.2])
+combo_hit_windows = Array[Vector2]([Vector2(0.05, 0.10)])
+combo_animation_names = Array[StringName]([&"attack"])
+active_skill_enabled = false
+melee_threats_required = 1
+melee_threat_radius = 150.0
+ready_lifetime_seconds = 6.0
+summon_skill_name = "Debug Summon"
+summon_behavior_id = &"debug_summon"
+summon_duration_seconds = 0.5
+takeover_windows = Array[Vector2]([Vector2(0.16, 0.30)])
+unused_support_cooldown_seconds = 1.0
+departure_skill_name = "Debug Departure"
+departure_behavior_id = &"debug_departure"
+departure_duration_seconds = 0.2

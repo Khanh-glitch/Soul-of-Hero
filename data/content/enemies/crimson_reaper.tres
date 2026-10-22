@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/crimson_reaper_enemy.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Crimson Reaper"
+script = ExtResource("1_definition")
+enemy_id = &"crimson_reaper"
+layout_type_ids = PackedStringArray("crimson_reaper")
+display_name = "Crimson Reaper"
+bestiary_summary = "A named Gate executioner awakened only after all three seals are physically broken. Its Elite contract emphasizes durability while damage, cadence, movement, reach, and reward grow on separate bounded axes."
+role_tags = PackedStringArray("named_elite", "boss", "ranged", "returning_projectile", "crimson_gate")
+development_only = false
+density_eligible = false
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"returning_disc"
+target_logic_id = &"nearest_player"
+max_health = 86.0
+movement_speed = 48.0
+preferred_range = 116.0
+attack_range = 188.0
+awareness_range = 205.0
+telegraph_seconds = 0.56
+recovery_seconds = 0.72
+attack_cooldown_seconds = 2.1
+attack_damage = 14.0
+stagger_damage = 10.0
+mastery_reward = 24
+score_reward = 150
+authoring_notes = "Production Level 9 pre-Elite authority. The dedicated controller starts from the proven Bone Reaper outcome; one deterministic Elite projection applies the shared explicit pressure axes exactly once."

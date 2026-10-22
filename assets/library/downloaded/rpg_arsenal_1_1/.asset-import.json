@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "rpg_arsenal_1_1",
+    "archive":  "RPG_ARSENAL_V1.1.zip",
+    "sha256":  "641E40C6988A57AD25CD15AA46E760F16F6F185C65DB2DF1232958FFB0887903",
+    "imported_at":  "2026-07-15T16:51:26.3169542Z",
+    "files":  299,
+    "bytes":  408837,
+    "categories":  [
+                       "ui",
+                       "icon",
+                       "weapon"
+                   ],
+    "license_status":  "bundled_license"
+}

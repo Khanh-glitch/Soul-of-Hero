@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_entry.gd" id="1_71vqf"]
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_definition.gd" id="2_vvmgu"]
+
+[sub_resource type="Resource" id="Resource_6tsfs"]
+script = ExtResource("1_71vqf")
+entry_id = &"coven_wraith"
+combatant_id = &"coven_wraith"
+count = 5
+authoring_notes = "5 authored marker(s) in chapter_2_level_15."
+
+[sub_resource type="Resource" id="Resource_arau2"]
+script = ExtResource("1_71vqf")
+entry_id = &"axe_soul_boss"
+combatant_id = &"axe_soul_boss"
+unique = true
+miniboss = true
+authoring_notes = "1 authored marker(s) in chapter_2_level_15."
+
+[resource]
+script = ExtResource("2_vvmgu")
+roster_id = &"chapter_2_level_15_roster"
+campaign_slot = 15
+authoring_status = 1
+authoring_notes = "Runtime-ready Chapter 2 roster generated from deterministic directed markers."
+entries = Array[ExtResource("1_71vqf")]([SubResource("Resource_6tsfs"), SubResource("Resource_arau2")])

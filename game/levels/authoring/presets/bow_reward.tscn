@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/vfx/sword/sword_echo_anchor_32x32_8.png" id="2_preview"]
+
+[node name="BowReward" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "bow_reward"
+display_name = "BOW REWARD"
+marker_color = Color(0.4, 0.9, 1, 1)
+preview_texture = ExtResource("2_preview")
+preview_columns = 8
+preview_scale = Vector2(0.85, 0.85)
+preview_offset = Vector2(0, -14)
+preview_tint = Color(0.52, 0.92, 1, 1)

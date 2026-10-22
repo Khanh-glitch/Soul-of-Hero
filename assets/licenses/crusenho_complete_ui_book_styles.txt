@@ -1,0 +1,15 @@
+Complete UI Book Styles Pack (TravelBookLite)
+Creator: Crusenho Agus Hennihuno
+Creator page: https://crusenho.itch.io
+Product page: https://crusenho.itch.io/complete-ui-book-styles-pack
+
+Project use: Field Codex, realtime XP/focus HUD, damage/combo frames and the
+continuous level-completion chooser. Text, colors and layout are adaptations;
+the original pixel textures remain under the downloaded package at:
+
+assets/library/downloaded/complete_ui_book_styles_free/
+
+The full license supplied by the creator is preserved verbatim at
+`assets/library/downloaded/complete_ui_book_styles_free/License.txt`. It allows
+personal and commercial use/adaptation with appropriate creator credit and
+prohibits redistribution/resale of the asset material as an asset pack.

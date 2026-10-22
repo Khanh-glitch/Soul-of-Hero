@@ -1,0 +1,279 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/components/settings_panel.gd" id="1_settings"]
+
+[node name="SettingsPanel" type="ScrollContainer"]
+custom_minimum_size = Vector2(0, 210)
+horizontal_scroll_mode = 0
+script = ExtResource("1_settings")
+
+[node name="Content" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="Intro" type="Label" parent="Content"]
+layout_mode = 2
+text = "Âm thanh, combat feedback, điều khiển và tiếp cận"
+
+[node name="Values" type="GridContainer" parent="Content"]
+layout_mode = 2
+columns = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+
+[node name="MasterLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Âm lượng tổng"
+
+[node name="MasterSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MasterValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="MusicLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Nhạc"
+
+[node name="MusicSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="MusicValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="SfxLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Hiệu ứng"
+
+[node name="SfxSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="SfxValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="ShakeLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Rung màn hình khi trúng đòn"
+
+[node name="ShakeSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 1.0
+
+[node name="ShakeValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="AimLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Hỗ trợ ngắm"
+
+[node name="AimSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.05
+value = 0.5
+
+[node name="AimValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "50%"
+horizontal_alignment = 2
+
+[node name="UiScaleLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Kích thước giao diện • SẮP CÓ"
+
+[node name="UiScaleSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.75
+max_value = 1.5
+step = 0.05
+value = 1.0
+editable = false
+
+[node name="UiScaleValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="JoystickOpacityLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Độ mờ cần điều khiển ảo"
+
+[node name="JoystickOpacitySlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.25
+max_value = 1.0
+step = 0.05
+value = 0.7
+
+[node name="JoystickOpacityValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "70%"
+horizontal_alignment = 2
+
+[node name="JoystickSizeLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Kích thước cần điều khiển ảo"
+
+[node name="JoystickSizeSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.75
+max_value = 1.5
+step = 0.05
+value = 1.0
+
+[node name="JoystickSizeValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="ButtonScaleLabel" type="Label" parent="Content/Values"]
+layout_mode = 2
+text = "Kích thước nút"
+
+[node name="ButtonScaleSlider" type="HSlider" parent="Content/Values"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(170, 22)
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 0.75
+max_value = 1.5
+step = 0.05
+value = 1.0
+
+[node name="ButtonScaleValue" type="Label" parent="Content/Values"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100%"
+horizontal_alignment = 2
+
+[node name="Toggles" type="GridContainer" parent="Content"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 18
+
+[node name="VibrationToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rung thiết bị"
+button_pressed = true
+disabled = true
+
+[node name="DamageToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Số sát thương"
+button_pressed = true
+
+[node name="FlashesToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Giảm chớp sáng"
+
+[node name="MotionToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Giảm chuyển động"
+
+[node name="FullscreenToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Toàn màn hình"
+
+[node name="ContrastToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Viền tương phản cao"
+
+[node name="LeftHandedToggle" type="CheckButton" parent="Content/Toggles"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Bố cục thuận tay trái"
+
+[node name="PaletteRow" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+
+[node name="PaletteLabel" type="Label" parent="Content/PaletteRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Bảng màu báo đòn"
+
+[node name="PaletteOption" type="OptionButton" parent="Content/PaletteRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(180, 34)
+layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="Content"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 6
+
+[node name="DefaultsButton" type="Button" parent="Content/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 34)
+layout_mode = 2
+text = "MẶC ĐỊNH"
+
+[node name="SaveButton" type="Button" parent="Content/Actions"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 34)
+layout_mode = 2
+text = "LƯU THAY ĐỔI"
+
+[node name="StatusLabel" type="Label" parent="Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = ""
+horizontal_alignment = 2

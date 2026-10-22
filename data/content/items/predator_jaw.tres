@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/ui/loot/soul_focus.png" id="2_icon"]
+
+[resource]
+resource_name = "Predator Jaw"
+script = ExtResource("1_item")
+item_id = &"predator_jaw"
+display_name = "Hàm Săn Mồi"
+description = "Chiến lợi phẩm từ nghi thức triệu hồi của kẻ săn linh hồn."
+icon = ExtResource("2_icon")
+authoring_notes = "Chapter 2 material reward."

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="EliteModifierDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/elite_modifier_definition.gd" id="1_modifier"]
+
+[resource]
+resource_name = "Crimson Reaper Elite"
+script = ExtResource("1_modifier")
+modifier_id = &"crimson_reaper_elite"
+display_name = "Crimson Reaper"
+authoring_notes = "Named Level 9 Elite. Uses the same explicit pressure axes as the taught Elite contract, with a unique crimson presentation and a 2.5x reward-score proxy."
+health_multiplier = 2.25
+damage_multiplier = 1.35
+attack_rate_multiplier = 1.15
+movement_multiplier = 1.08
+range_multiplier = 1.05
+reward_score_multiplier = 2.5
+visual_scale_multiplier = 1.36
+minimum_rarity = &"mythic"

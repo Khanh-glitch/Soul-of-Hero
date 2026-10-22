@@ -1,0 +1,129 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Bar01a.png" id="2_bar"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Fill01a.png" id="3_fill"]
+
+[sub_resource type="StyleBoxTexture" id="BarBackground"]
+texture = ExtResource("2_bar")
+texture_margin_left = 4.0
+texture_margin_top = 1.0
+texture_margin_right = 4.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.58, 0.49, 0.58, 1)
+
+[sub_resource type="StyleBoxTexture" id="HealthFill"]
+texture = ExtResource("3_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.92, 0.24, 0.26, 1)
+
+[sub_resource type="StyleBoxTexture" id="StaminaFill"]
+texture = ExtResource("3_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.2, 0.72, 0.42, 1)
+
+[sub_resource type="StyleBoxTexture" id="SoulFill"]
+texture = ExtResource("3_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.43, 0.42, 0.88, 1)
+
+[node name="StatCluster" type="PanelContainer"]
+custom_minimum_size = Vector2(218, 91)
+theme = ExtResource("1_theme")
+theme_type_variation = &"HudPanel"
+
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Identity" type="Label" parent="Rows"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "SWORD  •  KẺ MANG LINH HỒN"
+
+[node name="Health" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Rows/Health"]
+custom_minimum_size = Vector2(22, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.47, 0.42, 1)
+text = "HP"
+
+[node name="Bar" type="ProgressBar" parent="Rows/Health"]
+custom_minimum_size = Vector2(118, 11)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("HealthFill")
+value = 78.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="Rows/Health"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "78/100"
+horizontal_alignment = 2
+
+[node name="Stamina" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Rows/Stamina"]
+custom_minimum_size = Vector2(22, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.94, 0.6, 1)
+text = "TL"
+
+[node name="Bar" type="ProgressBar" parent="Rows/Stamina"]
+custom_minimum_size = Vector2(118, 11)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("StaminaFill")
+value = 61.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="Rows/Stamina"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "61/100"
+horizontal_alignment = 2
+
+[node name="Soul" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Rows/Soul"]
+custom_minimum_size = Vector2(22, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.76, 1, 1)
+text = "SO"
+
+[node name="Bar" type="ProgressBar" parent="Rows/Soul"]
+custom_minimum_size = Vector2(118, 11)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/background = SubResource("BarBackground")
+theme_override_styles/fill = SubResource("SoulFill")
+value = 42.0
+show_percentage = false
+
+[node name="Value" type="Label" parent="Rows/Soul"]
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "42/100"
+horizontal_alignment = 2

@@ -1,0 +1,715 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" path="res://game/ui/field_codex.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_BookCover01a.png" id="2_cover"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_BookPageLeft01a.png" id="3_left"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_BookPageRight01a.png" id="4_right"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Line01a.png" id="5_line"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconGear01a.png" id="6_gear"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconHeart01e.png" id="7_heart"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconEnergy01d.png" id="8_energy"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconStar01c.png" id="9_star"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconCross01a.png" id="10_cross"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconArrow01a.png" id="11_arrow"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kenney/rpg_audio/bookOpen.ogg" id="12_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kenney/rpg_audio/bookClose.ogg" id="13_close"]
+[ext_resource type="AudioStream" path="res://assets/audio/sfx/kenney/rpg_audio/bookFlip1.ogg" id="14_page"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="15_theme"]
+
+[node name="FieldCodex" type="Control"]
+visible = false
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme = ExtResource("15_theme")
+script = ExtResource("1_script")
+
+[node name="SoftDim" type="TextureRect" parent="."]
+modulate = Color(0.08, 0.04, 0.11, 0.24)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("2_cover")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Book" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -294.0
+offset_top = -169.0
+offset_right = 294.0
+offset_bottom = 169.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Cover" type="TextureRect" parent="Book"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_cover")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.5, 0.26, 0.17, 1)
+
+[node name="LeftPage" type="TextureRect" parent="Book"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 12.0
+offset_right = 294.0
+offset_bottom = 326.0
+mouse_filter = 2
+texture = ExtResource("3_left")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="RightPage" type="TextureRect" parent="Book"]
+layout_mode = 0
+offset_left = 294.0
+offset_top = 12.0
+offset_right = 575.0
+offset_bottom = 326.0
+mouse_filter = 2
+texture = ExtResource("4_right")
+expand_mode = 1
+stretch_mode = 0
+
+[node name="Brand" type="Label" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 65.0
+offset_top = 28.0
+offset_right = 243.0
+offset_bottom = 53.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.28, 0.12, 0.07, 1)
+theme_override_font_sizes/font_size = 15
+text = "KIẾM SĨ • LV 1"
+horizontal_alignment = 1
+
+[node name="PreviousEquipmentHero" type="Button" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 39.0
+offset_top = 28.0
+offset_right = 63.0
+offset_bottom = 53.0
+tooltip_text = "Xem trang bị của Hero trước trong cặp đã chọn"
+text = "‹"
+
+[node name="NextEquipmentHero" type="Button" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 245.0
+offset_top = 28.0
+offset_right = 269.0
+offset_bottom = 53.0
+tooltip_text = "Xem trang bị của Hero tiếp theo trong cặp đã chọn"
+text = "›"
+
+[node name="BrandLine" type="TextureRect" parent="Book"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 53.0
+offset_right = 260.0
+offset_bottom = 58.0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.2, 0.12, 1)
+
+[node name="Sections" type="HBoxContainer" parent="Book"]
+layout_mode = 0
+offset_left = 39.0
+offset_top = 64.0
+offset_right = 269.0
+offset_bottom = 99.0
+mouse_filter = 1
+theme_override_constants/separation = 4
+
+[node name="EquipmentSection" type="Button" parent="Book/Sections"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(113, 34)
+layout_mode = 2
+mouse_filter = 0
+toggle_mode = true
+button_pressed = true
+theme_override_colors/font_color = Color(0.84, 0.56, 0.29, 1)
+theme_override_colors/font_hover_color = Color(1, 0.78, 0.46, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.84, 0.56, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 0.9, 0.68, 1)
+theme_override_colors/icon_normal_color = Color(0.84, 0.66, 0.42, 1)
+theme_override_colors/icon_hover_color = Color(1, 0.78, 0.46, 1)
+theme_override_colors/icon_pressed_color = Color(1, 0.9, 0.68, 1)
+theme_override_constants/icon_max_width = 17
+theme_override_font_sizes/font_size = 10
+text = "TRANG BỊ"
+icon = ExtResource("6_gear")
+
+[node name="UpgradeSection" type="Button" parent="Book/Sections"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(113, 34)
+layout_mode = 2
+mouse_filter = 0
+toggle_mode = true
+theme_override_colors/font_color = Color(0.84, 0.56, 0.29, 1)
+theme_override_colors/font_hover_color = Color(1, 0.78, 0.46, 1)
+theme_override_colors/font_pressed_color = Color(1, 0.84, 0.56, 1)
+theme_override_colors/font_hover_pressed_color = Color(1, 0.9, 0.68, 1)
+theme_override_colors/icon_normal_color = Color(0.84, 0.66, 0.42, 1)
+theme_override_colors/icon_hover_color = Color(1, 0.78, 0.46, 1)
+theme_override_colors/icon_pressed_color = Color(1, 0.9, 0.68, 1)
+theme_override_constants/icon_max_width = 17
+theme_override_font_sizes/font_size = 10
+text = "NÂNG CẤP"
+icon = ExtResource("8_energy")
+
+[node name="EquipmentSlotArea" type="Control" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 38.0
+offset_top = 102.0
+offset_right = 270.0
+offset_bottom = 326.0
+mouse_filter = 1
+
+[node name="SlotTitle" type="Label" parent="Book/EquipmentSlotArea"]
+visible = false
+layout_mode = 0
+offset_right = 232.0
+offset_bottom = 18.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.36, 0.17, 0.09, 1)
+theme_override_font_sizes/font_size = 9
+text = "Ô TRANG BỊ  •  KÉO VÀ THẢ"
+horizontal_alignment = 1
+
+[node name="EquipmentSlotGrid" type="GridContainer" parent="Book/EquipmentSlotArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 6.0
+offset_top = 0.0
+offset_right = 226.0
+offset_bottom = 90.0
+mouse_filter = 1
+theme_override_constants/h_separation = 3
+theme_override_constants/v_separation = 2
+columns = 4
+
+[node name="CharacterStatsTitle" type="Label" parent="Book/EquipmentSlotArea"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 5.0
+offset_top = 146.0
+offset_right = 227.0
+offset_bottom = 159.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.42, 0.25, 0.14, 1)
+theme_override_font_sizes/font_size = 9
+text = "KIẾM SĨ  •  CẤP 1  •  CÒN 5"
+horizontal_alignment = 1
+
+[node name="CharacterStats" type="Label" parent="Book/EquipmentSlotArea"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 8.0
+offset_top = 160.0
+offset_right = 224.0
+offset_bottom = 216.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.28, 0.15, 0.08, 1)
+theme_override_constants/line_spacing = 1
+theme_override_font_sizes/font_size = 10
+text = "HP 100\nMANA 100\nPOWER 20\nVŨ KHÍ 20"
+
+[node name="StatsLine" type="TextureRect" parent="Book/EquipmentSlotArea"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 93.0
+offset_right = 225.0
+offset_bottom = 96.0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.2, 0.12, 0.46)
+
+[node name="StatsStrip" type="HBoxContainer" parent="Book/EquipmentSlotArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 99.0
+offset_right = 228.0
+offset_bottom = 137.0
+mouse_filter = 1
+theme_override_constants/separation = 2
+
+[node name="Hp" type="VBoxContainer" parent="Book/EquipmentSlotArea/StatsStrip"]
+custom_minimum_size = Vector2(54, 38)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = -3
+
+[node name="Name" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Hp"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.46, 0.23, 0.12, 1)
+theme_override_font_sizes/font_size = 8
+text = "HP"
+horizontal_alignment = 1
+
+[node name="StatHpValue" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Hp"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.27, 0.1, 0.06, 1)
+theme_override_font_sizes/font_size = 13
+text = "100"
+horizontal_alignment = 1
+
+[node name="StatHpDelta" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Hp"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.12, 0.48, 0.23, 1)
+theme_override_font_sizes/font_size = 8
+text = "+0"
+horizontal_alignment = 1
+
+[node name="Mana" type="VBoxContainer" parent="Book/EquipmentSlotArea/StatsStrip"]
+custom_minimum_size = Vector2(54, 38)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = -3
+
+[node name="Name" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Mana"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.46, 0.23, 0.12, 1)
+theme_override_font_sizes/font_size = 8
+text = "MANA"
+horizontal_alignment = 1
+
+[node name="StatManaValue" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Mana"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.27, 0.1, 0.06, 1)
+theme_override_font_sizes/font_size = 13
+text = "100"
+horizontal_alignment = 1
+
+[node name="StatManaDelta" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Mana"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.12, 0.48, 0.23, 1)
+theme_override_font_sizes/font_size = 8
+text = "+0"
+horizontal_alignment = 1
+
+[node name="Power" type="VBoxContainer" parent="Book/EquipmentSlotArea/StatsStrip"]
+custom_minimum_size = Vector2(54, 38)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = -3
+
+[node name="Name" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Power"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.46, 0.23, 0.12, 1)
+theme_override_font_sizes/font_size = 8
+text = "POWER"
+horizontal_alignment = 1
+
+[node name="StatPowerValue" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Power"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.27, 0.1, 0.06, 1)
+theme_override_font_sizes/font_size = 13
+text = "20"
+horizontal_alignment = 1
+
+[node name="StatPowerDelta" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Power"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.12, 0.48, 0.23, 1)
+theme_override_font_sizes/font_size = 8
+text = "+0"
+horizontal_alignment = 1
+
+[node name="Weapon" type="VBoxContainer" parent="Book/EquipmentSlotArea/StatsStrip"]
+custom_minimum_size = Vector2(54, 38)
+layout_mode = 2
+tooltip_text = "Sát thương thực tế sau Power, Hero Weapon và trang bị"
+mouse_filter = 1
+theme_override_constants/separation = -3
+
+[node name="Name" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Weapon"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.46, 0.23, 0.12, 1)
+theme_override_font_sizes/font_size = 8
+text = "DMG"
+horizontal_alignment = 1
+
+[node name="StatWeaponValue" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Weapon"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.27, 0.1, 0.06, 1)
+theme_override_font_sizes/font_size = 13
+text = "20"
+horizontal_alignment = 1
+
+[node name="StatWeaponDelta" type="Label" parent="Book/EquipmentSlotArea/StatsStrip/Weapon"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.12, 0.48, 0.23, 1)
+theme_override_font_sizes/font_size = 8
+text = "+0"
+horizontal_alignment = 1
+
+[node name="SecondaryStatsLine" type="TextureRect" parent="Book/EquipmentSlotArea"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 124.0
+offset_right = 225.0
+offset_bottom = 127.0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.2, 0.12, 0.32)
+
+[node name="SecondaryStatsGrid" type="GridContainer" parent="Book/EquipmentSlotArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 4.0
+offset_top = 131.0
+offset_right = 228.0
+offset_bottom = 208.0
+mouse_filter = 1
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 1
+columns = 2
+
+[node name="UpgradeIntro" type="Control" parent="Book"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 40.0
+offset_top = 110.0
+offset_right = 268.0
+offset_bottom = 272.0
+mouse_filter = 2
+
+[node name="Heart" type="TextureRect" parent="Book/UpgradeIntro"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 8.0
+offset_right = 62.0
+offset_bottom = 44.0
+mouse_filter = 2
+texture = ExtResource("7_heart")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Energy" type="TextureRect" parent="Book/UpgradeIntro"]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 8.0
+offset_right = 132.0
+offset_bottom = 44.0
+mouse_filter = 2
+texture = ExtResource("8_energy")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Star" type="TextureRect" parent="Book/UpgradeIntro"]
+layout_mode = 0
+offset_left = 166.0
+offset_top = 8.0
+offset_right = 202.0
+offset_bottom = 44.0
+mouse_filter = 2
+texture = ExtResource("9_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="UpgradePointSummary" type="Label" parent="Book/UpgradeIntro"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 54.0
+offset_right = 228.0
+offset_bottom = 84.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.3, 0.13, 0.07, 1)
+theme_override_font_sizes/font_size = 11
+text = "0 ĐIỂM CHỈ SỐ  •  0 ĐIỂM KỸ NĂNG"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="UpgradeHelp" type="Label" parent="Book/UpgradeIntro"]
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 91.0
+offset_right = 218.0
+offset_bottom = 145.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.41, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 8
+text = "Chỉ số và kỹ năng ở cùng một trang. Mỗi lần cộng được áp dụng ngay khi đang chiến đấu."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="LiveText" type="Label" parent="Book"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 45.0
+offset_top = 282.0
+offset_right = 263.0
+offset_bottom = 300.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.16, 0.37, 0.15, 1)
+theme_override_font_sizes/font_size = 8
+text = "● ÁP DỤNG TỨC THÌ  •  KHÔNG TẠM DỪNG"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="Book"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 50.0
+offset_top = 301.0
+offset_right = 258.0
+offset_bottom = 318.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.41, 0.23, 0.13, 1)
+theme_override_font_sizes/font_size = 8
+text = "I / Tab: đóng  •  E: nhặt đồ"
+horizontal_alignment = 1
+
+[node name="PageTitle" type="Label" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 311.0
+offset_top = 27.0
+offset_right = 557.0
+offset_bottom = 50.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.27, 0.11, 0.06, 1)
+theme_override_font_sizes/font_size = 13
+text = "KHO 0/30"
+horizontal_alignment = 1
+
+[node name="PageLine" type="TextureRect" parent="Book"]
+layout_mode = 0
+offset_left = 319.0
+offset_top = 51.0
+offset_right = 549.0
+offset_bottom = 56.0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.2, 0.12, 1)
+
+[node name="SummaryLabel" type="Label" parent="Book"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 312.0
+offset_top = 58.0
+offset_right = 556.0
+offset_bottom = 76.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.4, 0.22, 0.12, 1)
+theme_override_font_sizes/font_size = 8
+text = "Nhấn để xem • kéo vào ô tương thích"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 310.0
+offset_top = 66.0
+offset_right = 555.0
+offset_bottom = 307.0
+mouse_filter = 0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 0
+
+[node name="EntryList" type="GridContainer" parent="Book/Scroll"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(238, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 2
+theme_override_constants/v_separation = 2
+columns = 6
+
+[node name="DetailArea" type="Control" parent="Book"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 313.0
+offset_top = 66.0
+offset_right = 552.0
+offset_bottom = 307.0
+mouse_filter = 1
+
+[node name="DetailLine" type="TextureRect" parent="Book/DetailArea"]
+layout_mode = 0
+offset_right = 239.0
+offset_bottom = 5.0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.2, 0.12, 0.72)
+
+[node name="DetailTitle" type="Label" parent="Book/DetailArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 6.0
+offset_right = 239.0
+offset_bottom = 28.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.31, 0.13, 0.07, 1)
+theme_override_font_sizes/font_size = 12
+text = "CHỌN MỘT VẬT PHẨM"
+text_overrun_behavior = 3
+
+[node name="DetailText" type="RichTextLabel" parent="Book/DetailArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 30.0
+offset_right = 239.0
+offset_bottom = 190.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.31, 0.17, 0.1, 1)
+theme_override_font_sizes/normal_font_size = 10
+bbcode_enabled = true
+text = "Chi tiết, chỉ số và chức năng sẽ hiện ở đây."
+fit_content = false
+scroll_active = true
+scroll_following = false
+autowrap_mode = 2
+
+[node name="BackAction" type="Button" parent="Book/DetailArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 196.0
+offset_right = 70.0
+offset_bottom = 224.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+text = "QUAY LẠI"
+
+[node name="UpgradeAction" type="Button" parent="Book/DetailArea"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 78.0
+offset_top = 196.0
+offset_right = 159.0
+offset_bottom = 224.0
+tooltip_text = "Cần 1 đá nâng cấp cùng độ hiếm."
+mouse_filter = 0
+theme_override_constants/icon_max_width = 12
+theme_override_font_sizes/font_size = 9
+text = "NÂNG +1"
+icon = ExtResource("9_star")
+
+[node name="EquipAction" type="Button" parent="Book/DetailArea"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 166.0
+offset_top = 196.0
+offset_right = 239.0
+offset_bottom = 224.0
+mouse_filter = 0
+theme_override_constants/icon_max_width = 13
+theme_override_font_sizes/font_size = 9
+text = "TRANG BỊ"
+icon = ExtResource("11_arrow")
+
+[node name="StatusLabel" type="Label" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 315.0
+offset_top = 309.0
+offset_right = 551.0
+offset_bottom = 323.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.25, 0.36, 0.18, 1)
+theme_override_font_sizes/font_size = 7
+text = ""
+horizontal_alignment = 1
+text_overrun_behavior = 3
+
+[node name="CloseButton" type="Button" parent="Book"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 542.0
+offset_top = 20.0
+offset_right = 570.0
+offset_bottom = 48.0
+mouse_filter = 0
+theme_override_constants/icon_max_width = 15
+theme_override_font_sizes/font_size = 0
+icon = ExtResource("10_cross")
+expand_icon = true
+tooltip_text = "Đóng Tủ Đồ (I / Tab)"
+
+[node name="BookOpenSfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("12_open")
+volume_db = -7.0
+bus = &"UI"
+
+[node name="BookCloseSfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("13_close")
+volume_db = -7.0
+bus = &"UI"
+
+[node name="PageSfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("14_page")
+volume_db = -9.0
+bus = &"UI"

@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" format=3 uid="uid://cmimxcuynrr07"]
+
+[ext_resource type="Script" uid="uid://cwyy1kepvibi6" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+[ext_resource type="Script" uid="uid://d0ng874g4f1i4" path="res://game/content/rewards/reward_item_stack.gd" id="2_item"]
+[ext_resource type="Resource" path="res://data/content/items/crypt_bone_shard.tres" id="3_definition"]
+
+[sub_resource type="Resource" id="CryptBoneShard"]
+script = ExtResource("2_item")
+item_id = &"crypt_bone_shard"
+quantity = 3
+item_definition = ExtResource("3_definition")
+
+[resource]
+resource_name = "Chapter 1 Level 2 First Clear Reward"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_1_level_2_reward"
+account_currency = 160
+hero_materials = 3
+player_level_grant = 1
+item_stacks = Array[ExtResource("2_item")]([SubResource("CryptBoneShard")])

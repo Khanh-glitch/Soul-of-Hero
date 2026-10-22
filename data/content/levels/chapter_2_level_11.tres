@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_1_level_10")
+required_feature_ids = PackedStringArray("chapter_2_access")
+
+[resource]
+resource_name = "Chapter 2 Level 11 - Cổng Rơi"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_11"
+display_name = "Cổng Rơi"
+content_status = 2
+objective_summary = "Kích hoạt trực tiếp hai Spirit rồi đến cổng trú ẩn."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "gatefall", "two_spirit_onboarding")
+authoring_notes = "Chapter 2 data contract. Runtime must provide the safe no-damage landing pocket, confirmed direct two-Spirit tutorial, 18 basic Wraith total on Easy, and the recovery-gate objective. Legacy or invalid loadouts must not soft-lock this tutorial. The L10 reconciliation owns second_spirit_slot; this level practices it and does not grant it again."
+campaign_slot = 11
+chapter_number = 2
+chapter_level_number = 1
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_11.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_11_gatefall")
+entry_encounter_id = &"chapter_2_level_11_gatefall"
+unlock_requirements = SubResource("UnlockRequirements")
+completion_reward_bundle_id = &"chapter_2_level_11_reward"
+completion_transaction_id = &"campaign:chapter_2_level_11:first_clear:v1"
+recommended_mastery = 3200

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="LevelRegistry" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/content/level_registry.gd" id="1_registry"]
+[ext_resource type="Resource" path="res://data/content/enemies/skeleton_chaser_sandbox.tres" id="2_enemy"]
+[ext_resource type="Resource" path="res://data/content/encounters/crypt_skeleton_sandbox.tres" id="3_encounter"]
+[ext_resource type="Resource" path="res://data/content/levels/crypt_entrance_sandbox.tres" id="4_level"]
+
+[resource]
+resource_name = "Living Arsenal Sandbox Content Registry"
+script = ExtResource("1_registry")
+registry_id = &"living_arsenal_sandbox"
+schema_version = 1
+initial_feature_ids = PackedStringArray("starter_sword")
+enemy_definitions = Array[Resource]([ExtResource("2_enemy")])
+encounter_definitions = Array[Resource]([ExtResource("3_encounter")])
+level_definitions = Array[Resource]([ExtResource("4_level")])

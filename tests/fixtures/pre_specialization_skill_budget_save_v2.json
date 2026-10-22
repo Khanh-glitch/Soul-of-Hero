@@ -1,0 +1,40 @@
+{
+	"schema_version": 2,
+	"revision": 12,
+	"progression": {
+		"unlocked_heroes": {
+			"sword_hero": true,
+			"archer_hero": true
+		},
+		"player": {
+			"level": 100,
+			"xp": 0,
+			"stat_allocation": {
+				"hp": 0,
+				"damage": 0,
+				"mana": 0
+			},
+			"skill_allocations": {
+				"sword_hero": {
+					"normal_attack": 20,
+					"active_skill": 20,
+					"dash": 20,
+					"soul_ready_condition": 20,
+					"summon_skill": 20,
+					"departure_skill": 20
+				},
+				"archer_hero": {
+					"normal_attack": 20,
+					"active_skill": 20,
+					"dash": 20,
+					"soul_ready_condition": 20,
+					"summon_skill": 20,
+					"departure_skill": 20
+				}
+			}
+		}
+	},
+	"inventory": {
+		"hero_soul_rules_version": 2
+	}
+}

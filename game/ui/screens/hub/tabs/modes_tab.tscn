@@ -1,0 +1,114 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/ui/screens/hub/tabs/modes_tab.gd" id="1_script"]
+
+[node name="ModesTab" type="VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 7
+script = ExtResource("1_script")
+
+[node name="Header" type="Label" parent="."]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.77, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+text = "CHẾ ĐỘ SAU CHIẾN DỊCH"
+
+[node name="Explanation" type="Label" parent="."]
+layout_mode = 2
+text = "Các chế độ được đặt đúng vị trí nhưng chỉ mở khi tiến trình và cơ chế tương ứng đã sẵn sàng."
+autowrap_mode = 2
+
+[node name="Cards" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 7
+
+[node name="HuntCard" type="PanelContainer" parent="Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
+
+[node name="Content" type="VBoxContainer" parent="Cards/HuntCard"]
+layout_mode = 2
+alignment = 1
+
+[node name="HuntIcon" type="TextureRect" parent="Cards/HuntCard/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Cards/HuntCard/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.69, 0.48, 1)
+text = "SĂN QUÁI  •  KHÓA"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="Cards/HuntCard/Content"]
+layout_mode = 2
+text = "Săn mục tiêu để lấy Mảnh Quái.\nMở trong Chương 2 sau Lò Rèn."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ChallengeCard" type="PanelContainer" parent="Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
+
+[node name="Content" type="VBoxContainer" parent="Cards/ChallengeCard"]
+layout_mode = 2
+alignment = 1
+
+[node name="ChallengeIcon" type="TextureRect" parent="Cards/ChallengeCard/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Cards/ChallengeCard/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.69, 0.48, 1)
+text = "THỬ THÁCH  •  KHÓA"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="Cards/ChallengeCard/Content"]
+layout_mode = 2
+text = "Nhiệm vụ có hạt giống cục bộ và biến thể.\nMở ở cuối Chương 2."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DepthCard" type="PanelContainer" parent="Cards"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"CardPanel"
+
+[node name="Content" type="VBoxContainer" parent="Cards/DepthCard"]
+layout_mode = 2
+alignment = 1
+
+[node name="DepthIcon" type="TextureRect" parent="Cards/DepthCard/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="Cards/DepthCard/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.83, 0.69, 0.48, 1)
+text = "VỰC SÂU  •  KHÓA"
+horizontal_alignment = 1
+
+[node name="Body" type="Label" parent="Cards/DepthCard/Content"]
+layout_mode = 2
+text = "Chuỗi phòng tăng độ khó và điểm hồi sinh.\nMở sau khi hoàn thành Màn 20."
+horizontal_alignment = 1
+autowrap_mode = 2

@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/world/interactables/reliquary_branch_seal.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="2_sparkle"]
+
+[sub_resource type="RectangleShape2D" id="Rectangle_interaction"]
+size = Vector2(52, 52)
+
+[sub_resource type="RectangleShape2D" id="Rectangle_barrier"]
+size = Vector2(36, 12)
+
+[node name="ReliquaryBranchSeal" type="Area2D"]
+collision_layer = 32
+collision_mask = 2
+monitorable = true
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -18)
+scale = Vector2(1.4, 1.4)
+z_index = 1
+
+[node name="Glow" type="PointLight2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -6)
+energy = 0.75
+texture_scale = 1.2
+
+[node name="SealAura" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -4)
+z_index = 2
+texture_filter = 1
+texture = ExtResource("2_sparkle")
+hframes = 8
+modulate = Color(0.95, 0.6, 0.32, 0.52)
+
+[node name="SealSlashA" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 3
+points = PackedVector2Array(-10, 4, 10, -12)
+width = 2.0
+default_color = Color(0.95, 0.6, 0.32, 0.88)
+
+[node name="SealSlashB" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 3
+points = PackedVector2Array(-10, -12, 10, 4)
+width = 2.0
+default_color = Color(0.95, 0.6, 0.32, 0.88)
+
+[node name="BranchLabel" type="Label" parent="."]
+unique_name_in_owner = true
+offset_left = -45.0
+offset_top = 19.0
+offset_right = 45.0
+offset_bottom = 44.0
+mouse_filter = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_font_sizes/font_size = 8
+text = "NHÁNH THẦN VẬT\nCHUỘT TRÁI"
+horizontal_alignment = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("Rectangle_interaction")
+
+[node name="Barrier" type="StaticBody2D" parent="."]
+collision_layer = 1
+collision_mask = 0
+
+[node name="BarrierShape" type="CollisionShape2D" parent="Barrier"]
+unique_name_in_owner = true
+position = Vector2(0, 4)
+shape = SubResource("Rectangle_barrier")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

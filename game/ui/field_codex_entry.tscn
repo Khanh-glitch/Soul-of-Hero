@@ -1,0 +1,122 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/ui/field_codex_entry.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_Slot.png" id="2_slot"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_select.png" id="3_select"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconStar01e.png" id="4_star"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Line01a.png" id="5_line"]
+
+[node name="FieldCodexEntry" type="Control"]
+custom_minimum_size = Vector2(238, 42)
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 42.0
+grow_horizontal = 2
+mouse_filter = 0
+script = ExtResource("1_script")
+
+[node name="Separator" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -2.0
+offset_right = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+texture = ExtResource("5_line")
+expand_mode = 1
+stretch_mode = 0
+modulate = Color(0.43, 0.25, 0.14, 0.42)
+
+[node name="IconSlot" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 39.0
+offset_bottom = 39.0
+mouse_filter = 2
+texture = ExtResource("2_slot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SelectionMark" type="TextureRect" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 1.0
+offset_top = 1.0
+offset_right = 41.0
+offset_bottom = 41.0
+mouse_filter = 2
+texture = ExtResource("3_select")
+expand_mode = 1
+stretch_mode = 5
+modulate = Color(0.92, 0.49, 0.12, 1)
+
+[node name="Fallback" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 31.0
+offset_bottom = 31.0
+mouse_filter = 2
+texture = ExtResource("4_star")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Icon" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 7.0
+offset_top = 7.0
+offset_right = 35.0
+offset_bottom = 35.0
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 44.0
+offset_top = 2.0
+offset_right = 177.0
+offset_bottom = 20.0
+mouse_filter = 2
+theme_override_font_sizes/font_size = 10
+text = "Vật phẩm"
+text_overrun_behavior = 3
+
+[node name="Detail" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 44.0
+offset_top = 19.0
+offset_right = 179.0
+offset_bottom = 38.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.31, 0.17, 0.1, 1)
+theme_override_font_sizes/font_size = 9
+text = "Mô tả ngắn"
+text_overrun_behavior = 3
+
+[node name="ActionButton" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -57.0
+offset_top = 7.0
+offset_right = -3.0
+offset_bottom = 35.0
+grow_horizontal = 0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+text = "DÙNG"

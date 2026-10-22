@@ -1,0 +1,75 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/fantasy_icons.png" id="2_icons"]
+
+[sub_resource type="AtlasTexture" id="SwordIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(32, 160, 32, 32)
+
+[node name="ContentCard" type="PanelContainer"]
+custom_minimum_size = Vector2(268, 145)
+theme = ExtResource("1_theme")
+theme_type_variation = &"CardPanel"
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="IconFrame" type="PanelContainer" parent="Layout/Header"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Icon" type="TextureRect" parent="Layout/Header/IconFrame"]
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("SwordIcon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Identity" type="VBoxContainer" parent="Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Kicker" type="Label" parent="Layout/Header/Identity"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "HERO KHỞI ĐẦU  •  KIẾM"
+
+[node name="Title" type="Label" parent="Layout/Header/Identity"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "KẺ MANG LINH HỒN"
+
+[node name="Status" type="Label" parent="Layout/Header/Identity"]
+layout_mode = 2
+theme_type_variation = &"SuccessLabel"
+text = "● ĐANG TRANG BỊ"
+
+[node name="Description" type="Label" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Bốn nhịp chém liên hoàn. Soul Echo lặp lại phần combo còn lại bằng dư ảnh trắng."
+autowrap_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+alignment = 2
+theme_override_constants/separation = 5
+
+[node name="Inspect" type="Button" parent="Layout/Actions"]
+custom_minimum_size = Vector2(88, 30)
+layout_mode = 2
+text = "CHI TIẾT"
+
+[node name="Equip" type="Button" parent="Layout/Actions"]
+custom_minimum_size = Vector2(92, 30)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "TRANG BỊ"

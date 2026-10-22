@@ -1,0 +1,99 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Fill01a.png" id="2_fill"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_boss_fill"]
+texture = ExtResource("2_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.85098, 0.184314, 0.345098, 1)
+
+[node name="CastellanBossHUD" type="CanvasLayer"]
+layer = 92
+
+[node name="BossHudRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_theme")
+
+[node name="BossPanel" type="MarginContainer" parent="BossHudRoot"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -109.0
+offset_top = 3.0
+offset_right = 109.0
+offset_bottom = 53.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BossHudRoot/BossPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 1
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BossHudRoot/BossPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="BossName" type="Label" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.345098, 0.427451, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.96)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 10
+text = "Vampire Castellan (Cấp 10)"
+horizontal_alignment = 1
+
+[node name="HealthRow" type="HBoxContainer" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BossHealthBar" type="ProgressBar" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(158, 7)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/fill = SubResource("StyleBoxTexture_boss_fill")
+show_percentage = false
+
+[node name="BossHealthValue" type="Label" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.827451, 0.862745, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 7
+horizontal_alignment = 2
+
+[node name="BossPhase" type="Label" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.827451, 0.862745, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 7
+text = "GIAI ĐOẠN 1/2 • HUYẾT TRIỀU"
+horizontal_alignment = 1
+
+[node name="BossPattern" type="Label" parent="BossHudRoot/BossPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.960784, 0.776471, 0.419608, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 7
+text = "ĐỌC ĐÒN • PHẢN CÔNG"
+horizontal_alignment = 1

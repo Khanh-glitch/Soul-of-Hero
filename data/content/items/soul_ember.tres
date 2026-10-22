@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="StackItemDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/items/stack_item_definition.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/ui/loot/soul_ember.png" id="2_icon"]
+
+[resource]
+resource_name = "Soul Ember"
+script = ExtResource("1_item")
+item_id = &"soul_ember"
+display_name = "Tinh Chất Linh Hồn"
+description = "Vật liệu linh hồn cơ bản."
+icon = ExtResource("2_icon")
+authoring_notes = "Generic material drop."

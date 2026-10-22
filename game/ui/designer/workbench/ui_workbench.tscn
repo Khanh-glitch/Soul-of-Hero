@@ -1,0 +1,442 @@
+[gd_scene load_steps=25 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="2_backdrop"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/brand_header.tscn" id="3_brand"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/stat_cluster.tscn" id="4_stats"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/action_deck.tscn" id="5_actions"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/content_card.tscn" id="6_card"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/dialog_card.tscn" id="7_dialog"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/navigation_bar.tscn" id="8_navigation"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/prompt_toast.tscn" id="9_toast"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/inventory_slot.tscn" id="10_slot"]
+[ext_resource type="Texture2D" path="res://assets/branding/chapter_1_key_art_imagen.png" id="11_key_art"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="12_emblem"]
+[ext_resource type="Texture2D" path="res://assets/ui/input_prompts/tilemap_packed.png" id="13_prompts"]
+[ext_resource type="Texture2D" path="res://assets/ui/fantasy_icons.png" id="14_icons"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_background.png" id="15_inventory_bg"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_select.png" id="16_inventory_select"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_Slot.png" id="17_inventory_slot"]
+[ext_resource type="Texture2D" path="res://assets/ui/free_inventory/Inventory_Bar.png" id="18_inventory_bar"]
+
+[sub_resource type="AtlasTexture" id="PromptJ"]
+atlas = ExtResource("13_prompts")
+region = Rect2(384, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptK"]
+atlas = ExtResource("13_prompts")
+region = Rect2(400, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptQ"]
+atlas = ExtResource("13_prompts")
+region = Rect2(272, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptSpace"]
+atlas = ExtResource("13_prompts")
+region = Rect2(496, 96, 48, 16)
+
+[sub_resource type="AtlasTexture" id="SwordIcon"]
+atlas = ExtResource("14_icons")
+region = Rect2(32, 160, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AxeIcon"]
+atlas = ExtResource("14_icons")
+region = Rect2(320, 160, 32, 32)
+
+[node name="UIWorkbench" type="Control"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("2_backdrop")]
+layout_mode = 1
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="SafeMargin" type="MarginContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 32
+
+[node name="Catalog" type="VBoxContainer" parent="Scroll/SafeMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 11
+
+[node name="WorkbenchTitle" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+theme_override_font_sizes/font_size = 34
+text = "UI DESIGN WORKBENCH"
+
+[node name="WorkbenchIntro" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 11
+text = "Mở scene này bằng F6 để xem catalog. Kéo component từ game/ui/designer/components vào màn hình cần sửa."
+autowrap_mode = 2
+
+[node name="BrandingHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "01  •  BRANDING & HEADER"
+
+[node name="BrandHeader" parent="Scroll/SafeMargin/Catalog" instance=ExtResource("3_brand")]
+layout_mode = 2
+
+[node name="TypographyHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "02  •  FONT & HIERARCHY"
+
+[node name="TypographyPanel" type="PanelContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="TypeRows" type="VBoxContainer" parent="Scroll/SafeMargin/Catalog/TypographyPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Display" type="Label" parent="Scroll/SafeMargin/Catalog/TypographyPanel/TypeRows"]
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+text = "LINH HỒN KHÔNG LỤI TÀN"
+
+[node name="Title" type="Label" parent="Scroll/SafeMargin/Catalog/TypographyPanel/TypeRows"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "Grenze Gotisch  •  Tiêu đề và tên chương"
+
+[node name="Body" type="Label" parent="Scroll/SafeMargin/Catalog/TypographyPanel/TypeRows"]
+layout_mode = 2
+text = "Handjet SemiBold  •  Nội dung, mô tả, nút và tiếng Việt có dấu."
+
+[node name="Number" type="Label" parent="Scroll/SafeMargin/Catalog/TypographyPanel/TypeRows"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "VT323  •  001245  •  78/100  •  08.4s"
+
+[node name="Muted" type="Label" parent="Scroll/SafeMargin/Catalog/TypographyPanel/TypeRows"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "MutedLabel  •  metadata, chú thích và nội dung cấp ba"
+
+[node name="ComponentsHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "03  •  GAMEPLAY COMPONENTS"
+
+[node name="GameplayRow" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="StatCluster" parent="Scroll/SafeMargin/Catalog/GameplayRow" instance=ExtResource("4_stats")]
+layout_mode = 2
+
+[node name="RightStack" type="VBoxContainer" parent="Scroll/SafeMargin/Catalog/GameplayRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="PromptToast" parent="Scroll/SafeMargin/Catalog/GameplayRow/RightStack" instance=ExtResource("9_toast")]
+layout_mode = 2
+
+[node name="QuickStatus" type="PanelContainer" parent="Scroll/SafeMargin/Catalog/GameplayRow/RightStack"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"HudPanel"
+
+[node name="Row" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog/GameplayRow/RightStack/QuickStatus"]
+layout_mode = 2
+
+[node name="Objective" type="Label" parent="Scroll/SafeMargin/Catalog/GameplayRow/RightStack/QuickStatus/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"KickerLabel"
+text = "MỤC TIÊU  •  Tìm 3 ấn ký"
+
+[node name="Score" type="Label" parent="Scroll/SafeMargin/Catalog/GameplayRow/RightStack/QuickStatus/Row"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+text = "001245"
+
+[node name="ActionDeck" parent="Scroll/SafeMargin/Catalog" instance=ExtResource("5_actions")]
+layout_mode = 2
+
+[node name="CardsHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "04  •  CARDS, DIALOG & STATES"
+
+[node name="CardsRow" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ContentCard" parent="Scroll/SafeMargin/Catalog/CardsRow" instance=ExtResource("6_card")]
+layout_mode = 2
+
+[node name="DialogCard" parent="Scroll/SafeMargin/Catalog/CardsRow" instance=ExtResource("7_dialog")]
+layout_mode = 2
+
+[node name="ButtonPanel" type="PanelContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="ButtonRows" type="VBoxContainer" parent="Scroll/SafeMargin/Catalog/ButtonPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "TRẠNG THÁI NÚT  •  normal / primary / disabled / action"
+
+[node name="Buttons" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Normal" type="Button" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows/Buttons"]
+custom_minimum_size = Vector2(110, 36)
+layout_mode = 2
+text = "BÌNH THƯỜNG"
+
+[node name="Primary" type="Button" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows/Buttons"]
+custom_minimum_size = Vector2(110, 36)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "CHÍNH"
+
+[node name="Disabled" type="Button" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows/Buttons"]
+custom_minimum_size = Vector2(110, 36)
+layout_mode = 2
+text = "ĐÃ KHÓA"
+disabled = true
+
+[node name="Action" type="Button" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows/Buttons"]
+custom_minimum_size = Vector2(110, 42)
+layout_mode = 2
+theme_type_variation = &"ActionButton"
+text = "ACTION"
+
+[node name="InventorySlot" parent="Scroll/SafeMargin/Catalog/ButtonPanel/ButtonRows/Buttons" instance=ExtResource("10_slot")]
+layout_mode = 2
+
+[node name="NavigationHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "05  •  NAVIGATION"
+
+[node name="NavigationBar" parent="Scroll/SafeMargin/Catalog" instance=ExtResource("8_navigation")]
+layout_mode = 2
+
+[node name="AssetsHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "06  •  ASSET PALETTE"
+
+[node name="AssetPanel" type="PanelContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="AssetRows" type="VBoxContainer" parent="Scroll/SafeMargin/Catalog/AssetPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BrandingRow" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="KeyArt" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/BrandingRow"]
+custom_minimum_size = Vector2(240, 116)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("11_key_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Emblem" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/BrandingRow"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("12_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BrandingNotes" type="VBoxContainer" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/BrandingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="Title" type="Label" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/BrandingRow/BrandingNotes"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "BRANDING"
+
+[node name="Body" type="Label" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/BrandingRow/BrandingNotes"]
+layout_mode = 2
+text = "Key art dùng cho title và level detail. Emblem dùng cho logo, icon ứng dụng và header."
+autowrap_mode = 2
+
+[node name="PromptRow" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="PromptLabel" type="Label" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(104, 0)
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "INPUT GLYPHS"
+vertical_alignment = 1
+
+[node name="J" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = SubResource("PromptJ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="K" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = SubResource("PromptK")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Q" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(28, 28)
+layout_mode = 2
+texture = SubResource("PromptQ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Space" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(84, 28)
+layout_mode = 2
+texture = SubResource("PromptSpace")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Sword" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+texture = SubResource("SwordIcon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Axe" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/PromptRow"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+texture = SubResource("AxeIcon")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InventoryRow" type="HBoxContainer" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Label" type="Label" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/InventoryRow"]
+custom_minimum_size = Vector2(104, 0)
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "UI CHROME"
+vertical_alignment = 1
+
+[node name="Background" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/InventoryRow"]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("15_inventory_bg")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Selected" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/InventoryRow"]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("16_inventory_select")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Disabled" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/InventoryRow"]
+custom_minimum_size = Vector2(42, 42)
+layout_mode = 2
+texture = ExtResource("17_inventory_slot")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Bar" type="TextureRect" parent="Scroll/SafeMargin/Catalog/AssetPanel/AssetRows/InventoryRow"]
+custom_minimum_size = Vector2(203, 32)
+layout_mode = 2
+texture = ExtResource("18_inventory_bar")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ScreensHeading" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "07  •  LIVE SCREEN CATALOG"
+
+[node name="ScreenPanel" type="PanelContainer" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"CardPanel"
+
+[node name="ScreenGrid" type="GridContainer" parent="Scroll/SafeMargin/Catalog/ScreenPanel"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 18
+theme_override_constants/v_separation = 5
+
+[node name="TitleScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "TITLE\nres://game/ui/screens/title/title_screen.tscn"
+autowrap_mode = 2
+
+[node name="HubScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "HUB\nres://game/ui/screens/hub/hub_screen.tscn"
+autowrap_mode = 2
+
+[node name="HudScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "HUD\nres://game/ui/HUD.tscn"
+autowrap_mode = 2
+
+[node name="LevelScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "LEVEL DETAIL\nres://game/ui/screens/level_details"
+autowrap_mode = 2
+
+[node name="ResultsScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "RESULTS\nres://game/ui/screens/results"
+autowrap_mode = 2
+
+[node name="CreditsScreen" type="Label" parent="Scroll/SafeMargin/Catalog/ScreenPanel/ScreenGrid"]
+custom_minimum_size = Vector2(260, 34)
+layout_mode = 2
+text = "CREDITS\nres://game/ui/screens/credits"
+autowrap_mode = 2
+
+[node name="Footer" type="Label" parent="Scroll/SafeMargin/Catalog"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "DESIGN RULE  •  640×360 logical viewport  •  8 px safe edge  •  pixel filter nearest  •  không scale texture lẻ"
+horizontal_alignment = 1

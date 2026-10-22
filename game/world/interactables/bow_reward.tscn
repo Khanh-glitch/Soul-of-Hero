@@ -1,0 +1,63 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/world/interactables/bow_reward.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/characters/archer/archer_arrow.png" id="2_arrow"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="3_sparkle"]
+
+[sub_resource type="CircleShape2D" id="PickupShape"]
+radius = 17.0
+
+[node name="BowReward" type="Area2D"]
+z_index = 2
+collision_layer = 32
+collision_mask = 2
+monitorable = false
+script = ExtResource("1_script")
+
+[node name="PickupShape" type="CollisionShape2D" parent="."]
+position = Vector2(0, 2)
+shape = SubResource("PickupShape")
+
+[node name="RewardAura" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = -1
+position = Vector2(0, 2)
+texture_filter = 1
+texture = ExtResource("3_sparkle")
+hframes = 8
+modulate = Color(0.36, 0.88, 1, 0.22)
+
+[node name="BowCurve" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+points = PackedVector2Array(-7, -10, -2, -7, 1, -2, 1, 4, -2, 9, -7, 12)
+width = 2.0
+default_color = Color(0.84, 0.6, 0.34, 0.48)
+
+[node name="BowString" type="Line2D" parent="."]
+unique_name_in_owner = true
+z_index = 1
+points = PackedVector2Array(-7, -10, -7, 12)
+width = 1.0
+default_color = Color(0.75, 0.96, 1, 0.48)
+
+[node name="ArrowSprite" type="Sprite2D" parent="."]
+unique_name_in_owner = true
+z_index = 2
+position = Vector2(1, 1)
+texture_filter = 1
+texture = ExtResource("2_arrow")
+modulate = Color(1, 0.9, 0.62, 0.52)
+
+[node name="RewardLabel" type="Label" parent="."]
+offset_left = -34.0
+offset_top = -31.0
+offset_right = 34.0
+offset_bottom = -17.0
+theme_override_colors/font_color = Color(0.82, 0.95, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 0
+theme_override_font_sizes/font_size = 8
+text = "CUNG LINH HỒN"
+horizontal_alignment = 1

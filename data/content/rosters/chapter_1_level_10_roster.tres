@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://iqm1nffsrbuq"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2"]
+
+[sub_resource type="Resource" id="A"]
+script = ExtResource("2")
+entry_id = &"vampire_castellan"
+combatant_id = &"vampire_castellan"
+unique = true
+miniboss = true
+authoring_notes = "One dedicated two-phase boss runtime. This is not two Blood Vampire proxies."
+
+[resource]
+script = ExtResource("1")
+roster_id = &"chapter_1_level_10_roster"
+campaign_slot = 10
+authoring_status = 1
+authoring_notes = "Runtime-ready exact roster: one unique Vampire Castellan actor across both authored phases."
+entries = Array[ExtResource("2")]([SubResource("A")])

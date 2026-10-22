@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="EnemyDefinition" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/enemies/enemy_definition.gd" id="1_definition"]
+[ext_resource type="PackedScene" path="res://game/characters/enemies/coven_wraith_enemy.tscn" id="2_scene"]
+
+[resource]
+resource_name = "Spirit Leech"
+script = ExtResource("1_definition")
+enemy_id = &"spirit_leech"
+layout_type_ids = PackedStringArray("spirit_leech")
+display_name = "Spirit Leech"
+bestiary_summary = "A violet leech-shade whose close strike announces a Spirit-pressure hit."
+role_tags = PackedStringArray("chapter_2", "wraith", "spirit", "regular")
+base_scene = ExtResource("2_scene")
+attack_behavior_id = &"spirit_leech"
+target_logic_id = &"nearest_player"
+max_health = 238.0
+movement_speed = 68.0
+preferred_range = 34.0
+attack_range = 132.0
+awareness_range = 398.0
+telegraph_seconds = 0.72
+recovery_seconds = 0.85
+attack_cooldown_seconds = 2.22
+attack_damage = 23.0
+stagger_damage = 17.0
+crowd_control_resistance = 0.25
+loot_table_id = &"chapter_2_spirit_leech"
+mastery_reward = 136
+score_reward = 215
+audio_profile_id = &"spirit_leech"
+authoring_notes = "Reserved for composition mixes; its obvious purple telegraph lets players prioritise it."

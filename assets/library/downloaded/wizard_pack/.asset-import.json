@@ -1,0 +1,15 @@
+﻿{
+    "schema_version":  1,
+    "package_id":  "wizard_pack",
+    "archive":  "Wizard Pack.zip",
+    "sha256":  "41167557A3401E7156B6557CFEC932457D333059C6F6393BF958B6B4FE3A2291",
+    "imported_at":  "2026-07-15T16:50:40.6271774Z",
+    "files":  8,
+    "bytes":  73843,
+    "categories":  [
+                       "character",
+                       "hero_candidate",
+                       "magic"
+                   ],
+    "license_status":  "missing_local_proof"
+}

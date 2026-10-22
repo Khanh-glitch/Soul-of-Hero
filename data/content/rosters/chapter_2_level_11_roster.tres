@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_entry.gd" id="1_ilusc"]
+[ext_resource type="Script" path="res://game/content/rosters/level_roster_definition.gd" id="2_4ot7y"]
+
+[sub_resource type="Resource" id="Resource_1o4fg"]
+script = ExtResource("1_ilusc")
+entry_id = &"coven_wraith"
+combatant_id = &"coven_wraith"
+count = 9
+authoring_notes = "9 authored marker(s) in chapter_2_level_11."
+
+[resource]
+script = ExtResource("2_4ot7y")
+roster_id = &"chapter_2_level_11_roster"
+campaign_slot = 11
+authoring_status = 1
+authoring_notes = "Runtime-ready Chapter 2 roster generated from deterministic directed markers."
+entries = Array[ExtResource("1_ilusc")]([SubResource("Resource_1o4fg")])

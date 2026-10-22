@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+
+[resource]
+resource_name = "Chapter 2 Level 20 First Clear Reward - Depth Only"
+script = ExtResource("1_bundle")
+bundle_id = &"chapter_2_level_20_reward"
+account_currency = 3200
+hero_materials = 80
+monster_fragments = 45
+player_level_grant = 1
+hero_shards = {"wizard_hero": 10}

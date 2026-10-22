@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_13")
+required_feature_ids = PackedStringArray("hunt")
+
+[resource]
+resource_name = "Chapter 2 Level 14 - Xóm Giả Kim"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_14"
+display_name = "Xóm Giả Kim"
+content_status = 2
+objective_summary = "Nạp Overload tại hai lab quanh cauldron rồi kích nổ lò trung tâm."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "alchemist_village", "overload", "elite_reveal")
+authoring_notes = "Chapter 2 data contract. Both labs remain available in one run; each contributes 50 percent overload through combat near its cauldron. Easy composition is 12 basic, 8 Venom, and 6 Leech Wraith. Hexwing is a non-damaging story reveal only: it breaks one Soul pipe and retreats without boss bar, death, loot, or mastery. First clear unlocks rarity-loot disclosure."
+campaign_slot = 14
+chapter_number = 2
+chapter_level_number = 4
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_14.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_14_alchemist_village")
+entry_encounter_id = &"chapter_2_level_14_alchemist_village"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("rarity_loot")
+completion_reward_bundle_id = &"chapter_2_level_14_reward"
+completion_transaction_id = &"campaign:chapter_2_level_14:first_clear:v1"
+recommended_mastery = 4250

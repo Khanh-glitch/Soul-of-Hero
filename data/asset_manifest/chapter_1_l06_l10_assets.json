@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "scope": "chapter_1_levels_6_10",
+  "policy": {
+    "external_asset_gate": "production_ready requires a local license record permitting commercial game use",
+    "unverified_behavior": "placeholder_only",
+    "ai_reference_default": false
+  },
+  "sources": {
+    "project_original_placeholder": {
+      "kind": "project_original",
+      "license_status": "clear",
+      "commercial_use": true,
+      "attribution_required": false,
+      "ai_reference_allowed": true,
+      "record": "res://assets/ui/meta_placeholders/SOURCE_AND_LICENSE.md"
+    },
+    "codemanu_vfx_free": {
+      "kind": "external_free",
+      "license_status": "clear_conservative_cc_by_4_0",
+      "commercial_use": true,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": "res://assets/vfx/codemanu/SOURCE_AND_LICENSE.md"
+    },
+    "untied_super_pixel_free": {
+      "kind": "external_free",
+      "license_status": "clear_with_restrictions",
+      "commercial_use": true,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": "res://assets/vfx/untied/SOURCE_AND_USAGE.md"
+    },
+    "axe_local_pipeline": {
+      "kind": "generated_local",
+      "license_status": "unverified_dependency",
+      "commercial_use": false,
+      "attribution_required": false,
+      "ai_reference_allowed": false,
+      "record": "res://assets/characters/axe_warrior/ASSET_SOURCE.md"
+    },
+    "unverified_shikashi_derivative": {
+      "kind": "external_free_derivative",
+      "license_status": "commercial_use_text_present_attribution_mapping_incomplete",
+      "commercial_use": false,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": "res://assets/licenses/shikashi_fantasy_icons.txt"
+    },
+    "pixel_poem_enemy_set": {
+      "kind": "external_unknown",
+      "license_status": "missing_local_license_snapshot",
+      "commercial_use": false,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": ""
+    },
+    "rpg_icons_400_local_archive": {
+      "kind": "external_unknown",
+      "license_status": "missing_local_license_or_store_receipt",
+      "commercial_use": false,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": "res://assets/library/downloaded/rpg_icons_400/.asset-import.json"
+    },
+    "treasure_chests_1_2a_local_archive": {
+      "kind": "external_unknown",
+      "license_status": "readme_present_usage_grant_incomplete",
+      "commercial_use": false,
+      "attribution_required": true,
+      "ai_reference_allowed": false,
+      "record": "res://assets/library/downloaded/treasure_chests_1_2a/readme.txt"
+    }
+  },
+  "assets": [
+    {"id":"axe_character_sheets","path":"res://assets/characters/axe_warrior/_Idle.png","source":"axe_local_pipeline","status":"placeholder_only","reason":"FreeKnight/reference-input rights are not locally verified."},
+    {"id":"axe_charge","path":"res://assets/vfx/axe/axe_charge_64x64_12.png","source":"untied_super_pixel_free","status":"production_ready","width":768,"height":64,"frames":12,"frame_width":64,"frame_height":64},
+    {"id":"axe_cleave","path":"res://assets/vfx/axe/axe_cleave_64x48_6.png","source":"codemanu_vfx_free","status":"production_ready","width":384,"height":48,"frames":6,"frame_width":64,"frame_height":48},
+    {"id":"axe_trail","path":"res://assets/vfx/axe/axe_trail_32x16_6.png","source":"untied_super_pixel_free","status":"production_ready","width":192,"height":16,"frames":6,"frame_width":32,"frame_height":16},
+    {"id":"axe_spin","path":"res://assets/vfx/axe/axe_spin_32x32_8.png","source":"unverified_shikashi_derivative","status":"placeholder_only","width":256,"height":32,"frames":8,"frame_width":32,"frame_height":32,"reason":"Source icon license exists, but derivative/source mapping is not yet represented in this scoped manifest."},
+    {"id":"vampire_base_character","path":"res://assets/characters/enemies/enemies-vampire_idle.png","source":"pixel_poem_enemy_set","status":"placeholder_only","reason":"Enemy Animations Set license snapshot is missing."},
+    {"id":"castellan_base_character","path":"res://assets/characters/enemies/enemies-vampire_attack.png","source":"pixel_poem_enemy_set","status":"placeholder_only","reason":"May prototype phase language only; not a distinct production boss and license is unverified."},
+    {"id":"vampire_blink_departure","path":"res://assets/vfx/enemy/vampire_blink_departure_48x48_10.png","source":"untied_super_pixel_free","status":"production_ready","width":480,"height":48,"frames":10,"frame_width":48,"frame_height":48},
+    {"id":"vampire_blink_arrival","path":"res://assets/vfx/enemy/vampire_blink_arrival_48x48_10.png","source":"untied_super_pixel_free","status":"production_ready","width":480,"height":48,"frames":10,"frame_width":48,"frame_height":48},
+    {"id":"vampire_tether","path":"res://assets/vfx/enemy/vampire_tether_32x16_4.png","source":"codemanu_vfx_free","status":"production_ready","width":128,"height":16,"frames":4,"frame_width":32,"frame_height":16},
+    {"id":"aux_armor_icon_catalog","path":"res://assets/library/downloaded/rpg_icons_400/Icon151.png","source":"rpg_icons_400_local_archive","status":"placeholder_only","runtime_status":"integrated_semantic_catalog","width":32,"height":32,"icon_count":50,"coverage":"Icon151.png-Icon200.png","reason":"Runtime catalog and readability tests are integrated; commercial license proof is still missing."},
+    {"id":"aux_jewelry_icon_catalog","path":"res://assets/library/downloaded/rpg_icons_400/Icon241.png","source":"rpg_icons_400_local_archive","status":"placeholder_only","runtime_status":"integrated_semantic_catalog","width":32,"height":32,"icon_count":20,"coverage":"Icon241.png-Icon260.png","reason":"Runtime catalog and readability tests are integrated; commercial license proof is still missing."},
+    {"id":"aux_crystal_icon_catalog","path":"res://assets/library/downloaded/rpg_icons_400/Icon321.png","source":"rpg_icons_400_local_archive","status":"placeholder_only","runtime_status":"integrated_semantic_catalog","width":32,"height":32,"icon_count":80,"coverage":"Icon321.png-Icon400.png","reason":"Ten affinities by eight rarity shapes are integrated; commercial license proof is still missing."},
+    {"id":"treasure_chest_catalog","path":"res://assets/library/downloaded/treasure_chests_1_2a/treasure chests.png","source":"treasure_chests_1_2a_local_archive","status":"placeholder_only","runtime_status":"integrated_semantic_catalog","width":160,"height":192,"frames":30,"frame_width":32,"frame_height":32,"grid":"5x6","reason":"Nine regular and six monster chest grades are integrated; the local readme does not prove a complete usage grant."}
+  ],
+  "level_coverage": {
+    "6": ["axe_character_sheets","axe_charge","axe_cleave","axe_trail","axe_spin"],
+    "7": ["aux_armor_icon_catalog","aux_jewelry_icon_catalog","aux_crystal_icon_catalog"],
+    "8": ["vampire_base_character","vampire_blink_departure","vampire_blink_arrival","vampire_tether","aux_armor_icon_catalog","aux_jewelry_icon_catalog","aux_crystal_icon_catalog","treasure_chest_catalog"],
+    "9": ["vampire_base_character","aux_armor_icon_catalog","aux_jewelry_icon_catalog","aux_crystal_icon_catalog"],
+    "10": ["castellan_base_character","vampire_blink_departure","vampire_blink_arrival","vampire_tether","aux_armor_icon_catalog","aux_jewelry_icon_catalog","aux_crystal_icon_catalog"]
+  }
+}

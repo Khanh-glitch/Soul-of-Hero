@@ -1,0 +1,80 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://game/characters/enemies/vampire_castellan.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/vfx/enemy/vampire_tether_32x16_4.png" id="2_lane"]
+[ext_resource type="Texture2D" path="res://assets/vfx/world/interaction_sparkle_32x32_8.png" id="3_marker"]
+
+[sub_resource type="CapsuleShape2D" id="Capsule_body"]
+radius = 9.5
+height = 24.0
+
+[node name="VampireCastellan" type="CharacterBody2D" groups=["enemies", "bosses", "enemy_vampire_castellan"]]
+collision_layer = 4
+collision_mask = 3
+motion_mode = 1
+script = ExtResource("1_script")
+
+[node name="GroundShadow" type="Polygon2D" parent="."]
+z_index = -1
+position = Vector2(0, -1)
+color = Color(0.12, 0.005, 0.035, 0.68)
+polygon = PackedVector2Array(-15, -5, 15, -5, 19, 0, 15, 5, -15, 5, -19, 0)
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -28)
+scale = Vector2(2.05, 2.05)
+self_modulate = Color(1, 0.78, 0.88, 1)
+
+[node name="TelegraphVisual" type="Node2D" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 4
+
+[node name="TelegraphLaneH" type="Sprite2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+texture_filter = 1
+texture = ExtResource("2_lane")
+hframes = 4
+
+[node name="TelegraphLaneV" type="Sprite2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+rotation = 1.5708
+texture_filter = 1
+texture = ExtResource("2_lane")
+hframes = 4
+
+[node name="TelegraphLineA" type="Line2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+points = PackedVector2Array(0, 0, 1, 0)
+width = 3.0
+default_color = Color(1, 0.12, 0.32, 0.92)
+
+[node name="TelegraphLineB" type="Line2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+points = PackedVector2Array(0, 0, 1, 0)
+width = 3.0
+default_color = Color(1, 0.12, 0.32, 0.92)
+
+[node name="TelegraphLineC" type="Line2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+points = PackedVector2Array(0, 0, 1, 0)
+width = 3.0
+default_color = Color(0.72, 0.34, 1, 0.84)
+
+[node name="TelegraphMarker" type="Sprite2D" parent="TelegraphVisual"]
+unique_name_in_owner = true
+texture_filter = 1
+texture = ExtResource("3_marker")
+hframes = 8
+
+[node name="Crown" type="Polygon2D" parent="."]
+z_index = 2
+position = Vector2(0, -58)
+color = Color(0.98, 0.72, 0.22, 0.96)
+polygon = PackedVector2Array(-9, 5, -8, -4, -3, 1, 0, -7, 3, 1, 8, -4, 9, 5)
+
+[node name="BodyCollision" type="CollisionShape2D" parent="."]
+unique_name_in_owner = true
+position = Vector2(0, -9)
+shape = SubResource("Capsule_body")

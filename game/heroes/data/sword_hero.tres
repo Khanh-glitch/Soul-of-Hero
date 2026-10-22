@@ -1,0 +1,62 @@
+[gd_resource type="Resource" script_class="HeroDefinition" format=3 uid="uid://bpmlq2bspl300"]
+
+[ext_resource type="Script" uid="uid://bwt10xao22uhe" path="res://game/heroes/hero_definition.gd" id="1"]
+[ext_resource type="PackedScene" path="res://game/heroes/sword/sword_soul_echo.tscn" id="2_echo"]
+[ext_resource type="PackedScene" path="res://game/heroes/sword/sword_echo_wave.tscn" id="3_wave"]
+[ext_resource type="PackedScene" path="res://game/heroes/sword/sword_crescent_wave.tscn" id="4_crescent"]
+
+[resource]
+script = ExtResource("1")
+hero_id = &"sword_hero"
+display_name = "K-Night"
+title = "Chiến Binh Âm Giới"
+role_summary = "Kiếm sĩ cận chiến dùng combo bốn nhịp, truy kích hành quyết và dư ảnh âm giới."
+lore = ""
+lore_pending = true
+production_ready = true
+base_max_hp = 1100.0
+base_power = 20.0
+base_max_mana = 110.0
+base_move_speed_multiplier = 1.0
+combo_names = Array[String](["Khai Kiếm", "Áp Sát", "Sóng Truy Kích", "Đoạt Mệnh"])
+combo_damage_multipliers = Array[float]([1.0, 1.2, 0.5, 1.0])
+combo_action_durations = Array[float]([0.32, 0.38, 0.48, 0.52])
+combo_hit_windows = Array[Vector2]([Vector2(0.09, 0.23), Vector2(0.11, 0.27), Vector2(0.18, 0.36), Vector2(0.19, 0.41)])
+combo_animation_names = Array[StringName]([&"sword_combo_1", &"sword_combo_2", &"sword_combo_3", &"sword_combo_4"])
+combo_continuation_seconds = 2.0
+combo_3_recoil_distance = 24.0
+combo_4_pass_distance = 18.0
+sword_wave_scene = ExtResource("4_crescent")
+active_skill_enabled = true
+active_skill_name = "Linh Hồn Chiến Binh"
+active_skill_cooldown_seconds = 6.0
+active_skill_mana_cost = 20.0
+active_skill_attack_mana_cost = 0.0
+active_skill_toggle_persistent = false
+soul_echo_duration_seconds = 5.0
+soul_echo_damage_ratios = Array[float]([0.5, 0.5, 0.5, 0.5])
+soul_echo_delays = Array[float]([0.5, 0.5, 0.5, 0.5])
+soul_echo_scene = ExtResource("2_echo")
+soul_echo_wave_scene = ExtResource("3_wave")
+soul_echo_wave_speed = 270.0
+soul_echo_wave_distance = 116.0
+soul_echo_wave_width = 30.0
+soul_echo_combo_2_angle_degrees = 132.0
+soul_echo_combo_2_cross_distance = 48.0
+soul_echo_recoil_distance = 24.0
+soul_echo_execution_angle_degrees = 135.0
+soul_echo_execution_distance = 60.0
+soul_echo_fallback_distance = 50.0
+soul_echo_attack_cues = Array[StringName]([&"soul_echo_slash", &"soul_echo_cross", &"soul_echo_wave", &"soul_echo_execution"])
+ultimate_name = "Binh Đoàn Âm Giới"
+ultimate_behavior_id = &"knight_cavalry_charge"
+ultimate_mana_cost = 36.0
+ultimate_cooldown_seconds = 8.0
+ultimate_power_multiplier = 8.0
+summon_duration_seconds = 5.0
+unused_support_cooldown_seconds = 15.0
+summon_skill_name = "Hộ Vệ Linh Tử / Binh Đoàn Báo Thù"
+summon_behavior_id = &"k_night_soul_skill"
+takeover_windows = Array[Vector2]([Vector2(0.4, 5.0)])
+departure_skill_name = "Hơi Thở Cuối Cùng / Oán Hồn"
+departure_behavior_id = &"k_night_departure"

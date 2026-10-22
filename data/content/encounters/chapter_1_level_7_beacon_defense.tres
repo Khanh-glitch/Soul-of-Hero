@@ -1,0 +1,137 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" load_steps=21 format=3 uid="uid://dronsc5hx6cmh"]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="3"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="4"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="5"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="6"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="7"]
+
+[sub_resource type="Resource" id="W1Swords"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_one_swords"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l7_w1_sword_01", "l7_w1_sword_02", "l7_w1_sword_03", "l7_w1_sword_04")
+formation_id = &"four_lane_convergence"
+maximum_alive = 4
+
+[sub_resource type="Resource" id="W1Reaper"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_one_reaper"
+enemy_id = &"bone_reaper"
+count = 1
+spawn_marker_ids = PackedStringArray("l7_w1_reaper_01")
+formation_id = &"western_crossfire"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="W1Group"]
+script = ExtResource("3")
+group_id = &"beacon_wave_one_attackers"
+spawn_entries = Array[ExtResource("2")]([SubResource("W1Swords"), SubResource("W1Reaper")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Wave1"]
+script = ExtResource("4")
+wave_id = &"beacon_wave_one"
+groups = Array[ExtResource("3")]([SubResource("W1Group")])
+start_delay_seconds = 2.5
+
+[sub_resource type="Resource" id="W2Swords"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_two_swords"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l7_w2_sword_01", "l7_w2_sword_02", "l7_w2_sword_03", "l7_w2_sword_04")
+formation_id = &"north_south_pincer"
+maximum_alive = 4
+
+[sub_resource type="Resource" id="W2Reaper"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_two_reaper"
+enemy_id = &"bone_reaper"
+count = 1
+spawn_marker_ids = PackedStringArray("l7_w2_reaper_01")
+formation_id = &"eastern_crossfire"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="W2Group"]
+script = ExtResource("3")
+group_id = &"beacon_wave_two_attackers"
+spawn_entries = Array[ExtResource("2")]([SubResource("W2Swords"), SubResource("W2Reaper")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Wave2"]
+script = ExtResource("4")
+wave_id = &"beacon_wave_two"
+groups = Array[ExtResource("3")]([SubResource("W2Group")])
+start_delay_seconds = 4.0
+
+[sub_resource type="Resource" id="W3Swords"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_three_swords"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l7_w3_sword_01", "l7_w3_sword_02", "l7_w3_sword_03", "l7_w3_sword_04")
+formation_id = &"east_west_collapse"
+maximum_alive = 4
+
+[sub_resource type="Resource" id="W3Reapers"]
+script = ExtResource("2")
+entry_id = &"beacon_wave_three_reapers"
+enemy_id = &"bone_reaper"
+count = 2
+spawn_marker_ids = PackedStringArray("l7_w3_reaper_01", "l7_w3_reaper_02")
+formation_id = &"twin_northern_crossfire"
+maximum_alive = 2
+
+[sub_resource type="Resource" id="W3Group"]
+script = ExtResource("3")
+group_id = &"beacon_wave_three_attackers"
+spawn_entries = Array[ExtResource("2")]([SubResource("W3Swords"), SubResource("W3Reapers")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="Wave3"]
+script = ExtResource("4")
+wave_id = &"beacon_wave_three"
+groups = Array[ExtResource("3")]([SubResource("W3Group")])
+start_delay_seconds = 4.0
+
+[sub_resource type="Resource" id="ClearObjective"]
+script = ExtResource("6")
+objective_id = &"clear_all_beacon_waves"
+description_key = "objective.clear_all_beacon_waves"
+
+[sub_resource type="Resource" id="ProtectObjective"]
+script = ExtResource("6")
+objective_id = &"protect_soul_beacon"
+objective_type = 6
+description_key = "objective.protect_soul_beacon"
+target_id = &"soul_beacon_survived"
+target_count = 1
+failure_ends_encounter = true
+
+[sub_resource type="Resource" id="Warning"]
+script = ExtResource("5")
+warning_id = &"level_7_beacon_under_attack"
+message_key = "encounter.warning.protect_soul_beacon"
+visible_seconds = 2.5
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("7")
+required_objective_ids = PackedStringArray("clear_all_beacon_waves", "protect_soul_beacon")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l7_exit")
+
+[resource]
+resource_name = "Chapter 1 Level 7 - The Failing Beacon"
+script = ExtResource("1")
+encounter_id = &"chapter_1_level_7_beacon_defense"
+display_name = "The Failing Beacon"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "defense", "mixed_waves", "soul_beacon")
+authoring_notes = "Runtime-ready three-wave defense. The dedicated controller only activates authored markers in order; EncounterRuntimeState remains the sole gate/completion authority and receives one survival event after all sixteen enemies die while the Beacon is alive."
+waves = Array[ExtResource("4")]([SubResource("Wave1"), SubResource("Wave2"), SubResource("Wave3")])
+warnings = Array[ExtResource("5")]([SubResource("Warning")])
+objectives = Array[ExtResource("6")]([SubResource("ClearObjective"), SubResource("ProtectObjective")])
+completion = SubResource("Completion")

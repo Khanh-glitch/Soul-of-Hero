@@ -1,0 +1,136 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/input_prompts/tilemap_packed.png" id="2_prompts"]
+
+[sub_resource type="AtlasTexture" id="PromptJ"]
+atlas = ExtResource("2_prompts")
+region = Rect2(384, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptK"]
+atlas = ExtResource("2_prompts")
+region = Rect2(400, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptE"]
+atlas = ExtResource("2_prompts")
+region = Rect2(304, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptQ"]
+atlas = ExtResource("2_prompts")
+region = Rect2(272, 32, 16, 16)
+
+[node name="ActionDeck" type="PanelContainer"]
+custom_minimum_size = Vector2(342, 64)
+theme = ExtResource("1_theme")
+theme_type_variation = &"HudPanel"
+
+[node name="Rows" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Status" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+
+[node name="Hero" type="Label" parent="Rows/Status"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"KickerLabel"
+text = "SWORD  •  COMBO 3/4"
+
+[node name="Cooldown" type="Label" parent="Rows/Status"]
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_colors/font_color = Color(0.62, 0.86, 1, 1)
+text = "ECHO 8.4"
+
+[node name="Slots" type="HBoxContainer" parent="Rows"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Attack" type="PanelContainer" parent="Rows/Slots"]
+custom_minimum_size = Vector2(73, 29)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Row" type="HBoxContainer" parent="Rows/Slots/Attack"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Glyph" type="TextureRect" parent="Rows/Slots/Attack/Row"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptJ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Rows/Slots/Attack/Row"]
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "ĐÁNH\n3/4"
+
+[node name="Skill" type="PanelContainer" parent="Rows/Slots"]
+custom_minimum_size = Vector2(84, 29)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Row" type="HBoxContainer" parent="Rows/Slots/Skill"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Glyph" type="TextureRect" parent="Rows/Slots/Skill/Row"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptK")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Rows/Slots/Skill/Row"]
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "ECHO\n8.4s"
+
+[node name="Dash" type="PanelContainer" parent="Rows/Slots"]
+custom_minimum_size = Vector2(94, 29)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Row" type="HBoxContainer" parent="Rows/Slots/Dash"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Glyph" type="TextureRect" parent="Rows/Slots/Dash/Row"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptE")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Rows/Slots/Dash/Row"]
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "LƯỚT"
+
+[node name="Relay" type="PanelContainer" parent="Rows/Slots"]
+custom_minimum_size = Vector2(72, 29)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Row" type="HBoxContainer" parent="Rows/Slots/Relay"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Glyph" type="TextureRect" parent="Rows/Slots/Relay/Row"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptQ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Rows/Slots/Relay/Row"]
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "RELAY\nSẴN"

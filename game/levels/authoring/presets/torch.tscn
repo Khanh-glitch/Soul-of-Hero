@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/levels/authoring/map_element_marker.gd" id="1_marker"]
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/items/torch/torch_1.png" id="2_preview"]
+
+[node name="Torch" type="Node2D" groups=["map_authoring_element"]]
+script = ExtResource("1_marker")
+entity_type = "torch"
+display_name = "TORCH"
+marker_color = Color(1, 0.48, 0.18, 1)
+preview_texture = ExtResource("2_preview")
+preview_scale = Vector2(2, 2)
+preview_offset = Vector2(0, -16)

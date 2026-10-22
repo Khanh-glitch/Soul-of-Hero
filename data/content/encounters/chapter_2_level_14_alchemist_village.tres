@@ -1,0 +1,74 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="1_q54tn"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="2_can3w"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="3_o5nmv"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_0878y"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="5_1psq2"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="6_f2dp2"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="7_asrgg"]
+
+[sub_resource type="Resource" id="Resource_1jb6c"]
+script = ExtResource("1_q54tn")
+required_objective_ids = PackedStringArray("clear_foundry_route")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l14_exit")
+
+[sub_resource type="Resource" id="Resource_vl34g"]
+script = ExtResource("2_can3w")
+objective_id = &"clear_foundry_route"
+description_key = "objective.chapter_2.clear_foundry_route"
+
+[sub_resource type="Resource" id="Resource_aase7"]
+script = ExtResource("7_asrgg")
+entry_id = &"coven_wraith"
+enemy_id = &"coven_wraith"
+count = 4
+spawn_marker_ids = PackedStringArray("l14_coven_01", "l14_coven_02", "l14_coven_03", "l14_coven_04")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_pot1a"]
+script = ExtResource("6_f2dp2")
+group_id = &"coven_wraith_group"
+spawn_entries = Array[ExtResource("7_asrgg")]([SubResource("Resource_aase7")])
+
+[sub_resource type="Resource" id="Resource_g0kvl"]
+script = ExtResource("7_asrgg")
+entry_id = &"venom_bound_wraith"
+enemy_id = &"venom_bound_wraith"
+count = 4
+spawn_marker_ids = PackedStringArray("l14_venom_01", "l14_venom_02", "l14_venom_03", "l14_venom_04")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_mv2t1"]
+script = ExtResource("6_f2dp2")
+group_id = &"venom_bound_wraith_group"
+spawn_entries = Array[ExtResource("7_asrgg")]([SubResource("Resource_g0kvl")])
+
+[sub_resource type="Resource" id="Resource_yd7w6"]
+script = ExtResource("7_asrgg")
+entry_id = &"spirit_leech"
+enemy_id = &"spirit_leech"
+count = 2
+spawn_marker_ids = PackedStringArray("l14_leech_01", "l14_leech_02")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_a64ne"]
+script = ExtResource("6_f2dp2")
+group_id = &"spirit_leech_group"
+spawn_entries = Array[ExtResource("7_asrgg")]([SubResource("Resource_yd7w6")])
+
+[sub_resource type="Resource" id="Resource_iepvw"]
+script = ExtResource("5_1psq2")
+wave_id = &"directed_foundry_route"
+groups = Array[ExtResource("6_f2dp2")]([SubResource("Resource_pot1a"), SubResource("Resource_mv2t1"), SubResource("Resource_a64ne")])
+
+[resource]
+script = ExtResource("3_o5nmv")
+encounter_id = &"chapter_2_level_14_alchemist_village"
+display_name = "Chapter 2 — Alchemist Village Overload"
+encounter_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry")
+authoring_notes = "Generated from the Chapter 2 map markers. Deferred marker IDs remain the stable encounter authority."
+waves = Array[ExtResource("5_1psq2")]([SubResource("Resource_iepvw")])
+objectives = Array[ExtResource("2_can3w")]([SubResource("Resource_vl34g")])
+completion = SubResource("Resource_1jb6c")

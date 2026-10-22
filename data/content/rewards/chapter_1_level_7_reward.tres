@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=2 format=3]
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1"]
+[resource]
+script = ExtResource("1")
+bundle_id = &"chapter_1_level_7_reward"
+account_currency = 560
+hero_materials = 12
+monster_fragments = 5
+player_level_grant = 1

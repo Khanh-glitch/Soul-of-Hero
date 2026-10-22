@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://b3uu7a8u2wblx"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3"]
+
+[sub_resource type="Resource" id="Unlock"]
+script = ExtResource("2")
+prerequisite_level_ids = PackedStringArray("chapter_1_level_6")
+
+[resource]
+resource_name = "Chapter 1 Level 7 - The Failing Beacon"
+script = ExtResource("1")
+level_id = &"chapter_1_level_7"
+display_name = "The Failing Beacon"
+content_status = 2
+objective_summary = "Defend the Soul Beacon through mixed crypt waves."
+level_tags = PackedStringArray("campaign", "chapter_1", "crypt", "defense", "soul_beacon")
+authoring_notes = "CAMPAIGN_READY for the internal playable prototype: dedicated four-lane Beacon arena, real Beacon health/failure HUD, three ordered mixed waves, stable checkpoint/retry, Sword/Axe route, and EncounterRuntime-owned exit gate are covered by focused live and fresh Level 1-7 AppRoot objective tests."
+campaign_slot = 7
+chapter_number = 1
+chapter_level_number = 7
+level_scene = ExtResource("3")
+layout_data_path = "res://data/levels/chapter_1_level_7.json"
+encounter_ids = PackedStringArray("chapter_1_level_7_beacon_defense")
+entry_encounter_id = &"chapter_1_level_7_beacon_defense"
+unlock_requirements = SubResource("Unlock")
+granted_feature_ids = PackedStringArray("soul_jewelry")
+completion_reward_bundle_id = &"chapter_1_level_7_reward"
+completion_transaction_id = &"campaign:chapter_1_level_7:complete"
+recommended_mastery = 900

@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://game/ui/components/settings_panel.tscn" id="1_settings"]
+[ext_resource type="Script" path="res://game/ui/screens/hub/tabs/settings_tab.gd" id="2_script"]
+
+[node name="SettingsTab" type="VBoxContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+script = ExtResource("2_script")
+
+[node name="HeaderRow" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 23)
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="Label" parent="HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.77, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+vertical_alignment = 1
+text = "CÀI ĐẶT"
+
+[node name="CreditsButton" type="Button" parent="HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(92, 25)
+layout_mode = 2
+text = "GHI CÔNG"
+
+[node name="NewProfileButton" type="Button" parent="HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(132, 25)
+layout_mode = 2
+text = "HỒ SƠ MỚI"
+
+[node name="SettingsPanel" parent="." instance=ExtResource("1_settings")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ResetConfirmation" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
+title = "TẠO HỒ SƠ MỚI?"
+dialog_text = "Tiến trình chiến dịch, đội Soul và phần thưởng sẽ được đặt lại. Các cài đặt hiện tại được giữ nguyên."
+ok_button_text = "ĐẶT LẠI TIẾN TRÌNH"
+cancel_button_text = "HỦY"

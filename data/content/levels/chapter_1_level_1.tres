@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://bwnnb2qah5ruu"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" uid="uid://c3lrnx8knqrr1" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+
+[resource]
+resource_name = "Chapter 1 Level 1 - Hầm Mộ Khai Ấn"
+script = ExtResource("1_level")
+level_id = &"chapter_1_level_1"
+display_name = "Hầm Mộ Khai Ấn"
+content_status = 2
+objective_summary = "Phá ba bãi phục kích Skeleton, thu thập 3 ấn ký và mở cổng thoát."
+level_tags = PackedStringArray("campaign", "chapter_1", "crypt", "top_down")
+authoring_notes = "Redesigned onboarding dungeon: three dense Skeleton camps (4/4/4), three sigils, four spike traps, two checkpoints, and reciprocal floor-routing doors. Runtime entities are driven by the canonical JSON layout."
+campaign_slot = 1
+chapter_number = 1
+chapter_level_number = 1
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/crypt_entrance.json"
+encounter_ids = PackedStringArray("chapter_1_level_1_crypt")
+entry_encounter_id = &"chapter_1_level_1_crypt"
+unlock_requirements = SubResource("UnlockRequirements")
+completion_reward_bundle_id = &"chapter_1_level_1_reward"
+completion_transaction_id = &"campaign:chapter_1_level_1:complete"

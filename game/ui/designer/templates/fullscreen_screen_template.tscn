@@ -1,0 +1,71 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="2_backdrop"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/brand_header.tscn" id="3_header"]
+[ext_resource type="PackedScene" path="res://game/ui/designer/components/navigation_bar.tscn" id="4_navigation"]
+
+[node name="FullscreenScreenTemplate" type="Control"]
+custom_minimum_size = Vector2(640, 360)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("2_backdrop")]
+layout_mode = 1
+
+[node name="SafeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="SafeMargin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="BrandHeader" parent="SafeMargin/Layout" instance=ExtResource("3_header")]
+layout_mode = 2
+
+[node name="ContentPanel" type="PanelContainer" parent="SafeMargin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Content" type="VBoxContainer" parent="SafeMargin/Layout/ContentPanel"]
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 7
+
+[node name="Kicker" type="Label" parent="SafeMargin/Layout/ContentPanel/Content"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "KHU VỰC NỘI DUNG"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SafeMargin/Layout/ContentPanel/Content"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_font_sizes/font_size = 24
+text = "KÉO COMPONENT VÀO ĐÂY"
+horizontal_alignment = 1
+
+[node name="Instruction" type="Label" parent="SafeMargin/Layout/ContentPanel/Content"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Duplicate scene này, bật Editable Children và thay phần Content bằng card hoặc layout của bạn."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="NavigationBar" parent="SafeMargin/Layout" instance=ExtResource("4_navigation")]
+layout_mode = 2

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EliteSpawnPolicy" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/content/rosters/elite_spawn_policy.gd" id="1_policy"]
+[ext_resource type="Resource" path="res://data/content/elite_modifiers/triple_stat_elite.tres" id="2_modifier"]
+
+[resource]
+resource_name = "20 Percent Elite per Camp + Archetype Guarantee"
+script = ExtResource("1_policy")
+chance_per_camp = 0.2
+guarantee_one_per_eligible_archetype = true
+prefer_empty_camp_for_guarantee = true
+modifier = ExtResource("2_modifier")
+

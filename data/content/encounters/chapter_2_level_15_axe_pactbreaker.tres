@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="1_snb0t"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="2_s76rq"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="3_c8tah"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_dgrn0"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="5_6mxvi"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="6_ggoex"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="7_10v26"]
+
+[sub_resource type="Resource" id="Resource_wgcx5"]
+script = ExtResource("1_snb0t")
+required_objective_ids = PackedStringArray("clear_foundry_route", "axe_retreated")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l15_exit")
+
+[sub_resource type="Resource" id="Resource_gp7qi"]
+script = ExtResource("2_s76rq")
+objective_id = &"clear_foundry_route"
+description_key = "objective.chapter_2.clear_foundry_route"
+
+[sub_resource type="Resource" id="Resource_g4v6k"]
+script = ExtResource("2_s76rq")
+objective_id = &"axe_retreated"
+objective_type = 6
+description_key = "objective.chapter_2.axe_retreated"
+target_id = &"axe_retreated"
+target_count = 1
+
+[sub_resource type="Resource" id="Resource_70aua"]
+script = ExtResource("7_10v26")
+entry_id = &"coven_wraith"
+enemy_id = &"coven_wraith"
+count = 5
+spawn_marker_ids = PackedStringArray("l15_coven_01", "l15_coven_02", "l15_coven_03", "l15_coven_04", "l15_coven_05")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_fw8at"]
+script = ExtResource("6_ggoex")
+group_id = &"coven_wraith_group"
+spawn_entries = Array[ExtResource("7_10v26")]([SubResource("Resource_70aua")])
+
+[sub_resource type="Resource" id="Resource_vcvuk"]
+script = ExtResource("7_10v26")
+entry_id = &"axe_soul_boss"
+enemy_id = &"axe_soul_boss"
+spawn_marker_ids = PackedStringArray("l15_axe")
+formation_id = &"chapter_2_directed"
+
+[sub_resource type="Resource" id="Resource_pbyeb"]
+script = ExtResource("6_ggoex")
+group_id = &"axe_soul_boss_group"
+spawn_entries = Array[ExtResource("7_10v26")]([SubResource("Resource_vcvuk")])
+
+[sub_resource type="Resource" id="Resource_102ue"]
+script = ExtResource("5_6mxvi")
+wave_id = &"directed_foundry_route"
+groups = Array[ExtResource("6_ggoex")]([SubResource("Resource_fw8at"), SubResource("Resource_pbyeb")])
+
+[resource]
+script = ExtResource("3_c8tah")
+encounter_id = &"chapter_2_level_15_axe_pactbreaker"
+display_name = "Chapter 2 — Axe Pactbreaker"
+encounter_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry")
+authoring_notes = "Generated from the Chapter 2 map markers. Deferred marker IDs remain the stable encounter authority."
+waves = Array[ExtResource("5_6mxvi")]([SubResource("Resource_102ue")])
+objectives = Array[ExtResource("2_s76rq")]([SubResource("Resource_gp7qi"), SubResource("Resource_g4v6k")])
+completion = SubResource("Resource_wgcx5")

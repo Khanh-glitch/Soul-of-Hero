@@ -1,0 +1,89 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/fantasy_icons.png" id="2_icons"]
+
+[sub_resource type="AtlasTexture" id="CampaignIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(384, 416, 32, 32)
+
+[sub_resource type="AtlasTexture" id="ArsenalIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(0, 320, 32, 32)
+
+[sub_resource type="AtlasTexture" id="ModesIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(288, 544, 32, 32)
+
+[sub_resource type="AtlasTexture" id="BestiaryIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(256, 416, 32, 32)
+
+[sub_resource type="AtlasTexture" id="SettingsIcon"]
+atlas = ExtResource("2_icons")
+region = Rect2(128, 128, 32, 32)
+
+[node name="NavigationBar" type="PanelContainer"]
+custom_minimum_size = Vector2(560, 52)
+theme = ExtResource("1_theme")
+theme_type_variation = &"HudPanel"
+
+[node name="Buttons" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Campaign" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(104, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+theme_override_constants/icon_max_width = 18
+theme_type_variation = &"NavigationButton"
+text = "CHIẾN DỊCH"
+icon = SubResource("CampaignIcon")
+expand_icon = true
+
+[node name="Arsenal" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(104, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_constants/icon_max_width = 18
+theme_type_variation = &"NavigationButton"
+text = "HERO"
+icon = SubResource("ArsenalIcon")
+expand_icon = true
+
+[node name="Modes" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(104, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_constants/icon_max_width = 18
+theme_type_variation = &"NavigationButton"
+text = "CHẾ ĐỘ"
+icon = SubResource("ModesIcon")
+expand_icon = true
+
+[node name="Bestiary" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(104, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_constants/icon_max_width = 18
+theme_type_variation = &"NavigationButton"
+text = "QUÁI VẬT"
+icon = SubResource("BestiaryIcon")
+expand_icon = true
+
+[node name="Settings" type="Button" parent="Buttons"]
+custom_minimum_size = Vector2(104, 42)
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+theme_override_constants/icon_max_width = 18
+theme_type_variation = &"NavigationButton"
+text = "CÀI ĐẶT"
+icon = SubResource("SettingsIcon")
+expand_icon = true

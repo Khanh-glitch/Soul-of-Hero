@@ -1,0 +1,70 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" load_steps=14 format=3 uid="uid://d317wl1imytig"]
+
+[ext_resource type="Script" path="res://game/content/encounters/encounter_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_group_definition.gd" id="3"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_wave_definition.gd" id="4"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_objective_definition.gd" id="5"]
+[ext_resource type="Script" path="res://game/content/encounters/encounter_completion_contract.gd" id="6"]
+
+[sub_resource type="Resource" id="Reapers"]
+script = ExtResource("2")
+entry_id = &"reaper_branch"
+enemy_id = &"bone_reaper"
+count = 6
+spawn_marker_ids = PackedStringArray("l8_reaper_01", "l8_reaper_02", "l8_reaper_03", "l8_reaper_04", "l8_reaper_05", "l8_reaper_06")
+formation_id = &"reaper_reliquary_ring"
+maximum_alive = 6
+
+[sub_resource type="Resource" id="Vampires"]
+script = ExtResource("2")
+entry_id = &"vampire_branch"
+enemy_id = &"blood_vampire"
+count = 3
+spawn_marker_ids = PackedStringArray("l8_vampire_01", "l8_vampire_02", "l8_vampire_03")
+formation_id = &"vampire_reliquary_hunt"
+maximum_alive = 3
+
+[sub_resource type="Resource" id="ReaperGroup"]
+script = ExtResource("3")
+group_id = &"reaper_branch_guardians"
+spawn_entries = Array[ExtResource("2")]([SubResource("Reapers")])
+completion_rule = 2
+completion_signal = &"selected_branch_cleared"
+
+[sub_resource type="Resource" id="VampireGroup"]
+script = ExtResource("3")
+group_id = &"vampire_branch_guardians"
+spawn_entries = Array[ExtResource("2")]([SubResource("Vampires")])
+completion_rule = 2
+completion_signal = &"selected_branch_cleared"
+
+[sub_resource type="Resource" id="Wave"]
+script = ExtResource("4")
+wave_id = &"divided_reliquary_choice"
+groups = Array[ExtResource("3")]([SubResource("ReaperGroup"), SubResource("VampireGroup")])
+
+[sub_resource type="Resource" id="Objective"]
+script = ExtResource("5")
+objective_id = &"claim_elite_chest"
+objective_type = 6
+description_key = "objective.claim_elite_chest"
+target_id = &"elite_chest_claimed"
+target_count = 1
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("6")
+required_objective_ids = PackedStringArray("claim_elite_chest")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l8_exit")
+
+[resource]
+resource_name = "Chapter 1 Level 8 - The Divided Reliquary"
+script = ExtResource("1")
+encounter_id = &"chapter_1_level_8_divided_reliquary"
+display_name = "The Divided Reliquary"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "exclusive_branch", "triple_elite", "elite_chest")
+authoring_notes = "Both branches retain exact authored markers, but the dedicated runtime defers all nine and materializes only the physically selected set. It removes the unselected records from live totals, applies one deterministic explicit-axis Elite, and commits elite_chest_claimed only from the real chest opened signal."
+waves = Array[ExtResource("4")]([SubResource("Wave")])
+objectives = Array[ExtResource("5")]([SubResource("Objective")])
+completion = SubResource("Completion")

@@ -1,0 +1,492 @@
+{
+  "schema_version": 1,
+  "hero_id": "axe",
+  "display_name": "Axe — Ironwood Reaver",
+  "asset_root": "res://assets/Axe_v1",
+  "frame_size": [
+    120,
+    80
+  ],
+  "anchor": [
+    60,
+    80
+  ],
+  "default_facing": "right",
+  "alpha": "binary",
+  "palette_colours_per_colourway": 10,
+  "actions": {
+    "Attack": {
+      "frames": 4,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Attack2": {
+      "frames": 6,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Attack2NoMovement": {
+      "frames": 6,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "AttackCombo": {
+      "frames": 10,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "AttackComboNoMovement": {
+      "frames": 10,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "AttackNoMovement": {
+      "frames": 4,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Crouch": {
+      "frames": 1,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    },
+    "CrouchAll": {
+      "frames": 3,
+      "frame_ms": 100,
+      "fps": 10.0,
+      "loop": false
+    },
+    "CrouchAttack": {
+      "frames": 4,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "CrouchTransition": {
+      "frames": 1,
+      "frame_ms": 100,
+      "fps": 10.0,
+      "loop": false
+    },
+    "CrouchWalk": {
+      "frames": 8,
+      "frame_ms": 80,
+      "fps": 12.5,
+      "loop": true
+    },
+    "Dash": {
+      "frames": 2,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Death": {
+      "frames": 10,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "DeathNoMovement": {
+      "frames": 10,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Fall": {
+      "frames": 3,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    },
+    "Hit": {
+      "frames": 1,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Idle": {
+      "frames": 10,
+      "frame_ms": 80,
+      "fps": 12.5,
+      "loop": true
+    },
+    "Jump": {
+      "frames": 3,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "JumpFallInbetween": {
+      "frames": 2,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "Roll": {
+      "frames": 12,
+      "frame_ms": 50,
+      "fps": 20.0,
+      "loop": false
+    },
+    "Run": {
+      "frames": 10,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    },
+    "Slide": {
+      "frames": 2,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    },
+    "SlideAll": {
+      "frames": 4,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "SlideTransitionEnd": {
+      "frames": 1,
+      "frame_ms": 100,
+      "fps": 10.0,
+      "loop": false
+    },
+    "SlideTransitionStart": {
+      "frames": 1,
+      "frame_ms": 100,
+      "fps": 10.0,
+      "loop": false
+    },
+    "TurnAround": {
+      "frames": 3,
+      "frame_ms": 70,
+      "fps": 14.285714,
+      "loop": false
+    },
+    "WallClimb": {
+      "frames": 7,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": false
+    },
+    "WallClimbNoMovement": {
+      "frames": 7,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    },
+    "WallHang": {
+      "frames": 1,
+      "frame_ms": 100,
+      "fps": 10.0,
+      "loop": true
+    },
+    "WallSlide": {
+      "frames": 3,
+      "frame_ms": 60,
+      "fps": 16.666667,
+      "loop": true
+    }
+  },
+  "variants": {
+    "Colour1/Outline": {
+      "png_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo2hit",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchFull",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideFull",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      },
+      "gif_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo2hit",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      }
+    },
+    "Colour1/NoOutline": {
+      "png_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchFull",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideFull",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      },
+      "gif_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo2hit",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      }
+    },
+    "Colour2/Outline": {
+      "png_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      },
+      "gif_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo2hit",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      }
+    },
+    "Colour2/NoOutline": {
+      "png_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      },
+      "gif_names": {
+        "Attack": "Attack",
+        "Attack2": "Attack2",
+        "Attack2NoMovement": "Attack2NoMovement",
+        "AttackCombo": "AttackCombo2hit",
+        "AttackComboNoMovement": "AttackComboNoMovement",
+        "AttackNoMovement": "AttackNoMovement",
+        "Crouch": "Crouch",
+        "CrouchAll": "CrouchAll",
+        "CrouchAttack": "CrouchAttack",
+        "CrouchTransition": "CrouchTransition",
+        "CrouchWalk": "CrouchWalk",
+        "Dash": "Dash",
+        "Death": "Death",
+        "DeathNoMovement": "DeathNoMovement",
+        "Fall": "Fall",
+        "Hit": "Hit",
+        "Idle": "Idle",
+        "Jump": "Jump",
+        "JumpFallInbetween": "JumpFallInbetween",
+        "Roll": "Roll",
+        "Run": "Run",
+        "Slide": "Slide",
+        "SlideAll": "SlideAll",
+        "SlideTransitionEnd": "SlideTransitionEnd",
+        "SlideTransitionStart": "SlideTransitionStart",
+        "TurnAround": "TurnAround",
+        "WallClimb": "WallClimb",
+        "WallClimbNoMovement": "WallClimbNoMovement",
+        "WallHang": "WallHang",
+        "WallSlide": "WallSlide"
+      }
+    }
+  },
+  "virtual_actions": {
+    "Spin": {
+      "plays": "Attack2NoMovement",
+      "description": "Six-frame horizontal axe rotation; gameplay applies the same forward-lunge curve and circular hitbox as Attack2 while preserving the original 242-file raster contract."
+    }
+  },
+  "composites": {
+    "AttackCombo": [
+      "Attack",
+      "Attack2"
+    ],
+    "AttackComboNoMovement": [
+      "AttackNoMovement",
+      "Attack2NoMovement"
+    ],
+    "CrouchAll": [
+      "CrouchTransition",
+      "Crouch",
+      "CrouchTransition"
+    ],
+    "SlideAll": [
+      "SlideTransitionStart",
+      "Slide[0]",
+      "Slide[1]",
+      "SlideTransitionEnd"
+    ]
+  }
+}

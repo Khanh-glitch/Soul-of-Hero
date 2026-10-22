@@ -1,0 +1,173 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/source_reference.png" id="2_overlay"]
+
+[node name="BeaconHUD" type="CanvasLayer"]
+layer = 92
+
+[node name="BeaconHUDRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_theme")
+
+[node name="BeaconStatusPanel" type="MarginContainer" parent="BeaconHUDRoot"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 76.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="BeaconHUDRoot/BeaconStatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 7
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 7
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BeaconStatusLabel" type="Label" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.886275, 0.713726, 1, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.94)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 9
+horizontal_alignment = 1
+
+[node name="HealthRow" type="HBoxContainer" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="BeaconCaption" type="Label" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer/HealthRow"]
+custom_minimum_size = Vector2(47, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+text = "HẢI ĐĂNG"
+
+[node name="BeaconHealthBar" type="ProgressBar" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(151, 10)
+layout_mode = 2
+size_flags_horizontal = 3
+show_percentage = false
+
+[node name="BeaconHealthLabel" type="Label" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(55, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+horizontal_alignment = 2
+
+[node name="WaveRow" type="HBoxContainer" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="WaveLabel" type="Label" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer/WaveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+
+[node name="WaveTimerLabel" type="Label" parent="BeaconHUDRoot/BeaconStatusPanel/MarginContainer/VBoxContainer/WaveRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.823529, 0.478431, 1)
+theme_override_colors/font_outline_color = Color(0.04, 0.01, 0.06, 0.92)
+theme_override_constants/outline_size = 1
+theme_type_variation = &"NumberLabel"
+
+[node name="BeaconFailureOverlay" type="Control" parent="BeaconHUDRoot"]
+unique_name_in_owner = true
+visible = false
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="DungeonVeil" type="TextureRect" parent="BeaconHUDRoot/BeaconFailureOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+modulate = Color(0.12, 0.03, 0.14, 0.82)
+texture = ExtResource("2_overlay")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="FailureCard" type="PanelContainer" parent="BeaconHUDRoot/BeaconFailureOverlay"]
+layout_mode = 0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -79.0
+offset_right = 150.0
+offset_bottom = 79.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Margin" type="MarginContainer" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="Title" type="Label" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard/Margin/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.470588, 0.564706, 1)
+theme_override_font_sizes/font_size = 17
+text = "HẢI ĐĂNG ĐÃ VỠ"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard/Margin/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "Thử lại để đặt lại ba đợt quái và điểm lưu."
+autowrap_mode = 2
+horizontal_alignment = 1
+
+[node name="RetryButton" type="Button" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard/Margin/Content"]
+unique_name_in_owner = true
+process_mode = 3
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "THỬ LẠI"
+
+[node name="ReturnHomeButton" type="Button" parent="BeaconHUDRoot/BeaconFailureOverlay/FailureCard/Margin/Content"]
+unique_name_in_owner = true
+process_mode = 3
+layout_mode = 2
+text = "VỀ THÁNH ĐƯỜNG"

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3 uid="uid://c2mnq5ow6c5q2"]
+
+[ext_resource type="Script" uid="uid://eie5xx47gfm4" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" uid="uid://t5dv605gl3f0" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" uid="uid://c3lrnx8knqrr1" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_1_level_2")
+
+[resource]
+resource_name = "Chapter 1 Level 3 - Crossfire Archive"
+script = ExtResource("1_level")
+level_id = &"chapter_1_level_3"
+display_name = "Thư Khố Giao Hỏa"
+content_status = 2
+objective_summary = "Dùng pit làm vật che, áp sát các điểm neo Tử Thần và thu 4 trong 5 ấn ký."
+level_tags = PackedStringArray("campaign", "chapter_1", "crypt", "crossfire")
+authoring_notes = "Three camps split 7/7/6; melee screens protect readable Bone Reaper firing angles."
+campaign_slot = 3
+chapter_number = 1
+chapter_level_number = 3
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_1_level_3.json"
+encounter_ids = PackedStringArray("chapter_1_level_3_crypt")
+entry_encounter_id = &"chapter_1_level_3_crypt"
+unlock_requirements = SubResource("UnlockRequirements")
+completion_reward_bundle_id = &"chapter_1_level_3_reward"
+completion_transaction_id = &"campaign:chapter_1_level_3:complete"
+recommended_mastery = 220

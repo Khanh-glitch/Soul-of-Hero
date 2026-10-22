@@ -1,0 +1,59 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3 uid="uid://dae242y1r3l0i"]
+
+[ext_resource type="Script" uid="uid://d0ve8acy3o36l" path="res://game/content/encounters/encounter_definition.gd" id="1"]
+[ext_resource type="Script" uid="uid://djdgambkorbaa" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2"]
+[ext_resource type="Script" uid="uid://bo1m3mwr2j2r2" path="res://game/content/encounters/encounter_group_definition.gd" id="3"]
+[ext_resource type="Script" uid="uid://bm7kwws06w4ph" path="res://game/content/encounters/encounter_wave_definition.gd" id="4"]
+[ext_resource type="Script" uid="uid://cavdtginx1582" path="res://game/content/encounters/encounter_warning_definition.gd" id="4_u7ip5"]
+[ext_resource type="Script" uid="uid://bkuyjsemgao7e" path="res://game/content/encounters/encounter_objective_definition.gd" id="5"]
+[ext_resource type="Script" uid="uid://b4d371ibkdcmy" path="res://game/content/encounters/encounter_completion_contract.gd" id="6"]
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("6")
+required_objective_ids = PackedStringArray("enter_castellan_phase_two", "defeat_vampire_castellan")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l10_exit")
+
+[sub_resource type="Resource" id="PhaseObjective"]
+script = ExtResource("5")
+objective_id = &"enter_castellan_phase_two"
+objective_type = 6
+description_key = "objective.enter_castellan_phase_two"
+target_id = &"castellan_phase_two_started"
+target_count = 1
+
+[sub_resource type="Resource" id="DeathObjective"]
+script = ExtResource("5")
+objective_id = &"defeat_vampire_castellan"
+objective_type = 6
+description_key = "objective.defeat_vampire_castellan"
+target_id = &"castellan_defeated"
+target_count = 1
+
+[sub_resource type="Resource" id="Boss"]
+script = ExtResource("2")
+entry_id = &"vampire_castellan"
+enemy_id = &"vampire_castellan"
+spawn_marker_ids = PackedStringArray("l10_vampire_castellan")
+formation_id = &"boss_center"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="Group"]
+script = ExtResource("3")
+group_id = &"castellan_phase_one"
+spawn_entries = Array[ExtResource("2")]([SubResource("Boss")])
+
+[sub_resource type="Resource" id="Wave"]
+script = ExtResource("4")
+wave_id = &"continuous_castellan_duel"
+groups = Array[ExtResource("3")]([SubResource("Group")])
+
+[resource]
+script = ExtResource("1")
+encounter_id = &"chapter_1_level_10_castellan_phase_one"
+display_name = "Vampire Castellan - Continuous Two-Phase Duel"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "boss", "two_phase", "vampire_castellan")
+authoring_notes = "One dedicated boss marker owns both phases. The 55-percent health event and final death event are separate runtime objectives, so the north gate cannot open from a proxy kill or a skipped transition."
+waves = Array[ExtResource("4")]([SubResource("Wave")])
+objectives = Array[ExtResource("5")]([SubResource("PhaseObjective"), SubResource("DeathObjective")])
+completion = SubResource("Completion")

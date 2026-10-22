@@ -1,0 +1,118 @@
+[gd_resource type="Resource" script_class="EncounterDefinition" format=3 uid="uid://ce3bguk78uv8s"]
+
+[ext_resource type="Script" uid="uid://d0ve8acy3o36l" path="res://game/content/encounters/encounter_definition.gd" id="1_encounter"]
+[ext_resource type="Script" uid="uid://djdgambkorbaa" path="res://game/content/encounters/encounter_spawn_entry.gd" id="2_spawn"]
+[ext_resource type="Script" uid="uid://bo1m3mwr2j2r2" path="res://game/content/encounters/encounter_group_definition.gd" id="3_group"]
+[ext_resource type="Script" uid="uid://bm7kwws06w4ph" path="res://game/content/encounters/encounter_wave_definition.gd" id="4_wave"]
+[ext_resource type="Script" uid="uid://cavdtginx1582" path="res://game/content/encounters/encounter_warning_definition.gd" id="5_warning"]
+[ext_resource type="Script" uid="uid://bkuyjsemgao7e" path="res://game/content/encounters/encounter_objective_definition.gd" id="6_objective"]
+[ext_resource type="Script" uid="uid://b4d371ibkdcmy" path="res://game/content/encounters/encounter_completion_contract.gd" id="7_completion"]
+
+[sub_resource type="Resource" id="Completion"]
+script = ExtResource("7_completion")
+required_objective_ids = PackedStringArray("clear_level_4_crypt")
+gate_action = 1
+gate_entity_ids = PackedStringArray("l4_exit")
+
+[sub_resource type="Resource" id="ClearObjective"]
+script = ExtResource("6_objective")
+objective_id = &"clear_level_4_crypt"
+description_key = "objective.clear_level_4_crypt"
+
+[sub_resource type="Resource" id="EntryWarning"]
+script = ExtResource("5_warning")
+warning_id = &"level_4_crypt_warning"
+message_key = "encounter.warning.spiral_reliquary"
+visible_seconds = 1.25
+
+[sub_resource type="Resource" id="CampOneSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_1_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 4
+spawn_marker_ids = PackedStringArray("l4_c1_skeleton_01", "l4_c1_skeleton_02", "l4_c1_skeleton_03", "l4_c1_skeleton_04")
+formation_id = &"spiral_release"
+interval_seconds = 0.1
+maximum_alive = 4
+
+[sub_resource type="Resource" id="CampOneReaper"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_1_reaper"
+enemy_id = &"bone_reaper"
+spawn_marker_ids = PackedStringArray("l4_c1_reaper_01")
+formation_id = &"rear_anchor"
+maximum_alive = 1
+
+[sub_resource type="Resource" id="CampOne"]
+script = ExtResource("3_group")
+group_id = &"level_4_camp_1"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampOneSwords"), SubResource("CampOneReaper")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CampTwoSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_2_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l4_c2_skeleton_01", "l4_c2_skeleton_02", "l4_c2_skeleton_03")
+formation_id = &"pin_screen"
+interval_seconds = 0.1
+maximum_alive = 3
+
+[sub_resource type="Resource" id="CampTwoReapers"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_2_reapers"
+enemy_id = &"bone_reaper"
+count = 2
+spawn_marker_ids = PackedStringArray("l4_c2_reaper_01", "l4_c2_reaper_02")
+formation_id = &"diagonal_crossfire"
+maximum_alive = 2
+
+[sub_resource type="Resource" id="CampTwo"]
+script = ExtResource("3_group")
+group_id = &"level_4_camp_2"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampTwoSwords"), SubResource("CampTwoReapers")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CampThreeSwords"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_3_swordsmen"
+enemy_id = &"skeleton_swordsman"
+count = 3
+spawn_marker_ids = PackedStringArray("l4_c3_skeleton_01", "l4_c3_skeleton_02", "l4_c3_skeleton_03")
+formation_id = &"broken_cross_screen"
+interval_seconds = 0.1
+maximum_alive = 3
+
+[sub_resource type="Resource" id="CampThreeReapers"]
+script = ExtResource("2_spawn")
+entry_id = &"level_4_camp_3_reapers"
+enemy_id = &"bone_reaper"
+count = 2
+spawn_marker_ids = PackedStringArray("l4_c3_reaper_01", "l4_c3_reaper_02")
+formation_id = &"broken_cross_anchors"
+maximum_alive = 2
+
+[sub_resource type="Resource" id="CampThree"]
+script = ExtResource("3_group")
+group_id = &"level_4_camp_3"
+spawn_entries = Array[ExtResource("2_spawn")]([SubResource("CampThreeSwords"), SubResource("CampThreeReapers")])
+inter_entry_delay_seconds = 0.15
+
+[sub_resource type="Resource" id="CryptWave"]
+script = ExtResource("4_wave")
+wave_id = &"level_4_three_spiral_camps"
+groups = Array[ExtResource("3_group")]([SubResource("CampOne"), SubResource("CampTwo"), SubResource("CampThree")])
+inter_group_delay_seconds = 0.5
+
+[resource]
+resource_name = "Chapter 1 Level 4 - Spiral Reliquary"
+script = ExtResource("1_encounter")
+encounter_id = &"chapter_1_level_4_crypt"
+display_name = "Spiral Reliquary Camps"
+encounter_tags = PackedStringArray("campaign", "chapter_1", "crypt", "spiral", "dense_camps")
+authoring_notes = "Catalog mirrors the JSON-authored 5/5/5 camp split. Runtime spawning remains JSON-driven."
+waves = Array[ExtResource("4_wave")]([SubResource("CryptWave")])
+warnings = Array[ExtResource("5_warning")]([SubResource("EntryWarning")])
+objectives = Array[ExtResource("6_objective")]([SubResource("ClearObjective")])
+completion = SubResource("Completion")

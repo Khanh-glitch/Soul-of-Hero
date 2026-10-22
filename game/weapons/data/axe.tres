@@ -1,0 +1,130 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://boarr64dcwlkn"]
+
+[ext_resource type="Script" uid="uid://oabdelyhktnc" path="res://game/weapons/weapon_definition.gd" id="1_definition"]
+[ext_resource type="Script" uid="uid://0ltldcjxkaxw" path="res://game/weapons/weapon_attack_profile.gd" id="2_attack"]
+[ext_resource type="Script" uid="uid://8o6hyovmkvms" path="res://game/weapons/weapon_skill_profile.gd" id="3_skill"]
+[ext_resource type="Script" uid="uid://66g66y7jfnse" path="res://game/weapons/spirit_trigger_definition.gd" id="4_trigger"]
+[ext_resource type="Script" uid="uid://dfrks53y32d5g" path="res://game/weapons/spirit_action_definition.gd" id="5_action"]
+[ext_resource type="Script" uid="uid://bid81wdm4sr6s" path="res://game/weapons/weapon_target_rules.gd" id="6_target"]
+[ext_resource type="PackedScene" path="res://game/weapons/effects/axe_throw.tscn" id="7_throw"]
+[ext_resource type="PackedScene" path="res://game/weapons/effects/axe_follow_through.tscn" id="8_follow"]
+
+[sub_resource type="Resource" id="TargetSkill"]
+script = ExtResource("6_target")
+mode = 4
+range = 220.0
+facing_cone_degrees = 180.0
+require_target = false
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("3_skill")
+skill_id = &"throw_and_recall"
+behavior_id = &"throw_and_recall"
+display_name = "Ném & Thu Hồi"
+description = "Ném Rìu xuyên kẻ địch, tiếp tục di chuyển hoặc Lướt; bấm Kỹ năng lần nữa hay chờ để gọi Rìu về vị trí hiện tại."
+cooldown_seconds = 6.5
+mana_cost = 24.0
+damage = 26.0
+stagger = 16.0
+knockback = 7.0
+movement_allowed = true
+movement_speed_multiplier = 1.0
+target_rules = SubResource("TargetSkill")
+animation_name = &"axe_throw"
+action_duration = 0.3
+outbound_speed = 340.0
+return_speed = 470.0
+automatic_recall_seconds = 1.4
+path_width = 14.0
+cross_hit_stagger_bonus = 28.0
+return_snap_distance = 8.0
+projectile_scene = ExtResource("7_throw")
+damage_tags = PackedStringArray("melee", "projectile", "piercing", "returning", "cross_cut")
+
+[sub_resource type="Resource" id="TargetAttack"]
+script = ExtResource("6_target")
+range = 78.0
+facing_cone_degrees = 150.0
+maximum_targets = 8
+require_target = false
+
+[sub_resource type="Resource" id="Attack"]
+script = ExtResource("2_attack")
+attack_id = &"heavy_cleave"
+display_name = "Bổ Nặng"
+description = "Giữ Đánh khi di chuyển chậm rồi thả để chém vòng phía trước; sát thương, phạm vi và choáng tăng rõ theo lực giữ. Thả nhanh vẫn hữu dụng."
+combo_damage = PackedFloat32Array(30)
+combo_stagger = PackedFloat32Array(20)
+combo_knockback = PackedFloat32Array(9)
+combo_hit_stop = PackedFloat32Array(0.055)
+animation_names = PackedStringArray("attack")
+action_durations = PackedFloat32Array(0.44)
+hit_window_starts = PackedFloat32Array(0.16)
+hit_window_ends = PackedFloat32Array(0.32)
+cadence_seconds = 0.55
+combo_reset_seconds = 0.5
+mana_cost = 7.0
+movement_allowed = true
+movement_speed_multiplier = 0.36
+charge_enabled = true
+maximum_charge_seconds = 1.15
+full_charge_arc_degrees = 150.0
+full_charge_stagger_multiplier = 2.25
+target_rules = SubResource("TargetAttack")
+damage_tags = PackedStringArray("melee", "slash", "heavy", "charged")
+
+[sub_resource type="Resource" id="TargetSpirit"]
+script = ExtResource("6_target")
+mode = 5
+range = 420.0
+facing_cone_degrees = 360.0
+require_target = false
+
+[sub_resource type="Resource" id="Action"]
+script = ExtResource("5_action")
+action_id = &"follow_through"
+behavior_id = &"follow_through_endpoint_and_return"
+display_name = "Theo Đà"
+description = "Bay đến mục tiêu hoặc điểm cuối của kỹ năng vừa dùng, gây sát thương lượt đi rồi trở về người chơi đang di chuyển và gây sát thương lần nữa."
+cooldown_seconds = 3.0
+stagger = 14.0
+knockback = 6.0
+piercing = true
+target_rules = SubResource("TargetSpirit")
+animation_name = &"follow_through"
+outbound_speed = 430.0
+return_speed = 540.0
+path_width = 13.0
+return_snap_distance = 8.0
+projectile_scene = ExtResource("8_follow")
+damage_tags = PackedStringArray("spirit", "melee", "piercing", "returning")
+
+[sub_resource type="Resource" id="Trigger"]
+script = ExtResource("4_trigger")
+trigger_id = &"confirmed_hand_skill_resolution"
+confirmed_event = &"hand_skill_resolved"
+description = "Kích hoạt một lần khi kỹ năng của vũ khí chính kết thúc tại mục tiêu hoặc điểm đến hợp lệ."
+required_context_key = &"has_meaningful_endpoint"
+require_truthy_context_value = true
+deduplication_context_key = &"skill_instance_id"
+
+[resource]
+resource_name = "Axe"
+script = ExtResource("1_definition")
+weapon_id = &"axe"
+display_name = "Rìu"
+short_description = "Vũ khí nặng xoay quanh giữ lực, kiểm soát quỹ đạo và hai lượt sát thương đi–về."
+unlock_feature = &"axe"
+unlock_condition = "Mở chính thức tại phòng hướng dẫn an toàn ở Chương 1, Màn 5."
+unlock_campaign_level = 5
+normal_attack = SubResource("Attack")
+hand_skill = SubResource("Skill")
+spirit_trigger = SubResource("Trigger")
+spirit_action = SubResource("Action")
+hand_animation_library = &"axe_warrior_rpg"
+spirit_animation_library = &"weapon_spirit_axe_fallback"
+monster_part_compatibility_tags = PackedStringArray("axe", "melee", "heavy", "returning_projectile")
+rarity_compatibility_tags = PackedStringArray("attack", "charge", "skill", "spirit", "stagger", "area")
+weapon_tags = PackedStringArray("chapter_1", "level_5", "axe", "melee", "charged", "returning")
+hand_ui_description = "Đánh: giữ/thả Bổ Nặng. Kỹ năng: Ném & Thu Hồi."
+spirit_ui_description = "Kích hoạt: kỹ năng chính kết thúc. Linh Khí: Theo Đà đến điểm cuối rồi trở về."

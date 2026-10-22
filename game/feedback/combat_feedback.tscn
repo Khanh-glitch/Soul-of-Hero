@@ -1,0 +1,47 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://game/feedback/combat_feedback.gd" id="1_feedback"]
+[ext_resource type="Script" path="res://game/feedback/combo_hit_counter.gd" id="2_combo"]
+[ext_resource type="Script" path="res://game/feedback/combat_audio_router.gd" id="3_audio"]
+[ext_resource type="Script" path="res://game/feedback/gameplay_audio_hooks.gd" id="4_audio_hooks"]
+[ext_resource type="Script" path="res://game/feedback/pixel_glyph_sprite_text.gd" id="5_glyphs"]
+
+[node name="CombatFeedback" type="Node"]
+process_mode = 3
+script = ExtResource("1_feedback")
+
+[node name="WorldEffects" type="Node2D" parent="."]
+
+[node name="PresentationLayer" type="CanvasLayer" parent="."]
+layer = 70
+
+[node name="OverlayFlash" type="ColorRect" parent="PresentationLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0)
+
+[node name="ComboHitCounter" type="Control" parent="PresentationLayer"]
+custom_minimum_size = Vector2(142, 42)
+offset_left = 482.0
+offset_top = 126.0
+offset_right = 624.0
+offset_bottom = 168.0
+pivot_offset = Vector2(71, 21)
+mouse_filter = 2
+script = ExtResource("2_combo")
+
+[node name="GlyphText" type="Node2D" parent="PresentationLayer/ComboHitCounter"]
+unique_name_in_owner = true
+position = Vector2(71, 10)
+script = ExtResource("5_glyphs")
+
+[node name="CombatAudioRouter" type="Node" parent="."]
+script = ExtResource("3_audio")
+playback_enabled = true
+
+[node name="GameplayAudioHooks" type="Node" parent="."]
+script = ExtResource("4_audio_hooks")

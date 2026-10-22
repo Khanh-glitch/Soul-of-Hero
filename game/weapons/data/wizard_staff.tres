@@ -1,0 +1,98 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/weapons/weapon_definition.gd" id="1_definition"]
+[ext_resource type="Script" path="res://game/weapons/weapon_attack_profile.gd" id="2_attack"]
+[ext_resource type="Script" path="res://game/weapons/weapon_skill_profile.gd" id="3_skill"]
+[ext_resource type="Script" path="res://game/weapons/spirit_trigger_definition.gd" id="4_trigger"]
+[ext_resource type="Script" path="res://game/weapons/spirit_action_definition.gd" id="5_action"]
+[ext_resource type="Script" path="res://game/weapons/weapon_target_rules.gd" id="6_target"]
+
+[sub_resource type="Resource" id="AimRules"]
+script = ExtResource("6_target")
+mode = 4
+range = 480.0
+facing_cone_degrees = 360.0
+maximum_targets = 1
+require_target = false
+
+[sub_resource type="Resource" id="Attack"]
+script = ExtResource("2_attack")
+attack_id = &"wandering_shade"
+display_name = "Wandering Shade"
+description = "Launch a weak, bouncing Shade that marks every hostile in its small explosion."
+combo_count = 1
+combo_damage = PackedFloat32Array(3.0)
+combo_stagger = PackedFloat32Array(1.0)
+combo_knockback = PackedFloat32Array(0.0)
+combo_hit_stop = PackedFloat32Array(0.0)
+animation_names = PackedStringArray("wizard_attack")
+action_durations = PackedFloat32Array(0.44)
+hit_window_starts = PackedFloat32Array(0.20)
+hit_window_ends = PackedFloat32Array(0.22)
+cadence_seconds = 0.44
+combo_reset_seconds = 0.44
+mana_cost = 12.0
+movement_allowed = true
+movement_speed_multiplier = 0.7
+target_rules = SubResource("AimRules")
+damage_tags = PackedStringArray("wizard", "shade", "mark", "normal_attack")
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("3_skill")
+skill_id = &"dark_passage"
+behavior_id = &"wizard_dark_passage"
+display_name = "Dark Passage"
+description = "Consume Dark Points to teleport and detonate; each explosion grows nonlinearly with the local crowd."
+cooldown_seconds = 14.0
+mana_cost = 36.0
+damage = 12.0
+stagger = 12.0
+movement_allowed = false
+target_rules = SubResource("AimRules")
+animation_name = &"wizard_passage"
+action_duration = 0.26
+damage_tags = PackedStringArray("wizard", "active", "teleport", "aoe", "dark")
+
+[sub_resource type="Resource" id="Trigger"]
+script = ExtResource("4_trigger")
+trigger_id = &"wizard_soul_icon_loop"
+confirmed_event = &"enemy_killed"
+description = "Wizard Reserve observes confirmed player kills; its dedicated Soul runtime owns the icon and Dash loop."
+required_count = 1
+progress_per_event = 1.0
+pause_and_preserve_while_in_hand = false
+reset_progress_after_action = false
+
+[sub_resource type="Resource" id="Action"]
+script = ExtResource("5_action")
+action_id = &"wizard_soul_reversal"
+behavior_id = &"wizard_soul_anchor_reversal"
+display_name = "Soul Reversal"
+description = "A Reserve-only Dash anchor returns the controlled Hero and can summon Wizard at the abandoned position."
+cooldown_seconds = 10.0
+damage = 42.0
+stagger = 12.0
+target_rules = SubResource("AimRules")
+animation_name = &"wizard_passage"
+damage_tags = PackedStringArray("wizard", "soul", "summon", "dash")
+
+[resource]
+resource_name = "Wizard Staff"
+script = ExtResource("1_definition")
+weapon_id = &"wizard_staff"
+display_name = "Wizard Staff"
+short_description = "A dark-control Hand form: weak Shade setup, density-scaled passage burst, and a kill-powered Reserve Soul loop."
+unlock_feature = &"wizard_staff"
+unlock_condition = "Collect 50 Wizard shards and unlock the Wizard Hero; the boss grants 10 shards, never an item."
+unlock_campaign_level = 20
+normal_attack = SubResource("Attack")
+hand_skill = SubResource("Skill")
+spirit_trigger = SubResource("Trigger")
+spirit_action = SubResource("Action")
+hand_animation_library = &"wizard_hero_form"
+spirit_animation_library = &"wizard_soul_form"
+monster_part_compatibility_tags = PackedStringArray("wizard", "magic", "dark", "area")
+rarity_compatibility_tags = PackedStringArray("attack", "skill", "soul", "area")
+weapon_tags = PackedStringArray("wizard", "staff", "magic", "dark", "crowd_control", "teleport")
+hand_ui_description = "RMB selects a target; LMB/J sends Wandering Shade; E casts Dark Passage toward that target."
+spirit_ui_description = "While Reserve, confirmed kills become Dark Soul icons. Dash to anchor, kill again, then Dash back to summon Wizard."

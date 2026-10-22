@@ -1,0 +1,1071 @@
+[gd_scene load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://game/ui/hud.gd" id="1_hud"]
+[ext_resource type="Script" path="res://game/ui/action_button.gd" id="2_action"]
+[ext_resource type="Script" path="res://game/ui/virtual_joystick.gd" id="3_joystick"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="4_theme"]
+[ext_resource type="Texture2D" path="res://assets/ui/input_prompts/tilemap_packed.png" id="5_prompts"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Fill01a.png" id="6_fill"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_Select01a.png" id="7_joystick_base"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites Animated/UI_TravelBook_Button01a_4.png" id="8_joystick_knob"]
+[ext_resource type="Texture2D" path="res://assets/environment/dungeon/source_reference.png" id="9_overlay_art"]
+[ext_resource type="Texture2D" path="res://assets/ui/fantasy_icons.png" id="10_fantasy_icons"]
+
+[sub_resource type="StyleBoxTexture" id="HealthFill"]
+texture = ExtResource("6_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.94, 0.25, 0.25, 1)
+
+[sub_resource type="StyleBoxTexture" id="StaminaFill"]
+texture = ExtResource("6_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.58, 0.25, 0.88, 1)
+
+[sub_resource type="StyleBoxTexture" id="ManaFill"]
+texture = ExtResource("6_fill")
+texture_margin_left = 2.0
+texture_margin_top = 1.0
+texture_margin_right = 2.0
+texture_margin_bottom = 1.0
+modulate_color = Color(0.25, 0.49, 0.91, 1)
+
+[sub_resource type="AtlasTexture" id="PromptJ"]
+atlas = ExtResource("5_prompts")
+region = Rect2(384, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptK"]
+atlas = ExtResource("5_prompts")
+region = Rect2(400, 48, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptQ"]
+atlas = ExtResource("5_prompts")
+region = Rect2(272, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptEsc"]
+atlas = ExtResource("5_prompts")
+region = Rect2(272, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptSpace"]
+atlas = ExtResource("5_prompts")
+region = Rect2(496, 96, 48, 16)
+
+[sub_resource type="AtlasTexture" id="PromptE"]
+atlas = ExtResource("5_prompts")
+region = Rect2(304, 32, 16, 16)
+
+[sub_resource type="AtlasTexture" id="PromptLMB"]
+atlas = ExtResource("5_prompts")
+region = Rect2(144, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="IconCrouch"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(0, 128, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconInteract"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(448, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconSlide"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconRoll"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(192, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconAttack"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconSkill"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(288, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconRelay"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="IconDash"]
+atlas = ExtResource("10_fantasy_icons")
+region = Rect2(64, 32, 32, 32)
+
+[node name="HUD" type="CanvasLayer"]
+process_mode = 3
+layer = 90
+script = ExtResource("1_hud")
+
+[node name="HUDRoot" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("4_theme")
+
+[node name="TopLeftPanel" type="MarginContainer" parent="HUDRoot"]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 258.0
+offset_bottom = 92.0
+
+[node name="Stats" type="VBoxContainer" parent="HUDRoot/TopLeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="KnightLabel" type="Label" parent="HUDRoot/TopLeftPanel/Stats"]
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.871, 0.572, 1)
+theme_override_font_sizes/font_size = 9
+text = "HIỆP SĨ LANG THANG"
+
+[node name="HealthRow" type="HBoxContainer" parent="HUDRoot/TopLeftPanel/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="HealthIcon" type="Label" parent="HUDRoot/TopLeftPanel/Stats/HealthRow"]
+custom_minimum_size = Vector2(17, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.45, 0.4, 1)
+text = "HP"
+
+[node name="HealthBar" type="ProgressBar" parent="HUDRoot/TopLeftPanel/Stats/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 10)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/fill = SubResource("HealthFill")
+value = 100.0
+show_percentage = false
+
+[node name="HealthValue" type="Label" parent="HUDRoot/TopLeftPanel/Stats/HealthRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(43, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="StaminaRow" type="HBoxContainer" parent="HUDRoot/TopLeftPanel/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="StaminaIcon" type="Label" parent="HUDRoot/TopLeftPanel/Stats/StaminaRow"]
+custom_minimum_size = Vector2(17, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.48, 1, 1)
+text = "S2"
+
+[node name="StaminaBar" type="ProgressBar" parent="HUDRoot/TopLeftPanel/Stats/StaminaRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 10)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/fill = SubResource("StaminaFill")
+value = 100.0
+show_percentage = false
+
+[node name="StaminaValue" type="Label" parent="HUDRoot/TopLeftPanel/Stats/StaminaRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(43, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="ManaRow" type="HBoxContainer" parent="HUDRoot/TopLeftPanel/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="ManaIcon" type="Label" parent="HUDRoot/TopLeftPanel/Stats/ManaRow"]
+custom_minimum_size = Vector2(17, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.48, 0.72, 1, 1)
+text = "MP"
+
+[node name="ManaBar" type="ProgressBar" parent="HUDRoot/TopLeftPanel/Stats/ManaRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 10)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/fill = SubResource("ManaFill")
+value = 100.0
+show_percentage = false
+
+[node name="ManaValue" type="Label" parent="HUDRoot/TopLeftPanel/Stats/ManaRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(43, 0)
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_font_sizes/font_size = 12
+text = "100/100"
+horizontal_alignment = 2
+
+[node name="UltimateStatus" type="Label" parent="HUDRoot/TopLeftPanel/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.64, 0.84, 1, 1)
+theme_override_font_sizes/font_size = 8
+text = "R  •  PHI MÃ  •  SẴN SÀNG  •  15 MP"
+
+[node name="ObjectivePanel" type="MarginContainer" parent="HUDRoot"]
+layout_mode = 1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -180.0
+offset_top = 10.0
+offset_right = 180.0
+offset_bottom = 34.0
+grow_horizontal = 2
+
+[node name="ObjectiveMargin" type="MarginContainer" parent="HUDRoot/ObjectivePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 3
+
+[node name="ObjectiveLabel" type="Label" parent="HUDRoot/ObjectivePanel/ObjectiveMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0.08, 0.035, 0.06, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 9
+text = "MỤC TIÊU  •  Tìm 3 ấn ký để mở cổng"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="TopRightPanel" type="PanelContainer" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 444.0
+offset_top = 8.0
+offset_right = 632.0
+offset_bottom = 76.0
+theme_type_variation = &"HudPanel"
+
+[node name="RightStats" type="VBoxContainer" parent="HUDRoot/TopRightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="ScoreLabel" type="Label" parent="HUDRoot/TopRightPanel/RightStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_colors/font_color = Color(1, 0.85, 0.45, 1)
+theme_override_font_sizes/font_size = 13
+text = "ĐIỂM  000000"
+horizontal_alignment = 2
+
+[node name="SigilLabel" type="Label" parent="HUDRoot/TopRightPanel/RightStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"NumberLabel"
+theme_override_colors/font_color = Color(0.81, 0.62, 1, 1)
+theme_override_font_sizes/font_size = 13
+text = "ẤN KÝ  0/3"
+horizontal_alignment = 2
+
+[node name="SyncLabel" type="Label" parent="HUDRoot/TopRightPanel/RightStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "ĐỒNG BỘ  ○  CỤC BỘ"
+horizontal_alignment = 2
+
+[node name="SyncDetailLabel" type="Label" parent="HUDRoot/TopRightPanel/RightStats"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.67, 0.73, 1)
+theme_override_font_sizes/font_size = 8
+text = "Đang khởi động"
+horizontal_alignment = 2
+text_overrun_behavior = 3
+
+[node name="PauseButton" type="Button" parent="HUDRoot"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -47.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 47.0
+grow_horizontal = 0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_override_constants/icon_max_width = 14
+theme_type_variation = &"ActionButton"
+text = "Ⅱ"
+icon = SubResource("PromptEsc")
+expand_icon = true
+tooltip_text = "Tạm dừng (Esc)"
+
+[node name="ToastPanel" type="MarginContainer" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 180.0
+offset_top = 45.0
+offset_right = 460.0
+offset_bottom = 74.0
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="ToastMargin" type="MarginContainer" parent="HUDRoot/ToastPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 3
+
+[node name="ToastRow" type="HBoxContainer" parent="HUDRoot/ToastPanel/ToastMargin"]
+unique_name_in_owner = true
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Prompt" type="TextureRect" parent="HUDRoot/ToastPanel/ToastMargin/ToastRow"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(18, 18)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptLMB")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ToastLabel" type="Label" parent="HUDRoot/ToastPanel/ToastMargin/ToastRow"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.58, 1)
+text = "Thông báo"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WeaponPanel" type="MarginContainer" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -48.0
+offset_right = 120.0
+offset_bottom = -28.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="WeaponMargin" type="MarginContainer" parent="HUDRoot/WeaponPanel"]
+layout_mode = 2
+
+[node name="WeaponRows" type="VBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin"]
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="HandLabel" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.86, 0.48, 1)
+theme_override_colors/font_outline_color = Color(0.08, 0.035, 0.06, 0.95)
+theme_override_constants/outline_size = 1
+theme_override_font_sizes/font_size = 9
+text = "KIẾM SĨ • NHỊP 1/4"
+horizontal_alignment = 1
+
+[node name="HandStatus" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "SOUL ECHO • SẴN SÀNG"
+horizontal_alignment = 1
+
+[node name="SpiritLabel" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_colors/font_color = Color(0.52, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 8
+text = "CẶP HERO • DỰ BỊ TRỐNG"
+horizontal_alignment = 1
+
+[node name="SpiritStatus" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "Chuyển Hồn cần một nhân vật dự bị"
+horizontal_alignment = 1
+
+[node name="ActionDeck" type="HBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AttackSlot" type="PanelContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(73, 27)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Content" type="HBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/AttackSlot"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Prompt" type="TextureRect" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/AttackSlot/Content"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptJ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AttackSlotStatus" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/AttackSlot/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "ĐÁNH\n1/4"
+vertical_alignment = 1
+
+[node name="SkillSlot" type="PanelContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(87, 27)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Content" type="HBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/SkillSlot"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Prompt" type="TextureRect" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/SkillSlot/Content"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptK")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SkillSlotStatus" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/SkillSlot/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "ECHO\nSẴN SÀNG"
+vertical_alignment = 1
+
+[node name="DashSlot" type="PanelContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck"]
+custom_minimum_size = Vector2(78, 27)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Content" type="HBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/DashSlot"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="Prompt" type="TextureRect" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/DashSlot/Content"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptE")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Status" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/DashSlot/Content"]
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "LƯỚT"
+vertical_alignment = 1
+
+[node name="RelaySlot" type="PanelContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 27)
+layout_mode = 2
+theme_type_variation = &"PromptPanel"
+
+[node name="Content" type="HBoxContainer" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/RelaySlot"]
+layout_mode = 2
+theme_override_constants/separation = 3
+
+[node name="Prompt" type="TextureRect" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/RelaySlot/Content"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+mouse_filter = 2
+texture = SubResource("PromptQ")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RelaySlotStatus" type="Label" parent="HUDRoot/WeaponPanel/WeaponMargin/WeaponRows/ActionDeck/RelaySlot/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PromptLabel"
+text = "CHUYỂN HỒN\n—"
+vertical_alignment = 1
+
+[node name="VirtualControls" type="Control" parent="HUDRoot"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0.84)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="DPad" type="Control" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 10.0
+offset_top = 232.0
+offset_right = 134.0
+offset_bottom = 354.0
+mouse_filter = 2
+
+[node name="VirtualJoystick" type="Control" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+z_index = 4
+custom_minimum_size = Vector2(130, 130)
+layout_mode = 0
+offset_left = 8.0
+offset_top = 222.0
+offset_right = 138.0
+offset_bottom = 352.0
+mouse_filter = 0
+script = ExtResource("3_joystick")
+
+[node name="BaseAsset" type="TextureRect" parent="HUDRoot/VirtualControls/VirtualJoystick"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 13.0
+offset_top = 13.0
+offset_right = 117.0
+offset_bottom = 117.0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("7_joystick_base")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="KnobAsset" type="TextureRect" parent="HUDRoot/VirtualControls/VirtualJoystick"]
+unique_name_in_owner = true
+modulate = Color(1, 0.78, 0.38, 0.9)
+layout_mode = 0
+offset_left = 47.0
+offset_top = 47.0
+offset_right = 83.0
+offset_bottom = 83.0
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("8_joystick_knob")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MoveLabel" type="Label" parent="HUDRoot/VirtualControls/VirtualJoystick"]
+layout_mode = 0
+offset_left = 38.0
+offset_top = 54.0
+offset_right = 92.0
+offset_bottom = 76.0
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.18, 0.12, 0.2, 0.9)
+theme_override_font_sizes/font_size = 8
+text = "ĐI"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MoveUpButton" type="Button" parent="HUDRoot/VirtualControls/DPad"]
+layout_mode = 0
+offset_left = 42.0
+offset_right = 82.0
+offset_bottom = 38.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+theme_type_variation = &"ActionButton"
+text = "▲\nW"
+tooltip_text = "Đi lên (W / ↑)"
+script = ExtResource("2_action")
+action_name = &"move_up"
+
+[node name="MoveLeftButton" type="Button" parent="HUDRoot/VirtualControls/DPad"]
+layout_mode = 0
+offset_top = 41.0
+offset_right = 40.0
+offset_bottom = 79.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+theme_type_variation = &"ActionButton"
+text = "◀  A"
+tooltip_text = "Sang trái (A / ←)"
+script = ExtResource("2_action")
+action_name = &"move_left"
+
+[node name="MoveRightButton" type="Button" parent="HUDRoot/VirtualControls/DPad"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 41.0
+offset_right = 124.0
+offset_bottom = 79.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+theme_type_variation = &"ActionButton"
+text = "D  ▶"
+tooltip_text = "Sang phải (D / →)"
+script = ExtResource("2_action")
+action_name = &"move_right"
+
+[node name="MoveDownButton" type="Button" parent="HUDRoot/VirtualControls/DPad"]
+layout_mode = 0
+offset_left = 42.0
+offset_top = 82.0
+offset_right = 82.0
+offset_bottom = 120.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 9
+theme_type_variation = &"ActionButton"
+text = "S\n▼"
+tooltip_text = "Đi xuống (S / ↓)"
+script = ExtResource("2_action")
+action_name = &"move_down"
+
+[node name="KeyboardHint" type="Label" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 139.0
+offset_top = 288.0
+offset_right = 318.0
+offset_bottom = 306.0
+theme_override_colors/font_color = Color(0.82, 0.78, 0.73, 1)
+theme_override_font_sizes/font_size = 8
+text = "RMB: ưu tiên mục tiêu • LMB/J: đánh tự chọn • E: kỹ năng • F: lướt • R: tuyệt kỹ • Q: Chuyển Hồn"
+vertical_alignment = 2
+
+[node name="CrouchButton" type="Button" parent="HUDRoot/VirtualControls"]
+visible = false
+layout_mode = 0
+offset_left = 238.0
+offset_top = 310.0
+offset_right = 302.0
+offset_bottom = 354.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "CÚI/THỦ\nCtrl"
+tooltip_text = "Cúi hoặc thủ (Ctrl)"
+script = ExtResource("2_action")
+action_name = &"crouch"
+icon = SubResource("IconCrouch")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="InteractButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 520.0
+offset_top = 226.0
+offset_right = 572.0
+offset_bottom = 270.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "DÙNG\nE"
+tooltip_text = "Tương tác (E)"
+script = ExtResource("2_action")
+action_name = &"interact"
+icon = SubResource("IconInteract")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="SlideButton" type="Button" parent="HUDRoot/VirtualControls"]
+visible = false
+layout_mode = 0
+offset_left = 378.0
+offset_top = 310.0
+offset_right = 440.0
+offset_bottom = 354.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "TRƯỢT\nC"
+tooltip_text = "Trượt (C)"
+script = ExtResource("2_action")
+action_name = &"slide"
+icon = SubResource("IconSlide")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="RollButton" type="Button" parent="HUDRoot/VirtualControls"]
+visible = false
+layout_mode = 0
+offset_left = 444.0
+offset_top = 310.0
+offset_right = 502.0
+offset_bottom = 354.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "LỘN\nQ"
+tooltip_text = "Lộn tránh (Q)"
+script = ExtResource("2_action")
+action_name = &"roll"
+icon = SubResource("IconRoll")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="LightAttackButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 520.0
+offset_top = 276.0
+offset_right = 572.0
+offset_bottom = 320.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "ĐÁNH\nJ"
+tooltip_text = "Kiếm: chuỗi bốn nhịp (J / chuột trái)"
+script = ExtResource("2_action")
+action_name = &"attack"
+icon = SubResource("IconAttack")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="UltimateButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 462.0
+offset_top = 276.0
+offset_right = 514.0
+offset_bottom = 320.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 7
+theme_type_variation = &"ActionButton"
+text = "R\nPHI MÃ"
+tooltip_text = "Tuyệt kỹ nhân vật (R)"
+script = ExtResource("2_action")
+action_name = &"ultimate"
+icon = SubResource("IconSkill")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="HeavyAttackButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 578.0
+offset_top = 276.0
+offset_right = 630.0
+offset_bottom = 320.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "KỸ NĂNG\nE"
+tooltip_text = "Kỹ năng hiện tại (E)"
+script = ExtResource("2_action")
+action_name = &"skill"
+icon = SubResource("IconSkill")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="JumpButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 578.0
+offset_top = 226.0
+offset_right = 630.0
+offset_bottom = 270.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "CHUYỂN HỒN\nQ"
+tooltip_text = "Khi điều kiện READY đã đủ: nhấn Q để gài Soul Skill, rồi LMB để xác nhận"
+script = ExtResource("2_action")
+action_name = &"soul_relay_1"
+icon = SubResource("IconRelay")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="DashButton" type="Button" parent="HUDRoot/VirtualControls"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 549.0
+offset_top = 326.0
+offset_right = 601.0
+offset_bottom = 356.0
+mouse_filter = 0
+theme_override_font_sizes/font_size = 8
+theme_type_variation = &"ActionButton"
+text = "LƯỚT  F"
+tooltip_text = "Lướt né (F, tiêu hao 11 mana)"
+script = ExtResource("2_action")
+action_name = &"dash"
+icon = SubResource("IconDash")
+expand_icon = true
+theme_override_constants/icon_max_width = 18
+
+[node name="PauseOverlay" type="Control" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="TextureRect" parent="HUDRoot/PauseOverlay"]
+modulate = Color(0.07, 0.04, 0.1, 0.82)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("9_overlay_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CenterCard" type="PanelContainer" parent="HUDRoot/PauseOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -124.0
+offset_top = -86.0
+offset_right = 124.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="CardMargin" type="MarginContainer" parent="HUDRoot/PauseOverlay/CenterCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="CardContent" type="VBoxContainer" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
+theme_override_font_sizes/font_size = 18
+text = "TẠM DỪNG"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.75, 0.8, 1)
+theme_override_font_sizes/font_size = 9
+text = "Esc để trở lại hành trình"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "TIẾP TỤC  [ESC]"
+
+[node name="PauseRestartButton" type="Button" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "CHƠI LẠI"
+
+[node name="PauseHubButton" type="Button" parent="HUDRoot/PauseOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "VỀ BẢN ĐỒ"
+
+[node name="DeathOverlay" type="Control" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="TextureRect" parent="HUDRoot/DeathOverlay"]
+modulate = Color(0.18, 0.02, 0.04, 0.88)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("9_overlay_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CenterCard" type="PanelContainer" parent="HUDRoot/DeathOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -132.0
+offset_top = -92.0
+offset_right = 132.0
+offset_bottom = 92.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="CardMargin" type="MarginContainer" parent="HUDRoot/DeathOverlay/CenterCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="CardContent" type="VBoxContainer" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.38, 0.35, 1)
+theme_override_font_sizes/font_size = 18
+text = "CẢ HAI HERO ĐÃ GỤC"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.75, 0.78, 1)
+theme_override_font_sizes/font_size = 9
+text = "Cả hai Hero đã cạn máu"
+horizontal_alignment = 1
+
+[node name="RespawnButton" type="Button" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "HỒI SINH"
+
+[node name="DeathRestartButton" type="Button" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "CHƠI LẠI TỪ ĐẦU"
+
+[node name="DeathLoadoutButton" type="Button" parent="HUDRoot/DeathOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "ĐẾN ĐIỆN SOUL"
+
+[node name="WinOverlay" type="Control" parent="HUDRoot"]
+unique_name_in_owner = true
+visible = false
+process_mode = 3
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="TextureRect" parent="HUDRoot/WinOverlay"]
+modulate = Color(0.03, 0.16, 0.1, 0.86)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("9_overlay_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="CenterCard" type="PanelContainer" parent="HUDRoot/WinOverlay"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -142.0
+offset_top = -96.0
+offset_right = 142.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"ElevatedPanel"
+
+[node name="CardMargin" type="MarginContainer" parent="HUDRoot/WinOverlay/CenterCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="CardContent" type="VBoxContainer" parent="HUDRoot/WinOverlay/CenterCard/CardMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="HUDRoot/WinOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.88, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "CỔNG TÀN TÍCH ĐÃ MỞ"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="HUDRoot/WinOverlay/CenterCard/CardMargin/CardContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.92, 0.75, 1)
+theme_override_font_sizes/font_size = 9
+text = "Đủ ấn ký • Lối thoát đã được mở"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="HUDRoot/WinOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+text = "TIẾP TỤC KHÁM PHÁ"
+
+[node name="WinRestartButton" type="Button" parent="HUDRoot/WinOverlay/CenterCard/CardMargin/CardContent"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+text = "CHƠI LẠI"

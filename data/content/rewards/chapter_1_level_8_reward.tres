@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_auxiliary_equipment_grant.gd" id="2_aux"]
+
+[sub_resource type="Resource" id="EpicReliquaryVessel"]
+script = ExtResource("2_aux")
+grant_id = &"level_8_epic_reliquary_vessel"
+source_id = &"chapter_1_level_8_first_clear"
+stable_instance_id = "5444fa20-0680-b49a-dbb5-4a553e46a8b1"
+slot_id = "soul_vessel"
+rarity_id = "epic"
+item_level = 8
+seed = 18008
+allowed_affix_ids = PackedStringArray("max_hp_percent", "barrier_capacity_percent", "health_regen")
+equip_if_slot_empty = false
+
+[resource]
+resource_name = "Chapter 1 Level 8 First Clear Reward"
+script = ExtResource("1")
+bundle_id = &"chapter_1_level_8_reward"
+account_currency = 680
+hero_materials = 15
+monster_fragments = 6
+player_level_grant = 1
+auxiliary_equipment_grants = Array[Resource]([SubResource("EpicReliquaryVessel")])

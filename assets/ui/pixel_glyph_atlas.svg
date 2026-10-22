@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="72" height="5" viewBox="0 0 72 5">
+  <!-- Asset-backed copy of the original 3x5 combat glyphs. Each glyph occupies a 4px cell. -->
+  <g fill="#ffffff" shape-rendering="crispEdges">
+    <g id="glyph_0" transform="translate(0 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_1" transform="translate(4 0)">
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="1" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="1" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_2" transform="translate(8 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_3" transform="translate(12 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_4" transform="translate(16 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_5" transform="translate(20 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_6" transform="translate(24 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_7" transform="translate(28 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="1" y="3" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_8" transform="translate(32 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_9" transform="translate(36 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_H" transform="translate(40 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_I" transform="translate(44 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="1" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="1" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_T" transform="translate(48 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="1" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="1" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="1" y="3" width="1" height="1"/>
+      <rect x="1" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_X" transform="translate(52 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="2" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="2" y="1" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="0" y="3" width="1" height="1"/>
+      <rect x="2" y="3" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+      <rect x="2" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_bang" transform="translate(56 0)">
+      <rect x="0" y="0" width="1" height="1"/>
+      <rect x="0" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="0" y="4" width="1" height="1"/>
+    </g>
+    <g id="glyph_minus" transform="translate(60 0)">
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+    </g>
+    <g id="glyph_plus" transform="translate(64 0)">
+      <rect x="1" y="1" width="1" height="1"/>
+      <rect x="0" y="2" width="1" height="1"/>
+      <rect x="1" y="2" width="1" height="1"/>
+      <rect x="2" y="2" width="1" height="1"/>
+      <rect x="1" y="3" width="1" height="1"/>
+    </g>
+    <g id="glyph_space" transform="translate(68 0)">
+    </g>
+  </g>
+</svg>

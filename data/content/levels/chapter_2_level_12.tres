@@ -1,0 +1,33 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_11")
+required_feature_ids = PackedStringArray("chapter_2_access")
+
+[resource]
+resource_name = "Chapter 2 Level 12 - Mạch Độc Tro"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_12"
+display_name = "Mạch Độc Tro"
+content_status = 2
+objective_summary = "Thanh lọc hai dòng độc, thu Venom Spine và đến cauldron trung tâm."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "ash_venom", "purification", "forge")
+authoring_notes = "Chapter 2 data contract. Runtime must teach Venom Wraith independently before mixing profiles: 16 basic plus 6 Venom Wraith on Easy, two player-selectable poison channels, protected exits/objectives, and one guided Monster Forge interaction after Results. First clear grants the deterministic Venom Spine part and the Monster Parts/Forge feature pair."
+campaign_slot = 12
+chapter_number = 2
+chapter_level_number = 2
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_12.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_12_ash_venom")
+entry_encounter_id = &"chapter_2_level_12_ash_venom"
+unlock_requirements = SubResource("UnlockRequirements")
+granted_feature_ids = PackedStringArray("part_inventory", "monster_forge")
+completion_reward_bundle_id = &"chapter_2_level_12_reward"
+completion_transaction_id = &"campaign:chapter_2_level_12:first_clear:v1"
+recommended_mastery = 3500

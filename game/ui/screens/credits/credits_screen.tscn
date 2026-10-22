@@ -1,0 +1,101 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/credits/credits_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+
+[node name="CreditsScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 10.0
+offset_right = -16.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Header" type="HBoxContainer" parent="Margin/Layout"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Margin/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(1, 0.78, 0.39, 1)
+theme_override_font_sizes/font_size = 19
+text = "GHI CÔNG & NGUỒN TÀI NGUYÊN"
+
+[node name="BackButton" type="Button" parent="Margin/Layout/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(110, 40)
+layout_mode = 2
+text = "QUAY LẠI"
+
+[node name="Card" type="PanelContainer" parent="Margin/Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"ElevatedPanel"
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/Layout/Card"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="Margin/Layout/Card/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 7
+
+[node name="Game" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.73, 0.38, 1)
+theme_override_font_sizes/font_size = 15
+text = "SOUL OF HERO"
+
+[node name="Build" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+text = "Nền tảng alpha chơi được • Godot 4.7 • Lưu cục bộ • Desktop/Android ngang"
+
+[node name="ArtHeader" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.62, 0.9, 1)
+text = "GHI CÔNG TÀI NGUYÊN"
+
+[node name="Art" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+text = "• Cainos Pixel Art Top Down — nền, kiến trúc, cây và đạo cụ Home Map.\n• 0x72 Dungeon Tileset II — bản đồ hầm ngục.\n• Shikashi Fantasy Icons và Free Inventory UI — icon, HUD và khung pixel.\n• Complete UI Book Styles / TravelBookLite — Crusenho Agus Hennihuno; Field Codex, XP và continuation UI.\n• RPG Arsenal v1.1 — LimeZu; icon vũ khí, trang bị và loot.\n• Handjet, Grenze Gotisch, VT323 — SIL Open Font License 1.1.\n• Kenney Input Prompts Pixel, RPG Audio, Impact Sounds — CC0.\n• RPG Essentials SFX Free — Leohpaz; VFX Free Pack — CodeManu.\n• Super Pixel Effects Gigapack Free — Will Tice / unTied Games.\n• Pixel_Poem Enemy Animations Set và FreeKnight — sprite nhân vật.\n• Chapter I key art và biểu trưng Soul — hình ảnh gốc của dự án tạo bằng OpenAI ImageGen."
+autowrap_mode = 2
+
+[node name="NoticeHeader" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.78, 0.62, 0.9, 1)
+text = "PHẠM VI BẢN HIỆN TẠI"
+
+[node name="Notice" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+text = "Chiến dịch Chapter 1 hiện có 10 màn hoàn chỉnh trên khung 100 level. Level 11–100, Săn Quái, Thử Thách, Vực Sâu, Lò Rèn và các mode endgame vẫn là nội dung dự kiến; UI không được xem là bằng chứng các mode đó đã playable."
+autowrap_mode = 2
+
+[node name="Future" type="Label" parent="Margin/Layout/Card/Scroll/Content"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.53, 0.49, 0.57, 1)
+text = "TÍNH NĂNG DỰ KIẾN: Hero bổ sung, Chương 3, trang phục, chia sẻ đội Soul và xếp hạng trực tuyến nằm ngoài phạm vi bản alpha này."
+autowrap_mode = 2

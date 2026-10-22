@@ -1,0 +1,166 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/title/title_screen.gd" id="2_script"]
+[ext_resource type="PackedScene" path="res://game/ui/theme/dungeon_backdrop.tscn" id="3_backdrop"]
+[ext_resource type="Texture2D" path="res://assets/characters/knight/_Idle.png" id="4_hero"]
+[ext_resource type="Texture2D" path="res://assets/branding/chapter_1_key_art_imagen.png" id="5_key_art"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="6_emblem"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconPlay01a.png" id="7_continue_icon"]
+[ext_resource type="Texture2D" path="res://assets/library/downloaded/complete_ui_book_styles_free/01_TravelBookLite/Sprites/UI_TravelBook_IconRestart01a.png" id="8_new_game_icon"]
+
+[sub_resource type="AtlasTexture" id="HeroFrame"]
+atlas = ExtResource("4_hero")
+region = Rect2(0, 0, 120, 80)
+
+[node name="TitleScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_theme")
+script = ExtResource("2_script")
+
+[node name="DungeonBackdrop" parent="." instance=ExtResource("3_backdrop")]
+layout_mode = 1
+
+[node name="ChapterKeyArt" type="TextureRect" parent="."]
+modulate = Color(0.72, 0.68, 0.74, 0.72)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("5_key_art")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="HeroSilhouette" type="TextureRect" parent="."]
+visible = false
+modulate = Color(0.86, 0.78, 0.72, 0.82)
+layout_mode = 0
+offset_left = 238.0
+offset_top = 150.0
+offset_right = 402.0
+offset_bottom = 318.0
+mouse_filter = 2
+texture_filter = 1
+texture = SubResource("HeroFrame")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="SafeMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 24.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MainRow" type="HBoxContainer" parent="SafeMargin"]
+layout_mode = 2
+theme_override_constants/separation = 34
+
+[node name="Brand" type="VBoxContainer" parent="SafeMargin/MainRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+theme_override_constants/separation = 5
+
+[node name="Emblem" type="TextureRect" parent="SafeMargin/MainRow/Brand"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("6_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Kicker" type="Label" parent="SafeMargin/MainRow/Brand"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.76, 0.61, 0.36, 1)
+text = "NHẬP VAI HÀNH ĐỘNG GÓC NHÌN TỪ TRÊN"
+
+[node name="Title" type="Label" parent="SafeMargin/MainRow/Brand"]
+layout_mode = 2
+theme_type_variation = &"DisplayLabel"
+theme_override_colors/font_color = Color(1, 0.82, 0.42, 1)
+theme_override_font_sizes/font_size = 34
+text = "SOUL OF\nHERO"
+
+[node name="Tagline" type="Label" parent="SafeMargin/MainRow/Brand"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.76, 0.72, 0.79, 1)
+text = "Thức tỉnh Soul. Tiếp nối ý chí Hero.\nĐổi người, giữ nhịp, làm chủ chiến trường."
+
+[node name="Build" type="Label" parent="SafeMargin/MainRow/Brand"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_color = Color(0.46, 0.43, 0.5, 1)
+theme_override_font_sizes/font_size = 9
+text = "BẢN ALPHA • LƯU CỤC BỘ"
+
+[node name="ProfileChoice" type="VBoxContainer" parent="SafeMargin/MainRow"]
+custom_minimum_size = Vector2(226, 0)
+layout_mode = 2
+alignment = 1
+theme_override_constants/separation = 9
+
+[node name="ChoiceKicker" type="Label" parent="SafeMargin/MainRow/ProfileChoice"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.88, 0.71, 0.39, 1)
+text = "CHỌN HỒ SƠ"
+horizontal_alignment = 1
+
+[node name="ChoiceHint" type="Label" parent="SafeMargin/MainRow/ProfileChoice"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_color = Color(0.72, 0.68, 0.75, 1)
+text = "Tiếp tục hành trình hoặc bắt đầu lại."
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="SafeMargin/MainRow/ProfileChoice"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+theme_override_constants/icon_max_width = 20
+text = "TIẾP TỤC"
+icon = ExtResource("7_continue_icon")
+expand_icon = true
+
+[node name="NewGameButton" type="Button" parent="SafeMargin/MainRow/ProfileChoice"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+theme_override_constants/icon_max_width = 20
+text = "CHƠI MỚI"
+icon = ExtResource("8_new_game_icon")
+expand_icon = true
+
+[node name="ResetNote" type="Label" parent="SafeMargin/MainRow/ProfileChoice"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_colors/font_color = Color(0.58, 0.54, 0.62, 1)
+theme_override_font_sizes/font_size = 9
+text = "Chơi mới đặt lại tiến trình, đội hình và tủ đồ."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="StatusLabel" type="Label" parent="SafeMargin/MainRow/ProfileChoice"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.48, 0.42, 1)
+theme_override_font_sizes/font_size = 9
+text = "Không thể tạo hồ sơ mới."
+horizontal_alignment = 1
+autowrap_mode = 2

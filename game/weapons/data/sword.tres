@@ -1,0 +1,110 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://l45s4oaqw6ge"]
+
+[ext_resource type="Script" uid="uid://oabdelyhktnc" path="res://game/weapons/weapon_definition.gd" id="1_definition"]
+[ext_resource type="Script" uid="uid://0ltldcjxkaxw" path="res://game/weapons/weapon_attack_profile.gd" id="2_attack"]
+[ext_resource type="Script" uid="uid://8o6hyovmkvms" path="res://game/weapons/weapon_skill_profile.gd" id="3_skill"]
+[ext_resource type="Script" uid="uid://66g66y7jfnse" path="res://game/weapons/spirit_trigger_definition.gd" id="4_trigger"]
+[ext_resource type="Script" uid="uid://dfrks53y32d5g" path="res://game/weapons/spirit_action_definition.gd" id="5_action"]
+[ext_resource type="Script" uid="uid://bid81wdm4sr6s" path="res://game/weapons/weapon_target_rules.gd" id="6_target"]
+
+[sub_resource type="Resource" id="TargetSkill"]
+script = ExtResource("6_target")
+mode = 4
+range = 112.0
+facing_cone_degrees = 150.0
+require_target = false
+
+[sub_resource type="Resource" id="Skill"]
+script = ExtResource("3_skill")
+skill_id = &"dash_slash"
+behavior_id = &"move_and_damage_along_path"
+display_name = "Lướt Chém"
+description = "Lao theo hướng ngắm hoặc mục tiêu hỗ trợ, gây sát thương trên đường đi với thời gian bất tử được giới hạn rõ."
+damage = 44.0
+stagger = 24.0
+knockback = 10.0
+movement_distance = 96.0
+movement_duration = 0.18
+invulnerability_start_seconds = 0.02
+invulnerability_duration_seconds = 0.12
+ignore_unit_collision_during_movement = true
+target_rules = SubResource("TargetSkill")
+animation_name = &"dash_attack"
+action_duration = 0.34
+hit_window_start_seconds = 0.02
+hit_window_end_seconds = 0.18
+damage_tags = PackedStringArray("melee", "slash", "movement_skill")
+
+[sub_resource type="Resource" id="TargetAttack"]
+script = ExtResource("6_target")
+range = 72.0
+facing_cone_degrees = 125.0
+require_target = false
+
+[sub_resource type="Resource" id="Attack"]
+script = ExtResource("2_attack")
+attack_id = &"sword_three_hit_combo"
+display_name = "Liên Kích Ba Đòn"
+description = "Hai nhát chém nhanh nối với đòn kết thúc nặng hơn, tăng choáng, đẩy lùi và lực va chạm."
+combo_count = 3
+combo_damage = PackedFloat32Array(18, 20, 32)
+combo_stagger = PackedFloat32Array(9, 11, 28)
+combo_knockback = PackedFloat32Array(5, 6, 14)
+combo_hit_stop = PackedFloat32Array(0.035, 0.04, 0.075)
+animation_names = PackedStringArray("attack", "combo_attack", "heavy_attack")
+action_durations = PackedFloat32Array(0.34, 0.38, 0.52)
+hit_window_starts = PackedFloat32Array(0.1, 0.12, 0.2)
+hit_window_ends = PackedFloat32Array(0.25, 0.29, 0.43)
+cadence_seconds = 0.22
+mana_cost = 0.0
+hold_continues_combo = true
+target_rules = SubResource("TargetAttack")
+damage_tags = PackedStringArray("melee", "slash")
+
+[sub_resource type="Resource" id="TargetSpirit"]
+script = ExtResource("6_target")
+range = 320.0
+facing_cone_degrees = 360.0
+low_health_preference = 0.2
+
+[sub_resource type="Resource" id="Action"]
+script = ExtResource("5_action")
+action_id = &"flying_sword"
+behavior_id = &"fly_through_target_and_return_to_orbit"
+display_name = "Phi Kiếm"
+description = "Chọn mục tiêu hợp lệ gần nhất, hơi ưu tiên kẻ ít máu, chém xuyên một lần rồi trở về quỹ đạo Linh Khí."
+cooldown_seconds = 2.5
+damage = 28.0
+stagger = 18.0
+knockback = 6.0
+return_to_spirit_orbit = true
+target_rules = SubResource("TargetSpirit")
+animation_name = &"flying_sword"
+damage_tags = PackedStringArray("spirit", "slash")
+
+[sub_resource type="Resource" id="Trigger"]
+script = ExtResource("4_trigger")
+trigger_id = &"three_confirmed_hand_attacks"
+confirmed_event = &"hand_attack_instance_created"
+description = "Tăng tiến độ sau ba đòn đánh thường đã được xác nhận, bất kể vũ khí nào đang ở tay chính."
+required_count = 3
+
+[resource]
+resource_name = "Sword"
+script = ExtResource("1_definition")
+weapon_id = &"sword"
+display_name = "Kiếm"
+short_description = "Vũ khí linh hoạt với liên kích ba đòn; các đòn xác nhận sẽ đánh thức Phi Kiếm trở về."
+unlock_feature = &"starter_sword"
+unlock_condition = "Có sẵn từ đầu tiến trình."
+normal_attack = SubResource("Attack")
+hand_skill = SubResource("Skill")
+spirit_trigger = SubResource("Trigger")
+spirit_action = SubResource("Action")
+hand_animation_library = &"free_knight_sword"
+spirit_animation_library = &"weapon_spirit_sword"
+monster_part_compatibility_tags = PackedStringArray("blade", "melee", "spirit_projectile")
+rarity_compatibility_tags = PackedStringArray("attack", "skill", "spirit", "stagger")
+weapon_tags = PackedStringArray("starter", "sword", "melee", "combo")
+hand_ui_description = "Đánh: liên kích ba đòn. Kỹ năng: Lướt Chém."
+spirit_ui_description = "Kích hoạt: 3 đòn đánh chính xác nhận. Linh Khí: Phi Kiếm."

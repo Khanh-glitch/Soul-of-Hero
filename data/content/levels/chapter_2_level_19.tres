@@ -1,0 +1,32 @@
+[gd_resource type="Resource" script_class="LevelDefinition" format=3]
+
+[ext_resource type="Script" path="res://game/content/levels/level_definition.gd" id="1_level"]
+[ext_resource type="Script" path="res://game/content/levels/level_unlock_requirements.gd" id="2_unlock"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="3_scene"]
+
+[sub_resource type="Resource" id="UnlockRequirements"]
+script = ExtResource("2_unlock")
+prerequisite_level_ids = PackedStringArray("chapter_2_level_18")
+required_feature_ids = PackedStringArray("challenge")
+
+[resource]
+resource_name = "Chapter 2 Level 19 - Sabbath Ma Dực"
+script = ExtResource("1_level")
+level_id = &"chapter_2_level_19"
+display_name = "Sabbath Ma Dực"
+content_status = 2
+objective_summary = "Săn Hexwing có tên qua ba arena nối nhau và hạ thật ở arena cuối."
+level_tags = PackedStringArray("campaign", "chapter_2", "coven_foundry", "familiar_sabbath", "hexwing", "elite_boss")
+authoring_notes = "Chapter 2 data contract. One named Hexwing persists through three arenas at 70, 45, and 0 percent thresholds; it is never duplicated. HP, cooldown, and phase receipts survive each gate. Only the final arena emits death, Bestiary kill, mastery, Predator Jaw, and gate-key authority. Easy composition is 18 Wraith plus the named Elite."
+campaign_slot = 19
+chapter_number = 2
+chapter_level_number = 9
+level_scene = ExtResource("3_scene")
+layout_data_path = "res://data/levels/chapter_2_level_19.json"
+runtime_driver_id = &"dungeon_level"
+encounter_ids = PackedStringArray("chapter_2_level_19_familiar_sabbath")
+entry_encounter_id = &"chapter_2_level_19_familiar_sabbath"
+unlock_requirements = SubResource("UnlockRequirements")
+completion_reward_bundle_id = &"chapter_2_level_19_reward"
+completion_transaction_id = &"campaign:chapter_2_level_19:first_clear:v1"
+recommended_mastery = 6650

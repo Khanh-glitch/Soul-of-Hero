@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="LevelRosterDefinition" format=3 uid="uid://d00bdaq1f3em7"]
+
+[ext_resource type="Script" uid="uid://fpmw07eky4w8" path="res://game/content/rosters/level_roster_definition.gd" id="1_roster"]
+[ext_resource type="Script" uid="uid://bu1u0wygr650o" path="res://game/content/rosters/level_roster_entry.gd" id="2_entry"]
+[ext_resource type="Resource" path="res://data/content/elite_policies/elite_20_percent_guaranteed.tres" id="3_policy"]
+
+[sub_resource type="Resource" id="SkeletonOne"]
+script = ExtResource("2_entry")
+entry_id = &"skeleton_1"
+combatant_id = &"skeleton_swordsman"
+count = 10
+elite_eligible = true
+
+[sub_resource type="Resource" id="SkeletonTwo"]
+script = ExtResource("2_entry")
+entry_id = &"skeleton_2"
+combatant_id = &"bone_reaper"
+count = 5
+elite_eligible = true
+
+[sub_resource type="Resource" id="Vampire"]
+script = ExtResource("2_entry")
+entry_id = &"vampire"
+combatant_id = &"blood_vampire"
+unique = true
+authoring_notes = "Unique Level 5 Vampire; explicitly excluded from elite promotion."
+
+[sub_resource type="Resource" id="HoodedArcher"]
+script = ExtResource("2_entry")
+entry_id = &"hooded_archer"
+combatant_id = &"hooded_archer_miniboss"
+unique = true
+miniboss = true
+authoring_notes = "Canonical Level 5 recruitment boss. Death releases a separate physical Archer Hero Soul pickup; the roster entry itself grants no ownership."
+
+[resource]
+resource_name = "Chapter 1 Level 5 Roster"
+script = ExtResource("1_roster")
+roster_id = &"chapter_1_level_5_roster"
+campaign_slot = 5
+authoring_notes = "10 Skeleton 1 + 5 Bone Reapers + one unique Vampire + one KingdomArcher miniboss. Only the regular Skeleton entries are elite-eligible."
+entries = Array[ExtResource("2_entry")]([SubResource("SkeletonOne"), SubResource("SkeletonTwo"), SubResource("Vampire"), SubResource("HoodedArcher")])
+elite_policy = ExtResource("3_policy")
