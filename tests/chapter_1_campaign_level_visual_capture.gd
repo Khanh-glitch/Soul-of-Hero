@@ -216,7 +216,7 @@ func _capture_campaign_state(game: Node2D) -> void:
 	)
 	print(
 		(
-			"CHAPTER 1 CAMPAIGN CAPTURE PASSED: slot=%d point=%s enemies=%d image=%s"
+			"CHAPTER 1 CAMPAIGN CAPTURE RENDERED: slot=%d point=%s enemies=%d image=%s"
 			% [_slot, _capture_point, enemy_count, output_path]
 		)
 	)
@@ -312,6 +312,13 @@ func _expect(condition: bool, message: String) -> void:
 func _finish() -> void:
 	_cleanup_save()
 	if _failures.is_empty():
+		print("CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=%d point=%s" % [_slot, _capture_point])
 		get_tree().quit(0)
 	else:
+		push_error(
+			(
+				"CHAPTER 1 CAMPAIGN CAPTURE TEST FAILED: slot=%d point=%s failures=%d"
+				% [_slot, _capture_point, _failures.size()]
+			)
+		)
 		get_tree().quit(1)

@@ -89,6 +89,8 @@ jobs:
           set -e
           echo "Chapter 1 live collision-route exit code: ${result}"
           grep -E '^CHAPTER 1 COLLISION ROUTE(TEST)? (PASSED|FAILED)|^CHAPTER 1 COLLISION ROUTE: slot=' .artifacts/chapter-1-collision-routes.log >> "${GITHUB_STEP_SUMMARY}" || true
+          python3 tools/ci/publish_godot_failure_annotations.py \
+            .artifacts/chapter-1-collision-routes.log "Chapter 1 live collision routes"
           exit "${result}"
 
       - name: Run Chapter 1 objective, route, and Training gates
@@ -98,6 +100,7 @@ jobs:
         run: |
           set -uo pipefail
           failures=0
+          diagnostics=()
           tests=(
             "res://tests/content/content_contracts_test.gd"
             "res://tests/level_one_tutorial_learning_test.gd"
@@ -135,7 +138,10 @@ jobs:
             fi
             set -e
             echo "${test_path} exit code: ${result}"
-            if [[ ${result} -ne 0 ]]; then failures=$((failures + 1)); fi
+            if [[ ${result} -ne 0 ]]; then
+              failures=$((failures + 1))
+              diagnostics+=(".artifacts/${test_name}.log" "Failed Chapter 1/Training gate: ${test_name}")
+            fi
           done
           {
             echo "### Chapter 1 / Training runtime gates: $(( ${#tests[@]} - failures ))/${#tests[@]} passed"
@@ -145,6 +151,9 @@ jobs:
               grep -E 'PASSED|FAILED' ".artifacts/${test_name}.log" || true
             done
           } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
           exit "${failures}"
 
       - name: Run Chapter 2 campaign entry and scenario runtime checks
@@ -405,6 +414,7 @@ jobs:
           set -uo pipefail
           capture_failures=0
           capture_count=0
+          diagnostics=()
           for slot in {1..10}; do
             for point in spawn mid end; do
               echo "Capturing real campaign route: Chapter 1 Level ${slot}, ${point}"
@@ -419,7 +429,12 @@ jobs:
               result=${PIPESTATUS[0]}
               set -e
               echo "Chapter 1 Level ${slot} ${point} capture exit code: ${result}"
-              if [[ ${result} -ne 0 ]]; then capture_failures=$((capture_failures + 1)); else capture_count=$((capture_count + 1)); fi
+              if [[ ${result} -ne 0 ]]; then
+                capture_failures=$((capture_failures + 1))
+                diagnostics+=(".artifacts/chapter-1-level-${slot}-${point}-visual.log" "Chapter 1 Level ${slot} ${point} production capture")
+              else
+                capture_count=$((capture_count + 1))
+              fi
             done
           done
           echo "Chapter 1 route captures passed: ${capture_count}/30; failed: ${capture_failures}"
@@ -427,10 +442,13 @@ jobs:
             echo "### Chapter 1 production route captures: ${capture_count}/30 passed (spawn, mid, end for each level)"
             for slot in {1..10}; do
               for point in spawn mid end; do
-                grep -E '^CHAPTER 1 CAMPAIGN CAPTURE PASSED' ".artifacts/chapter-1-level-${slot}-${point}-visual.log" || true
-              done
+                grep -E '^CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED' ".artifacts/chapter-1-level-${slot}-${point}-visual.log" || true
             done
+          done
           } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
           exit "${capture_failures}"
 
       - name: Upload screenshots and rendered logs
