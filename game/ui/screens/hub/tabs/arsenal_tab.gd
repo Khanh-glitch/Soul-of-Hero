@@ -75,7 +75,8 @@ func _build_ui() -> void:
 	_tabs.set_tab_title(2, "CHỈ SỐ")
 	_tabs.set_tab_title(3, "KỸ NĂNG")
 	_tabs.set_tab_title(4, "TRANG BỊ HERO")
-	_tabs.current_tab = 0
+	# An actionable loadout comes before the lore/reference compendium.
+	_tabs.current_tab = 1
 
 
 func _refresh() -> void:
@@ -367,7 +368,7 @@ func _refresh_souls(level: int, gold: int, full_snapshot: Dictionary) -> void:
 	_clear(_soul_list)
 	_clear(_soul_detail)
 	var inventory: Array = _save.get_value(_path("inventory", "hero_souls"), [])
-	_refresh_team(inventory)
+	_refresh_team(inventory, full_snapshot)
 	_soul_list.add_child(_label("TÚI ĐỒ  •  %d HERO WEAPON" % inventory.size(), 11, Color("7ed7ff")))
 	for value: Variant in inventory:
 		if not value is Dictionary: continue
@@ -393,20 +394,36 @@ func _refresh_souls(level: int, gold: int, full_snapshot: Dictionary) -> void:
 	_render_soul_detail(selected, inventory, level, gold, full_snapshot)
 
 
-func _refresh_team(inventory: Array) -> void:
+func _refresh_team(inventory: Array, full_snapshot: Dictionary) -> void:
 	var team: Dictionary = _save.get_value(_path("soul_team"), {})
 	var active_id := String(team.get("active_hero", "sword_hero"))
 	var reserves: Array = team.get("reserve_souls", [""])
 	var reserve_one := String(reserves[0]) if reserves.size() > 0 else ""
-	_team_list.add_child(_label(
-		"CẶP HERO CỐ ĐỊNH KHI VÀO ẢI  •  CHỦ LỰC %s  •  DỰ BỊ %s" % [
-			_identity_name(active_id),
-			_identity_name(reserve_one) if not reserve_one.is_empty() else "TRỐNG",
-		],
-		9,
-		Color("7ed7ff"),
-		true
-	))
+	var quick_row := _data_row()
+	quick_row.name = "TeamQuickLook"
+	quick_row.add_theme_constant_override("separation", 8)
+	for role_data: Dictionary in [
+		{"hero_id": active_id, "role": "CHỦ LỰC", "node": "ActiveQuickLook"},
+		{"hero_id": reserve_one, "role": "DỰ BỊ", "node": "ReserveQuickLook"},
+	]:
+		var quick: Dictionary = _team_quick_look(
+			full_snapshot, String(role_data["hero_id"]), String(role_data["role"])
+		)
+		var column := _data_stack()
+		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var hero_line := _label(String(quick["hero"]), 10, Color("7ed7ff"), false)
+		hero_line.name = String(role_data["node"])
+		hero_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		hero_line.clip_text = true
+		hero_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		column.add_child(hero_line)
+		var gear_line := _label(String(quick["gear"]), 8, Color("b7c5d5"), false)
+		gear_line.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		gear_line.clip_text = true
+		gear_line.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+		column.add_child(gear_line)
+		quick_row.add_child(column)
+	_team_list.add_child(quick_row)
 	var unlocked: Dictionary = _save.get_value(_path("progression", "unlocked_heroes"), {})
 	var cards := _data_row()
 	cards.name = "IdentityCards"
@@ -453,6 +470,61 @@ func _refresh_team(inventory: Array) -> void:
 			card.pressed.connect(_select_soul.bind(String(best.get("instance_id", ""))))
 		LivingArsenalIcons.apply_to_button(card, _identity_icon(hero_id), 18)
 		cards.add_child(card)
+
+
+## Read-only, compact overview for the two fixed Hero slots.
+## Never infer an equipped item from an orphan UUID or a catalog definition:
+## display only exact Hero Soul/equipment instances found in the save inventory.
+func _team_quick_look(save_snapshot: Dictionary, hero_id: String, role: String) -> Dictionary:
+	if hero_id.is_empty():
+		return {
+			"hero": "%s • TRỐNG" % role,
+			"gear": "Chọn Hero Weapon để lập cặp chiến đấu.",
+		}
+	var team_value: Variant = save_snapshot.get("soul_team", {})
+	var team: Dictionary = team_value if team_value is Dictionary else {}
+	var selected_value: Variant = team.get("selected_soul_instances", {})
+	var selections: Dictionary = selected_value if selected_value is Dictionary else {}
+	var inventory_value: Variant = save_snapshot.get("inventory", {})
+	var inventory: Dictionary = inventory_value if inventory_value is Dictionary else {}
+	var soul_value: Variant = inventory.get("hero_souls", [])
+	var souls: Array = soul_value if soul_value is Array else []
+	var selected_id := String(selections.get(hero_id, ""))
+	var selected_soul := _find_soul(souls, selected_id)
+	var weapon_copy := "SOUL CHƯA GẮN"
+	if not selected_soul.is_empty() and String(selected_soul.get("hero_id", "")) == hero_id:
+		var rarity := clampi(int(selected_soul.get("rarity", 0)), 0, 7)
+		weapon_copy = "%s L%d" % [
+			SOULS.rarity_display_name_vi(rarity).to_upper(),
+			int(selected_soul.get("item_level", 1)),
+		]
+	var loadouts_value: Variant = save_snapshot.get("hero_loadouts", {})
+	var loadouts: Dictionary = loadouts_value if loadouts_value is Dictionary else {}
+	var loadout_value: Variant = loadouts.get(hero_id, {})
+	var loadout: Dictionary = loadout_value if loadout_value is Dictionary else {}
+	var gear_value: Variant = inventory.get(
+		"auxiliary_equipment", inventory.get("auxiliary_items", [])
+	)
+	var gear: Array = gear_value if gear_value is Array else []
+	var statuses: Array[String] = []
+	for slot_id: String in AUX.SLOT_IDS:
+		var equipped_uuid := String(loadout.get(_hero_loadout_slot(slot_id), ""))
+		var equipped := false
+		if not equipped_uuid.is_empty():
+			for raw_item: Variant in gear:
+				if raw_item is Dictionary:
+					var item := raw_item as Dictionary
+					if String(item.get("uuid", "")) == equipped_uuid \
+							and String(item.get("slot", "")) == slot_id:
+						equipped = true
+						break
+		statuses.append("%s %s" % [
+			_aux_slot_name(slot_id), "✓" if equipped else "—",
+		])
+	return {
+		"hero": "%s • %s • %s" % [role, _identity_name(hero_id), weapon_copy],
+		"gear": "  |  ".join(PackedStringArray(statuses)),
+	}
 
 
 func _unlock_hero_from_shards(hero_id: String) -> void:
