@@ -62,11 +62,21 @@ func _run() -> void:
 		_expect(item_row != null, "Equipped-items panel renders the granted Armor")
 		var compare: Button
 		if item_row != null:
-			for node: Node in item_row.get_children():
-				if node is Button and (node as Button).text == "XEM ±":
-					compare = node as Button
-					break
+			var box := item_row.get_parent()
+			for row_node: Node in box.get_children():
+				for node: Node in row_node.get_children():
+					if node is Button and (node as Button).text == "XEM ±":
+						compare = node as Button
+						break
 		_expect(compare != null, "Armor has an actionable what-if preview button")
+		if compare != null:
+			_expect(compare.is_visible_in_tree() and compare.size.x >= 65.0,
+				"Compare action has readable width in the actual Roster scene")
+			var bounds := compare.get_global_rect()
+			var host_bounds := roster.get_global_rect()
+			_expect(bounds.position.x >= host_bounds.position.x
+				and bounds.end.x <= host_bounds.end.x + 1.0,
+				"Compare action is not clipped beyond the Roster horizontal bounds")
 		if compare != null and save.has_method("get_snapshot"):
 			var before_preview: Dictionary = save.call("get_snapshot")
 			compare.pressed.emit()
