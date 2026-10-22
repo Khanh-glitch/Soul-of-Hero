@@ -180,11 +180,18 @@ func _run(game: Node2D) -> void:
 		player.current_action == "sword_attack_4" and mid_combo_echo_steps.has(echo_attack_key),
 		"Soul Echo queues the still-running fourth-step execution when its attack window opens"
 	)
-	for _frame: int in range(42):
-		await get_tree().physics_frame
+	# Simulate death during a buffered combo. The next life must not turn its
+	# first light input into a stale combo action or retain the old pursuit step.
+	player.combo_memory_remaining = 0.5
+	player.queued_combo = true
+	player._sword_combo_next_step = 4
+	player._sword_combo_buffered = true
 	player.respawn()
 	_expect(
-		is_zero_approx(player.combo_memory_remaining) and player._sword_combo_next_step == 1,
+		is_zero_approx(player.combo_memory_remaining)
+			and not player.queued_combo
+			and player._sword_combo_next_step == 1
+			and not player._sword_combo_buffered,
 		"respawn clears stale legacy and Sword combo state before accepting new attacks"
 	)
 	for _frame: int in range(4):
