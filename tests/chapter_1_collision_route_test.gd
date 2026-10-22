@@ -141,6 +141,7 @@ func _test_map(map_spec: Dictionary) -> void:
 	if not collision_clear_floor.has(player_cell):
 		game.queue_free()
 		await process_frame
+		await physics_frame
 		return
 
 	var door_targets := _door_transitions(entities)
@@ -249,6 +250,7 @@ func _test_map(map_spec: Dictionary) -> void:
 	)
 	game.queue_free()
 	await process_frame
+	await physics_frame
 
 
 func _test_level_8_branch_routes() -> void:
@@ -292,6 +294,7 @@ func _test_level_8_branch_routes() -> void:
 		if player == null or seal == null:
 			game.queue_free()
 			await process_frame
+			await physics_frame
 			continue
 		seal.call(&"_on_body_entered", player)
 		_expect(seal.interact(player), "Level 8 %s branch can be physically selected" % branch)
@@ -355,6 +358,7 @@ func _test_level_8_branch_routes() -> void:
 		print("CHAPTER 1 COLLISION ROUTE: slot=8 branch=%s reachable=%d" % [branch, reached.size()])
 		game.queue_free()
 		await process_frame
+		await physics_frame
 
 
 func _collision_names_at_cell(
