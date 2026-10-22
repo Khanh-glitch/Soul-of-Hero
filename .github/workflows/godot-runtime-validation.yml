@@ -138,11 +138,14 @@ jobs:
           ref: ${{ github.sha }}
           path: validation-tools
 
-      - name: Apply the identical corrected campaign-entry test to baseline
+      - name: Apply identical corrected runtime tests to baseline
         run: |
-          source_test="validation-tools/tests/campaign_entry_runtime_test.gd"
-          target_test="original-main/tests/campaign_entry_runtime_test.gd"
-          cp "${source_test}" "${target_test}"
+          for test_name in \
+            campaign_entry_runtime_test.gd \
+            smoke_test.gd \
+            chapter_1_level_5_miniboss_test.gd; do
+            cp "validation-tools/tests/${test_name}" "original-main/tests/${test_name}"
+          done
 
       - name: Install the same Godot 4.7 stable binary
         uses: chickensoft-games/setup-godot@v2
