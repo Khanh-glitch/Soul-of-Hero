@@ -779,13 +779,15 @@ func _refresh_aux(level: int) -> void:
 			)
 			summary.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			visual_row.add_child(summary)
-			var compare_gear := _action_button()
-			compare_gear.text = "XEM ±"
-			compare_gear.tooltip_text = "Xem thay đổi combat chính xác cho Hero được chọn."
-			compare_gear.pressed.connect(_select_equipment_preview.bind(hero_slot, uuid))
-			visual_row.add_child(compare_gear)
 			item_box.add_child(visual_row)
 			var actions := _data_row()
+			var compare_gear := _action_button()
+			compare_gear.text = "XEM ±"
+			compare_gear.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			compare_gear.custom_minimum_size = Vector2(65, 30)
+			compare_gear.tooltip_text = "Xem thay đổi combat chính xác cho Hero được chọn."
+			compare_gear.pressed.connect(_select_equipment_preview.bind(hero_slot, uuid))
+			actions.add_child(compare_gear)
 			var equip := _action_button()
 			equip.text = "THÁO" if is_equipped else ("CHUYỂN TỪ %s" % _identity_name(worn_by) if equipped_elsewhere else "TRANG BỊ")
 			equip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
