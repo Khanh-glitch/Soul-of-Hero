@@ -32,7 +32,8 @@ def main() -> int:
         if not selected:
             selected = lines[-12:]
         for line in selected:
-            command = "error" if FAILURE.search(line) else "notice"
+            is_failure = FAILURE.search(line) and not line.lstrip().startswith("PASS")
+            command = "error" if is_failure else "notice"
             message = line.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
             print(f"::{command} title={title}::{message}")
     return 0

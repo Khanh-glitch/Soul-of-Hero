@@ -55,6 +55,7 @@ jobs:
           exit "${result}"
 
       - name: Run Chapter 2 campaign entry and scenario runtime checks
+        timeout-minutes: 5
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_campaign_entry_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
@@ -72,6 +73,7 @@ jobs:
 
       - name: Run production gameplay smoke test
         if: always()
+        timeout-minutes: 10
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
@@ -85,6 +87,7 @@ jobs:
 
       - name: Run combat regression checks
         if: always()
+        timeout-minutes: 10
         run: |
           set -uo pipefail
           set +e
