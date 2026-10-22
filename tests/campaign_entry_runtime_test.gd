@@ -273,9 +273,21 @@ func _verify_layout(
 					expected_authored_children,
 				]
 			)
+			var child_details := PackedStringArray()
+			for child: Node in entity_root.get_children():
+				child_details.append(
+					"%s<%s,id=%s,type=%s,enemies=%s>"
+					% [
+						child.name,
+						child.get_class(),
+						String(child.get_meta(&"level_entity_id", "")),
+						String(child.get_meta(&"level_entity_type", "")),
+						str(child.is_in_group("enemies")),
+					]
+				)
+			print("CAMPAIGN_ENTRY_ENTITY_ROOT_DETAIL %s %s" % [label, ", ".join(child_details)])
 		_expect(
-			entity_root.get_child_count() - density_bonus_count \
-				== expected_authored_children,
+			entity_root.get_child_count() - density_bonus_count == expected_authored_children,
 			"%s spawns every authored immediate entity exactly once beside its optional density projection or Chapter 2 queue" % label,
 		)
 		if PACK_RULES.uses_pack_model(metadata):
@@ -500,5 +512,6 @@ func _finish() -> void:
 		print("CAMPAIGN ENTRY RUNTIME PASSED - %d checks across every CAMPAIGN_READY level" % _checks)
 		get_tree().quit(0)
 		return
+	print("CAMPAIGN_ENTRY_FAILURE_DETAILS %s" % JSON.stringify(_failures))
 	print("CAMPAIGN ENTRY RUNTIME FAILED - %d/%d checks failed" % [_failures.size(), _checks])
 	get_tree().quit(1)

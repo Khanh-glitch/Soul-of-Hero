@@ -31,17 +31,29 @@ def main() -> int:
             continue
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         summaries = [line for line in lines if SUMMARY.search(line)]
-        diagnostics = [line for line in lines if "CAMPAIGN_ENTRY_POPULATION_DETAIL" in line]
+        population_details = [
+            line for line in lines if "CAMPAIGN_ENTRY_POPULATION_DETAIL" in line
+        ]
+        root_details = [
+            line for line in lines if "CAMPAIGN_ENTRY_ENTITY_ROOT_DETAIL" in line
+        ]
+        campaign_failures = [
+            line for line in lines if "CAMPAIGN_ENTRY_FAILURE_DETAILS" in line
+        ]
         failures = [
             line
             for line in lines
             if FAILURE.search(line) and not line.lstrip().startswith("PASS")
         ]
-        # Reserve space for each test's exact count and a representative runtime
-        # diagnostic before publishing a small sample of individual assertions.
+        # Prioritize exact counts, compact assertion lists, and focused runtime
+        # diagnostics; use individual failures only when no compact list exists.
         selected = list(dict.fromkeys(
-            summaries[-1:] + diagnostics[-1:] + failures[-2:]
-        ))[:4]
+            summaries[-1:]
+            + campaign_failures[-1:]
+            + population_details[-1:]
+            + root_details[-1:]
+            + ([] if campaign_failures else failures[-3:])
+        ))[:5]
         if not selected:
             context = [line for line in lines[-240:] if CONTEXT.search(line)]
             selected = context[-3:] or lines[-3:]
