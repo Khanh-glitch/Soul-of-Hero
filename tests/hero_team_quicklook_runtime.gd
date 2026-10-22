@@ -5,6 +5,7 @@ extends Control
 const ROSTER_SCENE: PackedScene = preload(
 	"res://game/ui/screens/hub/tabs/arsenal_tab.tscn"
 )
+const AUX_RULES := preload("res://game/meta/equipment/auxiliary_equipment_rules.gd")
 
 var _checks := 0
 var _failures: Array[String] = []
@@ -19,6 +20,17 @@ func _run() -> void:
 	_expect(save != null, "Real project scene has SaveService autoload")
 	_expect(get_node_or_null("/root/GameEvents") != null,
 		"Real project scene has GameEvents autoload")
+	var gear := AUX_RULES.generate_item(
+		&"soul_vessel", &"normal", 1, 771901, &"h1_3_preview_runtime"
+	)
+	_expect(AUX_RULES.validate_item(gear).is_empty(),
+		"Runtime preview fixture is a valid authored Armor item")
+	var granted := false
+	if save != null and save.has_method("grant_auxiliary_equipment"):
+		granted = bool(save.call(
+			"grant_auxiliary_equipment", gear, "test:h1_3:preview:grant"
+		))
+	_expect(granted, "Runtime fixture grants one Armor to the test profile")
 	var roster := ROSTER_SCENE.instantiate()
 	add_child(roster)
 	roster.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -42,6 +54,36 @@ func _run() -> void:
 		"Active quick-look summary receives visible layout width")
 	_expect(reserve != null and reserve.size.x > 0,
 		"Reserve quick-look summary receives visible layout width")
+	if tabs != null and granted:
+		tabs.current_tab = 4
+		await get_tree().process_frame
+		var item_row_name := "AuxItemVisual_%s" % String(gear["uuid"]).left(8)
+		var item_row := roster.find_child(item_row_name, true, false)
+		_expect(item_row != null, "Equipped-items panel renders the granted Armor")
+		var compare: Button
+		if item_row != null:
+			for node: Node in item_row.get_children():
+				if node is Button and (node as Button).text == "XEM ±":
+					compare = node as Button
+					break
+		_expect(compare != null, "Armor has an actionable what-if preview button")
+		if compare != null and save.has_method("get_snapshot"):
+			var before_preview: Dictionary = save.call("get_snapshot")
+			compare.pressed.emit()
+			await get_tree().process_frame
+			await get_tree().process_frame
+			var comparison := roster.find_child(
+				"EquipmentComparisonDelta", true, false
+			) as Label
+			_expect(comparison != null,
+				"Clicking XEM ± renders the actual EquipmentComparisonDelta")
+			_expect(comparison != null and "HP" in comparison.text
+				and "POWER" in comparison.text and "MANA" in comparison.text,
+				"Displayed item comparison includes canonical HP, Power and Mana")
+			_expect(String(roster.get("_equipment_preview_instance")) == String(gear["uuid"]),
+				"Click selects the exact Armor instance UUID")
+			_expect(save.call("get_snapshot") == before_preview,
+				"Preview click does not mutate SaveService")
 	_finish()
 
 
