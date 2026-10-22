@@ -2,7 +2,7 @@
 
 **Branch:** `feat/hero-systems-completion`  
 **Base for source audit:** `main@5214788933b1a827f3a177d11ff486433dfe5e8a`  
-**Status:** source-level verification + targeted Hero Library implementation; **GitHub Actions Godot 4.7 runtime import and focused 55/55 coverage checks PASS**. Visual and human gameplay playtesting remain unverified.
+**Status:** H0 source audit and H1.1/H1.2 code delivered; **GitHub Actions Godot 4.7 test suites total 77/77 PASS** (55 Library + 13 pure loadout + 9 full-autoload Roster scene). Visual and human gameplay playtesting remain unverified.
 
 ## Status semantics
 
@@ -55,11 +55,23 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 
 ## Next tightly scoped work
 
-1. **H1.2**: live snapshot summary in Hero Roster for active/reserve Hero and equipped Soul/gear, with correct unavailable/locked states; verify current Arsenal before adding duplicate UI.
+1. **H1.2 shipped as two-column loadout overview**; remaining: multi-viewport visual proof and controller/navigation QA.
 2. **H1.3**: exact gear comparison of current/target Hero with live Power/DMG/HP/Mana and selected secondary effects, using `HeroSoulManager.project_hero_combat` as the only authority.
 3. **H2**: skill-kit boundary matrix for four heroes, rarities 0–7, valid rank splits; runtime proof before expanding descriptions to `LIVE`.
 4. **H3**: equipment lifecycle regression using isolated saves; escalate any necessary SaveService/loot change as a distinct PR.
 5. After the Chapter 2 agent publishes its branch, rebase and run combined regression with the real Godot binary.
+
+## H1.2 delivered (Godot runtime certified; visual QA pending)
+
+- Changed `game/ui/screens/hub/tabs/arsenal_tab.gd` to open **Team & Souls** rather than the long-form Hero Library by default. Library stays accessible as tab 0.
+- Replaced the long team heading with exactly two compact overview columns showing **Active / Reserve**, the exact selected Hero Soul rarity/item level and whether Armor, Boots and Jewelry are equipped.
+- Extracted pure, read-only `game/ui/screens/hub/tabs/components/hero_team_quicklook.gd`: a mismatched Soul ID, orphan equipment UUID or wrong item slot never displays as equipped. No save mutation or gameplay unlock changes.
+- Added `tests/hero_team_quicklook_test.gd` (13 passing checks) and a genuine project-scene harness `tests/hero_team_quicklook_runtime.tscn/.gd` (9 passing checks). The scene test runs with SaveService/GameEvents autoloads and verifies the visible UI columns. This prevents false negatives from direct `--script` instantiation of the full roster without normal autoload bootstrapping.
+- No changes to `SaveService`, KnightController, HeroSoulManager, AppFlow, LootDirector or Chapter 2 maps/objectives.
+
+**Engine evidence:** [Hero Library Godot QA run #39786405018](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39786405018) on `0ecb9a4104815a6bc7364be0868774e0d0f407e6`: Godot `4.7.stable.official.5b4e0cb0f`; project import success; Library `55/55`, pure quick look `13/13`, full-autoload Roster scene `9/9`; **job SUCCESS**.
+
+**Not yet certified:** screenshot and manual readability at 640×360, 847×437 and 1280×720; controller navigation, existing broad Hero/UI regression suite, Chapter 2 integration after Agent A publishes its work.
 
 ## Actual Godot 4.7 GitHub Actions evidence
 
