@@ -54,6 +54,24 @@ jobs:
           echo "Chapter 2 map test exit code: ${result}"
           exit "${result}"
 
+      - name: Run Chapter 1 campaign map geometry checks
+        if: always()
+        run: |
+          mkdir -p .artifacts
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-1-campaign-map-design.log
+          campaign_result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 campaign-map design exit code: ${campaign_result}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_map_design_test.gd 2>&1 | tee .artifacts/chapter-1-three-floor-map-design.log
+          legacy_result=${PIPESTATUS[0]}
+          set -e
+          echo "Chapter 1 three-floor map design exit code: ${legacy_result}"
+          if [[ ${campaign_result} -ne 0 ]]; then exit "${campaign_result}"; fi
+          exit "${legacy_result}"
+
       - name: Run Chapter 2 campaign entry and scenario runtime checks
         timeout-minutes: 3
         run: |
@@ -116,6 +134,8 @@ jobs:
         run: |
           python3 tools/ci/publish_godot_failure_annotations.py \
             .artifacts/godot-version.txt "Godot CLI version" \
+            .artifacts/chapter-1-campaign-map-design.log "Chapter 1 campaign map geometry" \
+            .artifacts/chapter-1-three-floor-map-design.log "Chapter 1 three-floor map design" \
             .artifacts/campaign-entry-runtime.log "Campaign entry runtime" \
             .artifacts/gameplay-smoke.log "Production gameplay smoke" \
             .artifacts/axe-combat.log "Axe combat regression" \
@@ -302,6 +322,29 @@ jobs:
           set -e
           echo "Chapter 1 Level 10 rendered capture exit code: ${result}"
           exit "${result}"
+
+      - name: Capture production Chapter 1 campaign maps
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          capture_failures=0
+          for slot in {1..10}; do
+            echo "Capturing production gameplay scene for Chapter 1 Level ${slot}"
+            set +e
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_ch1_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}.json" \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+              --level-slot="${slot}" --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/chapter-1-level-${slot}-visual.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            echo "Chapter 1 Level ${slot} rendered capture exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then capture_failures=$((capture_failures + 1)); fi
+          done
+          echo "Chapter 1 rendered map captures failed: ${capture_failures}"
+          exit "${capture_failures}"
 
       - name: Upload screenshots and rendered logs
         if: always()
