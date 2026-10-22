@@ -2,7 +2,7 @@
 
 **Branch:** `feat/hero-systems-completion`  
 **Base for source audit:** `main@5214788933b1a827f3a177d11ff486433dfe5e8a`  
-**Status:** H0 source audit and H1.1/H1.2 code delivered; **GitHub Actions Godot 4.7 test suites total 77/77 PASS** (55 Library + 13 pure loadout + 9 full-autoload Roster scene). Visual and human gameplay playtesting remain unverified.
+**Status:** H0 audit and H1.1–H1.3 implemented. **Godot 4.7 CI total 138/138 PASS** (55 Library + 13 pure team overview + 17 full-autoload Roster including click interaction + 53 equipment preview parity). Multi-viewport visual and manual gameplay playtesting remain unverified.
 
 ## Status semantics
 
@@ -56,7 +56,7 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 ## Next tightly scoped work
 
 1. **H1.2 shipped as two-column loadout overview**; remaining: multi-viewport visual proof and controller/navigation QA.
-2. **H1.3**: exact gear comparison of current/target Hero with live Power/DMG/HP/Mana and selected secondary effects, using `HeroSoulManager.project_hero_combat` as the only authority.
+2. **H1.3 delivered**: exact gear comparison of current/target Hero through `HeroSoulManager.project_hero_combat`; full-autoload UI click and save immutability tested. Visual QA pending.
 3. **H2**: skill-kit boundary matrix for four heroes, rarities 0–7, valid rank splits; runtime proof before expanding descriptions to `LIVE`.
 4. **H3**: equipment lifecycle regression using isolated saves; escalate any necessary SaveService/loot change as a distinct PR.
 5. After the Chapter 2 agent publishes its branch, rebase and run combined regression with the real Godot binary.
@@ -72,6 +72,18 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 **Engine evidence:** [Hero Library Godot QA run #39786405018](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39786405018) on `0ecb9a4104815a6bc7364be0868774e0d0f407e6`: Godot `4.7.stable.official.5b4e0cb0f`; project import success; Library `55/55`, pure quick look `13/13`, full-autoload Roster scene `9/9`; **job SUCCESS**.
 
 **Not yet certified:** screenshot and manual readability at 640×360, 847×437 and 1280×720; controller navigation, existing broad Hero/UI regression suite, Chapter 2 integration after Agent A publishes its work.
+
+## H1.3 delivered — canonical equipment preview
+
+- Added `game/ui/screens/hub/tabs/components/hero_equipment_preview.gd`, a **pure, read-only** projection for four equip slots: `hero_weapon`, `armor`, `boots`, `jewelry`. For a valid owned exact instance it clones `hero_loadouts`, synchronizes `soul_team.selected_soul_instances` for weapons, removes an instance from its old Hero when transferred, and delegates **both** original and candidate calculations to `HeroSoulManager.project_hero_combat`. This mirrors `SaveService.equip_hero_item` without mutating SaveService.
+- Return values are authoritative **HP, Mana, character Power, weapon base-hit damage** deltas and changed numeric `secondary_stats`, plus the Hero losing an item on transfer. The preview refuses missing/duplicate UUIDs, wrong Hero, wrong slot, invalid auxiliary item and locked Hero.
+- Updated `game/ui/screens/hub/tabs/arsenal_tab.gd`: item-scoped **XEM ±** controls and one comparison panel, computed on demand instead of projecting every item on every refresh.
+- Added `tests/hero_equipment_preview_test.gd`, independently comparing manual candidate clone vs projected values and exercising failure cases.
+- Extended actual Roster scene test: generate/grant valid Armor in isolated test save, navigate to equipment tab, emit **XEM ±**, assert rendered delta contains HP/Mana/Power, validate exact UUID and prove snapshot unchanged.
+
+**Godot CI evidence:** [Hero Library Godot QA run #39788488082](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39788488082) on commit `d5021f3a1351b8c4b70f58185797295df0d02f24`. Godot `4.7.stable.official.5b4e0cb0f`, import successful, all steps green: Library **55/55**, team summary **13/13**, full-autoload scene including item preview interaction **17/17**, equipment parity **53/53**; total **138/138**. No combat/save core edits.
+
+**Outstanding:** visual readability/screenshots at 640×360, 847×437, 1280×720; broad existing Hero/UI regression; verify integrated branch when Chapter 2 is ready.
 
 ## Actual Godot 4.7 GitHub Actions evidence
 
