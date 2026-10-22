@@ -2,7 +2,7 @@
 
 **Branch:** `feat/hero-systems-completion`  
 **Base for source audit:** `main@5214788933b1a827f3a177d11ff486433dfe5e8a`  
-**Status:** H0 audit and H1.1–H1.3 implemented. **Godot 4.7 CI total 138/138 PASS** (55 Library + 13 pure team overview + 17 full-autoload Roster including click interaction + 53 equipment preview parity). Multi-viewport visual and manual gameplay playtesting remain unverified.
+**Status:** H0 audit and H1.1–H1.3 implemented. **Godot 4.7 CI total 140/140 PASS** (55 Library + 13 pure team overview + 19 full-autoload Roster including visible button geometry/click + 53 equipment preview parity). Xvfb software-rendered **6 screenshots across 640×360, 847×437 and 1280×720** successfully generated and reviewed for XEM ± visibility. Broad gameplay/UX playtesting still unverified.
 
 ## Status semantics
 
@@ -66,7 +66,7 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 - Changed `game/ui/screens/hub/tabs/arsenal_tab.gd` to open **Team & Souls** rather than the long-form Hero Library by default. Library stays accessible as tab 0.
 - Replaced the long team heading with exactly two compact overview columns showing **Active / Reserve**, the exact selected Hero Soul rarity/item level and whether Armor, Boots and Jewelry are equipped.
 - Extracted pure, read-only `game/ui/screens/hub/tabs/components/hero_team_quicklook.gd`: a mismatched Soul ID, orphan equipment UUID or wrong item slot never displays as equipped. No save mutation or gameplay unlock changes.
-- Added `tests/hero_team_quicklook_test.gd` (13 passing checks) and a genuine project-scene harness `tests/hero_team_quicklook_runtime.tscn/.gd` (9 passing checks). The scene test runs with SaveService/GameEvents autoloads and verifies the visible UI columns. This prevents false negatives from direct `--script` instantiation of the full roster without normal autoload bootstrapping.
+- Added `tests/hero_team_quicklook_test.gd` (13 passing checks) and a genuine project-scene harness `tests/hero_team_quicklook_runtime.tscn/.gd` (9 passing checks). The scene test runs with SaveService/GameEvents autoloads and verifies the visible UI columns (subsequently expanded to include the H1.3 click and geometric assertions). This prevents false negatives from direct `--script` instantiation of the full roster without normal autoload bootstrapping.
 - No changes to `SaveService`, KnightController, HeroSoulManager, AppFlow, LootDirector or Chapter 2 maps/objectives.
 
 **Engine evidence:** [Hero Library Godot QA run #39786405018](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39786405018) on `0ecb9a4104815a6bc7364be0868774e0d0f407e6`: Godot `4.7.stable.official.5b4e0cb0f`; project import success; Library `55/55`, pure quick look `13/13`, full-autoload Roster scene `9/9`; **job SUCCESS**.
@@ -84,6 +84,19 @@ No edits in this slice to `knight.gd`, `hero_soul_manager.gd`, `save_service.gd`
 **Godot CI evidence:** [Hero Library Godot QA run #39788488082](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39788488082) on commit `d5021f3a1351b8c4b70f58185797295df0d02f24`. Godot `4.7.stable.official.5b4e0cb0f`, import successful, all steps green: Library **55/55**, team summary **13/13**, full-autoload scene including item preview interaction **17/17**, equipment parity **53/53**; total **138/138**. No combat/save core edits.
 
 **Outstanding:** visual readability/screenshots at 640×360, 847×437, 1280×720; broad existing Hero/UI regression; verify integrated branch when Chapter 2 is ready.
+
+## H1.3 visual audit and fix
+
+The first actual screenshots revealed that the auxiliary equipment **XEM ±** control was being pushed outside the visible item row by its long summary label. The code-only test still passed, illustrating why real rendering was necessary.
+
+- Moved **XEM ±** to the shared Equip/Favorite/Lock/Sell action row, guaranteeing a dedicated minimum width.
+- Extended the production-scene test with visibility and horizontal bounds assertions; counts increased to **19/19**.
+- Added a Godot GL Compatibility capture harness under Xvfb with Mesa software rendering, recording Team and Equipment screens at **640×360, 847×437 and 1280×720**; checks exact image dimensions, nonblank pixels and XEM ± **viewport geometry in both axes**.
+- CI uses the dummy audio driver (no sound card on Linux runner) and uploads explicitly selected .artifacts PNGs with `include-hidden-files: true`. Expected ALSA start-up failures must not mask gameplay/script errors.
+
+**Latest successful evidence:** [Godot 4.7 QA run #39791079853](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39791079853) at code commit `56ff347015471e8a9155ee0165ce5b0bd853f16f`. Import PASS; 55 Library + 13 team + 19 runtime scene + 53 equipment preview = **140/140 checks PASS**. Software-rendered visual captures PASS at all three target viewports: 6 PNGs contained in [workflow artifact](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39791079853/artifacts/12431267829). Screenshots reviewed: the previously clipped XEM ± button now appears within the action row at 640×360 and 1280×720.
+
+**Interpretation:** this is engine-backed functional + automated geometry/image evidence, **not** a human gameplay duration study, controller QA or full campaign regression. Other Hero/Combat/Save gates and Chapter 2 combined-branch integration remain open.
 
 ## Actual Godot 4.7 GitHub Actions evidence
 
