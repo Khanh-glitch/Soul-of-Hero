@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
@@ -40,6 +41,22 @@ def main() -> int:
         campaign_failures = [
             line for line in lines if "CAMPAIGN_ENTRY_FAILURE_DETAILS" in line
         ]
+        report_details: list[str] = []
+        report_name = {
+            "gameplay-smoke.log": "smoke_report.json",
+            "chapter-1-level-5-miniboss.log": "chapter_1_level_5_miniboss_report.json",
+        }.get(path.name)
+        report_path = path.with_name(report_name) if report_name else None
+        if report_path is not None and report_path.is_file():
+            try:
+                report = json.loads(report_path.read_text(encoding="utf-8"))
+                report_failures = report.get("failures", [])
+                if isinstance(report_failures, list) and report_failures:
+                    report_details = [
+                        "GODOT_FAILURE_REPORT " + json.dumps(report_failures, ensure_ascii=False)
+                    ]
+            except (OSError, json.JSONDecodeError):
+                report_details = []
         failures = [
             line
             for line in lines
@@ -50,6 +67,7 @@ def main() -> int:
         selected = list(dict.fromkeys(
             summaries[-1:]
             + campaign_failures[-1:]
+            + report_details[-1:]
             + population_details[-1:]
             + root_details[-1:]
             + ([] if campaign_failures else failures[-3:])
