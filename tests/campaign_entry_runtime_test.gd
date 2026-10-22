@@ -257,11 +257,27 @@ func _verify_layout(
 				directed_alive >= 0 and active_cap > 0 and directed_alive <= active_cap,
 				"%s Chapter 2 director keeps the simultaneous enemy count within its live cap" % label,
 			)
-				_expect(
-					entity_root.get_child_count() - density_bonus_count \
-						== expected_authored_children,
-					"%s spawns every authored immediate entity exactly once beside its optional density projection or Chapter 2 queue" % label,
-				)
+		if entity_root.get_child_count() - density_bonus_count != expected_authored_children:
+			print(
+				"CAMPAIGN_ENTRY_POPULATION_DETAIL %s root=%d density=%d authored=%d deferred=%d directed=%d alive=%d pending=%d cap=%d expected=%d"
+				% [
+					label,
+					entity_root.get_child_count(),
+					density_bonus_count,
+					authored_entities.size(),
+					deferred_enemy_ids.size(),
+					directed_enemy_ids.size(),
+					int(chapter_two_director.get("alive", -1)),
+					int(chapter_two_director.get("pending", -1)),
+					int(chapter_two_director.get("active_cap", 0)),
+					expected_authored_children,
+				]
+			)
+		_expect(
+			entity_root.get_child_count() - density_bonus_count \
+				== expected_authored_children,
+			"%s spawns every authored immediate entity exactly once beside its optional density projection or Chapter 2 queue" % label,
+		)
 		if PACK_RULES.uses_pack_model(metadata):
 			var pack_plan := PACK_RULES.get_level_pack_plan(
 				metadata,

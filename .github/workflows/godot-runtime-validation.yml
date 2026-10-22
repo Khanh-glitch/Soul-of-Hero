@@ -38,7 +38,7 @@ jobs:
         run: |
           set -uo pipefail
           set +e
-          godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Editor import exit code: ${result}"
@@ -48,20 +48,20 @@ jobs:
         run: |
           set -uo pipefail
           set +e
-          godot --headless --path . --script res://tests/chapter_2_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-2-map-design.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_2_campaign_map_design_test.gd 2>&1 | tee .artifacts/chapter-2-map-design.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Chapter 2 map test exit code: ${result}"
           exit "${result}"
 
       - name: Run Chapter 2 campaign entry and scenario runtime checks
-        timeout-minutes: 5
+        timeout-minutes: 3
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_campaign_entry_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
           export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
           set +e
-          godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Campaign entry runtime test exit code: ${result}"
@@ -73,13 +73,13 @@ jobs:
 
       - name: Run production gameplay smoke test
         if: always()
-        timeout-minutes: 10
+        timeout-minutes: 3
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
           export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
           set +e
-          godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Gameplay smoke test exit code: ${result}"
@@ -87,14 +87,14 @@ jobs:
 
       - name: Run combat regression checks
         if: always()
-        timeout-minutes: 10
+        timeout-minutes: 3
         run: |
           set -uo pipefail
           set +e
-          godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
           axe_result=${PIPESTATUS[0]}
           echo "Axe combat test exit code: ${axe_result}"
-          godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
           boss_result=${PIPESTATUS[0]}
           echo "Chapter 1 Level 5 boss/combat test exit code: ${boss_result}"
           set -e
@@ -121,6 +121,114 @@ jobs:
             .artifacts/axe-combat.log "Axe combat regression" \
             .artifacts/chapter-1-level-5-miniboss.log "Chapter 1 Level 5 combat"
 
+  original-main-baseline:
+    name: Original main baseline comparison
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out original main baseline
+        uses: actions/checkout@v4
+        with:
+          ref: 5214788933b1a827f3a177d11ff486433dfe5e8a
+          path: original-main
+
+      - name: Check out current-branch log annotator
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: validation-tools
+
+      - name: Install the same Godot 4.7 stable binary
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record baseline commit and exact Godot version
+        working-directory: original-main
+        run: |
+          mkdir -p .artifacts
+          git rev-parse HEAD | tee .artifacts/baseline-sha.txt
+          godot --version | tee .artifacts/godot-version.txt
+          echo "Baseline: $(cat .artifacts/baseline-sha.txt); Godot: $(cat .artifacts/godot-version.txt)" >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Import original main in the Godot Editor
+        working-directory: original-main
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline editor import exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same campaign-entry runtime test on original main
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_baseline_campaign_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline campaign entry exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same production smoke test on original main
+        if: always()
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_baseline_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+          export LIVING_ARSENAL_SAVE_PATH="${SOUL_OF_HERO_SAVE_PATH}"
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --smoke-test 2>&1 | tee .artifacts/gameplay-smoke.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline gameplay smoke exit code: ${result}"
+          exit "${result}"
+
+      - name: Run the same combat regression tests on original main
+        if: always()
+        working-directory: original-main
+        timeout-minutes: 3
+        run: |
+          set -uo pipefail
+          set +e
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
+          axe_result=${PIPESTATUS[0]}
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
+          boss_result=${PIPESTATUS[0]}
+          set -e
+          echo "Baseline Axe combat exit code: ${axe_result}; Level 5 miniboss exit code: ${boss_result}"
+          if [[ ${axe_result} -ne 0 ]]; then exit "${axe_result}"; fi
+          exit "${boss_result}"
+
+      - name: Upload original-main logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: godot-4.7-original-main-baseline
+          path: original-main/.artifacts/
+          if-no-files-found: warn
+          retention-days: 14
+          include-hidden-files: true
+
+      - name: Publish baseline failure context
+        if: always()
+        run: |
+          python3 validation-tools/tools/ci/publish_godot_failure_annotations.py \
+            original-main/.artifacts/godot-version.txt "Baseline Godot CLI version" \
+            original-main/.artifacts/campaign-entry-runtime.log "Original main campaign entry" \
+            original-main/.artifacts/gameplay-smoke.log "Original main gameplay smoke" \
+            original-main/.artifacts/axe-combat.log "Original main Axe combat" \
+            original-main/.artifacts/chapter-1-level-5-miniboss.log "Original main Level 5 combat"
+
   rendered-gameplay:
     name: Xvfb rendered gameplay captures
     runs-on: ubuntu-latest
@@ -145,7 +253,7 @@ jobs:
         run: |
           mkdir -p .artifacts
           set +e
-          godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/editor-import.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Editor import exit code: ${result}"
@@ -160,7 +268,7 @@ jobs:
             set +e
             xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
               SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${slot}.json" \
-              godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
               --resolution 1280x720 res://tests/chapter_2_level_visual_capture.tscn -- \
               --level-slot="${slot}" --expected-width=1280 --expected-height=720 \
               2>&1 | tee ".artifacts/chapter-2-level-${slot}-visual.log"
@@ -177,7 +285,7 @@ jobs:
           set +e
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             SOUL_OF_HERO_SAVE_PATH="user://tests/ci_level10_visual_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json" \
-            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+            timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
             --resolution 1280x720 res://tests/chapter_1_level_10_visual_capture.tscn -- \
             --expected-width=1280 --expected-height=720 \
             2>&1 | tee .artifacts/chapter-1-level-10-visual.log
