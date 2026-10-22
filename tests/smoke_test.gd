@@ -195,10 +195,14 @@ func _run(game: Node2D) -> void:
 	await get_tree().physics_frame
 	var enemy_health_before: int = enemy.health
 	player.light_damage = 27
+	var expected_light_hit_damage := player.hero_soul_manager.scale_active_damage(player.light_damage)
 	_expect(player.request_action("light_attack"), "light attack can start")
 	for _frame: int in range(15):
 		await get_tree().physics_frame
-	_expect(enemy_health_before - enemy.health == 27, "hot-tuned light damage reaches an overlapping enemy")
+	_expect(
+		enemy_health_before - enemy.health == expected_light_hit_damage,
+		"hot-tuned light damage reaches an overlapping enemy using the active Hero damage projection"
+	)
 	player.light_damage = 18
 	for _frame: int in range(10):
 		await get_tree().physics_frame
