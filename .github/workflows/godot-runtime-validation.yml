@@ -31,6 +31,7 @@ jobs:
         run: |
           mkdir -p .artifacts
           godot --version | tee .artifacts/godot-version.txt
+          echo "Godot CLI version: $(cat .artifacts/godot-version.txt)" >> "${GITHUB_STEP_SUMMARY}"
 
       - name: Import project in the Godot Editor
         shell: bash
@@ -57,9 +58,14 @@ jobs:
           godot --headless --path . -- --campaign-entry-runtime-test 2>&1 | tee .artifacts/campaign-entry-runtime.log
           result=${PIPESTATUS[0]}
           echo "Campaign entry runtime test exit code: ${result}"
+          if [[ ${result} -ne 0 ]]; then
+            echo "### Campaign-entry runtime failure (last 160 log lines)" >> "${GITHUB_STEP_SUMMARY}"
+            tail -n 160 .artifacts/campaign-entry-runtime.log >> "${GITHUB_STEP_SUMMARY}"
+          fi
           exit "${result}"
 
       - name: Run production gameplay smoke test
+        if: always()
         run: |
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://tests/ci_smoke_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
@@ -70,6 +76,7 @@ jobs:
           exit "${result}"
 
       - name: Run combat regression checks
+        if: always()
         run: |
           set -uo pipefail
           godot --headless --path . --script res://tests/axe_combat_test.gd 2>&1 | tee .artifacts/axe-combat.log
@@ -89,6 +96,7 @@ jobs:
           path: .artifacts/
           if-no-files-found: warn
           retention-days: 14
+          include-hidden-files: true
 
   rendered-gameplay:
     name: Xvfb rendered gameplay captures
@@ -157,3 +165,4 @@ jobs:
           path: .artifacts/
           if-no-files-found: warn
           retention-days: 14
+          include-hidden-files: true
