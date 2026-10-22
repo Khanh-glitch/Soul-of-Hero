@@ -74,7 +74,7 @@ func _run() -> void:
 
 func _prepare_capture() -> bool:
 	_expect(_capture_point in ["spawn", "mid", "end"], "capture point is spawn, mid, or end")
-	var level_id := StringName("chapter_1_level_%02d" % _slot)
+	var level_id := StringName("chapter_1_level_%d" % _slot)
 	var definition := CAMPAIGN_REGISTRY.find_level(level_id)
 	_expect(
 		definition != null and definition.is_campaign_ready(),
@@ -97,7 +97,7 @@ func _prepare_capture() -> bool:
 
 
 func _start_campaign_route() -> Node2D:
-	var level_id := StringName("chapter_1_level_%02d" % _slot)
+	var level_id := StringName("chapter_1_level_%d" % _slot)
 	_app_root = APP_ROOT_SCENE.instantiate()
 	_expect(_app_root != null, "production AppRoot scene instantiates")
 	if _app_root == null:
@@ -123,7 +123,7 @@ func _start_campaign_route() -> Node2D:
 
 
 func _capture_campaign_state(game: Node2D) -> void:
-	var level_id := StringName("chapter_1_level_%02d" % _slot)
+	var level_id := StringName("chapter_1_level_%d" % _slot)
 	var definition := CAMPAIGN_REGISTRY.find_level(level_id)
 	var dungeon := game.get_node_or_null("Level") as DungeonLevel
 	var entity_root := game.get_node_or_null("Level/Entities") as Node2D
@@ -321,4 +321,5 @@ func _finish() -> void:
 				% [_slot, _capture_point, _failures.size()]
 			)
 		)
+		print("CHAPTER 1 CAMPAIGN CAPTURE FAILURE DETAILS: " + JSON.stringify(_failures))
 		get_tree().quit(1)

@@ -256,15 +256,20 @@ func _test_level_8_branch_routes() -> void:
 			else null
 		)
 		var controller := game.get_node_or_null("Level8ReliquaryRuntime")
+		_expect(
+			player != null,
+			"Level 8 %s branch has a live Knight in the production entity root" % branch,
+		)
+		_expect(
+			controller != null,
+			"Level 8 %s branch installs its configured production runtime" % branch
+		)
 		var seal := (
 			controller.call(&"get_branch_seal", branch) as ReliquaryBranchSeal
 			if controller != null
 			else null
 		)
-		_expect(
-			player != null and seal != null,
-			"Level 8 %s branch has a live player and physical seal" % branch
-		)
+		_expect(seal != null, "Level 8 %s branch exposes its real physical seal" % branch)
 		if player == null or seal == null:
 			game.queue_free()
 			await process_frame
@@ -471,4 +476,5 @@ func _finish() -> void:
 	print(
 		"CHAPTER 1 COLLISION ROUTE TEST FAILED - %d/%d checks failed" % [_failures.size(), _checks]
 	)
+	print("CHAPTER 1 COLLISION ROUTE FAILURE DETAILS: " + JSON.stringify(_failures))
 	quit(1)

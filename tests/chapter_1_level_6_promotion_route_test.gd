@@ -10,21 +10,27 @@ extends SceneTree
 
 const TEST_SAVE_PATH := "user://tests/chapter_1_level_6_promotion_route_test.json"
 const REPORT_PATH := "res://.artifacts/chapter_1_level_6_promotion_route_report.json"
-const CAMPAIGN_REGISTRY: LevelRegistry = preload("res://data/content/registries/campaign_content_registry.tres")
+const CAMPAIGN_REGISTRY: LevelRegistry = preload(
+	"res://data/content/registries/campaign_content_registry.tres"
+)
 const HERO_SOUL_RULES := preload("res://game/meta/hero_souls/hero_soul_rules.gd")
-const ARCHER_PICKUP_REWARD: RewardBundleDefinition = preload("res://data/content/rewards/chapter_1_level_5_archer_soul_pickup.tres")
+const ARCHER_PICKUP_REWARD: RewardBundleDefinition = preload(
+	"res://data/content/rewards/chapter_1_level_5_archer_soul_pickup.tres"
+)
 const ARCHER_PICKUP_KEY := "campaign:chapter_1_level_5:archer_soul_pickup:v1"
 
 var _checks := 0
 var _failures: Array[String] = []
 
 
-class FakeAppRoot extends Node:
+class FakeAppRoot:
+	extends Node
 	var route_id: StringName
 	var payload: Dictionary = {}
 
-
-	func show_route(_scene_path: String, next_payload: Dictionary, next_route_id: StringName) -> void:
+	func show_route(
+		_scene_path: String, next_payload: Dictionary, next_route_id: StringName
+	) -> void:
 		route_id = next_route_id
 		payload = next_payload.duplicate(true)
 
@@ -43,7 +49,10 @@ func _run() -> void:
 		return
 
 	_remove_generations(TEST_SAVE_PATH)
-	_expect(save_service.configure_storage(TEST_SAVE_PATH, true), "fresh isolated Level 1-6 route profile loads")
+	_expect(
+		save_service.configure_storage(TEST_SAVE_PATH, true),
+		"fresh isolated Level 1-6 route profile loads"
+	)
 	var fake_root := FakeAppRoot.new()
 	root.add_child(fake_root)
 	app_flow.call(&"attach_app_root", fake_root)
@@ -53,17 +62,20 @@ func _run() -> void:
 
 
 func _test_sequential_first_clears(
-		save_service: LivingArsenalSaveService,
-		app_flow: Node,
-		fake_root: FakeAppRoot
+	save_service: LivingArsenalSaveService, app_flow: Node, fake_root: FakeAppRoot
 ) -> void:
 	var level_six := CAMPAIGN_REGISTRY.find_campaign_level(6)
-	_expect(level_six != null and level_six.is_campaign_ready(), "Level 6 is registered CAMPAIGN_READY")
+	_expect(
+		level_six != null and level_six.is_campaign_ready(), "Level 6 is registered CAMPAIGN_READY"
+	)
 	_expect(_archer_souls(save_service).is_empty(), "fresh profile owns no Archer Hero Soul")
 
 	for campaign_slot: int in range(1, 6):
 		var level := CAMPAIGN_REGISTRY.find_campaign_level(campaign_slot)
-		_expect(level != null and level.is_campaign_ready(), "campaign slot %d is ready on the sequential route" % campaign_slot)
+		_expect(
+			level != null and level.is_campaign_ready(),
+			"campaign slot %d is ready on the sequential route" % campaign_slot
+		)
 		if level == null:
 			continue
 		_expect(
@@ -74,7 +86,9 @@ func _test_sequential_first_clears(
 			bool(app_flow.call(&"start_campaign_level", level.level_id)),
 			"campaign slot %d starts through AppFlow" % campaign_slot
 		)
-		app_flow.call(&"complete_active_run", {"route_gate": true, "campaign_slot": campaign_slot}, true)
+		app_flow.call(
+			&"complete_active_run", {"route_gate": true, "campaign_slot": campaign_slot}, true
+		)
 		var result: Dictionary = app_flow.call(&"get_last_result")
 		var continuation := result.get("continuation", {}) as Dictionary
 		_expect(
@@ -82,20 +96,27 @@ func _test_sequential_first_clears(
 			"campaign slot %d commits in-place and exposes the next-level choice" % campaign_slot,
 		)
 		var reward: Dictionary = result.get("reward", {})
-		_expect(bool(reward.get("granted", false)), "campaign slot %d grants its first-clear bundle" % campaign_slot)
+		_expect(
+			bool(reward.get("granted", false)),
+			"campaign slot %d grants its first-clear bundle" % campaign_slot
+		)
 		_expect(
 			bool(app_flow.call(&"is_campaign_level_completed", level.level_id)),
 			"campaign slot %d completion persists" % campaign_slot
 		)
 
-	_expect(_archer_souls(save_service).is_empty(), "Level 5 completion alone owns no Archer Hero Soul")
+	_expect(
+		_archer_souls(save_service).is_empty(), "Level 5 completion alone owns no Archer Hero Soul"
+	)
 	_expect(
 		not bool(save_service.get_value(["progression", "unlocked_heroes", "archer_hero"], false)),
 		"Level 5 completion alone records no Archer ownership"
 	)
 	_expect(
-		not bool(save_service.get_value(["progression", "features", "soul_hero"], false))
-			and not bool(save_service.get_value(["progression", "features", "soul_relay"], false)),
+		(
+			not bool(save_service.get_value(["progression", "features", "soul_hero"], false))
+			and not bool(save_service.get_value(["progression", "features", "soul_relay"], false))
+		),
 		"Level 5 completion cannot stand in for physical Soul collection"
 	)
 	var reserves: Array = save_service.get_value(["soul_team", "reserve_souls"], [])
@@ -110,9 +131,17 @@ func _test_sequential_first_clears(
 		"physical pickup transaction grants Archer after the boss encounter"
 	)
 	_assert_archer_entitlement(save_service, "Level 5 physical pickup")
-	_expect(save_service.get_value(["soul_team", "reserve_souls"], []) == ["", ""], "Pickup ownership still does not auto-equip Archer")
+	_expect(
+		save_service.get_value(["soul_team", "reserve_souls"], []) == ["", ""],
+		"Pickup ownership still does not auto-equip Archer"
+	)
 	var archer_reserve: Array[StringName] = [&"archer_hero"]
-	_expect(save_service.set_soul_team(&"sword_hero", archer_reserve, "test:level_6_route:explicit_inventory_equip"), "player explicitly Equips Archer; activation is not tied to a new run")
+	_expect(
+		save_service.set_soul_team(
+			&"sword_hero", archer_reserve, "test:level_6_route:explicit_inventory_equip"
+		),
+		"player explicitly Equips Archer; activation is not tied to a new run"
+	)
 	_expect(
 		bool(app_flow.call(&"is_campaign_level_unlocked", &"chapter_1_level_6")),
 		"Level 5 completion unlocks Level 6"
@@ -123,8 +152,10 @@ func _test_sequential_first_clears(
 	)
 	var level_six_run: Dictionary = app_flow.call(&"get_active_run")
 	_expect(
-		level_six_run.get("level_id") == &"chapter_1_level_6"
-			and level_six_run.get("campaign_slot") == 6,
+		(
+			level_six_run.get("level_id") == &"chapter_1_level_6"
+			and level_six_run.get("campaign_slot") == 6
+		),
 		"Level 6 run payload resolves the promoted campaign content"
 	)
 	var run_team: Dictionary = level_six_run.get("soul_team", {})
@@ -134,11 +165,19 @@ func _test_sequential_first_clears(
 	)
 
 	var revision_before_replay := int(save_service.get_value(["revision"], -1))
-	_expect(bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_5")), "completed Level 5 remains replayable")
-	app_flow.call(&"complete_active_run", {"route_gate_replay": 1}, true)
-	var replay_reward: Dictionary = (app_flow.call(&"get_last_result") as Dictionary).get("reward", {})
 	_expect(
-		not bool(replay_reward.get("granted", true)) and bool(replay_reward.get("already_claimed", false)),
+		bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_5")),
+		"completed Level 5 remains replayable"
+	)
+	app_flow.call(&"complete_active_run", {"route_gate_replay": 1}, true)
+	var replay_reward: Dictionary = (app_flow.call(&"get_last_result") as Dictionary).get(
+		"reward", {}
+	)
+	_expect(
+		(
+			not bool(replay_reward.get("granted", true))
+			and bool(replay_reward.get("already_claimed", false))
+		),
 		"Level 5 replay reports its durable first-clear receipt"
 	)
 	_expect(
@@ -150,18 +189,27 @@ func _test_sequential_first_clears(
 	_expect(save_service.reload_save(), "sequential Level 1-5 profile reloads from disk")
 	_assert_archer_entitlement(save_service, "profile reload")
 	_expect(
-		bool(save_service.get_value(["progression", "unlocked_heroes", "archer_hero"], false))
-			and (save_service.get_value(["soul_team", "reserve_souls"], []) as Array).has("archer_hero"),
+		(
+			bool(save_service.get_value(["progression", "unlocked_heroes", "archer_hero"], false))
+			and (save_service.get_value(["soul_team", "reserve_souls"], []) as Array).has(
+				"archer_hero"
+			)
+		),
 		"reload preserves Archer ownership and explicit team assignment"
 	)
 	_expect(
-		bool(app_flow.call(&"is_campaign_level_unlocked", &"chapter_1_level_6"))
-			and bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_6")),
+		(
+			bool(app_flow.call(&"is_campaign_level_unlocked", &"chapter_1_level_6"))
+			and bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_6"))
+		),
 		"reload preserves the ability to start Level 6"
 	)
 
 	var revision_after_reload := int(save_service.get_value(["revision"], -1))
-	_expect(bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_5")), "Level 5 can replay after reload")
+	_expect(
+		bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_5")),
+		"Level 5 can replay after reload"
+	)
 	app_flow.call(&"complete_active_run", {"route_gate_replay": 2}, true)
 	_expect(
 		int(save_service.get_value(["revision"], -1)) == revision_after_reload,
@@ -176,19 +224,37 @@ func _assert_archer_entitlement(save_service: LivingArsenalSaveService, context:
 	if archers.size() != 1:
 		return
 	var soul: Dictionary = archers[0]
-	_expect(int(soul.get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL, "%s Archer Soul is base Normal rarity" % context)
-	_expect(int(soul.get("item_level", 0)) == 1, "%s Archer Soul is authored at base Level 1" % context)
+	_expect(
+		int(soul.get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL,
+		"%s Archer Soul is base Normal rarity" % context
+	)
+	_expect(
+		int(soul.get("item_level", 0)) == 1, "%s Archer Soul is authored at base Level 1" % context
+	)
 	_expect(
 		String(soul.get("source_id", "")) == "chapter_1_level_5_archer_drop",
 		"%s Archer Soul retains physical-drop provenance" % context
 	)
-	_expect(HERO_SOUL_RULES.validate_instance(soul).is_empty(), "%s Archer Soul validates against canonical rules" % context)
+	_expect(
+		HERO_SOUL_RULES.validate_instance(soul).is_empty(),
+		"%s Archer Soul validates against canonical rules" % context
+	)
 
 	var expected_id := ""
-	if ARCHER_PICKUP_REWARD.hero_soul_grants.size() == 1:
-		var expected_soul: Dictionary = ARCHER_PICKUP_REWARD.hero_soul_grants[0].call(&"create_soul_instance")
+	var soul_grants: Array = ARCHER_PICKUP_REWARD.hero_soul_grants
+	_expect(
+		soul_grants.size() == 1,
+		"%s authored pickup reward contains exactly one deterministic Archer Soul grant" % context
+	)
+	if soul_grants.size() == 1:
+		var expected_soul: Dictionary = (soul_grants.front() as Resource).call(
+			&"create_soul_instance"
+		)
 		expected_id = String(expected_soul.get("instance_id", ""))
-	_expect(not expected_id.is_empty() and String(soul.get("instance_id", "")) == expected_id, "%s Archer Soul keeps its deterministic instance ID" % context)
+	_expect(
+		not expected_id.is_empty() and String(soul.get("instance_id", "")) == expected_id,
+		"%s Archer Soul keeps its deterministic instance ID" % context
+	)
 
 
 func _archer_souls(save_service: LivingArsenalSaveService) -> Array[Dictionary]:
@@ -197,7 +263,10 @@ func _archer_souls(save_service: LivingArsenalSaveService) -> Array[Dictionary]:
 	if not raw_souls is Array:
 		return found
 	for value: Variant in raw_souls:
-		if value is Dictionary and String((value as Dictionary).get("hero_id", "")) == "archer_hero":
+		if (
+			value is Dictionary
+			and String((value as Dictionary).get("hero_id", "")) == "archer_hero"
+		):
 			found.append((value as Dictionary).duplicate(true))
 	return found
 
@@ -230,7 +299,12 @@ func _finish(app_flow: Node, fake_root: FakeAppRoot) -> void:
 	if _failures.is_empty():
 		print("CHAPTER 1 LEVEL 6 PROMOTION ROUTE PASSED - %d checks" % _checks)
 	else:
-		print("CHAPTER 1 LEVEL 6 PROMOTION ROUTE FAILED - %d/%d checks failed" % [_failures.size(), _checks])
+		print(
+			(
+				"CHAPTER 1 LEVEL 6 PROMOTION ROUTE FAILED - %d/%d checks failed"
+				% [_failures.size(), _checks]
+			)
+		)
 	_finish_after_cleanup.call_deferred(0 if _failures.is_empty() else 1)
 
 
