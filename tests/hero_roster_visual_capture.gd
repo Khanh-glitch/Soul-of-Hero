@@ -60,6 +60,27 @@ func _run() -> void:
 	var comparison := roster.find_child("EquipmentComparisonDelta", true, false) as Label
 	_check(comparison != null and comparison.is_visible_in_tree(),
 		"Preview delta is visible in Equipment tab")
+	var item_row := roster.find_child(
+		"AuxItemVisual_%s" % String(gear["uuid"]).left(8), true, false
+	)
+	var compare_button: Button
+	if item_row != null:
+		for child: Node in item_row.get_parent().get_children():
+			for node: Node in child.get_children():
+				if node is Button and (node as Button).text == "XEM ±":
+					compare_button = node as Button
+					break
+	_check(compare_button != null and compare_button.is_visible_in_tree(),
+		"Visible Armor compare button exists")
+	if compare_button != null:
+		var actual := compare_button.get_global_rect()
+		var viewport := get_viewport_rect()
+		_check(actual.size.x >= 65.0,
+			"Armor comparison button is not squeezed below legible width")
+		_check(actual.position.x >= 0.0 and actual.end.x <= viewport.size.x + 1.0
+			and actual.position.y >= 0.0 and actual.end.y <= viewport.size.y + 1.0,
+			"Armor XEM ± action fits entirely on the rendered viewport")
+
 	if comparison != null:
 		_check(comparison.size.x > 0 and comparison.size.y > 0,
 			"Preview has measurable layout")
