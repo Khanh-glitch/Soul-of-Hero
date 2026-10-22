@@ -26,10 +26,12 @@ def main() -> int:
         if not path.is_file():
             continue
         lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
-        selected = [line for line in lines[-240:] if CONTEXT.search(line)]
+        failures = [line for line in lines if FAILURE.search(line)]
+        context = [line for line in lines[-240:] if CONTEXT.search(line)]
+        selected = list(dict.fromkeys(failures[-20:] + context[-5:]))
         if not selected:
             selected = lines[-12:]
-        for line in selected[-24:]:
+        for line in selected:
             command = "error" if FAILURE.search(line) else "notice"
             message = line.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
             print(f"::{command} title={title}::{message}")
