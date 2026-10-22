@@ -12,6 +12,8 @@ on:
       - "tests/hero_team_quicklook_runtime.gd"
       - "tests/hero_team_quicklook_runtime.tscn"
       - "game/ui/screens/hub/tabs/components/hero_team_quicklook.gd"
+      - "game/ui/screens/hub/tabs/components/hero_equipment_preview.gd"
+      - "tests/hero_equipment_preview_test.gd"
       - ".github/workflows/hero-library-godot.yml"
   workflow_dispatch:
 
@@ -90,6 +92,22 @@ jobs:
             exit 1
           fi
 
+      - name: Verify exact-instance weapon and gear what-if comparisons
+        shell: bash
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://tests/hero_equipment_preview_qa_ci.json"
+          export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          timeout --kill-after=5s 60s \
+            /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+            --headless --path . --script res://tests/hero_equipment_preview_test.gd \
+            2>&1 | tee hero-equipment-preview-test.log
+          grep -q "HERO EQUIPMENT PREVIEW TEST PASSED" hero-equipment-preview-test.log
+          if grep -Eq '^(SCRIPT ERROR|ERROR):' hero-equipment-preview-test.log; then
+            echo "Godot reported an engine/script error."
+            exit 1
+          fi
+
       - name: Upload Godot logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -100,4 +118,5 @@ jobs:
             hero-library-test.log
             hero-team-test.log
             hero-team-scene-test.log
+            hero-equipment-preview-test.log
           if-no-files-found: ignore
