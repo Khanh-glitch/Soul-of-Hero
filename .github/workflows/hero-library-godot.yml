@@ -14,6 +14,8 @@ on:
       - "game/ui/screens/hub/tabs/components/hero_team_quicklook.gd"
       - "game/ui/screens/hub/tabs/components/hero_equipment_preview.gd"
       - "tests/hero_equipment_preview_test.gd"
+      - "tests/hero_roster_visual_capture.gd"
+      - "tests/hero_roster_visual_capture.tscn"
       - ".github/workflows/hero-library-godot.yml"
   workflow_dispatch:
 
@@ -23,7 +25,7 @@ permissions:
 jobs:
   hero-library:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
 
@@ -108,6 +110,32 @@ jobs:
             exit 1
           fi
 
+      - name: Capture production Hero Roster at three viewports
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri > /dev/null
+          mkdir -p .artifacts
+          for dimensions in 640x360 847x437 1280x720; do
+            width="${dimensions%x*}"
+            height="${dimensions#*x}"
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/roster_visual_${dimensions}_${GITHUB_RUN_ID}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              timeout --kill-after=5s 70s \
+              /tmp/godot-bin/Godot_v4.7-stable_linux.x86_64 \
+              --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution "$dimensions" res://tests/hero_roster_visual_capture.tscn \
+              -- "--expected-width=$width" "--expected-height=$height" \
+              2>&1 | tee "roster_visual_${dimensions}.log"
+            grep -q "HERO ROSTER VISUAL CAPTURE PASSED: ${width}x${height}" "roster_visual_${dimensions}.log"
+            if grep -Eq '^(SCRIPT ERROR|ERROR):' "roster_visual_${dimensions}.log"; then
+              echo "Godot reported a capture or script error at $dimensions."
+              exit 1
+            fi
+          done
+
       - name: Upload Godot logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -119,4 +147,6 @@ jobs:
             hero-team-test.log
             hero-team-scene-test.log
             hero-equipment-preview-test.log
+            roster_visual_*.log
+            .artifacts/hero_roster_*.png
           if-no-files-found: ignore
