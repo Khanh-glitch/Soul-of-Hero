@@ -50,6 +50,7 @@ def main() -> int:
             "chapter_1_level_8_fresh_route_test.log": "chapter_1_level_8_fresh_route_report.json",
             "chapter_1_level_9_fresh_route_test.log": "chapter_1_level_9_fresh_route_report.json",
             "chapter_1_level_10_fresh_route_test.log": "chapter_1_level_10_fresh_route_report.json",
+            "archer-hero-combat.log": "archer_hero_combat_report.json",
         }.get(path.name)
         report_path = path.with_name(report_name) if report_name else None
         if report_path is not None and report_path.is_file():
