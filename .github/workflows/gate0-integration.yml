@@ -169,6 +169,11 @@ jobs:
           done
           shopt -u nullglob
           rm -f "$EVIDENCE_DIR"/*.import
+          # Cut the comparison sheets and 4x close-ups from exactly the frames
+          # being committed in this same commit, so a reviewer never compares a
+          # sheet against frames from a different run (Godot's animation state
+          # differs by a frame or two between runs).
+          python3 tools/gate0/make_evidence_sheets.py | tee .artifacts/gate0/sheets.log
           for log in .artifacts/gate0/*.log; do
             cp "$log" "$EVIDENCE_DIR/logs/$(basename "${log%.log}").txt"
           done
