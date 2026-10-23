@@ -75,12 +75,28 @@ const { PNG } = require("pngjs");
     await page.goto(gameplayURL.toString(), {
       waitUntil: "domcontentloaded", timeout: 30000
     });
-    await page.waitForFunction(
-      () => window.__soulHeroRoute === "game" &&
-        window.__soulHeroLevelReady &&
-        window.__soulHeroLevelReady.instantiated_count > 10,
-      null, { timeout: 55000, polling: 250 }
-    );
+    try {
+      await page.waitForFunction(
+        () => window.__soulHeroRoute === "game" &&
+          window.__soulHeroLevelReady &&
+          window.__soulHeroLevelReady.instantiated_count > 10,
+        null, { timeout: 35000, polling: 250 }
+      );
+    } catch (timeoutError) {
+      const state = await page.evaluate(() => ({
+        url: window.location.href,
+        appReady: window.__soulHeroAppReady,
+        route: window.__soulHeroRoute,
+        level: window.__soulHeroLevelReady,
+        status: document.querySelector("#status")?.innerText?.slice(0, 500),
+        canvas: [
+          document.querySelector("canvas")?.width,
+          document.querySelector("canvas")?.height
+        ],
+      }));
+      console.log("GODOT WEB GAMEPLAY STARTUP FAILURE STATE:", JSON.stringify(state));
+      throw timeoutError;
+    }
     await page.waitForTimeout(1200);
     const gameplay = await page.evaluate(() => window.__soulHeroLevelReady);
     console.log("GODOT WEB LIVE ENTITY REPORT:", JSON.stringify(gameplay));
