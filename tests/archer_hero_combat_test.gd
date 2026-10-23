@@ -442,6 +442,22 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 		func(_weapon: WeaponDefinition, context: Dictionary) -> void:
 			attack_instances.append(context.duplicate(true))
 	)
+	var confirmed_hits: Array[Dictionary] = []
+	var record_hit := func(
+		target: Node, amount: int, _position: Vector2, context: Dictionary
+	) -> void:
+		if target == _dummy or target == pointer_choice:
+			(
+				confirmed_hits
+				. append(
+					{
+						"target": target.name,
+						"amount": amount,
+						"context": context.duplicate(true),
+					}
+				)
+			)
+	GameEvents.combat_hit_confirmed.connect(record_hit)
 	var origin := Vector2(12.0, 18.0)
 	_knight.global_position = origin
 	_knight.call(&"_update_facing", Vector2.RIGHT)
@@ -464,7 +480,7 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 		(
 			(
 				"Archer shoots the farther RMB-priority enemy instead of its automatic candidate "
-				+ "(pointer=%d fallback=%d shots=%d knight=%s target=%s)"
+				+ "(pointer=%d fallback=%d shots=%d knight=%s target=%s hits=%s)"
 			)
 			% [
 				pointer_choice.max_health - pointer_choice.health,
@@ -472,6 +488,7 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 				attack_instances.size(),
 				str(_knight.global_position),
 				str(pointer_choice.global_position),
+				JSON.stringify(confirmed_hits),
 			]
 		)
 	)
@@ -522,6 +539,7 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 		_knight.current_action.is_empty(),
 		"the buffered Archer chain resolves without leaving a stuck action"
 	)
+	GameEvents.combat_hit_confirmed.disconnect(record_hit)
 	pointer_choice.queue_free()
 	await _physics_frames(1)
 
@@ -739,17 +757,33 @@ func _test_sword_threat_visual_and_q_takeover() -> void:
 		),
 		"Sword support summon starts with its real input context"
 	)
+	await _physics_frames(1)
 	var effect := _knight.get("_soul_support_visual") as SoulInterceptionEffect
-	var ghost := effect.get("_ghost") as AnimatedSprite2D if is_instance_valid(effect) else null
+	var anchors: Array = effect.get("_anchors") if is_instance_valid(effect) else []
+	var anchor := anchors[0] as Node if not anchors.is_empty() else null
+	var ghost := (
+		anchor.get_node_or_null("ResidualLayer01") as AnimatedSprite2D if anchor != null else null
+	)
 	_expect(
 		(
 			is_instance_valid(effect)
 			and is_instance_valid(ghost)
-			and ghost.name == "SwordSoulGhost"
+			and ghost.name == "ResidualLayer01"
 			and ghost.animation == &"sword_combo_1"
 			and ghost.sprite_frames.has_animation(&"sword_combo_4")
 		),
-		"Soul Interception renders the dedicated Sword silhouette instead of cloning Archer"
+		(
+			(
+				"Soul Interception renders its dedicated anchored Sword silhouette "
+				+ "(effect=%s anchors=%d ghost=%s animation=%s)"
+			)
+			% [
+				str(is_instance_valid(effect)),
+				anchors.size(),
+				str(ghost.name if ghost != null else "<null>"),
+				String(ghost.animation) if ghost != null else "<null>",
+			]
+		)
 	)
 	_expect(
 		_knight.request_action("attack", _dummy.global_position),
