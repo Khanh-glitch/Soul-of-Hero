@@ -48,10 +48,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_levels_2_to_5.gd 2>&1 | tee .artifacts/chapter-1-levels-2-to-5-generator.log
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_level_6.gd 2>&1 | tee .artifacts/chapter-1-level-6-generator.log
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_crypt_training_sandbox.gd 2>&1 | tee .artifacts/training-sandbox-generator.log
-          git diff --stat -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
-          git diff --quiet --exit-code -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --stat -- data/levels/crypt_entrance.json data/levels/chapter_1_level_2.json data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json data/levels/chapter_1_level_5.json data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --quiet --exit-code -- data/levels/crypt_entrance.json data/levels/chapter_1_level_2.json data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json data/levels/chapter_1_level_5.json data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
 
       - name: Run Chapter 2 map design and loader checks
         run: |
