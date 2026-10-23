@@ -4,10 +4,6 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
 GATE1 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54
-ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
-   at: push_error (core/variant/variant_utility.cpp:1023)
-   GDScript backtrace (most recent call first):
-       [0] _finish_boot (res://game/app/app_root.gd:270)
 GATE1 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
 GATE1 CAPTURE: res://.artifacts/gate1/before_spawn.png (1280x720) at (280.0, 216.0)
 GATE1 WALK: entry  (280, 216) -> (215, 202)  66 px over 5 cells in 49 frames
