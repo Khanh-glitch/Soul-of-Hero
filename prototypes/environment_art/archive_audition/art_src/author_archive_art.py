@@ -74,9 +74,9 @@ STONE_GREY_D = (62, 64, 66)
 # Standing water in a lamp-lit undercroft: near-black with a faint cold cast.
 # Saturated blue reads as spilled paint at gameplay zoom, so the whole ramp is
 # pulled towards the stone instead of away from it.
-WATER_D = (22, 28, 31)
-WATER_M = (29, 37, 41)
-WATER_L = (40, 51, 57)
+WATER_D = (28, 35, 39)
+WATER_M = (37, 46, 52)
+WATER_L = (55, 68, 76)
 TEAL = (78, 102, 104)
 TEAL_D = (33, 45, 48)
 
@@ -645,10 +645,23 @@ def prop_rubble_chunk(seed: int) -> Image.Image:
     return img
 
 
+def floor_shadow(img: Image.Image, cx: int, y: int, rx: int, ry: int,
+                 alpha: int = 64) -> Image.Image:
+    """Composite a soft contact shadow so flat floor litter is not floating.
+
+    Drawn on its own layer and alpha-composited: painting translucent pixels
+    straight onto the sprite would leave it see-through (see the water bug).
+    """
+    layer = new(img.width, img.height)
+    draw = ImageDraw.Draw(layer, "RGBA")
+    draw.ellipse((cx - rx, y - ry, cx + rx, y + ry), fill=(4, 3, 6, alpha))
+    return Image.alpha_composite(img, layer)
+
+
 def prop_scrolls(seed: int) -> Image.Image:
     """A loose bundle of scrolls on the floor."""
     rng = random.Random(seed)
-    img = new(18, 12)
+    img = floor_shadow(new(18, 12), 9, 8, 8, 3)
     for i in range(rng.randint(2, 4)):
         x = rng.randint(0, 8)
         y = rng.randint(2, 7)
@@ -662,7 +675,7 @@ def prop_scrolls(seed: int) -> Image.Image:
 
 
 def prop_scroll_roll(seed: int) -> Image.Image:
-    img = new(14, 8)
+    img = floor_shadow(new(14, 8), 7, 6, 6, 2)
     for x in range(10):
         vline(img, 2 + x, 2, 4, PARCH if x % 3 else PARCH_D)
     px(img, 1, 3, SEAL)
@@ -672,7 +685,7 @@ def prop_scroll_roll(seed: int) -> Image.Image:
 
 def prop_book_stack(seed: int) -> Image.Image:
     rng = random.Random(seed)
-    img = new(14, 12)
+    img = floor_shadow(new(14, 12), 7, 10, 6, 2)
     y = 9
     for i in range(rng.randint(2, 3)):
         w = rng.randint(7, 10)
