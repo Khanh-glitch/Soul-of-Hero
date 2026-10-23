@@ -1,0 +1,99 @@
+name: Gate 1 — Archive native Godot 4.7 comparison
+on:
+  push:
+    branches:
+      - integration/level3-archive-redesign
+    paths:
+      - "prototypes/gate1/archive_overlay.gd"
+      - "prototypes/gate1/archive_overlay.tscn"
+      - "prototypes/gate1/capture_gate1.gd"
+      - "prototypes/gate1/capture_gate1.tscn"
+      - "prototypes/gate1/trial_level3.json"
+      - "prototypes/gate1/trial_art.json"
+      - "tools/gate1/make_evidence.py"
+      - ".github/workflows/gate1-runtime.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gate1-native-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Native before/after playable archive and collision
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Install Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Verify G1-B and prepare the evidence directory
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gate1 docs/gate1/evidence/logs
+          python3 tools/gate1/author_trial.py --check
+          test "$(sha256sum data/levels/chapter_1_level_3.json | cut -d' ' -f1)" = "5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54"
+          git diff --exit-code -- data/ game/ tests/ project.godot
+      - name: Import original project
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/gate1/godot_version.log
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --audio-driver Dummy --editor --path . --import --quit 2>&1 | tee .artifacts/gate1/import.log
+      - name: Native BEFORE — Candidate A + verified Gate 0
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri >/dev/null
+          export SOUL_OF_HERO_SAVE_PATH="user://gate1_before_${GITHUB_RUN_ID}.json"
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout --signal=TERM --kill-after=10s 420s godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --resolution 1280x720 res://prototypes/gate0/capture_gate0.tscn -- --overlay 2>&1 | tee .artifacts/gate1/before.log
+          grep -q "GATE0 CAPTURE TEST PASSED" .artifacts/gate1/before.log
+          for path in .artifacts/gate0/after_*.png; do
+            cp "$path" ".artifacts/gate1/before_$(basename "$path" | sed 's/^after_//')"
+          done
+          test "$(find .artifacts/gate1 -name 'before_*.png' | wc -l)" -eq 4
+      - name: Materialise experimental Level 3 only in ephemeral runner
+        run: |
+          set -euo pipefail
+          cp prototypes/gate1/trial_level3.json data/levels/chapter_1_level_3.json
+          cmp data/levels/chapter_1_level_3.json prototypes/gate1/trial_level3.json
+          echo "Trial SHA256 $(sha256sum data/levels/chapter_1_level_3.json)" | tee .artifacts/gate1/trial_pin.log
+      - name: Native AFTER — real Level 3 and Gate 1 architecture
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://gate1_after_${GITHUB_RUN_ID}.json"
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout --signal=TERM --kill-after=10s 420s godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --resolution 1280x720 res://prototypes/gate1/capture_gate1.tscn -- --overlay 2>&1 | tee .artifacts/gate1/after.log
+          grep -q "GATE1 CAPTURE TEST PASSED" .artifacts/gate1/after.log
+          if grep -Eq "^SCRIPT ERROR:" .artifacts/gate1/after.log; then exit 1; fi
+          test "$(find .artifacts/gate1 -name 'after_*.png' | wc -l)" -eq 4
+      - name: Persist native images and meaningful errors
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p docs/gate1/evidence/logs
+          shopt -s nullglob
+          for f in .artifacts/gate1/{before,after}_*.png; do
+            cp "$f" docs/gate1/evidence/
+          done
+          shopt -u nullglob
+          for f in .artifacts/gate1/*.log; do
+            cp "$f" "docs/gate1/evidence/logs/$(basename "${f%.log}").txt"
+          done
+          python3 -m pip install --quiet pillow
+          if test "$(find docs/gate1/evidence -maxdepth 1 -name 'after_*.png' | wc -l)" -eq 4; then
+            python3 tools/gate1/make_evidence.py
+          fi
+          git config user.name "gate1-evidence-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/gate1/evidence
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "ci(gate1): publish native Godot frames and logs [skip ci]"
+          git push
