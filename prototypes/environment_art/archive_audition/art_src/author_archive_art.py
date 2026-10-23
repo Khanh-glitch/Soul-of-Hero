@@ -1352,18 +1352,27 @@ def prop_long_table(seed: int, bays: int = 3) -> Image.Image:
     rng = random.Random(seed)
     w = 32 * bays
     img = new(w, 34)
-    # board
-    rect(img, 0, 6, w, 16, WOOD_M)
-    hline(img, 0, 6, w, WOOD_HI)
-    hline(img, 0, 7, w, WOOD_L)
-    hline(img, 0, 20, w, shade(WOOD_D, 0.84))
-    hline(img, 0, 21, w, shade(WOOD_D, 0.7))
+    # Board read as a top surface plus a front edge: a single slab of wood this
+    # tall reads as a wall of timber rather than a table you can work at.
+    for y in range(6, 18):
+        for x in range(w):
+            v = 0.94 + 0.05 * ((x * 3 + y * 5) % 3)
+            px(img, x, y, shade(WOOD_M, v))
+    hline(img, 0, 6, w, WOOD_L)
+    # lengthwise plank seams and cross joints at each bay
+    for y in (10, 14):
+        hline(img, 0, y, w, shade(WOOD_D, 0.94))
     for x in range(16, w, 16):
-        vline(img, x, 8, 12, shade(WOOD_D, 0.9))
+        vline(img, x, 7, 11, shade(WOOD_D, 0.9))
+    # front edge, five pixels: thickness, a highlight, a shadow beneath
+    rect(img, 0, 18, w, 5, shade(WOOD_D, 0.94))
+    hline(img, 0, 18, w, shade(WOOD_M, 1.02))
+    hline(img, 0, 20, w, shade(WOOD_D, 0.8))
+    hline(img, 0, 22, w, shade(WOOD_D, 0.6))
     # trestles
     for x in range(6, w, 32):
-        rect(img, x, 22, 4, 11, shade(WOOD_D, 0.95))
-        rect(img, x + 1, 23, 2, 9, WOOD_M)
+        rect(img, x, 23, 4, 10, shade(WOOD_D, 0.95))
+        rect(img, x + 1, 24, 2, 8, WOOD_M)
         hline(img, x - 3, 30, 10, shade(WOOD_D, 0.9))
     # objects along the board: manuscripts, candle, ink, stack
     for i in range(0, bays):
