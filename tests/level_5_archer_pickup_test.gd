@@ -120,7 +120,7 @@ func _test_first_clear_core_ground_loot(save: LivingArsenalSaveService) -> void:
 		bool(harness.get("configured", false)),
 		(
 			"actual boss configures generic Level 5 observer; errors=%s"
-			% JSON.stringify(harness.get("configure_errors", []))
+			% JSON.stringify(harness.get("configure_diagnostic", {}))
 		),
 	)
 	if not bool(harness.get("configured", false)):
@@ -237,7 +237,7 @@ func _test_legacy_receipt_reconciliation(save: LivingArsenalSaveService) -> void
 		bool(harness.get("configured", false)),
 		(
 			"reconciliation run configures; errors=%s"
-			% JSON.stringify(harness.get("configure_errors", []))
+			% JSON.stringify(harness.get("configure_diagnostic", {}))
 		),
 	)
 	if not bool(harness.get("configured", false)):
@@ -282,7 +282,10 @@ func _test_replay_clear(save: LivingArsenalSaveService) -> void:
 	var harness := _create_live_harness("archer-replay-hard", &"hard")
 	_expect(
 		bool(harness.get("configured", false)),
-		"Hard replay configures; errors=%s" % JSON.stringify(harness.get("configure_errors", [])),
+		(
+			"Hard replay configures; errors=%s"
+			% JSON.stringify(harness.get("configure_diagnostic", {}))
+		),
 	)
 	if not bool(harness.get("configured", false)):
 		return
@@ -362,9 +365,19 @@ func _create_live_harness(run_id: String, difficulty: StringName) -> Dictionary:
 			{"run_id": run_id, "difficulty": difficulty, "stage_level": 5},
 		)
 	)
+	var live_boss := observer.call(&"get_boss") as Node
+	var configure_diagnostic := {
+		"errors": configure_errors,
+		"observer_boss_matches": live_boss == boss,
+		"authored_profile":
+		StringName(_boss_config_from_authored_map().get("guaranteed_loot_profile", &"")),
+		"live_config": boss.get_meta(&"level_entity_config", {}),
+		"observer_boss_config":
+		live_boss.get_meta(&"level_entity_config", {}) if live_boss != null else {},
+	}
 	return {
 		"configured": configure_errors.is_empty(),
-		"configure_errors": configure_errors,
+		"configure_diagnostic": configure_diagnostic,
 		"encounter_runtime": encounter_runtime,
 		"encounter": encounter,
 		"boss": boss,

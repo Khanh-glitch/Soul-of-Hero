@@ -45,11 +45,11 @@ def main() -> int:
         report_name = {
             "gameplay-smoke.log": "smoke_report.json",
             "chapter-1-level-5-miniboss.log": "chapter_1_level_5_miniboss_report.json",
-            "level_5_archer_pickup.log": "level_5_archer_pickup_report.json",
-            "chapter_1_level_6_promotion_route.log": "chapter_1_level_6_promotion_route_report.json",
-            "chapter_1_level_8_fresh_route.log": "chapter_1_level_8_fresh_route_report.json",
-            "chapter_1_level_9_fresh_route.log": "chapter_1_level_9_fresh_route_report.json",
-            "chapter_1_level_10_fresh_route.log": "chapter_1_level_10_fresh_route_report.json",
+            "level_5_archer_pickup_test.log": "level_5_archer_pickup_report.json",
+            "chapter_1_level_6_promotion_route_test.log": "chapter_1_level_6_promotion_route_report.json",
+            "chapter_1_level_8_fresh_route_test.log": "chapter_1_level_8_fresh_route_report.json",
+            "chapter_1_level_9_fresh_route_test.log": "chapter_1_level_9_fresh_route_report.json",
+            "chapter_1_level_10_fresh_route_test.log": "chapter_1_level_10_fresh_route_report.json",
         }.get(path.name)
         report_path = path.with_name(report_name) if report_name else None
         if report_path is not None and report_path.is_file():
@@ -71,6 +71,10 @@ def main() -> int:
         for index, line in enumerate(lines):
             if "absolute paths from outside the active scene tree" not in line:
                 continue
+            for candidate in reversed(lines[max(0, index - 40):index]):
+                if "LEVEL 9 ROUTE TRACE:" in candidate:
+                    engine_context.append(candidate)
+                    break
             for candidate in lines[index + 1:index + 8]:
                 if ".gd:" in candidate or candidate.lstrip().startswith("at:"):
                     engine_context.append(candidate)

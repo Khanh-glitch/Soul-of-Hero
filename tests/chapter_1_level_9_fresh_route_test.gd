@@ -162,12 +162,17 @@ func _run() -> void:
 		"completion payload exposes deterministic Rare Sword Hero Soul Lv9"
 	)
 	var rare_instance_id := String(rare_summary.get("instance_id", ""))
+	var affix_ids: Array[String] = []
+	for raw_affix: Variant in rare_summary.get("affixes", []):
+		if raw_affix is Dictionary:
+			affix_ids.append(String((raw_affix as Dictionary).get("affix_id", "")))
 	_expect(
 		(
 			not rare_instance_id.is_empty()
 			and _count_soul_instance(save_service, rare_instance_id) == 1
+			and _soul_affix_ids(save_service, rare_instance_id) == affix_ids
 		),
-		"Save contains exactly one deterministic Rare Soul instance"
+		"Save contains exactly one deterministic Rare Soul instance with the completion affixes"
 	)
 	_expect(
 		_count_hero_souls(save_service, "sword_hero") == 2,
@@ -189,12 +194,11 @@ func _run() -> void:
 		),
 		"completion renders only the continuation question, never a reward summary"
 	)
-	var affix_ids: Array[String] = []
-	for raw_affix: Variant in rare_summary.get("affixes", []):
-		if raw_affix is Dictionary:
-			affix_ids.append(String((raw_affix as Dictionary).get("affix_id", "")))
+	# defense_while_attacking is a read-only legacy alias and cannot roll on a
+	# new Hero Soul. Authored seed 19001 deterministically produces these two
+	# canonical LIVE affixes through the same instance used by SaveService.
 	_expect(
-		affix_ids.has("defense_while_attacking") and affix_ids.has("active_power"),
+		affix_ids.has("healing_received") and affix_ids.has("active_power"),
 		(
 			"completion payload retains both deterministic LIVE affixes; actual=%s"
 			% ", ".join(affix_ids)
@@ -210,24 +214,29 @@ func _run() -> void:
 	)
 	var currencies_after_first := save_service.get_value(["currencies"], {}) as Dictionary
 	var level_after_first := int(save_service.get_value(["progression", "player", "level"], 0))
+	print("LEVEL 9 ROUTE TRACE: reloading first-clear save")
 	_expect(save_service.reload_save(), "Level 9 rewarded profile reloads from disk")
+	print("LEVEL 9 ROUTE TRACE: first-clear save reloaded")
 	_expect(
 		(
 			_count_soul_instance(save_service, rare_instance_id) == 1
 			and _count_hero_souls(save_service, "sword_hero") == 2
+			and _soul_affix_ids(save_service, rare_instance_id) == affix_ids
 		),
-		"Reload preserves exactly one Rare reward and both Sword copies"
+		"Reload preserves exactly one Rare reward, both Sword copies, and both affixes"
 	)
 	_expect(
 		bool(save_service.get_value(["progression", "features", "chapter_1_boss_gate"], false)),
 		"Reload preserves the atomic boss-gate feature"
 	)
 
+	print("LEVEL 9 ROUTE TRACE: starting replay")
 	_expect(
 		bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_9")),
 		"Completed Level 9 remains replayable"
 	)
 	await _wait_for_route(app_root, &"gameplay", 180)
+	print("LEVEL 9 ROUTE TRACE: replay gameplay mounted")
 	_expect(
 		await _play_live_level_nine(app_root),
 		"Replay physically repeats the complete three-seal boss route"
@@ -259,8 +268,9 @@ func _run() -> void:
 		(
 			_count_soul_instance(save_service, rare_instance_id) == 1
 			and _count_hero_souls(save_service, "sword_hero") == 2
+			and _soul_affix_ids(save_service, rare_instance_id) == affix_ids
 		),
-		"Replay cannot duplicate the deterministic Rare Soul"
+		"Replay cannot duplicate the deterministic Rare Soul or change its affixes"
 	)
 	route_host = app_root.get_node("RouteHost")
 	gameplay_screen = route_host.get_child(0) if route_host.get_child_count() == 1 else null
@@ -348,6 +358,23 @@ func _count_soul_instance(save_service: Node, instance_id: String) -> int:
 	return result
 
 
+func _soul_affix_ids(save_service: Node, instance_id: String) -> Array[String]:
+	var result: Array[String] = []
+	var path: Array[String] = ["inventory", "hero_souls"]
+	var souls := save_service.call(&"get_value", path, []) as Array
+	for raw_soul: Variant in souls:
+		if not raw_soul is Dictionary:
+			continue
+		var soul := raw_soul as Dictionary
+		if String(soul.get("instance_id", "")) != instance_id:
+			continue
+		for raw_affix: Variant in soul.get("affixes", []):
+			if raw_affix is Dictionary:
+				result.append(String((raw_affix as Dictionary).get("affix_id", "")))
+		break
+	return result
+
+
 func _count_hero_souls(save_service: Node, hero_id: String) -> int:
 	var result := 0
 	var path: Array[String] = ["inventory", "hero_souls"]
@@ -380,12 +407,14 @@ func _finish(app_flow: Node, app_root: Node) -> void:
 	get_tree().paused = false
 	if app_flow != null and app_root != null:
 		app_flow.call(&"detach_app_root", app_root)
+		print("LEVEL 9 ROUTE TRACE: freeing AppRoot")
 		if is_instance_valid(app_root):
 			for audio_node: Node in app_root.find_children("*", "AudioStreamPlayer", true, false):
 				(audio_node as AudioStreamPlayer).stop()
 			for audio_node: Node in app_root.find_children("*", "AudioStreamPlayer2D", true, false):
 				(audio_node as AudioStreamPlayer2D).stop()
 			app_root.free()
+		print("LEVEL 9 ROUTE TRACE: AppRoot freed")
 	_remove_generations(TEST_SAVE_PATH)
 	var report := {"ok": _failures.is_empty(), "checks": _checks, "failures": _failures}
 	var file := FileAccess.open(REPORT_PATH, FileAccess.WRITE)
