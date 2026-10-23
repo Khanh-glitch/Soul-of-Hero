@@ -2,11 +2,17 @@
 (none)
 
 == counts per log ==
+audit_base.log               ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+audit_gate3.log              ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author_check.log             ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
-logscan.log                  ObjectDB=3 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+base_pin.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+before.log                   ObjectDB=0 ERROR=1 SCRIPT_ERROR=1 WARNING=1
+import.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+logscan.log                  ObjectDB=8 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 manifest.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 stats.log                    ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+version.log                  ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 
 == gate3 route / collision / camera evidence ==
 GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
