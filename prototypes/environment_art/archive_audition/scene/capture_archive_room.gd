@@ -39,7 +39,7 @@ func _run() -> void:
 	await _shot_at("entry")
 	await _shot_at("mid")
 	await _shot_at("end")
-	await _walk_up(150)
+	await _walk_from_spawn(150)
 	await _frame("walk")
 	await _overview()
 	_report()
@@ -53,12 +53,27 @@ func _shot_at(point: String) -> void:
 	await _frame(point)
 
 
-func _walk_up(frames: int) -> void:
+## Walk the Knight north up the aisle from the spawn for real, with the room's
+## own collision active, and record where he actually ends up.
+func _walk_from_spawn(frames: int) -> void:
+	if _knight == null:
+		_failures.append("cannot walk: no Knight")
+		return
+	var room: Dictionary = _room.get("room")
+	var spawn: Array = room["spawn"]
+	_knight.global_position = Vector2(float(spawn[0]), float(spawn[1]))
+	await _settle(4)
+	var start: Vector2 = _knight.global_position
 	Input.action_press("move_up", 1.0)
 	for i: int in frames:
 		await get_tree().physics_frame
 	Input.action_release("move_up")
-	await _settle(8)
+	await _settle(6)
+	var finish: Vector2 = _knight.global_position
+	print("ARCHIVE WALK: from %s to %s (%.1f px north)"
+		% [str(start), str(finish), start.y - finish.y])
+	if start.y - finish.y < 32.0:
+		_failures.append("the Knight barely moved in the walk test")
 
 
 func _settle(frames: int = 8) -> void:

@@ -74,9 +74,9 @@ STONE_GREY_D = (62, 64, 66)
 # Standing water in a lamp-lit undercroft: near-black with a faint cold cast.
 # Saturated blue reads as spilled paint at gameplay zoom, so the whole ramp is
 # pulled towards the stone instead of away from it.
-WATER_D = (28, 35, 39)
-WATER_M = (37, 46, 52)
-WATER_L = (55, 68, 76)
+WATER_D = (33, 41, 46)
+WATER_M = (44, 55, 62)
+WATER_L = (68, 83, 92)
 TEAL = (78, 102, 104)
 TEAL_D = (33, 45, 48)
 
