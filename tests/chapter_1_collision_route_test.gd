@@ -197,7 +197,7 @@ func _test_map(map_spec: Dictionary) -> void:
 			"Level 8 begins with its two optional branches physically gated until one is chosen",
 		)
 
-	var target_types: Array[String] = OBJECTIVE_TYPES + ["floor_door"] + COMBAT_TYPES
+	var target_types: Array = OBJECTIVE_TYPES + ["floor_door"] + COMBAT_TYPES
 	if slot == 8:
 		target_types = ["reliquary_branch_seal"]
 	var unreachable_targets: Array[String] = []
