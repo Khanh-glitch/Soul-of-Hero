@@ -47,6 +47,9 @@ func _ready() -> void:
 		_direct_load_game.call_deferred()
 		return
 	AppFlow.attach_app_root(self)
+	if _web_local_gameplay_smoke_requested():
+		show_route(DIRECT_GAME_SCENE, {}, &"game")
+		return
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
 		var startup_choice_test: Node = (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
 		add_child(startup_choice_test)
@@ -91,6 +94,18 @@ func _ready() -> void:
 		_finish_boot.call_deferred()
 		if OS.get_cmdline_user_args().has("--ui-shell-capture"):
 			_capture_ui_shell.call_deferred()
+
+
+## CI-only local Web browser route. Public Pages cannot activate this mode.
+## This exercises the production game scene without mutating campaign unlocks.
+func _web_local_gameplay_smoke_requested() -> bool:
+	if not OS.has_feature("web"):
+		return false
+	var requested: Variant = JavaScriptBridge.eval(
+		"window.location.hostname === '127.0.0.1' " +
+		"&& new URLSearchParams(window.location.search).get('ci_gameplay') === '1'"
+	)
+	return requested is bool and bool(requested)
 
 
 func _exit_tree() -> void:
