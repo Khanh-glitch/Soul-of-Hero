@@ -1,0 +1,1 @@
+GATE1 ARCHITECTURE PASSED {"Backdrop": 3511, "Decor": 73, "Geometry": 1763, "entities": 79, "newly_reachable": 90, "original_reachable": 1008, "props": 18, "trial_reachable": 1098}
