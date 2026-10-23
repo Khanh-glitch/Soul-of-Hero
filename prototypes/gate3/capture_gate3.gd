@@ -638,6 +638,12 @@ func _enemy_count() -> int:
 
 
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
+	## Walk the planned route with the production input actions, and deal with what
+	## the level puts in the way the way a player would: kill what holds the corridor,
+	## re-plan when the route goes stale, and roll through when nothing can be killed.
+	## Progress is measured towards the waypoint, not raw movement, because being
+	## pushed back and forth by an enemy body looks like movement and is not progress.
+	var failures_before := _failures.size()
 	var route := _plan_route(_current_cell(), target_cell)
 	print("GATE3 PLAN: %s -> %s is %d cells" % [label, str(target_cell), route.size()])
 	if route.is_empty():
@@ -646,9 +652,11 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var started := _player.global_position
 	var index := 1
 	var frames := 0
-	var stall := 0
-	var last_position := started
-	var budget := route.size() * 150 + 600
+	var budget := route.size() * 200 + 900
+	var best_distance := 1.0e9
+	var checked_at := 0
+	var blocked := 0
+	var replans := 0
 	while index < route.size() and frames < budget:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died on the way to '%s' at %s"
@@ -656,52 +664,63 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			return false
 		var waypoint := _cell_centre(route[index])
 		var delta := waypoint - _player.global_position
-		# A real player fights what is standing in the corridor, with the production
-		# light-attack action. The harness never fights while it is standing on a
-		# spike footprint: that is where the Knight would bleed out, not gain ground.
-		# Fight only what is actually blocking the walk: the Knight is invulnerable for
-		# 0.75 s after every hit, so running past a crowd is cheap and fighting a crowd
-		# is not. A stalled walk means something is holding the corridor.
-		if _disengage_frames > 0:
-			_disengage_frames -= 1
-		if stall >= 24 and _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
-			var blocker := _nearest_enemy(56.0, delta)
-			if blocker != null:
-				var spent := await _engage_enemy(blocker, label)
-				frames += spent
-				stall = 0
-				last_position = _player.global_position
-				continue
 		if delta.length() <= 5.0:
 			index += 1
-			stall = 0
+			blocked = 0
+			best_distance = 1.0e9
+			checked_at = frames
 			continue
-		var actions: Array[String] = []
-		if absf(delta.x) > 2.0:
-			actions.append("move_right" if delta.x > 0.0 else "move_left")
-		if absf(delta.y) > 2.0:
-			actions.append("move_down" if delta.y > 0.0 else "move_up")
-		if actions.is_empty():
-			actions.append("move_right" if delta.x > 0.0 else "move_left")
+		if frames - checked_at >= 30:
+			if delta.length() > best_distance - 3.0:
+				blocked += 1
+			else:
+				blocked = 0
+			best_distance = delta.length()
+			checked_at = frames
+		if _disengage_frames > 0:
+			_disengage_frames -= 1
+		if blocked >= 2 and _disengage_frames <= 0:
+			var blocker := _nearest_enemy(56.0, delta)
+			if blocker != null and not _hazard_cache.has(_current_cell()):
+				var spent := await _engage_enemy(blocker, label)
+				frames += spent
+				blocked = 0
+				best_distance = 1.0e9
+				continue
+			if replans < 3:
+				var fresh := _plan_route(_current_cell(), target_cell)
+				if fresh.size() > 1:
+					route = fresh
+					index = 1
+					replans += 1
+					blocked = 0
+					best_distance = 1.0e9
+					continue
+			# Nothing to kill and no better route: the Knight's own roll carries him
+			# through the gap, which is exactly what the action is for.
+			var toward := _key_directions(delta)
+			for action: String in toward:
+				Input.action_press(action, 1.0)
+			Input.action_press("roll", 1.0)
+			await get_tree().physics_frame
+			Input.action_release("roll")
+			for action: String in toward:
+				Input.action_release(action)
+			frames += 1
+			blocked = 0
+			best_distance = 1.0e9
+			continue
+		var actions := _key_directions(delta)
 		for action: String in actions:
 			Input.action_press(action, 1.0)
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
 		frames += 1
-		if frames % 30 == 0:
-			print("GATE3 TRACE: %s frame %d cell %s HP %d stall %d waypoint %s"
-				% [label, frames, str(_current_cell()), int(_player.get("health")), stall,
+		if frames % 60 == 0:
+			print("GATE3 TRACE: %s frame %d cell %s HP %d blocked %d waypoint %s"
+				% [label, frames, str(_current_cell()), int(_player.get("health")), blocked,
 					str(route[mini(index, route.size() - 1)])])
-		if _player.global_position.distance_to(last_position) < 0.25:
-			stall += 1
-			if stall > 90:
-				_push("the Knight stalled walking to '%s' at %s"
-					% [label, str(_player.global_position)])
-				return false
-		else:
-			stall = 0
-			last_position = _player.global_position
 	if index < route.size():
 		_push("the Knight ran out of frames walking to '%s' (%d/%d waypoints)"
 			% [label, index, route.size()])
@@ -719,7 +738,16 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	# is itself proved separately by `_use_floor_door`.
 	_expect(travelled > 16.0 or route.size() <= 1 or label == "spawn",
 		"'%s' was reached on foot, not by teleporting" % label)
-	return true
+	return _failures.size() == failures_before
+
+
+func _key_directions(delta: Vector2) -> Array[String]:
+	var actions: Array[String] = []
+	if absf(delta.x) > 2.0:
+		actions.append("move_right" if delta.x > 0.0 else "move_left")
+	if absf(delta.y) > 2.0:
+		actions.append("move_down" if delta.y > 0.0 else "move_up")
+	return actions
 
 
 func _walk_to_station(name: String) -> bool:
