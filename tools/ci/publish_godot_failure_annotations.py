@@ -45,6 +45,11 @@ def main() -> int:
         report_name = {
             "gameplay-smoke.log": "smoke_report.json",
             "chapter-1-level-5-miniboss.log": "chapter_1_level_5_miniboss_report.json",
+            "level_5_archer_pickup.log": "level_5_archer_pickup_report.json",
+            "chapter_1_level_6_promotion_route.log": "chapter_1_level_6_promotion_route_report.json",
+            "chapter_1_level_8_fresh_route.log": "chapter_1_level_8_fresh_route_report.json",
+            "chapter_1_level_9_fresh_route.log": "chapter_1_level_9_fresh_route_report.json",
+            "chapter_1_level_10_fresh_route.log": "chapter_1_level_10_fresh_route_report.json",
         }.get(path.name)
         report_path = path.with_name(report_name) if report_name else None
         if report_path is not None and report_path.is_file():
@@ -62,6 +67,13 @@ def main() -> int:
             for line in lines
             if FAILURE.search(line) and not line.lstrip().startswith("PASS")
         ]
+        engine_context: list[str] = []
+        for index, line in enumerate(lines):
+            if "absolute paths from outside the active scene tree" not in line:
+                continue
+            for candidate in lines[index + 1:index + 8]:
+                if ".gd:" in candidate or candidate.lstrip().startswith("at:"):
+                    engine_context.append(candidate)
         # Prioritize exact counts, compact assertion lists, and focused runtime
         # diagnostics; use individual failures only when no compact list exists.
         selected = list(dict.fromkeys(
@@ -70,6 +82,7 @@ def main() -> int:
             + report_details[-1:]
             + population_details[-1:]
             + root_details[-1:]
+            + engine_context[-2:]
             + ([] if campaign_failures else failures[-3:])
         ))[:5]
         if not selected:

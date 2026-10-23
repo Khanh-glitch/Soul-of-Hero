@@ -462,8 +462,8 @@ func _test_campaign_ready_gate() -> void:
 		"soul_team":
 		{
 			"active_hero": "sword_hero",
-			"reserve_souls": ["", ""],
-			"capacity": 2,
+			"reserve_souls": [""],
+			"capacity": 1,
 		},
 	}
 	_expect(
@@ -512,7 +512,7 @@ func _test_campaign_ready_gate() -> void:
 		"Physical pickup grants Archer ownership and the Hero Soul core"
 	)
 	_expect(
-		(candidate.get("soul_team", {}) as Dictionary).get("reserve_souls", []) == ["", ""],
+		(candidate.get("soul_team", {}) as Dictionary).get("reserve_souls", []) == [""],
 		"Archer pickup leaves team placement unchanged until the player explicitly presses Equip"
 	)
 	var chapter_one_levels: Array[LevelDefinition] = []

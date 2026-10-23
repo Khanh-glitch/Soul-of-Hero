@@ -120,7 +120,10 @@ func _test_sequential_first_clears(
 		"Level 5 completion cannot stand in for physical Soul collection"
 	)
 	var reserves: Array = save_service.get_value(["soul_team", "reserve_souls"], [])
-	_expect(reserves == ["", ""], "Level 5 completion leaves both Reserve Soul slots untouched")
+	_expect(
+		reserves == [""],
+		"Level 5 completion leaves the canonical empty Reserve Soul slot untouched",
+	)
 	_expect(
 		save_service.transact_once(
 			ARCHER_PICKUP_KEY,
@@ -132,8 +135,8 @@ func _test_sequential_first_clears(
 	)
 	_assert_archer_entitlement(save_service, "Level 5 physical pickup")
 	_expect(
-		save_service.get_value(["soul_team", "reserve_souls"], []) == ["", ""],
-		"Pickup ownership still does not auto-equip Archer"
+		save_service.get_value(["soul_team", "reserve_souls"], []) == [""],
+		"Pickup ownership does not auto-equip Archer into the canonical Reserve slot"
 	)
 	var archer_reserve: Array[StringName] = [&"archer_hero"]
 	_expect(

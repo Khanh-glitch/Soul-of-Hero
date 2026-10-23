@@ -6,7 +6,9 @@ const MAP_PATH := "res://data/levels/chapter_1_level_5.json"
 const PICKUP_TRANSACTION_KEY := "campaign:chapter_1_level_5:archer_soul_pickup:v1"
 const BOSS_ENTITY_ID := &"l5_hooded_archer_miniboss"
 const PROFILE_ID := &"level_5_archer_soul"
-const REGISTRY: LevelRegistry = preload("res://data/content/registries/campaign_content_registry.tres")
+const REGISTRY: LevelRegistry = preload(
+	"res://data/content/registries/campaign_content_registry.tres"
+)
 const PICKUP_BUNDLE: RewardBundleDefinition = preload(
 	"res://data/content/rewards/chapter_1_level_5_archer_soul_pickup.tres"
 )
@@ -28,19 +30,20 @@ var _failures: Array[String] = []
 var _stage: Node2D
 
 
-class FakeEncounterAuthority extends Node:
+class FakeEncounterAuthority:
+	extends Node
 	var encounter_runtime: RefCounted
 
-
 	func record_encounter_event(event_id: StringName, amount: int = 1) -> bool:
-		return encounter_runtime != null and bool(
-			encounter_runtime.call(&"record_custom_event", event_id, amount)
+		return (
+			encounter_runtime != null
+			and bool(encounter_runtime.call(&"record_custom_event", event_id, amount))
 		)
 
 
-class FakeLivePlayer extends Node2D:
+class FakeLivePlayer:
+	extends Node2D
 	var refresh_calls := 0
-
 
 	func refresh_runtime_meta_from_save(_snapshot: Dictionary) -> bool:
 		refresh_calls += 1
@@ -77,11 +80,12 @@ func _test_authored_profile_and_rarity_contract() -> void:
 		StringName(boss_config.get("guaranteed_loot_profile", &"")) == PROFILE_ID,
 		"Level 5 JSON authors the Bow reward as a guaranteed core-loot profile",
 	)
-	var fixed_soul: Dictionary = PICKUP_BUNDLE.hero_soul_grants[0].call(
-		&"create_soul_instance"
-	)
+	var fixed_soul: Dictionary = PICKUP_BUNDLE.hero_soul_grants[0].call(&"create_soul_instance")
 	_expect(String(fixed_soul.get("hero_id", "")) == "archer_hero", "first Soul is Archer")
-	_expect(int(fixed_soul.get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL, "first Soul is guaranteed Normal")
+	_expect(
+		int(fixed_soul.get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL,
+		"first Soul is guaranteed Normal"
+	)
 	_expect((fixed_soul.get("affixes", []) as Array).is_empty(), "Normal first Soul has no affix")
 
 	for difficulty: StringName in [&"easy", &"medium", &"hard"]:
@@ -96,17 +100,29 @@ func _test_authored_profile_and_rarity_contract() -> void:
 		_expect(decreasing, "%s replay rarity chance decreases low to high" % difficulty)
 	for minimum: int in range(HERO_SOUL_RULES.Rarity.MAGIC, HERO_SOUL_RULES.MAX_RARITY + 1):
 		_expect(
-			ARCHER_DROP_RULES.high_rarity_tail_probability(&"easy", minimum)
-				< ARCHER_DROP_RULES.high_rarity_tail_probability(&"medium", minimum)
-			and ARCHER_DROP_RULES.high_rarity_tail_probability(&"medium", minimum)
-				< ARCHER_DROP_RULES.high_rarity_tail_probability(&"hard", minimum),
+			(
+				(
+					ARCHER_DROP_RULES.high_rarity_tail_probability(&"easy", minimum)
+					< ARCHER_DROP_RULES.high_rarity_tail_probability(&"medium", minimum)
+				)
+				and (
+					ARCHER_DROP_RULES.high_rarity_tail_probability(&"medium", minimum)
+					< ARCHER_DROP_RULES.high_rarity_tail_probability(&"hard", minimum)
+				)
+			),
 			"difficulty raises the full rarity-%d+ tail" % minimum,
 		)
 
 
 func _test_first_clear_core_ground_loot(save: LivingArsenalSaveService) -> void:
 	var harness := _create_live_harness("archer-core-first", &"easy")
-	_expect(bool(harness.get("configured", false)), "actual boss configures generic Level 5 observer")
+	_expect(
+		bool(harness.get("configured", false)),
+		(
+			"actual boss configures generic Level 5 observer; errors=%s"
+			% JSON.stringify(harness.get("configure_errors", []))
+		),
+	)
 	if not bool(harness.get("configured", false)):
 		return
 	var boss := harness["boss"] as HoodedArcherMiniboss
@@ -119,7 +135,10 @@ func _test_first_clear_core_ground_loot(save: LivingArsenalSaveService) -> void:
 	# the same local magnet radius as every other item; no forced reward chain.
 	player.global_position = death_position + Vector2(460.0, 0.0)
 	_mark_all_except_boss(runtime, encounter)
-	_expect(bool(runtime.call(&"mark_enemy_defeated", BOSS_ENTITY_ID)), "encounter accepts Archer defeat")
+	_expect(
+		bool(runtime.call(&"mark_enemy_defeated", BOSS_ENTITY_ID)),
+		"encounter accepts Archer defeat"
+	)
 	_expect(boss.take_damage(9999), "live KingdomArcher enters death")
 
 	var drop := await _wait_for_profile_drop(observer, 160)
@@ -128,41 +147,99 @@ func _test_first_clear_core_ground_loot(save: LivingArsenalSaveService) -> void:
 		return
 	var payload := drop.get_loot_payload()
 	_expect(drop.is_in_group(&"ground_loot"), "Bow reward uses the common ground_loot group")
-	_expect(StringName(payload.get("loot_profile", &"")) == PROFILE_ID, "payload retains authored profile")
-	_expect(StringName(payload.get("kind", &"")) == &"hero_soul", "payload is ordinary Hero Soul equipment")
-	_expect(String((payload.get("item", {}) as Dictionary).get("hero_id", "")) == "archer_hero", "payload owns the Archer Soul instance")
-	_expect(String(payload.get("icon_path", "")).contains("bow"), "payload uses a curated Bow image")
-	_expect(bool(payload.get("first_clear", false)), "first boss clear chooses fixed acquisition payload")
-	_expect(is_equal_approx(drop.auto_pickup_radius, 96.0), "Bow uses the standard GroundLoot magnet radius")
-	_expect(drop.global_position.distance_to(death_position) < 80.0, "visible launch remains anchored at the defeated boss")
-	_expect(_archer_souls(save.get_snapshot()).is_empty(), "launch/landing is visible before Save commit")
+	_expect(
+		StringName(payload.get("loot_profile", &"")) == PROFILE_ID,
+		"payload retains authored profile"
+	)
+	_expect(
+		StringName(payload.get("kind", &"")) == &"hero_soul",
+		"payload is ordinary Hero Soul equipment"
+	)
+	_expect(
+		String((payload.get("item", {}) as Dictionary).get("hero_id", "")) == "archer_hero",
+		"payload owns the Archer Soul instance"
+	)
+	_expect(
+		String(payload.get("icon_path", "")).contains("bow"), "payload uses a curated Bow image"
+	)
+	_expect(
+		bool(payload.get("first_clear", false)),
+		"first boss clear chooses fixed acquisition payload"
+	)
+	_expect(
+		is_equal_approx(drop.auto_pickup_radius, 96.0),
+		"Bow uses the standard GroundLoot magnet radius"
+	)
+	_expect(
+		drop.global_position.distance_to(death_position) < 80.0,
+		"visible launch remains anchored at the defeated boss"
+	)
+	_expect(
+		_archer_souls(save.get_snapshot()).is_empty(),
+		"launch/landing is visible before Save commit"
+	)
 	for _frame: int in 50:
 		await physics_frame
-	_expect(_archer_souls(save.get_snapshot()).is_empty(), "ranged kill leaves Bow visibly on the ground outside magnet range")
+	_expect(
+		_archer_souls(save.get_snapshot()).is_empty(),
+		"ranged kill leaves Bow visibly on the ground outside magnet range"
+	)
 	player.global_position = drop.global_position + Vector2(72.0, 0.0)
 
-	_expect(await _wait_for_archer_count(save, 1, 180), "standard local magnet commits Archer Soul after the player approaches")
+	_expect(
+		await _wait_for_archer_count(save, 1, 180),
+		"standard local magnet commits Archer Soul after the player approaches"
+	)
 	var owned := _archer_souls(save.get_snapshot())
 	_expect(owned.size() == 1, "first pickup stores exactly one Archer Soul")
-	_expect(int(owned[0].get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL, "stored first Soul remains Normal")
+	_expect(
+		int(owned[0].get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL,
+		"stored first Soul remains Normal"
+	)
 	_expect(save.is_transaction_applied(PICKUP_TRANSACTION_KEY), "fixed pickup receipt is durable")
-	_expect(bool(save.get_value(["progression", "features", "soul_hero"], false)), "pickup unlocks Soul Hero")
-	_expect(bool(save.get_value(["progression", "features", "soul_relay"], false)), "pickup unlocks Soul Relay")
-	_expect(bool(runtime.call(&"is_gate_unlocked", &"l5_exit")), "generic pickup resolution unlocks Level 5 exit")
-	_expect(bool(observer.call(&"get_snapshot").get("pickup_event_recorded", false)), "observer records physical pickup objective")
+	_expect(
+		bool(save.get_value(["progression", "features", "soul_hero"], false)),
+		"pickup unlocks Soul Hero"
+	)
+	_expect(
+		bool(save.get_value(["progression", "features", "soul_relay"], false)),
+		"pickup unlocks Soul Relay"
+	)
+	_expect(
+		bool(runtime.call(&"is_gate_unlocked", &"l5_exit")),
+		"generic pickup resolution unlocks Level 5 exit"
+	)
+	_expect(
+		bool(observer.call(&"get_snapshot").get("pickup_event_recorded", false)),
+		"observer records physical pickup objective"
+	)
 	await _assert_field_codex_contains_archer(save, player, String(owned[0].get("instance_id", "")))
 
 
 func _test_legacy_receipt_reconciliation(save: LivingArsenalSaveService) -> void:
-	_expect(save.reset_to_defaults("RESET_SOUL_OF_HERO_SAVE"), "profile resets for missing-entitlement fixture")
-	_expect(save.transact_once(
-		PICKUP_TRANSACTION_KEY,
-		func(_candidate: Dictionary) -> bool: return true,
-		{"kind": "legacy_broken_archer_pickup"},
-	), "legacy fixture records receipt without granting a Soul")
-	_expect(_archer_souls(save.get_snapshot()).is_empty(), "legacy fixture really has zero Archer Souls")
+	_expect(
+		save.reset_to_defaults("RESET_SOUL_OF_HERO_SAVE"),
+		"profile resets for missing-entitlement fixture"
+	)
+	_expect(
+		save.transact_once(
+			PICKUP_TRANSACTION_KEY,
+			func(_candidate: Dictionary) -> bool: return true,
+			{"kind": "legacy_broken_archer_pickup"},
+		),
+		"legacy fixture records receipt without granting a Soul"
+	)
+	_expect(
+		_archer_souls(save.get_snapshot()).is_empty(), "legacy fixture really has zero Archer Souls"
+	)
 	var harness := _create_live_harness("archer-reconcile", &"easy")
-	_expect(bool(harness.get("configured", false)), "reconciliation run configures")
+	_expect(
+		bool(harness.get("configured", false)),
+		(
+			"reconciliation run configures; errors=%s"
+			% JSON.stringify(harness.get("configure_errors", []))
+		),
+	)
 	if not bool(harness.get("configured", false)):
 		return
 	var boss := harness["boss"] as HoodedArcherMiniboss
@@ -177,12 +254,21 @@ func _test_legacy_receipt_reconciliation(save: LivingArsenalSaveService) -> void
 	var drop := await _wait_for_profile_drop(observer, 160)
 	_expect(drop != null, "broken legacy receipt still materializes a physical Bow")
 	if drop != null:
-		_expect(bool(drop.get_loot_payload().get("first_clear", false)), "missing fixed Soul restores guaranteed Normal path")
+		_expect(
+			bool(drop.get_loot_payload().get("first_clear", false)),
+			"missing fixed Soul restores guaranteed Normal path"
+		)
 		player.global_position = drop.global_position + Vector2(72.0, 0.0)
-	_expect(await _wait_for_archer_count(save, 1, 180), "generic GroundLoot reconciles missing fixed entitlement")
+	_expect(
+		await _wait_for_archer_count(save, 1, 180),
+		"generic GroundLoot reconciles missing fixed entitlement"
+	)
 	var owned := _archer_souls(save.get_snapshot())
 	_expect(owned.size() == 1, "reconciliation adds exactly one deterministic Archer Soul")
-	_expect(int(owned[0].get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL, "reconciled entitlement is Normal")
+	_expect(
+		int(owned[0].get("rarity", -1)) == HERO_SOUL_RULES.Rarity.NORMAL,
+		"reconciled entitlement is Normal"
+	)
 	var reconciliation_receipts := 0
 	for raw_key: Variant in (save.get_value(["applied_transactions"], {}) as Dictionary).keys():
 		if String(raw_key).begins_with("loot_reconcile:"):
@@ -194,7 +280,10 @@ func _test_legacy_receipt_reconciliation(save: LivingArsenalSaveService) -> void
 func _test_replay_clear(save: LivingArsenalSaveService) -> void:
 	var before := _archer_souls(save.get_snapshot()).size()
 	var harness := _create_live_harness("archer-replay-hard", &"hard")
-	_expect(bool(harness.get("configured", false)), "Hard replay configures")
+	_expect(
+		bool(harness.get("configured", false)),
+		"Hard replay configures; errors=%s" % JSON.stringify(harness.get("configure_errors", [])),
+	)
 	if not bool(harness.get("configured", false)):
 		return
 	var boss := harness["boss"] as HoodedArcherMiniboss
@@ -210,21 +299,35 @@ func _test_replay_clear(save: LivingArsenalSaveService) -> void:
 	_expect(drop != null, "every replay boss clear creates one guaranteed physical Bow Soul")
 	if drop != null:
 		var payload := drop.get_loot_payload()
-		_expect(not bool(payload.get("first_clear", true)), "replay uses difficulty rarity provider")
-		_expect(String(payload.get("pickup_transaction_key", "")).contains("archer_soul_replay"), "replay owns per-run receipt")
+		_expect(
+			not bool(payload.get("first_clear", true)), "replay uses difficulty rarity provider"
+		)
+		_expect(
+			String(payload.get("pickup_transaction_key", "")).contains("archer_soul_replay"),
+			"replay owns per-run receipt"
+		)
 		player.global_position = drop.global_position + Vector2(72.0, 0.0)
-	_expect(await _wait_for_archer_count(save, before + 1, 180), "Hard replay adds exactly one Archer Soul")
-	_expect(_archer_souls(save.get_snapshot()).size() == before + 1, "replay inventory count increments once")
+	_expect(
+		await _wait_for_archer_count(save, before + 1, 180),
+		"Hard replay adds exactly one Archer Soul"
+	)
+	_expect(
+		_archer_souls(save.get_snapshot()).size() == before + 1,
+		"replay inventory count increments once"
+	)
 
 
 func _create_live_harness(run_id: String, difficulty: StringName) -> Dictionary:
 	var level := REGISTRY.find_campaign_level(5)
 	var encounter := REGISTRY.find_encounter(level.entry_encounter_id) if level != null else null
 	var encounter_runtime = EncounterRuntimeStateScript.new()
-	var errors: PackedStringArray = encounter_runtime.configure(
-		level,
-		REGISTRY,
-		_load_document().get("entities", []),
+	var errors: PackedStringArray = (
+		encounter_runtime
+		. configure(
+			level,
+			REGISTRY,
+			_load_document().get("entities", []),
+		)
 	)
 	if not errors.is_empty() or encounter == null:
 		return {"configured": false}
@@ -250,14 +353,18 @@ func _create_live_harness(run_id: String, difficulty: StringName) -> Dictionary:
 	director.call(&"configure_world_source", boss, &"enemy")
 	var observer = ArcherRecruitmentRuntimeScript.new()
 	authority.add_child(observer)
-	var configure_errors: PackedStringArray = observer.configure(
-		authority,
-		entity_root,
-		encounter,
-		{"run_id": run_id, "difficulty": difficulty, "stage_level": 5},
+	var configure_errors: PackedStringArray = (
+		observer
+		. configure(
+			authority,
+			entity_root,
+			encounter,
+			{"run_id": run_id, "difficulty": difficulty, "stage_level": 5},
+		)
 	)
 	return {
 		"configured": configure_errors.is_empty(),
+		"configure_errors": configure_errors,
 		"encounter_runtime": encounter_runtime,
 		"encounter": encounter,
 		"boss": boss,
@@ -277,9 +384,9 @@ func _wait_for_profile_drop(observer: Node, maximum_frames: int) -> GroundLoot:
 
 
 func _wait_for_archer_count(
-		save: LivingArsenalSaveService,
-		expected: int,
-		maximum_frames: int,
+	save: LivingArsenalSaveService,
+	expected: int,
+	maximum_frames: int,
 ) -> bool:
 	for _frame: int in maximum_frames:
 		if _archer_souls(save.get_snapshot()).size() >= expected:
@@ -289,9 +396,9 @@ func _wait_for_archer_count(
 
 
 func _assert_field_codex_contains_archer(
-		_save: LivingArsenalSaveService,
-		player: FakeLivePlayer,
-		instance_id: String,
+	_save: LivingArsenalSaveService,
+	player: FakeLivePlayer,
+	instance_id: String,
 ) -> void:
 	var codex := FIELD_CODEX_SCENE.instantiate() as FieldCodex
 	_stage.add_child(codex)
@@ -305,9 +412,11 @@ func _assert_field_codex_contains_archer(
 			if raw_entry is FieldCodexEntry:
 				var drag_payload := (raw_entry as FieldCodexEntry).get_drag_payload()
 				var item_value: Variant = drag_payload.get("item", {})
-				if item_value is Dictionary \
-						and String((item_value as Dictionary).get("instance_id", "")) == instance_id \
-						and String((item_value as Dictionary).get("hero_id", "")) == "archer_hero":
+				if (
+					item_value is Dictionary
+					and String((item_value as Dictionary).get("instance_id", "")) == instance_id
+					and String((item_value as Dictionary).get("hero_id", "")) == "archer_hero"
+				):
 					found = true
 					break
 	_expect(found, "Field Codex matrix contains the committed Archer Soul entry")
@@ -328,16 +437,20 @@ func _archer_souls(snapshot: Dictionary) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	var inventory: Dictionary = snapshot.get("inventory", {})
 	for raw_soul: Variant in inventory.get("hero_souls", []):
-		if raw_soul is Dictionary \
-				and String((raw_soul as Dictionary).get("hero_id", "")) == "archer_hero":
+		if (
+			raw_soul is Dictionary
+			and String((raw_soul as Dictionary).get("hero_id", "")) == "archer_hero"
+		):
 			result.append((raw_soul as Dictionary).duplicate(true))
 	return result
 
 
 func _boss_config_from_authored_map() -> Dictionary:
 	for raw_entity: Variant in _load_document().get("entities", []):
-		if raw_entity is Dictionary \
-				and StringName((raw_entity as Dictionary).get("id", &"")) == BOSS_ENTITY_ID:
+		if (
+			raw_entity is Dictionary
+			and StringName((raw_entity as Dictionary).get("id", &"")) == BOSS_ENTITY_ID
+		):
 			return (raw_entity as Dictionary).duplicate(true)
 	return {}
 
@@ -369,7 +482,7 @@ func _expect(condition: bool, message: String) -> void:
 	push_error(message)
 
 
-func _finish(save: LivingArsenalSaveService) -> void:
+func _finish(_save: LivingArsenalSaveService) -> void:
 	if is_instance_valid(_stage):
 		_stage.queue_free()
 	_remove_generations(TEST_SAVE_PATH)
@@ -383,10 +496,15 @@ func _finish(save: LivingArsenalSaveService) -> void:
 	if file != null:
 		file.store_string(JSON.stringify(report, "\t") + "\n")
 		file.close()
-	print("LEVEL 5 ARCHER PICKUP TEST %s - %d checks" % [
-		"PASSED" if _failures.is_empty() else "FAILED",
-		_checks,
-	])
+	print(
+		(
+			"LEVEL 5 ARCHER PICKUP TEST %s - %d checks"
+			% [
+				"PASSED" if _failures.is_empty() else "FAILED",
+				_checks,
+			]
+		)
+	)
 	_finish_after_cleanup.call_deferred(0 if _failures.is_empty() else 1)
 
 
