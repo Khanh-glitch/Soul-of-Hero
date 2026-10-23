@@ -78,7 +78,7 @@ jobs:
           run_case training "TRAINING SANDBOX LIVE ROUTE PASSED - 37 checks" 120 res://tests/training_sandbox_live_route_test.tscn
           run_case chapter2 "Chapter 2 campaign map design: 420 checks, 0 failures." 120 --script res://tests/chapter_2_campaign_map_design_test.gd
           run_case level6 "CHAPTER 1 LEVEL 6 VERTICAL SLICE PASSED - 132 checks" 150 --script res://tests/chapter_1_level_6_vertical_slice_test.gd
-          run_case archer-promotion "CHAPTER 1 LEVEL 6 PROMOTION ROUTE PASSED - 82 checks" 150 res://tests/chapter_1_level_6_promotion_route_test.tscn
+          run_case archer-promotion "CHAPTER 1 LEVEL 6 PROMOTION ROUTE PASSED - 82 checks" 150 --script res://tests/chapter_1_level_6_promotion_route_test.gd
           run_case level9 "CHAPTER 1 LEVEL 9 FRESH ROUTE PASSED - 64 checks" 150 res://tests/chapter_1_level_9_fresh_route_test.tscn
           run_case campaign-entry "CAMPAIGN ENTRY RUNTIME PASSED - 949 checks" 180 -- --campaign-entry-runtime-test
           run_case smoke "SMOKE TEST PASSED" 150 -- --smoke-test
