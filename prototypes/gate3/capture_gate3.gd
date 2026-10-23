@@ -592,7 +592,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	## range and swinging at air would trade the Knight's HP for nothing, which is
 	## exactly what an earlier revision of this harness did. Returns frames spent.
 	var spent := 0
-	while spent < 300:
+	while spent < 200:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
@@ -616,6 +616,10 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		for action: String in actions:
 			Input.action_release(action)
 		spent += 1
+		if spent % 30 == 0:
+			print("GATE3 COMBAT: '%s' target %s at %.0f px, target HP %s, Knight HP %d"
+				% [label, String(target.name), offset.length(),
+					str(target.get("health")), int(_player.get("health"))])
 		if int(_player.get("health")) < 300:
 			print("GATE3 COMBAT: the Knight disengaged near '%s' at HP %d"
 				% [label, int(_player.get("health"))])
@@ -654,10 +658,13 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# A real player fights what is standing in the corridor, with the production
 		# light-attack action. The harness never fights while it is standing on a
 		# spike footprint: that is where the Knight would bleed out, not gain ground.
+		# Fight only what is actually blocking the walk: the Knight is invulnerable for
+		# 0.75 s after every hit, so running past a crowd is cheap and fighting a crowd
+		# is not. A stalled walk means something is holding the corridor.
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
-			var blocker := _nearest_enemy(44.0, delta)
+		if stall >= 24 and _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+			var blocker := _nearest_enemy(56.0, delta)
 			if blocker != null:
 				var spent := await _engage_enemy(blocker, label)
 				frames += spent
