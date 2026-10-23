@@ -101,7 +101,7 @@ def collect() -> list[dict[str, str]]:
 
 
 def render(rows: list[dict[str, str]]) -> str:
-    base = git("rev-parse", "origin/main")
+    base = "f27e8b7fe03f33b2001b08579543e5010a0a1b9d"  # the contract's base
     lines = [
         "# Gate 0 — Source manifest (Candidate B art provenance)",
         "",
@@ -110,8 +110,8 @@ def render(rows: list[dict[str, str]]) -> str:
         "",
         f"- **Candidate B (art source):** `{B_COMMIT}`",
         "- **B folder:** `prototypes/environment_art/archive_audition/`",
-        f"- **Base content:** `origin/main` @ `{base}` (see the execution contract for"
-        " the pinned Level 3 reference)",
+        f"- **Base content:** `{base}` (see the execution contract for the pinned"
+        " Level 3 reference)",
         "",
         "Every file below is a **verbatim copy** of Candidate B's original asset.",
         "No Gate 0 art was redrawn, re-exported, recoloured or resized: the script",
@@ -165,10 +165,10 @@ def main() -> int:
     args = parser.parse_args()
     try:
         rows = collect()
+        text = render(rows)
     except RuntimeError as error:
         print(f"MANIFEST CHECK FAILED: {error}")
         return 1
-    text = render(rows)
     if args.check:
         if not MANIFEST.exists() or MANIFEST.read_text() != text:
             print("MANIFEST CHECK FAILED: docs/gate0/SOURCE_MANIFEST.md is stale")

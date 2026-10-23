@@ -5,7 +5,7 @@ do not hand-edit. Re-run it (or `--check`) to prove the copies still match.
 
 - **Candidate B (art source):** `e7cad36f8f21e746abefe44ac6cfa54db9a378e6`
 - **B folder:** `prototypes/environment_art/archive_audition/`
-- **Base content:** `origin/main` @ `5214788933b1a827f3a177d11ff486433dfe5e8a` (see the execution contract for the pinned Level 3 reference)
+- **Base content:** `f27e8b7fe03f33b2001b08579543e5010a0a1b9d` (see the execution contract for the pinned Level 3 reference)
 
 Every file below is a **verbatim copy** of Candidate B's original asset.
 No Gate 0 art was redrawn, re-exported, recoloured or resized: the script
