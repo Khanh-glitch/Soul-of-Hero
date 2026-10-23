@@ -34,6 +34,9 @@ var _preloaded_home_scene: PackedScene
 
 
 func _ready() -> void:
+	# Browser-only boot visibility: a diagnostic marker, never an unlock/save action.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroAppReady = true;")
 	_apply_persisted_runtime_settings()
 	var save_service := get_node_or_null("/root/SaveService")
 	if save_service != null and save_service.has_signal(&"settings_changed"):
@@ -45,39 +48,39 @@ func _ready() -> void:
 		return
 	AppFlow.attach_app_root(self)
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
-		var startup_choice_test := preload("res://tests/startup_profile_choice_test.gd").new()
+		var startup_choice_test := (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
 		add_child(startup_choice_test)
 		startup_choice_test.start(self)
 		AppFlow.open_boot()
 		_finish_boot.call_deferred()
 		return
 	if OS.get_cmdline_user_args().has(ARCHER_HERO_COMBAT_TEST_ARGUMENT):
-		var archer_combat_test := preload("res://tests/archer_hero_combat_test.gd").new()
+		var archer_combat_test := (load("res://tests/archer_hero_combat_test.gd") as GDScript).new()
 		add_child(archer_combat_test)
 		archer_combat_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT):
-		var click_pickup_test := preload("res://tests/gameplay_click_auto_pickup_test.gd").new()
+		var click_pickup_test := (load("res://tests/gameplay_click_auto_pickup_test.gd") as GDScript).new()
 		add_child(click_pickup_test)
 		click_pickup_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT):
-		var hero_skill_test := preload("res://tests/hero_skill_live_runtime_test.gd").new()
+		var hero_skill_test := (load("res://tests/hero_skill_live_runtime_test.gd") as GDScript).new()
 		add_child(hero_skill_test)
 		hero_skill_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(VISIBLE_REWARD_RUNTIME_TEST_ARGUMENT):
-		var visible_reward_test := preload("res://tests/visible_progression_reward_runtime_test.gd").new()
+		var visible_reward_test := (load("res://tests/visible_progression_reward_runtime_test.gd") as GDScript).new()
 		add_child(visible_reward_test)
 		visible_reward_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT):
-		var fresh_loop_test := preload("res://tests/fresh_player_loop_acceptance_test.gd").new()
+		var fresh_loop_test := (load("res://tests/fresh_player_loop_acceptance_test.gd") as GDScript).new()
 		add_child(fresh_loop_test)
 		fresh_loop_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(CAMPAIGN_ENTRY_RUNTIME_TEST_ARGUMENT):
-		var campaign_entry_test := preload("res://tests/campaign_entry_runtime_test.gd").new()
+		var campaign_entry_test := (load("res://tests/campaign_entry_runtime_test.gd") as GDScript).new()
 		add_child(campaign_entry_test)
 		campaign_entry_test.start(self)
 		return
@@ -120,6 +123,8 @@ func show_route(scene_path: String, payload: Dictionary, route_id: StringName) -
 	if screen.has_method(&"configure"):
 		screen.call("configure", payload.duplicate(true))
 	_current_route = route_id
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroRoute = " + JSON.stringify(String(route_id)) + ";")
 	_publish_route_state(route_id, payload)
 	_is_switching = false
 
