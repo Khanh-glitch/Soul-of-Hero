@@ -97,9 +97,10 @@ jobs:
         run: |
           set -euo pipefail
           dest="prototypes/environment_art/archive_audition/captures"
-          mkdir -p "$dest"
+          mkdir -p "$dest" "$dest/logs"
           shopt -s nullglob
           for shot in .artifacts/archive_room_*.png; do cp "$shot" "$dest/"; done
+          for log in .artifacts/archive_*.log; do cp "$log" "$dest/logs/"; done
           shopt -u nullglob
           ls -l "$dest" || true
           git config user.name "archive-capture-bot"
