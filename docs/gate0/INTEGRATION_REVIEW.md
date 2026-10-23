@@ -34,7 +34,7 @@ The four committed `comparison_*.png` pairs and 4× `closeup_pair_*.png` images 
 
 - Recompose the first playable camera view around an immediately recognizable open manuscript press and desk; avoid using `shelf_closed` as the main read. Keep tutorial UI visible during review.
 - Refine at most the few weakest prop placements/scales and the floor-door rubble threshold; no additional formulaic clutter. Confirm opaque sprite bases, collision and silhouette again at 1×.
-- Preserve the existing art provenance, immutable entity contracts and generated placement determinism. Verify both 390/720? No additional 390px requirement: the game proof is native 1280×720.
+- Preserve the existing art provenance, immutable entity contracts and deterministic placement. Recheck the 1280×720 native Godot gameplay views and genuine Knight collision after every visual adjustment.
 - Before permanent integration, separately plan reload lifecycle, generator ownership, bookkeeping of overlay children, and a focused campaign regression with Level 2 untouched.
 
 **Do not conflate passing Gate 0 with Level 3 visual production approval. Do not merge or deploy.**
