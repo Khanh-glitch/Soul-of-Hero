@@ -1,5 +1,5 @@
 == ObjectDB / leak notices ==
-GATE3 OBJECTS: ObjectDB holds 12829 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12793 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 
 == counts per log ==
@@ -31,11 +31,11 @@ GATE3 WALK: cloister  (489, 201) -> (617, 295)  160 px over 14 cells in 139 fram
 GATE3 WALK: south_loop  (617, 295) -> (744, 374)  150 px over 13 cells in 139 frames, HP 1100
 GATE3 WALK: combat_space  (744, 374) -> (934, 344)  193 px over 14 cells in 127 frames, HP 1100
 GATE3 WALK: return_route  (934, 344) -> (713, 343)  222 px over 18 cells in 172 frames, HP 1100
-GATE3 COLLISION: Knight at (1283.98, 296.5711) is clear of every wall and prop
-GATE3 ROUTE: 73 cells walked, 933 px travelled, 1 fights, HP 1100 -> 0 (delta 1100)
+GATE3 COLLISION: Knight at (1276.86, 295.5103) is clear of every wall and prop
+GATE3 ROUTE: 73 cells walked, 933 px travelled, 0 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12829 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 767 nodes
-GATE3 OBJECTS: ObjectDB holds 12829 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12793 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 756 nodes
+GATE3 OBJECTS: ObjectDB holds 12793 objects at the end of the run
 GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
 GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79
