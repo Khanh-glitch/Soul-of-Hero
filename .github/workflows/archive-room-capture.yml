@@ -1,0 +1,121 @@
+name: Archive Room — Godot 4.7 render
+
+# Focused gate for the environment-art prototype: import, validate the authored
+# room data, render the prototype scene and publish the frames. It deliberately
+# does not run the campaign suites.
+
+on:
+  push:
+    branches:
+      - arena/6e89e68d-soul-of-hero
+    paths:
+      - "prototypes/environment_art/archive_audition/**"
+      - ".github/workflows/archive-room-capture.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: archive-room-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render:
+    name: Import + validate + render the archive room
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Validate the authored room data (no Godot needed)
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          python3 -m pip install --quiet pillow
+          cd prototypes/environment_art/archive_audition/art_src
+          python3 author_archive_art.py | tee -a "$GITHUB_WORKSPACE/.artifacts/archive_art.log"
+          python3 room_author.py | tee -a "$GITHUB_WORKSPACE/.artifacts/archive_room_data.log"
+          python3 validate_room.py | tee -a "$GITHUB_WORKSPACE/.artifacts/archive_validate.log"
+          # the authored data must reproduce byte-for-byte
+          cd "$GITHUB_WORKSPACE"
+          git diff --exit-code -- prototypes/environment_art/archive_audition/art \
+                                   prototypes/environment_art/archive_audition/room.json
+
+      - name: Import project resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/archive_godot_version.log
+          timeout --signal=TERM --kill-after=10s 180s \
+            godot --headless --audio-driver Dummy --editor --path . --import --quit \
+            2>&1 | tee .artifacts/archive_import.log
+
+      - name: Parse-check the prototype scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 90s godot --headless --audio-driver Dummy \
+            --path . --check-only --script res://prototypes/environment_art/archive_audition/scene/archive_room.gd \
+            2>&1 | tee .artifacts/archive_parse_room.log || true
+          if grep -Eq "SCRIPT ERROR|Parse Error" .artifacts/archive_parse_room.log; then
+            echo "::error::archive_room.gd failed to parse"
+            exit 1
+          fi
+
+      - name: Render the room at 1280x720
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri >/dev/null
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            timeout --signal=TERM --kill-after=10s 240s godot \
+            --path . --audio-driver Dummy --rendering-method gl_compatibility \
+            --rendering-driver opengl3 --resolution 1280x720 \
+            res://prototypes/environment_art/archive_audition/scene/capture_archive_room.tscn \
+            2>&1 | tee .artifacts/archive_capture.log
+          grep -q "ARCHIVE ROOM CAPTURE TEST PASSED" .artifacts/archive_capture.log
+          if grep -Eq "^SCRIPT ERROR:|^ERROR:" .artifacts/archive_capture.log; then
+            echo "::error::Godot reported a script or runtime error"
+            exit 1
+          fi
+          ls -l .artifacts/archive_room_*.png
+
+      - name: Publish the frames onto the branch
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          dest="prototypes/environment_art/archive_audition/captures"
+          mkdir -p "$dest"
+          shopt -s nullglob
+          for shot in .artifacts/archive_room_*.png; do cp "$shot" "$dest/"; done
+          shopt -u nullglob
+          ls -l "$dest" || true
+          git config user.name "archive-capture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$dest"
+          if git diff --cached --quiet; then
+            echo "no new captures"
+            exit 0
+          fi
+          git commit -m "ci(archive-room): publish Godot 4.7 renders [skip ci]"
+          git push
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: archive-room-evidence
+          path: .artifacts/
+          retention-days: 14
