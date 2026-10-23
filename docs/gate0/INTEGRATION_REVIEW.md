@@ -38,3 +38,15 @@ The four committed `comparison_*.png` pairs and 4× `closeup_pair_*.png` images 
 - Before permanent integration, separately plan reload lifecycle, generator ownership, bookkeeping of overlay children, and a focused campaign regression with Level 2 untouched.
 
 **Do not conflate passing Gate 0 with Level 3 visual production approval. Do not merge or deploy.**
+
+## Targeted visual polish — independent follow-up
+
+- **Change commit:** `03fa2b1571796adf6db53a6467c0b4d932a63abc` (only `tools/gate0/author_overlay.py` and generated `prototypes/gate0/overlay_level3_archive.json`; no art pixels or campaign files changed).
+- **Native evidence published:** `f1b6e911b0b05430da691eb2d214c267658f48bb`.
+- **Godot 4.7 integration run:** [39992472049](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39992472049) — **SUCCESS**, including provenance, authoring `--check`, import, native BEFORE/AFTER gameplay frames, real Knight walks and sampled collision probes.
+- **Visual correction 1:** the nearest `shelf_closed` at (296,176) is now a partly emptied `shelf_partial` of the **same physical dimensions**. The close-up confirms book spines and compartment geometry are now recognizable instead of a featureless dark slab. Existing far partial shelf remains, so there is a repeat; this is not a finished fully-authored archive.
+- **Visual correction 2:** `rubble_large` moved 8 px east (384→392, base y352), introducing additional visual separation from the floor-door frame. Validated floor support, physics and walking; other props and gameplay stayed unchanged.
+- **Remaining blocker:** the **unchanged production tutorial banner still occludes the tops of the north-wall presses** in the actual 1280×720 after-destination capture, and the first impression remains dominated by HUD/gray masonry. Do not hide the banner solely to manufacture a passing screenshot.
+- **Scope decision:** these two targeted fixes pass local visual correction, **NOT full Level 3 visual production acceptance**. The actual Level 3 layout, Chapter 1 combat/balance, editor/reload integration, and comprehensive campaign playtest are outside this proof and have not been signed off.
+
+**Current gate verdict:** technical integration **PASS**; targeted fixes **PASS**; production visual sign-off **PENDING**; no merge/deploy.
