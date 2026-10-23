@@ -2,9 +2,9 @@ extends Node
 
 ## Gate 1 evidence harness (checkpoint M2/M3).
 ##
-## Boots Candidate A's REAL `game/main.tscn` — its own DungeonLevel, Knight,
-## HUD, camera, torches and tilemaps — points the live level at Chapter 1
-## Level 3, and optionally attaches the Gate 1 archive overlay. Everything is
+## Starts Chapter 1 Level 3 through the real AppRoot/AppFlow campaign route,
+## then inspects the production Main scene, HUD, camera, Knight and tilemaps.
+## The Level 1-only tutorial must not appear in Level 3 captures. Everything is
 ## captured from the real viewport at the real window size.
 ##
 ##   godot --path . --rendering-method gl_compatibility --audio-driver Dummy \
@@ -16,7 +16,8 @@ extends Node
 ## and walks it with the production input actions. If a station cannot be
 ## reached on foot the run FAILS rather than quietly framing a teleport.
 
-const GAME_SCENE: PackedScene = preload("res://game/main.tscn")
+const APP_ROOT_SCENE: PackedScene = preload("res://game/app/app_root.tscn")
+const CAMPAIGN_REGISTRY: LevelRegistry = preload("res://data/content/registries/campaign_content_registry.tres")
 const OVERLAY_SCENE: PackedScene = preload("res://prototypes/gate1/archive_redesign.tscn")
 const LEVEL_PATH := "res://data/levels/chapter_1_level_3.json"
 const OVERLAY_PATH := "res://prototypes/gate1/visual_placement.json"
@@ -43,12 +44,13 @@ const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"entry": Vector2i(13, 12),
 	"destination": Vector2i(23, 20),
-	"sanctuary": Vector2i(27, 29),
+	"sanctuary": Vector2i(27, 26),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
 
 var _with_overlay := false
+var _app_root: Node
 var _game: Node2D
 var _dungeon: DungeonLevel
 var _player: CharacterBody2D
@@ -88,22 +90,44 @@ func _boot() -> bool:
 		return false
 	print("GATE1 LEVEL: %s sha256=%s" % [LEVEL_PATH, digest])
 
-	_game = GAME_SCENE.instantiate() as Node2D
-	if _game == null:
-		_push("the production Main scene did not instantiate")
+	# A direct Main launch incorrectly activates the Level 1 movement/dash
+	# tutorial in Level 3. Enter via AppFlow as a real campaign run instead.
+	if not _seed_isolated_campaign_save():
 		return false
-	_dungeon = _game.get_node_or_null("Level") as DungeonLevel
-	if _dungeon == null:
-		_push("the production Main scene has no DungeonLevel")
+	_app_root = APP_ROOT_SCENE.instantiate()
+	if _app_root == null:
+		_push("production AppRoot did not instantiate")
 		return false
-	# No AppFlow run is active, so Main keeps this path (it only overrides the
-	# level when a run is registered).
-	_dungeon.level_data_path = LEVEL_PATH
-	_dungeon.watch_file_changes = false
-	add_child(_game)
+	add_child(_app_root)
+	await get_tree().process_frame
+	if not AppFlow.start_campaign_level(&"chapter_1_level_3"):
+		_push("production campaign gate rejected Level 3")
+		return false
+	if not AppFlow.has_active_run():
+		_push("production campaign run is not active")
+		return false
+	var active: Dictionary = AppFlow.get_active_run()
+	if StringName(active.get("content_level_id", &"")) != &"chapter_1_level_3":
+		_push("wrong campaign content level in AppFlow")
+		return false
 	for _frame: int in 10:
 		await get_tree().process_frame
 		await get_tree().physics_frame
+	var host := _app_root.get_node_or_null("RouteHost")
+	_game = host.get_child(0) as Node2D if host != null and host.get_child_count() > 0 else null
+	if _game == null:
+		_push("production campaign route did not instantiate Main")
+		return false
+	_dungeon = _game.get_node_or_null("Level") as DungeonLevel
+	if _dungeon == null or String(_dungeon.level_data_path) != LEVEL_PATH:
+		_push("campaign Main failed to load the intended Level 3")
+		return false
+	_dungeon.watch_file_changes = false
+	var tutorial := _game.get_node_or_null("Tutorial")
+	if tutorial != null and tutorial.has_node("TutorialPanel"):
+		if (tutorial.get_node("TutorialPanel") as CanvasItem).visible:
+			_push("Level 1 tutorial is incorrectly displayed in campaign Level 3")
+	print("GATE1 CAMPAIGN ROUTE: %s, real HUD and active Level 3" % String(active.get("content_level_id", "")))
 
 	var container := _game.get_node_or_null("Level/Entities") as Node2D
 	if container == null:
@@ -117,6 +141,43 @@ func _boot() -> bool:
 	if players.size() != 1:
 		_push("expected exactly 1 Knight in the scene, found %d" % players.size())
 	return _failures.is_empty()
+
+
+
+func _seed_isolated_campaign_save() -> bool:
+	var save_path := OS.get_environment("SOUL_OF_HERO_SAVE_PATH")
+	if save_path.is_empty():
+		save_path = "user://gate1_%d.json" % Time.get_ticks_usec()
+	if not bool(SaveService.call(&"configure_storage", save_path, true)):
+		_push("failed to isolate campaign save")
+		return false
+	var ready_levels := CAMPAIGN_REGISTRY.get_ordered_campaign_levels(false)
+	var ids: Array[String] = []
+	for definition: LevelDefinition in ready_levels:
+		ids.append(String(definition.level_id))
+	var seeded := bool(SaveService.call(&"transact_once",
+		"gate1:isolated_campaign_entry",
+		func(candidate: Dictionary) -> bool:
+			var progression: Dictionary = candidate.get("progression", {}).duplicate(true)
+			var campaign: Dictionary = progression.get("campaign", {}).duplicate(true)
+			campaign["unlocked_levels"] = ids.duplicate()
+			var completed: Dictionary = campaign.get("completed_levels", {}).duplicate(true)
+			for definition: LevelDefinition in ready_levels:
+				for prerequisite_id: String in definition.unlock_requirements.prerequisite_level_ids:
+					completed[prerequisite_id] = true
+			campaign["completed_levels"] = completed
+			progression["campaign"] = campaign
+			var features: Dictionary = progression.get("features", {}).duplicate(true)
+			for definition: LevelDefinition in ready_levels:
+				for feature_id: String in definition.unlock_requirements.required_feature_ids:
+					features[feature_id] = true
+			progression["features"] = features
+			candidate["progression"] = progression
+			return true,
+		{"kind": "isolated_gate1_native_capture"}))
+	if not seeded:
+		_push("could not seed isolated Level 3 entitlement")
+	return seeded
 
 
 func _attach_overlay() -> bool:
