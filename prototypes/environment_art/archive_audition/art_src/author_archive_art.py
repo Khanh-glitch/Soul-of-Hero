@@ -1348,59 +1348,75 @@ def prop_column(seed: int) -> Image.Image:
 
 
 def prop_long_table(seed: int, bays: int = 3) -> Image.Image:
-    """The refectory table: one long board on trestles (96 x 34)."""
+    """The refectory table: one long board on trestles (32 x bays wide, 34 tall).
+
+    Read bottom-up: trestle feet, open space, the board's thickness, then the
+    top surface receding away from the camera. Objects stand ON that surface
+    with their bases on its front lip -- if they straddle the lip the table reads
+    as a wall with things glued to it. The whole sprite is only as tall as it
+    needs to be so the hall stays legible at gameplay zoom.
+    """
     rng = random.Random(seed)
     w = 32 * bays
     img = new(w, 34)
-    # Board read as a top surface plus a front edge: a single slab of wood this
-    # tall reads as a wall of timber rather than a table you can work at.
-    for y in range(6, 18):
+
+    # ---- top surface: the board seen from above, receding upwards ----------
+    top_y0, top_y1 = 9, 16          # 8 rows of surface
+    for y in range(top_y0, top_y1):
         for x in range(w):
-            v = 0.94 + 0.05 * ((x * 3 + y * 5) % 3)
+            # light falls from the front-left; the far edge is a touch dimmer
+            depth = (y - top_y0) / max(1, top_y1 - top_y0 - 1)
+            v = 0.98 - 0.10 * depth + 0.04 * ((x * 3 + y * 5) % 3)
             px(img, x, y, shade(WOOD_M, v))
-    hline(img, 0, 6, w, WOOD_L)
-    # lengthwise plank seams and cross joints at each bay
-    for y in (10, 14):
-        hline(img, 0, y, w, shade(WOOD_D, 0.94))
+    hline(img, 0, top_y0, w, shade(WOOD_L, 1.04))       # far edge catches light
+    # plank seams: one lengthwise, kept subtle so it is grain, not a rail
+    hline(img, 0, top_y0 + 4, w, shade(WOOD_D, 1.02))
     for x in range(16, w, 16):
-        vline(img, x, 7, 11, shade(WOOD_D, 0.9))
-    # front edge, five pixels: thickness, a highlight, a shadow beneath
-    rect(img, 0, 18, w, 5, shade(WOOD_D, 0.94))
-    hline(img, 0, 18, w, shade(WOOD_M, 1.02))
-    hline(img, 0, 20, w, shade(WOOD_D, 0.8))
-    hline(img, 0, 22, w, shade(WOOD_D, 0.6))
-    # trestles
+        vline(img, x, top_y0 + 1, top_y1 - top_y0 - 1, shade(WOOD_D, 1.02))
+
+    # ---- the board's thickness: the front lip ------------------------------
+    lip_y0, lip_y1 = top_y1, top_y1 + 4
+    rect(img, 0, lip_y0, w, lip_y1 - lip_y0, shade(WOOD_D, 0.90))
+    hline(img, 0, lip_y0, w, shade(WOOD_M, 1.06))        # lit top of the lip
+    hline(img, 0, lip_y1 - 1, w, shade(WOOD_D, 0.62))    # shadow under the lip
+
+    # ---- trestles ----------------------------------------------------------
     for x in range(6, w, 32):
-        rect(img, x, 23, 4, 10, shade(WOOD_D, 0.95))
-        rect(img, x + 1, 24, 2, 8, WOOD_M)
-        hline(img, x - 3, 30, 10, shade(WOOD_D, 0.9))
-    # objects along the board: manuscripts, candle, ink, stack
-    for i in range(0, bays):
+        rect(img, x, lip_y1, 4, 10, shade(WOOD_D, 0.95))
+        rect(img, x + 1, lip_y1 + 1, 2, 8, WOOD_M)
+        hline(img, x - 3, lip_y1 + 7, 10, shade(WOOD_D, 0.9))
+        hline(img, x - 4, lip_y1 + 10, 12, shade(WOOD_D, 0.78))  # the foot
+
+    # ---- things left on the board -----------------------------------------
+    # bases sit on the front lip so every object is unmistakably ON the table
+    base = top_y1 - 1
+    for i in range(bays):
         bx = i * 32
         kind = (i * 5 + seed) % 4
-        if kind == 0:
-            rect(img, bx + 4, 9, 10, 8, PARCH)
-            hline(img, bx + 4, 9, 10, PARCH_L)
-            vline(img, bx + 9, 9, 8, shade(PARCH_D, 0.9))
-            for line in range(4):
-                hline(img, bx + 5, 11 + line, 3, INK)
-                hline(img, bx + 11, 11 + line, 2, INK)
-        elif kind == 1:
+        if kind == 0:                       # an open manuscript, ink still wet
+            rect(img, bx + 4, base - 6, 11, 6, PARCH)
+            hline(img, bx + 4, base - 6, 11, PARCH_L)
+            vline(img, bx + 9, base - 6, 6, shade(PARCH_D, 0.9))
+            for line in range(2):
+                hline(img, bx + 5, base - 5 + line * 2, 3, INK)
+                hline(img, bx + 11, base - 5 + line * 2, 2, INK)
+        elif kind == 1:                     # quires standing, a quill in the well
             for k in range(3):
-                vline(img, bx + 6 + k * 2, 11, 10, PARCH_D)
-                px(img, bx + 6 + k * 2, 10, THREAD)
-            rect(img, bx + 16, 10, 3, 3, (32, 30, 34))
-            vline(img, bx + 17, 6, 4, PARCH_L)
-        elif kind == 2:
-            rect(img, bx + 5, 13, 8, 7, BIND_BLUE)
-            px(img, bx + 5, 13, THREAD)
-            hline(img, bx + 5, 16, 8, shade(BIND_BLUE, 1.4))
-            rect(img, bx + 17, 11, 2, 4, PARCH_L)
-            px(img, bx + 17, 10, (255, 214, 150))
-        else:
-            # an abandoned place: a stool tipped back, page on the table
-            hline(img, bx + 4, 12, 9, PARCH)
-            hline(img, bx + 4, 13, 9, PARCH_D)
+                vline(img, bx + 6 + k * 2, base - 7, 7, PARCH_D)
+                px(img, bx + 6 + k * 2, base - 8, THREAD)
+            rect(img, bx + 15, base - 2, 3, 2, (30, 28, 32))
+            vline(img, bx + 16, base - 7, 5, shade(PARCH_L, 0.9))
+        elif kind == 2:                     # a bound codex, closed
+            rect(img, bx + 5, base - 4, 9, 4, BIND_BLUE)
+            hline(img, bx + 5, base - 4, 9, shade(BIND_BLUE, 1.45))
+            vline(img, bx + 5, base - 4, 4, shade(BIND_BLUE, 0.7))
+            px(img, bx + 13, base - 3, THREAD)
+            rect(img, bx + 18, base - 2, 2, 2, shade(PARCH_L, 0.95))
+            px(img, bx + 19, base - 3, (255, 214, 150))   # a guttering wick
+        else:                               # abandoned mid-copy: sheet, no book
+            hline(img, bx + 4, base - 2, 10, PARCH)
+            hline(img, bx + 4, base - 1, 10, PARCH_D)
+            px(img, bx + 9, base - 3, INK)
     return img
 
 
