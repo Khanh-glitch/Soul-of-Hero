@@ -1,4 +1,4 @@
-extends SceneTree
+extends Node
 
 ## Loads each Chapter 1 map through Main/DungeonLevel and runs a player-sized
 ## shape query against the live TileMap collision layer. The route graph uses
@@ -62,19 +62,15 @@ var _reports: Array[Dictionary] = []
 var _runtime_host: Node
 
 
-func _initialize() -> void:
+func _ready() -> void:
 	_run.call_deferred()
 
 
 func _run() -> void:
-	_runtime_host = Node.new()
-	_runtime_host.name = "Chapter1CollisionRouteRuntimeHost"
-	root.add_child(_runtime_host)
+	_runtime_host = self
 	for map_spec: Dictionary in MAPS:
 		await _test_map(map_spec)
 	await _test_level_8_branch_routes()
-	if is_instance_valid(_runtime_host):
-		_runtime_host.free()
 	_finish()
 
 
@@ -109,8 +105,8 @@ func _test_map(map_spec: Dictionary) -> void:
 	dungeon.watch_file_changes = false
 	_runtime_host.add_child(game)
 	for _frame: int in 5:
-		await process_frame
-		await physics_frame
+		await get_tree().process_frame
+		await get_tree().physics_frame
 	var live_player := game.get_node_or_null("Level/Entities/Knight") as CharacterBody2D
 	_expect(
 		live_player != null, "%s production Main reaches ready and places the live Knight" % map_id
@@ -150,8 +146,8 @@ func _test_map(map_spec: Dictionary) -> void:
 	)
 	if not collision_clear_floor.has(player_cell):
 		game.free()
-		await process_frame
-		await physics_frame
+		await get_tree().process_frame
+		await get_tree().physics_frame
 		return
 
 	var door_targets := _door_transitions(entities)
@@ -259,8 +255,8 @@ func _test_map(map_spec: Dictionary) -> void:
 		)
 	)
 	game.free()
-	await process_frame
-	await physics_frame
+	await get_tree().process_frame
+	await get_tree().physics_frame
 
 
 func _test_level_8_branch_routes() -> void:
@@ -278,8 +274,8 @@ func _test_level_8_branch_routes() -> void:
 		dungeon.watch_file_changes = false
 		_runtime_host.add_child(game)
 		for _frame: int in 5:
-			await process_frame
-			await physics_frame
+			await get_tree().process_frame
+			await get_tree().physics_frame
 		var entity_root := game.get_node_or_null("Level/Entities") as Node2D
 		var player := (
 			entity_root.get_node_or_null("Knight") as CharacterBody2D
@@ -313,13 +309,13 @@ func _test_level_8_branch_routes() -> void:
 		_expect(seal != null, "Level 8 %s branch exposes its real physical seal" % branch)
 		if player == null or seal == null:
 			game.free()
-			await process_frame
-			await physics_frame
+			await get_tree().process_frame
+			await get_tree().physics_frame
 			continue
 		seal.call(&"_on_body_entered", player)
 		_expect(seal.interact(player), "Level 8 %s branch can be physically selected" % branch)
 		for _frame: int in 3:
-			await physics_frame
+			await get_tree().physics_frame
 		var snapshot: Dictionary = controller.call(&"get_snapshot")
 		_expect(
 			StringName(snapshot.get("selected_branch", "")) == branch,
@@ -377,8 +373,8 @@ func _test_level_8_branch_routes() -> void:
 				)
 		print("CHAPTER 1 COLLISION ROUTE: slot=8 branch=%s reachable=%d" % [branch, reached.size()])
 		game.free()
-		await process_frame
-		await physics_frame
+		await get_tree().process_frame
+		await get_tree().physics_frame
 
 
 func _node_names(parent: Node) -> PackedStringArray:
@@ -540,10 +536,10 @@ func _finish() -> void:
 		file.close()
 	if _failures.is_empty():
 		print("CHAPTER 1 COLLISION ROUTE TEST PASSED - %d checks across ten live maps" % _checks)
-		quit(0)
+		get_tree().quit(0)
 		return
 	print(
 		"CHAPTER 1 COLLISION ROUTE TEST FAILED - %d/%d checks failed" % [_failures.size(), _checks]
 	)
 	print("CHAPTER 1 COLLISION ROUTE FAILURE DETAILS: " + JSON.stringify(_failures))
-	quit(1)
+	get_tree().quit(1)

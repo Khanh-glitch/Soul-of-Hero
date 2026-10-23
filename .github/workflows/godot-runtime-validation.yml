@@ -84,7 +84,7 @@ jobs:
         run: |
           set -uo pipefail
           set +e
-          timeout --signal=TERM --kill-after=10s 480s godot --headless --path . --script res://tests/chapter_1_collision_route_test.gd 2>&1 | tee .artifacts/chapter-1-collision-routes.log
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --path . res://tests/chapter_1_collision_route_test.tscn 2>&1 | tee .artifacts/chapter-1-collision-routes.log
           result=${PIPESTATUS[0]}
           set -e
           echo "Chapter 1 live collision-route exit code: ${result}"
