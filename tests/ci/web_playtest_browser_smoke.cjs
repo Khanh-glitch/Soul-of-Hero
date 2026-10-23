@@ -87,6 +87,7 @@ const { PNG } = require("pngjs");
         url: window.location.href,
         appReady: window.__soulHeroAppReady,
         route: window.__soulHeroRoute,
+        probe: window.__soulHeroCiProbe,
         level: window.__soulHeroLevelReady,
         status: document.querySelector("#status")?.innerText?.slice(0, 500),
         canvas: [
