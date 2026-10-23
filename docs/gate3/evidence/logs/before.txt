@@ -6,42 +6,31 @@ OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Usi
 GATE3 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54
 GATE3 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
 GATE3 CAPTURE: res://.artifacts/gate3/before_spawn.png (1280x720) at (280.0, 216.0)
-GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames
+GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_archive_entry.png (1280x720) at (376.219, 200.536)
-GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames
+GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_landmark.png (1280x720) at (488.8025, 200.536)
-SCRIPT ERROR: Invalid call. Nonexistent function 'get_screen_center' in base 'Camera2D'.
-          at: _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-          GDScript backtrace (most recent call first):
-              [0] _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-SCRIPT ERROR: Invalid call. Nonexistent function 'get_screen_center' in base 'Camera2D'.
-          at: _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-          GDScript backtrace (most recent call first):
-              [0] _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1280_landmark.png (1280x720) zoom=(1.0, 1.0)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1280_landmark.png (1280x720) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1024, 576)
-SCRIPT ERROR: Invalid call. Nonexistent function 'get_screen_center' in base 'Camera2D'.
-          at: _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-          GDScript backtrace (most recent call first):
-              [0] _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-SCRIPT ERROR: Invalid call. Nonexistent function 'get_screen_center' in base 'Camera2D'.
-          at: _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
-          GDScript backtrace (most recent call first):
-              [0] _camera_shot (res://prototypes/gate3/capture_gate3.gd:731)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x576) zoom=(1.0, 1.0)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
-GATE3 WALK: cloister  (489, 201) -> (615, 295)  158 px over 14 cells in 143 frames
+GATE3 WALK: cloister  (489, 201) -> (615, 295)  158 px over 14 cells in 143 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_cloister.png (1280x720) at (614.9133, 295.2265)
-GATE3 WALK: south_loop  (615, 295) -> (745, 375)  152 px over 13 cells in 133 frames
+GATE3 WALK: south_loop  (615, 295) -> (745, 375)  152 px over 13 cells in 133 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_south_loop.png (1280x720) at (744.631, 374.9838)
-GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 frames
+GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_combat_space.png (1280x720) at (934.7823, 342.2592)
-GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames
+GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_return_route.png (1280x720) at (712.8999, 343.518)
-GATE3 COLLISION: Knight at (1275.033, 294.2311) is clear of every wall and prop
-GATE3 ROUTE: 73 cells walked, 935 px travelled, HP 1100 -> 0 (delta 1100)
-GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 12789 objects at the end of the run
+GATE3 COLLISION: Knight at (1243.568, 293.3438) is clear of every wall and prop
+GATE3 ROUTE: 73 cells walked, 935 px travelled, 20 fights, HP 1100 -> 0 (delta 1100)
+GATE3 CAMERA FRAMES: 4
+GATE3 OBJECTS: ObjectDB holds 12800 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 756 nodes
-GATE3 FAILURE: the Knight stalled walking to 'descent approach' at (1275.033, 294.2311)
+GATE3 FAILURE: the Knight died fighting near 'descent approach'
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1243.568, 293.3438)
 GATE3 FAILURE: no walkable route to 'descent approach' at (9, 51)
 GATE3 CAPTURE TEST FAILED (before)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).

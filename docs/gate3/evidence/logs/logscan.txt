@@ -1,5 +1,5 @@
 == ObjectDB / leak notices ==
-GATE3 OBJECTS: ObjectDB holds 12789 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12800 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 
 == counts per log ==
@@ -8,7 +8,7 @@ audit_gate3.log              ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author_check.log             ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 base_pin.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
-before.log                   ObjectDB=2 ERROR=0 SCRIPT_ERROR=4 WARNING=2
+before.log                   ObjectDB=2 ERROR=0 SCRIPT_ERROR=0 WARNING=2
 import.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 logscan.log                  ObjectDB=10 ERROR=0 SCRIPT_ERROR=0 WARNING=1
 manifest.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
@@ -19,19 +19,23 @@ version.log                  ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 == gate3 route / collision / camera evidence ==
 GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
 GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79
-GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames
-GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames
+GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames, HP 1100
+GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames, HP 1100
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1280_landmark.png (1280x720) zoom=(1.0, 1.0)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1280_landmark.png (1280x720) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1024, 576)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x576) zoom=(1.0, 1.0)
+GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
-GATE3 WALK: cloister  (489, 201) -> (615, 295)  158 px over 14 cells in 143 frames
-GATE3 WALK: south_loop  (615, 295) -> (745, 375)  152 px over 13 cells in 133 frames
-GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 frames
-GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames
-GATE3 COLLISION: Knight at (1275.033, 294.2311) is clear of every wall and prop
-GATE3 ROUTE: 73 cells walked, 935 px travelled, HP 1100 -> 0 (delta 1100)
-GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 12789 objects at the end of the run
+GATE3 WALK: cloister  (489, 201) -> (615, 295)  158 px over 14 cells in 143 frames, HP 1100
+GATE3 WALK: south_loop  (615, 295) -> (745, 375)  152 px over 13 cells in 133 frames, HP 1100
+GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 frames, HP 1100
+GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames, HP 1100
+GATE3 COLLISION: Knight at (1243.568, 293.3438) is clear of every wall and prop
+GATE3 ROUTE: 73 cells walked, 935 px travelled, 20 fights, HP 1100 -> 0 (delta 1100)
+GATE3 CAMERA FRAMES: 4
+GATE3 OBJECTS: ObjectDB holds 12800 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 756 nodes
-GATE3 OBJECTS: ObjectDB holds 12789 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12800 objects at the end of the run
 GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
 GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79

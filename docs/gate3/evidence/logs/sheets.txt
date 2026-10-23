@@ -1,2 +1,3 @@
-GATE3 SHEETS: 1 files
+GATE3 SHEETS: 2 files
+  camera_comparison.png
   route_and_connectivity_diagram.png
