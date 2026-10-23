@@ -71,6 +71,15 @@ jobs:
           test "$after" = "$PINNED_LEVEL_SHA256"
           echo "level sha256 $after" | tee .artifacts/gate0/level_pin.log
 
+      - name: Fetch Candidate B's art commit
+        shell: bash
+        # The checkout is shallow; the provenance check reads Candidate B's blobs
+        # straight out of git, so that one commit has to be present.
+        run: |
+          set -euo pipefail
+          git fetch --depth 1 origin e7cad36f8f21e746abefe44ac6cfa54db9a378e6
+          git cat-file -t e7cad36f8f21e746abefe44ac6cfa54db9a378e6
+
       - name: Verify provenance and authoring determinism
         shell: bash
         run: |

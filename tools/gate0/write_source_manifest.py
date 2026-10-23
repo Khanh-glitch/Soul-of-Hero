@@ -101,7 +101,6 @@ def collect() -> list[dict[str, str]]:
 
 
 def render(rows: list[dict[str, str]]) -> str:
-    branch = git("rev-parse", "--abbrev-ref", "HEAD")
     base = git("rev-parse", "origin/main")
     lines = [
         "# Gate 0 — Source manifest (Candidate B art provenance)",
@@ -111,7 +110,6 @@ def render(rows: list[dict[str, str]]) -> str:
         "",
         f"- **Candidate B (art source):** `{B_COMMIT}`",
         "- **B folder:** `prototypes/environment_art/archive_audition/`",
-        f"- **Gate 0 branch:** `{branch}`",
         f"- **Base content:** `origin/main` @ `{base}` (see the execution contract for"
         " the pinned Level 3 reference)",
         "",
