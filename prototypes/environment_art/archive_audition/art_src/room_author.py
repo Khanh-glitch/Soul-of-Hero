@@ -229,8 +229,8 @@ LIGHTS = [
     (352, 200, (1.00, 0.82, 0.58), 0.90, 2.6, "pendant"),
     (74,  290, (1.00, 0.80, 0.55), 0.85, 1.5, "candle"),
     (360, 330, (1.00, 0.80, 0.55), 0.75, 1.4, "candle"),
-    (616, 404, (0.56, 0.72, 0.90), 1.05, 2.4, "breach"),
-    (470, 380, (0.60, 0.74, 0.92), 0.55, 1.6, "breach"),
+    (616, 404, (0.50, 0.60, 0.74), 0.70, 2.4, "breach"),
+    (470, 380, (0.54, 0.64, 0.78), 0.40, 1.6, "breach"),
 ]
 
 # Explicit collision rectangles in tile units: (x, y, w, h). Props with a
@@ -244,7 +244,7 @@ COLLISION_RECTS = [
 SPAWN = (448, 372)  # px, just inside the door on the top tread
 # Camera anchors, given as floor cells the view is centred on.
 CAMERA_POINTS = {
-    "entry": (25, 22),   # inside the door, looking up the hall
+    "entry": (25, 21),   # one step inside the door, looking up the hall
     "mid": (17, 15),     # the study hall between the piers
     "end": (19, 8),      # the armarium wall
 }

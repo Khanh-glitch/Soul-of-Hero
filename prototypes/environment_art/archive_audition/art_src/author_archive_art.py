@@ -71,11 +71,14 @@ STONE_GREY = (92, 94, 96)
 STONE_GREY_L = (124, 126, 128)
 STONE_GREY_D = (62, 64, 66)
 
-WATER_D = (38, 56, 66)
-WATER_M = (52, 78, 92)
-WATER_L = (74, 108, 122)
-TEAL = (114, 214, 206)
-TEAL_D = (62, 146, 146)
+# Standing water in a lamp-lit undercroft: near-black with a faint cold cast.
+# Saturated blue reads as spilled paint at gameplay zoom, so the whole ramp is
+# pulled towards the stone instead of away from it.
+WATER_D = (22, 28, 31)
+WATER_M = (29, 37, 41)
+WATER_L = (40, 51, 57)
+TEAL = (78, 102, 104)
+TEAL_D = (33, 45, 48)
 
 MOSS = (62, 84, 58)
 MOSS_L = (88, 116, 74)
@@ -389,28 +392,28 @@ def face_broken(seed: int) -> Image.Image:
 def water_tile(kind: str) -> Image.Image:
     img = new(T, T)
     rect(img, 0, 0, T, T, WATER_D)
-    # ripple bands
-    for y in range(0, T, 4):
+    # Sparse, broken highlights only: a full ripple grid reads as fabric.
+    for y in range(2, T, 6):
         for x in range(T):
-            if (x + y // 4 * 3) % 7 < 3:
+            if (x * 5 + y * 7) % 13 < 2:
                 px(img, x, y, WATER_M)
     if kind == "deep":
         return img
-    # edges: thin teal lip + foam
+    # shoreline: a dark wet lip on the stone side, a faint reflection inside
     if "n" in kind:
-        hline(img, 0, 0, T, TEAL_D)
-        hline(img, 0, 1, T, WATER_L)
-        for x in range(0, T, 3):
-            px(img, x, 2, TEAL)
+        hline(img, 0, 0, T, (15, 18, 20))
+        hline(img, 0, 1, T, TEAL_D)
+        for x in range(0, T, 5):
+            px(img, x, 2, WATER_L)
     if "s" in kind:
-        hline(img, 0, T - 1, T, TEAL_D)
-        hline(img, 0, T - 2, T, WATER_L)
+        hline(img, 0, T - 1, T, (15, 18, 20))
+        hline(img, 0, T - 2, T, TEAL_D)
     if "w" in kind:
-        vline(img, 0, 0, T, TEAL_D)
-        vline(img, 1, 0, T, WATER_L)
+        vline(img, 0, 0, T, (15, 18, 20))
+        vline(img, 1, 0, T, TEAL_D)
     if "e" in kind:
-        vline(img, T - 1, 0, T, TEAL_D)
-        vline(img, T - 2, 0, T, WATER_L)
+        vline(img, T - 1, 0, T, (15, 18, 20))
+        vline(img, T - 2, 0, T, TEAL_D)
     return img
 
 
@@ -1191,7 +1194,22 @@ def prop_door_portal(seed: int) -> Image.Image:
         px(img, w - 12, y, shade(FACE_M, 0.84))
 
     # ---- the opening: a dark passage with the floor running into it ------
-    rect(img, 12, 16, w - 24, 20, (10, 9, 10))
+    # Receding depth rather than a flat black hole: the far end of the passage
+    # keeps a trace of stone so the eye reads a corridor, not missing art.
+    for y in range(16, 36):
+        t = (y - 16) / 20.0
+        base = (13 - int(t * 4), 12 - int(t * 4), 13 - int(t * 4))
+        hline(img, 12, y, w - 24, base)
+    # the vault of a second, further bay, barely lit
+    for x in range(15, w - 15):
+        dx = (x - (w / 2 - 0.5)) / 13.0
+        if abs(dx) < 1.0:
+            yy = int(23 - 5 * math.sqrt(max(0.0, 1.0 - dx * dx)))
+            for k in range(2):
+                px(img, x, yy + k, shade(FACE_D, 0.30))
+    # a cold sliver of light from deeper in the undercroft
+    vline(img, 12 + 11, 20, 12, (30, 32, 34))
+    vline(img, 12 + 12, 21, 10, (24, 26, 28))
     # the passage floor, receding: two bands of dim stone
     rect(img, 13, 26, w - 26, 8, (32, 28, 26))
     hline(img, 13, 26, w - 26, (46, 40, 36))

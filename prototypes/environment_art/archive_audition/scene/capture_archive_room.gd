@@ -91,7 +91,7 @@ func _frame(name: String) -> void:
 func _overview() -> void:
 	var cam := Camera2D.new()
 	cam.name = "OverviewCamera"
-	cam.zoom = Vector2(0.5, 0.5)
+	cam.zoom = Vector2(0.75, 0.75)
 	var size: Dictionary = _room.get("room")
 	cam.position = Vector2(float(size["width"]) * 8.0, float(size["height"]) * 8.0)
 	_room.add_child(cam)
