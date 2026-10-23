@@ -16,6 +16,7 @@ on:
     paths:
       - "prototypes/gate0/**"
       - "tools/gate0/**"
+      - "docs/gate0/**"
       - ".github/workflows/gate0-integration.yml"
   workflow_dispatch:
 
