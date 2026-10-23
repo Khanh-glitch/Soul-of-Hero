@@ -193,7 +193,7 @@ jobs:
       id-token: write
       contents: read
     environment:
-      name: github-pages
+      name: playtest-preview
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Configure GitHub Pages (first-time enablement)
