@@ -12,5 +12,4 @@ GATE0 CAPTURE: res://.artifacts/gate0/before_destination.png (1280x720) at (457.
 GATE0 WALK: combat_space  (458, 197) -> (556, 219)  100 px over 7 cells in 100 frames
 GATE0 CAPTURE: res://.artifacts/gate0/before_combat_space.png (1280x720) at (555.8387, 218.6889)
 GATE0 COLLISION: Knight at (555.8387, 218.6889) is clear of every wall and prop
-GATE0 FAILURE: exactly one HUD in the scene
-GATE0 CAPTURE TEST FAILED (before)
+GATE0 CAPTURE TEST PASSED: 4 frames (before)
