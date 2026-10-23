@@ -108,7 +108,7 @@ annotation, no scaling.
 | `captures/detail_study.png` | 4×: long board, front edge, objects, bench |
 
 Verification actually run (workflow `Archive Room — Godot 4.7 render`, run
-`39943558642`, success):
+`39953379203`, success — the frames below are the ones that run produced):
 
 1. Regenerating all art and `room.json` in CI reproduces the committed files
    byte-for-byte (`git diff --exit-code`).
@@ -145,6 +145,10 @@ Frames land in `captures/`; the CI logs that produced them are in `captures/logs
   renderer (Compatibility used here).
 - **The east quarter is sparse on purpose** (collapsed storage) but a player looking
   for a landmark there will find only rubble and one fallen shelf.
+- **The tables were the hardest read.** A long board at this scale tends towards a
+  wall of timber; the final version separates an eight-pixel top surface from a
+  four-pixel front lip and stands every object on that lip, which reads correctly at
+  1× only after two rewrites.
 - **No audio, no interaction, no entity hooks.** This is a visual prototype; the
   room has collision and a camera, nothing to press.
 
