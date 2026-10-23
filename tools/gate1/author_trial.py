@@ -22,12 +22,12 @@ FURNITURE=[
  ("bench","bench",304,352,True),
  ("scroll","scroll_roll",408,208,False),
  ("armarium","armarium_open",464,336,True),
- ("bay_desk","desk",456,352,True),
- ("abandoned_seat","stool_tipped",472,368,False),
- ("catalogue","lectern",528,368,True),
- ("books","book_stack",536,384,False),
- ("collapse","rubble_large",408,368,True),
- ("fallen_beam","beam",416,368,False),
+ ("bay_desk","desk",456,384,True),
+ ("abandoned_seat","stool_tipped",472,400,False),
+ ("catalogue","lectern",528,384,True),
+ ("books","book_stack",536,400,False),
+ ("collapse","rubble_large",408,384,True),
+ ("fallen_beam","beam",416,384,False),
 ]
 def read(p): return json.loads(p.read_text(encoding="utf-8"))
 def encode(v): return json.dumps(v,indent=2,ensure_ascii=False)+"\n"
@@ -136,7 +136,7 @@ def verify(base,trial,art,changed):
  assert all(c["source"] in (0,1) for layer in trial["layers"].values() for c in layer)
  old=reach(usable(base),(17,13));new=reach(usable(trial),(17,13))
  assert old<=new,("sealed existing route",len(old-new))
- start=(17,13);target=(29,23)
+ start=(17,13);target=(30,22)
  floors=usable(trial);block=set()
  for prop in art["props"]:
   if not prop["solid"]:continue
