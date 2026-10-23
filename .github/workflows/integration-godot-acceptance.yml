@@ -1,0 +1,100 @@
+name: Integration — Godot 4.7 Acceptance
+
+on:
+  push:
+    branches:
+      - integration/chapter1-2-hero-web-playtest
+  pull_request:
+    paths:
+      - ".github/workflows/integration-godot-acceptance.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: integration-godot-acceptance-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  combined-regression:
+    name: Integrated campaign + Hero Systems regression
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record exact revision and engine
+        shell: bash
+        run: |
+          mkdir -p .artifacts
+          printf 'commit=%s\n' "$GITHUB_SHA" | tee .artifacts/integration-revision.txt
+          godot --version | tee .artifacts/integration-engine.txt
+          printf '## Integrated branch regression\nHEAD: %s\n' "$GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Import the merged Godot project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --kill-after=10s 120s godot --headless --editor --path . --import --quit 2>&1 | tee .artifacts/integration-import.log
+
+      - name: Run current-head chapter, combat, roster and equipment gates
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          run_case() {
+            local id="$1"; shift
+            local marker="$1"; shift
+            local duration="$1"; shift
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/integration_${id}_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            echo "::group::Godot acceptance: $id"
+            set +e
+            timeout --signal=TERM --kill-after=10s "${duration}s" \
+              godot --headless --path . "$@" 2>&1 | tee ".artifacts/${id}.log"
+            result="${PIPESTATUS[0]}"
+            set -e
+            if [[ "$result" -ne 0 ]] || ! grep -Fq "$marker" ".artifacts/${id}.log"; then
+              echo "::error::Godot acceptance $id failed: exit=$result expected=$marker"
+              return 1
+            fi
+            if grep -Eq 'SCRIPT ERROR:|Can.t use get_node\(\) with absolute paths from outside the active scene tree' ".artifacts/${id}.log"; then
+              echo "::error::Unexpected Godot script / out-of-tree error in $id"
+              return 1
+            fi
+            echo "${id}: PASS ($marker)" >> "$GITHUB_STEP_SUMMARY"
+            echo "::endgroup::"
+          }
+
+          run_case collision "CHAPTER 1 COLLISION ROUTE TEST PASSED - 161 checks" 480 res://tests/chapter_1_collision_route_test.tscn
+          run_case training "TRAINING SANDBOX LIVE ROUTE PASSED - 37 checks" 120 res://tests/training_sandbox_live_route_test.tscn
+          run_case chapter2 "CHAPTER 2" 120 --script res://tests/chapter_2_campaign_map_design_test.gd
+          run_case level6 "CHAPTER 1 LEVEL 6 VERTICAL SLICE PASSED - 132 checks" 150 --script res://tests/chapter_1_level_6_vertical_slice_test.gd
+          run_case archer-promotion "CHAPTER 1 LEVEL 6 PROMOTION ROUTE PASSED - 82 checks" 150 res://tests/chapter_1_level_6_promotion_route_test.tscn
+          run_case level9 "CHAPTER 1 LEVEL 9 FRESH ROUTE PASSED - 64 checks" 150 res://tests/chapter_1_level_9_fresh_route_test.tscn
+          run_case campaign-entry "CAMPAIGN ENTRY RUNTIME PASSED - 949 checks" 180 -- --campaign-entry-runtime-test
+          run_case smoke "SMOKE TEST PASSED" 150 -- --smoke-test
+          run_case archer-combat "ARCHER HERO COMBAT TEST PASSED - 100 checks" 150 -- --archer-hero-combat-test
+          run_case hero-library "HERO LIBRARY COVERAGE TEST PASSED - 55 checks" 120 --script res://tests/hero_library_coverage_test.gd
+          run_case hero-team "HERO TEAM QUICK LOOK TEST PASSED - 13 checks" 90 --script res://tests/hero_team_quicklook_test.gd
+          run_case hero-team-scene "HERO TEAM RUNTIME SCENE TEST PASSED" 90 res://tests/hero_team_quicklook_runtime.tscn
+          run_case hero-equipment "HERO EQUIPMENT PREVIEW TEST PASSED - 53 checks" 120 --script res://tests/hero_equipment_preview_test.gd
+          run_case hero-skills "H2 SKILL MATRIX TEST PASSED - 858 checks" 120 --script res://tests/hero_skill_kit_matrix_test.gd
+
+      - name: Publish diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: combined-godot-regression
+          path: .artifacts/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
