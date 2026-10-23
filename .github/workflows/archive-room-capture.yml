@@ -103,6 +103,7 @@ jobs:
           mkdir -p "$dest" "$dest/logs"
           shopt -s nullglob
           for shot in .artifacts/archive_room_*.png; do cp "$shot" "$dest/"; done
+          rm -f "$dest"/*.import
           for log in .artifacts/archive_*.log; do
             cp "$log" "$dest/logs/$(basename "${log%.log}").txt"
           done

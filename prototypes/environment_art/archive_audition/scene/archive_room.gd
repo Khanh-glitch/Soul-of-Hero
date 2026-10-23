@@ -79,9 +79,12 @@ func _make_sources() -> void:
 	_atlas = TileSetAtlasSource.new()
 	_atlas.texture = load(TILE_ART)
 	_atlas.texture_region_size = Vector2i(T, T)
-	for y: int in 8:
-		for x: int in 8:
-			if _atlas.get_tile_data(Vector2i(x, y), 0) == null and not _atlas.has_tile(Vector2i(x, y)):
+	# the atlas is 8 columns of 16 px tiles and as many rows as the art needs
+	var rows: int = int(ceil(float(_atlas.texture.get_height()) / float(T)))
+	var columns: int = int(ceil(float(_atlas.texture.get_width()) / float(T)))
+	for y: int in rows:
+		for x: int in columns:
+			if not _atlas.has_tile(Vector2i(x, y)):
 				_atlas.create_tile(Vector2i(x, y))
 
 	_cap_atlas = TileSetAtlasSource.new()
