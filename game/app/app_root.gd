@@ -48,39 +48,39 @@ func _ready() -> void:
 		return
 	AppFlow.attach_app_root(self)
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
-		var startup_choice_test := (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
+		var startup_choice_test: Node = (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
 		add_child(startup_choice_test)
 		startup_choice_test.start(self)
 		AppFlow.open_boot()
 		_finish_boot.call_deferred()
 		return
 	if OS.get_cmdline_user_args().has(ARCHER_HERO_COMBAT_TEST_ARGUMENT):
-		var archer_combat_test := (load("res://tests/archer_hero_combat_test.gd") as GDScript).new()
+		var archer_combat_test: Node = (load("res://tests/archer_hero_combat_test.gd") as GDScript).new()
 		add_child(archer_combat_test)
 		archer_combat_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT):
-		var click_pickup_test := (load("res://tests/gameplay_click_auto_pickup_test.gd") as GDScript).new()
+		var click_pickup_test: Node = (load("res://tests/gameplay_click_auto_pickup_test.gd") as GDScript).new()
 		add_child(click_pickup_test)
 		click_pickup_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT):
-		var hero_skill_test := (load("res://tests/hero_skill_live_runtime_test.gd") as GDScript).new()
+		var hero_skill_test: Node = (load("res://tests/hero_skill_live_runtime_test.gd") as GDScript).new()
 		add_child(hero_skill_test)
 		hero_skill_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(VISIBLE_REWARD_RUNTIME_TEST_ARGUMENT):
-		var visible_reward_test := (load("res://tests/visible_progression_reward_runtime_test.gd") as GDScript).new()
+		var visible_reward_test: Node = (load("res://tests/visible_progression_reward_runtime_test.gd") as GDScript).new()
 		add_child(visible_reward_test)
 		visible_reward_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT):
-		var fresh_loop_test := (load("res://tests/fresh_player_loop_acceptance_test.gd") as GDScript).new()
+		var fresh_loop_test: Node = (load("res://tests/fresh_player_loop_acceptance_test.gd") as GDScript).new()
 		add_child(fresh_loop_test)
 		fresh_loop_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(CAMPAIGN_ENTRY_RUNTIME_TEST_ARGUMENT):
-		var campaign_entry_test := (load("res://tests/campaign_entry_runtime_test.gd") as GDScript).new()
+		var campaign_entry_test: Node = (load("res://tests/campaign_entry_runtime_test.gd") as GDScript).new()
 		add_child(campaign_entry_test)
 		campaign_entry_test.start(self)
 		return
