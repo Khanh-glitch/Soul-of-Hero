@@ -587,7 +587,11 @@ def build_backdrop(floor):
             else:
                 atlas = pick(BASE, x, y, 1)
         elif m == "span":
-            atlas = pick(CANDLE, x, y, 5)
+            # Plank bridges carry lit rails only on their outer edge; the deck
+            # itself is ossuary paving so the crossing reads as timber, not glow.
+            rail = any(material.get((x + dx, y + dy)) != "span"
+                       for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+            atlas = pick(CANDLE, x, y, 5) if rail else pick(NICHE, x, y, 2)
         else:  # bone terraces
             atlas = pick(HOLE, x, y, 8) if roll < 4 else pick(BASE, x, y, 1)
         cells.append(tile_cell(x, y, atlas, 0))
