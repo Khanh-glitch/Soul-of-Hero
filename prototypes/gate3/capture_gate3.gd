@@ -702,8 +702,9 @@ func _camera_shot(name: String, size: Vector2i) -> void:
 	var knight_on_screen := true
 	if camera != null:
 		var rect := get_viewport().get_visible_rect()
-		var centre := rect.size * 0.5
-		var offset := (_player.global_position - camera.get_screen_centre())
+		# `get_screen_center()` is the Camera2D API; the British spelling is not
+		# exposed and calling it silently yields an untyped Variant.
+		var offset: Vector2 = _player.global_position - camera.get_screen_center()
 		knight_on_screen = absf(offset.x) < rect.size.x * 0.5 - 32.0 \
 			and absf(offset.y) < rect.size.y * 0.5 - 64.0
 	_expect(knight_on_screen, "%s keeps the Knight inside the frame" % name)
