@@ -150,9 +150,9 @@ func _build_walls() -> void:
 	# merge horizontal runs of wall cells into single rectangles
 	var rows: Dictionary = {}
 	for cell: Array in room["layers"]["cap"]:
-		rows.get_or_add(cell[1], []).append(cell[0])
+		rows.get_or_add(int(cell[1]), []).append(int(cell[0]))
 	for cell: Array in room["layers"]["face"]:
-		rows.get_or_add(cell[1], []).append(cell[0])
+		rows.get_or_add(int(cell[1]), []).append(int(cell[0]))
 	for y: int in rows:
 		var xs: Array = rows[y]
 		xs.sort()
@@ -186,12 +186,12 @@ func _build_props() -> void:
 	for item: Dictionary in room["wall_items"]:
 		var sprite := _sprite(item["source"])
 		var cell: Array = item["cell"]
-		var size: Array = item["source"]
+		var src: Array = item["source"]
 		sprite.position = Vector2(
-			cell[0] * T + T * 0.5,
-			cell[1] * T + T,
+			float(cell[0]) * T + T * 0.5,
+			float(cell[1]) * T + T,
 		)
-		sprite.offset = Vector2(0, -size[3])
+		sprite.offset = Vector2(0.0, -float(src[3]))
 		wall_mounts.add_child(sprite)
 
 	var entities := _sorted_container("Entities", 0)
@@ -200,18 +200,18 @@ func _build_props() -> void:
 		var source: Array = prop["source"]
 		var sprite := _sprite(source)
 		sprite.name = "%s_%d_%d" % [prop["sprite"], prop["cell"][0], prop["cell"][1]]
-		sprite.position = Vector2(prop["x"], prop["y"])
-		sprite.offset = Vector2(0, -source[3])
+		sprite.position = Vector2(float(prop["x"]), float(prop["y"]))
+		sprite.offset = Vector2(0.0, -float(source[3]))
 		entities.add_child(sprite)
 		# contact shadow under the base of every object
 		var shadow := Polygon2D.new()
-		var half := source[2] * 0.32
+		var half: float = float(source[2]) * 0.32
 		shadow.polygon = PackedVector2Array([
 			Vector2(-half, -3), Vector2(half, -3),
 			Vector2(half * 0.82, 3), Vector2(-half * 0.82, 3),
 		])
 		shadow.color = Color(0.02, 0.01, 0.02, 0.42)
-		shadow.position = Vector2(prop["x"], prop["y"] - 2)
+		shadow.position = Vector2(float(prop["x"]), float(prop["y"]) - 2.0)
 		shadow.z_index = -1
 		entities.add_child(shadow)
 		if bool(prop.get("solid", false)):
@@ -219,10 +219,15 @@ func _build_props() -> void:
 			body.collision_layer = 1
 			body.collision_mask = 0
 			var shape := RectangleShape2D.new()
-			shape.size = Vector2(source[2] * 0.62, min(source[3] * 0.42, T * 1.2))
+			shape.size = Vector2(
+				float(source[2]) * 0.62,
+				min(float(source[3]) * 0.42, float(T) * 1.2)
+			)
 			var collider := CollisionShape2D.new()
 			collider.shape = shape
-			collider.position = Vector2(prop["x"], prop["y"] - shape.size.y * 0.5)
+			collider.position = Vector2(
+				float(prop["x"]), float(prop["y"]) - shape.size.y * 0.5
+			)
 			body.add_child(collider)
 			entities.add_child(body)
 
@@ -265,10 +270,11 @@ func _build_lights() -> void:
 	for light: Dictionary in room["lights"]:
 		var lamp := PointLight2D.new()
 		lamp.texture = radial
-		lamp.color = Color(light["color"][0], light["color"][1], light["color"][2])
+		var colour: Array = light["color"]
+		lamp.color = Color(float(colour[0]), float(colour[1]), float(colour[2]))
 		lamp.energy = float(light["energy"])
 		lamp.texture_scale = float(light["scale"])
-		lamp.position = Vector2(light["x"], light["y"])
+		lamp.position = Vector2(float(light["x"]), float(light["y"]))
 		lamp.shadow_enabled = false
 		lamp.blend_mode = Light2D.BLEND_MODE_ADD
 		holder.add_child(lamp)
@@ -285,7 +291,7 @@ func _spawn_knight() -> void:
 	knight = packed.instantiate() as Node2D
 	knight.name = "Knight"
 	var spawn: Array = room["spawn"]
-	knight.position = Vector2(spawn[0], spawn[1])
+	knight.position = Vector2(float(spawn[0]), float(spawn[1]))
 	var entities := get_node_or_null("Entities") as Node2D
 	if entities != null:
 		entities.add_child(knight)
@@ -312,4 +318,4 @@ func camera_point(name: String) -> Vector2:
 	if not points.has(name):
 		return Vector2.ZERO
 	var point: Array = points[name]
-	return Vector2(point[0], point[1])
+	return Vector2(float(point[0]), float(point[1]))
