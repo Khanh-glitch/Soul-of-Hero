@@ -91,6 +91,9 @@ F3                            [F3 landing]
 
 ## 3. The two route decisions
 
+*(Both decisions are measured on the built map, not sketched: see
+`evidence/level2_route_metrics.md`.)*
+
 ### Decision A — Floor 1: the Ledge or the Nave
 
 | | HIGH — Ledge of Relics | LOW — Flooded Nave |
