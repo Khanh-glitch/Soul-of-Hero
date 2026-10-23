@@ -14,8 +14,9 @@ on:
         description: "Which Git branch to export? (No merge; exported directly.)"
         required: true
         type: choice
-        default: feat/hero-systems-completion
+        default: integration/chapter1-2-hero-web-playtest
         options:
+          - integration/chapter1-2-hero-web-playtest
           - feat/hero-systems-completion
           - arena/0b97b037-soul-of-hero
           - main
@@ -39,7 +40,7 @@ jobs:
       - name: Checkout selected game branch (not merged)
         uses: actions/checkout@v4
         with:
-          ref: ${{ inputs.source_ref || 'feat/hero-systems-completion' }}
+          ref: ${{ inputs.source_ref || 'integration/chapter1-2-hero-web-playtest' }}
           path: game-src
           persist-credentials: false
 
@@ -56,7 +57,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "sha=$(git -C game-src rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-          echo "name=${{ inputs.source_ref || 'feat/hero-systems-completion' }}" >> "$GITHUB_OUTPUT"
+          echo "name=${{ inputs.source_ref || 'integration/chapter1-2-hero-web-playtest' }}" >> "$GITHUB_OUTPUT"
           cp .playtest-config/export_presets.cfg game-src/export_presets.cfg
           mkdir -p game-src/build/web
 
