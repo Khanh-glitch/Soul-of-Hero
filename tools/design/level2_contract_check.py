@@ -113,6 +113,10 @@ def schema_check(doc: dict) -> None:
                     fail(f"schema: {name}[{index}] atlas out of range {c['atlas']}")
 
     entities = doc["entities"]
+    positions = Counter(tuple(e["position"]) for e in entities)
+    for position, count in positions.items():
+        if count > 1:
+            fail(f"schema: {count} entities share cell {position}")
     ids = Counter(e["id"] for e in entities)
     for entity_id, count in ids.items():
         if count > 1:
