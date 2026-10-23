@@ -101,6 +101,10 @@ func _test_representative_sandbox_registry() -> void:
 	_expect(errors.is_empty(), "representative sandbox registry validates: %s" % "; ".join(errors))
 	var enemy := registry.find_enemy(&"skeleton_chaser_sandbox")
 	_expect(enemy != null and enemy.development_only, "registry resolves development-only Skeleton definition")
+	_expect(
+		enemy != null and not enemy.density_eligible,
+		"Training keeps five authored actors without density or mutant extras",
+	)
 	var encounter := registry.find_encounter(&"crypt_skeleton_sandbox")
 	_expect(encounter != null and encounter.get_group(&"crypt_patrol_group") != null, "registry resolves encounter and ordered group")
 	var level := registry.find_level(&"crypt_entrance_sandbox")
