@@ -7,10 +7,10 @@ audit_gate3.log              ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author_check.log             ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 base_pin.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
-before.log                   ObjectDB=0 ERROR=1 SCRIPT_ERROR=1 WARNING=1
 import.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
-logscan.log                  ObjectDB=8 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+logscan.log                  ObjectDB=7 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 manifest.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+parsecheck.log               ObjectDB=0 ERROR=2 SCRIPT_ERROR=2 WARNING=0
 stats.log                    ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 version.log                  ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 
