@@ -4,6 +4,11 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
 GATE1 LEVEL: res://data/levels/chapter_1_level_3.json sha256=096970efecd796e59395e5bcf8deb86942d11d5be9aa90d8e58c67d6516d670e
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+GATE1 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
 GATE1 OVERLAY: 18 props (13 solid) attached to res://data/levels/chapter_1_level_3.json
 GATE1 OVERLAY ATTACHED: 18 props, 13 solid bodies
 GATE1 CAPTURE: res://.artifacts/gate1/after_spawn.png (1280x720) at (280.0, 216.0)
@@ -11,11 +16,10 @@ GATE1 WALK: entry  (280, 216) -> (216, 200)  66 px over 5 cells in 58 frames
 GATE1 CAPTURE: res://.artifacts/gate1/after_entry.png (1280x720) at (215.8785, 199.6352)
 GATE1 WALK: destination  (216, 200) -> (375, 328)  205 px over 18 cells in 162 frames
 GATE1 CAPTURE: res://.artifacts/gate1/after_destination.png (1280x720) at (375.4561, 327.8969)
-GATE1 WALK: sanctuary  (375, 328) -> (441, 471)  157 px over 27 cells in 264 frames
-GATE1 CAPTURE: res://.artifacts/gate1/after_sanctuary.png (1280x720) at (440.8558, 471.1662)
-GATE1 WALK: combat_space  (441, 471) -> (551, 216)  278 px over 39 cells in 372 frames
-GATE1 CAPTURE: res://.artifacts/gate1/after_combat_space.png (1280x720) at (550.6186, 216.2831)
-GATE1 COLLISION: Knight at (550.6186, 216.2831) is clear of every wall and prop
+GATE1 COLLISION: Knight at (375.4561, 327.8969) is clear of every wall and prop
 GATE1 COLLISION: 13 solid prop footprints probed, each covered by a body
-GATE1 COLLISION: open floor at (550.6186, 212.2831) is free of prop bodies
-GATE1 CAPTURE TEST PASSED: 5 frames (after)
+GATE1 COLLISION: open floor at (375.4561, 323.8969) is free of prop bodies
+GATE1 FAILURE: no walkable route to the 'sanctuary' station at (27, 26)
+GATE1 CAPTURE TEST FAILED (after)
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
