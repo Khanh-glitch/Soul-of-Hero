@@ -103,6 +103,8 @@ jobs:
           mkdir -p "$dest" "$dest/logs"
           shopt -s nullglob
           for shot in .artifacts/archive_room_*.png; do cp "$shot" "$dest/"; done
+          # cut the 4x crops from exactly the frames just rendered
+          python3 prototypes/environment_art/archive_audition/art_src/make_detail_crops.py
           rm -f "$dest"/*.import
           for log in .artifacts/archive_*.log; do
             cp "$log" "$dest/logs/$(basename "${log%.log}").txt"
