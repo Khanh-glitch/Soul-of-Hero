@@ -4,19 +4,13 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
 GATE0 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54
-SCRIPT ERROR: Invalid access to property or key 'visible' on a base object of type 'Nil'.
-          at: _check_contracts (res://prototypes/gate0/capture_gate0.gd:167)
-          GDScript backtrace (most recent call first):
-              [0] _check_contracts (res://prototypes/gate0/capture_gate0.gd:167)
-              [1] _run (res://prototypes/gate0/capture_gate0.gd:67)
-              [2] _boot (res://prototypes/gate0/capture_gate0.gd:110)
 GATE0 CAPTURE: res://.artifacts/gate0/before_spawn.png (1280x720) at (280.0, 216.0)
 GATE0 WALK: entry  (280, 216) -> (212, 282)  95 px over 8 cells in 74 frames
 GATE0 CAPTURE: res://.artifacts/gate0/before_entry.png (1280x720) at (212.1429, 282.4192)
-GATE0 COLLISION: Knight at (217.9982, 282.4192) is clear of every wall and prop
-GATE0 FAILURE: the Knight stalled walking to 'destination' at (217.9982, 282.4192)
+GATE0 WALK: destination  (212, 282) -> (458, 197)  260 px over 20 cells in 191 frames
+GATE0 CAPTURE: res://.artifacts/gate0/before_destination.png (1280x720) at (457.712, 197.2275)
+GATE0 WALK: combat_space  (458, 197) -> (556, 219)  100 px over 7 cells in 100 frames
+GATE0 CAPTURE: res://.artifacts/gate0/before_combat_space.png (1280x720) at (555.8387, 218.6889)
+GATE0 COLLISION: Knight at (555.8387, 218.6889) is clear of every wall and prop
+GATE0 FAILURE: exactly one HUD in the scene
 GATE0 CAPTURE TEST FAILED (before)
-WARNING: 2 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-   at: cleanup (core/object/object.cpp:2535)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)
