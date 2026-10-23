@@ -835,10 +835,16 @@ func _configure_encounter_runtime() -> void:
 	_active_content_registry = resolved.get("registry") as LevelRegistry
 	_enemy_authority_errors.clear()
 	_reported_enemy_authority_errors.clear()
+	# Registered sandbox runs use the same authored marker/death projection as
+	# campaign encounters. Their slot remains zero and AppFlow never commits a
+	# campaign completion or campaign reward for Training.
 	if (
 		_active_content_level == null
 		or _active_content_registry == null
-		or not _active_content_level.is_campaign_level()
+		or (
+			not _active_content_level.is_campaign_level()
+			and _active_content_level.content_status != LevelDefinition.ContentStatus.SANDBOX
+		)
 	):
 		_encounter_runtime.clear()
 		GameSession.update_encounter_objective(0, 0, true)

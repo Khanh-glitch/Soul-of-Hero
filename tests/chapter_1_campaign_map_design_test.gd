@@ -38,6 +38,7 @@ func _run() -> void:
 	for map_spec: Dictionary in MAPS:
 		_test_map(map_spec)
 	_test_campaign_layout_distinctness()
+	_test_level_six_route_composition()
 	_finish()
 
 
@@ -169,6 +170,23 @@ func _test_campaign_layout_distinctness() -> void:
 				"Levels %02d and %02d keep meaningfully distinct floor silhouettes (%d cells)"
 				% [first_slot, second_slot, difference],
 			)
+
+
+func _test_level_six_route_composition() -> void:
+	var level_five: Dictionary = _floor_masks.get(5, {})
+	var level_six: Dictionary = _floor_masks.get(6, {})
+	if level_five.is_empty() or level_six.is_empty():
+		return
+	var intersection := 0
+	for cell: Vector2i in level_five:
+		if level_six.has(cell):
+			intersection += 1
+	var union := level_five.size() + level_six.size() - intersection
+	var overlap := float(intersection) / float(maxi(1, union))
+	_expect(
+		overlap <= 0.65,
+		"Levels 05 and 06 keep different route composition (Jaccard overlap %.3f, limit 0.650)" % overlap,
+	)
 
 
 func _cells_by_position(value: Variant) -> Dictionary:

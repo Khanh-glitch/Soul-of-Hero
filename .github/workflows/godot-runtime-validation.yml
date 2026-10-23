@@ -44,6 +44,15 @@ jobs:
           echo "Editor import exit code: ${result}"
           exit "${result}"
 
+      - name: Verify redesigned map generators are reproducible
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_level_6.gd 2>&1 | tee .artifacts/chapter-1-level-6-generator.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_crypt_training_sandbox.gd 2>&1 | tee .artifacts/training-sandbox-generator.log
+          git diff --stat -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --quiet --exit-code -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+
       - name: Run Chapter 2 map design and loader checks
         run: |
           set -uo pipefail
@@ -103,6 +112,7 @@ jobs:
           diagnostics=()
           tests=(
             "res://tests/content/content_contracts_test.tscn"
+            "res://tests/training_sandbox_live_route_test.tscn"
             "res://tests/level_5_archer_pickup_test.gd"
             "res://tests/level_one_tutorial_learning_test.gd"
             "res://tests/chapter_1_level_6_vertical_slice_test.gd"
@@ -141,6 +151,12 @@ jobs:
             if [[ ${test_path} == *chapter_1_level_8_fresh_route_test.tscn || ${test_path} == *chapter_1_level_9_fresh_route_test.tscn || ${test_path} == *chapter_1_level_10_fresh_route_test.tscn ]]; then
               if grep -Fq "Can't use get_node() with absolute paths from outside the active scene tree." ".artifacts/${test_name}.log"; then
                 echo "${test_path} emitted an out-of-tree absolute-path engine error"
+                result=1
+              fi
+            fi
+            if [[ ${test_path} == *training_sandbox_live_route_test.tscn ]]; then
+              if grep -Eq "SCRIPT ERROR:|Can't use get_node\(\) with absolute paths from outside the active scene tree\." ".artifacts/${test_name}.log"; then
+                echo "${test_path} emitted a script or out-of-tree engine error"
                 result=1
               fi
             fi
@@ -460,6 +476,45 @@ jobs:
             done
           done
           } >> "${GITHUB_STEP_SUMMARY}"
+          if [[ ${#diagnostics[@]} -gt 0 ]]; then
+            python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
+          fi
+          exit "${capture_failures}"
+
+      - name: Capture the production Training sandbox
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          capture_failures=0
+          capture_count=0
+          diagnostics=()
+          for point in spawn mid end; do
+            echo "Capturing real Training sandbox route: ${point}"
+            set +e
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_visual_training_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${point}.json" \
+              LIVING_ARSENAL_SAVE_PATH="user://tests/ci_visual_training_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}_${point}.json" \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+              --training --capture-point="${point}" --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/training-sandbox-${point}-visual.log"
+            result=${PIPESTATUS[0]}
+            set -e
+            if grep -Eq "SCRIPT ERROR:|Can't use get_node\(\) with absolute paths from outside the active scene tree\." ".artifacts/training-sandbox-${point}-visual.log"; then
+              echo "Training sandbox ${point} emitted a script or out-of-tree engine error"
+              result=1
+            fi
+            echo "Training sandbox ${point} capture exit code: ${result}"
+            if [[ ${result} -ne 0 ]]; then
+              capture_failures=$((capture_failures + 1))
+              diagnostics+=(".artifacts/training-sandbox-${point}-visual.log" "Training sandbox ${point} production capture")
+            else
+              capture_count=$((capture_count + 1))
+            fi
+          done
+          echo "Training sandbox route captures passed: ${capture_count}/3; failed: ${capture_failures}"
+          echo "### Training sandbox production captures: ${capture_count}/3 passed (spawn, combat loop, exit)" >> "${GITHUB_STEP_SUMMARY}"
           if [[ ${#diagnostics[@]} -gt 0 ]]; then
             python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
           fi

@@ -106,6 +106,28 @@ func _test_representative_sandbox_registry() -> void:
 	var level := registry.find_level(&"crypt_entrance_sandbox")
 	_expect(level != null and level.content_status == LevelDefinition.ContentStatus.SANDBOX, "representative crypt definition is explicitly SANDBOX")
 	_expect(level != null and level.campaign_slot == 0, "sandbox crypt occupies no campaign slot")
+	_expect(
+		level != null and level.layout_data_path == "res://data/levels/crypt_training_sandbox.json",
+		"Training owns a dedicated layout instead of reusing Campaign Level 01",
+	)
+	_expect(
+		encounter != null
+		and encounter.completion.reward_bundle_id.is_empty()
+		and encounter.completion.reward_transaction_id.is_empty(),
+		"Training encounter declares no reward transaction",
+	)
+	if encounter != null:
+		var group := encounter.get_group(&"crypt_patrol_group")
+		var markers := PackedStringArray()
+		if group != null and not group.spawn_entries.is_empty() and group.spawn_entries[0] != null:
+			markers = group.spawn_entries[0].spawn_marker_ids
+		_expect(
+			markers == PackedStringArray([
+				"training_skeleton_01", "training_skeleton_02", "training_skeleton_03",
+				"training_skeleton_04", "training_skeleton_05",
+			]),
+			"Training encounter binds all five live layout markers",
+		)
 	_expect(registry.get_ordered_campaign_levels().is_empty(), "sandbox registry makes no fake campaign-level claim")
 	_expect(registry.find_campaign_level(1) == null, "un-authored campaign slot lookup returns null")
 

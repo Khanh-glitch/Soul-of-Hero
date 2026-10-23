@@ -31,4 +31,4 @@ stagger_resistance = 0.0
 crowd_control_resistance = 0.0
 mastery_reward = 5
 score_reward = 100
-authoring_notes = "SANDBOX DATA ONLY. Values mirror the canonical SkeletonEnemy runtime authority while keeping a development-only content identity."
+authoring_notes = "SANDBOX RUNTIME PROFILE. Values mirror the canonical SkeletonEnemy behavior while keeping a development-only content identity outside campaign progression."

@@ -4,8 +4,12 @@ const APP_ROOT_SCENE: PackedScene = preload("res://game/app/app_root.tscn")
 const CAMPAIGN_REGISTRY: LevelRegistry = preload(
 	"res://data/content/registries/campaign_content_registry.tres"
 )
+const SANDBOX_REGISTRY: LevelRegistry = preload(
+	"res://data/content/registries/sandbox_content_registry.tres"
+)
 const ARTIFACT_DIR := "res://.artifacts"
 const MID_ROOM_IDS := {
+	0: "training_combat_loop",
 	1: "l1_f2_ring",
 	2: "l2_f2_ring",
 	3: "l3_f2_ring",
@@ -18,6 +22,7 @@ const MID_ROOM_IDS := {
 	10: "l10_processional_nave",
 }
 const END_ROOM_IDS := {
+	0: "training_exit",
 	1: "l1_f3_exit",
 	2: "l2_f3_exit",
 	3: "l3_f3_exit",
@@ -31,6 +36,7 @@ const END_ROOM_IDS := {
 }
 
 var _slot := 1
+var _training := false
 var _capture_point := "spawn"
 var _expected_size := Vector2i(1280, 720)
 var _failures: Array[String] = []
@@ -45,7 +51,9 @@ func _ready() -> void:
 
 func _parse_arguments() -> void:
 	for argument: String in OS.get_cmdline_user_args():
-		if argument.begins_with("--level-slot="):
+		if argument == "--training":
+			_training = true
+		elif argument.begins_with("--level-slot="):
 			_slot = clampi(int(argument.get_slice("=", 1)), 1, 10)
 		elif argument.begins_with("--capture-point="):
 			_capture_point = argument.get_slice("=", 1).strip_edges().to_lower()
@@ -53,6 +61,8 @@ func _parse_arguments() -> void:
 			_expected_size.x = maxi(1, int(argument.get_slice("=", 1)))
 		elif argument.begins_with("--expected-height="):
 			_expected_size.y = maxi(1, int(argument.get_slice("=", 1)))
+	if _training:
+		_slot = 0
 
 
 func _run() -> void:
@@ -74,11 +84,23 @@ func _run() -> void:
 
 func _prepare_capture() -> bool:
 	_expect(_capture_point in ["spawn", "mid", "end"], "capture point is spawn, mid, or end")
-	var level_id := StringName("chapter_1_level_%d" % _slot)
-	var definition := CAMPAIGN_REGISTRY.find_level(level_id)
+	var level_id := (
+		&"crypt_entrance_sandbox"
+		if _training
+		else StringName("chapter_1_level_%d" % _slot)
+	)
+	var definition := (
+		SANDBOX_REGISTRY.find_level(level_id)
+		if _training
+		else CAMPAIGN_REGISTRY.find_level(level_id)
+	)
 	_expect(
-		definition != null and definition.is_campaign_ready(),
-		"slot resolves to a campaign-ready LevelDefinition"
+		definition != null and (
+			definition.content_status == LevelDefinition.ContentStatus.SANDBOX
+			if _training
+			else definition.is_campaign_ready()
+		),
+		"route resolves to the correct sandbox or campaign-ready LevelDefinition"
 	)
 	_save_path = OS.get_environment("SOUL_OF_HERO_SAVE_PATH")
 	if _save_path.is_empty():
@@ -90,23 +112,31 @@ func _prepare_capture() -> bool:
 		"capture uses an isolated user save"
 	)
 	_expect(
-		_seed_campaign_entry(),
-		"capture fixture unlocks Chapter 1 through SaveService, not direct scene substitution"
+		_training or _seed_campaign_entry(),
+		"campaign captures unlock through SaveService; Training needs no campaign unlock fixture"
 	)
 	return _failures.is_empty()
 
 
 func _start_campaign_route() -> Node2D:
-	var level_id := StringName("chapter_1_level_%d" % _slot)
+	var level_id := (
+		&"crypt_entrance_sandbox"
+		if _training
+		else StringName("chapter_1_level_%d" % _slot)
+	)
 	_app_root = APP_ROOT_SCENE.instantiate()
 	_expect(_app_root != null, "production AppRoot scene instantiates")
 	if _app_root == null:
 		return null
 	add_child(_app_root)
 	await get_tree().process_frame
-	_expect(
-		AppFlow.start_campaign_level(level_id), "production campaign gate starts Level %d" % _slot
-	)
+	if _training:
+		AppFlow.start_training()
+		_expect(AppFlow.has_active_run(), "production AppFlow starts the Training sandbox")
+	else:
+		_expect(
+			AppFlow.start_campaign_level(level_id), "production campaign gate starts Level %d" % _slot
+		)
 	if not AppFlow.has_active_run():
 		return null
 	for _frame: int in 8:
@@ -123,8 +153,16 @@ func _start_campaign_route() -> Node2D:
 
 
 func _capture_campaign_state(game: Node2D) -> void:
-	var level_id := StringName("chapter_1_level_%d" % _slot)
-	var definition := CAMPAIGN_REGISTRY.find_level(level_id)
+	var level_id := (
+		&"crypt_entrance_sandbox"
+		if _training
+		else StringName("chapter_1_level_%d" % _slot)
+	)
+	var definition := (
+		SANDBOX_REGISTRY.find_level(level_id)
+		if _training
+		else CAMPAIGN_REGISTRY.find_level(level_id)
+	)
 	var dungeon := game.get_node_or_null("Level") as DungeonLevel
 	var entity_root := game.get_node_or_null("Level/Entities") as Node2D
 	var player := (
@@ -180,10 +218,10 @@ func _capture_campaign_state(game: Node2D) -> void:
 	)
 	_expect(
 		(
-			(_slot == 1 and tutorial_panel != null and tutorial_panel.visible)
+			((_slot == 1 or _training) and tutorial_panel != null and tutorial_panel.visible)
 			or (_slot > 1 and (tutorial_panel == null or not tutorial_panel.visible))
 		),
-		"tutorial prompt is visible only on the actual Level 1 campaign route",
+		"tutorial prompt is visible only on Level 1 or its Training sandbox route",
 	)
 	var camera := player.get_node_or_null("Camera") as Camera2D
 	if camera != null:
@@ -211,7 +249,9 @@ func _capture_campaign_state(game: Node2D) -> void:
 	)
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(ARTIFACT_DIR))
 	var output_path := (
-		"%s/chapter_1_level_%02d_%s_runtime.png" % [ARTIFACT_DIR, _slot, _capture_point]
+		"%s/training_sandbox_%s_runtime.png" % [ARTIFACT_DIR, _capture_point]
+		if _training
+		else "%s/chapter_1_level_%02d_%s_runtime.png" % [ARTIFACT_DIR, _slot, _capture_point]
 	)
 	_expect(
 		image.save_png(ProjectSettings.globalize_path(output_path)) == OK,
