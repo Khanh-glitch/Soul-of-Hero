@@ -1,0 +1,15 @@
+== ObjectDB / leak notices ==
+(none)
+
+== counts per log ==
+author.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+author_check.log             ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+logscan.log                  ObjectDB=3 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+manifest.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+stats.log                    ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
+
+== gate3 route / collision / camera evidence ==
+GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
+GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79
+GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
+GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79
