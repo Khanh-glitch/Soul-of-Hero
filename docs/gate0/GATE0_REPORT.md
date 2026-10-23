@@ -1,6 +1,9 @@
 # Gate 0 — Candidate B's archive art inside Candidate A's Chapter 1 Level 3
 
-**Branch:** `arena/6e89e68d-soul-of-hero` · **Evidence run:** [39987433621](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39987433621) — `success`
+**Branch:** `arena/6e89e68d-soul-of-hero` · **Evidence run:** [39988534019](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39988534019) — `success`
+(the frames in `docs/gate0/evidence/` are republished by every green run of this
+workflow and land in a `ci(gate0): publish Godot 4.7 before/after frames` commit,
+together with the comparison and close-up sheets cut from those same frames)
 **Status:** M0–M4 complete. Runtime evidence is real Godot 4.7 output. Visual approval is the reviewer's call, not mine.
 **Not done, by instruction:** nothing merged, nothing deployed, PR #4 untouched, no campaign/Level 2/`data/**`/`game/**`/`tests/**` change.
 
@@ -34,7 +37,7 @@ commands.
 | M1 | `0a39e4b` | 15-prop overlay + validator; refuses any level that is not Candidate A's pinned document; byte-identical regeneration; `--check` for CI |
 | M2 | `29f8b87` | runtime adapter + capture harness, pushed **before** any runtime experiment |
 | M3 | `41bf415` + `+4` fixes | Godot 4.7 workflow; the four fixes were real 4.7 parse/runtime defects, listed in §5 |
-| M4 | this commit | native frames, comparison pairs, 4× close-ups, logs, this report |
+| M4 | `41791f4` + `255b771` | native frames, comparison pairs, 4× close-ups, logs, this report; sheets are cut inside the publish step so they always match the committed frames |
 
 ## 2. What is integrated
 
@@ -97,9 +100,18 @@ Prototype-local visual overlay. Nothing is added to the level format.
 | Frames | 8 × 1280×720 native viewport captures, real HUD, real renderer (Mesa llvmpipe, GL 4.5 / gl_compatibility) |
 
 Exact log lines are in `docs/gate0/evidence/logs/before.txt` and `after.txt`. Frames were
-produced by [run 39987433621](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39987433621),
-whose `Publish the frames` step committed them to `docs/gate0/evidence/` so they are durable
-in git rather than an expiring CI artifact.
+produced by [run 39988534019](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39988534019),
+whose `Publish the frames` step committed them to `docs/gate0/evidence/`, so they are durable
+in git rather than an expiring CI artifact (the `gate0-logs` artifact expires in 14 days and is
+only a convenience copy).
+
+Durability was verified two ways, not assumed:
+
+* the workflow's own step fetched `…/docs/gate0/evidence/after_spawn.png` back from
+  `raw.githubusercontent.com` at the run's commit and logged the result
+  (`logs/durability_probe.txt`: 162 786 bytes on the first such run);
+* `gh api repos/…/contents/…?ref=<sha>` returns every frame, sheet and this report at the
+  commit they were published in.
 
 ## 5. Defects found and fixed by running Godot (not by guessing)
 
@@ -109,7 +121,12 @@ in git rather than an expiring CI artifact.
 4. `39986305188` — the HUD counter filtered on `CanvasItem` and therefore counted zero HUDs.
 5. `39986612418` — first full **success**: both runs passed, but framing was poor.
 6. `39987201278` — new stations exposed walk drift (single-axis input let the Knight clip a pillar); fixed by correcting both axes.
-7. `39987433621` — **current evidence run**: both runs pass, stations framed.
+7. `39987433621` — both runs pass with the corrected stations; this is the framing that was reviewed.
+8. `39987946607` — a later push cancelled its publish step mid-flight (`cancel-in-progress`), so
+   the frames it rendered were lost; re-run cleanly instead of reusing them.
+9. `39988534019` — **evidence run for this report**: both runs pass, and the publish step now cuts
+   the sheets from the frames it is committing, after `c5a0df9` showed sheets from an older run
+   surviving a frame refresh.
 
 ## 6. Visual review — what the frames actually show
 
@@ -161,9 +178,14 @@ To reproduce on the integration branch:
 
 ```bash
 git checkout integration/gate0-archive-art          # at 78ebc830
-git cherry-pick dcae5af 0a39e4b 29f8b87 41bf415     # M0–M3 source (new files only)
+git cherry-pick dcae5af 0a39e4b 29f8b87 41bf415     # M0-M3 source (new files only)
+git cherry-pick 41791f4 255b771                     # report + CI sheet fix
 # then push; the workflow runs and publishes frames to docs/gate0/evidence/
 ```
+
+On that branch `data/levels/chapter_1_level_3.json` already is Candidate A's pinned document, so
+the workflow's `Materialise` step logs "already is Candidate A's pinned document" and changes
+nothing.
 
 ## 8. Unresolved defects / limitations
 

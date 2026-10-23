@@ -7,6 +7,9 @@ name: Gate 0 — Level 3 archive overlay (Godot 4.7)
 #
 # Scope: only Gate 0 files. It does not run the campaign suites and does not
 # touch data/**, game/**, tests/** or the accepted Level 2 work.
+#
+# Deliberately NOT triggered by docs/gate0/**: this job commits the frames back
+# into that folder, so a docs trigger would make every publish re-trigger itself.
 
 on:
   push:
@@ -16,7 +19,6 @@ on:
     paths:
       - "prototypes/gate0/**"
       - "tools/gate0/**"
-      - "docs/gate0/**"
       - ".github/workflows/gate0-integration.yml"
   workflow_dispatch:
 
