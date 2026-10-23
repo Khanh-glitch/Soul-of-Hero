@@ -14,7 +14,6 @@ on:
       - "tools/captures/**"
       - "tools/design/**"
       - "docs/design-audition/LEVEL2_CONCEPT.md"
-      - "docs/design-pilot/**"
       - ".github/workflows/level2-audition.yml"
   pull_request:
     branches:
