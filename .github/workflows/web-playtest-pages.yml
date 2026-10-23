@@ -4,10 +4,7 @@ on:
   push:
     branches:
       - feat/web-playtest-deploy
-    paths:
-      - "export_presets.cfg"
-      - ".github/workflows/web-playtest-pages.yml"
-      - "docs/WEB_PLAYTEST.md"
+      - integration/chapter1-2-hero-web-playtest
   workflow_dispatch:
     inputs:
       source_ref:
