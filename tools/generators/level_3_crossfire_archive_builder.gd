@@ -345,10 +345,10 @@ func build() -> Dictionary:
 		{"id": "l3_spikes_17", "type": "spikes", "position": _cpos(88, 83)},
 		{"id": "l3_spikes_18", "type": "spikes", "position": _cpos(88, 86)},
 
-		# 14 Purposeful Archive Sconces (wall-mounted on load-bearing masonry — zero mid-floor torches!)
+		# 14 Purposeful Archive Sconces (wall-mounted on load-bearing masonry — zero basin overlap!)
 		{"id": "l3_torch_01", "type": "torch", "position": _cpos(11, 11)},
-		{"id": "l3_torch_02", "type": "torch", "position": _cpos(22, 10)},
-		{"id": "l3_torch_03", "type": "torch", "position": _cpos(36, 10)},
+		{"id": "l3_torch_02", "type": "torch", "position": _cpos(23, 10)},
+		{"id": "l3_torch_03", "type": "torch", "position": _cpos(36, 11)},
 		{"id": "l3_torch_04", "type": "torch", "position": _cpos(49, 6)},
 		{"id": "l3_torch_05", "type": "torch", "position": _cpos(98, 43)},
 		{"id": "l3_torch_06", "type": "torch", "position": _cpos(63, 49)},
@@ -826,13 +826,13 @@ func _build_spawn_archive_entrance() -> void:
 			_geom_cells.erase(p)
 			_decor_cells.erase(p)
 
-	# 1. Stepped Monastic Vault Footprint with 100% HUD-safe north & south margins:
+	# 1. Stepped Monastic Vault Footprint with 100% HUD-safe north, south & top-right margins:
 	var rects := [
 		[6, 12, 5, 8],
 		[11, 10, 15, 10],
 		[17, 20, 9, 2],
 		[26, 11, 9, 4],
-		[35, 9, 5, 15],
+		[35, 11, 5, 13],
 	]
 	for r: Array in rects:
 		for y: int in range(int(r[1]), int(r[1]) + int(r[3])):
@@ -883,8 +883,7 @@ func _build_spawn_archive_entrance() -> void:
 		[5, 10, 11],
 		[11, 16, 10],
 		[17, 25, 9],
-		[26, 34, 10],
-		[35, 39, 8],
+		[26, 39, 10],
 	]
 	for nr: Array in north_runs:
 		var wy: int = nr[2]

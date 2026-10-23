@@ -272,7 +272,7 @@ func build() -> Dictionary:
 		# Camp 3 (`l4_camp_3_broken_cross`: 3 Skeletons + 2 Diagonal Reapers)
 		{"id": "l4_c3_skeleton_01", "type": "skeleton", "position": _cpos(46, 88), "patrol": 32},
 		{"id": "l4_c3_skeleton_02", "type": "skeleton", "position": _cpos(55, 84), "patrol": 32},
-		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(73, 83), "patrol": 32},
+		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(72, 83), "patrol": 32},
 		{"id": "l4_c3_reaper_01", "type": "skeleton_reaper", "position": _cpos(77, 92), "patrol": 26},
 		{"id": "l4_c3_reaper_02", "type": "skeleton_reaper", "position": _cpos(63, 80), "patrol": 26},
 
@@ -739,24 +739,17 @@ func _place_flush_molten_brazier(x0: int, y_top: int) -> void:
 
 
 func _build_final_reliquary_apse() -> void:
-	# Clear strictly Location 2 viewport zone (x = 76..115, y = 74..99) while keeping
-	# x < 76 and Floors 1..2 100% untouched.
+	# Clear strictly Location 2 viewport zone (x = 75..115, y = 74..99) while keeping
+	# x < 75 and Floors 1..2 100% untouched.
 	for y: int in range(74, HEIGHT):
-		for x: int in range(76, WIDTH):
+		for x: int in range(75, WIDTH):
 			var p := Vector2i(x, y)
 			_floor_cells.erase(p)
 			_geom_cells.erase(p)
 			_decor_cells.erase(p)
 
-	# 1. Stepped Cathedral Sanctuary Footprint with 100% HUD-safe margins on ALL 4 edges:
-	# - East Sanctuary Forecourt of Camp 3 (`x = 76..81, y = 85..93`; 3-band north wall at
-	#   y = 82..84 completely below HP/S2/MP, south wall at y = 94 completely above ESC!)
-	# - Ceremonial Vestibule Throat (`x = 82..87, y = 87..91`; 3-band north wall at y = 84..86)
-	# - Broad Cathedral Choir & Side Reliquary Transepts (`x = 88..110, y = 84..95`)
-	# - Recessed Central High Altar Niche (`x = 97..101, y = 82..84`; 3-band wall at y = 79..81,
-	#   cornice cleanly below top-center MUC TIEU text!)
 	var rects := [
-		[76, 85, 6, 9],
+		[75, 85, 7, 9],
 		[82, 87, 6, 5],
 		[88, 84, 23, 12],
 		[97, 82, 5, 3],
@@ -785,7 +778,7 @@ func _build_final_reliquary_apse() -> void:
 
 	# 2. Clean 9-slice perimeter shell (ZERO hollow [1, 8..11, 0] cavities anywhere!)
 	for y: int in range(76, HEIGHT - 1):
-		for x: int in range(76, WIDTH - 1):
+		for x: int in range(75, WIDTH - 1):
 			var p := Vector2i(x, y)
 			if _floor_cells.has(p):
 				continue
@@ -806,7 +799,7 @@ func _build_final_reliquary_apse() -> void:
 	# 3. Full 3-band north masonry elevations ([0,1..3,0] cornice + [0,1..3,1] upper
 	#    brick + [0,3,2] lower brick) with stepped monumental High Altar recess at x = 97..101!
 	var north_runs := [
-		[76, 81, 84],
+		[75, 81, 84],
 		[82, 86, 86],
 		[87, 96, 83],
 		[97, 101, 81],
