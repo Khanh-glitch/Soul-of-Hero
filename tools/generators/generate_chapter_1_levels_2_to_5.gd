@@ -6,15 +6,35 @@ const LevelSchemaValidator := preload("res://game/levels/level_schema.gd")
 var _builder := MapBuilder.new()
 
 
+## Level 2's authoring authority moved to tools/design/level2_ossuary_author.py
+## (shape-based floor grammar, ordered material passes, clearance-aware
+## decoration). Regenerating Level 2 from this file would silently erase the
+## Ossuary Fork redesign, so it is deliberately skipped here and reproduced by
+##     python3 tools/design/level2_ossuary_author.py
+## See docs/design-audition/LEVEL2_DELIVERY.md.
 func _init() -> void:
+	# --level=N regenerates a single slot; --skip-level-2 keeps a partial run.
+	var requested_level := 0
+	var skip_level_2 := false
+	for argument: String in OS.get_cmdline_user_args():
+		if argument.begins_with("--level="):
+			requested_level = int(argument.get_slice("=", 1))
+		elif argument == "--skip-level-2":
+			skip_level_2 = true
 	var definitions := [
 		_level_1_definition(),
-		_level_2_definition(),
 		_level_3_definition(),
 		_level_4_definition(),
 		_level_5_definition(),
 	]
+	if not skip_level_2:
+		print(
+			"Level 2 is authored by tools/design/level2_ossuary_author.py "
+			+ "and is intentionally not regenerated from this GDScript generator."
+		)
 	for definition: Dictionary in definitions:
+		if requested_level > 0 and int(definition.get("slot", 0)) != requested_level:
+			continue
 		var level := _builder.build(definition)
 		var validation: Dictionary = LevelSchemaValidator.validate_level(level)
 		if not bool(validation.get("ok", false)):
@@ -142,6 +162,7 @@ func _level_1_definition() -> Dictionary:
 
 	return {
 		"id": "chapter_1_level_1",
+		"slot": 1,
 		"output": "res://data/levels/crypt_entrance.json",
 		"name": "Hầm Mộ Khai Ấn",
 		"width": 104,
@@ -189,120 +210,6 @@ func _level_1_definition() -> Dictionary:
 			"pacing": "three_packs_per_floor_five_members_each_with_short_breathers",
 			"roster_id": "chapter_1_level_1_roster",
 			"encounter_pack_model": _pack_model(1),
-		},
-	}
-
-
-func _level_2_definition() -> Dictionary:
-	var entities: Array = []
-	entities.append(_entity("player_spawn", "player", 8, 12))
-
-	var camp_1 := [
-		"l2_c1_skeleton_01", "l2_c1_skeleton_02", "l2_c1_skeleton_03",
-		"l2_c1_skeleton_04", "l2_c1_skeleton_05",
-	]
-	var camp_1_cells := [Vector2i(94, 12), Vector2i(99, 12), Vector2i(103, 15), Vector2i(95, 20), Vector2i(101, 21)]
-	_add_enemy_group(entities, camp_1, camp_1_cells, "skeleton", 40)
-	var camp_2 := [
-		"l2_c2_skeleton_01", "l2_c2_skeleton_02", "l2_c2_skeleton_03",
-		"l2_c2_skeleton_04", "l2_c2_skeleton_05",
-	]
-	var camp_2_cells := [Vector2i(58, 34), Vector2i(61, 38), Vector2i(59, 43), Vector2i(61, 48), Vector2i(56, 50)]
-	_add_enemy_group(entities, camp_2, camp_2_cells, "skeleton", 40)
-	var camp_3 := [
-		"l2_c3_skeleton_01", "l2_c3_skeleton_02", "l2_c3_skeleton_03",
-		"l2_c3_skeleton_04", "l2_c3_skeleton_05",
-	]
-	var camp_3_cells := [Vector2i(56, 63), Vector2i(69, 63), Vector2i(56, 72), Vector2i(70, 72), Vector2i(67, 67)]
-	_add_enemy_group(entities, camp_3, camp_3_cells, "skeleton", 38)
-
-	_add_door_pair(entities, "l2_f1_f2", Vector2i(103, 23), Vector2i(9, 42), "Tầng 2")
-	_add_door_pair(entities, "l2_f2_f3", Vector2i(103, 48), Vector2i(9, 70), "Tầng 3")
-	entities.append_array([
-		_entity("l2_sigil_choice_north", "sigil", 73, 8),
-		_entity("l2_sigil_choice_south", "sigil", 73, 23),
-		_entity("l2_sigil_ring", "sigil", 77, 50),
-		_entity("l2_sigil_gauntlet", "sigil", 74, 67),
-		_entity("l2_checkpoint_floor_2", "checkpoint", 16, 42),
-		_entity("l2_checkpoint_floor_3", "checkpoint", 16, 70),
-		_entity("l2_exit", "exit_gate", 102, 68),
-		_entity("l2_chest_risky_branch", "chest", 68, 13, {"score_reward": 220}),
-		_entity("l2_chest_gauntlet", "chest", 39, 63, {"score_reward": 280}),
-	])
-	_add_entities(entities, "l2_spikes", "spikes", [
-		Vector2i(59, 9), Vector2i(59, 21), Vector2i(39, 34),
-		Vector2i(39, 49), Vector2i(44, 67), Vector2i(72, 72),
-		Vector2i(48, 9), Vector2i(48, 21), Vector2i(83, 11),
-		Vector2i(48, 34), Vector2i(48, 49), Vector2i(75, 40),
-		Vector2i(54, 63), Vector2i(54, 73), Vector2i(84, 68),
-	])
-	_add_entities(entities, "l2_torch", "torch", [
-		Vector2i(17, 9), Vector2i(32, 6), Vector2i(80, 6), Vector2i(91, 22),
-		Vector2i(18, 36), Vector2i(70, 32), Vector2i(92, 49), Vector2i(18, 65),
-		Vector2i(37, 74), Vector2i(101, 63),
-	])
-	_add_entities(entities, "l2_coin", "coin", [
-		Vector2i(23, 11), Vector2i(35, 7), Vector2i(50, 7), Vector2i(50, 21),
-		Vector2i(25, 40), Vector2i(36, 34), Vector2i(36, 49), Vector2i(25, 68),
-		Vector2i(79, 68), Vector2i(91, 68),
-	])
-
-	return {
-		"id": "chapter_1_level_2",
-		"output": "res://data/levels/chapter_1_level_2.json",
-		"name": "Ngã Ba Cốt Trắng",
-		"width": 112,
-		"height": 80,
-		"decor_seed": 2,
-		"required_sigils": 3,
-		"layout_profile": "three_floor_fork_and_recombine",
-		"rooms": [
-			_room("l2_f1_entry", 1, "safe_entry", 4, 6, 16, 12),
-			_room("l2_f1_fork", 1, "route_choice", 30, 4, 24, 20),
-			_room("l2_f1_north_reliquary", 1, "optional_reward", 64, 3, 18, 13),
-			_room("l2_f1_south_reliquary", 1, "optional_reward", 64, 18, 18, 11),
-			_room("l2_f1_convergence", 1, "combat_camp", 88, 8, 19, 18),
-			_room("l2_f2_landing", 2, "safe_landing", 4, 34, 18, 14),
-			_room("l2_f2_ring", 2, "combat_camp", 34, 31, 30, 22),
-			_room("l2_f2_north_cache", 2, "flank_route", 68, 30, 18, 12),
-			_room("l2_f2_south_cache", 2, "flank_route", 68, 45, 18, 12),
-			_room("l2_f2_convergence", 2, "breather", 90, 35, 18, 17),
-			_room("l2_f3_landing", 3, "safe_landing", 4, 63, 18, 12),
-			_room("l2_f3_gauntlet", 3, "combat_camp", 34, 59, 42, 18),
-			_room("l2_f3_exit", 3, "exit", 86, 61, 21, 14),
-		],
-		"corridors": [
-			Rect2i(20, 10, 10, 4), Rect2i(54, 7, 10, 4), Rect2i(54, 19, 10, 4),
-			Rect2i(82, 8, 7, 4), Rect2i(82, 21, 7, 4),
-			Rect2i(22, 39, 12, 4), Rect2i(64, 35, 5, 4), Rect2i(64, 48, 5, 4),
-			Rect2i(86, 35, 5, 4), Rect2i(86, 48, 5, 4),
-			Rect2i(22, 67, 12, 4), Rect2i(76, 67, 10, 4),
-		],
-		"pits": [
-			Rect2i(38, 9, 8, 10), Rect2i(43, 37, 12, 10),
-			Rect2i(47, 62, 5, 7), Rect2i(61, 68, 5, 7),
-		],
-		"entities": entities,
-		"combat_camps": [
-			_camp("l2_camp_1_shield_wall", 1, [88, 8, 19, 18], [88, 14], camp_1, "five_swordsmen_converge_on_two_entries", true),
-			_camp("l2_camp_2_ring_pressure", 2, [34, 31, 30, 22], [52, 34], camp_2, "five_swordsmen_attack_around_a_cover_pit", true),
-			_camp("l2_camp_3_slalom", 3, [34, 59, 42, 18], [52, 67], camp_3, "five_swordsmen_hold_both_slalom_lanes", true),
-		],
-		"safe_zones": [
-			_zone("l2_spawn_sanctuary", [4, 6, 16, 12], "spawn_and_control_read"),
-			_zone("l2_floor_2_breather", [4, 34, 18, 14], "checkpoint_after_camp"),
-			_zone("l2_floor_3_breather", [4, 63, 18, 12], "checkpoint_before_final_camp"),
-		],
-		"special_zones": [
-			_zone("l2_choose_one_sigil_fork", [64, 3, 18, 26], "two_risk_profiles_one_required_route"),
-		],
-		"metadata": {
-			"objective": "Chọn nhánh ít rủi ro hơn, phá ba bãi xương và thu 3 trong 4 ấn ký.",
-			"difficulty_tier": 2,
-			"pacing": "three_five_member_packs_per_floor_with_route_pressure",
-			"density_cadence_anchor": _world_position(Vector2i(50, 13)),
-			"roster_id": "chapter_1_level_2_roster",
-			"encounter_pack_model": _pack_model(2),
 		},
 	}
 
@@ -362,6 +269,7 @@ func _level_3_definition() -> Dictionary:
 
 	return {
 		"id": "chapter_1_level_3",
+		"slot": 3,
 		"output": "res://data/levels/chapter_1_level_3.json",
 		"name": "Thư Khố Giao Hỏa",
 		"width": 116,
@@ -470,6 +378,7 @@ func _level_4_definition() -> Dictionary:
 
 	return {
 		"id": "chapter_1_level_4",
+		"slot": 4,
 		"output": "res://data/levels/chapter_1_level_4.json",
 		"name": "Thánh Tích Xoắn Ốc",
 		"width": 116,
@@ -581,6 +490,7 @@ func _level_5_definition() -> Dictionary:
 
 	return {
 		"id": "chapter_1_level_5",
+		"slot": 5,
 		"output": "res://data/levels/chapter_1_level_5.json",
 		"name": "Lò Hiến Tế Huyết Cốt",
 		"width": 120,
