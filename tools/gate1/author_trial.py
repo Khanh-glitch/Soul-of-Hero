@@ -21,13 +21,13 @@ FURNITURE=[
  ("long_board","long_table",256,320,True),
  ("bench","bench",304,352,True),
  ("scroll","scroll_roll",408,208,False),
- ("armarium","armarium_open",464,384,True),
- ("bay_desk","desk",456,448,True),
- ("abandoned_seat","stool_tipped",472,464,False),
- ("catalogue","lectern",528,448,True),
- ("books","book_stack",536,464,False),
- ("collapse","rubble_large",408,448,True),
- ("fallen_beam","beam",416,448,False),
+ ("armarium","armarium_open",464,336,True),
+ ("bay_desk","desk",456,352,True),
+ ("abandoned_seat","stool_tipped",472,368,False),
+ ("catalogue","lectern",528,368,True),
+ ("books","book_stack",536,384,False),
+ ("collapse","rubble_large",408,368,True),
+ ("fallen_beam","beam",416,368,False),
 ]
 def read(p): return json.loads(p.read_text(encoding="utf-8"))
 def encode(v): return json.dumps(v,indent=2,ensure_ascii=False)+"\n"
@@ -69,19 +69,19 @@ def construct(base):
   edited.add((x,y));b.pop((x,y),None);d.pop((x,y),None)
   g[(x,y)]=cell(x,y,2,0 if cap else 1)
  # The passage (25,20)->(26,21)->(26,22) preserves the old route.
- # The 136x64 armarium will stand at (496,384), against three stone courses.
- for y in range(22,29):
+ # The 136x64 armarium stands at (464,336), in full view above the XP bar.
+ for y in range(19,25):
   for x in range(24,34): floor(x,y)
  for x in (25,26):
-  for y in (20,21):floor(x,y)
- for y in range(19,22):
-  for x in range(27,34):wall(x,y,y==19)
- for y in range(23,29):wall(23,y,y==23)
- for y in range(22,29):wall(34,y,y==22)
- for x in range(23,38):wall(x,29,True)
+  for y in (19,20,21):floor(x,y)
+ for y in range(16,19):
+  for x in range(27,34):wall(x,y,y==16)
+ for y in range(22,25):wall(23,y,y==22)
+ for y in range(19,25):wall(34,y,y==19)
+ for x in range(23,35):wall(x,25,True)
  for name,m in (("Backdrop",b),("Geometry",g),("Decor",d)):
   out["layers"][name]=sorted_cells(m)
- assert all(23<=x<=37 and 19<=y<=29 for x,y in edited)
+ assert all(23<=x<=37 and 16<=y<=25 for x,y in edited)
  return out,edited
 def artwork(doc):
  frames=read(ATLAS)["frames"]; floor=usable(doc)
@@ -106,18 +106,18 @@ def artwork(doc):
    collider=[x,y-6,round(width,3),12],
    provenance="Candidate B e7cad36 original atlas"))
  floors=[]
- for y in range(22,29):
+ for y in range(19,25):
   for x in range(24,34):
-   tile=(5+(x-24)%2) if x<=26 else (4 if y in (25,26) and 28<=x<=35 else (x-27)%4)
+   tile=(5+(x-24)%2) if x<=26 else (4 if y in (22,23) and 28<=x<=35 else (x-27)%4)
    floors.append([x,y,tile,0])
- walls={(x,y) for y in range(19,22) for x in range(27,34)}
- walls|={(23,y) for y in range(23,29)}
- walls|={(34,y) for y in range(22,29)}
- walls|={(x,29) for x in range(23,38)}
+ walls={(x,y) for y in range(16,19) for x in range(27,34)}
+ walls|={(23,y) for y in range(22,25)}
+ walls|={(34,y) for y in range(19,25)}
+ walls|={(x,25) for x in range(23,35)}
  caps=[];faces=[]
  for x,y in sorted(walls,key=lambda p:(p[1],p[0])):
-  if y in (19,29) or (x,y) in ((23,23),(34,22)):caps.append([x,y,3])
-  else:faces.append([x,y,2 if y==21 else (x+y)%2,1])
+  if y in (16,25) or (x,y) in ((23,22),(34,19)):caps.append([x,y,3])
+  else:faces.append([x,y,2 if y==18 else (x+y)%2,1])
  return dict(version=1,target_level="res://data/levels/chapter_1_level_3.json",
   trial_map="res://prototypes/gate1/trial_level3.json",base_sha256=PIN,
   atlas="res://prototypes/gate0/art/archive_props.png",
@@ -126,7 +126,7 @@ def artwork(doc):
   light_texture="res://prototypes/gate1/art/light_radial.png",
   modulate=[0.9,0.87,0.87,1.0],collision_layer=1,
   props=props,visual=dict(floors=floors,faces=faces,caps=caps),
-  lights=[dict(x=464,y=346,energy=0.75,scale=2.0,color=[1,0.76,0.49])])
+  lights=[dict(x=464,y=286,energy=0.75,scale=2.0,color=[1,0.76,0.49])])
 def verify(base,trial,art,changed):
  assert trial["entities"]==base["entities"] and len(trial["entities"])==79
  assert (trial["width"],trial["height"])==(116,96)
@@ -136,7 +136,7 @@ def verify(base,trial,art,changed):
  assert all(c["source"] in (0,1) for layer in trial["layers"].values() for c in layer)
  old=reach(usable(base),(17,13));new=reach(usable(trial),(17,13))
  assert old<=new,("sealed existing route",len(old-new))
- start=(17,13);target=(31,26)
+ start=(17,13);target=(29,23)
  floors=usable(trial);block=set()
  for prop in art["props"]:
   if not prop["solid"]:continue
