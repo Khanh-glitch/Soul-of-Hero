@@ -1,0 +1,45 @@
+name: Gate 1 — Archive geometry authoring (G1-B)
+on:
+  push:
+    branches:
+      - integration/level3-archive-redesign
+    paths:
+      - "tools/gate1/author_trial.py"
+      - ".github/workflows/gate1-geometry.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  author:
+    name: Validate and publish derived Level 3 architecture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check original B art blobs
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git hash-object prototypes/gate1/art/archive_tiles.png)" = "dc1fc8fdd95d6d99c20b1f8e16e3bcbe2cf9fe37"
+          test "$(git hash-object prototypes/gate1/art/wall_caps.png)" = "d3c2066c489b77666504ad94875d09585a0ad0fd"
+      - name: Build trial and verify unchanged campaign
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/gate1/author_trial.py
+          python3 tools/gate1/author_trial.py --check
+          python3 -m json.tool prototypes/gate1/trial_level3.json >/dev/null
+          python3 -m json.tool prototypes/gate1/trial_art.json >/dev/null
+          git diff --exit-code -- data/ game/ tests/ project.godot
+      - name: Preserve trial documents on this branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "gate1-trial-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add prototypes/gate1/trial_level3.json prototypes/gate1/trial_art.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "build(gate1): publish deterministic architecture trial [skip ci]"
+          git push
