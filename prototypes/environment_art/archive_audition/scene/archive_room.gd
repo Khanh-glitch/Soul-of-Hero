@@ -42,6 +42,7 @@ var room: Dictionary = {}
 var knight: Node2D
 var camera: Camera2D
 
+var _tile_set: TileSet
 var _atlas: TileSetAtlasSource
 var _cap_atlas: TileSetAtlasSource
 var _prop_texture: Texture2D
@@ -95,20 +96,17 @@ func _make_sources() -> void:
 			_cap_atlas.create_tile(Vector2i(x, y))
 
 
-func _layer(name: String, z: int, tint: Color, with_collision := false) -> TileMapLayer:
+func _layer(name: String, z: int, tint: Color) -> TileMapLayer:
 	var layer := TileMapLayer.new()
 	layer.name = name
 	layer.z_index = z
 	layer.z_as_relative = false
 	layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	layer.modulate = tint
-	var tile_set := TileSet.new()
-	tile_set.tile_size = Vector2i(T, T)
-	if with_collision:
-		tile_set.add_physics_layer(0)
-	tile_set.add_source(_atlas, 0)
-	tile_set.add_source(_cap_atlas, 1)
-	layer.tile_set = tile_set
+	# A TileSetAtlasSource may only belong to one TileSet, so every layer shares
+	# this single TileSet; giving each layer its own silently broke the layers
+	# built before the last one (their tiles resolved to nothing).
+	layer.tile_set = _tile_set
 	add_child(layer)
 	return layer
 
@@ -118,6 +116,10 @@ func _build_layers() -> void:
 		return
 	_make_sources()
 	_prop_texture = load(PROP_ART)
+	_tile_set = TileSet.new()
+	_tile_set.tile_size = Vector2i(T, T)
+	_tile_set.add_source(_atlas, 0)
+	_tile_set.add_source(_cap_atlas, 1)
 
 	var floor_layer := _layer(FLOOR_LAYER, -12, Color(1, 1, 1))
 	var decal_layer := _layer(DECAL_LAYER, -11, Color(1, 1, 1))

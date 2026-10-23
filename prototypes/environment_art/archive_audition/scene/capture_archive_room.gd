@@ -99,6 +99,7 @@ func _overview() -> void:
 	await _settle()
 	await _frame("overview")
 	cam.queue_free()
+	await _settle(2)
 	# hand the camera back to the Knight for any later run
 	if _knight != null:
 		var kc := _knight.get_node_or_null("Camera") as Camera2D
