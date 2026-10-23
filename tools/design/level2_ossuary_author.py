@@ -163,6 +163,7 @@ F1_ADD = [
     ("rect", 91, 9, 10, 6),
     ("octagon", 111, 12, 11, 8, 4),                # R3 Reliquary Chapel
     ("rect", 104, 15, 9, 5),                       # chapel stair east
+    ("rect", 119, 13, 12, 4),                      # chapel-to-rotunda neck
     # Low road: the Flooded Nave, wide and sunken.
     ("poly", [(66, 34), (78, 32), (96, 33), (104, 36),
               (104, 41), (92, 43), (74, 43), (65, 39)]),
@@ -280,11 +281,13 @@ MATERIALS = [
     ("deep", ("octagon", 128, 88, 10, 7, 3)),
     ("soul", ("rect", 118, 71, 12, 2)),
     # ---- FLOOR 3 ----
-    ("grave", ("rect", 42, 104, 44, 24)),
-    ("bone", ("rect", 42, 104, 44, 7)),
+    ("grave", ("rect", 42, 108, 44, 16)),
+    ("bone", ("rect", 42, 104, 44, 8)),
     ("soul", ("rect", 46, 115, 38, 2)),
-    ("soul", ("octagon", 96, 116, 8, 9, 3)),
-    ("deep", ("rect", 104, 119, 16, 6)),
+    # A single lit processional lane runs from the choir into the exit apse.
+    ("soul", ("rect", 92, 115, 10, 2)),
+    ("soul", ("rect", 99, 112, 2, 8)),
+    ("deep", ("rect", 110, 120, 10, 4)),
 ]
 
 # ---------------------------------------------------------------------------
