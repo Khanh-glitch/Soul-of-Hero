@@ -14,6 +14,7 @@ on:
       - "tools/captures/**"
       - "tools/design/**"
       - "docs/design-audition/LEVEL2_CONCEPT.md"
+      - "docs/design-pilot/**"
       - ".github/workflows/level2-audition.yml"
   pull_request:
     branches:
@@ -190,13 +191,15 @@ jobs:
               --rendering-driver opengl3 --resolution 1280x720 \
               res://tools/captures/pilot_combat_visual_capture.tscn -- \
               --level-slot="${slot}" --capture-point="${point}" --sim-frames="${frames}" \
-              --out="res://docs/design-pilot/captures/after_l${slot}_${point}.png" \
+              --out="res://.artifacts/pilot_after_l${slot}_${point}.png" \
               2>&1 | tee ".artifacts/level${slot}_capture_${point}.log"
-            test -s "docs/design-pilot/captures/after_l${slot}_${point}.png"
+            grep -q "PILOT VISUAL CAPTURE SAVED:" ".artifacts/level${slot}_capture_${point}.log"
+            test -s ".artifacts/pilot_after_l${slot}_${point}.png"
+            cp ".artifacts/pilot_after_l${slot}_${point}.png" "docs/design-pilot/captures/after_l${slot}_${point}.png"
           done
 
-          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_3.json > data/levels/chapter_1_level_3.json
-          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_4.json > data/levels/chapter_1_level_4.json
+          git show 5214788933b1a827f3a177d11ff486433dfe5e8a:data/levels/chapter_1_level_3.json > data/levels/chapter_1_level_3.json
+          git show 5214788933b1a827f3a177d11ff486433dfe5e8a:data/levels/chapter_1_level_4.json > data/levels/chapter_1_level_4.json
           for slot in 3 4; do
             for point in spawn mid end; do
               export SOUL_OF_HERO_SAVE_PATH="user://tests/pilot_before_${slot}_${point}_${GITHUB_RUN_ID}.json"
@@ -232,7 +235,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git checkout 2903a305c610fc547581cc82268f3b7e37e8e75a -- docs/design-audition/
+          git checkout ef890bad2529d76383ff042fc16ce5ffcdff3e53 -- docs/design-audition/
+          if git diff --quiet HEAD~1 HEAD -- data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json tools/generators/ tools/captures/; then
+            git checkout HEAD -- docs/design-pilot/captures/
+            echo "Map & capture sources unchanged since HEAD~1; keeping archived Godot 4.7 captures exact at HEAD."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add docs/design-pilot/captures/

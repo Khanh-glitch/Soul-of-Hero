@@ -42,6 +42,7 @@ func _run() -> void:
 		await get_tree().process_frame
 	await get_tree().physics_frame
 
+	var exit_code := 0
 	var route_host := _app_root.get_node_or_null("RouteHost")
 	var game := (
 		route_host.get_child(0) as Node2D
@@ -49,31 +50,56 @@ func _run() -> void:
 		else null
 	)
 	if game != null:
+		var dungeon := game.get_node_or_null("Level") as DungeonLevel
 		var entity_root := game.get_node_or_null("Level/Entities") as Node2D
 		var player := (
 			entity_root.get_node_or_null("Knight") as CharacterBody2D
 			if entity_root != null
 			else null
 		)
-		if player != null:
-			player.global_position = _anchor_for(_slot, _point)
-			player.set_physics_process(false)
-			var camera := player.get_node_or_null("Camera") as Camera2D
-			if camera != null:
-				camera.reset_smoothing()
-				camera.force_update_scroll()
-			for _f: int in _sim_frames:
-				await get_tree().physics_frame
-				await get_tree().process_frame
-				if "current_health" in player and "max_health" in player:
-					player.set("current_health", player.get("max_health"))
-			await RenderingServer.frame_post_draw
-			var image := get_viewport().get_texture().get_image()
-			DirAccess.make_dir_recursive_absolute(
-				ProjectSettings.globalize_path(_out_path).get_base_dir()
-			)
-			image.save_png(ProjectSettings.globalize_path(_out_path))
-			print("PILOT VISUAL CAPTURE SAVED: slot=%d point=%s out=%s" % [_slot, _point, _out_path])
+		var body_collision := (
+			player.get_node_or_null("BodyShape") as CollisionShape2D
+			if player != null
+			else null
+		)
+		if dungeon == null or player == null or body_collision == null or body_collision.shape == null:
+			push_error("PILOT VISUAL CAPTURE FAIL: missing live DungeonLevel or Knight BodyShape")
+			exit_code = 1
+		else:
+			var anchor := _anchor_for(_slot, _point)
+			var anchor_cell := Vector2i(floori(anchor.x / 16.0), floori(anchor.y / 16.0))
+			var check_error := _validate_anchor_cell(dungeon, player, body_collision, anchor_cell)
+			if not check_error.is_empty():
+				push_error(
+					"PILOT VISUAL CAPTURE INVALID ANCHOR (slot=%d point=%s cell=%s): %s"
+					% [_slot, _point, anchor_cell, check_error]
+				)
+				exit_code = 1
+			else:
+				player.global_position = anchor
+				player.set_physics_process(false)
+				var camera := player.get_node_or_null("Camera") as Camera2D
+				if camera != null:
+					camera.reset_smoothing()
+					camera.force_update_scroll()
+				for _f: int in _sim_frames:
+					await get_tree().physics_frame
+					await get_tree().process_frame
+					if "current_health" in player and "max_health" in player:
+						player.set("current_health", player.get("max_health"))
+				await RenderingServer.frame_post_draw
+				var image := get_viewport().get_texture().get_image()
+				DirAccess.make_dir_recursive_absolute(
+					ProjectSettings.globalize_path(_out_path).get_base_dir()
+				)
+				image.save_png(ProjectSettings.globalize_path(_out_path))
+				print(
+					"PILOT VISUAL CAPTURE SAVED: slot=%d point=%s cell=%s out=%s"
+					% [_slot, _point, anchor_cell, _out_path]
+				)
+	else:
+		push_error("PILOT VISUAL CAPTURE FAIL: RouteHost has no active game scene")
+		exit_code = 1
 
 	if AppFlow.has_active_run():
 		AppFlow.abort_to_home()
@@ -82,23 +108,60 @@ func _run() -> void:
 		var candidate := _save_path + suffix
 		if FileAccess.file_exists(candidate):
 			DirAccess.remove_absolute(ProjectSettings.globalize_path(candidate))
-	get_tree().quit(0)
+	get_tree().quit(exit_code)
+
+
+func _validate_anchor_cell(
+	dungeon: DungeonLevel,
+	player: CharacterBody2D,
+	body_collision: CollisionShape2D,
+	cell: Vector2i,
+) -> String:
+	if dungeon.backdrop.get_cell_source_id(cell) == -1:
+		return "cell %s has no walkable Backdrop tile" % cell
+	if dungeon.geometry.get_cell_source_id(cell) != -1:
+		return "cell %s is occupied by solid Geometry" % cell
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = body_collision.shape
+	query.collision_mask = 1
+	query.collide_with_areas = false
+	var cell_world := dungeon.to_global(Vector2(cell * Vector2i(16, 16)) + Vector2(8.0, 8.0))
+	query.transform = Transform2D(0.0, cell_world + body_collision.position)
+	for hit: Dictionary in dungeon.get_world_2d().direct_space_state.intersect_shape(query, 16):
+		var collider: Variant = hit.get("collider")
+		if collider is Node and (collider == dungeon.geometry or dungeon.is_ancestor_of(collider)):
+			return "Knight BodyShape collides with Geometry at cell %s (%s)" % [
+				cell,
+				String((collider as Node).get_path()),
+			]
+	for entity_raw: Variant in dungeon.level_data.get("entities", []):
+		if not entity_raw is Dictionary or String(entity_raw.get("type", "")) != "spikes":
+			continue
+		var pos: Array = entity_raw.get("position", [])
+		if pos.size() >= 2:
+			var sc := Vector2i(floori(float(pos[0]) / 16.0), floori(float(pos[1]) / 16.0))
+			if sc == cell:
+				return "cell %s stands directly on an authored spikes hazard" % cell
+	return ""
 
 
 func _anchor_for(slot: int, point: String) -> Vector2:
 	if slot == 3 and point == "combat":
-		# Right behind the central scriptorium archive cover island in Camp 1:
-		# both East SkeletonReapers (105,11) & (105,19) fire SpectralDiscs while 5 Skeletons charge!
-		return Vector2(93.0 * 16.0 + 8.0, 14.0 * 16.0 + 8.0)
+		# Walkable cover lane west of the central stone archive bays in Camp 1:
+		# both East SkeletonReapers (102,13) & (102,20) fire SpectralDiscs across the stacks!
+		return Vector2(91.0 * 16.0 + 8.0, 16.0 * 16.0 + 8.0)
 	if slot == 3 and point == "vault":
-		return Vector2(54.0 * 16.0 + 8.0, 13.0 * 16.0 + 8.0)
+		# Walkable North Scriptorium Cloister cell framing the breached Forbidden Folio Vault
+		# to the north AND the twin stone bridges spanning the chasm abyss to the south!
+		return Vector2(49.0 * 16.0 + 8.0, 10.0 * 16.0 + 8.0)
 	if slot == 4 and point == "combat":
-		# Inside Octagonal Elite Pin Arena beside central reliquary cover + active floor spikes:
-		# twin cross-firing SkeletonReapers (39,46) & (57,52) throw SpectralDiscs while 3 Skeletons converge!
-		return Vector2(49.0 * 16.0 + 8.0, 52.0 * 16.0 + 8.0)
+		# Walkable lane beside the central ritual bastion + fore-telegraphed spike gates in Camp 2:
+		# twin cross-firing SkeletonReapers (39,46) & (57,52) throw SpectralDiscs!
+		return Vector2(50.0 * 16.0 + 8.0, 50.0 * 16.0 + 8.0)
 	if slot == 4 and point == "spiral":
-		# Inside Floor 1 Great Three-Turn Concentric Spiral showing all coils + Central Bullseye Shrine!
-		return Vector2(45.0 * 16.0 + 8.0, 15.0 * 16.0 + 8.0)
+		# Walkable processional axis of the Central Spiral Shrine framing outer austere coil,
+		# intermediate counter-coil, and burning molten inner sanctum core!
+		return Vector2(46.0 * 16.0 + 8.0, 13.0 * 16.0 + 8.0)
 	return Vector2(14.0 * 16.0 + 8.0, 14.0 * 16.0 + 8.0)
 
 
