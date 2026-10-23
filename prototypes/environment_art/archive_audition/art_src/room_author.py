@@ -195,7 +195,9 @@ WALL_ITEMS = [
     ("wall_lamp", 34, 5),
     ("wall_lamp",  2, 10),
     ("wall_lamp",  2, 18),
+    ("wall_lamp",  2, 24),
     ("wall_lamp", 47, 12),
+    ("wall_lamp", 47, 20),
 ]
 
 # Blind arcading: niches recessed into the wall faces. This is the single
@@ -232,6 +234,13 @@ LIGHTS = [
     (616, 404, (0.50, 0.60, 0.74), 0.70, 2.4, "breach"),
     (470, 380, (0.54, 0.64, 0.78), 0.40, 1.6, "breach"),
     (424, 396, (1.00, 0.80, 0.55), 0.55, 1.5, "threshold"),
+    # the side-wall lamps: each light sits on the fixture that casts it
+    (40,  166, (1.00, 0.78, 0.50), 0.75, 1.7, "sconce"),
+    (40,  294, (1.00, 0.78, 0.50), 0.75, 1.7, "sconce"),
+    (760, 198, (1.00, 0.78, 0.50), 0.75, 1.7, "sconce"),
+    (760, 326, (1.00, 0.78, 0.50), 0.70, 1.7, "sconce"),
+    (40,  390, (1.00, 0.78, 0.50), 0.65, 1.6, "sconce"),
+    (552,  86, (1.00, 0.78, 0.50), 0.60, 1.5, "sconce"),
 ]
 
 # Explicit collision rectangles in tile units: (x, y, w, h). Props with a
