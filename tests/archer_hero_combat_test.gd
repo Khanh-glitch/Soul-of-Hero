@@ -430,6 +430,7 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 	manager.reset_all_cooldowns()
 	manager.reset_hand_combo()
 	_knight.call(&"_reset_archer_state", &"mouse_aim_test")
+	await _clear_transient_archer_shots()
 	var pointer_choice := ArcherDamageDummy.new()
 	pointer_choice.name = "PointerChoiceDummy"
 	pointer_choice.add_to_group(&"enemies")
@@ -828,6 +829,16 @@ func _test_sword_threat_visual_and_q_takeover() -> void:
 func _physics_frames(count: int) -> void:
 	for _frame: int in count:
 		await get_tree().physics_frame
+
+
+func _clear_transient_archer_shots() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	for candidate: Node in scene.find_children("*", "", true, false):
+		if candidate is PiercingArrowEffect:
+			candidate.queue_free()
+	await _physics_frames(1)
 
 
 func _expected_normal_damage(step: int, focus_stage: int = 0) -> int:
