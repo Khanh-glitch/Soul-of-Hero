@@ -73,9 +73,9 @@ DEFAULT_ENTITY_ART = {"w": 32, "h": 32, "anchor": "bottom"}
 # `solid` props get a single collider derived from their sprite width.
 PLACEMENTS = [
     # --- the press bank on the entry hall's north wall ----------------------
-    dict(sprite="shelf_closed", x=296, base_y=176, solid=True,
-         intent="bay 17-19: the tall records press directly above the spawn - "
-                "the first thing the player can identify"),
+    dict(sprite="shelf_partial", x=296, base_y=176, solid=True,
+         intent="bay 17-19: a partly emptied manuscript press behind the entry, "
+                "its visible records distinguish this room from a generic dungeon"),
     dict(sprite="shelf_full", x=440, base_y=176, solid=True,
          intent="bay 26-28: a press still full of rolled records on the "
                 "crossfire hall's north wall"),
@@ -107,9 +107,9 @@ PLACEMENTS = [
     dict(sprite="beam", x=200, base_y=320, solid=False,
          intent="the beam that came down with the wall, still lying across "
                 "the floor"),
-    dict(sprite="rubble_large", x=384, base_y=352, solid=True,
-         intent="fallen vaulting in the lower hall, east of the long board, "
-                "where the record run stopped"),
+    dict(sprite="rubble_large", x=392, base_y=352, solid=True,
+         intent="fallen vaulting in the lower hall, shifted east to leave a "
+                "readable threshold beside the floor-door frame"),
     # --- the way out --------------------------------------------------------
     dict(sprite="scrolls_a", x=600, base_y=320, solid=False,
          intent="more of the load dropped further east, towards the exit"),
