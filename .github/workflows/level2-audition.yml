@@ -7,7 +7,6 @@ on:
       - design-audition/level2-candidate-b
     paths:
       - "data/levels/chapter_1_level_2.json"
-      - "tools/generators/**"
   workflow_dispatch:
 
 permissions:
@@ -28,6 +27,8 @@ jobs:
     steps:
       - name: Check out isolated candidate branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
 
       - name: Install proven Godot 4.7 stable
         uses: chickensoft-games/setup-godot@v2
