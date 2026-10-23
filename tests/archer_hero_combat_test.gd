@@ -59,13 +59,13 @@ func _run() -> void:
 	_world.add_child(_dummy)
 	_dummy._target = _knight
 	await _physics_frames(3)
+	await _test_mouse_selected_aim_and_lmb_buffer()
 	await _test_live_focus_chain_and_release_timing()
 	await _test_attack_facing_allows_backpedal()
 	await _test_live_soul_mark_and_focus_failure_rules()
 	await _test_clear_shot_readiness()
 	await _test_dash_archer_visual_and_takeover()
 	await _test_sword_threat_visual_and_q_takeover()
-	await _test_mouse_selected_aim_and_lmb_buffer()
 	_finish()
 
 
@@ -430,7 +430,6 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 	manager.reset_all_cooldowns()
 	manager.reset_hand_combo()
 	_knight.call(&"_reset_archer_state", &"mouse_aim_test")
-	_knight.call(&"_finish_kit_buff")
 	var pointer_choice := ArcherDamageDummy.new()
 	pointer_choice.name = "PointerChoiceDummy"
 	pointer_choice.add_to_group(&"enemies")
@@ -464,11 +463,6 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 	_knight.call(&"_update_facing", Vector2.RIGHT)
 	_dummy.global_position = origin + Vector2(76.0, -48.0)
 	pointer_choice.global_position = origin + Vector2(148.0, 58.0)
-	_dummy.reset()
-	pointer_choice.reset()
-	await _clear_transient_archer_shots()
-	# The cleanup frame is also a legitimate travel frame for any older arrow.
-	# Reset once more so only this scenario's projectile can affect the assertion.
 	_dummy.reset()
 	pointer_choice.reset()
 	_knight.call(&"_set_locked_attack_target", pointer_choice)
@@ -546,6 +540,11 @@ func _test_mouse_selected_aim_and_lmb_buffer() -> void:
 	)
 	GameEvents.combat_hit_confirmed.disconnect(record_hit)
 	pointer_choice.queue_free()
+	manager.reset_hand_combo()
+	_knight.call(&"_reset_archer_state", &"mouse_aim_test_complete")
+	_knight.global_position = Vector2.ZERO
+	_knight.velocity = Vector2.ZERO
+	_knight.call(&"_update_facing", Vector2.RIGHT)
 	await _physics_frames(1)
 
 
@@ -833,15 +832,6 @@ func _test_sword_threat_visual_and_q_takeover() -> void:
 func _physics_frames(count: int) -> void:
 	for _frame: int in count:
 		await get_tree().physics_frame
-
-
-func _clear_transient_archer_shots() -> void:
-	for _pass: int in 2:
-		for candidate: Node in get_tree().root.find_children("*", "", true, false):
-			if candidate is PiercingArrowEffect:
-				candidate.set_physics_process(false)
-				candidate.queue_free()
-		await _physics_frames(1)
 
 
 func _expected_normal_damage(step: int, focus_stage: int = 0) -> int:
