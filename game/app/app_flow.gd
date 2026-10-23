@@ -390,7 +390,7 @@ func get_level_details(level_id: StringName) -> Dictionary:
 			"mode_id": &"training",
 			"display_name": "Sân Tập Hầm Mộ",
 			"objective_summary": sandbox.objective_summary if sandbox != null else "Luyện tập tự do trong hầm mộ.",
-			"layout_data_path": sandbox.layout_data_path if sandbox != null else "res://data/levels/crypt_entrance.json",
+			"layout_data_path": sandbox.layout_data_path if sandbox != null else "res://data/levels/crypt_training_sandbox.json",
 			"unlocked": true,
 			"completed": false,
 			"selected_difficulty": DIFFICULTY_RULES.EASY,

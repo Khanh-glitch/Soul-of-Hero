@@ -67613,7 +67613,8 @@
         1528,
         1192
       ],
-      "patrol": 24
+      "patrol": 24,
+      "guaranteed_loot_profile": "level_5_archer_soul"
     },
     {
       "id": "door_l5_f1_f2_down",

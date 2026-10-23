@@ -66,7 +66,9 @@ func reset_run() -> void:
 
 
 func configure_objective(next_required_sigils: int) -> void:
-	required_sigils = clampi(next_required_sigils, 1, 99)
+	# Zero is a valid authored requirement for free-practice sandbox maps.
+	# Campaign layouts keep their existing positive Sigil requirements.
+	required_sigils = clampi(next_required_sigils, 0, 99)
 	sigils = mini(sigils, required_sigils)
 	GameEvents.sigil_collected.emit(sigils, required_sigils)
 

@@ -2767,6 +2767,11 @@ func respawn() -> void:
 	player_state = PlayerState.IDLE
 	current_action = ""
 	action_elapsed = 0.0
+	# A new life cannot inherit buffered combo state: otherwise the next light
+	# input can replay the previous combo action and ignore live tuning values.
+	combo_memory_remaining = 0.0
+	queued_combo = false
+	_reset_sword_combo(&"death")
 	health = max_health
 	for hero_key: Variant in _hero_health_maximum.keys():
 		_hero_health_current[hero_key] = float(_hero_health_maximum[hero_key])
