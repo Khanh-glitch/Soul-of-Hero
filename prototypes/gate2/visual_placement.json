@@ -3,6 +3,13 @@
   "collider_height": 12,
   "collider_width_ratio": 0.86,
   "collision_layer": 1,
+  "level_layer_tint": {
+    "Decor": [
+      1.15,
+      1.02,
+      0.86
+    ]
+  },
   "light_texture": "res://prototypes/gate2/art/light_radial.png",
   "lights": [
     {
@@ -23953,18 +23960,18 @@
       },
       "water": {
         "modulate": [
-          1.75,
-          1.85,
-          1.95,
+          1.05,
+          1.18,
+          1.32,
           1.0
         ],
         "z": -7
       },
       "water_edge": {
         "modulate": [
-          1.55,
-          1.65,
-          1.75,
+          1.0,
+          1.12,
+          1.24,
           1.0
         ],
         "z": -6

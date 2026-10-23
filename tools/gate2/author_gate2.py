@@ -729,8 +729,8 @@ def build_material(level) -> tuple[dict, dict]:
             "floor": {"z": -8, "modulate": [1.42, 1.35, 1.26, 1.0]},
             # Water is the one cool note in a warm room, and the cloister is the
             # level's light source, so it is lifted well clear of the stone.
-            "water": {"z": -7, "modulate": [1.75, 1.85, 1.95, 1.0]},
-            "water_edge": {"z": -6, "modulate": [1.55, 1.65, 1.75, 1.0]},
+            "water": {"z": -7, "modulate": [1.05, 1.18, 1.32, 1.0]},
+            "water_edge": {"z": -6, "modulate": [1.0, 1.12, 1.24, 1.0]},
             "shadow": {"z": -6, "modulate": [0.86, 0.82, 0.84, 1.0]},
             "weather": {"z": -5, "modulate": [1.0, 1.0, 1.0, 1.0]},
             "mass": {"z": 0, "modulate": [0.58, 0.52, 0.50, 1.0]},
@@ -769,6 +769,11 @@ def build_art(level) -> tuple[dict, dict]:
         "collider_width_ratio": COLLIDER_RATIO,
         "collider_height": COLLIDER_H,
         "material": material,
+        # Candidate A's own Decor tiles are the only cool-toned art left in the
+        # room (purple grates, blue vessels) and they read as a second palette
+        # pinned to a warm wall. A warm multiply on that ONE level layer pulls
+        # them onto the archive's palette without touching a single file.
+        "level_layer_tint": {"Decor": [1.15, 1.02, 0.86]},
         "lights": lights,
         "props": props,
     }

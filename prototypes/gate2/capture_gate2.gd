@@ -46,7 +46,7 @@ const STATIONS := {
 	"archive_entry": Vector2i(23, 12),
 	"landmark": Vector2i(30, 12),
 	"cloister": Vector2i(38, 18),
-	"combat_space": Vector2i(62, 21),
+	"combat_space": Vector2i(58, 21),
 	"return_route": Vector2i(44, 21),
 }
 const STATION_ORDER: Array[String] = [

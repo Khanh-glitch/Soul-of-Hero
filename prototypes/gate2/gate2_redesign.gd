@@ -65,6 +65,7 @@ func attach_to_level(level: Node) -> bool:
 		return false
 	_build_props(data, container)
 	_build_material(data, level)
+	_tint_level_layers(data, level)
 	_build_lights(data, level)
 	return _failures.is_empty()
 
@@ -189,6 +190,28 @@ func _build_material(data: Dictionary, level: Node) -> void:
 			_fail("%s applied %d of %d authored cells"
 				% [layer.name, applied, layer.get_used_cells().size()])
 		print("GATE2 MATERIAL: %s  %d cells  z=%d" % [layer.name, applied, layer.z_index])
+
+
+# ----------------------------------------------------------- level layers -----
+
+func _tint_level_layers(data: Dictionary, level: Node) -> void:
+	## Multiplies Candidate A's own layer tints so the level's cool-toned Decor
+	## tiles (purple grates, blue vessels) sit on the archive's palette. This is
+	## a modulate on a live node - no file, no data, no collision is touched, and
+	## DungeonLevel's palette tint is preserved rather than replaced.
+	for layer_name: String in (data.get("level_layer_tint", {}) as Dictionary):
+		var layer := level.get_node_or_null(layer_name) as CanvasItem
+		if layer == null:
+			_fail("the live level has no '%s' layer to tint" % layer_name)
+			continue
+		var tint: Array = (data["level_layer_tint"] as Dictionary)[layer_name]
+		layer.modulate = Color(
+			layer.modulate.r * float(tint[0]),
+			layer.modulate.g * float(tint[1]),
+			layer.modulate.b * float(tint[2]),
+			layer.modulate.a
+		)
+		print("GATE2 TINT: %s -> %s" % [layer_name, str(layer.modulate)])
 
 
 # ---------------------------------------------------------------- lights ------
