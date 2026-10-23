@@ -8,6 +8,7 @@ const APP_ROOT_SCENE: PackedScene = preload("res://game/app/app_root.tscn")
 const SANDBOX_REGISTRY: LevelRegistry = preload(
 	"res://data/content/registries/sandbox_content_registry.tres"
 )
+const LEVEL_SCHEMA := preload("res://game/levels/level_schema.gd")
 const EXPECTED_LAYOUT := "res://data/levels/crypt_training_sandbox.json"
 const TILE_SIZE := 16.0
 const DIRECTIONS := [
@@ -48,6 +49,7 @@ func _run() -> void:
 		SaveService.configure_storage(_save_path, true),
 		"Training route uses a fresh isolated save profile",
 	)
+	_test_schema_contract()
 
 	_app_root = APP_ROOT_SCENE.instantiate()
 	_expect(_app_root != null, "production AppRoot instantiates for Training")
@@ -258,6 +260,34 @@ func _test_enemy_death_projection(game: Node2D, live_enemies: Dictionary) -> voi
 	_expect(
 		int(duplicate_snapshot.get("defeated_enemies", 0)) == 5,
 		"Duplicate enemy death cannot inflate Training completion",
+	)
+
+
+func _test_schema_contract() -> void:
+	var file := FileAccess.open(EXPECTED_LAYOUT, FileAccess.READ)
+	_expect(file != null, "Training schema fixture opens the dedicated layout")
+	if file == null:
+		return
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
+	file.close()
+	_expect(parsed is Dictionary, "Training schema fixture parses as a map")
+	if not parsed is Dictionary:
+		return
+	var document := parsed as Dictionary
+	var validation: Dictionary = LEVEL_SCHEMA.validate_level(document)
+	_expect(
+		bool(validation.get("ok", false)),
+		(
+			"Explicit free-practice Training contract accepts zero Sigils: %s"
+			% validation.get("error", "")
+		),
+	)
+	var uncontracted := document.duplicate(true)
+	var uncontracted_metadata := uncontracted.get("metadata", {}) as Dictionary
+	uncontracted_metadata.erase("training_contract")
+	_expect(
+		not bool(LEVEL_SCHEMA.validate_level(uncontracted).get("ok", false)),
+		"Zero Sigils remain invalid without the explicit Training contract",
 	)
 
 

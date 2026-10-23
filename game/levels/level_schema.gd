@@ -71,8 +71,18 @@ static func validate_level(value: Variant) -> Dictionary:
 	if not bool(pack_result.get("ok", false)):
 		return pack_result
 	var required_value: Variant = metadata_value.get("required_sigils", null)
-	if not _is_integer_number(required_value) or int(required_value) < 1 or int(required_value) > 99:
-		return _failure("metadata.required_sigils must be an integer between 1 and 99.")
+	var required_count := int(required_value) if _is_integer_number(required_value) else -1
+	var zero_sigil_training := required_count == 0 and _has_free_practice_training_contract(
+		metadata_value
+	)
+	if (
+		not _is_integer_number(required_value)
+		or required_count > 99
+		or (required_count < 1 and not zero_sigil_training)
+	):
+		return _failure(
+			"metadata.required_sigils must be 1-99, or 0 with an explicit free-practice Training contract."
+		)
 	var available_sigils := 0
 	for raw_entity: Variant in entities_value:
 		if not raw_entity is Dictionary:
@@ -86,6 +96,21 @@ static func validate_level(value: Variant) -> Dictionary:
 	if int(required_value) > available_sigils:
 		return _failure("metadata.required_sigils exceeds the %d sigil entities in this level." % available_sigils)
 	return {"ok": true}
+
+
+static func _has_free_practice_training_contract(metadata: Dictionary) -> bool:
+	var raw_contract: Variant = metadata.get("training_contract", {})
+	if not raw_contract is Dictionary:
+		return false
+	var contract := raw_contract as Dictionary
+	# Keep zero-Sigil validation scoped to an explicit non-campaign practice
+	# contract. Every authored campaign map retains the previous 1-99 rule.
+	return (
+		contract.get("campaign_slot", null) == 0
+		and contract.get("campaign_rewards", null) == false
+		and contract.get("required_sigils", null) == 0
+		and contract.get("free_exit", null) == true
+	)
 
 
 static func _validate_cells(cells: Array, width: int, height: int, layer_name: String) -> Dictionary:
