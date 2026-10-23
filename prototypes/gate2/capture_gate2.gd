@@ -45,9 +45,9 @@ const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"archive_entry": Vector2i(23, 12),
 	"landmark": Vector2i(30, 12),
-	"cloister": Vector2i(38, 16),
+	"cloister": Vector2i(38, 18),
 	"combat_space": Vector2i(62, 21),
-	"return_route": Vector2i(46, 21),
+	"return_route": Vector2i(44, 21),
 }
 const STATION_ORDER: Array[String] = [
 	"spawn", "archive_entry", "landmark", "cloister", "combat_space", "return_route",
@@ -346,11 +346,11 @@ func _hazard_cells() -> Dictionary:
 	for entity: Dictionary in _dungeon.level_data.get("entities", []):
 		if String(entity.get("type", "")) != "spikes":
 			continue
-		var px := float(entity["position"][0])
-		var py := float(entity["position"][1])
-		for cx: int in range(floori((px - 16.0) / TILE), floori((px + 15.0) / TILE) + 1):
-			for cy: int in range(floori((py - 16.0) / TILE), floori((py + 15.0) / TILE) + 1):
-				cells[Vector2i(cx, cy)] = true
+		# One cell per spike: Candidate A authors hazards on the cell grid, and
+		# the body-safe rule already keeps the Knight's 12x16 body out of the
+		# cell above it as well.
+		cells[Vector2i(floori(float(entity["position"][0]) / TILE),
+			floori(float(entity["position"][1]) / TILE))] = true
 	return cells
 
 

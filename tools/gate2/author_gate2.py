@@ -549,16 +549,16 @@ def build_material(level) -> tuple[dict, dict]:
     weather = []
     for (x, y) in sorted(floor, key=lambda p: (p[1], p[0])):
         if near_garth(x, y):
-            frame = f"floor_flag_{hashed(x, y, 3) % 4}"
+            frame = "floor_flag_1"
             weather.append([x, y, "damp"])
         elif (x, y) in wear:
-            frame = "floor_flag_worn"
+            frame = "floor_flag_1" if hashed(x, y, 3) % 5 else "floor_flag_worn"
             if hashed(x, y, 31) % 3 == 0:
                 weather.append([x, y, "wear"])
         elif hashed(x, y, 5) % 41 == 0:
             frame = "floor_grate"
         else:
-            frame = f"floor_flag_{hashed(x, y, 3) % 4}"
+            frame = "floor_flag_2" if hashed(x, y, 3) % 3 else "floor_flag_1"
             if hashed(x, y, 7) % 17 == 0:
                 weather.append([x, y, "moss"])
         floor_tiles.append([x, y, frame])
@@ -721,20 +721,20 @@ def build_material(level) -> tuple[dict, dict]:
             # The rock the level is cut into: the same tone as the wall mass at
             # the level's edge, falling away to near-black at 20+ cells, so the
             # building reads as embedded in stone rather than standing on it.
-            "vault_b5": {"z": -17, "modulate": [0.14, 0.12, 0.13, 1.0]},
-            "vault_b4": {"z": -16, "modulate": [0.30, 0.26, 0.27, 1.0]},
-            "vault_b3": {"z": -15, "modulate": [0.52, 0.45, 0.45, 1.0]},
-            "vault_b2": {"z": -14, "modulate": [0.75, 0.65, 0.63, 1.0]},
-            "vault_b1": {"z": -13, "modulate": [0.95, 0.84, 0.80, 1.0]},
-            "floor": {"z": -8, "modulate": [1.22, 1.17, 1.10, 1.0]},
+            "vault_b5": {"z": -17, "modulate": [0.09, 0.08, 0.09, 1.0]},
+            "vault_b4": {"z": -16, "modulate": [0.16, 0.14, 0.15, 1.0]},
+            "vault_b3": {"z": -15, "modulate": [0.25, 0.21, 0.22, 1.0]},
+            "vault_b2": {"z": -14, "modulate": [0.36, 0.31, 0.31, 1.0]},
+            "vault_b1": {"z": -13, "modulate": [0.50, 0.43, 0.42, 1.0]},
+            "floor": {"z": -8, "modulate": [1.42, 1.35, 1.26, 1.0]},
             # Water is the one cool note in a warm room, and the cloister is the
             # level's light source, so it is lifted well clear of the stone.
             "water": {"z": -7, "modulate": [1.75, 1.85, 1.95, 1.0]},
             "water_edge": {"z": -6, "modulate": [1.55, 1.65, 1.75, 1.0]},
             "shadow": {"z": -6, "modulate": [0.86, 0.82, 0.84, 1.0]},
             "weather": {"z": -5, "modulate": [1.0, 1.0, 1.0, 1.0]},
-            "mass": {"z": 0, "modulate": [0.72, 0.64, 0.61, 1.0]},
-            "wall_face": {"z": 1, "modulate": [1.22, 1.19, 1.16, 1.0]},
+            "mass": {"z": 0, "modulate": [0.58, 0.52, 0.50, 1.0]},
+            "wall_face": {"z": 1, "modulate": [1.30, 1.26, 1.22, 1.0]},
         },
         "garth": [[x, y] for (x, y) in sorted(garth, key=lambda p: (p[1], p[0]))],
     }, {"garth": len(garth), "vault": sum(len(b) for b in bands.values()),
