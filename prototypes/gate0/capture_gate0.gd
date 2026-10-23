@@ -31,10 +31,18 @@ const EXPECTED_SIZE := Vector2i(1280, 720)
 const TILE := 16
 
 ## Camera stations, in cells, all reachable on foot in Candidate A's level.
+##
+## The cell is chosen so the assembly that station is about lands in the clear
+## band of the frame - below the tutorial banner and above the XP bar - rather
+## than behind the HUD. `spawn` is Candidate A's authored spawn point and is not
+## a choice; the other three are picked against the assembled room:
+##   entry        the copyist station (desk + stool) and the long board
+##   destination  the three-press bank on the north wall
+##   combat_space the crossfire hall, its spikes and the east departure
 const STATIONS := {
 	"spawn": Vector2i(17, 13),
-	"entry": Vector2i(13, 17),
-	"destination": Vector2i(28, 12),
+	"entry": Vector2i(13, 12),
+	"destination": Vector2i(24, 11),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
