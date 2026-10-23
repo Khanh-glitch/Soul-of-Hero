@@ -175,6 +175,13 @@ func _test_collision_route(dungeon: DungeonLevel, player: CharacterBody2D) -> vo
 	var document := dungeon.level_data
 	var entities: Array = document.get("entities", [])
 	var floor_cells := _cells_by_position(document.get("layers", {}).get("Backdrop", []))
+	_expect(
+		(
+			not floor_cells.is_empty()
+			and dungeon.backdrop.get_used_cells().size() == floor_cells.size()
+		),
+		"Training runtime loads its complete non-empty authored Backdrop",
+	)
 	var spike_cells := _entity_cells_by_type(entities, "spikes")
 	var player_cell := _entity_cell(_first_entity(entities, "player"))
 	var query := PhysicsShapeQueryParameters2D.new()
