@@ -85,6 +85,11 @@ var _walked_cells := 0
 var _walked_pixels := 0.0
 var _camera_frames := 0
 var _engaged_fights := 0
+var _hazard_cache: Dictionary = {}
+var _enemy_heat: Dictionary = {}
+## Frames left before the harness is willing to start another fight after it broke
+## one off to survive. Without this it re-engages the same enemy every frame.
+var _disengage_frames := 0
 
 
 func _ready() -> void:
@@ -127,6 +132,8 @@ func _run() -> void:
 		_finish()
 		return
 	_check_contracts()
+	_hazard_cache = _hazard_cells()
+	_enemy_heat = _build_enemy_heat()
 	_start_health = int(_player.get("health"))
 	await _capture_floor_one()
 	await _descend(DESCENT_1, FLOOR2_ORDER)
@@ -430,6 +437,26 @@ func _hazard_cells() -> Dictionary:
 	return cells
 
 
+func _build_enemy_heat() -> Dictionary:
+	## Cells close to an authored enemy are less attractive. This is a routing cost,
+	## not a claim about where the enemies will be: they chase, and the harness still
+	## fights whatever ends up in front of it.
+	var heat := {}
+	for entity: Dictionary in _dungeon.level_data.get("entities", []):
+		var kind := String(entity.get("type", ""))
+		if kind == "player" or kind == "floor_door" or kind == "torch":
+			continue
+		var centre := Vector2i(floori(float(entity["position"][0]) / TILE),
+			floori(float(entity["position"][1]) / TILE))
+		for dx: int in range(-4, 5):
+			for dy: int in range(-4, 5):
+				var cell: Vector2i = centre + Vector2i(dx, dy)
+				var ring := maxi(absi(dx), absi(dy))
+				var weight := 6 if ring <= 2 else (3 if ring <= 3 else 1)
+				heat[cell] = int(heat.get(cell, 0)) + weight
+	return heat
+
+
 func _overlay_blocked_cells() -> Dictionary:
 	var cells := {}
 	for entry: Dictionary in _load_json(PLACEMENT_PATH).get("props", []):
@@ -473,7 +500,7 @@ func _plan_route(from_cell: Vector2i, to_cell: Vector2i) -> Array[Vector2i]:
 		return []
 	if from_cell == to_cell:
 		return [from_cell]
-	var hazards := _hazard_cells()
+	var hazards := _hazard_cache if not _hazard_cache.is_empty() else _hazard_cells()
 	var best := {from_cell: 0}
 	var previous := {}
 	var frontier: Array[Vector2i] = [from_cell]
@@ -495,7 +522,11 @@ func _plan_route(from_cell: Vector2i, to_cell: Vector2i) -> Array[Vector2i]:
 			var neighbour: Vector2i = current + step
 			if not walkable.has(neighbour):
 				continue
+			# Hazards are expensive and so is walking into a crowd: the harness takes
+			# the quiet way round, the way a player who wants to reach floor 2 alive
+			# would, and only fights what the route cannot avoid.
 			var step_cost := HAZARD_COST if hazards.has(neighbour) else 1
+			step_cost += int(_enemy_heat.get(neighbour, 0))
 			var tentative := cost + step_cost
 			if tentative >= int(best.get(neighbour, 1 << 30)):
 				continue
@@ -561,8 +592,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	## range and swinging at air would trade the Knight's HP for nothing, which is
 	## exactly what an earlier revision of this harness did. Returns frames spent.
 	var spent := 0
-	var kills_before := _enemy_count()
-	while spent < 200:
+	while spent < 300:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
@@ -570,10 +600,13 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			break
 		var offset := target.global_position - _player.global_position
 		var actions: Array[String] = []
-		if offset.length() > 24.0:
-			if absf(offset.x) > 2.0:
+		# Always face the target: the sword hitbox is placed 17 px along the attack
+		# direction, so swinging while facing away is a miss and costs the Knight HP
+		# for nothing. Movement input is what turns him.
+		if offset.length() > 12.0:
+			if absf(offset.x) > 1.0:
 				actions.append("move_right" if offset.x > 0.0 else "move_left")
-			if absf(offset.y) > 2.0:
+			if absf(offset.y) > 1.0:
 				actions.append("move_down" if offset.y > 0.0 else "move_up")
 		for action: String in actions:
 			Input.action_press(action, 1.0)
@@ -583,13 +616,10 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		for action: String in actions:
 			Input.action_release(action)
 		spent += 1
-		# Back away from a fight that is not working instead of losing the run to it.
-		if spent > 90 and _enemy_count() >= kills_before:
-			print("GATE3 COMBAT: the Knight broke off an ineffective fight near '%s'" % label)
-			break
-		if int(_player.get("health")) < 320:
+		if int(_player.get("health")) < 300:
 			print("GATE3 COMBAT: the Knight disengaged near '%s' at HP %d"
 				% [label, int(_player.get("health"))])
+			_disengage_frames = 420
 			break
 	_engaged_fights += 1
 	return spent
@@ -624,7 +654,9 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# A real player fights what is standing in the corridor, with the production
 		# light-attack action. The harness never fights while it is standing on a
 		# spike footprint: that is where the Knight would bleed out, not gain ground.
-		if not _hazard_cells().has(_current_cell()):
+		if _disengage_frames > 0:
+			_disengage_frames -= 1
+		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var blocker := _nearest_enemy(44.0, delta)
 			if blocker != null:
 				var spent := await _engage_enemy(blocker, label)
