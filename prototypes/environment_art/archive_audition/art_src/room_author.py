@@ -152,7 +152,7 @@ PROPS = [
     ("stool",           20, 24, False, 0),
 
     # ---- the eastern bay: a press pulled away from the wall -------------
-    ("shelf_closed",    34, 11, True, 0),
+    ("shelf_closed",    33, 11, True, 0),
     ("stool_tipped",    36, 13, False, 0),
     ("scrolls_a",       37, 14, False, 2),
     ("book_stack",      32, 12, False, 2),
@@ -253,10 +253,14 @@ COLLISION_RECTS = [
 
 SPAWN = (448, 372)  # px, just inside the door on the top tread
 # Camera anchors, given as floor cells the view is centred on.
+# Camera anchors, given as the floor cell the Knight stands on. Each one is
+# chosen so the 40x22.5-cell gameplay camera frames a readable piece of the room:
+# the entry anchor keeps the lit cabinet and the doorway in the same shot,
+# because a hall of tables alone does not say "archive".
 CAMERA_POINTS = {
-    "entry": (25, 21),   # one step inside the door, looking up the hall
-    "mid": (17, 15),     # the study hall between the piers
-    "end": (19, 8),      # the armarium wall
+    "entry": (25, 15),   # arrival: cabinet ahead, doorway still behind
+    "mid": (33, 20),     # the study corner: desks, the displaced press, debris
+    "end": (19, 8),      # the armarium wall up close
 }
 
 
