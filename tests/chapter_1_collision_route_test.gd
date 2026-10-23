@@ -59,6 +59,7 @@ const DIRECTIONS := [
 var _checks := 0
 var _failures: Array[String] = []
 var _reports: Array[Dictionary] = []
+var _runtime_host: Node
 
 
 func _initialize() -> void:
@@ -66,9 +67,14 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_runtime_host = Node.new()
+	_runtime_host.name = "Chapter1CollisionRouteRuntimeHost"
+	root.add_child(_runtime_host)
 	for map_spec: Dictionary in MAPS:
 		await _test_map(map_spec)
 	await _test_level_8_branch_routes()
+	if is_instance_valid(_runtime_host):
+		_runtime_host.free()
 	_finish()
 
 
@@ -101,10 +107,14 @@ func _test_map(map_spec: Dictionary) -> void:
 		return
 	dungeon.level_data_path = String(map_spec.path)
 	dungeon.watch_file_changes = false
-	root.add_child(game)
+	_runtime_host.add_child(game)
 	for _frame: int in 5:
 		await process_frame
 		await physics_frame
+	var live_player := game.get_node_or_null("Level/Entities/Knight") as CharacterBody2D
+	_expect(
+		live_player != null, "%s production Main reaches ready and places the live Knight" % map_id
+	)
 
 	var backdrop_count := dungeon.backdrop.get_used_cells().size()
 	_expect(
@@ -266,7 +276,7 @@ func _test_level_8_branch_routes() -> void:
 			continue
 		dungeon.level_data_path = "res://data/levels/chapter_1_level_8.json"
 		dungeon.watch_file_changes = false
-		root.add_child(game)
+		_runtime_host.add_child(game)
 		for _frame: int in 5:
 			await process_frame
 			await physics_frame
