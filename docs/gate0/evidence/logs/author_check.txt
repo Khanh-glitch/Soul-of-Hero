@@ -1,5 +1,5 @@
 level: Thư Khố Giao Hỏa  116x96 cells  backdrop 3351  geometry 1702  entities 79
 placements: 15  solids: 10
-route: reachable 978/3351 walkable cells, 30 blocked by overlay colliders, 27 anchors checked
+route: reachable 979/3351 walkable cells, 29 blocked by overlay colliders, 27 anchors checked
 OVERLAY VALIDATION PASSED (no void, no entity overlap, no collider overlap, no route seal)
 CHECK PASSED: prototypes/gate0/overlay_level3_archive.json is exactly what this table generates

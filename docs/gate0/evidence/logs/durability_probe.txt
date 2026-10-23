@@ -1,1 +1,1 @@
--rw-r--r-- 1 runner runner 162550 Oct 23 16:56 /tmp/probe.png
+-rw-r--r-- 1 runner runner 160141 Oct 23 17:08 /tmp/probe.png
