@@ -1,1 +1,1 @@
-room 50x30  floor 880 water 7 face 128 cap 342 decal 171 props 66 lights 12
+room 50x30  floor 880 water 7 face 128 cap 342 decal 171 props 66 lights 13
