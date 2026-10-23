@@ -122,7 +122,6 @@ func _test_map(map_spec: Dictionary) -> void:
 		"%s runtime loads every collision cell" % map_id
 	)
 
-	var space := dungeon.get_world_2d().direct_space_state
 	var body_shape := RectangleShape2D.new()
 	body_shape.size = BODY_CLEARANCE
 	var query := PhysicsShapeQueryParameters2D.new()
@@ -134,7 +133,7 @@ func _test_map(map_spec: Dictionary) -> void:
 		var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
 		# Knight's BodyShape is centered eight pixels above its foot/root position.
 		query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
-		if space.intersect_shape(query, 1).is_empty():
+		if not _has_current_level_collision(dungeon, query):
 			collision_clear_floor[cell] = true
 	var spawn_clear := collision_clear_floor.has(player_cell)
 	_expect(
@@ -332,11 +331,10 @@ func _test_level_8_branch_routes() -> void:
 		query.collision_mask = 1
 		query.collide_with_areas = false
 		var walkable := {}
-		var space := dungeon.get_world_2d().direct_space_state
 		for cell: Vector2i in floor_cells:
 			var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
 			query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
-			if space.intersect_shape(query, 1).is_empty():
+			if not _has_current_level_collision(dungeon, query):
 				walkable[cell] = true
 		var start := _entity_cell(_first_entity(document.get("entities", []), "player"))
 		var reached := _reachable(walkable, start, spikes, {})
@@ -384,6 +382,22 @@ func _node_names(parent: Node) -> PackedStringArray:
 	return names
 
 
+func _has_current_level_collision(
+	dungeon: DungeonLevel,
+	query: PhysicsShapeQueryParameters2D,
+) -> bool:
+	var game_root := dungeon.get_parent()
+	var space := dungeon.get_world_2d().direct_space_state
+	for result: Dictionary in space.intersect_shape(query, 64):
+		var collider: Variant = result.get("collider")
+		if not collider is Node:
+			continue
+		var node := collider as Node
+		if node == dungeon.geometry or game_root == node or game_root.is_ancestor_of(node):
+			return true
+	return false
+
+
 func _collision_names_at_cell(
 	dungeon: DungeonLevel,
 	shape: RectangleShape2D,
@@ -396,10 +410,14 @@ func _collision_names_at_cell(
 	var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
 	query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
 	var names := PackedStringArray()
-	for result: Dictionary in dungeon.get_world_2d().direct_space_state.intersect_shape(query, 8):
+	var game_root := dungeon.get_parent()
+	for result: Dictionary in dungeon.get_world_2d().direct_space_state.intersect_shape(query, 64):
 		var collider: Variant = result.get("collider")
-		if collider is Node:
-			names.append(String((collider as Node).get_path()))
+		if not collider is Node:
+			continue
+		var node := collider as Node
+		if node == dungeon.geometry or game_root == node or game_root.is_ancestor_of(node):
+			names.append(String(node.get_path()))
 	return names
 
 
