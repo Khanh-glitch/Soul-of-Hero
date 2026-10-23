@@ -18,6 +18,7 @@ GATE2 MATERIAL: Gate2_shadow  501 cells  z=-6
 GATE2 MATERIAL: Gate2_weather  284 cells  z=-5
 GATE2 MATERIAL: Gate2_mass  493 cells  z=0
 GATE2 MATERIAL: Gate2_wall_face  1214 cells  z=1
+GATE2 TINT: Decor -> (0.966, 0.816, 0.6708, 1.0)
 GATE2 LIGHTS: 3 local lanterns
 GATE2 OVERLAY ATTACHED: 20 props, 10 solid bodies, 12 material layers, 3 lights
 GATE2 CAPTURE: res://.artifacts/gate2/after_spawn.png (1280x720) at (280.0, 216.0)
@@ -27,10 +28,13 @@ GATE2 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames
 GATE2 CAPTURE: res://.artifacts/gate2/after_landmark.png (1280x720) at (488.8025, 200.536)
 GATE2 WALK: cloister  (489, 201) -> (615, 297)  159 px over 14 cells in 186 frames
 GATE2 CAPTURE: res://.artifacts/gate2/after_cloister.png (1280x720) at (614.6093, 297.4901)
-GATE2 COLLISION: Knight at (614.6093, 297.4901) is clear of every wall and prop
+GATE2 WALK: combat_space  (615, 297) -> (935, 343)  323 px over 27 cells in 278 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_combat_space.png (1280x720) at (934.6696, 342.8706)
+GATE2 WALK: return_route  (935, 343) -> (713, 344)  222 px over 18 cells in 169 frames
+GATE2 CAPTURE: res://.artifacts/gate2/after_return_route.png (1280x720) at (713.1164, 343.9882)
+GATE2 COLLISION: Knight at (713.1164, 343.9882) is clear of every wall and prop
 GATE2 COLLISION: 10 solid prop footprints probed, each covered by a body
-GATE2 COLLISION: open floor at (614.6093, 293.4901) is free of prop bodies
-GATE2 FAILURE: no walkable route to the 'combat_space' station at (62, 21)
-GATE2 CAPTURE TEST FAILED (after)
+GATE2 COLLISION: open floor at (713.1164, 339.9882) is free of prop bodies
+GATE2 CAPTURE TEST PASSED: 6 frames (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
