@@ -7,11 +7,5 @@ ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_entry.png (1280x720)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_mid.png (1280x720)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_end.png (1280x720)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_walk.png (1280x720)
-ERROR: Condition "!enabled || !is_inside_tree()" is true.
-   at: make_current (scene/2d/camera_2d.cpp:588)
-   GDScript backtrace (most recent call first):
-       [0] _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:97)
-       [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:44)
-       [2] _frame (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:87)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_overview.png (1280x720)
 ARCHIVE ROOM CAPTURE TEST PASSED: 5 frames at 1280x720
