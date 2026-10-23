@@ -58,10 +58,10 @@ func _ready() -> void:
 
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(OUT_DIR))
-	if not _boot():
+	if not await _boot():
 		_finish()
 		return
-	if _with_overlay and not _attach_overlay():
+	if _with_overlay and not await _attach_overlay():
 		_finish()
 		return
 	await _check_contracts()
@@ -316,7 +316,7 @@ func _walk_to_station(name: String) -> bool:
 			action = "move_down" if delta.y > 0.0 else "move_up"
 		Input.action_press(action, 1.0)
 		await get_tree().physics_frame
-		Input.action_release(action, 1.0)
+		Input.action_release(action)
 		frames += 1
 		if _player.global_position.distance_to(last_position) < 0.25:
 			stall += 1
