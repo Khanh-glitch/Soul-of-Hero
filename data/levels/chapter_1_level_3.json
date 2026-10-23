@@ -50642,16 +50642,6 @@
         "alternative": 0
       },
       {
-        "x": 24,
-        "y": 9,
-        "source": 0,
-        "atlas": [
-          4,
-          6
-        ],
-        "alternative": 0
-      },
-      {
         "x": 25,
         "y": 9,
         "source": 0,
@@ -51016,7 +51006,7 @@
         "y": 18,
         "source": 0,
         "atlas": [
-          6,
+          5,
           7
         ],
         "alternative": 0

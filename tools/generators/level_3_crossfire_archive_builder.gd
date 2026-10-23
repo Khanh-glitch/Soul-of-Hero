@@ -793,11 +793,12 @@ func _place_solid_stack_bay(x0: int, y_base: int, w: int, breached_east: bool) -
 
 func _place_column_1x3(cx: int, cy: int, cracked: bool) -> void:
 	# Verified 1x3 (16x48px) classical column over opaque brick backing [0, 3, 2].
+	# Note: [0, 6, 7] is flat fill in dungeon_tileset_ii.png; [0, 5, 7] is the true carved plinth base!
 	var col_x := 6 if cracked else 5
 	_set_solid(cx, cy, 0, 3, 2)
 	_decor_cells[Vector2i(cx, cy - 1)] = [0, col_x, 5]
 	_decor_cells[Vector2i(cx, cy)] = [0, col_x, 6]
-	_decor_cells[Vector2i(cx, cy + 1)] = [0, col_x, 7]
+	_decor_cells[Vector2i(cx, cy + 1)] = [0, 5, 7]
 
 
 func _place_sunken_shaft_2x4(x0: int, y0: int) -> void:
@@ -913,9 +914,8 @@ func _build_spawn_archive_entrance() -> void:
 		_set_solid(20 + dx, 8, 0, tx, 3)
 		_set_solid(20 + dx, 9, 0, tx, 4)
 
-	# (D) Wall water seepage ([0, 4, 5..6]) drawn on Decor over solid brick so zero black hole!
+	# (D) Wall water seepage ([0, 4, 5]) drawn on Decor over solid brick so zero flat fill!
 	_decor_cells[Vector2i(24, 8)] = [0, 4, 5]
-	_decor_cells[Vector2i(24, 9)] = [0, 4, 6]
 	_floor_cells[Vector2i(24, 10)] = [0, 3, 5]
 
 	# (E) Parallel Monastic Stone Archive Stack Carrels + Recessed 1x2 Timber Storage Cases
