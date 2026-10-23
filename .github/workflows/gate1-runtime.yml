@@ -34,7 +34,9 @@ jobs:
           mkdir -p .artifacts/gate1 docs/gate1/evidence/logs
           python3 tools/gate1/author_redesign.py | tee .artifacts/gate1/author.log
           python3 tools/gate1/author_redesign.py --check | tee .artifacts/gate1/author_check.log
+          git diff --exit-code -- prototypes/gate1/level_data/chapter_1_level_3_trial.json prototypes/gate1/visual_placement.json
           cp prototypes/gate0/level_data/chapter_1_level_3_a.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate1/base_pin.log
       - name: Import Godot 4.7
         run: |
           set -euo pipefail
@@ -53,17 +55,20 @@ jobs:
             --resolution 1280x720 res://prototypes/gate1/capture_gate1.tscn \
             2>&1 | tee .artifacts/gate1/before.log
           grep -q "GATE1 CAPTURE TEST PASSED" .artifacts/gate1/before.log
+          if grep -Eq "^ERROR:|^SCRIPT ERROR:" .artifacts/gate1/before.log; then exit 1; fi
       - name: Capture redesigned annex with live Knight collision and HUD
         run: |
           set -euo pipefail
           cp prototypes/gate1/level_data/chapter_1_level_3_trial.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate1/trial_pin.log
+          cmp data/levels/chapter_1_level_3.json prototypes/gate1/level_data/chapter_1_level_3_trial.json
           export SOUL_OF_HERO_SAVE_PATH="user://g1_after_$GITHUB_RUN_ID.json"
           xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 420s godot --path . \
             --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
             --resolution 1280x720 res://prototypes/gate1/capture_gate1.tscn -- --overlay \
             2>&1 | tee .artifacts/gate1/after.log
           grep -q "GATE1 CAPTURE TEST PASSED" .artifacts/gate1/after.log
-          if grep -Eq "^SCRIPT ERROR:" .artifacts/gate1/after.log; then exit 1; fi
+          if grep -Eq "^ERROR:|^SCRIPT ERROR:" .artifacts/gate1/after.log; then exit 1; fi
           test -f .artifacts/gate1/after_sanctuary.png
       - name: Persist native frames and log errors
         if: always()

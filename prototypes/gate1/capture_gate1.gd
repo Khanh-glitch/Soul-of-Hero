@@ -24,7 +24,8 @@ const OVERLAY_PATH := "res://prototypes/gate1/visual_placement.json"
 const OUT_DIR := "res://.artifacts/gate1"
 
 ## Candidate A's pinned Level 3 document (design-pilot f27e8b7).
-const LEVEL_SHA256 := "" # ephemeral trial hash controlled by deterministic Python generator
+const LEVEL_SHA256 := "5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54"
+const TRIAL_LEVEL_PATH := "res://prototypes/gate1/level_data/chapter_1_level_3_trial.json"
 const EXPECTED_CELLS := {"Backdrop": 3511, "Geometry": 1763, "Decor": 73}
 const EXPECTED_ENTITIES := 79
 const EXPECTED_TILESET_SOURCES := 2
@@ -85,8 +86,9 @@ func _run() -> void:
 
 func _boot() -> bool:
 	var digest := _file_sha256(LEVEL_PATH)
-	if digest.is_empty():
-		_push("live level is not Candidate A's pinned Level 3 (sha256 %s)" % digest)
+	var expected_digest := _file_sha256(TRIAL_LEVEL_PATH) if _with_overlay else LEVEL_SHA256
+	if digest != expected_digest or expected_digest.is_empty():
+		_push("Level 3 source pin mismatch; expected %s, observed %s" % [expected_digest, digest])
 		return false
 	print("GATE1 LEVEL: %s sha256=%s" % [LEVEL_PATH, digest])
 
