@@ -42,7 +42,7 @@ const TILE := 16
 const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"entry": Vector2i(13, 12),
-	"destination": Vector2i(24, 11),
+	"destination": Vector2i(22, 11),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
@@ -331,12 +331,22 @@ func _walk_to_station(name: String) -> bool:
 			index += 1
 			stall = 0
 			continue
-		var action := "move_right" if delta.x > 0.0 else "move_left"
-		if absf(delta.y) > absf(delta.x):
-			action = "move_down" if delta.y > 0.0 else "move_up"
-		Input.action_press(action, 1.0)
+		# Correct both axes, not just the dominant one. Walking a corridor with a
+		# single axis lets a few pixels of drift accumulate until the Knight's
+		# shoulder catches a wall corner and he wedges; pressing both keeps him
+		# on the cell centre line the route planned for.
+		var actions: Array[String] = []
+		if absf(delta.x) > 2.0:
+			actions.append("move_right" if delta.x > 0.0 else "move_left")
+		if absf(delta.y) > 2.0:
+			actions.append("move_down" if delta.y > 0.0 else "move_up")
+		if actions.is_empty():
+			actions.append("move_right" if delta.x > 0.0 else "move_left")
+		for action: String in actions:
+			Input.action_press(action, 1.0)
 		await get_tree().physics_frame
-		Input.action_release(action)
+		for action: String in actions:
+			Input.action_release(action)
 		frames += 1
 		if _player.global_position.distance_to(last_position) < 0.25:
 			stall += 1
