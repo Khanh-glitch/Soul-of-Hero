@@ -7,11 +7,11 @@ GATE3 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283
 GATE3 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
 GATE3 CAPTURE: res://.artifacts/gate3/before_spawn.png (1280x720) at (280.0, 216.0)
 GATE3 PLAN: archive_entry -> (23, 12) is 8 cells
-GATE3 TRACE: archive_entry frame 60 cell (22, 12) HP 1100 blocked 0 waypoint (22, 12)
+GATE3 TRACE: archive_entry frame 60 cell (22, 12) HP 1100 stuck 0 waypoint (22, 12)
 GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_archive_entry.png (1280x720) at (376.219, 200.536)
 GATE3 PLAN: landmark -> (30, 12) is 8 cells
-GATE3 TRACE: landmark frame 60 cell (30, 12) HP 1100 blocked 0 waypoint (30, 12)
+GATE3 TRACE: landmark frame 60 cell (30, 12) HP 1100 stuck 7 waypoint (30, 12)
 GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_landmark.png (1280x720) at (488.8025, 200.536)
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1280_landmark.png (1280x720) zoom=(1.0, 1.0)
@@ -21,56 +21,55 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: cloister -> (38, 18) is 15 cells
-GATE3 TRACE: cloister frame 60 cell (34, 14) HP 1100 blocked 0 waypoint (35, 14)
-GATE3 TRACE: cloister frame 120 cell (36, 18) HP 1100 blocked 0 waypoint (36, 18)
+GATE3 TRACE: cloister frame 60 cell (34, 14) HP 1100 stuck 2 waypoint (35, 14)
+GATE3 TRACE: cloister frame 120 cell (36, 18) HP 1100 stuck 1 waypoint (36, 18)
 GATE3 WALK: cloister  (489, 201) -> (617, 295)  160 px over 14 cells in 139 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_cloister.png (1280x720) at (617.4411, 295.1833)
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 60 cell (40, 21) HP 1100 blocked 0 waypoint (41, 21)
-GATE3 TRACE: south_loop frame 120 cell (43, 23) HP 1100 blocked 0 waypoint (44, 23)
+GATE3 TRACE: south_loop frame 60 cell (40, 21) HP 1100 stuck 5 waypoint (41, 21)
+GATE3 TRACE: south_loop frame 120 cell (43, 23) HP 1100 stuck 7 waypoint (44, 23)
 GATE3 WALK: south_loop  (617, 295) -> (744, 374)  150 px over 13 cells in 139 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_south_loop.png (1280x720) at (744.2471, 374.3859)
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 60 cell (53, 23) HP 1100 blocked 0 waypoint (53, 23)
-GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 blocked 0 waypoint (58, 21)
+GATE3 TRACE: combat_space frame 60 cell (53, 23) HP 1100 stuck 7 waypoint (53, 23)
+GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 stuck 5 waypoint (58, 21)
 GATE3 WALK: combat_space  (744, 374) -> (934, 344)  193 px over 14 cells in 127 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_combat_space.png (1280x720) at (934.3984, 343.5279)
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 60 cell (55, 23) HP 1100 blocked 0 waypoint (54, 23)
-GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 blocked 0 waypoint (47, 23)
+GATE3 TRACE: return_route frame 60 cell (55, 23) HP 1100 stuck 11 waypoint (54, 23)
+GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 stuck 5 waypoint (47, 23)
 GATE3 WALK: return_route  (934, 344) -> (713, 343)  222 px over 18 cells in 172 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_return_route.png (1280x720) at (712.8456, 343.2413)
 GATE3 PLAN: descent approach -> (109, 17) is 84 cells
-GATE3 TRACE: descent approach frame 60 cell (48, 23) HP 1100 blocked 0 waypoint (48, 23)
-GATE3 TRACE: descent approach frame 120 cell (55, 23) HP 1100 blocked 0 waypoint (55, 23)
-GATE3 TRACE: descent approach frame 180 cell (62, 23) HP 1100 blocked 0 waypoint (62, 23)
-GATE3 TRACE: descent approach frame 240 cell (66, 21) HP 1100 blocked 0 waypoint (67, 21)
-GATE3 TRACE: descent approach frame 300 cell (73, 21) HP 1100 blocked 0 waypoint (73, 20)
-GATE3 TRACE: descent approach frame 360 cell (76, 18) HP 1100 blocked 0 waypoint (77, 18)
-GATE3 TRACE: descent approach frame 420 cell (79, 18) HP 1080 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 480 cell (79, 18) HP 926 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 540 cell (79, 18) HP 906 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 600 cell (79, 18) HP 866 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 660 cell (79, 18) HP 846 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 720 cell (79, 18) HP 692 blocked 1 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 780 cell (79, 18) HP 672 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 840 cell (79, 18) HP 518 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 900 cell (79, 18) HP 498 blocked 1 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 960 cell (82, 15) HP 344 blocked 0 waypoint (80, 18)
-GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 190
-GATE3 TRACE: descent approach frame 1020 cell (83, 16) HP 190 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1080 cell (83, 18) HP 190 blocked 0 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1140 cell (82, 18) HP 36 blocked 2 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 60 cell (48, 23) HP 1100 stuck 1 waypoint (48, 23)
+GATE3 TRACE: descent approach frame 120 cell (55, 23) HP 1100 stuck 1 waypoint (55, 23)
+GATE3 TRACE: descent approach frame 180 cell (62, 23) HP 1100 stuck 1 waypoint (62, 23)
+GATE3 TRACE: descent approach frame 240 cell (66, 21) HP 1100 stuck 6 waypoint (67, 21)
+GATE3 TRACE: descent approach frame 300 cell (73, 21) HP 1100 stuck 3 waypoint (73, 20)
+GATE3 TRACE: descent approach frame 360 cell (76, 18) HP 1100 stuck 6 waypoint (77, 18)
+GATE3 TRACE: descent approach frame 420 cell (80, 18) HP 1080 stuck 1 waypoint (80, 18)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 13 px with target HP 979, Knight HP 926
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 13 px, target HP 979, Knight HP 926
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 28 px, target HP 979, Knight HP 772
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 13 px, target HP 979, Knight HP 772
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 14 px, target HP 979, Knight HP 772
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 25 px, target HP 979, Knight HP 618
+GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 14 px, target HP 979, Knight HP 618
+GATE3 TRACE: descent approach frame 720 cell (78, 18) HP 310 stuck 41 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 780 cell (80, 18) HP 156 stuck 41 waypoint (81, 18)
+GATE3 TRACE: descent approach frame 840 cell (79, 18) HP 136 stuck 41 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 900 cell (79, 18) HP 116 stuck 41 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 960 cell (79, 18) HP 116 stuck 40 waypoint (80, 18)
 GATE3 PLAN: descent approach -> (9, 51) is 0 cells
-GATE3 COLLISION: Knight at (1326.831, 299.174) is clear of every wall and prop
+GATE3 COLLISION: Knight at (1276.861, 294.9264) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 933 px travelled, 1 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12836 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 769 nodes
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1326.831, 299.174)
+GATE3 OBJECTS: ObjectDB holds 12831 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 767 nodes
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1276.861, 294.9264)
 GATE3 FAILURE: no walkable route to 'descent approach' at (9, 51)
 GATE3 CAPTURE TEST FAILED (before)
-WARNING: 19 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 5 resources still in use at exit (run with --verbose for details).
+ERROR: 3 resources still in use at exit (run with --verbose for details).
    at: clear (core/io/resource.cpp:822)
