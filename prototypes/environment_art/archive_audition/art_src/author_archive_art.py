@@ -390,31 +390,62 @@ def face_broken(seed: int) -> Image.Image:
 # Water: 9-slice pool + a still variant
 # ---------------------------------------------------------------------------
 def water_tile(kind: str) -> Image.Image:
+    """Standing water with a ragged coastline.
+
+    Coast tiles leave the stone outside the waterline fully transparent so the
+    flagstones show through: a straight tile-aligned rectangle reads as spilled
+    paint rather than a pool. The waterline wobbles per column with a fixed
+    table, so the pool edge steps irregularly instead of marching in a grid.
+    """
     img = new(T, T)
-    rect(img, 0, 0, T, T, WATER_D)
-    # Sparse, broken highlights only: a full ripple grid reads as fabric.
-    for y in range(2, T, 6):
-        for x in range(T):
-            if (x * 5 + y * 7) % 13 < 2:
-                px(img, x, y, WATER_M)
     if kind == "deep":
+        rect(img, 0, 0, T, T, WATER_D)
+        _water_sheen(img, 0, 0, T, T)
         return img
-    # shoreline: a dark wet lip on the stone side, a faint reflection inside
+
+    wobble = [0, 1, 2, 1, 0, 1, 3, 2, 0, 1, 1, 2, 0, 2, 1, 0]
+
+    def inside(x: int, y: int) -> bool:
+        if "n" in kind and y < 2 + wobble[x % 16]:
+            return False
+        if "s" in kind and y > T - 1 - (2 + wobble[(x + 5) % 16]):
+            return False
+        if "w" in kind and x < 2 + wobble[(y + 3) % 16]:
+            return False
+        if "e" in kind and x > T - 1 - (2 + wobble[(y + 7) % 16]):
+            return False
+        return True
+
+    for y in range(T):
+        for x in range(T):
+            if inside(x, y):
+                px(img, x, y, WATER_D)
+    _water_sheen(img, 0, 0, T, T)
+
+    # shoreline: a wet dark lip on the water side, a cold glint on the north
+    for y in range(T):
+        for x in range(T):
+            if not inside(x, y):
+                continue
+            if not (inside(x - 1, y) and inside(x + 1, y)
+                    and inside(x, y - 1) and inside(x, y + 1)):
+                px(img, x, y, TEAL_D)
     if "n" in kind:
-        hline(img, 0, 0, T, (15, 18, 20))
-        hline(img, 0, 1, T, TEAL_D)
-        for x in range(0, T, 5):
-            px(img, x, 2, WATER_L)
-    if "s" in kind:
-        hline(img, 0, T - 1, T, (15, 18, 20))
-        hline(img, 0, T - 2, T, TEAL_D)
-    if "w" in kind:
-        vline(img, 0, 0, T, (15, 18, 20))
-        vline(img, 1, 0, T, TEAL_D)
-    if "e" in kind:
-        vline(img, T - 1, 0, T, (15, 18, 20))
-        vline(img, T - 2, 0, T, TEAL_D)
+        for x in range(T):
+            yy = 2 + wobble[x % 16]
+            if inside(x, yy + 1):
+                px(img, x, yy + 1, WATER_L)
     return img
+
+
+def _water_sheen(img: Image.Image, x0: int, y0: int, w: int, h: int) -> None:
+    """Sparse broken highlights: a ripple grid reads as woven fabric."""
+    for y in range(y0 + 2, y0 + h, 6):
+        for x in range(x0, x0 + w):
+            if (x * 5 + y * 7) % 13 < 2:
+                current = img.getpixel((x, y))
+                if current[3] > 0:
+                    px(img, x, y, WATER_M)
 
 
 def damp_decal(seed: int) -> Image.Image:
