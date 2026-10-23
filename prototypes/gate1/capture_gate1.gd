@@ -44,7 +44,7 @@ const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"entry": Vector2i(13, 12),
 	"destination": Vector2i(23, 20),
-	"sanctuary": Vector2i(27, 26),
+	"sanctuary": Vector2i(32, 26),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
@@ -99,7 +99,14 @@ func _boot() -> bool:
 		_push("production AppRoot did not instantiate")
 		return false
 	add_child(_app_root)
-	await get_tree().process_frame
+	# AppRoot must finish its real Boot -> Title handoff before we enter
+	# Level 3; racing _finish_boot causes an app-origin startup error.
+	var boot_deadline := Time.get_ticks_msec() + 20000
+	while AppFlow.get_current_route() != &"title" and Time.get_ticks_msec() < boot_deadline:
+		await get_tree().process_frame
+	if AppFlow.get_current_route() != &"title":
+		_push("production AppRoot did not complete its Boot -> Title route")
+		return false
 	if not AppFlow.start_campaign_level(&"chapter_1_level_3"):
 		_push("production campaign gate rejected Level 3")
 		return false
@@ -123,10 +130,17 @@ func _boot() -> bool:
 		_push("campaign Main failed to load the intended Level 3")
 		return false
 	_dungeon.watch_file_changes = false
-	var tutorial := _game.get_node_or_null("Tutorial")
-	if tutorial != null and tutorial.has_node("TutorialPanel"):
-		if (tutorial.get_node("TutorialPanel") as CanvasItem).visible:
-			_push("Level 1 tutorial is incorrectly displayed in campaign Level 3")
+	# The Level 1 tutorial node exists in Main for every stage, but should
+	# explicitly be inactive in the actual campaign Level 3 run.
+	var tutorial := _game.get_node_or_null("LevelOneTutorial") as CanvasLayer
+	if tutorial == null:
+		_push("production Main is missing its LevelOneTutorial node")
+	else:
+		var tutorial_panel := tutorial.get_node_or_null("%TutorialPanel") as CanvasItem
+		if tutorial_panel == null:
+			_push("cannot locate the real tutorial panel for Level 3 validation")
+		elif tutorial_panel.visible:
+			_push("Level 1 tutorial incorrectly visible in campaign Level 3")
 	print("GATE1 CAMPAIGN ROUTE: %s, real HUD and active Level 3" % String(active.get("content_level_id", "")))
 
 	var container := _game.get_node_or_null("Level/Entities") as Node2D
