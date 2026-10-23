@@ -1,0 +1,44 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+SCRIPT ERROR: Parse Error: Cannot infer the type of "half" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:208)
+          GDScript backtrace (most recent call first):
+              [0] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:32)
+ERROR: Failed to load script "res://prototypes/environment_art/archive_audition/scene/archive_room.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:32)
+SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
+          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+          GDScript backtrace (most recent call first):
+              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:39)
+              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
+SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
+          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+          GDScript backtrace (most recent call first):
+              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:40)
+              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
+SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
+          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+          GDScript backtrace (most recent call first):
+              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
+              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:41)
+              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
+ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_walk.png (1280x720)
+SCRIPT ERROR: Invalid access to property or key 'room' on a base object of type 'Node2D'.
+          at: _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:95)
+          GDScript backtrace (most recent call first):
+              [0] _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:95)
+              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:44)
+              [2] _frame (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:87)
+CAPTURE FAILURE: the Knight was not spawned from the shipping scene
+ARCHIVE ROOM CAPTURE TEST FAILED
+WARNING: 1 RID of type "CanvasItem" was leaked.
+   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2733)
+WARNING: 1 ObjectDB instance was leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
