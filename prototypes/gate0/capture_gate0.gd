@@ -34,7 +34,7 @@ const TILE := 16
 const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"entry": Vector2i(13, 17),
-	"destination": Vector2i(29, 11),
+	"destination": Vector2i(28, 12),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
@@ -163,9 +163,14 @@ func _check_contracts() -> void:
 	_expect(container != null and container.y_sort_enabled,
 		"the entity container is still y-sorted, so props sort with actors")
 
+	# HUD's root is a CanvasLayer, so it is not a CanvasItem: presence plus a
+	# visibility check only where visibility actually exists.
 	var hud := _game.get_node_or_null("HUD")
-	_expect(hud != null and (hud as CanvasItem).visible,
-		"the production HUD is in the captured frame")
+	_expect(hud != null, "the production HUD is in the scene")
+	if hud is CanvasItem:
+		_expect((hud as CanvasItem).visible, "the production HUD is visible in frame")
+	elif hud is CanvasLayer:
+		_expect((hud as CanvasLayer).visible, "the production HUD layer is visible in frame")
 	_expect(_count_huds() == 1, "exactly one HUD in the scene")
 
 	# The overlay must not smuggle in a third TileSet source.
@@ -247,9 +252,15 @@ func _walkable_cells() -> Dictionary:
 		walkable.erase(Vector2i(int(cell["x"]), int(cell["y"])))
 	for key: Vector2i in _blocked_cells:
 		walkable.erase(key)
-	# The Knight's body is 12x16 in a 16px grid, so a one-cell margin keeps the
-	# walk off wall faces without teleporting.
-	return walkable
+	# The Knight's BodyShape is 12x16 anchored at his feet, so standing at a
+	# cell centre puts his body across that cell and the one above it. A cell is
+	# only walkable if BOTH rows are open, otherwise the route plans through a
+	# gap his shoulders do not fit through and he wedges on a wall corner.
+	var body_safe := {}
+	for cell: Vector2i in walkable:
+		if walkable.has(cell + Vector2i.UP):
+			body_safe[cell] = true
+	return body_safe
 
 
 func _plan_route(from_cell: Vector2i, to_cell: Vector2i) -> Array[Vector2i]:
