@@ -39,6 +39,9 @@ const EXPECTED_TILESET_SOURCES := 2
 const EXPECTED_SIZE := Vector2i(1280, 720)
 const SMALL_SIZE := Vector2i(1024, 576)
 const TILE := 16
+## A spike footprint is walkable, but the router treats it as this much worse than
+## open floor, so the Knight only crosses one where the level leaves no choice.
+const HAZARD_COST := 25
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -244,7 +247,6 @@ func _attach_overlay() -> bool:
 	_expect(bool(_overlay.get("shade_built")),
 		"the shade field was built (C6: one node instead of five band layers)")
 	_blocked_cells = _overlay_blocked_cells()
-	_blocked_cells.merge(_hazard_cells())
 	return _failures.is_empty()
 
 
@@ -333,7 +335,9 @@ func _check_contracts() -> void:
 
 	# Nothing opaque may cover an authored floor cell: the walk must never be hidden.
 	var walkable := _authored_floor_cells()
-	for role: String in ["rock", "mass", "wall_face", "niche", "shadow"]:
+	# `shadow` is deliberately excluded: it is a translucent contact darkening
+	# (alpha 0.62) painted over floor next to walls, not an opaque cover.
+	for role: String in ["rock", "mass", "wall_face", "niche"]:
 		var layer := _dungeon.get_node_or_null("Gate3_" + role) as TileMapLayer
 		if layer == null:
 			continue
@@ -384,7 +388,11 @@ func _authored_floor_cells() -> Dictionary:
 
 
 func _hazard_cells() -> Dictionary:
-	## Candidate A's floor spikes, so the walk avoids gambling on HP.
+	## Candidate A's floor spikes. Like the production game these are Area2Ds that
+	## damage a body standing in them; they do not block the walk. The router gives
+	## them a high cost, so the Knight avoids them whenever the level offers a safe
+	## way round and only crosses one where the level itself demands it. Whatever HP
+	## that costs is reported, not hidden.
 	var cells := {}
 	for entity: Dictionary in _dungeon.level_data.get("entities", []):
 		if String(entity.get("type", "")) != "spikes":
@@ -403,10 +411,11 @@ func _overlay_blocked_cells() -> Dictionary:
 		if not bool(entry.get("solid", false)):
 			continue
 		var box: Array = entry["collider"]
-		var left := float(box[0]) - float(box[2]) * 0.5
-		var top := float(box[1]) - float(box[3]) * 0.5
-		var right := float(box[0]) + float(box[2]) * 0.5
-		var bottom := float(box[1]) + float(box[3]) * 0.5
+		# The authored contract is a pixel bounding box: [left, top, right, bottom].
+		var left := float(box[0])
+		var top := float(box[1])
+		var right := float(box[2])
+		var bottom := float(box[3])
 		for cx: int in range(floori(left / TILE), floori((right - 1.0) / TILE) + 1):
 			for cy: int in range(floori(top / TILE), floori((bottom - 1.0) / TILE) + 1):
 				cells[Vector2i(cx, cy)] = true
@@ -429,22 +438,46 @@ func _walkable_cells() -> Dictionary:
 
 
 func _plan_route(from_cell: Vector2i, to_cell: Vector2i) -> Array[Vector2i]:
+	## Dijkstra over the body-safe cells. Ordinary floor costs 1, a spike footprint
+	## costs HAZARD_COST, so a safe detour always wins when one exists and the
+	## harness never walks over a hazard on a whim. Returns [] when there is no route
+	## at all, and a one-cell route when the Knight already stands on the target
+	## (which is what happens immediately after a floor door).
 	var walkable := _walkable_cells()
 	if not walkable.has(from_cell) or not walkable.has(to_cell):
 		return []
-	var previous := {from_cell: from_cell}
-	var queue: Array[Vector2i] = [from_cell]
-	var head := 0
-	while head < queue.size():
-		var current: Vector2i = queue[head]
-		head += 1
+	if from_cell == to_cell:
+		return [from_cell]
+	var hazards := _hazard_cells()
+	var best := {from_cell: 0}
+	var previous := {}
+	var frontier: Array[Vector2i] = [from_cell]
+	var frontier_cost: Array[int] = [0]
+	while not frontier.is_empty():
+		var pick := 0
+		for index: int in range(1, frontier.size()):
+			if frontier_cost[index] < frontier_cost[pick]:
+				pick = index
+		var current: Vector2i = frontier[pick]
+		var cost := frontier_cost[pick]
+		frontier.remove_at(pick)
+		frontier_cost.remove_at(pick)
 		if current == to_cell:
 			break
+		if cost > int(best.get(current, 1 << 30)):
+			continue
 		for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
 			var neighbour: Vector2i = current + step
-			if walkable.has(neighbour) and not previous.has(neighbour):
-				previous[neighbour] = current
-				queue.append(neighbour)
+			if not walkable.has(neighbour):
+				continue
+			var step_cost := HAZARD_COST if hazards.has(neighbour) else 1
+			var tentative := cost + step_cost
+			if tentative >= int(best.get(neighbour, 1 << 30)):
+				continue
+			best[neighbour] = tentative
+			previous[neighbour] = current
+			frontier.append(neighbour)
+			frontier_cost.append(tentative)
 	if not previous.has(to_cell):
 		return []
 	var route: Array[Vector2i] = []
@@ -519,7 +552,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	print("GATE3 WALK: %s  (%.0f, %.0f) -> (%.0f, %.0f)  %.0f px over %d cells in %d frames"
 		% [label, started.x, started.y, _player.global_position.x,
 			_player.global_position.y, travelled, route.size() - 1, frames])
-	_expect(travelled > 16.0 or label == "spawn",
+	# A one-waypoint route means the Knight is already standing on the station, which
+	# only happens on the landing cell a floor door just moved him to; that transition
+	# is itself proved separately by `_use_floor_door`.
+	_expect(travelled > 16.0 or route.size() <= 1 or label == "spawn",
 		"'%s' was reached on foot, not by teleporting" % label)
 	return true
 
@@ -531,7 +567,15 @@ func _walk_to_station(name: String) -> bool:
 # ---------------------------------------------------------- evidence ---------
 
 func _capture_floor_one() -> void:
+	# `descent_landing` is the repaired shaft: it does not exist as a room in
+	# Candidate A, which is precisely what Gate 2 defect C1 is about, so the BEFORE
+	# run has no walk there and records that instead of inventing a viewpoint.
+	var order: Array[String] = []
 	for name: String in FLOOR1_ORDER:
+		if not _with_overlay and name == "descent_landing":
+			continue
+		order.append(name)
+	for name: String in order:
 		if name != "spawn":
 			if not await _walk_to_station(name):
 				return
@@ -734,7 +778,9 @@ func _probe_collision() -> void:
 		if not bool(entry.get("solid", false)):
 			continue
 		var box: Array = entry["collider"]
-		var point := Vector2(float(box[0]), float(box[1]))
+		# [left, top, right, bottom] in level pixels; probe the centre.
+		var point := Vector2((float(box[0]) + float(box[2])) * 0.5,
+			(float(box[1]) + float(box[3])) * 0.5)
 		if not _point_hits_gate3_collision(space, point, collider_root):
 			_push("no Gate3Collision body under the solid prop '%s' at %s"
 				% [String(entry.get("id")), str(point)])

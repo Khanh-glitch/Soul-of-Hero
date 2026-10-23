@@ -126,17 +126,23 @@ func _build_props(data: Dictionary, container: Node2D) -> void:
 
 		if not bool(entry.get("solid", false)):
 			continue
+		# The authored contract is a pixel bounding box: [left, top, right, bottom].
+		# The body sits at its centre with the box's own extent, so the collider is
+		# exactly the footprint the authoring tool validated against the floor.
 		var box: Array = entry["collider"]
+		var left := float(box[0])
+		var top := float(box[1])
+		var right := float(box[2])
+		var bottom := float(box[3])
 		var body := StaticBody2D.new()
 		body.name = "solid_" + String(entry.get("id", "prop"))
 		body.collision_layer = int(data.get("collision_layer", 1))
 		body.collision_mask = 0  # a wall: never queries actors
 		var shape := RectangleShape2D.new()
-		shape.size = Vector2(float(box[2]), float(box[3]))
+		shape.size = Vector2(right - left, bottom - top)
 		var shape_node := CollisionShape2D.new()
 		shape_node.shape = shape
-		# box[0..1] is the shape CENTRE in level pixels (the JSON contract).
-		body.position = Vector2(float(box[0]), float(box[1]))
+		body.position = Vector2((left + right) * 0.5, (top + bottom) * 0.5)
 		body.add_child(shape_node)
 		collision_root.add_child(body)
 		colliders_added += 1
