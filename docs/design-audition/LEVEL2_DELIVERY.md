@@ -12,8 +12,10 @@ routes on `slot=2` and the three production captures.
 — *Godot 4.7 Runtime Validation*: every Chapter 1 / Level 2 step passed; the run is
 marked failed only by the **“Original main baseline comparison”** job, which checks
 out `main` (86 commits behind this work) and fails there, unrelated to this branch.
-The captures published in `evidence/` are the artifacts of run `39902162744`,
-committed back onto the branch by the workflow itself.
+The captures in `evidence/` are the real artifacts of run `39902162744` (and are
+re-published unchanged by later runs of the same workflow, e.g. `39902478800`),
+committed back onto the branch by the workflow itself so a reviewer can open
+them without downloading a zip.
 
 Concept: [`LEVEL2_CONCEPT.md`](LEVEL2_CONCEPT.md). Evidence folder:
 [`evidence/`](evidence/).
