@@ -87,10 +87,34 @@ var _camera_frames := 0
 
 
 func _ready() -> void:
-	for argument: String in OS.get_cmdline_user_args():
+	var arguments := OS.get_cmdline_user_args()
+	for argument: String in arguments:
 		if argument == "--overlay":
 			_with_overlay = true
+	if "--check" in arguments:
+		_check_scripts()
+		return
 	_run.call_deferred()
+
+
+func _check_scripts() -> void:
+	## A cheap smoke test that the whole Gate 3 scene graph compiles inside the real
+	## project: a script that fails to load leaves the capture scene empty, and under
+	## Xvfb that only shows up as a fifteen-minute timeout. This takes seconds.
+	var ok := true
+	var overlay_script := load("res://prototypes/gate3/gate3_redesign.gd") as Script
+	if overlay_script == null or not overlay_script.can_instantiate():
+		printerr("GATE3 SCRIPT CHECK FAILED: gate3_redesign.gd does not compile")
+		ok = false
+	var overlay: Node = OVERLAY_SCENE.instantiate()
+	if overlay == null or not overlay.has_method("attach_to_level"):
+		printerr("GATE3 SCRIPT CHECK FAILED: the overlay scene has no attach_to_level")
+		ok = false
+	elif overlay != null:
+		overlay.free()
+	if ok:
+		print("GATE3 SCRIPT CHECK OK: capture and overlay compile in the live project")
+	get_tree().quit(0 if ok else 1)
 
 
 func _run() -> void:

@@ -55,13 +55,13 @@ jobs:
           set -euo pipefail
           godot --version | tee .artifacts/gate3/version.log
           timeout 300s godot --headless --audio-driver Dummy --editor --path . --import --quit 2>&1 | tee .artifacts/gate3/import.log
-          # Parse both Gate 3 scripts before spending fifteen minutes on a capture:
-          # a script that fails to load leaves the scene empty and the capture only
-          # fails at its timeout, which hides the one line that explains why.
-          for script in res://prototypes/gate3/capture_gate3.gd res://prototypes/gate3/gate3_redesign.gd; do
-            timeout 120s godot --headless --path . --check-only --script "$script" \
-              2>&1 | tee -a .artifacts/gate3/parsecheck.log
-          done
+          # Compile-check the whole Gate 3 scene graph before spending fifteen minutes
+          # on a capture: a script that fails to load leaves the scene empty, and under
+          # Xvfb that only surfaces as a timeout, which hides the one line that says why.
+          timeout 180s godot --headless --audio-driver Dummy --path . \
+            res://prototypes/gate3/capture_gate3.tscn -- --check \
+            2>&1 | tee .artifacts/gate3/parsecheck.log
+          grep -q "GATE3 SCRIPT CHECK OK" .artifacts/gate3/parsecheck.log
       - name: Install Xvfb Mesa
         run: |
           sudo apt-get update -qq
