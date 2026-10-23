@@ -5,8 +5,15 @@ on:
     branches:
       - design-audition/level2-candidate-a
       - design-audition/level2-candidate-b
+      # Arena working branch for candidate B: the audition workflow is not
+      # registered on the default branch, so it can only be triggered from a
+      # branch that lists itself here.
+      - arena/6e89e68d-soul-of-hero
     paths:
       - "data/levels/chapter_1_level_2.json"
+      - "tools/design/**"
+      - "docs/design-audition/**"
+      - ".github/workflows/level2-audition.yml"
   workflow_dispatch:
 
 permissions:
