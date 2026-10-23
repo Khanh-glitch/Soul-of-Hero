@@ -132,14 +132,14 @@ Inspecting all 16 real `1280×720` Godot 4.7 `gl_compatibility` captures in `doc
 - **Engine Verified:** `Godot Engine v4.7.stable.official.5b4e0cb0f` (`ubuntu-latest` / `ubuntu-24.04` Xvfb `LIBGL_ALWAYS_SOFTWARE=1`, `--resolution 1280x720`)
 - **Full Raw Verification Log Archived in Repo:** [`docs/design-pilot/captures/godot_verification_log.md`](captures/godot_verification_log.md)
 - **Current-Head CI Suites (`100% PASSING`):**
-  - `Level 2 Audition QA — Godot 4.7` (Push Run [`39909669998`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39909669998) & PR #4 Run [`39909675216`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39909675216)): **`SUCCESS`**
+  - `Level 2 Audition QA — Godot 4.7` (Push Run [`39910418819`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910418819) & PR #4 Run [`39910424901`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910424901)): **`SUCCESS`**
     - `generate_chapter_1_levels_2_to_5.gd`: **`ZERO DIFF`** across Levels 1–5
     - `chapter_1_campaign_map_design_test.gd`: **`PASSED — 39,449 checks across ten maps`**
     - `chapter_1_map_design_test.gd`: **`PASSED — 837 / 837 checks`**
     - `encounter_pack_trap_test.gd`: **`PASSED — 1,044 checks`**
     - `chapter_1_collision_route_test.tscn`: **`PASSED — 161 checks across ten live maps`** (`slot=2 safe=2559/2559 targets=13`, **`slot=3 safe=2929/2929 targets=14`**, **`slot=4 safe=3454/3454 targets=13`**)
     - Real `1280×720` Campaign Visual Captures: **`spawn`, `mid`, `end` PASSED** for both Slot 3 & Slot 4 + live combat & vault/spiral showcase captures saved to `docs/design-pilot/captures/`
-  - `Godot 4.7 Runtime Validation` (Push Run [`39909670094`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39909670094) & PR #4 Run [`39909675207`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39909675207)):
+  - `Godot 4.7 Runtime Validation` (Push Run [`39910418806`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910418806) & PR #4 Run [`39910424906`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910424906)):
     - Current-head job **`Import and headless runtime tests`**: **`SUCCESS`** (`CAMPAIGN ENTRY RUNTIME PASSED - 949 checks`, `SMOKE TEST PASSED — 89 checks`, all 21 Chapter 1/Training gates passed, `AXE` / `LEVEL 5 MINIBOSS` / `ARCHER` combat regressions passed)
     - Current-head job **`Xvfb rendered gameplay captures`**: **`SUCCESS`** (`30 / 30` Chapter 1 campaign captures + Chapter 2 + Level 10 Boss + Training Sandbox captures passed)
     - Pre-existing baseline job `Original main baseline comparison`: expected `failure` (runs unmodified historical `main` baseline only, separate from current branch head).
