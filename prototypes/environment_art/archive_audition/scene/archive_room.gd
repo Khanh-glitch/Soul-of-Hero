@@ -35,7 +35,7 @@ const FACE_LAYER := "WallFace"
 const CAP_LAYER := "WallCap"
 
 @export var spawn_knight := true
-@export var ambient_tint := Color(0.34, 0.33, 0.40, 1.0)
+@export var ambient_tint := Color(0.46, 0.44, 0.50, 1.0)
 @export var fog_darkness := 0.55
 
 var room: Dictionary = {}
@@ -208,17 +208,6 @@ func _build_props() -> void:
 		sprite.position = Vector2(float(prop["x"]), float(prop["y"]))
 		sprite.offset = Vector2(0.0, -float(source[3]))
 		entities.add_child(sprite)
-		# contact shadow under the base of every object
-		var shadow := Polygon2D.new()
-		var half: float = float(source[2]) * 0.32
-		shadow.polygon = PackedVector2Array([
-			Vector2(-half, -3), Vector2(half, -3),
-			Vector2(half * 0.82, 3), Vector2(-half * 0.82, 3),
-		])
-		shadow.color = Color(0.02, 0.01, 0.02, 0.42)
-		shadow.position = Vector2(float(prop["x"]), float(prop["y"]) - 2.0)
-		shadow.z_index = -1
-		entities.add_child(shadow)
 		if bool(prop.get("solid", false)):
 			var body := StaticBody2D.new()
 			body.collision_layer = 1
@@ -309,7 +298,10 @@ func _spawn_knight() -> void:
 		camera.limit_right = int(room["width"]) * T
 		camera.limit_bottom = int(room["height"]) * T
 		camera.position_smoothing_enabled = false
+		camera.limit_smoothed = false
+		camera.enabled = true
 		camera.make_current()
+		camera.reset_smoothing()
 
 
 func place_knight(cell_or_px: Vector2) -> void:
