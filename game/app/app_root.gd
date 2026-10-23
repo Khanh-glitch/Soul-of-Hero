@@ -101,11 +101,20 @@ func _ready() -> void:
 func _web_local_gameplay_smoke_requested() -> bool:
 	if not OS.has_feature("web"):
 		return false
-	var requested: Variant = JavaScriptBridge.eval(
-		"window.location.hostname === '127.0.0.1' " +
-		"&& new URLSearchParams(window.location.search).get('ci_gameplay') === '1'"
-	)
-	return requested is bool and bool(requested)
+	# Godot's JavaScriptBridge.eval() may return null for a JS expression
+	# evaluated in its isolated context. Read location via the real JS interface.
+	var location: JavaScriptObject = JavaScriptBridge.get_interface("location")
+	if location == null:
+		return false
+	var host := String(location.get("hostname"))
+	var query := String(location.get("search"))
+	var enabled := host == "127.0.0.1" and query.contains("ci_gameplay=1")
+	JavaScriptBridge.eval("window.__soulHeroCiProbe = " + JSON.stringify({
+		"hostname": host,
+		"search": query,
+		"enabled": enabled,
+	}) + ";")
+	return enabled
 
 
 func _exit_tree() -> void:
