@@ -831,8 +831,8 @@ func _build_spawn_archive_entrance() -> void:
 		[6, 12, 5, 8],
 		[11, 10, 15, 10],
 		[17, 20, 9, 2],
-		[26, 11, 9, 4],
-		[35, 11, 5, 13],
+		[26, 10, 9, 5],
+		[35, 10, 5, 14],
 	]
 	for r: Array in rects:
 		for y: int in range(int(r[1]), int(r[1]) + int(r[3])):
@@ -882,8 +882,7 @@ func _build_spawn_archive_entrance() -> void:
 	var north_runs := [
 		[5, 10, 11],
 		[11, 16, 10],
-		[17, 25, 9],
-		[26, 39, 10],
+		[17, 39, 9],
 	]
 	for nr: Array in north_runs:
 		var wy: int = nr[2]
