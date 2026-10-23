@@ -3,42 +3,631 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-SCRIPT ERROR: Parse Error: Cannot infer the type of "half" variable because the value doesn't have a set type.
-          at: GDScript::reload (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:208)
-          GDScript backtrace (most recent call first):
-              [0] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:32)
-ERROR: Failed to load script "res://prototypes/environment_art/archive_audition/scene/archive_room.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
    GDScript backtrace (most recent call first):
-       [0] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:32)
-SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
-          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-          GDScript backtrace (most recent call first):
-              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:39)
-              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
-SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
-          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-          GDScript backtrace (most recent call first):
-              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:40)
-              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
-SCRIPT ERROR: Invalid call. Nonexistent function 'camera_point (via call)' in base 'Node2D'.
-          at: _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-          GDScript backtrace (most recent call first):
-              [0] _shot_at (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:49)
-              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:41)
-              [2] _settle (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:67)
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 0).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 1).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 2).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 3).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 4).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 5).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 6).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (0, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (1, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (2, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (3, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (4, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (5, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (6, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: The TileSetAtlasSource atlas has no tile at (7, 7).
+   at: get_tile_data (scene/resources/2d/tile_set.cpp:5473)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:84)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ERROR: Cannot create tile. The tile is outside the texture or tiles are already present in the space the tile would cover.
+   at: create_tile (scene/resources/2d/tile_set.cpp:4998)
+   GDScript backtrace (most recent call first):
+       [0] _make_sources (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:85)
+       [1] _build_layers (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:116)
+       [2] _ready (res://prototypes/environment_art/archive_audition/scene/archive_room.gd:54)
+       [3] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:33)
+ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_entry.png (1280x720)
+ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_mid.png (1280x720)
+ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_end.png (1280x720)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_walk.png (1280x720)
-SCRIPT ERROR: Invalid access to property or key 'room' on a base object of type 'Node2D'.
-          at: _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:95)
-          GDScript backtrace (most recent call first):
-              [0] _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:95)
-              [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:44)
-              [2] _frame (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:87)
-CAPTURE FAILURE: the Knight was not spawned from the shipping scene
-ARCHIVE ROOM CAPTURE TEST FAILED
-WARNING: 1 RID of type "CanvasItem" was leaked.
-   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2733)
-WARNING: 1 ObjectDB instance was leaked at exit (run with `--verbose` for details).
-   at: cleanup (core/object/object.cpp:2535)
+ERROR: Condition "!enabled || !is_inside_tree()" is true.
+   at: make_current (scene/2d/camera_2d.cpp:588)
+   GDScript backtrace (most recent call first):
+       [0] _overview (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:97)
+       [1] _run (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:44)
+       [2] _frame (res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd:87)
+ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_overview.png (1280x720)
+ARCHIVE ROOM CAPTURE TEST PASSED: 5 frames at 1280x720

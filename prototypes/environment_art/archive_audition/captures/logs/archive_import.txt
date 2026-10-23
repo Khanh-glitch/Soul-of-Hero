@@ -357,7 +357,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  99% ] [90m[1mupdate_scripts_classes[22m | [39m[0m
 [92m[ DONE ][39m [1mupdate_scripts_classes[22m
 [0m
-[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (1255 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (1256 steps)[39m[0m
 [   0% ] [90m[1m_update_scan_actions[22m | footstep_concrete_000.ogg[39m[0m
 [   0% ] [90m[1m_update_scan_actions[22m | footstep_concrete_001.ogg[39m[0m
 [   0% ] [90m[1m_update_scan_actions[22m | footstep_concrete_002.ogg[39m[0m
@@ -559,7 +559,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  15% ] [90m[1m_update_scan_actions[22m | Knight_attack_new_9.png[39m[0m
 [  15% ] [90m[1m_update_scan_actions[22m | Knight_attack_new_10.png[39m[0m
 [  15% ] [90m[1m_update_scan_actions[22m | _Attack2.png[39m[0m
-[  16% ] [90m[1m_update_scan_actions[22m | _Attack2NoMovement.png[39m[0m
+[  15% ] [90m[1m_update_scan_actions[22m | _Attack2NoMovement.png[39m[0m
 [  16% ] [90m[1m_update_scan_actions[22m | _Attack.png[39m[0m
 [  16% ] [90m[1m_update_scan_actions[22m | _AttackCombo2hit.png[39m[0m
 [  16% ] [90m[1m_update_scan_actions[22m | _AttackComboNoMovement.png[39m[0m
@@ -647,7 +647,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  22% ] [90m[1m_update_scan_actions[22m | GrenzeGotisch-Black.ttf[39m[0m
 [  22% ] [90m[1m_update_scan_actions[22m | GrenzeGotisch-Bold.ttf[39m[0m
 [  22% ] [90m[1m_update_scan_actions[22m | GrenzeGotisch-SemiBold.ttf[39m[0m
-[  23% ] [90m[1m_update_scan_actions[22m | Handjet-Bold.ttf[39m[0m
+[  22% ] [90m[1m_update_scan_actions[22m | Handjet-Bold.ttf[39m[0m
 [  23% ] [90m[1m_update_scan_actions[22m | Handjet-Regular.ttf[39m[0m
 [  23% ] [90m[1m_update_scan_actions[22m | Handjet-SemiBold.ttf[39m[0m
 [  23% ] [90m[1m_update_scan_actions[22m | VT323-Regular.ttf[39m[0m
@@ -672,7 +672,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  24% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadB01a.png[39m[0m
 [  24% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadDPadDown01a.png[39m[0m
 [  24% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadDPadLeft01a.png[39m[0m
-[  25% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadDPadRight01a.png[39m[0m
+[  24% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadDPadRight01a.png[39m[0m
 [  25% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadDPadUp01a.png[39m[0m
 [  25% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadL01a.png[39m[0m
 [  25% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_GamepadL301a.png[39m[0m
@@ -735,7 +735,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  29% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_2.png[39m[0m
 [  29% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_3.png[39m[0m
 [  29% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_4.png[39m[0m
-[  30% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_5.png[39m[0m
+[  29% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_5.png[39m[0m
 [  30% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionHold01a_6.png[39m[0m
 [  30% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionPress01a_1.png[39m[0m
 [  30% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_CommandActionPress01a_2.png[39m[0m
@@ -760,7 +760,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  31% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_Point02a_1.png[39m[0m
 [  31% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_Point02a_2.png[39m[0m
 [  31% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_SlotCursor01a_1.png[39m[0m
-[  32% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_SlotCursor01a_2.png[39m[0m
+[  31% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_SlotCursor01a_2.png[39m[0m
 [  32% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_SlotCursor01a_3.png[39m[0m
 [  32% ] [90m[1m_update_scan_actions[22m | UI_TravelBook_SlotCursor01a_4.png[39m[0m
 [  32% ] [90m[1m_update_scan_actions[22m | UI_TravelBookAnimated_Spritesheet01a.png[39m[0m
@@ -823,7 +823,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  36% ] [90m[1m_update_scan_actions[22m | walls_floor.png[39m[0m
 [  36% ] [90m[1m_update_scan_actions[22m | Water_coasts_animation.png[39m[0m
 [  36% ] [90m[1m_update_scan_actions[22m | water_detilazation_v2.png[39m[0m
-[  37% ] [90m[1m_update_scan_actions[22m | decorative_cracks_coasts_animation.png[39m[0m
+[  36% ] [90m[1m_update_scan_actions[22m | decorative_cracks_coasts_animation.png[39m[0m
 [  37% ] [90m[1m_update_scan_actions[22m | decorative_cracks_floor.png[39m[0m
 [  37% ] [90m[1m_update_scan_actions[22m | decorative_cracks_walls.png[39m[0m
 [  37% ] [90m[1m_update_scan_actions[22m | doors_lever_chest_animation.png[39m[0m
@@ -848,7 +848,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  38% ] [90m[1m_update_scan_actions[22m | rpg_icons_99.png[39m[0m
 [  38% ] [90m[1m_update_scan_actions[22m | rpg_icons_100.png[39m[0m
 [  38% ] [90m[1m_update_scan_actions[22m | rpg_icons_101.png[39m[0m
-[  39% ] [90m[1m_update_scan_actions[22m | rpg_icons_102.png[39m[0m
+[  38% ] [90m[1m_update_scan_actions[22m | rpg_icons_102.png[39m[0m
 [  39% ] [90m[1m_update_scan_actions[22m | rpg_icons_103.png[39m[0m
 [  39% ] [90m[1m_update_scan_actions[22m | rpg_icons_104.png[39m[0m
 [  39% ] [90m[1m_update_scan_actions[22m | rpg_icons_105.png[39m[0m
@@ -873,7 +873,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  40% ] [90m[1m_update_scan_actions[22m | rpg_icons_112.png[39m[0m
 [  40% ] [90m[1m_update_scan_actions[22m | rpg_icons_113.png[39m[0m
 [  40% ] [90m[1m_update_scan_actions[22m | rpg_icons_114.png[39m[0m
-[  41% ] [90m[1m_update_scan_actions[22m | rpg_icons_115.png[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | rpg_icons_115.png[39m[0m
 [  41% ] [90m[1m_update_scan_actions[22m | rpg_icons_116.png[39m[0m
 [  41% ] [90m[1m_update_scan_actions[22m | rpg_icons_1.png[39m[0m
 [  41% ] [90m[1m_update_scan_actions[22m | rpg_icons_2.png[39m[0m
@@ -911,7 +911,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  43% ] [90m[1m_update_scan_actions[22m | rpg_icons_70.png[39m[0m
 [  43% ] [90m[1m_update_scan_actions[22m | rpg_icons_71.png[39m[0m
 [  43% ] [90m[1m_update_scan_actions[22m | rpg_icons_72.png[39m[0m
-[  44% ] [90m[1m_update_scan_actions[22m | rpg_icons_73.png[39m[0m
+[  43% ] [90m[1m_update_scan_actions[22m | rpg_icons_73.png[39m[0m
 [  44% ] [90m[1m_update_scan_actions[22m | rpg_icons_74.png[39m[0m
 [  44% ] [90m[1m_update_scan_actions[22m | rpg_icons_75.png[39m[0m
 [  44% ] [90m[1m_update_scan_actions[22m | rpg_icons_76.png[39m[0m
@@ -936,7 +936,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  45% ] [90m[1m_update_scan_actions[22m | rpg_icons_31.png[39m[0m
 [  45% ] [90m[1m_update_scan_actions[22m | rpg_icons_32.png[39m[0m
 [  45% ] [90m[1m_update_scan_actions[22m | rpg_icons_33.png[39m[0m
-[  46% ] [90m[1m_update_scan_actions[22m | rpg_icons_34.png[39m[0m
+[  45% ] [90m[1m_update_scan_actions[22m | rpg_icons_34.png[39m[0m
 [  46% ] [90m[1m_update_scan_actions[22m | rpg_icons_35.png[39m[0m
 [  46% ] [90m[1m_update_scan_actions[22m | rpg_icons_36.png[39m[0m
 [  46% ] [90m[1m_update_scan_actions[22m | rpg_icons_37.png[39m[0m
@@ -961,7 +961,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  47% ] [90m[1m_update_scan_actions[22m | rpg_icons_56.png[39m[0m
 [  47% ] [90m[1m_update_scan_actions[22m | rpg_icons_57.png[39m[0m
 [  47% ] [90m[1m_update_scan_actions[22m | rpg_icons_58.png[39m[0m
-[  48% ] [90m[1m_update_scan_actions[22m | rpg_icons_59.png[39m[0m
+[  47% ] [90m[1m_update_scan_actions[22m | rpg_icons_59.png[39m[0m
 [  48% ] [90m[1m_update_scan_actions[22m | rpg_icons_60.png[39m[0m
 [  48% ] [90m[1m_update_scan_actions[22m | rpg_icons_61.png[39m[0m
 [  48% ] [90m[1m_update_scan_actions[22m | rpg_icons_62.png[39m[0m
@@ -986,7 +986,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  49% ] [90m[1m_update_scan_actions[22m | complete_width448.png[39m[0m
 [  49% ] [90m[1m_update_scan_actions[22m | rpg_icons89.png[39m[0m
 [  49% ] [90m[1m_update_scan_actions[22m | rpg_icons90.png[39m[0m
-[  50% ] [90m[1m_update_scan_actions[22m | rpg_icons91.png[39m[0m
+[  49% ] [90m[1m_update_scan_actions[22m | rpg_icons91.png[39m[0m
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons92.png[39m[0m
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons93.png[39m[0m
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons94.png[39m[0m
@@ -999,7 +999,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons101.png[39m[0m
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons102.png[39m[0m
 [  50% ] [90m[1m_update_scan_actions[22m | rpg_icons103.png[39m[0m
-[  51% ] [90m[1m_update_scan_actions[22m | rpg_icons104.png[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | rpg_icons104.png[39m[0m
 [  51% ] [90m[1m_update_scan_actions[22m | rpg_icons105.png[39m[0m
 [  51% ] [90m[1m_update_scan_actions[22m | rpg_icons106.png[39m[0m
 [  51% ] [90m[1m_update_scan_actions[22m | rpg_icons107.png[39m[0m
@@ -1024,7 +1024,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  52% ] [90m[1m_update_scan_actions[22m | rpg_icons114.png[39m[0m
 [  52% ] [90m[1m_update_scan_actions[22m | rpg_icons115.png[39m[0m
 [  52% ] [90m[1m_update_scan_actions[22m | rpg_icons116.png[39m[0m
-[  53% ] [90m[1m_update_scan_actions[22m | rpg_icons1.png[39m[0m
+[  52% ] [90m[1m_update_scan_actions[22m | rpg_icons1.png[39m[0m
 [  53% ] [90m[1m_update_scan_actions[22m | rpg_icons2.png[39m[0m
 [  53% ] [90m[1m_update_scan_actions[22m | rpg_icons3.png[39m[0m
 [  53% ] [90m[1m_update_scan_actions[22m | rpg_icons4.png[39m[0m
@@ -1049,7 +1049,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  54% ] [90m[1m_update_scan_actions[22m | rpg_icons23.png[39m[0m
 [  54% ] [90m[1m_update_scan_actions[22m | rpg_icons24.png[39m[0m
 [  54% ] [90m[1m_update_scan_actions[22m | rpg_icons141.png[39m[0m
-[  55% ] [90m[1m_update_scan_actions[22m | rpg_icons142.png[39m[0m
+[  54% ] [90m[1m_update_scan_actions[22m | rpg_icons142.png[39m[0m
 [  55% ] [90m[1m_update_scan_actions[22m | rpg_icons143.png[39m[0m
 [  55% ] [90m[1m_update_scan_actions[22m | rpg_icons144.png[39m[0m
 [  55% ] [90m[1m_update_scan_actions[22m | rpg_icons145.png[39m[0m
@@ -1074,7 +1074,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  56% ] [90m[1m_update_scan_actions[22m | rpg_icons84.png[39m[0m
 [  56% ] [90m[1m_update_scan_actions[22m | rpg_icons85.png[39m[0m
 [  56% ] [90m[1m_update_scan_actions[22m | rpg_icons86.png[39m[0m
-[  57% ] [90m[1m_update_scan_actions[22m | rpg_icons87.png[39m[0m
+[  56% ] [90m[1m_update_scan_actions[22m | rpg_icons87.png[39m[0m
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons88.png[39m[0m
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons25.png[39m[0m
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons26.png[39m[0m
@@ -1087,7 +1087,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons33.png[39m[0m
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons34.png[39m[0m
 [  57% ] [90m[1m_update_scan_actions[22m | rpg_icons35.png[39m[0m
-[  58% ] [90m[1m_update_scan_actions[22m | rpg_icons36.png[39m[0m
+[  57% ] [90m[1m_update_scan_actions[22m | rpg_icons36.png[39m[0m
 [  58% ] [90m[1m_update_scan_actions[22m | rpg_icons37.png[39m[0m
 [  58% ] [90m[1m_update_scan_actions[22m | rpg_icons38.png[39m[0m
 [  58% ] [90m[1m_update_scan_actions[22m | rpg_icons39.png[39m[0m
@@ -1112,7 +1112,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  59% ] [90m[1m_update_scan_actions[22m | rpg_icons58.png[39m[0m
 [  59% ] [90m[1m_update_scan_actions[22m | rpg_icons59.png[39m[0m
 [  59% ] [90m[1m_update_scan_actions[22m | rpg_icons60.png[39m[0m
-[  60% ] [90m[1m_update_scan_actions[22m | rpg_icons61.png[39m[0m
+[  59% ] [90m[1m_update_scan_actions[22m | rpg_icons61.png[39m[0m
 [  60% ] [90m[1m_update_scan_actions[22m | rpg_icons62.png[39m[0m
 [  60% ] [90m[1m_update_scan_actions[22m | rpg_icons63.png[39m[0m
 [  60% ] [90m[1m_update_scan_actions[22m | rpg_icons64.png[39m[0m
@@ -1137,7 +1137,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  61% ] [90m[1m_update_scan_actions[22m | Icon2.png[39m[0m
 [  61% ] [90m[1m_update_scan_actions[22m | Icon3.png[39m[0m
 [  61% ] [90m[1m_update_scan_actions[22m | Icon4.png[39m[0m
-[  62% ] [90m[1m_update_scan_actions[22m | Icon5.png[39m[0m
+[  61% ] [90m[1m_update_scan_actions[22m | Icon5.png[39m[0m
 [  62% ] [90m[1m_update_scan_actions[22m | Icon6.png[39m[0m
 [  62% ] [90m[1m_update_scan_actions[22m | Icon7.png[39m[0m
 [  62% ] [90m[1m_update_scan_actions[22m | Icon8.png[39m[0m
@@ -1162,7 +1162,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  63% ] [90m[1m_update_scan_actions[22m | Icon27.png[39m[0m
 [  63% ] [90m[1m_update_scan_actions[22m | Icon28.png[39m[0m
 [  63% ] [90m[1m_update_scan_actions[22m | Icon29.png[39m[0m
-[  64% ] [90m[1m_update_scan_actions[22m | Icon30.png[39m[0m
+[  63% ] [90m[1m_update_scan_actions[22m | Icon30.png[39m[0m
 [  64% ] [90m[1m_update_scan_actions[22m | Icon31.png[39m[0m
 [  64% ] [90m[1m_update_scan_actions[22m | Icon32.png[39m[0m
 [  64% ] [90m[1m_update_scan_actions[22m | Icon33.png[39m[0m
@@ -1175,7 +1175,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  64% ] [90m[1m_update_scan_actions[22m | Icon40.png[39m[0m
 [  64% ] [90m[1m_update_scan_actions[22m | Icon41.png[39m[0m
 [  64% ] [90m[1m_update_scan_actions[22m | Icon42.png[39m[0m
-[  65% ] [90m[1m_update_scan_actions[22m | Icon43.png[39m[0m
+[  64% ] [90m[1m_update_scan_actions[22m | Icon43.png[39m[0m
 [  65% ] [90m[1m_update_scan_actions[22m | Icon44.png[39m[0m
 [  65% ] [90m[1m_update_scan_actions[22m | Icon45.png[39m[0m
 [  65% ] [90m[1m_update_scan_actions[22m | Icon46.png[39m[0m
@@ -1187,7 +1187,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  65% ] [90m[1m_update_scan_actions[22m | Icon52.png[39m[0m
 [  65% ] [90m[1m_update_scan_actions[22m | Icon53.png[39m[0m
 [  65% ] [90m[1m_update_scan_actions[22m | Icon54.png[39m[0m
-[  66% ] [90m[1m_update_scan_actions[22m | Icon55.png[39m[0m
+[  65% ] [90m[1m_update_scan_actions[22m | Icon55.png[39m[0m
 [  66% ] [90m[1m_update_scan_actions[22m | Icon56.png[39m[0m
 [  66% ] [90m[1m_update_scan_actions[22m | Icon57.png[39m[0m
 [  66% ] [90m[1m_update_scan_actions[22m | Icon58.png[39m[0m
@@ -1200,7 +1200,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  66% ] [90m[1m_update_scan_actions[22m | Icon65.png[39m[0m
 [  66% ] [90m[1m_update_scan_actions[22m | Icon66.png[39m[0m
 [  66% ] [90m[1m_update_scan_actions[22m | Icon67.png[39m[0m
-[  67% ] [90m[1m_update_scan_actions[22m | Icon68.png[39m[0m
+[  66% ] [90m[1m_update_scan_actions[22m | Icon68.png[39m[0m
 [  67% ] [90m[1m_update_scan_actions[22m | Icon69.png[39m[0m
 [  67% ] [90m[1m_update_scan_actions[22m | Icon70.png[39m[0m
 [  67% ] [90m[1m_update_scan_actions[22m | Icon71.png[39m[0m
@@ -1225,7 +1225,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  68% ] [90m[1m_update_scan_actions[22m | Icon90.png[39m[0m
 [  68% ] [90m[1m_update_scan_actions[22m | Icon91.png[39m[0m
 [  68% ] [90m[1m_update_scan_actions[22m | Icon92.png[39m[0m
-[  69% ] [90m[1m_update_scan_actions[22m | Icon93.png[39m[0m
+[  68% ] [90m[1m_update_scan_actions[22m | Icon93.png[39m[0m
 [  69% ] [90m[1m_update_scan_actions[22m | Icon94.png[39m[0m
 [  69% ] [90m[1m_update_scan_actions[22m | Icon95.png[39m[0m
 [  69% ] [90m[1m_update_scan_actions[22m | Icon96.png[39m[0m
@@ -1250,7 +1250,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  70% ] [90m[1m_update_scan_actions[22m | Icon115.png[39m[0m
 [  70% ] [90m[1m_update_scan_actions[22m | Icon116.png[39m[0m
 [  70% ] [90m[1m_update_scan_actions[22m | Icon117.png[39m[0m
-[  71% ] [90m[1m_update_scan_actions[22m | Icon118.png[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | Icon118.png[39m[0m
 [  71% ] [90m[1m_update_scan_actions[22m | Icon119.png[39m[0m
 [  71% ] [90m[1m_update_scan_actions[22m | Icon120.png[39m[0m
 [  71% ] [90m[1m_update_scan_actions[22m | Icon121.png[39m[0m
@@ -1263,7 +1263,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  71% ] [90m[1m_update_scan_actions[22m | Icon128.png[39m[0m
 [  71% ] [90m[1m_update_scan_actions[22m | Icon129.png[39m[0m
 [  71% ] [90m[1m_update_scan_actions[22m | Icon130.png[39m[0m
-[  72% ] [90m[1m_update_scan_actions[22m | Icon131.png[39m[0m
+[  71% ] [90m[1m_update_scan_actions[22m | Icon131.png[39m[0m
 [  72% ] [90m[1m_update_scan_actions[22m | Icon132.png[39m[0m
 [  72% ] [90m[1m_update_scan_actions[22m | Icon133.png[39m[0m
 [  72% ] [90m[1m_update_scan_actions[22m | Icon134.png[39m[0m
@@ -1275,7 +1275,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  72% ] [90m[1m_update_scan_actions[22m | Icon140.png[39m[0m
 [  72% ] [90m[1m_update_scan_actions[22m | Icon141.png[39m[0m
 [  72% ] [90m[1m_update_scan_actions[22m | Icon142.png[39m[0m
-[  73% ] [90m[1m_update_scan_actions[22m | Icon143.png[39m[0m
+[  72% ] [90m[1m_update_scan_actions[22m | Icon143.png[39m[0m
 [  73% ] [90m[1m_update_scan_actions[22m | Icon144.png[39m[0m
 [  73% ] [90m[1m_update_scan_actions[22m | Icon145.png[39m[0m
 [  73% ] [90m[1m_update_scan_actions[22m | Icon146.png[39m[0m
@@ -1288,7 +1288,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  73% ] [90m[1m_update_scan_actions[22m | Icon153.png[39m[0m
 [  73% ] [90m[1m_update_scan_actions[22m | Icon154.png[39m[0m
 [  73% ] [90m[1m_update_scan_actions[22m | Icon155.png[39m[0m
-[  74% ] [90m[1m_update_scan_actions[22m | Icon156.png[39m[0m
+[  73% ] [90m[1m_update_scan_actions[22m | Icon156.png[39m[0m
 [  74% ] [90m[1m_update_scan_actions[22m | Icon157.png[39m[0m
 [  74% ] [90m[1m_update_scan_actions[22m | Icon158.png[39m[0m
 [  74% ] [90m[1m_update_scan_actions[22m | Icon159.png[39m[0m
@@ -1300,7 +1300,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  74% ] [90m[1m_update_scan_actions[22m | Icon165.png[39m[0m
 [  74% ] [90m[1m_update_scan_actions[22m | Icon166.png[39m[0m
 [  74% ] [90m[1m_update_scan_actions[22m | Icon167.png[39m[0m
-[  75% ] [90m[1m_update_scan_actions[22m | Icon168.png[39m[0m
+[  74% ] [90m[1m_update_scan_actions[22m | Icon168.png[39m[0m
 [  75% ] [90m[1m_update_scan_actions[22m | Icon169.png[39m[0m
 [  75% ] [90m[1m_update_scan_actions[22m | Icon170.png[39m[0m
 [  75% ] [90m[1m_update_scan_actions[22m | Icon171.png[39m[0m
@@ -1313,7 +1313,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  75% ] [90m[1m_update_scan_actions[22m | Icon178.png[39m[0m
 [  75% ] [90m[1m_update_scan_actions[22m | Icon179.png[39m[0m
 [  75% ] [90m[1m_update_scan_actions[22m | Icon180.png[39m[0m
-[  76% ] [90m[1m_update_scan_actions[22m | Icon181.png[39m[0m
+[  75% ] [90m[1m_update_scan_actions[22m | Icon181.png[39m[0m
 [  76% ] [90m[1m_update_scan_actions[22m | Icon182.png[39m[0m
 [  76% ] [90m[1m_update_scan_actions[22m | Icon183.png[39m[0m
 [  76% ] [90m[1m_update_scan_actions[22m | Icon184.png[39m[0m
@@ -1338,7 +1338,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  77% ] [90m[1m_update_scan_actions[22m | Icon203.png[39m[0m
 [  77% ] [90m[1m_update_scan_actions[22m | Icon204.png[39m[0m
 [  77% ] [90m[1m_update_scan_actions[22m | Icon205.png[39m[0m
-[  78% ] [90m[1m_update_scan_actions[22m | Icon206.png[39m[0m
+[  77% ] [90m[1m_update_scan_actions[22m | Icon206.png[39m[0m
 [  78% ] [90m[1m_update_scan_actions[22m | Icon207.png[39m[0m
 [  78% ] [90m[1m_update_scan_actions[22m | Icon208.png[39m[0m
 [  78% ] [90m[1m_update_scan_actions[22m | Icon209.png[39m[0m
@@ -1351,7 +1351,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  78% ] [90m[1m_update_scan_actions[22m | Icon216.png[39m[0m
 [  78% ] [90m[1m_update_scan_actions[22m | Icon217.png[39m[0m
 [  78% ] [90m[1m_update_scan_actions[22m | Icon218.png[39m[0m
-[  79% ] [90m[1m_update_scan_actions[22m | Icon219.png[39m[0m
+[  78% ] [90m[1m_update_scan_actions[22m | Icon219.png[39m[0m
 [  79% ] [90m[1m_update_scan_actions[22m | Icon220.png[39m[0m
 [  79% ] [90m[1m_update_scan_actions[22m | Icon221.png[39m[0m
 [  79% ] [90m[1m_update_scan_actions[22m | Icon222.png[39m[0m
@@ -1363,7 +1363,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  79% ] [90m[1m_update_scan_actions[22m | Icon228.png[39m[0m
 [  79% ] [90m[1m_update_scan_actions[22m | Icon229.png[39m[0m
 [  79% ] [90m[1m_update_scan_actions[22m | Icon230.png[39m[0m
-[  80% ] [90m[1m_update_scan_actions[22m | Icon231.png[39m[0m
+[  79% ] [90m[1m_update_scan_actions[22m | Icon231.png[39m[0m
 [  80% ] [90m[1m_update_scan_actions[22m | Icon232.png[39m[0m
 [  80% ] [90m[1m_update_scan_actions[22m | Icon233.png[39m[0m
 [  80% ] [90m[1m_update_scan_actions[22m | Icon234.png[39m[0m
@@ -1376,7 +1376,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  80% ] [90m[1m_update_scan_actions[22m | Icon241.png[39m[0m
 [  80% ] [90m[1m_update_scan_actions[22m | Icon242.png[39m[0m
 [  80% ] [90m[1m_update_scan_actions[22m | Icon243.png[39m[0m
-[  81% ] [90m[1m_update_scan_actions[22m | Icon244.png[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | Icon244.png[39m[0m
 [  81% ] [90m[1m_update_scan_actions[22m | Icon245.png[39m[0m
 [  81% ] [90m[1m_update_scan_actions[22m | Icon246.png[39m[0m
 [  81% ] [90m[1m_update_scan_actions[22m | Icon247.png[39m[0m
@@ -1388,7 +1388,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  81% ] [90m[1m_update_scan_actions[22m | Icon253.png[39m[0m
 [  81% ] [90m[1m_update_scan_actions[22m | Icon254.png[39m[0m
 [  81% ] [90m[1m_update_scan_actions[22m | Icon255.png[39m[0m
-[  82% ] [90m[1m_update_scan_actions[22m | Icon256.png[39m[0m
+[  81% ] [90m[1m_update_scan_actions[22m | Icon256.png[39m[0m
 [  82% ] [90m[1m_update_scan_actions[22m | Icon257.png[39m[0m
 [  82% ] [90m[1m_update_scan_actions[22m | Icon258.png[39m[0m
 [  82% ] [90m[1m_update_scan_actions[22m | Icon259.png[39m[0m
@@ -1401,7 +1401,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  82% ] [90m[1m_update_scan_actions[22m | Icon266.png[39m[0m
 [  82% ] [90m[1m_update_scan_actions[22m | Icon267.png[39m[0m
 [  82% ] [90m[1m_update_scan_actions[22m | Icon268.png[39m[0m
-[  83% ] [90m[1m_update_scan_actions[22m | Icon269.png[39m[0m
+[  82% ] [90m[1m_update_scan_actions[22m | Icon269.png[39m[0m
 [  83% ] [90m[1m_update_scan_actions[22m | Icon270.png[39m[0m
 [  83% ] [90m[1m_update_scan_actions[22m | Icon271.png[39m[0m
 [  83% ] [90m[1m_update_scan_actions[22m | Icon272.png[39m[0m
@@ -1426,7 +1426,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  84% ] [90m[1m_update_scan_actions[22m | Icon291.png[39m[0m
 [  84% ] [90m[1m_update_scan_actions[22m | Icon292.png[39m[0m
 [  84% ] [90m[1m_update_scan_actions[22m | Icon293.png[39m[0m
-[  85% ] [90m[1m_update_scan_actions[22m | Icon294.png[39m[0m
+[  84% ] [90m[1m_update_scan_actions[22m | Icon294.png[39m[0m
 [  85% ] [90m[1m_update_scan_actions[22m | Icon295.png[39m[0m
 [  85% ] [90m[1m_update_scan_actions[22m | Icon296.png[39m[0m
 [  85% ] [90m[1m_update_scan_actions[22m | Icon297.png[39m[0m
@@ -1439,7 +1439,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  85% ] [90m[1m_update_scan_actions[22m | Icon304.png[39m[0m
 [  85% ] [90m[1m_update_scan_actions[22m | Icon305.png[39m[0m
 [  85% ] [90m[1m_update_scan_actions[22m | Icon306.png[39m[0m
-[  86% ] [90m[1m_update_scan_actions[22m | Icon307.png[39m[0m
+[  85% ] [90m[1m_update_scan_actions[22m | Icon307.png[39m[0m
 [  86% ] [90m[1m_update_scan_actions[22m | Icon308.png[39m[0m
 [  86% ] [90m[1m_update_scan_actions[22m | Icon309.png[39m[0m
 [  86% ] [90m[1m_update_scan_actions[22m | Icon310.png[39m[0m
@@ -1451,7 +1451,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  86% ] [90m[1m_update_scan_actions[22m | Icon316.png[39m[0m
 [  86% ] [90m[1m_update_scan_actions[22m | Icon317.png[39m[0m
 [  86% ] [90m[1m_update_scan_actions[22m | Icon318.png[39m[0m
-[  87% ] [90m[1m_update_scan_actions[22m | Icon319.png[39m[0m
+[  86% ] [90m[1m_update_scan_actions[22m | Icon319.png[39m[0m
 [  87% ] [90m[1m_update_scan_actions[22m | Icon320.png[39m[0m
 [  87% ] [90m[1m_update_scan_actions[22m | Icon321.png[39m[0m
 [  87% ] [90m[1m_update_scan_actions[22m | Icon322.png[39m[0m
@@ -1464,7 +1464,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  87% ] [90m[1m_update_scan_actions[22m | Icon329.png[39m[0m
 [  87% ] [90m[1m_update_scan_actions[22m | Icon330.png[39m[0m
 [  87% ] [90m[1m_update_scan_actions[22m | Icon331.png[39m[0m
-[  88% ] [90m[1m_update_scan_actions[22m | Icon332.png[39m[0m
+[  87% ] [90m[1m_update_scan_actions[22m | Icon332.png[39m[0m
 [  88% ] [90m[1m_update_scan_actions[22m | Icon333.png[39m[0m
 [  88% ] [90m[1m_update_scan_actions[22m | Icon334.png[39m[0m
 [  88% ] [90m[1m_update_scan_actions[22m | Icon335.png[39m[0m
@@ -1476,7 +1476,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  88% ] [90m[1m_update_scan_actions[22m | Icon341.png[39m[0m
 [  88% ] [90m[1m_update_scan_actions[22m | Icon342.png[39m[0m
 [  88% ] [90m[1m_update_scan_actions[22m | Icon343.png[39m[0m
-[  89% ] [90m[1m_update_scan_actions[22m | Icon344.png[39m[0m
+[  88% ] [90m[1m_update_scan_actions[22m | Icon344.png[39m[0m
 [  89% ] [90m[1m_update_scan_actions[22m | Icon345.png[39m[0m
 [  89% ] [90m[1m_update_scan_actions[22m | Icon346.png[39m[0m
 [  89% ] [90m[1m_update_scan_actions[22m | Icon347.png[39m[0m
@@ -1489,7 +1489,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  89% ] [90m[1m_update_scan_actions[22m | Icon354.png[39m[0m
 [  89% ] [90m[1m_update_scan_actions[22m | Icon355.png[39m[0m
 [  89% ] [90m[1m_update_scan_actions[22m | Icon356.png[39m[0m
-[  90% ] [90m[1m_update_scan_actions[22m | Icon357.png[39m[0m
+[  89% ] [90m[1m_update_scan_actions[22m | Icon357.png[39m[0m
 [  90% ] [90m[1m_update_scan_actions[22m | Icon358.png[39m[0m
 [  90% ] [90m[1m_update_scan_actions[22m | Icon359.png[39m[0m
 [  90% ] [90m[1m_update_scan_actions[22m | Icon360.png[39m[0m
@@ -1501,7 +1501,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  90% ] [90m[1m_update_scan_actions[22m | Icon366.png[39m[0m
 [  90% ] [90m[1m_update_scan_actions[22m | Icon367.png[39m[0m
 [  90% ] [90m[1m_update_scan_actions[22m | Icon368.png[39m[0m
-[  91% ] [90m[1m_update_scan_actions[22m | Icon369.png[39m[0m
+[  90% ] [90m[1m_update_scan_actions[22m | Icon369.png[39m[0m
 [  91% ] [90m[1m_update_scan_actions[22m | Icon370.png[39m[0m
 [  91% ] [90m[1m_update_scan_actions[22m | Icon371.png[39m[0m
 [  91% ] [90m[1m_update_scan_actions[22m | Icon372.png[39m[0m
@@ -1514,7 +1514,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  91% ] [90m[1m_update_scan_actions[22m | Icon379.png[39m[0m
 [  91% ] [90m[1m_update_scan_actions[22m | Icon380.png[39m[0m
 [  91% ] [90m[1m_update_scan_actions[22m | Icon381.png[39m[0m
-[  92% ] [90m[1m_update_scan_actions[22m | Icon382.png[39m[0m
+[  91% ] [90m[1m_update_scan_actions[22m | Icon382.png[39m[0m
 [  92% ] [90m[1m_update_scan_actions[22m | Icon383.png[39m[0m
 [  92% ] [90m[1m_update_scan_actions[22m | Icon384.png[39m[0m
 [  92% ] [90m[1m_update_scan_actions[22m | Icon385.png[39m[0m
@@ -1527,7 +1527,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  92% ] [90m[1m_update_scan_actions[22m | Icon392.png[39m[0m
 [  92% ] [90m[1m_update_scan_actions[22m | Icon393.png[39m[0m
 [  92% ] [90m[1m_update_scan_actions[22m | Icon394.png[39m[0m
-[  93% ] [90m[1m_update_scan_actions[22m | Icon395.png[39m[0m
+[  92% ] [90m[1m_update_scan_actions[22m | Icon395.png[39m[0m
 [  93% ] [90m[1m_update_scan_actions[22m | Icon396.png[39m[0m
 [  93% ] [90m[1m_update_scan_actions[22m | Icon397.png[39m[0m
 [  93% ] [90m[1m_update_scan_actions[22m | Icon398.png[39m[0m
@@ -1539,7 +1539,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  93% ] [90m[1m_update_scan_actions[22m | Death.png[39m[0m
 [  93% ] [90m[1m_update_scan_actions[22m | Fall.png[39m[0m
 [  93% ] [90m[1m_update_scan_actions[22m | Hit.png[39m[0m
-[  94% ] [90m[1m_update_scan_actions[22m | Idle.png[39m[0m
+[  93% ] [90m[1m_update_scan_actions[22m | Idle.png[39m[0m
 [  94% ] [90m[1m_update_scan_actions[22m | Jump.png[39m[0m
 [  94% ] [90m[1m_update_scan_actions[22m | Run.png[39m[0m
 [  94% ] [90m[1m_update_scan_actions[22m | Inventory_background.png[39m[0m
@@ -1552,7 +1552,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  94% ] [90m[1m_update_scan_actions[22m | Inventory_style_01d.png[39m[0m
 [  94% ] [90m[1m_update_scan_actions[22m | Inventory_style_02a.png[39m[0m
 [  94% ] [90m[1m_update_scan_actions[22m | Inventory_style_02b.png[39m[0m
-[  95% ] [90m[1m_update_scan_actions[22m | Inventory_style_02c.png[39m[0m
+[  94% ] [90m[1m_update_scan_actions[22m | Inventory_style_02c.png[39m[0m
 [  95% ] [90m[1m_update_scan_actions[22m | Inventory_style_02d.png[39m[0m
 [  95% ] [90m[1m_update_scan_actions[22m | Inventory_style_03a.png[39m[0m
 [  95% ] [90m[1m_update_scan_actions[22m | Inventory_style_03b.png[39m[0m
@@ -1564,7 +1564,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  95% ] [90m[1m_update_scan_actions[22m | bow_eternal.png[39m[0m
 [  95% ] [90m[1m_update_scan_actions[22m | bow_legendary.png[39m[0m
 [  95% ] [90m[1m_update_scan_actions[22m | bow_magic.png[39m[0m
-[  96% ] [90m[1m_update_scan_actions[22m | bow_mythic.png[39m[0m
+[  95% ] [90m[1m_update_scan_actions[22m | bow_mythic.png[39m[0m
 [  96% ] [90m[1m_update_scan_actions[22m | bow_normal.png[39m[0m
 [  96% ] [90m[1m_update_scan_actions[22m | bow_rare.png[39m[0m
 [  96% ] [90m[1m_update_scan_actions[22m | hero_soul.png[39m[0m
@@ -1577,7 +1577,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  96% ] [90m[1m_update_scan_actions[22m | meta_icon_placeholders.svg[39m[0m
 [  96% ] [90m[1m_update_scan_actions[22m | fantasy_icons.png[39m[0m
 [  96% ] [90m[1m_update_scan_actions[22m | pixel_glyph_atlas.svg[39m[0m
-[  97% ] [90m[1m_update_scan_actions[22m | axe_charge_64x64_12.png[39m[0m
+[  96% ] [90m[1m_update_scan_actions[22m | axe_charge_64x64_12.png[39m[0m
 [  97% ] [90m[1m_update_scan_actions[22m | axe_cleave_64x48_6.png[39m[0m
 [  97% ] [90m[1m_update_scan_actions[22m | axe_spin_32x32_8.png[39m[0m
 [  97% ] [90m[1m_update_scan_actions[22m | axe_trail_32x16_6.png[39m[0m
@@ -1589,7 +1589,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  97% ] [90m[1m_update_scan_actions[22m | reaper_disc_48x48_8.png[39m[0m
 [  97% ] [90m[1m_update_scan_actions[22m | reaper_trail_32x16_6.png[39m[0m
 [  97% ] [90m[1m_update_scan_actions[22m | vampire_blink_arrival_48x48_10.png[39m[0m
-[  98% ] [90m[1m_update_scan_actions[22m | vampire_blink_departure_48x48_10.png[39m[0m
+[  97% ] [90m[1m_update_scan_actions[22m | vampire_blink_departure_48x48_10.png[39m[0m
 [  98% ] [90m[1m_update_scan_actions[22m | vampire_tether_32x16_4.png[39m[0m
 [  98% ] [90m[1m_update_scan_actions[22m | sword_crescent_wave.png[39m[0m
 [  98% ] [90m[1m_update_scan_actions[22m | sword_echo_anchor_32x32_8.png[39m[0m
@@ -1602,7 +1602,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  98% ] [90m[1m_update_scan_actions[22m | scifi_warp_003_large_blue.png[39m[0m
 [  98% ] [90m[1m_update_scan_actions[22m | spell_absorb_001_small_violet.png[39m[0m
 [  98% ] [90m[1m_update_scan_actions[22m | spell_death_001_large_red.png[39m[0m
-[  99% ] [90m[1m_update_scan_actions[22m | stylized_skull_smoke_burst_001_small_white.png[39m[0m
+[  98% ] [90m[1m_update_scan_actions[22m | stylized_skull_smoke_burst_001_small_white.png[39m[0m
 [  99% ] [90m[1m_update_scan_actions[22m | symmetrical_impact_001_small_yellow.png[39m[0m
 [  99% ] [90m[1m_update_scan_actions[22m | fantasy_portal_64x64_12.png[39m[0m
 [  99% ] [90m[1m_update_scan_actions[22m | interaction_sparkle_32x32_8.png[39m[0m
@@ -1613,9 +1613,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  99% ] [90m[1m_update_scan_actions[22m | room_preview.png[39m[0m
 [  99% ] [90m[1m_update_scan_actions[22m | room_preview_entry.png[39m[0m
 [  99% ] [90m[1m_update_scan_actions[22m | wall_caps.png[39m[0m
+[  99% ] [90m[1m_update_scan_actions[22m | archive_room_walk.png[39m[0m
 [92m[ DONE ][39m [1m_update_scan_actions[22m
 [0m
-[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1188 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1189 steps)[39m[0m
 [   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -1842,7 +1843,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  18% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  19% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -1949,6 +1950,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  27% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -1961,7 +1963,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  28% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  29% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2056,6 +2057,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  36% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  37% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2080,7 +2082,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  38% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  39% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2163,6 +2164,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  46% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2199,7 +2201,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  48% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  49% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2270,6 +2271,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  54% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2318,7 +2320,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  58% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  58% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  58% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  59% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2377,6 +2378,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  63% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  64% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2437,7 +2439,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  68% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  69% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2484,6 +2485,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  72% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  73% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2556,7 +2558,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  78% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  79% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2591,6 +2592,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  81% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  82% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2686,7 +2688,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
-[  89% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
 [  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
@@ -2985,9 +2987,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  14% ] [90m[1mreimport[22m | impactPunch_heavy_000.ogg[39m[0m
 [  14% ] [90m[1mreimport[22m | impactPlate_medium_002.ogg[39m[0m
 [  15% ] [90m[1mreimport[22m | impactPlate_medium_001.ogg[39m[0m
+[  15% ] [90m[1mreimport[22m | Icon99.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon98.png[39m[0m
-[  15% ] [90m[1mreimport[22m | Icon97.png[39m[0m
-[  15% ] [90m[1mreimport[22m | Icon71.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon72.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon73.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon74.png[39m[0m
@@ -2996,6 +2997,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  15% ] [90m[1mreimport[22m | Icon77.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon78.png[39m[0m
 [  15% ] [90m[1mreimport[22m | Icon79.png[39m[0m
+[  15% ] [90m[1mreimport[22m | Icon80.png[39m[0m
+[  16% ] [90m[1mreimport[22m | Icon97.png[39m[0m
 [  16% ] [90m[1mreimport[22m | Icon96.png[39m[0m
 [  16% ] [90m[1mreimport[22m | Icon95.png[39m[0m
 [  16% ] [90m[1mreimport[22m | Icon94.png[39m[0m
@@ -3007,19 +3010,19 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  16% ] [90m[1mreimport[22m | Icon88.png[39m[0m
 [  16% ] [90m[1mreimport[22m | Icon87.png[39m[0m
 [  16% ] [90m[1mreimport[22m | Icon86.png[39m[0m
-[  16% ] [90m[1mreimport[22m | Icon85.png[39m[0m
+[  17% ] [90m[1mreimport[22m | Icon85.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon84.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon83.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon82.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon81.png[39m[0m
-[  17% ] [90m[1mreimport[22m | Icon80.png[39m[0m
+[  17% ] [90m[1mreimport[22m | Icon53.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon52.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon51.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon50.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon49.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon48.png[39m[0m
 [  17% ] [90m[1mreimport[22m | Icon47.png[39m[0m
-[  17% ] [90m[1mreimport[22m | Icon46.png[39m[0m
+[  18% ] [90m[1mreimport[22m | Icon46.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon45.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon44.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon43.png[39m[0m
@@ -3029,7 +3032,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  18% ] [90m[1mreimport[22m | Icon39.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon38.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon37.png[39m[0m
-[  18% ] [90m[1mreimport[22m | Icon36.png[39m[0m
+[  18% ] [90m[1mreimport[22m | Icon71.png[39m[0m
 [  18% ] [90m[1mreimport[22m | Icon70.png[39m[0m
 [  19% ] [90m[1mreimport[22m | Icon69.png[39m[0m
 [  19% ] [90m[1mreimport[22m | Icon68.png[39m[0m
@@ -3042,19 +3045,19 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  19% ] [90m[1mreimport[22m | Icon61.png[39m[0m
 [  19% ] [90m[1mreimport[22m | Icon60.png[39m[0m
 [  19% ] [90m[1mreimport[22m | Icon59.png[39m[0m
-[  19% ] [90m[1mreimport[22m | Icon58.png[39m[0m
+[  20% ] [90m[1mreimport[22m | Icon58.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon57.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon56.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon55.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon54.png[39m[0m
-[  20% ] [90m[1mreimport[22m | Icon53.png[39m[0m
+[  20% ] [90m[1mreimport[22m | Icon154.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon153.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon152.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon151.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon150.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon149.png[39m[0m
 [  20% ] [90m[1mreimport[22m | Icon148.png[39m[0m
-[  20% ] [90m[1mreimport[22m | Icon147.png[39m[0m
+[  21% ] [90m[1mreimport[22m | Icon147.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon146.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon145.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon144.png[39m[0m
@@ -3064,9 +3067,9 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  21% ] [90m[1mreimport[22m | Icon140.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon139.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon138.png[39m[0m
-[  21% ] [90m[1mreimport[22m | Icon137.png[39m[0m
+[  21% ] [90m[1mreimport[22m | Icon172.png[39m[0m
 [  21% ] [90m[1mreimport[22m | Icon171.png[39m[0m
-[  21% ] [90m[1mreimport[22m | Icon170.png[39m[0m
+[  22% ] [90m[1mreimport[22m | Icon170.png[39m[0m
 [  22% ] [90m[1mreimport[22m | Icon169.png[39m[0m
 [  22% ] [90m[1mreimport[22m | Icon168.png[39m[0m
 [  22% ] [90m[1mreimport[22m | Icon167.png[39m[0m
@@ -3078,11 +3081,11 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  22% ] [90m[1mreimport[22m | Icon161.png[39m[0m
 [  22% ] [90m[1mreimport[22m | Icon160.png[39m[0m
 [  22% ] [90m[1mreimport[22m | Icon159.png[39m[0m
-[  22% ] [90m[1mreimport[22m | Icon158.png[39m[0m
+[  23% ] [90m[1mreimport[22m | Icon158.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon157.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon156.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon155.png[39m[0m
-[  23% ] [90m[1mreimport[22m | Icon154.png[39m[0m
+[  23% ] [90m[1mreimport[22m | Icon119.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon118.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon117.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon116.png[39m[0m
@@ -3090,7 +3093,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  23% ] [90m[1mreimport[22m | Icon114.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon113.png[39m[0m
 [  23% ] [90m[1mreimport[22m | Icon112.png[39m[0m
-[  23% ] [90m[1mreimport[22m | Icon111.png[39m[0m
+[  24% ] [90m[1mreimport[22m | Icon111.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon110.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon109.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon108.png[39m[0m
@@ -3099,10 +3102,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  24% ] [90m[1mreimport[22m | Icon102.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon101.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon100.png[39m[0m
-[  24% ] [90m[1mreimport[22m | Icon99.png[39m[0m
+[  24% ] [90m[1mreimport[22m | Icon137.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon136.png[39m[0m
 [  24% ] [90m[1mreimport[22m | Icon135.png[39m[0m
-[  24% ] [90m[1mreimport[22m | Icon134.png[39m[0m
+[  25% ] [90m[1mreimport[22m | Icon134.png[39m[0m
 [  25% ] [90m[1mreimport[22m | Icon133.png[39m[0m
 [  25% ] [90m[1mreimport[22m | Icon132.png[39m[0m
 [  25% ] [90m[1mreimport[22m | Icon131.png[39m[0m
@@ -3114,10 +3117,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  25% ] [90m[1mreimport[22m | Icon125.png[39m[0m
 [  25% ] [90m[1mreimport[22m | Icon124.png[39m[0m
 [  25% ] [90m[1mreimport[22m | Icon123.png[39m[0m
-[  25% ] [90m[1mreimport[22m | Icon122.png[39m[0m
+[  26% ] [90m[1mreimport[22m | Icon122.png[39m[0m
 [  26% ] [90m[1mreimport[22m | Icon121.png[39m[0m
 [  26% ] [90m[1mreimport[22m | Icon120.png[39m[0m
-[  26% ] [90m[1mreimport[22m | Icon119.png[39m[0m
+[  26% ] [90m[1mreimport[22m | rpg_icons28.png[39m[0m
 [  26% ] [90m[1mreimport[22m | rpg_icons27.png[39m[0m
 [  26% ] [90m[1mreimport[22m | rpg_icons26.png[39m[0m
 [  26% ] [90m[1mreimport[22m | rpg_icons25.png[39m[0m
@@ -3126,7 +3129,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  26% ] [90m[1mreimport[22m | rpg_icons86.png[39m[0m
 [  26% ] [90m[1mreimport[22m | rpg_icons85.png[39m[0m
 [  26% ] [90m[1mreimport[22m | rpg_icons84.png[39m[0m
-[  26% ] [90m[1mreimport[22m | rpg_icons83.png[39m[0m
+[  27% ] [90m[1mreimport[22m | rpg_icons83.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons82.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons81.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons80.png[39m[0m
@@ -3134,7 +3137,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  27% ] [90m[1mreimport[22m | rpg_icons78.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons77.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons76.png[39m[0m
-[  27% ] [90m[1mreimport[22m | rpg_icons75.png[39m[0m
+[  27% ] [90m[1mreimport[22m | rpg_icons46.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons45.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons44.png[39m[0m
 [  27% ] [90m[1mreimport[22m | rpg_icons43.png[39m[0m
@@ -3152,7 +3155,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  28% ] [90m[1mreimport[22m | rpg_icons31.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons30.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons29.png[39m[0m
-[  29% ] [90m[1mreimport[22m | rpg_icons28.png[39m[0m
+[  29% ] [90m[1mreimport[22m | rpg_icons21.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons20.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons19.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons18.png[39m[0m
@@ -3161,7 +3164,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  29% ] [90m[1mreimport[22m | rpg_icons15.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons14.png[39m[0m
 [  29% ] [90m[1mreimport[22m | rpg_icons13.png[39m[0m
-[  29% ] [90m[1mreimport[22m | rpg_icons12.png[39m[0m
+[  30% ] [90m[1mreimport[22m | rpg_icons12.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons11.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons10.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons9.png[39m[0m
@@ -3169,11 +3172,11 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  30% ] [90m[1mreimport[22m | rpg_icons7.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons6.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons5.png[39m[0m
-[  30% ] [90m[1mreimport[22m | rpg_icons4.png[39m[0m
+[  30% ] [90m[1mreimport[22m | rpg_icons75.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons74.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons73.png[39m[0m
 [  30% ] [90m[1mreimport[22m | rpg_icons72.png[39m[0m
-[  30% ] [90m[1mreimport[22m | rpg_icons71.png[39m[0m
+[  31% ] [90m[1mreimport[22m | rpg_icons71.png[39m[0m
 [  31% ] [90m[1mreimport[22m | rpg_icons70.png[39m[0m
 [  31% ] [90m[1mreimport[22m | rpg_icons69.png[39m[0m
 [  31% ] [90m[1mreimport[22m | rpg_icons148.png[39m[0m
@@ -3185,9 +3188,9 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  31% ] [90m[1mreimport[22m | rpg_icons142.png[39m[0m
 [  31% ] [90m[1mreimport[22m | rpg_icons141.png[39m[0m
 [  31% ] [90m[1mreimport[22m | rpg_icons24.png[39m[0m
-[  31% ] [90m[1mreimport[22m | rpg_icons23.png[39m[0m
+[  32% ] [90m[1mreimport[22m | rpg_icons23.png[39m[0m
 [  32% ] [90m[1mreimport[22m | rpg_icons22.png[39m[0m
-[  32% ] [90m[1mreimport[22m | rpg_icons21.png[39m[0m
+[  32% ] [90m[1mreimport[22m | Icon18.png[39m[0m
 [  32% ] [90m[1mreimport[22m | Icon17.png[39m[0m
 [  32% ] [90m[1mreimport[22m | Icon16.png[39m[0m
 [  32% ] [90m[1mreimport[22m | Icon15.png[39m[0m
@@ -3197,19 +3200,19 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  32% ] [90m[1mreimport[22m | Icon11.png[39m[0m
 [  32% ] [90m[1mreimport[22m | Icon10.png[39m[0m
 [  32% ] [90m[1mreimport[22m | Icon9.png[39m[0m
-[  32% ] [90m[1mreimport[22m | Icon8.png[39m[0m
+[  33% ] [90m[1mreimport[22m | Icon8.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon7.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon6.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon5.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon4.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon3.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon2.png[39m[0m
-[  33% ] [90m[1mreimport[22m | Icon1.png[39m[0m
+[  33% ] [90m[1mreimport[22m | Icon36.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon35.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon34.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon33.png[39m[0m
 [  33% ] [90m[1mreimport[22m | Icon32.png[39m[0m
-[  33% ] [90m[1mreimport[22m | Icon31.png[39m[0m
+[  34% ] [90m[1mreimport[22m | Icon31.png[39m[0m
 [  34% ] [90m[1mreimport[22m | Icon30.png[39m[0m
 [  34% ] [90m[1mreimport[22m | Icon29.png[39m[0m
 [  34% ] [90m[1mreimport[22m | Icon28.png[39m[0m
@@ -3221,8 +3224,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  34% ] [90m[1mreimport[22m | Icon22.png[39m[0m
 [  34% ] [90m[1mreimport[22m | Icon21.png[39m[0m
 [  34% ] [90m[1mreimport[22m | Icon20.png[39m[0m
-[  34% ] [90m[1mreimport[22m | Icon19.png[39m[0m
-[  35% ] [90m[1mreimport[22m | Icon18.png[39m[0m
+[  35% ] [90m[1mreimport[22m | Icon19.png[39m[0m
+[  35% ] [90m[1mreimport[22m | rpg_icons64.png[39m[0m
 [  35% ] [90m[1mreimport[22m | rpg_icons63.png[39m[0m
 [  35% ] [90m[1mreimport[22m | rpg_icons62.png[39m[0m
 [  35% ] [90m[1mreimport[22m | rpg_icons61.png[39m[0m
@@ -3233,14 +3236,14 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  35% ] [90m[1mreimport[22m | rpg_icons56.png[39m[0m
 [  35% ] [90m[1mreimport[22m | rpg_icons55.png[39m[0m
 [  35% ] [90m[1mreimport[22m | rpg_icons54.png[39m[0m
-[  35% ] [90m[1mreimport[22m | rpg_icons53.png[39m[0m
+[  36% ] [90m[1mreimport[22m | rpg_icons53.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons52.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons51.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons50.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons49.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons48.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons47.png[39m[0m
-[  36% ] [90m[1mreimport[22m | rpg_icons46.png[39m[0m
+[  36% ] [90m[1mreimport[22m | Icon1.png[39m[0m
 [  36% ] [90m[1mreimport[22m | complete_width448.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons128.png[39m[0m
 [  36% ] [90m[1mreimport[22m | rpg_icons127.png[39m[0m
@@ -3258,7 +3261,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  37% ] [90m[1mreimport[22m | rpg_icons67.png[39m[0m
 [  37% ] [90m[1mreimport[22m | rpg_icons66.png[39m[0m
 [  38% ] [90m[1mreimport[22m | rpg_icons65.png[39m[0m
-[  38% ] [90m[1mreimport[22m | rpg_icons64.png[39m[0m
+[  38% ] [90m[1mreimport[22m | Icon361.png[39m[0m
 [  38% ] [90m[1mreimport[22m | Icon360.png[39m[0m
 [  38% ] [90m[1mreimport[22m | Icon359.png[39m[0m
 [  38% ] [90m[1mreimport[22m | Icon358.png[39m[0m
@@ -3275,12 +3278,12 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  39% ] [90m[1mreimport[22m | Icon347.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon346.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon345.png[39m[0m
-[  39% ] [90m[1mreimport[22m | Icon344.png[39m[0m
+[  39% ] [90m[1mreimport[22m | Icon378.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon377.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon376.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon375.png[39m[0m
 [  39% ] [90m[1mreimport[22m | Icon374.png[39m[0m
-[  39% ] [90m[1mreimport[22m | Icon373.png[39m[0m
+[  40% ] [90m[1mreimport[22m | Icon373.png[39m[0m
 [  40% ] [90m[1mreimport[22m | Icon372.png[39m[0m
 [  40% ] [90m[1mreimport[22m | Icon371.png[39m[0m
 [  40% ] [90m[1mreimport[22m | Icon370.png[39m[0m
@@ -3292,7 +3295,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  40% ] [90m[1mreimport[22m | Icon364.png[39m[0m
 [  40% ] [90m[1mreimport[22m | Icon363.png[39m[0m
 [  40% ] [90m[1mreimport[22m | Icon362.png[39m[0m
-[  40% ] [90m[1mreimport[22m | Icon361.png[39m[0m
+[  41% ] [90m[1mreimport[22m | Icon327.png[39m[0m
 [  41% ] [90m[1mreimport[22m | Icon326.png[39m[0m
 [  41% ] [90m[1mreimport[22m | Icon325.png[39m[0m
 [  41% ] [90m[1mreimport[22m | Icon324.png[39m[0m
@@ -3304,19 +3307,19 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  41% ] [90m[1mreimport[22m | Icon318.png[39m[0m
 [  41% ] [90m[1mreimport[22m | Icon317.png[39m[0m
 [  41% ] [90m[1mreimport[22m | Icon316.png[39m[0m
-[  41% ] [90m[1mreimport[22m | Icon315.png[39m[0m
+[  42% ] [90m[1mreimport[22m | Icon315.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon314.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon313.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon312.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon311.png[39m[0m
-[  42% ] [90m[1mreimport[22m | Icon310.png[39m[0m
+[  42% ] [90m[1mreimport[22m | Icon344.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon343.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon342.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon341.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon340.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon339.png[39m[0m
 [  42% ] [90m[1mreimport[22m | Icon338.png[39m[0m
-[  42% ] [90m[1mreimport[22m | Icon337.png[39m[0m
+[  43% ] [90m[1mreimport[22m | Icon337.png[39m[0m
 [  43% ] [90m[1mreimport[22m | Icon336.png[39m[0m
 [  43% ] [90m[1mreimport[22m | Icon335.png[39m[0m
 [  43% ] [90m[1mreimport[22m | Icon334.png[39m[0m
@@ -3326,9 +3329,9 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  43% ] [90m[1mreimport[22m | Icon330.png[39m[0m
 [  43% ] [90m[1mreimport[22m | Icon329.png[39m[0m
 [  43% ] [90m[1mreimport[22m | Icon328.png[39m[0m
-[  43% ] [90m[1mreimport[22m | Icon327.png[39m[0m
+[  43% ] [90m[1mreimport[22m | meta_icon_placeholders.svg[39m[0m
 [  43% ] [90m[1mreimport[22m | soul_vessel.png[39m[0m
-[  43% ] [90m[1mreimport[22m | soul_trace.png[39m[0m
+[  44% ] [90m[1mreimport[22m | soul_trace.png[39m[0m
 [  44% ] [90m[1mreimport[22m | hero_soul_sword.png[39m[0m
 [  44% ] [90m[1mreimport[22m | hero_soul.png[39m[0m
 [  44% ] [90m[1mreimport[22m | tilemap_packed.png[39m[0m
@@ -3340,10 +3343,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  44% ] [90m[1mreimport[22m | Inventory_style_02c.png[39m[0m
 [  44% ] [90m[1mreimport[22m | Inventory_style_02b.png[39m[0m
 [  44% ] [90m[1mreimport[22m | Inventory_style_02a.png[39m[0m
-[  44% ] [90m[1mreimport[22m | Inventory_style_01d.png[39m[0m
+[  45% ] [90m[1mreimport[22m | Inventory_style_01d.png[39m[0m
 [  45% ] [90m[1mreimport[22m | Inventory_style_01c.png[39m[0m
 [  45% ] [90m[1mreimport[22m | Inventory_style_01b.png[39m[0m
-[  45% ] [90m[1mreimport[22m | Inventory_style_01a.png[39m[0m
+[  45% ] [90m[1mreimport[22m | archive_room_walk.png[39m[0m
 [  45% ] [90m[1mreimport[22m | wall_caps.png[39m[0m
 [  45% ] [90m[1mreimport[22m | room_preview_entry.png[39m[0m
 [  45% ] [90m[1mreimport[22m | room_preview.png[39m[0m
@@ -3360,7 +3363,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  46% ] [90m[1mreimport[22m | Effect_Anima_1_437x437.png[39m[0m
 [  46% ] [90m[1mreimport[22m | pixel_glyph_atlas.svg[39m[0m
 [  46% ] [90m[1mreimport[22m | fantasy_icons.png[39m[0m
-[  46% ] [90m[1mreimport[22m | meta_icon_placeholders.svg[39m[0m
+[  46% ] [90m[1mreimport[22m | Icon395.png[39m[0m
 [  46% ] [90m[1mreimport[22m | Icon394.png[39m[0m
 [  46% ] [90m[1mreimport[22m | Icon393.png[39m[0m
 [  46% ] [90m[1mreimport[22m | Icon392.png[39m[0m
@@ -3377,7 +3380,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  47% ] [90m[1mreimport[22m | Icon381.png[39m[0m
 [  47% ] [90m[1mreimport[22m | Icon380.png[39m[0m
 [  48% ] [90m[1mreimport[22m | Icon379.png[39m[0m
-[  48% ] [90m[1mreimport[22m | Icon378.png[39m[0m
+[  48% ] [90m[1mreimport[22m | Inventory_style_01a.png[39m[0m
 [  48% ] [90m[1mreimport[22m | Inventory_Slot.png[39m[0m
 [  48% ] [90m[1mreimport[22m | Inventory_select.png[39m[0m
 [  48% ] [90m[1mreimport[22m | Inventory_Bar.png[39m[0m
@@ -3395,11 +3398,11 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  49% ] [90m[1mreimport[22m | Icon398.png[39m[0m
 [  49% ] [90m[1mreimport[22m | Icon397.png[39m[0m
 [  49% ] [90m[1mreimport[22m | Icon396.png[39m[0m
-[  49% ] [90m[1mreimport[22m | Icon395.png[39m[0m
+[  49% ] [90m[1mreimport[22m | Icon224.png[39m[0m
 [  49% ] [90m[1mreimport[22m | Icon223.png[39m[0m
 [  49% ] [90m[1mreimport[22m | Icon222.png[39m[0m
 [  49% ] [90m[1mreimport[22m | Icon221.png[39m[0m
-[  49% ] [90m[1mreimport[22m | Icon220.png[39m[0m
+[  50% ] [90m[1mreimport[22m | Icon220.png[39m[0m
 [  50% ] [90m[1mreimport[22m | Icon219.png[39m[0m
 [  50% ] [90m[1mreimport[22m | Icon218.png[39m[0m
 [  50% ] [90m[1mreimport[22m | Icon217.png[39m[0m
@@ -3411,8 +3414,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  50% ] [90m[1mreimport[22m | Icon211.png[39m[0m
 [  50% ] [90m[1mreimport[22m | Icon210.png[39m[0m
 [  50% ] [90m[1mreimport[22m | Icon209.png[39m[0m
-[  50% ] [90m[1mreimport[22m | Icon208.png[39m[0m
-[  51% ] [90m[1mreimport[22m | Icon207.png[39m[0m
+[  51% ] [90m[1mreimport[22m | Icon208.png[39m[0m
+[  51% ] [90m[1mreimport[22m | Icon241.png[39m[0m
 [  51% ] [90m[1mreimport[22m | Icon240.png[39m[0m
 [  51% ] [90m[1mreimport[22m | Icon239.png[39m[0m
 [  51% ] [90m[1mreimport[22m | Icon238.png[39m[0m
@@ -3423,19 +3426,19 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  51% ] [90m[1mreimport[22m | Icon233.png[39m[0m
 [  51% ] [90m[1mreimport[22m | Icon232.png[39m[0m
 [  51% ] [90m[1mreimport[22m | Icon231.png[39m[0m
-[  51% ] [90m[1mreimport[22m | Icon230.png[39m[0m
+[  52% ] [90m[1mreimport[22m | Icon230.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon229.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon228.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon227.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon226.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon225.png[39m[0m
-[  52% ] [90m[1mreimport[22m | Icon224.png[39m[0m
+[  52% ] [90m[1mreimport[22m | Icon189.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon188.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon187.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon186.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon185.png[39m[0m
 [  52% ] [90m[1mreimport[22m | Icon184.png[39m[0m
-[  52% ] [90m[1mreimport[22m | Icon183.png[39m[0m
+[  53% ] [90m[1mreimport[22m | Icon183.png[39m[0m
 [  53% ] [90m[1mreimport[22m | Icon182.png[39m[0m
 [  53% ] [90m[1mreimport[22m | Icon181.png[39m[0m
 [  53% ] [90m[1mreimport[22m | Icon180.png[39m[0m
@@ -3446,8 +3449,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  53% ] [90m[1mreimport[22m | Icon175.png[39m[0m
 [  53% ] [90m[1mreimport[22m | Icon174.png[39m[0m
 [  53% ] [90m[1mreimport[22m | Icon173.png[39m[0m
-[  53% ] [90m[1mreimport[22m | Icon172.png[39m[0m
-[  53% ] [90m[1mreimport[22m | Icon206.png[39m[0m
+[  53% ] [90m[1mreimport[22m | Icon207.png[39m[0m
+[  54% ] [90m[1mreimport[22m | Icon206.png[39m[0m
 [  54% ] [90m[1mreimport[22m | Icon205.png[39m[0m
 [  54% ] [90m[1mreimport[22m | Icon204.png[39m[0m
 [  54% ] [90m[1mreimport[22m | Icon203.png[39m[0m
@@ -3464,7 +3467,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  55% ] [90m[1mreimport[22m | Icon192.png[39m[0m
 [  55% ] [90m[1mreimport[22m | Icon191.png[39m[0m
 [  55% ] [90m[1mreimport[22m | Icon190.png[39m[0m
-[  55% ] [90m[1mreimport[22m | Icon189.png[39m[0m
+[  55% ] [90m[1mreimport[22m | Icon293.png[39m[0m
 [  55% ] [90m[1mreimport[22m | Icon292.png[39m[0m
 [  55% ] [90m[1mreimport[22m | Icon291.png[39m[0m
 [  55% ] [90m[1mreimport[22m | Icon290.png[39m[0m
@@ -3481,7 +3484,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  56% ] [90m[1mreimport[22m | Icon279.png[39m[0m
 [  56% ] [90m[1mreimport[22m | Icon278.png[39m[0m
 [  56% ] [90m[1mreimport[22m | Icon277.png[39m[0m
-[  56% ] [90m[1mreimport[22m | Icon276.png[39m[0m
+[  56% ] [90m[1mreimport[22m | Icon310.png[39m[0m
 [  56% ] [90m[1mreimport[22m | Icon309.png[39m[0m
 [  57% ] [90m[1mreimport[22m | Icon308.png[39m[0m
 [  57% ] [90m[1mreimport[22m | Icon307.png[39m[0m
@@ -3498,7 +3501,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  58% ] [90m[1mreimport[22m | Icon296.png[39m[0m
 [  58% ] [90m[1mreimport[22m | Icon295.png[39m[0m
 [  58% ] [90m[1mreimport[22m | Icon294.png[39m[0m
-[  58% ] [90m[1mreimport[22m | Icon293.png[39m[0m
+[  58% ] [90m[1mreimport[22m | Icon258.png[39m[0m
 [  58% ] [90m[1mreimport[22m | Icon257.png[39m[0m
 [  58% ] [90m[1mreimport[22m | Icon256.png[39m[0m
 [  58% ] [90m[1mreimport[22m | Icon255.png[39m[0m
@@ -3515,10 +3518,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  59% ] [90m[1mreimport[22m | Icon244.png[39m[0m
 [  59% ] [90m[1mreimport[22m | Icon243.png[39m[0m
 [  59% ] [90m[1mreimport[22m | Icon242.png[39m[0m
-[  59% ] [90m[1mreimport[22m | Icon241.png[39m[0m
+[  59% ] [90m[1mreimport[22m | Icon276.png[39m[0m
 [  59% ] [90m[1mreimport[22m | Icon275.png[39m[0m
 [  59% ] [90m[1mreimport[22m | Icon274.png[39m[0m
-[  59% ] [90m[1mreimport[22m | Icon273.png[39m[0m
+[  60% ] [90m[1mreimport[22m | Icon273.png[39m[0m
 [  60% ] [90m[1mreimport[22m | Icon272.png[39m[0m
 [  60% ] [90m[1mreimport[22m | Icon271.png[39m[0m
 [  60% ] [90m[1mreimport[22m | Icon270.png[39m[0m
@@ -3530,10 +3533,9 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  60% ] [90m[1mreimport[22m | Icon264.png[39m[0m
 [  60% ] [90m[1mreimport[22m | Icon263.png[39m[0m
 [  60% ] [90m[1mreimport[22m | Icon262.png[39m[0m
-[  60% ] [90m[1mreimport[22m | Icon261.png[39m[0m
+[  61% ] [90m[1mreimport[22m | Icon261.png[39m[0m
 [  61% ] [90m[1mreimport[22m | Icon260.png[39m[0m
 [  61% ] [90m[1mreimport[22m | Icon259.png[39m[0m
-[  61% ] [90m[1mreimport[22m | Icon258.png[39m[0m
 [  61% ] [90m[1mreimport[22m | UI_TravelBook_FrameSelect01b.png[39m[0m
 [  61% ] [90m[1mreimport[22m | UI_TravelBook_GamepadA01a.png[39m[0m
 [  61% ] [90m[1mreimport[22m | UI_TravelBook_GamepadB01a.png[39m[0m
@@ -3566,7 +3568,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  63% ] [90m[1mreimport[22m | UI_TravelBook_IconHeart01a.png[39m[0m
 [  63% ] [90m[1mreimport[22m | UI_TravelBook_IconHeart01e.png[39m[0m
 [  63% ] [90m[1mreimport[22m | UI_TravelBook_IconHeart01i.png[39m[0m
-[  64% ] [90m[1mreimport[22m | candlestick_2_3.png[39m[0m
+[  63% ] [90m[1mreimport[22m | candlestick_2_3.png[39m[0m
 [  64% ] [90m[1mreimport[22m | candlestick_2_4.png[39m[0m
 [  64% ] [90m[1mreimport[22m | side_torch_1.png[39m[0m
 [  64% ] [90m[1mreimport[22m | side_torch_2.png[39m[0m
@@ -3578,7 +3580,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  64% ] [90m[1mreimport[22m | dungeon_tileset.png[39m[0m
 [  64% ] [90m[1mreimport[22m | source_reference.png[39m[0m
 [  64% ] [90m[1mreimport[22m | ocean_plant.png[39m[0m
-[  65% ] [90m[1mreimport[22m | ocean_props.png[39m[0m
+[  64% ] [90m[1mreimport[22m | ocean_props.png[39m[0m
 [  65% ] [90m[1mreimport[22m | ocean_struct.png[39m[0m
 [  65% ] [90m[1mreimport[22m | ocean_tileset_grass.png[39m[0m
 [  65% ] [90m[1mreimport[22m | ocean_tileset_stone_ground.png[39m[0m
@@ -3590,7 +3592,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  65% ] [90m[1mreimport[22m | UI_TravelBook_Cursor01c.png[39m[0m
 [  65% ] [90m[1mreimport[22m | UI_TravelBook_CommandPress01a.png[39m[0m
 [  65% ] [90m[1mreimport[22m | UI_TravelBook_CommandHold01a.png[39m[0m
-[  66% ] [90m[1mreimport[22m | UI_TravelBook_CommandDirection01a.png[39m[0m
+[  65% ] [90m[1mreimport[22m | UI_TravelBook_CommandDirection01a.png[39m[0m
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_ButtonValue01b.png[39m[0m
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_ButtonValue01a.png[39m[0m
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_BookPageRight01a.png[39m[0m
@@ -3602,7 +3604,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_2.png[39m[0m
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_3.png[39m[0m
 [  66% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_4.png[39m[0m
-[  67% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_5.png[39m[0m
+[  66% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_5.png[39m[0m
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionHold01a_6.png[39m[0m
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionPress01a_1.png[39m[0m
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_CommandActionPress01a_2.png[39m[0m
@@ -3614,7 +3616,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aHide_4.png[39m[0m
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aShow_1.png[39m[0m
 [  67% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aShow_2.png[39m[0m
-[  68% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aShow_3.png[39m[0m
+[  67% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aShow_3.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_Marker01aShow_4.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_MouseCursorClick01a_1.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_MouseCursorClick01a_2.png[39m[0m
@@ -3626,7 +3628,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_Point01a_2.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_Point02a_1.png[39m[0m
 [  68% ] [90m[1mreimport[22m | UI_TravelBook_Point02a_2.png[39m[0m
-[  69% ] [90m[1mreimport[22m | UI_TravelBook_SlotCursor01a_1.png[39m[0m
+[  68% ] [90m[1mreimport[22m | UI_TravelBook_SlotCursor01a_1.png[39m[0m
 [  69% ] [90m[1mreimport[22m | UI_TravelBook_SlotCursor01a_2.png[39m[0m
 [  69% ] [90m[1mreimport[22m | UI_TravelBook_SlotCursor01a_3.png[39m[0m
 [  69% ] [90m[1mreimport[22m | UI_TravelBook_SlotCursor01a_4.png[39m[0m
@@ -3673,7 +3675,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  72% ] [90m[1mreimport[22m | _WallClimb.png[39m[0m
 [  72% ] [90m[1mreimport[22m | _WallClimbNoMovement.png[39m[0m
 [  72% ] [90m[1mreimport[22m | _WallHang.png[39m[0m
-[  73% ] [90m[1mreimport[22m | _WallSlide.png[39m[0m
+[  72% ] [90m[1mreimport[22m | _WallSlide.png[39m[0m
 [  73% ] [90m[1mreimport[22m | enemies-skeleton1_attack.png[39m[0m
 [  73% ] [90m[1mreimport[22m | enemies-skeleton1_death.png[39m[0m
 [  73% ] [90m[1mreimport[22m | enemies-skeleton1_movement.png[39m[0m
@@ -3685,7 +3687,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  73% ] [90m[1mreimport[22m | enemies-skeleton2_take_damage.png[39m[0m
 [  73% ] [90m[1mreimport[22m | enemies-vampire_attack.png[39m[0m
 [  73% ] [90m[1mreimport[22m | enemies-vampire_death.png[39m[0m
-[  74% ] [90m[1mreimport[22m | enemies-vampire_movement.png[39m[0m
+[  73% ] [90m[1mreimport[22m | enemies-vampire_movement.png[39m[0m
 [  74% ] [90m[1mreimport[22m | enemies-vampire_take_damage.png[39m[0m
 [  74% ] [90m[1mreimport[22m | ash_steward_idle.png[39m[0m
 [  74% ] [90m[1mreimport[22m | gatekeeper_archer_idle.png[39m[0m
@@ -3697,7 +3699,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  74% ] [90m[1mreimport[22m | Knight_attack_new_6.png[39m[0m
 [  74% ] [90m[1mreimport[22m | Knight_attack_new_7.png[39m[0m
 [  74% ] [90m[1mreimport[22m | chapter_1_key_art_imagen.png[39m[0m
-[  75% ] [90m[1mreimport[22m | soul_hero_emblem_imagen.png[39m[0m
+[  74% ] [90m[1mreimport[22m | soul_hero_emblem_imagen.png[39m[0m
 [  75% ] [90m[1mreimport[22m | archer_boss_motion_vfx_atlas_chroma.png[39m[0m
 [  75% ] [90m[1mreimport[22m | archer_boss_motion_vfx_atlas_generated_raw.png[39m[0m
 [  75% ] [90m[1mreimport[22m | archer_boss_motion_vfx_atlas_rgba.png[39m[0m
@@ -3709,7 +3711,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  75% ] [90m[1mreimport[22m | archer_boss_sheet.png[39m[0m
 [  75% ] [90m[1mreimport[22m | archer_hero_soul_icon_64.png[39m[0m
 [  75% ] [90m[1mreimport[22m | archer_player_sheet.png[39m[0m
-[  76% ] [90m[1mreimport[22m | _Attack2.png[39m[0m
+[  75% ] [90m[1mreimport[22m | _Attack2.png[39m[0m
 [  76% ] [90m[1mreimport[22m | _Attack2NoMovement.png[39m[0m
 [  76% ] [90m[1mreimport[22m | _Attack.png[39m[0m
 [  76% ] [90m[1mreimport[22m | _Roll.png[39m[0m
@@ -3721,7 +3723,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  76% ] [90m[1mreimport[22m | _DeathNoMovement.png[39m[0m
 [  76% ] [90m[1mreimport[22m | _Death.png[39m[0m
 [  76% ] [90m[1mreimport[22m | _Dash.png[39m[0m
-[  77% ] [90m[1mreimport[22m | _CrouchWalk.png[39m[0m
+[  76% ] [90m[1mreimport[22m | _CrouchWalk.png[39m[0m
 [  77% ] [90m[1mreimport[22m | _CrouchTransition.png[39m[0m
 [  77% ] [90m[1mreimport[22m | _CrouchFull.png[39m[0m
 [  77% ] [90m[1mreimport[22m | _CrouchAttack.png[39m[0m
@@ -3733,7 +3735,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  77% ] [90m[1mreimport[22m | cainos_player.png[39m[0m
 [  77% ] [90m[1mreimport[22m | cainos_props.png[39m[0m
 [  77% ] [90m[1mreimport[22m | cainos_shadow.png[39m[0m
-[  78% ] [90m[1mreimport[22m | cainos_shadow_plant.png[39m[0m
+[  77% ] [90m[1mreimport[22m | cainos_shadow_plant.png[39m[0m
 [  78% ] [90m[1mreimport[22m | cainos_struct.png[39m[0m
 [  78% ] [90m[1mreimport[22m | cainos_tileset_grass.png[39m[0m
 [  78% ] [90m[1mreimport[22m | cainos_tileset_stone_ground.png[39m[0m
@@ -3745,7 +3747,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  78% ] [90m[1mreimport[22m | chest_open_1.png[39m[0m
 [  78% ] [90m[1mreimport[22m | chest_open_2.png[39m[0m
 [  78% ] [90m[1mreimport[22m | chest_open_3.png[39m[0m
-[  79% ] [90m[1mreimport[22m | chest_open_4.png[39m[0m
+[  78% ] [90m[1mreimport[22m | chest_open_4.png[39m[0m
 [  79% ] [90m[1mreimport[22m | coin_2.png[39m[0m
 [  79% ] [90m[1mreimport[22m | coin_3.png[39m[0m
 [  79% ] [90m[1mreimport[22m | coin_4.png[39m[0m
@@ -3780,7 +3782,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  81% ] [90m[1mreimport[22m | cainos_demo_overview.png[39m[0m
 [  81% ] [90m[1mreimport[22m | _WallSlide.png[39m[0m
 [  81% ] [90m[1mreimport[22m | _WallHang.png[39m[0m
-[  82% ] [90m[1mreimport[22m | _WallClimbNoMovement.png[39m[0m
+[  81% ] [90m[1mreimport[22m | _WallClimbNoMovement.png[39m[0m
 [  82% ] [90m[1mreimport[22m | _WallClimb.png[39m[0m
 [  82% ] [90m[1mreimport[22m | _TurnAround.png[39m[0m
 [  82% ] [90m[1mreimport[22m | _SlideTransitionStart.png[39m[0m
@@ -3792,9 +3794,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  82% ] [90m[1mreimport[22m | _JumpFallInbetween.png[39m[0m
 [  82% ] [90m[1mreimport[22m | _Jump.png[39m[0m
 [  82% ] [90m[1mreimport[22m | _Hit.png[39m[0m
-[  83% ] [90m[1mreimport[22m | _Fall.png[39m[0m
+[  82% ] [90m[1mreimport[22m | _Fall.png[39m[0m
 [  83% ] [90m[1mreimport[22m | _DeathNoMovement.png[39m[0m
-[  83% ] [90m[1mreimport[22m | rpg_icons_28.png[39m[0m
 [  83% ] [90m[1mreimport[22m | rpg_icons_29.png[39m[0m
 [  83% ] [90m[1mreimport[22m | rpg_icons_30.png[39m[0m
 [  83% ] [90m[1mreimport[22m | rpg_icons_31.png[39m[0m
@@ -3804,8 +3805,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  83% ] [90m[1mreimport[22m | rpg_icons_35.png[39m[0m
 [  83% ] [90m[1mreimport[22m | rpg_icons_36.png[39m[0m
 [  83% ] [90m[1mreimport[22m | rpg_icons_37.png[39m[0m
-[  84% ] [90m[1mreimport[22m | rpg_icons_38.png[39m[0m
-[  84% ] [90m[1mreimport[22m | rpg_icons_39.png[39m[0m
+[  83% ] [90m[1mreimport[22m | rpg_icons_38.png[39m[0m
+[  83% ] [90m[1mreimport[22m | rpg_icons_39.png[39m[0m
 [  84% ] [90m[1mreimport[22m | rpg_icons_40.png[39m[0m
 [  84% ] [90m[1mreimport[22m | rpg_icons_41.png[39m[0m
 [  84% ] [90m[1mreimport[22m | rpg_icons_42.png[39m[0m
@@ -3816,8 +3817,8 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  84% ] [90m[1mreimport[22m | rpg_icons_47.png[39m[0m
 [  84% ] [90m[1mreimport[22m | rpg_icons_48.png[39m[0m
 [  84% ] [90m[1mreimport[22m | rpg_icons_49.png[39m[0m
-[  85% ] [90m[1mreimport[22m | rpg_icons_50.png[39m[0m
-[  85% ] [90m[1mreimport[22m | rpg_icons_51.png[39m[0m
+[  84% ] [90m[1mreimport[22m | rpg_icons_50.png[39m[0m
+[  84% ] [90m[1mreimport[22m | rpg_icons_51.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_52.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_53.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_54.png[39m[0m
@@ -3826,10 +3827,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  85% ] [90m[1mreimport[22m | rpg_icons_57.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_58.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_59.png[39m[0m
-[  85% ] [90m[1mreimport[22m | rpg_icons_23.png[39m[0m
+[  85% ] [90m[1mreimport[22m | rpg_icons_60.png[39m[0m
 [  85% ] [90m[1mreimport[22m | rpg_icons_24.png[39m[0m
-[  86% ] [90m[1mreimport[22m | rpg_icons_141.png[39m[0m
-[  86% ] [90m[1mreimport[22m | rpg_icons_142.png[39m[0m
+[  85% ] [90m[1mreimport[22m | rpg_icons_141.png[39m[0m
+[  85% ] [90m[1mreimport[22m | rpg_icons_142.png[39m[0m
 [  86% ] [90m[1mreimport[22m | rpg_icons_143.png[39m[0m
 [  86% ] [90m[1mreimport[22m | rpg_icons_144.png[39m[0m
 [  86% ] [90m[1mreimport[22m | rpg_icons_145.png[39m[0m
@@ -3840,8 +3841,10 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  86% ] [90m[1mreimport[22m | rpg_icons_70.png[39m[0m
 [  86% ] [90m[1mreimport[22m | rpg_icons_71.png[39m[0m
 [  86% ] [90m[1mreimport[22m | rpg_icons_72.png[39m[0m
-[  87% ] [90m[1mreimport[22m | rpg_icons_73.png[39m[0m
-[  87% ] [90m[1mreimport[22m | rpg_icons_74.png[39m[0m
+[  86% ] [90m[1mreimport[22m | rpg_icons_73.png[39m[0m
+[  86% ] [90m[1mreimport[22m | rpg_icons_74.png[39m[0m
+[  87% ] [90m[1mreimport[22m | rpg_icons_75.png[39m[0m
+[  87% ] [90m[1mreimport[22m | rpg_icons_28.png[39m[0m
 [  87% ] [90m[1mreimport[22m | rpg_icons_27.png[39m[0m
 [  87% ] [90m[1mreimport[22m | rpg_icons_26.png[39m[0m
 [  87% ] [90m[1mreimport[22m | rpg_icons_25.png[39m[0m
@@ -3858,14 +3861,12 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  88% ] [90m[1mreimport[22m | rpg_icons_78.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons_77.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons_76.png[39m[0m
-[  88% ] [90m[1mreimport[22m | rpg_icons_75.png[39m[0m
-[  88% ] [90m[1mreimport[22m | rpg_icons100.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons101.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons102.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons103.png[39m[0m
 [  88% ] [90m[1mreimport[22m | rpg_icons104.png[39m[0m
-[  89% ] [90m[1mreimport[22m | rpg_icons105.png[39m[0m
-[  89% ] [90m[1mreimport[22m | rpg_icons106.png[39m[0m
+[  88% ] [90m[1mreimport[22m | rpg_icons105.png[39m[0m
+[  88% ] [90m[1mreimport[22m | rpg_icons106.png[39m[0m
 [  89% ] [90m[1mreimport[22m | rpg_icons107.png[39m[0m
 [  89% ] [90m[1mreimport[22m | rpg_icons108.png[39m[0m
 [  89% ] [90m[1mreimport[22m | rpg_icons129.png[39m[0m
@@ -3876,7 +3877,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  89% ] [90m[1mreimport[22m | rpg_icons134.png[39m[0m
 [  89% ] [90m[1mreimport[22m | rpg_icons135.png[39m[0m
 [  89% ] [90m[1mreimport[22m | rpg_icons136.png[39m[0m
-[  90% ] [90m[1mreimport[22m | rpg_icons137.png[39m[0m
+[  89% ] [90m[1mreimport[22m | rpg_icons137.png[39m[0m
 [  90% ] [90m[1mreimport[22m | rpg_icons138.png[39m[0m
 [  90% ] [90m[1mreimport[22m | rpg_icons139.png[39m[0m
 [  90% ] [90m[1mreimport[22m | rpg_icons140.png[39m[0m
@@ -3887,11 +3888,11 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  90% ] [90m[1mreimport[22m | rpg_icons113.png[39m[0m
 [  90% ] [90m[1mreimport[22m | rpg_icons114.png[39m[0m
 [  90% ] [90m[1mreimport[22m | rpg_icons115.png[39m[0m
-[  91% ] [90m[1mreimport[22m | rpg_icons116.png[39m[0m
-[  91% ] [90m[1mreimport[22m | rpg_icons1.png[39m[0m
+[  90% ] [90m[1mreimport[22m | rpg_icons116.png[39m[0m
+[  90% ] [90m[1mreimport[22m | rpg_icons1.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons2.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons3.png[39m[0m
-[  91% ] [90m[1mreimport[22m | rpg_icons_60.png[39m[0m
+[  91% ] [90m[1mreimport[22m | rpg_icons4.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons_61.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons_62.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons_63.png[39m[0m
@@ -3899,14 +3900,16 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  91% ] [90m[1mreimport[22m | rpg_icons_65.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons_66.png[39m[0m
 [  91% ] [90m[1mreimport[22m | rpg_icons_67.png[39m[0m
-[  92% ] [90m[1mreimport[22m | rpg_icons_68.png[39m[0m
-[  92% ] [90m[1mreimport[22m | rpg_icons_117.png[39m[0m
+[  91% ] [90m[1mreimport[22m | rpg_icons_68.png[39m[0m
+[  91% ] [90m[1mreimport[22m | rpg_icons_117.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_118.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_119.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_120.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_121.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_122.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons_123.png[39m[0m
+[  92% ] [90m[1mreimport[22m | rpg_icons_124.png[39m[0m
+[  92% ] [90m[1mreimport[22m | rpg_icons100.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons99.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons98.png[39m[0m
 [  92% ] [90m[1mreimport[22m | rpg_icons97.png[39m[0m
@@ -3923,7 +3926,6 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  93% ] [90m[1mreimport[22m | rpg_icons_127.png[39m[0m
 [  93% ] [90m[1mreimport[22m | rpg_icons_126.png[39m[0m
 [  93% ] [90m[1mreimport[22m | rpg_icons_125.png[39m[0m
-[  94% ] [90m[1mreimport[22m | rpg_icons_124.png[39m[0m
 [  94% ] [90m[1mreimport[22m | Dark VFX 2 (48x64)15.png[39m[0m
 [  94% ] [90m[1mreimport[22m | Dark VFX 2 (48x64)16.png[39m[0m
 [  94% ] [90m[1mreimport[22m | ATTACK.png[39m[0m
@@ -3935,7 +3937,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  94% ] [90m[1mreimport[22m | DEATH.png[39m[0m
 [  94% ] [90m[1mreimport[22m | FLYING.png[39m[0m
 [  94% ] [90m[1mreimport[22m | HURT.png[39m[0m
-[  95% ] [90m[1mreimport[22m | projectile.png[39m[0m
+[  94% ] [90m[1mreimport[22m | projectile.png[39m[0m
 [  95% ] [90m[1mreimport[22m | decorative_cracks_coasts_animation.png[39m[0m
 [  95% ] [90m[1mreimport[22m | decorative_cracks_floor.png[39m[0m
 [  95% ] [90m[1mreimport[22m | decorative_cracks_walls.png[39m[0m
@@ -3947,7 +3949,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  95% ] [90m[1mreimport[22m | walls_floor.png[39m[0m
 [  95% ] [90m[1mreimport[22m | Water_coasts_animation.png[39m[0m
 [  95% ] [90m[1mreimport[22m | water_detilazation_v2.png[39m[0m
-[  96% ] [90m[1mreimport[22m | decorative_cracks_coasts_animation.png[39m[0m
+[  95% ] [90m[1mreimport[22m | decorative_cracks_coasts_animation.png[39m[0m
 [  96% ] [90m[1mreimport[22m | decorative_cracks_floor.png[39m[0m
 [  96% ] [90m[1mreimport[22m | decorative_cracks_walls.png[39m[0m
 [  96% ] [90m[1mreimport[22m | doors_lever_chest_animation.png[39m[0m
@@ -3959,11 +3961,12 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  96% ] [90m[1mreimport[22m | UI_TravelBook_Spritesheet01a.png[39m[0m
 [  96% ] [90m[1mreimport[22m | UI_TravelBook_SpritesheetInfo01a.png[39m[0m
 [  96% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)1.png[39m[0m
-[  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)2.png[39m[0m
+[  96% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)2.png[39m[0m
 [  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)3.png[39m[0m
 [  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)4.png[39m[0m
 [  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)5.png[39m[0m
 [  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)6.png[39m[0m
+[  97% ] [90m[1mreimport[22m | Dark VFX 1 (40x32)7.png[39m[0m
 [  97% ] [90m[1mreimport[22m | VT323-Regular.ttf[39m[0m
 [  97% ] [90m[1mreimport[22m | Handjet-SemiBold.ttf[39m[0m
 [  97% ] [90m[1mreimport[22m | Handjet-Regular.ttf[39m[0m
@@ -3996,7 +3999,7 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 [  99% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
 [92m[ DONE ][39m [1mreimport[22m
 [0m
-[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1188 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (1189 steps)[39m[0m
 [   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
 [92m[ DONE ][39m [1mreimport[22m
 [0m
