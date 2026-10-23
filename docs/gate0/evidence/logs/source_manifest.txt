@@ -1,1 +1,0 @@
-MANIFEST CHECK FAILED: git rev-parse e7cad36f8f21e746abefe44ac6cfa54db9a378e6:prototypes/environment_art/archive_audition/art/props.png failed: fatal: path 'prototypes/environment_art/archive_audition/art/props.png' exists on disk, but not in 'e7cad36f8f21e746abefe44ac6cfa54db9a378e6'
