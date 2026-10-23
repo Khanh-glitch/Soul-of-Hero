@@ -24,14 +24,190 @@ GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 
 GATE3 CAPTURE: res://.artifacts/gate3/before_combat_space.png (1280x720) at (934.7823, 342.2592)
 GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_return_route.png (1280x720) at (712.8999, 343.518)
-GATE3 COLLISION: Knight at (1243.568, 293.3438) is clear of every wall and prop
-GATE3 ROUTE: 73 cells walked, 935 px travelled, 20 fights, HP 1100 -> 0 (delta 1100)
+GATE3 COMBAT: the Knight broke off an ineffective fight near 'descent approach'
+GATE3 COMBAT: the Knight broke off an ineffective fight near 'descent approach'
+GATE3 COMBAT: the Knight broke off an ineffective fight near 'descent approach'
+GATE3 COMBAT: the Knight broke off an ineffective fight near 'descent approach'
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 250
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 96
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 0
+GATE3 COLLISION: Knight at (1292.794, 285.5003) is clear of every wall and prop
+GATE3 ROUTE: 73 cells walked, 935 px travelled, 175 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12800 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12801 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 756 nodes
-GATE3 FAILURE: the Knight died fighting near 'descent approach'
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1243.568, 293.3438)
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1292.794, 285.5003)
 GATE3 FAILURE: no walkable route to 'descent approach' at (9, 51)
 GATE3 CAPTURE TEST FAILED (before)
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 19 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
+ERROR: 5 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
