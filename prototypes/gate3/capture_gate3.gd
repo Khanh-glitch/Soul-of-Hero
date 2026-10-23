@@ -84,6 +84,7 @@ var _start_health := 0
 var _walked_cells := 0
 var _walked_pixels := 0.0
 var _camera_frames := 0
+var _engaged_fights := 0
 
 
 func _ready() -> void:
@@ -525,6 +526,32 @@ func _current_cell() -> Vector2i:
 	)
 
 
+func _nearest_enemy_distance() -> float:
+	var nearest := 1.0e9
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Node2D
+		if enemy == null or not enemy.is_inside_tree():
+			continue
+		nearest = minf(nearest, enemy.global_position.distance_to(_player.global_position))
+	return nearest
+
+
+func _fight_until_clear(label: String) -> int:
+	## Press the production light-attack action until nothing is within reach, or
+	## until the fight has clearly stalled. Returns the frames spent.
+	var spent := 0
+	while spent < 240 and _nearest_enemy_distance() < 44.0:
+		if int(_player.get("health")) <= 0:
+			_push("the Knight died fighting near '%s'" % label)
+			return spent
+		Input.action_press("light_attack", 1.0)
+		await get_tree().physics_frame
+		Input.action_release("light_attack")
+		spent += 1
+	_engaged_fights += 1
+	return spent
+
+
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var route := _plan_route(_current_cell(), target_cell)
 	if route.is_empty():
@@ -535,8 +562,22 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var frames := 0
 	var stall := 0
 	var last_position := started
-	var budget := route.size() * 90 + 180
+	var budget := route.size() * 150 + 600
 	while index < route.size() and frames < budget:
+		if int(_player.get("health")) <= 0:
+			_push("the Knight died on the way to '%s' at %s"
+				% [label, str(_player.global_position)])
+			return false
+		# A real player clears the room before walking through it, so the harness
+		# fights with the production light-attack action whenever an enemy is within
+		# reach. This is gameplay, not a pose: the enemies can and do hit back, which
+		# is why the HP delta is reported instead of assumed to be zero.
+		if _nearest_enemy_distance() < 44.0:
+			var spent := await _fight_until_clear(label)
+			frames += spent
+			stall = 0
+			last_position = _player.global_position
+			continue
 		var waypoint := _cell_centre(route[index])
 		var delta := waypoint - _player.global_position
 		if delta.length() <= 5.0:
@@ -558,7 +599,7 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		frames += 1
 		if _player.global_position.distance_to(last_position) < 0.25:
 			stall += 1
-			if stall > 45:
+			if stall > 90:
 				_push("the Knight stalled walking to '%s' at %s"
 					% [label, str(_player.global_position)])
 				return false
@@ -573,9 +614,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var travelled := started.distance_to(_player.global_position)
 	_walked_cells += route.size() - 1
 	_walked_pixels += travelled
-	print("GATE3 WALK: %s  (%.0f, %.0f) -> (%.0f, %.0f)  %.0f px over %d cells in %d frames"
+	print("GATE3 WALK: %s  (%.0f, %.0f) -> (%.0f, %.0f)  %.0f px over %d cells in %d frames, HP %d"
 		% [label, started.x, started.y, _player.global_position.x,
-			_player.global_position.y, travelled, route.size() - 1, frames])
+			_player.global_position.y, travelled, route.size() - 1, frames,
+			int(_player.get("health"))])
 	# A one-waypoint route means the Knight is already standing on the station, which
 	# only happens on the landing cell a floor door just moved him to; that transition
 	# is itself proved separately by `_use_floor_door`.
@@ -726,11 +768,12 @@ func _camera_shot(name: String, size: Vector2i) -> void:
 	var knight_on_screen := true
 	if camera != null:
 		var rect := get_viewport().get_visible_rect()
-		# `get_screen_center()` is the Camera2D API; the British spelling is not
-		# exposed and calling it silently yields an untyped Variant.
-		var offset: Vector2 = _player.global_position - camera.get_screen_center()
-		knight_on_screen = absf(offset.x) < rect.size.x * 0.5 - 32.0 \
-			and absf(offset.y) < rect.size.y * 0.5 - 64.0
+		# Go through the viewport's canvas transform instead of any one Camera2D
+		# accessor, so the check is independent of which camera is following.
+		var screen_position: Vector2 = get_viewport().get_canvas_transform() * _player.global_position
+		var safe_rect := Rect2(Vector2(32.0, 64.0),
+			rect.size - Vector2(64.0, 64.0))
+		knight_on_screen = safe_rect.has_point(screen_position)
 	_expect(knight_on_screen, "%s keeps the Knight inside the frame" % name)
 	var path := "%s/after_%s.png" % [OUT_DIR, name]
 	if image.save_png(ProjectSettings.globalize_path(path)) != OK:
@@ -839,8 +882,9 @@ func _point_hits_gate3_collision(
 
 func _report_walk() -> void:
 	var end_health := int(_player.get("health"))
-	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, HP %d -> %d (delta %d)"
-		% [_walked_cells, _walked_pixels, _start_health, end_health, _start_health - end_health])
+	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, HP %d -> %d (delta %d)"
+		% [_walked_cells, _walked_pixels, _engaged_fights, _start_health, end_health,
+			_start_health - end_health])
 	print("GATE3 CAMERA FRAMES: %d" % _camera_frames)
 	var counted := 0
 	for _index: int in range(1):

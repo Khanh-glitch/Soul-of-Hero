@@ -70,7 +70,7 @@ jobs:
         run: |
           set -euo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://g3_before_$GITHUB_RUN_ID.json"
-          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 900s godot --path . \
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 1500s godot --path . \
             --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
             --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn \
             2>&1 | tee .artifacts/gate3/before.log || true
@@ -83,7 +83,7 @@ jobs:
           sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate3/gate3_pin.log
           cmp data/levels/chapter_1_level_3.json prototypes/gate3/level_data/chapter_1_level_3_gate3.json
           export SOUL_OF_HERO_SAVE_PATH="user://g3_after_$GITHUB_RUN_ID.json"
-          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 900s godot --path . \
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 1500s godot --path . \
             --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
             --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn -- --overlay \
             2>&1 | tee .artifacts/gate3/after.log || true
