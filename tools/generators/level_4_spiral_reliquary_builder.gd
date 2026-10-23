@@ -237,12 +237,20 @@ func build() -> Dictionary:
 		Vector2i(90, 88),
 	]
 
-	# Fore-telegraphed iron channel grates aligned cleanly to each spike gate's axis
+	# Fore-telegraphed iron channel grates on unchanged upstream floors only (`x < 76`)
 	for sc: Vector2i in spikes_coords:
+		if sc.x >= 76:
+			continue
 		for dir: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT]:
 			var gp := sc + dir
 			if _floor_cells.has(gp):
 				_floor_cells[gp] = [0, 1 if dir.x < 0 else 2, 12]
+
+	# =========================================================================
+	# BENCHMARK LOCATION 2 (`x = 76..115, y = 76..99`):
+	# HAND-AUTHORED CONSECRATED CATHEDRAL SANCTUARY APSE (`l4_f3_exit`)
+	# =========================================================================
+	_build_final_reliquary_apse()
 
 	var entities: Array = [
 		{"id": "player_spawn", "type": "player", "position": _cpos(11, 14)},
@@ -264,8 +272,8 @@ func build() -> Dictionary:
 		# Camp 3 (`l4_camp_3_broken_cross`: 3 Skeletons + 2 Diagonal Reapers)
 		{"id": "l4_c3_skeleton_01", "type": "skeleton", "position": _cpos(46, 88), "patrol": 32},
 		{"id": "l4_c3_skeleton_02", "type": "skeleton", "position": _cpos(55, 84), "patrol": 32},
-		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(75, 82), "patrol": 32},
-		{"id": "l4_c3_reaper_01", "type": "skeleton_reaper", "position": _cpos(76, 94), "patrol": 26},
+		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(74, 83), "patrol": 32},
+		{"id": "l4_c3_reaper_01", "type": "skeleton_reaper", "position": _cpos(77, 93), "patrol": 26},
 		{"id": "l4_c3_reaper_02", "type": "skeleton_reaper", "position": _cpos(63, 80), "patrol": 26},
 
 		# 4 Reciprocal Sanctum Stairwell Portals (`door_l4_f2_f3_down` at Bullseye Portal (91, 54)!)
@@ -306,12 +314,12 @@ func build() -> Dictionary:
 		{"id": "l4_sigil_spiral", "type": "sigil", "position": _cpos(51, 13)},
 		{"id": "l4_sigil_camp_1", "type": "sigil", "position": _cpos(104, 15)},
 		{"id": "l4_sigil_camp_2", "type": "sigil", "position": _cpos(55, 59)},
-		{"id": "l4_sigil_camp_3", "type": "sigil", "position": _cpos(80, 88)},
+		{"id": "l4_sigil_camp_3", "type": "sigil", "position": _cpos(80, 89)},
 
-		# Checkpoints (2) & Recessed Consecrated Apse Exit Gate (1)
+		# Checkpoints (2) & Consecrated High Altar Sanctuary Apse Exit Gate (1)
 		{"id": "l4_checkpoint_floor_2", "type": "checkpoint", "position": _cpos(16, 52)},
 		{"id": "l4_checkpoint_floor_3", "type": "checkpoint", "position": _cpos(16, 88)},
-		{"id": "l4_exit", "type": "exit_gate", "position": _cpos(104, 81)},
+		{"id": "l4_exit", "type": "exit_gate", "position": _cpos(99, 83)},
 
 		# Chests (2: exact score_reward 420 & 460 preserved)
 		{"id": "l4_chest_spiral", "type": "chest", "position": _cpos(30, 25), "score_reward": 420},
@@ -338,7 +346,7 @@ func build() -> Dictionary:
 		{"id": "l4_spikes_18", "type": "spikes", "position": _cpos(56, 82)},
 		{"id": "l4_spikes_19", "type": "spikes", "position": _cpos(56, 94)},
 		{"id": "l4_spikes_20", "type": "spikes", "position": _cpos(71, 88)},
-		{"id": "l4_spikes_21", "type": "spikes", "position": _cpos(90, 88)},
+		{"id": "l4_spikes_21", "type": "spikes", "position": _cpos(90, 89)},
 
 		# 14 Progressive Ritual Beacons (down 42% from 24: dark austere outer coils
 		# intensifying into warm golden pools strictly at inner sanctums!)
@@ -353,9 +361,9 @@ func build() -> Dictionary:
 		{"id": "l4_torch_09", "type": "torch", "position": _cpos(95, 54)},
 		{"id": "l4_torch_10", "type": "torch", "position": _cpos(14, 88)},
 		{"id": "l4_torch_11", "type": "torch", "position": _cpos(49, 88)},
-		{"id": "l4_torch_12", "type": "torch", "position": _cpos(79, 88)},
-		{"id": "l4_torch_13", "type": "torch", "position": _cpos(100, 82)},
-		{"id": "l4_torch_14", "type": "torch", "position": _cpos(108, 82)},
+		{"id": "l4_torch_12", "type": "torch", "position": _cpos(79, 85)},
+		{"id": "l4_torch_13", "type": "torch", "position": _cpos(95, 84)},
+		{"id": "l4_torch_14", "type": "torch", "position": _cpos(103, 84)},
 
 		# 12 Original Coins
 		{"id": "l4_coin_01", "type": "coin", "position": _cpos(20, 14)},
@@ -368,8 +376,8 @@ func build() -> Dictionary:
 		{"id": "l4_coin_08", "type": "coin", "position": _cpos(71, 48)},
 		{"id": "l4_coin_09", "type": "coin", "position": _cpos(24, 88)},
 		{"id": "l4_coin_10", "type": "coin", "position": _cpos(31, 88)},
-		{"id": "l4_coin_11", "type": "coin", "position": _cpos(85, 88)},
-		{"id": "l4_coin_12", "type": "coin", "position": _cpos(104, 86)},
+		{"id": "l4_coin_11", "type": "coin", "position": _cpos(85, 89)},
+		{"id": "l4_coin_12", "type": "coin", "position": _cpos(99, 91)},
 	]
 
 	var metadata := {
@@ -659,6 +667,215 @@ func _set_solid(x: int, y: int, src: int, tx: int, ty: int) -> void:
 	_floor_cells.erase(p)
 	_decor_cells.erase(p)
 	_geom_cells[p] = [src, tx, ty]
+
+
+# =============================================================================
+# BENCHMARK LOCATION 2 (`x = 76..115, y = 76..99`):
+# HAND-AUTHORED CONSECRATED CATHEDRAL SANCTUARY APSE (`l4_f3_exit`)
+# =============================================================================
+const SANCTUARY_FLOOR_PALETTE := [
+	Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4),
+	Vector2i(2, 4), Vector2i(3, 4),
+	Vector2i(1, 5), Vector2i(2, 5), Vector2i(3, 5),
+	Vector2i(1, 6), Vector2i(2, 6),
+]
+
+
+func _sanctuary_floor_tile(x: int, y: int) -> Vector2i:
+	var a := (x * 73856093) & 0xFFFFFFFF
+	var b := (y * 19349663) & 0xFFFFFFFF
+	var c := ((x + y) * 83492791) & 0xFFFFFFFF
+	return SANCTUARY_FLOOR_PALETTE[((a ^ b ^ c) & 0xFFFFFFFF) % SANCTUARY_FLOOR_PALETTE.size()]
+
+
+func _sanctuary_wall_9slice(fset: Dictionary, x: int, y: int) -> Vector2i:
+	var n := fset.has(Vector2i(x, y - 1))
+	var e := fset.has(Vector2i(x + 1, y))
+	var s := fset.has(Vector2i(x, y + 1))
+	var w := fset.has(Vector2i(x - 1, y))
+	if n and e:
+		return Vector2i(1, 2)
+	if n and w:
+		return Vector2i(3, 2)
+	if s and e:
+		return Vector2i(1, 0)
+	if s and w:
+		return Vector2i(3, 0)
+	if s:
+		return Vector2i(2, 0)
+	if n:
+		return Vector2i(2, 2)
+	if e:
+		return Vector2i(1, 1)
+	if w:
+		return Vector2i(3, 1)
+	if fset.has(Vector2i(x + 1, y + 1)):
+		return Vector2i(1, 0)
+	if fset.has(Vector2i(x - 1, y + 1)):
+		return Vector2i(3, 0)
+	if fset.has(Vector2i(x + 1, y - 1)):
+		return Vector2i(1, 2)
+	if fset.has(Vector2i(x - 1, y - 1)):
+		return Vector2i(3, 2)
+	return Vector2i(2, 0)
+
+
+func _place_sanctuary_column_1x3(cx: int, cy: int) -> void:
+	# Complete 1x3 (16x48px) classical stone column over opaque brick backing [0, 3, 2].
+	_set_solid(cx, cy, 0, 3, 2)
+	_decor_cells[Vector2i(cx, cy - 1)] = [0, 5, 5]
+	_decor_cells[Vector2i(cx, cy)] = [0, 5, 6]
+	_decor_cells[Vector2i(cx, cy + 1)] = [0, 5, 7]
+
+
+func _place_flush_molten_brazier(x0: int, y_top: int) -> void:
+	# Complete unclipped 3x3 molten fire brazier embedded 100% flush inside
+	# 3-band north solid masonry (y_top cornice, y_top+1 spout, y_top+2 basin curb).
+	for dx: int in range(3):
+		var tx := 4 + dx
+		_set_solid(x0 + dx, y_top, 0, tx, 0)
+		_set_solid(x0 + dx, y_top + 1, 0, tx, 1)
+		_set_solid(x0 + dx, y_top + 2, 0, tx, 2)
+
+
+func _build_final_reliquary_apse() -> void:
+	# Clear strictly Location 2 viewport zone (x = 76..115, y = 74..99) while keeping
+	# x < 76 and Floors 1..2 100% untouched.
+	for y: int in range(74, HEIGHT):
+		for x: int in range(76, WIDTH):
+			var p := Vector2i(x, y)
+			_floor_cells.erase(p)
+			_geom_cells.erase(p)
+			_decor_cells.erase(p)
+
+	# 1. Stepped Cathedral Sanctuary Footprint with 100% HUD-safe margins on ALL 4 edges:
+	# - East Sanctuary Forecourt of Camp 3 (`x = 76..81, y = 85..93`; 3-band north wall at
+	#   y = 82..84 completely below HP/S2/MP, south wall at y = 94 completely above ESC!)
+	# - Ceremonial Vestibule Throat (`x = 82..87, y = 87..91`; 3-band north wall at y = 84..86)
+	# - Broad Cathedral Choir & Side Reliquary Transepts (`x = 88..110, y = 84..95`)
+	# - Recessed Central High Altar Niche (`x = 97..101, y = 82..84`; 3-band wall at y = 79..81,
+	#   cornice cleanly below top-center MUC TIEU text!)
+	var rects := [
+		[76, 85, 6, 9],
+		[82, 87, 6, 5],
+		[88, 84, 23, 12],
+		[97, 82, 5, 3],
+	]
+	for r: Array in rects:
+		for y: int in range(int(r[1]), int(r[1]) + int(r[3])):
+			for x: int in range(int(r[0]), int(r[0]) + int(r[2])):
+				var p := Vector2i(x, y)
+				var ft := _sanctuary_floor_tile(x, y)
+				_floor_cells[p] = [0, ft.x, ft.y]
+
+	# Stepped south chamfer corners so the apse reads as a carved cathedral octagon, not a box!
+	for dy: int in range(2):
+		for dx: int in range(3):
+			_floor_cells.erase(Vector2i(88 + dx, 94 + dy))
+			_floor_cells.erase(Vector2i(108 + dx, 94 + dy))
+
+	# Ceremonial Processional Flagstone Cross-Axis (W -> Center (99, 89) -> High Altar (99, 83))
+	for x: int in range(76, 102):
+		if _floor_cells.has(Vector2i(x, 89)):
+			_floor_cells[Vector2i(x, 89)] = [0, 1, 4]
+	for y: int in range(82, 95):
+		for x: int in [98, 99, 100]:
+			if _floor_cells.has(Vector2i(x, y)):
+				_floor_cells[Vector2i(x, y)] = [0, 1, 4]
+
+	# 2. Clean 9-slice perimeter shell (ZERO hollow [1, 8..11, 0] cavities anywhere!)
+	for y: int in range(76, HEIGHT - 1):
+		for x: int in range(76, WIDTH - 1):
+			var p := Vector2i(x, y)
+			if _floor_cells.has(p):
+				continue
+			var touches := false
+			for dy: int in range(-1, 2):
+				for dx: int in range(-1, 2):
+					if dx == 0 and dy == 0:
+						continue
+					if _floor_cells.has(Vector2i(x + dx, y + dy)):
+						touches = true
+						break
+				if touches:
+					break
+			if touches:
+				var wa := _sanctuary_wall_9slice(_floor_cells, x, y)
+				_geom_cells[p] = [1, wa.x, wa.y]
+
+	# 3. Full 3-band north masonry elevations ([0,1..3,0] cornice + [0,1..3,1] upper
+	#    brick + [0,3,2] lower brick) with stepped monumental High Altar recess at x = 97..101!
+	var north_runs := [
+		[76, 81, 84],
+		[82, 86, 86],
+		[87, 96, 83],
+		[97, 101, 81],
+		[102, 111, 83],
+	]
+	for nr: Array in north_runs:
+		var wy: int = nr[2]
+		for wx: int in range(int(nr[0]), int(nr[1]) + 1):
+			_set_solid(wx, wy, 0, 3, 2)
+			_set_solid(wx, wy - 1, 0, 1 + posmod(wx * 3 + wy, 3), 1)
+			var lip := Vector2i(wx, wy - 2)
+			if not _floor_cells.has(lip):
+				_set_solid(wx, wy - 2, 0, 1 + posmod(wx + wy, 3), 0)
+
+	# 4. Complete Bilateral Cathedral Sanctuary Architecture around Axis x = 99:
+	# (A) Twin unclipped 3x3 Molten Braziers symmetrically at x = 91..93 and x = 105..107
+	#     with 2 full tiles of clean masonry separation (94..95 and 103..104) before columns!
+	_place_flush_molten_brazier(91, 81)
+	_place_flush_molten_brazier(105, 81)
+
+	# (B) Twin 1x3 Portal Columns framing the 5-wide High Altar Niche (`x = 96` & `x = 102`)
+	_place_sanctuary_column_1x3(96, 83)
+	_place_sanctuary_column_1x3(102, 83)
+
+	# (C) Dark Carved Altar Dais Steps (`[0, 5, 12]`) under `l4_exit` at (99, 83)
+	for dy_step: int in [82, 83]:
+		for dx_step: int in [98, 99, 100]:
+			_floor_cells[Vector2i(dx_step, dy_step)] = [0, 5, 12]
+
+	# (D) Symmetric uncropped 1x1 Gold & Crimson Reliquary Banners flanking the High Altar
+	#     (zero overlap with `ExitGate/GateArch` spanning x = 97.8..100.2, y = 80.3..83.7!)
+	_set_solid(89, 82, 0, 2, 3)
+	_set_solid(109, 82, 0, 2, 3)
+	_set_solid(97, 80, 0, 1, 2)
+	_set_solid(101, 80, 0, 1, 2)
+	_set_solid(79, 83, 0, 1, 2)
+
+	# (E) Solid 3-band Stone Choir Screen Partitions (`[0,1..3,0]` cornice cap on Decor
+	#     + `[0,1..3,1]` upper brick + `[0,3,2]` lower brick — ZERO hollow cavities!)
+	for sx: int in [89, 90, 91]:
+		_decor_cells[Vector2i(sx, 85)] = [0, 1 + (sx - 89), 0]
+		_set_solid(sx, 86, 0, 1 + (sx - 89), 1)
+		_set_solid(sx, 87, 0, 3, 2)
+		_decor_cells[Vector2i(sx, 90)] = [0, 1 + (sx - 89), 0]
+		_set_solid(sx, 91, 0, 1 + (sx - 89), 1)
+		_set_solid(sx, 92, 0, 3, 2)
+	for sx2: int in [107, 108, 109]:
+		_decor_cells[Vector2i(sx2, 85)] = [0, 1 + (sx2 - 107), 0]
+		_set_solid(sx2, 86, 0, 1 + (sx2 - 107), 1)
+		_set_solid(sx2, 87, 0, 3, 2)
+		_decor_cells[Vector2i(sx2, 90)] = [0, 1 + (sx2 - 107), 0]
+		_set_solid(sx2, 91, 0, 1 + (sx2 - 107), 1)
+		_set_solid(sx2, 92, 0, 3, 2)
+
+	# (F) Four Symmetrical 1x3 Freestanding Nave Colonnade Pillars framing the Choir Aisle
+	_place_sanctuary_column_1x3(94, 87)
+	_place_sanctuary_column_1x3(104, 87)
+	_place_sanctuary_column_1x3(94, 92)
+	_place_sanctuary_column_1x3(104, 92)
+
+	# (G) Plain Reliquary Wood Storage Cases (`1x2` [0,18,25..26] over stone backing — ZERO fake gold chests!)
+	_set_solid(109, 85, 0, 3, 2)
+	_decor_cells[Vector2i(109, 84)] = [0, 18, 25]
+	_decor_cells[Vector2i(109, 85)] = [0, 18, 26]
+	_set_solid(89, 85, 0, 3, 2)
+	_decor_cells[Vector2i(89, 84)] = [0, 18, 25]
+	_decor_cells[Vector2i(89, 85)] = [0, 18, 26]
+	_decor_cells[Vector2i(90, 93)] = [0, 18, 27]
+	_decor_cells[Vector2i(108, 93)] = [0, 18, 27]
 
 
 func _serialize_layer(cells: Dictionary) -> Array:

@@ -29,25 +29,22 @@ func build() -> Dictionary:
 	_pilaster_piers.clear()
 
 	# =========================================================================
-	# FLOOR 1 (y = 2..25, NW CATALOG VESTIBULE -> BREACHED CLOISTER & CHASM
-	# BRIDGES -> SE GRAND READING HALL) — 12+ rows void gap above Floor 2!
+	# FLOOR 1 (y = 3..25): BENCHMARK LOCATION 1 (`l3_f1_entry` DAMAGED MONASTIC
+	# ARCHIVE ENTRANCE) -> UNCHANGED DOWNSTREAM CLOISTER, BRIDGES & HALL
 	# =========================================================================
-	# West Catalog Vestibule (intact monastic scroll-catalog hall)
-	_carve_rect(6, 4, 13, 9)
-	_carve_rect(19, 7, 12, 4)
-
-	# North Scriptorium Cloister (preserves mandatory scout anchor at (60, 10)!)
-	_carve_rect(31, 8, 35, 4)
+	# Unchanged downstream Floor 1 regions (`x >= 35`); `x < 40` is authored cleanly
+	# inside `_build_spawn_archive_entrance()` below!
+	_carve_rect(35, 9, 31, 3)
 	# Breached North Passage -> Forbidden Folio Vault (`l3_f1_hidden_cache`)
 	_carve_rect(47, 5, 5, 4)
 	_carve_rect(43, 3, 13, 3)
 
-	# Twin Staggered Stone Bridges across 7-row Open Subterranean Chasm (y = 12..19)!
+	# Twin Staggered Stone Bridges across Open Subterranean Chasm!
 	_carve_rect(35, 12, 5, 8)
 	_carve_rect(56, 12, 5, 8)
 
 	# South Scholar's Gallery + Exposed Line-of-Fire Treasure Pocket (320 pts)
-	_carve_rect(33, 20, 33, 4)
+	_carve_rect(35, 20, 31, 4)
 	_carve_rect(46, 23, 9, 3)
 
 	# East Convergence Gallery -> Twin-Pulpit Grand Reading Hall (`l3_f1_camp`)
@@ -65,7 +62,6 @@ func build() -> Dictionary:
 	_carve_rect(106, 15, 6, 5)
 
 	# Subtle worn stone reading runners along main circulation aisles
-	_wear_aisle_h(7, 30, 8)
 	_wear_aisle_h(31, 66, 10)
 	_wear_aisle_v(49, 4, 10)
 	_wear_aisle_v(37, 10, 21)
@@ -73,9 +69,7 @@ func build() -> Dictionary:
 	_wear_aisle_h(34, 65, 21)
 	_wear_aisle_h(74, 110, 17)
 
-	# Parallel stone scroll-cubby archive stacks (`armaria`) — solid Reaper cover!
-	_add_archive_bay(10, 5, 3, false)
-	_add_archive_bay(10, 10, 3, false)
+	# Unchanged downstream cover blocks (Spawn Entrance has zero sewer/trough blocks!)
 	_add_archive_bay(41, 9, 3, true)
 	_add_archive_bay(51, 20, 3, true)
 	_add_archive_bay(87, 12, 4, false)
@@ -176,8 +170,7 @@ func build() -> Dictionary:
 	# =========================================================================
 	# PURPOSEFUL ARCHIVAL ARCHITECTURE (NO REPETITIVE BANNERS OR CRATES!)
 	# =========================================================================
-	# 1. Properly aligned 3x3 Scriptorium Ink Cisterns (cornice + brick + floor lip!)
-	_place_cistern(13, 4)
+	# 1. Properly aligned 3x3 Scriptorium Ink Cisterns on unchanged downstream floors
 	_place_cistern(92, 10)
 	_place_cistern(31, 39)
 
@@ -195,7 +188,6 @@ func build() -> Dictionary:
 	_frame_exit_sanctuary(104, 80)
 
 	# 5. Authentic Breached Archive Masonry & localized fallen stone around breaches
-	#    (shows how the hidden vaults broke open and where crossfire shattered stone!)
 	_mark_breach_wall(45, 7)
 	_mark_breach_wall(52, 7)
 	_mark_breach_floor(48, 6)
@@ -211,16 +203,14 @@ func build() -> Dictionary:
 	_mark_breach_floor(56, 82)
 	_mark_breach_floor(58, 85)
 
-	# 6. Sparse threshold-only emerald scholar standards (only 5 across all 3 floors!)
-	_set_solid(8, 3, 0, 1, 3)
+	# 6. Sparse threshold-only emerald scholar standards on unchanged downstream floors
 	_set_solid(88, 9, 0, 1, 3)
 	_set_solid(98, 9, 0, 1, 3)
 	_set_solid(100, 40, 0, 1, 3)
 	_set_solid(97, 79, 0, 1, 3)
 
-	# 7. Protected archival wall pigeonhole niches on intact reading room north walls
+	# 7. Protected archival wall niches on unchanged downstream reading rooms
 	for niche_p: Vector2i in [
-		Vector2i(10, 3), Vector2i(17, 3),
 		Vector2i(45, 2), Vector2i(53, 2),
 		Vector2i(86, 9), Vector2i(100, 9),
 		Vector2i(98, 40), Vector2i(103, 40),
@@ -231,10 +221,8 @@ func build() -> Dictionary:
 		if _geom_cells.has(niche_p):
 			_geom_cells[niche_p] = [0, 1 + (niche_p.x % 2), 12]
 
-	# 8. Sparse, context-specific archival floor details (scroll phials in intact vaults,
-	#    stone fragments strictly next to breaches — never coordinate-hash clutter!)
+	# 8. Unchanged downstream floor details
 	var curated_decor := [
-		[7, 5, 0, 20, 21], [17, 5, 0, 19, 22],
 		[44, 3, 0, 20, 21], [54, 3, 0, 20, 22],
 		[47, 7, 0, 18, 27], [53, 24, 0, 21, 22],
 		[97, 42, 0, 20, 21], [72, 58, 0, 20, 22],
@@ -248,10 +236,16 @@ func build() -> Dictionary:
 			_decor_cells[dp] = [int(d[2]), int(d[3]), int(d[4])]
 
 	# =========================================================================
+	# BENCHMARK LOCATION 1 (`x = 0..39, y = 0..26`):
+	# HAND-AUTHORED DAMAGED MONASTIC ARCHIVE ENTRANCE (`l3_f1_entry`)
+	# =========================================================================
+	_build_spawn_archive_entrance()
+
+	# =========================================================================
 	# ALL 77 ORIGINAL ENTITY IDS PRESERVED 100% + DISCIPLINED LIGHTING (79 TOTAL)
 	# =========================================================================
 	var entities: Array = [
-		{"id": "player_spawn", "type": "player", "position": _cpos(14, 8)},
+		{"id": "player_spawn", "type": "player", "position": _cpos(17, 13)},
 
 		# Camp 1 (`l3_camp_1_far_anchors`: 5 Skeletons + 2 Archivist Pulpit Reapers)
 		{"id": "l3_c1_skeleton_01", "type": "skeleton", "position": _cpos(85, 17), "patrol": 32},
@@ -330,7 +324,7 @@ func build() -> Dictionary:
 		{"id": "l3_chest_ring", "type": "chest", "position": _cpos(70, 57), "score_reward": 360},
 
 		# 18 Authored Spikes (all safe-bypassable; (61, 49) mid anchor kept 100% spike-free!)
-		{"id": "l3_spikes_01", "type": "spikes", "position": _cpos(29, 9)},
+		{"id": "l3_spikes_01", "type": "spikes", "position": _cpos(32, 12)},
 		{"id": "l3_spikes_02", "type": "spikes", "position": _cpos(37, 15)},
 		{"id": "l3_spikes_03", "type": "spikes", "position": _cpos(46, 21)},
 		{"id": "l3_spikes_04", "type": "spikes", "position": _cpos(58, 15)},
@@ -351,10 +345,10 @@ func build() -> Dictionary:
 		{"id": "l3_spikes_17", "type": "spikes", "position": _cpos(88, 83)},
 		{"id": "l3_spikes_18", "type": "spikes", "position": _cpos(88, 86)},
 
-		# 14 Purposeful Archive Sconces (down from 22 — zero regular-interval torch spam!)
-		{"id": "l3_torch_01", "type": "torch", "position": _cpos(8, 6)},
-		{"id": "l3_torch_02", "type": "torch", "position": _cpos(17, 8)},
-		{"id": "l3_torch_03", "type": "torch", "position": _cpos(37, 10)},
+		# 14 Purposeful Archive Sconces (wall-mounted on load-bearing masonry — zero mid-floor torches!)
+		{"id": "l3_torch_01", "type": "torch", "position": _cpos(11, 11)},
+		{"id": "l3_torch_02", "type": "torch", "position": _cpos(22, 10)},
+		{"id": "l3_torch_03", "type": "torch", "position": _cpos(36, 10)},
 		{"id": "l3_torch_04", "type": "torch", "position": _cpos(49, 6)},
 		{"id": "l3_torch_05", "type": "torch", "position": _cpos(98, 43)},
 		{"id": "l3_torch_06", "type": "torch", "position": _cpos(63, 49)},
@@ -368,8 +362,8 @@ func build() -> Dictionary:
 		{"id": "l3_torch_14", "type": "torch", "position": _cpos(108, 80)},
 
 		# 12 Original Coins (clean breadcrumb guidance across optional & main lanes)
-		{"id": "l3_coin_01", "type": "coin", "position": _cpos(21, 8)},
-		{"id": "l3_coin_02", "type": "coin", "position": _cpos(26, 9)},
+		{"id": "l3_coin_01", "type": "coin", "position": _cpos(23, 12)},
+		{"id": "l3_coin_02", "type": "coin", "position": _cpos(29, 12)},
 		{"id": "l3_coin_03", "type": "coin", "position": _cpos(49, 8)},
 		{"id": "l3_coin_04", "type": "coin", "position": _cpos(62, 10)},
 		{"id": "l3_coin_05", "type": "coin", "position": _cpos(90, 46)},
@@ -400,8 +394,8 @@ func build() -> Dictionary:
 		"layout_profile": "three_floor_crossfire_and_cover",
 		"tileset": "0x72 DungeonTileset II v1.7 (CC0)",
 		"rooms": [
-			{"id": "l3_f1_entry", "floor": 1, "role": "safe_entry", "rect": [6, 4, 13, 9]},
-			{"id": "l3_f1_crossfire_hall", "floor": 1, "role": "cover_lesson", "rect": [31, 8, 43, 18]},
+			{"id": "l3_f1_entry", "floor": 1, "role": "safe_entry", "rect": [6, 9, 22, 12]},
+			{"id": "l3_f1_crossfire_hall", "floor": 1, "role": "cover_lesson", "rect": [35, 9, 39, 15]},
 			{"id": "l3_f1_hidden_cache", "floor": 1, "role": "optional_reward", "rect": [43, 3, 13, 6]},
 			{"id": "l3_f1_camp", "floor": 1, "role": "combat_camp", "rect": [82, 10, 24, 14]},
 			{"id": "l3_f2_landing", "floor": 2, "role": "safe_landing", "rect": [95, 41, 14, 9]},
@@ -716,6 +710,247 @@ func _set_solid(x: int, y: int, src: int, tx: int, ty: int) -> void:
 	_floor_cells.erase(p)
 	_decor_cells.erase(p)
 	_geom_cells[p] = [src, tx, ty]
+
+
+# =============================================================================
+# BENCHMARK LOCATION 1 (`x = 0..39, y = 0..26`):
+# HAND-AUTHORED DAMAGED MONASTIC ARCHIVE ENTRANCE (`l3_f1_entry` + WEST BRIDGE)
+# =============================================================================
+const ARCHIVE_FLOOR_PALETTE := [
+	Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4), Vector2i(1, 4),
+	Vector2i(2, 4), Vector2i(3, 4),
+	Vector2i(1, 5), Vector2i(2, 5), Vector2i(3, 5),
+	Vector2i(1, 6), Vector2i(2, 6),
+]
+
+
+func _archive_floor_tile(x: int, y: int) -> Vector2i:
+	var a := (x * 73856093) & 0xFFFFFFFF
+	var b := (y * 19349663) & 0xFFFFFFFF
+	var c := ((x + y) * 83492791) & 0xFFFFFFFF
+	return ARCHIVE_FLOOR_PALETTE[((a ^ b ^ c) & 0xFFFFFFFF) % ARCHIVE_FLOOR_PALETTE.size()]
+
+
+func _archive_wall_9slice(fset: Dictionary, x: int, y: int) -> Vector2i:
+	var n := fset.has(Vector2i(x, y - 1))
+	var e := fset.has(Vector2i(x + 1, y))
+	var s := fset.has(Vector2i(x, y + 1))
+	var w := fset.has(Vector2i(x - 1, y))
+	if n and e:
+		return Vector2i(1, 2)
+	if n and w:
+		return Vector2i(3, 2)
+	if s and e:
+		return Vector2i(1, 0)
+	if s and w:
+		return Vector2i(3, 0)
+	if s:
+		return Vector2i(2, 0)
+	if n:
+		return Vector2i(2, 2)
+	if e:
+		return Vector2i(1, 1)
+	if w:
+		return Vector2i(3, 1)
+	if fset.has(Vector2i(x + 1, y + 1)):
+		return Vector2i(1, 0)
+	if fset.has(Vector2i(x - 1, y + 1)):
+		return Vector2i(3, 0)
+	if fset.has(Vector2i(x + 1, y - 1)):
+		return Vector2i(1, 2)
+	if fset.has(Vector2i(x - 1, y - 1)):
+		return Vector2i(3, 2)
+	return Vector2i(2, 0)
+
+
+func _place_wood_case_1x2(x: int, y_base: int) -> void:
+	# Verified complete 1x2 (16x32px) plain wooden archive storage cabinet:
+	# Solid brick backing [0, 3, 2] on Geometry prevents any 2px black void border,
+	# while [0, 18, 25..26] renders the complete uncropped 16x32 wood cabinet on Decor!
+	_set_solid(x, y_base, 0, 3, 2)
+	_decor_cells[Vector2i(x, y_base - 1)] = [0, 18, 25]
+	_decor_cells[Vector2i(x, y_base)] = [0, 18, 26]
+
+
+func _place_solid_stack_bay(x0: int, y_base: int, w: int, breached_east: bool) -> void:
+	# Solid 3-band cut-stone monastic archive stack (`[0,1..3,0]` cornice cap on Decor
+	# at y_base - 2 + `[0,1..3,1]` upper brick at y_base - 1 + `[0,3,2]` lower brick at y_base).
+	# Zero hollow cavities, zero sewer slits; optional shattered east end!
+	for dx: int in range(w):
+		var px := x0 + dx
+		if breached_east and dx == w - 1:
+			_set_solid(px, y_base - 1, 0, 2, 1)
+			_set_solid(px, y_base, 0, 3, 3)
+			_decor_cells[Vector2i(px, y_base - 2)] = [0, 3, 0]
+			var rf := Vector2i(px, y_base + 1)
+			if _floor_cells.has(rf):
+				_floor_cells[rf] = [0, 3, 5]
+		else:
+			_set_solid(px, y_base - 1, 0, 1 + posmod(px * 3 + y_base, 3), 1)
+			_set_solid(px, y_base, 0, 3, 2)
+			_decor_cells[Vector2i(px, y_base - 2)] = [0, 1 + posmod(px + y_base, 3), 0]
+
+
+func _place_column_1x3(cx: int, cy: int, cracked: bool) -> void:
+	# Verified 1x3 (16x48px) classical column over opaque brick backing [0, 3, 2].
+	var col_x := 6 if cracked else 5
+	_set_solid(cx, cy, 0, 3, 2)
+	_decor_cells[Vector2i(cx, cy - 1)] = [0, col_x, 5]
+	_decor_cells[Vector2i(cx, cy)] = [0, col_x, 6]
+	_decor_cells[Vector2i(cx, cy + 1)] = [0, col_x, 7]
+
+
+func _place_sunken_shaft_2x4(x0: int, y0: int) -> void:
+	# Verified fixed 2x4 (32x64px) sunken stone shaft pit [0, 2..3, 8..11]:
+	# Row 8 has 5px transparent north bevels so it draws on Decor over solid floor-slab
+	# backing [0, 1, 4] on Geometry — zero black slit above the stone rim!
+	for dx: int in range(2):
+		_set_solid(x0 + dx, y0, 0, 1, 4)
+		_decor_cells[Vector2i(x0 + dx, y0)] = [0, 2 + dx, 8]
+	for dy: int in [1, 2]:
+		for dx: int in range(2):
+			_set_solid(x0 + dx, y0 + dy, 0, 2 + dx, 8 + dy)
+	for dx: int in range(2):
+		var sp := Vector2i(x0 + dx, y0 + 3)
+		if _floor_cells.has(sp):
+			_decor_cells[sp] = [0, 2 + dx, 11]
+
+
+func _build_spawn_archive_entrance() -> void:
+	# Clear strictly Location 1 viewport zone (x = 0..39, y = 0..26) while keeping
+	# x >= 40 and Floors 2..3 100% untouched.
+	for y: int in range(0, 27):
+		for x: int in range(0, 40):
+			var p := Vector2i(x, y)
+			_floor_cells.erase(p)
+			_geom_cells.erase(p)
+			_decor_cells.erase(p)
+
+	# 1. Stepped Monastic Vault Footprint with 100% HUD-safe north & south margins:
+	var rects := [
+		[6, 12, 5, 8],
+		[11, 10, 15, 10],
+		[17, 20, 9, 2],
+		[26, 11, 9, 4],
+		[35, 9, 5, 15],
+	]
+	for r: Array in rects:
+		for y: int in range(int(r[1]), int(r[1]) + int(r[3])):
+			for x: int in range(int(r[0]), int(r[0]) + int(r[2])):
+				var p := Vector2i(x, y)
+				var ft := _archive_floor_tile(x, y)
+				_floor_cells[p] = [0, ft.x, ft.y]
+
+	# Worn flagstone scholar aisles between parallel stone archive stacks
+	for x: int in range(7, 26):
+		for ry: int in [12, 16, 19]:
+			if _floor_cells.has(Vector2i(x, ry)):
+				_floor_cells[Vector2i(x, ry)] = [0, 1, 4]
+	for x: int in range(26, 40):
+		if _floor_cells.has(Vector2i(x, 12)):
+			_floor_cells[Vector2i(x, 12)] = [0, 1, 4]
+	for y: int in range(10, 20):
+		for rx: int in [15, 16]:
+			if _floor_cells.has(Vector2i(rx, y)):
+				_floor_cells[Vector2i(rx, y)] = [0, 1, 4]
+	for y: int in range(9, 23):
+		if _floor_cells.has(Vector2i(37, y)):
+			_floor_cells[Vector2i(37, y)] = [0, 1, 4]
+
+	# 2. Clean 9-slice perimeter shell (ZERO hollow [1, 8..11, 0] cavities anywhere!)
+	for y: int in range(1, 26):
+		for x: int in range(1, 40):
+			var p := Vector2i(x, y)
+			if _floor_cells.has(p):
+				continue
+			var touches := false
+			for dy: int in range(-1, 2):
+				for dx: int in range(-1, 2):
+					if dx == 0 and dy == 0:
+						continue
+					if _floor_cells.has(Vector2i(x + dx, y + dy)):
+						touches = true
+						break
+				if touches:
+					break
+			if touches:
+				var wa := _archive_wall_9slice(_floor_cells, x, y)
+				_geom_cells[p] = [1, wa.x, wa.y]
+
+	# 3. Full 3-band north masonry elevations ([0,1..3,0] cornice + [0,1..3,1] upper
+	#    brick + [0,3,2] lower brick) across every north wall run in Location 1!
+	var north_runs := [
+		[5, 10, 11],
+		[11, 16, 10],
+		[17, 25, 9],
+		[26, 34, 10],
+		[35, 39, 8],
+	]
+	for nr: Array in north_runs:
+		var wy: int = nr[2]
+		for wx: int in range(int(nr[0]), int(nr[1]) + 1):
+			_set_solid(wx, wy, 0, 3, 2)
+			_set_solid(wx, wy - 1, 0, 1 + posmod(wx * 3 + wy, 3), 1)
+			var lip := Vector2i(wx, wy - 2)
+			if not _floor_cells.has(lip):
+				_set_solid(wx, wy - 2, 0, 1 + posmod(wx + wy, 3), 0)
+
+	# 4. Complete Verified Multi-Tile Monastic Archive Architecture:
+	# (A) 4x3 Sealed Oak Archive Vault Door (x = 12..15, y = 8..10) cleanly below HP/MP HUD!
+	_decor_cells[Vector2i(13, 8)] = [0, 2, 14]
+	_decor_cells[Vector2i(14, 8)] = [0, 3, 14]
+	for dx: int in range(4):
+		_decor_cells[Vector2i(12 + dx, 9)] = [0, 1 + dx, 15]
+		_decor_cells[Vector2i(12 + dx, 10)] = [0, 1 + dx, 16]
+	_floor_cells[Vector2i(13, 11)] = [0, 5, 12]
+	_floor_cells[Vector2i(14, 11)] = [0, 5, 12]
+
+	# (B) Single complete 1x1 Emerald Scholar Banner on upper wall course at (18, 8)
+	_set_solid(18, 8, 0, 1, 3)
+
+	# (C) Flush 3x3 Scriptorium Lavabo / Blue Cistern embedded 100% inside north wall (x = 20..22, y = 7..9)
+	for dx: int in range(3):
+		var tx := 4 + dx
+		_set_solid(20 + dx, 7, 0, tx, 0)
+		_set_solid(20 + dx, 8, 0, tx, 3)
+		_set_solid(20 + dx, 9, 0, tx, 4)
+
+	# (D) Wall water seepage ([0, 4, 5..6]) drawn on Decor over solid brick so zero black hole!
+	_decor_cells[Vector2i(24, 8)] = [0, 4, 5]
+	_decor_cells[Vector2i(24, 9)] = [0, 4, 6]
+	_floor_cells[Vector2i(24, 10)] = [0, 3, 5]
+
+	# (E) Parallel Monastic Stone Archive Stack Carrels + Recessed 1x2 Timber Storage Cases
+	_place_solid_stack_bay(8, 14, 4, false)
+	_place_wood_case_1x2(7, 14)
+	_place_solid_stack_bay(8, 18, 4, false)
+	_place_wood_case_1x2(7, 18)
+	_place_wood_case_1x2(8, 11)
+	_place_wood_case_1x2(9, 11)
+
+	# East archive stack row breached by collapse + surviving wood storage cabinet!
+	_place_solid_stack_bay(19, 14, 4, true)
+	_place_wood_case_1x2(18, 14)
+	_place_wood_case_1x2(25, 10)
+
+	# (F) Paired Central Reading Nave Columns: Intact West (14, 16) vs Shattered East (17, 17)
+	_place_column_1x3(14, 16, false)
+	_place_column_1x3(17, 17, true)
+	_floor_cells[Vector2i(18, 17)] = [0, 3, 5]
+	_floor_cells[Vector2i(18, 18)] = [0, 2, 6]
+
+	# (G) Sunken 2x4 Sub-Vault Collapse Shaft Pit in SE Bay (x = 21..22, y = 18..21)
+	_place_sunken_shaft_2x4(21, 18)
+	_floor_cells[Vector2i(20, 19)] = [0, 3, 5]
+	_floor_cells[Vector2i(23, 19)] = [0, 2, 6]
+
+	# (H) East Cloister breach rubble (authentic stone rubble [0, 3, 5], zero mini-ladders!)
+	_set_solid(29, 10, 0, 3, 3)
+	_floor_cells[Vector2i(29, 11)] = [0, 3, 5]
+	_set_solid(33, 10, 0, 3, 3)
+	_floor_cells[Vector2i(33, 11)] = [0, 2, 5]
+	_decor_cells[Vector2i(19, 21)] = [0, 18, 27]
+	_decor_cells[Vector2i(36, 13)] = [0, 18, 27]
 
 
 func _serialize_layer(cells: Dictionary) -> Array:
