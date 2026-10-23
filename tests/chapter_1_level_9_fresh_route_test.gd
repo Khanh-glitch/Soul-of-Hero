@@ -214,9 +214,7 @@ func _run() -> void:
 	)
 	var currencies_after_first := save_service.get_value(["currencies"], {}) as Dictionary
 	var level_after_first := int(save_service.get_value(["progression", "player", "level"], 0))
-	print("LEVEL 9 ROUTE TRACE: reloading first-clear save")
 	_expect(save_service.reload_save(), "Level 9 rewarded profile reloads from disk")
-	print("LEVEL 9 ROUTE TRACE: first-clear save reloaded")
 	_expect(
 		(
 			_count_soul_instance(save_service, rare_instance_id) == 1
@@ -230,13 +228,11 @@ func _run() -> void:
 		"Reload preserves the atomic boss-gate feature"
 	)
 
-	print("LEVEL 9 ROUTE TRACE: starting replay")
 	_expect(
 		bool(app_flow.call(&"start_campaign_level", &"chapter_1_level_9")),
 		"Completed Level 9 remains replayable"
 	)
 	await _wait_for_route(app_root, &"gameplay", 180)
-	print("LEVEL 9 ROUTE TRACE: replay gameplay mounted")
 	_expect(
 		await _play_live_level_nine(app_root),
 		"Replay physically repeats the complete three-seal boss route"
@@ -407,14 +403,12 @@ func _finish(app_flow: Node, app_root: Node) -> void:
 	get_tree().paused = false
 	if app_flow != null and app_root != null:
 		app_flow.call(&"detach_app_root", app_root)
-		print("LEVEL 9 ROUTE TRACE: freeing AppRoot")
 		if is_instance_valid(app_root):
 			for audio_node: Node in app_root.find_children("*", "AudioStreamPlayer", true, false):
 				(audio_node as AudioStreamPlayer).stop()
 			for audio_node: Node in app_root.find_children("*", "AudioStreamPlayer2D", true, false):
 				(audio_node as AudioStreamPlayer2D).stop()
 			app_root.free()
-		print("LEVEL 9 ROUTE TRACE: AppRoot freed")
 	_remove_generations(TEST_SAVE_PATH)
 	var report := {"ok": _failures.is_empty(), "checks": _checks, "failures": _failures}
 	var file := FileAccess.open(REPORT_PATH, FileAccess.WRITE)

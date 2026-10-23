@@ -148,6 +148,8 @@ jobs:
             if [[ ${result} -ne 0 ]]; then
               failures=$((failures + 1))
               diagnostics+=(".artifacts/${test_name}.log" "Failed Chapter 1/Training gate: ${test_name}")
+            else
+              diagnostics+=(".artifacts/${test_name}.log" "Passed Chapter 1/Training gate: ${test_name}")
             fi
           done
           {
@@ -206,9 +208,13 @@ jobs:
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tests/chapter_1_level_5_miniboss_test.gd 2>&1 | tee .artifacts/chapter-1-level-5-miniboss.log
           boss_result=${PIPESTATUS[0]}
           echo "Chapter 1 Level 5 boss/combat test exit code: ${boss_result}"
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . -- --archer-hero-combat-test 2>&1 | tee .artifacts/archer-hero-combat.log
+          archer_result=${PIPESTATUS[0]}
+          echo "Archer explicit-equip combat test exit code: ${archer_result}"
           set -e
           if [[ ${axe_result} -ne 0 ]]; then exit "${axe_result}"; fi
-          exit "${boss_result}"
+          if [[ ${boss_result} -ne 0 ]]; then exit "${boss_result}"; fi
+          exit "${archer_result}"
 
       - name: Upload runtime logs
         if: always()
@@ -230,7 +236,8 @@ jobs:
             .artifacts/campaign-entry-runtime.log "Campaign entry runtime" \
             .artifacts/gameplay-smoke.log "Production gameplay smoke" \
             .artifacts/axe-combat.log "Axe combat regression" \
-            .artifacts/chapter-1-level-5-miniboss.log "Chapter 1 Level 5 combat"
+            .artifacts/chapter-1-level-5-miniboss.log "Chapter 1 Level 5 combat" \
+            .artifacts/archer-hero-combat.log "Archer explicit-equip combat regression"
 
   original-main-baseline:
     name: Original main baseline comparison

@@ -71,10 +71,6 @@ def main() -> int:
         for index, line in enumerate(lines):
             if "absolute paths from outside the active scene tree" not in line:
                 continue
-            for candidate in reversed(lines[max(0, index - 40):index]):
-                if "LEVEL 9 ROUTE TRACE:" in candidate:
-                    engine_context.append(candidate)
-                    break
             for candidate in lines[index + 1:index + 8]:
                 if ".gd:" in candidate or candidate.lstrip().startswith("at:"):
                     engine_context.append(candidate)
