@@ -639,6 +639,7 @@ func _enemy_count() -> int:
 
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var route := _plan_route(_current_cell(), target_cell)
+	print("GATE3 PLAN: %s -> %s is %d cells" % [label, str(target_cell), route.size()])
 	if route.is_empty():
 		_push("no walkable route to '%s' at %s" % [label, str(target_cell)])
 		return false
@@ -688,6 +689,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		for action: String in actions:
 			Input.action_release(action)
 		frames += 1
+		if frames % 30 == 0:
+			print("GATE3 TRACE: %s frame %d cell %s HP %d stall %d waypoint %s"
+				% [label, frames, str(_current_cell()), int(_player.get("health")), stall,
+					str(route[mini(index, route.size() - 1)])])
 		if _player.global_position.distance_to(last_position) < 0.25:
 			stall += 1
 			if stall > 90:
