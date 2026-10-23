@@ -300,7 +300,7 @@ func build() -> Dictionary:
 		{"id": "l2_c2_skeleton_03", "type": "skeleton", "position": _cpos(49, 55), "patrol": 40},
 		{"id": "l2_c2_skeleton_04", "type": "skeleton", "position": _cpos(70, 55), "patrol": 40},
 		{"id": "l2_c2_skeleton_05", "type": "skeleton", "position": _cpos(60, 56), "patrol": 40},
-		{"id": "l2_c3_skeleton_01", "type": "skeleton", "position": _cpos(52, 80), "patrol": 38},
+		{"id": "l2_c3_skeleton_01", "type": "skeleton", "position": _cpos(52, 79), "patrol": 38},
 		{"id": "l2_c3_skeleton_02", "type": "skeleton", "position": _cpos(61, 88), "patrol": 38},
 		{"id": "l2_c3_skeleton_03", "type": "skeleton", "position": _cpos(71, 80), "patrol": 38},
 		{"id": "l2_c3_skeleton_04", "type": "skeleton", "position": _cpos(71, 88), "patrol": 38},

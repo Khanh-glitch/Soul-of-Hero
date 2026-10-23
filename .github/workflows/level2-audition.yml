@@ -10,7 +10,7 @@ on:
       - "data/levels/chapter_1_level_2.json"
       - "tools/generators/**"
       - "tools/design/**"
-      - "docs/design-audition/**"
+      - "docs/design-audition/LEVEL2_CONCEPT.md"
       - ".github/workflows/level2-audition.yml"
   pull_request:
     branches:
@@ -18,7 +18,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: level2-audition-${{ github.ref }}
@@ -36,6 +36,7 @@ jobs:
       - name: Check out isolated candidate branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref || github.ref_name }}
           fetch-depth: 0
 
       - name: Install proven Godot 4.7 stable
@@ -65,7 +66,11 @@ jobs:
         run: |
           set -euo pipefail
           timeout --signal=TERM --kill-after=10s 120s godot --headless --audio-driver Dummy --path . --script res://tools/generators/generate_chapter_1_levels_2_to_5.gd 2>&1 | tee .artifacts/level2_generator_sync.log
-          git diff --exit-code data/levels/
+          if ! git diff --quiet data/levels/; then
+            git diff --stat data/levels/
+            git diff data/levels/ | head -n 80
+            exit 1
+          fi
 
       - name: Validate Chapter 1 schema, camp spacing, and pack contracts
         shell: bash
@@ -98,6 +103,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install --yes xvfb libgl1-mesa-dri >/dev/null
+          mkdir -p docs/design-audition/captures
           for point in spawn mid end; do
             export SOUL_OF_HERO_SAVE_PATH="user://tests/level2_capture_${point}_${GITHUB_RUN_ID}.json"
             export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
@@ -111,7 +117,7 @@ jobs:
               2>&1 | tee ".artifacts/level2_capture_${point}.log"
             grep -q "CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=$point" ".artifacts/level2_capture_${point}.log"
             test -s ".artifacts/chapter_1_level_02_${point}_runtime.png"
-            cp ".artifacts/chapter_1_level_02_${point}_runtime.png" ".artifacts/after_level2_${point}_runtime.png"
+            cp ".artifacts/chapter_1_level_02_${point}_runtime.png" "docs/design-audition/captures/after_${point}.png"
             echo "Level 2 AFTER $point: real Godot capture PASS" >> "$GITHUB_STEP_SUMMARY"
           done
 
@@ -127,12 +133,50 @@ jobs:
               --level-slot=2 --capture-point="$point" \
               --expected-width=1280 --expected-height=720 \
               2>&1 | tee ".artifacts/level2_baseline_capture_${point}.log"
-            cp ".artifacts/chapter_1_level_02_${point}_runtime.png" ".artifacts/before_level2_${point}_runtime.png"
+            cp ".artifacts/chapter_1_level_02_${point}_runtime.png" "docs/design-audition/captures/before_${point}.png"
           done
           git checkout -- data/levels/chapter_1_level_2.json
-          cp .artifacts/after_level2_spawn_runtime.png .artifacts/chapter_1_level_02_spawn_runtime.png
-          cp .artifacts/after_level2_mid_runtime.png .artifacts/chapter_1_level_02_mid_runtime.png
-          cp .artifacts/after_level2_end_runtime.png .artifacts/chapter_1_level_02_end_runtime.png
+          cp docs/design-audition/captures/after_spawn.png .artifacts/chapter_1_level_02_spawn_runtime.png
+          cp docs/design-audition/captures/after_mid.png .artifacts/chapter_1_level_02_mid_runtime.png
+          cp docs/design-audition/captures/after_end.png .artifacts/chapter_1_level_02_end_runtime.png
+
+          {
+            echo "# Real Godot 4.7.0 Audition Verification Summary (Run ${GITHUB_RUN_ID})"
+            echo "- Godot Version: $(cat .artifacts/godot_version.log)"
+            echo "- Generator Sync: ZERO DIFF"
+            grep -E "CHAPTER 1|ENCOUNTER|slot=2" \
+              .artifacts/level2_geometry.log \
+              .artifacts/level2_map_design.log \
+              .artifacts/level2_encounter_pack.log \
+              .artifacts/level2_collision.log \
+              .artifacts/level2_capture_spawn.log \
+              .artifacts/level2_capture_mid.log \
+              .artifacts/level2_capture_end.log || true
+          } > docs/design-audition/captures/godot_verification_log.md
+
+      - name: Commit verified Godot 4.7 captures to candidate branch
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/design-audition/captures/
+          if ! git diff --cached --quiet; then
+            git commit -m "docs(level-2): archive real Godot 4.7 1280x720 captures and runtime verification logs [skip ci]"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+
+      - name: Publish diagnostic annotation if any step failed
+        if: failure()
+        shell: bash
+        run: |
+          for f in .artifacts/*.log; do
+            [ -f "$f" ] || continue
+            tail -n 15 "$f" | while IFS= read -r line; do
+              echo "::error title=$(basename "$f")::$line"
+            done
+          done
 
       - name: Upload full candidate evidence (including failure logs)
         if: always()

@@ -442,7 +442,7 @@ func _level_5_definition() -> Dictionary:
 	_add_enemy_group(entities, camp_3_reapers, [Vector2i(59, 80)], "skeleton_reaper", 24)
 	var camp_3 := camp_3_swords + camp_3_reapers
 	var archer_id := "l5_hooded_archer_miniboss"
-	entities.append(_entity(archer_id, "hooded_archer_miniboss", 95, 74, {"patrol": 24}))
+	entities.append(_entity(archer_id, "hooded_archer_miniboss", 95, 74, {"patrol": 24, "guaranteed_loot_profile": "level_5_archer_soul"}))
 
 	_add_door_pair(entities, "l5_f1_f2", Vector2i(110, 18), Vector2i(9, 46), "Tầng 2")
 	_add_door_pair(entities, "l5_f2_f3", Vector2i(110, 54), Vector2i(9, 76), "Tầng 3")

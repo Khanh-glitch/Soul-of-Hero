@@ -439,7 +439,7 @@ def build_level2_data() -> dict:
         {"id": "l2_c2_skeleton_05", "type": "skeleton", "position": cpos(60, 56), "patrol": 40},
 
         # 4. Camp 3 Skeletons (5 authored in l2_camp_3_slalom — 03, 04, 05 visible in END capture!)
-        {"id": "l2_c3_skeleton_01", "type": "skeleton", "position": cpos(52, 80), "patrol": 38},
+        {"id": "l2_c3_skeleton_01", "type": "skeleton", "position": cpos(52, 79), "patrol": 38},
         {"id": "l2_c3_skeleton_02", "type": "skeleton", "position": cpos(61, 88), "patrol": 38},
         {"id": "l2_c3_skeleton_03", "type": "skeleton", "position": cpos(71, 80), "patrol": 38},
         {"id": "l2_c3_skeleton_04", "type": "skeleton", "position": cpos(71, 88), "patrol": 38},
@@ -804,18 +804,18 @@ def verify_all_contracts(data: dict, baseline: dict) -> dict:
     if min_door_spike < 64.0:
         errors.append(f"min_door_spike {min_door_spike:.1f} < 64")
 
-    for label, pos in [(e["id"], e["position"]) for e in enemies] + [("density_cadence_anchor", data["metadata"]["density_cadence_anchor"])]:
-        cx, cy = pos[0] // TILE, pos[1] // TILE
-        if label == "density_cadence_anchor" and (cx, cy) != (50, 13):
-            errors.append(f"density_cadence_anchor moved from (50,13) to {(cx, cy)}")
-        max_card = 0
-        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            steps = 0
-            while (cx + dx * (steps + 1), cy + dy * (steps + 1)) in floor_set:
-                steps += 1
-            max_card = max(max_card, steps)
-        if max_card < 2:
-            errors.append(f"{label} at {(cx, cy)} lacks cardinal patrol clearance ({max_card})")
+    for e in enemies:
+        cx, cy = e["position"][0] // TILE, e["position"][1] // TILE
+        radius_cells = max(1, int(e.get("patrol", 32)) // 16)
+        for dx, dy in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+            for step in range(1, radius_cells + 1):
+                if (cx + dx * step, cy + dy * step) not in floor_set:
+                    errors.append(f"{e['id']} at {(cx, cy)} lacks full 4-way patrol clearance dir={(dx, dy)} step={step}")
+                    break
+
+    dca_x, dca_y = data["metadata"]["density_cadence_anchor"][0] // TILE, data["metadata"]["density_cadence_anchor"][1] // TILE
+    if (dca_x, dca_y) != (50, 13):
+        errors.append(f"density_cadence_anchor moved from (50,13) to {(dca_x, dca_y)}")
 
     for camp in data["metadata"]["combat_camps"]:
         rx, ry, rw, rh = camp["rect"]
