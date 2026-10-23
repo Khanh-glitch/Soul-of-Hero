@@ -31,6 +31,7 @@ jobs:
           python3 tools/gate2/author_gate2.py | tee .artifacts/gate2/author.log
           python3 tools/gate2/author_gate2.py --check | tee .artifacts/gate2/author_check.log
           python3 tools/gate2/author_gate2.py --stats | tee .artifacts/gate2/stats.log
+          python3 tools/gate2/write_source_manifest.py --check | tee .artifacts/gate2/manifest.log
           # The generated documents must already be committed byte-for-byte.
           git diff --exit-code -- prototypes/gate2/level_data/chapter_1_level_3_gate2.json prototypes/gate2/visual_placement.json
           # Candidate A's pinned level, untouched, for the BEFORE run.
