@@ -363,7 +363,7 @@ ENTITIES = {
     "l2_c3_skeleton_02": ("skeleton", (62, 116), {"patrol": 38}),
     "l2_c3_skeleton_03": ("skeleton", (70, 120), {"patrol": 38}),
     "l2_c3_skeleton_04": ("skeleton", (80, 116), {"patrol": 38}),
-    "l2_c3_skeleton_05": ("skeleton", (86, 111), {"patrol": 38}),
+    "l2_c3_skeleton_05": ("skeleton", (86, 111), {"patrol": 30}),
 
     "door_l2_f1_f2_down": ("floor_door", (156, 26), {
         "target_position": world(11, 72), "label": "Tầng 2",
@@ -406,7 +406,7 @@ ENTITIES = {
     "l2_spikes_12": ("spikes", (110, 70), {}),
     "l2_spikes_13": ("spikes", (58, 110), {}),
     "l2_spikes_14": ("spikes", (74, 120), {}),
-    "l2_spikes_15": ("spikes", (86, 122), {}),
+    "l2_spikes_15": ("spikes", (90, 120), {}),
 
     "l2_torch_01": ("torch", (6, 20), {}),
     "l2_torch_02": ("torch", (24, 19), {}),
