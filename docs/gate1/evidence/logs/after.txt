@@ -1,0 +1,16 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+GATE1 LEVEL: res://data/levels/chapter_1_level_3.json sha256=59b4fcfc3f8e6d54232a747233864db0d0a904b4fa1d6fa77ccef28937b1fd55
+GATE1 ARCHITECTURE: 70 floor / 25 face / 24 cap cells, 1 local lights
+GATE1 OVERLAY: 13 props (9 solid) attached to res://data/levels/chapter_1_level_3.json
+GATE1 OVERLAY ATTACHED: 13 props, 9 solid bodies
+GATE1 CAPTURE: res://.artifacts/gate1/after_spawn.png (1280x720) at (280.0, 216.0)
+GATE1 COLLISION: Knight at (259.7618, 216.0) is clear of every wall and prop
+GATE1 COLLISION: 0 solid prop footprints probed, each covered by a body
+GATE1 COLLISION: open floor at (259.7618, 212.0) is free of prop bodies
+GATE1 FAILURE: every prop in the overlay document was built
+GATE1 FAILURE: the Knight stalled walking to 'entry' at (259.7618, 216.0)
+GATE1 CAPTURE TEST FAILED (after)
