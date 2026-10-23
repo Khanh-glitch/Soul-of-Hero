@@ -526,6 +526,26 @@ func _current_cell() -> Vector2i:
 	)
 
 
+func _nearest_enemy(within: float, heading: Vector2) -> Node2D:
+	## Nearest live enemy inside `within` pixels that lies ahead of the walk, so the
+	## harness fights what is in its way and does not chase side rooms.
+	var best: Node2D = null
+	var best_distance := within
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Node2D
+		if enemy == null or not enemy.is_inside_tree() or not enemy.is_visible_in_tree():
+			continue
+		var offset := enemy.global_position - _player.global_position
+		var distance := offset.length()
+		if distance >= best_distance:
+			continue
+		if heading.length_squared() > 0.01 and offset.normalized().dot(heading.normalized()) < -0.2:
+			continue
+		best_distance = distance
+		best = enemy
+	return best
+
+
 func _nearest_enemy_distance() -> float:
 	var nearest := 1.0e9
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
@@ -536,20 +556,51 @@ func _nearest_enemy_distance() -> float:
 	return nearest
 
 
-func _fight_until_clear(label: String) -> int:
-	## Press the production light-attack action until nothing is within reach, or
-	## until the fight has clearly stalled. Returns the frames spent.
+func _engage_enemy(target: Node2D, label: String) -> int:
+	## Close the distance and use the production light-attack action. Standing at
+	## range and swinging at air would trade the Knight's HP for nothing, which is
+	## exactly what an earlier revision of this harness did. Returns frames spent.
 	var spent := 0
-	while spent < 240 and _nearest_enemy_distance() < 44.0:
+	var kills_before := _enemy_count()
+	while spent < 200:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
+		if not is_instance_valid(target) or not target.is_inside_tree():
+			break
+		var offset := target.global_position - _player.global_position
+		var actions: Array[String] = []
+		if offset.length() > 24.0:
+			if absf(offset.x) > 2.0:
+				actions.append("move_right" if offset.x > 0.0 else "move_left")
+			if absf(offset.y) > 2.0:
+				actions.append("move_down" if offset.y > 0.0 else "move_up")
+		for action: String in actions:
+			Input.action_press(action, 1.0)
 		Input.action_press("light_attack", 1.0)
 		await get_tree().physics_frame
 		Input.action_release("light_attack")
+		for action: String in actions:
+			Input.action_release(action)
 		spent += 1
+		# Back away from a fight that is not working instead of losing the run to it.
+		if spent > 90 and _enemy_count() >= kills_before:
+			print("GATE3 COMBAT: the Knight broke off an ineffective fight near '%s'" % label)
+			break
+		if int(_player.get("health")) < 320:
+			print("GATE3 COMBAT: the Knight disengaged near '%s' at HP %d"
+				% [label, int(_player.get("health"))])
+			break
 	_engaged_fights += 1
 	return spent
+
+
+func _enemy_count() -> int:
+	var count := 0
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if node.is_inside_tree():
+			count += 1
+	return count
 
 
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
@@ -568,18 +619,19 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			_push("the Knight died on the way to '%s' at %s"
 				% [label, str(_player.global_position)])
 			return false
-		# A real player clears the room before walking through it, so the harness
-		# fights with the production light-attack action whenever an enemy is within
-		# reach. This is gameplay, not a pose: the enemies can and do hit back, which
-		# is why the HP delta is reported instead of assumed to be zero.
-		if _nearest_enemy_distance() < 44.0:
-			var spent := await _fight_until_clear(label)
-			frames += spent
-			stall = 0
-			last_position = _player.global_position
-			continue
 		var waypoint := _cell_centre(route[index])
 		var delta := waypoint - _player.global_position
+		# A real player fights what is standing in the corridor, with the production
+		# light-attack action. The harness never fights while it is standing on a
+		# spike footprint: that is where the Knight would bleed out, not gain ground.
+		if not _hazard_cells().has(_current_cell()):
+			var blocker := _nearest_enemy(44.0, delta)
+			if blocker != null:
+				var spent := await _engage_enemy(blocker, label)
+				frames += spent
+				stall = 0
+				last_position = _player.global_position
+				continue
 		if delta.length() <= 5.0:
 			index += 1
 			stall = 0
