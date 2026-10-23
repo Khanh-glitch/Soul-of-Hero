@@ -13,7 +13,6 @@ from pathlib import Path
 import json
 import subprocess
 import sys
-import html
 
 BASE_SHA = "1c21a49c2eb3775c4b421dab86d057c7256f5964"
 LEVEL_PATH = "data/levels/chapter_1_level_2.json"
@@ -185,7 +184,7 @@ def main():
 
     report = [
         "# Level 2 candidate — auditable diff against frozen integration baseline",
-        f"- Frozen SHA: \`{BASE_SHA}\`",
+        f"- Frozen SHA: `{BASE_SHA}`",
         f"- Schema: {after.get('version')}; map dimensions: {width}×{height} 16px cells",
         f"- Authored entities: {len(old_e)} baseline → {len(new_e)} candidate",
         f"- Original entity IDs preserved: {len(dropped)==0}; types preserved: {not type_mismatch}",
@@ -195,7 +194,7 @@ def main():
         f"- Floor cells: {len(previous_floor)} → {len(floor)}",
         f"- Floor footprint symmetric difference: **{changed_tiles} cells**",
         f"- Floor mask Jaccard similarity: **{jaccard:.3f}** (1.000 = unchanged)",
-        "- Geometry overlay: \`level2_footprint_overlay.svg\` (blue retained / orange removed / green added)",
+        "- Geometry overlay: `level2_footprint_overlay.svg` (blue retained / orange removed / green added)",
         "",
         "## Automated immutable-contract violations",
         *([f"- FAIL: {x}" for x in errors] or ["- None detected."]),
