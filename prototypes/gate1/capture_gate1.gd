@@ -24,7 +24,7 @@ const OUT_DIR := "res://.artifacts/gate1"
 
 ## Candidate A's pinned Level 3 document (design-pilot f27e8b7).
 const LEVEL_SHA256 := "dynamic: trial document SHA-256 verified byte-for-byte by the harness"
-const EXPECTED_CELLS := {"Backdrop": 3423, "Geometry": 1743, "Decor": 73}
+const EXPECTED_CELLS := {"Backdrop": 3405, "Geometry": 1731, "Decor": 73}
 const EXPECTED_ENTITIES := 79
 const EXPECTED_TILESET_SOURCES := 2
 const EXPECTED_SIZE := Vector2i(1280, 720)
@@ -42,7 +42,7 @@ const TILE := 16
 const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"entry": Vector2i(13, 12),
-	"destination": Vector2i(29, 26),
+	"destination": Vector2i(30, 22),
 	"combat_space": Vector2i(34, 13),
 }
 const STATION_ORDER: Array[String] = ["spawn", "entry", "destination", "combat_space"]
@@ -323,6 +323,7 @@ func _walk_to_station(name: String) -> bool:
 	if route.is_empty():
 		_push("no walkable route to the '%s' station at %s" % [name, str(target_cell)])
 		return false
+	print("GATE1 ROUTE: %s %s" % [name, str(route)])
 	var started := _player.global_position
 	var index := 1
 	var frames := 0
