@@ -19,6 +19,10 @@ jobs:
     timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The provenance check reads Candidate B's files straight out of git
+          # history, so a shallow clone is not enough.
+          fetch-depth: 0
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
