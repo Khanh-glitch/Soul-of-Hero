@@ -197,7 +197,8 @@ func _count_huds() -> int:
 	var stack: Array[Node] = [get_tree().root]
 	while not stack.is_empty():
 		var node: Node = stack.pop_back()
-		if String(node.name) == "HUD" and node is CanvasItem:
+		# The HUD root is a CanvasLayer, so match on name, not on CanvasItem.
+		if String(node.name) == "HUD":
 			count += 1
 		stack.append_array(node.get_children())
 	return count
