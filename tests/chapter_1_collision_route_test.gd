@@ -139,7 +139,7 @@ func _test_map(map_spec: Dictionary) -> void:
 		),
 	)
 	if not collision_clear_floor.has(player_cell):
-		game.queue_free()
+		game.free()
 		await process_frame
 		await physics_frame
 		return
@@ -248,7 +248,7 @@ func _test_map(map_spec: Dictionary) -> void:
 			]
 		)
 	)
-	game.queue_free()
+	game.free()
 	await process_frame
 	await physics_frame
 
@@ -279,11 +279,21 @@ func _test_level_8_branch_routes() -> void:
 		var controller := game.get_node_or_null("Level8ReliquaryRuntime")
 		_expect(
 			player != null,
-			"Level 8 %s branch has a live Knight in the production entity root" % branch,
+			(
+				"Level 8 %s branch has a live Knight in the production entity root; entity_root=%s children=%s"
+				% [
+					branch,
+					String(entity_root.get_path()) if entity_root != null else "<null>",
+					", ".join(_node_names(entity_root)) if entity_root != null else "<none>",
+				]
+			),
 		)
 		_expect(
 			controller != null,
-			"Level 8 %s branch installs its configured production runtime" % branch
+			(
+				"Level 8 %s branch installs its configured production runtime; map=%s root_children=%s"
+				% [branch, dungeon.level_data_path, ", ".join(_node_names(game))]
+			),
 		)
 		var seal := (
 			controller.call(&"get_branch_seal", branch) as ReliquaryBranchSeal
@@ -292,7 +302,7 @@ func _test_level_8_branch_routes() -> void:
 		)
 		_expect(seal != null, "Level 8 %s branch exposes its real physical seal" % branch)
 		if player == null or seal == null:
-			game.queue_free()
+			game.free()
 			await process_frame
 			await physics_frame
 			continue
@@ -356,9 +366,16 @@ func _test_level_8_branch_routes() -> void:
 					),
 				)
 		print("CHAPTER 1 COLLISION ROUTE: slot=8 branch=%s reachable=%d" % [branch, reached.size()])
-		game.queue_free()
+		game.free()
 		await process_frame
 		await physics_frame
+
+
+func _node_names(parent: Node) -> PackedStringArray:
+	var names := PackedStringArray()
+	for child: Node in parent.get_children():
+		names.append(String(child.name))
+	return names
 
 
 func _collision_names_at_cell(
