@@ -17,7 +17,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write  # the capture step publishes PNGs back onto the candidate branch
 
 concurrency:
   group: level2-audition-${{ github.ref }}
@@ -103,6 +103,28 @@ jobs:
             test -s ".artifacts/chapter_1_level_02_${point}_runtime.png"
             echo "Level 2 $point: real Godot capture PASS" >> "$GITHUB_STEP_SUMMARY"
           done
+
+      - name: Publish Godot 4.7 captures onto the candidate branch
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          dest="docs/design-audition/evidence"
+          mkdir -p "$dest"
+          shopt -s nullglob
+          for shot in .artifacts/chapter_1_level_02_*_runtime.png; do
+            cp "$shot" "$dest/"
+          done
+          shopt -u nullglob
+          git config user.name "level2-audition-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add "$dest"
+          if git diff --cached --quiet; then
+            echo "no new captures to publish"
+            exit 0
+          fi
+          git commit -m "ci(level2-audition): publish Godot 4.7 runtime captures [skip ci]"
+          git push
 
       - name: Upload full candidate evidence (including failure logs)
         if: always()
