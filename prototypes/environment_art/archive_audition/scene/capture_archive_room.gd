@@ -36,6 +36,7 @@ func _run() -> void:
 	if _knight == null:
 		_failures.append("the Knight was not spawned from the shipping scene")
 
+	await _shot_at_spawn("arrival")
 	await _shot_at("entry")
 	await _shot_at("mid")
 	await _shot_at("end")
@@ -43,6 +44,17 @@ func _run() -> void:
 	await _frame("walk")
 	await _overview()
 	_report()
+
+
+## First impression: the Knight standing on the threshold, camera clamped to the
+## room, exactly what the player sees on the frame they enter.
+func _shot_at_spawn(name: String) -> void:
+	if _knight != null:
+		var room: Dictionary = _room.get("room")
+		var spawn: Array = room["spawn"]
+		_knight.global_position = Vector2(float(spawn[0]), float(spawn[1]))
+	await _settle()
+	await _frame(name)
 
 
 func _shot_at(point: String) -> void:
