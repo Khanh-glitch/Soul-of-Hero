@@ -32,11 +32,15 @@ STATIONS = ["spawn", "entry", "destination", "combat_space"]
 
 # (name, station, left, top, width, height) in capture pixels. Chosen on the
 # frames themselves and then reused verbatim for the before/after pair.
+# Boxes are placed on the assemblies' actual screen positions for the current
+# station set (see the station table in capture_gate0.gd), then padded so the
+# joinery around the furniture is visible and a reviewer can judge whether the
+# prop sits on the wall properly rather than only seeing the prop.
 CLOSEUPS = [
-    ("press_bank", "destination", 300, 250, 340, 190),
-    ("copyist_station", "entry", 430, 250, 320, 200),
-    ("long_board_collapse", "entry", 300, 400, 340, 200),
-    ("east_departure", "combat_space", 930, 470, 300, 200),
+    ("press_bank", "destination", 380, 270, 320, 190),
+    ("copyist_station", "entry", 360, 330, 300, 200),
+    ("long_board_collapse", "entry", 340, 520, 360, 200),
+    ("east_departure", "combat_space", 640, 510, 340, 200),
 ]
 SCALE = 4
 
