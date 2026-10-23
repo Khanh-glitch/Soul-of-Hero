@@ -103,6 +103,7 @@ jobs:
           diagnostics=()
           tests=(
             "res://tests/content/content_contracts_test.tscn"
+            "res://tests/level_5_archer_pickup_test.gd"
             "res://tests/level_one_tutorial_learning_test.gd"
             "res://tests/chapter_1_level_6_vertical_slice_test.gd"
             "res://tests/chapter_1_level_6_live_runtime_test.tscn"
@@ -113,14 +114,14 @@ jobs:
             "res://tests/chapter_1_level_8_vertical_slice_test.gd"
             "res://tests/chapter_1_level_8_live_runtime_test.tscn"
             "res://tests/chapter_1_level_8_authority_failure_test.tscn"
-            "res://tests/chapter_1_level_8_fresh_route_test.gd"
+            "res://tests/chapter_1_level_8_fresh_route_test.tscn"
             "res://tests/chapter_1_level_9_vertical_slice_test.gd"
             "res://tests/chapter_1_level_9_live_runtime_test.tscn"
             "res://tests/chapter_1_level_9_authority_failure_test.tscn"
-            "res://tests/chapter_1_level_9_fresh_route_test.gd"
+            "res://tests/chapter_1_level_9_fresh_route_test.tscn"
             "res://tests/chapter_1_level_10_vertical_slice_test.gd"
             "res://tests/chapter_1_level_10_live_runtime_test.tscn"
-            "res://tests/chapter_1_level_10_fresh_route_test.gd"
+            "res://tests/chapter_1_level_10_fresh_route_test.tscn"
           )
           for test_path in "${tests[@]}"; do
             test_name=${test_path##*/}
@@ -137,6 +138,12 @@ jobs:
               result=${PIPESTATUS[0]}
             fi
             set -e
+            if [[ ${test_path} == *chapter_1_level_8_fresh_route_test.tscn || ${test_path} == *chapter_1_level_9_fresh_route_test.tscn || ${test_path} == *chapter_1_level_10_fresh_route_test.tscn ]]; then
+              if grep -Fq "Can't use get_node() with absolute paths from outside the active scene tree." ".artifacts/${test_name}.log"; then
+                echo "${test_path} emitted an out-of-tree absolute-path engine error"
+                result=1
+              fi
+            fi
             echo "${test_path} exit code: ${result}"
             if [[ ${result} -ne 0 ]]; then
               failures=$((failures + 1))

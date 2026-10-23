@@ -7,7 +7,6 @@ extends Node
 
 const GAME_SCENE: PackedScene = preload("res://game/main.tscn")
 const TILE_SIZE := 16.0
-const BODY_CLEARANCE := Vector2(12.0, 14.0)
 const MAPS := [
 	{"slot": 1, "path": "res://data/levels/crypt_entrance.json"},
 	{"slot": 2, "path": "res://data/levels/chapter_1_level_2.json"},
@@ -108,9 +107,20 @@ func _test_map(map_spec: Dictionary) -> void:
 		await get_tree().process_frame
 		await get_tree().physics_frame
 	var live_player := game.get_node_or_null("Level/Entities/Knight") as CharacterBody2D
-	_expect(
-		live_player != null, "%s production Main reaches ready and places the live Knight" % map_id
+	var body_collision := (
+		live_player.get_node_or_null("BodyShape") as CollisionShape2D
+		if live_player != null
+		else null
 	)
+	_expect(
+		live_player != null and body_collision != null and body_collision.shape != null,
+		"%s production Main reaches ready with the live Knight BodyShape" % map_id,
+	)
+	if live_player == null or body_collision == null or body_collision.shape == null:
+		game.free()
+		await get_tree().process_frame
+		await get_tree().physics_frame
+		return
 
 	var backdrop_count := dungeon.backdrop.get_used_cells().size()
 	_expect(
@@ -122,17 +132,16 @@ func _test_map(map_spec: Dictionary) -> void:
 		"%s runtime loads every collision cell" % map_id
 	)
 
-	var body_shape := RectangleShape2D.new()
-	body_shape.size = BODY_CLEARANCE
+	var body_shape := body_collision.shape
 	var query := PhysicsShapeQueryParameters2D.new()
 	query.shape = body_shape
 	query.collision_mask = 1  # Dungeon Geometry / World only; ignore actors and pickups.
 	query.collide_with_areas = false
 	var collision_clear_floor := {}
 	for cell: Vector2i in floor_cells:
-		var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
-		# Knight's BodyShape is centered eight pixels above its foot/root position.
-		query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
+		query.transform = _knight_collision_transform_at_cell(
+			dungeon, live_player, body_collision, cell
+		)
 		if not _has_current_level_collision(dungeon, query):
 			collision_clear_floor[cell] = true
 	var spawn_clear := collision_clear_floor.has(player_cell)
@@ -140,7 +149,12 @@ func _test_map(map_spec: Dictionary) -> void:
 		spawn_clear,
 		(
 			"%s spawn fits the live Knight-sized collision footprint; blockers=%s"
-			% [map_id, ", ".join(_collision_names_at_cell(dungeon, body_shape, player_cell))]
+			% [
+				map_id,
+				", ".join(
+					_collision_names_at_cell(dungeon, live_player, body_collision, player_cell)
+				)
+			]
 		),
 	)
 	if not collision_clear_floor.has(player_cell):
@@ -163,9 +177,15 @@ func _test_map(map_spec: Dictionary) -> void:
 							% [
 								source,
 								destination,
-								", ".join(_collision_names_at_cell(dungeon, body_shape, source)),
 								", ".join(
-									_collision_names_at_cell(dungeon, body_shape, destination)
+									_collision_names_at_cell(
+										dungeon, live_player, body_collision, source
+									)
+								),
+								", ".join(
+									_collision_names_at_cell(
+										dungeon, live_player, body_collision, destination
+									)
 								),
 							]
 						)
@@ -194,7 +214,28 @@ func _test_map(map_spec: Dictionary) -> void:
 	else:
 		_expect(
 			reached.size() < safe_floor_count,
-			"Level 8 begins with its two optional branches physically gated until one is chosen",
+			"Level 8 retains collision-blocked floor behind its physical branch gates",
+		)
+		var accessible_branch_markers: Array[String] = []
+		for branch: StringName in [&"reaper", &"vampire"]:
+			var branch_type := "skeleton_reaper" if branch == &"reaper" else "vampire"
+			var branch_prefix := "l8_%s_" % branch
+			for raw_entity: Variant in entities:
+				if (
+					not raw_entity is Dictionary
+					or String(raw_entity.get("type", "")) != branch_type
+					or not String(raw_entity.get("id", "")).begins_with(branch_prefix)
+				):
+					continue
+				var marker_cell := _entity_cell(raw_entity)
+				if _reachable_near(marker_cell, reached, collision_clear_floor):
+					accessible_branch_markers.append(String(raw_entity.get("id", "")))
+		_expect(
+			accessible_branch_markers.is_empty(),
+			(
+				"Level 8 actual Knight-clear route blocks both branch alternatives before selection: %s"
+				% ", ".join(accessible_branch_markers)
+			),
 		)
 
 	var target_types: Array = OBJECTIVE_TYPES + ["floor_door"] + COMBAT_TYPES
@@ -311,8 +352,21 @@ func _test_level_8_branch_routes() -> void:
 			await get_tree().process_frame
 			await get_tree().physics_frame
 			continue
-		seal.call(&"_on_body_entered", player)
-		_expect(seal.interact(player), "Level 8 %s branch can be physically selected" % branch)
+		player.global_position = seal.global_position + Vector2(0.0, 32.0)
+		player.velocity = Vector2.ZERO
+		for _frame: int in 3:
+			await get_tree().physics_frame
+		_expect(
+			seal.can_interact(player),
+			(
+				"Level 8 %s selection requires actual Knight overlap with its interaction Area2D"
+				% branch
+			),
+		)
+		_expect(
+			seal.interact(player),
+			"Level 8 %s branch can be selected from its physical seal" % branch
+		)
 		for _frame: int in 3:
 			await get_tree().physics_frame
 		var snapshot: Dictionary = controller.call(&"get_snapshot")
@@ -320,20 +374,43 @@ func _test_level_8_branch_routes() -> void:
 			StringName(snapshot.get("selected_branch", "")) == branch,
 			"Level 8 %s branch is the active collision route" % branch,
 		)
+		var other_branch: StringName = &"vampire" if branch == &"reaper" else &"reaper"
+		var selected_gate := seal.get_node_or_null("Barrier/BarrierShape") as CollisionShape2D
+		var other_seal := controller.call(&"get_branch_seal", other_branch) as Node
+		var locked_gate := (
+			other_seal.get_node_or_null("Barrier/BarrierShape") as CollisionShape2D
+			if other_seal != null
+			else null
+		)
+		_expect(
+			selected_gate != null and selected_gate.disabled,
+			"Level 8 selected %s gate removes its real blocking shape" % branch,
+		)
+		_expect(
+			locked_gate != null and not locked_gate.disabled,
+			"Level 8 unselected %s gate retains its real blocking shape" % other_branch,
+		)
 
 		var document: Dictionary = dungeon.level_data
 		var floor_cells := _cells_by_position(document.get("layers", {}).get("Backdrop", []))
 		var spikes := _entity_cells_by_type(document.get("entities", []), "spikes")
-		var shape := RectangleShape2D.new()
-		shape.size = BODY_CLEARANCE
+		var branch_body_collision := player.get_node_or_null("BodyShape") as CollisionShape2D
+		if branch_body_collision == null or branch_body_collision.shape == null:
+			_expect(false, "Level 8 %s route uses the live Knight BodyShape" % branch)
+			game.free()
+			await get_tree().process_frame
+			await get_tree().physics_frame
+			continue
+		var shape := branch_body_collision.shape
 		var query := PhysicsShapeQueryParameters2D.new()
 		query.shape = shape
 		query.collision_mask = 1
 		query.collide_with_areas = false
 		var walkable := {}
 		for cell: Vector2i in floor_cells:
-			var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
-			query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
+			query.transform = _knight_collision_transform_at_cell(
+				dungeon, player, branch_body_collision, cell
+			)
 			if not _has_current_level_collision(dungeon, query):
 				walkable[cell] = true
 		var start := _entity_cell(_first_entity(document.get("entities", []), "player"))
@@ -356,6 +433,26 @@ func _test_level_8_branch_routes() -> void:
 			(
 				"Level 8 selected %s branch enemies have a Knight-clear route: %s"
 				% [branch, ", ".join(unreachable_branch_enemies)]
+			),
+		)
+		var reachable_locked_branch_enemies: Array[String] = []
+		var locked_branch_type := "skeleton_reaper" if other_branch == &"reaper" else "vampire"
+		var locked_branch_prefix := "l8_%s_" % other_branch
+		for raw_entity: Variant in document.get("entities", []):
+			if (
+				not raw_entity is Dictionary
+				or String(raw_entity.get("type", "")) != locked_branch_type
+				or not String(raw_entity.get("id", "")).begins_with(locked_branch_prefix)
+			):
+				continue
+			var enemy_cell := _entity_cell(raw_entity)
+			if _reachable_near(enemy_cell, reached, walkable):
+				reachable_locked_branch_enemies.append(String(raw_entity.get("id", "")))
+		_expect(
+			reachable_locked_branch_enemies.is_empty(),
+			(
+				"Level 8 unselected %s branch remains physically unreachable: %s"
+				% [other_branch, ", ".join(reachable_locked_branch_enemies)]
 			),
 		)
 		for objective_type: String in ["chest", "exit_gate"]:
@@ -398,17 +495,29 @@ func _has_current_level_collision(
 	return false
 
 
+func _knight_collision_transform_at_cell(
+	dungeon: DungeonLevel,
+	player: CharacterBody2D,
+	body_collision: CollisionShape2D,
+	cell: Vector2i,
+) -> Transform2D:
+	var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
+	var root_transform := player.global_transform
+	root_transform.origin = world_center
+	return root_transform * body_collision.transform
+
+
 func _collision_names_at_cell(
 	dungeon: DungeonLevel,
-	shape: RectangleShape2D,
+	player: CharacterBody2D,
+	body_collision: CollisionShape2D,
 	cell: Vector2i,
 ) -> PackedStringArray:
 	var query := PhysicsShapeQueryParameters2D.new()
-	query.shape = shape
+	query.shape = body_collision.shape
 	query.collision_mask = 1
 	query.collide_with_areas = false
-	var world_center := dungeon.backdrop.to_global(dungeon.backdrop.map_to_local(cell))
-	query.transform = Transform2D(0.0, world_center + Vector2(0.0, -8.0))
+	query.transform = _knight_collision_transform_at_cell(dungeon, player, body_collision, cell)
 	var names := PackedStringArray()
 	var game_root := dungeon.get_parent()
 	for result: Dictionary in dungeon.get_world_2d().direct_space_state.intersect_shape(query, 64):
