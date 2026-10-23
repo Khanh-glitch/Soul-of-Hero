@@ -1,0 +1,1 @@
+MANIFEST CHECK PASSED: 3 copied assets match Candidate B exactly
