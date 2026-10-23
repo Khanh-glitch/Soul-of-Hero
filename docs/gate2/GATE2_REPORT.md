@@ -1,8 +1,9 @@
 # Gate 2 — Level 3 Archive Architectural Cohesion & Visual Identity
 
 **Level:** `chapter_1_level_3` · **Engine:** Godot 4.7 stable (CI) · **Branch:**
-`arena/6e89e68d-soul-of-hero` · **Evidence run:** GitHub Actions **40010717499**
-(`Gate 2 — Archive architectural cohesion (native Godot 4.7)`, success)
+`arena/6e89e68d-soul-of-hero` · **Evidence run:** GitHub Actions **40011458967**
+(`Gate 2 — Archive architectural cohesion (native Godot 4.7)`, success — validate,
+provenance, import, before capture, after capture and publish all green)
 
 > **This is a design review submission, not a production approval.** Nothing here
 > has been merged, deployed or promoted. I did not score my own work: Gate 1 was
@@ -156,6 +157,7 @@ hold. All pass at HEAD.
 | no opaque material layer covers a walkable cell | pass |
 | every frame name resolves in the atlas | pass |
 | `--check`: generated documents match the committed ones | pass |
+| provenance: all 5 art files byte-identical to Candidate B's commit | pass (`GATE2 SOURCE MANIFEST OK`) |
 
 ### 5.2 Runtime contracts (`capture_gate2.gd`, in CI)
 
