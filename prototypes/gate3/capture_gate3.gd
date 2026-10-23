@@ -592,6 +592,9 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	## range and swinging at air would trade the Knight's HP for nothing, which is
 	## exactly what an earlier revision of this harness did. Returns frames spent.
 	var spent := 0
+	print("GATE3 COMBAT: engaging %s at %.0f px with target HP %s, Knight HP %d"
+		% [String(target.name), target.global_position.distance_to(_player.global_position),
+			str(target.get("health")), int(_player.get("health"))])
 	while spent < 200:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died fighting near '%s'" % label)
@@ -653,10 +656,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var index := 1
 	var frames := 0
 	var budget := route.size() * 200 + 900
-	var best_distance := 1.0e9
-	var checked_at := 0
-	var blocked := 0
+	var visited := {_current_cell(): true}
+	var frames_since_new_cell := 0
 	var replans := 0
+	var rolls := 0
 	while index < route.size() and frames < budget:
 		if int(_player.get("health")) <= 0:
 			_push("the Knight died on the way to '%s' at %s"
@@ -666,38 +669,36 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		var delta := waypoint - _player.global_position
 		if delta.length() <= 5.0:
 			index += 1
-			blocked = 0
-			best_distance = 1.0e9
-			checked_at = frames
 			continue
-		if frames - checked_at >= 30:
-			if delta.length() > best_distance - 3.0:
-				blocked += 1
-			else:
-				blocked = 0
-			best_distance = delta.length()
-			checked_at = frames
+		# Progress is "reached a cell this leg has not been in yet". Being shoved back
+		# and forth by an enemy body, or rocking on a spike, reaches no new cell and is
+		# not progress however much the position wobbles.
+		var cell := _current_cell()
+		if not visited.has(cell):
+			visited[cell] = true
+			frames_since_new_cell = 0
+		else:
+			frames_since_new_cell += 1
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		if blocked >= 2 and _disengage_frames <= 0:
-			var blocker := _nearest_enemy(56.0, delta)
-			if blocker != null and not _hazard_cache.has(_current_cell()):
+		if frames_since_new_cell > 60 and _disengage_frames <= 0:
+			var blocker := _nearest_enemy(64.0, delta)
+			var hurt := int(_player.get("health")) < 260
+			if blocker != null and not hurt and not _hazard_cache.has(cell) and rolls < 2:
 				var spent := await _engage_enemy(blocker, label)
 				frames += spent
-				blocked = 0
-				best_distance = 1.0e9
+				frames_since_new_cell = 0
 				continue
 			if replans < 3:
-				var fresh := _plan_route(_current_cell(), target_cell)
+				var fresh := _plan_route(cell, target_cell)
 				if fresh.size() > 1:
 					route = fresh
 					index = 1
 					replans += 1
-					blocked = 0
-					best_distance = 1.0e9
+					frames_since_new_cell = 0
 					continue
-			# Nothing to kill and no better route: the Knight's own roll carries him
-			# through the gap, which is exactly what the action is for.
+			# Nothing left to kill and no better route: roll through the gap. The roll
+			# is the Knight's own i-frame move, so this is still playing the game.
 			var toward := _key_directions(delta)
 			for action: String in toward:
 				Input.action_press(action, 1.0)
@@ -707,8 +708,8 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			for action: String in toward:
 				Input.action_release(action)
 			frames += 1
-			blocked = 0
-			best_distance = 1.0e9
+			rolls += 1
+			frames_since_new_cell = 0
 			continue
 		var actions := _key_directions(delta)
 		for action: String in actions:
@@ -718,9 +719,9 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			Input.action_release(action)
 		frames += 1
 		if frames % 60 == 0:
-			print("GATE3 TRACE: %s frame %d cell %s HP %d blocked %d waypoint %s"
-				% [label, frames, str(_current_cell()), int(_player.get("health")), blocked,
-					str(route[mini(index, route.size() - 1)])])
+			print("GATE3 TRACE: %s frame %d cell %s HP %d stuck %d waypoint %s"
+				% [label, frames, str(_current_cell()), int(_player.get("health")),
+					frames_since_new_cell, str(route[mini(index, route.size() - 1)])])
 	if index < route.size():
 		_push("the Knight ran out of frames walking to '%s' (%d/%d waypoints)"
 			% [label, index, route.size()])
