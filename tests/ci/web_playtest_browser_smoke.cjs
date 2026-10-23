@@ -62,10 +62,54 @@ const { PNG } = require("pngjs");
     if (distinct.size < 10) {
       throw new Error("Game loaded title route but visible canvas remains nearly monochrome/black");
     }
+    console.log("GODOT WEB TITLE SCREEN PASSED - route and nonblank screenshot");
+
+    // A Title-only smoke missed the user-facing bug: map tiles could show while
+    // Main.gd failed to compile, leaving monsters, chests and gates absent.
+    // This localhost-only CI route loads the actual game scene from its authored
+    // crypt_entrance.json without altering campaign save/unlock state.
+    const gameplayURL = new URL(
+      process.env.WEB_SMOKE_URL || "http://127.0.0.1:8787/"
+    );
+    gameplayURL.searchParams.set("ci_gameplay", "1");
+    await page.goto(gameplayURL.toString(), {
+      waitUntil: "domcontentloaded", timeout: 30000
+    });
+    await page.waitForFunction(
+      () => window.__soulHeroRoute === "game" &&
+        window.__soulHeroLevelReady &&
+        window.__soulHeroLevelReady.instantiated_count > 10,
+      null, { timeout: 55000, polling: 250 }
+    );
+    await page.waitForTimeout(1200);
+    const gameplay = await page.evaluate(() => window.__soulHeroLevelReady);
+    console.log("GODOT WEB LIVE ENTITY REPORT:", JSON.stringify(gameplay));
+    if (!gameplay.layout.endsWith("crypt_entrance.json") ||
+        gameplay.authored_count < 50 ||
+        gameplay.instantiated_count < 30) {
+      throw new Error("Gameplay map is missing expected authored population");
+    }
+    for (const required of ["skeleton", "chest", "exit_gate", "spikes", "torch"]) {
+      if ((gameplay.types?.[required] || 0) < 1) {
+        throw new Error("Missing live runtime entity in browser: " + required);
+      }
+    }
+    const gamePNG = await page.screenshot({ path: path.join(out, "gameplay.png") });
+    const image = PNG.sync.read(gamePNG);
+    const distinctGame = new Set();
+    for (let y = 0; y < image.height; y += 17) {
+      for (let x = 0; x < image.width; x += 17) {
+        const pos = (y * image.width + x) * 4;
+        distinctGame.add([image.data[pos] >> 4,
+          image.data[pos + 1] >> 4, image.data[pos + 2] >> 4].join("-"));
+      }
+    }
+    console.log("GODOT WEB GAMEPLAY SCREENSHOT COLOR BUCKETS:", distinctGame.size);
+    if (distinctGame.size < 10) throw new Error("Gameplay canvas is blank");
     const fatal = logs.filter(e => /PAGE ERROR|SCRIPT ERROR|Failed loading|Parse Error|Preload file/.test(e));
     if (fatal.length) throw new Error("Fatal browser/Godot errors: " + fatal.slice(0, 6).join("\n"));
     successful = true;
-    console.log("GODOT WEB BROWSER SMOKE PASSED - title route and nonblank screenshot");
+    console.log("GODOT WEB BROWSER SMOKE PASSED - title and live gameplay entity population");
   } finally {
     try {
       await page.screenshot({ path: path.join(out, "last-state.png"), timeout: 12000 });
