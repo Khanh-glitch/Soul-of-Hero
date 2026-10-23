@@ -10,13 +10,13 @@ GATE2 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 fr
 GATE2 CAPTURE: res://.artifacts/gate2/before_archive_entry.png (1280x720) at (376.219, 200.536)
 GATE2 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames
 GATE2 CAPTURE: res://.artifacts/gate2/before_landmark.png (1280x720) at (488.8025, 200.536)
-GATE2 WALK: cloister  (489, 201) -> (619, 272)  149 px over 12 cells in 169 frames
-GATE2 CAPTURE: res://.artifacts/gate2/before_cloister.png (1280x720) at (619.2938, 271.7049)
-GATE2 WALK: combat_space  (619, 272) -> (999, 344)  386 px over 33 cells in 354 frames
-GATE2 CAPTURE: res://.artifacts/gate2/before_combat_space.png (1280x720) at (998.6165, 343.5764)
-GATE2 WALK: return_route  (999, 344) -> (745, 343)  253 px over 20 cells in 210 frames
-GATE2 CAPTURE: res://.artifacts/gate2/before_return_route.png (1280x720) at (745.425, 343.4082)
-GATE2 COLLISION: Knight at (745.425, 343.4082) is clear of every wall and prop
+GATE2 WALK: cloister  (489, 201) -> (614, 297)  159 px over 14 cells in 186 frames
+GATE2 CAPTURE: res://.artifacts/gate2/before_cloister.png (1280x720) at (614.3279, 297.337)
+GATE2 WALK: combat_space  (614, 297) -> (999, 343)  387 px over 31 cells in 319 frames
+GATE2 CAPTURE: res://.artifacts/gate2/before_combat_space.png (1280x720) at (998.9539, 342.5988)
+GATE2 WALK: return_route  (999, 343) -> (713, 344)  286 px over 22 cells in 203 frames
+GATE2 CAPTURE: res://.artifacts/gate2/before_return_route.png (1280x720) at (713.1164, 343.7206)
+GATE2 COLLISION: Knight at (713.1164, 343.7206) is clear of every wall and prop
 GATE2 CAPTURE TEST PASSED: 6 frames (before)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

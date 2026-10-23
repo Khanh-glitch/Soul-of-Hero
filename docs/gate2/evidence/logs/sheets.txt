@@ -1,2 +1,2 @@
-missing native frame docs/gate2/evidence/after_cloister.png
+missing native frame docs/gate2/evidence/after_combat_space.png
 evidence sheets skipped: a native frame is missing
