@@ -1,0 +1,107 @@
+name: Level 2 Audition QA — Godot 4.7
+
+on:
+  push:
+    branches:
+      - design-audition/level2-candidate-a
+      - design-audition/level2-candidate-b
+    paths:
+      - "data/levels/chapter_1_level_2.json"
+      - "tools/generators/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: level2-audition-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  level2-audition:
+    name: Source integrity + live collision + 3 in-game captures
+    runs-on: ubuntu-24.04
+    timeout-minutes: 22
+    env:
+      SOUL_OF_HERO_SAVE_PATH: "user://tests/level2_audition_${{ github.run_id }}.json"
+      LIVING_ARSENAL_SAVE_PATH: "user://tests/level2_audition_${{ github.run_id }}.json"
+    steps:
+      - name: Check out isolated candidate branch
+        uses: actions/checkout@v4
+
+      - name: Install proven Godot 4.7 stable
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Audit pinned-baseline delta and immutable entity contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          python3 tools/design/level2_audition_audit.py 2>&1 | tee .artifacts/level2_source_audit.log
+          cat .artifacts/level2_audition_metrics.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Import production resources
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/godot_version.log
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --audio-driver Dummy --editor --path . --import --quit 2>&1 | tee .artifacts/level2_import.log
+
+      - name: Validate Chapter 1 schema and geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --audio-driver Dummy --path . --script res://tests/chapter_1_campaign_map_design_test.gd 2>&1 | tee .artifacts/level2_geometry.log
+          if grep -Eq '^SCRIPT ERROR:|^ERROR:' .artifacts/level2_geometry.log; then
+            echo "::error::Godot script or geometry error"
+            exit 1
+          fi
+
+      - name: Live Knight collision routes across Chapter 1 (includes Level 2)
+        shell: bash
+        timeout-minutes: 9
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --audio-driver Dummy --path . res://tests/chapter_1_collision_route_test.tscn 2>&1 | tee .artifacts/level2_collision.log
+          grep -q "CHAPTER 1 COLLISION ROUTE TEST PASSED" .artifacts/level2_collision.log
+          grep -q "slot=2" .artifacts/level2_collision.log
+          if grep -Eq '^SCRIPT ERROR:|^ERROR:' .artifacts/level2_collision.log; then
+            echo "::error::Godot collision script error"
+            exit 1
+          fi
+
+      - name: Capture actual Level 2 spawn, middle and exit views
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri >/dev/null
+          for point in spawn mid end; do
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/level2_capture_${point}_${GITHUB_RUN_ID}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              timeout --signal=TERM --kill-after=10s 100s godot \
+              --path . --audio-driver Dummy --rendering-method gl_compatibility \
+              --rendering-driver opengl3 --resolution 1280x720 \
+              res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+              --level-slot=2 --capture-point="$point" \
+              --expected-width=1280 --expected-height=720 \
+              2>&1 | tee ".artifacts/level2_capture_${point}.log"
+            grep -q "CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=$point" ".artifacts/level2_capture_${point}.log"
+            test -s ".artifacts/chapter_1_level_02_${point}_runtime.png"
+            echo "Level 2 $point: real Godot capture PASS" >> "$GITHUB_STEP_SUMMARY"
+          done
+
+      - name: Upload full candidate evidence (including failure logs)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: level2-audition-evidence
+          path: .artifacts/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
