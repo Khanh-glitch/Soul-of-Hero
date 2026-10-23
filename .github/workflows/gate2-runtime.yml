@@ -1,0 +1,100 @@
+name: Gate 2 — Archive architectural cohesion (native Godot 4.7)
+on:
+  push:
+    branches:
+      - arena/6e89e68d-soul-of-hero
+    paths:
+      - "tools/gate2/**"
+      - "prototypes/gate2/**"
+      - ".github/workflows/gate2-runtime.yml"
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: gate2-native
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive the Gate 2 architecture and validate entities, props and routes
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gate2 docs/gate2/evidence/logs
+          python3 tools/gate2/author_gate2.py | tee .artifacts/gate2/author.log
+          python3 tools/gate2/author_gate2.py --check | tee .artifacts/gate2/author_check.log
+          python3 tools/gate2/author_gate2.py --stats | tee .artifacts/gate2/stats.log
+          # The generated documents must already be committed byte-for-byte.
+          git diff --exit-code -- prototypes/gate2/level_data/chapter_1_level_3_gate2.json prototypes/gate2/visual_placement.json
+          # Candidate A's pinned level, untouched, for the BEFORE run.
+          cp prototypes/gate0/level_data/chapter_1_level_3_a.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate2/base_pin.log
+          test -f prototypes/gate2/art/props.png
+          test -f prototypes/gate2/art/archive_tiles.png
+          test -f prototypes/gate2/art/light_radial.png
+      - name: Import Godot 4.7
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/gate2/version.log
+          timeout 300s godot --headless --audio-driver Dummy --editor --path . --import --quit 2>&1 | tee .artifacts/gate2/import.log
+      - name: Install Xvfb Mesa
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri >/dev/null
+      - name: Capture Candidate A Level 3 baseline with HUD
+        run: |
+          set -euo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://g2_before_$GITHUB_RUN_ID.json"
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 600s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate2/capture_gate2.tscn \
+            2>&1 | tee .artifacts/gate2/before.log
+          grep -q "GATE2 CAPTURE TEST PASSED" .artifacts/gate2/before.log
+          if grep -Eq "^ERROR:|^SCRIPT ERROR:" .artifacts/gate2/before.log; then exit 1; fi
+      - name: Capture Gate 2 archive with live Knight collision and HUD
+        run: |
+          set -euo pipefail
+          cp prototypes/gate2/level_data/chapter_1_level_3_gate2.json data/levels/chapter_1_level_3.json
+          sha256sum data/levels/chapter_1_level_3.json | tee .artifacts/gate2/gate2_pin.log
+          cmp data/levels/chapter_1_level_3.json prototypes/gate2/level_data/chapter_1_level_3_gate2.json
+          export SOUL_OF_HERO_SAVE_PATH="user://g2_after_$GITHUB_RUN_ID.json"
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 600s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate2/capture_gate2.tscn -- --overlay \
+            2>&1 | tee .artifacts/gate2/after.log
+          grep -q "GATE2 CAPTURE TEST PASSED" .artifacts/gate2/after.log
+          if grep -Eq "^ERROR:|^SCRIPT ERROR:" .artifacts/gate2/after.log; then exit 1; fi
+          # Every station must have produced a frame, not just the last one.
+          for station in spawn archive_entry landmark cloister combat_space return_route; do
+            test -f ".artifacts/gate2/after_$station.png"
+            test -f ".artifacts/gate2/before_$station.png"
+          done
+      - name: Persist native frames and log errors
+        if: always()
+        run: |
+          set -euo pipefail
+          mkdir -p docs/gate2/evidence/logs
+          shopt -s nullglob
+          for frame in .artifacts/gate2/*.png; do cp "$frame" docs/gate2/evidence/; done
+          for logfile in .artifacts/gate2/*.log; do
+            cp "$logfile" "docs/gate2/evidence/logs/$(basename "$logfile" .log).txt"
+          done
+          shopt -u nullglob
+          if [ -f .artifacts/gate2/after_spawn.png ] && [ -f .artifacts/gate2/before_spawn.png ]; then
+            python3 -m pip install --quiet pillow
+            python3 tools/gate2/make_evidence_sheets.py | tee docs/gate2/evidence/logs/sheets.txt
+          fi
+          git config user.name "gate2-capture-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/gate2/evidence
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(gate2): publish native Godot archive evidence [skip ci]"
+            git push
+          fi
