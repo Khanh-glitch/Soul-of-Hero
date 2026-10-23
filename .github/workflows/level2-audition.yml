@@ -8,9 +8,13 @@ on:
       - "arena/**"
     paths:
       - "data/levels/chapter_1_level_2.json"
+      - "data/levels/chapter_1_level_3.json"
+      - "data/levels/chapter_1_level_4.json"
       - "tools/generators/**"
+      - "tools/captures/**"
       - "tools/design/**"
       - "docs/design-audition/LEVEL2_CONCEPT.md"
+      - "docs/design-pilot/**"
       - ".github/workflows/level2-audition.yml"
   pull_request:
     branches:
@@ -154,16 +158,87 @@ jobs:
               .artifacts/level2_capture_end.log || true
           } > docs/design-audition/captures/godot_verification_log.md
 
+      - name: Capture actual Level 3 and Level 4 AFTER, live combat, and BEFORE views in real Godot 4.7
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs/design-pilot/captures
+          for slot in 3 4; do
+            for point in spawn mid end; do
+              export SOUL_OF_HERO_SAVE_PATH="user://tests/pilot_after_${slot}_${point}_${GITHUB_RUN_ID}.json"
+              export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                timeout --signal=TERM --kill-after=10s 100s godot \
+                --path . --audio-driver Dummy --rendering-method gl_compatibility \
+                --rendering-driver opengl3 --resolution 1280x720 \
+                res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="${slot}" --capture-point="${point}" \
+                --expected-width=1280 --expected-height=720 \
+                2>&1 | tee ".artifacts/level${slot}_capture_${point}.log"
+              grep -q "CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=${slot} point=${point}" ".artifacts/level${slot}_capture_${point}.log"
+              test -s ".artifacts/chapter_1_level_0${slot}_${point}_runtime.png"
+              cp ".artifacts/chapter_1_level_0${slot}_${point}_runtime.png" "docs/design-pilot/captures/after_l${slot}_${point}.png"
+            done
+          done
+
+          for spec in "3:combat:90" "3:vault:20" "4:combat:90" "4:spiral:20"; do
+            IFS=':' read -r slot point frames <<< "${spec}"
+            export SOUL_OF_HERO_SAVE_PATH="user://tests/pilot_action_${slot}_${point}_${GITHUB_RUN_ID}.json"
+            export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              timeout --signal=TERM --kill-after=10s 100s godot \
+              --path . --audio-driver Dummy --rendering-method gl_compatibility \
+              --rendering-driver opengl3 --resolution 1280x720 \
+              res://tools/captures/pilot_combat_visual_capture.tscn -- \
+              --level-slot="${slot}" --capture-point="${point}" --sim-frames="${frames}" \
+              --out="res://docs/design-pilot/captures/after_l${slot}_${point}.png" \
+              2>&1 | tee ".artifacts/level${slot}_capture_${point}.log"
+            test -s "docs/design-pilot/captures/after_l${slot}_${point}.png"
+          done
+
+          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_3.json > data/levels/chapter_1_level_3.json
+          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_4.json > data/levels/chapter_1_level_4.json
+          for slot in 3 4; do
+            for point in spawn mid end; do
+              export SOUL_OF_HERO_SAVE_PATH="user://tests/pilot_before_${slot}_${point}_${GITHUB_RUN_ID}.json"
+              export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                timeout --signal=TERM --kill-after=10s 100s godot \
+                --path . --audio-driver Dummy --rendering-method gl_compatibility \
+                --rendering-driver opengl3 --resolution 1280x720 \
+                res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="${slot}" --capture-point="${point}" \
+                --expected-width=1280 --expected-height=720 \
+                2>&1 | tee ".artifacts/level${slot}_before_${point}.log"
+              cp ".artifacts/chapter_1_level_0${slot}_${point}_runtime.png" "docs/design-pilot/captures/before_l${slot}_${point}.png"
+            done
+          done
+          git checkout -- data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json
+
+          {
+            echo "# Real Godot 4.7.0 Levels 3 & 4 Runtime Verification Summary (Run ${GITHUB_RUN_ID})"
+            echo "- Godot Version: $(cat .artifacts/godot_version.log)"
+            echo "- Generator Sync (Levels 1-5): ZERO DIFF"
+            grep -E "CHAPTER 1|ENCOUNTER|PILOT VISUAL|slot=" \
+              .artifacts/level2_geometry.log \
+              .artifacts/level2_map_design.log \
+              .artifacts/level2_encounter_pack.log \
+              .artifacts/level2_collision.log \
+              .artifacts/level3_capture_*.log \
+              .artifacts/level4_capture_*.log || true
+          } > docs/design-pilot/captures/godot_verification_log.md
+
       - name: Commit verified Godot 4.7 captures to candidate branch
         if: github.event_name == 'push'
         shell: bash
         run: |
           set -euo pipefail
+          git checkout 2903a305c610fc547581cc82268f3b7e37e8e75a -- docs/design-audition/
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/design-audition/captures/
+          git add docs/design-pilot/captures/
           if ! git diff --cached --quiet; then
-            git commit -m "docs(level-2): archive real Godot 4.7 1280x720 captures and runtime verification logs [skip ci]"
+            git commit -m "docs(levels-3-4): archive real Godot 4.7 1280x720 BEFORE/AFTER/combat captures & logs [skip ci]"
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
 
