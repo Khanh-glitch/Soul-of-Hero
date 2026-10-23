@@ -48,10 +48,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_levels_2_to_5.gd 2>&1 | tee .artifacts/chapter-1-levels-2-to-5-generator.log
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_chapter_1_level_6.gd 2>&1 | tee .artifacts/chapter-1-level-6-generator.log
           timeout --signal=TERM --kill-after=10s 120s godot --headless --path . --script res://tools/generators/generate_crypt_training_sandbox.gd 2>&1 | tee .artifacts/training-sandbox-generator.log
-          git diff --stat -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
-          git diff --quiet --exit-code -- data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --stat -- data/levels/crypt_entrance.json data/levels/chapter_1_level_2.json data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json data/levels/chapter_1_level_5.json data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
+          git diff --quiet --exit-code -- data/levels/crypt_entrance.json data/levels/chapter_1_level_2.json data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json data/levels/chapter_1_level_5.json data/levels/chapter_1_level_6.json data/levels/crypt_training_sandbox.json
 
       - name: Run Chapter 2 map design and loader checks
         run: |
@@ -437,6 +438,29 @@ jobs:
           echo "Chapter 1 Level 10 rendered capture exit code: ${result}"
           exit "${result}"
 
+      - name: Capture Level 3 and Level 4 BEFORE baselines and live action frames
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          cp data/levels/chapter_1_level_3.json /tmp/after_l3_backup.json
+          cp data/levels/chapter_1_level_4.json /tmp/after_l4_backup.json
+          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_3.json > data/levels/chapter_1_level_3.json
+          git show 2903a305c610fc547581cc82268f3b7e37e8e75a:data/levels/chapter_1_level_4.json > data/levels/chapter_1_level_4.json
+          for slot in 3 4; do
+            for point in spawn mid end; do
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                SOUL_OF_HERO_SAVE_PATH="user://tests/ci_before_${GITHUB_RUN_ID}_${slot}_${point}.json" \
+                LIVING_ARSENAL_SAVE_PATH="user://tests/ci_before_${GITHUB_RUN_ID}_${slot}_${point}.json" \
+                timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                --resolution 1280x720 res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="${slot}" --capture-point="${point}" --expected-width=1280 --expected-height=720
+              cp ".artifacts/chapter_1_level_0${slot}_${point}_runtime.png" ".artifacts/before_level_0${slot}_${point}_runtime.png"
+            done
+          done
+          cp /tmp/after_l3_backup.json data/levels/chapter_1_level_3.json
+          cp /tmp/after_l4_backup.json data/levels/chapter_1_level_4.json
+
       - name: Capture production Chapter 1 campaign maps
         if: always()
         shell: bash
@@ -519,6 +543,43 @@ jobs:
             python3 tools/ci/publish_godot_failure_annotations.py "${diagnostics[@]}"
           fi
           exit "${capture_failures}"
+
+      - name: Capture Level 3 and Level 4 live combat and spiral showcase frames
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          for spec in "3:combat:90" "3:vault:20" "4:combat:90" "4:spiral:20"; do
+            IFS=':' read -r slot point frames <<< "${spec}"
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+              SOUL_OF_HERO_SAVE_PATH="user://tests/ci_action_${GITHUB_RUN_ID}_${slot}_${point}.json" \
+              LIVING_ARSENAL_SAVE_PATH="user://tests/ci_action_${GITHUB_RUN_ID}_${slot}_${point}.json" \
+              timeout --signal=TERM --kill-after=10s 90s godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --resolution 1280x720 res://tools/captures/pilot_combat_visual_capture.tscn -- \
+              --level-slot="${slot}" --capture-point="${point}" --sim-frames="${frames}" \
+              --out="res://.artifacts/chapter_1_level_0${slot}_${point}_runtime.png"
+          done
+          for f in \
+            .artifacts/before_level_03_spawn_runtime.png \
+            .artifacts/before_level_03_mid_runtime.png \
+            .artifacts/before_level_03_end_runtime.png \
+            .artifacts/before_level_04_spawn_runtime.png \
+            .artifacts/before_level_04_mid_runtime.png \
+            .artifacts/before_level_04_end_runtime.png \
+            .artifacts/chapter_1_level_03_spawn_runtime.png \
+            .artifacts/chapter_1_level_03_mid_runtime.png \
+            .artifacts/chapter_1_level_03_end_runtime.png \
+            .artifacts/chapter_1_level_03_combat_runtime.png \
+            .artifacts/chapter_1_level_03_vault_runtime.png \
+            .artifacts/chapter_1_level_04_spawn_runtime.png \
+            .artifacts/chapter_1_level_04_mid_runtime.png \
+            .artifacts/chapter_1_level_04_end_runtime.png \
+            .artifacts/chapter_1_level_04_combat_runtime.png \
+            .artifacts/chapter_1_level_04_spiral_runtime.png; do
+            if [[ -f "${f}" ]]; then
+              echo "B64PNG_BEGIN:$(basename "${f}"):$(base64 -w0 "${f}"):B64PNG_END"
+            fi
+          done
 
       - name: Upload screenshots and rendered logs
         if: always()

@@ -2,10 +2,14 @@ extends SceneTree
 
 const MapBuilder := preload("res://tools/generators/chapter_1_map_builder.gd")
 const Level2OssuaryForkBuilder := preload("res://tools/generators/level_2_ossuary_fork_builder.gd")
+const Level3CrossfireArchiveBuilder := preload("res://tools/generators/level_3_crossfire_archive_builder.gd")
+const Level4SpiralReliquaryBuilder := preload("res://tools/generators/level_4_spiral_reliquary_builder.gd")
 const LevelSchemaValidator := preload("res://game/levels/level_schema.gd")
 
 var _builder := MapBuilder.new()
 var _level_2_builder := Level2OssuaryForkBuilder.new()
+var _level_3_builder := Level3CrossfireArchiveBuilder.new()
+var _level_4_builder := Level4SpiralReliquaryBuilder.new()
 
 
 func _init() -> void:
@@ -17,11 +21,15 @@ func _init() -> void:
 		_level_5_definition(),
 	]
 	for definition: Dictionary in definitions:
-		var level: Dictionary = (
-			_level_2_builder.build()
-			if bool(definition.get("use_level_2_ossuary_fork_builder", false))
-			else _builder.build(definition)
-		)
+		var level: Dictionary
+		if bool(definition.get("use_level_2_ossuary_fork_builder", false)):
+			level = _level_2_builder.build()
+		elif bool(definition.get("use_level_3_crossfire_archive_builder", false)):
+			level = _level_3_builder.build()
+		elif bool(definition.get("use_level_4_spiral_reliquary_builder", false)):
+			level = _level_4_builder.build()
+		else:
+			level = _builder.build(definition)
 		var validation: Dictionary = LevelSchemaValidator.validate_level(level)
 		if not bool(validation.get("ok", false)):
 			push_error(
@@ -208,216 +216,18 @@ func _level_2_definition() -> Dictionary:
 
 
 func _level_3_definition() -> Dictionary:
-	var entities: Array = []
-	entities.append(_entity("player_spawn", "player", 8, 13))
-	var camp_1_swords := ["l3_c1_skeleton_01", "l3_c1_skeleton_02", "l3_c1_skeleton_03", "l3_c1_skeleton_04", "l3_c1_skeleton_05"]
-	var camp_1_reapers := ["l3_c1_reaper_01", "l3_c1_reaper_02"]
-	_add_enemy_group(entities, camp_1_swords, [Vector2i(88, 10), Vector2i(92, 15), Vector2i(96, 9), Vector2i(98, 18), Vector2i(102, 14)], "skeleton", 38)
-	_add_enemy_group(entities, camp_1_reapers, [Vector2i(106, 8), Vector2i(106, 20)], "skeleton_reaper", 32)
-	var camp_1 := camp_1_swords + camp_1_reapers
-
-	var camp_2_swords := ["l3_c2_skeleton_01", "l3_c2_skeleton_02", "l3_c2_skeleton_03", "l3_c2_skeleton_04", "l3_c2_skeleton_05"]
-	var camp_2_reapers := ["l3_c2_reaper_01", "l3_c2_reaper_02"]
-	_add_enemy_group(entities, camp_2_swords, [Vector2i(80, 36), Vector2i(81, 46), Vector2i(90, 33), Vector2i(94, 49), Vector2i(106, 36)], "skeleton", 36)
-	_add_enemy_group(entities, camp_2_reapers, [Vector2i(106, 49), Vector2i(94, 42)], "skeleton_reaper", 30)
-	var camp_2 := camp_2_swords + camp_2_reapers
-
-	var camp_3_swords := ["l3_c3_skeleton_01", "l3_c3_skeleton_02", "l3_c3_skeleton_03", "l3_c3_skeleton_04", "l3_c3_skeleton_05"]
-	var camp_3_reapers := ["l3_c3_reaper_01"]
-	_add_enemy_group(entities, camp_3_swords, [Vector2i(42, 67), Vector2i(48, 64), Vector2i(54, 65), Vector2i(66, 75), Vector2i(72, 74)], "skeleton", 36)
-	_add_enemy_group(entities, camp_3_reapers, [Vector2i(74, 66)], "skeleton_reaper", 28)
-	var camp_3 := camp_3_swords + camp_3_reapers
-
-	_add_door_pair(entities, "l3_f1_f2", Vector2i(113, 14), Vector2i(9, 42), "Tầng 2")
-	_add_door_pair(entities, "l3_f2_f3", Vector2i(113, 47), Vector2i(9, 72), "Tầng 3")
-	entities.append_array([
-		_entity("l3_sigil_crossfire_cache", "sigil", 60, 3),
-		_entity("l3_sigil_camp_1", "sigil", 108, 14),
-		_entity("l3_sigil_ring_cache", "sigil", 51, 56),
-		_entity("l3_sigil_camp_2", "sigil", 108, 42),
-		_entity("l3_sigil_final", "sigil", 78, 70),
-		_entity("l3_checkpoint_floor_2", "checkpoint", 16, 42),
-		_entity("l3_checkpoint_floor_3", "checkpoint", 16, 72),
-		_entity("l3_exit", "exit_gate", 105, 71),
-		_entity("l3_chest_line_of_fire", "chest", 68, 21, {"score_reward": 320}),
-		_entity("l3_chest_ring", "chest", 35, 51, {"score_reward": 360}),
-	])
-	_add_entities(entities, "l3_spikes", "spikes", [
-		Vector2i(35, 13), Vector2i(51, 7), Vector2i(51, 21), Vector2i(75, 13),
-		Vector2i(37, 34), Vector2i(37, 50), Vector2i(69, 42), Vector2i(85, 48),
-		Vector2i(39, 72), Vector2i(68, 63),
-		Vector2i(88, 8), Vector2i(88, 20), Vector2i(95, 35), Vector2i(95, 50),
-		Vector2i(51, 64), Vector2i(51, 78), Vector2i(78, 64), Vector2i(78, 78),
-	])
-	_add_entities(entities, "l3_torch", "torch", [
-		Vector2i(17, 10), Vector2i(32, 6), Vector2i(70, 6), Vector2i(84, 7),
-		Vector2i(18, 37), Vector2i(33, 32), Vector2i(64, 51), Vector2i(76, 33),
-		Vector2i(108, 51), Vector2i(18, 67), Vector2i(36, 63), Vector2i(92, 66),
-	])
-	_add_entities(entities, "l3_coin", "coin", [
-		Vector2i(23, 12), Vector2i(32, 13), Vector2i(51, 14), Vector2i(71, 13),
-		Vector2i(25, 41), Vector2i(35, 42), Vector2i(64, 42), Vector2i(70, 42),
-		Vector2i(25, 71), Vector2i(36, 71), Vector2i(82, 71), Vector2i(93, 71),
-	])
-
 	return {
 		"id": "chapter_1_level_3",
 		"output": "res://data/levels/chapter_1_level_3.json",
-		"name": "Thư Khố Giao Hỏa",
-		"width": 116,
-		"height": 84,
-		"decor_seed": 3,
-		"required_sigils": 4,
-		"layout_profile": "three_floor_crossfire_and_cover",
-		"rooms": [
-			_room("l3_f1_entry", 1, "safe_entry", 4, 7, 16, 12),
-			_room("l3_f1_crossfire_hall", 1, "cover_lesson", 30, 4, 42, 20),
-			_room("l3_f1_hidden_cache", 1, "optional_reward", 54, 1, 14, 6),
-			_room("l3_f1_camp", 1, "combat_camp", 82, 5, 32, 18),
-			_room("l3_f2_landing", 2, "safe_landing", 4, 35, 18, 14),
-			_room("l3_f2_ring", 2, "cover_route", 32, 30, 34, 24),
-			_room("l3_f2_hidden_reliquary", 2, "optional_reward", 45, 52, 14, 7),
-			_room("l3_f2_camp", 2, "combat_camp", 74, 31, 40, 22),
-			_room("l3_f3_landing", 3, "safe_landing", 4, 66, 18, 12),
-			_room("l3_f3_camp", 3, "combat_camp", 34, 61, 46, 20),
-			_room("l3_f3_exit", 3, "exit", 90, 64, 20, 15),
-		],
-		"corridors": [
-			Rect2i(20, 11, 10, 4), Rect2i(72, 11, 10, 4),
-			Rect2i(22, 40, 10, 4), Rect2i(66, 40, 8, 4),
-			Rect2i(22, 70, 12, 4), Rect2i(80, 70, 10, 4),
-		],
-		"pits": [
-			Rect2i(40, 8, 9, 5), Rect2i(54, 15, 9, 5),
-			Rect2i(43, 37, 12, 10), Rect2i(86, 36, 5, 5), Rect2i(98, 43, 5, 5),
-			Rect2i(48, 68, 16, 5),
-		],
-		"entities": entities,
-		"combat_camps": [
-			_camp("l3_camp_1_far_anchors", 1, [82, 5, 32, 18], [82, 14], camp_1, "five_swordsmen_screen_two_reapers", true),
-			_camp("l3_camp_2_pincer_fire", 2, [74, 31, 40, 22], [74, 42], camp_2, "five_swordsmen_push_between_two_reaper_angles", true),
-			_camp("l3_camp_3_split_lane", 3, [34, 61, 46, 20], [34, 71], camp_3, "five_swordsmen_split_then_one_reaper_closes_the_lane", true),
-		],
-		"safe_zones": [
-			_zone("l3_spawn_sanctuary", [4, 7, 16, 12], "spawn_and_reaper_read"),
-			_zone("l3_floor_2_breather", [4, 35, 18, 14], "checkpoint_and_reset"),
-			_zone("l3_floor_3_breather", [4, 66, 18, 12], "checkpoint_before_split_lane"),
-		],
-		"special_zones": [
-			_zone("l3_optional_sigil_pair", [45, 1, 23, 58], "five_sigils_only_four_required"),
-		],
-		"metadata": {
-			"objective": "Dùng hố làm vật che, áp sát các điểm neo Tử Thần và thu 4 trong 5 ấn ký.",
-			"difficulty_tier": 3,
-			"pacing": "three_six_member_packs_per_floor_with_ranged_crossfire",
-			"density_cadence_anchor": _world_position(Vector2i(60, 10)),
-			"roster_id": "chapter_1_level_3_roster",
-			"encounter_pack_model": _pack_model(3),
-		},
+		"use_level_3_crossfire_archive_builder": true,
 	}
 
 
 func _level_4_definition() -> Dictionary:
-	var entities: Array = []
-	entities.append(_entity("player_spawn", "player", 8, 14))
-	var camp_1_swords := ["l4_c1_skeleton_01", "l4_c1_skeleton_02", "l4_c1_skeleton_03", "l4_c1_skeleton_04"]
-	var camp_1_reapers := ["l4_c1_reaper_01"]
-	_add_enemy_group(entities, camp_1_swords, [Vector2i(90, 10), Vector2i(95, 17), Vector2i(101, 9), Vector2i(104, 19)], "skeleton", 34)
-	_add_enemy_group(entities, camp_1_reapers, [Vector2i(106, 14)], "skeleton_reaper", 28)
-	var camp_1 := camp_1_swords + camp_1_reapers
-	var camp_2_swords := ["l4_c2_skeleton_01", "l4_c2_skeleton_02", "l4_c2_skeleton_03"]
-	var camp_2_reapers := ["l4_c2_reaper_01", "l4_c2_reaper_02"]
-	_add_enemy_group(entities, camp_2_swords, [Vector2i(56, 35), Vector2i(60, 41), Vector2i(56, 49)], "skeleton", 34)
-	_add_enemy_group(entities, camp_2_reapers, [Vector2i(39, 34), Vector2i(61, 49)], "skeleton_reaper", 28)
-	var camp_2 := camp_2_swords + camp_2_reapers
-	var camp_3_swords := ["l4_c3_skeleton_01", "l4_c3_skeleton_02", "l4_c3_skeleton_03"]
-	var camp_3_reapers := ["l4_c3_reaper_01", "l4_c3_reaper_02"]
-	_add_enemy_group(entities, camp_3_swords, [Vector2i(42, 65), Vector2i(44, 76), Vector2i(72, 64)], "skeleton", 32)
-	_add_enemy_group(entities, camp_3_reapers, [Vector2i(74, 76), Vector2i(58, 68)], "skeleton_reaper", 26)
-	var camp_3 := camp_3_swords + camp_3_reapers
-
-	_add_door_pair(entities, "l4_f1_f2", Vector2i(107, 21), Vector2i(9, 43), "Tầng 2")
-	_add_door_pair(entities, "l4_f2_f3", Vector2i(107, 49), Vector2i(9, 72), "Tầng 3")
-	entities.append_array([
-		_entity("l4_sigil_spiral", "sigil", 70, 24),
-		_entity("l4_sigil_camp_1", "sigil", 106, 8),
-		_entity("l4_sigil_camp_2", "sigil", 62, 51),
-		_entity("l4_sigil_camp_3", "sigil", 80, 70),
-		_entity("l4_checkpoint_floor_2", "checkpoint", 16, 43),
-		_entity("l4_checkpoint_floor_3", "checkpoint", 16, 72),
-		_entity("l4_exit", "exit_gate", 105, 71),
-		_entity("l4_chest_spiral", "chest", 31, 24, {"score_reward": 420}),
-		_entity("l4_chest_pinwheel", "chest", 105, 33, {"score_reward": 460}),
-	])
-	_add_entities(entities, "l4_spikes", "spikes", [
-		Vector2i(33, 6), Vector2i(50, 5), Vector2i(70, 7), Vector2i(70, 23),
-		Vector2i(50, 25), Vector2i(31, 22), Vector2i(35, 42), Vector2i(67, 42),
-		Vector2i(80, 33), Vector2i(104, 43), Vector2i(38, 72), Vector2i(68, 78),
-		Vector2i(90, 7), Vector2i(52, 35), Vector2i(52, 50), Vector2i(92, 50),
-		Vector2i(48, 62), Vector2i(48, 79), Vector2i(78, 64), Vector2i(78, 79),
-		Vector2i(96, 70),
-	])
-	_add_entities(entities, "l4_torch", "torch", [
-		Vector2i(17, 10), Vector2i(29, 13), Vector2i(74, 13), Vector2i(86, 7),
-		Vector2i(18, 38), Vector2i(33, 33), Vector2i(63, 51), Vector2i(77, 32),
-		Vector2i(108, 52), Vector2i(18, 67), Vector2i(36, 62), Vector2i(92, 66),
-	])
-	_add_entities(entities, "l4_coin", "coin", [
-		Vector2i(23, 13), Vector2i(31, 13), Vector2i(39, 5), Vector2i(68, 5),
-		Vector2i(74, 13), Vector2i(25, 42), Vector2i(34, 42), Vector2i(70, 42),
-		Vector2i(25, 71), Vector2i(35, 71), Vector2i(84, 71), Vector2i(94, 71),
-	])
-
 	return {
 		"id": "chapter_1_level_4",
 		"output": "res://data/levels/chapter_1_level_4.json",
-		"name": "Thánh Tích Xoắn Ốc",
-		"width": 116,
-		"height": 84,
-		"decor_seed": 4,
-		"required_sigils": 4,
-		"layout_profile": "three_floor_spiral_pressure",
-		"rooms": [
-			_room("l4_f1_entry", 1, "safe_entry", 4, 8, 16, 12),
-			_room("l4_f1_spiral", 1, "trap_route", 28, 3, 48, 24),
-			_room("l4_f1_camp", 1, "combat_camp", 84, 5, 26, 20),
-			_room("l4_f2_landing", 2, "safe_landing", 4, 36, 18, 14),
-			_room("l4_f2_camp", 2, "combat_camp", 31, 31, 34, 22),
-			_room("l4_f2_relay_ring", 2, "trap_route", 75, 30, 35, 24),
-			_room("l4_f3_landing", 3, "safe_landing", 4, 66, 18, 12),
-			_room("l4_f3_camp", 3, "combat_camp", 34, 60, 48, 21),
-			_room("l4_f3_exit", 3, "exit", 90, 64, 20, 15),
-		],
-		"corridors": [
-			Rect2i(20, 12, 8, 4), Rect2i(76, 12, 9, 4),
-			Rect2i(22, 41, 9, 4), Rect2i(65, 41, 10, 4),
-			Rect2i(22, 70, 12, 4), Rect2i(82, 70, 8, 4),
-		],
-		"pits": [
-			Rect2i(36, 8, 32, 14), Rect2i(43, 36, 10, 12), Rect2i(83, 36, 19, 12),
-			Rect2i(47, 64, 5, 7), Rect2i(62, 70, 5, 7),
-		],
-		"entities": entities,
-		"combat_camps": [
-			_camp("l4_camp_1_spiral_release", 1, [84, 5, 26, 20], [84, 14], camp_1, "four_swordsmen_release_one_reaper_after_the_trap_loop", true),
-			_camp("l4_camp_2_elite_pin", 2, [31, 31, 34, 22], [31, 42], camp_2, "three_swordsmen_pin_while_two_reapers_crossfire", true),
-			_camp("l4_camp_3_broken_cross", 3, [34, 60, 48, 21], [34, 71], camp_3, "three_swordsmen_split_two_reapers_own_the_diagonals", true),
-		],
-		"safe_zones": [
-			_zone("l4_spawn_sanctuary", [4, 8, 16, 12], "spawn_before_trap_read"),
-			_zone("l4_floor_2_breather", [4, 36, 18, 14], "checkpoint_after_spiral"),
-			_zone("l4_floor_3_breather", [4, 66, 18, 12], "checkpoint_before_final_camp"),
-		],
-		"special_zones": [
-			_zone("l4_full_spiral_commitment", [28, 3, 48, 24], "sigil_forces_the_long_side_of_the_loop"),
-		],
-		"metadata": {
-			"objective": "Đọc nhịp bẫy xoắn ốc, phá ba bãi tinh nhuệ và thu đủ 4 ấn ký.",
-			"difficulty_tier": 4,
-			"pacing": "four_six_member_packs_per_floor_through_dense_trap_fields",
-			"roster_id": "chapter_1_level_4_roster",
-			"encounter_pack_model": _pack_model(4),
-		},
+		"use_level_4_spiral_reliquary_builder": true,
 	}
 
 
