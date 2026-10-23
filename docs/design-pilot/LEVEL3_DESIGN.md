@@ -1,70 +1,26 @@
-# Chapter 1 Level 3 Design Brief — *Thư Khố Giao Hỏa* (Crossfire Archive)
+# Chapter 1 Level 3 Design Brief — *Crossfire Archive* (`chapter_1_level_3.json`)
 
-## 1. Level Fantasy & Core Gameplay Verb
+## 1. Architectural Concept: A Damaged Monastic Scroll Archive
 
-- **Level Fantasy:** A collapsed subterranean **Forbidden Scriptorium & Crossfire Archive** (*Thư Khố Giao Hỏa*) — staggered timber folio stacks, iron-banded stone lecterns, sapphire ink basins, and sunken archive trenches held by ranged **Skeleton Reaper** (*Tử Thần Xương*) anchors behind melee bone-vanguard screens.
-- **Core Gameplay Verb:** **Read the Reaper sightline, break boomerang line-of-sight on solid archive stacks, peel the melee screen out of crossfire, and close inside the Reaper's `82 px` minimum kite threshold.**
-- **Physics Grounding in Live Engine Code (`advanced_enemy.gd` + `spectral_disc.gd`):**
-  - `SkeletonReaper` (`Archetype.BONE_REAPER`) engages at `detection = 205 px` (`12.8 tiles`), maintains `preferred_min..preferred_max = 82..150 px` (`5.1..9.4 tiles`), telegraphs a cyan aiming beam for `0.56s`, fires a returning `SpectralDisc` out to `188 px` (`11.75 tiles`), and pauses in `State.RECOVER` for `0.72s`.
-  - Crucially, `SpectralDisc._physics_process` casts a physics ray against **Collision Mask `1` (`Geometry`)** every frame (`PhysicsRayQueryParameters2D.create(..., 1)`) and **immediately aborts forward flight (`_begin_return()`) upon hitting any `Geometry` wall or solid cover pier**.
-  - Every solid **Archive Book-Stack Pier** (`2×2` to `3×2` `Geometry` plinths topped with slatted timber book-crates `[18, 25..26]` and iron-banded folio coffers `[6, 6]`) is therefore placed at **measured `5–9 tile` (`80–144 px`) intervals** from each Reaper perch — turning cover-stepping from flavor text into literal projectile interception.
+Level 3 (*Crossfire Archive*) reads immediately as a **subterranean monastic archive and scriptorium** that has been breached through its masonry vaults — distinct in plan, tile grammar, prop vocabulary, and lighting from both Level 2 (*Ossuary Fork*) and Level 4 (*Spiral Reliquary*):
 
----
+- **Purposeful Archival Storage (`armaria` Scroll Stacks):** Built from `14` structural `2`-row stone `armaria` bays (`[1, 10, 0]` horizontal stone cap over `[0, 1..2, 12]` scroll cubby alcoves flanked by solid brick piers), forming real reading aisles and solid projectile cover against `SkeletonReaper` `SpectralDisc` volleys.
+- **Breached Masonry Vaults (`l3_vault_f1`, `l3_vault_f2`):** Framed in exterior north walls using complete `4×3` carved stone ironbound portal arches (`[2..3, 14] + [1..4, 15..16]`) behind breached masonry thresholds with collapsed rubble (`[5..6, 13]`) on the floor — reading honestly as sealed inner archive vaults whose outer antechambers were forced open.
+- **Structural Chasm Bridges & Pilaster Halls:** Twin stone bridges span the Floor 1 and Floor 2 archive chasms using dual-box `0x72` masonry (`columns 1..3` hollow outer shells vs `columns 8..11` + `[4, 3]`/`[7, 3]` `256/256`-opaque solid stone piers), eliminating all vertical pillar-tooth caps and internal alpha slits.
+- **Recessed Stairwell Portals & North Exit Sanctuary:** All four `FloorDoor` transitions sit directly beneath `4×3` carved dark-stone stairwell arches over dark `[5, 12]` threshold slabs, and `l3_exit` sits flush inside a `5`-wide recessed North Sanctuary Wall flanked by full `3`-part carved columns (`[5..6, 5] + [6, 6] + [5, 7]` plinths) and warm torches.
 
-## 2. How Level 3 Differs Structurally & Visually from Level 2 (*Ngã Rẽ Xương Trắng*)
+## 2. Preserved Gameplay & Entity Contract (`100%` Immutable IDs)
 
-| Dimension | Accepted Level 2 (*Ngã Rẽ Xương Trắng*) | Redesigned Level 3 (*Thư Khố Giao Hỏa*) |
-|---|---|---|
-| **Spatial Topology** | Vertical **E → W → E switchback** with symmetrical North/South fork halls and wide colonnaded naves | Three **W → E staggered crossfire galleries** built from **asymmetric diagonal book-stack islands, sunken chasm firing trenches, and flanking cloisters** |
-| **Color & Prop Palette (`0x72` Atlas)** | **Crimson `[1,2]` vs Sapphire `[2,2]`** fork standards, white ossuary columns, skull pedestals | **Emerald `[1,3]` & Amber-Gold `[2,3]`** archive standards, **slatted timber book-stacks (`[18,25..26]`)**, **iron-banded folio coffers (`[6,6]`, `[19,25]`)**, **sapphire ink fountains (`[4..6,3..4]`)**, **reagent vials (`[19..21,21..22]`)** |
-| **Primary Threat & Decision** | Pure melee skeleton packs (`15` skeletons, `0` reapers) + short spiked branch vs longer clean branch | **Ranged crossfire (`15` skeletons + `5` `SkeletonReaper` anchors)**: choose between **exposed fast firing lanes** vs **protected sightline-broken flanking aisles** (`+9` to `+15` tiles) + **4-of-5 optional vault sigil routing** |
+- **Dimensions:** `120 × 96` (`16px` tiles), `3` isolated physical floor components (`Floor 1`, `Floor 2`, `Floor 3`).
+- **Live `Knight/BodyShape` Physics Reachability:** **`2,853 / 2,853` safe walkable floor cells reachable** (`0` dead pockets), `14/14` route targets verified.
+- **Immutable Entities Preserved (`79` total — `100%` original IDs, types, camps, and rewards intact):**
+  - `1` `player` (`(14, 8)`), `4` bidirectional `floor_door`s, `2` `checkpoint`s, `1` `exit_gate` (`l3_exit` at `(107, 81)`).
+  - `21` enemies across `3` combat camps (`l3_camp_1_far_anchors`, `l3_camp_2_split_reapers`, `l3_camp_3_ gauntlet` — `15` `skeleton`s + `6` `skeleton_reaper`s).
+  - `18` `spikes` hazards (`≥ 2` safe adjacent tiles and `≥ 3`-row corridor clearance throughout).
+  - `2` `chest`s (`score_reward = 400` and `450`), `4` required `sigil`s, `13` coins, and `13` disciplined scriptorium torches.
 
----
+## 3. Native `1280×720` Visual Proof
 
-## 3. ASCII Floor Footprint (`116 × 96` Grid, Three Door-Linked Floors, Zero Inter-Floor Camera Bleed)
-
-```text
-FLOOR 1 (y = 1..25, W -> E): COLLAPSED SCRIPTORIUM, SECRET FOLIO VAULT & TWIN-PERCH CAMP 1
-                                   [l3_f1_hidden_cache: Optional Sigil #1]
-                                          +-----[Vault Door]-----+
-  [Spawn Vestibule]       +--North Cloister--+  Anchor(60,10)    +--> North Stack Flank --+
-  (10,13) ===Bridge===> ==|  [Stack]  ====Chasm====  [Stack]    |   [Stack]      Reaper01 |
-                          |  ===Direct Center Firing Line====   |=====[Lectern]  Sigil #2 |==> Door F1->F2
-                          +--South Exposed Ledge [Chest 320pt]--+   [Stack]      Reaper02 |     (112,14)
-                                                                 +--> South Stack Flank --+
-
-FLOOR 2 (y = 30..58, W -> E): HERRINGBONE TRENCH GALLERY (`mid`), SECRET RELIQUARY & PINCER CAMP 2
-  [Safe Landing]          +--North Bridge----+                   +--North Protected Flank (isolates Reaper02)--+
-  Door(9,42) -> CP(16,42) |  [Chest 360pt]   |== Diagonal Chasm =|   [Bastion]    Reaper02(Pulpit)             |
-                          |  [Stack Piers]   |== South Bridge  ==|==== Direct Center Pincer Line === Sigil #4  |==> Door F2->F3
-                          +------------------+--------+----------+   [Bastion]    Reaper01(SE Perch)           |     (112,46)
-                                                [l3_f2_hidden_reliquary: Optional Sigil #3]
-
-FLOOR 3 (y = 61..80, W -> E): SPLIT-BASTION ARCHIVE SPINE & SEAL EXIT CHAMBER (`end`)
-  [Safe Landing]          +=== North Fast Exposed Firing Lane (Reaper01 LOS) ===> Reaper01 + Sigil #5 ==+
-  Door(9,72) -> CP(16,72) |    ###### Central Book-Stack Spine + Chasm (2 Cross-Over Gaps) ######       |==> [l3_f3_exit]
-                          +=== South Protected Flank (Zero Reaper LOS until East Gap) ==================+     Exit(104,71)
-```
-
----
-
-## 4. Target Encounter Beats, Sightline Loops & Route Choices
-
-| Floor | Main Route vs Protected Flank / Optional Discovery | Reaper Anchor Placement & Sightline Break |
-|---|---|---|
-| **Floor 1** | **Center Crossfire Line** (`~98 tiles`) cuts straight across twin trench bridges; **North Archive Cloister + Hidden Folio Vault** (`+12 tiles`) secures **Optional Sigil #1 (`l3_sigil_crossfire_cache`)** behind vault doors; **South Line-of-Fire Ledge** rewards **`l3_chest_line_of_fire` (`320 pts`)**. | `l3_c1_reaper_01` `(104, 9)` & `l3_c1_reaper_02` `(104, 19)` hold elevated east back-wall perches (`< 82 px` backstop stops infinite kite) behind two staggered `3×2` book-stack piers at `x = 91..93` (`11 tiles` sightline, broken at `6 tiles` by center lectern pier `x = 97..98`). |
-| **Floor 2** | **Direct Pincer Cut** (`~96 tiles`) crosses south trench bridge straight into Camp 2; **North Protected Flank** (`~109 tiles`, `+13 tiles`) wraps above solid book-stack bastions to isolate `l3_c2_reaper_02` out of `l3_c2_reaper_01`'s range; **West Scholar Pocket** grants **`l3_chest_ring` (`360 pts`)**; **South Secret Reliquary (`l3_f2_hidden_reliquary`)** grants **Optional Sigil #3 (`l3_sigil_ring_cache`)**. | `l3_c2_reaper_02` `(94, 42)` commands the central pulpit while `l3_c2_reaper_01` `(105, 48)` cross-fires diagonally from the SE corner; staggered piers at `x = 85..87` and `x = 99..101` let players block one Reaper's boomerang completely while punishing the other. |
-| **Floor 3** | **North Fast Lane** (`~94 tiles`) sprints straight toward `l3_sigil_final` (`(77, 70)`) and `l3_exit` (`(104, 71)`) under `l3_c3_reaper_01`'s barrel; **South Protected Flank** (`~106 tiles`, `+12 tiles`) runs behind a continuous book-stack & chasm spine with mid/east cross-over gaps, emerging `4 tiles` beside `l3_c3_reaper_01`. | `l3_c3_reaper_01` `(74, 67)` locks down the upper lane (`11.75-tile` disc reach across north bridge), zero LOS into the south aisle until `x = 70`. |
-
----
-
-## 5. Preserved Immutable Contracts & Pacing Target
-
-- **Preserved Contracts (Zero Drift):**
-  - Grid `116 × 96` (`>= 12-tile` black abyss gaps between floors so `640×360` world cameras show zero adjacent-floor pixel bleed), `camera_bounds = [0, 0, 1856, 1536]`, `required_sigils = 4` (`5` authored sigils), `density_cadence_anchor = [968, 168]` (`Vector2i(60, 10)` on `collision_clear` floor).
-  - Final footprint metrics: **`3,415` `Backdrop` floor cells** (`[1027, 1267, 1121]` vs `5,004` bloated baseline — `-31.8%` empty filler removed), **`1,632` `Geometry` cells**, **`97` `Decor` cells**, **`2,929 / 2,929` (`100.0%`) non-spike capsule-clear cells reachable**, `Baseline sym_diff = 4,791` (`Jaccard = 0.275`), `Min diff vs other 9 maps = 2,641`.
-  - All **77 original entity IDs** preserved with exact types (`1` `player`, `15` `skeleton`, `5` `skeleton_reaper`, `4` reciprocal `floor_door`, `5` `sigil`, `2` `checkpoint`, `2` `chest` `[320, 360]`, `18` `spikes`, `1` `exit_gate`, `12` `torch`, `12` `coin`) + justified environment polish (`l3_torch_13..22`, `l3_coin_13..18` = **93 total entities**).
-  - All **11 room IDs**, **3 `combat_camps` IDs & enemy memberships**, **3 `safe_zones`**, and **`l3_optional_sigil_pair` special zone** preserved.
-- **Measured Capsule-Safe Runtime Window (`118 px/s = 7.375 tiles/s` live Knight move speed):**
-  - Pure continuous safe walk across all 3 floors: **`282.7 tiles` (`4,523 px`, `38.3s`)** via direct crossfire lanes vs **`313.1 tiles` (`5,010 px`, `42.5s`)** via protected sightline-broken flanks & optional vault sigils.
-  - Full combat clear (`15` skeletons + `5` Reapers across 3 cover-based camps + `4/5` sigils + `2` chests): **`~115–170 seconds` (`1.9–2.8 minutes`)**.
+- Full `2×` identical-scale forensic close-ups: [`images/forensic_before_after_zoom_l3.png`](images/forensic_before_after_zoom_l3.png)
+- Native `1280×720` `spawn` / `mid` / `end` side-by-side board: [`images/level3_godot47_side_by_side.png`](images/level3_godot47_side_by_side.png)
+- Validated `1280×720` captures: [`captures/after_l3_spawn.png`](captures/after_l3_spawn.png), [`captures/after_l3_vault.png`](captures/after_l3_vault.png) (`(49, 10)`), [`captures/after_l3_combat.png`](captures/after_l3_combat.png) (`(91, 16)`), [`captures/after_l3_mid.png`](captures/after_l3_mid.png), [`captures/after_l3_end.png`](captures/after_l3_end.png).

@@ -1,145 +1,88 @@
-# Chapter 1 Levels 3 & 4 Design Pilot — Delivery Report, Real Godot 4.7 Evidence & QA Verification
+# Chapter 1 Levels 3 & 4 — Architectural & Environment Art Correction Report
 
-- **Repository / Branch / PR:** `Khanh-glitch/Soul-of-Hero` · branch **`arena/b1c99a44-soul-of-hero`** · **PR #4** (`https://github.com/Khanh-glitch/Soul-of-Hero/pull/4`)
-- **Accepted Level 2 Base Commit Preserved Intact:** `2903a305c610fc547581cc82268f3b7e37e8e75a` (`0` bytes changed on `data/levels/crypt_entrance.json`, `data/levels/chapter_1_level_2.json`, `data/levels/chapter_1_level_5.json`, `tools/generators/level_2_ossuary_fork_builder.gd`, `docs/design-audition/*`, `game/*`, `tests/*`, and `data/content/*`)
-- **Stage Workflow Completed Sequentially:**
-  1. **Stage A — Level 3 (*Thư Khố Giao Hỏa* / Crossfire Archive):** Design brief (`LEVEL3_DESIGN.md`) → deterministic builder (`tools/generators/level_3_crossfire_archive_builder.gd`) → `data/levels/chapter_1_level_3.json` → 1:1 camera bleed & cover polish (`116×96`) → `ERRORS (0): []`.
-  2. **Stage B — Level 4 (*Thánh Tích Xoắn Ốc* / Spiral Reliquary):** Design brief (`LEVEL4_DESIGN.md`) → deterministic builder (`tools/generators/level_4_spiral_reliquary_builder.gd`) → `data/levels/chapter_1_level_4.json` → 1:1 abyss-contrast & true inward-coil polish (`116×100`) → `ERRORS (0): []`.
-  3. **Canonical Generator & Live Godot 4.7.0 Validation:** Wired both builders into `tools/generators/generate_chapter_1_levels_2_to_5.gd` (`Generator Sync: ZERO DIFF` across Levels 1–5) and validated in real **`Godot 4.7.stable.official.5b4e0cb0f`** headless + `1280×720` Xvfb production gameplay scenes.
+## 1. Executive Summary
+
+This pass executes a **source-level architectural & environment art correction** across **Chapter 1 Level 3 (`data/levels/chapter_1_level_3.json` — *Crossfire Archive*)** and **Chapter 1 Level 4 (`data/levels/chapter_1_level_4.json` — *Spiral Reliquary*)** on branch **`arena/b1c99a44-soul-of-hero`** (**PR #4**), directly resolving all visual review defects, formulaic environmental detailing, and invalid custom showcase capture anchors identified in `ef890bad2529d76383ff042fc16ce5ffcdff3e53`.
+
+- **Accepted Level 2 untouched (`0` diff):** `data/levels/chapter_1_level_2.json`, `tools/generators/level_2_ossuary_fork_builder.gd`, and `docs/design-audition/**` remain `100%` unchanged (`0` byte diff against `ef890bad2529d76383ff042fc16ce5ffcdff3e53`).
+- **Zero shared gameplay modifications (`0` diff):** `game/**` (scenes, `knight.tscn`, `exit_gate.tscn`, `floor_door.tscn`, combat, Hero Systems, SaveService, unlock logic), `tests/**`, and all other campaign maps remain `100%` unchanged.
+- **Zero generator drift & 100% live physics route clearance in real Godot `4.7.stable.official.5b4e0cb0f`:**
+  - `generate_chapter_1_levels_2_to_5.gd`: **`ZERO DIFF`** across Levels 1–5.
+  - `chapter_1_campaign_map_design_test.gd`: **`PASSED — 39,342 checks across ten maps`**.
+  - `chapter_1_map_design_test.gd`: **`PASSED — 837/837`**.
+  - `encounter_pack_trap_test.gd`: **`PASSED — 1,044 checks`**.
+  - `chapter_1_collision_route_test.tscn` (live `Knight/BodyShape` physics): **`slot=3 safe=2853/2853 targets=14`**, **`slot=4 safe=3409/3409 targets=13`** (`161/161` live route checks passed across all 10 maps).
+  - All `10` native `1280×720` real Godot 4.7 `gl_compatibility` captures (`spawn`, `mid`, `end`, `combat`, `vault`/`spiral`) verified on valid, live-physics-clear walkable floor anchors with active enemy combat and zero engine errors.
 
 ---
 
-## 1. Three Distinct Experiences Across Levels 2, 3, and 4
+## 2. Visual Forensic Defect Register (`ef890bad` Root-Cause Audit)
 
-![Three Levels Architectural Variety Comparison](images/three_levels_silhouette_comparison.png)
+Every defect was audited directly against `assets/environment/dungeon_0x72/{dungeon_tileset_ii.png,atlas_walls_low.png}`, `doors_lever_chest_animation.png`, `crypt_entrance.tscn`, `knight.tscn`, `exit_gate.tscn`, `floor_door.tscn`, and all 10 `1280×720` runtime captures **before** editing builder code.
 
-| Dimension | Level 2 — *Ngã Ba Cốt Trắng* (Accepted Baseline Preserved) | Level 3 — *Thư Khố Giao Hỏa* (Stage A Redesign) | Level 4 — *Thánh Tích Xoắn Ốc* (Stage B Redesign) |
+| # | Defect Category | Exact Scenes / Captures (`ef890bad`) | Root-Cause Classification | Structural Source Fix Implemented |
+|---|---|---|---|---|
+| **D1** | **Truncated / toothed walls & parapets** | All 10 `ef890bad` captures (`after_l3_*`, `after_l4_*`) | **Tile grammar / builder error** (`_wall_atlas_9slice()` placed `[1, 2, 0]` — a *vertical* `x=5..10` pillar cross-section — along horizontal interior wall roofs & spiral dividers, producing repeating vertical tooth rows) | Replaced `_wall_atlas_9slice()` in both L3 & L4 builders with `_compile_masonry()`, separating outer hollow-enclosure shells (`columns 1..3`) from solid stone piers/parapets (`[1, 8, 0]—[1, 10, 0]—[1, 11, 0]` continuous horizontal stone top cap over `[0, 1..3, 1]` ashlar faces). |
+| **D2** | **Implausible joins, `5px` internal black slits & corner bosses** | `after_l3_{vault,combat,mid}.png`, `after_l4_{spawn,spiral,combat,mid}.png` | **Tile grammar / builder error** (`[1, 1, *]` & `[1, 3, *]` have `5px` transparent alpha on their outer edges designed strictly for room exteriors; placing them against solid stone pierced black `#09090e` slits into piers & bridges) | Mapped wall-to-solid-stone joins to `100%` opaque `256/256`-alpha tiles (`[1, 4, 3]` / `[1, 7, 3]` side-to-solid courses, `[1, 9, 2]` solid core fill, unbroken `[0, 1..3, 0]` cornices across full wall spans). |
+| **D3** | **Unconvincing geometry-to-void transitions (`-1`-row fountains & braziers)** | `9/9` cisterns in L3 (`after_l3_{spawn,vault,combat}.png`) & `9/9` molten basins in L4 (`after_l4_{spawn,spiral}.png`) | **Tile grammar / builder error** (stamped `[0, 4..6, 0..2]` at `y-3, y-2, y-1`, pushing row `0` into black void above the cornice and row `2` curb onto the wall instead of the floor) | Aligned every cistern and molten brazier flush onto exterior north walls at `y_floor - 2` (cornice), `y_floor - 1` (spout), and `y_floor` (`Backdrop` basin curb), with zero internal-wall cutouts into adjacent upper galleries. |
+| **D4** | **Disconnected / floating / fake multi-tile fragments** | Fake crate+tooth shelves (`after_l3_*`), plinthless columns (`after_l3_combat.png`, `after_l4_{spawn,end}.png`) | **Tile grammar / builder error + Environmental clutter** (`2×2` wooden crates `[21..22, 19..20]` stacked above `[1, 2, 0]` wall teeth; `[5..6, 5..6]` column shafts lacking `[5, 7]` bases) | Built authentic `2`-row `armaria` scroll cubby racks (`[1, 10, 0]` stone cap + `[0, 1..2, 12]` pigeonhole alcoves with flanking brick piers) for L3, and complete `3`-row columns (`[5..6, 5]` capitals + `[6, 6]` shafts + `[5, 7]` carved floor plinths) for both levels. |
+| **D5** | **Doors lacking believable framing, destination, or functionality** | L3 vault doors facing open void (`after_l3_vault.png`) & all 8 unframed `FloorDoor` flags (`after_l3_combat.png`, `after_l4_mid.png`) | **Portal / interactable composition error** (wooden door `[1..2, 11]` floated against void without jambs or room mass; `FloorDoor` flags stood in open floor with no stairwell architecture) | Framed L3's two breached archive vaults as complete `4×3` carved stone ironbound portals (`[2..3, 14] + [1..4, 15..16]`) inside exterior north walls with breached rubble thresholds, and recessed dark-stone stairwell portals (`[5..6, 15..16]` + `[5, 12]` dark threshold steps) directly behind all 8 `FloorDoor`s. |
+| **D6** | **Exit gates floating mid-room without architectural housing (+ shared-scene sprite note)** | `after_l3_end.png`, `after_l4_end.png` | **Portal / interactable composition error** (`ExitGate` placed on open `Backdrop` floor tiles with zero supporting wall) + **Shared scene asset note** (`game/world/interactables/exit_gate.tscn:10` sets `region_rect = Rect2(0, 0, 32, 48)` across `3` stacked `16px` frames in `doors_lever_chest_animation.png`, rendering arch + double leaf inside one `36.8×55.2px` sprite at `z_index = -1`) | Without modifying shared `exit_gate.tscn` (strictly out of scope; reported transparently below), built a **Recessed `5`-Wide North Sanctuary Niche** in L3 (`l3_exit` at `(107, 81)`) and a **Projected Consecrated North Cathedral Apse** in L4 (`l4_exit` at `(104, 81)`), seating `GateArch` flush against a dedicated north wall flanked by full `3`-part columns, dark threshold stone, and twin torches. |
+| **D7** | **Invalid capture anchors & prop/hazard collisions** | `3:vault = (54, 13)` (void — missing `Backdrop`), `4:spiral = (45, 15)` (inside solid `Geometry`), `l4_end` columns overlapping spikes | **Capture / camera invalid position + Entity overlap** (`pilot_combat_visual_capture.gd` teleported the player without checking `Backdrop`, live `Knight/BodyShape` collision, or `spikes`) | Hardened `pilot_combat_visual_capture.gd` with `_validate_anchor_cell()` checking `Backdrop`, `Geometry`, live `PhysicsShapeQueryParameters2D` `BodyShape` collision (`quit(1)` on failure), and `spikes`; updated validated anchors to `3:combat=(91,16)`, `3:vault=(49,10)`, `4:combat=(50,50)`, `4:spiral=(46,13)`, and cleared all column/torch/spike overlaps. |
+| **D8** | **Formulaic hash floor noise & mechanical banner/torch spam** | All 10 `ef890bad` captures (`22`–`24` torches, `52`–`56` banners, `81`–`96` skulls/crates per map) | **Environmental clutter / repetition** (coordinate-modulo floor noise + identical torch/banner rhythm across L3 and L4 obscured traversal readability and blurred level identity) | Removed coordinate-hash clutter (`Decor` reduced cleanly to purposeful architectural elements), cut torches to `13` (L3) / `14` (L4), cut banners by `-78%` (`10` emerald scriptorium pennants in L3 vs `13` inner-sanctum crimson/gold standards in L4), and authored completely distinct architectural progressions. |
+
+> **Honest Shared-Asset Disclosure (Out of Scope — Untouched):** `game/world/interactables/exit_gate.tscn` (`line 10`) defines `AtlasTexture.region = Rect2(0, 0, 32, 48)` on `doors_lever_chest_animation.png`, spanning rows `y = 0..47` (`arch` at `y = 0..15` plus closed leaf frames below it) rendered at `position = Vector2(0, -24)`, `scale = Vector2(1.15, 1.15)`, `z_index = -1`. Per strict scope rules, `exit_gate.tscn` was **not modified**; instead, both builders recess `3` clean rows between the North Sanctuary/Apse brick wall (`y = ey - 3`) and `ExitGate` (`ey`), seating both the upper stone arch and lower sill cleanly against dark sanctuary threshold stone without cropping or occlusion. If a single-arch crop (`Rect2(0, 0, 32, 32)`) is desired project-wide later, that should be handled as an explicit `exit_gate.tscn` task across all levels.
+
+---
+
+## 3. Comparable-Scale `2×` Forensic Close-Up Proof (`ef890bad` BEFORE vs Corrected Real Godot 4.7 AFTER)
+
+Both plates crop identical `460×215` viewport regions from native `1280×720` Godot 4.7 screenshots and upscale `2×` (`NEAREST`) at **identical pixel scale**:
+
+### Level 3 — *Crossfire Archive* (`2×` Identical-Scale Defect vs Fix Audit)
+![Level 3 2x Forensic Zoom Audit](images/forensic_before_after_zoom_l3.png)
+
+### Level 4 — *Spiral Reliquary* (`2×` Identical-Scale Defect vs Fix Audit)
+![Level 4 2x Forensic Zoom Audit](images/forensic_before_after_zoom_l4.png)
+
+---
+
+## 4. Architectural & Environmental Identity Differentiation (Level 2 vs Level 3 vs Level 4)
+
+![Three Levels Silhouette & Identity Comparison](images/three_levels_silhouette_comparison.png)
+
+| Dimension | Level 2 (*Ossuary Fork* — Untouched) | Level 3 (*Crossfire Archive*) | Level 4 (*Spiral Reliquary*) |
 |---|---|---|---|
-| **Grid & Sculpted Floor Cells** | `120 × 97` · **`2,898`** floor cells (`-35.9%` vs baseline) | `116 × 96` · **`3,415`** floor cells (`-31.8%` vs `5,004` hollow baseline) | `116 × 100` · **`4,008`** floor cells (`-12.5%` vs `4,582` hollow baseline) |
-| **Baseline Divergence** | `sym_diff = 5,278` · **`Jaccard = 0.165`** | `sym_diff = 4,791` · **`Jaccard = 0.275`** · `min diff vs other 9 maps = 2,641` | `sym_diff = 5,432` · **`Jaccard = 0.225`** · `min diff vs other 9 maps = 3,010` |
-| **Macro & `1280×720` Silhouette** | Symmetrical **Bone Cathedral** (`E → W → E` vertical switchback, colonnaded naves, north/south fork halls) | Staggered **Forbidden Crossfire Scriptorium** (`E → W → E` switchback bridges over wide chasms, asymmetric cover islands, hinged secret vaults) | **True Concentric Coiling Spirals & Radial Pinwheels** winding around **visible central bullseye shrines & stairwells** across `3`-column black abyss channels |
-| **Visual Material & Color Palette (`0x72` Atlas)** | **Crimson `[1,2]` + Sapphire `[2,2]`** banners, white skull colonnades | **Emerald `[1,3]` + Amber `[2,3]`** archive standards, **slatted wooden book-stacks `[18,25..26]`**, **sapphire ink fountains `[4..6,3..4]`**, **iron-hinged vault doors `[2..3,15..16]`** | **Molten-Amber Fire Braziers `[4..6,1..2]`**, **Gold Reliquary Standards `[2,3]`**, **Spiral Stair Masonry `[5,12]`**, **Dormant Iron Grates `[1..2,12]`** |
-| **Primary Gameplay Verb** | Pure melee skeleton crowd kiting (`15` skeletons, `0` Reapers) + north/south risk-vs-length fork | **Sightline reading & solid cover-stepping (`15` skeletons + `5` `SkeletonReaper` anchors):** direct exposed firing bridges vs protected flanking aisles + **4-of-5** optional vault sigil routing | **Processional inward spiral commitment (`10` skeletons + `5` elite Reapers):** early shrine sightlines across low parapets, rhythmic grate-telegraphed spike gates (`21` spikes), rotational elite pins, and **4/4** required sigils |
+| **Spatial & Structural Identity** | Switchback ossuary fork with risk/reward branch lanes (`2,898` floor cells — `0` diff) | Orthogonal monastic scroll library: parallel `armaria` stack bays, breached north vaults, twin chasm bridges, recessed north exit sanctuary (`3,350` floor cells) | Three-stage concentric ritual procession: austere outer coil → counter-coil spike gates → burning inner sanctum heart & projected cathedral exit apse (`3,966` floor cells) |
+| **Signature Architecture** | Ossuary fork bastions & bone alcoves | `2`-row stone `armaria` scroll racks (`14` bays), `4×3` sealed ironbound vault arches (`2`), complete `3×3` blue cisterns (`4`), collapsed masonry breach thresholds | Continuous concentric coil walls, twin-column carved sanctum piers (`16`), complete `3×3` molten fire braziers strictly at inner sanctums (`6`) |
+| **Lighting & Banner Discipline** | Unchanged (`0` diff) | `13` reading-aisle torches (`-41%` vs `22`); `10` emerald scriptorium pennants strictly on hall headers (`-81%` vs `52`) | `14` progressive ritual beacons (`-42%` vs `24`: `1` in outer coil → warm pools in inner sanctums); `0` outer-coil banners, `13` inner crimson/gold standards (`-77%` vs `56`) |
+| **Combat & Trap Integration** | Unchanged (`0` diff) | Ranged `SkeletonReaper` crossfire integrated directly across scroll-stack sightlines and pilaster cover piers (`18` spikes, `21` enemies) | Ceremonial threshold spike gates with flanking warning grates (`[7, 4]`) + recovery alcoves before inner sanctum engagements (`21` spikes, `24` enemies) |
 
 ---
 
-## 2. Live Godot 4.7 Combat, Projectiles & Signature Architecture Showcase (`1280×720`)
+## 5. Native `1280×720` Real Godot 4.7 Production & Validated Showcase Captures
 
-![Real Godot 4.7 Live Combat & Signature Architecture](images/levels_3_4_live_combat_showcase.png)
+> **Methodological Honesty Note:** `after_l{3,4}_{spawn,mid,end}.png` are captured by the production `tests/chapter_1_campaign_level_visual_capture.tscn` suite, and `after_l{3,4}_{combat,vault,spiral}.png` are captured by `tools/captures/pilot_combat_visual_capture.tscn` using validated camera/player anchors verified against `Backdrop`, `Geometry`, live `Knight/BodyShape` collision (`PhysicsShapeQueryParameters2D`), and `spikes`. Full playable route reachability from spawn across every floor door to every chest, sigil, checkpoint, camp, and exit gate is independently proven by `tests/chapter_1_collision_route_test.tscn` (`slot=3 safe=2853/2853`, `slot=4 safe=3409/3409`).
 
----
+### Validated Custom Combat & Architectural Showcase Views (`1280×720`)
+![Validated Live Combat & Architectural Showcase](images/levels_3_4_live_combat_showcase.png)
 
-## 3. Stage A Detailed Evidence — Level 3 (*Thư Khố Giao Hỏa* / Crossfire Archive)
+### Level 3 (*Crossfire Archive*) — Native `1280×720` `spawn` / `mid` / `end` Comparison
+![Level 3 Godot 4.7 Side by Side](images/level3_godot47_side_by_side.png)
 
-### 3.1 Physics-Grounded Tactical Sightline & Cover Architecture
-- **`SkeletonReaper` + `SpectralDisc` Mechanics Verified Directly in `advanced_enemy.gd` & `spectral_disc.gd`:**
-  - `BONE_REAPER` acquires at `205 px` (`12.8 tiles`), kites to `82..150 px` (`5.1..9.4 tiles`), telegraphs a cyan aiming line for `0.56s`, fires a boomerang `SpectralDisc` to `188 px` (`11.75 tiles`), and pauses for `0.72s` recovery.
-  - Crucially, `SpectralDisc` raycasts against **Collision Layer `1` (`Geometry`)** (`PhysicsRayQueryParameters2D.create(..., 1)`) and aborts forward flight (`_begin_return()`) the instant it hits solid `Geometry`, whereas open `Backdrop` allows discs to cross chasms freely.
-- **Resulting Level 3 Design Decisions:**
-  1. **Solid Layer-1 Timber Book-Stack Cover Islands (`[18, 25..26]` over `Geometry` plinths):** Placed at measured `5–9 tile` (`80–144 px`) intervals from all `5` Reaper perches (`l3_c1_reaper_01/02`, `l3_c2_reaper_01/02`, `l3_c3_reaper_01`) — captured live in `captures/after_l3_combat.png` with an active cyan `SpectralDisc` & aiming beam cutting across the lectern cover island.
-  2. **Backstop Perches Preventing Infinite Kiting:** East perches in Camp 1 (`x = 105`), West bastions in Camp 2 (`x = 14..26`), and the NE bastion in Camp 3 (`x = 76`) place a wall within `< 80 px` behind each Reaper so closing inside `82 px` corners and punishes the elite.
-  3. **Direct Exposed Crossfire Lanes vs Protected Flanks + 4-of-5 Optional Vault Discovery:**
-     - **Floor 1 (`W → E`):** Center bridge sprints straight through Reaper sightlines (`78.9 tiles` to Camp 1 front), South exposed ledge rewards **`l3_chest_line_of_fire` (`320 pts`)**, and North archive cloister unlocks the iron-hinged **Hidden Folio Vault (`l3_f1_hidden_cache` → Optional Sigil #1 `l3_sigil_crossfire_cache`)**.
-     - **Floor 2 (`E → W` Switchback):** Arriving at `(98, 46)` flips flow westward across staggered twin chasms (`after_l3_mid.png`), offering a north treasure alcove (**`l3_chest_ring`, `360 pts`**), a twin-door **Secret South Reliquary (`l3_f2_hidden_reliquary` → Optional Sigil #3 `l3_sigil_ring_cache`)**, and a north flank isolating `l3_c2_reaper_02` from `l3_c2_reaper_01`.
-     - **Floor 3 (`W → E` Finale):** A central chasm-and-stack spine splits the **Fast Exposed North Reaper Lane** from the **Zero-LOS Protected South Flank**, recombining at `l3_sigil_final` `(82, 84)` before `l3_exit` `(104, 84)`.
-
-### 3.2 Identical-Scale Full-Map `BEFORE` vs `AFTER` & Route Diagram — Level 3
-![Level 3 Full Map Before vs After Annotated](images/level3_full_before_after_annotated.png)
-
-### 3.3 Real Godot 4.7.0 `1280×720` Side-by-Side (`spawn`, `mid`, `end`) — Level 3
-![Level 3 Real Godot 4.7 Side by Side](images/level3_godot47_side_by_side.png)
+### Level 4 (*Spiral Reliquary*) — Native `1280×720` `spawn` / `mid` / `end` Comparison
+![Level 4 Godot 4.7 Side by Side](images/level4_godot47_side_by_side.png)
 
 ---
 
-## 4. Stage B Detailed Evidence — Level 4 (*Thánh Tích Xoắn Ốc* / Spiral Reliquary)
+## 6. Runtime, Collision, Generator & Zero-Diff Verification Matrix
 
-### 4.1 True Concentric Spirals, Landmark Previews & Rhythmic Trap Gates
-- **Authentic Multi-Turn Spiral Geometry (Caught & Verified via BFS Commitment Audit):**
-  1. **Floor 1 — Consecrated Molten Vestibule → Great Three-Turn Concentric Spiral → Release Camp 1:**
-     - From `player_spawn` `(14, 14)`, the West Mouth `(25, 14)` and `3`-column black abyss channel appear immediately in frame (`after_l4_spawn.png`).
-     - Entering the spiral winds clockwise around the Outer North Gallery, down the Outer East Arm, into the **Inner Counter-Coil** (`Inner South → Inner West → Inner North`), culminating at **`l4_sigil_spiral` `(49, 13)`** inside the **Central Bullseye Shrine** (`after_l4_spiral.png`), with optional **`l4_chest_spiral` (`420 pts`)** on the Outer South Treasure Gallery before releasing into `l4_camp_1_spiral_release` (`4` Skeletons + `1` Reaper).
-     - **Verified Anti-Shortcut Proof:** Hypothetical outer-ring bypass without collecting `l4_sigil_spiral` = `100.6 tiles`; mandatory `4/4`-sigil inward spiral path = **`188.0 tiles` (`25.5s` pure walk)** — every run genuinely coils through all concentric rings with zero fake straight-through shortcut.
-  2. **Floor 2 — Safe Breather → Octagonal Elite Pin Arena → Three-Ring Bullseye Pinwheel (`mid`):**
-     - `l4_camp_2_elite_pin` (`after_l4_combat.png`) rotates around a sunken central chasm flanked by twin cross-firing `SkeletonReaper`s (`(39, 46)` & `(57, 52)`), `3` Skeleton swordsmen, and `3` rhythmic spike gates.
-     - `l4_f2_relay_ring` (`after_l4_mid.png`) frames **three full concentric stone rings** separated by symmetric `3`-column black void channels, rewarding **`l4_chest_pinwheel` (`460 pts`)** on the outer NE coil and winding directly into **`door_l4_f2_f3_down` at the dead bullseye heart `(91, 53)`** — zero backtracking out of the spiral!
-  3. **Floor 3 — Safe Breather → Broken-Cross Radial Climax → Ceremonial Half-Spiral Exit (`end`):**
-     - Four quadrant chasms carve a radial cross (`l4_camp_3_broken_cross`: `3` Skeletons + `2` diagonal Reapers) leading to `l4_sigil_camp_3` `(80, 88)` and a ceremonial half-coil procession around twin molten altars to `l4_exit` `(104, 88)` (`after_l4_end.png`).
-
-### 4.2 Identical-Scale Full-Map `BEFORE` vs `AFTER` & Spiral Coil Diagram — Level 4
-![Level 4 Full Map Before vs After Annotated](images/level4_full_before_after_annotated.png)
-
-### 4.3 Real Godot 4.7.0 `1280×720` Side-by-Side (`spawn`, `mid`, `end`) — Level 4
-![Level 4 Real Godot 4.7 Side by Side](images/level4_godot47_side_by_side.png)
-
----
-
-## 5. Measured Capsule-Safe Travel Distances, Pacing & Contract Audit Tables
-
-### 5.1 Capsule-Safe Dijkstra Route Measurements (`118 px/s` Live Knight Walk Speed)
-
-| Level & Route Segment | Start → End Cell | Safe Distance (`tiles`) | Pixel Distance (`px`) | Pure Walk (`@ 118 px/s`) | Design Role |
-|---|---|---:|---:|---:|---|
-| **L3 Floor 1 — Direct Center Crossfire Bridge** | `(11, 8) → (85, 17)` | `78.9 t` | `1,262 px` | `10.7 s` | Fast exposed lane across twin Reaper firing sightlines |
-| **L3 Floor 1 — North Cloister + Optional Vault Sigil #1** | `(11, 8) → (48, 3) → (104, 17)` | `105.5 t` | `1,689 px` | `14.3 s` | Protected LOS-broken flank + `l3_sigil_crossfire_cache` |
-| **L3 Floor 1 — South Exposed Ledge Chest (`320 pts`)** | `(11, 8) → (50, 24)` | `48.6 t` | `777 px` | `6.6 s` | Risk-reward detour under south crossfire |
-| **L3 Floor 2 — Direct Switchback Gallery (`E → W`)** | `(98, 46) → (18, 52)` | `82.5 t` | `1,320 px` | `11.2 s` | Fast west push into `l3_camp_2_pincer_fire` |
-| **L3 Floor 2 — South Secret Reliquary Detour (`Sigil #3`)** | `(98, 46) → (55, 60) → (18, 52)` | `93.8 t` | `1,501 px` | `12.7 s` | Optional `4/5` flexibility sigil allowing skipping a camp corner |
-| **L3 Floor 3 — Checkpoint → Final Sigil → Exit Gate** | `(16, 84) → (82, 84) → (104, 84)` | `91.3 t` | `1,461 px` | `12.4 s` | Split-spine climax choice (exposed north vs protected south) |
-| **L3 Full 3-Floor Critical Path (Est. Full Combat Clear)** | `Spawn → Exit` | **`282.7–313.1 t`** | **`4,523–5,010 px`** | **`38.3–42.5 s` walk (`~1.9–2.8m` full combat)** | Snappy tactical crossfire pace with zero filler |
-| **L4 Floor 1 — Full 3-Turn Inward Spiral (`Sigil #1` → `Camp 1`)** | `(14, 14) → (49, 13) → (104, 15)` | `188.0 t` | `3,008 px` | `25.5 s` | True multi-turn commitment into visible bullseye shrine |
-| **L4 Floor 1 — Optional South Treasure Coil (`Chest 420pt`)** | `(49, 13) → (30, 25)` | `+80.1 t` | `+1,281 px` | `+10.9 s` | Optional outer-south treasure loop |
-| **L4 Floor 2 — Checkpoint → Elite Pin → Bullseye Stair `(91,53)`** | `(16, 52) → (55, 59) → (91, 53)` | `155.7 t` | `2,491 px` | `21.1 s` | Rotational combat pin + 3-ring pinwheel terminating at center |
-| **L4 Floor 3 — Checkpoint → Broken-Cross Sigil → Half-Spiral Exit** | `(16, 88) → (80, 88) → (104, 88)` | `89.6 t` | `1,434 px` | `12.2 s` | Radial climax + ceremonial half-spiral exit |
-| **L4 Full 3-Floor Critical Path (Est. Full Combat Clear)** | `Spawn → Exit` | **`446.5 t`** | **`7,144 px`** | **`60.5 s` walk (`~2.2–3.2m` full combat)** | Escalating pre-boss ceremonial spiral |
-
-### 5.2 Complete Structural, Entity & Safety Contract Verification Table
-
-| Invariant / Contract | Baseline L3 | **Redesigned L3** | Baseline L4 | **Redesigned L4** | Status |
-|---|---:|---:|---:|---:|---|
-| Canvas Dimensions (`tiles`) | `116 × 84` | **`116 × 96`** | `116 × 84` | **`116 × 100`** | **PASS** (`camera_bounds` exact) |
-| `Backdrop` Walkable Floor Cells (Components) | `5,004` (`3`) | **`3,415` (`[1027, 1267, 1121]`)** | `4,582` (`3`) | **`4,008` (`[1292, 1310, 1406]`)** | **PASS** (`3` door-linked floors) |
-| `Geometry` Solid Collision Cells | `1,104` | **`1,632`** | `1,154` | **`1,825`** | **PASS** (`0` overlap with `Backdrop`) |
-| `Decor` Architectural Trim Cells | `29` | **`97`** | `24` | **`56`** | **PASS** (`0` missing/transparent tiles) |
-| Live Knight Capsule Safe Reachability | `4,604 / 4,604` | **`2,929 / 2,929` (`100%`)** | `4,172 / 4,172` | **`3,454 / 3,454` (`100%`)** | **PASS** (Verified in Godot 4.7 physics) |
-| Preserved Original Entity IDs & Exact Types | `77` | **`77 / 77` preserved (`93` total)** | `74` | **`74 / 74` preserved (`94` total)** | **PASS** (`100%` ID + type match) |
-| Roster (`skeleton` / `skeleton_reaper` / `spikes` / `sigil`) | `15 / 5 / 18 / 5(4)` | **`15 / 5 / 18 / 5 (4 req)`** | `10 / 5 / 21 / 4(4)` | **`10 / 5 / 21 / 4 (4 req)`** | **PASS** (`100%` exact roster) |
-| Chest Rewards (`score_reward`) | `320`, `360` | **`320`, `360`** | `420`, `460` | **`420`, `460`** | **PASS** |
-| `density_cadence_anchor` Contract | `[968, 168]` | **`[968, 168]` (`(60,10)`)** | `null` | **`null` (omitted)** | **PASS** |
-| Enemy 4-Way Cardinal Patrol Clearance | Pass | **`20 / 20` pass** | Pass | **`15 / 15` pass** | **PASS** |
-| Camp Spacing (`>= 55 px` min, `<= 560 px` max) | Pass | **`64.0..526.3 px`** | Pass | **`112.0..489.5 px`** | **PASS** |
-| Spawn Safety (`enemy >= 240px`, `spike >= 160px`) | Pass | **`634.6 px` / `289.8 px`** | Pass | **`649.7 px` / `374.6 px`** | **PASS** |
-| Spike Dodge Fairness (`>= 2` safe neighbors) | Pass | **`min = 4` (`18/18` spikes)** | Pass | **`min = 4` (`21/21` spikes)** | **PASS** |
-| Zero Unintended Diff (`L1`, `L2`, `L5`, `game/`, `tests/`) | — | **`0` lines diff** | — | **`0` lines diff** | **PASS** |
-
----
-
-## 6. Honest 1:1 Visual & HUD Readability Critique (From Real `1280×720` Godot 4.7 Captures)
-
-Inspecting all 16 real `1280×720` Godot 4.7 `gl_compatibility` captures in `docs/design-pilot/captures/` at 1:1 resolution confirmed:
-1. **What Succeeded Cleanly After 1:1 Polish Passes:**
-   - **Zero inter-floor pixel bleed** across every single camera anchor (`spawn`, `mid`, `end`, `combat`, `vault`, `spiral`) after expanding canvas height to `96` rows (Level 3) and `100` rows (Level 4) with `>= 12`-tile void separations.
-   - **Crisp `3`-column black abyss figure-ground contrast on Level 4:** Widening vertical uncarved spiral separations from `3` to `5` columns (`2` parapet columns + `3` pure black void columns) eliminated brick-filled trenches and made all three concentric spiral rings read instantaneously in `after_l4_spiral.png` and `after_l4_mid.png`.
-   - **Tactile cover readability in live combat (`after_l3_combat.png`, `after_l4_combat.png`):** Both live action captures show `SkeletonReaper` cyan aiming lines and glowing skull `SpectralDisc` projectiles clearly contrasting dark stone floors and solid lectern/altar cover islands.
-2. **Candid Residual Imperfections Observed at 1:1 (Documented Without Hiding):**
-   - **Top-left HUD overlay over north-wall trim on tall chambers:** When `Camera2D` clamps near `y = 0` or `20`-tile tall rooms (`after_l3_spawn.png`, `after_l4_mid.png`), the fixed `HP / S2 / MP` bars slightly overlap decorative north-wall spouts/coins in the upper-left corner (`x < 430 px, y < 115 px`). All walkable lanes, spikes, and enemies remain inside the unobstructed center band (`y = 140..645 px`).
-   - **Peripheral bottom-edge peek on `after_l4_spawn.png`:** At `player_spawn` `(14, 14)`, the top rim of `l4_chest_spiral` in the far Outer South Coil peeks just behind the bottom `XP` bar (`y = 706..720 px`), resolving cleanly into full view once the Knight enters the West Spiral arm (`after_l4_spiral.png`).
-   - **Procedural `32×32` dark-plum `Spikes` pad vs `16×16` grate trim:** Live `Spikes` actors render a slightly wider square dark-purple base than a single `16×16` tile, partially covering the inner edge of adjacent `[1..2, 12]` iron-grate fore-telegraph tiles while reinforcing a unmistakable high-contrast `2×2` danger zone.
-
----
-
-## 7. Real Godot 4.7.0 Headless & Rendered CI Verification Summary
-
-- **Engine Verified:** `Godot Engine v4.7.stable.official.5b4e0cb0f` (`ubuntu-latest` / `ubuntu-24.04` Xvfb `LIBGL_ALWAYS_SOFTWARE=1`, `--resolution 1280x720`)
-- **Full Raw Verification Log Archived in Repo:** [`docs/design-pilot/captures/godot_verification_log.md`](captures/godot_verification_log.md)
-- **Current-Head CI Suites (`100% PASSING`):**
-  - `Level 2 Audition QA — Godot 4.7` (Push Run [`39910418819`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910418819) & PR #4 Run [`39910424901`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910424901)): **`SUCCESS`**
-    - `generate_chapter_1_levels_2_to_5.gd`: **`ZERO DIFF`** across Levels 1–5
-    - `chapter_1_campaign_map_design_test.gd`: **`PASSED — 39,449 checks across ten maps`**
-    - `chapter_1_map_design_test.gd`: **`PASSED — 837 / 837 checks`**
-    - `encounter_pack_trap_test.gd`: **`PASSED — 1,044 checks`**
-    - `chapter_1_collision_route_test.tscn`: **`PASSED — 161 checks across ten live maps`** (`slot=2 safe=2559/2559 targets=13`, **`slot=3 safe=2929/2929 targets=14`**, **`slot=4 safe=3454/3454 targets=13`**)
-    - Real `1280×720` Campaign Visual Captures: **`spawn`, `mid`, `end` PASSED** for both Slot 3 & Slot 4 + live combat & vault/spiral showcase captures saved to `docs/design-pilot/captures/`
-  - `Godot 4.7 Runtime Validation` (Push Run [`39910418806`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910418806) & PR #4 Run [`39910424906`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39910424906)):
-    - Current-head job **`Import and headless runtime tests`**: **`SUCCESS`** (`CAMPAIGN ENTRY RUNTIME PASSED - 949 checks`, `SMOKE TEST PASSED — 89 checks`, all 21 Chapter 1/Training gates passed, `AXE` / `LEVEL 5 MINIBOSS` / `ARCHER` combat regressions passed)
-    - Current-head job **`Xvfb rendered gameplay captures`**: **`SUCCESS`** (`30 / 30` Chapter 1 campaign captures + Chapter 2 + Level 10 Boss + Training Sandbox captures passed)
-    - Pre-existing baseline job `Original main baseline comparison`: expected `failure` (runs unmodified historical `main` baseline only, separate from current branch head).
+| Verification Gate | Command / Harness | Result |
+|---|---|---|
+| **Accepted Level 2 & Shared Systems Zero-Diff** | `git diff --exit-code ef890bad... -- data/levels/chapter_1_level_2.json tools/generators/level_2_ossuary_fork_builder.gd docs/design-audition/ game/ tests/` | **PASS (`0` files / `0` bytes changed)** |
+| **Generator Reproducibility (`Levels 1–5`)** | `godot --headless --path . --script res://tools/generators/generate_chapter_1_levels_2_to_5.gd && git diff --exit-code data/levels/` | **PASS (`ZERO DIFF`)** |
+| **Campaign Schema & Distinctness (`10` maps)** | `res://tests/chapter_1_campaign_map_design_test.gd` | **PASS (`39,342` checks)** |
+| **Three-Floor Camp Spacing, Patrol & Dodge Clearance** | `res://tests/chapter_1_map_design_test.gd` | **PASS (`837/837` checks)** |
+| **Encounter Pack & Trap Projection** | `res://tests/encounter_pack_trap_test.gd` | **PASS (`1,044` checks)** |
+| **Live `Knight` Capsule Physics Route Sweep** | `res://tests/chapter_1_collision_route_test.tscn` | **PASS (`slot=3 safe=2853/2853 targets=14`; `slot=4 safe=3409/3409 targets=13`; `161/161` total)** |
+| **Native `1280×720` Production + Showcase Captures** | `chapter_1_campaign_level_visual_capture.tscn` + fail-fast `pilot_combat_visual_capture.tscn` | **PASS (`10/10` captures saved at `1280×720`, `0` invalid anchors, `0` script errors)** |
