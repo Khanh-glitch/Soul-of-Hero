@@ -7,13 +7,13 @@ GATE0 LEVEL: res://data/levels/chapter_1_level_3.json sha256=5ea50e9cf37791a6283
 GATE0 OVERLAY: 15 props (10 solid) attached to res://data/levels/chapter_1_level_3.json
 GATE0 OVERLAY ATTACHED: 15 props, 10 solid bodies
 GATE0 CAPTURE: res://.artifacts/gate0/after_spawn.png (1280x720) at (280.0, 216.0)
-GATE0 WALK: entry  (280, 216) -> (212, 283)  95 px over 8 cells in 83 frames
-GATE0 CAPTURE: res://.artifacts/gate0/after_entry.png (1280x720) at (212.1747, 282.5392)
-GATE0 WALK: destination  (212, 283) -> (459, 196)  261 px over 20 cells in 192 frames
-GATE0 CAPTURE: res://.artifacts/gate0/after_destination.png (1280x720) at (458.7964, 196.3925)
-GATE0 WALK: combat_space  (459, 196) -> (555, 219)  99 px over 7 cells in 101 frames
-GATE0 CAPTURE: res://.artifacts/gate0/after_combat_space.png (1280x720) at (555.1562, 218.7167)
-GATE0 COLLISION: Knight at (555.1562, 218.7167) is clear of every wall and prop
+GATE0 WALK: entry  (280, 216) -> (216, 200)  66 px over 5 cells in 58 frames
+GATE0 CAPTURE: res://.artifacts/gate0/after_entry.png (1280x720) at (215.8785, 199.6352)
+GATE0 WALK: destination  (216, 200) -> (361, 185)  146 px over 10 cells in 92 frames
+GATE0 CAPTURE: res://.artifacts/gate0/after_destination.png (1280x720) at (360.8961, 185.1599)
+GATE0 WALK: combat_space  (361, 185) -> (551, 216)  192 px over 14 cells in 162 frames
+GATE0 CAPTURE: res://.artifacts/gate0/after_combat_space.png (1280x720) at (550.5088, 216.201)
+GATE0 COLLISION: Knight at (550.5088, 216.201) is clear of every wall and prop
 GATE0 COLLISION: 10 solid prop footprints probed, each covered by a body
-GATE0 COLLISION: open floor at (555.1562, 214.7167) is free of prop bodies
+GATE0 COLLISION: open floor at (550.5088, 212.201) is free of prop bodies
 GATE0 CAPTURE TEST PASSED: 4 frames (after)
