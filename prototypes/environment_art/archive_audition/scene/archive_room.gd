@@ -196,7 +196,8 @@ func _build_props() -> void:
 			float(cell[0]) * T + T * 0.5,
 			float(cell[1]) * T + T,
 		)
-		sprite.offset = Vector2(0.0, -float(src[3]))
+		# sprites are centred, so the half-height offset puts the base on the cell
+		sprite.offset = Vector2(0.0, -float(src[3]) * 0.5)
 		wall_mounts.add_child(sprite)
 
 	var entities := _sorted_container("Entities", 0)
@@ -206,7 +207,7 @@ func _build_props() -> void:
 		var sprite := _sprite(source)
 		sprite.name = "%s_%d_%d" % [prop["sprite"], prop["cell"][0], prop["cell"][1]]
 		sprite.position = Vector2(float(prop["x"]), float(prop["y"]))
-		sprite.offset = Vector2(0.0, -float(source[3]))
+		sprite.offset = Vector2(0.0, -float(source[3]) * 0.5)
 		entities.add_child(sprite)
 		if bool(prop.get("solid", false)):
 			var body := StaticBody2D.new()
