@@ -79,7 +79,9 @@ jobs:
       - name: Persist native frames and log errors
         if: always()
         run: |
-          set -euo pipefail
+          # Deliberately forgiving: a failed capture must still publish its own
+          # logs and whatever frames it did produce, or a red run is undebuggable.
+          set -uo pipefail
           mkdir -p docs/gate2/evidence/logs
           shopt -s nullglob
           for frame in .artifacts/gate2/*.png; do cp "$frame" docs/gate2/evidence/; done
@@ -87,10 +89,11 @@ jobs:
             cp "$logfile" "docs/gate2/evidence/logs/$(basename "$logfile" .log).txt"
           done
           shopt -u nullglob
-          if [ -f .artifacts/gate2/after_spawn.png ] && [ -f .artifacts/gate2/before_spawn.png ]; then
-            python3 -m pip install --quiet pillow
-            python3 tools/gate2/make_evidence_sheets.py | tee docs/gate2/evidence/logs/sheets.txt
-          fi
+          python3 -m pip install --quiet pillow || true
+          python3 tools/gate2/make_evidence_sheets.py \
+            > docs/gate2/evidence/logs/sheets.txt 2>&1 \
+            || echo "evidence sheets skipped: a native frame is missing" \
+               | tee -a docs/gate2/evidence/logs/sheets.txt
           git config user.name "gate2-capture-bot"
           git config user.email "actions@users.noreply.github.com"
           git add docs/gate2/evidence
