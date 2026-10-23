@@ -47,6 +47,7 @@ def main() -> int:
             "chapter-1-level-5-miniboss.log": "chapter_1_level_5_miniboss_report.json",
             "level_5_archer_pickup_test.log": "level_5_archer_pickup_report.json",
             "chapter_1_level_6_promotion_route_test.log": "chapter_1_level_6_promotion_route_report.json",
+            "training_sandbox_live_route_test.log": "training_sandbox_live_route_report.json",
             "chapter_1_level_8_fresh_route_test.log": "chapter_1_level_8_fresh_route_report.json",
             "chapter_1_level_9_fresh_route_test.log": "chapter_1_level_9_fresh_route_report.json",
             "chapter_1_level_10_fresh_route_test.log": "chapter_1_level_10_fresh_route_report.json",
