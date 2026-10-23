@@ -57214,7 +57214,7 @@
       "id": "l4_c3_skeleton_03",
       "type": "skeleton",
       "position": [
-        1192,
+        1176,
         1336
       ],
       "patrol": 32
@@ -57224,7 +57224,7 @@
       "type": "skeleton_reaper",
       "position": [
         1240,
-        1496
+        1480
       ],
       "patrol": 26
     },

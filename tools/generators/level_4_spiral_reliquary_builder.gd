@@ -272,8 +272,8 @@ func build() -> Dictionary:
 		# Camp 3 (`l4_camp_3_broken_cross`: 3 Skeletons + 2 Diagonal Reapers)
 		{"id": "l4_c3_skeleton_01", "type": "skeleton", "position": _cpos(46, 88), "patrol": 32},
 		{"id": "l4_c3_skeleton_02", "type": "skeleton", "position": _cpos(55, 84), "patrol": 32},
-		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(74, 83), "patrol": 32},
-		{"id": "l4_c3_reaper_01", "type": "skeleton_reaper", "position": _cpos(77, 93), "patrol": 26},
+		{"id": "l4_c3_skeleton_03", "type": "skeleton", "position": _cpos(73, 83), "patrol": 32},
+		{"id": "l4_c3_reaper_01", "type": "skeleton_reaper", "position": _cpos(77, 92), "patrol": 26},
 		{"id": "l4_c3_reaper_02", "type": "skeleton_reaper", "position": _cpos(63, 80), "patrol": 26},
 
 		# 4 Reciprocal Sanctum Stairwell Portals (`door_l4_f2_f3_down` at Bullseye Portal (91, 54)!)
