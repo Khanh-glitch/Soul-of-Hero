@@ -2,15 +2,18 @@
 
 **Candidate:** B (branch `arena/6e89e68d-soul-of-hero`, working copy of
 `design-audition/level2-candidate-b`)
-**Redesign commit:** `bb5f4d6` (final content commit adds the last hazard fix; the
-audition run below is from the commit it names)
+**Redesign commit:** `a7b4505` (last content commit: plank bridges with lit rails)
 **Frozen baseline:** `1c21a49c2eb3775c4b421dab86d057c7256f5964`
-**Audition CI gate:** run [39900632510](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39900632510)
-— *Level 2 Audition QA — Godot 4.7*, `completed / success`.
+**Audition CI gate:** run [39902162744](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39902162744)
+— *Level 2 Audition QA — Godot 4.7* on `a7b4505`: `completed / success`, which
+includes the source audit, the Chapter 1 geometry gate, the live Knight collision
+routes on `slot=2` and the three production captures.
 **Godot product gate:** run [39900632540](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/39900632540)
 — *Godot 4.7 Runtime Validation*: every Chapter 1 / Level 2 step passed; the run is
 marked failed only by the **“Original main baseline comparison”** job, which checks
 out `main` (86 commits behind this work) and fails there, unrelated to this branch.
+The captures published in `evidence/` are the artifacts of run `39902162744`,
+committed back onto the branch by the workflow itself.
 
 Concept: [`LEVEL2_CONCEPT.md`](LEVEL2_CONCEPT.md). Evidence folder:
 [`evidence/`](evidence/).
@@ -279,7 +282,7 @@ xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --audio-driver Dummy \
 | frame | file | content observed |
 | --- | --- | --- |
 | spawn | `evidence/chapter_1_level_02_spawn_runtime.png` | Mouth Court: Knight at the spawn, three braziers, coin, a spike band on the throat, torch; HUD live |
-| mid | `evidence/chapter_1_level_02_mid_runtime.png` | the Bone Well: standing on the island, plank cross over four void quadrants, two caches in view |
+| mid | `evidence/chapter_1_level_02_mid_runtime.png` | the Bone Well: Knight on the island plinth beside the ring sigil, the plank cross over four black void quadrants with lit rails, bier/grave props and a coin on the far rim |
 | end | `evidence/chapter_1_level_02_end_runtime.png` | exit apse: exit gate portal, a live Skeleton, a spike rack, the +280 chest, bier/brazier props |
 
 All three are exactly 1280×720 and each run prints
@@ -324,9 +327,11 @@ measured playthrough time.
   - The Backdrop tint (`0.64, 0.69, 0.78`) plus the room lighting makes large
     stretches of the nave and the apse quite dark; a player may read the deep
     water zones as walls on first contact. The teal lip strip is the only cue.
-  - The candle-stub material is a high-contrast accent and, on the well island,
-    it dominates the frame. It is intentional (the island should glow) but it is
-    the busiest texture in the level.
+  - The candle-stub accent is high contrast by design (lit rails, processional
+    lane). An earlier revision used it as a *fill* on the spans and island and it
+    swamped the mid frame; the shipped version keeps it on rails only, but it is
+    still the busiest texture in the level and the well crossing still reads as a
+    glowing scaffold rather than polished timber.
   - The end capture has props and a live enemy at the frame edge, but the apse is
     still sparse compared with the choir.
   - No verticality: this is a pure top-down floor plan; the “balcony” is a
@@ -334,6 +339,14 @@ measured playthrough time.
   - Asset limitation: the shipped atlas has no ossuary-specific architecture, so
     the tomb identity comes from *arrangement* (colonnades, bier rows, graves,
     moat, shaft) rather than bespoke art.
+
+### 5.6 Evidence images
+
+![before / after footprints at identical scale](evidence/level2_before_after_footprint.png)
+
+![spawn](evidence/chapter_1_level_02_spawn_runtime.png)
+![mid — the bone well](evidence/chapter_1_level_02_mid_runtime.png)
+![end — exit apse](evidence/chapter_1_level_02_end_runtime.png)
 
 ## 7. Scope
 
