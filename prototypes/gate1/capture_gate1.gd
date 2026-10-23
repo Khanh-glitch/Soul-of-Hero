@@ -238,9 +238,14 @@ func _overlay_blocked_cells() -> Dictionary:
 		if not bool(entry.get("solid", false)):
 			continue
 		var box: Array = entry["collider"]
-		var left := float(box[0]) - float(box[2]) * 0.5
+		# The Knight is 12 px wide and overshoots cell centres by a few
+		# pixels while moving. Plan a horizontal apron around colliders rather
+		# than assuming a one-cell wall test makes corridor corners safe.
+		# Actual prop collision bodies stay unchanged; this only reroutes walking.
+		var clearance_x := 12.0
+		var left := float(box[0]) - float(box[2]) * 0.5 - clearance_x
 		var top := float(box[1]) - float(box[3]) * 0.5
-		var right := float(box[0]) + float(box[2]) * 0.5
+		var right := float(box[0]) + float(box[2]) * 0.5 + clearance_x
 		var bottom := float(box[1]) + float(box[3]) * 0.5
 		for cx: int in range(floori(left / TILE), floori((right - 1.0) / TILE) + 1):
 			for cy: int in range(floori(top / TILE), floori((bottom - 1.0) / TILE) + 1):
