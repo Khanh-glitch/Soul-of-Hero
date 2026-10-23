@@ -10,4 +10,4 @@ ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_end.png (1280x720)
 ARCHIVE WALK: from (448.0, 372.0) to (448.0, 256.076) (115.9 px north)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_walk.png (1280x720)
 ARCHIVE CAPTURE SAVED: res://.artifacts/archive_room_overview.png (1280x720)
-ARCHIVE ROOM CAPTURE TEST PASSED: 5 frames at 1280x720
+ARCHIVE ROOM CAPTURE TEST PASSED: 6 frames at 1280x720
