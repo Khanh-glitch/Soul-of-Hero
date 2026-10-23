@@ -1,0 +1,163 @@
+name: Candidate A — Level 3–4 Design Pilot
+
+on:
+  push:
+    branches:
+      - design-pilot/levels3-4-candidate-a
+    paths:
+      - "data/levels/chapter_1_level_3.json"
+      - "data/levels/chapter_1_level_4.json"
+      - "tools/generators/**"
+      - "tools/design/levels3_4_pilot_audit.py"
+      - ".github/workflows/levels3-4-pilot.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: design-pilot-a-3-4-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  design-runtime:
+    name: Source audit + real Godot 4.7 + live physics + screenshots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 28
+    env:
+      SOUL_OF_HERO_SAVE_PATH: "user://tests/pilot_${{ github.run_id }}.json"
+      LIVING_ARSENAL_SAVE_PATH: "user://tests/pilot_${{ github.run_id }}.json"
+    steps:
+      - name: Checkout pinned baseline history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install official Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Audit unchanged contracts and identify implemented maps
+        id: scope
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          python3 tools/design/levels3_4_pilot_audit.py 2>&1 | tee .artifacts/pilot_source_audit.log
+          cat .artifacts/levels3_4_contract_report.md >> "$GITHUB_STEP_SUMMARY"
+          BASE="2903a305c610fc547581cc82268f3b7e37e8e75a"
+          slots=()
+          for slot in 3 4; do
+            if ! git diff --quiet "$BASE" HEAD -- "data/levels/chapter_1_level_${slot}.json"; then
+              slots+=("$slot")
+            fi
+          done
+          if (( ${#slots[@]} == 0 )); then
+            echo "slots=" >> "$GITHUB_OUTPUT"
+            echo "No Level 3/4 rewrite yet; functional capture deferred." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          echo "slots=${slots[*]}" >> "$GITHUB_OUTPUT"
+
+      - name: Import actual Godot project
+        if: steps.scope.outputs.slots != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --version | tee .artifacts/godot-version.log
+          timeout --signal=TERM --kill-after=10s 120s \
+            godot --headless --audio-driver Dummy --editor --path . --import --quit \
+            2>&1 | tee .artifacts/import.log
+
+      - name: Generator reproducibility for all Chapter 1 Levels 1 to 5
+        if: steps.scope.outputs.slots != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 140s \
+            godot --headless --audio-driver Dummy --path . \
+            --script res://tools/generators/generate_chapter_1_levels_2_to_5.gd \
+            2>&1 | tee .artifacts/generator.log
+          if ! git diff --quiet -- data/levels/; then
+            echo "::error::Generator modified committed level data (drift)"
+            git diff --stat -- data/levels/
+            exit 1
+          fi
+
+      - name: Validate Chapter 1 geometry, packs and hazard fairness
+        if: steps.scope.outputs.slots != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          for entry in \
+            "geometry:tests/chapter_1_campaign_map_design_test.gd" \
+            "map-design:tests/chapter_1_map_design_test.gd" \
+            "encounters:tests/encounter_pack_trap_test.gd"; do
+            name="${entry%%:*}"
+            script="${entry#*:}"
+            timeout --signal=TERM --kill-after=10s 180s \
+              godot --headless --audio-driver Dummy --path . --script "res://$script" \
+              2>&1 | tee ".artifacts/$name.log"
+            if grep -Eq '^SCRIPT ERROR:|^ERROR:' ".artifacts/$name.log"; then
+              echo "::error::Godot $name reported an error"
+              exit 1
+            fi
+          done
+
+      - name: Knight collision-clear routes and objective gates
+        if: steps.scope.outputs.slots != ''
+        timeout-minutes: 9
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --signal=TERM --kill-after=10s 480s \
+            godot --headless --audio-driver Dummy --path . \
+            res://tests/chapter_1_collision_route_test.tscn \
+            2>&1 | tee .artifacts/collision.log
+          grep -q "CHAPTER 1 COLLISION ROUTE TEST PASSED" .artifacts/collision.log
+          for slot in ${{ steps.scope.outputs.slots }}; do
+            grep -q "slot=$slot" .artifacts/collision.log
+          done
+          if grep -Eq '^SCRIPT ERROR:|^ERROR:' .artifacts/collision.log; then
+            exit 1
+          fi
+
+      - name: Actual 1280x720 Godot captures (spawn, mid, end)
+        if: steps.scope.outputs.slots != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri >/dev/null
+          for slot in ${{ steps.scope.outputs.slots }}; do
+            for point in spawn mid end; do
+              export SOUL_OF_HERO_SAVE_PATH="user://tests/pilot_${slot}_${point}_${GITHUB_RUN_ID}.json"
+              export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+              xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+                timeout --signal=TERM --kill-after=10s 100s \
+                godot --path . --audio-driver Dummy \
+                --rendering-method gl_compatibility --rendering-driver opengl3 \
+                --resolution 1280x720 \
+                res://tests/chapter_1_campaign_level_visual_capture.tscn -- \
+                --level-slot="$slot" --capture-point="$point" \
+                --expected-width=1280 --expected-height=720 \
+                2>&1 | tee ".artifacts/level_${slot}_${point}.log"
+              grep -q "CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=$slot point=$point" ".artifacts/level_${slot}_${point}.log"
+              printf -v two "%02d" "$slot"
+              test -s ".artifacts/chapter_1_level_${two}_${point}_runtime.png"
+              echo "Level $slot/$point: real Godot capture PASS" >> "$GITHUB_STEP_SUMMARY"
+            done
+          done
+
+      - name: Upload all evidence, including failure logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: level3-4-a-pilot-evidence
+          path: .artifacts/
+          include-hidden-files: true
+          if-no-files-found: warn
+          retention-days: 14
