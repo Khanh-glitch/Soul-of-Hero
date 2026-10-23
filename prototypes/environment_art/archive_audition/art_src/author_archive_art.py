@@ -1238,27 +1238,32 @@ def prop_door_portal(seed: int) -> Image.Image:
         px(img, w - 12, y, shade(FACE_M, 0.84))
 
     # ---- the opening: a dark passage with the floor running into it ------
-    # Receding depth rather than a flat black hole: the far end of the passage
-    # keeps a trace of stone so the eye reads a corridor, not missing art.
+    # Depth cues instead of a flat black hole: the passage darkens towards the
+    # jambs, the floor recedes in two treads, and a little of the hall's warm
+    # light spills over the threshold.
     for y in range(16, 36):
         t = (y - 16) / 20.0
-        base = (13 - int(t * 4), 12 - int(t * 4), 13 - int(t * 4))
+        base = (14 - int(t * 5), 13 - int(t * 5), 14 - int(t * 5))
         hline(img, 12, y, w - 24, base)
-    # the vault of a second, further bay, barely lit
-    for x in range(15, w - 15):
-        dx = (x - (w / 2 - 0.5)) / 13.0
-        if abs(dx) < 1.0:
-            yy = int(23 - 5 * math.sqrt(max(0.0, 1.0 - dx * dx)))
-            for k in range(2):
-                px(img, x, yy + k, shade(FACE_D, 0.30))
-    # a cold sliver of light from deeper in the undercroft
-    vline(img, 12 + 11, 20, 12, (30, 32, 34))
-    vline(img, 12 + 12, 21, 10, (24, 26, 28))
-    # the passage floor, receding: two bands of dim stone
-    rect(img, 13, 26, w - 26, 8, (32, 28, 26))
-    hline(img, 13, 26, w - 26, (46, 40, 36))
+    for y in range(16, 36):
+        for x in range(12, w - 12):
+            edge = min(x - 12, (w - 12) - 1 - x)
+            if edge < 3:
+                px(img, x, y, (9, 8, 9))
+    # two treads running back into the passage
+    for y, tone in ((30, (44, 38, 34)), (31, (30, 26, 24)),
+                    (34, (38, 33, 30)), (35, (27, 24, 22))):
+        hline(img, 13, y, w - 26, tone)
     for x in range(14, w - 14, 7):
-        vline(img, x, 27, 6, (26, 23, 21))
+        vline(img, x, 32, 3, (22, 20, 18))
+    # the hall's lamplight spilling over the threshold stones
+    for y in range(33, 36):
+        for x in range(13, w - 13):
+            if (x + y) % 5 < 2:
+                px(img, x, y, (56, 44, 32))
+    # a cold sliver of light from deeper in the undercroft
+    vline(img, 12 + 11, 20, 10, (34, 35, 37))
+    vline(img, 12 + 12, 21, 8, (26, 27, 29))
 
     # ---- the leaf: hanging inward from the west jamb ---------------------
     leaf_x0, leaf_x1 = 12, 27
@@ -1285,11 +1290,11 @@ def prop_door_portal(seed: int) -> Image.Image:
         x = rng.randint(9, w - 10)
         y = rng.randint(34, 39)
         px(img, x, y, shade(FACE_D, rng.choice([0.7, 0.78, 0.86])))
-    # a splash of standing water on the step
-    for x in range(20, 30):
-        px(img, x, 38, (48, 70, 78))
+    # damp creeping over the step, in the same muted water ramp as the pool
+    for x in range(21, 29):
+        px(img, x, 38, WATER_D)
         if x % 3:
-            px(img, x, 37, (60, 88, 96))
+            px(img, x, 37, WATER_M)
     return img
 
 

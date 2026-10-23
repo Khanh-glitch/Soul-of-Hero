@@ -21,6 +21,7 @@ const EXPECTED := Vector2i(1280, 720)
 var _room: Node2D
 var _knight: Node2D
 var _failures: Array[String] = []
+var _shots := 0
 
 
 func _ready() -> void:
@@ -111,6 +112,7 @@ func _frame(name: String) -> void:
 			"%s is %dx%d, expected %dx%d"
 			% [name, image.get_width(), image.get_height(), EXPECTED.x, EXPECTED.y]
 		)
+	_shots += 1
 	print("ARCHIVE CAPTURE SAVED: %s (%dx%d)"
 		% [path, image.get_width(), image.get_height()])
 
@@ -136,7 +138,7 @@ func _overview() -> void:
 
 func _report() -> void:
 	if _failures.is_empty():
-		print("ARCHIVE ROOM CAPTURE TEST PASSED: 5 frames at 1280x720")
+		print("ARCHIVE ROOM CAPTURE TEST PASSED: %d frames at 1280x720" % _shots)
 		get_tree().quit(0)
 		return
 	for failure: String in _failures:

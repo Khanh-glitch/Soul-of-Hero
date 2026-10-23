@@ -21,9 +21,9 @@ CAPTURES = os.path.join(BASE, "captures")
 CROPS = [
     ("detail_armarium", "archive_room_end.png", 468, 88, 236, 140,
      "the open armarium: doors, shelves, manuscript rows, flanking lights"),
-    ("detail_doorway", "archive_room_entry.png", 612, 486, 156, 136,
+    ("detail_doorway", "archive_room_arrival.png", 536, 480, 160, 132,
      "the doorway and its masonry: voussoir arch, jambs, threshold, wall join"),
-    ("detail_breach", "archive_room_mid.png", 656, 470, 232, 148,
+    ("detail_breach", "archive_room_mid.png", 672, 466, 208, 148,
      "the collapsed corner: broken wall, fallen beam, rubble, standing water"),
     ("detail_study", "archive_room_entry.png", 336, 240, 232, 148,
      "the study furniture: long table, books, bench, pier bases"),
