@@ -1,0 +1,1 @@
+GATE3 MANIFEST: docs/gate3/evidence/CHANGE_MANIFEST.md is out of date
