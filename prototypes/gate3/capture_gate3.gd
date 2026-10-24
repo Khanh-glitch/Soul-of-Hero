@@ -83,6 +83,8 @@ const DESCENT_1 := {"walk": Vector2i(109, 17), "door": Vector2i(109, 16), "landi
 const DESCENT_2 := {"walk": Vector2i(9, 51), "door": Vector2i(9, 51), "landing": Vector2i(9, 80)}
 
 var _with_overlay := false
+## Second capture pass: skip the floor-1 station tour and go down.
+var _deep := false
 var _app_root: Node
 var _game: Node2D
 var _dungeon: DungeonLevel
@@ -107,6 +109,9 @@ func _ready() -> void:
 	var arguments := OS.get_cmdline_user_args()
 	for argument: String in arguments:
 		if argument == "--overlay":
+			_with_overlay = true
+		elif argument == "--deep":
+			_deep = true
 			_with_overlay = true
 	if "--check" in arguments:
 		_check_scripts()
@@ -146,14 +151,25 @@ func _run() -> void:
 	_hazard_cache = _hazard_cells()
 	_enemy_heat = _build_enemy_heat()
 	_start_health = int(_player.get("health"))
-	await _capture_floor_one()
-	if not _player_dead():
-		await _descend(DESCENT_1, FLOOR2_ORDER)
-	if not _player_dead():
-		await _descend(DESCENT_2, FLOOR3_ORDER)
+	if _deep:
+		# Second pass: the same campaign entry, the same walk, but straight to the
+		# east door and down. A single pass that also captures eight floor-1 stations
+		# spends most of the Knight's health on floor 1 before the descent, and the
+		# point of this pass is the two lower storeys, not a speedrun. Nothing is
+		# teleported: the Knight walks from the authored spawn either way.
+		await _capture_depth()
+	else:
+		await _capture_floor_one()
 	await _probe_collision()
 	_report_walk()
 	_finish()
+
+
+func _capture_depth() -> void:
+	if not await _descend(DESCENT_1, FLOOR2_ORDER):
+		return
+	if not _player_dead():
+		await _descend(DESCENT_2, FLOOR3_ORDER)
 
 
 # ---------------------------------------------------------------- boot -------
