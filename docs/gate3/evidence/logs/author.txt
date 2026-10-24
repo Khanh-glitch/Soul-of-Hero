@@ -27,7 +27,15 @@
   PLACEMENT gate3_38_column: moved from [52, 84] to [56, 82] to keep its walk and sightlines clear
   PLACEMENT long_table at [60, 84]: dropped, no nearby cell satisfies the placement contract
   PLACEMENT gate3_41_candle_stand: moved from [66, 88] to [66, 89] to keep its walk and sightlines clear
-GATE3 AUTHOR OK: 75 cell edits, 36 props, 6 lights, 79 entities unchanged
+  PLACEMENT armarium_open at [67, 42]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_43_shelf_collapsed: moved from [70, 46] to [70, 52] to keep its walk and sightlines clear
+  PLACEMENT gate3_46_scrolls_a: moved from [58, 47] to [58, 42] to keep its walk and sightlines clear
+  PLACEMENT gate3_47_shelf_collapsed: moved from [40, 80] to [40, 79] to keep its walk and sightlines clear
+  PLACEMENT gate3_48_column: moved from [56, 86] to [56, 88] to keep its walk and sightlines clear
+  PLACEMENT gate3_49_lectern: moved from [62, 84] to [58, 82] to keep its walk and sightlines clear
+  PLACEMENT gate3_50_paternoster: moved from [44, 88] to [44, 89] to keep its walk and sightlines clear
+  PLACEMENT gate3_51_drying_rack: moved from [30, 88] to [35, 88] to keep its walk and sightlines clear
+GATE3 AUTHOR OK: 75 cell edits, 45 props, 10 lights, 79 entities unchanged
   alcove       12
   shaft_floor  37
   shaft_seal   7

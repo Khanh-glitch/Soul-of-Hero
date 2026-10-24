@@ -5,23 +5,30 @@ OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Usi
 
 GATE3 LEVEL: res://data/levels/chapter_1_level_3.json sha256=25a51aa9834278c9415cf7039933e3c1bc4238bb33aa0d2111db620cccf2036d
 GATE3 CAMPAIGN ROUTE: chapter_1_level_3, real HUD and active Level 3
-GATE3 PROPS: 36 sprites (17 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
+GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 HAZARDS: 18 spike hazards re-skinned onto derived frames (crimson pit, violet gone)
-GATE3 MATERIAL: Gate3_rock  5872 cells  z=-30
+GATE3 VARIANTS: rock  4218 cells, 14 alternative tiles in use
+GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
+GATE3 VARIANTS: rock_deep  1753 cells, 14 alternative tiles in use
+GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
 GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
 GATE3 MATERIAL: Gate3_coping  34 cells  z=-19
 GATE3 MATERIAL: Gate3_water  66 cells  z=-18
 GATE3 MATERIAL: Gate3_water_edge  30 cells  z=-17
 GATE3 MATERIAL: Gate3_shadow  508 cells  z=-16
-GATE3 MATERIAL: Gate3_weather  326 cells  z=-15
+GATE3 MATERIAL: Gate3_weather  316 cells  z=-15
 GATE3 MATERIAL: Gate3_mass  707 cells  z=-13
 GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
-GATE3 MATERIAL: Gate3_niche  241 cells  z=-11
+GATE3 MATERIAL: Gate3_niche  267 cells  z=-11
 GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
 GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
-GATE3 LAYER: Decor hidden (replaced by Gate3_decor)
-GATE3 LIGHTS: 6 local lanterns
-GATE3 OVERLAY ATTACHED: 36 props, 17 solid bodies, 11 material layers, 6 lights, 18 hazards re-skinned, shade=true
+GATE3 LAYER: Decor hidden
+GATE3 COVERAGE: Backdrop 3413/3413 cells painted by ["floor", "water", "water_edge", "coping"]
+GATE3 LAYER: Backdrop hidden
+GATE3 COVERAGE: Geometry 1686/1686 cells painted by ["wall_face", "mass", "niche"]
+GATE3 LAYER: Geometry hidden
+GATE3 LIGHTS: 10 local lanterns
+GATE3 OVERLAY ATTACHED: 45 props, 21 solid bodies, 12 material layers, 10 lights, 18 hazards re-skinned, shade=true
 GATE3 CAPTURE: res://.artifacts/gate3/after_spawn.png (1280x720) at (280.0, 216.0)
 GATE3 PLAN: archive_entry -> (23, 12) is 8 cells
 GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames, HP 1100
@@ -36,34 +43,34 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: descent_landing -> (30, 17) is 16 cells
-GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 398 waypoint (33, 17)
+GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 386 waypoint (33, 17)
 GATE3 WALK: descent_landing  (489, 201) -> (487, 279)  78 px over 15 cells in 146 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_descent_landing.png (1280x720) at (487.2381, 278.9723)
 GATE3 PLAN: cloister -> (38, 18) is 10 cells
 GATE3 WALK: cloister  (487, 279) -> (615, 295)  129 px over 9 cells in 85 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_cloister.png (1280x720) at (614.7933, 294.6941)
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 329 waypoint (45, 23)
+GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 323 waypoint (45, 23)
 GATE3 WALK: south_loop  (615, 295) -> (744, 375)  152 px over 13 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_south_loop.png (1280x720) at (743.9288, 374.9468)
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 185 waypoint (57, 21)
+GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 175 waypoint (57, 21)
 GATE3 WALK: combat_space  (744, 375) -> (937, 345)  195 px over 14 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_combat_space.png (1280x720) at (936.938, 344.9181)
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 244 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 270 waypoint (47, 23)
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 170 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_return_route.png (1280x720) at (713.1164, 342.5425)
 GATE3 COLLISION: Knight at (713.1164, 342.5425) is clear of every wall and prop
-GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
+GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (713.1164, 338.5425) is free of prop bodies
-GATE3 PERF: 90 physics frames in 1656 ms, 18.40 ms per frame (software GL)
-GATE3 PERF: nodes=844 objects=13949 draw_calls_in_frame=242 objects_in_frame=3805
-GATE3 PERF: physics_process=1.39 ms render_process=147.65 ms
+GATE3 PERF: 90 physics frames in 1452 ms, 16.14 ms per frame (software GL)
+GATE3 PERF: nodes=866 objects=14028 draw_calls_in_frame=95 objects_in_frame=2653
+GATE3 PERF: physics_process=1.39 ms render_process=232.09 ms
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 13947 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 844 nodes
+GATE3 OBJECTS: ObjectDB holds 14022 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 866 nodes
 GATE3 CAPTURE TEST PASSED: 8 frames, 4 camera frames (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
