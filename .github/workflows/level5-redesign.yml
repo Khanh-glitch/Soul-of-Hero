@@ -211,10 +211,14 @@ jobs:
       - name: Acceptance gate
         run: |
           # `bash -e` is the default; the gate accumulates failures instead, and
-          # its own transcript is published with the rest of the evidence.
+          # its own transcript is published with the rest of the evidence. The
+          # body is a function piped through tee on purpose: an `exec > >(tee)`
+          # redirect loses the tail of the transcript when the step process ends.
           set +e
           set -uo pipefail
-          exec > >(tee -a docs/level-design/level5-redesign/evidence/logs/gate_acceptance.txt) 2>&1
+          gate_log=docs/level-design/level5-redesign/evidence/logs/gate_acceptance.txt
+          : > "$gate_log"
+          acceptance_gate() {
           rc=0
           # In-scope Level 5 acceptance suites. Each one is matched on the exact
           # success line it prints *and* on its check count, so a suite that
@@ -270,14 +274,19 @@ jobs:
               rc=1
             fi
           fi
-          exit $rc
+          return $rc
+          }
+          acceptance_gate 2>&1 | tee -a "$gate_log"
+          exit ${PIPESTATUS[0]}
 
       - name: Evidence gate
         if: always()
         run: |
           set +e
           set -uo pipefail
-          exec > >(tee -a docs/level-design/level5-redesign/evidence/logs/gate_evidence.txt) 2>&1
+          gate_log=docs/level-design/level5-redesign/evidence/logs/gate_evidence.txt
+          : > "$gate_log"
+          evidence_gate() {
           rc=0
           for tag in before after; do
             if ! grep -q "LEVEL5 REVIEW CAPTURE DONE: tag=${tag}" ".artifacts/level5/capture_${tag}.log"; then
@@ -301,7 +310,10 @@ jobs:
             || { echo "MISSING after route trace"; rc=1; }
           test -f docs/level-design/level5-redesign/evidence/route_trace_before.png \
             || { echo "MISSING before route trace"; rc=1; }
-          exit $rc
+          return $rc
+          }
+          evidence_gate 2>&1 | tee -a "$gate_log"
+          exit ${PIPESTATUS[0]}
 
       - name: Persist native frames, logs and the source pin
         if: always()

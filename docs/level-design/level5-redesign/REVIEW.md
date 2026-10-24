@@ -191,7 +191,9 @@ gates are the only steps that can turn it red.
 
 `chapter_1_map_design_test` prints a count, not the word PASSED; the gate matches
 each suite's exact success line *and* its check count, so a suite that runs fewer
-checks cannot pass.
+checks cannot pass. Both gates write their own transcript
+(`evidence/logs/gate_acceptance.txt`, `gate_evidence.txt`), so a red gate is
+diagnosable from the repository rather than from the run page.
 
 **One suite is red, and it is not a Level 5 suite.**
 `chapter_1_balance_matrix_test` fails (`583 checks`, `FAIL … uses canonical
