@@ -565,8 +565,8 @@ Completed load for: 'res://game/app/app_flow.gd' remapped 'res://game/app/app_fl
 Loaded system CA certificates
 Loading resource: res://prototypes/gate3/capture_gate3.tscn remapped: res://prototypes/gate3/capture_gate3.tscn
 Loading resource: res://prototypes/gate3/capture_gate3.gd remapped: res://prototypes/gate3/capture_gate3.gd
-SCRIPT ERROR: Parse Error: Expected expression after "<" operator.
-          at: GDScript::reload (res://prototypes/gate3/capture_gate3.gd:319)
+SCRIPT ERROR: Parse Error: Expected closing ")" after call arguments.
+          at: GDScript::reload (res://prototypes/gate3/capture_gate3.gd:1729)
 ERROR: Failed to load script "res://prototypes/gate3/capture_gate3.gd" with error "Parse error".
    at: load (modules/gdscript/gdscript_resource_format.cpp:46)
 Completed load for: 'res://prototypes/gate3/capture_gate3.gd' remapped 'res://prototypes/gate3/capture_gate3.gd' at thread -1
