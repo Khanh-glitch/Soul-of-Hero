@@ -33,146 +33,151 @@ GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
 GATE3 RESPAWN: director armed, checkpoint (280.0, 216.0)
 GATE3 OVERLAY ATTACHED: 45 props, 21 solid bodies, 12 material layers, 10 lights, 18 hazards re-skinned, shade=true
 GATE3 PLAN: descent approach -> (109, 17) is 137 cells
-GATE3 TRACE: descent approach frame 120 cell (29, 12) HP 1100 since_progress 3 nearest 463 waypoint (29, 12)
-GATE3 TRACE: descent approach frame 240 cell (35, 17) HP 1100 since_progress 2 nearest 367 waypoint (36, 17)
-GATE3 TRACE: descent approach frame 360 cell (44, 21) HP 1100 since_progress 3 nearest 296 waypoint (44, 22)
-GATE3 TRACE: descent approach frame 480 cell (55, 23) HP 1100 since_progress 1 nearest 218 waypoint (55, 23)
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 32 px, target HP 979, Knight HP 1100, mana 99
-GATE3 COMBAT: after the input press current_action='dash', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 15 px, target HP 779, Knight HP 1100, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 21 px, target HP 539, Knight HP 946, action='hit'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 40 px, target HP 239, Knight HP 946, action='sword_attack_1'
-GATE3 COMBAT: fight near 'descent approach' ended after 107 frames, target HP 979 -> 0, Knight HP 1100 -> 946
-GATE3 TRACE: descent approach frame 720 cell (61, 11) HP 946 since_progress 5 nearest 385 waypoint (60, 15)
-GATE3 TRACE: descent approach frame 840 cell (68, 14) HP 946 since_progress 1 nearest 284 waypoint (68, 14)
-GATE3 TRACE: descent approach frame 1080 cell (79, 18) HP 906 since_progress 1 nearest 28 waypoint (79, 18)
-GATE3 COMBAT: engaging L3C1Skeleton01 at 17 px, target HP 919, Knight HP 906, mana 93
+GATE3 TRACE: descent approach frame 120 cell (29, 12) HP 1100 since_progress 3 nearest 483 waypoint (29, 12)
+GATE3 TRACE: descent approach frame 240 cell (35, 17) HP 1100 since_progress 2 nearest 387 waypoint (36, 17)
+GATE3 TRACE: descent approach frame 360 cell (44, 21) HP 1100 since_progress 3 nearest 313 waypoint (44, 22)
+GATE3 TRACE: descent approach frame 480 cell (55, 23) HP 1100 since_progress 1 nearest 229 waypoint (55, 23)
+GATE3 COMBAT: engaging Floor03Pack01Member07 at 31 px, target HP 979, Knight HP 1100, mana 99
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 479, Knight HP 906, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 28 px, target HP 379, Knight HP 906, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 40 px, target HP 379, Knight HP 906, action='sword_attack_4'
-GATE3 COMBAT: fight near 'descent approach' ended after 92 frames, target HP 919 -> 0, Knight HP 906 -> 906
-GATE3 TRACE: descent approach frame 1200 cell (87, 17) HP 906 since_progress 25 nearest 54 waypoint (80, 18)
-GATE3 COMBAT: engaging L3C1Skeleton02 at 48 px, target HP 979, Knight HP 906, mana 97
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 16 px, target HP 539, Knight HP 1100, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 25 px, target HP 439, Knight HP 946, action='hit'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 38 px, target HP 239, Knight HP 946, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 105 frames, target HP 979 -> 0, Knight HP 1100 -> 946
+GATE3 TRACE: descent approach frame 720 cell (61, 11) HP 946 since_progress 22 nearest 402 waypoint (60, 15)
+GATE3 TRACE: descent approach frame 840 cell (68, 13) HP 946 since_progress 3 nearest 269 waypoint (68, 13)
+GATE3 TRACE: descent approach frame 960 cell (75, 18) HP 946 since_progress 1 nearest 133 waypoint (75, 18)
+GATE3 TRACE: descent approach frame 1080 cell (78, 18) HP 926 since_progress 1 nearest 44 waypoint (78, 18)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 15 px, target HP 939, Knight HP 926, mana 93
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 12 px, target HP 499, Knight HP 926, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 26 px, target HP 399, Knight HP 772, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 38 px, target HP 199, Knight HP 772, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 105 frames, target HP 939 -> 0, Knight HP 926 -> 772
+GATE3 COMBAT: engaging L3C1Skeleton03 at 33 px, target HP 739, Knight HP 772, mana 96
+GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 51 px, target HP 639, Knight HP 772, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 41 px, target HP 639, Knight HP 772, action='sword_attack_4'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 70 px, target HP 167, Knight HP 618, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 81 px, target HP 167, Knight HP 618, action='sword_attack_2'
+GATE3 COMBAT: fight near 'descent approach' ended after 135 frames, target HP 739 -> 167, Knight HP 772 -> 618
+GATE3 COMBAT: engaging L3C1Skeleton02 at 13 px, target HP 739, Knight HP 618, mana 100
+GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 27 px, target HP 639, Knight HP 618, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 15 px, target HP 167, Knight HP 618, action='sword_attack_4'
+GATE3 COMBAT: fight near 'descent approach' ended after 79 frames, target HP 739 -> 0, Knight HP 618 -> 618
+GATE3 COMBAT: engaging L3C1Skeleton03 at 27 px, target HP 167, Knight HP 618, mana 103
 GATE3 COMBAT: after the input press current_action='sword_attack_1', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 13 px, target HP 739, Knight HP 906, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 36 px, target HP 639, Knight HP 752, action='hit'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 53 px, target HP 439, Knight HP 752, action='sword_attack_1'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 598 (308 lost in this fight)
-GATE3 COMBAT: fight near 'descent approach' ended after 115 frames, target HP 979 -> 419, Knight HP 906 -> 598
-GATE3 DAMAGE: cell (90, 17) HP 598 -> 444 on_hazard=false nearest_enemy=14 dashes=100
-GATE3 DAMAGE: cell (90, 17) HP 444 -> 290 on_hazard=false nearest_enemy=13 dashes=110
-GATE3 DAMAGE: cell (90, 17) HP 290 -> 136 on_hazard=false nearest_enemy=12 dashes=135
-GATE3 DAMAGE: cell (90, 17) HP 136 -> 0 on_hazard=false nearest_enemy=13 dashes=143
-GATE3 RESPAWN: died at (1446.465, 282.0435), back at (280.0, 216.0) (checkpoint (280.0, 216.0)), HP 1100/1100, paused=false
-GATE3 RESPAWN: died on 'descent approach' at (1446.393, 282.0529), respawned at (280.0, 216.0) with HP 1100/1100 (paused=false)
+GATE3 COMBAT: fight near 'descent approach' ended after 23 frames, target HP 167 -> 0, Knight HP 618 -> 618
+GATE3 COMBAT: engaging L3C1Skeleton04 at 15 px, target HP 699, Knight HP 618, mana 103
+GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 24 px, target HP 599, Knight HP 618, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 19 px, target HP 599, Knight HP 464, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 41 px, target HP 399, Knight HP 464, action='sword_attack_2'
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 444 (174 lost in this fight)
+GATE3 COMBAT: fight near 'descent approach' ended after 103 frames, target HP 699 -> 399, Knight HP 618 -> 444
+GATE3 TRACE: descent approach frame 1560 cell (89, 18) HP 444 since_progress 1 nearest 22 waypoint (81, 18)
+GATE3 TRACE: descent approach frame 1680 cell (86, 20) HP 444 since_progress 12 nearest 24 waypoint (84, 21)
+GATE3 DAMAGE: cell (86, 21) HP 444 -> 290 on_hazard=false nearest_enemy=37 dashes=109
+GATE3 COMBAT: engaging L3C1Skeleton05 at 17 px, target HP 699, Knight HP 290, mana 92
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 136 (154 lost in this fight)
+GATE3 COMBAT: fight near 'descent approach' ended after 20 frames, target HP 699 -> 499, Knight HP 290 -> 136
+GATE3 DAMAGE: cell (85, 20) HP 136 -> 0 on_hazard=false nearest_enemy=16 dashes=121
+GATE3 RESPAWN: died at (1361.556, 327.2776), back at (280.0, 216.0) (checkpoint (280.0, 216.0)), HP 1100/1100, paused=false
+GATE3 RESPAWN: died on 'descent approach' at (1361.576, 327.2053), respawned at (280.0, 216.0) with HP 1100/1100 (paused=false)
 GATE3 RESPAWN: re-planning 'descent approach' from (17, 13), 137 cells
-GATE3 TRACE: descent approach frame 1560 cell (19, 12) HP 1100 since_progress 1 nearest 509 waypoint (20, 12)
-GATE3 TRACE: descent approach frame 1680 cell (30, 14) HP 1100 since_progress 1 nearest 432 waypoint (31, 14)
-GATE3 TRACE: descent approach frame 1800 cell (39, 17) HP 1100 since_progress 5 nearest 397 waypoint (39, 18)
-GATE3 TRACE: descent approach frame 1920 cell (45, 23) HP 1100 since_progress 1 nearest 341 waypoint (46, 23)
-GATE3 TRACE: descent approach frame 2040 cell (56, 21) HP 1100 since_progress 3 nearest 485 waypoint (57, 21)
-GATE3 TRACE: descent approach frame 2160 cell (60, 13) HP 1100 since_progress 3 nearest 522 waypoint (60, 12)
-GATE3 TRACE: descent approach frame 2280 cell (68, 14) HP 1100 since_progress 1 nearest 397 waypoint (68, 15)
-GATE3 TRACE: descent approach frame 2520 cell (82, 18) HP 1080 since_progress 1 nearest 175 waypoint (82, 18)
-GATE3 COMBAT: engaging L3C1Skeleton02 at 32 px, target HP 419, Knight HP 1080, mana 86
+GATE3 TRACE: descent approach frame 1800 cell (18, 13) HP 1100 since_progress 2 nearest 512 waypoint (18, 13)
+GATE3 TRACE: descent approach frame 1920 cell (30, 12) HP 1100 since_progress 2 nearest 476 waypoint (30, 12)
+GATE3 TRACE: descent approach frame 2040 cell (36, 17) HP 1100 since_progress 3 nearest 385 waypoint (37, 17)
+GATE3 TRACE: descent approach frame 2160 cell (44, 21) HP 1100 since_progress 3 nearest 352 waypoint (44, 22)
+GATE3 TRACE: descent approach frame 2280 cell (55, 23) HP 1100 since_progress 3 nearest 451 waypoint (56, 23)
+GATE3 TRACE: descent approach frame 2400 cell (60, 16) HP 1100 since_progress 3 nearest 589 waypoint (60, 15)
+GATE3 TRACE: descent approach frame 2520 cell (68, 11) HP 1100 since_progress 6 nearest 472 waypoint (68, 12)
+GATE3 TRACE: descent approach frame 2640 cell (73, 19) HP 1100 since_progress 3 nearest 401 waypoint (73, 18)
+GATE3 TRACE: descent approach frame 2760 cell (76, 18) HP 1060 since_progress 1 nearest 350 waypoint (78, 18)
+GATE3 TRACE: descent approach frame 2880 cell (85, 22) HP 1060 since_progress 1 nearest 176 waypoint (86, 22)
+GATE3 COMBAT: engaging L3C1Skeleton05 at 32 px, target HP 499, Knight HP 1060, mana 88
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 29 frames, target HP 419 -> 0, Knight HP 1080 -> 1080
-GATE3 TRACE: descent approach frame 2760 cell (86, 23) HP 1060 since_progress 16 nearest 104 waypoint (87, 23)
-GATE3 COMBAT: engaging L3C1Skeleton03 at 33 px, target HP 959, Knight HP 1060, mana 81
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 36 px, target HP 519, Knight HP 1060, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 21 px, target HP 399, Knight HP 1060, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 47 px, target HP 399, Knight HP 906, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 26 px, target HP 159, Knight HP 906, action='sword_attack_2'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 752 (308 lost in this fight)
-GATE3 COMBAT: fight near 'descent approach' ended after 133 frames, target HP 959 -> 159, Knight HP 1060 -> 752
-GATE3 TRACE: descent approach frame 3000 cell (92, 23) HP 752 since_progress 2 nearest 23 waypoint (93, 23)
-GATE3 TRACE: descent approach frame 3120 cell (104, 16) HP 752 since_progress 22 nearest 57 waypoint (104, 21)
-GATE3 COMBAT: engaging L3C1Skeleton04 at 51 px, target HP 699, Knight HP 752, mana 70
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 16 px, target HP 459, Knight HP 752, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 20 px, target HP 359, Knight HP 752, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 45 px, target HP 359, Knight HP 598, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 14 px, target HP 119, Knight HP 598, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 24 px, target HP 119, Knight HP 598, action='sword_attack_3'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 444 (308 lost in this fight)
-GATE3 COMBAT: fight near 'descent approach' ended after 162 frames, target HP 699 -> 119, Knight HP 752 -> 444
-GATE3 TRACE: descent approach frame 3360 cell (105, 21) HP 444 since_progress 2 nearest 41 waypoint (105, 21)
-GATE3 TRACE: descent approach frame 3480 cell (109, 18) HP 444 since_progress 3 nearest 67 waypoint (109, 17)
-GATE3 WALK: descent approach  (280, 216) -> (1751, 281)  1473 px over 136 cells in 3489 frames, HP 444
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 42 px, target HP 299, Knight HP 906, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 48 px, target HP 99, Knight HP 906, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 76 frames, target HP 499 -> 0, Knight HP 1060 -> 906
+GATE3 COMBAT: engaging L3C1Skeleton04 at 33 px, target HP 119, Knight HP 906, mana 91
+GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 63 px, target HP 19, Knight HP 906, action='sword_attack_3'
+GATE3 COMBAT: fight near 'descent approach' ended after 51 frames, target HP 119 -> 0, Knight HP 906 -> 906
+GATE3 TRACE: descent approach frame 3120 cell (99, 19) HP 906 since_progress 12 nearest 39 waypoint (96, 23)
+GATE3 COMBAT: engaging L3C1Reaper02 at 32 px, target HP 1202, Knight HP 906, mana 93
+GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 25 px, target HP 1002, Knight HP 906, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 19 px, target HP 762, Knight HP 906, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 32 px, target HP 662, Knight HP 906, action='sword_attack_4'
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 45 px, target HP 662, Knight HP 752, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 19 px, target HP 422, Knight HP 752, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 46 px, target HP 322, Knight HP 752, action='sword_attack_3'
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 598 (308 lost in this fight)
+GATE3 COMBAT: fight near 'descent approach' ended after 183 frames, target HP 1202 -> 322, Knight HP 906 -> 598
+GATE3 TRACE: descent approach frame 3360 cell (96, 21) HP 598 since_progress 2 nearest 167 waypoint (96, 23)
+GATE3 TRACE: descent approach frame 3480 cell (105, 21) HP 598 since_progress 2 nearest 135 waypoint (105, 21)
+GATE3 WALK: descent approach  (280, 216) -> (1752, 280)  1473 px over 136 cells in 3563 frames, HP 598
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 401 px to (1704.0, 680.0)
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
 GATE3 PLAN: checkpoint -> (98, 46) is 13 cells
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 444
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 598
 GATE3 CHECKPOINT: touched the flag at (98, 46), checkpoint now (1576.0, 744.0)
 GATE3 PLAN: floor2_arrival -> (106, 42) is 13 cells
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 444
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 598
 GATE3 PLAN: floor2_stacks -> (74, 46) is 43 cells
-GATE3 TRACE: floor2_stacks frame 120 cell (95, 44) HP 444 since_progress 2 nearest 404 waypoint (95, 45)
-GATE3 TRACE: floor2_stacks frame 240 cell (82, 45) HP 444 since_progress 2 nearest 519 waypoint (82, 45)
-GATE3 TRACE: floor2_stacks frame 360 cell (74, 49) HP 444 since_progress 5 nearest 456 waypoint (74, 48)
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 444
-GATE3 DEPTH: floor 2 reached on foot and captured, HP 444
+GATE3 TRACE: floor2_stacks frame 120 cell (95, 44) HP 598 since_progress 2 nearest 409 waypoint (95, 45)
+GATE3 TRACE: floor2_stacks frame 240 cell (82, 45) HP 598 since_progress 2 nearest 524 waypoint (82, 45)
+GATE3 TRACE: floor2_stacks frame 360 cell (74, 49) HP 598 since_progress 5 nearest 468 waypoint (74, 48)
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 598
+GATE3 DEPTH: floor 2 reached on foot and captured, HP 598
 GATE3 PLAN: descent approach -> (9, 51) is 105 cells
-GATE3 TRACE: descent approach frame 120 cell (71, 54) HP 444 since_progress 3 nearest 399 waypoint (70, 54)
-GATE3 TRACE: descent approach frame 240 cell (60, 51) HP 444 since_progress 3 nearest 224 waypoint (60, 51)
-GATE3 TRACE: descent approach frame 360 cell (56, 43) HP 444 since_progress 2 nearest 231 waypoint (56, 43)
-GATE3 TRACE: descent approach frame 480 cell (47, 40) HP 444 since_progress 1 nearest 113 waypoint (46, 40)
-GATE3 COMBAT: engaging L3C2Skeleton03 at 33 px, target HP 979, Knight HP 444, mana 90
+GATE3 TRACE: descent approach frame 120 cell (71, 54) HP 598 since_progress 3 nearest 403 waypoint (70, 54)
+GATE3 TRACE: descent approach frame 240 cell (60, 51) HP 598 since_progress 3 nearest 202 waypoint (60, 51)
+GATE3 TRACE: descent approach frame 360 cell (56, 43) HP 598 since_progress 2 nearest 241 waypoint (56, 43)
+GATE3 TRACE: descent approach frame 480 cell (47, 40) HP 598 since_progress 1 nearest 140 waypoint (46, 40)
+GATE3 COMBAT: engaging L3C2Skeleton03 at 33 px, target HP 979, Knight HP 598, mana 99
 GATE3 COMBAT: after the input press current_action='dash', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 11 px, target HP 779, Knight HP 444, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 32 px, target HP 239, Knight HP 290, action='sword_attack_1'
-GATE3 COMBAT: fight near 'descent approach' ended after 109 frames, target HP 979 -> 0, Knight HP 444 -> 290
-GATE3 TRACE: descent approach frame 720 cell (30, 43) HP 290 since_progress 14 nearest 97 waypoint (31, 42)
-GATE3 TRACE: descent approach frame 840 cell (27, 43) HP 290 since_progress 1 nearest 102 waypoint (26, 43)
-GATE3 TRACE: descent approach frame 960 cell (24, 40) HP 270 since_progress 3 nearest 137 waypoint (24, 40)
-GATE3 TRACE: descent approach frame 1080 cell (18, 49) HP 270 since_progress 14 nearest 61 waypoint (17, 47)
-GATE3 COMBAT: engaging L3C2Skeleton05 at 48 px, target HP 979, Knight HP 270, mana 76
+GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 29 px, target HP 779, Knight HP 598, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 19 px, target HP 539, Knight HP 444, action='hit'
+GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 34 px, target HP 239, Knight HP 444, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 109 frames, target HP 979 -> 0, Knight HP 598 -> 444
+GATE3 TRACE: descent approach frame 720 cell (34, 43) HP 444 since_progress 2 nearest 140 waypoint (33, 43)
+GATE3 TRACE: descent approach frame 840 cell (22, 42) HP 444 since_progress 11 nearest 124 waypoint (24, 42)
+GATE3 TRACE: descent approach frame 960 cell (18, 40) HP 424 since_progress 4 nearest 161 waypoint (18, 41)
+GATE3 COMBAT: engaging L3C2Skeleton05 at 47 px, target HP 979, Knight HP 424, mana 94
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 37 px, target HP 539, Knight HP 270, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 29 px, target HP 439, Knight HP 270, action='sword_attack_3'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 116 (154 lost in this fight)
-GATE3 COMBAT: fight near 'descent approach' ended after 72 frames, target HP 979 -> 439, Knight HP 270 -> 116
-GATE3 TRACE: descent approach frame 1200 cell (17, 47) HP 116 since_progress 1 nearest 82 waypoint (16, 47)
-GATE3 DAMAGE: cell (15, 51) HP 116 -> 0 on_hazard=false nearest_enemy=45 dashes=361
-GATE3 RESPAWN: died at (250.9709, 826.8537), back at (1576.0, 744.0) (checkpoint (1576.0, 744.0)), HP 1100/1100, paused=false
-GATE3 RESPAWN: died on 'descent approach' at (250.9709, 826.8537), respawned at (1576.0, 744.0) with HP 1100/1100 (paused=false)
-GATE3 RESPAWN: re-planning 'descent approach' from (98, 46), 129 cells
-GATE3 TRACE: descent approach frame 1320 cell (91, 46) HP 1100 since_progress 1 nearest 450 waypoint (90, 46)
-GATE3 TRACE: descent approach frame 1440 cell (79, 48) HP 1100 since_progress 2 nearest 527 waypoint (79, 48)
-GATE3 TRACE: descent approach frame 1560 cell (72, 52) HP 1100 since_progress 13 nearest 421 waypoint (72, 53)
-GATE3 TRACE: descent approach frame 1680 cell (60, 54) HP 1100 since_progress 1 nearest 231 waypoint (60, 53)
-GATE3 TRACE: descent approach frame 1800 cell (59, 43) HP 1100 since_progress 3 nearest 270 waypoint (59, 43)
-GATE3 TRACE: descent approach frame 1920 cell (50, 40) HP 1100 since_progress 3 nearest 188 waypoint (50, 40)
-GATE3 TRACE: descent approach frame 2040 cell (36, 40) HP 1100 since_progress 2 nearest 161 waypoint (36, 40)
-GATE3 TRACE: descent approach frame 2160 cell (27, 43) HP 1100 since_progress 3 nearest 102 waypoint (26, 43)
-GATE3 TRACE: descent approach frame 2280 cell (18, 47) HP 1100 since_progress 1 nearest 70 waypoint (17, 47)
-GATE3 TRACE: descent approach frame 2400 cell (9, 51) HP 1100 since_progress 1 nearest 137 waypoint (9, 51)
-GATE3 WALK: descent approach  (1192, 744) -> (151, 823)  1044 px over 21 cells in 2402 frames, HP 1100
+GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 38 px, target HP 539, Knight HP 424, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 28 px, target HP 439, Knight HP 424, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 47 px, target HP 439, Knight HP 270, action='hit'
+GATE3 COMBAT: 'descent approach' L3C2Skeleton05 at 43 px, target HP 239, Knight HP 270, action='sword_attack_2'
+GATE3 COMBAT: fight near 'descent approach' ended after 122 frames, target HP 979 -> 0, Knight HP 424 -> 270
+GATE3 TRACE: descent approach frame 1200 cell (21, 49) HP 270 since_progress 11 nearest 109 waypoint (21, 49)
+GATE3 WALK: descent approach  (1192, 744) -> (152, 824)  1044 px over 15 cells in 1310 frames, HP 270
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 464 px to (152.0, 1288.0)
 GATE3 PLAN: checkpoint -> (17, 84) is 13 cells
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 1100
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 270
 GATE3 CHECKPOINT: touched the flag at (17, 84), checkpoint now (280.0, 1352.0)
 GATE3 PLAN: floor3_camp -> (36, 82) is 22 cells
-GATE3 TRACE: floor3_camp frame 120 cell (30, 84) HP 1100 since_progress 3 nearest 303 waypoint (31, 84)
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 1100
-GATE3 DEPTH: floor 3 reached on foot and captured, HP 1100
+GATE3 TRACE: floor3_camp frame 120 cell (30, 84) HP 270 since_progress 3 nearest 310 waypoint (31, 84)
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 270
+GATE3 DEPTH: floor 3 reached on foot and captured, HP 270
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 PERF: 90 physics frames in 1470 ms, 16.33 ms per frame (software GL)
-GATE3 PERF: nodes=900 objects=14096 draw_calls_in_frame=0 objects_in_frame=0
-GATE3 PERF: physics_process=2.40 ms render_process=17.00 ms
-GATE3 ROUTE: 256 cells walked, 3764 px travelled, 8 fights, 385 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
-GATE3 RESPAWN TOTAL: 2 deaths recovered at a checkpoint during this run
-GATE3 DAMAGE LEDGER: hazard 254 (6 ticks), enemy 1946 (13 blows), unexplained 0
-GATE3 STABILITY: descent complete=true floors=3 hp_start=1100 hp_end=1100 delta=0 fights=8 respawns=2 hazard=254 enemy=1946 unexplained=0
+GATE3 PERF: 90 physics frames in 1486 ms, 16.52 ms per frame (software GL)
+GATE3 PERF: nodes=864 objects=13936 draw_calls_in_frame=0 objects_in_frame=0
+GATE3 PERF: physics_process=3.41 ms render_process=15.24 ms
+GATE3 ROUTE: 250 cells walked, 3763 px travelled, 12 fights, 232 dashes, 0 skill casts, HP 1100 -> 270 (delta 830)
+GATE3 RESPAWN TOTAL: 1 deaths recovered at a checkpoint during this run
+GATE3 DAMAGE LEDGER: hazard 100 (5 ticks), enemy 1830 (12 blows), unexplained 0
+GATE3 STABILITY: descent complete=true floors=3 hp_start=1100 hp_end=270 delta=830 fights=12 respawns=1 hazard=100 enemy=1830 unexplained=0
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 900 nodes
-GATE3 DEPTH SUMMARY: floors reached = 1..3, HP 1100
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 864 nodes
+GATE3 DEPTH SUMMARY: floors reached = 1..3, HP 270
 GATE3 CAPTURE TEST PASSED: 0 frames, 0 camera frames (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

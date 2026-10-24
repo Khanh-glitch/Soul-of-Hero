@@ -1,30 +1,30 @@
 == ObjectDB / leak notices ==
-GATE3 OBJECTS: ObjectDB holds 14023 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14024 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 12760 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 == unused/leaked instances named by --verbose ==
-GATE3 OBJECTS: ObjectDB holds 13686 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13850 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 
 == counts per log ==
@@ -96,15 +96,15 @@ GATE3 CAMERA FRAME: cloister floor 1 cells (18, 6, 59, 29) building 78.0% rock 2
 GATE3 WALK: south_loop  (615, 295) -> (744, 375)  152 px over 13 cells in 135 frames, HP 1100
 GATE3 CAMERA FRAME: south_loop floor 1 cells (26, 6, 67, 29) building 78.2% rock 21.8% void 0.0%
 GATE3 WALK: combat_space  (744, 375) -> (937, 345)  195 px over 14 cells in 135 frames, HP 1100
-GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 6, 79, 30) building 70.8% rock 29.2% void 0.0%
+GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 6, 79, 29) building 73.9% rock 26.1% void 0.0%
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 170 frames, HP 1100
-GATE3 CAMERA FRAME: return_route floor 1 cells (24, 6, 65, 30) building 74.5% rock 25.5% void 0.0%
+GATE3 CAMERA FRAME: return_route floor 1 cells (24, 6, 65, 29) building 77.7% rock 22.3% void 0.0%
 GATE3 COLLISION: Knight at (713.1164, 342.5425) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (713.1164, 338.5425) is free of prop bodies
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 14023 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14024 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 866 nodes
 GATE3 MATERIAL rock=4218  rock_deep=1753  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=267  mass=707  shadow=508  weather=316  decor=109
 GATE3 PROPS 45 (21 solid)  LIGHTS 10  ENTITIES 79
@@ -123,7 +123,7 @@ GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 
 GATE3 COLLISION: Knight at (712.8999, 343.518) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 935 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12760 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 754 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
@@ -143,28 +143,28 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 1, 81, 24) building 74.1% rock 25.9% void 0.0%
-GATE3 WALK: descent approach  (280, 216) -> (1759, 279)  1480 px over 8 cells in 1997 frames, HP 712
+GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 2, 81, 25) building 75.6% rock 24.4% void 0.0%
+GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 33 cells in 4293 frames, HP 538
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 406 px to (1704.506, 680.0136)
-GATE3 WALK: checkpoint  (1705, 680) -> (1577, 745)  143 px over 12 cells in 111 frames, HP 712
-GATE3 WALK: floor2_arrival  (1577, 745) -> (1703, 679)  142 px over 12 cells in 110 frames, HP 712
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 538
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 538
 GATE3 CAMERA FRAME: floor2_arrival floor 2 cells (74, 34, 114, 57) building 45.3% rock 54.7% void 0.0%
-GATE3 WALK: floor2_stacks  (1703, 679) -> (1193, 743)  514 px over 42 cells in 386 frames, HP 712
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 538
 GATE3 CAMERA FRAME: floor2_stacks floor 2 cells (54, 34, 95, 58) building 61.9% rock 38.1% void 0.0%
-GATE3 WALK: descent approach  (1193, 743) -> (153, 823)  1043 px over 9 cells in 3315 frames, HP 1080
+GATE3 WALK: descent approach  (1192, 744) -> (141, 823)  1054 px over 36 cells in 1089 frames, HP 384
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 1080
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 1080
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 466 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 384
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 384
 GATE3 CAMERA FRAME: floor3_camp floor 3 cells (16, 70, 57, 94) building 59.2% rock 40.8% void 0.0%
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 116 cells walked, 3771 px travelled, 10 fights, 276 dashes, 0 skill casts, HP 1100 -> 1080 (delta 20)
+GATE3 ROUTE: 168 cells walked, 3773 px travelled, 9 fights, 672 dashes, 0 skill casts, HP 1100 -> 384 (delta 716)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 863 nodes
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 882 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -183,41 +183,41 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 1, 81, 24) building 74.1% rock 25.9% void 0.0%
-GATE3 WALK: descent approach  (280, 216) -> (1759, 279)  1480 px over 8 cells in 1997 frames, HP 712
+GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 2, 81, 25) building 75.6% rock 24.4% void 0.0%
+GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 33 cells in 4293 frames, HP 538
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 406 px to (1704.506, 680.0136)
-GATE3 WALK: checkpoint  (1705, 680) -> (1577, 745)  143 px over 12 cells in 111 frames, HP 712
-GATE3 WALK: floor2_arrival  (1577, 745) -> (1703, 679)  142 px over 12 cells in 110 frames, HP 712
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 538
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 538
 GATE3 CAMERA FRAME: floor2_arrival floor 2 cells (74, 34, 114, 57) building 45.3% rock 54.7% void 0.0%
-GATE3 WALK: floor2_stacks  (1703, 679) -> (1193, 743)  514 px over 42 cells in 386 frames, HP 712
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 538
 GATE3 CAMERA FRAME: floor2_stacks floor 2 cells (54, 34, 95, 58) building 61.9% rock 38.1% void 0.0%
-GATE3 WALK: descent approach  (1193, 743) -> (153, 823)  1043 px over 9 cells in 3315 frames, HP 1080
+GATE3 WALK: descent approach  (1192, 744) -> (141, 823)  1054 px over 36 cells in 1089 frames, HP 384
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 1080
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 1080
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 466 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 384
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 384
 GATE3 CAMERA FRAME: floor3_camp floor 3 cells (16, 70, 57, 94) building 59.2% rock 40.8% void 0.0%
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 116 cells walked, 3771 px travelled, 10 fights, 276 dashes, 0 skill casts, HP 1100 -> 1080 (delta 20)
+GATE3 ROUTE: 168 cells walked, 3773 px travelled, 9 fights, 672 dashes, 0 skill casts, HP 1100 -> 384 (delta 716)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 863 nodes
-GATE3 OBJECTS: ObjectDB holds 14023 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 12760 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13744 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13686 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 882 nodes
+GATE3 OBJECTS: ObjectDB holds 14024 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13808 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13850 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -258,15 +258,15 @@ GATE3 CAMERA FRAME: cloister floor 1 cells (18, 6, 59, 29) building 78.0% rock 2
 GATE3 WALK: south_loop  (615, 295) -> (744, 375)  152 px over 13 cells in 135 frames, HP 1100
 GATE3 CAMERA FRAME: south_loop floor 1 cells (26, 6, 67, 29) building 78.2% rock 21.8% void 0.0%
 GATE3 WALK: combat_space  (744, 375) -> (937, 345)  195 px over 14 cells in 135 frames, HP 1100
-GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 6, 79, 30) building 70.8% rock 29.2% void 0.0%
+GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 6, 79, 29) building 73.9% rock 26.1% void 0.0%
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 170 frames, HP 1100
-GATE3 CAMERA FRAME: return_route floor 1 cells (24, 6, 65, 30) building 74.5% rock 25.5% void 0.0%
+GATE3 CAMERA FRAME: return_route floor 1 cells (24, 6, 65, 29) building 77.7% rock 22.3% void 0.0%
 GATE3 COLLISION: Knight at (713.1164, 342.5425) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (713.1164, 338.5425) is free of prop bodies
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 14023 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14024 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 866 nodes
 GATE3 MATERIAL rock=4218  rock_deep=1753  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=267  mass=707  shadow=508  weather=316  decor=109
 GATE3 PROPS 45 (21 solid)  LIGHTS 10  ENTITIES 79
@@ -289,22 +289,58 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 1, 81, 25) building 73.8% rock 26.2% void 0.0%
-GATE3 CAMERA FRAME: respawn_death floor 1 cells (60, 6, 101, 29) building 64.1% rock 35.9% void 0.0%
-GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1472 px over 16 cells in 3754 frames, HP 752
+GATE3 CAMERA FRAME: combat_load floor 1 cells (40, 2, 81, 25) building 75.6% rock 24.4% void 0.0%
+GATE3 CAMERA FRAME: respawn_death floor 1 cells (63, 6, 104, 29) building 64.3% rock 35.7% void 0.0%
+GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 22 cells in 4378 frames, HP 672
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
 GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 752
-GATE3 WALK: checkpoint floor 2  (1577, 744) -> (1577, 744)  0 px over 0 cells in 0 frames, HP 752
-GATE3 WALK: hazard approach 1  (1577, 744) -> (1064, 665)  520 px over 3 cells in 751 frames, HP 612
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 672
+GATE3 WALK: checkpoint floor 2  (1577, 744) -> (1577, 744)  0 px over 0 cells in 0 frames, HP 672
+GATE3 WALK: hazard approach 1  (1577, 744) -> (1064, 665)  520 px over 3 cells in 751 frames, HP 532
 GATE3 CAMERA FRAME: respawn_death floor 2 cells (49, 34, 90, 57) building 66.8% rock 33.2% void 0.0%
 GATE3 CAMERA FRAME: respawn_after floor 2 cells (74, 34, 114, 58) building 43.6% rock 56.4% void 0.0%
 GATE3 COLLISION: Knight at (1576.0, 744.0) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (1576.0, 740.0) is free of prop bodies
-GATE3 ROUTE: 31 cells walked, 2134 px travelled, 10 fights, 479 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
+GATE3 ROUTE: 37 cells walked, 2135 px travelled, 12 fights, 1083 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13686 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13850 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 881 nodes
+GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
+GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
+GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
+GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
+GATE3 MATERIAL: Gate3_coping  34 cells  z=-19
+GATE3 MATERIAL: Gate3_water  66 cells  z=-18
+GATE3 MATERIAL: Gate3_water_edge  30 cells  z=-17
+GATE3 MATERIAL: Gate3_shadow  508 cells  z=-16
+GATE3 MATERIAL: Gate3_weather  316 cells  z=-15
+GATE3 MATERIAL: Gate3_mass  707 cells  z=-13
+GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
+GATE3 MATERIAL: Gate3_niche  267 cells  z=-11
+GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
+GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
+GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
+GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
+GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
+GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
+GATE3 WALK: descent approach  (280, 216) -> (1751, 280)  1473 px over 11 cells in 3693 frames, HP 558
+GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 558
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 558
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 558
+GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1055 px over 42 cells in 1221 frames, HP 96
+GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 96
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 96
+GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
+GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
+GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
+GATE3 ROUTE: 152 cells walked, 3774 px travelled, 13 fights, 358 dashes, 0 skill casts, HP 1100 -> 96 (delta 1004)
+GATE3 CAMERA FRAMES: 0
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 871 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
@@ -324,13 +360,13 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1750, 280)  1471 px over 2 cells in 4936 frames, HP 886
+GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1473 px over 4 cells in 3564 frames, HP 906
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 886
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 886
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 886
-GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1056 px over 39 cells in 1006 frames, HP 732
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 906
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 906
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 906
+GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1055 px over 38 cells in 1049 frames, HP 732
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
 GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
 GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 732
@@ -338,10 +374,10 @@ GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 140 cells walked, 3774 px travelled, 9 fights, 482 dashes, 0 skill casts, HP 1100 -> 732 (delta 368)
+GATE3 ROUTE: 141 cells walked, 3774 px travelled, 10 fights, 356 dashes, 0 skill casts, HP 1100 -> 732 (delta 368)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 884 nodes
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 902 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -360,24 +396,24 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1751, 280)  1472 px over 8 cells in 3421 frames, HP 772
+GATE3 WALK: descent approach  (280, 216) -> (1752, 280)  1473 px over 136 cells in 3563 frames, HP 598
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
 GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 772
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 772
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 772
-GATE3 WALK: descent approach  (1192, 744) -> (151, 823)  1044 px over 44 cells in 1063 frames, HP 618
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 598
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 598
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 598
+GATE3 WALK: descent approach  (1192, 744) -> (152, 824)  1044 px over 15 cells in 1310 frames, HP 270
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 618
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 618
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 464 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 270
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 270
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 151 cells walked, 3763 px travelled, 12 fights, 264 dashes, 0 skill casts, HP 1100 -> 618 (delta 482)
+GATE3 ROUTE: 250 cells walked, 3763 px travelled, 12 fights, 232 dashes, 0 skill casts, HP 1100 -> 270 (delta 830)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 883 nodes
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 864 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -396,24 +432,24 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1751, 281)  1473 px over 136 cells in 3489 frames, HP 444
+GATE3 WALK: descent approach  (280, 216) -> (1750, 279)  1472 px over 3 cells in 3385 frames, HP 1060
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 401 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 444
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 444
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 444
-GATE3 WALK: descent approach  (1192, 744) -> (151, 823)  1044 px over 21 cells in 2402 frames, HP 1100
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 1060
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 1060
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 1060
+GATE3 WALK: descent approach  (1192, 744) -> (142, 822)  1053 px over 25 cells in 1463 frames, HP 424
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 1100
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 1100
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 466 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 424
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 424
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 256 cells walked, 3764 px travelled, 8 fights, 385 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
+GATE3 ROUTE: 127 cells walked, 3771 px travelled, 13 fights, 331 dashes, 0 skill casts, HP 1100 -> 424 (delta 676)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 900 nodes
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 853 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -432,49 +468,49 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 45 cells in 2536 frames, HP 652
+GATE3 WALK: descent approach  (280, 216) -> (1751, 280)  1473 px over 11 cells in 3693 frames, HP 558
+GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 558
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 558
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 558
+GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1055 px over 42 cells in 1221 frames, HP 96
+GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 96
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 96
+GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
+GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
+GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
+GATE3 ROUTE: 152 cells walked, 3774 px travelled, 13 fights, 358 dashes, 0 skill casts, HP 1100 -> 96 (delta 1004)
+GATE3 CAMERA FRAMES: 0
+GATE3 OBJECTS: ObjectDB holds 13894 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 871 nodes
+GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
+GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
+GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
+GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
+GATE3 MATERIAL: Gate3_coping  34 cells  z=-19
+GATE3 MATERIAL: Gate3_water  66 cells  z=-18
+GATE3 MATERIAL: Gate3_water_edge  30 cells  z=-17
+GATE3 MATERIAL: Gate3_shadow  508 cells  z=-16
+GATE3 MATERIAL: Gate3_weather  316 cells  z=-15
+GATE3 MATERIAL: Gate3_mass  707 cells  z=-13
+GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
+GATE3 MATERIAL: Gate3_niche  267 cells  z=-11
+GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
+GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
+GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
+GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
+GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
+GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
+GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1473 px over 4 cells in 3564 frames, HP 906
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
 GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 652
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 652
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 652
-GATE3 WALK: descent approach  (1192, 744) -> (134, 823)  1061 px over 39 cells in 1166 frames, HP 478
-GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (155.2222, 1288.0)
-GATE3 WALK: checkpoint  (155, 1288) -> (279, 1353)  140 px over 12 cells in 109 frames, HP 478
-GATE3 WALK: floor3_camp  (279, 1353) -> (584, 1322)  306 px over 21 cells in 196 frames, HP 478
-GATE3 COLLISION: Knight at (583.6261, 1321.51) is clear of every wall and prop
-GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (583.6261, 1317.51) is free of prop bodies
-GATE3 ROUTE: 183 cells walked, 3779 px travelled, 8 fights, 322 dashes, 0 skill casts, HP 1100 -> 478 (delta 622)
-GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 854 nodes
-GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
-GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
-GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
-GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
-GATE3 MATERIAL: Gate3_coping  34 cells  z=-19
-GATE3 MATERIAL: Gate3_water  66 cells  z=-18
-GATE3 MATERIAL: Gate3_water_edge  30 cells  z=-17
-GATE3 MATERIAL: Gate3_shadow  508 cells  z=-16
-GATE3 MATERIAL: Gate3_weather  316 cells  z=-15
-GATE3 MATERIAL: Gate3_mass  707 cells  z=-13
-GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
-GATE3 MATERIAL: Gate3_niche  267 cells  z=-11
-GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
-GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
-GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
-GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
-GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
-GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1750, 280)  1471 px over 2 cells in 4936 frames, HP 886
-GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 886
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 886
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 886
-GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1056 px over 39 cells in 1006 frames, HP 732
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 906
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 906
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 906
+GATE3 WALK: descent approach  (1192, 744) -> (140, 823)  1055 px over 38 cells in 1049 frames, HP 732
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
 GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
 GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 732
@@ -482,10 +518,10 @@ GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 140 cells walked, 3774 px travelled, 9 fights, 482 dashes, 0 skill casts, HP 1100 -> 732 (delta 368)
+GATE3 ROUTE: 141 cells walked, 3774 px travelled, 10 fights, 356 dashes, 0 skill casts, HP 1100 -> 732 (delta 368)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14053 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 884 nodes
+GATE3 OBJECTS: ObjectDB holds 14032 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 902 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -504,24 +540,24 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1751, 280)  1472 px over 8 cells in 3421 frames, HP 772
+GATE3 WALK: descent approach  (280, 216) -> (1752, 280)  1473 px over 136 cells in 3563 frames, HP 598
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
 GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 772
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 772
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 772
-GATE3 WALK: descent approach  (1192, 744) -> (151, 823)  1044 px over 44 cells in 1063 frames, HP 618
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 598
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 598
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 598
+GATE3 WALK: descent approach  (1192, 744) -> (152, 824)  1044 px over 15 cells in 1310 frames, HP 270
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 618
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 618
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 464 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 270
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 270
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 151 cells walked, 3763 px travelled, 12 fights, 264 dashes, 0 skill casts, HP 1100 -> 618 (delta 482)
+GATE3 ROUTE: 250 cells walked, 3763 px travelled, 12 fights, 232 dashes, 0 skill casts, HP 1100 -> 270 (delta 830)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13911 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 883 nodes
+GATE3 OBJECTS: ObjectDB holds 13929 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 864 nodes
 GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
 GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
@@ -540,59 +576,23 @@ GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
 GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
 GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
 GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1751, 281)  1473 px over 136 cells in 3489 frames, HP 444
+GATE3 WALK: descent approach  (280, 216) -> (1750, 279)  1472 px over 3 cells in 3385 frames, HP 1060
 GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 401 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 444
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 444
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 444
-GATE3 WALK: descent approach  (1192, 744) -> (151, 823)  1044 px over 21 cells in 2402 frames, HP 1100
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 1060
+GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 1060
+GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 1060
+GATE3 WALK: descent approach  (1192, 744) -> (142, 822)  1053 px over 25 cells in 1463 frames, HP 424
 GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (152.0, 1288.0)
-GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 1100
-GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 1100
+GATE3 FLOOR DOOR: Tầng 3 moved the Knight 466 px to (152.0, 1288.0)
+GATE3 WALK: checkpoint  (152, 1288) -> (279, 1352)  142 px over 12 cells in 111 frames, HP 424
+GATE3 WALK: floor3_camp  (279, 1352) -> (583, 1321)  306 px over 21 cells in 194 frames, HP 424
 GATE3 COLLISION: Knight at (582.7864, 1321.224) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (582.7864, 1317.224) is free of prop bodies
-GATE3 ROUTE: 256 cells walked, 3764 px travelled, 8 fights, 385 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
+GATE3 ROUTE: 127 cells walked, 3771 px travelled, 13 fights, 331 dashes, 0 skill casts, HP 1100 -> 424 (delta 676)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14089 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 900 nodes
-GATE3 PROPS: 45 sprites (21 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
-GATE3 MATERIAL: Gate3_rock  4218 cells  z=-29
-GATE3 MATERIAL: Gate3_rock_deep  1753 cells  z=-28
-GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
-GATE3 MATERIAL: Gate3_coping  34 cells  z=-19
-GATE3 MATERIAL: Gate3_water  66 cells  z=-18
-GATE3 MATERIAL: Gate3_water_edge  30 cells  z=-17
-GATE3 MATERIAL: Gate3_shadow  508 cells  z=-16
-GATE3 MATERIAL: Gate3_weather  316 cells  z=-15
-GATE3 MATERIAL: Gate3_mass  707 cells  z=-13
-GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
-GATE3 MATERIAL: Gate3_niche  267 cells  z=-11
-GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
-GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
-GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
-GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
-GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
-GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
-GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 45 cells in 2536 frames, HP 652
-GATE3 CAMERA: storey 2, limits 176..1824 x 544..1088 px
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
-GATE3 WALK: checkpoint  (1704, 680) -> (1577, 744)  142 px over 12 cells in 111 frames, HP 652
-GATE3 WALK: floor2_arrival  (1577, 744) -> (1703, 680)  142 px over 12 cells in 110 frames, HP 652
-GATE3 WALK: floor2_stacks  (1703, 680) -> (1192, 744)  515 px over 42 cells in 385 frames, HP 652
-GATE3 WALK: descent approach  (1192, 744) -> (134, 823)  1061 px over 39 cells in 1166 frames, HP 478
-GATE3 CAMERA: storey 3, limits 32..1840 x 1120..1584 px
-GATE3 FLOOR DOOR: Tầng 3 moved the Knight 465 px to (155.2222, 1288.0)
-GATE3 WALK: checkpoint  (155, 1288) -> (279, 1353)  140 px over 12 cells in 109 frames, HP 478
-GATE3 WALK: floor3_camp  (279, 1353) -> (584, 1322)  306 px over 21 cells in 196 frames, HP 478
-GATE3 COLLISION: Knight at (583.6261, 1321.51) is clear of every wall and prop
-GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (583.6261, 1317.51) is free of prop bodies
-GATE3 ROUTE: 183 cells walked, 3779 px travelled, 8 fights, 322 dashes, 0 skill casts, HP 1100 -> 478 (delta 622)
-GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13913 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 854 nodes
+GATE3 OBJECTS: ObjectDB holds 13962 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 853 nodes
 GATE3 MATERIAL rock=4218  rock_deep=1753  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=267  mass=707  shadow=508  weather=316  decor=109
 GATE3 PROPS 45 (21 solid)  LIGHTS 10  ENTITIES 79
