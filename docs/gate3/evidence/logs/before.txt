@@ -47,29 +47,35 @@ GATE3 TRACE: descent approach frame 180 cell (62, 23) HP 1100 stuck 1 waypoint (
 GATE3 TRACE: descent approach frame 240 cell (66, 21) HP 1100 stuck 6 waypoint (67, 21)
 GATE3 TRACE: descent approach frame 300 cell (73, 21) HP 1100 stuck 3 waypoint (73, 20)
 GATE3 TRACE: descent approach frame 360 cell (76, 18) HP 1100 stuck 6 waypoint (77, 18)
-GATE3 TRACE: descent approach frame 420 cell (80, 18) HP 1080 stuck 1 waypoint (80, 18)
-GATE3 COMBAT: engaging L3C1Skeleton01 at 13 px with target HP 979, Knight HP 926
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 13 px, target HP 979, Knight HP 926
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 28 px, target HP 979, Knight HP 772
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 13 px, target HP 979, Knight HP 772
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 14 px, target HP 979, Knight HP 772
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 25 px, target HP 979, Knight HP 618
-GATE3 COMBAT: 'descent approach' target L3C1Skeleton01 at 14 px, target HP 979, Knight HP 618
-GATE3 TRACE: descent approach frame 720 cell (78, 18) HP 310 stuck 41 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 780 cell (80, 18) HP 156 stuck 41 waypoint (81, 18)
-GATE3 TRACE: descent approach frame 840 cell (79, 18) HP 136 stuck 41 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 900 cell (79, 18) HP 116 stuck 41 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 960 cell (79, 18) HP 116 stuck 40 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 420 cell (79, 18) HP 1080 stuck 9 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 480 cell (79, 18) HP 926 stuck 9 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 540 cell (79, 18) HP 772 stuck 42 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 600 cell (80, 18) HP 772 stuck 42 waypoint (80, 18)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 13 px, target HP 979, Knight HP 772
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 19 px, target HP 979, Knight HP 618
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 618
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 598
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 598
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 578
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 578
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 29 px, target HP 979, Knight HP 424
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 424
+GATE3 COMBAT: fight near 'descent approach' ended after 260 frames, Knight HP 772 -> 404
+GATE3 TRACE: descent approach frame 900 cell (79, 18) HP 404 stuck 22 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 960 cell (79, 18) HP 384 stuck 22 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1020 cell (79, 18) HP 364 stuck 21 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1080 cell (79, 18) HP 344 stuck 20 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1140 cell (79, 18) HP 324 stuck 19 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1200 cell (79, 18) HP 304 stuck 18 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1260 cell (79, 18) HP 150 stuck 17 waypoint (80, 18)
 GATE3 PLAN: descent approach -> (9, 51) is 0 cells
-GATE3 COLLISION: Knight at (1276.861, 294.9264) is clear of every wall and prop
+GATE3 COLLISION: Knight at (1272.443, 297.0507) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 933 px travelled, 1 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12831 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 767 nodes
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1276.861, 294.9264)
+GATE3 OBJECTS: ObjectDB holds 12806 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 765 nodes
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1272.443, 297.0507)
 GATE3 FAILURE: no walkable route to 'descent approach' at (9, 51)
 GATE3 CAPTURE TEST FAILED (before)
-WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 3 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)
