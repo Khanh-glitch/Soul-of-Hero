@@ -1,11 +1,57 @@
-# L02 — Ossuary Fork
+# Ossuary Fork (L02) - visual review
 
-**Status: `CANDIDATE — pending human review`**
+- Level id: `chapter_1_level_2`
+- Map source: `data/levels/chapter_1_level_2.json`
+- Source sha256: `a40e9500414e0787037f7d279faaa0e88e1b2275cb2e8c79be3cfb42b699bc04`
+- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Art direction: Ossuary Fork — burial galleries, bone masonry
 
-| Level id | Map source | Theme | Stations |
-| --- | --- | --- | --- |
-| `chapter_1_level_2` | `data/levels/chapter_1_level_2.json` | `data/environment/chapter1/chapter_1_level_2.json` | checkpoint, entry, exit, landmark |
+## What the native frames show
 
-Native frames: `images/after_*.png` (1280x720, Godot 4.7), pairs in
-`images/pair_*.png` where a BEFORE station exists. BEFORE runs the same
-map, geometry and entities with the presentation layer disabled.
+- Derived facade cells: 1835
+- Landmark lights: 12
+- Authored entities preserved: 64
+
+### Improved
+
+- The burial gallery keeps its authored bone piles and urns and now sits inside brick walls with a coping line and contact shadow.
+- Warm bone-toned palette separates this floor from Level 1 without changing the map.
+
+### Still missing against the brief
+
+- Burial niches are not architectural yet: the bone galleries are props on a floor, not constructed recesses in a wall.
+- Safe and risky branches read the same; the brief asked for the environment to signal which fork is dangerous.
+
+### Next correction pass
+
+- Add a niche band on wall faces (a recessed dark tile framed by two jambs) at fixed intervals.
+- Differentiate the branches with a blood channel or rubble fall on the risky side.
+
+## Cost of the layer
+
+- Nodes: 695 (art off) -> 715 (art on)
+- Draw calls: 72 -> 91
+- Static memory: 128.6 MiB with the layer on
+
+## Frames
+
+- `images/after_checkpoint.png`
+- `images/after_entry.png`
+- `images/after_exit.png`
+- `images/after_landmark.png`
+- `images/before_checkpoint.png`
+- `images/before_entry.png`
+- `images/before_exit.png`
+- `images/before_landmark.png`
+- `images/crop3x_entry.png`
+- `images/crop3x_exit.png`
+- `images/crop3x_landmark.png`
+- `images/pair_checkpoint.png`
+- `images/pair_entry.png`
+- `images/pair_exit.png`
+- `images/pair_landmark.png`
+
+Every image above is a native Godot frame from the production `AppRoot`
+campaign boot at 1280x720. `before_*` is the same map with the art layer
+disabled, so the pair isolates the layer and nothing else. Nothing in this
+folder is a plan diagram, a PIL preview or a generated image.

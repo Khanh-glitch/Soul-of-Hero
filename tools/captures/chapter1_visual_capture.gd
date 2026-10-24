@@ -201,11 +201,16 @@ func _stations(dungeon: DungeonLevel) -> Array:
 	stations.append(_station("entry", "Entry — first impression", by_type, "player"))
 	stations.append(_station("landmark", "Primary landmark", by_type, "sigil"))
 	stations.append(_station("checkpoint", "Checkpoint breather", by_type, "checkpoint"))
-	stations.append(_station("exit", "Exit gate", by_type, "exit_gate"))
+	# The boss frame is captured before the exit frame: standing on the exit gate
+	# completes the level and raises the completion dialog, which then covered the
+	# arena in the boss frame of the first evidence run.
 	for kind: String in BOSS_TYPES:
 		if by_type.has(kind):
 			stations.append(_station("boss", "Boss arena — %s" % kind, by_type, kind, 6))
 			break
+	# Four tiles short of the gate, so the frame shows the gate instead of
+	# triggering it.
+	stations.append(_station("exit", "Exit gate", by_type, "exit_gate", -4))
 	var result: Array = []
 	for station: Dictionary in stations:
 		if station.is_empty():

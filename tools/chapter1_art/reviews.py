@@ -216,7 +216,8 @@ def main() -> int:
         images = sorted(p.name for p in (folder / "images").glob("*.png")) if (folder / "images").exists() else []
         note = CRITIQUE.get(level_id, {})
         row = stats.get(level_id, {})
-        theme = json.loads((THEMES / f"{level_id}.json").read_text())
+        theme_path = THEMES / entry.get("theme", f"{level_id}.json")
+        theme = json.loads(theme_path.read_text()) if theme_path.exists() else {}
         lines = [
             f"# {entry['title']} (L{entry['slot']:02d}) - visual review",
             "",

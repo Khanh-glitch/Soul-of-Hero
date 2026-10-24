@@ -115,6 +115,7 @@ def main() -> int:
         "## Gallery",
         "",
         "`gallery/chapter1_after_overview.png` — one AFTER frame per level.",
+        "`L01/` … `L10/` — native frames, before/after pairs, crops, `REVIEW.md`.",
         "",
         "## Cost of the presentation layer",
         "",
@@ -122,10 +123,8 @@ def main() -> int:
         "",
         "| Level | Nodes | Draw calls | Static memory |",
         "| --- | --- | --- | --- |",
-        "`L01/` … `L10/` — native frames, before/after pairs, crops, `REVIEW.md`.",
     ]
-    perf = _perf_rows()
-    for row in perf:
+    for row in _perf_rows():
         lines.append("| %s | %s | %s | %s |" % (row[0], row[1], row[2], row[3]))
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")

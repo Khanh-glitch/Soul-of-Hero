@@ -6,7 +6,7 @@
       "level_id": "chapter_1_level_1",
       "title": "Crypt Entrance",
       "map": "crypt_entrance.json",
-      "theme": "chapter_1_level_1.json",
+      "theme": "crypt_entrance.json",
       "folder": "L01"
     },
     {

@@ -1,11 +1,56 @@
-# L04 — Spiral Reliquary
+# Spiral Reliquary (L04) - visual review
 
-**Status: `CANDIDATE — pending human review`**
+- Level id: `chapter_1_level_4`
+- Map source: `data/levels/chapter_1_level_4.json`
+- Source sha256: `7a105be67fa99f274ad039acd0d6a04cfadb41883a33cf4e62bd96f8e5945233`
+- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Art direction: Spiral Reliquary — monumental concentric stone
 
-| Level id | Map source | Theme | Stations |
-| --- | --- | --- | --- |
-| `chapter_1_level_4` | `data/levels/chapter_1_level_4.json` | `data/environment/chapter1/chapter_1_level_4.json` | checkpoint, entry, exit, landmark |
+## What the native frames show
 
-Native frames: `images/after_*.png` (1280x720, Godot 4.7), pairs in
-`images/pair_*.png` where a BEFORE station exists. BEFORE runs the same
-map, geometry and entities with the presentation layer disabled.
+- Derived facade cells: 1403
+- Landmark lights: 13
+- Authored entities preserved: 74
+
+### Improved
+
+- Neutral stone palette and a paved margin make the reliquary floor read as cut stone rather than a tile grid.
+
+### Still missing against the brief
+
+- The concentric ritual stonework and the central landmark the brief asks for are in the plan, not in the picture.
+- The final apse is architecturally identical to the rest of the floor.
+
+### Next correction pass
+
+- Ring the central landmark with a concentric band of paving and four cardinal inlays.
+- Give the apse a distinct floor family and a heavier coping so the room change is visible from the doorway.
+
+## Cost of the layer
+
+- Nodes: 777 (art off) -> 800 (art on)
+- Draw calls: 72 -> 76
+- Static memory: 107.9 MiB with the layer on
+
+## Frames
+
+- `images/after_checkpoint.png`
+- `images/after_entry.png`
+- `images/after_exit.png`
+- `images/after_landmark.png`
+- `images/before_checkpoint.png`
+- `images/before_entry.png`
+- `images/before_exit.png`
+- `images/before_landmark.png`
+- `images/crop3x_entry.png`
+- `images/crop3x_exit.png`
+- `images/crop3x_landmark.png`
+- `images/pair_checkpoint.png`
+- `images/pair_entry.png`
+- `images/pair_exit.png`
+- `images/pair_landmark.png`
+
+Every image above is a native Godot frame from the production `AppRoot`
+campaign boot at 1280x720. `before_*` is the same map with the art layer
+disabled, so the pair isolates the layer and nothing else. Nothing in this
+folder is a plan diagram, a PIL preview or a generated image.

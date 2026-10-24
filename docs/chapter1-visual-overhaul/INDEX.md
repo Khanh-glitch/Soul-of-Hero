@@ -21,9 +21,9 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 
 | Suite | Result |
 | --- | --- |
-| `chapter_1_map_design_test` | PASSED |
-| `chapter_1_campaign_map_design_test` | PASSED |
-| `chapter_1_collision_route_test` | PASSED |
+| `chapter_1_map_design_test` | MISSING |
+| `chapter_1_campaign_map_design_test` | MISSING |
+| `chapter_1_collision_route_test` | MISSING |
 
 `chapter_1_balance_matrix_test` is a known pre-existing, baseline-matched
 failure on this branch and is reported in `regressions/` rather than
@@ -32,6 +32,7 @@ silently passed. See the Level 5 review for the pinned-baseline proof.
 ## Gallery
 
 `gallery/chapter1_after_overview.png` — one AFTER frame per level.
+`L01/` … `L10/` — native frames, before/after pairs, crops, `REVIEW.md`.
 
 ## Cost of the presentation layer
 
@@ -39,7 +40,6 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-`L01/` … `L10/` — native frames, before/after pairs, crops, `REVIEW.md`.
 | chapter_1_level_10 | 639 -> 664 | 91 -> 103 | 98.0 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 104.7 MiB |
 | chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.6 MiB |
