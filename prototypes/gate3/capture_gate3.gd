@@ -790,16 +790,21 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			continue
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		# Deal with an enemy before it reaches the Knight. The sword attack acquires a
-		# target and closes the distance itself, and the fights that cost this Knight no
-		# health at all in the logs are exactly the ones started at range; the ones that
-		# cost him a hit are the ones started at fourteen pixels, already in contact.
-		if not _deep and _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
-			var closing := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
-			if closing != null:
-				frames += await _engage_enemy(closing, label)
-				progress_at = frames
-				best_distance = 1.0e9
+		# Do not pick fights. Measured across nine captures: a fight this harness starts
+		# costs 150-300 of the Knight's 1100 health, a fight it is forced into costs far
+		# less, and walking past an enemy costs nothing at all when the Knight uses his
+		# dash's invulnerability. The only fights are the ones the corridor demands.
+		if _disengage_frames <= 0 and _nearest_enemy_distance() < 44.0:
+			if frames % 26 == 0:
+				var away := _key_directions(delta)
+				for action: String in away:
+					Input.action_press(action, 1.0)
+				Input.action_press("dash", 1.0)
+				await get_tree().physics_frame
+				Input.action_release("dash")
+				for action: String in away:
+					Input.action_release(action)
+				frames += 1
 				continue
 		if frames - progress_at > STALL_FRAMES and _disengage_frames <= 0:
 			attempts += 1
