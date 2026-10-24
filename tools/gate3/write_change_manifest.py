@@ -56,8 +56,15 @@ def files_under(path: str) -> list[Path]:
     # and the documents that *produce* the evidence, which only change when a human
     # changes them.
     evidence = ROOT / "docs/gate3/evidence"
-    return sorted(p for p in target.rglob("*")
-                  if p.is_file() and not p.is_relative_to(evidence))
+    return sorted(
+        p for p in target.rglob("*")
+        if p.is_file()
+        and not p.is_relative_to(evidence)
+        # Byte-compiled modules appear the moment the authoring tools run, which is
+        # before this check in the same CI step; they are build output, not changes.
+        and "__pycache__" not in p.parts
+        and p.suffix != ".pyc"
+    )
 
 
 def cell_set(document: dict, layer: str) -> set[tuple[int, int]]:
