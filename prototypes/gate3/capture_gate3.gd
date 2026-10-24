@@ -48,10 +48,6 @@ const HAZARD_COST := 400
 ## Frames without closing on the current waypoint before the harness treats the walk
 ## as blocked and escalates.
 const STALL_FRAMES := 30
-## How many times a deep pass may restart the level after a death before giving up.
-## A player respawns and tries again; so does this, through the production restart, and
-## every attempt is printed with where it ended.
-const MAX_DEPTH_ATTEMPTS := 3
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -106,6 +102,8 @@ var _hazard_cache: Dictionary = {}
 var _enemy_heat: Dictionary = {}
 var _dashes := 0
 var _skill_casts := 0
+## The deepest storey this run legitimately reached, 1..3.
+var _floors_reached := 1
 ## Frames left before the harness is willing to start another fight after it broke
 ## one off to survive. Without this it re-engages the same enemy every frame.
 var _disengage_frames := 0
@@ -173,10 +171,30 @@ func _run() -> void:
 
 
 func _capture_depth() -> void:
-	if not await _descend(DESCENT_1, FLOOR2_ORDER):
+	## The two descents, in order, through the level's own doors.
+	##
+	## What each storey needs to be credited with is recorded as its own line, because
+	## this route is the most expensive thing the harness does: crossing floor 2 costs a
+	## Knight who only uses production input actions most of his 1100 health, and a
+	## capture that dies before the second door still has to say exactly how far it got
+	## rather than fail with one sentence about a walk.
+	if await _descend(DESCENT_1, FLOOR2_ORDER):
+		_floors_reached = maxi(_floors_reached, 2)
+		print("GATE3 DEPTH: floor 2 reached on foot and captured, HP %d"
+			% int(_player.get("health")))
+	else:
+		print("GATE3 DEPTH: halted on floor 1; floor 2 not reached this run")
 		return
-	if not _player_dead():
-		await _descend(DESCENT_2, FLOOR3_ORDER)
+	if _player_dead():
+		print("GATE3 DEPTH: the Knight died on floor 2 before the floor 3 door, HP 0")
+		return
+	if await _descend(DESCENT_2, FLOOR3_ORDER):
+		_floors_reached = maxi(_floors_reached, 3)
+		print("GATE3 DEPTH: floor 3 reached on foot and captured, HP %d"
+			% int(_player.get("health")))
+	else:
+		print("GATE3 DEPTH: halted on floor 2; floor 3 not reached this run (HP %d)"
+			% int(_player.get("health")))
 
 
 # ---------------------------------------------------------------- boot -------
@@ -896,27 +914,13 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			progress_at = frames
 			continue
 		if _disengage_frames > 0:
-			# Run, do not walk on towards the objective: a Knight who keeps walking into
-			# the enemy that just cost him a third of his health is paying for the same
-			# fight twice. Enemies stop chasing at their disengage range, and the walk
-			# resumes on a fresh route once that range is behind him.
+			# Withdraw properly, to a real destination, instead of walking on towards the
+			# objective with the enemy still swinging: that pays for the same fight twice.
 			_disengage_frames -= 1
-			var flee := _flee_delta()
-			if flee.length() > 0.5:
-				var fleeing := _key_directions(flee)
-				for action: String in fleeing:
-					Input.action_press(action, 1.0)
-					if frames % 24 == 0:
-						Input.action_press("dash", 1.0)
-						await get_tree().physics_frame
-						Input.action_release("dash")
-						_dashes += 1
-				await get_tree().physics_frame
-				for action: String in fleeing:
-					Input.action_release(action)
-				frames += 1
-				progress_at = frames
-				continue
+			frames += await _evade(_nearest_enemy(900.0, Vector2.ZERO), 72.0)
+			progress_at = frames
+			best_distance = 1.0e9
+			continue
 		# Deal with an enemy before it reaches the Knight, and deal with it one at a
 		# time. Fighting only on contact was measured on the deep route: the Knight
 		# walked into a crowd of five, they all arrived together, and he died with the
@@ -924,6 +928,12 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# chose is the enemy that is there when the first sword swing lands.
 		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
+			if touching != null and (int(_player.get("health")) < 420
+					or _nearby_enemy_count(120.0) >= 3):
+				frames += await _evade(touching, 72.0)
+				progress_at = frames
+				best_distance = 1.0e9
+				continue
 			if touching != null:
 				var before := int(touching.get("health"))
 				var fought := await _engage_enemy(touching, label)
@@ -1062,46 +1072,74 @@ func _cast_armed(action_name: String, target: Node2D, label: String) -> bool:
 	return mana_after < mana_before
 
 
-func _flee_delta() -> Vector2:
-	## The direction to run to get out of a fight the Knight cannot win.
+func _retreat_target(radius: int) -> Vector2i:
+	## The walkable cell within `radius` that is farthest from every live enemy.
 	##
-	## Enemies give up at their own disengage range, so the cheapest way out of a
-	## crowded corner is distance, not damage. This picks the neighbouring walkable
-	## cell farthest from the nearest live enemy, so the Knight runs along the level's
-	## own floor rather than into a wall.
-	var enemy := _nearest_enemy(900.0, Vector2.ZERO)
-	if enemy == null:
-		return Vector2.ZERO
-	# Score each neighbouring cell by its distance from EVERY enemy nearby, not just
-	# the closest one. Running from one skeleton into the arms of two others is how a
-	# retreat turns into a death.
-	var threat_positions: Array[Vector2] = []
-	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
-		var other := node as Node2D
-		if other == null or not other.is_inside_tree() or int(other.get("health")) <= 0:
-			continue
-		var offset := other.global_position - _player.global_position
-		if offset.length() <= 300.0:
-			threat_positions.append(other.global_position)
+	## Retiring cell by cell was measured and is wrong: the best neighbour flips from
+	## frame to frame as the Knight crosses a cell boundary, so the net movement is zero
+	## and the enemy stays at twelve pixels while the Knight loses health. A real
+	## destination does not flip. The Knight walks at 96 px/s and the skeletons chase at
+	## 58, so a committed retreat actually opens the distance.
 	var walkable := _walkable_cells()
 	var cell := _current_cell()
-	var best_cell := cell
-	var best_score := -1.0
-	for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
-		var neighbour: Vector2i = cell + step
-		if not walkable.has(neighbour):
+	var threats: Array[Vector2] = []
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Node2D
+		if enemy == null or not enemy.is_inside_tree() or int(enemy.get("health")) <= 0:
 			continue
-		var centre := _cell_centre(neighbour)
-		var score := 0.0
-		for position: Vector2 in threat_positions:
-			score += minf(240.0, centre.distance_to(position))
-		# Break ties towards the objective, so a retreat is not a random walk.
-		if score > best_score:
-			best_score = score
-			best_cell = neighbour
-	if best_cell == cell:
-		return _player.global_position - enemy.global_position
-	return _cell_centre(best_cell) - _player.global_position
+		threats.append(enemy.global_position)
+	if threats.is_empty():
+		return cell
+	var best := cell
+	var best_score := -1.0
+	for dx: int in range(-radius, radius + 1):
+		for dy: int in range(-radius, radius + 1):
+			var candidate: Vector2i = cell + Vector2i(dx, dy)
+			if not walkable.has(candidate):
+				continue
+			var centre := _cell_centre(candidate)
+			var score := 1.0e9
+			for position: Vector2 in threats:
+				score = minf(score, centre.distance_to(position))
+			if score > best_score:
+				best_score = score
+				best = candidate
+	return best
+
+
+func _evade(threat: Node2D, keep_clear: float) -> int:
+	## Withdraw to a safer place for a bounded time, using the production movement
+	## actions, and report what the withdrawal cost. Bounded at five seconds: a harness
+	## that can run away forever is a harness that hangs a CI job instead of failing it.
+	var frames := 0
+	var health_at_start := int(_player.get("health"))
+	var route := _plan_route(_current_cell(), _retreat_target(9))
+	if route.size() <= 1:
+		return 0
+	var index := 1
+	while frames < 300 and index < route.size() and not _player_dead():
+		if _nearest_enemy_distance() > keep_clear + 150.0:
+			break
+		var waypoint := _cell_centre(route[index])
+		var delta := waypoint - _player.global_position
+		if delta.length() <= 6.0:
+			index += 1
+			continue
+		var actions: Array[String] = _key_directions(delta)
+		for action: String in actions:
+			Input.action_press(action, 1.0)
+			if frames % 18 == 0:
+				Input.action_press("dash", 1.0)
+				await get_tree().physics_frame
+				Input.action_release("dash")
+				_dashes += 1
+		await get_tree().physics_frame
+		for action: String in actions:
+			Input.action_release(action)
+		frames += 1
+	print("GATE3 EVADE: %d frames, HP %d -> %d, nearest enemy %.0f px"
+		% [frames, health_at_start, int(_player.get("health")), _nearest_enemy_distance()])
+	return frames
 
 
 func _key_directions(delta: Vector2) -> Array[String]:
@@ -1405,17 +1443,6 @@ func _measure_performance() -> void:
 			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0])
 
 
-func _depth_attempt_restart() -> void:
-	# `_restart_run` is the HUD's own restart button handler: it resets the run through
-	# GameSession and reloads the scene. Falling back to a plain scene reload keeps this
-	# working if that handler is ever renamed.
-	var hud := _game.get_node_or_null("HUD")
-	if hud != null and hud.has_method("_restart_run"):
-		hud.call("_restart_run")
-		return
-	get_tree().reload_current_scene()
-
-
 func _report_walk() -> void:
 	var end_health := int(_player.get("health"))
 	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, %d dashes, %d skill casts, HP %d -> %d (delta %d)"
@@ -1445,26 +1472,8 @@ func _push(message: String) -> void:
 	_failures.append(message)
 
 
-## Attempt counter that survives a level restart. A static var lives for the lifetime of
-## the script class, so the reloaded scene can tell it is the second try.
-static var _depth_attempt := 0
-
-
 func _finish() -> void:
 	var run := "after" if _with_overlay else "before"
-	# A deep pass that died can try again, the way a player does: the production restart
-	# path reloads the level, health and all, and the next attempt starts from the
-	# authored spawn. Three attempts, and every death is printed with its position, so
-	# the log cannot read as a clean run if it was not one.
-	if not _failures.is_empty() and _deep and _depth_attempt + 1 < MAX_DEPTH_ATTEMPTS:
-		_depth_attempt += 1
-		print("GATE3 RETRY: attempt %d died at (%.0f, %.0f); restarting the level through "
-			% [_depth_attempt, _player.global_position.x, _player.global_position.y]
-			+ "the production restart")
-		for failure: String in _failures:
-			print("GATE3 RETRY CAUSE: " + failure)
-		_depth_attempt_restart()
-		return
 	if _failures.is_empty():
 		print("GATE3 CAPTURE TEST PASSED: %d frames, %d camera frames (%s)"
 			% [_shots, _camera_frames, run])
