@@ -718,6 +718,17 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		if delta.length() <= 5.0:
 			index += 1
 			continue
+		# Something in melee contact is the one case that needs no heuristics: the
+		# Knight is being hit and cannot walk through a body, so he fights it. This is
+		# what a player does, and without it the capture simply stood in the eastern
+		# chokepoint paying a skeleton's damage for twenty seconds.
+		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+			var adjacent := _nearest_enemy(30.0, Vector2.ZERO)
+			if adjacent != null:
+				var engaged := await _engage_enemy(adjacent, label)
+				frames += engaged
+				frames_since_new_cell = 0
+				continue
 		# Progress is "reached a cell this leg has not been in yet". Being shoved back
 		# and forth by an enemy body, or rocking on a spike, reaches no new cell and is
 		# not progress however much the position wobbles.
