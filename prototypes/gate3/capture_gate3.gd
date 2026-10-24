@@ -262,6 +262,7 @@ func _capture_respawn() -> void:
 	# Any death before the flag was reached belongs to the walk, not to this trial; the
 	# frame that matters is the one taken after the checkpoint is live.
 	_respawn_death_captured = false
+	var respawns_before := int(_overlay.get("respawns_completed"))
 
 	# Three honest attempts at dying: walk to the nearest spike and stand in it. A death
 	# on the way there is just as good a trial, and the recovery path has already
@@ -282,18 +283,21 @@ func _capture_respawn() -> void:
 		if await _stand_in_hazard(hazard):
 			break
 
-	if _respawns_seen < 1:
-		_push("the respawn trial never managed to die on floor 2 (HP %d)"
-			% int(_player.get("health")))
-		return
-	if not _respawn_death_captured:
-		_push("a death happened but no frame of it was captured")
-		return
+	if _player_dead() and not _respawn_death_captured:
+		# The spike killed the Knight inside this loop, so the production death overlay
+		# is up right now: this is the frame the trial exists to produce.
+		_respawn_death_captured = true
+		await get_tree().process_frame
+		await _shot("respawn_death")
 	if _player_dead():
 		# The last death is still in flight; wait for the director to finish.
 		var deadline := Time.get_ticks_msec() + 15000
 		while Time.get_ticks_msec() < deadline and _player_dead():
 			await get_tree().process_frame
+	if not _respawn_death_captured:
+		_push("the respawn trial never managed to die on floor 2 (HP %d)"
+			% int(_player.get("health")))
+		return
 	await _settle(10)
 	var restored := int(_player.get("health"))
 	var maximum := int(_player.get("max_health"))
@@ -304,9 +308,9 @@ func _capture_respawn() -> void:
 	_expect(distance < 4.0,
 		"respawn placed the Knight at the checkpoint (%s, %.1f px away)"
 		% [str(_player.global_position), distance])
-	_expect(int(_overlay.get("respawns_completed")) >= 1,
-		"the director performed the respawn (%d)"
-		% int(_overlay.get("respawns_completed")))
+	_expect(int(_overlay.get("respawns_completed")) > respawns_before,
+		"the director revived the Knight at the checkpoint (%d before, %d now)"
+		% [respawns_before, int(_overlay.get("respawns_completed"))])
 	var death_overlay := _game.get_node_or_null("HUD/HUDRoot/DeathOverlay") as CanvasItem
 	_expect(death_overlay == null or not death_overlay.visible,
 		"the production death overlay is hidden again")
