@@ -949,10 +949,20 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			await get_tree().physics_frame
 			Input.action_release("dash")
 			_dashes += 1
+		var health_before_tick := int(_player.get("health"))
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
 		frames += 1
+		# Attribute every point of health lost while travelling. Without this the log
+		# says "died on the way" and nothing else, and an unattributed drain looks
+		# exactly like a script bug.
+		var health_after_tick := int(_player.get("health"))
+		if health_after_tick < health_before_tick:
+			var on_hazard := _hazard_cache.has(_current_cell())
+			print("GATE3 DAMAGE: cell %s HP %d -> %d on_hazard=%s nearest_enemy=%.0f dashes=%d"
+				% [str(_current_cell()), health_before_tick, health_after_tick,
+					str(on_hazard), _nearest_enemy_distance(), _dashes])
 		if frames % 120 == 0:
 			print("GATE3 TRACE: %s frame %d cell %s HP %d since_progress %d nearest %.0f waypoint %s"
 				% [label, frames, str(_current_cell()), int(_player.get("health")),
