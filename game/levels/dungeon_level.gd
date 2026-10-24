@@ -12,6 +12,10 @@ const ATLAS_GRIDS := {
 	1: Vector2i(12, 4),
 }
 const LevelSchemaValidator := preload("res://game/levels/level_schema.gd")
+## Optional Chapter 1 presentation layer. A level that has no theme document in
+## res://data/environment/chapter1/ is left exactly as it was, so this hook can
+## never change a map that has not opted in.
+const EnvironmentArt := preload("res://game/levels/presentation/chapter1_environment_art.gd")
 
 @export_file("*.json") var level_data_path := "res://data/levels/crypt_entrance.json"
 @export var watch_file_changes := true
@@ -81,6 +85,7 @@ func reload_from_disk() -> bool:
 	var events := get_node_or_null("/root/GameEvents")
 	if events != null:
 		events.emit_signal("map_changed", "file")
+	_refresh_environment_art()
 	if not Engine.is_editor_hint():
 		var realtime_bridge := get_node_or_null("/root/RealtimeBridge")
 		if realtime_bridge != null and realtime_bridge.has_method(&"publish_event"):
@@ -89,6 +94,12 @@ func reload_from_disk() -> bool:
 				"geometry_cells": geometry.get_used_cells().size(),
 			})
 	return true
+
+
+func _refresh_environment_art() -> void:
+	if Engine.is_editor_hint():
+		return
+	EnvironmentArt.attach(self)
 
 
 func _get_layer_cells(layer_name: String) -> Array:

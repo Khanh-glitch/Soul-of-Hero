@@ -1,0 +1,16 @@
+{
+  "schema": "chapter1_review_status/1",
+  "_note": "Authored by the agent after inspecting the native frames. A level is only READY FOR HUMAN VISUAL REVIEW when its frames were looked at and judged worth a human's time; this file never means 'accepted'.",
+  "levels": {
+    "chapter_1_level_1": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_2": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_3": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_4": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_5": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_6": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_7": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_8": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_9": "TECHNICALLY VALID — VISUAL NOT READY",
+    "chapter_1_level_10": "TECHNICALLY VALID — VISUAL NOT READY"
+  }
+}

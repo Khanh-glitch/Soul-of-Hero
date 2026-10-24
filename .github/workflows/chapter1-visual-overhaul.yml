@@ -1,0 +1,140 @@
+name: Chapter 1 — visual overhaul (native Godot 4.7)
+
+# One job for the whole chapter: it imports the project once, then photographs
+# every level twice (art layer on / off) through the production AppRoot, runs the
+# frozen gameplay suites, and publishes the evidence tree.
+on:
+  push:
+    branches:
+      - arena/6e89e68d-soul-of-hero
+    paths:
+      - "game/levels/presentation/**"
+      - "game/levels/dungeon_level.gd"
+      - "data/environment/chapter1/**"
+      - "tools/captures/chapter1_visual_capture.*"
+      - "tools/chapter1_art/**"
+      - "docs/chapter1-visual-overhaul/**"
+      - ".github/workflows/chapter1-visual-overhaul.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+concurrency:
+  group: chapter1-visual-overhaul
+  cancel-in-progress: true
+
+jobs:
+  native:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Record the source pins
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/chapter1 docs/chapter1-visual-overhaul/regressions
+          godot --version | tee docs/chapter1-visual-overhaul/regressions/toolchain.txt
+          echo "head $(git rev-parse HEAD)" | tee -a docs/chapter1-visual-overhaul/regressions/toolchain.txt
+          sha256sum data/levels/*.json data/environment/chapter1/*.json \
+            | tee docs/chapter1-visual-overhaul/regressions/source_pins.txt
+
+      - name: Import the project
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --audio-driver Dummy --editor --path . --import --quit \
+            2>&1 | tee .artifacts/chapter1/import.log
+
+      - name: Compile-check the chapter harness
+        run: |
+          set -euo pipefail
+          timeout 300s godot --headless --audio-driver Dummy --path . \
+            res://tools/captures/chapter1_visual_capture.tscn -- --slot=5 --check \
+            2>&1 | tee .artifacts/chapter1/harness_check.log
+          grep -q "CHAPTER1 HARNESS CHECK OK" .artifacts/chapter1/harness_check.log
+
+      - name: Install Xvfb and Mesa
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install --yes xvfb libgl1-mesa-dri fonts-dejavu-core >/dev/null
+
+      - name: Frozen gameplay suites
+        continue-on-error: true
+        run: |
+          set +e
+          mkdir -p .artifacts/chapter1/suites
+          rc=0
+          for suite in chapter_1_map_design_test chapter_1_campaign_map_design_test; do
+            timeout 600s godot --headless --path . --script "res://tests/${suite}.gd" \
+              > ".artifacts/chapter1/suites/${suite}.log" 2>&1 || rc=1
+            grep -hE "MAP DESIGN" ".artifacts/chapter1/suites/${suite}.log" | tail -2
+          done
+          timeout 600s godot --headless --path . res://tests/chapter_1_collision_route_test.tscn \
+            > .artifacts/chapter1/suites/chapter_1_collision_route_test.log 2>&1 || rc=1
+          grep -hE "COLLISION ROUTE TEST (PASSED|FAILED)" \
+            .artifacts/chapter1/suites/chapter_1_collision_route_test.log | tail -2
+          exit $rc
+
+      - name: Capture every level (art layer ON, then OFF)
+        continue-on-error: true
+        run: |
+          set +e
+          while read -r slot level_id; do
+            for mode in after before; do
+              extra=""
+              [ "$mode" = "before" ] && extra="--no-art"
+              export SOUL_OF_HERO_SAVE_PATH="user://c1_${level_id}_${mode}_$GITHUB_RUN_ID.json"
+              xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+                timeout 900s godot --path . --audio-driver Dummy \
+                --rendering-method gl_compatibility --rendering-driver opengl3 \
+                --resolution 1280x720 res://tools/captures/chapter1_visual_capture.tscn \
+                -- --slot="$slot" --tag="$mode" $extra \
+                --out-dir="res://.artifacts/chapter1/${level_id}/${mode}" \
+                > ".artifacts/chapter1/${level_id}_${mode}.log" 2>&1
+              grep -hE "CHAPTER1 CAPTURE|CHAPTER1 STATION" ".artifacts/chapter1/${level_id}_${mode}.log" | tail -8
+            done
+          done <<'LEVELS'
+          1 chapter_1_level_1
+          2 chapter_1_level_2
+          3 chapter_1_level_3
+          4 chapter_1_level_4
+          5 chapter_1_level_5
+          6 chapter_1_level_6
+          7 chapter_1_level_7
+          8 chapter_1_level_8
+          9 chapter_1_level_9
+          10 chapter_1_level_10
+          LEVELS
+
+      - name: Build the evidence tree
+        continue-on-error: true
+        run: |
+          set +eo pipefail
+          python3 -m pip install --quiet pillow
+          python3 tools/chapter1_art/evidence.py
+
+      - name: Publish logs, statuses and the gallery
+        if: always()
+        run: |
+          set +eo pipefail
+          mkdir -p docs/chapter1-visual-overhaul/regressions/logs
+          shopt -s nullglob
+          for logfile in .artifacts/chapter1/*.log .artifacts/chapter1/suites/*.log; do
+            cp "$logfile" "docs/chapter1-visual-overhaul/regressions/logs/$(basename "$logfile" .log).txt"
+          done
+          shopt -u nullglob
+          python3 tools/chapter1_art/index_doc.py || true
+          git config user.name "chapter1-art-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add docs/chapter1-visual-overhaul
+          if ! git diff --cached --quiet; then
+            git commit -m "ci(chapter1): publish visual overhaul evidence [skip ci]"
+            git push
+          fi
