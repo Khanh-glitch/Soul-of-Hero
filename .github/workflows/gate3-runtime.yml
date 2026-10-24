@@ -39,6 +39,8 @@ jobs:
           python3 tools/gate3/write_source_manifest.py --check | tee .artifacts/gate3/manifest.log
           # The hazard frames this prototype derives from production art must be
           # reproducible from their pinned sources, and the sources must be untouched.
+          # Pillow is a build dependency of the authoring tool, not of the game.
+          python3 -m pip install --quiet pillow
           python3 tools/gate3/make_derived_art.py --check | tee .artifacts/gate3/derived_art.log
           # Floor-by-floor reachability: every entity on all three storeys, and the
           # south ambulatory both ways, on the authored document.
