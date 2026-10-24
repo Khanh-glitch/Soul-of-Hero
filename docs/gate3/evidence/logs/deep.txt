@@ -23,368 +23,82 @@ GATE3 LAYER: Decor hidden (replaced by Gate3_decor)
 GATE3 LIGHTS: 6 local lanterns
 GATE3 OVERLAY ATTACHED: 36 props, 17 solid bodies, 11 material layers, 6 lights, 18 hazards re-skinned, shade=true
 GATE3 PLAN: descent approach -> (109, 17) is 137 cells
-GATE3 TRACE: descent approach frame 120 cell (25, 14) HP 1100 since_progress 2 nearest 448 waypoint (26, 14)
-GATE3 TRACE: descent approach frame 240 cell (35, 18) HP 1100 since_progress 1 nearest 379 waypoint (35, 18)
-GATE3 TRACE: descent approach frame 360 cell (41, 23) HP 1100 since_progress 4 nearest 311 waypoint (42, 23)
-GATE3 TRACE: descent approach frame 480 cell (54, 23) HP 1100 since_progress 3 nearest 229 waypoint (55, 23)
-GATE3 TRACE: descent approach frame 600 cell (56, 11) HP 1100 since_progress 1 nearest 44 waypoint (56, 10)
+GATE3 TRACE: descent approach frame 120 cell (25, 14) HP 1100 since_progress 2 nearest 437 waypoint (26, 14)
+GATE3 TRACE: descent approach frame 240 cell (35, 18) HP 1100 since_progress 1 nearest 371 waypoint (35, 18)
+GATE3 TRACE: descent approach frame 360 cell (41, 23) HP 1100 since_progress 4 nearest 328 waypoint (42, 23)
+GATE3 TRACE: descent approach frame 480 cell (54, 23) HP 1100 since_progress 3 nearest 216 waypoint (55, 23)
+GATE3 TRACE: descent approach frame 600 cell (56, 11) HP 1100 since_progress 1 nearest 52 waypoint (56, 10)
 GATE3 COMBAT: engaging Floor03Pack01Member07 at 34 px, target HP 979, Knight HP 1100, mana 110
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 49 px, target HP 779, Knight HP 1100, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 20 px, target HP 539, Knight HP 1100, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 58 px, target HP 439, Knight HP 1100, action='sword_attack_3'
-GATE3 COMBAT: fight near 'descent approach' ended after 107 frames, target HP 979 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 32 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 28 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 23 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 19 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 18 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 18 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 18 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 17 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 17 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 17 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 16 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 16 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 11 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 7 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 2 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 2 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 7 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 11 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 15 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 19 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 24 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 28 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 31 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='sword_attack_4', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 46 px, target HP 0, Knight HP 1100, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1100 -> 1100
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 33 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1080 -> 1080
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 32 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1080 -> 1080
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 31 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1080 -> 1080
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 31 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1080 -> 1080
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 30 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 1080 -> 1080
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 30 px, target HP 0, Knight HP 1080, mana 110
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> -1, Knight HP 1080 -> 1080
-GATE3 TRACE: descent approach frame 840 cell (60, 13) HP 1060 since_progress 3 nearest 403 waypoint (57, 10)
-GATE3 TRACE: descent approach frame 960 cell (65, 10) HP 1060 since_progress 3 nearest 324 waypoint (66, 10)
-GATE3 TRACE: descent approach frame 1080 cell (73, 16) HP 1060 since_progress 2 nearest 189 waypoint (73, 17)
-GATE3 TRACE: descent approach frame 1200 cell (76, 18) HP 1060 since_progress 2 nearest 71 waypoint (76, 18)
-GATE3 TRACE: descent approach frame 1320 cell (79, 18) HP 886 since_progress 9 nearest 14 waypoint (80, 18)
-GATE3 COMBAT: engaging L3C1Skeleton01 at 19 px, target HP 939, Knight HP 866, mana 98
-GATE3 COMBAT: after the input press current_action='roll', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 44 px, target HP 739, Knight HP 866, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 31 px, target HP 499, Knight HP 866, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 38 px, target HP 379, Knight HP 866, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 73 px, target HP 359, Knight HP 866, action='sword_attack_4'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 58 px, target HP 359, Knight HP 846, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 36 px, target HP 99, Knight HP 846, action='sword_attack_2'
-GATE3 COMBAT: fight near 'descent approach' ended after 206 frames, target HP 939 -> 0, Knight HP 866 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 30 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 29 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 28 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 27 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 26 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 25 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 25 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 24 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 23 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 23 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 23 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='hit', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 23 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 104
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 105
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 106
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> 0, Knight HP 826 -> 826
-GATE3 COMBAT: engaging L3C1Skeleton01 at 22 px, target HP 0, Knight HP 826, mana 107
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: fight near 'descent approach' ended after 0 frames, target HP 0 -> -1, Knight HP 826 -> 826
-GATE3 TRACE: descent approach frame 1680 cell (79, 18) HP 806 since_progress 1 nearest 15 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1800 cell (79, 18) HP 652 since_progress 27 nearest 13 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1920 cell (78, 18) HP 344 since_progress 22 nearest 25 waypoint (80, 18)
-GATE3 COMBAT: engaging L3C1Skeleton05 at 13 px, target HP 959, Knight HP 344, mana 107
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 18 px, target HP 759, Knight HP 190, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 27 px, target HP 759, Knight HP 190, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 14 px, target HP 519, Knight HP 190, action='sword_attack_3'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 36
-GATE3 COMBAT: fight near 'descent approach' ended after 95 frames, target HP 959 -> 519, Knight HP 344 -> 36
-GATE3 TRACE: descent approach frame 2040 cell (81, 18) HP 36 since_progress 2 nearest 18 waypoint (80, 18)
-GATE3 COLLISION: Knight at (1299.865, 295.4502) is clear of every wall and prop
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 45 px, target HP 779, Knight HP 1100, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 17 px, target HP 539, Knight HP 1100, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 41 px, target HP 439, Knight HP 946, action='hit'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 18 px, target HP 199, Knight HP 946, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 17 px, target HP 199, Knight HP 946, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 66 px, target HP 99, Knight HP 946, action='sword_attack_4'
+GATE3 COMBAT: fight near 'descent approach' ended after 191 frames, target HP 979 -> 0, Knight HP 1100 -> 946
+GATE3 TRACE: descent approach frame 840 cell (60, 18) HP 946 since_progress 2 nearest 409 waypoint (60, 17)
+GATE3 TRACE: descent approach frame 960 cell (64, 11) HP 946 since_progress 2 nearest 339 waypoint (65, 11)
+GATE3 TRACE: descent approach frame 1080 cell (73, 16) HP 946 since_progress 1 nearest 179 waypoint (73, 17)
+GATE3 TRACE: descent approach frame 1200 cell (79, 18) HP 772 since_progress 11 nearest 13 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1320 cell (79, 18) HP 732 since_progress 19 nearest 13 waypoint (80, 18)
+GATE3 TRACE: descent approach frame 1440 cell (79, 18) HP 558 since_progress 14 nearest 14 waypoint (80, 18)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 18 px, target HP 979, Knight HP 538, mana 110
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 15 px, target HP 779, Knight HP 538, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 20 px, target HP 539, Knight HP 384, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 37 px, target HP 339, Knight HP 384, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 12 px, target HP 99, Knight HP 384, action='sword_attack_2'
+GATE3 COMBAT: fight near 'descent approach' ended after 133 frames, target HP 979 -> 0, Knight HP 538 -> 384
+GATE3 COMBAT: engaging L3C1Skeleton03 at 17 px, target HP 99, Knight HP 384, mana 110
+GATE3 COMBAT: after the input press current_action='sword_attack_3', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 17 px, target HP 0, Knight HP 230, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 30 frames, target HP 99 -> 0, Knight HP 384 -> 230
+GATE3 COMBAT: engaging L3C1Skeleton02 at 32 px, target HP 119, Knight HP 230, mana 110
+GATE3 COMBAT: after the input press current_action='sword_attack_1', hero=sword_hero, weapon=sword
+GATE3 COMBAT: fight near 'descent approach' ended after 26 frames, target HP 119 -> 0, Knight HP 230 -> 230
+GATE3 TRACE: descent approach frame 1800 cell (86, 21) HP 230 since_progress 19 nearest 109 waypoint (85, 19)
+GATE3 COMBAT: engaging L3C1Skeleton05 at 34 px, target HP 879, Knight HP 230, mana 110
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 15 px, target HP 599, Knight HP 230, action='sword_attack_4'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 20 px, target HP 379, Knight HP 230, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 18 px, target HP 139, Knight HP 230, action='sword_attack_2'
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 76
+GATE3 COMBAT: fight near 'descent approach' ended after 103 frames, target HP 879 -> 39, Knight HP 230 -> 76
+GATE3 TRACE: descent approach frame 2040 cell (93, 23) HP 76 since_progress 4 nearest 99 waypoint (94, 23)
+GATE3 TRACE: descent approach frame 2160 cell (104, 21) HP 76 since_progress 1 nearest 85 waypoint (104, 21)
+GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 29 cells in 2251 frames, HP 76
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 PLAN: floor2_arrival -> (106, 42) is 1 cells
+GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 76
+GATE3 CAPTURE: res://.artifacts/gate3/after_floor2_arrival.png (1280x720) at (1704.0, 680.0)
+GATE3 PLAN: floor2_stacks -> (74, 46) is 43 cells
+GATE3 TRACE: floor2_stacks frame 120 cell (95, 44) HP 76 since_progress 2 nearest 386 waypoint (95, 45)
+GATE3 TRACE: floor2_stacks frame 240 cell (82, 45) HP 76 since_progress 2 nearest 464 waypoint (82, 45)
+GATE3 TRACE: floor2_stacks frame 360 cell (74, 49) HP 76 since_progress 5 nearest 457 waypoint (74, 48)
+GATE3 WALK: floor2_stacks  (1704, 680) -> (1192, 744)  516 px over 42 cells in 385 frames, HP 76
+GATE3 CAPTURE: res://.artifacts/gate3/after_floor2_stacks.png (1280x720) at (1192.471, 744.1821)
+GATE3 PLAN: descent approach -> (9, 51) is 93 cells
+GATE3 TRACE: descent approach frame 120 cell (69, 53) HP 76 since_progress 3 nearest 372 waypoint (69, 54)
+GATE3 TRACE: descent approach frame 240 cell (56, 54) HP 76 since_progress 1 nearest 162 waypoint (55, 54)
+GATE3 COMBAT: engaging L3C2Skeleton01 at 33 px, target HP 979, Knight HP 76, mana 110
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 76
+GATE3 COMBAT: fight near 'descent approach' ended after 1 frames, target HP 979 -> 979, Knight HP 76 -> 76
+GATE3 COMBAT: engaging L3C2Skeleton01 at 34 px, target HP 779, Knight HP 76, mana 110
+GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 76
+GATE3 COMBAT: fight near 'descent approach' ended after 1 frames, target HP 779 -> 539, Knight HP 76 -> 76
+GATE3 TRACE: descent approach frame 360 cell (48, 52) HP 76 since_progress 8 nearest 26 waypoint (48, 52)
+GATE3 TRACE: descent approach frame 480 cell (47, 46) HP 76 since_progress 3 nearest 71 waypoint (47, 46)
+GATE3 COLLISION: Knight at (628.6445, 699.9261) is clear of every wall and prop
 GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (1299.865, 291.4502) is free of prop bodies
-GATE3 ROUTE: 0 cells walked, 0 px travelled, 109 fights, HP 1100 -> 0 (delta 1100)
+GATE3 COLLISION: open floor at (628.6445, 695.9261) is free of prop bodies
+GATE3 ROUTE: 71 cells walked, 1988 px travelled, 7 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13940 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 853 nodes
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1299.865, 295.4502)
+GATE3 OBJECTS: ObjectDB holds 13874 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 867 nodes
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (628.6445, 699.9261)
 GATE3 CAPTURE TEST FAILED (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
