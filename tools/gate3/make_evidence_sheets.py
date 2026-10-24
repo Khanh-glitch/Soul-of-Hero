@@ -76,6 +76,23 @@ def crop(name: str, station: str, box) -> Path | None:
     return path
 
 
+def combat_sheet() -> Path | None:
+    """The one frame taken while a fight was actually happening.
+
+    Labelled with what it is and what it is not: it is a native frame, captured mid-fight
+    with the combo landing and the skeleton swinging, not a posed still of a room that
+    happens to contain an enemy.
+    """
+    after = EV / "after_combat_load.png"
+    if not after.exists():
+        return None
+    image = label(Image.open(after).convert("RGB"),
+                  "native frame captured mid-fight: sword combo landing, skeleton swinging")
+    path = EV / "combat_under_load.png"
+    image.save(path)
+    return path
+
+
 def camera_sheet() -> Path | None:
     tiles = []
     for name in CAMERA:
@@ -158,6 +175,9 @@ def main() -> int:
         path = crop(name, station, box)
         if path:
             made.append(path.name)
+    path = combat_sheet()
+    if path:
+        made.append(path.name)
     path = camera_sheet()
     if path:
         made.append(path.name)

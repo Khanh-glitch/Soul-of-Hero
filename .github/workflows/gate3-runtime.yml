@@ -42,6 +42,9 @@ jobs:
           # Pillow is a build dependency of the authoring tool, not of the game.
           python3 -m pip install --quiet pillow
           python3 tools/gate3/make_derived_art.py --check | tee .artifacts/gate3/derived_art.log
+          # The change manifest must be current, and it refuses to be written at all if
+          # the 79 entities are not identical to Candidate A's.
+          python3 tools/gate3/write_change_manifest.py --check | tee .artifacts/gate3/change_manifest.log
           # Floor-by-floor reachability: every entity on all three storeys, and the
           # south ambulatory both ways, on the authored document.
           python3 tools/gate3/worldmodel.py audit --level prototypes/gate3/level_data/chapter_1_level_3_gate3.json \
@@ -158,6 +161,9 @@ jobs:
           for station in floor2_arrival floor2_stacks; do
             test -f ".artifacts/gate3/after_$station.png"
           done
+          # A native frame taken while a fight was happening, not a room that happens to
+          # contain an enemy: this pass fights, so the frame must exist.
+          test -f .artifacts/gate3/after_combat_load.png
           if grep -q "GATE3 DEPTH: floor 3 reached" .artifacts/gate3/deep.log; then
             test -f .artifacts/gate3/after_floor3_camp.png
           else

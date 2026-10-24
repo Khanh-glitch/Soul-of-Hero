@@ -102,6 +102,8 @@ var _hazard_cache: Dictionary = {}
 var _enemy_heat: Dictionary = {}
 var _dashes := 0
 var _skill_casts := 0
+## Whether the mid-fight native frame has been taken yet.
+var _combat_frame_taken := false
 ## The deepest storey this run legitimately reached, 1..3.
 var _floors_reached := 1
 ## Frames left before the harness is willing to start another fight after it broke
@@ -803,6 +805,12 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			var alternative := _nearest_enemy(46.0, Vector2.ZERO)
 			if alternative != null and alternative != target:
 				break
+		# One native frame taken mid-fight, once per run, while a skeleton is actually
+		# swinging and the combo is actually landing. A station frame of a room that
+		# happens to contain an enemy is not evidence that combat works; this is.
+		if not _combat_frame_taken and spent >= 24 and int(target.get("health")) <= start_target_health - 1:
+			_combat_frame_taken = true
+			await _shot("combat_load")
 		if spent % 30 == 0:
 			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s'"
 				% [label, String(target.name), distance, str(target.get("health")),
