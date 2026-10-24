@@ -74,7 +74,7 @@ tuning budget. Recorded as a proposal, not attempted.
 | # | Gate 2 defect | implementation | how it is proved |
 | --- | --- | --- | --- |
 | C1 | sealed shaft | floored, opened west, south side sealed, one lantern above; a rubble arch at the stair head so no false interaction is implied | `audit`: floor-1 entities 16/16, the shaft is walkable (`descent_landing` station reached on foot in 15 cells); AFTER versus BEFORE native frame |
-| C2 | magenta `Decor` | live `Decor` layer hidden, archive fittings painted on the wall plane in the same eleven-role palette | `Gate3_decor` 110 cells; contract `Decor hidden (C2)`; the violet blocks are gone from the AFTER frame |
+| C2 | magenta `Decor` | live `Decor` layer hidden, archive fittings painted on the wall plane in the same eleven-role palette — **and** the real source of the magenta fixed: it was the hazard sprite's opaque violet plate, repainted as a crimson pit in a prototype-local derived copy (`tools/gate3/make_derived_art.py`) | `Gate3_decor` 109 cells; contract `Decor hidden (C2)`; a live hazard frame contains no pixel of RGB(61,37,59) and still fills its cell; 3× `hazard_bay` crop |
 | C3 | flat wall bands | recess/pier rhythm from real geometry: `wall_face` 979, `niche` 241, `mass` 707, `coping` 34 cells | no material layer covers a walkable cell (contract check); 3× crops |
 | C4 | rectangular garth | 9 parapet cells opened, 4 corner piers, coping ring, shoreline on 30 cells, water kept on all 66 original cells | `garth_open 9`, `garth_piers 4`; the walk now touches water on three sides |
 | C5 | south ambulatory | pier block opened; both directions walked by the harness with the real 12×16 body | `audit` strict and permissive: PASS 23 cells; harness walks `south_loop` then `return_route` |
@@ -86,6 +86,6 @@ tuning budget. Recorded as a proposal, not attempted.
 The campaign camera is a plain follow camera at zoom 1. The alternative evaluated
 is an archive framing at zoom 2, applied to the live `Camera2D` at runtime. Both are
 captured at the same moment, at 1280×720 and 1024×576, in
-`docs/gate3/evidence/comparison_camera_*.png`. The decision and its reasoning are in
+`docs/gate3/evidence/camera_comparison.png`. The decision and its reasoning are in
 `GATE3_REPORT.md`, because the brief requires it to be argued from the native frames
 rather than from intent.

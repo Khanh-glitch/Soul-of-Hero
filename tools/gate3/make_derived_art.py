@@ -8,11 +8,17 @@ opaque 16x16 frames whose background is a flat violet, RGB (61, 37, 59). At the
 stone floor — which is exactly the "magenta/purple" Gate 2 was marked down for, and
 exactly the sort of thing a multiply tint cannot fix, because the plate is opaque.
 
-Production art is frozen, so this tool does not touch it. It writes a
-prototype-local *derived* copy with ONLY the flat background turned transparent;
-every spike pixel is copied unchanged, so the hazard keeps its shape, its contrast
-and its four-frame animation, and loses nothing but the plate behind it. The
-derived files carry the source sha256 in the manifest, so the provenance is
+Production art is frozen, so this tool does not touch it. It writes a prototype-local
+*derived* copy in which ONLY the flat plate is repainted, as a dark crimson pit, and
+the plate's violet shadow step is neutralised; every spike pixel is copied unchanged,
+so the hazard keeps its shape, its contrast and its four-frame animation.
+
+Clearing the plate to transparency was the first attempt and was rejected after being
+measured in the native frame: pale spikes on bare stone read as harmless rubble, and a
+hazard must never become quieter than the card it replaced. The pit keeps the bay a
+marked danger while removing the violet.
+
+The derived files carry the source sha256 in the manifest, so the provenance is
 auditable and the derivation is reproducible:
 
     python3 tools/gate3/make_derived_art.py [--check]
