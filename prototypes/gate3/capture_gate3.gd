@@ -79,8 +79,10 @@ const FLOOR2_ORDER: Array[String] = ["floor2_arrival", "floor2_stacks"]
 const FLOOR3_ORDER: Array[String] = ["floor3_camp"]
 
 ## The two authored descents, as (walk-to cell, door cell, expected landing cell).
-const DESCENT_1 := {"walk": Vector2i(109, 17), "door": Vector2i(109, 16), "landing": Vector2i(106, 42)}
-const DESCENT_2 := {"walk": Vector2i(9, 51), "door": Vector2i(9, 51), "landing": Vector2i(9, 80)}
+const DESCENT_1 := {"walk": Vector2i(109, 17), "door": Vector2i(109, 16), "landing": Vector2i(106, 42),
+	"checkpoint": Vector2i(98, 46)}
+const DESCENT_2 := {"walk": Vector2i(9, 51), "door": Vector2i(9, 51), "landing": Vector2i(9, 80),
+	"checkpoint": Vector2i(17, 84)}
 
 var _with_overlay := false
 ## Second capture pass: skip the floor-1 station tour and go down.
@@ -1434,6 +1436,14 @@ func _descend(descent: Dictionary, order: Array[String]) -> bool:
 	_expect(landed == descent["landing"],
 		"the floor door landed the Knight at %s (expected %s)"
 		% [str(landed), str(descent["landing"])])
+	# Round 4: a player touches the flag on the storey they have just entered. Until
+	# now the harness walked past it, so a death on floor 2 sent the Knight back to the
+	# spawn on floor 1 and the walk could not be resumed across a floor door.
+	var flag: Vector2i = descent.get("checkpoint", Vector2i(-1, -1))
+	if flag != Vector2i(-1, -1):
+		if await _walk_to_cell("checkpoint", flag):
+			print("GATE3 CHECKPOINT: touched the flag at %s, checkpoint now %s"
+				% [str(flag), str(GameSession.checkpoint)])
 	for name: String in order:
 		if not await _walk_to_station(name):
 			return false

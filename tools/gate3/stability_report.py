@@ -53,15 +53,15 @@ def parse(path: str) -> list[dict]:
                 "enemy": int(values["enemy"]),
                 "unexplained": int(values["unexplained"]),
             })
+            runs.append(current)
+            current = {}
             continue
         route = ROUTE.search(line)
         if route and current:
             current["cells"] = int(route.group("cells"))
             current["pixels"] = int(route.group("pixels"))
-        if PASSED in line:
-            current["passed"] = True
-            runs.append(current)
-            current = {}
+        if PASSED in line and runs:
+            runs[-1]["passed"] = True
     return runs
 
 
@@ -75,12 +75,13 @@ def main(argv: list[str]) -> int:
     print("Headless replays of the same production descent (authored spawn, the level's")
     print("own floor doors, production input actions). Health is 1100 for every run.")
     print()
-    print("| # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained |")
-    print("|---|---|---|---|---|---|---|---|---|")
+    print("| # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |")
+    print("|---|---|---|---|---|---|---|---|---|---|")
     for index, run in enumerate(runs, start=1):
-        print("| {} | 1..{} | {} | {} | {} | {} | {} | {} | {} |".format(
+        print("| {} | 1..{} | {} | {} | {} | {} | {} | {} | {} | {} |".format(
             index, run["floors"], run["fights"], run["respawns"], run.get("cells", "?"),
-            run["delta"], run["hazard"], run["enemy"], run["unexplained"]))
+            run["delta"], run["hazard"], run["enemy"], run["unexplained"],
+            "passed" if run.get("passed") else "recorded"))
     print()
     if not runs:
         print("GATE3 STABILITY: no descent produced a stability line")
