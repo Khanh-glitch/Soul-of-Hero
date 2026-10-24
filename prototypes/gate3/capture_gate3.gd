@@ -912,11 +912,14 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# chose is the enemy that is there when the first sword swing lands.
 		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
+			var crowd := _nearby_enemy_count(170.0)
 			if touching != null and (not _can_afford_a_fight()
-					or int(_player.get("health")) < EVADE_BELOW_HEALTH):
-				# Not healthy enough to trade: slip past instead. Every fight in this
-				# archive costs about 150 health on average, and the two floor doors at
-				# the far end do not care how many skeletons are dead on the way.
+					or int(_player.get("health")) < EVADE_BELOW_HEALTH or crowd > 1):
+				# One skeleton at a time is a duel the Knight wins for free: the sword
+				# combo interrupts it and the dash out of each hit costs it a swing. Two
+				# or more is a crowd, and a crowd is what has ended every failed capture,
+				# so the harness leaves instead of trading blows it cannot win. The doors
+				# at the far end do not care how many skeletons are dead on the way.
 				frames += await _evade(touching, 72.0)
 				progress_at = frames
 				best_distance = 1.0e9
@@ -1066,11 +1069,14 @@ func _evade(threat: Node2D, keep_clear: float) -> int:
 	## no health. Bounded, because a harness that can run forever is a harness that
 	## hangs a CI job instead of failing it.
 	var frames := 0
-	while frames < 240 and not _player_dead():
+	var health_at_start := int(_player.get("health"))
+	# Run until the crowd is behind him, not just until the one that started it is:
+	# this is bounded at five seconds, which is enough to clear any enemy's chase.
+	while frames < 300 and not _player_dead():
 		if not is_instance_valid(threat) or not threat.is_inside_tree():
 			break
 		var distance := threat.global_position.distance_to(_player.global_position)
-		if distance > keep_clear + 70.0:
+		if distance > keep_clear + 90.0 and _nearby_enemy_count(190.0) == 0:
 			break
 		var flee := _flee_delta()
 		if flee.length() < 0.5:
@@ -1088,6 +1094,8 @@ func _evade(threat: Node2D, keep_clear: float) -> int:
 		for action: String in actions:
 			Input.action_release(action)
 		frames += 1
+	print("GATE3 EVADE: %d frames, HP %d -> %d, nearest enemy %.0f px"
+		% [frames, health_at_start, int(_player.get("health")), _nearest_enemy_distance()])
 	return frames
 
 
@@ -1101,6 +1109,17 @@ func _flee_delta() -> Vector2:
 	var enemy := _nearest_enemy(900.0, Vector2.ZERO)
 	if enemy == null:
 		return Vector2.ZERO
+	# Score each neighbouring cell by its distance from EVERY enemy nearby, not just
+	# the closest one. Running from one skeleton into the arms of two others is how a
+	# retreat turns into a death.
+	var threat_positions: Array[Vector2] = []
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var other := node as Node2D
+		if other == null or not other.is_inside_tree() or int(other.get("health")) <= 0:
+			continue
+		var offset := other.global_position - _player.global_position
+		if offset.length() <= 300.0:
+			threat_positions.append(other.global_position)
 	var walkable := _walkable_cells()
 	var cell := _current_cell()
 	var best_cell := cell
@@ -1109,7 +1128,11 @@ func _flee_delta() -> Vector2:
 		var neighbour: Vector2i = cell + step
 		if not walkable.has(neighbour):
 			continue
-		var score := _cell_centre(neighbour).distance_to(enemy.global_position)
+		var centre := _cell_centre(neighbour)
+		var score := 0.0
+		for position: Vector2 in threat_positions:
+			score += minf(240.0, centre.distance_to(position))
+		# Break ties towards the objective, so a retreat is not a random walk.
 		if score > best_score:
 			best_score = score
 			best_cell = neighbour
