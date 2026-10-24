@@ -350,6 +350,8 @@ func _build_floor_wear(floor: Dictionary, geometry: Dictionary) -> void:
 	layer.name = FLOOR_WEAR_NODE
 	layer.z_index = -9
 	layer.tile_set = reference.tile_set
+	# Half-strength: wear should tint the slab under it, not read as a rug.
+	layer.modulate = Color(1.0, 1.0, 1.0, float(config.get("alpha", 0.55)))
 	add_child(layer)
 	for cell: Vector2i in floor:
 		if geometry.has(cell):
