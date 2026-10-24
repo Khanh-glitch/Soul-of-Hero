@@ -60,8 +60,10 @@ ring, and a real recess plus lantern around the armarium.
 | C6 | five hard vault falloff bands → one efficient method | one 116×96 RGBA distance-field shade sprite, linearly filtered, in a single node with a 26-cell falloff; no steps at any zoom | 1 node |
 | C7 | bespoke architecture on floors 2–3, distinct per floor | same eleven roles, different purpose per storey: floor 2 is a stack level (shelf bays, armarium, reading lamps), floor 3 is a camp (benches, stores, the exit approach) | 36 props, 6 lights across all three storeys |
 
-Measured totals (`evidence/logs/stats.txt`, `evidence/logs/after.txt`):
-`PROPS 36 (17 solid) · LIGHTS 6 · ENTITIES 79`, material layers
+Measured totals at Phase C (`evidence/logs/stats.txt`, `evidence/logs/after.txt`):
+`PROPS 36 (17 solid) · LIGHTS 6 · ENTITIES 79` — these are the Phase C figures; Round 4
+later added nine props and four lights, so the current delivery is
+`PROPS 45 (21 solid) · LIGHTS 10 · ENTITIES 79` (§13.3). Material layers
 `rock 5872 / floor 3413 / coping 34 / water 66 / water_edge 30 / wall_face 979 /
 niche 241 / mass 707 / shadow 508 / weather 326 / decor 109`.
 
@@ -612,18 +614,22 @@ GATE3 STABILITY SPREAD: max-min=622 (57% of a 1100 health bar)
 
 Twelve descents, read together:
 
-* **Reliability: solved.** 12 / 12 reached floor 3 on foot, 3 765–3 787 px each, and 11 of
-  the 12 needed at least one checkpoint respawn. Before the respawn director a death ended
-  the whole level; now it costs the storey.
+* **Reliability: solved.** 12 / 12 reached floor 3 on foot, 3 763–3 787 px each, and 8 of
+  the 12 needed at least one checkpoint respawn (11 respawns in total). Before the respawn
+  director a death ended the whole level; now it costs the storey.
 * **Cost: still not controlled.** Net health lost across the twelve is
   0, 0, 0, 328, 368, 482, 502, 622, 676, 696, 944, 1044 out of 1100 — min 0 %, median
-  51 %, max 95 %. The plan's declared threshold (median ≈ 40 % of the bar, max ≤ 75 %) is
-  **missed on both counts**, and the per-sample medians — 415, 686, 425 — swing by more
+  44.7 %, max 94.9 %. The plan's declared threshold (median ≈ 40 % of the bar, max ≤ 75 %)
+  is **missed on both counts**, and the per-sample medians — 415, 686, 425 — swing by more
   than most tuning changes would. That swing is the substantive finding: this level's
   basic-attack-and-dash combat is a coin-flip on how many skeletons converge at once.
   `data/**` is frozen under decision D2(a), so nothing was tuned.
+* **The gross cost is what decides survivability.** Net delta hides respawns, so the
+  ledger totals are the honest figure: median 1 505 = **136.8 % of a health bar** per
+  descent, and **7 of the 12 descents absorbed more than one full bar**. The shipped game
+  has no respawn (§12.2), so those seven runs are deaths, not descents.
 * **The ledger explains the damage.** 17 164 points attributed out of 17 762 —
-  **96.6 % across the twelve runs**, with ten of the twelve at exactly 100 %. The
+  **96.6 % across the twelve runs**, with eight of the twelve at exactly 100 %. The
   unattributed remainder comes from damage taken in the same frame as a teleport or a
   respawn.
 * **"HP lost" and "damage" are different numbers by design.** A respawn refills the bar,
@@ -648,14 +654,20 @@ unexplained 0` — 100 % attributed.
 
 1. `floor2_arrival` (45.3 %) and `floor3_camp` (59.2 %) stay below the plan's ≥ 60 %
    building target; the arrival room is genuinely the emptiest frame in the level.
-2. Descent cost ranges from 0 to 95 % of the health bar across twelve runs, with a median
-   of 51 % against the plan's 40 % target, and 3.4 % of the damage is unattributed. Both
-   are reported under D2(a), neither tuned.
+2. Descent cost ranges from 0 to 94.9 % of the health bar across twelve runs, with a
+   median of 44.7 % against the plan's 40 % target, a gross median of 136.8 % of the bar,
+   and 3.4 % of the damage unattributed. All three are reported under D2(a), none tuned.
 3. The deep evidence job still retries the whole Godot process; the retry did not fire in
    the green run, but the mechanism is unchanged.
 4. The ObjectDB notice (§10) is unchanged.
 5. Camera bands are derived from room rects, not hand-composed; they satisfy the
    "no storey-gap framing" criterion but are not a designed shot per room.
+
+Round 5 (`docs/gate3/ROUND_5_ACCEPTANCE.md`) reviewed this round as an acceptance and
+promotion decision rather than a delivery: it re-derived the framing and stability
+numbers from the artefacts, corrected the three arithmetic slips listed there, and
+concluded **conditional GO for the visual system, no-go for promoting Candidate A as
+Level 3 or accepting the current combat balance**. Read it together with this section.
 
 ---
 
