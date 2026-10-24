@@ -1065,7 +1065,7 @@ func _recover_from_death(label: String) -> bool:
 	while Time.get_ticks_msec() < deadline and _player_dead():
 		await get_tree().process_frame
 	if _player_dead():
-		push_error("GATE3 RESPAWN: the Knight did not come back within 15 s")
+		print("GATE3 RESPAWN: the Knight did not come back within 15 s")
 		return false
 	_respawns_this_walk += 1
 	_respawns_seen += 1
@@ -1726,8 +1726,10 @@ func _report_walk() -> void:
 		% [int(_ledger["hazard"]), int(_ledger_events["hazard"]),
 			int(_ledger["enemy"]), int(_ledger_events["enemy"]),
 			int(_ledger["unknown"])])
-	print("GATE3 STABILITY: descent complete=%s floors=%d hp_start=%d hp_end=%d delta=%d "
-		+ "fights=%d respawns=%d hazard=%d enemy=%d unexplained=%d"
+	# One format string, one % operator: mixing + and % here formatted only the
+	# second half and left the specifiers on screen.
+	print(("GATE3 STABILITY: descent complete=%s floors=%d hp_start=%d hp_end=%d delta=%d "
+		+ "fights=%d respawns=%d hazard=%d enemy=%d unexplained=%d")
 		% [str(not _player_dead()), _floors_reached, _start_health, end_health,
 			_start_health - end_health, _engaged_fights, _respawns_seen,
 			int(_ledger["hazard"]), int(_ledger["enemy"]), int(_ledger["unknown"])])
