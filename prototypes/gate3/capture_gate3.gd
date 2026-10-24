@@ -898,6 +898,26 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			best_distance = 1.0e9
 			progress_at = frames
 			continue
+		if _hazard_cache.has(_current_cell()):
+			# Standing on spikes is the one place the walk must not think about anything
+			# else. The capture that died here spent nine hundred frames on a single spike
+			# cell next to a skeleton, taking both the hazard tick and the enemy's swings,
+			# because the walk skips combat on a hazard cell and the enemy would not let it
+			# leave. So: leave first, whether or not anything is swinging.
+			var away := _safe_step_from_hazard(waypoint)
+			if away.length() > 0.5:
+				var escaping: Array[String] = _key_directions(away)
+				for action: String in escaping:
+					Input.action_press(action, 1.0)
+				Input.action_press("dash", 1.0)
+				await get_tree().physics_frame
+				Input.action_release("dash")
+				_dashes += 1
+				for action: String in escaping:
+					Input.action_release(action)
+				frames += 1
+				progress_at = frames
+				continue
 		if _disengage_frames > 0:
 			# Walk on towards the waypoint without starting anything new. Sprinting away
 			# was measured twice and lost both times: the Knight is faster than a skeleton
@@ -1047,6 +1067,29 @@ func _cast_armed(action_name: String, target: Node2D, label: String) -> bool:
 		% [label, mana_before, mana_after, health_before, int(_player.get("health")),
 			String(_player.get("current_action"))])
 	return mana_after < mana_before
+
+
+func _safe_step_from_hazard(waypoint: Vector2) -> Vector2:
+	## The step off a spike cell that stays closest to the waypoint.
+	##
+	## The route already prices a hazard cell at four hundred ordinary cells, so this
+	## only ever runs when the level has put the Knight on spikes anyway: knocked back
+	## onto them, or standing on the door's own footprint. It prefers the neighbour that
+	## is both off the hazard and nearest the waypoint, so leaving does not undo progress.
+	var walkable := _walkable_cells()
+	var cell := _current_cell()
+	var best := Vector2.ZERO
+	var best_score := -1.0e9
+	for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
+		var neighbour: Vector2i = cell + step
+		if not walkable.has(neighbour) or _hazard_cache.has(neighbour):
+			continue
+		var centre := _cell_centre(neighbour)
+		var score := -centre.distance_to(waypoint)
+		if score > best_score:
+			best_score = score
+			best = centre - _player.global_position
+	return best
 
 
 func _retreat_target(radius: int) -> Vector2i:
