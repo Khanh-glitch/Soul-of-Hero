@@ -651,6 +651,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	## The frame counter, the health delta and the reason for every phase change are
 	## printed, so the fight is auditable from the log alone.
 	var spent := 0
+	var last_damage_at := 0
 	var last_target_health := int(target.get("health"))
 	var start_health := int(_player.get("health"))
 	var start_target_health := int(target.get("health"))
@@ -698,6 +699,14 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		var target_health_now := int(target.get("health"))
 		if target_health_now < last_target_health - 1:
 			last_target_health = target_health_now
+			last_damage_at = spent
+		elif spent - last_damage_at > 70:
+			# Seventy frames without landing a hit means this target is out of reach or
+			# behind geometry; another enemy in contact is the better target. Standing
+			# here swinging is what cost 240 frames and 300 health in the logs.
+			var alternative := _nearest_enemy(46.0, Vector2.ZERO)
+			if alternative != null and alternative != target:
+				break
 		if spent % 30 == 0:
 			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s'"
 				% [label, String(target.name), distance, str(target.get("health")),
@@ -790,21 +799,15 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			continue
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		# Do not pick fights. Measured across nine captures: a fight this harness starts
-		# costs 150-300 of the Knight's 1100 health, a fight it is forced into costs far
-		# less, and walking past an enemy costs nothing at all when the Knight uses his
-		# dash's invulnerability. The only fights are the ones the corridor demands.
-		if _disengage_frames <= 0 and _nearest_enemy_distance() < 44.0:
-			if frames % 26 == 0:
-				var away := _key_directions(delta)
-				for action: String in away:
-					Input.action_press(action, 1.0)
-				Input.action_press("dash", 1.0)
-				await get_tree().physics_frame
-				Input.action_release("dash")
-				for action: String in away:
-					Input.action_release(action)
-				frames += 1
+		# Fight only what is on top of the Knight. Nine captures price a self-chosen
+		# fight at 150-300 of the Knight's 1100 health; a fight started at range is the
+		# same fight, one enemy closer, with the Knight's opening hit landing for free.
+		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+			var touching := _nearest_enemy(34.0, Vector2.ZERO)
+			if touching != null:
+				frames += await _engage_enemy(touching, label)
+				progress_at = frames
+				best_distance = 1.0e9
 				continue
 		if frames - progress_at > STALL_FRAMES and _disengage_frames <= 0:
 			attempts += 1
