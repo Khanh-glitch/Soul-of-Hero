@@ -8,10 +8,10 @@ ledger could not attribute to a hazard tick or a blow inside its window.
 
 | # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 1..3 | 7 | 0 | 213 | 676 | 214 | 462 | 0 | passed |
-| 2 | 1..3 | 10 | 2 | 363 | 0 | 408 | 1522 | 270 | passed |
-| 3 | 1..3 | 10 | 0 | 157 | 944 | 20 | 924 | 0 | passed |
-| 4 | 1..3 | 10 | 1 | 260 | 696 | 120 | 1676 | 0 | passed |
+| 1 | 1..3 | 9 | 2 | 140 | 368 | 254 | 2314 | 0 | passed |
+| 2 | 1..3 | 12 | 1 | 151 | 482 | 194 | 1388 | 0 | passed |
+| 3 | 1..3 | 8 | 2 | 256 | 0 | 254 | 1946 | 0 | passed |
+| 4 | 1..3 | 8 | 0 | 183 | 622 | 160 | 462 | 0 | passed |
 
-GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=686 max=944 respawns=3 damage=5346 unexplained=270 explained=95.2%
-GATE3 STABILITY SPREAD: max-min=944 (86% of a 1100 health bar)
+GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=425 max=622 respawns=5 damage=6972 unexplained=0 explained=100.0%
+GATE3 STABILITY SPREAD: max-min=622 (57% of a 1100 health bar)
