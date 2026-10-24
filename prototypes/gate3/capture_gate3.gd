@@ -692,6 +692,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	var last_damage_at := 0
 	var last_target_health := int(target.get("health"))
 	var start_health := int(_player.get("health"))
+	var last_knight_health := start_health
 	var start_target_health := int(target.get("health"))
 	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
@@ -730,6 +731,23 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			Input.action_press("attack", 1.0)
 		if String(_player.get("current_action")) == "" and spent % 4 == 0:
 			_player.call("request_action", "attack")
+		# Dash the moment a hit lands. The dash carries the Knight's own 0.18 s of
+		# invulnerability, which is longer than the enemy's swing recovery, so a fight
+		# that reacts to damage takes a fraction of the hits a fight that only trades
+		# blows takes. Measured on the deep route: 154 health per second of standing in
+		# contact, against 1100 for the whole level.
+		var health_now := int(_player.get("health"))
+		if health_now < last_knight_health and spent % 2 == 1:
+			for action: String in actions:
+				Input.action_press(action, 1.0)
+			Input.action_press("dash", 1.0)
+			await get_tree().physics_frame
+			Input.action_release("dash")
+			for action: String in actions:
+				Input.action_release(action)
+			_dashes += 1
+			spent += 1
+		last_knight_health = health_now
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
@@ -749,9 +767,14 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s'"
 				% [label, String(target.name), distance, str(target.get("health")),
 					int(_player.get("health")), String(_player.get("current_action"))])
-		if int(_player.get("health")) < 150:
-			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d"
-				% [label, int(_player.get("health"))])
+		# Break off for two reasons, both measured. Below 150 health the next hit is
+		# lethal. And any single fight that has already cost 320 health is not going to
+		# get cheaper: the skeleton is at full speed, the corridor is not getting wider,
+		# and the rest of the level needs that health more than this kill does.
+		var spent_health := start_health - int(_player.get("health"))
+		if int(_player.get("health")) < 150 or spent_health > 320:
+			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d (%d lost in this fight)"
+				% [label, int(_player.get("health")), spent_health])
 			_disengage_frames = 420
 			break
 	Input.action_release("attack")
