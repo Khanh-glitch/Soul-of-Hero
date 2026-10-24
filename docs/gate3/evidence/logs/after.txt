@@ -35,22 +35,22 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: descent_landing -> (30, 17) is 16 cells
-GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 380 waypoint (33, 17)
+GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 381 waypoint (33, 17)
 GATE3 WALK: descent_landing  (489, 201) -> (487, 279)  78 px over 15 cells in 146 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_descent_landing.png (1280x720) at (487.2381, 278.9723)
 GATE3 PLAN: cloister -> (38, 18) is 10 cells
 GATE3 WALK: cloister  (487, 279) -> (616, 296)  130 px over 9 cells in 94 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_cloister.png (1280x720) at (616.4355, 296.3098)
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 120 cell (43, 23) HP 1100 since_progress 2 nearest 316 waypoint (44, 23)
+GATE3 TRACE: south_loop frame 120 cell (43, 23) HP 1100 since_progress 2 nearest 329 waypoint (44, 23)
 GATE3 WALK: south_loop  (616, 296) -> (746, 375)  151 px over 13 cells in 141 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_south_loop.png (1280x720) at (745.5955, 375.0663)
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (57, 21) HP 1100 since_progress 5 nearest 181 waypoint (57, 21)
+GATE3 TRACE: combat_space frame 120 cell (57, 21) HP 1100 since_progress 5 nearest 184 waypoint (57, 21)
 GATE3 WALK: combat_space  (746, 375) -> (937, 345)  194 px over 14 cells in 132 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_combat_space.png (1280x720) at (936.9796, 344.8215)
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 since_progress 1 nearest 249 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 since_progress 1 nearest 201 waypoint (47, 23)
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 172 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_return_route.png (1280x720) at (712.9711, 343.2823)
 GATE3 COLLISION: Knight at (712.9711, 343.2823) is clear of every wall and prop
@@ -58,7 +58,7 @@ GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (712.9711, 339.2823) is free of prop bodies
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 13952 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13955 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 844 nodes
 GATE3 CAPTURE TEST PASSED: 8 frames, 4 camera frames (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
