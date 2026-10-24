@@ -122,9 +122,9 @@ def architecture_centres(data_path: Path) -> dict[str, tuple[int, int]]:
         document = json.loads(data_path.read_text(encoding="utf-8"))
     except OSError:
         return {}
-    geometry = {
-        (int(tile["x"]), int(tile["y"])) for tile in document.get("layers", {}).get("Geometry", [])
-    }
+    layers = document.get("layers", {})
+    geometry = {(int(tile["x"]), int(tile["y"])) for tile in layers.get("Geometry", [])}
+    floor = {(int(tile["x"]), int(tile["y"])) for tile in layers.get("Backdrop", [])}
     half_w = CROP_PIXELS // 2 // CROP_TILE       # 10 tiles
     half_h = CROP_PIXELS * 9 // 16 // 2 // CROP_TILE  # 5 tiles
     centres: dict[str, tuple[int, int]] = {}
@@ -133,14 +133,22 @@ def architecture_centres(data_path: Path) -> dict[str, tuple[int, int]]:
         for gx, gy in sorted(geometry):
             if abs(gx - sx) > 14 or abs(gy - sy) > 9:
                 continue
-            density = sum(
-                1
+            window = [
+                (x, y)
                 for x in range(gx - half_w, gx + half_w)
                 for y in range(gy - half_h, gy + half_h)
-                if (x, y) in geometry
-            )
-            distance = abs(gx - sx) + abs(gy - sy)
-            score = (density, -distance)
+            ]
+            density = sum(1 for cell in window if cell in geometry)
+            walked = sum(1 for cell in window if cell in floor)
+            # A crop has to show architecture *in context*. Maximising masonry
+            # alone lands the window in the middle of a solid island, which at
+            # 4x is a wall of brick and tells a reviewer nothing. Aim for a
+            # window that is roughly 42 % masonry and still has floor in it, so
+            # kerbs, thresholds and wall feet are what fills the frame.
+            fraction = density / float(len(window))
+            if walked < len(window) * 0.25:
+                continue
+            score = (-round(abs(fraction - 0.42), 3), -(abs(gx - sx) + abs(gy - sy)))
             if best is None or score > best[0]:
                 best = (score, gx, gy)
         if best is None:

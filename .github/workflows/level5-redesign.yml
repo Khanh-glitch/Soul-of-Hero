@@ -212,25 +212,33 @@ jobs:
         run: |
           set -uo pipefail
           rc=0
-          # In-scope Level 5 acceptance suites: every one of these must print
-          # PASSED and must not print a failure line.
-          for suite in chapter_1_map_design_test chapter_1_campaign_map_design_test \
-                       chapter_1_level_5_miniboss_test level_5_archer_pickup_test \
-                       chapter_1_level_5_live_loot_regression collision_route; do
-            logfile=".artifacts/level5/${suite}.log"
+          # In-scope Level 5 acceptance suites. Each one is matched on the exact
+          # success line it prints *and* on its check count, so a suite that
+          # silently runs fewer checks cannot pass, and each must also be free of
+          # failure lines.
+          check_suite() {
+            local suite="$1"
+            local expected="$2"
+            local logfile=".artifacts/level5/${suite}.log"
             if [ ! -f "$logfile" ]; then
               echo "MISSING suite log: $suite"
               rc=1
-              continue
+              return
             fi
-            if grep -q "PASSED" "$logfile" && ! grep -q "ERROR: FAIL" "$logfile"; then
-              echo "PASSED $suite"
+            if grep -qF "$expected" "$logfile" && ! grep -q "ERROR: FAIL" "$logfile"; then
+              echo "PASSED $suite — $expected"
             else
-              echo "FAILED $suite"
+              echo "FAILED $suite — expected: $expected"
               grep -hE "FAIL|ERROR" "$logfile" | head -10 || true
               rc=1
             fi
-          done
+          }
+          check_suite chapter_1_map_design_test "CHAPTER 1 MAP DESIGN 837/837"
+          check_suite chapter_1_campaign_map_design_test "CAMPAIGN MAP DESIGN PASSED"
+          check_suite chapter_1_level_5_miniboss_test "LEVEL 5 ARCHER MINIBOSS TEST PASSED - 77 checks"
+          check_suite level_5_archer_pickup_test "LEVEL 5 ARCHER PICKUP TEST PASSED - 59 checks"
+          check_suite chapter_1_level_5_live_loot_regression "LEVEL 5 LIVE LOOT PASSED - 22 checks"
+          check_suite collision_route "COLLISION ROUTE TEST PASSED - 161 checks across ten live maps"
           # Out-of-scope diagnostic. The balance matrix asserts on the Hero stat
           # projection and never reads a level document, and it is red on this
           # branch before the redesign. It may only be carried as a known
@@ -261,6 +269,7 @@ jobs:
           exit $rc
 
       - name: Evidence gate
+        if: always()
         run: |
           set -uo pipefail
           rc=0
