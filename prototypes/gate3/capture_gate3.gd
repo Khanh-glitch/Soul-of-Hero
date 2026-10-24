@@ -47,7 +47,7 @@ const TILE := 16
 const HAZARD_COST := 400
 ## Frames without closing on the current waypoint before the harness treats the walk
 ## as blocked and escalates.
-const STALL_FRAMES := 45
+const STALL_FRAMES := 30
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -745,6 +745,17 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			continue
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
+		# Deal with an enemy before it reaches the Knight. The sword attack acquires a
+		# target and closes the distance itself, and the fights that cost this Knight no
+		# health at all in the logs are exactly the ones started at range; the ones that
+		# cost him a hit are the ones started at fourteen pixels, already in contact.
+		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+			var closing := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
+			if closing != null:
+				frames += await _engage_enemy(closing, label)
+				progress_at = frames
+				best_distance = 1.0e9
+				continue
 		if frames - progress_at > STALL_FRAMES and _disengage_frames <= 0:
 			attempts += 1
 			var index_before := index
