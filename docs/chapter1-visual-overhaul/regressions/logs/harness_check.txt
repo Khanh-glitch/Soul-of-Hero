@@ -1,10 +1,39 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
+SCRIPT ERROR: Parse Error: The function signature doesn't match the parent. Parent signature is "_set(StringName, Variant) -> bool".
+          at: GDScript::reload (res://game/levels/presentation/chapter1_environment_art.gd:231)
+SCRIPT ERROR: Compile Error: Failed to compile depended scripts.
+          at: GDScript::reload (res://game/levels/dungeon_level.gd:0)
+ERROR: Failed to load script "res://game/levels/dungeon_level.gd" with error "Compilation failed".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+SCRIPT ERROR: Invalid call. Nonexistent function 'attach' in base 'GDScript'.
+          at: DungeonLevel._refresh_environment_art (res://game/levels/dungeon_level.gd:102)
+          GDScript backtrace (most recent call first):
+              [0] _refresh_environment_art (res://game/levels/dungeon_level.gd:102)
+              [1] reload_from_disk (res://game/levels/dungeon_level.gd:88)
+              [2] _ready (res://game/levels/dungeon_level.gd:39)
+              [3] show_route (res://game/app/app_root.gd:146)
+              [4] _show (res://game/app/app_flow.gd:1097)
+              [5] _begin_run (res://game/app/app_flow.gd:545)
+              [6] start_campaign_level (res://game/app/app_flow.gd:167)
+              [7] _run (res://tools/captures/chapter1_visual_capture.gd:84)
+SCRIPT ERROR: Invalid call. Nonexistent function 'attach' in base 'GDScript'.
+          at: DungeonLevel._refresh_environment_art (res://game/levels/dungeon_level.gd:102)
+          GDScript backtrace (most recent call first):
+              [0] _refresh_environment_art (res://game/levels/dungeon_level.gd:102)
+              [1] reload_from_disk (res://game/levels/dungeon_level.gd:88)
+              [2] _apply_active_run_level_source (res://game/main.gd:151)
+              [3] _ready (res://game/main.gd:64)
+              [4] show_route (res://game/app/app_root.gd:146)
+              [5] _show (res://game/app/app_flow.gd:1097)
+              [6] _begin_run (res://game/app/app_flow.gd:545)
+              [7] start_campaign_level (res://game/app/app_flow.gd:167)
+              [8] _run (res://tools/captures/chapter1_visual_capture.gd:84)
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=226 lights=11 entities=83
-CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=226 lights=11
+CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=off facade_cells=0 lights=0 entities=83
+CHAPTER1 HARNESS CHECK FAIL: level=chapter_1_level_5 facade_cells=0 lights=0
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

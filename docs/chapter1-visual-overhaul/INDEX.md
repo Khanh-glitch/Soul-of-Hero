@@ -21,9 +21,9 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 
 | Suite | Result |
 | --- | --- |
-| `chapter_1_map_design_test` | PASSED |
-| `chapter_1_campaign_map_design_test` | PASSED |
-| `chapter_1_collision_route_test` | PASSED |
+| `chapter_1_map_design_test` | MISSING |
+| `chapter_1_campaign_map_design_test` | MISSING |
+| `chapter_1_collision_route_test` | MISSING |
 
 `chapter_1_balance_matrix_test` is a known pre-existing, baseline-matched
 failure on this branch and is reported in `regressions/` rather than
