@@ -5,10 +5,10 @@ own floor doors, production input actions). Health is 1100 for every run.
 
 | # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | 1..3 | 10 | 1 | 209 | 0 | 348 | 752 | 0 | passed |
-| 2 | 1..3 | 7 | 1 | 144 | 348 | 80 | 1368 | 0 | passed |
-| 3 | 1..3 | 5 | 0 | 170 | 656 | 20 | 636 | 0 | passed |
-| 4 | 1..3 | 12 | 1 | 147 | 944 | 60 | 1830 | 154 | passed |
+| 1 | 1..3 | 11 | 1 | 279 | 1098 | 484 | 1406 | 308 | passed |
+| 2 | 1..3 | 10 | 0 | 159 | 964 | 20 | 944 | 0 | passed |
+| 3 | 1..3 | 10 | 1 | 190 | 462 | 194 | 1368 | 0 | passed |
+| 4 | 1..3 | 14 | 2 | 116 | 924 | 832 | 2292 | 0 | passed |
 
-GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=502 max=944 respawns=3 explained=261.5%
-GATE3 STABILITY SPREAD: max-min=944 (86% of a 1100 health bar)
+GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=462 median=944 max=1098 respawns=4 explained=218.7%
+GATE3 STABILITY SPREAD: max-min=636 (58% of a 1100 health bar)
