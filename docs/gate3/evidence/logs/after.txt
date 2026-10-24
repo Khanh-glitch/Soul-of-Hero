@@ -28,46 +28,66 @@ GATE3 LAYER: Backdrop hidden
 GATE3 COVERAGE: Geometry 1686/1686 cells painted by ["wall_face", "mass", "niche"]
 GATE3 LAYER: Geometry hidden
 GATE3 LIGHTS: 10 local lanterns
+GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
+GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
+GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
+GATE3 CAMERA: storey 1, limits 16..1776 x -32..464 px
+GATE3 RESPAWN: director armed, checkpoint (280.0, 216.0)
 GATE3 OVERLAY ATTACHED: 45 props, 21 solid bodies, 12 material layers, 10 lights, 18 hazards re-skinned, shade=true
 GATE3 CAPTURE: res://.artifacts/gate3/after_spawn.png (1280x720) at (280.0, 216.0)
+GATE3 CAMERA FRAME: spawn floor 1 cells (0, 1, 40, 25) building 54.7% rock 45.3% void 0.0%
 GATE3 PLAN: archive_entry -> (23, 12) is 8 cells
 GATE3 WALK: archive_entry  (280, 216) -> (376, 201)  97 px over 7 cells in 69 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_archive_entry.png (1280x720) at (376.219, 200.536)
+GATE3 CAMERA FRAME: archive_entry floor 1 cells (3, 0, 44, 24) building 60.8% rock 39.2% void 0.0%
 GATE3 PLAN: landmark -> (30, 12) is 8 cells
 GATE3 WALK: landmark  (376, 201) -> (489, 201)  113 px over 7 cells in 62 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_landmark.png (1280x720) at (488.8025, 200.536)
+GATE3 CAMERA FRAME: landmark floor 1 cells (10, 0, 51, 24) building 71.2% rock 28.8% void 0.0%
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1280_landmark.png (1280x720) zoom=(1.0, 1.0)
+GATE3 CAMERA FRAME: cam_baseline_1280_landmark floor 1 cells (10, 0, 51, 24) building 71.2% rock 28.8% void 0.0%
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1280_landmark.png (1280x720) zoom=(2.0, 2.0)
+GATE3 CAMERA FRAME: cam_archive_1280_landmark floor 1 cells (20, 6, 41, 18) building 91.7% rock 8.3% void 0.0%
 GATE3 RESOLUTION: rendering at (1024, 576)
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x576) zoom=(1.0, 1.0)
+GATE3 CAMERA FRAME: cam_baseline_1024_landmark floor 1 cells (10, 0, 51, 24) building 71.2% rock 28.8% void 0.0%
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
+GATE3 CAMERA FRAME: cam_archive_1024_landmark floor 1 cells (20, 6, 41, 18) building 91.7% rock 8.3% void 0.0%
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: descent_landing -> (30, 17) is 16 cells
-GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 386 waypoint (33, 17)
+GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 392 waypoint (33, 17)
 GATE3 WALK: descent_landing  (489, 201) -> (487, 279)  78 px over 15 cells in 146 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_descent_landing.png (1280x720) at (487.2381, 278.9723)
+GATE3 CAMERA FRAME: descent_landing floor 1 cells (10, 5, 51, 29) building 70.4% rock 29.6% void 0.0%
 GATE3 PLAN: cloister -> (38, 18) is 10 cells
 GATE3 WALK: cloister  (487, 279) -> (615, 295)  129 px over 9 cells in 85 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_cloister.png (1280x720) at (614.7933, 294.6941)
+GATE3 CAMERA FRAME: cloister floor 1 cells (18, 6, 59, 30) building 74.8% rock 25.2% void 0.0%
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 323 waypoint (45, 23)
+GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 329 waypoint (45, 23)
 GATE3 WALK: south_loop  (615, 295) -> (744, 375)  152 px over 13 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_south_loop.png (1280x720) at (743.9288, 374.9468)
+GATE3 CAMERA FRAME: south_loop floor 1 cells (26, 11, 67, 35) building 56.7% rock 43.3% void 0.0%
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 175 waypoint (57, 21)
+GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 156 waypoint (57, 21)
 GATE3 WALK: combat_space  (744, 375) -> (937, 345)  195 px over 14 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_combat_space.png (1280x720) at (936.938, 344.9181)
+GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 9, 79, 33) building 61.9% rock 38.1% void 0.0%
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 270 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 260 waypoint (47, 23)
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 170 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_return_route.png (1280x720) at (713.1164, 342.5425)
+GATE3 CAMERA FRAME: return_route floor 1 cells (24, 9, 65, 33) building 64.6% rock 35.4% void 0.0%
 GATE3 COLLISION: Knight at (713.1164, 342.5425) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (713.1164, 338.5425) is free of prop bodies
-GATE3 PERF: 90 physics frames in 1452 ms, 16.14 ms per frame (software GL)
-GATE3 PERF: nodes=866 objects=14028 draw_calls_in_frame=95 objects_in_frame=2653
-GATE3 PERF: physics_process=1.39 ms render_process=232.09 ms
+GATE3 PERF: 90 physics frames in 1410 ms, 15.67 ms per frame (software GL)
+GATE3 PERF: nodes=866 objects=14028 draw_calls_in_frame=97 objects_in_frame=2661
+GATE3 PERF: physics_process=1.38 ms render_process=78.04 ms
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
+GATE3 RESPAWN TOTAL: 0 deaths recovered at a checkpoint during this run
+GATE3 DAMAGE LEDGER: hazard 0 (0 ticks), enemy 0 (0 blows), unexplained 0
+GATE3 STABILITY: descent complete=true floors=1 hp_start=1100 hp_end=1100 delta=0 fights=0 respawns=0 hazard=0 enemy=0 unexplained=0
 GATE3 CAMERA FRAMES: 4
 GATE3 OBJECTS: ObjectDB holds 14022 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 866 nodes
