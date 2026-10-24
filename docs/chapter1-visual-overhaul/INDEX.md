@@ -21,9 +21,9 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 
 | Suite | Result |
 | --- | --- |
-| `chapter_1_map_design_test` | MISSING |
-| `chapter_1_campaign_map_design_test` | MISSING |
-| `chapter_1_collision_route_test` | MISSING |
+| `chapter_1_map_design_test` | PASSED |
+| `chapter_1_campaign_map_design_test` | PASSED |
+| `chapter_1_collision_route_test` | PASSED |
 
 `chapter_1_balance_matrix_test` is a known pre-existing, baseline-matched
 failure on this branch and is reported in `regressions/` rather than
@@ -40,13 +40,13 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-| chapter_1_level_10 | 639 -> 664 | 91 -> 103 | 98.0 MiB |
+| chapter_1_level_10 | 654 -> 657 | 108 -> 109 | 97.9 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 104.7 MiB |
 | chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.6 MiB |
-| chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 108.1 MiB |
-| chapter_1_level_4 | 777 -> 800 | 72 -> 76 | 107.9 MiB |
-| chapter_1_level_5 | 868 -> 886 | 103 -> 110 | 114.3 MiB |
-| chapter_1_level_6 | 868 -> 884 | 66 -> 78 | 109.8 MiB |
-| chapter_1_level_7 | 662 -> 679 | 92 -> 103 | 107.5 MiB |
-| chapter_1_level_8 | 680 -> 697 | 110 -> 121 | 103.9 MiB |
-| chapter_1_level_9 | 719 -> 732 | 106 -> 113 | 101.0 MiB |
+| chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 109.7 MiB |
+| chapter_1_level_4 | 777 -> 801 | 72 -> 76 | 109.0 MiB |
+| chapter_1_level_5 | 871 -> 890 | 103 -> 110 | 114.3 MiB |
+| chapter_1_level_6 | 862 -> 886 | 66 -> 78 | 111.5 MiB |
+| chapter_1_level_7 | 662 -> 681 | 92 -> 103 | 107.5 MiB |
+| chapter_1_level_8 | 686 -> 712 | 117 -> 127 | 104.1 MiB |
+| chapter_1_level_9 | 723 -> 770 | 111 -> 138 | 101.3 MiB |
