@@ -238,12 +238,13 @@ func _capture_depth() -> void:
 ## level revision.  The Knight has to die of a real hazard tick, and the only thing
 ## that brings him back is the director in the overlay: production's `respawn()` is
 ## never called by the shipped HUD.
+const NO_STATIONS: Array[String] = []
 const RESPAWN_CHECKPOINT := Vector2i(98, 46)
 const RESPAWN_CHECKPOINT_PX := Vector2(1576.0, 744.0)
 
 
 func _capture_respawn() -> void:
-	if not await _descend(DESCENT_1, []):
+	if not await _descend(DESCENT_1, NO_STATIONS):
 		_push("the respawn trial could not reach floor 2")
 		return
 	_floors_reached = maxi(_floors_reached, 2)
@@ -316,8 +317,9 @@ func _nearest_reachable_hazard() -> Vector2i:
 			continue
 		candidates.append(cell)
 	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
-		return _cell_centre(a).distance_to(_player.global_position) <
-			_cell_centre(b).distance_to(_player.global_position))
+		var distance_a := _cell_centre(a).distance_to(_player.global_position)
+		var distance_b := _cell_centre(b).distance_to(_player.global_position)
+		return distance_a < distance_b)
 	for cell: Vector2i in candidates:
 		if not _plan_route(_current_cell(), cell).is_empty():
 			return cell
