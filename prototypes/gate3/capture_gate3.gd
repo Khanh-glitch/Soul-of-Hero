@@ -665,6 +665,12 @@ func _weapon_id() -> String:
 	return String(hand.get("weapon_id")) if hand != null else "none"
 
 
+func _can_afford_a_fight() -> bool:
+	## A fight costs the Knight roughly a hit or two of his own health. Below this
+	## line the harness keeps moving instead of trading blows it cannot pay for.
+	return int(_player.get("health")) > 620
+
+
 func _enemy_count() -> int:
 	var count := 0
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
@@ -715,13 +721,9 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
 		if frames_since_new_cell > 60 and _disengage_frames <= 0:
-			var blocker := _nearest_enemy(64.0, delta)
-			var hurt := int(_player.get("health")) < 260
-			if blocker != null and not hurt and not _hazard_cache.has(cell) and rolls < 2:
-				var spent := await _engage_enemy(blocker, label)
-				frames += spent
-				frames_since_new_cell = 0
-				continue
+			# Escalation, cheapest first. The Knight is invulnerable for 0.75 s after
+			# every hit, so slipping past a body with a roll usually costs less than
+			# standing in a corridor trading blows with it.
 			if replans < 3:
 				var fresh := _plan_route(cell, target_cell)
 				if fresh.size() > 1:
@@ -730,20 +732,30 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 					replans += 1
 					frames_since_new_cell = 0
 					continue
-			# Nothing left to kill and no better route: roll through the gap. The roll
-			# is the Knight's own i-frame move, so this is still playing the game.
-			var toward := _key_directions(delta)
-			for action: String in toward:
-				Input.action_press(action, 1.0)
-			Input.action_press("roll", 1.0)
-			await get_tree().physics_frame
-			Input.action_release("roll")
-			for action: String in toward:
-				Input.action_release(action)
-			frames += 1
-			rolls += 1
+			if rolls < 4:
+				var toward := _key_directions(delta)
+				for action: String in toward:
+					Input.action_press(action, 1.0)
+				Input.action_press("roll", 1.0)
+				await get_tree().physics_frame
+				Input.action_release("roll")
+				for action: String in toward:
+					Input.action_release(action)
+				frames += 1
+				rolls += 1
+				frames_since_new_cell = 0
+				continue
+			# Still blocked: kill what is holding the corridor, unless the Knight is
+			# already too hurt to trade blows, in which case keep rolling.
+			var blocker := _nearest_enemy(64.0, delta)
+			if blocker != null and _can_afford_a_fight() and not _hazard_cache.has(cell):
+				var spent := await _engage_enemy(blocker, label)
+				frames += spent
+				frames_since_new_cell = 0
+				rolls = 0
+				continue
+			rolls = 0
 			frames_since_new_cell = 0
-			continue
 		var actions := _key_directions(delta)
 		for action: String in actions:
 			Input.action_press(action, 1.0)
