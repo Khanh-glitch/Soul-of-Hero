@@ -1,4 +1,4 @@
-GATE3 SHEETS: 19 files
+GATE3 SHEETS: 20 files
   comparison_spawn.png
   comparison_archive_entry.png
   comparison_landmark.png
@@ -16,5 +16,6 @@ GATE3 SHEETS: 19 files
   inspection_crop_bay_rhythm_3x.png
   inspection_crop_shade_depth_3x.png
   inspection_crop_hazard_bay_3x.png
+  combat_under_load.png
   camera_comparison.png
   route_and_connectivity_diagram.png
