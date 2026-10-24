@@ -772,10 +772,12 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		# get cheaper: the skeleton is at full speed, the corridor is not getting wider,
 		# and the rest of the level needs that health more than this kill does.
 		var spent_health := start_health - int(_player.get("health"))
-		if int(_player.get("health")) < 150 or spent_health > 320:
+		if int(_player.get("health")) < 150 or spent_health > 160:
 			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d (%d lost in this fight)"
 				% [label, int(_player.get("health")), spent_health])
-			_disengage_frames = 420
+			# About three seconds of running: long enough to clear the disengage range,
+			# short enough that the capture still finishes inside its time budget.
+			_disengage_frames = 190
 			break
 	Input.action_release("attack")
 	_engaged_fights += 1
@@ -859,7 +861,27 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			progress_at = frames
 			continue
 		if _disengage_frames > 0:
+			# Run, do not walk on towards the objective: a Knight who keeps walking into
+			# the enemy that just cost him a third of his health is paying for the same
+			# fight twice. Enemies stop chasing at their disengage range, and the walk
+			# resumes on a fresh route once that range is behind him.
 			_disengage_frames -= 1
+			var flee := _flee_delta()
+			if flee.length() > 0.5:
+				var fleeing := _key_directions(flee)
+				for action: String in fleeing:
+					Input.action_press(action, 1.0)
+					if frames % 24 == 0:
+						Input.action_press("dash", 1.0)
+						await get_tree().physics_frame
+						Input.action_release("dash")
+						_dashes += 1
+				await get_tree().physics_frame
+				for action: String in fleeing:
+					Input.action_release(action)
+				frames += 1
+				progress_at = frames
+				continue
 		# Deal with an enemy before it reaches the Knight, and deal with it one at a
 		# time. Fighting only on contact was measured on the deep route: the Knight
 		# walked into a crowd of five, they all arrived together, and he died with the
@@ -954,6 +976,33 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	_expect(travelled > 16.0 or route.size() <= 1 or label == "spawn",
 		"'%s' was reached on foot, not by teleporting" % label)
 	return _failures.size() == failures_before
+
+
+func _flee_delta() -> Vector2:
+	## The direction to run to get out of a fight the Knight cannot win.
+	##
+	## Enemies give up at their own disengage range, so the cheapest way out of a
+	## crowded corner is distance, not damage. This picks the neighbouring walkable
+	## cell farthest from the nearest live enemy, so the Knight runs along the level's
+	## own floor rather than into a wall.
+	var enemy := _nearest_enemy(900.0, Vector2.ZERO)
+	if enemy == null:
+		return Vector2.ZERO
+	var walkable := _walkable_cells()
+	var cell := _current_cell()
+	var best_cell := cell
+	var best_score := -1.0
+	for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
+		var neighbour: Vector2i = cell + step
+		if not walkable.has(neighbour):
+			continue
+		var score := _cell_centre(neighbour).distance_to(enemy.global_position)
+		if score > best_score:
+			best_score = score
+			best_cell = neighbour
+	if best_cell == cell:
+		return _player.global_position - enemy.global_position
+	return _cell_centre(best_cell) - _player.global_position
 
 
 func _key_directions(delta: Vector2) -> Array[String]:
