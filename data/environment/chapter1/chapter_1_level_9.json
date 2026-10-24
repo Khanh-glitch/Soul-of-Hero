@@ -20,9 +20,9 @@
       0.88
     ],
     "world": [
-      1.0,
-      0.95,
-      0.95
+      0.82,
+      0.77,
+      0.78
     ],
     "background": [
       0.06,
@@ -124,7 +124,8 @@
         "light": false
       }
     ],
-    "trim_spacing": 11
+    "trim_spacing": 11,
+    "pier_every": 7
   },
   "shadow": {
     "color": [

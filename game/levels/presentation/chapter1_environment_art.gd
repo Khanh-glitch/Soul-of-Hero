@@ -78,13 +78,13 @@ const DEFAULT_SHADOW := {"color": [0.0, 0.0, 0.0, 0.46], "depth": 7, "side": 4}
 ## objective that the player must find gets a light, so the lighting cannot drift
 ## away from the gameplay that the frozen suites validate.
 const ENTITY_LIGHTS := {
-	"sigil": {"color": [1.0, 0.78, 0.42], "energy": 0.85, "scale": 2.2},
-	"checkpoint": {"color": [0.62, 0.82, 1.0], "energy": 0.75, "scale": 2.6},
-	"exit_gate": {"color": [1.0, 0.86, 0.55], "energy": 1.0, "scale": 3.2},
-	"chest": {"color": [1.0, 0.80, 0.45], "energy": 0.55, "scale": 1.8},
-	"hooded_archer_miniboss": {"color": [1.0, 0.55, 0.35], "energy": 0.9, "scale": 3.0},
-	"vampire": {"color": [0.95, 0.40, 0.45], "energy": 0.8, "scale": 2.6},
-	"vampire_castellan": {"color": [1.0, 0.35, 0.40], "energy": 1.1, "scale": 3.4},
+	"sigil": {"color": [1.0, 0.78, 0.42], "energy": 1.25, "scale": 3.0},
+	"checkpoint": {"color": [0.62, 0.82, 1.0], "energy": 1.05, "scale": 3.4},
+	"exit_gate": {"color": [1.0, 0.86, 0.55], "energy": 1.45, "scale": 4.2},
+	"chest": {"color": [1.0, 0.80, 0.45], "energy": 0.85, "scale": 2.4},
+	"hooded_archer_miniboss": {"color": [1.0, 0.55, 0.35], "energy": 1.3, "scale": 4.0},
+	"vampire": {"color": [0.95, 0.40, 0.45], "energy": 1.15, "scale": 3.4},
+	"vampire_castellan": {"color": [1.0, 0.35, 0.40], "energy": 1.5, "scale": 4.4},
 }
 
 var level_data_path := ""
@@ -311,6 +311,13 @@ func _build_facade() -> void:
 			_put(facade, target, courses[posmod(cell.x * 5 + step * 3, courses.size())])
 			placed[target] = true
 			stack = step
+		# Pilasters: every few bays the facade steps one course higher, which
+		# gives a long wall a rhythm of built bays instead of a flat ribbon.
+		if stack == rows and posmod(cell.x, maxi(3, int(config.get("pier_every", 7)))) == 0:
+			var crest := Vector2i(cell.x, top - rows - 1)
+			if not floor.has(crest) and not geometry.has(crest) and not placed.has(crest):
+				_put(facade, crest, courses[posmod(cell.x, courses.size())])
+				placed[crest] = true
 		if stack == rows:
 			var cap_cell := Vector2i(cell.x, top - rows - 1)
 			if not floor.has(cap_cell) and not geometry.has(cap_cell) and not placed.has(cap_cell):
