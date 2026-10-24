@@ -631,9 +631,6 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	var last_target_health := int(target.get("health"))
 	var start_health := int(_player.get("health"))
 	var start_target_health := int(target.get("health"))
-	var health_mark := start_health
-	var retreat_until := -1
-	var retreats := 0
 	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
 			start_target_health, start_health, float(_player.get("mana"))])
@@ -641,65 +638,56 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	await get_tree().physics_frame
 	print("GATE3 COMBAT: after the input press current_action='%s', hero=%s, weapon=%s"
 		% [String(_player.get("current_action")), _hero_id(), _weapon_id()])
-	while spent < 360:
+	# Keep the combo on the target. Retreating between swings was tried and measured:
+	# it costs the Knight a free hit each time, because a retreating Knight neither
+	# staggers the enemy nor leaves its reach, and it stretches a two-second kill into
+	# six. The sword combo interrupts the skeleton, so the fastest kill is also the
+	# cheapest one.
+	while spent < 240:
 		if _player_dead():
 			Input.action_release("attack")
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
 		if not is_instance_valid(target) or not target.is_inside_tree():
 			break
+		if int(target.get("health")) <= 0:
+			break
 		var offset := target.global_position - _player.global_position
 		var distance := offset.length()
-		var health_now := int(_player.get("health"))
-		if health_now < health_mark:
-			health_mark = health_now
-			# Took a hit: break contact, then come back in.
-			retreat_until = spent + 26
-			retreats += 1
-		var target_health_now := int(target.get("health"))
-		if target_health_now < last_target_health - 1:
-			last_target_health = target_health_now
-		var retreating := spent < retreat_until
 		var actions: Array[String] = []
-		if retreating:
-			# Walk out of reach; the enemy follows, which pulls it off the route.
-			if distance < 72.0:
-				if absf(offset.x) > 2.0:
-					actions.append("move_left" if offset.x > 0.0 else "move_right")
-				if absf(offset.y) > 2.0:
-					actions.append("move_up" if offset.y > 0.0 else "move_down")
-			Input.action_release("attack")
-		else:
-			if distance > 40.0:
-				if absf(offset.x) > 2.0:
-					actions.append("move_right" if offset.x > 0.0 else "move_left")
-				if absf(offset.y) > 2.0:
-					actions.append("move_down" if offset.y > 0.0 else "move_up")
-			# Fresh press every other frame: the input layer only reports new presses.
-			if spent % 2 == 0:
-				Input.action_release("attack")
-				Input.action_press("attack", 1.0)
-			if String(_player.get("current_action")) == "" and spent % 4 == 0:
-				_player.call("request_action", "attack")
+		if distance > 40.0:
+			if absf(offset.x) > 2.0:
+				actions.append("move_right" if offset.x > 0.0 else "move_left")
+			if absf(offset.y) > 2.0:
+				actions.append("move_down" if offset.y > 0.0 else "move_up")
 		for action: String in actions:
 			Input.action_press(action, 1.0)
+		# Fresh press every other frame: the input layer only reports new presses.
+		if spent % 2 == 0:
+			Input.action_release("attack")
+			Input.action_press("attack", 1.0)
+		if String(_player.get("current_action")) == "" and spent % 4 == 0:
+			_player.call("request_action", "attack")
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
 		spent += 1
+		var target_health_now := int(target.get("health"))
+		if target_health_now < last_target_health - 1:
+			last_target_health = target_health_now
 		if spent % 30 == 0:
-			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s', retreats %d"
+			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s'"
 				% [label, String(target.name), distance, str(target.get("health")),
-					health_now, String(_player.get("current_action")), retreats])
-		if health_now < 150:
+					int(_player.get("health")), String(_player.get("current_action"))])
+		if int(_player.get("health")) < 150:
 			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d"
-				% [label, health_now])
+				% [label, int(_player.get("health"))])
 			_disengage_frames = 420
 			break
 	Input.action_release("attack")
 	_engaged_fights += 1
-	print("GATE3 COMBAT: fight near '%s' ended after %d frames with %d retreats, target HP %d -> %d, Knight HP %d -> %d"
-		% [label, spent, retreats, start_target_health,
+	print("GATE3 COMBAT: fight near '%s' ended after %d frames, target HP %d -> %d, Knight HP %d -> %d"
+		% [label, spent, start_target_health,
 			int(target.get("health")) if is_instance_valid(target) else -1,
 			start_health, int(_player.get("health"))])
 	return spent
@@ -920,6 +908,20 @@ func _use_floor_door(door_cell: Vector2i) -> bool:
 		_push("no FloorDoor node within a cell of %s" % str(door_cell))
 		return false
 	for _frame: int in 12:
+		await get_tree().physics_frame
+	# The door is an Area2D with a real footprint: a Knight who stops a cell short is
+	# not in it. Step onto the door itself, with the production movement actions.
+	if not bool(door.call("can_interact", _player)):
+		for _frame: int in 90:
+			var offset: Vector2 = (door as Node2D).global_position - _player.global_position
+			if offset.length() <= 6.0:
+				break
+			var actions: Array[String] = _key_directions(offset)
+			for action: String in actions:
+				Input.action_press(action, 1.0)
+			await get_tree().physics_frame
+			for action: String in actions:
+				Input.action_release(action)
 		await get_tree().physics_frame
 	var before := _player.global_position
 	if bool(door.call("can_interact", _player)):
