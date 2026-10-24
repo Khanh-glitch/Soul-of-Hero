@@ -48,6 +48,8 @@ const HAZARD_COST := 400
 ## Frames without closing on the current waypoint before the harness treats the walk
 ## as blocked and escalates.
 const STALL_FRAMES := 30
+## Hard cap on how many times a deep pass may reload the level after a death.
+const MAX_DEPTH_ATTEMPTS := 3
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -151,6 +153,8 @@ func _run() -> void:
 	if _with_overlay and not await _attach_overlay():
 		_finish()
 		return
+	if _depth_started_ms == 0:
+		_depth_started_ms = Time.get_ticks_msec()
 	_check_contracts()
 	_hazard_cache = _hazard_cells()
 	_enemy_heat = _build_enemy_heat()
@@ -1492,8 +1496,30 @@ func _push(message: String) -> void:
 	_failures.append(message)
 
 
+## Attempt counter, static so it survives `reload_current_scene()`, and the wall clock at
+## which this pass started, so a retry can never eat the step's timeout.
+static var _depth_attempt := 0
+static var _depth_started_ms := 0
+
+
 func _finish() -> void:
 	var run := "after" if _with_overlay else "before"
+	# A deep pass that died before reaching a storey retries, the way a player does, by
+	# reloading the level through the engine's own scene reload: full health, the authored
+	# spawn, nothing carried over. Bounded three ways -- two extra attempts, an
+	# eighteen-minute wall clock, and a printed cause for every death -- so a red run
+	# still explains itself instead of hanging.
+	if _deep and _floors_reached < 2 and not _failures.is_empty():
+		var elapsed := Time.get_ticks_msec() - _depth_started_ms
+		if _depth_attempt + 1 < MAX_DEPTH_ATTEMPTS and elapsed < 18 * 60 * 1000:
+			_depth_attempt += 1
+			print("GATE3 RETRY: attempt %d ended at (%.0f, %.0f) after %d s; reloading the level"
+				% [_depth_attempt, _player.global_position.x, _player.global_position.y,
+					elapsed / 1000])
+			for failure: String in _failures:
+				print("GATE3 RETRY CAUSE: " + failure)
+			get_tree().reload_current_scene()
+			return
 	# The deep pass has a weaker, and honest, contract than the floor-1 tour: it exists
 	# to prove that the lower storeys are reachable through the level's own doors, and
 	# floor 2 is what every run has to deliver. A death after floor 2 is a recorded
