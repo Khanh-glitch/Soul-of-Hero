@@ -53,6 +53,11 @@ const STALL_FRAMES := 45
 ## chosen so the thing each station is about lands in the clear band of the frame.
 ##   descent_landing  the repaired sealed shaft (Gate 2 defect C1)
 ##   south_loop       the opened south ambulatory, past the spike bay (C5)
+##   floor2_stacks    floor 2's shelf bay and armarium, 36 cells from the landing
+##   floor3_camp      floor 3's camp shelf and bench, 31 cells from the landing
+## Both extra-floor stations are placed inside the rooms that carry the bespoke
+## props, and as close to their landing as the room allows: a capture walk is not a
+## playthrough, and every extra corridor is HP the harness has to earn honestly.
 const STATIONS := {
 	"spawn": Vector2i(17, 13),
 	"archive_entry": Vector2i(23, 12),
@@ -63,8 +68,8 @@ const STATIONS := {
 	"combat_space": Vector2i(58, 21),
 	"return_route": Vector2i(44, 21),
 	"floor2_arrival": Vector2i(106, 42),
-	"floor2_stacks": Vector2i(48, 52),
-	"floor3_camp": Vector2i(45, 89),
+	"floor2_stacks": Vector2i(74, 44),
+	"floor3_camp": Vector2i(36, 82),
 }
 const FLOOR1_ORDER: Array[String] = [
 	"spawn", "archive_entry", "landmark", "descent_landing", "cloister",
@@ -602,6 +607,8 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	## — the same scripted entry point the repository's combat tests use — and says so
 	## in the log, so the evidence never hides which path produced the fight.
 	var spent := 0
+	var reached_at := 0
+	var last_target_health := int(target.get("health"))
 	var start_health := int(_player.get("health"))
 	var start_target_health := int(target.get("health"))
 	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
@@ -620,7 +627,14 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			break
 		var offset := target.global_position - _player.global_position
 		var actions: Array[String] = []
-		if offset.length() > 20.0:
+		# The sword hero's attack acquires its target and closes the last few pixels
+		# itself, so the harness swings from reach instead of walking into contact
+		# damage. It only closes the gap when the swings are not landing.
+		var target_health_now := int(target.get("health"))
+		if target_health_now < last_target_health - 1:
+			reached_at = spent
+			last_target_health = target_health_now
+		if offset.length() > 44.0 or spent - reached_at > 60:
 			if absf(offset.x) > 2.0:
 				actions.append("move_right" if offset.x > 0.0 else "move_left")
 			if absf(offset.y) > 2.0:
