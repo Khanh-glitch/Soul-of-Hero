@@ -1727,7 +1727,7 @@ func _report_walk() -> void:
 			int(_ledger["enemy"]), int(_ledger_events["enemy"]),
 			int(_ledger["unknown"])])
 	print("GATE3 STABILITY: descent complete=%s floors=%d hp_start=%d hp_end=%d delta=%d "
-		"fights=%d respawns=%d hazard=%d enemy=%d unexplained=%d"
+		+ "fights=%d respawns=%d hazard=%d enemy=%d unexplained=%d"
 		% [str(not _player_dead()), _floors_reached, _start_health, end_health,
 			_start_health - end_health, _engaged_fights, _respawns_seen,
 			int(_ledger["hazard"]), int(_ledger["enemy"]), int(_ledger["unknown"])])
