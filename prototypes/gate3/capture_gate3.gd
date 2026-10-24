@@ -68,7 +68,7 @@ const STATIONS := {
 	"combat_space": Vector2i(58, 21),
 	"return_route": Vector2i(44, 21),
 	"floor2_arrival": Vector2i(106, 42),
-	"floor2_stacks": Vector2i(74, 44),
+	"floor2_stacks": Vector2i(74, 46),
 	"floor3_camp": Vector2i(36, 82),
 }
 const FLOOR1_ORDER: Array[String] = [
@@ -783,7 +783,7 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# target and closes the distance itself, and the fights that cost this Knight no
 		# health at all in the logs are exactly the ones started at range; the ones that
 		# cost him a hit are the ones started at fourteen pixels, already in contact.
-		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+		if not _deep and _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var closing := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
 			if closing != null:
 				frames += await _engage_enemy(closing, label)
