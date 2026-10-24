@@ -33,6 +33,7 @@ const FACADE_NODE := "EnvironmentFacade"
 const BACKING_NODE := "EnvironmentWallBacking"
 const TRIM_NODE := "EnvironmentWallTrim"
 const FLOOR_WEAR_NODE := "EnvironmentFloorWear"
+const FLOOR_BORDER_NODE := "EnvironmentFloorBorder"
 const SHADOW_NODE := "EnvironmentShadow"
 const LIGHT_NODE := "EnvironmentLights"
 
@@ -133,6 +134,7 @@ func rebuild() -> void:
 	_build_lights()
 	var document := _level_document()
 	if not document.is_empty():
+		_build_floor_border(_cell_set(document, "Backdrop"), _cell_set(document, "Geometry"))
 		_build_floor_wear(_cell_set(document, "Backdrop"), _cell_set(document, "Geometry"))
 	_build_facade()
 	_build_shadows()
@@ -338,6 +340,35 @@ func _build_facade() -> void:
 				_put(facade, neighbour, side[posmod(cell.y, side.size())])
 				placed[neighbour] = true
 	facade.update_internals()
+
+
+## Paved margin. Every walkable cell that touches a wall gets the sheet's darker
+## paving, which gives each room a real floor border and stops the interior of a
+## hall from running edge to edge into its own walls.
+func _build_floor_border(floor: Dictionary, geometry: Dictionary) -> void:
+	var config: Dictionary = theme.get("floor", {})
+	var border: Array = config.get("border", [])
+	if border.is_empty() or floor.is_empty():
+		return
+	var reference := get_parent().get_node_or_null("Decor") as TileMapLayer
+	if reference == null:
+		return
+	var layer := TileMapLayer.new()
+	layer.name = FLOOR_BORDER_NODE
+	layer.z_index = -9
+	layer.tile_set = reference.tile_set
+	add_child(layer)
+	for cell: Vector2i in floor:
+		if geometry.has(cell):
+			continue
+		var touches := geometry.has(Vector2i(cell.x, cell.y - 1)) \
+			or geometry.has(Vector2i(cell.x, cell.y + 1)) \
+			or geometry.has(Vector2i(cell.x - 1, cell.y)) \
+			or geometry.has(Vector2i(cell.x + 1, cell.y))
+		if not touches:
+			continue
+		_put(layer, cell, border[posmod(cell.x * 7 + cell.y * 3, border.size())])
+	layer.update_internals()
 
 
 ## Floor wear. The authored floor is deliberately uniform so that gameplay

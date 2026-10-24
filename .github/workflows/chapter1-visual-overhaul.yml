@@ -150,6 +150,7 @@ jobs:
             cp "$logfile" "docs/chapter1-visual-overhaul/regressions/logs/$(basename "$logfile" .log).txt"
           done
           shopt -u nullglob
+          python3 tools/chapter1_art/reviews.py || true
           python3 tools/chapter1_art/index_doc.py || true
           git config user.name "chapter1-art-bot"
           git config user.email "actions@users.noreply.github.com"

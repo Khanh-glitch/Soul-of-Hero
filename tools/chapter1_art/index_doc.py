@@ -16,6 +16,7 @@ That label still means "a human must look", never "accepted".
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -40,6 +41,25 @@ def suite_state() -> tuple[str, dict]:
         rows[name] = "PASSED" if passed else ("MISSING" if not log.exists() else "FAILED")
         ok = ok and passed
     return ("PASSED" if ok else "FAILED"), rows
+
+
+def _perf_rows() -> list:
+    rows = []
+    logs = DOCS / "regressions" / "logs"
+    for log in sorted(logs.glob("*_after.txt")):
+        level_id = log.name[: -len("_after.txt")]
+        text = log.read_text(errors="replace")
+        before = logs / f"{level_id}_before.txt"
+        btext = before.read_text(errors="replace") if before.exists() else ""
+        after_perf = re.search(r"PERF: .*nodes=(\d+) draw_calls=(\d+) static_mb=([\d.]+)", text)
+        before_perf = re.search(r"PERF: .*nodes=(\d+) draw_calls=(\d+) static_mb=([\d.]+)", btext)
+        if not after_perf:
+            continue
+        nodes = f"{before_perf.group(1)} -> {after_perf.group(1)}" if before_perf else after_perf.group(1)
+        calls = f"{before_perf.group(2)} -> {after_perf.group(2)}" if before_perf else after_perf.group(2)
+        memory = f"{after_perf.group(3)} MiB"
+        rows.append((level_id, nodes, calls, memory))
+    return rows
 
 
 def main() -> int:
@@ -95,8 +115,18 @@ def main() -> int:
         "## Gallery",
         "",
         "`gallery/chapter1_after_overview.png` — one AFTER frame per level.",
+        "",
+        "## Cost of the presentation layer",
+        "",
+        "Measured on the capture frame of the same run, art off vs art on:",
+        "",
+        "| Level | Nodes | Draw calls | Static memory |",
+        "| --- | --- | --- | --- |",
         "`L01/` … `L10/` — native frames, before/after pairs, crops, `REVIEW.md`.",
     ]
+    perf = _perf_rows()
+    for row in perf:
+        lines.append("| %s | %s | %s | %s |" % (row[0], row[1], row[2], row[3]))
     DOCS.mkdir(parents=True, exist_ok=True)
     (DOCS / "INDEX.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 

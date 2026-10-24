@@ -112,6 +112,21 @@ func _run() -> void:
 			(dungeon.level_data.get("entities", []) as Array).size(),
 		])
 
+	# Cost of the presentation layer, measured on the same frame as the photos so
+	# a before/after pair is also a before/after cost table.
+	var draw_calls := int(Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME))
+	var objects := int(Performance.get_monitor(Performance.OBJECT_NODE_COUNT))
+	var memory_mb := Performance.get_monitor(Performance.MEMORY_STATIC) / 1048576.0
+	print("CHAPTER1 PERF: level=%s art=%s nodes=%d draw_calls=%d static_mb=%.1f fps=%d"
+		% [
+			_level_id,
+			"on" if art != null else "off",
+			objects,
+			draw_calls,
+			memory_mb,
+			int(Performance.get_monitor(Performance.TIME_FPS)),
+		])
+
 	if _check_only:
 		var ok := true
 		if not _no_art:
