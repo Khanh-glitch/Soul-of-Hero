@@ -55,7 +55,7 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x5
 GATE3 CAMERA FRAME: cam_archive_1024_landmark floor 1 cells (20, 6, 41, 18) building 91.7% rock 8.3% void 0.0%
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: descent_landing -> (30, 17) is 16 cells
-GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 392 waypoint (33, 17)
+GATE3 TRACE: descent_landing frame 120 cell (33, 17) HP 1100 since_progress 3 nearest 379 waypoint (33, 17)
 GATE3 WALK: descent_landing  (489, 201) -> (487, 279)  78 px over 15 cells in 146 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_descent_landing.png (1280x720) at (487.2381, 278.9723)
 GATE3 CAMERA FRAME: descent_landing floor 1 cells (10, 5, 51, 29) building 70.4% rock 29.6% void 0.0%
@@ -64,32 +64,32 @@ GATE3 WALK: cloister  (487, 279) -> (615, 295)  129 px over 9 cells in 85 frames
 GATE3 CAPTURE: res://.artifacts/gate3/after_cloister.png (1280x720) at (614.7933, 294.6941)
 GATE3 CAMERA FRAME: cloister floor 1 cells (18, 6, 59, 29) building 78.0% rock 22.0% void 0.0%
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 328 waypoint (45, 23)
+GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 8 nearest 332 waypoint (45, 23)
 GATE3 WALK: south_loop  (615, 295) -> (744, 375)  152 px over 13 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_south_loop.png (1280x720) at (743.9288, 374.9468)
 GATE3 CAMERA FRAME: south_loop floor 1 cells (26, 6, 67, 29) building 78.2% rock 21.8% void 0.0%
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 173 waypoint (57, 21)
+GATE3 TRACE: combat_space frame 120 cell (56, 21) HP 1100 since_progress 1 nearest 186 waypoint (57, 21)
 GATE3 WALK: combat_space  (744, 375) -> (937, 345)  195 px over 14 cells in 135 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_combat_space.png (1280x720) at (936.938, 344.9181)
 GATE3 CAMERA FRAME: combat_space floor 1 cells (38, 6, 79, 29) building 73.9% rock 26.1% void 0.0%
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 246 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 262 waypoint (47, 23)
 GATE3 WALK: return_route  (937, 345) -> (713, 343)  224 px over 18 cells in 170 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/after_return_route.png (1280x720) at (713.1164, 342.5425)
 GATE3 CAMERA FRAME: return_route floor 1 cells (24, 6, 65, 29) building 77.7% rock 22.3% void 0.0%
 GATE3 COLLISION: Knight at (713.1164, 342.5425) is clear of every wall and prop
 GATE3 COLLISION: 21 solid prop footprints probed, each covered by a body
 GATE3 COLLISION: open floor at (713.1164, 338.5425) is free of prop bodies
-GATE3 PERF: 90 physics frames in 1355 ms, 15.06 ms per frame (software GL)
-GATE3 PERF: nodes=866 objects=14027 draw_calls_in_frame=98 objects_in_frame=2494
-GATE3 PERF: physics_process=1.14 ms render_process=102.23 ms
+GATE3 PERF: 90 physics frames in 1510 ms, 16.78 ms per frame (software GL)
+GATE3 PERF: nodes=866 objects=14026 draw_calls_in_frame=96 objects_in_frame=2486
+GATE3 PERF: physics_process=1.40 ms render_process=132.98 ms
 GATE3 ROUTE: 83 cells walked, 988 px travelled, 0 fights, 0 dashes, 0 skill casts, HP 1100 -> 1100 (delta 0)
 GATE3 RESPAWN TOTAL: 0 deaths recovered at a checkpoint during this run
 GATE3 DAMAGE LEDGER: hazard 0 (0 ticks), enemy 0 (0 blows), unexplained 0
 GATE3 STABILITY: descent complete=true floors=1 hp_start=1100 hp_end=1100 delta=0 fights=0 respawns=0 hazard=0 enemy=0 unexplained=0
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 14021 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 14024 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 866 nodes
 GATE3 CAPTURE TEST PASSED: 8 frames, 4 camera frames (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
