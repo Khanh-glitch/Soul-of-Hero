@@ -823,6 +823,17 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		var actions := _key_directions(delta)
 		for action: String in actions:
 			Input.action_press(action, 1.0)
+		# A spike bay ahead is crossed at a dash, not at a walk: the dash carries the
+		# Knight's own brief invulnerability and gets him out of the tick window.
+		var hazard_ahead := false
+		for ahead: int in range(1, 4):
+			if _hazard_cache.has(route[mini(index + ahead, route.size() - 1)]):
+				hazard_ahead = true
+				break
+		if hazard_ahead and frames % 18 == 0:
+			Input.action_press("dash", 1.0)
+			await get_tree().physics_frame
+			Input.action_release("dash")
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
