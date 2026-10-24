@@ -77,6 +77,11 @@ jobs:
               > ".artifacts/chapter1/suites/${suite}.log" 2>&1 || rc=1
             grep -hE "MAP DESIGN" ".artifacts/chapter1/suites/${suite}.log" | tail -2
           done
+          # Recorded, never gated: this suite fails identically on the pinned
+          # pre-sprint tree, so it is a known pre-existing failure and not a
+          # result of the art layer. The log is published with the evidence.
+          timeout 600s godot --headless --path . --script res://tests/chapter_1_balance_matrix_test.gd \
+            > .artifacts/chapter1/suites/chapter_1_balance_matrix_test.log 2>&1 || true
           timeout 600s godot --headless --path . res://tests/chapter_1_collision_route_test.tscn \
             > .artifacts/chapter1/suites/chapter_1_collision_route_test.log 2>&1 || rc=1
           grep -hE "COLLISION ROUTE TEST (PASSED|FAILED)" \

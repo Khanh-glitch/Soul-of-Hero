@@ -126,6 +126,37 @@ def build_gallery(results: list[dict], out_dir: Path) -> None:
           gallery / "chapter1_after_overview.png")
 
 
+def build_comparison(results: list[dict], out_dir: Path) -> None:
+    """BEFORE/AFTER pairs for Levels 5-10, the block the sprint started from."""
+    gallery = out_dir / "gallery"
+    rows = []
+    for result in results:
+        if result["slot"] < 5:
+            continue
+        entry = next(e for e in _index()["levels"] if e["level_id"] == result["level_id"])
+        before = _load(ARTIFACTS / result["level_id"] / "before" / "before_entry.png")
+        after = _load(ARTIFACTS / result["level_id"] / "after" / "after_entry.png")
+        if before is None or after is None:
+            continue
+        before = before.resize((420, 236), Image.NEAREST)
+        after = after.resize((420, 236), Image.NEAREST)
+        row = Image.new("RGB", (420 * 2 + 24, 236 + 26), (12, 10, 14))
+        row.paste(_label(before, "L%02d BEFORE — art layer off" % result["slot"], 14), (6, 20))
+        row.paste(_label(after, "L%02d AFTER — %s" % (result["slot"], entry["title"]), 14), (438, 20))
+        rows.append(row)
+    if not rows:
+        return
+    width = max(row.width for row in rows)
+    height = sum(row.height + 6 for row in rows)
+    sheet = Image.new("RGB", (width + 12, height + 12), (12, 10, 14))
+    y = 6
+    for row in rows:
+        sheet.paste(row, (6, y))
+        y += row.height + 6
+    _save(_label(sheet, "Levels 5-10 — same map, presentation layer off (left) vs on (right)"),
+          gallery / "level5_to_10_comparison.png")
+
+
 def write_reviews(results: list[dict], out_dir: Path) -> None:
     for result in results:
         entry = next(e for e in _index()["levels"] if e["level_id"] == result["level_id"])
@@ -162,6 +193,7 @@ def main() -> int:
         if result["status"] == "PENDING":
             result["status"] = "CANDIDATE — pending human review"
     build_gallery(results, out_dir)
+    build_comparison(results, out_dir)
     write_reviews(results, out_dir)
     (out_dir / "gallery" / "status.json").write_text(
         json.dumps(results, indent=2) + "\n", encoding="utf-8")
