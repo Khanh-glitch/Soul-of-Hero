@@ -505,6 +505,21 @@ def overlaps(a, b, clearance=0.0) -> bool:
                 or a[3] + clearance <= b[1] or b[3] + clearance <= a[1])
 
 
+def _unique_by_cell(cells: list) -> list:
+    """One tile per cell, first one wins.
+
+    A TileMapLayer can only hold a single tile in a cell, so a document that lists two
+    entries for the same cell would claim more cells than the runtime can apply -- the
+    first AFTER capture failed exactly there, on `decor` at (29, 21).
+    """
+    seen = {}
+    for cell in cells:
+        key = (cell[0], cell[1])
+        if key not in seen:
+            seen[key] = cell
+    return [seen[key] for key in sorted(seen)]
+
+
 def prop_document(entry: dict, index: int) -> dict:
     x, base_y = cell_rect(entry["cell"], entry["row"])
     rect = sprite_rect(entry["sprite"], x, base_y)
@@ -914,7 +929,10 @@ def build_art(level: dict, props: list, material: dict) -> dict:
         },
         "props": props,
         "lights": lights,
-        "material": material,
+        # One entry per cell, so the runtime's "authored cells == applied cells"
+        # contract compares like with like: two roles can want the same cell, and a
+        # duplicate inside one role would make the document disagree with the layer.
+        "material": {role: _unique_by_cell(cells) for role, cells in material.items()},
     }
 
 
