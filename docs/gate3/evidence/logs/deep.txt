@@ -23,320 +23,268 @@ GATE3 LAYER: Decor hidden (replaced by Gate3_decor)
 GATE3 LIGHTS: 6 local lanterns
 GATE3 OVERLAY ATTACHED: 36 props, 17 solid bodies, 11 material layers, 6 lights, 18 hazards re-skinned, shade=true
 GATE3 PLAN: descent approach -> (109, 17) is 137 cells
-GATE3 TRACE: descent approach frame 120 cell (29, 12) HP 1100 since_progress 3 nearest 467 waypoint (29, 12)
-GATE3 TRACE: descent approach frame 240 cell (35, 17) HP 1100 since_progress 2 nearest 383 waypoint (36, 17)
-GATE3 TRACE: descent approach frame 360 cell (44, 21) HP 1100 since_progress 3 nearest 313 waypoint (44, 22)
-GATE3 TRACE: descent approach frame 480 cell (55, 23) HP 1100 since_progress 1 nearest 228 waypoint (55, 23)
-GATE3 COMBAT: engaging Floor03Pack01Member07 at 67 px, target HP 979, Knight HP 1100, mana 99
+GATE3 TRACE: descent approach frame 120 cell (29, 12) HP 1100 since_progress 3 nearest 454 waypoint (29, 12)
+GATE3 TRACE: descent approach frame 240 cell (35, 17) HP 1100 since_progress 2 nearest 372 waypoint (36, 17)
+GATE3 TRACE: descent approach frame 360 cell (44, 21) HP 1100 since_progress 3 nearest 301 waypoint (44, 22)
+GATE3 TRACE: descent approach frame 480 cell (55, 23) HP 1100 since_progress 1 nearest 208 waypoint (55, 23)
+GATE3 COMBAT: engaging Floor03Pack01Member07 at 70 px, target HP 979, Knight HP 1100, mana 99
 GATE3 COMBAT: after the input press current_action='dash', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 21 px, target HP 779, Knight HP 1100, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 16 px, target HP 539, Knight HP 1100, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 37 px, target HP 439, Knight HP 1100, action='sword_attack_3'
-GATE3 COMBAT: fight near 'descent approach' ended after 115 frames, target HP 979 -> 0, Knight HP 1100 -> 1100
-GATE3 TRACE: descent approach frame 720 cell (57, 12) HP 1100 since_progress 6 nearest 455 waypoint (60, 16)
-GATE3 TRACE: descent approach frame 840 cell (60, 11) HP 1100 since_progress 3 nearest 386 waypoint (60, 11)
-GATE3 TRACE: descent approach frame 960 cell (68, 15) HP 1100 since_progress 2 nearest 268 waypoint (68, 16)
-GATE3 TRACE: descent approach frame 1080 cell (78, 16) HP 1100 since_progress 28 nearest 45 waypoint (74, 18)
-GATE3 COMBAT: engaging L3C1Skeleton01 at 71 px, target HP 959, Knight HP 1100, mana 103
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 20 px, target HP 779, Knight HP 1100, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 18 px, target HP 539, Knight HP 1100, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 30 px, target HP 439, Knight HP 946, action='hit'
+GATE3 COMBAT: 'descent approach' Floor03Pack01Member07 at 36 px, target HP 239, Knight HP 946, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 129 frames, target HP 979 -> 0, Knight HP 1100 -> 946
+GATE3 TRACE: descent approach frame 720 cell (59, 11) HP 946 since_progress 1 nearest 424 waypoint (60, 17)
+GATE3 TRACE: descent approach frame 840 cell (64, 11) HP 946 since_progress 2 nearest 360 waypoint (65, 11)
+GATE3 TRACE: descent approach frame 960 cell (69, 19) HP 946 since_progress 1 nearest 265 waypoint (69, 19)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 68 px, target HP 979, Knight HP 926, mana 100
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 51 px, target HP 939, Knight HP 1100, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 49 px, target HP 939, Knight HP 1080, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 30 px, target HP 919, Knight HP 1060, action='hit'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 39 px, target HP 719, Knight HP 1060, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 12 px, target HP 479, Knight HP 1060, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 32 px, target HP 379, Knight HP 1060, action='sword_attack_3'
-GATE3 COMBAT: fight near 'descent approach' ended after 201 frames, target HP 959 -> 0, Knight HP 1100 -> 1060
-GATE3 DAMAGE: cell (79, 16) HP 1060 -> 1040 on_hazard=true nearest_enemy=182 dashes=17
-GATE3 TRACE: descent approach frame 1440 cell (79, 16) HP 1040 since_progress 28 nearest 102 waypoint (80, 17)
-GATE3 COMBAT: engaging L3C1Skeleton03 at 71 px, target HP 979, Knight HP 1040, mana 101
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 59 px, target HP 959, Knight HP 906, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 57 px, target HP 959, Knight HP 906, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 17 px, target HP 699, Knight HP 906, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 599, Knight HP 886, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 18 px, target HP 159, Knight HP 886, action='sword_attack_2'
+GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 732 (194 lost in this fight)
+GATE3 COMBAT: fight near 'descent approach' ended after 179 frames, target HP 979 -> 159, Knight HP 926 -> 732
+GATE3 EVADE: 82 frames, HP 732 -> 732, nearest enemy 131 px
+GATE3 EVADE: 79 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 EVADE: 0 frames, HP 732 -> 732, nearest enemy 225 px
+GATE3 TRACE: descent approach frame 1440 cell (68, 16) HP 732 since_progress 2 nearest 248 waypoint (68, 17)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 66 px, target HP 59, Knight HP 712, mana 84
+GATE3 SKILL: mana 84 -> 84, HP 712 -> 712, action='hit'
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 25 px, target HP 739, Knight HP 1040, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 18 px, target HP 739, Knight HP 1040, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 48 px, target HP 639, Knight HP 1040, action='sword_attack_4'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton03 at 13 px, target HP 167, Knight HP 1040, action='sword_attack_4'
-GATE3 COMBAT: fight near 'descent approach' ended after 133 frames, target HP 979 -> 0, Knight HP 1040 -> 1040
-GATE3 COMBAT: engaging L3C1Skeleton02 at 72 px, target HP 979, Knight HP 1040, mana 105
-GATE3 SKILL: mana 105 -> 105, HP 1040 -> 1040, action='sword_attack_2'
-GATE3 COMBAT: after the input press current_action='sword_attack_2', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 27 px, target HP 739, Knight HP 1040, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 60 px, target HP 639, Knight HP 1040, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 16 px, target HP 167, Knight HP 1040, action='sword_attack_4'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 23 px, target HP 167, Knight HP 1040, action='sword_attack_1'
-GATE3 COMBAT: fight near 'descent approach' ended after 138 frames, target HP 979 -> 0, Knight HP 1040 -> 1040
-GATE3 DAMAGE: cell (91, 17) HP 1040 -> 1020 on_hazard=true nearest_enemy=25 dashes=27
-GATE3 COMBAT: engaging L3C1Skeleton05 at 36 px, target HP 979, Knight HP 1020, mana 109
-GATE3 SKILL: mana 109 -> 109, HP 1020 -> 1020, action='hit'
-GATE3 ULTIMATE: mana 109 -> 109, HP 1020 -> 1020, action=''
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 40 px, target HP 39, Knight HP 712, action='sword_attack_2'
+GATE3 COMBAT: fight near 'descent approach' ended after 31 frames, target HP 59 -> 0, Knight HP 712 -> 712
+GATE3 DAMAGE: cell (79, 18) HP 712 -> 692 on_hazard=true nearest_enemy=56 dashes=36
+GATE3 COMBAT: engaging L3C1Skeleton02 at 71 px, target HP 879, Knight HP 692, mana 78
+GATE3 SKILL: mana 78 -> 62, HP 692 -> 692, action=''
 GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 44 px, target HP 779, Knight HP 1020, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 57 px, target HP 779, Knight HP 1020, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 64 px, target HP 759, Knight HP 866, action='hit'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 49 px, target HP 739, Knight HP 866, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 74 px, target HP 739, Knight HP 866, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 89 px, target HP 619, Knight HP 866, action='sword_attack_3'
-GATE3 COMBAT: the Knight broke off near 'descent approach' at HP 846 (174 lost in this fight)
-GATE3 COMBAT: fight near 'descent approach' ended after 203 frames, target HP 979 -> 619, Knight HP 1020 -> 846
-GATE3 EVADE: 235 frames, HP 846 -> 846, nearest enemy 147 px
-GATE3 EVADE: 165 frames, HP 846 -> 846, nearest enemy 83 px
-GATE3 EVADE: 84 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 EVADE: 0 frames, HP 846 -> 846, nearest enemy 224 px
-GATE3 TRACE: descent approach frame 2520 cell (68, 17) HP 846 since_progress 1 nearest 261 waypoint (68, 18)
-GATE3 TRACE: descent approach frame 2640 cell (75, 18) HP 846 since_progress 14 nearest 84 waypoint (74, 18)
-GATE3 COMBAT: engaging L3C1Skeleton05 at 67 px, target HP 539, Knight HP 846, mana 81
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 58 px, target HP 519, Knight HP 826, action='hit'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 59 px, target HP 499, Knight HP 826, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 26 px, target HP 259, Knight HP 826, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 38 px, target HP 159, Knight HP 806, action='hit'
-GATE3 COMBAT: fight near 'descent approach' ended after 140 frames, target HP 539 -> 0, Knight HP 846 -> 806
-GATE3 TRACE: descent approach frame 2880 cell (83, 19) HP 806 since_progress 14 nearest 300 waypoint (83, 20)
-GATE3 TRACE: descent approach frame 3000 cell (87, 23) HP 806 since_progress 3 nearest 227 waypoint (88, 23)
-GATE3 COMBAT: engaging L3C1Reaper02 at 72 px, target HP 1202, Knight HP 806, mana 82
-GATE3 SKILL: mana 81 -> 81, HP 806 -> 806, action=''
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 47 px, target HP 1002, Knight HP 806, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 21 px, target HP 762, Knight HP 806, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 55 px, target HP 662, Knight HP 806, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Reaper02 at 23 px, target HP 30, Knight HP 806, action='sword_attack_4'
-GATE3 COMBAT: fight near 'descent approach' ended after 140 frames, target HP 1202 -> 0, Knight HP 806 -> 806
-GATE3 COMBAT: engaging L3C1Reaper01 at 66 px, target HP 1202, Knight HP 806, mana 86
-GATE3 COMBAT: after the input press current_action='sword_attack_1', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 57 px, target HP 1202, Knight HP 806, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 64 px, target HP 1102, Knight HP 806, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 74 px, target HP 1102, Knight HP 806, action='sword_attack_4'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 17 px, target HP 822, Knight HP 806, action='sword_attack_1'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 10 px, target HP 622, Knight HP 806, action='sword_attack_2'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 13 px, target HP 382, Knight HP 806, action='sword_attack_3'
-GATE3 COMBAT: 'descent approach' L3C1Reaper01 at 36 px, target HP 282, Knight HP 806, action='sword_attack_3'
-GATE3 COMBAT: fight near 'descent approach' ended after 226 frames, target HP 1202 -> 0, Knight HP 806 -> 806
-GATE3 TRACE: descent approach frame 3480 cell (91, 13) HP 806 since_progress 18 nearest 968 waypoint (97, 23)
-GATE3 TRACE: descent approach frame 3600 cell (97, 23) HP 806 since_progress 2 nearest 959 waypoint (98, 23)
-GATE3 TRACE: descent approach frame 3720 cell (105, 19) HP 806 since_progress 5 nearest 1073 waypoint (106, 19)
-GATE3 WALK: descent approach  (280, 216) -> (1752, 279)  1473 px over 36 cells in 3777 frames, HP 806
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
-GATE3 PLAN: floor2_arrival -> (106, 42) is 1 cells
-GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 806
-GATE3 CAPTURE: res://.artifacts/gate3/after_floor2_arrival.png (1280x720) at (1704.0, 680.0)
-GATE3 PLAN: floor2_stacks -> (74, 46) is 43 cells
-GATE3 TRACE: floor2_stacks frame 120 cell (95, 44) HP 806 since_progress 2 nearest 630 waypoint (95, 45)
-GATE3 TRACE: floor2_stacks frame 240 cell (82, 45) HP 806 since_progress 2 nearest 564 waypoint (82, 45)
-GATE3 TRACE: floor2_stacks frame 360 cell (74, 49) HP 806 since_progress 5 nearest 467 waypoint (74, 48)
-GATE3 WALK: floor2_stacks  (1704, 680) -> (1192, 744)  516 px over 42 cells in 385 frames, HP 806
-GATE3 CAPTURE: res://.artifacts/gate3/after_floor2_stacks.png (1280x720) at (1192.471, 744.1821)
-GATE3 DEPTH: floor 2 reached on foot and captured, HP 806
-GATE3 PLAN: descent approach -> (9, 51) is 105 cells
-GATE3 TRACE: descent approach frame 120 cell (69, 53) HP 806 since_progress 3 nearest 385 waypoint (69, 54)
-GATE3 TRACE: descent approach frame 240 cell (60, 51) HP 806 since_progress 1 nearest 223 waypoint (60, 50)
-GATE3 TRACE: descent approach frame 360 cell (56, 43) HP 806 since_progress 3 nearest 229 waypoint (55, 43)
-GATE3 TRACE: descent approach frame 480 cell (46, 40) HP 806 since_progress 2 nearest 92 waypoint (46, 40)
-GATE3 COMBAT: engaging L3C2Skeleton03 at 70 px, target HP 979, Knight HP 806, mana 100
-GATE3 SKILL: mana 100 -> 84, HP 806 -> 806, action=''
-GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 32 px, target HP 979, Knight HP 806, action=''
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 35 px, target HP 979, Knight HP 652, action=''
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 13 px, target HP 979, Knight HP 652, action=''
-GATE3 COMBAT: 'descent approach' L3C2Skeleton03 at 13 px, target HP 979, Knight HP 652, action=''
-GATE3 COMBAT: fight near 'descent approach' ended after 125 frames, target HP 979 -> 979, Knight HP 806 -> 652
-GATE3 EVADE: 300 frames, HP 652 -> 36, nearest enemy 13 px
-GATE3 EVADE: 3 frames, HP 36 -> 0, nearest enemy 13 px
-GATE3 DEPTH: halted on floor 2; floor 3 not reached this run (HP 0)
-GATE3 COLLISION: Knight at (648.3932, 649.4117) is clear of every wall and prop
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 55 px, target HP 859, Knight HP 672, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 71 px, target HP 739, Knight HP 672, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 33 px, target HP 499, Knight HP 672, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 48 px, target HP 399, Knight HP 652, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 30 px, target HP 149, Knight HP 652, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton02 at 42 px, target HP 49, Knight HP 652, action='sword_attack_2'
+GATE3 COMBAT: fight near 'descent approach' ended after 199 frames, target HP 879 -> 0, Knight HP 692 -> 652
+GATE3 TRACE: descent approach frame 1920 cell (82, 18) HP 652 since_progress 14 nearest 194 waypoint (76, 18)
+GATE3 DAMAGE: cell (77, 18) HP 652 -> 632 on_hazard=true nearest_enemy=194 dashes=64
+GATE3 TRACE: descent approach frame 2040 cell (80, 18) HP 632 since_progress 1 nearest 92 waypoint (81, 18)
+GATE3 COMBAT: engaging L3C1Skeleton05 at 67 px, target HP 979, Knight HP 632, mana 52
+GATE3 SKILL: mana 51 -> 52, HP 632 -> 632, action='dash'
+GATE3 COMBAT: after the input press current_action='dash', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 29 px, target HP 779, Knight HP 478, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 25 px, target HP 579, Knight HP 478, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 55 px, target HP 579, Knight HP 478, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton05 at 28 px, target HP 579, Knight HP 478, action='sword_attack_3'
+GATE3 COMBAT: fight near 'descent approach' ended after 123 frames, target HP 979 -> 579, Knight HP 632 -> 478
+GATE3 COMBAT: engaging L3C1Skeleton04 at 21 px, target HP 639, Knight HP 478, mana 56
+GATE3 SKILL: mana 55 -> 55, HP 478 -> 478, action='sword_attack_3'
+GATE3 COMBAT: after the input press current_action='sword_attack_3', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 19 px, target HP 439, Knight HP 324, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 68 px, target HP 439, Knight HP 324, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton04 at 58 px, target HP 439, Knight HP 324, action='sword_attack_3'
+GATE3 COMBAT: fight near 'descent approach' ended after 118 frames, target HP 639 -> 439, Knight HP 478 -> 324
+GATE3 EVADE: 140 frames, HP 324 -> 150, nearest enemy 75 px
+GATE3 EVADE: 24 frames, HP 150 -> 0, nearest enemy 17 px
+GATE3 DEPTH: halted on floor 1; floor 2 not reached this run
+GATE3 COLLISION: Knight at (1281.115, 294.265) is clear of every wall and prop
 GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (648.3932, 645.4117) is free of prop bodies
-GATE3 PERF: 90 physics frames in 1713 ms, 19.03 ms per frame (software GL)
-GATE3 PERF: nodes=831 objects=13600 draw_calls_in_frame=226 objects_in_frame=3351
-GATE3 PERF: physics_process=1.11 ms render_process=156.28 ms
-GATE3 ROUTE: 78 cells walked, 1988 px travelled, 9 fights, 112 dashes, 1 skill casts, HP 1100 -> 0 (delta 1100)
+GATE3 COLLISION: open floor at (1281.115, 290.265) is free of prop bodies
+GATE3 PERF: 90 physics frames in 1474 ms, 16.38 ms per frame (software GL)
+GATE3 PERF: nodes=877 objects=13866 draw_calls_in_frame=227 objects_in_frame=3499
+GATE3 PERF: physics_process=9.66 ms render_process=75.23 ms
+GATE3 ROUTE: 0 cells walked, 0 px travelled, 6 fights, 87 dashes, 1 skill casts, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13594 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 831 nodes
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (648.3932, 649.4117)
+GATE3 OBJECTS: ObjectDB holds 13901 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 906 nodes
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1281.115, 294.265)
 GATE3 CAPTURE TEST FAILED (after)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
