@@ -8,6 +8,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 CAPTURE: level=chapter_1_level_9 slot=9 art=on facade_cells=416 lights=6 entities=40
+CHAPTER1 PERF: level=chapter_1_level_9 art=on nodes=732 draw_calls=113 static_mb=101.0 fps=10
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=entry cell=(48, 68) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=checkpoint cell=(48, 65) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_checkpoint.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=exit cell=(48, 7) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_exit.png ok=true
