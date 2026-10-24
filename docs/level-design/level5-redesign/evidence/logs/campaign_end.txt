@@ -1,0 +1,13 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+CHAPTER 1 CAMPAIGN CAPTURE RENDERED: slot=5 point=end enemies=31 image=res://.artifacts/chapter_1_level_05_end_runtime.png
+CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=5 point=end
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

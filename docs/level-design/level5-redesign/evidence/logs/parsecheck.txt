@@ -1,10 +1,9 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-SCRIPT ERROR: Compile Error: Identifier not found: AppFlow
-          at: GDScript::reload (res://game/app/app_root.gd:49)
-ERROR: Failed to load script "res://game/app/app_root.gd" with error "Compilation failed".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
-SCRIPT ERROR: Compile Error: Identifier not found: SaveService
-          at: GDScript::reload (res://tools/captures/level5_blood_crucible_capture.gd:71)
-ERROR: Failed to load script "res://tools/captures/level5_blood_crucible_capture.gd" with error "Compilation failed".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+LEVEL5 HARNESS CHECK OK: level=res://data/levels/chapter_1_level_5.json floor_cells=5181 entities=83
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
