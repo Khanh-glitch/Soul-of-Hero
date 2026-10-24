@@ -588,39 +588,41 @@ func _nearest_enemy_distance() -> float:
 
 
 func _engage_enemy(target: Node2D, label: String) -> int:
-	## Close the distance and use the production light-attack action. Standing at
-	## range and swinging at air would trade the Knight's HP for nothing, which is
-	## exactly what an earlier revision of this harness did. Returns frames spent.
+	## Fight the way the game is played: hold the production `attack` action, which is
+	## the sword hero's combo, and steer into the target. `light_attack` is only an
+	## alias of `attack` for the HUD, and pressing it starts a stub action that swings
+	## a 17 px hitbox without auto-aim — an earlier revision of this harness did
+	## exactly that and logged two hundred frames of combat at 13 px range in which the
+	## skeleton never lost a single hit point. Returns frames spent.
 	var spent := 0
-	print("GATE3 COMBAT: engaging %s at %.0f px with target HP %s, Knight HP %d"
+	var start_health := int(_player.get("health"))
+	var target_health := int(target.get("health")) if target.get("health") != null else -1
+	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
-			str(target.get("health")), int(_player.get("health"))])
-	while spent < 200:
+			target_health, start_health])
+	Input.action_press("attack", 1.0)
+	while spent < 260:
 		if int(_player.get("health")) <= 0:
+			Input.action_release("attack")
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
 		if not is_instance_valid(target) or not target.is_inside_tree():
 			break
 		var offset := target.global_position - _player.global_position
 		var actions: Array[String] = []
-		# Always face the target: the sword hitbox is placed 17 px along the attack
-		# direction, so swinging while facing away is a miss and costs the Knight HP
-		# for nothing. Movement input is what turns him.
-		if offset.length() > 12.0:
-			if absf(offset.x) > 1.0:
+		if offset.length() > 20.0:
+			if absf(offset.x) > 2.0:
 				actions.append("move_right" if offset.x > 0.0 else "move_left")
-			if absf(offset.y) > 1.0:
+			if absf(offset.y) > 2.0:
 				actions.append("move_down" if offset.y > 0.0 else "move_up")
 		for action: String in actions:
 			Input.action_press(action, 1.0)
-		Input.action_press("light_attack", 1.0)
 		await get_tree().physics_frame
-		Input.action_release("light_attack")
 		for action: String in actions:
 			Input.action_release(action)
 		spent += 1
 		if spent % 30 == 0:
-			print("GATE3 COMBAT: '%s' target %s at %.0f px, target HP %s, Knight HP %d"
+			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d"
 				% [label, String(target.name), offset.length(),
 					str(target.get("health")), int(_player.get("health"))])
 		if int(_player.get("health")) < 300:
@@ -628,7 +630,10 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 				% [label, int(_player.get("health"))])
 			_disengage_frames = 420
 			break
+	Input.action_release("attack")
 	_engaged_fights += 1
+	print("GATE3 COMBAT: fight near '%s' ended after %d frames, Knight HP %d -> %d"
+		% [label, spent, start_health, int(_player.get("health"))])
 	return spent
 
 
