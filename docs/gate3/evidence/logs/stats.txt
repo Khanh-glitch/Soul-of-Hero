@@ -6,5 +6,5 @@ GATE3 EDITS
   garth_piers  4
   garth_open   9
 GATE3 LAYERS  Backdrop=3413  Geometry=1686  Decor=73
-GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=110
+GATE3 MATERIAL rock=5872  floor=3413  coping=34  water=66  water_edge=30  wall_face=979  niche=241  mass=707  shadow=508  weather=326  decor=109
 GATE3 PROPS 36 (17 solid)  LIGHTS 6  ENTITIES 79
