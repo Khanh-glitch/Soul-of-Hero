@@ -13,7 +13,5 @@ CHAPTER1 STATION tag=after level=chapter_1_level_9 station=checkpoint cell=(48, 
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=exit cell=(48, 7) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_exit.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=boss cell=(60, 53) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_boss.png ok=true
 CHAPTER1 CAPTURE DONE: tag=after level=chapter_1_level_9
-WARNING: 22 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 5 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)
