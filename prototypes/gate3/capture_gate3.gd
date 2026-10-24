@@ -589,19 +589,21 @@ func _nearest_enemy_distance() -> float:
 
 func _engage_enemy(target: Node2D, label: String) -> int:
 	## Fight the way the game is played: hold the production `attack` action, which is
-	## the sword hero's combo, and steer into the target. `light_attack` is only an
-	## alias of `attack` for the HUD, and pressing it starts a stub action that swings
-	## a 17 px hitbox without auto-aim — an earlier revision of this harness did
-	## exactly that and logged two hundred frames of combat at 13 px range in which the
-	## skeleton never lost a single hit point. Returns frames spent.
+	## the sword hero's attack, and steer into the target. If the input path produces
+	## no action the harness falls back to the Knight's own `request_action("attack")`
+	## — the same scripted entry point the repository's combat tests use — and says so
+	## in the log, so the evidence never hides which path produced the fight.
 	var spent := 0
 	var start_health := int(_player.get("health"))
-	var target_health := int(target.get("health")) if target.get("health") != null else -1
-	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d"
+	var start_target_health := int(target.get("health"))
+	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
-			target_health, start_health])
+			start_target_health, start_health, float(_player.get("mana"))])
 	Input.action_press("attack", 1.0)
-	while spent < 260:
+	await get_tree().physics_frame
+	print("GATE3 COMBAT: after the input press current_action='%s', hero=%s, weapon=%s"
+		% [String(_player.get("current_action")), _hero_id(), _weapon_id()])
+	while spent < 240:
 		if int(_player.get("health")) <= 0:
 			Input.action_release("attack")
 			_push("the Knight died fighting near '%s'" % label)
@@ -617,14 +619,22 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 				actions.append("move_down" if offset.y > 0.0 else "move_up")
 		for action: String in actions:
 			Input.action_press(action, 1.0)
+		# The input path only reports a *new* press, so it is re-pressed as a fresh
+		# press; where that still produces no action, request it directly.
+		if spent % 2 == 0:
+			Input.action_release("attack")
+			Input.action_press("attack", 1.0)
+		if String(_player.get("current_action")) == "" and spent % 4 == 0:
+			_player.call("request_action", "attack")
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
 		spent += 1
 		if spent % 30 == 0:
-			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d"
+			print("GATE3 COMBAT: '%s' %s at %.0f px, target HP %s, Knight HP %d, action='%s'"
 				% [label, String(target.name), offset.length(),
-					str(target.get("health")), int(_player.get("health"))])
+					str(target.get("health")), int(_player.get("health")),
+					String(_player.get("current_action"))])
 		if int(_player.get("health")) < 300:
 			print("GATE3 COMBAT: the Knight disengaged near '%s' at HP %d"
 				% [label, int(_player.get("health"))])
@@ -632,9 +642,27 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 			break
 	Input.action_release("attack")
 	_engaged_fights += 1
-	print("GATE3 COMBAT: fight near '%s' ended after %d frames, Knight HP %d -> %d"
-		% [label, spent, start_health, int(_player.get("health"))])
+	print("GATE3 COMBAT: fight near '%s' ended after %d frames, target HP %d -> %d, Knight HP %d -> %d"
+		% [label, spent, start_target_health,
+			int(target.get("health")) if is_instance_valid(target) else -1,
+			start_health, int(_player.get("health"))])
 	return spent
+
+
+func _hero_id() -> String:
+	var manager: Variant = _player.get("hero_soul_manager")
+	if manager == null:
+		return "none"
+	var hero: Variant = manager.get("active_hero")
+	return String(hero.get("hero_id")) if hero != null else "none"
+
+
+func _weapon_id() -> String:
+	var manager: Variant = _player.get("weapon_manager")
+	if manager == null:
+		return "none"
+	var hand: Variant = manager.call("get_hand_weapon")
+	return String(hand.get("weapon_id")) if hand != null else "none"
 
 
 func _enemy_count() -> int:
