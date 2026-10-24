@@ -31,7 +31,7 @@ GATE3 WALK: cloister  (489, 201) -> (617, 295)  160 px over 14 cells in 139 fram
 GATE3 WALK: south_loop  (617, 295) -> (744, 374)  150 px over 13 cells in 139 frames, HP 1100
 GATE3 WALK: combat_space  (744, 374) -> (934, 344)  193 px over 14 cells in 127 frames, HP 1100
 GATE3 WALK: return_route  (934, 344) -> (713, 343)  222 px over 18 cells in 172 frames, HP 1100
-GATE3 COLLISION: Knight at (1278.383, 297.869) is clear of every wall and prop
+GATE3 COLLISION: Knight at (1309.106, 297.7557) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 933 px travelled, 0 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
 GATE3 OBJECTS: ObjectDB holds 12794 objects at the end of the run
