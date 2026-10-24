@@ -565,9 +565,17 @@ Completed load for: 'res://game/app/app_flow.gd' remapped 'res://game/app/app_fl
 Loaded system CA certificates
 Loading resource: res://prototypes/gate3/capture_gate3.tscn remapped: res://prototypes/gate3/capture_gate3.tscn
 Loading resource: res://prototypes/gate3/capture_gate3.gd remapped: res://prototypes/gate3/capture_gate3.gd
-SCRIPT ERROR: Parse Error: Expected closing ")" after call arguments.
-          at: GDScript::reload (res://prototypes/gate3/capture_gate3.gd:1729)
-ERROR: Failed to load script "res://prototypes/gate3/capture_gate3.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+Loading resource: res://game/app/app_root.tscn remapped: res://game/app/app_root.tscn
+Loading resource: res://game/app/app_root.gd remapped: res://game/app/app_root.gd
+Completed load for: 'res://game/app/app_root.gd' remapped 'res://game/app/app_root.gd' at thread -1
+Completed load for: 'res://game/app/app_root.tscn' remapped 'res://game/app/app_root.tscn' at thread -1
+Loading resource: res://prototypes/gate3/gate3_redesign.tscn remapped: res://prototypes/gate3/gate3_redesign.tscn
+Loading resource: res://prototypes/gate3/gate3_redesign.gd remapped: res://prototypes/gate3/gate3_redesign.gd
+Completed load for: 'res://prototypes/gate3/gate3_redesign.gd' remapped 'res://prototypes/gate3/gate3_redesign.gd' at thread -1
+Completed load for: 'res://prototypes/gate3/gate3_redesign.tscn' remapped 'res://prototypes/gate3/gate3_redesign.tscn' at thread -1
 Completed load for: 'res://prototypes/gate3/capture_gate3.gd' remapped 'res://prototypes/gate3/capture_gate3.gd' at thread -1
 Completed load for: 'res://prototypes/gate3/capture_gate3.tscn' remapped 'res://prototypes/gate3/capture_gate3.tscn' at thread -1
+GATE3 SCRIPT CHECK OK: capture and overlay compile in the live project
+XR: Clearing primary interface
+XR: Removed interface "Native mobile"
+XR: Removed interface "OpenXR"

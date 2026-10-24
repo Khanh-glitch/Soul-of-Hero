@@ -1,6 +1,3 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-SCRIPT ERROR: Parse Error: Expected closing ")" after call arguments.
-          at: GDScript::reload (res://prototypes/gate3/capture_gate3.gd:1729)
-ERROR: Failed to load script "res://prototypes/gate3/capture_gate3.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+GATE3 SCRIPT CHECK OK: capture and overlay compile in the live project
