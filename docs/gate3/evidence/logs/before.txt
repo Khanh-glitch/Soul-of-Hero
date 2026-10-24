@@ -19,7 +19,7 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: cloister -> (38, 18) is 15 cells
-GATE3 TRACE: cloister frame 120 cell (36, 18) HP 1100 since_progress 1 nearest 365 waypoint (36, 18)
+GATE3 TRACE: cloister frame 120 cell (36, 18) HP 1100 since_progress 1 nearest 360 waypoint (36, 18)
 GATE3 WALK: cloister  (489, 201) -> (617, 295)  160 px over 14 cells in 139 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_cloister.png (1280x720) at (617.4411, 295.1833)
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
@@ -27,17 +27,17 @@ GATE3 TRACE: south_loop frame 120 cell (43, 23) HP 1100 since_progress 3 nearest
 GATE3 WALK: south_loop  (617, 295) -> (744, 374)  150 px over 13 cells in 139 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_south_loop.png (1280x720) at (744.2471, 374.3859)
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 since_progress 2 nearest 146 waypoint (58, 21)
+GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 since_progress 2 nearest 139 waypoint (58, 21)
 GATE3 WALK: combat_space  (744, 374) -> (934, 344)  193 px over 14 cells in 127 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_combat_space.png (1280x720) at (934.3984, 343.5279)
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 since_progress 1 nearest 232 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (48, 23) HP 1100 since_progress 1 nearest 219 waypoint (47, 23)
 GATE3 WALK: return_route  (934, 344) -> (713, 343)  222 px over 18 cells in 172 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_return_route.png (1280x720) at (712.8456, 343.2413)
 GATE3 COLLISION: Knight at (712.8456, 343.2413) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 933 px travelled, 0 fights, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12762 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12763 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 754 nodes
 GATE3 CAPTURE TEST PASSED: 7 frames, 4 camera frames (before)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
