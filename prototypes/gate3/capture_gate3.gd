@@ -825,12 +825,10 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		# get cheaper: the skeleton is at full speed, the corridor is not getting wider,
 		# and the rest of the level needs that health more than this kill does.
 		var spent_health := start_health - int(_player.get("health"))
-		if int(_player.get("health")) < 150 or spent_health > 160:
+		if int(_player.get("health")) < 150 or spent_health > 320:
 			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d (%d lost in this fight)"
 				% [label, int(_player.get("health")), spent_health])
-			# About three seconds of running: long enough to clear the disengage range,
-			# short enough that the capture still finishes inside its time budget.
-			_disengage_frames = 190
+			_disengage_frames = 420
 			break
 	Input.action_release("attack")
 	_engaged_fights += 1
@@ -914,13 +912,11 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			progress_at = frames
 			continue
 		if _disengage_frames > 0:
-			# Withdraw properly, to a real destination, instead of walking on towards the
-			# objective with the enemy still swinging: that pays for the same fight twice.
+			# Walk on towards the waypoint without starting anything new. Sprinting away
+			# was measured twice and lost both times: the Knight is faster than a skeleton
+			# only while he is not in hit-stun, and a hit-stun is exactly what a crowd
+			# delivers, so the retreat was 500-600 health spent to go nowhere.
 			_disengage_frames -= 1
-			frames += await _evade(_nearest_enemy(900.0, Vector2.ZERO), 72.0)
-			progress_at = frames
-			best_distance = 1.0e9
-			continue
 		# Deal with an enemy before it reaches the Knight, and deal with it one at a
 		# time. Fighting only on contact was measured on the deep route: the Knight
 		# walked into a crowd of five, they all arrived together, and he died with the
@@ -928,8 +924,12 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# chose is the enemy that is there when the first sword swing lands.
 		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
-			if touching != null and (int(_player.get("health")) < 420
-					or _nearby_enemy_count(120.0) >= 3):
+			if touching != null and int(_player.get("health")) < 220 \
+					and _nearby_enemy_count(90.0) >= 3:
+				# Only as a last resort, with three enemies already on him and less than a
+				# fifth of his health: at that point nothing else is left to try. Every
+				# earlier use of this path made the run worse, because a Knight in hit-stun
+				# is not running away, he is standing still being hit.
 				frames += await _evade(touching, 72.0)
 				progress_at = frames
 				best_distance = 1.0e9
