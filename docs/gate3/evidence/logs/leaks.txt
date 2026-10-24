@@ -1,7 +1,7 @@
 == leak notices in the checked-in run logs ==
 before   notices=1 instances=7
 after    notices=1 instances=7
-deep     notices=1 instances=7
+deep     notices=1 instances=20
 
 == unused/leaked instances named by --verbose ==
 (none named)
