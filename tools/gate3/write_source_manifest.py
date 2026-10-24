@@ -78,8 +78,10 @@ def build() -> str:
         "| the shade field | the material roles in `visual_placement.json` | generated "
         "at runtime by `prototypes/gate3/gate3_redesign.gd` (distance transform) |",
         "| `prototypes/gate3/art/peaks_1..4.png` | "
-        "`assets/environment/dungeon/items/spikes/peaks_1..4.png` | only the flat violet "
-        "plate RGB(61,37,59) cleared to alpha 0; every spike pixel copied unchanged. "
+        "`assets/environment/dungeon/items/spikes/peaks_1..4.png` | the flat violet "
+        "plate RGB(61,37,59) repainted as a dark crimson pit RGB(72,30,30) at alpha 210 "
+        "and its violet shadow step RGB(54,32,48) neutralised to RGB(38,30,34); every "
+        "spike pixel copied unchanged, no spike pixel added or removed. "
         "Hashes in `prototypes/gate3/art/derived_art.json`, reproducible with "
         "`tools/gate3/make_derived_art.py --check` |",
         "",

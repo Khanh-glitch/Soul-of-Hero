@@ -34,6 +34,20 @@ MANIFEST = OUT_DIR / "derived_art.json"
 # The flat plate behind every spike frame. Sampled at the corner of each source
 # frame and asserted to be uniform before anything is written.
 PLATE = (61, 37, 59)
+# The plate is turned into a recessed pit rather than erased. On this dungeon's stone
+# a bare cluster of pale spikes reads as rubble; a dark socket under them reads as a
+# marked bay you must not step in. The colour is neutral-warm so it belongs to the
+# floor, and it is dark enough that the spikes stay the brightest thing in the cell.
+PIT = (72, 30, 30)
+PIT_ALPHA = 210
+# No edge treatment on purpose: bay tiles are adjacent, so a uniform plate lets the
+# four tiles of one bay merge into a single recessed square instead of reading as
+# four separate cards. A bevelled edge was tried and produced exactly that grid.
+# The plate's own two shadow steps (37,19,26) and (54,32,48) are spike shading and are
+# kept, except (54,32,48), which is violet enough to read as a magenta fringe against
+# the pit and is neutralised to the same value with the violet taken out.
+SHADOW_VIOLET = (54, 32, 48)
+SHADOW_NEUTRAL = (38, 30, 34)
 FRAMES = ["peaks_1.png", "peaks_2.png", "peaks_3.png", "peaks_4.png"]
 
 
@@ -53,19 +67,26 @@ def derive(source: Path) -> tuple[bytes, dict]:
     if plate != PLATE:
         raise SystemExit(f"{source.name}: expected a {PLATE} plate, found {plate}")
     cleared = 0
+    neutralised = 0
     for y in range(height):
         for x in range(width):
-            r, g, b, a = pixels[x, y]
+            r, g, b, _a = pixels[x, y]
             if (r, g, b) == PLATE:
-                pixels[x, y] = (r, g, b, 0)
+                pixels[x, y] = (PIT[0], PIT[1], PIT[2], PIT_ALPHA)
                 cleared += 1
+            elif (r, g, b) == SHADOW_VIOLET:
+                pixels[x, y] = (SHADOW_NEUTRAL[0], SHADOW_NEUTRAL[1],
+                                SHADOW_NEUTRAL[2], 255)
+                neutralised += 1
     if cleared == width * height:
         raise SystemExit(f"{source.name}: the whole frame is plate; refusing to erase the art")
     from io import BytesIO
 
     buffer = BytesIO()
     image.save(buffer, format="PNG", optimize=True)
-    return buffer.getvalue(), {"cleared_pixels": cleared, "size": [width, height]}
+    return buffer.getvalue(), {"plate_pixels_replaced": cleared,
+                               "violet_shadow_pixels_neutralised": neutralised,
+                               "size": [width, height]}
 
 
 def run(check: bool) -> int:
@@ -108,8 +129,10 @@ def run(check: bool) -> int:
         print(f"GATE3 DERIVED ART OK: {len(entries)} frames reproducible, production art untouched")
         return 0
     MANIFEST.write_text(text)
-    cleared = sum(entry["cleared_pixels"] for entry in entries)
-    print(f"GATE3 DERIVED ART: {len(entries)} spike frames, {cleared} plate pixels cleared, "
+    cleared = sum(entry["plate_pixels_replaced"] for entry in entries)
+    neutralised = sum(entry["violet_shadow_pixels_neutralised"] for entry in entries)
+    print(f"GATE3 DERIVED ART: {len(entries)} spike frames, {cleared} plate pixels turned into "
+          f"a recessed pit, {neutralised} violet shadow pixels neutralised, "
           f"production art untouched")
     return 0
 

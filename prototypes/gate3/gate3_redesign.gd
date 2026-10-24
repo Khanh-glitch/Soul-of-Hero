@@ -19,9 +19,11 @@ extends Node2D
 ##      that do not belong in an archive) and paints the archive's own fittings
 ##      instead — a node visibility change, not a data or art change. It also swaps
 ##      every spike's animation for a prototype-local *derived* copy of the same
-##      production frames with only the flat violet plate cleared to transparency: the
-##      plate was the last genuinely magenta thing on screen, and it was the hazard
-##      art rather than the decoration layer that carried it;
+##      production frames with the flat violet plate repainted as a dark crimson pit:
+##      the plate was the last genuinely magenta thing on screen, and it was the hazard
+##      art rather than the decoration layer that carried it. Clearing it to nothing
+##      was tried first and made the hazard quieter than the card it replaced; the pit
+##      keeps the bay reading as a marked danger at a glance;
 ##   6. it builds ONE smooth shade field from a distance transform, replacing Gate
 ##      2's five hard vault bands: a 116x96 RGBA image, linearly filtered, so the
 ##      falloff has no steps at any zoom.
@@ -32,7 +34,7 @@ extends Node2D
 const PLACEMENT_PATH := "res://prototypes/gate3/visual_placement.json"
 const EXPECTED_LEVEL := "res://data/levels/chapter_1_level_3.json"
 ## Prototype-local derived hazard frames (see tools/gate3/make_derived_art.py): the
-## production spike frames with only their flat violet plate made transparent.
+## production spike frames with their flat violet plate repainted as a crimson pit.
 const HAZARD_FRAME_PATHS := [
 	"res://prototypes/gate3/art/peaks_1.png",
 	"res://prototypes/gate3/art/peaks_2.png",
@@ -171,10 +173,11 @@ func _reskin_hazards() -> void:
 	## C2, correctly diagnosed: the magenta Gate 2 was marked down for is the flat
 	## violet plate baked into `assets/environment/dungeon/items/spikes/peaks_*.png`.
 	## The plate is opaque, so no multiply tint can remove it; the production atlas is
-	## frozen, so this loads a derived copy with only that plate cleared. The spike
-	## pixels, the frame count and the 8 fps animation are unchanged, and the hazard
-	## stays exactly as dangerous and at least as legible: pale steel spikes now sit
-	## directly on the stone floor instead of on a lavender card.
+	## frozen, so this loads a derived copy with that plate repainted. The spike
+	## pixels, the frame count and the 8 fps animation are unchanged, so the hazard
+	## stays exactly as dangerous and at least as legible: pale steel spikes now stand
+	## in a dark crimson pit instead of on a lavender card. Erasing the plate outright
+	## was tried first and read as harmless rubble, which is not an acceptable trade.
 	var frames: Array[Texture2D] = []
 	for path: String in HAZARD_FRAME_PATHS:
 		var texture: Texture2D = load(path)
@@ -205,7 +208,7 @@ func _reskin_hazards() -> void:
 	if hazards_reskinned == 0:
 		_fail("no spike hazards were found to re-skin, which cannot be right")
 	else:
-		print("GATE3 HAZARDS: %d spike hazards re-skinned onto derived frames (violet plate cleared)"
+		print("GATE3 HAZARDS: %d spike hazards re-skinned onto derived frames (crimson pit, violet gone)"
 			% hazards_reskinned)
 
 

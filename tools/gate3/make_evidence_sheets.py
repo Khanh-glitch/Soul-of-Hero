@@ -31,6 +31,9 @@ CROPS = [
     ("south_loop", "south_loop", (260, 210, 1020, 610)),
     ("bay_rhythm", "archive_entry", (180, 150, 900, 530)),
     ("shade_depth", "spawn", (0, 120, 720, 540)),
+    # The hazard re-skin: the four spike bays around the landmark, where the opaque
+    # violet plate used to read as a lavender card on the stone.
+    ("hazard_bay", "landmark", (760, 300, 1000, 520)),
 ]
 CAMERA = ["cam_baseline_1280_landmark", "cam_archive_1280_landmark",
           "cam_baseline_1024_landmark", "cam_archive_1024_landmark"]

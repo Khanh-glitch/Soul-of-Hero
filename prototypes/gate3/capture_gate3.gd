@@ -438,6 +438,31 @@ func _check_contracts() -> void:
 		var atlas := frame as AtlasTexture
 		_expect(atlas == null,
 			"a spike hazard is no longer drawn from the production plate-bearing frame")
+		# The violet itself, measured on the pixels the renderer will use: the derived
+		# frame must contain no pixel of the production plate colour at all.
+		if frame != null:
+			var image := frame.get_image()
+			if image != null:
+				var violet := 0
+				for y: int in range(image.get_height()):
+					for x: int in range(image.get_width()):
+						var pixel := image.get_pixel(x, y)
+						if pixel.a > 0.5 \
+								and int(round(pixel.r * 255.0)) == 61 \
+								and int(round(pixel.g * 255.0)) == 37 \
+								and int(round(pixel.b * 255.0)) == 59:
+							violet += 1
+				_expect(violet == 0,
+					"the hazard frame carries no pixel of the violet plate (found %d)" % violet)
+				# And the bay must still be as visible as before: the pit is a real mark,
+				# not an erased card, so the frame keeps a background around the spikes.
+				var opaque := 0
+				for y: int in range(image.get_height()):
+					for x: int in range(image.get_width()):
+						if image.get_pixel(x, y).a > 0.5:
+							opaque += 1
+				_expect(opaque >= image.get_width() * image.get_height() * 3 / 4,
+					"the hazard frame still fills its cell, so the bay reads as a marked danger")
 	_expect(hazard_sprites == spikes,
 		"%d live hazard sprites for %d authored spikes" % [hazard_sprites, spikes])
 
