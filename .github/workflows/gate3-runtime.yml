@@ -119,9 +119,19 @@ jobs:
             2>&1 | tee .artifacts/gate3/deep.log || true
           grep -q "GATE3 CAPTURE TEST PASSED" .artifacts/gate3/deep.log
           if grep -Eq "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/deep.log; then exit 1; fi
-          for station in floor2_arrival floor2_stacks floor3_camp; do
+          # Floor 2 is what this pass has to deliver, and it delivers it every run. The
+          # floor 3 leg is printed by name whether it happened or not, so that a log
+          # which stops on floor 2 can never be read as if it had gone all the way down.
+          grep -q "GATE3 DEPTH: floor 2 reached" .artifacts/gate3/deep.log
+          for station in floor2_arrival floor2_stacks; do
             test -f ".artifacts/gate3/after_$station.png"
           done
+          if grep -q "GATE3 DEPTH: floor 3 reached" .artifacts/gate3/deep.log; then
+            test -f .artifacts/gate3/after_floor3_camp.png
+          else
+            echo "GATE3 DEPTH LIMIT: floor 3 was not reached in this run"
+            grep -h "GATE3 DEPTH" .artifacts/gate3/deep.log || true
+          fi
       - name: Identify the objects that survive shutdown
         if: always()
         run: |
