@@ -618,6 +618,10 @@ func _nearest_enemy(within: float, heading: Vector2) -> Node2D:
 		var enemy := node as Node2D
 		if enemy == null or not enemy.is_inside_tree() or not enemy.is_visible_in_tree():
 			continue
+		# A dead skeleton stays in the `enemies` group until it is freed, and a corpse
+		# in contact range produced 109 zero-frame "fights" in one run.
+		if int(enemy.get("health")) <= 0:
+			continue
 		var offset := enemy.global_position - _player.global_position
 		var distance := offset.length()
 		if distance >= best_distance:
@@ -633,7 +637,7 @@ func _nearest_enemy_distance() -> float:
 	var nearest := 1.0e9
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
 		var enemy := node as Node2D
-		if enemy == null or not enemy.is_inside_tree():
+		if enemy == null or not enemy.is_inside_tree() or int(enemy.get("health")) <= 0:
 			continue
 		nearest = minf(nearest, enemy.global_position.distance_to(_player.global_position))
 	return nearest
@@ -805,10 +809,16 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(34.0, Vector2.ZERO)
 			if touching != null:
-				frames += await _engage_enemy(touching, label)
-				progress_at = frames
-				best_distance = 1.0e9
-				continue
+				var before := int(touching.get("health"))
+				var fought := await _engage_enemy(touching, label)
+				frames += fought
+				if fought > 0 and int(touching.get("health")) < before:
+					progress_at = frames
+					best_distance = 1.0e9
+					continue
+				# A fight that neither spends frames nor lands a hit is not a fight; fall
+				# through to walking and let the stall timer decide.
+				_disengage_frames = 30
 		if frames - progress_at > STALL_FRAMES and _disengage_frames <= 0:
 			attempts += 1
 			var index_before := index
