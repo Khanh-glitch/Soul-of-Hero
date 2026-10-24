@@ -368,7 +368,7 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
 ## 12. Unresolved defects and limitations
 
 1. **The deep route is marginal, and needs a retry to be reliable.** The green run walks
-   all three storeys in one descent (146 cells, 3473 px, 9 fights, HP 1100 → 96), but
+   all three storeys in one descent (168 cells, 3484 px, 9 fights, HP 1100 → 438), but
    earlier builds died on floor 1 in roughly half their attempts, so the workflow retries
    the whole Godot process up to three times, each attempt keeping its own log, and the
    step prints which attempt produced the evidence. A green deep log can mean "second
@@ -398,6 +398,19 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
    the floor-1 landmark only; the lower storeys keep the level's own camera.
 6. **Performance is measured under a software rasteriser**, so the render figure is a
    ceiling; no GPU number exists for this build in CI.
+7. **The archive material is drawn behind two production layers, and therefore does not
+   appear.** `crypt_entrance.tscn` gives `Backdrop` z = −10 and `Geometry` z = 0, while
+   every Gate 3 material layer is added with `z_as_relative = false` at z = −30 … −10, and
+   `_hide_level_layers()` hides only `Decor`. Comparing `before_spawn.png` with
+   `after_spawn.png` at floor and wall pixels returns identical values, which is how the
+   error was found: 5 800 authored cells (floor, wall face, mass, niche, coping, weather,
+   wall shadow) and the `Gate3_Shade` field never reach the screen, and the visible
+   masonry is the 0x72 tileset with its salmon wall caps. Only `rock`, the props, the
+   hazard reskin and the lights are on screen. `docs/gate3/ROUND_4_PLAN.md` records the
+   fix that is proposed for the next round, together with the other three review items
+   (combat stability, respawn, lower-storey camera). Nothing in this report is retracted:
+   the material evidence in §8 measured the authored document and the capture logs, not
+   the composited frame.
 
 ---
 
