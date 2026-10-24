@@ -39,9 +39,12 @@ const EXPECTED_TILESET_SOURCES := 2
 const EXPECTED_SIZE := Vector2i(1280, 720)
 const SMALL_SIZE := Vector2i(1024, 576)
 const TILE := 16
-## A spike footprint is walkable, but the router treats it as this much worse than
-## open floor, so the Knight only crosses one where the level leaves no choice.
-const HAZARD_COST := 25
+## A spike footprint is walkable (the hazard damages, it does not block), but a
+## player will walk around it: at this cost any detour, however long, beats standing
+## in a bay taking 196-point ticks. The previous value of 25 let the router choose a
+## three-cell spike crossing over a two-cell detour, and the capture bled out on the
+## spike at (78,17) while the log looked like an enemy fight.
+const HAZARD_COST := 400
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -136,8 +139,10 @@ func _run() -> void:
 	_enemy_heat = _build_enemy_heat()
 	_start_health = int(_player.get("health"))
 	await _capture_floor_one()
-	await _descend(DESCENT_1, FLOOR2_ORDER)
-	await _descend(DESCENT_2, FLOOR3_ORDER)
+	if not _player_dead():
+		await _descend(DESCENT_1, FLOOR2_ORDER)
+	if not _player_dead():
+		await _descend(DESCENT_2, FLOOR3_ORDER)
 	await _probe_collision()
 	_report_walk()
 	_finish()
@@ -604,7 +609,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	print("GATE3 COMBAT: after the input press current_action='%s', hero=%s, weapon=%s"
 		% [String(_player.get("current_action")), _hero_id(), _weapon_id()])
 	while spent < 240:
-		if int(_player.get("health")) <= 0:
+		if _player_dead():
 			Input.action_release("attack")
 			_push("the Knight died fighting near '%s'" % label)
 			return spent
@@ -635,7 +640,7 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 				% [label, String(target.name), offset.length(),
 					str(target.get("health")), int(_player.get("health")),
 					String(_player.get("current_action"))])
-		if int(_player.get("health")) < 300:
+		if int(_player.get("health")) < 220:
 			print("GATE3 COMBAT: the Knight disengaged near '%s' at HP %d"
 				% [label, int(_player.get("health"))])
 			_disengage_frames = 420
@@ -668,7 +673,7 @@ func _weapon_id() -> String:
 func _can_afford_a_fight() -> bool:
 	## A fight costs the Knight roughly a hit or two of his own health. Below this
 	## line the harness keeps moving instead of trading blows it cannot pay for.
-	return int(_player.get("health")) > 620
+	return int(_player.get("health")) > 350
 
 
 func _enemy_count() -> int:
@@ -677,6 +682,10 @@ func _enemy_count() -> int:
 		if node.is_inside_tree():
 			count += 1
 	return count
+
+
+func _player_dead() -> bool:
+	return int(_player.get("health")) <= 0 or bool(_player.get("dead"))
 
 
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
@@ -700,7 +709,7 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var replans := 0
 	var rolls := 0
 	while index < route.size() and frames < budget:
-		if int(_player.get("health")) <= 0:
+		if _player_dead():
 			_push("the Knight died on the way to '%s' at %s"
 				% [label, str(_player.global_position)])
 			return false
