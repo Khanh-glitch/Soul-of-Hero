@@ -55,10 +55,12 @@ def files_under(path: str) -> list[Path]:
     # document stale the moment a capture finished. What is inventoried here is the code
     # and the documents that *produce* the evidence, which only change when a human
     # changes them.
-    # Two of the four documents under docs/gate3 are edited by hand and rewritten by the
-    # generator, so they are inventoried by their generator instead of by size here: the
-    # inventory has to be stable against a prose edit, or it goes stale on every sentence.
-    generated = {OUT, ROOT / "docs/gate3/SOURCE_MANIFEST.md"}
+    # The report and the source manifest are both prose: they are hand-edited constantly
+    # and rewritten by their own generators. Sizes for them are therefore not inventoried
+    # here -- the inventory has to be stable against a prose edit, or it goes stale on
+    # every sentence -- and what they contain is checked by their own `--check` instead.
+    generated = {OUT, ROOT / "docs/gate3/SOURCE_MANIFEST.md",
+                 ROOT / "docs/gate3/GATE3_REPORT.md"}
     evidence = ROOT / "docs/gate3/evidence"
     return sorted(
         p for p in target.rglob("*")

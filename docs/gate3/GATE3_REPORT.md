@@ -10,14 +10,15 @@ files. The one level substitution is made inside the CI runner only, from
 
 | | |
 | --- | --- |
-| green end-to-end run, all three storeys | [`40081378592`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40081378592) @ `13054b5` — **conclusion: success**; floors 1, 2 and 3 in one descent, HP 1100 → 444, including the new mid-fight frame |
+| green end-to-end run, all three storeys | [`40081969068`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40081969068) @ `d48eee2` — **conclusion: success**; floors 1, 2 and 3 in one descent, HP 1100 → 438, including the mid-fight frame |
+| the run before it, same conclusion | [`40081378592`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40081378592) @ `13054b5` — success, HP 1100 → 444 |
 | three earlier green three-storey runs | [`40074357646`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40074357646) @ `4bffb81` (HP 1100 → 826), [`40073875673`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40073875673) @ `a6afe5d` (→ 2), [`40069612470`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40069612470) @ `a4c7e31` (→ 96) |
-| repository suite for this branch | [`40081378591`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40081378591) @ `13054b5` — *Import and headless runtime tests* **success**, *Xvfb rendered gameplay captures* **success**, *Original main baseline comparison* **failure** (unchanged `main`; see §9) |
+| repository suite for this branch | [`40081969077`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40081969077) @ `d48eee2` — *Import and headless runtime tests* **success**, *Xvfb rendered gameplay captures* **success**, *Original main baseline comparison* **failure** (unchanged `main`; see §9) |
 | Godot | `4.7.stable.official.5b4e0cb0f` (`evidence/logs/version.txt`) |
 | trial level sha256 | `25a51aa9834278c9415cf7039933e3c1bc4238bb33aa0d2111db620cccf2036d` |
 | Candidate A pin used for BEFORE | `5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54` |
 
-The workflow was re-run against the commit that carries this delivery (`13054b5`), so every
+The workflow was re-run against the commit that carries this delivery (`d48eee2`), so every
 number above is reproduced at the delivered revision; the evidence commit the bot
 published on top of it only adds the frames and logs from that run.
 
@@ -151,7 +152,7 @@ is byte-identical to the pin, and the capture enters through the real campaign r
 
 ## 6. Phase F — the 15 verification items
 
-All results below are from the green run `40081378592` unless stated. Line references
+All results below are from the green run `40081969068` unless stated. Line references
 are to `docs/gate3/evidence/logs/*.txt`.
 
 | # | item | result |
@@ -178,7 +179,8 @@ are to `docs/gate3/evidence/logs/*.txt`.
 | --- | --- | --- | --- | --- | --- |
 | BEFORE (Candidate A) | 73 | 935 | 0 | 1100 → 1100 | floor-1 tour only; the BEFORE build has no shaft to walk to |
 | AFTER, floor-1 tour | 83 | 988 | 0 | 1100 → 1100 | +10 cells and +53 px of new walkable route through the repaired shaft and the opened ambulatory |
-| AFTER, deep (this run) | 147 | 3475 | 7 | 1100 → 444 | **floors 1–3 in one descent**, through both doors, 656 health spent |
+| AFTER, deep (this run) | 168 | 3484 | 9 | 1100 → 438 | **floors 1–3 in one descent**, through both doors, 662 health spent |
+| AFTER, deep (`40081378592`) | 147 | 3475 | 7 | 1100 → 444 | 656 spent |
 | AFTER, deep (`40074357646`) | 113 | 3475 | 7 | 1100 → 826 | 274 spent |
 | AFTER, deep (`40073875673`) | 84 | 3468 | 9 | 1100 → 2 | 1098 spent |
 | AFTER, deep (`40069612470`) | 146 | 3473 | 9 | 1100 → 96 | 1004 spent |
@@ -194,12 +196,12 @@ Measured at the end of the AFTER walk with the entire overlay live, under the CI
 software rasteriser (`llvmpipe`), which is a ceiling and not a target:
 
 ```
-GATE3 PERF: 90 physics frames in 1646 ms, 18.29 ms per frame (software GL)
-GATE3 PERF: nodes=844 objects=13953 draw_calls_in_frame=242 objects_in_frame=3805
-GATE3 PERF: physics_process=2.09 ms render_process=144.02 ms
+GATE3 PERF: 90 physics frames in 1656 ms, 18.40 ms per frame (software GL)
+GATE3 PERF: nodes=844 objects=13949 draw_calls_in_frame=242 objects_in_frame=3805
+GATE3 PERF: physics_process=1.39 ms render_process=147.65 ms
 ```
 
-Physics — the part that decides whether the game *plays* — is 2.09 ms of a 16.67 ms
+Physics — the part that decides whether the game *plays* — is 1.39 ms of a 16.67 ms
 budget. The render figure is software rasterisation of a 116×96 cell map with 2690
 objects in frame and is not representative of GPU rendering; it is reported so the
 claim "we measured it" is checkable rather than asserted.
@@ -376,9 +378,9 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
    Measured cause: two or more skeletons converging, and hit-stun, which means a Knight
    in contact with a crowd cannot disengage — retreating was measured three times and
    lost every time. The harness's policy is the aggressive one that survives best, and the
-   full descent varies enormously for a Knight using only basic attacks and a dash: 656
-   health spent in the green run at HEAD, 274 at `4bffb81`, 1098 at `a6afe5d`, 1004 at
-   `a4c7e31`. The descent always completes; the health it costs is not controlled,
+   full descent varies enormously for a Knight using only basic attacks and a dash: 662
+   health spent in the green run at HEAD, 656 at `13054b5`, 274 at `4bffb81`, 1098 at
+   `a6afe5d`, 1004 at `a4c7e31`. The descent always completes; the health it costs is not controlled,
    and that variance is the honest finding about this level's difficulty. This is a genuine difficulty finding about `chapter_1_level_3`, not a
    correction the gate is allowed to make: enemies are part of the frozen entity list.
 2. **The shipped death flow has no respawn.** `game/ui/HUD.tscn` contains a
@@ -389,7 +391,7 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
 3. **The ObjectDB notice is characterised but not explained** (§10).
 4. **The lower-storey frames come from one specific run.** `after_floor2_*`,
    `after_floor3_camp.png` and `after_combat_load.png` in the tree were captured by run
-   `40081378592`; the committed
+   `40081969068`; the committed
    evidence files are whatever the last publishing run produced, and each log names its
    own run's route so a frame can be matched to the log that made it.
 5. **Camera bounds on floors 2–3 were not re-tuned.** The 2.0 framing was evaluated at
