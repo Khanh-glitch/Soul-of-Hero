@@ -30,6 +30,9 @@ const SpriteFramesFactory := preload("res://game/world/sprite_frame_factory.gd")
 
 const THEME_DIR := "res://data/environment/chapter1"
 const FACADE_NODE := "EnvironmentFacade"
+const BACKING_NODE := "EnvironmentWallBacking"
+const TRIM_NODE := "EnvironmentWallTrim"
+const FLOOR_WEAR_NODE := "EnvironmentFloorWear"
 const SHADOW_NODE := "EnvironmentShadow"
 const LIGHT_NODE := "EnvironmentLights"
 
@@ -56,10 +59,18 @@ const DEFAULT_PALETTE := {
 }
 const DEFAULT_FACADE := {
 	"rows": 2,
-	"body": [[2, 2], [1, 2], [3, 2], [2, 3]],
-	"cap": [[2, 0], [10, 0]],
-	"side": [[1, 1], [3, 1]],
-	"thickness": 1,
+	# 0,x,y is dungeon_tileset_ii, the sheet the authored walls already use, so the
+	# derived storey continues the same masonry instead of restating the level in a
+	# second, noisier material.
+	"courses": [[0, 1, 1], [0, 2, 1], [0, 3, 1]],
+	"cap": [[0, 1, 0], [0, 2, 0], [0, 3, 0]],
+	"side": [[0, 1, 1], [0, 3, 1]],
+	"backing": [[0, 2, 1]],
+	"trim": [
+		{"tiles": [[0, 5, 1], [0, 4, 1]], "light": true, "energy": 0.85, "scale": 2.0},
+		{"tiles": [[0, 1, 2], [0, 2, 2], [0, 1, 3]], "light": false},
+	],
+	"trim_spacing": 11,
 }
 const DEFAULT_SHADOW := {"color": [0.0, 0.0, 0.0, 0.46], "depth": 7, "side": 4}
 
@@ -119,9 +130,14 @@ func rebuild() -> void:
 	_tile_size = int(theme.get("tile_size", 16))
 	_clear_children()
 	_apply_palette()
+	_build_lights()
+	var document := _level_document()
+	if not document.is_empty():
+		_build_floor_wear(_cell_set(document, "Backdrop"), _cell_set(document, "Geometry"))
 	_build_facade()
 	_build_shadows()
-	_build_lights()
+	if not document.is_empty():
+		_build_trim(_cell_set(document, "Geometry"), _cell_set(document, "Backdrop"))
 
 
 # -- theme -------------------------------------------------------------------
@@ -176,8 +192,15 @@ func _apply_palette() -> void:
 		return
 	for property: String in ["backdrop_tint", "geometry_tint", "decor_tint"]:
 		var key := property.replace("_tint", "")
-		if key in level:
-			level.set(property, _color(key, "palette"))
+		if not key in level:
+			continue
+		var colour := _color(key, "palette")
+		level.set(property, colour)
+		# DungeonLevel applies its exported tints once in _ready(), so the live
+		# TileMapLayers have to be repainted as well or the theme is invisible.
+		var layer := level.get_node_or_null(key.capitalize()) as TileMapLayer
+		if layer != null:
+			layer.modulate = colour
 	var host := level.get_parent()
 	if host == null:
 		return
@@ -190,6 +213,40 @@ func _apply_palette() -> void:
 
 
 # -- architecture ------------------------------------------------------------
+# Tile entries are [source, x, y]; a bare [x, y] means the shared stone sheet.
+func _tile_source(entry: Array) -> int:
+	if entry.size() >= 3:
+		return int(entry[0])
+	return SOURCE_WALL_SHEET
+
+
+func _tile_coords(entry: Array) -> Vector2i:
+	if entry.size() >= 3:
+		return Vector2i(int(entry[1]), int(entry[2]))
+	if entry.size() == 2:
+		return Vector2i(int(entry[0]), int(entry[1]))
+	return Vector2i.ZERO
+
+
+func _set(layer: TileMapLayer, cell: Vector2i, entry: Array) -> void:
+	layer.set_cell(cell, _tile_source(entry), _tile_coords(entry))
+
+
+## Cells the player can see the face of: a wall block immediately north of walkable
+## floor. Everything in this file keys off this set, so the derived architecture
+## can never appear where the authored map says there is open ground.
+func _visible_faces(geometry: Dictionary, floor: Dictionary) -> Array[Vector2i]:
+	var faces: Array[Vector2i] = []
+	for cell: Vector2i in geometry:
+		if floor.has(Vector2i(cell.x, cell.y + 1)):
+			faces.append(cell)
+	faces.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		if a.y == b.y:
+			return a.x < b.x
+		return a.y < b.y)
+	return faces
+
+
 func _build_facade() -> void:
 	var document := _level_document()
 	if document.is_empty():
@@ -197,50 +254,71 @@ func _build_facade() -> void:
 	var level := get_parent()
 	var floor := _cell_set(document, "Backdrop")
 	var geometry := _cell_set(document, "Geometry")
-	if floor.is_empty():
+	if floor.is_empty() or geometry.is_empty():
 		return
-	var config: Dictionary = theme.get("facade", {})
-	var rows := int(config.get("rows", (DEFAULT_FACADE as Dictionary)["rows"]))
-	var body: Array = config.get("body", (DEFAULT_FACADE as Dictionary)["body"])
-	var cap: Array = config.get("cap", (DEFAULT_FACADE as Dictionary)["cap"])
-	var side: Array = config.get("side", (DEFAULT_FACADE as Dictionary)["side"])
-	if rows <= 0 or body.is_empty():
-		return
-
-	var facade := TileMapLayer.new()
-	facade.name = FACADE_NODE
-	facade.z_index = -9
 	var reference := level.get_node_or_null("Decor") as TileMapLayer
 	if reference == null:
 		return
+	var config: Dictionary = theme.get("facade", {})
+
+	# 1. Solid stone behind the authored wall band. Several of the authored wall
+	#    tiles are decorative and carry transparent holes, so without this the
+	#    "walls" let the level background through and no amount of facade above
+	#    them reads as architecture. No collision: this sits behind Geometry.
+	var backing: Array = config.get("backing", (DEFAULT_FACADE as Dictionary)["backing"])
+	if not backing.is_empty():
+		var wall := TileMapLayer.new()
+		wall.name = BACKING_NODE
+		wall.z_index = -9
+		wall.tile_set = reference.tile_set
+		wall.modulate = Color(0.80, 0.78, 0.80, 1.0)
+		add_child(wall)
+		for cell: Vector2i in geometry:
+			if floor.has(cell):
+				continue
+			_set(wall, cell, backing[posmod(cell.x * 31 + cell.y * 17, backing.size())])
+		wall.update_internals()
+
+	# 2. Facade above the wall band: masonry courses plus a coping course, using
+	#    the same brick the authored walls use so the derived storey reads as the
+	#    continuation of the room rather than a different material.
+	var rows := int(config.get("rows", (DEFAULT_FACADE as Dictionary)["rows"]))
+	var courses: Array = config.get("courses", (DEFAULT_FACADE as Dictionary)["courses"])
+	var cap: Array = config.get("cap", (DEFAULT_FACADE as Dictionary)["cap"])
+	var side: Array = config.get("side", (DEFAULT_FACADE as Dictionary)["side"])
+	if rows <= 0 or courses.is_empty():
+		return
+	var facade := TileMapLayer.new()
+	facade.name = FACADE_NODE
+	facade.z_index = -9
 	facade.tile_set = reference.tile_set
 	add_child(facade)
 
-	# A wall cell whose south neighbour is floor is a wall the player sees the
-	# face of. Extend that face upward so the room sits inside a building
-	# instead of floating in the level background.
 	var placed := {}
-	for cell: Vector2i in geometry:
-		var below := Vector2i(cell.x, cell.y + 1)
-		if not floor.has(below):
+	for cell: Vector2i in _visible_faces(geometry, floor):
+		# Climb over the wall band's own courses, then stack the facade on the
+		# topmost stone. Without this the first probe hits the band itself.
+		var top := cell.y
+		while geometry.has(Vector2i(cell.x, top - 1)):
+			top -= 1
+		if placed.has(Vector2i(cell.x, top)):
 			continue
 		var stack := 0
 		for step: int in range(1, rows + 1):
-			var target := Vector2i(cell.x, cell.y - step)
+			var target := Vector2i(cell.x, top - step)
 			if floor.has(target) or geometry.has(target) or placed.has(target):
 				break
-			var tile: Array = body[posmod(cell.x * 7 + cell.y * 13 + step * 5, body.size())]
-			facade.set_cell(target, SOURCE_WALL_SHEET, Vector2i(int(tile[0]), int(tile[1])))
+			_set(facade, target, courses[posmod(cell.x * 5 + step * 3, courses.size())])
 			placed[target] = true
 			stack = step
 		if stack == rows:
-			var cap_cell := Vector2i(cell.x, cell.y - rows - 1)
+			var cap_cell := Vector2i(cell.x, top - rows - 1)
 			if not floor.has(cap_cell) and not geometry.has(cap_cell) and not placed.has(cap_cell):
-				var cap_tile: Array = cap[posmod(cell.x * 3 + cell.y, cap.size())]
-				facade.set_cell(cap_cell, SOURCE_WALL_SHEET, Vector2i(int(cap_tile[0]), int(cap_tile[1])))
+				_set(facade, cap_cell, cap[posmod(cell.x * 3 + cell.y, cap.size())])
+				placed[cap_cell] = true
 
-	# Side returns: one column of stone on the outside of an east/west wall so a
-	# vertical run of wall reads as having thickness rather than as a painted edge.
+	# 3. Side returns: one column of stone on the outside of an east/west wall so a
+	#    vertical run of wall reads as having thickness, not as a painted edge.
 	if not side.is_empty():
 		for cell: Vector2i in geometry:
 			for direction: int in [-1, 1]:
@@ -250,10 +328,86 @@ func _build_facade() -> void:
 					continue
 				if not (floor.has(inward) or geometry.has(inward)):
 					continue
-				var tile: Array = side[posmod(cell.x * 11 + cell.y * 5, side.size())]
-				facade.set_cell(neighbour, SOURCE_WALL_SHEET, Vector2i(int(tile[0]), int(tile[1])))
+				_set(facade, neighbour, side[posmod(cell.y, side.size())])
 				placed[neighbour] = true
 	facade.update_internals()
+
+
+## Floor wear. The authored floor is deliberately uniform so that gameplay
+## markers stay readable, but a hall of 5,000 identical tiles reads as a grid.
+## Scattering the sheet's own rubble and cracked slabs at a low, deterministic
+## rate gives the floor history without touching collision or coverage.
+func _build_floor_wear(floor: Dictionary, geometry: Dictionary) -> void:
+	var config: Dictionary = theme.get("floor", {})
+	var wear: Array = config.get("wear", [])
+	if wear.is_empty() or floor.is_empty():
+		return
+	var rate := maxi(1, int(config.get("rate", 17)))
+	var reference := get_parent().get_node_or_null("Decor") as TileMapLayer
+	if reference == null:
+		return
+	var layer := TileMapLayer.new()
+	layer.name = FLOOR_WEAR_NODE
+	layer.z_index = -9
+	layer.tile_set = reference.tile_set
+	add_child(layer)
+	for cell: Vector2i in floor:
+		if geometry.has(cell):
+			continue
+		if posmod(cell.x * 7919 + cell.y * 104729, rate) != 0:
+			continue
+		_set(layer, cell, wear[posmod(cell.x * 13 + cell.y * 7, wear.size())])
+	layer.update_internals()
+
+
+## Wall-mounted dressing: torches and banners hung on the visible wall faces at a
+## fixed rhythm. Collision-free by construction (the cells are already solid), and
+## deterministic, so the same map always hangs the same brackets.
+func _build_trim(geometry: Dictionary, floor: Dictionary) -> void:
+	var config: Dictionary = theme.get("facade", {})
+	var trim: Array = config.get("trim", [])
+	if trim.is_empty():
+		return
+	var reference := get_parent().get_node_or_null("Decor") as TileMapLayer
+	if reference == null:
+		return
+	var spacing := maxi(1, int(config.get("trim_spacing", 9)))
+	var layer := TileMapLayer.new()
+	layer.name = TRIM_NODE
+	layer.z_index = 1
+	layer.tile_set = reference.tile_set
+	add_child(layer)
+	var lights: Node2D = get_node_or_null(LIGHT_NODE) as Node2D
+	var index := 0
+	var last_x := -9999
+	for cell: Vector2i in _visible_faces(geometry, floor):
+		if cell.x - last_x < spacing:
+			continue
+		# Skip corners: a bracket hung on the very end of a run looks pinned on.
+		if not geometry.has(Vector2i(cell.x - 1, cell.y)) or not geometry.has(Vector2i(cell.x + 1, cell.y)):
+			continue
+		var entry: Variant = trim[posmod(index, trim.size())]
+		index += 1
+		last_x = cell.x
+		if not entry is Dictionary:
+			continue
+		var spec: Dictionary = entry
+		var tiles: Array = spec.get("tiles", [])
+		if tiles.is_empty():
+			continue
+		_set(layer, cell, tiles[posmod(cell.x, tiles.size())])
+		if lights == null or not bool(spec.get("light", false)):
+			continue
+		var light := PointLight2D.new()
+		light.position = Vector2(cell.x * _tile_size + _tile_size * 0.5, cell.y * _tile_size + _tile_size)
+		light.texture = SpriteFramesFactory.make_radial_texture(128)
+		var colour: Array = spec.get("color", [1.0, 0.72, 0.42])
+		light.color = Color(float(colour[0]), float(colour[1]), float(colour[2]), 1.0)
+		light.energy = float(spec.get("energy", 0.8))
+		light.texture_scale = float(spec.get("scale", 1.6))
+		light.shadow_enabled = false
+		lights.add_child(light)
+	layer.update_internals()
 
 
 func _cell_set(document: Dictionary, layer_name: String) -> Dictionary:
