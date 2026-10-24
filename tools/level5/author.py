@@ -18,11 +18,11 @@ by piers and blood channels, and a tiered arena whose crucible is the boss floor
 
 Usage
 -----
-    python3 tools/design/level5_blood_crucible_author.py --check
-    python3 tools/design/level5_blood_crucible_author.py --write
-    python3 tools/design/level5_blood_crucible_author.py --validate
-    python3 tools/design/level5_blood_crucible_author.py --stats
-    python3 tools/design/level5_blood_crucible_author.py --diagram OUTDIR
+    python3 tools/level5/author.py --check
+    python3 tools/level5/author.py --write
+    python3 tools/level5/author.py --validate
+    python3 tools/level5/author.py --stats
+    python3 tools/level5/author.py --diagram OUTDIR
 
 Only the Python standard library is required. `--diagram` additionally needs
 Pillow and is documentation-only: a plan diagram is never gameplay evidence.
@@ -58,7 +58,7 @@ HEIGHT = 88
 # visual and the collision TileSet in game/levels/crypt_entrance.tscn, and the
 # runtime rebuilds the same grids in DungeonLevel._make_tile_set(), so any cell
 # written here is guaranteed loadable. Every entry below was confirmed by
-# rendering the atlas through tools/design/render_level_plan.py and comparing
+# rendering the atlas through tools/level5/render_level_plan.py and comparing
 # it with the accepted Level 3/4 native captures.
 # ---------------------------------------------------------------------------
 S0 = 0

@@ -14,7 +14,7 @@ var _builder := MapBuilder.new()
 ## See docs/design-audition/LEVEL2_DELIVERY.md.
 ##
 ## Level 5's authoring authority moved to
-## tools/design/level5_blood_crucible_author.py for the same reason: the Blood
+## tools/level5/author.py for the same reason: the Blood
 ## Crucible is an ordered masonry compile (threshold walls, offering basins,
 ## processional channels, a tiered arena), not an additive rectangle carve.
 ## Its geometry is retained in _level_5_definition() only so that the pinned

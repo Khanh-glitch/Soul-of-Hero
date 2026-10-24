@@ -139,7 +139,7 @@ def build_sheet(after_dir: Path, out_dir: Path) -> Path | None:
 
 def build_route_trace(data_path: Path, out_path: Path, title: str) -> bool:
     """Plan diagram of the authored route. Documentation, never gameplay."""
-    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "design"))
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
     import render_level_plan as renderer  # noqa: WPS433
 
     document = json.loads(data_path.read_text(encoding="utf-8"))

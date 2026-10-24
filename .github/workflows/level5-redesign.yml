@@ -4,7 +4,7 @@ on:
     branches:
       - arena/6e89e68d-soul-of-hero
     paths:
-      - "tools/design/**"
+      - "tools/level5/**"
       - "tools/captures/level5_blood_crucible_capture.*"
       - "data/levels/chapter_1_level_5.json"
       - "prototypes/level5/**"
@@ -43,9 +43,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .artifacts/level5 docs/level-design/level5-redesign/evidence/logs
-          python3 tools/design/level5_blood_crucible_author.py --validate | tee .artifacts/level5/validate.log
-          python3 tools/design/level5_blood_crucible_author.py --check | tee .artifacts/level5/check.log
-          python3 tools/design/level5_blood_crucible_author.py --stats | tee .artifacts/level5/stats.log
+          python3 tools/level5/author.py --validate | tee .artifacts/level5/validate.log
+          python3 tools/level5/author.py --check | tee .artifacts/level5/check.log
+          python3 tools/level5/author.py --stats | tee .artifacts/level5/stats.log
           sha256sum data/levels/chapter_1_level_5.json prototypes/level5/baseline/chapter_1_level_5.json \
             | tee .artifacts/level5/pins.log
           # The pinned baseline must still be the tree-of-record file, unedited.
@@ -67,9 +67,13 @@ jobs:
           godot --version | tee .artifacts/level5/version.log
           timeout 420s godot --headless --audio-driver Dummy --editor --path . --import --quit \
             2>&1 | tee .artifacts/level5/import.log
-          timeout 180s godot --headless --audio-driver Dummy --path . \
-            --check-only --script res://tools/captures/level5_blood_crucible_capture.gd \
+          # Run the harness scene, not `--check-only --script`: the script form
+          # compiles without the project autoloads, so AppFlow/SaveService read
+          # as "Identifier not found" even when the game itself is fine.
+          timeout 300s godot --headless --audio-driver Dummy --path . \
+            res://tools/captures/level5_blood_crucible_capture.tscn -- --check \
             2>&1 | tee .artifacts/level5/parsecheck.log
+          grep -q "LEVEL5 HARNESS CHECK OK" .artifacts/level5/parsecheck.log
 
       - name: Install Xvfb and Mesa
         run: |
@@ -120,11 +124,11 @@ jobs:
           # The redesign is *authored*, not checked in as a second copy: rewrite it
           # from the design authority, then prove the committed file was already
           # byte-identical, so the frames cannot belong to a different map.
-          python3 tools/design/level5_blood_crucible_author.py --check \
+          python3 tools/level5/author.py --check \
             | tee .artifacts/level5/check_before_author.log
-          python3 tools/design/level5_blood_crucible_author.py --write \
+          python3 tools/level5/author.py --write \
             | tee .artifacts/level5/author_write.log
-          python3 tools/design/level5_blood_crucible_author.py --check \
+          python3 tools/level5/author.py --check \
             | tee .artifacts/level5/check_after_author.log
           git diff --exit-code -- data/levels/chapter_1_level_5.json \
             | tee .artifacts/level5/after_map_diff.log || true
@@ -161,7 +165,7 @@ jobs:
           cp .artifacts/level5/before/*.png docs/level-design/level5-redesign/before/ || true
           cp .artifacts/level5/after/*.png docs/level-design/level5-redesign/after/ || true
           python3 -m pip install --quiet pillow
-          python3 tools/design/level5_evidence.py | tee .artifacts/level5/evidence.log
+          python3 tools/level5/evidence.py | tee .artifacts/level5/evidence.log
           godot --version > docs/level-design/level5-redesign/evidence/toolchain.txt
           git rev-parse HEAD >> docs/level-design/level5-redesign/evidence/toolchain.txt
           sha256sum data/levels/chapter_1_level_5.json prototypes/level5/baseline/chapter_1_level_5.json \

@@ -10,7 +10,7 @@ It exists for one reason: the Level 5 redesign workflow captures the BEFORE
 frames from this file, so the comparison is always against the same map even
 after `data/levels/chapter_1_level_5.json` has been redesigned. It is not read
 by the game and it is not a second source of truth for the level — that is
-`tools/design/level5_blood_crucible_author.py`.
+`tools/level5/author.py`.
 
 To restore the pre-redesign level exactly:
 
@@ -18,4 +18,4 @@ To restore the pre-redesign level exactly:
 
 To restore the redesign:
 
-    python3 tools/design/level5_blood_crucible_author.py --write
+    python3 tools/level5/author.py --write

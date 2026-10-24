@@ -47,6 +47,7 @@ var _out_dir := "res://.artifacts/level5"
 var _tag := "after"
 var _only := ""
 var _sim_frames := 70
+var _check_only := false
 var _app_root: Node
 
 
@@ -60,6 +61,8 @@ func _ready() -> void:
 			_only = argument.get_slice("=", 1).strip_edges()
 		elif argument.begins_with("--sim-frames="):
 			_sim_frames = maxi(12, int(argument.get_slice("=", 1)))
+		elif argument == "--check":
+			_check_only = true
 	_run.call_deferred()
 
 
@@ -70,6 +73,39 @@ func _run() -> void:
 		save_path = "user://tests/level5_review_%d.json" % Time.get_ticks_usec()
 	SaveService.call(&"configure_storage", save_path, true)
 	_seed_campaign_entry()
+	if _check_only:
+		# Smoke check: the scene graph, both autoloads and the Level 5 document
+		# all have to resolve before a fifteen-minute capture is worth starting.
+		# This runs the *scene*, not `--check-only --script`, so AppFlow and
+		# SaveService are registered exactly as they are in the capture.
+		var level := CAMPAIGN_REGISTRY.find_campaign_level(5)
+		if level == null:
+			push_error("LEVEL5 HARNESS CHECK FAIL: campaign slot 5 is not registered")
+			get_tree().quit(1)
+			return
+		_app_root = APP_ROOT_SCENE.instantiate()
+		add_child(_app_root)
+		await get_tree().process_frame
+		AppFlow.start_campaign_level(StringName("chapter_1_level_5"))
+		for _frame: int in 10:
+			await get_tree().process_frame
+			await get_tree().physics_frame
+		var host := _app_root.get_node_or_null("RouteHost")
+		var live := host.get_child(0) if host != null and host.get_child_count() > 0 else null
+		var dungeon := live.get_node_or_null("Level") as DungeonLevel if live != null else null
+		var ok := dungeon != null and not dungeon.level_data.is_empty()
+		print("LEVEL5 HARNESS CHECK %s: level=%s floor_cells=%d entities=%d"
+			% [
+				"OK" if ok else "FAIL",
+				dungeon.level_data_path if dungeon != null else "(none)",
+				dungeon.backdrop.get_used_cells().size() if dungeon != null else 0,
+				(dungeon.level_data.get("entities", []) as Array).size() if dungeon != null else 0,
+			])
+		if AppFlow.has_active_run():
+			AppFlow.abort_to_home()
+			await get_tree().process_frame
+		get_tree().quit(0 if ok else 1)
+		return
 
 	_app_root = APP_ROOT_SCENE.instantiate()
 	add_child(_app_root)
@@ -149,9 +185,18 @@ func _capture_station(
 		target = dungeon.to_global(Vector2(cell * 16) + Vector2(8.0, 8.0))
 
 	var cell_now := Vector2i(floori(target.x / 16.0), floori(target.y / 16.0))
-	if dungeon.backdrop.get_cell_source_id(cell_now) == -1 or dungeon.geometry.get_cell_source_id(cell_now) != -1:
-		push_error("LEVEL5 REVIEW CAPTURE INVALID STATION %s at %s" % [station, cell_now])
-		return false
+	if not _station_cell_is_valid(dungeon, cell_now):
+		# The anchor is a design intent, not a guarantee: if a later map edit
+		# moves the floor under it, step outward instead of losing the whole
+		# capture pass, and say so in the log.
+		var snapped := _nearest_valid_cell(dungeon, cell_now)
+		if snapped == cell_now:
+			push_error("LEVEL5 REVIEW CAPTURE INVALID STATION %s at %s" % [station, cell_now])
+			return false
+		print("LEVEL5 REVIEW STATION MOVED tag=%s station=%s %s -> %s"
+			% [_tag, station, cell_now, snapped])
+		cell_now = snapped
+		target = dungeon.to_global(Vector2(cell_now * 16) + Vector2(8.0, 8.0))
 
 	if station == "f3_archer" and boss != null:
 		# The production phase-2 Soul Mark windup: bow-local charge plus the
@@ -189,6 +234,37 @@ func _capture_station(
 	print("LEVEL5 REVIEW STATION tag=%s station=%s cell=%s size=%dx%d out=%s ok=%s"
 		% [_tag, station, cell_now, image.get_width(), image.get_height(), output, str(saved == OK)])
 	return saved == OK
+
+
+func _station_cell_is_valid(dungeon: DungeonLevel, cell: Vector2i) -> bool:
+	if dungeon.backdrop.get_cell_source_id(cell) == -1:
+		return false
+	if dungeon.geometry.get_cell_source_id(cell) != -1:
+		return false
+	if dungeon.geometry.get_cell_source_id(cell + Vector2i.UP) != -1:
+		return false
+	for entity_raw: Variant in dungeon.level_data.get("entities", []):
+		if not entity_raw is Dictionary or String((entity_raw as Dictionary).get("type", "")) != "spikes":
+			continue
+		var position: Array = (entity_raw as Dictionary).get("position", [])
+		if position.size() < 2:
+			continue
+		var spike_cell := Vector2i(floori(float(position[0]) / 16.0), floori(float(position[1]) / 16.0))
+		if spike_cell == cell:
+			return false
+	return true
+
+
+func _nearest_valid_cell(dungeon: DungeonLevel, origin: Vector2i) -> Vector2i:
+	for radius: int in range(1, 8):
+		for offset_y: int in range(-radius, radius + 1):
+			for offset_x: int in range(-radius, radius + 1):
+				if maxi(absi(offset_x), absi(offset_y)) != radius:
+					continue
+				var candidate := origin + Vector2i(offset_x, offset_y)
+				if _station_cell_is_valid(dungeon, candidate):
+					return candidate
+	return origin
 
 
 func _seed_campaign_entry() -> void:

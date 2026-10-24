@@ -9,7 +9,7 @@ This is a *plan renderer*, not evidence: it never draws entities, lighting, HUD,
 sprites or shaders, and must never be labelled a native capture.
 
 Usage:
-    python3 tools/design/render_level_plan.py DATA_JSON OUT_PNG [--crop x,y,w,h]
+    python3 tools/level5/render_level_plan.py DATA_JSON OUT_PNG [--crop x,y,w,h]
         [--scale N] [--grid]
 """
 
