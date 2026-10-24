@@ -210,7 +210,11 @@ jobs:
 
       - name: Acceptance gate
         run: |
+          # `bash -e` is the default; the gate accumulates failures instead, and
+          # its own transcript is published with the rest of the evidence.
+          set +e
           set -uo pipefail
+          exec > >(tee -a docs/level-design/level5-redesign/evidence/logs/gate_acceptance.txt) 2>&1
           rc=0
           # In-scope Level 5 acceptance suites. Each one is matched on the exact
           # success line it prints *and* on its check count, so a suite that
@@ -238,7 +242,7 @@ jobs:
           check_suite chapter_1_level_5_miniboss_test "LEVEL 5 ARCHER MINIBOSS TEST PASSED - 77 checks"
           check_suite level_5_archer_pickup_test "LEVEL 5 ARCHER PICKUP TEST PASSED - 59 checks"
           check_suite chapter_1_level_5_live_loot_regression "LEVEL 5 LIVE LOOT PASSED - 22 checks"
-          check_suite collision_route "COLLISION ROUTE TEST PASSED - 161 checks across ten live maps"
+          check_suite chapter_1_collision_route_test "COLLISION ROUTE TEST PASSED - 161 checks across ten live maps"
           # Out-of-scope diagnostic. The balance matrix asserts on the Hero stat
           # projection and never reads a level document, and it is red on this
           # branch before the redesign. It may only be carried as a known
@@ -271,7 +275,9 @@ jobs:
       - name: Evidence gate
         if: always()
         run: |
+          set +e
           set -uo pipefail
+          exec > >(tee -a docs/level-design/level5-redesign/evidence/logs/gate_evidence.txt) 2>&1
           rc=0
           for tag in before after; do
             if ! grep -q "LEVEL5 REVIEW CAPTURE DONE: tag=${tag}" ".artifacts/level5/capture_${tag}.log"; then
