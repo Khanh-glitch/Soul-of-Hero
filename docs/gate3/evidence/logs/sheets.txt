@@ -1,4 +1,4 @@
-GATE3 SHEETS: 16 files
+GATE3 SHEETS: 17 files
   comparison_spawn.png
   comparison_archive_entry.png
   comparison_landmark.png
@@ -7,6 +7,7 @@ GATE3 SHEETS: 16 files
   comparison_combat_space.png
   comparison_return_route.png
   comparison_floor2_arrival.png
+  comparison_floor2_stacks.png
   inspection_crop_armarium_alcove_3x.png
   inspection_crop_cloister_garth_3x.png
   inspection_crop_descent_landing_3x.png
