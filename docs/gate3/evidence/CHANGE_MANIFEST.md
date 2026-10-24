@@ -12,11 +12,11 @@ by every capture run. This table is the code and documentation that produces it.
 
 | path | files | bytes |
 | --- | --- | --- |
-| `docs/gate3` | 4 | 50,231 |
+| `docs/gate3` | 3 | 49,102 |
 | `prototypes/gate3` | 11 | 1,525,531 |
-| `tools/gate3` | 6 | 84,472 |
+| `tools/gate3` | 6 | 84,834 |
 | `.github/workflows/gate3-runtime.yml` | 1 | 14,469 |
-| **total** | **22** | **1,674,703** |
+| **total** | **21** | **1,673,936** |
 
 ## 2. Cell diff against the pinned Candidate A baseline
 

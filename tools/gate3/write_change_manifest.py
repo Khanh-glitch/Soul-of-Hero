@@ -55,10 +55,15 @@ def files_under(path: str) -> list[Path]:
     # document stale the moment a capture finished. What is inventoried here is the code
     # and the documents that *produce* the evidence, which only change when a human
     # changes them.
+    # Two of the four documents under docs/gate3 are edited by hand and rewritten by the
+    # generator, so they are inventoried by their generator instead of by size here: the
+    # inventory has to be stable against a prose edit, or it goes stale on every sentence.
+    generated = {OUT, ROOT / "docs/gate3/SOURCE_MANIFEST.md"}
     evidence = ROOT / "docs/gate3/evidence"
     return sorted(
         p for p in target.rglob("*")
         if p.is_file()
+        and p not in generated
         and not p.is_relative_to(evidence)
         # Byte-compiled modules appear the moment the authoring tools run, which is
         # before this check in the same CI step; they are build output, not changes.
