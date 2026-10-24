@@ -330,9 +330,12 @@ tools/gate3/make_evidence_sheets.py                  tools/gate3/write_source_ma
 
 1. **The deep route is marginal, and needs a retry to be reliable.** The green run walks
    all three storeys in one descent (146 cells, 3473 px, 9 fights, HP 1100 → 96), but
-   earlier builds died on floor 1 in roughly half their attempts, and the pass therefore
-   reloads the level and tries again up to three times, printing every death and its
-   position. A green deep log can mean "second attempt", and says so when it does.
+   earlier builds died on floor 1 in roughly half their attempts, so the workflow retries
+   the whole Godot process up to three times, each attempt keeping its own log, and the
+   step prints which attempt produced the evidence. A green deep log can mean "second
+   attempt", and says so when it does. An in-process retry through
+   `reload_current_scene()` was tried first and rejected: it hung the step instead of
+   failing it.
    Measured cause: two or more skeletons converging, and hit-stun, which means a Knight
    in contact with a crowd cannot disengage — retreating was measured three times and
    lost every time. The harness's policy is the aggressive one that survives best, and the
