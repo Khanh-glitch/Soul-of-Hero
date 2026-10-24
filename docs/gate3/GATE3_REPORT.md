@@ -16,6 +16,9 @@ files. The one level substitution is made inside the CI runner only, from
 | trial level sha256 | `25a51aa9834278c9415cf7039933e3c1bc4238bb33aa0d2111db620cccf2036d` |
 | Candidate A pin used for BEFORE | `5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54` |
 
+The same workflow is re-run against the commit that ships this document, so the evidence
+is reproducible at the delivered revision and not only at an earlier one.
+
 Every image in `docs/gate3/evidence/` is a native `1280×720` (or `1024×576`) capture
 produced by `prototypes/gate3/capture_gate3.tscn` on the CI runner, through the real
 campaign entry, the production HUD, the production input actions and the level's own
