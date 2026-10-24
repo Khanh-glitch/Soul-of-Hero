@@ -7,7 +7,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-LEVEL5 REVIEW CAPTURE: level doc=res://data/levels/chapter_1_level_5.json floors=5181 entities=83
+LEVEL5 REVIEW CAPTURE: level doc=res://data/levels/chapter_1_level_5.json floors=5105 entities=83
 LEVEL5 REVIEW STATION tag=after station=f1_spawn cell=(10, 17) size=1280x720 out=res://.artifacts/level5/after/after_f1_spawn.png ok=true
 LEVEL5 REVIEW STATION tag=after station=f1_camp cell=(66, 16) size=1280x720 out=res://.artifacts/level5/after/after_f1_camp.png ok=true
 LEVEL5 REVIEW STATION tag=after station=f2_court cell=(30, 48) size=1280x720 out=res://.artifacts/level5/after/after_f2_court.png ok=true
