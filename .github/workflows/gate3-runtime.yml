@@ -122,6 +122,34 @@ jobs:
           for station in floor2_arrival floor2_stacks floor3_camp; do
             test -f ".artifacts/gate3/after_$station.png"
           done
+      - name: Identify the objects that survive shutdown
+        if: always()
+        run: |
+          # Gate 2's report counted three leak notices and Gate 1's counted seven
+          # instances, and this gate has been quoting both without knowing which is
+          # which. Godot only names the leaked instances under --verbose, so this asks
+          # it, on the short script-check run rather than on a fifteen-minute capture.
+          set -uo pipefail
+          timeout 240s godot --headless --verbose --audio-driver Dummy --path . \
+            res://prototypes/gate3/capture_gate3.tscn -- --check \
+            > .artifacts/gate3/leaks_raw.log 2>&1 || true
+          {
+            echo "== leak notices in the checked-in run logs =="
+            for logfile in before after deep; do
+              notices="$(grep -c "ObjectDB instances were leaked" ".artifacts/gate3/$logfile.log" || true)"
+              instances="$(sed -n "s/.*WARNING: \([0-9][0-9]*\) ObjectDB instances were leaked.*/\1/p" \
+                ".artifacts/gate3/$logfile.log" | awk "{ total += \$1 } END { print total + 0 }")"
+              printf "%-8s notices=%s instances=%s\n" "$logfile" "$notices" "$instances"
+            done
+            echo
+            echo "== unused/leaked instances named by --verbose =="
+            grep -E "Leaked instance|ObjectDB instances were leaked|Orphan StringName|orphan" \
+              .artifacts/gate3/leaks_raw.log | head -40 || echo "(none named)"
+            echo
+            echo "== the same notice in the named run =="
+            grep -c "ObjectDB instances were leaked" .artifacts/gate3/leaks_raw.log || true
+          } | tee .artifacts/gate3/leaks.log
+          rm -f .artifacts/gate3/leaks_raw.log
       - name: Scan the runtime logs
         if: always()
         run: |

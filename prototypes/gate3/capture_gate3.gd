@@ -162,6 +162,7 @@ func _run() -> void:
 	else:
 		await _capture_floor_one()
 	await _probe_collision()
+	await _measure_performance()
 	_report_walk()
 	_finish()
 
@@ -1291,6 +1292,30 @@ func _point_hits_gate3_collision(
 
 
 # -------------------------------------------------------------- report -------
+
+func _measure_performance() -> void:
+	## A load probe at the end of the walk, with the whole overlay live: the physics
+	## frame time the engine actually delivers, the draw calls the renderer submits,
+	## and the node and object counts that the review asked to be measured rather than
+	## asserted. Software rasterisation under Xvfb, so the render numbers are a ceiling,
+	## not a target: they are reported as such.
+	var nodes := Performance.get_monitor(Performance.OBJECT_NODE_COUNT)
+	var objects := Performance.get_monitor(Performance.OBJECT_COUNT)
+	var draw_calls := Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME)
+	var objects_in_frame := Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)
+	var frames := 90
+	var started := Time.get_ticks_usec()
+	for _i: int in range(frames):
+		await get_tree().physics_frame
+	var elapsed_us := float(Time.get_ticks_usec() - started)
+	print("GATE3 PERF: %d physics frames in %.0f ms, %.2f ms per frame (software GL)"
+		% [frames, elapsed_us / 1000.0, elapsed_us / 1000.0 / float(frames)])
+	print("GATE3 PERF: nodes=%d objects=%d draw_calls_in_frame=%d objects_in_frame=%d"
+		% [int(nodes), int(objects), int(draw_calls), int(objects_in_frame)])
+	print("GATE3 PERF: physics_process=%.2f ms render_process=%.2f ms"
+		% [Performance.get_monitor(Performance.TIME_PHYSICS_PROCESS) * 1000.0,
+			Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0])
+
 
 func _report_walk() -> void:
 	var end_health := int(_player.get("health"))
