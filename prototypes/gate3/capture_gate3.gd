@@ -48,6 +48,8 @@ const HAZARD_COST := 400
 ## Frames without closing on the current waypoint before the harness treats the walk
 ## as blocked and escalates.
 const STALL_FRAMES := 30
+## Below this much health the harness stops picking fights and slips past instead.
+const EVADE_BELOW_HEALTH := 700
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -888,9 +890,17 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# walked into a crowd of five, they all arrived together, and he died with the
 		# route unfinished. Starting the fight at range means the enemy the harness
 		# chose is the enemy that is there when the first sword swing lands.
-		if _disengage_frames <= 0 and _can_afford_a_fight() \
-				and not _hazard_cache.has(_current_cell()):
+		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
+			if touching != null and (not _can_afford_a_fight()
+					or int(_player.get("health")) < EVADE_BELOW_HEALTH):
+				# Not healthy enough to trade: slip past instead. Every fight in this
+				# archive costs about 150 health on average, and the two floor doors at
+				# the far end do not care how many skeletons are dead on the way.
+				frames += await _evade(touching, 72.0)
+				progress_at = frames
+				best_distance = 1.0e9
+				continue
 			if touching != null:
 				var before := int(touching.get("health"))
 				var fought := await _engage_enemy(touching, label)
@@ -987,6 +997,38 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	_expect(travelled > 16.0 or route.size() <= 1 or label == "spawn",
 		"'%s' was reached on foot, not by teleporting" % label)
 	return _failures.size() == failures_before
+
+
+func _evade(threat: Node2D, keep_clear: float) -> int:
+	## Walk away from one enemy until it is out of its own chasing range.
+	##
+	## Enemies disengage at a finite range, so distance is a real defence and it costs
+	## no health. Bounded, because a harness that can run forever is a harness that
+	## hangs a CI job instead of failing it.
+	var frames := 0
+	while frames < 240 and not _player_dead():
+		if not is_instance_valid(threat) or not threat.is_inside_tree():
+			break
+		var distance := threat.global_position.distance_to(_player.global_position)
+		if distance > keep_clear + 70.0:
+			break
+		var flee := _flee_delta()
+		if flee.length() < 0.5:
+			break
+		var actions: Array[String] = _key_directions(flee)
+		for action: String in actions:
+			Input.action_press(action, 1.0)
+			# A dash every twenty frames, which is 0.18 s of invulnerability each time.
+			if frames % 20 == 0:
+				Input.action_press("dash", 1.0)
+				await get_tree().physics_frame
+				Input.action_release("dash")
+				_dashes += 1
+		await get_tree().physics_frame
+		for action: String in actions:
+			Input.action_release(action)
+		frames += 1
+	return frames
 
 
 func _flee_delta() -> Vector2:
