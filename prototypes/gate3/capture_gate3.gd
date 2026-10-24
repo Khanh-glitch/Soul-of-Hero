@@ -732,24 +732,11 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
 			start_target_health, start_health, float(_player.get("mana"))])
-	# The Sword Hero's active skill is part of his kit, not an ornament: a player uses
-	# it when a fight starts going wrong. The harness uses it once per fight, at the
-	# moment the fight starts, and only when a second enemy is close enough for it to
-	# be worth the mana.
-	# The Sword Hero's kit, used the way a player uses it: the active skill when two
-	# enemies are close, the ultimate when three are. Both are production actions
-	# confirmed by a real mouse event; neither is a harness invention.
-	var crowd := _nearby_enemy_count(160.0)
-	if crowd >= 2 and int(_player.get("mana")) >= 16:
-		if await _cast_armed("skill", target, "SKILL"):
-			_skill_casts += 1
-	if crowd >= 3 and not _player_dead():
-		if await _cast_armed("ultimate", target, "ULTIMATE"):
-			_skill_casts += 1
-	if _player_dead():
-		Input.action_release("attack")
-		_push("the Knight died casting near '%s'" % label)
-		return spent
+	# The kit is deliberately NOT used here. Measured across four captures: the Sword
+	# Hero's active skill and ultimate both root him in place for their cast, and a rooted
+	# Knight in a crowd takes more damage than the sword combo would have prevented. The
+	# mouse-driven casting path stays in this harness, because it is how a real click
+	# confirms a cast and it should not be lost, but no capture depends on it.
 	Input.action_press("attack", 1.0)
 	await get_tree().physics_frame
 	print("GATE3 COMBAT: after the input press current_action='%s', hero=%s, weapon=%s"
@@ -825,10 +812,10 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 		# get cheaper: the skeleton is at full speed, the corridor is not getting wider,
 		# and the rest of the level needs that health more than this kill does.
 		var spent_health := start_health - int(_player.get("health"))
-		if int(_player.get("health")) < 150 or spent_health > 320:
+		if int(_player.get("health")) < 150 or spent_health > 160:
 			print("GATE3 COMBAT: the Knight broke off near '%s' at HP %d (%d lost in this fight)"
 				% [label, int(_player.get("health")), spent_health])
-			_disengage_frames = 420
+			_disengage_frames = 190
 			break
 	Input.action_release("attack")
 	_engaged_fights += 1
@@ -923,17 +910,7 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# route unfinished. Starting the fight at range means the enemy the harness
 		# chose is the enemy that is there when the first sword swing lands.
 		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
-			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
-			if touching != null and int(_player.get("health")) < 220 \
-					and _nearby_enemy_count(90.0) >= 3:
-				# Only as a last resort, with three enemies already on him and less than a
-				# fifth of his health: at that point nothing else is left to try. Every
-				# earlier use of this path made the run worse, because a Knight in hit-stun
-				# is not running away, he is standing still being hit.
-				frames += await _evade(touching, 72.0)
-				progress_at = frames
-				best_distance = 1.0e9
-				continue
+			var touching := _nearest_enemy(34.0, Vector2.ZERO)
 			if touching != null:
 				var before := int(touching.get("health"))
 				var fought := await _engage_enemy(touching, label)
