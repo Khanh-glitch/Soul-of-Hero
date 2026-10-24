@@ -103,6 +103,7 @@ var _engaged_fights := 0
 var _hazard_cache: Dictionary = {}
 var _enemy_heat: Dictionary = {}
 var _dashes := 0
+var _skill_casts := 0
 ## Frames left before the harness is willing to start another fight after it broke
 ## one off to survive. Without this it re-engages the same enemy every frame.
 var _disengage_frames := 0
@@ -670,6 +671,17 @@ func _nearest_enemy(within: float, heading: Vector2) -> Node2D:
 	return best
 
 
+func _nearby_enemy_count(within: float) -> int:
+	var count := 0
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		var enemy := node as Node2D
+		if enemy == null or not enemy.is_inside_tree() or int(enemy.get("health")) <= 0:
+			continue
+		if enemy.global_position.distance_to(_player.global_position) <= within:
+			count += 1
+	return count
+
+
 func _nearest_enemy_distance() -> float:
 	var nearest := 1.0e9
 	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
@@ -700,6 +712,14 @@ func _engage_enemy(target: Node2D, label: String) -> int:
 	print("GATE3 COMBAT: engaging %s at %.0f px, target HP %d, Knight HP %d, mana %.0f"
 		% [String(target.name), target.global_position.distance_to(_player.global_position),
 			start_target_health, start_health, float(_player.get("mana"))])
+	# The Sword Hero's active skill is part of his kit, not an ornament: a player uses
+	# it when a fight starts going wrong. The harness uses it once per fight, at the
+	# moment the fight starts, and only when a second enemy is close enough for it to
+	# be worth the mana.
+	var mana_before_skill := int(_player.get("mana"))
+	if _nearby_enemy_count(150.0) >= 2 and mana_before_skill >= 16:
+		if await _cast_skill(target):
+			_skill_casts += 1
 	Input.action_press("attack", 1.0)
 	await get_tree().physics_frame
 	print("GATE3 COMBAT: after the input press current_action='%s', hero=%s, weapon=%s"
@@ -997,6 +1017,46 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	_expect(travelled > 16.0 or route.size() <= 1 or label == "spawn",
 		"'%s' was reached on foot, not by teleporting" % label)
 	return _failures.size() == failures_before
+
+
+func _click_world(world_position: Vector2) -> void:
+	## A real left mouse button event, through the engine's own input queue.
+	##
+	## The Knight confirms a cast, interacts with a door and aims an attack from
+	## `InputEventMouseButton`, not from an action, so an automation harness that only
+	## presses actions can never use his actual kit. This is not a shortcut around the
+	## input path: it is the same event a player's mouse produces, at a screen position
+	## computed from the live canvas transform.
+	var screen := _player.get_canvas_transform() * world_position
+	for pressed: bool in [true, false]:
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.button_mask = MOUSE_BUTTON_MASK_LEFT if pressed else 0
+		event.pressed = pressed
+		event.position = screen
+		event.global_position = screen
+		Input.parse_input_event(event)
+		await get_tree().physics_frame
+
+
+func _cast_skill(target: Node2D) -> bool:
+	## Arm the Sword Hero's active skill and confirm it on the target, the way a player
+	## does: `skill`, then a click.
+	var mana_before := int(_player.get("mana"))
+	var health_before := int(_player.get("health"))
+	Input.action_press("skill", 1.0)
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+	Input.action_release("skill")
+	await get_tree().physics_frame
+	if is_instance_valid(target):
+		await _click_world(target.global_position)
+	await get_tree().physics_frame
+	var mana_after := int(_player.get("mana"))
+	print("GATE3 SKILL: mana %d -> %d, HP %d -> %d, action='%s'"
+		% [mana_before, mana_after, health_before, int(_player.get("health")),
+			String(_player.get("current_action"))])
+	return mana_after < mana_before
 
 
 func _evade(threat: Node2D, keep_clear: float) -> int:
@@ -1361,9 +1421,9 @@ func _measure_performance() -> void:
 
 func _report_walk() -> void:
 	var end_health := int(_player.get("health"))
-	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, %d dashes, HP %d -> %d (delta %d)"
-		% [_walked_cells, _walked_pixels, _engaged_fights, _dashes, _start_health, end_health,
-			_start_health - end_health])
+	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, %d dashes, %d skill casts, HP %d -> %d (delta %d)"
+		% [_walked_cells, _walked_pixels, _engaged_fights, _dashes, _skill_casts, _start_health,
+			end_health, _start_health - end_health])
 	print("GATE3 CAMERA FRAMES: %d" % _camera_frames)
 	var counted := 0
 	for _index: int in range(1):
