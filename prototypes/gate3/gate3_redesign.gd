@@ -75,6 +75,23 @@ var _atlas_source: TileSetAtlasSource
 var _alternative_cache := {}
 var _failures: Array[String] = []
 var _shade_node: Sprite2D
+var _data: Dictionary
+
+## Round 4, package D: the lower storeys get their own camera band.
+var camera_bands_built := false
+var camera_floor := 0
+var camera_shifts := 0
+var _camera: Camera2D
+var _knight: Node2D
+var _camera_bands: Array = []
+var _camera_base_offset := Vector2.ZERO
+var _camera_look := Vector2.ZERO
+
+## Round 4, package E: a respawn director over the production APIs.
+const RESPAWN_DELAY := 1.2
+var respawn_ready := false
+var respawns_completed := 0
+var _respawn_pending := false
 
 
 func attach_to_level(level: Node) -> bool:
@@ -98,6 +115,9 @@ func attach_to_level(level: Node) -> bool:
 	_build_shade(data, level)
 	_hide_level_layers(data, level)
 	_build_lights(data, level)
+	_build_camera(level)
+	_build_respawn(level)
+	_data = data
 	return _failures.is_empty()
 
 
@@ -466,6 +486,185 @@ func _build_lights(data: Dictionary, level: Node) -> void:
 		level.add_child(lamp)
 		lights_added += 1
 	print("GATE3 LIGHTS: %d local lanterns" % lights_added)
+
+
+# --------------------------------------------------------------- camera ------
+
+## The level is three storeys stacked in one 116 x 84 cell plane, and `main.gd`
+## clamps the Knight's camera to the whole map. At the floor-2 landing that put a
+## quarter of the frame on the flat background and half of it on repeated rock
+## (measured, see docs/gate3/ROUND_4_PLAN.md). The camera now follows the storey the
+## Knight is standing on: its own limits, at least one screen of apron, and a small
+## look-ahead in the direction of travel. Nothing here touches the level data.
+const CAMERA_PAD_CELLS := 5.0
+const CAMERA_LOOKAHEAD := 18.0
+
+func _build_camera(level: Node) -> void:
+	_knight = get_tree().get_first_node_in_group(&"player") as Node2D
+	if _knight == null:
+		_fail("cannot find the Knight to build the storey camera bands")
+		return
+	_camera = _knight.get_node_or_null("Camera") as Camera2D
+	if _camera == null:
+		_fail("the Knight has no Camera to tune for the lower storeys")
+		return
+	_camera_base_offset = _camera.position
+	var document: Dictionary = level.get("level_data")
+	var rooms: Array = (document.get("metadata", {}) as Dictionary).get("rooms", [])
+	var by_floor := {}
+	for room: Dictionary in rooms:
+		var rect: Array = room.get("rect", [])
+		if rect.size() < 4:
+			continue
+		var floor_id := int(room.get("floor", 1))
+		var box := Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3]))
+		if by_floor.has(floor_id):
+			by_floor[floor_id] = (by_floor[floor_id] as Rect2).merge(box)
+		else:
+			by_floor[floor_id] = box
+	for floor_id: int in by_floor.keys():
+		_camera_bands.append({"floor": floor_id, "rect": (by_floor[floor_id] as Rect2).grow(CAMERA_PAD_CELLS)})
+	_camera_bands.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
+		return int(a["floor"]) < int(b["floor"]))
+	if _camera_bands.size() < 3:
+		_fail("the level's rooms describe %d storeys, expected 3" % _camera_bands.size())
+		return
+	camera_bands_built = true
+	for band: Dictionary in _camera_bands:
+		print("GATE3 CAMERA BAND: floor %d cells %s"
+			% [int(band["floor"]), str(band["rect"])])
+	_apply_camera_band(0)
+
+
+func _process(delta: float) -> void:
+	if not camera_bands_built or _camera == null or _knight == null:
+		return
+	var cell := Vector2(_knight.global_position.x / float(16), _knight.global_position.y / float(16))
+	var index := camera_floor
+	for band: Dictionary in _camera_bands:
+		if (band["rect"] as Rect2).has_point(cell):
+			index = int(band["floor"]) - 1
+			break
+	if index != camera_floor:
+		_apply_camera_band(index)
+	var velocity := Vector2.ZERO
+	if _knight is CharacterBody2D:
+		velocity = (_knight as CharacterBody2D).velocity
+	var lead := Vector2.ZERO
+	if velocity.length() > 4.0:
+		lead = velocity.normalized() * CAMERA_LOOKAHEAD
+	_camera_look = _camera_look.lerp(lead, clampf(delta * 3.0, 0.0, 1.0))
+	_camera.position = _camera_base_offset + _camera_look
+
+
+func _apply_camera_band(index: int) -> void:
+	if index < 0 or index >= _camera_bands.size():
+		return
+	var rect: Rect2 = _camera_bands[index]["rect"]
+	# A band narrower than the viewport cannot be clamped without the camera
+	# snapping to an edge, so every band is grown to at least one screen (640 x 360
+	# logical pixels = 40 x 22.5 cells) around its own centre.
+	var screen_cells := Vector2(41.0, 24.0)
+	if rect.size.x < screen_cells.x:
+		rect = rect.grow_individual((screen_cells.x - rect.size.x) * 0.5, 0.0,
+			(screen_cells.x - rect.size.x) * 0.5, 0.0)
+	if rect.size.y < screen_cells.y:
+		rect = rect.grow_individual(0.0, (screen_cells.y - rect.size.y) * 0.5,
+			0.0, (screen_cells.y - rect.size.y) * 0.5)
+	_camera.limit_left = int(rect.position.x * 16.0)
+	_camera.limit_top = int(rect.position.y * 16.0)
+	_camera.limit_right = int((rect.position.x + rect.size.x) * 16.0)
+	_camera.limit_bottom = int((rect.position.y + rect.size.y) * 16.0)
+	camera_floor = index
+	camera_shifts += 1
+	_camera_look = Vector2.ZERO
+	_camera.position = _camera_base_offset
+	_camera.reset_smoothing()
+	print("GATE3 CAMERA: storey %d, limits %d..%d x %d..%d px"
+		% [index + 1, _camera.limit_left, _camera.limit_right,
+			_camera.limit_top, _camera.limit_bottom])
+
+
+func camera_frame_report(viewport_size: Vector2) -> Dictionary:
+	## What the frame is actually made of, in cells: the building the archive paints,
+	## the rock apron, or nothing. The harness prints this for every captured station,
+	## so the claim "the camera no longer frames empty ground" is measured, not seen.
+	if _camera == null or _data.is_empty():
+		return {}
+	var centre := _camera.get_screen_center_position()
+	var half := viewport_size / (2.0 * _camera.zoom)
+	var left := int(floor((centre.x - half.x) / 16.0))
+	var right := int(ceil((centre.x + half.x) / 16.0))
+	var top := int(floor((centre.y - half.y) / 16.0))
+	var bottom := int(ceil((centre.y + half.y) / 16.0))
+	var material: Dictionary = _data.get("material", {})
+	var building := {}
+	for role: String in ["floor", "wall_face", "mass", "niche", "coping", "water", "water_edge", "decor", "weather"]:
+		for cell: Array in material.get(role, []):
+			building[Vector2i(int(cell[0]), int(cell[1]))] = true
+	var rock := {}
+	for role: String in ["rock", "rock_deep"]:
+		for cell: Array in material.get(role, []):
+			rock[Vector2i(int(cell[0]), int(cell[1]))] = true
+	var built := 0
+	var stone := 0
+	var empty := 0
+	for y: int in range(top, bottom):
+		for x: int in range(left, right):
+			var key := Vector2i(x, y)
+			if building.has(key):
+				built += 1
+			elif rock.has(key):
+				stone += 1
+			else:
+				empty += 1
+	var total := maxi(1, built + stone + empty)
+	return {
+		"cells": Vector4i(left, top, right, bottom),
+		"building_pct": roundf(100.0 * float(built) / float(total) * 10.0) / 10.0,
+		"rock_pct": roundf(100.0 * float(stone) / float(total) * 10.0) / 10.0,
+		"void_pct": roundf(100.0 * float(empty) / float(total) * 10.0) / 10.0,
+		"floor": camera_floor + 1,
+	}
+
+
+# -------------------------------------------------------------- respawn ------
+
+## Round 4, package E. Production already has everything but the trigger:
+## `KnightController.respawn()` restores health, mana, stamina and the checkpoint, and
+## `hud.gd::_on_player_respawned` hides the death overlay, unpauses the tree and shows
+## its own toast. Nothing calls `respawn()` -- the `RespawnButton` in HUD.tscn is
+## hidden in `_ready()` and connected to nothing -- so dying costs the whole level.
+## This director only supplies the missing call, after the death animation has played,
+## and leaves the production HUD to do the rest.
+func _build_respawn(level: Node) -> void:
+	if _knight == null or not _knight.has_method("respawn"):
+		_fail("the Knight has no respawn() to drive")
+		return
+	if not GameEvents.player_died.is_connected(_on_player_died):
+		GameEvents.player_died.connect(_on_player_died)
+	respawn_ready = true
+	print("GATE3 RESPAWN: director armed, checkpoint %s" % str(GameSession.checkpoint))
+
+
+func _on_player_died() -> void:
+	if _respawn_pending:
+		return
+	_respawn_pending = true
+	# The tree is paused by the production HUD the moment the death signal fires, so
+	# the wait has to be a timer that keeps processing while paused.
+	var timer := get_tree().create_timer(RESPAWN_DELAY, true)
+	await timer.timeout
+	_respawn_pending = false
+	if _knight == null or not is_instance_valid(_knight) or not bool(_knight.get("dead")):
+		return
+	var died_at := _knight.global_position
+	_knight.call("respawn")
+	respawns_completed += 1
+	print("GATE3 RESPAWN: died at %s, back at %s (checkpoint %s), HP %d/%d, paused=%s"
+		% [str(died_at), str(_knight.global_position), str(GameSession.checkpoint),
+			int(_knight.get("health")), int(_knight.get("max_health")),
+			str(get_tree().paused)])
 
 
 # --------------------------------------------------------------- report ------

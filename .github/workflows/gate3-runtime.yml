@@ -170,6 +170,52 @@ jobs:
             echo "GATE3 DEPTH LIMIT: floor 3 was not reached in this run"
             grep -h "GATE3 DEPTH" .artifacts/gate3/deep.log || true
           fi
+      - name: Four headless stability descents
+        run: |
+          set -uo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          # Round 4, package F. Balance cannot be tested by one lucky run: the same
+          # descent is replayed four times with no rendering at all (the frames are the
+          # other passes' job), and every point of health lost is attributed to a
+          # hazard or an enemy by the harness's own ledger. A run that dies and comes
+          # back at a checkpoint is a result, not a failed step.
+          for run in 1 2 3 4; do
+            export SOUL_OF_HERO_SAVE_PATH="user://g3_stability_${GITHUB_RUN_ID}_${run}.json"
+            timeout 600s godot --headless --audio-driver Dummy --path . \
+              res://prototypes/gate3/capture_gate3.tscn -- --stability \
+              > ".artifacts/gate3/stability_run_${run}.log" 2>&1 || true
+            grep -h "GATE3 STABILITY:" ".artifacts/gate3/stability_run_${run}.log" || \
+              echo "GATE3 STABILITY: descent run ${run} produced no summary"
+          done
+          cat .artifacts/gate3/stability_run_*.log > .artifacts/gate3/stability.log
+          python3 tools/gate3/stability_report.py .artifacts/gate3/stability.log \
+            > .artifacts/gate3/stability_table.log
+          cat .artifacts/gate3/stability_table.log
+          grep -q "GATE3 STABILITY SUMMARY" .artifacts/gate3/stability_table.log
+
+      - name: Die on a floor-2 hazard and come back at the checkpoint
+        run: |
+          set -euo pipefail
+          cp prototypes/gate3/level_data/chapter_1_level_3_gate3.json data/levels/chapter_1_level_3.json
+          # Round 4, package E. In the shipped HUD the death overlay has a "HỒI SINH"
+          # button that is hidden in _ready() and connected to nothing, and nothing in
+          # the project calls KnightController.respawn(). This pass proves the round-4
+          # director supplies that missing call: the Knight activates the floor-2 flag,
+          # dies of a real hazard tick, and is placed back at the checkpoint with full
+          # health and the tree unpaused.
+          export SOUL_OF_HERO_SAVE_PATH="user://g3_respawn_${GITHUB_RUN_ID}.json"
+          xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 timeout 900s godot --path . \
+            --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 \
+            --resolution 1280x720 res://prototypes/gate3/capture_gate3.tscn -- --respawn \
+            2>&1 | tee .artifacts/gate3/respawn.log || true
+          if grep -E "^ERROR:|^SCRIPT ERROR:" .artifacts/gate3/respawn.log \
+              | grep -vE "resources still in use at exit|ObjectDB instances were leaked"; then exit 1; fi
+          grep -q "GATE3 CAPTURE TEST PASSED" .artifacts/gate3/respawn.log
+          grep -q "GATE3 RESPAWN: floor-2 checkpoint active" .artifacts/gate3/respawn.log
+          grep -q "GATE3 RESPAWN SUMMARY" .artifacts/gate3/respawn.log
+          test -f .artifacts/gate3/after_respawn_death.png
+          test -f .artifacts/gate3/after_respawn_after.png
+
       - name: Identify the objects that survive shutdown
         if: always()
         run: |

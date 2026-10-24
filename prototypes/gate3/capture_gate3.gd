@@ -85,6 +85,18 @@ const DESCENT_2 := {"walk": Vector2i(9, 51), "door": Vector2i(9, 51), "landing":
 var _with_overlay := false
 ## Second capture pass: skip the floor-1 station tour and go down.
 var _deep := false
+## Third capture pass (round 4, package E): die on a hazard after activating the
+## floor-3 checkpoint, and prove the respawn that production never triggers.
+var _respawn_trial := false
+var _respawn_death_captured := false
+## Fourth pass (round 4, package F): the same descent, headless, with no frames: a
+## stability sample that costs seconds rather than a software-rendered minute.
+var _stability := false
+## Damage ledger: every point of health lost in this run, attributed to the thing
+## that was closest to the Knight when it happened.
+var _ledger := {"hazard": 0, "enemy": 0, "unknown": 0}
+var _ledger_events := {"hazard": 0, "enemy": 0, "unknown": 0}
+var _ledger_last := -1
 var _app_root: Node
 var _game: Node2D
 var _dungeon: DungeonLevel
@@ -102,6 +114,13 @@ var _hazard_cache: Dictionary = {}
 var _enemy_heat: Dictionary = {}
 var _dashes := 0
 var _skill_casts := 0
+## Round 4: with the respawn director armed, a death is a recoverable event in a
+## capture run rather than the end of the recording. Each one is counted and printed
+## with the HP it cost, so the descent is still reported honestly.
+var _respawns_seen := 0
+var _respawns_this_walk := 0
+const MAX_RESPAWNS_PER_WALK := 2
+const MAX_RESPAWNS_TOTAL := 6
 ## Whether the mid-fight native frame has been taken yet.
 var _combat_frame_taken := false
 ## The deepest storey this run legitimately reached, 1..3.
@@ -117,6 +136,13 @@ func _ready() -> void:
 		if argument == "--overlay":
 			_with_overlay = true
 		elif argument == "--deep":
+			_deep = true
+			_with_overlay = true
+		elif argument == "--respawn":
+			_respawn_trial = true
+			_with_overlay = true
+		elif argument == "--stability":
+			_stability = true
 			_deep = true
 			_with_overlay = true
 	if "--check" in arguments:
@@ -157,7 +183,12 @@ func _run() -> void:
 	_hazard_cache = _hazard_cells()
 	_enemy_heat = _build_enemy_heat()
 	_start_health = int(_player.get("health"))
-	if _deep:
+	_ledger_last = _start_health
+	if not GameEvents.player_health_changed.is_connected(_on_health_changed):
+		GameEvents.player_health_changed.connect(_on_health_changed)
+	if _respawn_trial:
+		await _capture_respawn()
+	elif _deep:
 		# Second pass: the same campaign entry, the same walk, but straight to the
 		# east door and down. A single pass that also captures eight floor-1 stations
 		# spends most of the Knight's health on floor 1 before the descent, and the
@@ -197,6 +228,122 @@ func _capture_depth() -> void:
 	else:
 		print("GATE3 DEPTH: halted on floor 2; floor 3 not reached this run (HP %d)"
 			% int(_player.get("health")))
+
+
+# ------------------------------------------------------------- respawn ------
+
+## Round 4, package E.  The floor-2 checkpoint sits seven cells west of the landing
+## the first door delivers the Knight to, and the nearest spike is picked from the
+## live hazard list rather than hard-coded, so this trial does not depend on one
+## level revision.  The Knight has to die of a real hazard tick, and the only thing
+## that brings him back is the director in the overlay: production's `respawn()` is
+## never called by the shipped HUD.
+const RESPAWN_CHECKPOINT := Vector2i(98, 46)
+const RESPAWN_CHECKPOINT_PX := Vector2(1576.0, 744.0)
+
+
+func _capture_respawn() -> void:
+	if not await _descend(DESCENT_1, []):
+		_push("the respawn trial could not reach floor 2")
+		return
+	_floors_reached = maxi(_floors_reached, 2)
+	if not await _walk_to_cell("checkpoint floor 2", RESPAWN_CHECKPOINT):
+		_push("the respawn trial could not reach the floor-2 checkpoint")
+		return
+	await _settle(6)
+	var checkpoint: Vector2 = GameSession.checkpoint
+	_expect(checkpoint.distance_to(RESPAWN_CHECKPOINT_PX) < 4.0,
+		"standing on the floor-2 flag moved the checkpoint to %s (expected %s)"
+		% [str(checkpoint), str(RESPAWN_CHECKPOINT_PX)])
+	print("GATE3 RESPAWN: floor-2 checkpoint active at %s" % str(checkpoint))
+
+	var hazard := _nearest_reachable_hazard()
+	if hazard == Vector2i(-1, -1):
+		_push("no reachable hazard was found to die on")
+		return
+	print("GATE3 RESPAWN: dying deliberately on the hazard at %s" % str(hazard))
+	if not await _walk_to_cell("hazard approach", hazard):
+		_push("the respawn trial could not reach the hazard at %s" % str(hazard))
+		return
+	var respawns_before := int(_overlay.get("respawns_completed"))
+	if not await _stand_in_hazard(hazard):
+		_push("the Knight did not die on the hazard at %s, HP %d"
+			% [str(hazard), int(_player.get("health"))])
+		return
+	print("GATE3 RESPAWN: died on the floor-2 hazard, HP %d, paused=%s"
+		% [int(_player.get("health")), str(get_tree().paused)])
+	await _settle(2)
+	await _shot("respawn_death")
+
+	# The director waits out the death animation (1.2 s) and then calls the production
+	# `respawn()`; the production HUD hides its overlay and unpauses the tree.
+	var deadline := Time.get_ticks_msec() + 15000
+	while Time.get_ticks_msec() < deadline and _player_dead():
+		await get_tree().process_frame
+	await _settle(10)
+	var restored := int(_player.get("health"))
+	var maximum := int(_player.get("max_health"))
+	_expect(not _player_dead(), "the Knight is alive again after the respawn")
+	_expect(restored == maximum, "respawn restored health (%d/%d)" % [restored, maximum])
+	_expect(not get_tree().paused, "the tree is unpaused, so play can continue")
+	var distance := _player.global_position.distance_to(checkpoint)
+	_expect(distance < 4.0,
+		"respawn placed the Knight at the checkpoint (%s, %.1f px away)"
+		% [str(_player.global_position), distance])
+	_expect(int(_overlay.get("respawns_completed")) == respawns_before + 1,
+		"the director performed exactly one respawn for this death (%d before, %d now)"
+		% [respawns_before, int(_overlay.get("respawns_completed"))])
+	var death_overlay := _game.get_node_or_null("HUD/HUDRoot/DeathOverlay") as CanvasItem
+	_expect(death_overlay == null or not death_overlay.visible,
+		"the production death overlay is hidden again")
+	print("GATE3 RESPAWN SUMMARY: checkpoint %s, respawned %s, HP %d/%d, paused=%s"
+		% [str(checkpoint), str(_player.global_position), restored, maximum,
+			str(get_tree().paused)])
+	await _shot("respawn_after")
+
+
+func _nearest_reachable_hazard() -> Vector2i:
+	## Only the spikes' own centres: the cache also holds their neighbours, and a
+	## corner cell is not inside the Area2D. Floor 2 is rows 30..65, so the trial stays
+	## on the storey the checkpoint is on.
+	var candidates: Array[Vector2i] = []
+	for entity: Dictionary in _dungeon.level_data.get("entities", []):
+		if String(entity.get("type", "")) != "spikes":
+			continue
+		var cell := Vector2i(floori(float(entity["position"][0]) / TILE),
+			floori(float(entity["position"][1]) / TILE))
+		if cell.y < 30 or cell.y >= 66:
+			continue
+		candidates.append(cell)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return _cell_centre(a).distance_to(_player.global_position) <
+			_cell_centre(b).distance_to(_player.global_position))
+	for cell: Vector2i in candidates:
+		if not _plan_route(_current_cell(), cell).is_empty():
+			return cell
+	return Vector2i(-1, -1)
+
+
+func _stand_in_hazard(target_cell: Vector2i) -> bool:
+	## Deliberately hold position on a live hazard cell until the Knight dies. This is
+	## the one place the harness does not avoid the spikes: the trial is about what
+	## happens after death, so it has to die honestly.
+	var target := _cell_centre(target_cell)
+	var frames := 0
+	while frames < 2400:
+		if _player_dead():
+			return true
+		var delta := target - _player.global_position
+		var actions: Array[String] = []
+		if delta.length() > 3.0:
+			actions = _key_directions(delta)
+		for action: String in actions:
+			Input.action_press(action, 1.0)
+		await get_tree().physics_frame
+		for action: String in ["move_left", "move_right", "move_up", "move_down"]:
+			Input.action_release(action)
+		frames += 1
+	return _player_dead()
 
 
 # ---------------------------------------------------------------- boot -------
@@ -879,6 +1026,53 @@ func _player_dead() -> bool:
 	return int(_player.get("health")) <= 0 or bool(_player.get("dead"))
 
 
+func _on_health_changed(current: int, _maximum: int) -> void:
+	## Round 4, package F. Health only ever moves for two reasons in this level: a
+	## hazard tick, or an enemy's blow (respawn is the only heal, and the director
+	## reports that separately). Each loss is attributed by what was within reach at
+	## that instant, so the report can say where the health went instead of guessing.
+	if _ledger_last < 0:
+		_ledger_last = current
+		return
+	var lost := _ledger_last - current
+	_ledger_last = current
+	if lost <= 0:
+		return
+	var source := _damage_source()
+	_ledger[source] = int(_ledger[source]) + lost
+	_ledger_events[source] = int(_ledger_events[source]) + 1
+
+
+func _damage_source() -> String:
+	for node: Node in get_tree().get_nodes_in_group(&"dungeon_hazards"):
+		if node is Node2D and (node as Node2D).global_position.distance_to(_player.global_position) < 28.0:
+			return "hazard"
+	for node: Node in get_tree().get_nodes_in_group(&"enemies"):
+		if node is Node2D and (node as Node2D).global_position.distance_to(_player.global_position) < 72.0:
+			return "enemy"
+	return "unknown"
+
+
+func _recover_from_death(label: String) -> bool:
+	## Production's HUD pauses the tree on death; the round-4 director revives the Knight
+	## at the checkpoint 1.2 s later. Wait for that, and only then let the walk continue.
+	if _respawns_this_walk >= MAX_RESPAWNS_PER_WALK or _respawns_seen >= MAX_RESPAWNS_TOTAL:
+		return false
+	var died_at := _player.global_position
+	var deadline := Time.get_ticks_msec() + 15000
+	while Time.get_ticks_msec() < deadline and _player_dead():
+		await get_tree().process_frame
+	if _player_dead():
+		push_error("GATE3 RESPAWN: the Knight did not come back within 15 s")
+		return false
+	_respawns_this_walk += 1
+	_respawns_seen += 1
+	print("GATE3 RESPAWN: died on '%s' at %s, respawned at %s with HP %d/%d (paused=%s)"
+		% [label, str(died_at), str(_player.global_position), int(_player.get("health")),
+			int(_player.get("max_health")), str(get_tree().paused)])
+	return true
+
+
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	## Walk the planned route with the production input actions, and handle what the
 	## level puts in the way the way a player would.
@@ -890,6 +1084,7 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	## revisions of this harness believed he was walking while he stood in one place
 	## losing a hundred health a second.
 	var failures_before := _failures.size()
+	_respawns_this_walk = 0
 	var route := _plan_route(_current_cell(), target_cell)
 	print("GATE3 PLAN: %s -> %s is %d cells" % [label, str(target_cell), route.size()])
 	if route.is_empty():
@@ -904,9 +1099,23 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var attempts := 0
 	while index < route.size() and frames < budget:
 		if _player_dead():
-			_push("the Knight died on the way to '%s' at %s"
-				% [label, str(_player.global_position)])
-			return false
+			if not await _recover_from_death(label):
+				_push("the Knight died on the way to '%s' at %s"
+					% [label, str(_player.global_position)])
+				return false
+			# Back at the checkpoint: the walk is re-planned from where the Knight now
+			# stands, exactly as a player would re-orient after a respawn.
+			route = _plan_route(_current_cell(), target_cell)
+			print("GATE3 RESPAWN: re-planning '%s' from %s, %d cells"
+				% [label, str(_current_cell()), route.size()])
+			if route.is_empty():
+				_push("no route to '%s' after the respawn at %s"
+					% [label, str(_current_cell())])
+				return false
+			index = 1
+			best_distance = 1.0e9
+			progress_at = frames
+			continue
 		var waypoint := _cell_centre(route[index])
 		var delta := waypoint - _player.global_position
 		if delta.length() < best_distance - 4.0:
@@ -1333,6 +1542,8 @@ func _set_resolution(size: Vector2i) -> bool:
 
 
 func _camera_shot(name: String, size: Vector2i) -> void:
+	if _stability:
+		return
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	if image == null:
@@ -1360,6 +1571,7 @@ func _camera_shot(name: String, size: Vector2i) -> void:
 	_camera_frames += 1
 	print("GATE3 CAMERA: %s (%dx%d) zoom=%s" % [path, image.get_width(), image.get_height(),
 		str(camera.zoom) if camera != null else "n/a"])
+	_log_camera_frame(name)
 
 
 func _settle(frames: int = 8) -> void:
@@ -1375,6 +1587,8 @@ func _settle(frames: int = 8) -> void:
 
 
 func _shot(name: String) -> void:
+	if _stability:
+		return
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	if image == null:
@@ -1391,6 +1605,23 @@ func _shot(name: String) -> void:
 			% [name, image.get_width(), image.get_height(), EXPECTED_SIZE.x, EXPECTED_SIZE.y])
 	print("GATE3 CAPTURE: %s (%dx%d) at %s"
 		% [path, image.get_width(), image.get_height(), str(_player.global_position)])
+	_log_camera_frame(name)
+
+
+func _log_camera_frame(label: String) -> void:
+	## Round 4, package D: what the frame is made of, measured from the placement
+	## document and the camera's own visible rectangle, so "the lower storeys no longer
+	## frame empty ground" is a number in the log rather than a claim in the report.
+	if _overlay == null:
+		return
+	var report: Variant = _overlay.call("camera_frame_report", Vector2(get_viewport().get_visible_rect().size))
+	if not (report is Dictionary) or (report as Dictionary).is_empty():
+		return
+	var data: Dictionary = report
+	print("GATE3 CAMERA FRAME: %s floor %d cells %s building %.1f%% rock %.1f%% void %.1f%%"
+		% [label, int(data.get("floor", 0)), str(data.get("cells", Vector4i.ZERO)),
+			float(data.get("building_pct", 0.0)), float(data.get("rock_pct", 0.0)),
+			float(data.get("void_pct", 0.0))])
 
 
 # ------------------------------------------------------------ collision ------
@@ -1487,6 +1718,17 @@ func _report_walk() -> void:
 	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, %d dashes, %d skill casts, HP %d -> %d (delta %d)"
 		% [_walked_cells, _walked_pixels, _engaged_fights, _dashes, _skill_casts, _start_health,
 			end_health, _start_health - end_health])
+	print("GATE3 RESPAWN TOTAL: %d deaths recovered at a checkpoint during this run"
+		% _respawns_seen)
+	print("GATE3 DAMAGE LEDGER: hazard %d (%d ticks), enemy %d (%d blows), unexplained %d"
+		% [int(_ledger["hazard"]), int(_ledger_events["hazard"]),
+			int(_ledger["enemy"]), int(_ledger_events["enemy"]),
+			int(_ledger["unknown"])])
+	print("GATE3 STABILITY: descent complete=%s floors=%d hp_start=%d hp_end=%d delta=%d "
+		"fights=%d respawns=%d hazard=%d enemy=%d unexplained=%d"
+		% [str(not _player_dead()), _floors_reached, _start_health, end_health,
+			_start_health - end_health, _engaged_fights, _respawns_seen,
+			int(_ledger["hazard"]), int(_ledger["enemy"]), int(_ledger["unknown"])])
 	print("GATE3 CAMERA FRAMES: %d" % _camera_frames)
 	var counted := 0
 	for _index: int in range(1):
