@@ -20,7 +20,8 @@ prose. Where I could not verify something, it says so.
 
 | source | revision | what it establishes |
 | --- | --- | --- |
-| `docs/gate3/evidence/logs/*.txt`, `*.png` | `0516c67` (run `40091078257`) | the current native frames, coverage, respawn and stability logs |
+| `docs/gate3/evidence/logs/*.txt`, `*.png` | `32d7389` (run `40093897428`) | the current native frames, coverage, respawn and stability logs (sample D) |
+| `docs/gate3/evidence/logs/stability_table.txt` | `0516c67` (run `40091078257`) | stability sample C |
 | `docs/gate3/evidence/logs/stability_table.txt` | `48c7582` (run `40090068943`) | stability sample B |
 | `docs/gate3/evidence/logs/stability_table.txt` | `b76fe3f` (run `40088983090`) | stability sample A |
 | `data/levels/chapter_1_level_3.json` | `12ff770` | the **shipped** Level 3 (77 entities, 116×84) |
@@ -172,12 +173,16 @@ open floor 2.
 These do not change any frame or log, but they matter for an acceptance decision because
 they mean the report cannot be read as a precise record.
 
-1. **`GATE3_REPORT.md` §13.6 states the wrong median.** "median 51 %" — the twelve net
-   deltas give **492 / 1100 = 44.7 %**. Corrected in this round (§10); the logs are
-   untouched.
+1. **`GATE3_REPORT.md` §13.6 quoted a median its own data did not support.** It said
+   "median 51 %" over twelve runs, which recomputes to **492 / 1100 = 44.7 %**. The number
+   became right for sixteen runs only after a fourth sample was published *during this
+   review* (`40093897428`, median 51.1 %) — the report printed a figure from a data set it
+   was not describing. Corrected to the sixteen-run aggregate with all four samples shown;
+   no log was touched.
 2. **"11 of the 12 needed at least one checkpoint respawn"** conflates respawns with
    runs: 11 respawns happen across **8** runs. Corrected.
-3. **"10 of the twelve at exactly 100 % explained"** — it is **8**.
+3. **"10 of the twelve at exactly 100 % explained"** — it is **8** of those twelve
+   (11 of 16 once sample D is included).
 4. **§2 still prints the Round 3 totals** (`PROPS 36 · LIGHTS 6`) next to a Round 4
    delivery of `PROPS 45 (21 solid) · LIGHTS 10`. Both numbers are real; they are from
    different rounds, and the table does not say so.
@@ -197,7 +202,7 @@ reviewer distrust the rest, and they are cheap to fix.
 
 ## 3. Gameplay acceptance
 
-### 3.1 What the twelve descents prove — and what they do not
+### 3.1 What the sixteen descents prove — and what they do not
 
 They prove **automation reliability**: the same production descent, driven by production
 input actions, reaches floor 3 on foot in 12 of 12 attempts, 3 763–3 787 px, 7–12 fights,
@@ -211,7 +216,8 @@ and the *harness* is robust. It says nothing about whether a player would surviv
 
 ### 3.2 The numbers, recomputed from the logs
 
-Samples A (`40088983090`), B (`40090068943`) and C (`40091078257`), four runs each:
+Samples A (`40088983090`), B (`40090068943`), C (`40091078257`) and D
+(`40093897428`), four runs each:
 
 | run | fights | deaths | cells | net HP lost | gross damage | explained |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -227,27 +233,33 @@ Samples A (`40088983090`), B (`40090068943`) and C (`40091078257`), four runs ea
 | C2 | 12 | 1 | 151 | 482 | 1 582 | 100 % |
 | C3 | 8 | 2 | 256 | 0 | 2 200 | 100 % |
 | C4 | 8 | 0 | 183 | 622 | 622 | 100 % |
+| D1 | 13 | 1 | 152 | 1 004 | 2 104 | 92.7 % |
+| D2 | 10 | 1 | 141 | 368 | 1 468 | 100 % |
+| D3 | 12 | 1 | 250 | 830 | 1 930 | 100 % |
+| D4 | 13 | 1 | 127 | 676 | 1 776 | 100 % |
 
 | statistic | value | against the Round 4 target |
 | --- | --- | --- |
-| descents reaching floor 3 | 12 / 12 | pass |
-| net HP lost — min / **median** / max | 0 / **492** / 1 044 | median 44.7 % vs ≈ 40 % — **miss** |
+| descents reaching floor 3 | 16 / 16 | pass |
+| net HP lost — min / **median** / max | 0 / **562** / 1 044 | median 51.1 % vs ≈ 40 % — **miss** |
 | net HP lost — max | 1 044 = **94.9 %** of the bar | vs ≤ 75 % — **fail** |
-| gross damage — median | **1 505 = 136.8 %** of the bar | not targeted; see §3.3 |
-| runs taking more than one full bar | **7 / 12** | — |
-| deaths / runs with a death | 11 / **8 of 12** | — |
-| damage attributed to a source | 17 164 of 17 762 = **96.6 %** | vs ≥ 90 % — pass |
+| gross damage — median | **1 592 = 144.7 %** of the bar | not targeted; see §3.3 |
+| runs taking more than one full bar | **11 / 16** | — |
+| deaths / runs with a death | 15 / **12 of 16** | — |
+| damage attributed to a source | 24 288 of 25 040 = **97.0 %** | vs ≥ 90 % — pass |
 
-The per-sample medians (415, 686, 425) differ by 65 % of a health bar, which is the
-single most important number in this table: **the run-to-run variance is larger than any
-plausible tuning step**, so a four-run sample cannot certify this level's difficulty in
-either direction.
+The per-sample medians (415, 686, 425, 753) differ by 34 % of a health bar between
+consecutive samples of the *same build*, which is the single most important number in this
+table: **the run-to-run variance is larger than any plausible tuning step**, so a
+four-run sample cannot certify this level's difficulty in either direction. The
+sixteen-run median moved from 44.7 % (samples A–C) to 51.1 % when a fourth sample was
+published during this review — a movement produced by the harness, not by the game.
 
-### 3.3 The mortality finding — the reason a "12/12" is not reassuring
+### 3.3 The mortality finding — the reason a "16/16" is not reassuring
 
-Gross damage per descent has a median of 1 505 against a 1 100 health pool, and 7 of 12
+Gross damage per descent has a median of 1 592 against a 1 100 health pool, and 11 of 16
 descents absorbed **more than a full bar**. The shipped game has no respawn (§3.5), so in
-those 7 runs a player with the harness's effectiveness would have died at least once and
+those 11 runs a player with the harness's effectiveness would have died at least once and
 been sent back to the level's start by the production death screen.
 
 The harness's bot is not a weak player: it dashes 150–493 times per descent, and its
@@ -291,9 +303,9 @@ demonstrates the fix in the prototype; it does not ship it.
 Read from `.github/workflows/gate3-runtime.yml`, not from the summary:
 
 * The **rendered deep pass retries the whole Godot process up to three times**. The
-  current run passed on attempt 1; an earlier run needed attempt 2 (`HP 444`).
+  last two runs passed on attempt 1; an earlier run needed attempt 2 (`HP 444`).
 * That step requires **floor 2**; reaching **floor 3 is optional**
-  (`GATE3 DEPTH LIMIT` is printed and tolerated). The 12/12 three-storey record comes from
+  (`GATE3 DEPTH LIMIT` is printed and tolerated). The 16/16 three-storey record comes from
   the *headless stability* step, not from the rendered pass.
 * The stability step tolerates runs that produce no summary (`|| echo`). It does not fail
   the step on a missing descent; the summary grep only needs *one* line.
@@ -445,7 +457,7 @@ Legend: **P** passed and independently verified · **F** failed against a stated
 | 2 | No production file modified by the gate | **P** | `git diff --name-only fa83414..HEAD -- data game tests assets project.godot` = 0 |
 | 3 | 79 entities byte-identical, original order | **P** | `write_change_manifest.py --check`, entity arrays compared |
 | 4 | Real spawn + campaign entry, not a test harness teleport | **P** | `GATE3 CAMPAIGN ROUTE: chapter_1_level_3`; doors call `interact()` |
-| 5 | Floor doors reciprocal, 3 storeys reachable | **P** | door lines + `floor 1..3` in 12/12 stability runs |
+| 5 | Floor doors reciprocal, 3 storeys reachable | **P** | door lines + `floor 1..3` in 16/16 stability runs |
 | 6 | Whole-sprite props, colliders match footprints | **P** | 21 solid footprints probed, each covered by a body |
 | 7 | No overlapping solids / no unwalkable required route | **P** | authoring validator + `audit` 0 unreachable + walked routes |
 | 8 | 18 hazards present and legible | **P** | 18 spike entities; crimson-bay frames; contrast 2.0–3.8× |
@@ -458,16 +470,16 @@ Legend: **P** passed and independently verified · **F** failed against a stated
 | 15 | Framing ≥ 60 % building at every station | **F** | `floor2_arrival` 45.3 %, `floor3_camp` 59.2 % |
 | 16 | No frame shows empty background | **P** | `void = 0 %` on all 16 frames |
 | 17 | Camera bands prevent storey-gap framing | **P** | per-storey limits + `reset_smoothing()` |
-| 18 | Median descent cost ≈ 40 % of the bar | **F** (marginal) | 44.7 % across 12 runs |
+| 18 | Median descent cost ≈ 40 % of the bar | **F** | 51.1 % across 16 runs |
 | 19 | Maximum descent cost ≤ 75 % of the bar | **F** | 94.9 % |
-| 20 | Level survivable without the prototype respawn | **F** | 7/12 descents exceeded a full bar |
-| 21 | ≥ 90 % of damage attributed | **P** | 96.6 % across 12; 22 % gap in the rendered deep run |
+| 20 | Level survivable without the prototype respawn | **F** | 11/16 descents exceeded a full bar |
+| 21 | ≥ 90 % of damage attributed | **P** | 97.0 % across 16; one rendered deep run at 22 % gap |
 | 22 | Zero `ERROR:`/`SCRIPT ERROR:` in capture logs | **P** | `grep -cE '^(ERROR|SCRIPT ERROR):' logs/*.txt` = 0 |
 | 23 | ObjectDB leak explained | **F** (open, low) | 7 instances, unidentified, unchanged since Round 3 |
 | 24 | Rendering performance acceptable on GPU | **U** | only llvmpipe figures exist |
 | 25 | Rendering performance acceptable in the browser | **U** | never rendered in WebGL2 |
 | 26 | Repository Level 3 tests still pass on the promoted map | **U** | route/balance matrix must be re-run on the integration branch |
-| 27 | Report numbers match the evidence | **F** (fixed here) | median 51 % → 44.7 %; respawn run count; §2 totals (§10) |
+| 27 | Report numbers match the evidence | **F** (fixed here) | median restated over 16 runs; respawn run count; §2 totals (§10) |
 
 ---
 
@@ -563,10 +575,12 @@ What blocks a clean GO:
 1. **Map identity (blocking, owner decision).** Gate 3 redesigns Candidate A, not the
    shipped Level 3, and PR #5 is simultaneously designing the shipped Level 3 under a
    no-substitution, 77-entity contract. One slot, two baselines.
-2. **Combat balance (blocking, D2(a) preserved).** 44.7 % median net loss and 94.9 % max
-   miss both declared targets; more importantly the **gross** cost has a median of 137 %
-   of the health bar and 7 of 12 descents exceed one bar, so the level is not survivable
-   without a respawn that the shipped game does not have.
+2. **Combat balance (blocking, D2(a) preserved).** 51.1 % median net loss and 94.9 % max
+   miss both declared targets; more importantly the **gross** cost has a median of 144.7 %
+   of the health bar and 11 of 16 descents exceed one bar, so the level is not survivable
+   without a respawn that the shipped game does not have. The sixteen-run median moved
+   from 44.7 % to 51.1 % when one more sample was published, which is itself part of the
+   finding: the harness's variance is the same size as the effect being judged.
 3. **Composition (partial).** `floor2_arrival` at 45.3 % is a visible first-impression
    defect on floor 2; `floor3_camp` at 59.2 % is a metric miss that the picture does not
    support.
@@ -590,12 +604,12 @@ modified**, so every number in the evidence remains exactly as published.
 
 | § | was | is | why |
 | --- | --- | --- | --- |
-| 13.6 | "median 51 %" | 44.7 % (492/1100) | arithmetic: median of the twelve net deltas |
-| 13.6 | "11 of the 12 needed at least one checkpoint respawn" | 8 of 12 runs, 11 respawns in total | respawns ≠ runs |
-| 13.6 | "10 of the twelve at exactly 100 %" | 8 of 12 | recomputed per run |
-| 13.6 | — | added: gross damage median 1 505 = 136.8 % of the bar; 7/12 descents exceed one bar | the number that decides survivability |
+| 13.6 | "median 51 %" over twelve runs | sixteen runs, all four samples shown, median 51.1 % — and the twelve-run figure (44.7 %) stated as such | the original figure matched no data set the report named |
+| 13.6 | "11 of the 12 needed at least one checkpoint respawn" | 12 of 16 runs, 15 respawns in total | respawns ≠ runs |
+| 13.6 | "10 of the twelve at exactly 100 %" | 11 of 16 | recomputed per run |
+| 13.6 | — | added: gross damage median 1 592 = 144.7 % of the bar; 11/16 descents exceed one bar | the number that decides survivability |
 | 13.6 | "3 765–3 787 px each" | 3 763–3 787 px | measured range |
-| 13.7 | "median of 51 %" | 45 % | as above |
+| 13.7 | "median of 51 %" | 51.1 % over sixteen runs, with the sample spread stated | as above |
 | 2 | "PROPS 36 · LIGHTS 6" presented as the delivery | marked as the Phase C figures, with the Round 4 totals (45 props/21 solid, 10 lights) alongside | two real numbers, different rounds |
 
 ---
@@ -626,12 +640,13 @@ PY
 # stability aggregate, from the three published samples
 git show b76fe3f:docs/gate3/evidence/logs/stability_table.txt   # sample A
 git show 48c7582:docs/gate3/evidence/logs/stability_table.txt   # sample B
-cat docs/gate3/evidence/logs/stability_table.txt                # sample C
+git show 0516c67:docs/gate3/evidence/logs/stability_table.txt   # sample C
+cat docs/gate3/evidence/logs/stability_table.txt                # sample D
 
-# the numbers this round derived from them
-#   net delta   : 0,0,0,328,368,482,502,622,676,696,944,1044  -> median 492 (44.7 %), max 1044 (94.9 %)
-#   gross       : 622,676,944,1044,1100,1428,1582,1602,1796,2200,2200,2568 -> median 1505 (136.8 %)
-#   > one bar   : 7 of 12      deaths: 11 across 8 runs      explained: 17164 / 17762 = 96.6 %
+# the numbers this round derived from them (16 runs)
+#   net delta : 0,0,0,328,368,368,482,502,622,676,676,696,830,944,1004,1044 -> median 562 (51.1 %), max 1044 (94.9 %)
+#   gross     : median 1592 (144.7 %)
+#   > one bar : 11 of 16     deaths: 15 across 12 runs     explained: 24288 / 25040 = 97.0 %
 
 # evidence integrity
 grep -cE "^(ERROR|SCRIPT ERROR):" docs/gate3/evidence/logs/*.txt | grep -v ":0"

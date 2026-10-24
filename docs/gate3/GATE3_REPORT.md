@@ -565,12 +565,13 @@ within 4 px of the checkpoint; the director's respawn counter increased; the pro
 death overlay is hidden again. An earlier attempt failed honestly at HP 240 (§13.7),
 which is how the hazard approach was corrected.
 
-### 13.6 Package F — twelve headless descents, with a damage ledger
+### 13.6 Package F — sixteen headless descents, with a damage ledger
 
 Every descent is the same production run (authored spawn, the level's own floor doors,
 production input actions) with a ledger attached to `health_changed`. The workflow runs
-four of them per push, so this round produced three independent samples of four — which
-is the point: any single sample looks far better, or far worse, than the truth.
+four of them per push, so this round has produced four independent published samples of
+four (A–D, each recoverable from the evidence commit that published it) — which is the
+point: any single sample looks far better, or far worse, than the truth.
 
 Sample A — `40088983090`:
 
@@ -598,7 +599,7 @@ Sample B — `40090068943`:
 GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=686 max=944 respawns=3 damage=5346 unexplained=270 explained=95.2%
 ```
 
-Sample C — `40091078257` (the run whose table is in the tree):
+Sample C — `40091078257`:
 
 | # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |
 |---|---|---|---|---|---|---|---|---|---|
@@ -612,24 +613,37 @@ GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=425 max=622 
 GATE3 STABILITY SPREAD: max-min=622 (57% of a 1100 health bar)
 ```
 
-Twelve descents, read together:
+Sample D — `40093897428` (the run whose table is in the tree):
 
-* **Reliability: solved.** 12 / 12 reached floor 3 on foot, 3 763–3 787 px each, and 8 of
-  the 12 needed at least one checkpoint respawn (11 respawns in total). Before the respawn
-  director a death ended the whole level; now it costs the storey.
-* **Cost: still not controlled.** Net health lost across the twelve is
-  0, 0, 0, 328, 368, 482, 502, 622, 676, 696, 944, 1044 out of 1100 — min 0 %, median
-  44.7 %, max 94.9 %. The plan's declared threshold (median ≈ 40 % of the bar, max ≤ 75 %)
-  is **missed on both counts**, and the per-sample medians — 415, 686, 425 — swing by more
-  than most tuning changes would. That swing is the substantive finding: this level's
-  basic-attack-and-dash combat is a coin-flip on how many skeletons converge at once.
-  `data/**` is frozen under decision D2(a), so nothing was tuned.
+| # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 1..3 | 13 | 1 | 152 | 1004 | 120 | 1830 | 154 | passed |
+| 2 | 1..3 | 10 | 1 | 141 | 368 | 120 | 1348 | 0 | passed |
+| 3 | 1..3 | 12 | 1 | 250 | 830 | 100 | 1830 | 0 | passed |
+| 4 | 1..3 | 13 | 1 | 127 | 676 | 234 | 1542 | 0 | passed |
+
+```
+GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=368 median=753 max=1004 respawns=4 damage=7124 unexplained=154 explained=97.9%
+```
+
+Sixteen descents, read together:
+
+* **Reliability: solved.** 16 / 16 reached floor 3 on foot, 3 763–3 787 px each, 7–13
+  fights, and 12 of the 16 needed at least one checkpoint respawn (15 respawns in total).
+  Before the respawn director a death ended the whole level; now it costs the storey.
+* **Cost: still not controlled.** Net health lost across the sixteen is 0, 0, 0, 328, 368,
+  368, 482, 502, 622, 676, 676, 696, 830, 944, 1 004, 1 044 out of 1100 — min 0 %, median
+  **51.1 %**, max **94.9 %**. The plan's declared threshold (median ≈ 40 % of the bar, max
+  ≤ 75 %) is **missed on both counts**, and the four sample medians — 415, 686, 425, 753 —
+  swing by more than most tuning changes would. That swing is the substantive finding:
+  this level's basic-attack-and-dash combat is a coin-flip on how many skeletons converge
+  at once. `data/**` is frozen under decision D2(a), so nothing was tuned.
 * **The gross cost is what decides survivability.** Net delta hides respawns, so the
-  ledger totals are the honest figure: median 1 505 = **136.8 % of a health bar** per
-  descent, and **7 of the 12 descents absorbed more than one full bar**. The shipped game
-  has no respawn (§12.2), so those seven runs are deaths, not descents.
-* **The ledger explains the damage.** 17 164 points attributed out of 17 762 —
-  **96.6 % across the twelve runs**, with eight of the twelve at exactly 100 %. The
+  ledger totals are the honest figure: median 1 592 = **144.7 % of a health bar** per
+  descent, and **11 of the 16 descents absorbed more than one full bar**. The shipped game
+  has no respawn (§12.2), so those eleven runs are deaths, not descents.
+* **The ledger explains the damage.** 24 288 points attributed out of 25 040 —
+  **97.0 % across the sixteen runs**, with eleven of the sixteen at exactly 100 %. The
   unattributed remainder comes from damage taken in the same frame as a teleport or a
   respawn.
 * **"HP lost" and "damage" are different numbers by design.** A respawn refills the bar,
@@ -654,9 +668,9 @@ unexplained 0` — 100 % attributed.
 
 1. `floor2_arrival` (45.3 %) and `floor3_camp` (59.2 %) stay below the plan's ≥ 60 %
    building target; the arrival room is genuinely the emptiest frame in the level.
-2. Descent cost ranges from 0 to 94.9 % of the health bar across twelve runs, with a
-   median of 44.7 % against the plan's 40 % target, a gross median of 136.8 % of the bar,
-   and 3.4 % of the damage unattributed. All three are reported under D2(a), none tuned.
+2. Descent cost ranges from 0 to 94.9 % of the health bar across sixteen runs, with a
+   median of 51.1 % against the plan's 40 % target, a gross median of 144.7 % of the bar,
+   and 3.0 % of the damage unattributed. All three are reported under D2(a), none tuned.
 3. The deep evidence job still retries the whole Godot process; the retry did not fire in
    the green run, but the mechanism is unchanged.
 4. The ObjectDB notice (§10) is unchanged.
