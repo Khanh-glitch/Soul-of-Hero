@@ -47,35 +47,56 @@ GATE3 TRACE: descent approach frame 180 cell (62, 23) HP 1100 stuck 1 waypoint (
 GATE3 TRACE: descent approach frame 240 cell (66, 21) HP 1100 stuck 6 waypoint (67, 21)
 GATE3 TRACE: descent approach frame 300 cell (73, 21) HP 1100 stuck 3 waypoint (73, 20)
 GATE3 TRACE: descent approach frame 360 cell (76, 18) HP 1100 stuck 6 waypoint (77, 18)
-GATE3 TRACE: descent approach frame 420 cell (79, 18) HP 1080 stuck 9 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 480 cell (79, 18) HP 926 stuck 9 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 540 cell (79, 18) HP 772 stuck 42 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 600 cell (80, 18) HP 772 stuck 42 waypoint (80, 18)
-GATE3 COMBAT: engaging L3C1Skeleton01 at 13 px, target HP 979, Knight HP 772
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 19 px, target HP 979, Knight HP 618
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 618
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 598
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 598
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 578
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 578
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 29 px, target HP 979, Knight HP 424
-GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 13 px, target HP 979, Knight HP 424
-GATE3 COMBAT: fight near 'descent approach' ended after 260 frames, Knight HP 772 -> 404
-GATE3 TRACE: descent approach frame 900 cell (79, 18) HP 404 stuck 22 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 960 cell (79, 18) HP 384 stuck 22 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1020 cell (79, 18) HP 364 stuck 21 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1080 cell (79, 18) HP 344 stuck 20 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1140 cell (79, 18) HP 324 stuck 19 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1200 cell (79, 18) HP 304 stuck 18 waypoint (80, 18)
-GATE3 TRACE: descent approach frame 1260 cell (79, 18) HP 150 stuck 17 waypoint (80, 18)
-GATE3 PLAN: descent approach -> (9, 51) is 0 cells
-GATE3 COLLISION: Knight at (1272.443, 297.0507) is clear of every wall and prop
-GATE3 ROUTE: 73 cells walked, 933 px travelled, 1 fights, HP 1100 -> 0 (delta 1100)
+GATE3 TRACE: descent approach frame 420 cell (78, 18) HP 926 stuck 9 waypoint (79, 18)
+GATE3 TRACE: descent approach frame 480 cell (80, 18) HP 926 stuck 17 waypoint (81, 18)
+GATE3 TRACE: descent approach frame 540 cell (79, 18) HP 772 stuck 17 waypoint (80, 18)
+GATE3 COMBAT: engaging L3C1Skeleton01 at 13 px, target HP 959, Knight HP 772, mana 110
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 21 px, target HP 759, Knight HP 772, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 16 px, target HP 519, Knight HP 618, action='hit'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 39 px, target HP 219, Knight HP 618, action='sword_attack_1'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 5 px, target HP 0, Knight HP 618, action='sword_attack_2'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 23 px, target HP 0, Knight HP 618, action='sword_attack_3'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 18 px, target HP 0, Knight HP 618, action='sword_attack_4'
+GATE3 COMBAT: 'descent approach' L3C1Skeleton01 at 52 px, target HP 0, Knight HP 618, action='sword_attack_1'
+GATE3 COMBAT: fight near 'descent approach' ended after 215 frames, target HP 959 -> -1, Knight HP 772 -> 618
+GATE3 TRACE: descent approach frame 840 cell (80, 18) HP 598 stuck 30 waypoint (81, 18)
+GATE3 TRACE: descent approach frame 900 cell (81, 17) HP 444 stuck 40 waypoint (82, 18)
+GATE3 COMBAT: engaging L3C1Skeleton03 at 14 px, target HP 739, Knight HP 444, mana 110
+GATE3 COMBAT: after the input press current_action='', hero=sword_hero, weapon=sword
+GATE3 COMBAT: the Knight disengaged near 'descent approach' at HP 290
+GATE3 COMBAT: fight near 'descent approach' ended after 18 frames, target HP 739 -> 539, Knight HP 444 -> 290
+GATE3 TRACE: descent approach frame 960 cell (82, 18) HP 290 stuck 22 waypoint (82, 19)
+GATE3 TRACE: descent approach frame 1020 cell (85, 21) HP 290 stuck 3 waypoint (85, 22)
+GATE3 TRACE: descent approach frame 1080 cell (86, 23) HP 136 stuck 11 waypoint (87, 23)
+GATE3 TRACE: descent approach frame 1140 cell (93, 23) HP 136 stuck 7 waypoint (93, 23)
+GATE3 TRACE: descent approach frame 1200 cell (100, 23) HP 136 stuck 7 waypoint (100, 23)
+GATE3 TRACE: descent approach frame 1260 cell (104, 21) HP 136 stuck 4 waypoint (105, 21)
+GATE3 TRACE: descent approach frame 1320 cell (108, 19) HP 136 stuck 2 waypoint (109, 19)
+GATE3 WALK: descent approach  (713, 343) -> (1752, 280)  1041 px over 41 cells in 1350 frames, HP 136
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 PLAN: floor2_arrival -> (106, 42) is 1 cells
+GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 136
+GATE3 CAPTURE: res://.artifacts/gate3/before_floor2_arrival.png (1280x720) at (1704.0, 680.0)
+GATE3 PLAN: floor2_stacks -> (48, 52) is 73 cells
+GATE3 TRACE: floor2_stacks frame 60 cell (99, 42) HP 136 stuck 7 waypoint (99, 42)
+GATE3 TRACE: floor2_stacks frame 120 cell (95, 44) HP 136 stuck 6 waypoint (95, 45)
+GATE3 TRACE: floor2_stacks frame 180 cell (89, 45) HP 136 stuck 0 waypoint (89, 45)
+GATE3 TRACE: floor2_stacks frame 240 cell (82, 45) HP 136 stuck 0 waypoint (82, 45)
+GATE3 TRACE: floor2_stacks frame 300 cell (75, 45) HP 136 stuck 0 waypoint (75, 45)
+GATE3 TRACE: floor2_stacks frame 360 cell (73, 48) HP 136 stuck 0 waypoint (73, 48)
+GATE3 TRACE: floor2_stacks frame 420 cell (71, 52) HP 136 stuck 2 waypoint (70, 52)
+GATE3 TRACE: floor2_stacks frame 480 cell (67, 54) HP 136 stuck 3 waypoint (66, 54)
+GATE3 TRACE: floor2_stacks frame 540 cell (60, 54) HP 136 stuck 3 waypoint (59, 54)
+GATE3 TRACE: floor2_stacks frame 600 cell (54, 53) HP 136 stuck 1 waypoint (54, 53)
+GATE3 PLAN: descent approach -> (9, 51) is 58 cells
+GATE3 COLLISION: Knight at (855.4441, 842.3767) is clear of every wall and prop
+GATE3 ROUTE: 114 cells walked, 1974 px travelled, 2 fights, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12806 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 765 nodes
-GATE3 FAILURE: the Knight died on the way to 'descent approach' at (1272.443, 297.0507)
-GATE3 FAILURE: no walkable route to 'descent approach' at (9, 51)
+GATE3 OBJECTS: ObjectDB holds 12827 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 783 nodes
+GATE3 FAILURE: the Knight died on the way to 'floor2_stacks' at (855.4441, 842.3767)
+GATE3 FAILURE: the Knight died on the way to 'descent approach' at (855.4441, 842.3767)
 GATE3 CAPTURE TEST FAILED (before)
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
