@@ -110,6 +110,7 @@ func attach_to_level(level: Node) -> bool:
 		_fail("Entities is not y-sorted, so props could not occlude correctly")
 		return false
 	_build_props(data, container)
+	_tuck_checkpoints(container)
 	_reskin_hazards()
 	_build_material(data, level)
 	_build_shade(data, level)
@@ -203,6 +204,29 @@ func _build_props(data: Dictionary, container: Node2D) -> void:
 
 
 # --------------------------------------------------------------- hazards ------
+
+func _tuck_checkpoints(container: Node2D) -> void:
+	## Round 4b: the checkpoint's plate is a 64 px AnimatedSprite2D standing on the cell
+	## the Knight respawns onto, so the hero came back *behind* it -- visible in
+	## `after_respawn_after.png`, where only his legs and helmet show. The plate is
+	## scenery; the Knight is the thing you must always be able to read, so the plate is
+	## drawn one layer under the entities. Only z_index changes: position, collision,
+	## the trigger and the glow are untouched, and nothing is hidden.
+	var tucked := 0
+	for child: Node in container.get_children():
+		if child.get_node_or_null("RespawnPoint") == null:
+			continue
+		var plate := child as CanvasItem
+		if plate == null:
+			continue
+		plate.z_index = -1
+		tucked += 1
+	if tucked == 0:
+		_fail("no checkpoint plate was found under %s, so the hero could be occluded"
+			% container.name)
+		return
+	print("GATE3 ENTITY Z: %d checkpoint plates drawn under the Knight" % tucked)
+
 
 func _reskin_hazards() -> void:
 	## C2, correctly diagnosed: the magenta Gate 2 was marked down for is the flat
