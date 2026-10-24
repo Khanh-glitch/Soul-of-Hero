@@ -3,8 +3,7 @@ GATE3 OBJECTS: ObjectDB holds 13948 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 GATE3 OBJECTS: ObjectDB holds 12761 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 14033 objects at the end of the run
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+GATE3 OBJECTS: ObjectDB holds 13741 objects at the end of the run
 == unused/leaked instances named by --verbose ==
 
 == counts per log ==
@@ -15,12 +14,12 @@ author.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 author_check.log             ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 base_pin.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 before.log                   ObjectDB=2 ERROR=0 SCRIPT_ERROR=0 WARNING=2
-deep.log                     ObjectDB=2 ERROR=0 SCRIPT_ERROR=0 WARNING=2
+deep.log                     ObjectDB=1 ERROR=0 SCRIPT_ERROR=0 WARNING=1
 derived_art.log              ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 gate3_pin.log                ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 import.log                   ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 leaks.log                    ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
-logscan.log                  ObjectDB=19 ERROR=0 SCRIPT_ERROR=0 WARNING=3
+logscan.log                  ObjectDB=18 ERROR=0 SCRIPT_ERROR=0 WARNING=2
 manifest.log                 ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 parsecheck.log               ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
 stats.log                    ObjectDB=0 ERROR=0 SCRIPT_ERROR=0 WARNING=0
@@ -92,16 +91,20 @@ GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
 GATE3 MATERIAL: Gate3_niche  241 cells  z=-11
 GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
 GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
-GATE3 COLLISION: Knight at (1408.711, 377.864) is clear of every wall and prop
+GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1472 px over 8 cells in 3848 frames, HP 56
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
+GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 56
+GATE3 WALK: floor2_stacks  (1704, 680) -> (1192, 744)  516 px over 42 cells in 385 frames, HP 56
+GATE3 COLLISION: Knight at (619.0017, 649.0328) is clear of every wall and prop
 GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (1408.711, 373.864) is free of prop bodies
-GATE3 ROUTE: 0 cells walked, 0 px travelled, 2 fights, 62 dashes, 0 skill casts, HP 1100 -> 0 (delta 1100)
+GATE3 COLLISION: open floor at (619.0017, 645.0328) is free of prop bodies
+GATE3 ROUTE: 50 cells walked, 1988 px travelled, 12 fights, 94 dashes, 3 skill casts, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 14033 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 885 nodes
+GATE3 OBJECTS: ObjectDB holds 13741 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 846 nodes
 GATE3 OBJECTS: ObjectDB holds 13948 objects at the end of the run
 GATE3 OBJECTS: ObjectDB holds 12761 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 14033 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13741 objects at the end of the run
 GATE3 PROPS: 36 sprites (17 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  5872 cells  z=-30
 GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
