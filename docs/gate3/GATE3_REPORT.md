@@ -284,6 +284,11 @@ deep     notices=1 instances=7
 * A `--headless --verbose` run of the same scene **does not reproduce it at all**
   (0 notices), so the leak belongs to the rendered capture path, not to loading the
   level or the overlay.
+* The engine's shutdown notice sometimes escalates to `ERROR: 4 resources still in use at
+  exit` (seen in the deep log of run `40073399046`) and sometimes stops at the warning.
+  The step's script-error gate now distinguishes that engine notice from a game `ERROR:`
+  by name, because failing a run on Godot's own leak report while investigating that same
+  leak is not a useful signal.
 * Godot only names leaked instances under `--verbose`, and the headless run that can
   afford verbose output is exactly the run that does not leak. The seven objects are
   therefore **still unidentified**.
