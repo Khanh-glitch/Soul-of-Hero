@@ -756,8 +756,11 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 				continue
 			# Still blocked: kill what is holding the corridor, unless the Knight is
 			# already too hurt to trade blows, in which case keep rolling.
-			var blocker := _nearest_enemy(64.0, delta)
-			if blocker != null and _can_afford_a_fight() and not _hazard_cache.has(cell):
+			# A stuck walk is usually a body in a chokepoint, and the level's own
+			# chokepoints are three cells wide: there is no way round, and standing
+			# still only pays the enemies' damage. Fight it, even hurt.
+			var blocker := _nearest_enemy(72.0, Vector2.ZERO)
+			if blocker != null and not _hazard_cache.has(cell):
 				var spent := await _engage_enemy(blocker, label)
 				frames += spent
 				frames_since_new_cell = 0
@@ -773,9 +776,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			Input.action_release(action)
 		frames += 1
 		if frames % 60 == 0:
-			print("GATE3 TRACE: %s frame %d cell %s HP %d stuck %d waypoint %s"
+			print("GATE3 TRACE: %s frame %d cell %s HP %d stuck %d nearest %.0f waypoint %s"
 				% [label, frames, str(_current_cell()), int(_player.get("health")),
-					frames_since_new_cell, str(route[mini(index, route.size() - 1)])])
+					frames_since_new_cell, _nearest_enemy_distance(),
+					str(route[mini(index, route.size() - 1)])])
 	if index < route.size():
 		_push("the Knight ran out of frames walking to '%s' (%d/%d waypoints)"
 			% [label, index, route.size()])
