@@ -45,6 +45,9 @@ const TILE := 16
 ## three-cell spike crossing over a two-cell detour, and the capture bled out on the
 ## spike at (78,17) while the log looked like an enemy fight.
 const HAZARD_COST := 400
+## Frames without closing on the current waypoint before the harness treats the walk
+## as blocked and escalates.
+const STALL_FRAMES := 45
 
 ## Stations, in cells.  `spawn` is Candidate A's authored spawn point; the rest are
 ## chosen so the thing each station is about lands in the clear band of the frame.
@@ -689,11 +692,15 @@ func _player_dead() -> bool:
 
 
 func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
-	## Walk the planned route with the production input actions, and deal with what
-	## the level puts in the way the way a player would: kill what holds the corridor,
-	## re-plan when the route goes stale, and roll through when nothing can be killed.
-	## Progress is measured towards the waypoint, not raw movement, because being
-	## pushed back and forth by an enemy body looks like movement and is not progress.
+	## Walk the planned route with the production input actions, and handle what the
+	## level puts in the way the way a player would.
+	##
+	## "Stuck" is measured as: the distance to the current waypoint has not improved
+	## for STALL_FRAMES physics frames. That is the only measure that survives contact
+	## with the level — a body shoving the Knight back and forth makes the position
+	## wobble and even makes him cross cell boundaries, which is why two earlier
+	## revisions of this harness believed he was walking while he stood in one place
+	## losing a hundred health a second.
 	var failures_before := _failures.size()
 	var route := _plan_route(_current_cell(), target_cell)
 	print("GATE3 PLAN: %s -> %s is %d cells" % [label, str(target_cell), route.size()])
@@ -703,11 +710,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 	var started := _player.global_position
 	var index := 1
 	var frames := 0
-	var budget := route.size() * 200 + 900
-	var visited := {_current_cell(): true}
-	var frames_since_new_cell := 0
-	var replans := 0
-	var rolls := 0
+	var budget := route.size() * 260 + 1200
+	var best_distance := 1.0e9
+	var progress_at := 0
+	var attempts := 0
 	while index < route.size() and frames < budget:
 		if _player_dead():
 			_push("the Knight died on the way to '%s' at %s"
@@ -715,44 +721,25 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			return false
 		var waypoint := _cell_centre(route[index])
 		var delta := waypoint - _player.global_position
+		if delta.length() < best_distance - 4.0:
+			best_distance = delta.length()
+			progress_at = frames
 		if delta.length() <= 5.0:
 			index += 1
+			best_distance = 1.0e9
+			progress_at = frames
 			continue
-		# Something in melee contact is the one case that needs no heuristics: the
-		# Knight is being hit and cannot walk through a body, so he fights it. This is
-		# what a player does, and without it the capture simply stood in the eastern
-		# chokepoint paying a skeleton's damage for twenty seconds.
-		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
-			var adjacent := _nearest_enemy(30.0, Vector2.ZERO)
-			if adjacent != null:
-				var engaged := await _engage_enemy(adjacent, label)
-				frames += engaged
-				frames_since_new_cell = 0
-				continue
-		# Progress is "reached a cell this leg has not been in yet". Being shoved back
-		# and forth by an enemy body, or rocking on a spike, reaches no new cell and is
-		# not progress however much the position wobbles.
-		var cell := _current_cell()
-		if not visited.has(cell):
-			visited[cell] = true
-			frames_since_new_cell = 0
-		else:
-			frames_since_new_cell += 1
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		if frames_since_new_cell > 60 and _disengage_frames <= 0:
-			# Escalation, cheapest first. The Knight is invulnerable for 0.75 s after
-			# every hit, so slipping past a body with a roll usually costs less than
-			# standing in a corridor trading blows with it.
-			if replans < 3:
-				var fresh := _plan_route(cell, target_cell)
-				if fresh.size() > 1:
-					route = fresh
-					index = 1
-					replans += 1
-					frames_since_new_cell = 0
-					continue
-			if rolls < 4:
+		if frames - progress_at > STALL_FRAMES and _disengage_frames <= 0:
+			attempts += 1
+			var index_before := index
+			var cell := _current_cell()
+			var blocker := _nearest_enemy(72.0, Vector2.ZERO)
+			if blocker != null and not _hazard_cache.has(cell):
+				frames += await _engage_enemy(blocker, label)
+			elif attempts % 3 == 2:
+				# Nothing to kill: roll, which carries the Knight's own i-frames.
 				var toward := _key_directions(delta)
 				for action: String in toward:
 					Input.action_press(action, 1.0)
@@ -762,23 +749,18 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 				for action: String in toward:
 					Input.action_release(action)
 				frames += 1
-				rolls += 1
-				frames_since_new_cell = 0
+			else:
+				# Re-plan from where the Knight actually is; a stale route into a
+				# crowd is worse than a longer one that goes round it.
+				var fresh := _plan_route(cell, target_cell)
+				if fresh.size() > 1:
+					route = fresh
+					index = 1
+					best_distance = 1.0e9
+			progress_at = frames
+			if index != index_before:
 				continue
-			# Still blocked: kill what is holding the corridor, unless the Knight is
-			# already too hurt to trade blows, in which case keep rolling.
-			# A stuck walk is usually a body in a chokepoint, and the level's own
-			# chokepoints are three cells wide: there is no way round, and standing
-			# still only pays the enemies' damage. Fight it, even hurt.
-			var blocker := _nearest_enemy(72.0, Vector2.ZERO)
-			if blocker != null and not _hazard_cache.has(cell):
-				var spent := await _engage_enemy(blocker, label)
-				frames += spent
-				frames_since_new_cell = 0
-				rolls = 0
-				continue
-			rolls = 0
-			frames_since_new_cell = 0
+			continue
 		var actions := _key_directions(delta)
 		for action: String in actions:
 			Input.action_press(action, 1.0)
@@ -786,10 +768,10 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		for action: String in actions:
 			Input.action_release(action)
 		frames += 1
-		if frames % 60 == 0:
-			print("GATE3 TRACE: %s frame %d cell %s HP %d stuck %d nearest %.0f waypoint %s"
+		if frames % 120 == 0:
+			print("GATE3 TRACE: %s frame %d cell %s HP %d since_progress %d nearest %.0f waypoint %s"
 				% [label, frames, str(_current_cell()), int(_player.get("health")),
-					frames_since_new_cell, _nearest_enemy_distance(),
+					frames - progress_at, _nearest_enemy_distance(),
 					str(route[mini(index, route.size() - 1)])])
 	if index < route.size():
 		_push("the Knight ran out of frames walking to '%s' (%d/%d waypoints)"
