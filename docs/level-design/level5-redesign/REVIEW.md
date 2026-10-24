@@ -50,7 +50,7 @@ the frozen map contract offline.
 | Layer | Before | After | Distinct tiles |
 | --- | --- | --- | --- |
 | Backdrop | 5 584 | 5 181 | 8 (one flagstone family, five per-room resurfacing grades) |
-| Geometry | 1 132 | 1 793 | 35 |
+| Geometry | 1 132 | 1 793 | 38 |
 | Decor | 28 | 50 | 10 |
 | Entities | 83 | 83 | unchanged IDs and types |
 

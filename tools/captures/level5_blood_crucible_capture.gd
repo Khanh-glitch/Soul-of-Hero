@@ -167,13 +167,36 @@ func _run() -> void:
 	get_tree().quit(exit_code)
 
 
+func _find_boss(game: Node2D, dungeon: DungeonLevel) -> HoodedArcherMiniboss:
+	# main.gd renames every spawned entity to the PascalCase of its map id
+	# (`l5_hooded_archer_miniboss` -> `L5HoodedArcherMiniboss`), so the boss
+	# scene's own root name "KingdomArcher" is never a node name at runtime.
+	# Query it the way the game does: the live `minibosses` group, filtered to
+	# the id the Level 5 document actually authors.
+	var authored := ""
+	for raw: Variant in (dungeon.level_data.get("entities", []) as Array):
+		if raw is Dictionary \
+				and String((raw as Dictionary).get("type", "")) == "hooded_archer_miniboss":
+			authored = String((raw as Dictionary).get("id", ""))
+			break
+	var expected := authored.to_pascal_case()
+	for node: Node in game.get_tree().get_nodes_in_group(&"minibosses"):
+		var candidate := node as HoodedArcherMiniboss
+		if candidate == null or not candidate.is_inside_tree():
+			continue
+		if not expected.is_empty() and String(candidate.name) != expected:
+			continue
+		return candidate
+	return null
+
+
 func _capture_station(
 	station: String,
 	dungeon: DungeonLevel,
 	player: CharacterBody2D,
 	game: Node2D,
 ) -> bool:
-	var boss := game.find_child("KingdomArcher", true, false) as HoodedArcherMiniboss
+	var boss := _find_boss(game, dungeon)
 	var target := Vector2.ZERO
 	if station == "f3_archer":
 		if boss == null:
