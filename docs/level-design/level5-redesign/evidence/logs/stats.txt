@@ -1,0 +1,4 @@
+Backdrop   5181 cells,  8 tiles, dominant 70%
+Geometry   1793 cells, 38 tiles, dominant 20%
+Decor        50 cells, 10 tiles, dominant 24%
+entities  83  {'checkpoint': 2, 'chest': 2, 'coin': 14, 'exit_gate': 1, 'floor_door': 4, 'hooded_archer_miniboss': 1, 'player': 1, 'sigil': 4, 'skeleton': 10, 'skeleton_reaper': 5, 'spikes': 24, 'torch': 14, 'vampire': 1}
