@@ -10,14 +10,16 @@ files. The one level substitution is made inside the CI runner only, from
 
 | | |
 | --- | --- |
-| green end-to-end run, all three storeys | [`40069612470`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40069612470) @ `a4c7e31` — **conclusion: success**; floors 1, 2 and 3 captured in one descent, HP 1100 → 96 |
-| repository suite for this branch | [`40069612476`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40069612476) — *Import and headless runtime tests* **success**, *Xvfb rendered gameplay captures* **success**, *Original main baseline comparison* **failure** (unchanged `main`; see §9) |
+| green end-to-end run, all three storeys | [`40073875673`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40073875673) @ `a6afe5d` — **conclusion: success**; floors 1, 2 and 3 captured in one descent, HP 1100 → 2 |
+| earlier green three-storey run | [`40069612470`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40069612470) @ `a4c7e31` — success; same route, HP 1100 → 96 |
+| repository suite for this branch | [`40073875849`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40073875849) — *Import and headless runtime tests* **success**, *Xvfb rendered gameplay captures* **success**, *Original main baseline comparison* **failure** (unchanged `main`; see §9) |
 | Godot | `4.7.stable.official.5b4e0cb0f` (`evidence/logs/version.txt`) |
 | trial level sha256 | `25a51aa9834278c9415cf7039933e3c1bc4238bb33aa0d2111db620cccf2036d` |
 | Candidate A pin used for BEFORE | `5ea50e9cf37791a6283bfd9a58bd634ec8aa144e9602c5b9f40f0b4600555f54` |
 
-The same workflow is re-run against the commit that ships this document, so the evidence
-is reproducible at the delivered revision and not only at an earlier one.
+The workflow was re-run against the commit that carries this delivery (`a6afe5d`), so the
+evidence is reproduced at the delivered revision and not only at an earlier one; this
+document is the only change after that commit.
 
 Every image in `docs/gate3/evidence/` is a native `1280×720` (or `1024×576`) capture
 produced by `prototypes/gate3/capture_gate3.tscn` on the CI runner, through the real
@@ -149,7 +151,7 @@ is byte-identical to the pin, and the capture enters through the real campaign r
 
 ## 6. Phase F — the 15 verification items
 
-All results below are from the green run `40069612470` unless stated. Line references
+All results below are from the green run `40073875673` unless stated. Line references
 are to `docs/gate3/evidence/logs/*.txt`.
 
 | # | item | result |
@@ -176,8 +178,8 @@ are to `docs/gate3/evidence/logs/*.txt`.
 | --- | --- | --- | --- | --- | --- |
 | BEFORE (Candidate A) | 73 | 935 | 0 | 1100 → 1100 | floor-1 tour only; the BEFORE build has no shaft to walk to |
 | AFTER, floor-1 tour | 83 | 988 | 0 | 1100 → 1100 | +10 cells and +53 px of new walkable route through the repaired shaft and the opened ambulatory |
-| AFTER, deep (this run) | 146 | 3473 | 9 | 1100 → 96 | **floors 1–3 in one descent**, through both doors, no reload |
-| AFTER, deep (`40062407818`) | 103 | 3467 | 11 | 1100 → 384 | floors 1–3, an earlier build of the same harness |
+| AFTER, deep (this run) | 84 | 3468 | 9 | 1100 → 2 | **floors 1–3 in one descent**, through both doors, first attempt |
+| AFTER, deep (`40069612470`) | 146 | 3473 | 9 | 1100 → 96 | the same route on an earlier node set, same conclusion |
 
 Environmental damage is reported as measured, not as intended: the deep log carries one
 line per tick that costs health, with the cell, the `on_hazard` flag, the distance to the
@@ -190,12 +192,12 @@ Measured at the end of the AFTER walk with the entire overlay live, under the CI
 software rasteriser (`llvmpipe`), which is a ceiling and not a target:
 
 ```
-GATE3 PERF: 90 physics frames in 1444 ms, 16.05 ms per frame (software GL)
-GATE3 PERF: nodes=835 objects=13654 draw_calls_in_frame=166 objects_in_frame=2690
-GATE3 PERF: physics_process=2.33 ms render_process=125.30 ms
+GATE3 PERF: 90 physics frames in 1486 ms, 16.51 ms per frame (software GL)
+GATE3 PERF: nodes=841 objects=13649 draw_calls_in_frame=165 objects_in_frame=2689
+GATE3 PERF: physics_process=2.19 ms render_process=125.51 ms
 ```
 
-Physics — the part that decides whether the game *plays* — is 2.33 ms of a 16.67 ms
+Physics — the part that decides whether the game *plays* — is 2.19 ms of a 16.67 ms
 budget. The render figure is software rasterisation of a 116×96 cell map with 2690
 objects in frame and is not representative of GPU rendering; it is reported so the
 claim "we measured it" is checkable rather than asserted.
@@ -240,8 +242,8 @@ Contact engagement plus a dash out of every hit is what survives, and that is wh
 | storey | reached through | evidence |
 | --- | --- | --- |
 | floor 1 | authored spawn | 8 native frames, 6 Gate-2 stations plus the repaired shaft and the return route |
-| floor 2 | `f1_f2_down` door, `interact()`, `403 px` moved to `(1704, 680)` | `after_floor2_arrival.png`, `after_floor2_stacks.png` — captured in the green run at HP 424 |
-| floor 3 | `f2_f3_down` door, `interact()`, `465 px` moved to `(152, 1288)` | `after_floor3_camp.png` — captured in the same run at HP 96, `GATE3 DEPTH: floor 3 reached on foot and captured` |
+| floor 2 | `f1_f2_down` door, `interact()`, `412 px` moved to `(1702, 678)` | `after_floor2_arrival.png`, `after_floor2_stacks.png` — captured in the green run at HP 156 |
+| floor 3 | `f2_f3_down` door, `interact()`, `465 px` moved to `(152, 1288)` | `after_floor3_camp.png` — captured in the same run at HP 2, `GATE3 DEPTH: floor 3 reached on foot and captured` |
 
 The audit proves all three storeys reachable for the authored geometry: floor 1
 16/16 entities, floor 2 17/17, floor 3 14/14, `result OK (0 unreachable entities)`.
@@ -344,8 +346,8 @@ tools/gate3/make_evidence_sheets.py                  tools/gate3/write_source_ma
    Measured cause: two or more skeletons converging, and hit-stun, which means a Knight
    in contact with a crowd cannot disengage — retreating was measured three times and
    lost every time. The harness's policy is the aggressive one that survives best, and the
-   full descent is still marginal for a Knight using only basic attacks and a dash: 96
-   health left of 1100 on arrival at floor 3. This is a genuine difficulty finding about `chapter_1_level_3`, not a
+   full descent is still marginal for a Knight using only basic attacks and a dash: 2
+   health left of 1100 on arrival at floor 3 in the green run, 96 in the run before it. This is a genuine difficulty finding about `chapter_1_level_3`, not a
    correction the gate is allowed to make: enemies are part of the frozen entity list.
 2. **The shipped death flow has no respawn.** `game/ui/HUD.tscn` contains a
    `RespawnButton` ("HỒI SINH") wired to nothing, hidden in `_ready()`, and `hud.gd`
@@ -354,7 +356,7 @@ tools/gate3/make_evidence_sheets.py                  tools/gate3/write_source_ma
    is a production defect outside Gate 3's writable paths — recorded, not touched.
 3. **The ObjectDB notice is characterised but not explained** (§10).
 4. **The lower-storey frames come from one specific run.** `after_floor2_*` and
-   `after_floor3_camp.png` in the tree were captured by run `40069612470`; the committed
+   `after_floor3_camp.png` in the tree were captured by run `40073875673`; the committed
    evidence files are whatever the last publishing run produced, and each log names its
    own run's route so a frame can be matched to the log that made it.
 5. **Camera bounds on floors 2–3 were not re-tuned.** The 2.0 framing was evaluated at
