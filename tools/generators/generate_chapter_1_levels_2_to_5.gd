@@ -12,6 +12,14 @@ var _builder := MapBuilder.new()
 ## Ossuary Fork redesign, so it is deliberately skipped here and reproduced by
 ##     python3 tools/design/level2_ossuary_author.py
 ## See docs/design-audition/LEVEL2_DELIVERY.md.
+##
+## Level 5's authoring authority moved to
+## tools/design/level5_blood_crucible_author.py for the same reason: the Blood
+## Crucible is an ordered masonry compile (threshold walls, offering basins,
+## processional channels, a tiered arena), not an additive rectangle carve.
+## Its geometry is retained in _level_5_definition() only so that the pinned
+## baseline stays readable, and both the direct run and --level=5 refuse.
+## See docs/level-design/level5-redesign/REVIEW.md.
 func _init() -> void:
 	# --level=N regenerates a single slot; --skip-level-2 keeps a partial run.
 	var requested_level := 0
@@ -21,11 +29,18 @@ func _init() -> void:
 			requested_level = int(argument.get_slice("=", 1))
 		elif argument == "--skip-level-2":
 			skip_level_2 = true
+	if requested_level == 2 or requested_level == 5:
+		print(
+			"Level %d is authored by a Python design authority, not by this generator; "
+			% requested_level
+			+ "refusing to regenerate it."
+		)
+		quit(2)
+		return
 	var definitions := [
 		_level_1_definition(),
 		_level_3_definition(),
 		_level_4_definition(),
-		_level_5_definition(),
 	]
 	if not skip_level_2:
 		print(
