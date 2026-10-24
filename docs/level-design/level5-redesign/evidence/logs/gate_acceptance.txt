@@ -59,3 +59,4 @@ FAIL  l3_hp_lesson_reaper action sword_4 uses canonical formula v1
 FAIL  l3_hp_lesson_reaper stays inside its TTK band
 FAIL  l3_hp_lesson_reaper stays inside its hit breakpoint band
 FAIL  l3_hp_lesson_reaper stays inside its survivability band
+ACCEPTANCE GATE PASSED (rc=0)

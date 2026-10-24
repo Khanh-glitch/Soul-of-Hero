@@ -274,6 +274,7 @@ jobs:
               rc=1
             fi
           fi
+          echo "ACCEPTANCE GATE $([ "$rc" -eq 0 ] && echo PASSED || echo FAILED) (rc=$rc)"
           return $rc
           }
           acceptance_gate 2>&1 | tee -a "$gate_log"
@@ -310,6 +311,11 @@ jobs:
             || { echo "MISSING after route trace"; rc=1; }
           test -f docs/level-design/level5-redesign/evidence/route_trace_before.png \
             || { echo "MISSING before route trace"; rc=1; }
+          # A gate that says nothing on success is a gate nobody can read.
+          echo "CHECKED twelve native frames (6 after + 6 before), 6 pairs, 6 4x crops,"
+          echo "comparison sheet and both route traces, plus a completed capture pass"
+          echo "for each tag."
+          echo "EVIDENCE GATE $([ "$rc" -eq 0 ] && echo PASSED || echo FAILED) (rc=$rc)"
           return $rc
           }
           evidence_gate 2>&1 | tee -a "$gate_log"
