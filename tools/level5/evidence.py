@@ -33,9 +33,13 @@ STATIONS = [
     ("f3_approach", "F3 boss approach — antechamber foreshadow"),
     ("f3_archer", "F3 Archer arena — combat state"),
 ]
-# 4x nearest crops: (station, label, centre-x fraction, centre-y fraction).
-# Fractions rather than pixels so a crop can never fall outside the frame; each
-# station gets a different window so the six crops cover different architecture.
+# 4x nearest architecture crops: (station, label, fallback centre-x fraction,
+# fallback centre-y fraction). The window is not a fixed fraction of the frame:
+# an earlier round shipped crops centred on empty floor because the camera looks
+# wherever the station does. The centre is now derived from the level document --
+# the crop is placed on the densest cluster of Geometry (masonry) around the
+# station, inside the frame -- so a crop always shows built architecture. The
+# fractions remain only as the fallback for an image whose map is unavailable.
 CROPS = [
     ("f1_spawn", "vestibule threshold and sealed gate", 0.30, 0.45),
     ("f1_camp", "guard court buttress and wall face", 0.62, 0.40),
@@ -44,7 +48,18 @@ CROPS = [
     ("f3_approach", "antechamber mouth and arena beyond", 0.58, 0.45),
     ("f3_archer", "arena buttress, tier line and dais", 0.72, 0.52),
 ]
+# Station anchors in cells: the same anchors the capture harness stages, so the
+# camera is known to be centred on them (1280 x 720, 1:1 pixel scale).
+STATION_CELLS = {
+    "f1_spawn": (10, 17),
+    "f1_camp": (66, 16),
+    "f2_court": (30, 48),
+    "f2_checkpoint": (10, 49),
+    "f3_approach": (64, 76),
+    "f3_archer": (105, 74),
+}
 CROP_PIXELS = 320
+CROP_TILE = 16
 
 
 
@@ -94,17 +109,62 @@ def build_pairs(before_dir: Path, after_dir: Path, out_dir: Path) -> list[str]:
     return written
 
 
-def build_crops(after_dir: Path, out_dir: Path) -> list[str]:
+def architecture_centres(data_path: Path) -> dict[str, tuple[int, int]]:
+    """Screen centre of the densest masonry cluster around each station.
+
+    The camera is centred on the station cell (both the harness and the
+    production camera put the Knight at the middle of the frame), so a masonry
+    cell at (gx, gy) lands at screen (640 + (gx - sx) * 16, ...). Windowing
+    around the richest 20 x 11 tile neighbourhood keeps every crop on built
+    architecture instead of on the floor in front of the Knight.
+    """
+    try:
+        document = json.loads(data_path.read_text(encoding="utf-8"))
+    except OSError:
+        return {}
+    geometry = {
+        (int(tile["x"]), int(tile["y"])) for tile in document.get("layers", {}).get("Geometry", [])
+    }
+    half_w = CROP_PIXELS // 2 // CROP_TILE       # 10 tiles
+    half_h = CROP_PIXELS * 9 // 16 // 2 // CROP_TILE  # 5 tiles
+    centres: dict[str, tuple[int, int]] = {}
+    for station, (sx, sy) in STATION_CELLS.items():
+        best = None
+        for gx, gy in sorted(geometry):
+            if abs(gx - sx) > 14 or abs(gy - sy) > 9:
+                continue
+            density = sum(
+                1
+                for x in range(gx - half_w, gx + half_w)
+                for y in range(gy - half_h, gy + half_h)
+                if (x, y) in geometry
+            )
+            distance = abs(gx - sx) + abs(gy - sy)
+            score = (density, -distance)
+            if best is None or score > best[0]:
+                best = (score, gx, gy)
+        if best is None:
+            continue
+        _, gx, gy = best
+        centres[station] = (640 + (gx - sx) * CROP_TILE, 360 + (gy - sy) * CROP_TILE)
+    return centres
+
+
+def build_crops(after_dir: Path, out_dir: Path, data_path: Path | None = None) -> list[str]:
     written: list[str] = []
     out_dir.mkdir(parents=True, exist_ok=True)
+    foci = architecture_centres(data_path) if data_path is not None else {}
     for station, caption, fx, fy in CROPS:
         source = _load(after_dir / ("after_%s.png" % station))
         if source is None:
             print("MISSING capture for crop %s" % station, file=sys.stderr)
             continue
         half_w, half_h = CROP_PIXELS // 2, CROP_PIXELS * 9 // 32
-        centred_x = int(source.width * fx)
-        centred_y = int(source.height * fy)
+        if station in foci:
+            centred_x, centred_y = foci[station]
+        else:
+            centred_x = int(source.width * fx)
+            centred_y = int(source.height * fy)
         left = max(0, min(source.width - CROP_PIXELS, centred_x - half_w))
         top = max(0, min(source.height - CROP_PIXELS * 9 // 16, centred_y - half_h))
         box = (left, top, left + CROP_PIXELS, top + CROP_PIXELS * 9 // 16)
@@ -306,7 +366,7 @@ def main() -> int:
     out_dir = ROOT / args.out
     evidence_dir = ROOT / args.evidence
     pairs = build_pairs(ROOT / args.before, ROOT / args.after, out_dir)
-    crops = build_crops(ROOT / args.after, evidence_dir / "crops")
+    crops = build_crops(ROOT / args.after, evidence_dir / "crops", ROOT / args.data)
     sheet = build_sheet(ROOT / args.after, out_dir)
     trace_after = build_route_trace(
         ROOT / args.data, evidence_dir / "route_trace_after.png", args.title + " — redesign"

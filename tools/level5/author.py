@@ -135,6 +135,21 @@ SHELL_BE = (4, 3)
 SHELL_BW = (7, 3)
 
 
+# Room floor families. Each room spends six of eleven hash slots on its own
+# wear pattern, which leaves a single slab at ~45 % of the field instead of the
+# 70 % that made round 4's native frames read as a repeating texture. The order
+# inside each tuple is the wear story of the room, not a random mix: a nave
+# alternates worn slabs, a chapel is stained, a hall is scorched.
+KIND_FLOOR = {
+    "nave": (F_A_ALT, F_A_ALT, F_A_WORN, F_A_WORN, F_A_ALT_WORN, F_A_STAIN),
+    "chapel": (F_A_STAIN, F_A_STAIN, F_A_STAIN2, F_A_STAIN2, F_A_WORN, F_A_ALT),
+    "court": (F_A_ALT, F_A_ALT, F_A_ALT_WORN, F_A_ALT_WORN, F_A_WORN, F_A_STAIN),
+    "hall": (F_A_STAIN2, F_A_STAIN2, F_A_STAIN, F_A_STAIN, F_A_ALT, F_A_WORN),
+    "arena": (F_A_CRACK, F_A_CRACK, F_A_ALT_CRACK, F_A_ALT_CRACK, F_A_WORN, F_A_STAIN),
+    "landing": (F_A_ALT_WORN, F_A_ALT_WORN, F_A_WORN, F_A_WORN, F_A_ALT, F_A_CRACK),
+}
+
+
 class Plan:
     """Layer accumulator: floor (Backdrop), geometry (collision), decoration."""
 
@@ -185,18 +200,29 @@ class Plan:
     # -- floor texture ------------------------------------------------------
     @staticmethod
     def _floor_tile(x: int, y: int) -> tuple[int, int]:
-        """Calm flagstone field: one slab dominates, wear arrives in pairs."""
-        h = (x * 41 + y * 17) % 37
+        """Calm flagstone field, but never a visible grid period.
+
+        Native capture of round 4 measured a single slab at 70 % of the floor,
+        which made every 1280 x 720 frame read as a repeating waffle. The eight
+        slabs now share the field at roughly 40 / 22 / 14 / 14 / 10 %, with wear
+        arriving in runs of two or three so the eye reads sections of old floor
+        instead of a texture tile.
+        """
+        h = (x * 41 + y * 17) % 20
         if h == 0:
             return F_A_CRACK
-        if h in (5, 6):
+        if h in (1, 2):
+            return F_A_ALT_CRACK
+        if h in (3, 4, 5):
             return F_A_WORN
+        if h in (6, 7):
+            return F_A_ALT_WORN
+        if h in (8, 9):
+            return F_A_STAIN
+        if h == 10:
+            return F_A_STAIN2
         if h == 11:
             return F_A_ALT
-        if h == 19:
-            return F_A_ALT_WORN
-        if h == 27:
-            return F_A_STAIN
         return F_A
 
     # -- set pieces ---------------------------------------------------------
@@ -223,21 +249,53 @@ class Plan:
                 if (x, y) not in self.floor:
                     continue
                 h = (x * 7 + y * 13) % 11
-                if kind == "nave":
-                    tile = F_A_ALT if h == 0 else (F_A_WORN if h < 3 else F_A)
-                elif kind == "chapel":
-                    tile = F_A_STAIN if h < 3 else (F_A_WORN if h == 4 else F_A)
-                elif kind == "court":
-                    tile = F_A_ALT if h < 3 else (F_A_ALT_WORN if h == 4 else F_A)
-                elif kind == "hall":
-                    tile = F_A_STAIN2 if h < 2 else (F_A_STAIN if h == 3 else F_A)
-                elif kind == "arena":
-                    tile = F_A_CRACK if h < 2 else (F_A_ALT_CRACK if h == 3 else F_A)
-                elif kind == "landing":
-                    tile = F_A_ALT_WORN if h < 3 else F_A
-                else:
-                    tile = F_A
+                family = KIND_FLOOR.get(kind, ())
+                tile = family[h] if h < len(family) else F_A
                 self.floor[(x, y)] = (S0, *tile)
+
+    def fill_island(self, x0: int, y0: int, x1: int, y1: int) -> None:
+        """Turn an uncarved interior block into solid ashlar, not into background.
+
+        `compile_masonry` only skins cells within two tiles of real floor, so a
+        deliberately uncarved island (the ceremonial core of the Blood Court)
+        used to render as the level's black background: a bottomless moat around
+        a floating basin, and a surface the Knight could walk across. This lays
+        courses instead: capped on the north face, brick through the body,
+        shaded on the south. Cells an earlier pass authored are kept.
+        """
+        for y in range(y0, y1 + 1):
+            for x in range(x0, x1 + 1):
+                if (x, y) in self.floor or (x, y) in self.geom:
+                    continue
+                if y == y0:
+                    tile = CAP_A if (x * 3 + y) % 3 else CAP_C
+                elif y == y1:
+                    tile = BRICK_C
+                else:
+                    tile = BRICK_A if (x * 5 + y) % 3 else BRICK_B
+                self.solid(x, y, tile)
+
+    def colonnade_line(self, x0: int, x1: int, y: int, step: int = 5,
+                       height: int = 2, width: int = 2, skip=()) -> None:
+        """A colonnade that hugs a wall line and leaves every lane open.
+
+        Interior mass is what stops a hall reading as one flat slab; the brief
+        asks for credible wall mass, corners and depth, and a 40-tile hall with
+        four free-standing blocks has neither. Each bay is a wall-attached
+        stack, so nothing floats and no path is closed.
+        """
+        x = x0
+        while x + width - 1 <= x1:
+            if not any(lo <= x <= hi for lo, hi in skip):
+                cells = set(range(x, x + width))
+                clear = True
+                for dx in range(width):
+                    for dy in range(height):
+                        if (x + dx, y + dy) not in self.floor:
+                            clear = False
+                if clear:
+                    self.mass(x, y, x + width - 1, y + height - 1)
+            x += step
 
     def basin(self, x0: int, y0: int, x1: int, y1: int) -> None:
         """Sunken offering basin: masonry kerb, broken interior, burnt floor rim."""
@@ -552,6 +610,10 @@ def _floor_one(p: Plan) -> None:
     p.mass(36, 6, 37, 8)             # alternating bays keep the nave rhythmic
     p.mass(66, 6, 67, 8)
     p.mass(70, 19, 72, 21)
+    # A full north colonnade: the nave is 40 tiles of open floor otherwise, and
+    # open floor is what makes a 1280 x 720 frame read as a slab.
+    p.colonnade_line(39, 66, 6, step=5, height=2, width=2, skip=[(53, 61)])
+    p.colonnade_line(39, 66, 21, step=6, height=2, width=2, skip=[(47, 55)])
     p.prop(40, 9, (1, 22))
     p.prop(64, 9, (3, 22))
     p.prop(38, 18, (5, 5))
@@ -583,6 +645,8 @@ def _floor_one(p: Plan) -> None:
     p.altar(88, 8, 4, DRAPE_ORANGE)
     p.mass(88, 24, 90, 26)
     p.mass(99, 24, 101, 26)
+    # Bays along the guard court's north wall; the camp lanes stay open.
+    p.colonnade_line(84, 104, 9, step=7, height=2, width=2, skip=[(94, 98)])
     p.breach([(83, 26), (84, 26)])
     p.sconce_wall(84, 7)
     p.sconce_wall(96, 7)
@@ -637,6 +701,9 @@ def _floor_two(p: Plan) -> None:
 
     # ---- the court ring ------------------------------------------------
     p.basin(41, 47, 49, 51)
+    # The island is *architecture*: without this the uncarved core rendered as
+    # the level background, a black moat the Knight could walk on.
+    p.fill_island(32, 45, 58, 53)
     p.gutter_h(34, 40, 52)
     p.gutter_h(50, 57, 52)
     p.gutter_v(53, 55, 38)
@@ -660,6 +727,8 @@ def _floor_two(p: Plan) -> None:
     p.mass(88, 42, 90, 44)
     p.mass(74, 54, 76, 56)
     p.mass(104, 54, 106, 56)
+    p.colonnade_line(79, 103, 42, step=6, height=2, width=2, skip=[(85, 93)])
+    p.colonnade_line(79, 101, 55, step=6, height=2, width=2, skip=[(79, 82)])
     p.gutter_h(86, 102, 49)
     p.rubble([(80, 55), (106, 45)])
     p.breach([(77, 43), (78, 43)])
@@ -721,6 +790,8 @@ def _floor_three(p: Plan) -> None:
     p.arch_wall(46, 62)
     p.coffin(35, 82)
     p.pier_teeth([36, 40, 44], 81)
+    p.colonnade_line(34, 48, 66, step=6, height=2, width=2, skip=[(40, 48)])
+    p.colonnade_line(34, 54, 83, step=8, height=2, width=2)
     p.sconce_wall(36, 65)
     p.sconce_wall(54, 65)
     p.blood_pool(45, 77, 2)
@@ -744,6 +815,8 @@ def _floor_three(p: Plan) -> None:
     p.mass(96, 66, 97, 68)
     p.mass(78, 84, 79, 86)
     p.mass(96, 84, 97, 86)
+    p.colonnade_line(82, 94, 67, step=6, height=2, width=2)
+    p.colonnade_line(82, 94, 85, step=6, height=2, width=2)
     p.rubble([(82, 66), (83, 66), (100, 86), (105, 86)])
     p.blood_pool(99, 74, 3)
     p.altar(100, 66, 4, DRAPE_RED)
