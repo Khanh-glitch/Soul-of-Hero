@@ -28,6 +28,12 @@ extends Node2D
 ##      2's five hard vault bands: a 116x96 RGBA image, linearly filtered, so the
 ##      falloff has no steps at any zoom.
 ##
+## Round 4 adds two corrections found by comparing before/after frames pixel by pixel:
+## the level's own `Backdrop` and `Geometry` layers were drawn above every Gate 3
+## material layer, so the archive stone never reached the screen; they are now hidden
+## behind an exact-coverage proof. And the rock apron is carried further out in eight
+## flip/transpose variants of the approved frames instead of two hash-alternated ones.
+##
 ## It adds no second Knight, no HUD, no campaign node, and reports every refusal
 ## through `get_failures()` instead of failing quietly.
 
@@ -45,9 +51,15 @@ const HAZARD_FRAME_PATHS := [
 ## Draw order, bottom to top. `layer_style` in the document carries each layer's
 ## absolute z_index and modulate; this list only fixes creation order.
 const MATERIAL_ORDER: Array[String] = [
-	"rock", "floor", "coping", "water", "water_edge", "shadow", "weather",
+	"rock", "rock_deep", "floor", "coping", "water", "water_edge", "shadow", "weather",
 	"mass", "wall_face", "niche", "decor",
 ]
+
+## Round 4: `rock` and `rock_deep` carry a flip/transpose mask per cell. The runtime
+## builds one explicit alternative tile per (frame, mask) pair, so the stone outside
+## the building is eight shapes of the same approved frames rather than two.
+## Bit 0 = flip horizontally, bit 1 = flip vertically, bit 2 = transpose.
+const ROCK_VARIANT_ROLES: Array[String] = ["rock", "rock_deep"]
 
 @export var placement_path := PLACEMENT_PATH
 
@@ -58,6 +70,9 @@ var lights_added := 0
 var hidden_layers: Array[String] = []
 var hazards_reskinned := 0
 var shade_built := false
+var rock_variants_built := 0
+var _atlas_source: TileSetAtlasSource
+var _alternative_cache := {}
 var _failures: Array[String] = []
 var _shade_node: Sprite2D
 
@@ -228,6 +243,7 @@ func _build_material(data: Dictionary, level: Node) -> void:
 	for y: int in range(int(texture.get_height() / tile)):
 		for x: int in range(int(texture.get_width() / tile)):
 			atlas_source.create_tile(Vector2i(x, y))
+	_atlas_source = atlas_source
 	var tile_set := TileSet.new()
 	tile_set.tile_size = Vector2i(tile, tile)
 	tile_set.add_source(atlas_source, 0)
@@ -249,14 +265,42 @@ func _build_material(data: Dictionary, level: Node) -> void:
 		level.add_child(layer)
 		material_layers_added += 1
 		var applied := 0
+		var variant_role := role in ROCK_VARIANT_ROLES
 		for cell: Array in tiles:
-			layer.set_cell(Vector2i(int(cell[0]), int(cell[1])), 0,
-				Vector2i(int(cell[2]), int(cell[3])))
+			var atlas_coords := Vector2i(int(cell[2]), int(cell[3]))
+			var variant := int(cell[6]) if variant_role and cell.size() > 6 else 0
+			layer.set_cell(Vector2i(int(cell[0]), int(cell[1])), 0, atlas_coords,
+				_alternative_for(atlas_coords, variant))
 			applied += 1
+		if variant_role:
+			print("GATE3 VARIANTS: %s  %d cells, %d alternative tiles in use"
+				% [role, applied, _alternative_cache.size()])
 		if applied != layer.get_used_cells().size():
 			_fail("%s applied %d of %d authored cells"
 				% [layer.name, applied, layer.get_used_cells().size()])
 		print("GATE3 MATERIAL: %s  %d cells  z=%d" % [layer.name, applied, layer.z_index])
+
+
+func _alternative_for(atlas_coords: Vector2i, variant: int) -> int:
+	## Round 4: eight rotations of the same quarry frames, made as real alternative
+	## tiles so the flip is baked by the renderer and the cell data stays one atlas
+	## source. `variant` 0 is the untouched frame.
+	if variant == 0 or _atlas_source == null:
+		return 0
+	var key := "%d:%d:%d" % [atlas_coords.x, atlas_coords.y, variant]
+	if _alternative_cache.has(key):
+		return int(_alternative_cache[key])
+	var alternative := _atlas_source.create_alternative_tile(atlas_coords)
+	var data := _atlas_source.get_tile_data(atlas_coords, alternative)
+	if data == null:
+		_fail("cannot create rock variant %d for %s" % [variant, str(atlas_coords)])
+		return 0
+	rock_variants_built += 1
+	data.flip_h = (variant & 1) != 0
+	data.flip_v = (variant & 2) != 0
+	data.transpose = (variant & 4) != 0
+	_alternative_cache[key] = alternative
+	return alternative
 
 
 # ----------------------------------------------------------------- shade ------
@@ -338,20 +382,66 @@ func _build_shade(data: Dictionary, level: Node) -> void:
 
 # ----------------------------------------------------------- level layers -----
 
+## Which Gate 3 layers are allowed to stand in for each production layer when it is
+## hidden. Nothing is hidden unless every one of its cells has a replacement: an
+## unpainted masonry cell would leave a wall the Knight collides with invisible.
+const REPLACEMENTS := {
+	"Backdrop": ["floor", "water", "water_edge", "coping"],
+	"Geometry": ["wall_face", "mass", "niche"],
+	"Decor": [],
+}
+
+
 func _hide_level_layers(data: Dictionary, level: Node) -> void:
-	## C2. Candidate A's `Decor` layer is the only strongly cool-toned art left in the
-	## room (shelf and grille tiles with pale vessels). Gate 2 tried to pull it toward
-	## the palette with a warm multiply; magenta does not become stone. Gate 3 hides
-	## the layer instead and paints the archive's own fittings on the wall plane, so
-	## no production art and no level data changes.
+	## C2, and the round-4 correction. Candidate A's `Decor` layer is the only cool
+	## toned production art left in the room, so it is replaced by the archive's own
+	## fittings. Round 4 found the real reason the archive material never appeared:
+	## the level's `Backdrop` (z = -10) and `Geometry` (z = 0) TileMapLayers were drawn
+	## *above* every Gate 3 layer (z = -30 ... -10), so 5 800 authored cells and the
+	## whole shade field were behind the tiles they were meant to replace. Both are now
+	## hidden, but only after every cell they own is proved to have a painted
+	## replacement -- the same precondition `tools/gate3/author_gate3.py` checks
+	## offline. Hiding a layer does not disable its collision: the TileSet physics
+	## layer keeps the walls solid, which is exactly what is wanted here.
+	var painted := _painted_cells(data)
 	for layer_name: String in (data.get("hidden_level_layers", []) as Array):
 		var layer := level.get_node_or_null(layer_name) as CanvasItem
 		if layer == null:
 			_fail("the live level has no '%s' layer to replace" % layer_name)
 			continue
+		var roles: Array = REPLACEMENTS.get(layer_name, [])
+		if not roles.is_empty():
+			var tile_layer := layer as TileMapLayer
+			if tile_layer == null:
+				_fail("'%s' is not a TileMapLayer, so its coverage cannot be proved" % layer_name)
+				continue
+			var missing: Array[Vector2i] = []
+			var total := 0
+			for cell: Vector2i in tile_layer.get_used_cells():
+				total += 1
+				if not painted.has(cell):
+					missing.append(cell)
+			if not missing.is_empty():
+				_fail("%s has %d cells with no Gate3 replacement, first %s (+%d more)"
+					% [layer_name, missing.size(), str(missing[0]),
+						maxi(0, missing.size() - 3)])
+				continue
+			print("GATE3 COVERAGE: %s %d/%d cells painted by %s"
+				% [layer_name, total, total, str(roles)])
 		layer.visible = false
 		hidden_layers.append(layer_name)
-		print("GATE3 LAYER: %s hidden (replaced by Gate3_decor)" % layer_name)
+		print("GATE3 LAYER: %s hidden" % layer_name)
+
+
+func _painted_cells(data: Dictionary) -> Dictionary:
+	var cells := {}
+	var material: Dictionary = data.get("material", {})
+	var ground_roles: Array = REPLACEMENTS["Backdrop"]
+	var wall_roles: Array = REPLACEMENTS["Geometry"]
+	for role: String in ground_roles + wall_roles:
+		for cell: Array in material.get(role, []):
+			cells[Vector2i(int(cell[0]), int(cell[1]))] = true
+	return cells
 
 
 # ---------------------------------------------------------------- lights ------

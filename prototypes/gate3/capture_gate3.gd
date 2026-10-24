@@ -406,6 +406,17 @@ func _check_contracts() -> void:
 		"one collider per solid prop (%d)" % solids)
 	_expect(int(_overlay.get("lights_added")) == (placement.get("lights", []) as Array).size(),
 		"every authored light was built")
+	# Round 4: the level's own two layers were drawn above every Gate 3 layer, so the
+	# archive stone never reached the screen. They may only be hidden -- and the frames
+	# are only evidence -- once that has actually happened in the running game.
+	for production_layer: String in ["Backdrop", "Geometry", "Decor"]:
+		var node := _dungeon.get_node_or_null(production_layer) as CanvasItem
+		_expect(node != null and not node.visible,
+			"the production %s layer is hidden, its cells replaced by Gate3 material"
+			% production_layer)
+	_expect(int(_overlay.get("rock_variants_built")) >= 8,
+		"the rock apron uses alternative (flipped/transposed) tiles, %d built"
+		% int(_overlay.get("rock_variants_built")))
 
 	var material: Dictionary = placement.get("material", {})
 	var roles := 0

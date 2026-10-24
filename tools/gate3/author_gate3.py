@@ -86,6 +86,16 @@ GARTH_OPENINGS = GARTH_OPEN_WEST + GARTH_OPEN_EAST + GARTH_OPEN_NORTH
 NICHE_PHASE = 2
 PIER_PHASE = 0
 
+# C3 follow-up (round 4): a pier rhythm that is identical on all three storeys is
+# why the lower floors read as the same stone repeated.  Each storey now carries its
+# own phase and its own frame bias (see `wall_frame`), and the deep rock outside the
+# building is rotated into eight real variants instead of two.
+FLOOR_PIER_PHASE = {1: PIER_PHASE, 2: (PIER_PHASE + 2) % 4, 3: (PIER_PHASE + 1) % 4}
+# The rock apron.  It was 14 cells; at 14 the frame at the floor-2 landing was a
+# quarter empty background (measured), so the apron now reaches past a full screen.
+ROCK_BAND_RADIUS = 6
+ROCK_RADIUS = 22
+
 # --------------------------------------------------------------- placement ---
 # Each placement: (cell, row, sprite, solid, intent).  `cell` is the centre
 # column, `row` is the standing row; the sprite's feet sit on the row's baseline.
@@ -150,6 +160,31 @@ PLACEMENTS = [
     dict(cell=60, row=84, sprite="long_table", solid=True, intent="floor 3: the camp table under the seals"),
     dict(cell=48, row=88, sprite="stone_bench", solid=False, intent="floor 3: seating around the camp"),
     dict(cell=66, row=88, sprite="candle_stand", solid=False, intent="floor 3: the camp light"),
+    # --- round 4: the lower storeys get architecture, not more decoration ------
+    # The review's complaint was that floors 2 and 3 had no anchors: 8 and 6 props
+    # respectively, and one light each.  These are landmarks the eye can navigate by
+    # -- an opened press, a collapsed range, a pier, a lectern where the seals are
+    # laid out, a hanging rope, a drying rack -- each with its own light above.
+    dict(cell=67, row=42, sprite="armarium_open", solid=True,
+         intent="floor 2: the presses are open, and whatever was filed here has been taken"),
+    dict(cell=70, row=46, sprite="shelf_collapsed", solid=True,
+         intent="floor 2: a range that came down, the hall's second landmark"),
+    dict(cell=45, row=46, sprite="column", solid=True,
+         intent="floor 2: the pier that carries the vault over the crossfire hall"),
+    dict(cell=41, row=52, sprite="stone_bench", solid=False,
+         intent="floor 2: a bench on the south wall of the hall, facing the light"),
+    dict(cell=58, row=47, sprite="scrolls_a", solid=False,
+         intent="floor 2: loose leaves where the range came down"),
+    dict(cell=40, row=80, sprite="shelf_collapsed", solid=True,
+         intent="floor 3: the broken case beside the reliquary press"),
+    dict(cell=56, row=86, sprite="column", solid=True,
+         intent="floor 3: the second pier of the camp, so the camp reads as a room"),
+    dict(cell=62, row=84, sprite="lectern", solid=False,
+         intent="floor 3: the lectern where the four seals are counted"),
+    dict(cell=44, row=88, sprite="paternoster", solid=False,
+         intent="floor 3: the rope still hanging into the dark"),
+    dict(cell=30, row=88, sprite="drying_rack", solid=False,
+         intent="floor 3: the camp's own kit, hung to dry"),
 ]
 
 LIGHTS = [
@@ -165,6 +200,16 @@ LIGHTS = [
          intent="floor 2's working light in the stacks"),
     dict(cell=44, row=84, energy=0.30, scale=0.66, colour=[1.0, 0.86, 0.64],
          intent="floor 3's camp light"),
+    # Round 4 -- the lower storeys had one light each, so the eye had no anchor to
+    # follow when it descended.  Every landmark below now carries its own pool.
+    dict(cell=67, row=41, energy=0.26, scale=0.50, colour=[1.0, 0.82, 0.60],
+         intent="floor 2: the pool under the opened presses, so the armarium reads as a place"),
+    dict(cell=45, row=50, energy=0.24, scale=0.62, colour=[0.86, 0.92, 1.0],
+         intent="floor 2: cold light off the crossfire hall's pier, the room's own centre"),
+    dict(cell=31, row=79, energy=0.24, scale=0.46, colour=[1.0, 0.84, 0.62],
+         intent="floor 3: the reliquary press is lit where the seals are laid out"),
+    dict(cell=59, row=83, energy=0.26, scale=0.58, colour=[1.0, 0.88, 0.66],
+         intent="floor 3: the camp table is the last warm light before the exit"),
 ]
 
 # The Knight and the authored entity art, for the overlap check.
@@ -694,10 +739,58 @@ def validate_props(level: dict, props: list) -> list:
 
 # ---------------------------------------------------------------- material ----
 
+def floor_lookup(level: dict):
+    """Which storey a cell belongs to, from the level's own room rectangles."""
+    bands = []
+    for room in level.get("metadata", {}).get("rooms", []):
+        rect = room.get("rect") or []
+        if len(rect) < 4:
+            continue
+        x, y, w, h = (int(rect[0]), int(rect[1]), int(rect[2]), int(rect[3]))
+        bands.append((int(room.get("floor", 1)), (x, y, x + w - 1, y + h - 1)))
+
+    def floor_of(x: int, y: int) -> int:
+        for floor, (x0, y0, x1, y1) in bands:
+            if x0 <= x <= x1 and y0 <= y <= y1:
+                return floor
+        # corridor cells between rooms: fall back on the vertical order of the
+        # three storeys, which the room rectangles make unambiguous
+        return 1 if y < 30 else (2 if y < 66 else 3)
+
+    return floor_of
+
+
+def wall_frame(floor: int, x: int, y: int, pier: bool, facing: bool, upper: bool) -> str:
+    """One storey's masonry. The courses are the same masonry, read differently.
+
+    Floor 1 keeps the nave's dressed ashlar with a dado course at eye level;
+    floor 2 is the foundations, so it is banded dado-low and heavier above; floor 3
+    is the buried reliquary, so it is broken more often and the piers are narrower.
+    Nothing here changes collision: every frame is painted on a cell that is
+    already masonry.
+    """
+    if floor >= 3:
+        if facing:
+            return "face_b" if pier else ("face_broken_a" if hashed(x, y, 41) % 3 == 0 else "face_a")
+        if upper:
+            return "face_broken_a" if hashed(x, y, 43) % 3 == 0 else ("face_b" if pier else "face_a")
+        return "face_broken_b" if hashed(x, y, 47) % 4 == 0 else ("face_b" if pier else "face_a")
+    if floor == 2:
+        if facing:
+            return "face_dado" if (pier or y % 2 == 1) else "face_b"
+        return "face_b" if (pier or hashed(x, y, 53) % 5 == 0) else "face_a"
+    if facing:
+        return "face_b" if pier else "face_dado"
+    if upper:
+        return "face_b" if pier else "face_a"
+    return "face_broken_a" if hashed(x, y) % 5 == 0 else ("face_b" if pier else "face_a")
+
+
 def build_material(level: dict, props: list) -> dict:
     ground = cellset(level["layers"]["Backdrop"])
     solid = cellset(level["layers"]["Geometry"])
     water = garth_water(level)
+    floor_of = floor_lookup(level)
     props_cells = set()
     for prop in props:
         for x in range(prop["cells"][0], prop["cells"][2] + 1):
@@ -705,12 +798,14 @@ def build_material(level: dict, props: list) -> dict:
                 props_cells.add((x, y))
 
     roles: dict[str, list] = {name: [] for name in (
-        "rock", "floor", "coping", "water", "water_edge", "wall_face", "niche",
+        "rock", "rock_deep", "floor", "coping", "water", "water_edge", "wall_face", "niche",
         "mass", "shadow", "weather", "decor")}
 
-    def add(role, x, y, frame_name, lit=0):
+    def add(role, x, y, frame_name, lit=0, variant=0):
         frame = tile_frame(frame_name)
-        roles[role].append([x, y, frame[0], frame[1], lit, frame_name])
+        # `variant` is a flip/transpose mask applied by the runtime through an
+        # explicit alternative tile: same atlas, same source, no new art.
+        roles[role].append([x, y, frame[0], frame[1], lit, frame_name, variant])
 
     # --- floor ------------------------------------------------------------
     for x, y in sorted(ground):
@@ -724,17 +819,25 @@ def build_material(level: dict, props: list) -> dict:
             add("coping", x, y, "floor_flag_3" if hashed(x, y) % 3 else "floor_quarry_0")
 
     # --- rock: everything outside the building ---------------------------
+    # Round 4: two frames alternated by hash was the "artificial diagonal
+    # banding" the review named.  The same two quarry frames are now flipped and
+    # transposed into eight variants (an explicit alternative tile per variant in
+    # the runtime), split into a near band and a deeper band with its own tint, and
+    # carried far enough out that the camera never reaches bare background.
     for y in range(level["height"]):
         for x in range(level["width"]):
             cell = (x, y)
             if cell in ground or cell in solid or cell in water:
                 continue
-            if not near_building(x, y, ground | solid | water, 14):
-                continue
             if is_sealed_interior(cell, ground, solid):
                 continue
+            building = ground | solid | water
+            if not near_building(x, y, building, ROCK_RADIUS):
+                continue
+            role = "rock" if near_building(x, y, building, ROCK_BAND_RADIUS) else "rock_deep"
             frame = "floor_quarry_1" if hashed(x, y) % 2 else "floor_quarry_0"
-            add("rock", x, y, frame)
+            variant = hashed(x, y, 37) % 8
+            add(role, x, y, frame, variant=variant)
 
     # --- wall faces: courses by distance to the walk below ----------------
     for x, y in sorted(solid):
@@ -749,15 +852,12 @@ def build_material(level: dict, props: list) -> dict:
         below = (x, y + 1)
         facing = below in ground or below in water
         if facing or (x, y - 1) in ground:
-            # the bay rhythm: every fourth column of a wall run is a pier
-            pier = (x % 4) == PIER_PHASE
-            if facing:
-                frame = "face_b" if pier else "face_dado"
-            elif (x, y - 2) in ground or (x, y - 1) in ground:
-                frame = "face_b" if pier else "face_a"
-            else:
-                frame = "face_broken_a" if hashed(x, y) % 5 == 0 else ("face_b" if pier else "face_a")
-            add("wall_face", x, y, frame)
+            # the bay rhythm: every fourth column of a wall run is a pier, and each
+            # storey runs its own phase
+            floor_number = floor_of(x, y)
+            pier = (x % 4) == FLOOR_PIER_PHASE.get(floor_number, PIER_PHASE)
+            upper = (x, y - 2) in ground or (x, y - 1) in ground
+            add("wall_face", x, y, wall_frame(floor_number, x, y, pier, facing, upper))
             if facing:
                 add("shadow", x, y + 1, "wall_shadow")
         else:
@@ -770,7 +870,10 @@ def build_material(level: dict, props: list) -> dict:
         below, above = (x, y + 1), (x, y - 1)
         if below not in ground and below not in water and above not in ground:
             continue
-        if x % 4 != NICHE_PHASE:
+        # the buried storey is packed with recesses, the foundations are not
+        floor_number = floor_of(x, y)
+        phase = NICHE_PHASE % (3 if floor_number >= 3 else 4)
+        if x % (3 if floor_number >= 3 else 4) != phase:
             continue
         roll = hashed(x, y, 11) % 100
         frame = ("face_niche_scrolls" if roll < 30 else
@@ -839,6 +942,35 @@ def build_material(level: dict, props: list) -> dict:
     return roles
 
 
+def check_coverage(level: dict, material: dict) -> dict:
+    """Every production cell must be repainted before its layer may be hidden.
+
+    `Backdrop` (the walkable ground) is replaced by the floor and water layers;
+    `Geometry` (masonry) is replaced by wall faces plus dressed interior mass.
+    Hiding a layer that still owned an unpainted cell would delete the only picture
+    of a wall the Knight can collide with, so this is a hard precondition, checked
+    here in the authoring tool and again on the live level at runtime.
+    """
+    ground = cellset(level["layers"]["Backdrop"])
+    solid = cellset(level["layers"]["Geometry"])
+    floor_paint = {(int(c[0]), int(c[1])) for role in ("floor", "water", "water_edge", "coping")
+                   for c in material.get(role, [])}
+    wall_paint = {(int(c[0]), int(c[1])) for role in ("wall_face", "mass", "niche")
+                  for c in material.get(role, [])}
+    uncovered_ground = sorted(ground - floor_paint)
+    uncovered_solid = sorted(solid - wall_paint)
+    return {
+        "ground_total": len(ground),
+        "ground_painted": len(ground & floor_paint),
+        "solid_total": len(solid),
+        "solid_painted": len(solid & wall_paint),
+        "uncovered_ground": uncovered_ground[:8],
+        "uncovered_solid": uncovered_solid[:8],
+        "uncovered_ground_count": len(uncovered_ground),
+        "uncovered_solid_count": len(uncovered_solid),
+    }
+
+
 def near_building(x: int, y: int, building: set, radius: int) -> bool:
     for dy in range(-radius, radius + 1):
         for dx in range(-radius, radius + 1):
@@ -888,7 +1020,7 @@ def build_art(level: dict, props: list, material: dict) -> dict:
             "intent": entry["intent"],
         })
     return {
-        "version": 3,
+        "version": 4,
         "target_level": "res://data/levels/chapter_1_level_3.json",
         "source_level": "res://prototypes/gate3/level_data/chapter_1_level_3_gate3.json",
         "atlas": PROPS_ATLAS,
@@ -899,7 +1031,13 @@ def build_art(level: dict, props: list, material: dict) -> dict:
         "collision_layer": 1,
         "modulate": [0.94, 0.90, 0.88, 1.0],
         "level_layer_tint": {},
-        "hidden_level_layers": ["Decor"],
+        # Round 4: the material layers were being drawn *behind* the level's own two
+        # TileMapLayers (`Backdrop` z=-10, `Geometry` z=0), so 5 800 authored cells
+        # never reached the screen.  Hiding them is only allowed because coverage is
+        # exact: Gate3 floor == Backdrop cells, Gate3 wall_face + mass == Geometry
+        # cells.  `check_coverage` proves that here, and the runtime proves it again
+        # on the live level before it hides anything.
+        "hidden_level_layers": ["Decor", "Backdrop", "Geometry"],
         # C6: one smooth shade field replaces Gate 2's five hard vault bands.
         "shade": {
             "mode": "distance_field",
@@ -915,7 +1053,11 @@ def build_art(level: dict, props: list, material: dict) -> dict:
         # these are absolute: rock at the bottom, wall faces above the floor, the
         # shade field above the walls but below every actor and prop.
         "layer_style": {
-            "rock": {"z": -30, "modulate": [0.92, 0.90, 0.94, 1.0]},
+            # The scene's Background Parallax2D also sits at z = -30; the apron must
+            # stay in front of it, so both bands live at -29/-28, still well below
+            # the floor layer at -20.
+            "rock": {"z": -29, "modulate": [0.98, 0.95, 0.97, 1.0]},
+            "rock_deep": {"z": -28, "modulate": [0.80, 0.77, 0.84, 1.0]},
             "floor": {"z": -20, "modulate": [1.06, 1.00, 0.94, 1.0]},
             "coping": {"z": -19, "modulate": [1.14, 1.08, 0.98, 1.0]},
             "water": {"z": -18, "modulate": [0.96, 1.04, 1.10, 1.0]},
@@ -948,8 +1090,16 @@ def run(write: bool = True) -> dict:
         OUT_LEVEL.write_text(json.dumps(level, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
     props, notes = fit_placements(level, PLACEMENTS)
     material = build_material(level, props)
+    coverage = check_coverage(level, material)
+    if coverage["uncovered_ground_count"] or coverage["uncovered_solid_count"]:
+        raise SystemExit(
+            "Gate 3 would hide a production layer it has not repainted: "
+            f"{coverage['uncovered_ground_count']} ground cells (first {coverage['uncovered_ground']}), "
+            f"{coverage['uncovered_solid_count']} masonry cells (first {coverage['uncovered_solid']})"
+        )
     art = build_art(level, props, material)
-    return {"level": level, "art": art, "props": props, "report": report, "notes": notes}
+    return {"level": level, "art": art, "props": props, "report": report, "notes": notes,
+            "coverage": coverage}
 
 
 def main(argv=None) -> int:
@@ -972,6 +1122,10 @@ def main(argv=None) -> int:
             f"{name}={len(cells)}" for name, cells in art["material"].items()))
         print(f"GATE3 PROPS {len(props)} ({sum(1 for p in props if p['solid'])} solid)  "
               f"LIGHTS {len(art['lights'])}  ENTITIES {len(level['entities'])}")
+        coverage = result["coverage"]
+        print("GATE3 COVERAGE  Backdrop {ground_painted}/{ground_total}  "
+              "Geometry {solid_painted}/{solid_total}  hidden={hidden}".format(
+                  hidden=",".join(art["hidden_level_layers"]), **coverage))
         return 0
 
     if options.check:

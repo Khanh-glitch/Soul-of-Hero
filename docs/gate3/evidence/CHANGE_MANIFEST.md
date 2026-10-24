@@ -13,10 +13,10 @@ by every capture run. This table is the code and documentation that produces it.
 | path | files | bytes |
 | --- | --- | --- |
 | `docs/gate3` | 3 | 38,804 |
-| `prototypes/gate3` | 11 | 1,525,531 |
-| `tools/gate3` | 6 | 84,974 |
+| `prototypes/gate3` | 11 | 1,630,674 |
+| `tools/gate3` | 6 | 94,180 |
 | `.github/workflows/gate3-runtime.yml` | 1 | 14,469 |
-| **total** | **21** | **1,663,778** |
+| **total** | **21** | **1,778,127** |
 
 ## 2. Cell diff against the pinned Candidate A baseline
 
@@ -62,8 +62,8 @@ Candidate A authors 79 entities; Gate 3 authors 79. The lists are **identical, b
 
 ## 4. Prototype-local art and props
 
-* props: 36 (17 with a collider)
-* material layers: 11 — coping 34, decor 109, floor 3413, mass 707, niche 241, rock 5872, shadow 508, wall_face 979, water 66, water_edge 30, weather 326
+* props: 45 (21 with a collider)
+* material layers: 12 — coping 34, decor 109, floor 3413, mass 707, niche 267, rock 4218, rock_deep 1753, shadow 508, wall_face 979, water 66, water_edge 30, weather 316
 * derived art: 4 hazard frames, source and derived sha256 recorded, production atlas untouched
 
 ## 5. Frozen production paths
