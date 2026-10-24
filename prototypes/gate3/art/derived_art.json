@@ -1,0 +1,69 @@
+{
+  "note": "Prototype-local derived hazard frames. Only the flat violet plate is cleared to transparency; every spike pixel is the production pixel. The production atlas is not modified.",
+  "frames": [
+    {
+      "derived": "prototypes/gate3/art/peaks_1.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_1.png",
+      "source_sha256": "fb533481b3f69266f93c3b9af5ff9f5e61503ce4b2cbb3bb9e5468d63bc1ab7f",
+      "derived_sha256": "cf2a8f1aa69f35b507e302e5b0d3b4a789e06208b0b77d3ea71158c0afce944c",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "cleared_pixels": 151,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_2.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_2.png",
+      "source_sha256": "266e18aef1c348b806f40e34d555f2fcf9488b395b62054b61cbb2a94c306f13",
+      "derived_sha256": "9025fa8b509a72d11eb627d947cea3017b39b80fcbdf833d3d53d10e0f3e6a89",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "cleared_pixels": 175,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_3.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_3.png",
+      "source_sha256": "5c17d29182b3cb0a3ebe6be953c14c6796022c678f880fef767be89dfc17f338",
+      "derived_sha256": "922e068b42a475ad72ed97f985c0a7742a97d51655db34831e47540961db18c7",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "cleared_pixels": 208,
+      "size": [
+        16,
+        16
+      ]
+    },
+    {
+      "derived": "prototypes/gate3/art/peaks_4.png",
+      "source": "assets/environment/dungeon/items/spikes/peaks_4.png",
+      "source_sha256": "b2552ae814b6a57588f29f9b4a7611d03de4720273b36c1a424a71f3ee759ee5",
+      "derived_sha256": "6d8816a694c40be299a349b1a276ec744b5f868f648bf38bfadc1c16058d609b",
+      "plate_rgb": [
+        61,
+        37,
+        59
+      ],
+      "cleared_pixels": 199,
+      "size": [
+        16,
+        16
+      ]
+    }
+  ]
+}

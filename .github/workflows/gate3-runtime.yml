@@ -37,6 +37,9 @@ jobs:
           python3 tools/gate3/author_gate3.py --check | tee .artifacts/gate3/author_check.log
           python3 tools/gate3/author_gate3.py --stats | tee .artifacts/gate3/stats.log
           python3 tools/gate3/write_source_manifest.py --check | tee .artifacts/gate3/manifest.log
+          # The hazard frames this prototype derives from production art must be
+          # reproducible from their pinned sources, and the sources must be untouched.
+          python3 tools/gate3/make_derived_art.py --check | tee .artifacts/gate3/derived_art.log
           # Floor-by-floor reachability: every entity on all three storeys, and the
           # south ambulatory both ways, on the authored document.
           python3 tools/gate3/worldmodel.py audit --level prototypes/gate3/level_data/chapter_1_level_3_gate3.json \

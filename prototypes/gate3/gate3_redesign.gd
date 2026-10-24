@@ -15,9 +15,13 @@ extends Node2D
 ##      contact shadow, weather, dressed mass, wall faces, recesses, fittings) over
 ##      the level's own layers in separate TileMapLayers, leaving the authored JSON,
 ##      its two TileSet sources and its collision byte-identical;
-##   5. it hides Candidate A's live `Decor` layer (the cool-toned shelf/vessel frames
-##      that a warm multiply could not turn into stone) and paints the archive's own
-##      fittings instead — a node visibility change, not a data or art change;
+##   5. it hides Candidate A's live `Decor` layer (cobweb, skull and barrel frames
+##      that do not belong in an archive) and paints the archive's own fittings
+##      instead — a node visibility change, not a data or art change. It also swaps
+##      every spike's animation for a prototype-local *derived* copy of the same
+##      production frames with only the flat violet plate cleared to transparency: the
+##      plate was the last genuinely magenta thing on screen, and it was the hazard
+##      art rather than the decoration layer that carried it;
 ##   6. it builds ONE smooth shade field from a distance transform, replacing Gate
 ##      2's five hard vault bands: a 116x96 RGBA image, linearly filtered, so the
 ##      falloff has no steps at any zoom.
@@ -27,6 +31,14 @@ extends Node2D
 
 const PLACEMENT_PATH := "res://prototypes/gate3/visual_placement.json"
 const EXPECTED_LEVEL := "res://data/levels/chapter_1_level_3.json"
+## Prototype-local derived hazard frames (see tools/gate3/make_derived_art.py): the
+## production spike frames with only their flat violet plate made transparent.
+const HAZARD_FRAME_PATHS := [
+	"res://prototypes/gate3/art/peaks_1.png",
+	"res://prototypes/gate3/art/peaks_2.png",
+	"res://prototypes/gate3/art/peaks_3.png",
+	"res://prototypes/gate3/art/peaks_4.png",
+]
 
 ## Draw order, bottom to top. `layer_style` in the document carries each layer's
 ## absolute z_index and modulate; this list only fixes creation order.
@@ -42,6 +54,7 @@ var colliders_added := 0
 var material_layers_added := 0
 var lights_added := 0
 var hidden_layers: Array[String] = []
+var hazards_reskinned := 0
 var shade_built := false
 var _failures: Array[String] = []
 var _shade_node: Sprite2D
@@ -63,6 +76,7 @@ func attach_to_level(level: Node) -> bool:
 		_fail("Entities is not y-sorted, so props could not occlude correctly")
 		return false
 	_build_props(data, container)
+	_reskin_hazards()
 	_build_material(data, level)
 	_build_shade(data, level)
 	_hide_level_layers(data, level)
@@ -149,6 +163,50 @@ func _build_props(data: Dictionary, container: Node2D) -> void:
 
 	print("GATE3 PROPS: %d sprites (%d solid) attached to %s"
 		% [props_added, colliders_added, String(container.get_path())])
+
+
+# --------------------------------------------------------------- hazards ------
+
+func _reskin_hazards() -> void:
+	## C2, correctly diagnosed: the magenta Gate 2 was marked down for is the flat
+	## violet plate baked into `assets/environment/dungeon/items/spikes/peaks_*.png`.
+	## The plate is opaque, so no multiply tint can remove it; the production atlas is
+	## frozen, so this loads a derived copy with only that plate cleared. The spike
+	## pixels, the frame count and the 8 fps animation are unchanged, and the hazard
+	## stays exactly as dangerous and at least as legible: pale steel spikes now sit
+	## directly on the stone floor instead of on a lavender card.
+	var frames: Array[Texture2D] = []
+	for path: String in HAZARD_FRAME_PATHS:
+		var texture: Texture2D = load(path)
+		if texture == null:
+			_fail("cannot load the derived hazard frame %s" % path)
+			return
+		frames.append(texture)
+	for node: Node in get_tree().get_nodes_in_group(&"dungeon_hazards"):
+		var sprite := node.get_node_or_null("%AnimatedSprite2D") as AnimatedSprite2D
+		if sprite == null:
+			_fail("a spike hazard has no AnimatedSprite2D to re-skin")
+			continue
+		var source_frames := sprite.sprite_frames
+		var fps := 8.0
+		if source_frames != null and source_frames.has_animation(&"active"):
+			fps = source_frames.get_animation_speed(&"active")
+		var reworked := SpriteFrames.new()
+		if reworked.has_animation(&"default"):
+			reworked.remove_animation(&"default")
+		reworked.add_animation(&"active")
+		reworked.set_animation_speed(&"active", fps)
+		reworked.set_animation_loop(&"active", true)
+		for texture: Texture2D in frames:
+			reworked.add_frame(&"active", texture)
+		sprite.sprite_frames = reworked
+		sprite.play(&"active")
+		hazards_reskinned += 1
+	if hazards_reskinned == 0:
+		_fail("no spike hazards were found to re-skin, which cannot be right")
+	else:
+		print("GATE3 HAZARDS: %d spike hazards re-skinned onto derived frames (violet plate cleared)"
+			% hazards_reskinned)
 
 
 # -------------------------------------------------------------- material ------

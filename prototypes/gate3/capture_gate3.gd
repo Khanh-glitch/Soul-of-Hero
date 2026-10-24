@@ -299,10 +299,10 @@ func _attach_overlay() -> bool:
 		return false
 	for _frame: int in 2:
 		await get_tree().physics_frame
-	print("GATE3 OVERLAY ATTACHED: %d props, %d solid bodies, %d material layers, %d lights, shade=%s"
+	print("GATE3 OVERLAY ATTACHED: %d props, %d solid bodies, %d material layers, %d lights, %d hazards re-skinned, shade=%s"
 		% [int(_overlay.get("props_added")), int(_overlay.get("colliders_added")),
 			int(_overlay.get("material_layers_added")), int(_overlay.get("lights_added")),
-			str(bool(_overlay.get("shade_built")))])
+			int(_overlay.get("hazards_reskinned")), str(bool(_overlay.get("shade_built")))])
 	if int(_overlay.get("colliders_added")) <= 0:
 		_push("the overlay added no collision bodies, which cannot be right")
 	_expect(bool(_overlay.get("shade_built")),
@@ -416,6 +416,29 @@ func _check_contracts() -> void:
 		_expect(not decor.visible, "Candidate A's Decor layer is hidden (C2)")
 	_expect((_overlay.get("hidden_layers") as Array).size() >= 1,
 		"the overlay reports the layer it replaced")
+
+	# C2, correctly diagnosed: the violet was the hazard plate, not the decoration.
+	var spikes := 0
+	for entity: Dictionary in _dungeon.level_data.get("entities", []):
+		if String(entity.get("type", "")) == "spikes":
+			spikes += 1
+	_expect(int(_overlay.get("hazards_reskinned")) == spikes,
+		"all %d spike hazards were re-skinned onto derived frames" % spikes)
+	var hazard_sprites := 0
+	for node: Node in get_tree().get_nodes_in_group(&"dungeon_hazards"):
+		var sprite := node.get_node_or_null("%AnimatedSprite2D") as AnimatedSprite2D
+		if sprite == null or sprite.sprite_frames == null:
+			continue
+		hazard_sprites += 1
+		_expect(sprite.sprite_frames.has_animation(&"active")
+			and sprite.sprite_frames.get_frame_count(&"active") == 4,
+			"a spike hazard still animates 4 frames")
+		var frame := sprite.sprite_frames.get_frame_texture(&"active", 0)
+		var atlas := frame as AtlasTexture
+		_expect(atlas == null,
+			"a spike hazard is no longer drawn from the production plate-bearing frame")
+	_expect(hazard_sprites == spikes,
+		"%d live hazard sprites for %d authored spikes" % [hazard_sprites, spikes])
 
 
 func _count_huds() -> int:
