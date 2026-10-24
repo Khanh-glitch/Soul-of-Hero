@@ -1,9 +1,9 @@
 == ObjectDB / leak notices ==
 GATE3 OBJECTS: ObjectDB holds 13948 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 12757 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-GATE3 OBJECTS: ObjectDB holds 13755 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13593 objects at the end of the run
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
 == unused/leaked instances named by --verbose ==
 
@@ -77,7 +77,7 @@ GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 
 GATE3 COLLISION: Knight at (712.8999, 343.518) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 935 px travelled, 0 fights, 0 dashes, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12757 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 754 nodes
 GATE3 PROPS: 36 sprites (17 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  5872 cells  z=-30
@@ -92,20 +92,20 @@ GATE3 MATERIAL: Gate3_wall_face  979 cells  z=-12
 GATE3 MATERIAL: Gate3_niche  241 cells  z=-11
 GATE3 MATERIAL: Gate3_decor  109 cells  z=-10
 GATE3 SHADE: 116x96 distance field, falloff 26 cells, one node
-GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1473 px over 23 cells in 2519 frames, HP 76
-GATE3 FLOOR DOOR: Tầng 2 moved the Knight 404 px to (1704.0, 680.0)
-GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 76
-GATE3 WALK: floor2_stacks  (1704, 680) -> (1192, 744)  516 px over 42 cells in 385 frames, HP 76
-GATE3 COLLISION: Knight at (610.514, 649.0328) is clear of every wall and prop
+GATE3 WALK: descent approach  (280, 216) -> (1751, 279)  1473 px over 17 cells in 3407 frames, HP 746
+GATE3 FLOOR DOOR: Tầng 2 moved the Knight 403 px to (1704.0, 680.0)
+GATE3 WALK: floor2_arrival  (1704, 680) -> (1704, 680)  0 px over 0 cells in 0 frames, HP 746
+GATE3 WALK: floor2_stacks  (1704, 680) -> (1192, 744)  516 px over 42 cells in 385 frames, HP 746
+GATE3 COLLISION: Knight at (265.7858, 884.3817) is clear of every wall and prop
 GATE3 COLLISION: 17 solid prop footprints probed, each covered by a body
-GATE3 COLLISION: open floor at (610.514, 645.0328) is free of prop bodies
-GATE3 ROUTE: 65 cells walked, 1988 px travelled, 7 fights, 71 dashes, HP 1100 -> 0 (delta 1100)
+GATE3 COLLISION: open floor at (265.7858, 880.3817) is free of prop bodies
+GATE3 ROUTE: 59 cells walked, 1988 px travelled, 11 fights, 119 dashes, HP 1100 -> 0 (delta 1100)
 GATE3 CAMERA FRAMES: 0
-GATE3 OBJECTS: ObjectDB holds 13755 objects at the end of the run
-GATE3 OBJECTS: the live scene tree holds 849 nodes
+GATE3 OBJECTS: ObjectDB holds 13593 objects at the end of the run
+GATE3 OBJECTS: the live scene tree holds 837 nodes
 GATE3 OBJECTS: ObjectDB holds 13948 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 12757 objects at the end of the run
-GATE3 OBJECTS: ObjectDB holds 13755 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 13593 objects at the end of the run
 GATE3 PROPS: 36 sprites (17 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  5872 cells  z=-30
 GATE3 MATERIAL: Gate3_floor  3413 cells  z=-20
@@ -156,7 +156,7 @@ GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 
 GATE3 COLLISION: Knight at (712.8999, 343.518) is clear of every wall and prop
 GATE3 ROUTE: 73 cells walked, 935 px travelled, 0 fights, 0 dashes, HP 1100 -> 1100 (delta 0)
 GATE3 CAMERA FRAMES: 4
-GATE3 OBJECTS: ObjectDB holds 12757 objects at the end of the run
+GATE3 OBJECTS: ObjectDB holds 12758 objects at the end of the run
 GATE3 OBJECTS: the live scene tree holds 754 nodes
 GATE3 PROPS: 36 sprites (17 solid) attached to /root/Gate3NativeCapture/AppRoot/RouteHost/Game/Level/Entities
 GATE3 MATERIAL: Gate3_rock  5872 cells  z=-30
