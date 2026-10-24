@@ -860,12 +860,14 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			continue
 		if _disengage_frames > 0:
 			_disengage_frames -= 1
-		# Fight only what is on top of the Knight. Nine captures price a self-chosen
-		# fight at 150-300 of the Knight's 1100 health; a fight started at range is the
-		# same fight, one enemy closer, with the Knight's opening hit landing for free.
+		# Deal with an enemy before it reaches the Knight, and deal with it one at a
+		# time. Fighting only on contact was measured on the deep route: the Knight
+		# walked into a crowd of five, they all arrived together, and he died with the
+		# route unfinished. Starting the fight at range means the enemy the harness
+		# chose is the enemy that is there when the first sword swing lands.
 		if _disengage_frames <= 0 and _can_afford_a_fight() \
 				and not _hazard_cache.has(_current_cell()):
-			var touching := _nearest_enemy(34.0, Vector2.ZERO)
+			var touching := _nearest_enemy(72.0, delta if delta.length() > 1.0 else Vector2.ZERO)
 			if touching != null:
 				var before := int(touching.get("health"))
 				var fought := await _engage_enemy(touching, label)
