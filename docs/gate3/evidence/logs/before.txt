@@ -19,19 +19,19 @@ GATE3 CAMERA: res://.artifacts/gate3/after_cam_baseline_1024_landmark.png (1024x
 GATE3 CAMERA: res://.artifacts/gate3/after_cam_archive_1024_landmark.png (1024x576) zoom=(2.0, 2.0)
 GATE3 RESOLUTION: rendering at (1280, 720)
 GATE3 PLAN: cloister -> (38, 18) is 15 cells
-GATE3 TRACE: cloister frame 120 cell (37, 17) HP 1100 since_progress 2 nearest 388 waypoint (37, 17)
+GATE3 TRACE: cloister frame 120 cell (37, 17) HP 1100 since_progress 2 nearest 389 waypoint (37, 17)
 GATE3 WALK: cloister  (489, 201) -> (615, 295)  158 px over 14 cells in 143 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_cloister.png (1280x720) at (614.9133, 295.2265)
 GATE3 PLAN: south_loop -> (46, 23) is 14 cells
-GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 4 nearest 337 waypoint (45, 23)
+GATE3 TRACE: south_loop frame 120 cell (44, 23) HP 1100 since_progress 4 nearest 330 waypoint (45, 23)
 GATE3 WALK: south_loop  (615, 295) -> (745, 375)  152 px over 13 cells in 133 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_south_loop.png (1280x720) at (744.631, 374.9838)
 GATE3 PLAN: combat_space -> (58, 21) is 15 cells
-GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 since_progress 2 nearest 178 waypoint (58, 21)
+GATE3 TRACE: combat_space frame 120 cell (58, 22) HP 1100 since_progress 2 nearest 176 waypoint (58, 21)
 GATE3 WALK: combat_space  (745, 375) -> (935, 342)  193 px over 14 cells in 128 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_combat_space.png (1280x720) at (934.7823, 342.2592)
 GATE3 PLAN: return_route -> (44, 21) is 19 cells
-GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 306 waypoint (47, 23)
+GATE3 TRACE: return_route frame 120 cell (47, 23) HP 1100 since_progress 2 nearest 293 waypoint (47, 23)
 GATE3 WALK: return_route  (935, 342) -> (713, 344)  222 px over 18 cells in 168 frames, HP 1100
 GATE3 CAPTURE: res://.artifacts/gate3/before_return_route.png (1280x720) at (712.8999, 343.518)
 GATE3 COLLISION: Knight at (712.8999, 343.518) is clear of every wall and prop
