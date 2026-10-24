@@ -100,6 +100,7 @@ var _camera_frames := 0
 var _engaged_fights := 0
 var _hazard_cache: Dictionary = {}
 var _enemy_heat: Dictionary = {}
+var _dashes := 0
 ## Frames left before the harness is willing to start another fight after it broke
 ## one off to survive. Without this it re-engages the same enemy every frame.
 var _disengage_frames := 0
@@ -493,18 +494,26 @@ func _build_enemy_heat() -> Dictionary:
 	## Cells close to an authored enemy are less attractive. This is a routing cost,
 	## not a claim about where the enemies will be: they chase, and the harness still
 	## fights whatever ends up in front of it.
+	##
+	## The radius is the enemy's own detection range, not a decorative neighbourhood.
+	## The earlier four-cell ring let routes pass straight through a skeleton's
+	## 205-pixel awareness cone, which is why a "quiet" route still cost 408 health
+	## crossing the gallery on floor 1 with no fight logged at all.
+	##
+	## Only the enemies raise the cost. Coins, chests, sigils and checkpoints were
+	## pulling routes away from the very things the walk is meant to visit.
 	var heat := {}
 	for entity: Dictionary in _dungeon.level_data.get("entities", []):
 		var kind := String(entity.get("type", ""))
-		if kind == "player" or kind == "floor_door" or kind == "torch":
+		if kind != "skeleton" and kind != "skeleton_reaper":
 			continue
 		var centre := Vector2i(floori(float(entity["position"][0]) / TILE),
 			floori(float(entity["position"][1]) / TILE))
-		for dx: int in range(-4, 5):
-			for dy: int in range(-4, 5):
+		for dx: int in range(-13, 14):
+			for dy: int in range(-13, 14):
 				var cell: Vector2i = centre + Vector2i(dx, dy)
 				var ring := maxi(absi(dx), absi(dy))
-				var weight := 6 if ring <= 2 else (3 if ring <= 3 else 1)
+				var weight := 40 if ring <= 2 else (20 if ring <= 4 else (6 if ring <= 8 else 1))
 				heat[cell] = int(heat.get(cell, 0)) + weight
 	return heat
 
@@ -806,7 +815,8 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 		# Fight only what is on top of the Knight. Nine captures price a self-chosen
 		# fight at 150-300 of the Knight's 1100 health; a fight started at range is the
 		# same fight, one enemy closer, with the Knight's opening hit landing for free.
-		if _disengage_frames <= 0 and not _hazard_cache.has(_current_cell()):
+		if _disengage_frames <= 0 and _can_afford_a_fight() \
+				and not _hazard_cache.has(_current_cell()):
 			var touching := _nearest_enemy(34.0, Vector2.ZERO)
 			if touching != null:
 				var before := int(touching.get("health"))
@@ -859,10 +869,14 @@ func _walk_to_cell(label: String, target_cell: Vector2i) -> bool:
 			if _hazard_cache.has(route[mini(index + ahead, route.size() - 1)]):
 				hazard_ahead = true
 				break
-		if hazard_ahead and frames % 18 == 0:
+		# Dash across a hazard bay, and dash while an enemy is on the Knight's heels:
+		# 0.18 s of dash invulnerability is a whole enemy swing not taken.
+		var chased := _nearest_enemy_distance() < 100.0
+		if (hazard_ahead or chased) and frames % 6 == 0:
 			Input.action_press("dash", 1.0)
 			await get_tree().physics_frame
 			Input.action_release("dash")
+			_dashes += 1
 		await get_tree().physics_frame
 		for action: String in actions:
 			Input.action_release(action)
@@ -1171,8 +1185,8 @@ func _point_hits_gate3_collision(
 
 func _report_walk() -> void:
 	var end_health := int(_player.get("health"))
-	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, HP %d -> %d (delta %d)"
-		% [_walked_cells, _walked_pixels, _engaged_fights, _start_health, end_health,
+	print("GATE3 ROUTE: %d cells walked, %.0f px travelled, %d fights, %d dashes, HP %d -> %d (delta %d)"
+		% [_walked_cells, _walked_pixels, _engaged_fights, _dashes, _start_health, end_health,
 			_start_health - end_health])
 	print("GATE3 CAMERA FRAMES: %d" % _camera_frames)
 	var counted := 0
