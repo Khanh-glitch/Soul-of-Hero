@@ -74,6 +74,9 @@ def main(argv: list[str]) -> int:
     print()
     print("Headless replays of the same production descent (authored spawn, the level's")
     print("own floor doors, production input actions). Health is 1100 for every run.")
+    print("A run that respawns has its bar refilled, so `HP lost` is the net delta while")
+    print("`hazard` and `enemy` are the ledger's gross totals; `unexplained` is health the")
+    print("ledger could not attribute to a hazard tick or a blow inside its window.")
     print()
     print("| # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |")
     print("|---|---|---|---|---|---|---|---|---|---|")
@@ -88,12 +91,18 @@ def main(argv: list[str]) -> int:
         return 1
     deltas = [run["delta"] for run in runs]
     reached = sum(1 for run in runs if run["floors"] >= 3)
-    explained = sum(run["hazard"] + run["enemy"] for run in runs)
-    total = sum(deltas) or 1
+    # Explained share is measured against the damage the ledger saw, not against the
+    # net health delta: a death restores the whole bar, so a run that respawned can
+    # lose 1044 health and still finish at full.  Damage / (damage + unexplained) is
+    # the only ratio that stays true across runs with different respawn counts.
+    accounted = sum(run["hazard"] + run["enemy"] for run in runs)
+    unexplained = sum(run["unexplained"] for run in runs)
+    total = (accounted + unexplained) or 1
     print("GATE3 STABILITY SUMMARY: runs={} three_storey={} hp_lost_min={} median={} max={} "
-          "respawns={} explained={:.1f}%".format(
+          "respawns={} damage={} unexplained={} explained={:.1f}%".format(
               len(runs), reached, min(deltas), int(statistics.median(deltas)), max(deltas),
-              sum(run["respawns"] for run in runs), 100.0 * explained / total))
+              sum(run["respawns"] for run in runs), accounted, unexplained,
+              100.0 * accounted / total))
     spread = max(deltas) - min(deltas)
     print("GATE3 STABILITY SPREAD: max-min={} ({:.0f}% of a 1100 health bar)".format(
         spread, 100.0 * spread / 1100.0))

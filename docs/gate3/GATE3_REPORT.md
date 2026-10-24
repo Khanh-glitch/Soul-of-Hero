@@ -316,6 +316,9 @@ the workflow step that measures it says so in its own output.
 | `inspection_crop_{armarium_alcove,cloister_garth,descent_landing,south_loop,bay_rhythm,shade_depth,hazard_bay}_3x.png` | seven labelled 3× nearest-neighbour crops of native frames |
 | `route_and_connectivity_diagram.png` | the one offline artefact: the authored plan, the props and the descents, labelled as a diagram on its own face |
 | `CHANGE_MANIFEST.md` | machine-generated inventory, cell diff and frozen-path proof |
+| `after_respawn_death.png`, `after_respawn_after.png` | round 4: the death frame on the floor-2 spike, and the same camera after the checkpoint respawn |
+| `logs/stability_run_{1,2,3,4}.txt`, `logs/stability_table.txt` | round 4: the four headless descents and the table `tools/gate3/stability_report.py` derives from them |
+| `logs/respawn.txt` | round 4: the death/respawn trial — checkpoint touch, death, revival, assertions |
 | `logs/*.txt` | every capture log, the authoring checks, the audit, the leak probe and the log scan |
 
 ## 11. Provenance and changed files
@@ -383,11 +386,17 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
    `a6afe5d`, 1004 at `a4c7e31`. The descent always completes; the health it costs is not controlled,
    and that variance is the honest finding about this level's difficulty. This is a genuine difficulty finding about `chapter_1_level_3`, not a
    correction the gate is allowed to make: enemies are part of the frozen entity list.
+   Round 4 measures the same descent four times with a ledger attached (§13.6): all four
+   reach floor 3, and the cost still ranges from 0 to 1044 health, so the finding stands;
+   what changed is that a death now costs a storey instead of the level.
 2. **The shipped death flow has no respawn.** `game/ui/HUD.tscn` contains a
    `RespawnButton` ("HỒI SINH") wired to nothing, hidden in `_ready()`, and `hud.gd`
    never connects it; the only wired death buttons restart the level. Dying on floor 2
    therefore costs the whole level, which is what makes (1) as expensive as it is. This
-   is a production defect outside Gate 3's writable paths — recorded, not touched.
+   is a production defect outside Gate 3's writable paths — recorded, not touched. Round
+   4 demonstrates that the shipped `respawn()` and the shipped `player_respawned`
+   handling are sufficient when something calls them (§13.5), and the prototype director
+   does exactly that; the production gap itself is still open.
 3. **The ObjectDB notice is characterised but not explained** (§10).
 4. **The lower-storey frames come from one specific run.** `after_floor2_*`,
    `after_floor3_camp.png` and `after_combat_load.png` in the tree were captured by run
@@ -398,8 +407,8 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
    the floor-1 landmark only; the lower storeys keep the level's own camera.
 6. **Performance is measured under a software rasteriser**, so the render figure is a
    ceiling; no GPU number exists for this build in CI.
-7. **The archive material is drawn behind two production layers, and therefore does not
-   appear.** `crypt_entrance.tscn` gives `Backdrop` z = −10 and `Geometry` z = 0, while
+7. **(Fixed in round 4 — §13.1.) The archive material was drawn behind two production
+   layers, and therefore did not appear.** `crypt_entrance.tscn` gives `Backdrop` z = −10 and `Geometry` z = 0, while
    every Gate 3 material layer is added with `z_as_relative = false` at z = −30 … −10, and
    `_hide_level_layers()` hides only `Decor`. Comparing `before_spawn.png` with
    `after_spawn.png` at floor and wall pixels returns identical values, which is how the
@@ -408,13 +417,203 @@ changed cell — is `docs/gate3/evidence/CHANGE_MANIFEST.md`.
    masonry is the 0x72 tileset with its salmon wall caps. Only `rock`, the props, the
    hazard reskin and the lights are on screen. `docs/gate3/ROUND_4_PLAN.md` records the
    fix that is proposed for the next round, together with the other three review items
-   (combat stability, respawn, lower-storey camera). Nothing in this report is retracted:
-   the material evidence in §8 measured the authored document and the capture logs, not
-   the composited frame.
+   (combat stability, respawn, lower-storey camera). Round 4 executed that plan; §13
+   records both the fix and its measured result. Nothing in this report is retracted: the
+   material evidence in §8 measured the authored document and the capture logs, not the
+   composited frame.
 
 ---
 
-## 13. Reproduction
+## 13. Round 4 — the four review items, measured
+
+Round 4 was opened after this gate's technical pass, not instead of it: the frozen
+evidence above stays as it was, and every number below comes from a new native run
+(`Gate 3 runtime` run `40088983090`, every step green, 13 m 13 s; logs in
+`docs/gate3/evidence/logs/`). All round-4 code lives in `prototypes/gate3/**` and
+`tools/gate3/**`; `git diff --name-only fa83414..HEAD -- data game tests assets
+project.godot` is still empty. The plan and its three approved decisions are in
+`docs/gate3/ROUND_4_PLAN.md`.
+
+### 13.1 Package A — the archive material finally reaches the screen
+
+Section 12.7 described the defect: `Backdrop` (z −10) and `Geometry` (z 0) sat above
+every Gate 3 material layer (z −30 … −10), so 5 800 authored cells were invisible.
+The fix hides those two production layers as well (`hidden_level_layers` is now
+`["Decor", "Backdrop", "Geometry"]`) — and, because hiding a layer with nothing under
+it would punch a hole in the level, the capture measures coverage first and refuses to
+run if one cell is missing:
+
+```
+GATE3 COVERAGE: Backdrop 3413/3413 cells painted by ["floor", "water", "water_edge", "coping"]
+GATE3 COVERAGE: Geometry 1686/1686 cells painted by ["wall_face", "mass", "niche"]
+```
+
+The check is per cell, not per layer: an uncovered cell prints its coordinates and
+fails the run. Only `visible` is changed — the production TileSet keeps its collision,
+so the walking and the body-safe routes in §6 are measured against the same solids as
+before.
+
+The pixel test that found the bug now fails as it should: floor and wall pixels differ
+between `before_spawn.png` and `after_spawn.png`, and the 3× crops
+(`inspection_crop_*_3x.png`) show brick courses, piers, book niches, moss and damp,
+wall shadow and the `Gate3_Shade` field instead of the original salmon-capped tiles.
+
+### 13.2 Package B — sixteen rock states, no repeating diagonal band
+
+`rock` used to be two near-identical 16 px hatches chosen by a 2-D hash, which at 2×
+zoom read as a periodic diagonal weave. It now uses 2 frames × 8 flip/transpose
+alternatives = 16 states, chosen by hash *and* by distance from the building (larger,
+lighter blocks against the wall; darker and plainer further out), with the rock radius
+extended from 14 to 22 cells so no frame in the playable area sees the flat
+`Background/Color` polygon:
+
+```
+GATE3 MATERIAL: rock 4218  rock_deep 1753  floor 3413  wall_face 979  mass 707  coping 34  niche 241
+GATE3 VARIANTS: rock  4218 cells, 14 alternative tiles in use
+GATE3 VARIANTS: rock_deep  1753 cells, 14 alternative tiles in use
+```
+
+All eighteen hazards stay on contrasting ground: the spikes are hazard-reskinned and
+lit, and the framing measurement below excludes none of them.
+
+### 13.3 Package C — the lower storeys have anchors
+
+Floors 2 and 3 had 8 and 6 props and one light each, which is why the review found them
+unanchored. They now carry 12 and 9 props and 3 lights each, and all of them are
+semantic: the opened press whose contents were taken, a range that came down, the pier
+under the crossfire hall, the lectern where the seals are counted, the rope still
+hanging into the dark.
+
+```
+GATE3 PROPS 45 (21 solid)  LIGHTS 10  ENTITIES 79      # was 36 props / 6 lights
+```
+
+The storeys also differ in material: floor 2 shifts the pier rhythm and uses a thicker
+dado; floor 3 leans on the broken faces and the niches. The entity list is untouched —
+`GATE3 MANIFEST OK … 79 entities identical` on every run of this round.
+
+### 13.4 Package D — a camera band per storey
+
+The camera used the level's single `camera_bounds` covering all 116 × 84 cells, so it
+could frame the empty band between two storeys. It now derives a band per storey from
+`metadata.rooms[].rect` and switches limits when the Knight changes floor:
+
+```
+GATE3 CAMERA BAND: floor 1 cells [P: (1.0, -2.0), S: (110.0, 31.0)]
+GATE3 CAMERA BAND: floor 2 cells [P: (11.0, 34.0), S: (103.0, 34.0)]
+GATE3 CAMERA BAND: floor 3 cells [P: (2.0, 70.0), S: (113.0, 29.0)]
+```
+
+Measured composition of each real captured frame (share of the visible 40 × 22.5 cells):
+
+| station | floor | building | rock | void | before (plan §1.2) |
+|---|---|---|---|---|---|
+| spawn | 1 | 56.6 % | 43.4 % | 0 % | — |
+| archive_entry | 1 | 60.8 % | 39.2 % | 0 % | — |
+| landmark | 1 | 71.2 % | 28.8 % | 0 % | 70.5 % |
+| descent_landing | 1 | 70.4 % | 29.6 % | 0 % | — |
+| cloister | 1 | 78.0 % | 22.0 % | 0 % | 74.8 % |
+| south_loop | 1 | 78.2 % | 21.8 % | 0 % | — |
+| combat_space | 1 | 73.9 % | 26.1 % | 0 % | 62.7 % |
+| return_route | 1 | 77.7 % | 22.3 % | 0 % | — |
+| combat_load | 1 | 73.8 % | 26.2 % | 0 % | — |
+| **floor2_arrival** | 2 | **45.3 %** | 54.7 % | **0 %** | 25.8 % / 49.2 % / 25.0 % |
+| floor2_stacks | 2 | 61.9 % | 38.1 % | 0 % | 62.3 % |
+| **floor3_camp** | 3 | **59.2 %** | 40.8 % | 0 % | 58.5 % |
+
+Two honest results: `void` is now 0 % everywhere, and the worst frame improved from
+25.8 % to 45.3 % building — but **45.3 % and 59.2 % still miss the plan's ≥ 60 %
+target** at `floor2_arrival` and `floor3_camp`. The arrival frame's remaining deficit is
+the room itself: it is the largest open floor in the level and its floor belongs to
+the produced chart, so pushing it past 60 % means either moving the camera off the
+Knight or adding cells the level does not have. I have not moved the camera away from
+the player to make a statistic look better.
+
+### 13.5 Package E — death and respawn, on the real production path
+
+`prototypes/gate3/respawn_director.gd` listens for `GameEvents.player_died`, waits
+1.2 s for the death animation, then calls the Knight's own `respawn()`. The shipped HUD
+already handles the rest (`player_respawned` → overlay hidden, pause released, toast
+shown), so no production file was touched, and no second HUD, Knight or singleton was
+created — decision D1(a).
+
+The trial is a real death on a real floor-2 spike, after the floor-2 checkpoint has
+been touched:
+
+```
+GATE3 CHECKPOINT: touched the flag at (98, 46), checkpoint now (1576.0, 744.0)
+GATE3 RESPAWN: floor-2 checkpoint active at (1576.0, 744.0)
+GATE3 RESPAWN: attempt 1, the hazard at (69, 41)
+GATE3 RESPAWN: died at (1110.998, 664.5607), back at (1576.0, 744.0) (checkpoint (1576.0, 744.0)), HP 1100/1100, paused=false
+GATE3 RESPAWN SUMMARY: checkpoint (1576.0, 744.0), respawned (1576.0, 744.0), HP 1100/1100, paused=false, deaths 1
+GATE3 RESPAWN TOTAL: 1 deaths recovered at a checkpoint during this run
+GATE3 CAPTURE TEST PASSED: 4 frames, 0 camera frames (after)
+```
+
+Two native frames belong to it: `after_respawn_death.png` (the moment of death, the
+Knight's health at zero on the spike) and `after_respawn_after.png` (the same camera,
+full health, standing on the checkpoint flag). The run asserts, in order: the Knight is
+alive again; health equals maximum; the tree is not paused; the respawn position is
+within 4 px of the checkpoint; the director's respawn counter increased; the production
+death overlay is hidden again. An earlier attempt failed honestly at HP 240 (§13.7),
+which is how the hazard approach was corrected.
+
+### 13.6 Package F — four headless descents, with a damage ledger
+
+Every descent is the same production run (authored spawn, the level's own floor doors,
+production input actions) with a ledger attached to `health_changed`:
+
+| # | floors | fights | respawns | cells | HP lost | hazard | enemy | unexplained | capture |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 | 1..3 | 11 | 1 | 121 | 328 | 60 | 1368 | 0 | passed |
+| 2 | 1..3 | 9 | 1 | 151 | 0 | 40 | 1040 | 20 | passed |
+| 3 | 1..3 | 9 | 0 | 167 | 1044 | 254 | 636 | 154 | passed |
+| 4 | 1..3 | 9 | 1 | 126 | 502 | 140 | 1308 | 154 | recorded |
+
+```
+GATE3 STABILITY SUMMARY: runs=4 three_storey=4 hp_lost_min=0 median=415 max=1044 respawns=3 damage=4846 unexplained=328 explained=93.7%
+GATE3 STABILITY SPREAD: max-min=1044 (95% of a 1100 health bar)
+```
+
+Read honestly, this says three things.
+
+* **The descent is reliable now.** Four of four runs reached floor 3 on foot, two of
+  them after dying and being returned to a floor checkpoint — the respawn director turned
+  a lost level into a checkpoint restart, which is exactly the production flow the review
+  asked for.
+* **The cost is still not controlled.** Net health lost ranges from 0 to 1044 out of
+  1100; the ledger attributes 4 846 points of damage and cannot attribute 328, i.e.
+  **93.7 % explained**, with two runs at 100 % and 98.1 % and two at 85.3 % and 89.2 %.
+  The plan's declared threshold (median ≈ 40 % of the bar, max ≤ 75 %) is met on the
+  median — 415/1100 = 37.7 % — and **missed on the maximum**, 1044/1100 = 94.9 %.
+  Since `data/**` is frozen (decision D2(a)), this is reported, not tuned.
+* **"HP lost" and "damage" are different numbers by design.** A respawn refills the bar,
+  so run 2 ends at full health after having taken 1 080 damage. The report tool
+  therefore measures explained share against ledger damage, not against the net delta.
+
+The first two stability runs of this round also produced a real finding: after a death
+the director returned the Knight to `GameSession.checkpoint`, which was still the
+floor-1 spawn, and the grid router — which does not model floor doors — then reported
+"no route to the descent". Runs 1 and 3 halted on it. The fix was not a router change:
+each descent now walks to the storey's checkpoint flag after landing
+(`GATE3 CHECKPOINT: touched the flag at (98, 46)` / `(17, 84)`), so a death costs the
+storey, not the level. That is also what the production game does.
+
+### 13.7 What round 4 did not fix
+
+1. `floor2_arrival` (45.3 %) and `floor3_camp` (59.2 %) stay below the plan's ≥ 60 %
+   building target; the arrival room is genuinely the emptiest frame in the level.
+2. Maximum descent cost is 94.9 % of the health bar, and the ledger leaves 6.3 % of the
+   damage unattributed — both reported under D2(a), neither tuned.
+3. The deep evidence job still retries the whole Godot process; the retry did not fire in
+   the green run, but the mechanism is unchanged.
+4. The ObjectDB notice (§10) is unchanged.
+5. Camera bands are derived from room rects, not hand-composed; they satisfy the
+   "no storey-gap framing" criterion but are not a designed shot per room.
+
+---
+
+## 14. Reproduction
 
 ```bash
 # the authored documents, and the checks the workflow runs on them
@@ -438,7 +637,7 @@ The substitution in steps 3–5 is a runner-local action; the workflow never com
 back, and `git diff --name-only fa83414..HEAD -- data game tests assets project.godot`
 is the check that proves it.
 
-## 14. Rollback
+## 15. Rollback
 
 Gate 3 is additive: every file it adds lives under `docs/gate3/`, `prototypes/gate3/`,
 `tools/gate3/` or `.github/workflows/gate3-runtime.yml`, and no production file is
