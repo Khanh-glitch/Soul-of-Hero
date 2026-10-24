@@ -53,6 +53,7 @@ jobs:
             2>&1 | tee .artifacts/chapter1/import.log
 
       - name: Compile-check the chapter harness
+        continue-on-error: true
         run: |
           set -euo pipefail
           timeout 300s godot --headless --audio-driver Dummy --path . \
@@ -119,6 +120,25 @@ jobs:
           set +eo pipefail
           python3 -m pip install --quiet pillow
           python3 tools/chapter1_art/evidence.py
+
+      # A parse error in the presentation layer must not stop the evidence run
+      # (the frames are how the error gets diagnosed), but it must fail the job,
+      # so this is the gate that reads the capture logs back.
+      - name: Verify the art layer built on every level
+        if: always()
+        run: |
+          set -uo pipefail
+          rc=0
+          for level_id in chapter_1_level_{1..10}; do
+            logfile=".artifacts/chapter1/${level_id}_after.log"
+            if ! grep -qE "CHAPTER1 CAPTURE: .* art=on facade_cells=[1-9]" "$logfile" 2>/dev/null; then
+              echo "MISSING ART: ${level_id}"
+              grep -hE "SCRIPT ERROR|Parse Error|CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -5
+              rc=1
+            fi
+          done
+          [ $rc -eq 0 ] && echo "ART LAYER OK on all ten levels"
+          exit $rc
 
       - name: Publish logs, statuses and the gallery
         if: always()

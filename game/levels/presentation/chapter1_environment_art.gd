@@ -228,7 +228,7 @@ func _tile_coords(entry: Array) -> Vector2i:
 	return Vector2i.ZERO
 
 
-func _set(layer: TileMapLayer, cell: Vector2i, entry: Array) -> void:
+func _put(layer: TileMapLayer, cell: Vector2i, entry: Array) -> void:
 	layer.set_cell(cell, _tile_source(entry), _tile_coords(entry))
 
 
@@ -276,7 +276,7 @@ func _build_facade() -> void:
 		for cell: Vector2i in geometry:
 			if floor.has(cell):
 				continue
-			_set(wall, cell, backing[posmod(cell.x * 31 + cell.y * 17, backing.size())])
+			_put(wall, cell, backing[posmod(cell.x * 31 + cell.y * 17, backing.size())])
 		wall.update_internals()
 
 	# 2. Facade above the wall band: masonry courses plus a coping course, using
@@ -308,13 +308,13 @@ func _build_facade() -> void:
 			var target := Vector2i(cell.x, top - step)
 			if floor.has(target) or geometry.has(target) or placed.has(target):
 				break
-			_set(facade, target, courses[posmod(cell.x * 5 + step * 3, courses.size())])
+			_put(facade, target, courses[posmod(cell.x * 5 + step * 3, courses.size())])
 			placed[target] = true
 			stack = step
 		if stack == rows:
 			var cap_cell := Vector2i(cell.x, top - rows - 1)
 			if not floor.has(cap_cell) and not geometry.has(cap_cell) and not placed.has(cap_cell):
-				_set(facade, cap_cell, cap[posmod(cell.x * 3 + cell.y, cap.size())])
+				_put(facade, cap_cell, cap[posmod(cell.x * 3 + cell.y, cap.size())])
 				placed[cap_cell] = true
 
 	# 3. Side returns: one column of stone on the outside of an east/west wall so a
@@ -328,7 +328,7 @@ func _build_facade() -> void:
 					continue
 				if not (floor.has(inward) or geometry.has(inward)):
 					continue
-				_set(facade, neighbour, side[posmod(cell.y, side.size())])
+				_put(facade, neighbour, side[posmod(cell.y, side.size())])
 				placed[neighbour] = true
 	facade.update_internals()
 
@@ -356,7 +356,7 @@ func _build_floor_wear(floor: Dictionary, geometry: Dictionary) -> void:
 			continue
 		if posmod(cell.x * 7919 + cell.y * 104729, rate) != 0:
 			continue
-		_set(layer, cell, wear[posmod(cell.x * 13 + cell.y * 7, wear.size())])
+		_put(layer, cell, wear[posmod(cell.x * 13 + cell.y * 7, wear.size())])
 	layer.update_internals()
 
 
@@ -395,7 +395,7 @@ func _build_trim(geometry: Dictionary, floor: Dictionary) -> void:
 		var tiles: Array = spec.get("tiles", [])
 		if tiles.is_empty():
 			continue
-		_set(layer, cell, tiles[posmod(cell.x, tiles.size())])
+		_put(layer, cell, tiles[posmod(cell.x, tiles.size())])
 		if lights == null or not bool(spec.get("light", false)):
 			continue
 		var light := PointLight2D.new()
