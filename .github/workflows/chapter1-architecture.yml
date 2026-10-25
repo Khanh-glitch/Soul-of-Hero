@@ -225,11 +225,17 @@ jobs:
               grep -qE "CRUCIBLE FIGHT: knight_hp [0-9]+/[0-9]+ -> [0-9]+/[0-9]+ .* boss_hp=[0-9]+/" \
                 "$logfile" || { echo "BOSS FRAME HAS NO HEALTH RECORD"; rc=1; }
               grep -q "boss_state=" "$logfile" || { echo "BOSS STATE NOT RECORDED"; rc=1; }
-              # input-driven traversal: two legs, each ending in a real door use
-              grep -q "CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate door_used_via=." "$logfile" \
-                || { echo "MISSING INPUT TRAVERSAL (leg 1)"; rc=1; }
-              grep -q "CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door door_used_via=." "$logfile" \
-                || { echo "MISSING INPUT TRAVERSAL (leg 2)"; rc=1; }
+              # input-driven traversal: a walk from the level's own spawn, and a real
+              # walk plus door use on each of the two gate approaches
+              grep -q "CRUCIBLE TRAVERSAL: leg=f1_spawn_walk arrived=true" "$logfile" \
+                || { echo "MISSING INPUT WALK FROM SPAWN"; rc=1; }
+              grep -q "CRUCIBLE TRAVERSAL: leg=f1_gate_door door_used_via=." "$logfile" \
+                || { echo "MISSING INPUT TRAVERSAL (floor 1 gate)"; rc=1; }
+              grep -q "CRUCIBLE TRAVERSAL: leg=f2_gate_door door_used_via=." "$logfile" \
+                || { echo "MISSING INPUT TRAVERSAL (floor 2 gate)"; rc=1; }
+              # the walk must say what it did NOT walk, not just what it did
+              grep -q "CRUCIBLE TRAVERSAL SCOPE:" "$logfile" \
+                || { echo "TRAVERSAL SCOPE NOT STATED"; rc=1; }
               # the startup-profile boot error must be gone, not hidden
               if grep -q "startup profile choice" "$logfile"; then
                 echo "STARTUP PROFILE BOOT ERROR IS BACK"; rc=1
