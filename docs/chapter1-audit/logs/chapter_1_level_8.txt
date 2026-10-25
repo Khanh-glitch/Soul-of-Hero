@@ -3,7 +3,7 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-ENVIRONMENT BEDROCK: enclosed_void=112 outside_void=3052
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
 AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
@@ -37,5 +37,7 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=017 cell=(50, 64) rect=[488.0
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=018 cell=(80, 64) rect=[968.0, 844.0, 1608.0, 1204.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=019 cell=(84, 64) rect=[1024.0, 844.0, 1664.0, 1204.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_8 frames=20 limits_applied=true
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 12 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)
