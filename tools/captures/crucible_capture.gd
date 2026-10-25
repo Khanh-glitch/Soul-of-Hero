@@ -679,12 +679,27 @@ func _release_movement() -> void:
 			Input.action_release(action)
 
 
+## The cells the Knight can stand on: the level's own floor, minus its solid tiles,
+## minus the cells that the level's *entities* occupy. A tile-layer-only view is
+## wrong: torches, chests and sigils are placed objects with a footprint, and a
+## route planned through one of them ends with the Knight pressed against it --
+## which is exactly what the earlier walk did at the torch on (42,20).
 func _walkable_cells(dungeon: DungeonLevel) -> Dictionary:
 	var floor := {}
 	for tile: Dictionary in dungeon.level_data.get("layers", {}).get("Backdrop", []):
 		floor[Vector2i(int(tile["x"]), int(tile["y"]))] = true
 	for tile: Dictionary in dungeon.level_data.get("layers", {}).get("Geometry", []):
 		floor.erase(Vector2i(int(tile["x"]), int(tile["y"])))
+	# Footprints: solid props and hazards own the cell they stand on. Only that
+	# cell: padding the block by a second cell closed the southern bypass of the
+	# altar island and left floor 2 with no route at all, which the route planner
+	# itself reported.
+	var occupied := ["torch", "spikes", "chest", "sigil", "exit_gate", "checkpoint"]
+	for entity: Dictionary in dungeon.level_data.get("entities", []):
+		if not occupied.has(String(entity.get("type", ""))):
+			continue
+		var position: Array = entity.get("position", [0, 0])
+		floor.erase(Vector2i(int(position[0]) / TILE, int(position[1]) / TILE))
 	return floor
 
 
