@@ -327,15 +327,16 @@ func _build_bedrock() -> void:
 		consider.call(cell + Vector2i(0, 1))
 		consider.call(cell - Vector2i(0, 1))
 
-	# Two layers, because the two voids mean different things. The enclosed mass is
-	# the stone the rooms were cut out of, and it is lit like the walls it belongs to.
-	# The outer void is the country outside the keep: it is rock too, but held right
-	# down in value, so the level sits *in* something instead of floating as a floor
-	# plan on a black field. Rooms stay silhouetted because the difference between the
-	# two is a whole stop of light.
+	# Two layers, because the two voids mean different things. The enclosed mass is the
+	# stone the rooms were cut out of. The outer void is the country outside the keep.
+	# They are nearly the same value on purpose: the first version held the outer rock
+	# down at 42% of the inner and the measurement said exactly what the eye said -
+	# 21/255, which is black, so the map was back to a floor plan floating in nothing.
+	# Both are dark stone now, a shade apart, and the rooms separate from them because
+	# the floor they walk on is a lighter material, not because the outside is a hole.
 	var inner_colour: Color = _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
 	var outer_colour: Color = _to_color(config.get("outer_color", []),
-		Color(inner_colour.r * 0.42, inner_colour.g * 0.42, inner_colour.b * 0.46, 1.0))
+		Color(inner_colour.r * 0.85, inner_colour.g * 0.85, inner_colour.b * 0.88, 1.0))
 	var rock := TileMapLayer.new()
 	rock.name = BEDROCK_NODE
 	rock.z_index = -11
