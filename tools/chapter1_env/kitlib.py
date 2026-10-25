@@ -253,8 +253,8 @@ def flag_quadrant(seed: int, quad: int, base, joint, *, tone: float = 1.0,
             r = _h01(seed, quad, x, y)
             if r < 0.22:
                 px(img, x, y, shade(base, tone * (0.95 + r * 0.16)))
-            elif r > 0.978:
-                px(img, x, y, shade(base, tone * 1.10))
+            elif r > 0.991:
+                px(img, x, y, shade(base, tone * 1.08))
     if quad in (0, 2):
         vline(img, 0, 0, T, joint)
         vline(img, 1, 0, T, shade(base, tone * 0.90))

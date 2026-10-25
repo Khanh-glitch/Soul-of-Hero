@@ -35,14 +35,14 @@ KIT = "relay"
 # Cool limestone: a green-grey stone, not the warm bone of the Crypt or the red
 # basalt of the Crucible. Value bands stay tight (0.62 / 0.86 / 1.00 / 1.16) so
 # the kit reads as one material under one light.
-STONE_DARK = (62, 74, 74)
-STONE_BASE = (100, 113, 111)
-STONE_LIGHT = (150, 162, 154)
-STONE_PALE = (190, 198, 184)
-JOINT = (40, 50, 51)
-BEDROCK_DARK = (66, 74, 72)
-BEDROCK_BASE = (92, 102, 98)
-BEDROCK_LIGHT = (118, 128, 120)
+STONE_DARK = (52, 58, 62)
+STONE_BASE = (84, 90, 94)
+STONE_LIGHT = (120, 127, 130)
+STONE_PALE = (152, 158, 158)
+JOINT = (40, 45, 49)
+BEDROCK_DARK = (44, 50, 54)
+BEDROCK_BASE = (62, 69, 74)
+BEDROCK_LIGHT = (86, 94, 98)
 
 VERD_DARK = (38, 82, 74)
 VERD = (66, 132, 112)
@@ -62,7 +62,7 @@ IRON_DARK = (40, 44, 48)
 IRON = (66, 72, 76)
 IRON_LIGHT = (104, 112, 116)
 
-LINEN = (206, 202, 182)
+LINEN = (186, 182, 166)
 LINEN_DARK = (150, 148, 132)
 
 

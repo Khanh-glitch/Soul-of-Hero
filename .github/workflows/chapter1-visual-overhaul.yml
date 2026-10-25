@@ -151,34 +151,63 @@ jobs:
         if: always()
         run: |
           set -uo pipefail
-          rc=0
-          # A level ships art when it ships an architecture document. For those the
-          # capture must prove the authored layer attached and drew a facade; for
-          # the rest it must prove the layer stayed off, so a document can never be
-          # silently orphaned or a level silently skipped.
-          for n in {1..10}; do
-            level_id="chapter_1_level_${n}"
-            logfile=".artifacts/chapter1/${level_id}_after.log"
-            if [ -f "data/levels/${level_id}_architecture.json" ]; then
-              if ! grep -qE "CHAPTER1 CAPTURE: .* art=on facade_cells=[1-9]" "$logfile" 2>/dev/null; then
-                echo "MISSING ART: ${level_id} ships a document but drew no facade"
-                grep -hE "SCRIPT ERROR|Parse Error|CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -5
-                rc=1
-              else
-                echo "ART OK: ${level_id}"
-              fi
-            else
-              if grep -qE "CHAPTER1 CAPTURE: .* art=off" "$logfile" 2>/dev/null; then
-                echo "BASELINE OK: ${level_id} has no architecture document yet"
-              else
-                echo "UNEXPECTED ART: ${level_id} has no document but attached a layer"
-                grep -hE "CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -3
-                rc=1
-              fi
-            fi
-          done
-          [ $rc -eq 0 ] && echo "ART LAYER OK on all ten levels"
-          exit $rc
+          python3 - <<'PY'
+          """Every level must prove, from its own capture log, that a facade was drawn.
+
+          Levels that ship an architecture document must additionally prove that the
+          authored kit that ran is the kit the document names, and that it built
+          floor detail, wall cells and props. A document that is silently orphaned,
+          a kit that fails to load and a level that never photographed all read the
+          same way: red.
+          """
+          import json, pathlib, re, sys
+
+          rc = 0
+          capture_re = re.compile(r"CHAPTER1 CAPTURE: level=(\S+) slot=(\d+) art=(\w+) facade_cells=(\d+) lights=(\d+)")
+          authored_re = re.compile(r"AUTHORED ART: kit=(\w+) floor_detail=(\d+) wall_cells=(\d+) bedrock=(\d+) props=(\d+) lights=(\d+) shadows=(\d+)")
+          for n in range(1, 11):
+              level = "chapter_1_level_%d" % n
+              log = pathlib.Path(".artifacts/chapter1/%s_after.log" % level)
+              text = log.read_text(errors="replace") if log.exists() else ""
+              capture = capture_re.search(text)
+              authored = authored_re.search(text)
+              document = pathlib.Path("data/levels/%s_architecture.json" % level)
+              if capture is None:
+                  print("GATE FAIL %s: no CHAPTER1 CAPTURE line; the level never photographed" % level)
+                  for line in text.splitlines():
+                      if "SCRIPT ERROR" in line or "Parse Error" in line:
+                          print("    " + line.strip())
+                          break
+                  rc = 1
+                  continue
+              art, facade, lights = capture.group(3), int(capture.group(4)), int(capture.group(5))
+              if art != "on" or facade < 1:
+                  print("GATE FAIL %s: art=%s facade_cells=%d" % (level, art, facade))
+                  rc = 1
+                  continue
+              if document.exists():
+                  want = json.loads(document.read_text()).get("kit", "crucible")
+                  if authored is None:
+                      print("GATE FAIL %s: ships a document but no authored layer reported" % level)
+                      rc = 1
+                      continue
+                  kit, floor, walls, props = (authored.group(1), int(authored.group(2)),
+                                              int(authored.group(3)), int(authored.group(5)))
+                  if kit != want or floor < 1 or walls < 1 or props < 1:
+                      print("GATE FAIL %s: authored kit=%s floor=%d walls=%d props=%d, document names %s"
+                            % (level, kit, floor, walls, props, want))
+                      rc = 1
+                      continue
+                  print("GATE OK %s: authored kit=%s floor_detail=%d wall_cells=%d props=%d lights=%d"
+                        % (level, kit, floor, walls, props, int(authored.group(6))))
+              elif authored is not None:
+                  print("GATE FAIL %s: no document but an authored kit attached" % level)
+                  rc = 1
+              else:
+                  print("GATE OK %s: shared presentation layer only (facade_cells=%d lights=%d)"
+                        % (level, facade, lights))
+          sys.exit(rc)
+          PY
 
       - name: Publish logs, statuses and the gallery
         if: always()

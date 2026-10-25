@@ -117,10 +117,10 @@ def conduit_path(plan, floor, geom, path, *, chevron_at=(), seed_note="", stop=(
         else:
             frame = "conduit_v"
         plan.floor_tile(cell, frame)
-        if index % 6 == 3:
+        if index % 10 == 3:
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 + 8,
-                "color": [0.62, 1.0, 0.84], "energy": 0.38, "scale": 0.80,
+                "color": [0.55, 0.95, 0.82], "energy": 0.18, "scale": 0.70,
                 "cell": [cell[0], cell[1]], "note": "conduit glow" + seed_note,
             })
     for cell, direction in chevron_at:
@@ -186,7 +186,7 @@ def medallion(plan, floor, geom, centre, radius=RADIUS) -> int:
             painted += 1
     plan.lights.append({
         "x": centre[0] * 16 + 8, "y": centre[1] * 16 + 8,
-        "color": [0.66, 1.0, 0.86], "energy": 0.70, "scale": 2.0,
+        "color": [0.60, 0.98, 0.86], "energy": 0.30, "scale": 1.7,
         "cell": [centre[0], centre[1]], "note": "the medallion's own light",
     })
     return painted
@@ -227,7 +227,7 @@ def chambers(plan, floor, geom, faces, guard, level) -> None:
                 plan.floor_tile(cell, "terrace")
                 plan.prop("lamp_standing", cell, light={
                     "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 34,
-                    "color": [1.0, 0.88, 0.64], "energy": 1.0, "scale": 1.8,
+                    "color": [1.0, 0.82, 0.52], "energy": 0.7, "scale": 1.5,
                     "cell": [cell[0], cell[1]], "note": "ring lamp",
                 })
 
@@ -238,7 +238,7 @@ def chambers(plan, floor, geom, faces, guard, level) -> None:
                       note="the Soul Anchor's crystal monument")
             plan.lights.append({
                 "x": monument[0] * 16 + 8, "y": monument[1] * 16 - 56,
-                "color": [0.70, 1.0, 0.88], "energy": 0.85, "scale": 2.2,
+                "color": [0.68, 1.0, 0.90], "energy": 0.95, "scale": 2.0,
                 "cell": [monument[0], monument[1]], "note": "crystal core light",
             })
         # broken crystal growth spilling from the plinth
@@ -253,8 +253,8 @@ def chambers(plan, floor, geom, faces, guard, level) -> None:
             if cell in floor and cell not in guard:
                 plan.prop("pylon_tall" if index == 0 else "pylon", cell,
                           light={"x": cell[0] * 16 + 8, "y": cell[1] * 16 - 62,
-                                 "color": [0.62, 1.0, 0.84], "energy": 0.70,
-                                 "scale": 1.5, "cell": [cell[0], cell[1]],
+                                 "color": [0.60, 0.98, 0.86], "energy": 0.42,
+                                 "scale": 1.35, "cell": [cell[0], cell[1]],
                                  "note": "pylon lantern"})
 
         # --- conduit posts at the medallion's rim, all four quadrants ------
@@ -325,7 +325,7 @@ def corridors(plan, floor, geom, faces, guard) -> None:
         if wall_light % 23 == 0:
             plan.prop("sconce", cell, light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 22,
-                "color": [1.0, 0.86, 0.62], "energy": 1.15, "scale": 1.7,
+                "color": [1.0, 0.82, 0.54], "energy": 0.8, "scale": 1.4,
                 "cell": [cell[0], cell[1]], "note": "wall sconce",
             })
         elif wall_light % 31 == 0:
@@ -338,7 +338,7 @@ def corridors(plan, floor, geom, faces, guard) -> None:
             if cell in floor and cell not in guard:
                 plan.prop("lamp_standing", cell, light={
                     "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 34,
-                    "color": [1.0, 0.86, 0.60], "energy": 1.35, "scale": 2.1,
+                    "color": [1.0, 0.84, 0.56], "energy": 0.95, "scale": 1.7,
                     "cell": [cell[0], cell[1]], "note": "room lamp",
                 })
 
@@ -352,7 +352,7 @@ def exit_room(plan, floor, geom, faces, guard) -> None:
             plan.prop("arch_relay", cell, note="the chapter door behind the exit")
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 20,
-                "color": [1.0, 0.90, 0.70], "energy": 2.0, "scale": 3.4,
+                "color": [1.0, 0.86, 0.62], "energy": 1.35, "scale": 2.6,
                 "cell": [cell[0], cell[1]], "note": "exit arch light",
             })
             break
@@ -361,7 +361,7 @@ def exit_room(plan, floor, geom, faces, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("pylon_tall", cell, light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 62,
-                "color": [0.72, 1.0, 0.86], "energy": 1.2, "scale": 1.9,
+                "color": [0.64, 1.0, 0.88], "energy": 0.55, "scale": 1.4,
                 "cell": [cell[0], cell[1]], "note": "exit pylon",
             })
     # the tally of cores: three plaques on the exit room's wall
@@ -493,8 +493,8 @@ def build() -> dict:
         ),
         # A cold, damp signal-house: teal shadow, a pale sky-lit background, and a
         # palette that never warms past the copper fittings.
-        "ambient": [0.42, 0.50, 0.50],
-        "background": [0.030, 0.052, 0.058],
+        "ambient": [0.44, 0.48, 0.54],
+        "background": [0.020, 0.032, 0.045],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,
         "lights": plan.lights,

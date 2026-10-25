@@ -101,15 +101,20 @@ CRITIQUE = {
     },
     "chapter_1_level_6": {
         "improved": [
-            "Spectral palette reads immediately as a different place from the crypt, and the anchor landmarks cast cool light.",
+            "The level is a distinct place: pale cool limestone, verdigris copper and cold soul-light, built from its own kit rather than the Crucible's red basalt and brass.",
+            "Each of the three Soul Anchors stands on a dais with an inlaid relay medallion cut into the paving, framed by two pylons and four conduit posts, with its crystal monument on the axis behind the core. The Anchor is now inside something instead of being a light on open floor.",
+            "The split diamond is legible as two lanes: conduit runs around the central block on both sides and the floor chevrons run east on the north lane and west on the south one, so the two directions the level teaches are visible without a tooltip.",
+            "The east approach is terraced, with risers under each band and a pylon pair at every second brow, so the climb to the first Anchor is counted by the eye.",
+            "The last Anchor's conduit circles the chamber and turns back west to the exit arch, which carries the same two-ring mark as the medallions.",
         ],
         "missing": [
-            "The three anchor chambers are distinguished only by a light colour; there is no architecture saying 'chamber'.",
-            "Split lanes are not readable as lanes.",
+            "The east rooms and the two landings are still large and thinly furnished; the authored layer reads best where the composition is dense and weakest in the biggest empty floors.",
+            "Wall architecture is carried by inlaid panels and lancets on broadside faces only; a wall seen end-on still shows the default course, and the transition between the two is visible.",
+            "The relief panel on the third floor's hollow centre is rock, not architecture: the massif reads correctly but adds nothing to the return loop.",
         ],
         "next": [
-            "Frame each anchor with a stone housing (plinth, jamb, cap) so the anchor is inside something.",
-            "Mark the split with a central pier rather than an open floor.",
+            "Furnish the three landing rooms at the same density as the Anchor chambers.",
+            "Give the exit room a second element beyond the arch and the two pylons, so the last frame of the level has its own composition.",
         ],
     },
     "chapter_1_level_7": {
@@ -224,7 +229,7 @@ def main() -> int:
             f"- Level id: `{level_id}`",
             f"- Map source: `data/levels/{entry['map']}`",
             f"- Source sha256: `{pins.get(Path(entry['map']).name, 'see regressions/source_pins.txt')}`",
-            f"- Status: `{status.get(level_id, 'TECHNICALLY VALID - VISUAL NOT READY')}`",
+            f"- Status: `{status.get(level_id, 'INCOMPLETE — ART DELIVERY FAILED')}`",
             f"- Art direction: {theme.get('concept', 'see theme document')}",
             "",
             "## What the native frames show",
