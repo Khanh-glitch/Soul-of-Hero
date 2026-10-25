@@ -566,8 +566,14 @@ def prop_chain_column(seed: int = 8):
             px(img, int(cx + math.cos(a) * 11), yy, IRON_LIGHT)
             px(img, int(cx + math.cos(a) * 11), yy + 1, IRON)
             px(img, int(cx + math.cos(a) * 11), yy + 2, IRON_DARK)
+    # The tail hangs free of the column, so it has to be an object: two pixels of
+    # iron with a lit edge, not a dotted line. At 1:1 a one-pixel tail reads as a
+    # scratch on the sprite.
     for i in range(10):
-        px(img, cx + 11 + (i % 2), 110 + i * 2, IRON if i % 2 else IRON_LIGHT)
+        y = 110 + i * 2
+        hline(img, cx + 10, y, 3, IRON if i % 2 else IRON_LIGHT)
+        px(img, cx + 10, y, IRON_LIGHT)
+        px(img, cx + 12, y, IRON_DARK)
     return finish(img)
 
 

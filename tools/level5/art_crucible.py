@@ -1027,23 +1027,43 @@ def prop_chain(seed: int, *, hook: bool = True, length: int = 80) -> Image.Image
     """Hanging chain with a hook: ceiling clutter that makes the hall feel tall."""
     w = 16
     img = new(w, length)
-    for y in range(length):
-        link = (y // 3) % 2
-        col = IRON_M if (y // 3) % 2 else IRON_L
-        if link:
-            px(img, 7, y, col)
-            px(img, 8, y, shade(col, 0.8))
-            px(img, 6, y, shade(col, 0.95) if y % 3 == 1 else (0, 0, 0, 0))
+    # Iron reads as iron because of its holes, not its outline. The old chain was a
+    # single column of pixels that alternated shade - at 1:1 that is a dotted seam,
+    # not a chain, and it is the same failure as the chapter's hairline motifs: a
+    # real object described by one line. These links are four pixels of metal each,
+    # alternating vertical and edge-on, with a lit top-left and a dark bottom-right,
+    # so the chain has thickness and a twist at native scale.
+    step = 5
+    for index, y in enumerate(range(1, length - 8, step)):
+        if index % 2 == 0:
+            # a link seen face-on: a 5x4 ring with its hole in the middle
+            hline(img, 5, y, 6, IRON_L)
+            hline(img, 5, y + 3, 6, IRON_M)
+            px(img, 5, y + 1, IRON_L)
+            px(img, 10, y + 1, IRON_HI)
+            px(img, 6, y + 2, IRON_M)
+            px(img, 9, y + 2, IRON_M)
+            px(img, 6, y + 1, (0, 0, 0, 0))
+            px(img, 7, y + 1, (0, 0, 0, 0))
+            px(img, 7, y + 2, (0, 0, 0, 0))
+            px(img, 8, y + 2, (0, 0, 0, 0))
+            px(img, 8, y + 1, IRON_L)
+            px(img, 9, y + 1, IRON_M)
         else:
-            px(img, 7, y, col)
-            px(img, 8, y, shade(col, 0.9))
-            px(img, 9, y, shade(col, 0.7) if y % 3 == 1 else (0, 0, 0, 0))
+            # the next link turned ninety degrees: only its edge is visible
+            hline(img, 6, y + 1, 4, IRON_L)
+            hline(img, 6, y + 2, 4, IRON_M)
+            px(img, 6, y + 1, IRON_HI)
+            px(img, 9, y + 2, IRON_D)
     if hook:
         y = length - 8
         for i in range(8):
             px(img, 7 + i // 2, y + i, IRON_L)
             px(img, 6 - i // 2, y + i, IRON_M)
+            if i % 2 == 0:
+                px(img, 7 + i // 2, y + i - 1, IRON_HI)
         px(img, 7, length - 1, IRON_HI)
+        px(img, 8, length - 1, IRON_D)
     return img
 
 
