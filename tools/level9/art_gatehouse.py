@@ -42,6 +42,7 @@ KIT = "gatehouse"
 # Values chosen against the engine's ambient multiply: the renderer tints every
 # tile by the level's ambient, so an oxblood that looks right on its own reads as
 # black on the level. These are the same hues, two stops lighter.
+FLOOR_COOL = (58, 52, 66)     # paving is cool; the walls stay warm on purpose
 STONE_DARK = (58, 42, 48)
 STONE_BASE = (104, 66, 70)
 STONE_LIGHT = (146, 96, 98)
@@ -83,25 +84,29 @@ def rock(seed: int):
 def flag(seed: int, quad: int, *, tone: float = 1.0):
     """A single huge paving block: one joint in two, worn and chiselled.
 
-    The joint is soft rather than black and the slab carries a highlight along its
-    lit edges, so a room of these reads as worn stone paving instead of brickwork
-    laid flat on the ground.
+    The paving is deliberately a stop darker and a stop cooler than the walls.
+    In the first pass the floor, the walls, the iron and the blood were all the
+    same oxblood, so the room had no value structure at all: seal rings, floor
+    markings and props dissolved into the ground. Now the floor carries the
+    coolest, darkest value in the level, the walls stay warm, and the red things
+    - blood, iron, embers - are the only saturated red in the room.
     """
-    img = flag_quadrant(seed, quad, STONE_BASE, mix(JOINT, STONE_BASE, 0.35), tone=tone)
+    base = mix(STONE_BASE, FLOOR_COOL, 0.42)
+    img = flag_quadrant(seed, quad, base, mix(JOINT, base, 0.30), tone=tone)
     if quad in (0, 3):
-        hline(img, 0, 1, T, shade(STONE_BASE, 1.14))
+        hline(img, 0, 1, T, shade(base, 1.16))
     if quad in (0, 1):
-        vline(img, 1, 0, T, shade(STONE_BASE, 1.08))
+        vline(img, 1, 0, T, shade(base, 1.09))
     # a broad chisel mark that never repeats within a room
     if _h01(seed, quad, 2) < 0.5:
         offset = 4 + int(_h01(seed, quad, 3) * 7)
         for x in range(2, T - 2):
-            px(img, x, offset + (x // 5) % 2, shade(STONE_BASE, 1.09))
+            px(img, x, offset + (x // 5) % 2, shade(base, 1.10))
     # a crack here and there
     if _h01(seed, quad, 7) > 0.86:
         x = 3 + int(_h01(seed, quad, 9) * 9)
         for y in range(2, T - 2):
-            px(img, x, y, shade(STONE_BASE, 0.84))
+            px(img, x, y, shade(base, 0.82))
             if _h01(seed, quad, 11, y) > 0.7:
                 x += 1 if _h01(seed, quad, 13, y) > 0.5 else -1
             x = max(2, min(T - 3, x))
@@ -127,8 +132,16 @@ def iron_band(direction: str, seed: int):
 
 
 def blood_floor(seed: int, quad: int):
-    """Paving over which something died, and nobody washed it."""
-    img = flag(seed, quad, tone=0.90)
+    """Paving over which something died, and nobody washed it.
+
+    Three mid-red blobs on red paving read as pink petals - *lighter* than the
+    ground, so they read as objects rather than stains. Blood is darker than the
+    stone it lands on: this is a near-black pool with one wet highlight on the
+    rim, so a room of it sinks in value while the seals stay up.
+    """
+    img = flag(seed, quad, tone=0.94)
+    base = mix(STONE_BASE, FLOOR_COOL, 0.42)
+    stain = mix(base, BLOOD, 0.72)
     for i in range(3):
         cx = 3 + int(_h01(seed, quad, i, 7) * 10)
         cy = 3 + int(_h01(seed, quad, i, 11) * 10)
@@ -136,7 +149,11 @@ def blood_floor(seed: int, quad: int):
         for y in range(max(0, cy - r), min(T, cy + r + 1)):
             for x in range(max(0, cx - r), min(T, cx + r + 1)):
                 if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
-                    px(img, x, y, mix(STONE_BASE, BLOOD, 0.55))
+                    px(img, x, y, stain)
+        px(img, cx - r, cy, mix(stain, BLOOD_LIGHT, 0.45))
+        px(img, cx, cy - r, mix(stain, BLOOD_LIGHT, 0.30))
+        for k in range(2 + int(_h01(seed, quad, i, 17) * 3)):
+            px(img, cx + r + k, cy + 1 + k, stain)
     return img
 
 
@@ -172,11 +189,19 @@ def wall_banner():
     return img
 
 
-def ring_tiles(radius: int):
-    """The gate's seal ring: three iron arcs, cut into the floor round a station.
+def ring_tiles(radius: int, opening: str | None = None, tag: str = "ring"):
+    """The gate's seal ring: iron arcs cut into the floor round a station.
 
-    One shared emblem for all three stations on purpose — they are three locks on
-    the same gate, and the *fixtures* standing on them are what differ.
+    One shared emblem for all three stations on purpose - they are three locks on
+    the same gate - but the arms they sit in are not the same shape. The west and
+    east stations stand within two cells of their arm's end wall, so a full
+    circle was painted there as a broken crescent: the arc simply stopped where
+    the wall began and the seal read as a smear instead of a mechanism.
+
+    An `opening` builds the ring as a horseshoe cut at the wall, with a bronze
+    collar and a bolt on each cut end, so the mechanism plainly runs into the
+    plinth. That is an authored stop, not a missing tile - and it makes the two
+    end stations read differently from the two that carry a whole ring.
     """
     span = 2 * radius + 1
     size = span * T
@@ -186,34 +211,76 @@ def ring_tiles(radius: int):
             canvas.paste(flag(43, (tx % 2) + (ty % 2) * 2), (tx * T, ty * T))
     cx = cy = (size - 1) / 2.0
     r_out = radius * T - 3
+    gap = {"E": (-52.0, 52.0), "W": (128.0, 232.0),
+           "N": (-142.0, -38.0), "S": (38.0, 142.0)}.get(opening or "")
+
+    def in_gap(angle_deg: float) -> bool:
+        if gap is None:
+            return False
+        a = ((angle_deg + 180.0) % 360.0) - 180.0
+        return gap[0] <= a <= gap[1]
+
     for y in range(size):
         for x in range(size):
             d = math.hypot(x - cx, y - cy)
             if d > r_out:
                 continue
+            if in_gap(math.degrees(math.atan2(y - cy, x - cx))):
+                continue
+            # a recessed channel under the iron: the ring sits *in* the paving
+            px(canvas, x, y, mix(STONE_DARK, JOINT, 0.55))
             if d > r_out - 4:
-                px(canvas, x, y, IRON_LIGHT if int(d) % 2 else IRON)
+                px(canvas, x, y, BRONZE_LIGHT if int(d) % 3 == 0 else IRON_LIGHT)
             elif d > r_out - 7:
-                px(canvas, x, y, BLOOD_LIGHT if int(d) % 4 else BLOOD)
-            elif d > r_out - 10:
+                px(canvas, x, y, IRON if int(d) % 2 else IRON_DARK)
+            elif d > r_out - 9:
+                px(canvas, x, y, mix(IRON_LIGHT, BONE, 0.35))
+            elif d > r_out - 11:
                 px(canvas, x, y, IRON_DARK if int(d) % 3 else IRON)
             elif d < 8:
                 px(canvas, x, y, mix(STONE_DARK, JOINT, 0.35))
     # three iron spokes: one per seal on the gate
     for i in range(3):
-        a = math.radians(-90 + i * 120)
+        a_deg = -90 + i * 120
+        if in_gap(a_deg):
+            continue
+        a = math.radians(a_deg)
         for r in range(7, int(r_out) - 8):
             px(canvas, int(cx + math.cos(a) * r), int(cy + math.sin(a) * r), BLOOD_LIGHT)
             px(canvas, int(cx + math.cos(a) * r) + 1, int(cy + math.sin(a) * r), BLOOD)
+    # a bronze boss on the centre cell: the place a seal is broken, marked
+    for y in range(size):
+        for x in range(size):
+            d = math.hypot(x - cx, y - cy)
+            if d < 2:
+                px(canvas, x, y, BRONZE_LIGHT)
+            elif d < 3:
+                px(canvas, x, y, BRONZE)
+            elif d < 5:
+                px(canvas, x, y, IRON_DARK)
+    # terminal collars: each cut end is capped with a bronze socket and a bolt,
+    # so the break is an authored stop where the mechanism enters the plinth
+    if gap is not None:
+        for angle_deg in gap:
+            a = math.radians(angle_deg)
+            bx = cx + math.cos(a) * (r_out - 4)
+            by = cy + math.sin(a) * (r_out - 4)
+            for oy in range(-3, 4):
+                for ox in range(-3, 4):
+                    if abs(ox) + abs(oy) > 4:
+                        continue
+                    px(canvas, int(bx) + ox, int(by) + oy,
+                       BRONZE_LIGHT if abs(ox) + abs(oy) < 3 else BRONZE_DARK)
+            px(canvas, int(bx), int(by), IRON_DARK)
+            px(canvas, int(bx) + 1, int(by) + 1, BRONZE)
     frames = {}
     for ty in range(span):
         for tx in range(span):
-            frames["ring_%d_%d" % (tx - radius, ty - radius)] = \
+            frames["%s_%d_%d" % (tag, tx - radius, ty - radius)] = \
                 canvas.crop((tx * T, ty * T, tx * T + T, ty * T + T))
     return frames
 
 
-# --- props: the gate -------------------------------------------------------
 def prop_gate_tower(seed: int = 1, *, mirror: bool = False):
     """One tower of the gate: a massive square shaft, corbelled crown, banner."""
     w, h = 80, 152
@@ -418,49 +485,87 @@ def prop_seal_bell(seed: int = 4):
 
 
 def prop_seal_brazier(seed: int = 5):
-    """East seal — an iron cauldron on three legs. The one that burns."""
-    w, h = 70, 108
+    """East seal - an iron cauldron standing in its shrine niche. The one that burns.
+
+    The first version was a 70 x 108 funnel hanging from a shelf: wider than its
+    own niche, it hung out over the seal cell beside it and its centre was the
+    darkest value in the room, so the objective read as a hole behind a hood. A
+    cauldron that does not fit its own shrine is not a monument, it is an
+    occlusion.
+
+    This one is built to the niche rather than the niche to it: a stone plinth on
+    the shrine floor, three bronze-shod legs, a cauldron with a rolled rim, coals
+    in its throat and three flames. At 48px it clears the seal cell completely,
+    and every value is bronze (light) or iron (mid), so it can never read as a
+    hole. It still lights the ring: that is the point of it.
+    """
+    w, h = 48, 78
     img = new(w, h)
     cx = w // 2
     base_y = h - 3
-    _station_base(img, w, base_y, 50)
-    # three splayed legs
-    for dx in (-17, 0, 17):
-        for i in range(24):
-            lean = (i // 7) * (1 if dx > 0 else (-1 if dx < 0 else 0))
-            px(img, cx + dx + lean, base_y - 9 - i, IRON)
-            px(img, cx + dx + lean + 1, base_y - 9 - i, IRON_DARK)
-    # the bowl: a deep cauldron, wider at the rim
-    rim_y = base_y - 66
-    for i in range(36):
-        t = i / 36.0
-        half = int(26 - t ** 1.4 * 14)
+    # plinth on the niche floor: dark iron-shod stone, never pale stone, which
+    # under this level's ambient reads as a bench
+    block(img, 3, base_y - 7, w - 6, 7, shade(STONE_DARK, 1.05), bevel=2)
+    hline(img, 3, base_y - 8, w - 6, mix(STONE_LIGHT, IRON, 0.5))
+    hline(img, 3, base_y - 1, w - 6, IRON_DARK)
+    # three splayed legs, bronze-shod
+    for dx in (-12, 0, 12):
+        for i in range(15):
+            lean = (i // 5) * (1 if dx > 0 else (-1 if dx < 0 else 0))
+            px(img, cx + dx + lean, base_y - 8 - i, IRON)
+            px(img, cx + dx + lean + 1, base_y - 8 - i, IRON_DARK)
+            if i < 4:
+                px(img, cx + dx + lean, base_y - 8 - i, BRONZE)
+    # the bowl: a cauldron with a belly, not a bag. The belly bulges below the
+    # rim and the foot tapers back in, which is what makes it read as a vessel
+    # rather than as something hanging.
+    rim_y = base_y - 48
+    depth = 24
+    for i in range(depth):
+        t = i / float(depth - 1)
+        half = int(17 + math.sin(t * math.pi) * 4 - t ** 2.2 * 7)
         for x in range(cx - half, cx + half):
             u = (x - (cx - half)) / max(1, half * 2)
-            colour = IRON_LIGHT if u < 0.14 else IRON if u < 0.5 else IRON_DARK
-            if i in (12, 24):
-                colour = shade(colour, 0.74)
+            colour = (BRONZE_LIGHT if u < 0.10 else BRONZE if u < 0.40 else
+                      BRONZE_DARK if u < 0.78 else IRON_DARK)
+            if t > 0.72:
+                colour = shade(colour, 0.80)
+            if i > 12 and u > 0.15:
+                colour = mix(colour, EMBER, 0.26)
             px(img, x, rim_y + i, colour)
-    # a thick rim, and the fire inside it
-    rect(img, cx - 27, rim_y - 6, 55, 8, IRON)
-    hline(img, cx - 27, rim_y - 7, 55, IRON_LIGHT)
-    hline(img, cx - 27, rim_y + 1, 55, IRON_DARK)
-    for x in range(cx - 23, cx + 24):
-        px(img, x, rim_y - 4, (74, 24, 8))
-        px(img, x, rim_y - 3, (128, 44, 12) if x % 4 else EMBER)
-    # flames: three tongues and sparks
-    for tongue, dx in enumerate((-11, 0, 11)):
-        for i in range(9 - tongue % 2):
-            half = max(1, 4 - i // 3)
+        # three raised bands round the belly
+        if i in (7, 13, 19):
+            hline(img, cx - half, rim_y + i, half * 2, IRON_DARK)
+            hline(img, cx - half, rim_y + i + 1, half * 2, mix(BRONZE_LIGHT, EMBER, 0.25))
+    # two ring handles, hung clear of the rim so the mouth stays unbroken
+    for side in (-1, 1):
+        hx = cx + side * 23
+        for k in range(7):
+            px(img, hx + side * (k // 3), rim_y + 1 + k, IRON_LIGHT if k < 4 else IRON_DARK)
+            px(img, hx + side * (k // 3) + side, rim_y + 2 + k, IRON)
+    # a thick iron rim with a lit inner lip, and the coals in its throat
+    rect(img, cx - 21, rim_y - 5, 43, 7, IRON)
+    hline(img, cx - 21, rim_y - 6, 43, IRON_LIGHT)
+    hline(img, cx - 21, rim_y - 5, 43, mix(IRON_LIGHT, EMBER, 0.35))
+    hline(img, cx - 21, rim_y + 1, 43, IRON_DARK)
+    for x in range(cx - 21, cx + 22, 5):
+        px(img, x, rim_y - 4, IRON_DARK)
+    for x in range(cx - 17, cx + 18):
+        px(img, x, rim_y - 3, (92, 28, 10))
+        px(img, x, rim_y - 2, EMBER if x % 3 else EMBER_LIGHT)
+    # three tongues and sparks
+    for tongue, dx in enumerate((-8, 0, 8)):
+        for i in range(8 - tongue % 2):
+            half = max(1, 3 - i // 3)
             for x in range(cx + dx - half, cx + dx + half):
-                px(img, x, rim_y - 8 - i, EMBER if i < 5 else EMBER_LIGHT)
-    for i in range(7):
-        px(img, cx - 12 + i * 4, rim_y - 20 - (i % 3), EMBER_LIGHT)
-    # chains from the rim
-    for dx in (-28, 28):
-        for i in range(11):
-            px(img, cx + dx + (i % 2), rim_y + 3 + i * 3, IRON_LIGHT if i % 2 else IRON)
-    glow(img, cx, rim_y - 8, 26, 22, EMBER, 100, steps=4)
+                px(img, x, rim_y - 7 - i, EMBER if i < 4 else EMBER_LIGHT)
+    for i in range(5):
+        px(img, cx - 8 + i * 4, rim_y - 17 - (i % 3), EMBER_LIGHT)
+    # two short chains off the rim, into the shrine's ironwork
+    for dx in (-21, 20):
+        for i in range(7):
+            px(img, cx + dx + (i % 2), rim_y + 3 + i * 2, IRON_LIGHT if i % 2 else IRON)
+    glow(img, cx, rim_y - 6, 18, 16, EMBER, 90, steps=4)
     return finish(img)
 
 
@@ -764,8 +869,9 @@ def build_tiles() -> list:
     tiles.append(("wall_banner", lambda: wall_banner()))
     for direction in ("h", "v"):
         tiles.append(("iron_" + direction, lambda d=direction: iron_band(d, 61)))
-    for name, image in ring_tiles(2).items():
-        tiles.append((name, lambda i=image: i.copy()))
+    for tag, opening in (("ring", None), ("ringE", "E"), ("ringW", "W")):
+        for name, image in ring_tiles(2, opening, tag).items():
+            tiles.append((name, lambda i=image: i.copy()))
     return tiles
 
 

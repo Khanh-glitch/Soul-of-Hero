@@ -46,7 +46,12 @@ KIT = "gatehouse"
 EXIT = (48, 7)
 REAPER = (48, 15)
 SEALS = ((18, 45), (78, 45), (48, 32))
-RINGS = ((18, 45), (78, 45), (48, 32), (48, 7))
+# Each station's floor ring, and how that ring terminates. The west and east
+# stations stand a cell from their arm's end wall, so their rings are horseshoes
+# whose cut ends are capped with a bronze socket where the mechanism enters the
+# plinth. The throat and the gate carry complete rings.
+RINGS = (((18, 45), "ringW"), ((78, 45), "ringE"), ((48, 32), "ring"),
+         ((48, 7), "ring"))
 TALL = {"chain_column", "banner", "banner_torn", "seal_bell", "seal_brazier"}
 
 
@@ -95,12 +100,14 @@ def aisle(plan, floor, geom) -> int:
 
 
 def rings(plan, floor, geom) -> int:
+    """Paint all four floor rings, each with the frame set its arm allows."""
     painted = 0
-    for centre in RINGS:
-        for (dx, dy), frame in ring_offsets(2).items():
+    for centre, tag in RINGS:
+        offsets = ring_offsets(2)
+        for (dx, dy) in offsets:
             cell = (centre[0] + dx, centre[1] + dy)
             if cell in floor and cell not in geom:
-                plan.floor_tile(cell, frame)
+                plan.floor_tile(cell, "%s_%d_%d" % (tag, dx, dy))
                 painted += 1
     return painted
 
