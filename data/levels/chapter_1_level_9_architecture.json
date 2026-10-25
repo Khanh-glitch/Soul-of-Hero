@@ -20318,18 +20318,6 @@
       "note": "east gate tower"
     },
     {
-      "frame": "portcullis",
-      "cell": [
-        48,
-        10
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "raised portcullis in the gate mouth"
-    },
-    {
       "frame": "banner",
       "cell": [
         36,
@@ -21923,7 +21911,7 @@
   "stats": {
     "floor_overrides": 2834,
     "wall_overrides": 58,
-    "props": 71,
+    "props": 70,
     "lights": 29,
     "aisle_cells": 232,
     "ring_cells": 88,

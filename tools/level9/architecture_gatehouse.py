@@ -205,13 +205,14 @@ def gate_assembly(p: Placer, faces) -> int:
                            note="the Crimson Gate")
     placed += p.floor_prop("gate_tower", (41, 11), note="west gate tower")
     placed += p.floor_prop("gate_tower_l", (55, 11), note="east gate tower")
-    # The portcullis. The kit has drawn one since the gatehouse was authored and the
-    # assembly never placed it, so the gate read as a lit arch with a blue bloom in
-    # it - the light was doing all the work of telling the player "this is the way
-    # out". The bars give the opening something to be seen through. Hung one cell up
-    # from the threshold: it is raised, the way a gate is raised when the garrison
-    # expects to close it.
-    placed += p.floor_prop("portcullis", (48, 10), note="raised portcullis in the gate mouth")
+    # No portcullis prop here. The kit has one, and it was placed in the gate mouth
+    # during this pass - then the native frame showed it drawn *behind* the arch
+    # sprite, because it stood on the cell above and the y-sort put it there. It added
+    # nothing to the picture, and the gate already has its bars: prop_gate_arch draws
+    # the portcullis inside its own lit opening, where they read against the cold
+    # light. The gate's real problem was never missing bars; it was a 614 px light at
+    # 1.05 covering the whole assembly. Placing a prop that implies nothing is the same
+    # fault as leaving a room empty, so it is not left in the document as decoration.
     for x in (36, 60):
         placed += p.wall("banner", (x, 3), note="gate banner")
     for x in (34, 62):

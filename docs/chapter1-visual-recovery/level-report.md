@@ -153,10 +153,12 @@ Four seals, four medallions: the audit's finding was that they do not read as fo
 stations, and at 1:1 they read as identical spiky rosettes on stalks. 64 cells above
 row 0.
 
-**After.** Gate light 0.66 at a 333 px pool, and the portcullis placed in the mouth
-of the arch, hung one cell up so it reads as raised: the opening now has bars in it,
-which is what makes a gate read as a way out rather than as a lit hole. 23 of 29
-lights resized.
+**After.** Gate light 0.66 on a 333 px pool: the arch now reads as stone — voussoirs,
+keystone seal, towers either side, the gate's own bars dark against the cold light —
+instead of as a blue bloom with a shape somewhere inside it. 29 lights resized, 13
+cores rolled off. A portcullis prop was placed in the mouth during this pass and then
+removed: at native scale it drew behind the arch sprite and contributed nothing, and
+the arch already draws its bars. It was not left in the document as decoration.
 
 **Still wrong.** The four seal stations still do not differentiate. The iron band is
 still a 1-px motif. The props down the nave are evenly spaced chains of identical
