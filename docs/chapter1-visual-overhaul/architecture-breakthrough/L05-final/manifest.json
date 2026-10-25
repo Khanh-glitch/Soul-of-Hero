@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "7628a9aed5a4714f2a5b762fefc292c5559bd0d0",
+  "commit": "aa74d7a9a8201f299e13a48295a7d7fa470ffc04",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "fe62bc0dcc4fbd6ccb270460242af085fddfb9764f9ae64ee17a142088bc5cd6",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "208e9ddbde0ce4e5f30a6422773847189dd30df45901feb8d5638db7735c4de6"
+    "tools/captures/crucible_capture.gd": "f8e83325bd9b342ba9cc503b0630c725547da4f739c93b49ac1b1bc0c417e434"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -27,13 +27,13 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1073,
+    "nodes": 1071,
     "draw_calls": 110,
     "static_mb": 121.7,
     "errors": [],
     "fight": {
-      "knight_hp_before": "764/1100",
-      "knight_hp_after": "764/1100",
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -51,13 +51,13 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 870,
+    "nodes": 869,
     "draw_calls": 103,
     "static_mb": 114.0,
     "errors": [],
     "fight": {
-      "knight_hp_before": "1100/1100",
-      "knight_hp_after": "1100/1100",
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -153,7 +153,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=764/1100 boss_hp=6337"
+      "extra": "knight_hp=932/1100 boss_hp=6337"
     },
     "overview_f1": {
       "tag": "after",
