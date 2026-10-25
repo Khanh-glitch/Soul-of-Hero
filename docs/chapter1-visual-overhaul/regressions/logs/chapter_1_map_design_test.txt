@@ -1,9 +1,9 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
-ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984
-ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696
-ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
+ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=8019,2403,739,471
+ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696 bands=4072,254,6,0
+ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696 bands=4452,245,7,0
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0

@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_4`
 - Map source: `data/levels/chapter_1_level_4.json`
-- Source sha256: `0f46c997ef129c78ef1fd1b5530ed49c7c5ba5bf21226f4821f5c4e4de710b5d`
+- Source sha256: `64ddf77638236a352d8119146607d4c4f44fd4e282dbbc63d4af5993876754ba`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Spiral Reliquary — monumental concentric stone
 

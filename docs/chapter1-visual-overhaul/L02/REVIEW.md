@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_2`
 - Map source: `data/levels/chapter_1_level_2.json`
-- Source sha256: `aea1a4b2fd315cc8bf6f785897726f4e1ff48719d1d9b0d9055e48ffc94b9e0f`
+- Source sha256: `c167afff26fa585ff0d88a13df13d4b8ebe39ee7ebb3e98449f2b664b49b6fbf`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Ossuary Fork — burial galleries, bone masonry
 
@@ -29,9 +29,9 @@
 
 ## Cost of the layer
 
-- Nodes: 695 (art off) -> 716 (art on)
-- Draw calls: 72 -> 97
-- Static memory: 133.3 MiB with the layer on
+- Nodes: 695 (art off) -> 719 (art on)
+- Draw calls: 72 -> 98
+- Static memory: 133.7 MiB with the layer on
 
 ## Frames
 

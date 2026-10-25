@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_1`
 - Map source: `data/levels/crypt_entrance.json`
-- Source sha256: `801db3885d74e2e78ec8c627f0f0c8a8962fd748b70656d5b351269dc22b8c1d`
+- Source sha256: `52b5fab2957c485c950fa2d42aeeab4f12abe41eea5e54a1c9768fd4f16525c5`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Crypt Entrance — the chapter's approachable threshold
 
@@ -31,9 +31,9 @@
 
 ## Cost of the layer
 
-- Nodes: 677 (art off) -> 698 (art on)
-- Draw calls: 74 -> 78
-- Static memory: 106.5 MiB with the layer on
+- Nodes: 677 (art off) -> 701 (art on)
+- Draw calls: 74 -> 79
+- Static memory: 106.7 MiB with the layer on
 
 ## Frames
 

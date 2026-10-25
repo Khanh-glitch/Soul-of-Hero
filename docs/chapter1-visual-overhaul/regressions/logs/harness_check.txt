@@ -1,6 +1,6 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
@@ -9,7 +9,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=3303 lights=29 entities=83
-CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1075 draw_calls=0 static_mb=189.2 fps=1
+CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1070 draw_calls=0 static_mb=189.3 fps=1
 CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=3303 lights=29
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
