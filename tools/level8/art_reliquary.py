@@ -739,21 +739,34 @@ def prop_broken_column(seed: int = 14):
 
 # --- wall overlays ---------------------------------------------------------
 def _wall_niche():
+    """A burial niche: an arched black recess with a carved head and sill.
+
+    It has to be a *recess*, so the two pixels either side of the opening are the
+    brightest thing in the tile - that is what makes a hole read as depth instead of
+    as a black stripe painted on a wall.
+    """
     img = new(T, T)
-    rect(img, 0, 0, T, T, shade(MARBLE_LIGHT, 0.98))
-    courses(img, 0, 0, T, T, shade(MARBLE_LIGHT, 0.98), row_h=8, seed=71, mortar=MORTAR)
-    rect(img, 5, 0, 6, T, shade(MARBLE_DARK, 0.62))
-    rect(img, 6, 0, 4, T, (26, 28, 32))
+    rect(img, 0, 0, T, T, shade(MARBLE_BASE, 0.90))
+    courses(img, 0, 0, T, T, shade(MARBLE_BASE, 0.90), row_h=8, seed=71, mortar=MORTAR)
+    rect(img, 5, 0, 6, T, shade(MARBLE_DARK, 0.55))
+    rect(img, 6, 0, 4, T, (22, 24, 28))
     vline(img, 4, 0, T, MARBLE_PALE)
+    vline(img, 5, 0, T, MARBLE_LIGHT)
     vline(img, 11, 0, T, shade(MARBLE_DARK, 0.9))
-    px(img, 8, 6, COLD_LIGHT)
+    vline(img, 12, 0, T, MARBLE_LIGHT)
+    # sill and shelf
+    hline(img, 5, 11, 6, shade(MARBLE_PALE, 0.94))
+    hline(img, 5, 12, 6, IRON_DARK)
+    # the head, pale against the black
+    rect(img, 7, 5, 2, 3, BONE)
+    px(img, 8, 3, COLD_LIGHT)
     return img
 
 
 def _wall_gilt():
     img = new(T, T)
-    rect(img, 0, 0, T, T, shade(MARBLE_LIGHT, 1.02))
-    courses(img, 0, 0, T, T, shade(MARBLE_LIGHT, 1.02), row_h=8, seed=73, mortar=MORTAR)
+    rect(img, 0, 0, T, T, shade(MARBLE_BASE, 0.94))
+    courses(img, 0, 0, T, T, shade(MARBLE_BASE, 0.94), row_h=8, seed=73, mortar=MORTAR)
     rect(img, 0, 5, T, 6, WINE_DARK)
     hline(img, 0, 5, T, WINE)
     hline(img, 0, 10, T, WINE)
@@ -766,8 +779,8 @@ def _wall_gilt():
 
 def _wall_iron_band():
     img = new(T, T)
-    rect(img, 0, 0, T, T, shade(MARBLE_LIGHT, 0.94))
-    courses(img, 0, 0, T, T, shade(MARBLE_LIGHT, 0.94), row_h=8, seed=77, mortar=MORTAR)
+    rect(img, 0, 0, T, T, shade(MARBLE_BASE, 0.90))
+    courses(img, 0, 0, T, T, shade(MARBLE_BASE, 0.90), row_h=8, seed=77, mortar=MORTAR)
     rect(img, 0, 7, T, 3, IRON)
     hline(img, 0, 7, T, IRON_LIGHT)
     hline(img, 0, 9, T, IRON_DARK)
@@ -783,11 +796,17 @@ def build_tiles() -> list:
     tiles.append(("floor_worn", lambda: marble(31, 0, tone=0.90)))
     tiles.append(("floor_broken", lambda: marble(37, 1, tone=0.94)))
     tiles.append(("shadow_edge", lambda: shadow_tile(94)))
-    tiles.append(("wall_plinth", lambda: wall_plinth_tile(shade(MARBLE_LIGHT, 0.94), IRON)))
-    tiles.append(("wall_field_a", lambda: wall_field_tile(41, shade(MARBLE_LIGHT, 1.02), MORTAR)))
-    tiles.append(("wall_field_b", lambda: wall_field_tile(43, shade(MARBLE_LIGHT, 0.94), MORTAR)))
-    tiles.append(("wall_dado_a", lambda: wall_field_tile(47, shade(MARBLE_PALE, 0.94), MORTAR, dado=True)))
-    tiles.append(("wall_pier", lambda: wall_field_tile(53, shade(MARBLE_LIGHT, 1.06), MORTAR, pier=True)))
+    # The wall stack used to sit within a few percent of the floor's own value, which
+    # is the whole of L8's contrast finding: a pale marble room lit by pale lamps has
+    # no plane a viewer can tell from another plane. The wall's base is now a full step
+    # darker than the paving, the socle darker still, and only the pier and the cornice
+    # are left bright - so a wall reads as a dark vertical plane with light coming down
+    # onto its top edge, which is what a wall does.
+    tiles.append(("wall_plinth", lambda: wall_plinth_tile(shade(MARBLE_BASE, 0.78), IRON)))
+    tiles.append(("wall_field_a", lambda: wall_field_tile(41, shade(MARBLE_BASE, 0.96), MORTAR)))
+    tiles.append(("wall_field_b", lambda: wall_field_tile(43, shade(MARBLE_BASE, 0.86), MORTAR)))
+    tiles.append(("wall_dado_a", lambda: wall_field_tile(47, shade(MARBLE_LIGHT, 0.80), MORTAR, dado=True)))
+    tiles.append(("wall_pier", lambda: wall_field_tile(53, shade(MARBLE_PALE, 0.92), MORTAR, pier=True)))
     tiles.append(("wall_cornice", lambda: wall_cornice_tile(shade(GILT, 0.9), MARBLE_LIGHT)))
     tiles.append(("wall_cap", lambda: wall_cap_tile(shade(MARBLE_PALE, 0.90), MARBLE_LIGHT)))
     tiles.append(("wall_niche", lambda: _wall_niche()))

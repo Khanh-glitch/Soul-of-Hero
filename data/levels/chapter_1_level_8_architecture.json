@@ -25557,30 +25557,23 @@
       {
         "cell": [
           5,
-          16
-        ],
-        "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          5,
           20
         ],
         "frame": "wall_iron"
       },
       {
         "cell": [
-          8,
-          20
+          7,
+          16
         ],
-        "frame": "wall_niche"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
-          8,
+          7,
           44
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
@@ -25591,84 +25584,21 @@
       },
       {
         "cell": [
-          10,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          12,
+          14,
           16
         ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          12,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          12,
-          44
-        ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
           14,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          14,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          14,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          16,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          16,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          16,
           44
         ],
         "frame": "wall_dado_a"
       },
       {
         "cell": [
-          18,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          18,
+          15,
           20
         ],
         "frame": "wall_iron"
@@ -25676,30 +25606,30 @@
       {
         "cell": [
           20,
+          20
+        ],
+        "frame": "wall_niche"
+      },
+      {
+        "cell": [
+          21,
           16
         ],
         "frame": "wall_dado_a"
       },
       {
         "cell": [
-          20,
-          20
+          21,
+          44
         ],
-        "frame": "wall_iron"
-      },
-      {
-        "cell": [
-          23,
-          35
-        ],
-        "frame": "wall_iron"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
           25,
           20
         ],
-        "frame": "wall_niche"
+        "frame": "wall_iron"
       },
       {
         "cell": [
@@ -25710,85 +25640,29 @@
       },
       {
         "cell": [
-          25,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          27,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          27,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          29,
+          28,
           16
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
-          29,
+          28,
+          44
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          30,
           20
         ],
         "frame": "wall_niche"
       },
       {
         "cell": [
-          29,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          31,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          31,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          31,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          33,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          33,
-          20
-        ],
-        "frame": "wall_niche"
-      },
-      {
-        "cell": [
-          33,
-          44
+          35,
+          11
         ],
         "frame": "wall_dado_a"
       },
@@ -25801,17 +25675,10 @@
       },
       {
         "cell": [
-          36,
-          11
+          35,
+          44
         ],
         "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          37,
-          20
-        ],
-        "frame": "wall_iron"
       },
       {
         "cell": [
@@ -25823,184 +25690,114 @@
       {
         "cell": [
           42,
-          20
+          11
         ],
-        "frame": "wall_niche"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
-          43,
+          49,
+          3
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          49,
           43
         ],
         "frame": "wall_dado_a"
       },
       {
         "cell": [
-          44,
-          3
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          46,
+          56,
           3
         ],
         "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          55,
-          3
-        ],
-        "frame": "wall_field_b"
       },
       {
         "cell": [
           56,
           43
         ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          57,
-          3
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          58,
-          43
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          59,
-          3
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          60,
-          43
-        ],
         "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          61,
-          20
-        ],
-        "frame": "wall_gilt"
       },
       {
         "cell": [
           62,
-          11
+          20
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_niche"
       },
       {
         "cell": [
           63,
-          20
+          11
         ],
-        "frame": "wall_gilt"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
           63,
           44
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
           64,
-          11
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          65,
           20
         ],
         "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          65,
-          44
-        ],
-        "frame": "wall_field_b"
       },
       {
         "cell": [
           66,
-          11
+          20
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_niche"
       },
       {
         "cell": [
-          67,
+          68,
           20
         ],
         "frame": "wall_gilt"
       },
       {
         "cell": [
-          67,
+          70,
+          16
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          70,
+          20
+        ],
+        "frame": "wall_niche"
+      },
+      {
+        "cell": [
+          70,
           44
         ],
         "frame": "wall_dado_a"
       },
       {
         "cell": [
-          68,
-          11
-        ],
-        "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          69,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          69,
+          72,
           20
         ],
         "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          71,
-          16
-        ],
-        "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          71,
-          20
-        ],
-        "frame": "wall_niche"
       },
       {
         "cell": [
           74,
           20
         ],
-        "frame": "wall_gilt"
+        "frame": "wall_niche"
       },
       {
         "cell": [
@@ -26011,38 +25808,31 @@
       },
       {
         "cell": [
-          76,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          78,
-          20
-        ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          78,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          79,
-          35
-        ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          80,
+          77,
           16
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          77,
+          44
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          78,
+          20
+        ],
+        "frame": "wall_niche"
+      },
+      {
+        "cell": [
+          78,
+          35
+        ],
+        "frame": "wall_niche"
       },
       {
         "cell": [
@@ -26054,13 +25844,6 @@
       {
         "cell": [
           80,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          81,
           35
         ],
         "frame": "wall_gilt"
@@ -26068,30 +25851,16 @@
       {
         "cell": [
           82,
-          16
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          82,
           20
         ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          82,
-          44
-        ],
-        "frame": "wall_dado_a"
+        "frame": "wall_niche"
       },
       {
         "cell": [
           84,
           16
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
@@ -26104,13 +25873,6 @@
         "cell": [
           84,
           44
-        ],
-        "frame": "wall_dado_a"
-      },
-      {
-        "cell": [
-          86,
-          16
         ],
         "frame": "wall_dado_a"
       },
@@ -26124,13 +25886,13 @@
       {
         "cell": [
           88,
-          16
+          20
         ],
-        "frame": "wall_dado_a"
+        "frame": "wall_gilt"
       },
       {
         "cell": [
-          88,
+          90,
           20
         ],
         "frame": "wall_niche"
@@ -26138,58 +25900,58 @@
       {
         "cell": [
           91,
-          20
-        ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          93,
-          20
-        ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          93,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          95,
-          20
-        ],
-        "frame": "wall_gilt"
-      },
-      {
-        "cell": [
-          95,
-          44
-        ],
-        "frame": "wall_field_b"
-      },
-      {
-        "cell": [
-          97,
           16
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       },
       {
         "cell": [
-          97,
+          91,
+          44
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          92,
           20
         ],
         "frame": "wall_gilt"
       },
       {
         "cell": [
-          97,
+          94,
+          20
+        ],
+        "frame": "wall_niche"
+      },
+      {
+        "cell": [
+          96,
+          20
+        ],
+        "frame": "wall_gilt"
+      },
+      {
+        "cell": [
+          98,
+          16
+        ],
+        "frame": "wall_dado_a"
+      },
+      {
+        "cell": [
+          98,
+          20
+        ],
+        "frame": "wall_niche"
+      },
+      {
+        "cell": [
+          98,
           44
         ],
-        "frame": "wall_field_b"
+        "frame": "wall_dado_a"
       }
     ]
   },
@@ -28631,14 +28393,14 @@
   ],
   "stats": {
     "floor_overrides": 3648,
-    "wall_overrides": 91,
+    "wall_overrides": 57,
     "props": 96,
     "lights": 45,
     "spine_cells": 194,
     "emblem_cells": 98,
     "dais_cells": 88,
     "tomb_slab_cells": 110,
-    "wall_dressing": 91,
+    "wall_dressing": 57,
     "wear_cells": 94,
     "lights_resized": 45,
     "lights_dimmed": 3

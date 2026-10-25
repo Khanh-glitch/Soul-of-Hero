@@ -175,32 +175,45 @@ def tomb_slab(plan, floor, geom, centre, tall_cells: int, *, cold: bool) -> int:
     return painted
 
 
-def walls(plan, faces, wing_of) -> int:
-    """Wall dressing: niches west, gilt panels east, plain ashlar elsewhere."""
+def walls(plan, faces, wing_of, geom) -> int:
+    """Wall dressing: a burial arcade west, gilt panels east, plain ashlar elsewhere.
+
+    This used to hang a niche or a gilt panel wherever a hash roll happened to land,
+    on whatever course of the wall that cell was, so the east wall carried red dashes
+    at four different heights and the west wall carried black slots wherever the
+    arithmetic fell. That is the scattered-ornament finding, and it is worst in the
+    room whose whole idea is that the two halves are *organised* differently. The
+    panels are now a course - one row of the wall, the dado - and they are placed in
+    bays measured from the wing's own centre, so each wing reads as an elevation:
+    niches on a rhythm, gilt on a rhythm, nothing in between.
+    """
     painted = 0
     for cell in sorted(faces):
-        wing = wing_of.get((cell[0], cell[1] + 1))
-        roll = ((cell[0] * 53 + cell[1] * 29) % 100) / 100.0
+        x, y = cell
+        wing = wing_of.get((x, y + 1))
+        # Ornament goes on the wall's own bottom course. The stack above it is not in
+        # this document - the renderer extrudes it into the rock - so a panel placed
+        # one row up would float in a cell the validator rightly calls outside the
+        # geometry. One course means one height for every panel in the room.
+        bay_cell = cell
         if wing == "reaper":
-            if roll < 0.34:
-                plan.wall_tile(cell, "wall_niche")
-                painted += 1
-            elif roll < 0.46:
-                plan.wall_tile(cell, "wall_iron")
-                painted += 1
+            if x % 5 == 0 or x % 5 == 5:
+                if x % 10 == 0:
+                    plan.wall_tile(bay_cell, "wall_niche")
+                    painted += 1
+                elif x % 10 == 5:
+                    plan.wall_tile(bay_cell, "wall_iron")
+                    painted += 1
         elif wing == "vampire":
-            if roll < 0.38:
-                plan.wall_tile(cell, "wall_gilt")
+            if x % 4 == 0:
+                plan.wall_tile(bay_cell, "wall_gilt")
                 painted += 1
-            elif roll < 0.46:
-                plan.wall_tile(cell, "wall_niche")
+            elif x % 4 == 2:
+                plan.wall_tile(bay_cell, "wall_niche")
                 painted += 1
         else:
-            if roll < 0.22:
-                plan.wall_tile(cell, "wall_field_b")
-                painted += 1
-            elif roll < 0.30:
-                plan.wall_tile(cell, "wall_dado_a")
+            if x % 7 == 0:
+                plan.wall_tile(bay_cell, "wall_dado_a")
                 painted += 1
     return painted
 
@@ -467,7 +480,7 @@ def build():
             plan.floor_tile(cell, "cold_" + frame)
     painted_slabs = (tomb_slab(plan, floor, geom, (12, 31), 11, cold=True)
                      + tomb_slab(plan, floor, geom, (88, 31), 11, cold=False))
-    painted_walls = walls(plan, faces, wing_of)
+    painted_walls = walls(plan, faces, wing_of, geom)
     painted_wear = wear(plan, floor, geom, wing_of)
 
     p = Placer(plan, floor, geom, guard, faces)
