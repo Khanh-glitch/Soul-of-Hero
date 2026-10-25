@@ -42,15 +42,15 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 | --- | --- | --- | --- | --- | --- |
 | D1 | Light pools were 179–1638 px, so in L5, L6, L8 and L9 a single lamp covered the room and flattened floor, wall and prop to one value | Audit lighting findings; authored scales of 0.7–6.4 across the six generators | `kitlib.clamp_light` (and the same rule restated in L5's frozen pipeline): radius 140–400 px, core ≤ 1.15 energy. Radius is compressed by `r^0.6` and energy rolls off above 0.85 rather than being clipped, so the author's ordering survives | After the pass: L5 10 distinct radii, L6 7, L8 8, L9 7, L10 6 — 207 px to 399 px | fixed |
 | D2 | The L9 gate read as a blue dome: a 614 px cold flood over the arch and the arena floor | Audit K; `docs/chapter1-visual-recovery/after/L09` frames | Gate light 1.05/2.4 → 0.66/1.3. A portcullis prop was also placed in the gate mouth and then removed: the native frame showed it drawn behind the arch sprite (y-sort, one cell up), adding nothing, and the arch already draws its own bars inside the lit opening. A prop that implies nothing is a defect of its own | AFTER frame of the gate at 1:1 and 2× — arch, voussoirs, keystone, bars and towers all read | fixed |
-| D3 | Floor and wall hold the same value in L5, L6, L7 and L10, so rooms have no ground plane | Audit H | — | — | open |
-| D4 | Hero objects do not read: L10's throne, L7's beacon, L5's bowl | Audit K | — | — | open |
+| D3 | Floor and wall hold the same value in L5, L6, L7 and L10, so rooms have no ground plane | Audit H | L9 is fixed at the source: paving is a cool dark stone and walls stay warm, so the floor carries the lowest value in the room and the reds (blood, iron, embers) are the only saturated colour. L5 is lifted out of black (ambient 0.30/0.32/0.40 -> 0.44/0.45/0.53, still the darkest level in the chapter, 29 authored lights unchanged). L10's floor is separated by the new tread bands and the inlay, not by a palette change. L6 and L7 still read as one value in places | AFTER mosaics at `9ee4166` and the fresh sweep at `1dac103`; offline composites from the authored documents for the same cells | partial |
+| D4 | Hero objects do not read: L10's throne, L7's beacon, L5's bowl | Audit K | **L10 throne** rebuilt out of five masses (dais, winged buttresses outside the back slab, pilastered back, projecting seat, crown resting on the lintel): the old canopy was twenty-two 1-px columns that averaged into a moire wash. **L7 beacon** was a bug, not a style: `apron()` covered nine cells in every direction and ran *after* `ward()`, so the 13x13 ward disc with its iron ring and eight ward marks was painted and then repainted. The apron is laid first now. **L9 east station** cauldron rebuilt at 48 px inside its niche; the old 70 x 108 funnel was wider than the shrine and laid its darkest value over the seal cell | Traced in the authored documents and confirmed in the AFTER mosaics and in 4x crops of them | fixed for L10 and L7, fixed for the L9 seal; **L5's bowl still open** |
 
 ## E — art direction
 
 | # | Defect | Evidence | Repair | Verification | Status |
 | --- | --- | --- | --- | --- | --- |
-| E1 | 1-px hairline motifs (L6 conduit, L7 lane, L9 iron band, L10 carpet) read as unfinished line art | Audit G | — | — | open |
-| E2 | Prop composition is mechanical: prop runs at fixed spacing, identical silhouettes repeated | Audit J; L09 and L10 mosaics show chains of identical props at a constant interval | — | — | open |
+| E1 | 1-px hairline motifs (L6 conduit, L7 lane, L9 iron band, L10 carpet) read as unfinished line art | Audit G | L10's aisle and lane tiles were the worst of them: a 2-px rule on the tile's top seam and a 1-px line down its left seam, so any isolated cell read as a gold scratch on the floor. Both are centred bands with a dark bed and an arris now. L9's ring arcs were restated as steel and brass on a dark pad. L6's conduits and L7's lanes are unchanged | L10 AFTER mosaic and document composites; art-ref validator | partial |
+| E2 | Prop composition is mechanical: prop runs at fixed spacing, identical silhouettes repeated | Audit J; L09 and L10 mosaics show chains of identical props at a constant interval | L9's four seal rings are no longer one emblem stamped four times: the throat and the gate carry a whole ring, the west and east stations carry a horseshoe cut at the wall with a bronze socket on each end. Everything else still stands at a constant interval | L9 kit preview and the ring frame sets; AFTER mosaic | partial |
 | E3 | Bedrock is a flat field of one tile | Audit F | Partly addressed by C1/C2 (two values, three tiles, hashed per cell) | Mosaics | partial |
 
 ## F — identity
@@ -66,3 +66,13 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 * Gates C and D: the two structural causes (hollow maps, flooded light) are
   repaired and verified; the art direction on top of them is not.
 * Gates E and F: not started.
+
+## New findings this pass
+
+| # | Defect | Evidence | Repair | Verification | Status |
+| --- | --- | --- | --- | --- | --- |
+| G1 | L8 is over-exposed: the reliquary's pale marble, its 45 authored lights and a bright ambient stack until whole wings sit at 230-255 and detail is gone; the left hall reads as white brick under a blue wash | 2x crops of `L08_mosaic.png` at the decision hall and the blue wing | — | — | open |
+| G2 | L5's halls were black: floor tiles that are already dark blue-grey stone multiplied by an ambient of 0.30/0.32/0.40 land near 30/255, so the paving could not be told from the wall except by its joints | 4x crop of `L05_mosaic.png` at a floor/wall junction, and the frames at 1:1 | Ambient 0.44/0.45/0.53; the 29 lights and their ordering untouched | AFTER mosaic at the next sweep | partial |
+| G3 | L1-L4 still carry single-pixel noise decals (X marks, tics, short dashes) scattered on the floor, which read as scratches at gameplay zoom | `L01..L04_mosaic.png` at 1:1 | — | — | open |
+| G4 | L7's "banners" read as free-standing monoliths: a pale cloth rectangle with no pole, no rail and no attachment, standing on the floor | 2x crop of the ward ring in `L07_mosaic.png` | — | — | open |
+| G5 | L10 has two hollow 4x4 blocks flanking the throne (x 37-40 and 59-62, y 20-23) whose 2x2 interiors are neither floor nor geometry; they read as black holes in the hall, and the one-cell walls around them read as a thin frame | Level JSON grid dump plus the AFTER mosaic | — | — | open |

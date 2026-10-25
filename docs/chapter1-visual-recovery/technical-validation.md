@@ -163,3 +163,65 @@ art/data (architecture documents, kits, generators).
 * It does not claim the BEFORE/AFTER comparison is like-for-like for lighting: the
   light normalisation deliberately changes exposure in L5, L6, L8 and L9, and that is
   the point of the change rather than a correction applied to hide a problem.
+
+---
+
+# Second pass — art repairs (`082b59a` … `9ee4166`)
+
+Four art commits land on the branch on top of the first pass: L10's throne, L10's
+staircase, L7's ward ring, L9's seal stations and paving, and L5's ambient. Each one
+is kit art, an architecture document, or a per-level lighting constant. None of them
+touches a level file, an entity, a collider, a route, a reward or a save field.
+
+## Workflows, on `9ee4166`
+
+| Workflow | Result | Notes |
+| --- | --- | --- |
+| Chapter 1 — audit sweep (native Godot 4.7, read-only) | **success** (`40202174188`, 8m06s) | ten levels captured, stitched and published; `overlap_worst_shift_px = 0` and `overlaps_at_zero_shift = 14/14` on L09, `limits_applied true`, `coverage_of_content 1.0` |
+| Chapter 1 — architecture breakthrough | **success** (`40202174162`, 2m40s) | regeneration is byte-reproducible; the art layer builds on every level |
+| Chapter 1 — visual overhaul | **success** (`40202174273`) at `9ee4166`; **publish step only** failed at `1dac103` (`40203197458`) | At `1dac103` every substantive step passed — compile-check, frozen gameplay suites, capture of all ten levels with the art layer on and off, evidence tree, "verify the art layer built on every level" — and only `Publish logs, statuses and the gallery` failed, which is the documented race against the audit sweep publishing at the same moment. It is not an art or gameplay verdict |
+| Godot 4.7 Runtime Validation | **failure** (`40202174284`) | pre-existing: the same job fails at `e5aa108` and at the audit baseline |
+| Level 5 — Blood Crucible redesign | **failure** (`40202174192`) | pre-existing: fails in 33-42 s at step 3 (`Authoring authority is byte-reproducible and satisfies the map contract`) on the eight runs before this pass as well; the same step, the same duration, so it is not a regression from the ambient change |
+
+The L5 job is worth stating plainly because it is the one that could plausibly have
+been caused here: the ambient edit does land in a file that job reads. It failed at
+`40191815195` (33 s), `40192040569` (39 s), `40192246203` (37 s), `40193126746` (36 s)
+and `40202174192` (42 s) — five runs, three of them before any of this pass's commits
+existed, always at the same step. That is a pre-existing failure, not a regression.
+
+## Reproducibility of the evidence
+
+The audit sweep regenerates from the branch, so any art commit invalidates the
+mosaics until the next sweep runs. The workflow's trigger paths were already widened
+to `game/levels/presentation/**`, `data/levels/**`, `data/environment/**` and
+`assets/environment/chapter1/**` for exactly this reason; every commit in this pass
+changed one of those, so each one re-captured the chapter.
+
+The mosaics are 1:1 world pixels, twice the size the player sees at 640×360. Nothing
+in this pass is verified by looking at a downscaled image: the judgements above come
+from crops taken at 1:1, 2x and 4x from the published mosaics, and from compositing
+the authored documents offline against the same kits.
+
+## What did *not* change, and must not
+
+* No level document, entity id, spawn, checkpoint, objective, reward, walkability or
+  collision change. `l9_east_gate_seal` is still at `(78, 45)`; the ring was made to
+  fit the room rather than the room being made to fit the ring.
+* No prop was deleted to lower a count and no monument was shrunk to fit: the L9
+  cauldron is smaller than it was *because* being wider than its own shrine was the
+  defect (it covered the seal cell), and it is documented as such in the commit.
+* `docs/chapter1-audit/` is untouched and still byte-identical to `e613242`.
+* No screenshot was edited, cropped, brightened or stitched by hand.
+
+## Third sweep, `1dac103`
+
+| Workflow | Result | Notes |
+| --- | --- | --- |
+| Chapter 1 — audit sweep | **success** (`40203197505`, 8m09s) | published as `bf1c4ce`; this is the mosaic set the L9 and L7 confirmations above are read from |
+| Chapter 1 — visual overhaul | **failure** (`40203197458`), publish step only | see the table above: all art, gameplay and compile steps passed |
+| Godot 4.7 Runtime Validation | **failure** (`40203197455`) | pre-existing, same as every run before this pass |
+
+Two workflows publishing to the same branch at once is the known race; both now
+retry with a rebase, and this run lost it. A red `Publish` step with green
+`Compile`, `Frozen gameplay suites`, `Capture` and `Verify the art layer` steps is
+not a failing chapter — it is a late writer.

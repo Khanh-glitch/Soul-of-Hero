@@ -32,9 +32,9 @@ Two examples of what that means in practice:
 | A | Gameplay readability / missing content | **Done** — 3 missing-frame classes repaired, 1 validator added |
 | B | Architectural boundaries and clipping | **Partly done** — camera headroom and wall crowns done; per-level boundary work on L5's portal, L9's gate framing and L10's hall is open |
 | C | L1–L4 enclosed voids finished as architecture | **Partly done** — every void is rock, in the headroom too; room-level architecture is open |
-| D | Visual hierarchy (floor/wall, light, hero objects) | **Partly done** — light pools normalised; floor/wall value separation and hero objects are open |
-| E | Art direction (motifs, composition, bedrock, variation) | **Open** — see the ledger |
-| F | Level identity L1–L4, polish | **Open** |
+| D | Visual hierarchy (floor/wall, light, hero objects) | **Partly done** — light pools normalised; L10's throne, L7's ward ring, L9's seal stations and L5's exposure repaired; L6/L7 value structure and L5's bowl still open |
+| E | Art direction (motifs, composition, bedrock, variation) | **Partly done** — L10's seam rules and L9's rings are built features now; L6's conduits, L7's lanes, prop repetition and bedrock detail are open |
+| F | Level identity L1–L4, polish | **Open** — L1–L4 were not touched beyond Gate C |
 
 A partly-done gate is not a passed gate. The visual verdict at the bottom of
 `level-report.md` follows from that.
@@ -51,11 +51,23 @@ A partly-done gate is not a passed gate. The visual verdict at the bottom of
 | `bc3d3a3` | C | The keep sits in rock instead of on a black field |
 | `408a451` | E | The chain is drawn as a chain, not a dotted seam |
 | `b0a7268`, `7c5e4d5` | C | Rock measured on the native frames and corrected twice: out of black, then to one value with rock in the headroom |
-| `bc3d3a3`…`7c5e4d5` | C | The rock measured on native frames and corrected twice: out of black, then to one value with rock in the headroom |
-| `408a451` | E | The chain is drawn as a chain, not a dotted seam |
 | `869aa67` | — | The audit sweep re-photographs the chapter when the chapter changes, and publishes to `after/` |
 | `e9f6a6a` | — | `docs/chapter1-audit/` frozen at `e613242` and protected by a guard; publishing made race-proof |
-| `165c46f` | — | This documentation |
+| `e5aa108` | — | First documentation pass |
+
+### Second pass — art repairs (this pass)
+
+| Commit | Gate | What |
+| --- | --- | --- |
+| `9b9c803` | D | L10: the throne rebuilt out of five masses instead of twenty-two 1-px columns |
+| `3164bcb` | D, E | L9: the cauldron no longer covers the seal, rings generated per arm, paving separated from walls, blood darkened |
+| `67046b5` | E | L10: the staircase becomes tread/riser bands, and the aisle/lane seam rules become centred inlay |
+| `27a98ea` | D | L7: the apron no longer repaints the ward ring — the arena's floor art was never visible |
+| `4c77e47` | D | L5: ambient lifted out of black (0.44/0.45/0.53) with all 29 lights untouched |
+| `1dac103` | E | L9: rings get a recessed pad and bronze socket caps inside the last paintable column |
+
+Every one of these is kit art, an architecture document or a per-level lighting
+constant. No level file, entity, collider, route or save field changed.
 
 ## Documents here
 

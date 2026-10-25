@@ -192,6 +192,85 @@ baseline.
 structural causes of the clipping and flooding (B1, D1) are repaired and verified.
 No P0 is left open.
 
+## This pass — what changed on the branch, level by level
+
+Judged the way the audit asked: whole mosaic first, then crops at 1:1 and at 2-4x
+for detail, with the authored document open beside them. Round numbers below are
+native log values, not estimates.
+
+**L01–L04.** No art changed this pass. The findings stand: four variations of one
+room, single-pixel noise decals on the floor, no prop layer, rock and wall band the
+same material (G3, F1, C3).
+
+**L05 — The Crucible.** The halls were black: an ambient of 0.30/0.32/0.40 over
+already-dark blue-grey paving lands near 30/255, so a 4x crop of a floor/wall
+junction shows the two as the same value with only the joints to tell them apart.
+Ambient is now 0.44/0.45/0.53 — still the darkest level in the chapter, still fire
+lit, all 29 authored lights untouched. The three basins remain identical to each
+other (C3/E2) and the bowl itself is unchanged (D4).
+
+**L06 — The Relay House.** No art changed. Of the six document-driven levels it is
+in the best shape: the floor is a dark slate, the walls are a lighter masonry band,
+and the relay platform is a genuine focal point. Its remaining faults are the 1-px
+conduit lines (E1) and hot-pink blood decals that read as spray paint.
+
+**L07 — The Beacon Yard.** The ward ring was never in any build. `apron()` covers
+nine cells in every direction and ran after `ward()`, so it repainted the whole
+disc: the 13x13 ward with its octagonal iron ring, hot centre line and eight ward
+marks existed in the kit and on the floor for zero frames. The apron is laid first
+and the ring inlaid into it; `stats.ward_cells` now reports 169 painted cells
+instead of a guess. The free-standing "banners" with no pole still read as
+monoliths (G4).
+
+**L08 — The Reliquary.** No art changed. New finding G1: it is over-exposed. Pale
+marble plus 45 lights plus a bright ambient stack until a whole wing sits at
+230-255 and detail is gone; the left hall reads as white brick under a blue wash.
+
+**L09 — The Crimson Gate.** Four repairs, all of them art:
+the east cauldron was a 70 x 108 funnel wider than its own shrine, hanging over the
+seal cell and laying the darkest value in the room across it (D4); the seal rings
+were broken crescents because the stations stand two cells from their end walls, and
+a full 5x5 ring cannot be painted where the wall is (E2/F2); the paving, walls,
+iron and blood were one oxblood value (D3); and blood was painted *lighter* than the
+stone, so it read as pink petals instead of a stain (E1).
+The cauldron is 48 px inside its niche, the rings are generated per arm (whole ring
+in the throat and at the gate; horseshoes at the west and east stations, cut at 80
+degrees so both ends land inside a paintable column, each capped with a bronze
+socket and a bolt), every ring sits on a recessed dark pad, and the paving is now
+the coolest, darkest value in the room. `ring_cells` 88, validation clean.
+
+**L10 — The Castellan's Throne.** Two repairs. The throne (D4) was a small seat in
+front of a black hatched fence: twenty-two 1-px canopy columns two pixels apart
+averaged into a moire wash at gameplay zoom and the crown floated above the lintel.
+It is now five masses — three-step dais, winged buttresses outside the back slab so
+their silhouette reads, pilastered back around a crimson field, projecting seat with
+arms, crown resting on the lintel — each at least three cells across. And the
+staircase (E1) was painted as scattered `aisle`/`lane` tiles whose 2-px seam rules
+read as gold scratches; four tiers of tread and riser bands now read as four steps.
+Hollow blocks flanking the throne (G5) are unchanged and still read as holes.
+
+### Native confirmation at `bf1c4ce` (sweep `40203197505`)
+
+Read at 6x off `after/L09_mosaic.png` and 3x off `after/L07_mosaic.png`:
+
+* **L9 east station.** The bronze cauldron stands in its niche, on its plinth, and
+  the seal cell beside it is clear: the gold centre boss of the ring is visible, the
+  ring reads as a steel-and-brass mechanism on a recessed pad instead of a red
+  scribble on red paving. The pad's arc and the iron ring are both legible.
+  What does *not* read is the bronze socket on the north-east end: the cauldron
+  occupies that cell and hides it. The cut on the south-east end is visible.
+  Honest summary: the occlusion is fixed and the ring is a mechanism, not a
+  mechanism whose every detail is visible.
+* **L7 ward ring.** The disc, the inner iron arc, the hot centre line and the ward
+  marks are all present on the floor now. The centre is still crowded — four
+  braziers, two watch pillars and two free-standing cloth panels stand on and around
+  the ring — so the disc reads as a patterned floor rather than as an arena centre.
+  Repair of the bug is confirmed; the composition around it is not finished.
+* **L10.** The four treads and the riser read as a staircase under the dais at 3x,
+  and the throne's dais, buttress steps, pilasters, crimson field, seat and crown all
+  read as separate masses. The gold scratch marks that were scattered over the paving
+  are gone; the only remaining floor ornament is the inlay band, which is continuous.
+
 **P1/P2 resolution:** partly. Floor/wall value separation (D3), hero objects (D4),
 hairline motifs (E1), prop composition (E2), L1–L4 identity (F1) and L9's seal
 stations (F2) are open, and they are exactly the findings that decide whether the
