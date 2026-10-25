@@ -6,10 +6,12 @@ Mosaicked native frames of every level, taken by
 `tools/captures/chapter1_audit_sweep.tscn` and stitched 1:1 by
 `tools/chapter1_audit/audit_sheets.py`.
 
-Each `L<nn>_mosaic.png` is the level exactly as the game renders it, composited
-from 1280×720 frames taken on a 960×540 overlapping grid with actors and HUD
-hidden. Because the mosaic is 1:1 in map pixels, any region of it can be cropped
-and read at pixel scale without resampling.
+Each `L<nn>_mosaic.png` is the level as the game composes it: 1280×720 frames taken
+on an overlapping camera grid with actors and HUD hidden, composited where the
+renderer actually drew them. The chapter renders to a 640×360 canvas that the
+window upscales, so frames are reduced by that factor with nearest-neighbour
+sampling and **one mosaic pixel is one art pixel** — any region can be cropped and
+read at the size the tiles were drawn at.
 
 `L<nn>_mosaic.json` records how many frames went in, the camera bounds, whether
 the camera obeyed its limits, the authored content rectangle and the fraction of
