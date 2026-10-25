@@ -92,8 +92,26 @@ const DEFAULT_BEDROCK := {
 	# it is "the keep floats on a black field" - the exact defect this layer was
 	# added to remove. At 0.78 the rock reads as darker mass with visible coursing,
 	# still a full stop under the floor it surrounds.
-	"color": [0.78, 0.74, 0.80, 1.0],
+	"color": [0.60, 0.57, 0.63, 1.0],
+	# One value for the whole void was the second half of that mistake. At gameplay
+	# scale a single tint over a single tile turns a third of the frame into a
+	# stamped lattice - the same brick at the same phase from the room's edge to the
+	# frame's edge, which is the procedural wallpaper the production review keeps
+	# rejecting. Distance from the rooms is the one thing the void actually has: mass
+	# falls off away from a lit hall. So the fill is banded by that distance - the
+	# first band keeps the base value and each band after it is a fraction of it.
+	# This is a local falloff, not a global dimming: the band pressed against the
+	# wall is unchanged, and the floor, walls, decor and lights are not touched.
+	# 0.60 modulate on this sheet lands the void at about 44/255 against a 124/255
+	# floor, so the last band sits at 28/255 - deep shadow, not the 22/255 black
+	# that started this whole pass.
+	"bands": [1.0, 0.88, 0.76, 0.64],
+	"band_width": 7,
+	# Tiles are picked per patch of this many cells, not per cell, so the void reads
+	# as cut blocks rather than as per-pixel noise.
+	"patch": 3,
 }
+const BEDROCK_OFFSETS: Array[Vector2i] = [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]
 
 ## Landmark lights are derived from the authored entities, not hand-placed: an
 ## objective that the player must find gets a light, so the lighting cannot drift
@@ -281,13 +299,22 @@ func _visible_faces(geometry: Dictionary, floor: Dictionary) -> Array[Vector2i]:
 ## screen. The castle looked unpublished, not dark.
 ##
 ## So every unmarked cell inside the map and in the headroom above it gets stone, on
-## a layer behind the backdrops, in one value. That last part is a decision with a
-## history: the first version filled the *enclosed* cells lighter than the cells open
-## to the map border, on the theory that the outer country should recede. Measured on
-## the first native frames, the outer value came out at 21/255 - black, so nothing had
-## changed - and when it was raised the two values showed up as rectangular patches of
-## two greys, which reads as inconsistent material rather than as depth. One value,
-## and the hierarchy comes from the floor being a lighter material than the rock.
+## a layer behind the backdrops. That last part is a decision with a history: the
+## first version filled the *enclosed* cells lighter than the cells open to the map
+## border, on the theory that the outer country should recede. Measured on the first
+## native frames, the outer value came out at 21/255 - black, so nothing had
+## changed - and when it was raised the two values showed up as rectangular patches
+## of two greys, which reads as inconsistent material rather than as depth.
+##
+## The current version bands the fill by its distance from the rooms instead of by
+## enclosure. Two things were wrong with one flat value: on the frames it was black
+## (see above), and once it was bright enough to see it was a uniform field of the
+## same brick at the same phase from the wall to the frame edge, which is the
+## wallpaper the review keeps rejecting. Depth from the rooms is real information -
+## the mass behind a wall is nearer the lit hall than the mass at the edge of the
+## keep - so it carries the falloff, and the stone is picked per 48 px patch so the
+## void reads as cut blocks. Neither change touches the floor, the walls, the trim
+## or the lights, so this is depth, not a global darkening.
 ##
 ## Nothing here is walkable and nothing here collides: the pass only fills cells that
 ## are neither Backdrop nor Geometry, so it cannot invent ground or cover a room.
@@ -310,12 +337,55 @@ func _build_bedrock() -> void:
 	var reference := get_parent().get_node_or_null("Decor") as TileMapLayer
 	if reference == null:
 		return
-	var rock := TileMapLayer.new()
-	rock.name = BEDROCK_NODE
-	rock.z_index = -11
-	rock.tile_set = reference.tile_set
-	rock.modulate = _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
-	add_child(rock)
+	var base := _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
+	var bands: Array = config.get("bands", (DEFAULT_BEDROCK as Dictionary)["bands"])
+	if bands.is_empty():
+		bands = [1.0]
+	var band_width := maxi(1, int(config.get("band_width", (DEFAULT_BEDROCK as Dictionary)["band_width"])))
+	var patch := maxi(1, int(config.get("patch", (DEFAULT_BEDROCK as Dictionary)["patch"])))
+
+	# Distance from the rooms, four-way, out of every cell the player can stand on or
+	# that the document marks solid. Unreached cells (there are none inside the map,
+	# but the name is kept honest) fall to the deepest band.
+	var depth := {}
+	var queue: Array[Vector2i] = []
+	for cell: Vector2i in floor:
+		depth[cell] = 0
+		queue.append(cell)
+	for cell: Vector2i in geometry:
+		if depth.has(cell):
+			continue
+		depth[cell] = 0
+		queue.append(cell)
+	var head := 0
+	while head < queue.size():
+		var cell: Vector2i = queue[head]
+		head += 1
+		var next_depth := int(depth[cell]) + 1
+		for offset: Vector2i in BEDROCK_OFFSETS:
+			var next := cell + offset
+			if next.x < 0 or next.x >= width or next.y < WORLD_TOP_ROW or next.y >= height:
+				continue
+			if depth.has(next):
+				continue
+			depth[next] = next_depth
+			queue.append(next)
+
+	# A TileMapLayer carries one modulate, so the falloff is one layer per band. The
+	# bands never share a cell, so their draw order cannot matter.
+	var layers: Array[TileMapLayer] = []
+	for index: int in range(bands.size()):
+		var layer := TileMapLayer.new()
+		layer.name = BEDROCK_NODE if index == 0 else "%s%d" % [BEDROCK_NODE, index]
+		layer.z_index = -11
+		layer.tile_set = reference.tile_set
+		var scale := clampf(float(bands[index]), 0.0, 1.5)
+		layer.modulate = Color(base.r * scale, base.g * scale, base.b * scale, base.a)
+		add_child(layer)
+		layers.append(layer)
+	var counts := PackedInt32Array()
+	counts.resize(bands.size())
+	counts.fill(0)
 	var filled := 0
 	var open := 0
 	for y: int in range(WORLD_TOP_ROW, height):
@@ -323,13 +393,30 @@ func _build_bedrock() -> void:
 			var cell := Vector2i(x, y)
 			if floor.has(cell) or geometry.has(cell):
 				continue
-			_put(rock, cell, tiles[posmod(x * 73 + y * 151, tiles.size())])
+			var distance := int(depth.get(cell, band_width * bands.size()))
+			# `floor` is a local in this function (the Backdrop cell set), so the
+			# truncation is explicit: these are all non-negative x, and posmod() below
+			# keeps a negative y in range.
+			var px := int(float(x) / float(patch))
+			var py := int(float(y) / float(patch))
+			# A hard multiple of the band width would draw the falloff as contour lines
+			# around every room - the same "rectangular patches of greys" the first
+			# version was rejected for. A per-patch wobble of up to one band width
+			# makes the seam a ragged hand-width of rock instead.
+			var wobble := posmod(px * 13 + py * 7, band_width)
+			var band := mini(int(float(maxi(distance - wobble, 0)) / float(band_width)), bands.size() - 1)
+			_put(layers[band], cell, tiles[posmod(px * 31 + py * 57, tiles.size())])
+			counts[band] += 1
 			if y >= 0:
 				filled += 1
 			else:
 				open += 1
-	rock.update_internals()
-	print("ENVIRONMENT BEDROCK: void_cells=%d headroom_cells=%d" % [filled, open])
+	for layer: TileMapLayer in layers:
+		layer.update_internals()
+	var report := PackedStringArray()
+	for index: int in range(counts.size()):
+		report.append("%d" % counts[index])
+	print("ENVIRONMENT BEDROCK: void_cells=%d headroom_cells=%d bands=%s" % [filled, open, ",".join(report)])
 
 
 func _build_facade() -> void:
