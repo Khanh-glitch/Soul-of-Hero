@@ -49,26 +49,3 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=030 cell=(20, 89) rect=[8.0, 
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=031 cell=(50, 89) rect=[488.0, 1244.0, 1128.0, 1604.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=032 cell=(80, 89) rect=[968.0, 1244.0, 1608.0, 1604.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=033 cell=(110, 89) rect=[1448.0, 1244.0, 2088.0, 1604.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=034 cell=(140, 89) rect=[1928.0, 1244.0, 2568.0, 1604.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=035 cell=(144, 89) rect=[1984.0, 1244.0, 2624.0, 1604.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=036 cell=(20, 106) rect=[8.0, 1516.0, 648.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=037 cell=(50, 106) rect=[488.0, 1516.0, 1128.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=038 cell=(80, 106) rect=[968.0, 1516.0, 1608.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=039 cell=(110, 106) rect=[1448.0, 1516.0, 2088.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=040 cell=(140, 106) rect=[1928.0, 1516.0, 2568.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=041 cell=(144, 106) rect=[1984.0, 1516.0, 2624.0, 1876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=042 cell=(20, 123) rect=[8.0, 1788.0, 648.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=043 cell=(50, 123) rect=[488.0, 1788.0, 1128.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=044 cell=(80, 123) rect=[968.0, 1788.0, 1608.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=045 cell=(110, 123) rect=[1448.0, 1788.0, 2088.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=046 cell=(140, 123) rect=[1928.0, 1788.0, 2568.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=047 cell=(144, 123) rect=[1984.0, 1788.0, 2624.0, 2148.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=048 cell=(20, 126) rect=[8.0, 1836.0, 648.0, 2196.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=049 cell=(50, 126) rect=[488.0, 1836.0, 1128.0, 2196.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=050 cell=(80, 126) rect=[968.0, 1836.0, 1608.0, 2196.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=051 cell=(110, 126) rect=[1448.0, 1836.0, 2088.0, 2196.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=052 cell=(140, 126) rect=[1928.0, 1836.0, 2568.0, 2196.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=053 cell=(144, 126) rect=[1984.0, 1836.0, 2624.0, 2196.0] ok=true
-CHAPTER1 AUDIT DONE: level=chapter_1_level_2 frames=54 limits_applied=true
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-   at: cleanup (core/object/object.cpp:2535)
