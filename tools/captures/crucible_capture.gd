@@ -486,6 +486,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5))
 		var no_progress := 0
 		var reported := false
+		var probed := false
 		while frames < 3200:
 			var hp := _number_property(player, "health")
 			if hp != null and int(hp) <= 0:
@@ -563,6 +564,9 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 					_report_colliders(player, leg_name, frames, door_distance)
 			if player.global_position.distance_to(last_position) < 0.6:
 				stuck += 1
+				if stuck == 17 and not probed:
+					probed = true
+					_probe_stall(player, leg_name, frames, heading)
 				if stuck > 24:
 					replans += 1
 					if replans > 8:
@@ -646,6 +650,41 @@ func _report_colliders(player: CharacterBody2D, leg_name: String, frames: int,
 			% [node.name if node != null else "<unnamed>",
 				collider.get_class(),
 				(node as Node2D).global_position if node is Node2D else Vector2.ZERO])
+
+
+## Rays in the four directions plus the live input state. A stall of this kind has
+## been misread twice from the tile data; this makes the cause unambiguous.
+func _probe_stall(player: CharacterBody2D, leg_name: String, frames: int,
+		heading: Vector2) -> void:
+	var pressed := []
+	for action: StringName in [&"move_left", &"move_right", &"move_up", &"move_down",
+			&"attack", &"dash"]:
+		if Input.is_action_pressed(action):
+			pressed.append(String(action))
+	print("CRUCIBLE TRAVERSAL STALL: leg=%s frame=%d at=%s velocity=%s heading=%s pressed=%s"
+		% [leg_name, frames, player.global_position, player.velocity, heading, pressed])
+	var space := player.get_world_2d().direct_space_state
+	for direction: Vector2 in [Vector2.LEFT, Vector2.RIGHT, Vector2.UP, Vector2.DOWN]:
+		var params := PhysicsRayQueryParameters2D.create(player.global_position,
+			player.global_position + direction * 26.0)
+		params.collide_with_areas = true
+		var hit := space.intersect_ray(params)
+		if hit.is_empty():
+			print("CRUCIBLE TRAVERSAL RAY: %s -> free" % direction)
+			continue
+		var collider = hit.get("collider")
+		var node := collider as Node
+		print("CRUCIBLE TRAVERSAL RAY: %s -> %s (%s) at=%s"
+			% [direction,
+				node.name if node != null else "<unnamed>",
+				collider.get_class() if collider != null else "null",
+				hit.get("position")])
+	for child: Node in player.get_children():
+		if child is CollisionShape2D and (child as CollisionShape2D).shape != null:
+			var collision_shape := child as CollisionShape2D
+			print("CRUCIBLE TRAVERSAL SHAPE: %s shape=%s disabled=%s"
+				% [collision_shape.name, collision_shape.shape.get_class(),
+					collision_shape.disabled])
 
 
 ## Nearest living enemy within `radius`, or null. Used to decide when the walk
