@@ -2,15 +2,15 @@ Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
 ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
 ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
-AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
-CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
+CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=3303 lights=29 entities=83
-CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1074 draw_calls=0 static_mb=189.3 fps=1
+CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1069 draw_calls=0 static_mb=189.8 fps=1
 CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=3303 lights=29
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

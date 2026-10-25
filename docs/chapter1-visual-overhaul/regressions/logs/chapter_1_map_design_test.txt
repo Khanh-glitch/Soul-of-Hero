@@ -8,7 +8,7 @@ ENVIRONMENT PALETTE: theme=chapter_1_level_3.json keys=9 backdrop=(2.15, 2.15, 2
 ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696 bands=4195,137,0,0
 ENVIRONMENT PALETTE: theme=chapter_1_level_4.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.66, 0.66, 0.66, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.84, 0.87, 0.98, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.66, 0.66, 0.66, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
 ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696 bands=4289,394,21,0
-AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
-CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
+CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 MAP DESIGN 837/837
