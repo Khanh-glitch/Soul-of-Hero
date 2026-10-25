@@ -2,15 +2,15 @@
   "schema": "chapter1_architecture_evidence/1",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "a4db02cb49898281963fc05c69cbada85e09f510",
+  "commit": "8494961e6e7f2f29042bd219b1cbf0f6b7d0acd1",
   "source_pins": {
     "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
     "data/levels/chapter_1_level_5_architecture.json": "cc8be31580da0af995a910e533022759939c9f1729e6a6d831592a578dfa84d4",
-    "assets/environment/chapter1/crucible/crucible_tiles.png": "22051d64661b6e7a866e750be362aecd98e78a898340373c12308dc073a29634",
-    "assets/environment/chapter1/crucible/crucible_props.png": "287d34d3a5f4a2685d50f49e0ef7d825fe4bd21b6fa714ba79d26425c77cbde5",
-    "tools/level5/art_crucible.py": "3a1e97ac4c2a31f607f4e564c625e97f8bf9f79b2757b228460561b740100651",
+    "assets/environment/chapter1/crucible/crucible_tiles.png": "36e207f4bfb58d6cb4c79efbfa08fe64997604d131cbc74222f3777930eb660f",
+    "assets/environment/chapter1/crucible/crucible_props.png": "efae810cce3d2c649ca46e2b4423d737ffc5379efe3f0f5d3f295ee52b42aa95",
+    "tools/level5/art_crucible.py": "799a5aa6041a0e9b684c3048d123d281876e4016398a68f53422bcfa2dbfb955",
     "tools/level5/architecture.py": "3f54a8a7b7731c4c2f79606c50d1e64a8800ba937b08c34a7c3aca19e791b16f",
-    "game/levels/presentation/crucible_art.gd": "aec5bd22870aff5b29902d32933a598b7f2bb19198625ac1ce401150d03c998c"
+    "game/levels/presentation/crucible_art.gd": "938da928a058ace95fff927e22c7081b3b8b3e4e2ac879ee8a352b2264609bf7"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -19,9 +19,9 @@
     "props": 108,
     "lights": 20,
     "entities": 83,
-    "perf_nodes": 1000,
+    "perf_nodes": 999,
     "draw_calls": 109,
-    "static_mb": 115.7,
+    "static_mb": 115.9,
     "fps": 1,
     "errors": []
   },
@@ -32,7 +32,7 @@
     "props": 0,
     "lights": 0,
     "entities": 83,
-    "perf_nodes": 867,
+    "perf_nodes": 870,
     "draw_calls": 103,
     "static_mb": 109.2,
     "fps": 1,
