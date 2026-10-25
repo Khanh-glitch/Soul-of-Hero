@@ -1,0 +1,37 @@
+{
+  "schema": "chapter1_architecture_evidence/1",
+  "level": "chapter_1_level_5",
+  "branch": "arena/6e89e68d-soul-of-hero",
+  "commit": "10d9c20418eded360027c678b8e9a7fa3e30cc4a",
+  "source_pins": {
+    "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
+    "data/levels/chapter_1_level_5_architecture.json": "2efc36256609a2c66564ff3ee810362ea5a585a77d5ef69892f0c492e6562627",
+    "assets/environment/chapter1/crucible/crucible_tiles.png": "863a56fe6a2c76963a30f5d179bea4ac0544b063cf205ebe7bfcffc5359ec4d5",
+    "assets/environment/chapter1/crucible/crucible_props.png": "84a67db88c79c4143370de0a8c7d94b8953cdd0fb7bd35de238062dd2d90bfbe",
+    "tools/level5/art_crucible.py": "2ae13d53df8fc6de1970f67cae5165a35ffc3783ae4ba9141c4bd926ca73a81c",
+    "tools/level5/architecture.py": "40cf1a12f7dadcd24f03ce518fe3ac9340249f39e8c808389463daa89b32ecad",
+    "game/levels/presentation/crucible_art.gd": "2fcbd9a64b8e9d2b9ff263464677ee14f5610b9a9864e060d92ae5f2ceaf5b56"
+  },
+  "capture": {
+    "errors": [
+      "SCRIPT ERROR: Parse Error: Assignment is not allowed inside an expression."
+    ]
+  },
+  "capture_before": {
+    "errors": [
+      "SCRIPT ERROR: Parse Error: Assignment is not allowed inside an expression."
+    ]
+  },
+  "stations": {},
+  "stations_before": {},
+  "frames": [],
+  "pairs": 0,
+  "overviews": [],
+  "crops": [],
+  "evidence_kind": {
+    "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
+    "crops": "integer nearest-neighbour crops of those native frames",
+    "comparisons": "native frames plus the two owner-approved gold references and the rejected baseline",
+    "preview": "PIL composition previews: NOT gameplay evidence, never present these as frames"
+  }
+}
