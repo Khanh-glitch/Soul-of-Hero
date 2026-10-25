@@ -102,6 +102,7 @@ func _run() -> void:
 		camera.limit_right = int(bounds[2])
 		camera.limit_bottom = int(bounds[3])
 		camera.position_smoothing_enabled = false
+		camera.limit_smoothed = false
 
 	var positions := _positions(bounds, content)
 	print("CHAPTER1 AUDIT PLAN: level=%s frames=%d bounds=%s content=%s"
@@ -128,29 +129,49 @@ func _run() -> void:
 			if camera != null:
 				camera.reset_smoothing()
 				camera.force_update_scroll()
+		# The canvas transform is the authority on where the frame is looking. A
+		# camera's own centre is not: it reports the target, and it disagrees with
+		# what was drawn as soon as limits, smoothing or an offset are in play.
+		# Reading the transform back means the mosaic cannot drift from the frame.
+		var canvas := get_viewport().get_canvas_transform()
+		var world_origin := canvas.affine_inverse().origin
+		var scale := Vector2(canvas.x.length(), canvas.y.length())
 		await RenderingServer.frame_post_draw
 		var image := get_viewport().get_texture().get_image()
-		var name := "%s_%03d" % [_level_id, index]
-		var output := "%s/%s.png" % [_out_dir, name]
+		var stem := "%s_%03d" % [_level_id, index]
+		var output := "%s/%s.png" % [_out_dir, stem]
 		var saved := image.save_png(ProjectSettings.globalize_path(output))
-		var actual := centre
-		if camera != null:
-			actual = Vector2i(camera.get_screen_center_position())
+		var rect := [
+			snappedf(world_origin.x, 0.01), snappedf(world_origin.y, 0.01),
+			snappedf(world_origin.x + image.get_width() * scale.x, 0.01),
+			snappedf(world_origin.y + image.get_height() * scale.y, 0.01),
+		]
 		frames.append({
-			"file": name + ".png",
-			"centre": [actual.x, actual.y],
+			"file": stem + ".png",
+			"rect": rect,
 			"size": [image.get_width(), image.get_height()],
 			"cell": [cell.x, cell.y],
 		})
-		print("CHAPTER1 AUDIT SHOT: level=%s frame=%03d cell=%s centre=%s ok=%s"
-			% [_level_id, index, cell, actual, str(saved == OK)])
+		print("CHAPTER1 AUDIT SHOT: level=%s frame=%03d cell=%s rect=%s ok=%s"
+			% [_level_id, index, cell, rect, str(saved == OK)])
 		index += 1
 
+	# Whether the camera actually obeyed its limits. If it did not, the sweep has
+	# photographed a strip the player can never reach, and every claim about what
+	# is cut at the top of the screen has to be made from the limits, not the
+	# picture. Recording it stops the two being confused later.
+	var limits_applied := true
+	for frame: Dictionary in frames:
+		var rect: Array = frame["rect"]
+		if float(rect[0]) < float(bounds[0]) - 0.5 or float(rect[1]) < float(bounds[1]) - 0.5 \
+				or float(rect[2]) > float(bounds[2]) + 0.5 or float(rect[3]) > float(bounds[3]) + 0.5:
+			limits_applied = false
 	var manifest := {
 		"level": _level_id,
 		"slot": definition.campaign_slot,
 		"bounds": bounds,
 		"content": content,
+		"limits_applied": limits_applied,
 		"frames": frames,
 	}
 	var file := FileAccess.open("%s/manifest.json" % _out_dir, FileAccess.WRITE)

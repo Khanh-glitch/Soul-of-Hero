@@ -15,7 +15,7 @@ on:
       - arena/6e89e68d-soul-of-hero
     paths:
       - "tools/captures/chapter1_audit_sweep.*"
-      - "tools/chapter1_art/audit_sheets.py"
+      - "tools/chapter1_audit/*.py"
       - ".github/workflows/chapter1-visual-audit.yml"
   workflow_dispatch:
 
@@ -82,7 +82,7 @@ jobs:
         run: |
           set -euo pipefail
           python3 -m pip install --quiet pillow
-          python3 tools/chapter1_art/audit_sheets.py --artifacts .artifacts/audit \
+          python3 tools/chapter1_audit/audit_sheets.py --artifacts .artifacts/audit \
             --out docs/chapter1-audit
 
       - name: Publish the mosaics
