@@ -271,15 +271,88 @@ Read at 6x off `after/L09_mosaic.png` and 3x off `after/L07_mosaic.png`:
   read as separate masses. The gold scratch marks that were scattered over the paving
   are gone; the only remaining floor ornament is the inlay band, which is continuous.
 
-**P1/P2 resolution:** partly. Floor/wall value separation (D3), hero objects (D4),
-hairline motifs (E1), prop composition (E2), L1–L4 identity (F1) and L9's seal
-stations (F2) are open, and they are exactly the findings that decide whether the
-chapter looks designed.
+### Pass 3 — exposure, material and identity at `0edc5a1` (sweep `40211470676`)
+
+Four commits, each with its own reason:
+
+* `d4ea1dd` bands the L1–L4 rock by its distance from the rooms and picks its tiles per
+  48 px patch. One tint over one tile at one phase, wall to frame edge, was a stamped
+  lattice on a third of every L1–L4 frame. The seam between bands is dithered, because
+  a clean multiple of the band width draws the falloff as contour lines around every
+  room.
+* `352b25e` gives the four L1–L4 themes four material stories - bone masonry, archive
+  warmth, cold monumental stone - using the chapter's own sheet, and stops the wall
+  backing tint from being hardcoded grey.
+* `f1cacfc` adds `wall_tint` / `bedrock_tint` to `CrucibleArt` and sets them for L6, L7
+  and L9; doubles L7's light energies and lights its ring braziers; and logs the
+  palette that actually reaches the canvas.
+* `0edc5a1` fixes the bug that log line found: `Chapter1EnvironmentArt.attach()`
+  rebuilt the existing layer from the node's own stale `level_data_path`, so from level
+  2 onward every level painted level 1's theme. Measured, not guessed: on the mosaics
+  at `f1cacfc`, L2, L3 and L4 shared the exact wall colour `(110, 90, 76)` while L1 sat
+  at `(116, 96, 83)`.
+
+Luminance ledger, 0-255, sampled off `after/L*_mosaic.png`. Floor and wall are cell
+medians; `rock` for L1–L4 is the void fill, and for L5–L10 the fraction of it away from
+a light.
+
+| Level | floor | wall | rock | frame median | p10 | p90 | >245 |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| L01 | 133 | 66 | 44 near, 28 far | 63 | 20 | 171 | 0.9% |
+| L02 | 117 | 62 | | 48 | 18 | 122 | 0.35% |
+| L03 | 121 | 62 | | 58 | 17 | 161 | 0.54% |
+| L04 | 115 | 56 | | 54 | 16 | 140 | 0.45% |
+| L05 | 83 | 74 | 55 | 76 | 34 | 113 | 0.03% |
+| L06 | 110 | 87 | 75 | 87 | 43 | 144 | 0.28% |
+| L07 | 106 | 96 | 48 far, 159 under a brazier | 107 | 44 | 153 | 0.33% |
+| L08 | 133 | 122 | 91 | 97 | 70 | 175 | 1.25% |
+| L09 | 93 | 79 | 66 | 65 | 54 | 106 | 0.04% |
+| L10 | 110 | 103 | 45 | 81 | 6 | 125 | 0.13% |
+
+What the ledger says, item by item:
+
+* **D3 floor/wall separation - PARTIAL.** Every level is now ordered floor > wall >
+  rock, which four of the ten were not before (`f1cacfc`: L6 110/111/106, L7 99/90/118,
+  L9 93/93; L1–L4 all sharing one theme). L04 is the weakest at 115/56 - a 2:1 step -
+  and L01–L04 still read as one bright plane per room rather than as a floor with
+  furniture-scale incident on it.
+* **F1 / C3 L1–L4 identity - PARTIAL.** The four documents now differ in wall mass,
+  course count, trim rhythm, wear pattern, shadow depth and rock falloff, and they are
+  finally *read*: L2, L3 and L4 sample at 117/121/115 floor against L1's 133, with
+  different walls and different colour. At 1:1 the rooms still share one floor
+  material, the same repeating dentil along every wall band, and the same dust speckle,
+  because all four are cut from one shared sheet that this pass does not change.
+* **L7 focus - FIXED, over-corrected.** Twenty-two lights at 0.30-0.42 under a 0.74
+  ambient, and the ring braziers with no light at all: the yard was a uniformly lit tan
+  field. It now has a pool. The beacon core measures white - the braziers, the pillar
+  fires and the beacon's own light stack on the same 4x4 cells - so the shrine's centre
+  is blown out and its silhouette is lost. That is a new defect of this pass and it is
+  still open.
+* **L6 material hierarchy - FIXED.** 110/87/75 against 110/111/106 before. The floors
+  and walls are separable at 1:1 for the first time.
+* **L9 wall mass - FIXED.** 93/79/66 against 93/93/81.
+* **L8 over-exposure - STILL OPEN.** 1.25% of pixels above 245, the highest in the
+  chapter, with p10 at 70: it is bright everywhere rather than bright where something is
+  lit.
+* **L10 deep shadows - STILL OPEN.** p10 at 6 means a tenth of the frame is at or near
+  black; the rock averages 45 and the throne flanks are still hollow.
+* **E1 hairline motifs, E2 prop composition, E3 bedrock strata, G3–G5 - STILL OPEN.**
+  Nothing in this pass touched them.
+
+**P1/P2 resolution:** partly. Floor/wall value separation (D3) and L1–L4 identity
+(F1) moved from "not attempted" to "measurably present, materially incomplete";
+hero objects (D4), hairline motifs (E1), prop composition (E2) and L9's seal stations
+(F2) are open, and they are exactly the findings that decide whether the chapter looks
+designed. One defect was introduced by this pass - L7's blown-out beacon core - and is
+recorded as open rather than as a win.
 
 **Visual production review:** **NOT READY.** The chapter no longer has holes in its
-maps, sliced walls, invisible props or lamps that erase the room, and that is real
-progress that a reviewer can see in the BEFORE/AFTER mosaics. But ten finished,
-individually designed locations is not what is on the branch: L1–L4 remain four
-variations of one room, and L5–L10 still lack ground-plane separation, readable hero
-objects and non-mechanical prop composition. Gates E and F were not attempted, and
-Gates C and D are half done.
+maps, sliced walls, invisible props or lamps that erase the room, and since this pass
+it also has, level by level, a floor that out-values its walls and walls that
+out-value their rock - a hierarchy it did not have on six of its ten levels. That is
+real progress a reviewer can see in the BEFORE/AFTER mosaics. It is not enough: L1–L4
+are still four rooms cut from one sheet with one repeating dentil, L6–L10 still lack
+hero objects and non-mechanical prop composition, L8 is bright everywhere and L10 is
+black in a tenth of its frame, and this pass left L7's beacon centre blown out. Gates
+E and F were not attempted, Gate D is half done, and Gate C is now measurably started
+rather than merely claimed.

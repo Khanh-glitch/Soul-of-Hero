@@ -225,3 +225,49 @@ Two workflows publishing to the same branch at once is the known race; both now
 retry with a rebase, and this run lost it. A red `Publish` step with green
 `Compile`, `Frozen gameplay suites`, `Capture` and `Verify the art layer` steps is
 not a failing chapter — it is a late writer.
+
+## Fourth sweep, `0edc5a1`
+
+| Workflow | Result | Notes |
+| --- | --- | --- |
+| Chapter 1 — audit sweep | **success** (`40211470676`, 8m21s) | published the mosaic set this pass is measured from |
+| Chapter 1 — visual overhaul | **success** (`40211470691`) | every step green, publish included: the intermittent publish failure of the last three sweeps did not reproduce |
+| Chapter 1 — architecture breakthrough | **success** (`40210251818`) | includes the L5 / L7 / reliquary regeneration drift check against the new tints |
+| Godot 4.7 Runtime Validation | **failure** (`40211470724`) | steps 8 and 9 are `Run the same campaign-entry runtime test on original main` and `Run the same production smoke test on original main`: the baseline fails on `main` itself, so this is pre-existing and not a regression |
+
+### Two instruments added, and what they found
+
+**1. Theme tile validation.** `tools/validate_chapter1_art_refs.py` now also reads the
+ten `chapter1_environment_theme/1` documents and validates every tile reference in
+`facade.courses`, `facade.cap`, `facade.side`, `facade.backing`, each `facade.trim[]`
+set, `floor.wear`, `floor.border` and `bedrock.tiles` against `dungeon_tileset_ii.png`
+and `atlas_walls_low.png`. It fails on an out-of-range coordinate, an unknown sheet or
+a coordinate that lands on an empty cell - the same silent failure that cost L7 twenty
+barrels and L8 two banners. Verified in both directions; a synthetic document naming
+`[99,3]`, an empty cell and sheet 4 is rejected on all three counts.
+
+```
+Chapter 1 art reference validation: 6 architecture document(s), 6 kit(s), 10 theme document(s).
+PASS: every authored frame resolves to a kit atlas, and every theme tile resolves to a pixel on its sheet.
+```
+
+**2. Palette arrival.** `Chapter1EnvironmentArt` prints the theme file it resolved, the
+palette values it read, and the live modulate on `Backdrop`, `Geometry` and `Decor`
+after it sets them. On the first run at `f1cacfc` that line read
+`theme=crypt_entrance.json` for **all four** L1–L4 levels. `attach()` reused the
+existing node and rebuilt it from the node's own `level_data_path`, which had been set
+once, when the node was created; a campaign run swaps the map under one long-lived
+`DungeonLevel`, so levels 2–4 were painted with level 1's theme for the whole life of
+the layer. Fixed in `0edc5a1` by assigning the current path before the rebuild, which
+is what `CrucibleArt.attach()` already did - and which is why L5–L10 never had the bug.
+
+Both are permanent: the log line makes the next mismatch visible, and the validator
+makes the next missing frame a red check instead of a hole.
+
+### Material value controls
+
+`CrucibleArt` now reads two optional per-document keys, `wall_tint` and `bedrock_tint`,
+defaulting to `1.0` so an unnamed document renders byte-for-byte as before. L6 sets
+`0.76 / 0.60`, L9 sets `0.84 / 0.80`, L7 sets rock to `0.55`. Neither key touches the
+paving, the props, the lights or the entities, and the generators own both values, so
+the drift check covers them.
