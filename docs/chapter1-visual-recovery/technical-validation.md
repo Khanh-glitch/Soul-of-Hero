@@ -226,6 +226,20 @@ retry with a rebase, and this run lost it. A red `Publish` step with green
 `Compile`, `Frozen gameplay suites`, `Capture` and `Verify the art layer` steps is
 not a failing chapter — it is a late writer.
 
+## Fifth sweep, `7b2d406` — the state of the branch
+
+| Workflow | Result | Notes |
+| --- | --- | --- |
+| Chapter 1 — audit sweep | **success** (`40214833620`) | published the mosaic set the ledger above is measured from |
+| Chapter 1 — visual overhaul | **success** (`40214833517`) | green end to end, publish included, with the rebuilt publish step |
+| Godot 4.7 Runtime Validation | **failure** (`40214833530`) | steps 8 and 9 run the same tests against `main` and fail there too: pre-existing baseline, not a regression. Every step that runs against this branch passes |
+
+The publish step is now green on both jobs after being the only red step on four
+sweeps. It no longer rebases: the two publishing jobs write overlapping docs, so the
+rebase conflicted, the abort left the commit behind the branch and the push lost three
+times. Each job now keeps the files it generated, takes the new base, and rebuilds its
+own commit on top of it.
+
 ## Fourth sweep, `0edc5a1`
 
 | Workflow | Result | Notes |
