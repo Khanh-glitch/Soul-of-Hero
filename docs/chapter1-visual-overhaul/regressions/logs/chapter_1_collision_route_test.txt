@@ -19,6 +19,8 @@ CHAPTER 1 COLLISION ROUTE: slot=8 safe=1759/3367 targets=5
 AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5046 props=70 lights=29 shadows=100
 CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5046 props=70 lights=29 shadows=100
 CHAPTER 1 COLLISION ROUTE: slot=9 safe=2724/2724 targets=5
+AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=2730 props=41 lights=23 shadows=68
+CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2730 props=41 lights=23 shadows=68
 CHAPTER 1 COLLISION ROUTE: slot=10 safe=2144/2144 targets=2
 AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4632 props=94 lights=45 shadows=266
 CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4632 props=94 lights=45 shadows=266
