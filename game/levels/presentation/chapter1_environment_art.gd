@@ -29,6 +29,7 @@ extends Node2D
 const SpriteFramesFactory := preload("res://game/world/sprite_frame_factory.gd")
 
 const THEME_DIR := "res://data/environment/chapter1"
+const BEDROCK_NODE := "EnvironmentBedrock"
 const FACADE_NODE := "EnvironmentFacade"
 const BACKING_NODE := "EnvironmentWallBacking"
 const TRIM_NODE := "EnvironmentWallTrim"
@@ -80,6 +81,14 @@ const DEFAULT_FACADE := {
 	"trim_spacing": 11,
 }
 const DEFAULT_SHADOW := {"color": [0.0, 0.0, 0.0, 0.46], "depth": 7, "side": 4}
+## The stone the level is cut out of. A theme may name its own tiles and tint; the
+## default is the plainest masonry course in the sheet the authored walls already
+## use, held well back in value so the rock reads as mass behind the rooms and never
+## competes with the floor the player fights on.
+const DEFAULT_BEDROCK := {
+	"tiles": [[0, 2, 1], [0, 1, 1], [0, 3, 1]],
+	"color": [0.42, 0.40, 0.45, 1.0],
+}
 
 ## Landmark lights are derived from the authored entities, not hand-placed: an
 ## objective that the player must find gets a light, so the lighting cannot drift
@@ -142,6 +151,7 @@ func rebuild() -> void:
 	if not document.is_empty():
 		_build_floor_border(_cell_set(document, "Backdrop"), _cell_set(document, "Geometry"))
 		_build_floor_wear(_cell_set(document, "Backdrop"), _cell_set(document, "Geometry"))
+	_build_bedrock()
 	_build_facade()
 	_build_shadows()
 	if not document.is_empty():
@@ -253,6 +263,85 @@ func _visible_faces(geometry: Dictionary, floor: Dictionary) -> Array[Vector2i]:
 			return a.x < b.x
 		return a.y < b.y)
 	return faces
+
+
+## The mass the level is cut out of.
+##
+## A dungeon map only marks the cells the player can walk on and the cells that are
+## solid. Everything else — the space between two rooms, the inside of a thick wall,
+## the ground behind a stairwell — is unmarked, and unmarked cells draw the level
+## background. On the native frames those read as holes punched through the map:
+## black rectangles between rooms, a corridor with nothing behind its wall. The
+## castle looked unpublished, not dark.
+##
+## So the unmarked cells get rock. But not all of them, and this is the part that
+## matters for art direction: a cell that is connected to the edge of the map is
+## *outside* the level, and that stays as background — it is the negative space the
+## architecture is silhouetted against. A cell that no path reaches from the border
+## is *inside* the level, enclosed by masonry, and that is filled. The rule is
+## derived, not painted in, so it follows the map when the map changes.
+func _build_bedrock() -> void:
+	var document := _level_document()
+	if document.is_empty():
+		return
+	var floor := _cell_set(document, "Backdrop")
+	var geometry := _cell_set(document, "Geometry")
+	if floor.is_empty():
+		return
+	var width := int(document.get("width", 0))
+	var height := int(document.get("height", 0))
+	if width <= 0 or height <= 0:
+		return
+	var config: Dictionary = theme.get("bedrock", DEFAULT_BEDROCK)
+	var tiles: Array = config.get("tiles", (DEFAULT_BEDROCK as Dictionary)["tiles"])
+	if tiles.is_empty():
+		return
+	var reference := get_parent().get_node_or_null("Decor") as TileMapLayer
+	if reference == null:
+		return
+
+	# Flood the background from the map border. Whatever the flood cannot reach is
+	# enclosed, and enclosed space is rock.
+	var open := {}
+	var queue: Array[Vector2i] = []
+	var consider := func(cell: Vector2i) -> void:
+		if cell.x < 0 or cell.y < 0 or cell.x >= width or cell.y >= height:
+			return
+		if open.has(cell) or floor.has(cell) or geometry.has(cell):
+			return
+		open[cell] = true
+		queue.append(cell)
+	for x: int in range(width):
+		consider.call(Vector2i(x, 0))
+		consider.call(Vector2i(x, height - 1))
+	for y: int in range(height):
+		consider.call(Vector2i(0, y))
+		consider.call(Vector2i(width - 1, y))
+	var cursor := 0
+	while cursor < queue.size():
+		var cell: Vector2i = queue[cursor]
+		cursor += 1
+		consider.call(cell + Vector2i(1, 0))
+		consider.call(cell - Vector2i(1, 0))
+		consider.call(cell + Vector2i(0, 1))
+		consider.call(cell - Vector2i(0, 1))
+
+	var rock := TileMapLayer.new()
+	rock.name = BEDROCK_NODE
+	rock.z_index = -11
+	rock.tile_set = reference.tile_set
+	rock.modulate = _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
+	add_child(rock)
+	var filled := 0
+	for y: int in range(height):
+		for x: int in range(width):
+			var cell := Vector2i(x, y)
+			if floor.has(cell) or geometry.has(cell) or open.has(cell):
+				continue
+			_put(rock, cell, tiles[posmod(x * 73 + y * 151, tiles.size())])
+			filled += 1
+	rock.update_internals()
+	print("ENVIRONMENT BEDROCK: enclosed_void=%d outside_void=%d" % [filled, open.size()])
 
 
 func _build_facade() -> void:
