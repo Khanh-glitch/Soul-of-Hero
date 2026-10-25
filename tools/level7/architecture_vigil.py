@@ -402,9 +402,14 @@ def build():
 
     plan = Plan()
     walls(plan, floor, geom, faces)
-    ward(plan, floor, geom)
+    # The apron is laid first and the ward ring is inlaid *into* it. Painting them
+    # the other way round threw the ring away: the apron covers nine cells in every
+    # direction, so it repainted the whole disc and the level's one piece of floor
+    # art - an octagonal iron ring with eight ward marks - was never visible in any
+    # build. The ring is the arena's centre, so it goes on last.
+    painted_apron = apron(plan, floor, geom, clear)
     painted_lanes = lanes(plan, floor, geom, clear)
-    apron(plan, floor, geom, clear)
+    painted_ward = ward(plan, floor, geom)
     beacon_frame(plan, floor, geom, guard)
     bastions(plan, floor, geom, faces, guard)
     objectives(plan, floor, geom, faces, guard)
@@ -438,7 +443,8 @@ def build():
             "props": len(plan.props),
             "lights": len(plan.lights),
             "lane_cells": painted_lanes,
-            "ward_cells": RADIUS * RADIUS * 4,
+            "apron_cells": painted_apron,
+            "ward_cells": painted_ward,
         },
     }
     return document, level
