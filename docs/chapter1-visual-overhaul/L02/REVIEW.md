@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_2`
 - Map source: `data/levels/chapter_1_level_2.json`
-- Source sha256: `a40e9500414e0787037f7d279faaa0e88e1b2275cb2e8c79be3cfb42b699bc04`
+- Source sha256: `2246b1181b2afcbcf3c8874982c4a0efd914fd2f808187471fc629af33bb22bf`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Ossuary Fork — burial galleries, bone masonry
 

@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_3`
 - Map source: `data/levels/chapter_1_level_3.json`
-- Source sha256: `189ba341a2649731b56ea304ce5c4cc7ac61d56bbaf404b5a2bafab38b3b869b`
+- Source sha256: `e5611beea1ceafa9445349e8c2be54c18872169c5748321e5d898bf40b5f3224`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Crossfire Archive — warm archive stacks and long sightlines
 
