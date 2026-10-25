@@ -29,5 +29,6 @@
   ],
   "coverage_of_content": 1.0,
   "overlaps_checked": 14,
-  "overlap_mean_abs_diff": 50.76
+  "overlap_best_diff": 51.73,
+  "overlap_worst_shift_px": 0
 }
