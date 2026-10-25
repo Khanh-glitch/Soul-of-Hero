@@ -74,6 +74,10 @@ const DEFAULT_FACADE := {
 	"cap": [[0, 1, 0], [0, 2, 0], [0, 3, 0]],
 	"side": [[0, 1, 1], [0, 3, 1]],
 	"backing": [[0, 2, 1]],
+	# The wall mass behind the authored band is the chapter's largest single area of
+	# stone in any frame, so its value and hue carry most of a level's material
+	# identity. Left hardcoded it made all four themes the same grey room.
+	"backing_color": [0.80, 0.78, 0.80],
 	"trim": [
 		{"tiles": [[0, 5, 1], [0, 4, 1]], "light": true, "energy": 0.85, "scale": 2.0},
 		{"tiles": [[0, 1, 2], [0, 2, 2], [0, 1, 3]], "light": false},
@@ -443,7 +447,8 @@ func _build_facade() -> void:
 		wall.name = BACKING_NODE
 		wall.z_index = -9
 		wall.tile_set = reference.tile_set
-		wall.modulate = Color(0.80, 0.78, 0.80, 1.0)
+		wall.modulate = _to_color(config.get("backing_color", []),
+				_to_color((DEFAULT_FACADE as Dictionary)["backing_color"], Color(0.80, 0.78, 0.80, 1.0)))
 		add_child(wall)
 		for cell: Vector2i in geometry:
 			if floor.has(cell):
