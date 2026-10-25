@@ -397,10 +397,10 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     plan.hang("chain_long", geom, 88, 44, note="chains over the court")
     plan.hang("chain_long", geom, 99, 44, note="chains over the court")
     plan.hang("chain_short", geom, 84, 44, note="chains over the court")
-    for cell in ((84, 49), (98, 49), (88, 43), (95, 44), (101, 51), (90, 52)):
+    for cell in ((84, 49), (88, 43), (95, 44)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="bone drift across the court")
-    for cell in ((82, 44), (99, 47), (86, 51), (103, 45), (92, 53), (77, 49)):
+    for cell in ((82, 44), (86, 51), (92, 53)):
         if cell in floor and cell not in guard:
             plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
 

@@ -2506,13 +2506,6 @@
       },
       {
         "cell": [
-          99,
-          47
-        ],
-        "frame": "stain_b"
-      },
-      {
-        "cell": [
           86,
           51
         ],
@@ -2520,24 +2513,10 @@
       },
       {
         "cell": [
-          103,
-          45
-        ],
-        "frame": "stain_b"
-      },
-      {
-        "cell": [
           92,
           53
         ],
         "frame": "stain_a"
-      },
-      {
-        "cell": [
-          77,
-          49
-        ],
-        "frame": "stain_b"
       },
       {
         "cell": [
@@ -4837,44 +4816,8 @@
     {
       "frame": "skulls",
       "cell": [
-        98,
-        49
-      ],
-      "z": 1,
-      "y_sort": false,
-      "low": true,
-      "anchor": "base",
-      "note": "bone drift across the court"
-    },
-    {
-      "frame": "skulls",
-      "cell": [
         95,
         44
-      ],
-      "z": 1,
-      "y_sort": false,
-      "low": true,
-      "anchor": "base",
-      "note": "bone drift across the court"
-    },
-    {
-      "frame": "skulls",
-      "cell": [
-        101,
-        51
-      ],
-      "z": 1,
-      "y_sort": false,
-      "low": true,
-      "anchor": "base",
-      "note": "bone drift across the court"
-    },
-    {
-      "frame": "skulls",
-      "cell": [
-        90,
-        52
       ],
       "z": 1,
       "y_sort": false,

@@ -71,8 +71,16 @@ def draw_floor(world: Image.Image, level: dict, arch: dict, frames, tiles, palet
         else:
             sprite_img = None
         if sprite_img is None:
-            # base floor: use the crucible kit's plain flags, chosen deterministically
-            name = "floor_a" if (cell[0] * 7 + cell[1] * 13) % 5 else "floor_b"
+            # base floor: same rule as the runtime, so the preview cannot flatter
+            # the composition. The four plain frames are the quadrants of one
+            # 32 px flag.
+            quad = (1 if cell[0] % 2 else 0) + (2 if cell[1] % 2 else 0)
+            roll = (cell[0] * 31 + cell[1] * 17) % 19
+            name = ["floor_a", "floor_b", "floor_c", "floor_d"][quad]
+            if roll == 0:
+                name = "floor_worn"
+            elif roll == 5:
+                name = "floor_broken"
             sprite_img = sprite(tiles, frames["crucible_tiles"][name])
         tinted = tint(sprite_img, palette["floor"])
         world.alpha_composite(tinted, (cell[0] * T, cell[1] * T))

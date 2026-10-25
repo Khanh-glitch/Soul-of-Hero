@@ -59,7 +59,7 @@ const BEDROCK_Z := -12
 ## Ambient the authored lighting is composed against. Dark enough for the lit
 ## set pieces to be the brightest thing in frame, bright enough that the floor,
 ## the enemies and the player are all readable during combat.
-const AMBIENT := Color(0.40, 0.36, 0.40, 1.0)
+const AMBIENT := Color(0.34, 0.31, 0.35, 1.0)
 const BACKGROUND := Color(0.035, 0.028, 0.032, 1.0)
 
 var level_data_path := ""
@@ -307,21 +307,18 @@ func _build_floor_detail(floor: Dictionary, geometry: Dictionary) -> void:
 	stats["floor_overrides"] = overrides
 
 
-## Deterministic flagstone variation: the same cell always gets the same stone,
-## so a rebuild is byte-identical and the room never shimmers on reload.
+## Deterministic flagstone variation. The four plain floor frames are the four
+## quadrants of one 32 px flag, so parity picks the quadrant and the paving reads
+## as large stone rather than as a 16 px grid. The same cell always gets the same
+## stone, so a rebuild is byte-identical and a reload never shimmers.
 func _default_floor(cell: Vector2i) -> String:
-	var roll := posmod(cell.x * 31 + cell.y * 17 + (cell.x * cell.y) % 7, 23)
+	var quad := (1 if cell.x % 2 else 0) + (2 if cell.y % 2 else 0)
+	var roll := posmod(cell.x * 31 + cell.y * 17, 19)
 	if roll == 0:
 		return "floor_worn"
-	if roll == 3:
+	if roll == 5:
 		return "floor_broken"
-	if roll < 8:
-		return "floor_b"
-	if roll < 13:
-		return "floor_c"
-	if roll < 17:
-		return "floor_d"
-	return "floor_a"
+	return ["floor_a", "floor_b", "floor_c", "floor_d"][quad]
 
 
 # -- walls -------------------------------------------------------------------
@@ -506,3 +503,10 @@ func _apply_lighting() -> void:
 		var layer := level.get_node_or_null(property.replace("_tint", "").capitalize()) as CanvasItem
 		if layer != null:
 			layer.modulate = Color(1.0, 1.0, 1.0, 1.0)
+	# The level's own Decor layer is the stock tileset's idea of dressing: loose
+	# crates, brackets and rugs in the old blue-grey palette. With authored props
+	# in place they read as debris dropped on the new floor, so the authored pass
+	# takes over that role entirely. Decor carries no collision.
+	var decor := level.get_node_or_null("Decor") as CanvasItem
+	if decor != null:
+		decor.visible = false

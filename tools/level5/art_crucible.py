@@ -45,16 +45,23 @@ T = 16
 # ---------------------------------------------------------------------------
 # Palette
 # ---------------------------------------------------------------------------
-BASALT_D = (24, 21, 23)
-BASALT_M = (38, 33, 36)
-BASALT_L = (54, 46, 49)
-BASALT_HI = (74, 64, 67)
-GROUT = (17, 15, 17)
+# Value ladder, darkest to lightest. This is the single most important thing in
+# the kit: a room reads as architecture only when the unexcavated rock, the
+# socle, the wall field, the floor, the cornice and the wall top occupy
+# different steps of one ladder. The first version of this kit put floor and
+# wall in the same warm brown band, and the rooms turned into brown soup.
+BASALT_D = (44, 42, 46)
+BASALT_M = (98, 94, 90)     # flagstone body
+BASALT_L = (116, 111, 105)  # lit flag edge
+BASALT_HI = (138, 132, 124)
+GROUT = (47, 44, 46)
 
-WARM_D = (58, 43, 36)      # the crypt's own brown, kept for continuity
-WARM_M = (82, 61, 51)
-WARM_L = (108, 81, 66)
-WARM_HI = (134, 102, 82)
+WARM_D = (58, 54, 52)       # wall field, in shadow
+WARM_M = (86, 82, 78)       # wall field
+WARM_L = (124, 118, 110)    # lit mouldings, pilaster shafts
+WARM_HI = (170, 162, 148)   # cornice and wall top: the brightest stone
+
+CAP = (176, 168, 152)       # the top plane of a wall mass
 
 OX_D = (48, 13, 15)
 OX_M = (78, 20, 22)
@@ -230,26 +237,46 @@ def bedrock(seed: int) -> Image.Image:
     return img
 
 
-def floor_slab(seed: int, tone: float = 1.0, cracks: int = 0,
-               base=BASALT_M) -> Image.Image:
-    """A 16x16 patch of large basalt flags: two slabs, deep grout, worn bevels."""
+def floor_flag(seed: int, quad: int, base=BASALT_M, tone: float = 1.0) -> Image.Image:
+    """One quadrant of a 32 px flagstone.
+
+    The runtime lays four quadrants out as a 2x2 block, so the paving reads as
+    large flags with a joint every 32 px instead of a 16 px grid. quad: 0=TL,
+    1=TR, 2=BL, 3=BR — the joint is drawn only on the outer edges of the block.
+    """
     rng = random.Random(seed)
     img = new(T, T)
-    rect(img, 0, 0, T, T, GROUT)
-    slabs = [(0, 0, 9, 8), (9, 0, 7, 8), (0, 8, 6, 8), (6, 8, 10, 8)]
-    for (x, y, w, h) in slabs:
-        body = shade(base, tone * rng.choice([0.96, 1.0, 1.04, 1.08]))
-        rect(img, x, y, w, h, body)
-        hline(img, x, y, w, shade(body, 1.16))
-        vline(img, x, y, h, shade(body, 1.08))
-        hline(img, x, y + h - 1, w, shade(body, 0.72))
-        vline(img, x + w - 1, y, h, shade(body, 0.80))
-        for _ in range(rng.randint(1, 3)):
-            px(img, x + rng.randint(1, w - 2), y + rng.randint(1, h - 2), shade(body, 0.88))
+    body = shade(base, tone)
+    rect(img, 0, 0, T, T, body)
+    joint = shade(body, 0.70)
+    lip = shade(body, 1.07)
+    if quad in (0, 1):
+        hline(img, 0, 0, T, joint)
+        hline(img, 0, 1, T, lip)
+    if quad in (0, 2):
+        vline(img, 0, 0, T, joint)
+        vline(img, 1, 0, T, lip)
+    if quad in (2, 3):
+        hline(img, 0, T - 1, T, shade(body, 0.92))
+    if quad in (1, 3):
+        vline(img, T - 1, 0, T, shade(body, 0.94))
+    # stone grain: identical in all four quadrants so the flag reads as one stone
+    for _ in range(18):
+        px(img, rng.randint(0, 7), rng.randint(0, 7), shade(body, rng.choice([0.97, 1.03])))
+    for _ in range(10):
+        px(img, rng.randint(8, 15), rng.randint(8, 15), shade(body, rng.choice([0.96, 1.04])))
+    return img
+
+
+def floor_slab(seed: int, tone: float = 1.0, cracks: int = 0,
+               base=BASALT_M) -> Image.Image:
+    """A worn single flag with cracks, used for the damaged variants."""
+    rng = random.Random(seed)
+    img = floor_flag(seed, 3, base=base, tone=tone)
     for _ in range(cracks):
-        x, y = rng.randint(2, 13), rng.randint(1, 5)
-        for _step in range(rng.randint(4, 9)):
-            px(img, x, y, shade(base, 0.55))
+        x, y = rng.randint(3, 12), rng.randint(2, 5)
+        for _step in range(rng.randint(5, 9)):
+            px(img, x, y, shade(base, 0.76))
             x += rng.choice([-1, 0, 0, 1])
             y += 1
             if y > 14:
@@ -257,90 +284,105 @@ def floor_slab(seed: int, tone: float = 1.0, cracks: int = 0,
     return img
 
 
-def floor_aisle(seed: int, variant: int) -> Image.Image:
-    """The processional walk: cut slabs with a brass inlay line at each edge.
+def floor_aisle(seed: int, variant: str = "h") -> Image.Image:
+    """Processional paving: the same stone, dressed finer and cut to a band.
 
-    variant 0 = straight, 1 = the band turning; the brass line is what makes the
-    route read as built rather than as a differently-coloured carpet.
+    The band is legible because its edges are a recessed cut and a single brass
+    stud row — not because it is painted a bright orange. The rejected version
+    drew two brass stripes across the whole tile and turned the nave into a
+    hazard-striped corridor.
     """
     rng = random.Random(seed)
-    img = floor_slab(seed, tone=1.10, base=shade(BASALT_M, 1.06))
-    # inlaid brass strips follow the walking axis (vertical on screen)
-    if variant == 0:
-        for y in range(T):
-            px(img, 1, y, BRASS_D)
-            px(img, 2, y, BRASS_M)
-            px(img, 13, y, BRASS_M)
-            px(img, 14, y, BRASS_D)
-        for y in range(0, T, 8):
-            px(img, 2, y, BRASS_L)
-            px(img, 13, y, BRASS_L)
+    body = shade(BASALT_L, rng.choice([0.99, 1.02]))
+    img = new(T, T)
+    rect(img, 0, 0, T, T, body)
+    horizontal = variant in ("h", "end")
+    if horizontal:
+        hline(img, 0, 0, T, shade(BASALT_M, 0.86))
+        hline(img, 0, 1, T, shade(BASALT_M, 1.0))
+        hline(img, 0, 14, T, shade(BASALT_M, 1.02))
+        hline(img, 0, 15, T, shade(BASALT_M, 0.86))
+        for x in range(0, T, 8):
+            px(img, x, 1, BRASS_M)
+            px(img, x + 1, 14, BRASS_D)
+            vline(img, x, 2, 12, shade(body, 0.97))
     else:
-        for x in range(T):
-            px(img, x, 1, BRASS_D)
-            px(img, x, 2, BRASS_M)
-            px(img, x, 13, BRASS_M)
-            px(img, x, 14, BRASS_D)
-    for _ in range(5):
-        px(img, rng.randint(3, 12), rng.randint(3, 12), shade(BASALT_L, 1.05))
+        vline(img, 0, 0, T, shade(BASALT_M, 0.86))
+        vline(img, 1, 0, T, shade(BASALT_M, 1.0))
+        vline(img, 14, 0, T, shade(BASALT_M, 1.02))
+        vline(img, 15, 0, T, shade(BASALT_M, 0.86))
+        for y in range(0, T, 8):
+            px(img, 1, y, BRASS_M)
+            px(img, 14, y + 1, BRASS_D)
+            hline(img, 2, y, 12, shade(body, 0.97))
+    for _ in range(10):
+        px(img, rng.randint(2, 13), rng.randint(2, 13), shade(body, rng.choice([0.97, 1.04])))
     return img
 
 
 def floor_channel(kind: str) -> Image.Image:
-    """A blood runnel: recessed iron-lined trough carrying dark oxblood."""
-    img = floor_slab(0x51 + ord(kind[0]), tone=1.0)
-    blood_hi = mix(OX_M, OX_L, 0.55)
-    if kind in ("h", "cross"):
-        rect(img, 0, 4, T, 8, IRON_D)
-        rect(img, 0, 5, T, 6, OX_D)
-        rect(img, 0, 6, T, 4, OX_M)
-        hline(img, 0, 6, T, blood_hi)
-        hline(img, 0, 11, T, IRON_M)
-        for x in range(0, T, 5):
-            px(img, x, 7, mix(OX_L, FIRE_M, 0.25))
+    """A blood runnel: a narrow recessed gutter cut through the paving.
+
+    Narrow on purpose. A wide painted band reads as decoration; a 4 px recess
+    with a dark rim, oxblood in the bottom and a wet highlight reads as a drain
+    that was built into the floor.
+    """
+    rng = random.Random(0x51 + ord(kind[0]))
+    palette = Image
+    img = floor_slab(0x51 + ord(kind[0]), tone=0.97)
+    delivered = mix(OX_D, OX_M, 0.6)
+    if kind in ("h", "cross", "end"):
+        rect(img, 0, 6, T, 5, shade(BASALT_M, 0.62))
+        rect(img, 0, 7, T, 3, delivered)
+        hline(img, 0, 7, T, mix(OX_L, FIRE_D, 0.30))
+        hline(img, 0, 10, T, shade(BASALT_M, 0.80))
+        hline(img, 0, 6, T, shade(BASALT_M, 0.52))
+        for x in range(rng.randint(0, 3), T, 6):
+            px(img, x, 8, mix(OX_M, OX_D, 0.5))
     if kind in ("v", "cross"):
-        rect(img, 4, 0, 8, T, IRON_D)
-        rect(img, 5, 0, 6, T, OX_D)
-        rect(img, 6, 0, 4, T, OX_M)
-        vline(img, 6, 0, T, blood_hi)
-        vline(img, 11, 0, T, IRON_M)
+        rect(img, 6, 0, 5, T, shade(BASALT_M, 0.62))
+        rect(img, 7, 0, 3, T, delivered)
+        vline(img, 7, 0, T, mix(OX_L, FIRE_D, 0.30))
+        vline(img, 10, 0, T, shade(BASALT_M, 0.80))
+        vline(img, 6, 0, T, shade(BASALT_M, 0.52))
     if kind == "end":
-        rect(img, 0, 4, T, 8, IRON_D)
-        rect(img, 0, 5, T, 6, OX_D)
-        rect(img, 0, 6, T, 4, OX_M)
-        hline(img, 0, 6, T, blood_hi)
-        vline(img, 13, 4, 8, IRON_L)
+        rect(img, 11, 5, 4, 7, shade(BASALT_M, 0.66))
+        vline(img, 14, 5, 7, shade(BASALT_M, 0.88))
     return img
 
 
 def floor_grate(seed: int) -> Image.Image:
-    img = floor_slab(seed, tone=0.86)
-    rect(img, 1, 1, 14, 14, IRON_D)
-    for x in range(2, 14, 3):
-        vline(img, x, 2, 12, IRON_L)
-        vline(img, x + 1, 2, 12, IRON_M)
-    hline(img, 1, 1, 14, IRON_M)
-    hline(img, 1, 14, 14, IRON_D)
+    img = floor_slab(seed, tone=0.9)
+    rect(img, 2, 2, 12, 12, shade(BASALT_M, 0.42))
+    for x in range(3, 13, 2):
+        vline(img, x, 3, 10, IRON_M)
+    hline(img, 2, 2, 12, IRON_L)
+    hline(img, 2, 13, 12, IRON_D)
     return img
 
 
 def floor_stain(seed: int, *, big: bool) -> Image.Image:
-    """Sparse iron-oxide / blood stain decal, drawn with a hard-edged rim."""
+    """Dried blood: an irregular, alpha-edged pool, never a coloured tile.
+
+    Drawn on transparency so the paving keeps showing through. The rejected
+    version painted opaque red squares, which read as red carpets dropped on the
+    floor rather than as something spilled.
+    """
     rng = random.Random(seed)
     img = new(T, T)
     cx, cy = T / 2 + rng.uniform(-2, 2), T / 2 + rng.uniform(-1, 2)
-    rx = rng.uniform(4.5, 6.5) if big else rng.uniform(3.0, 4.5)
-    ry = rx * rng.uniform(0.5, 0.75)
-    for _ in range(3):
-        ox, oy = rng.uniform(-2, 2), rng.uniform(-1.5, 1.5)
+    rx = rng.uniform(5.0, 7.0) if big else rng.uniform(3.2, 4.6)
+    ry = rx * rng.uniform(0.55, 0.8)
+    for layer, (spread, alpha) in enumerate(((1.0, 150), (0.72, 90))):
         for yy in range(T):
             for xx in range(T):
-                dx = (xx - cx - ox) / rx
-                dy = (yy - cy - oy) / ry
-                d = dx * dx + dy * dy
-                if d <= 1.0:
-                    a = 190 if d < 0.72 else 120
-                    px(img, xx, yy, mix(OX_D, OX_M, rng.random() * 0.5) + (a,))
+                dx = (xx - cx) / (rx * spread)
+                dy = (yy - cy) / (ry * spread)
+                if dx * dx + dy * dy <= 1.0:
+                    tone = mix(OX_D, OX_M, rng.random() * 0.6)
+                    px(img, xx, yy, tone + (alpha,))
+    for _ in range(rng.randint(2, 5)):
+        px(img, rng.randint(1, 14), rng.randint(1, 14), OX_D + (170,))
     return img
 
 
@@ -348,94 +390,105 @@ def floor_stain(seed: int, *, big: bool) -> Image.Image:
 # Wall stack — five courses so a wall has vertical stratification
 # ---------------------------------------------------------------------------
 def wall_plinth(seed: int) -> Image.Image:
-    """Bottom course: a dark projecting socle with a lit top lip."""
+    """Bottom course: the dark projecting socle the wall stands on.
+
+    Its job is to put a hard value step between the lit floor and the wall, so
+    the wall reads as rising out of the ground instead of meeting it.
+    """
     img = new(T, T)
-    rect(img, 0, 0, T, T, GROUT)
-    course_band(img, 0, 0, T, T, shade(BASALT_D, 1.12), rows=1, seed=seed)
-    # the projecting lip catches light and casts the shadow the next course needs
-    hline(img, 0, 0, T, BASALT_HI)
-    hline(img, 0, 1, T, BASALT_L)
-    hline(img, 0, 13, T, BASALT_L)
-    hline(img, 0, 14, T, BASALT_M)
-    hline(img, 0, 15, T, GROUT)
+    rect(img, 0, 0, T, T, shade(WARM_D, 0.72))
+    course_band(img, 0, 0, T, T, shade(WARM_D, 0.82), rows=1, seed=seed)
+    # the projecting lip catches light; the shadow under it belongs to the floor
+    hline(img, 0, 0, T, shade(WARM_L, 0.92))
+    hline(img, 0, 1, T, shade(WARM_M, 0.86))
+    hline(img, 0, 15, T, shade(WARM_D, 0.5))
     return img
 
 
 def wall_field(seed: int) -> Image.Image:
+    """The main wall face: coursed ashlar, 16x8 blocks, thin joints."""
     img = new(T, T)
-    course_band(img, 0, 0, T, T, WARM_M, rows=3, seed=seed)
-    # damp seeping from the course above
-    dither(img, 0, 0, T, 3, shade(WARM_D, 0.9), 0.30, seed)
+    rng = random.Random(seed)
+    rect(img, 0, 0, T, T, shade(WARM_D, 0.9))
+    for row in range(2):
+        y = row * 8
+        offset = 0 if (row + seed) % 2 == 0 else 8
+        for block_x in (-offset, -offset + 16):
+            body = shade(WARM_M, rng.choice([0.96, 1.0, 1.03]))
+            rect(img, block_x, y, 15, 7, body)
+            hline(img, block_x, y, 15, shade(body, 1.08))
+            hline(img, block_x, y + 6, 15, shade(body, 0.82))
+            vline(img, block_x + 15, y, 7, shade(body, 0.74))
+            if rng.random() < 0.5:
+                px(img, block_x + rng.randint(2, 12), y + rng.randint(1, 5), shade(body, 0.9))
     return img
 
 
 def wall_dado(seed: int) -> Image.Image:
-    """Carved band: a repeated chevron, the sacrificial motif of the complex."""
+    """Carved band above the socle: a sunken panel with the cult's chevron."""
     img = new(T, T)
-    course_band(img, 0, 0, T, T, shade(WARM_M, 0.92), rows=2, seed=seed)
-    # sunken panel
-    rect(img, 1, 4, 14, 8, shade(WARM_D, 0.92))
-    frame(img, 1, 4, 14, 8, shade(WARM_D, 0.72))
-    hline(img, 2, 5, 12, shade(WARM_L, 1.02))
-    for i, x in enumerate(range(3, 13, 3)):
-        px(img, x, 9, WARM_HI)
-        px(img, x + 1, 8, WARM_HI)
-        px(img, x + 1, 9, shade(WARM_D, 0.8))
-        px(img, x + 2, 7, shade(WARM_L, 1.05))
+    rect(img, 0, 0, T, T, shade(WARM_M, 0.92))
+    rect(img, 1, 3, 14, 10, shade(WARM_D, 0.80))
+    frame(img, 1, 3, 14, 10, shade(WARM_D, 0.55))
+    hline(img, 2, 4, 12, shade(WARM_L, 0.9))
+    for x in range(3, 14, 3):
+        px(img, x, 10, shade(WARM_L, 1.02))
+        px(img, x + 1, 9, shade(WARM_L, 1.02))
+        px(img, x + 1, 10, shade(WARM_D, 0.62))
+        px(img, x + 2, 8, shade(WARM_M, 0.86))
     return img
 
 
 def wall_cornice(seed: int) -> Image.Image:
-    """Projecting top course: lit upper face, deep soffit shadow."""
+    """Projecting top course: a lit band with a hard shadow beneath it.
+
+    This bright band is what tells the eye where the wall ends and the dark
+    interior of the next room begins. Without it a wall is just more floor.
+    """
     img = new(T, T)
     rect(img, 0, 0, T, T, GROUT)
-    rect(img, 0, 2, T, 9, WARM_L)
-    hline(img, 0, 2, T, WARM_HI)
-    hline(img, 0, 3, T, shade(WARM_L, 1.1))
-    for x in range(0, T, 5):
-        vline(img, x, 4, 6, shade(WARM_M, 0.9))
-    hline(img, 0, 10, T, shade(WARM_D, 0.8))
-    hline(img, 0, 11, T, shade(WARM_D, 0.62))
+    rect(img, 0, 1, T, 8, WARM_HI)
+    hline(img, 0, 1, T, CAP)
+    hline(img, 0, 2, T, shade(CAP, 1.02))
+    for x in range(0, T, 4):
+        px(img, x, 5, shade(WARM_L, 1.04))
+        px(img, x + 2, 7, shade(WARM_L, 0.98))
+    rect(img, 0, 9, T, 3, shade(WARM_D, 0.62))
+    hline(img, 0, 9, T, shade(WARM_L, 0.9))
+    hline(img, 0, 11, T, GROUT)
     hline(img, 0, 12, T, GROUT)
     return img
 
 
 def wall_pier(seed: int) -> Image.Image:
-    """A pilaster: a lit shaft with a joint, used to break a long wall into bays."""
+    """A pilaster: a lit shaft that breaks a long wall into bays."""
     img = new(T, T)
-    rect(img, 0, 0, T, T, GROUT)
+    rect(img, 0, 0, T, T, shade(WARM_D, 0.9))
     rect(img, 3, 0, 10, T, WARM_L)
     vline(img, 3, 0, T, WARM_HI)
-    vline(img, 4, 0, T, shade(WARM_L, 1.12))
+    vline(img, 4, 0, T, shade(WARM_L, 1.06))
     vline(img, 11, 0, T, shade(WARM_M, 0.92))
-    vline(img, 12, 0, T, shade(WARM_D, 0.9))
-    hline(img, 3, 7, 10, shade(WARM_D, 0.84))
-    hline(img, 3, 8, 10, shade(WARM_L, 1.06))
-    for y in range(0, T, 6):
-        px(img, 6, y, shade(WARM_M, 0.9))
-        px(img, 9, y + 3, shade(WARM_M, 0.9))
+    vline(img, 12, 0, T, shade(WARM_D, 0.82))
+    hline(img, 3, 7, 10, shade(WARM_D, 0.78))
+    hline(img, 3, 8, 10, shade(WARM_L, 1.04))
     return img
 
 
-def wall_cap(seed: int, mask: int = 0) -> Image.Image:
-    """Top surface of a wall mass; lit where nothing sits above it."""
+def wall_cap(seed: int) -> Image.Image:
+    """The top plane of a wall mass: the brightest stone in the room."""
     img = new(T, T)
-    rect(img, 0, 0, T, T, BASALT_M)
     rng = random.Random(seed)
-    for jx in (0, 8):
-        for jy in range(0, T, 8):
-            ox = 4 if (jy // 8) % 2 else 0
-            vline(img, (jx + ox) % T, jy, 8, shade(BASALT_M, 0.84))
-            hline(img, 0, jy, T, shade(BASALT_M, 0.88))
-    for _ in range(6):
-        px(img, rng.randint(1, 14), rng.randint(1, 14), shade(BASALT_M, rng.choice([0.9, 1.1])))
-    if not mask & 1:
-        hline(img, 0, 0, T, BASALT_HI)
-        hline(img, 0, 1, T, BASALT_L)
-    if not mask & 8:
-        vline(img, 0, 0, T, shade(BASALT_L, 1.06))
-    if not mask & 2:
-        vline(img, 15, 0, T, shade(BASALT_D, 0.9))
+    rect(img, 0, 0, T, T, CAP)
+    for jy in range(0, T, 8):
+        hline(img, 0, jy, T, shade(CAP, 0.86))
+        offset = 4 if (jy // 8) % 2 else 0
+        for jx in range(0, T, 8):
+            vline(img, (jx + offset) % T, jy, 8, shade(CAP, 0.88))
+    for _ in range(10):
+        px(img, rng.randint(1, 14), rng.randint(1, 14), shade(CAP, rng.choice([0.94, 1.03])))
+    # edge of the mass: a lit rim at the top, shadow where it falls away
+    hline(img, 0, 0, T, shade(CAP, 1.04))
+    hline(img, 0, 15, T, shade(WARM_D, 0.7))
     return img
 
 
@@ -1176,15 +1229,15 @@ def build_tiles() -> dict:
 
     cells = []
     variants = {
-        "floor_a": (lambda: floor_slab(1, 1.00), 0, 0),
-        "floor_b": (lambda: floor_slab(2, 1.05), 1, 0),
-        "floor_c": (lambda: floor_slab(3, 0.95), 2, 0),
-        "floor_d": (lambda: floor_slab(4, 1.02, cracks=2), 3, 0),
+        "floor_a": (lambda: floor_flag(1, 0), 0, 0),
+        "floor_b": (lambda: floor_flag(1, 1), 1, 0),
+        "floor_c": (lambda: floor_flag(1, 2), 2, 0),
+        "floor_d": (lambda: floor_flag(1, 3), 3, 0),
         "floor_worn": (lambda: floor_slab(5, 0.88, cracks=1), 4, 0),
         "floor_broken": (lambda: floor_slab(6, 1.0, cracks=3), 5, 0),
         "floor_grate": (lambda: floor_grate(7), 6, 0),
-        "floor_aisle_v": (lambda: floor_aisle(8, 0), 7, 0),
-        "floor_aisle_h": (lambda: floor_aisle(9, 1), 0, 1),
+        "floor_aisle_v": (lambda: floor_aisle(8, "v"), 7, 0),
+        "floor_aisle_h": (lambda: floor_aisle(9, "h"), 0, 1),
         "floor_channel_h": (lambda: floor_channel("h"), 1, 1),
         "floor_channel_v": (lambda: floor_channel("v"), 2, 1),
         "floor_channel_x": (lambda: floor_channel("cross"), 3, 1),
