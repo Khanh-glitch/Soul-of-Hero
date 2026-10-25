@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/1",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "b0203f8e70addbc9e5f6b7588fe8fcf22222bd8c",
+  "commit": "1e2f5148a2b6d544368a4e65f5fb7b051dc0507b",
   "source_pins": {
     "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
     "data/levels/chapter_1_level_5_architecture.json": "928bdfe5edaed4dab5d4951cd07d7210375d16889d1118491bc345e7537aedda",
@@ -32,7 +32,7 @@
     "props": 0,
     "lights": 0,
     "entities": 83,
-    "perf_nodes": 870,
+    "perf_nodes": 867,
     "draw_calls": 103,
     "static_mb": 109.2,
     "fps": 1,
@@ -262,10 +262,28 @@
       "extra": ""
     }
   },
-  "frames": [],
-  "pairs": 0,
-  "overviews": [],
-  "crops": [],
+  "frames": [
+    "f1_spawn",
+    "f1_gate",
+    "f1_altar",
+    "f2_landing",
+    "f2_court",
+    "f2_encounter",
+    "f3_approach",
+    "f3_fight"
+  ],
+  "pairs": 8,
+  "overviews": [
+    "f1",
+    "f2",
+    "f3"
+  ],
+  "crops": [
+    "f1_spawn",
+    "f1_gate",
+    "f2_court",
+    "f3_fight"
+  ],
   "evidence_kind": {
     "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
     "crops": "integer nearest-neighbour crops of those native frames",
