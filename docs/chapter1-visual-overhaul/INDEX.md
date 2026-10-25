@@ -10,7 +10,7 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 | L02 | Ossuary Fork | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L03 | Crossfire Archive | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L04 | Spiral Reliquary | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L05 | Blood Crucible | 8 + 3 overviews + 6 walk frames (`L05-final/`) | `IN PROGRESS — AUTHORED ARCHITECTURE, SHORT OF THE REFERENCE (see architecture-breakthrough/DESIGN_REVIEW.md)` |
+| L05 | Blood Crucible | 5 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L06 | Soul Anchor Relay | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L07 | The Failing Beacon | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L08 | Divided Reliquary | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
@@ -43,13 +43,13 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-| chapter_1_level_10 | 660 -> 685 | 103 -> 107 | 98.3 MiB |
+| chapter_1_level_10 | 640 -> 655 | 91 -> 104 | 98.1 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 104.9 MiB |
 | chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.8 MiB |
-| chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 109.9 MiB |
-| chapter_1_level_4 | 779 -> 799 | 72 -> 76 | 109.3 MiB |
-| chapter_1_level_5 | 868 -> 1012 | 103 -> 110 | 119.1 MiB |
-| chapter_1_level_6 | 868 -> 885 | 66 -> 78 | 111.7 MiB |
-| chapter_1_level_7 | 665 -> 681 | 92 -> 103 | 107.7 MiB |
-| chapter_1_level_8 | 685 -> 709 | 118 -> 127 | 104.2 MiB |
-| chapter_1_level_9 | 725 -> 742 | 122 -> 127 | 101.4 MiB |
+| chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 108.3 MiB |
+| chapter_1_level_4 | 780 -> 798 | 72 -> 76 | 108.1 MiB |
+| chapter_1_level_5 | 870 -> 1073 | 103 -> 110 | 119.6 MiB |
+| chapter_1_level_6 | 865 -> 884 | 66 -> 78 | 110.0 MiB |
+| chapter_1_level_7 | 664 -> 678 | 92 -> 103 | 107.7 MiB |
+| chapter_1_level_8 | 680 -> 698 | 107 -> 118 | 104.1 MiB |
+| chapter_1_level_9 | 718 -> 731 | 105 -> 118 | 101.2 MiB |
