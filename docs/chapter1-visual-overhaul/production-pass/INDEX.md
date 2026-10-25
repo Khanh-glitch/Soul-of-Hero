@@ -16,8 +16,8 @@ claim of approval.
 |---|---|---|---|---|---|
 | L06 | The Relay House — "Two Souls, One Path" | `relay` | `tools/level6/` | [run 40174706175](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40174706175), evidence commit `8c13ef0` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 | L07 | The Beacon Yard — Soul Beacon defence | `vigil` | `tools/level7/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
-| L08 | Reliquary of two wings | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
-| L09 | The Crimson Gate | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
+| L08 | The Divided Reliquary — Reaper and Vampire wings | `reliquary` | `tools/level8/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
+| L09 | The Crimson Gate — three seals, one named elite | `gatehouse` | `tools/level9/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
 | L10 | The Castellan's throne | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
 
 Every image referenced from these pages is a native Godot 4.7 frame, 1280×720,

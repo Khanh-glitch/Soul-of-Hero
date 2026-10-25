@@ -352,12 +352,14 @@ def pack(name: str, builders: dict) -> dict:
     frames = {}
     placed = []
     cursor_x = cursor_y = row_h = 0
+    widest = 0
     items = builders.items() if isinstance(builders, dict) else builders
     for frame_name, builder in items:
         image = builder()
         if image is None:
             continue
         if cursor_x + image.width > 1024:
+            widest = max(widest, cursor_x)
             cursor_y += row_h + 1
             cursor_x, row_h = 0, 0
         frames[frame_name] = {"x": cursor_x, "y": cursor_y,
@@ -365,7 +367,10 @@ def pack(name: str, builders: dict) -> dict:
         placed.append((cursor_x, cursor_y, image))
         cursor_x += image.width + 2
         row_h = max(row_h, image.height)
-    width = max(16, cursor_x)
+    # The sheet must cover every row it wrapped onto: a row that ends short must
+    # not shrink the atlas under the rows above it, or the frames out at the right
+    # edge are cropped out of their own sheet.
+    width = max(16, widest, cursor_x)
     height = max(16, cursor_y + row_h)
     sheet = new(width, height)
     for x, y, image in placed:
