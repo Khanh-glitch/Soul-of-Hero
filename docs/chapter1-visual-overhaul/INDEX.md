@@ -12,10 +12,10 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 | L04 | Spiral Reliquary | 8 | `INCOMPLETE — ART DELIVERY FAILED` |
 | L05 | Blood Crucible | 9 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 | L06 | Soul Anchor Relay | 7 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L07 | The Failing Beacon | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L08 | Divided Reliquary | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L09 | The Crimson Gate | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L10 | Castellan Throne | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L07 | The Failing Beacon | 4 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L08 | Divided Reliquary | 4 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L09 | The Crimson Gate | 4 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L10 | Castellan Throne | 4 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 
 ## Gameplay gates (frozen, unchanged expectations)
 
@@ -43,13 +43,13 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-| chapter_1_level_10 | 642 -> 730 | 92 -> 110 | 102.8 MiB |
+| chapter_1_level_10 | 639 -> 719 | 94 -> 110 | 102.7 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 105.0 MiB |
-| chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 120.5 MiB |
+| chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.8 MiB |
 | chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 108.4 MiB |
-| chapter_1_level_4 | 779 -> 798 | 72 -> 76 | 108.1 MiB |
-| chapter_1_level_5 | 866 -> 1069 | 103 -> 110 | 119.7 MiB |
-| chapter_1_level_6 | 864 -> 1102 | 66 -> 73 | 118.9 MiB |
-| chapter_1_level_7 | 661 -> 883 | 92 -> 114 | 115.4 MiB |
-| chapter_1_level_8 | 681 -> 826 | 100 -> 125 | 112.5 MiB |
-| chapter_1_level_9 | 718 -> 833 | 103 -> 120 | 107.8 MiB |
+| chapter_1_level_4 | 780 -> 799 | 72 -> 76 | 108.1 MiB |
+| chapter_1_level_5 | 866 -> 1073 | 103 -> 110 | 119.7 MiB |
+| chapter_1_level_6 | 863 -> 1099 | 66 -> 73 | 118.8 MiB |
+| chapter_1_level_7 | 661 -> 882 | 92 -> 114 | 115.4 MiB |
+| chapter_1_level_8 | 676 -> 843 | 106 -> 125 | 112.7 MiB |
+| chapter_1_level_9 | 718 -> 837 | 106 -> 129 | 107.8 MiB |
