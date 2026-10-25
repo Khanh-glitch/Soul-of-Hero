@@ -68,11 +68,52 @@ For Level 1–4, the native pass prints the void counts, and they match the audi
 independent count exactly:
 
 ```
-level 1  ENVIRONMENT BEDROCK: enclosed_void=112  outside_void=3052
-level 2  ENVIRONMENT BEDROCK: enclosed_void=762  outside_void=9886
-level 3  ENVIRONMENT BEDROCK: enclosed_void=182  outside_void=3454
-level 4  ENVIRONMENT BEDROCK: enclosed_void=640  outside_void=3368
+level 1  ENVIRONMENT BEDROCK: void_cells=3164  headroom_cells=624
+level 2  ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984
+level 3  ENVIRONMENT BEDROCK: void_cells=3636  headroom_cells=696
+level 4  ENVIRONMENT BEDROCK: void_cells=4008  headroom_cells=696
 ```
+
+Each Level 1–4 log carries two `ENVIRONMENT BEDROCK` lines: the harness loads the
+default level (this crypt) before the target level, so Level 1's own line and the
+pre-load line are the same one. The line quoted for each level above is that level's.
+
+The counts are `void_cells` (inside the map) and `headroom_cells` (the strip above row
+0 that the camera can now look into). Before the single-value correction the line read
+`enclosed_void=112 outside_void=3052` for Level 1, and 112/762/182/640 enclosed for
+L1–L4 — the same numbers the audit had counted independently, from the other
+direction. That agreement is what made the void count trustworthy.
+
+## 3b. Mosaic alignment
+
+The sweep stitches overlapping native frames into a 1:1 mosaic per level, so the
+review is of the whole map rather than of five stations. Stitching can lie if a frame
+is pasted in the wrong place, so each overlap is checked: the two copies are compared
+at zero shift and at every shift within ±4 px, and the shift that actually agrees best
+is recorded. The metric runs on edge maps rather than on raw brightness, because the
+torches flicker between frames and a brightness comparison is minimised by sliding a
+pool rather than by lining up the architecture.
+
+On the mosaics committed with this report
+(`docs/chapter1-audit/L*_mosaic.json`):
+
+| level | frames | coverage of authored content | worst overlap shift | overlaps agreeing at 0 |
+| --- | --- | --- | --- | --- |
+| 1 | 20 | 0.990 | 0 px | 19/19 |
+| 2 | 54 | 1.000 | 0 px | 53/53 |
+| 3 | 20 | 1.000 | 0 px | 19/19 |
+| 4 | 20 | 1.000 | 0 px | 19/19 |
+| 5 | 24 | 1.000 | 0 px | 23/23 |
+| 6 | 24 | 1.000 | 0 px | 23/23 |
+| 7 | 15 | 1.000 | 0 px | 14/14 |
+| 8 | 20 | 1.000 | 0 px | 19/19 |
+| 9 | 15 | 1.000 | 0 px | 14/14 |
+| 10 | 15 | 1.000 | 0 px | 14/14 |
+
+Every overlap on every level agrees best at zero shift, and each mosaic's
+`limits_applied` is `true`, i.e. no frame was drawn outside the camera rectangle the
+level actually allows. Level 1's 0.990 coverage is its map's own lattice margin, not a
+missing frame.
 
 ## 4. Workflow state
 

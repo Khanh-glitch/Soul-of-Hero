@@ -31,7 +31,7 @@ Two examples of what that means in practice:
 | --- | --- | --- |
 | A | Gameplay readability / missing content | **Done** — 3 missing-frame classes repaired, 1 validator added |
 | B | Architectural boundaries and clipping | **Partly done** — camera headroom and wall crowns done; per-level boundary work on L5's portal, L9's gate framing and L10's hall is open |
-| C | L1–L4 enclosed voids finished as architecture | **Partly done** — all voids are rock now; room-level architecture is open |
+| C | L1–L4 enclosed voids finished as architecture | **Partly done** — every void is rock, in the headroom too; room-level architecture is open |
 | D | Visual hierarchy (floor/wall, light, hero objects) | **Partly done** — light pools normalised; floor/wall value separation and hero objects are open |
 | E | Art direction (motifs, composition, bedrock, variation) | **Open** — see the ledger |
 | F | Level identity L1–L4, polish | **Open** |
@@ -47,9 +47,12 @@ A partly-done gate is not a passed gate. The visual verdict at the bottom of
 | `897ae4b` | A | L7 `barrels`, L8 `banner_pale` authored, L5 kit/ambient/background stated, L5 floor claims resolved, `tools/validate_chapter1_art_refs.py` |
 | `951552f` | B | Level schema allows bounded headroom above row 0 (the fix for the regression `0a7bbce` caused) |
 | `971e7d2` | D | Every light normalised to a 140–400 px pool with a 1.15 energy ceiling, L9 gains its portcullis, L9 gate light becomes a threshold glow |
-| `48de9ab` | C | Enclosed voids become rock (L1–L4) |
-| `bc3d3a3` | C | Outer voids become darker rock, so the keep sits in the world instead of on a black field |
+| `48de9ab` | C | Voids become rock (L1–L4), derived by flood from the map border |
+| `bc3d3a3` | C | The keep sits in rock instead of on a black field |
+| `408a451` | E | The chain is drawn as a chain, not a dotted seam |
+| `b0a7268`, `7c5e4d5` | C | Rock measured on the native frames and corrected twice: out of black, then to one value with rock in the headroom |
 | `869aa67` | — | The audit sweep now re-photographs the chapter when the chapter changes |
+| `165c46f` | — | This documentation |
 
 ## Documents here
 
