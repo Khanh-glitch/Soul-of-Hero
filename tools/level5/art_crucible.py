@@ -223,7 +223,7 @@ def bedrock(seed: int) -> Image.Image:
     """
     rng = random.Random(seed)
     img = new(T, T)
-    base = (54, 50, 52) if seed % 2 else (48, 45, 48)
+    base = (40, 37, 40) if seed % 2 else (35, 32, 36)
     rect(img, 0, 0, T, T, base)
     for row in range(0, T, 6):
         offset = (row // 6) % 2 * 5
@@ -395,6 +395,24 @@ def floor_stain(seed: int, *, big: bool) -> Image.Image:
 # ---------------------------------------------------------------------------
 # Wall stack — five courses so a wall has vertical stratification
 # ---------------------------------------------------------------------------
+def shadow_edge(seed: int = 0) -> Image.Image:
+    """Ambient occlusion where a wall meets the floor.
+
+    A 16 px strip that is darkest at its top row and fades to nothing by the
+    eighth. Laid along the foot of every wall face it is the cheapest, strongest
+    depth cue in a top down room: without it the wall and the floor are two flat
+    planes meeting on a line.
+    """
+    img = new(T, T)
+    for y in range(9):
+        alpha = int(126 * (1.0 - y / 9.0) ** 1.5)
+        if alpha <= 0:
+            continue
+        for x in range(T):
+            px(img, x, y, (8, 7, 10, alpha))
+    return img
+
+
 def wall_plinth(seed: int) -> Image.Image:
     """Bottom course: the dark projecting socle the wall stands on.
 
@@ -1288,6 +1306,7 @@ def build_tiles() -> dict:
         "wall_cornice": (lambda: wall_cornice(26), 5, 2),
         "wall_pier": (lambda: wall_pier(27), 6, 2),
         "wall_cap": (lambda: wall_cap(28), 7, 2),
+        "shadow_edge": (lambda: shadow_edge(), 2, 3),
         "bedrock_a": (lambda: bedrock(31), 0, 3),
         "bedrock_b": (lambda: bedrock(32), 1, 3),
     }

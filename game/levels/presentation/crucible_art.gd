@@ -37,6 +37,7 @@ const LIGHT_ART := "res://assets/environment/chapter1/crucible/light_radial.png"
 
 const NODE_NAME := "CrucibleArt"
 const BEDROCK := "CrucibleBedrock"
+const SHADOWS := "CrucibleShadow"
 const FLOOR_DETAIL := "CrucibleFloor"
 const WALL_STACK := "CrucibleWalls"
 const PROP_ROOT := "CrucibleProps"
@@ -55,11 +56,12 @@ const WALL_EXTRUDE := 3
 const WALL_Z := 2
 const FLOOR_Z := -9
 const BEDROCK_Z := -12
+const SHADOW_Z := -8
 
 ## Ambient the authored lighting is composed against. Dark enough for the lit
 ## set pieces to be the brightest thing in frame, bright enough that the floor,
 ## the enemies and the player are all readable during combat.
-const AMBIENT := Color(0.34, 0.31, 0.35, 1.0)
+const AMBIENT := Color(0.30, 0.32, 0.40, 1.0)
 const BACKGROUND := Color(0.035, 0.028, 0.032, 1.0)
 
 var level_data_path := ""
@@ -118,14 +120,15 @@ func rebuild() -> void:
 	var geometry := _cells("Geometry")
 	_build_bedrock(floor, geometry)
 	_build_floor_detail(floor, geometry)
+	_build_shadows(floor, geometry)
 	_build_walls(floor, geometry)
 	_build_props(geometry)
 	_build_lights()
-	print("CRUCIBLE ART: floor_detail=%d wall_cells=%d bedrock=%d props=%d lights=%d"
+	print("CRUCIBLE ART: floor_detail=%d wall_cells=%d bedrock=%d props=%d lights=%d shadows=%d"
 		% [
 			int(stats.get("floor", 0)), int(stats.get("walls", 0)),
 			int(stats.get("bedrock", 0)), int(stats.get("props", 0)),
-			int(stats.get("lights", 0)),
+			int(stats.get("lights", 0)), int(stats.get("shadows", 0)),
 		])
 
 
@@ -318,6 +321,23 @@ func _default_floor(cell: Vector2i) -> String:
 	if roll == 9:
 		return "floor_broken"
 	return ["floor_a", "floor_b", "floor_c", "floor_d"][quad]
+
+
+# -- shadows -----------------------------------------------------------------
+## Ambient occlusion at the foot of every wall face, painted on its own layer so
+## it darkens the paving without touching it. The floor and the wall are otherwise
+## two flat planes meeting on a hard line.
+func _build_shadows(floor: Dictionary, geometry: Dictionary) -> void:
+	var layer := _layer(SHADOWS, SHADOW_Z, _tileset())
+	var painted := 0
+	for cell: Vector2i in geometry:
+		var below := Vector2i(cell.x, cell.y + 1)
+		if not floor.has(below) or geometry.has(below):
+			continue
+		if _put(layer, below, "shadow_edge"):
+			painted += 1
+	layer.update_internals()
+	stats["shadows"] = painted
 
 
 # -- walls -------------------------------------------------------------------
