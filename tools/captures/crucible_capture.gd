@@ -76,7 +76,9 @@ func _ready() -> void:
 	# viewport that stops drawing, a campaign boot that stalls), this quits with a
 	# non-zero code and a printed reason so the log says what happened.
 	var watchdog := Timer.new()
-	watchdog.wait_time = 480.0
+	# Two 3200-frame input walks plus two capture passes; the previous 480 s limit
+	# was sized for a harness that gave up on the walk after 1400 frames.
+	watchdog.wait_time = 840.0
 	watchdog.one_shot = true
 	watchdog.autostart = true
 	watchdog.timeout.connect(func() -> void:
@@ -190,6 +192,14 @@ func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out_dir))
 
 	var exit_code := 0
+	# Real input, first: with a full health pool, the Knight walks both ground-floor
+	# legs of the level and crosses a door at the end of each. Running this before
+	# the photograph stations means the walk is not paying for damage the stations
+	# dealt, and the station frames are still taken afterwards from the live level.
+	if not _no_art:
+		var traversed: bool = await _traverse(player, dungeon)
+		if not traversed:
+			exit_code = 1
 	for station: Dictionary in STATIONS:
 		if station["id"] == "f3_fight":
 			# GDScript refuses `not await call()` inside a condition, so the result
@@ -204,12 +214,6 @@ func _run() -> void:
 	for overview: Dictionary in OVERVIEWS:
 		var wide: bool = await _capture(overview, player, true)
 		if not wide:
-			exit_code = 1
-	# Real input: walk the Knight through the level with the movement actions,
-	# along a path found in the level's own collision grid, and cross a door.
-	if not _no_art:
-		var traversed: bool = await _traverse(player, dungeon)
-		if not traversed:
 			exit_code = 1
 	print("CRUCIBLE CAPTURE DONE: tag=%s" % _tag)
 	_finish(exit_code)
@@ -442,105 +446,160 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		{"name": "f2_landing_to_f2_f3_door", "start": Vector2i(9, 48), "door": Vector2i(106, 48)},
 	]
 	var walkable := _walkable_cells(dungeon)
-	# Enemies are solid bodies, so a route that ignores them ends with the Knight
-	# walking into a skeleton and stopping. Their cells are treated as blocked for
-	# planning (with a margin that shrinks if no route exists), and the walk itself
-	# is still real input: the harness does not move enemies or teleport past them.
-	var enemy_cells := _enemy_cells(dungeon)
-	var shot := 0
 	var ok := true
 	for leg: Dictionary in legs:
 		var start_cell: Vector2i = leg["start"]
 		var door_cell: Vector2i = leg["door"]
+		var leg_name: String = leg["name"]
 		player.global_position = Vector2(start_cell.x * TILE + TILE * 0.5,
 			start_cell.y * TILE + TILE * 0.5)
 		player.velocity = Vector2.ZERO
 		for _i: int in range(6):
 			await get_tree().physics_frame
-		print("CRUCIBLE TRAVERSAL: leg=%s staged_at=%s" % [leg["name"], start_cell])
-		var path := _path_around_enemies(walkable, enemy_cells, start_cell, door_cell)
+		var path := _path_cells(walkable, start_cell, door_cell)
 		if path.is_empty():
 			push_error("CRUCIBLE TRAVERSAL FAIL: no walkable path %s -> %s"
 				% [start_cell, door_cell])
 			ok = false
 			continue
-		print("CRUCIBLE TRAVERSAL: leg=%s path=%d cells" % [leg["name"], path.size()])
-		# Walk leg by leg. The path is planned on the tile grid; the Knight is a
-		# body with a radius, so a corner can stop him where a cell is technically
-		# walkable. When that happens the harness re-plans from wherever he actually
-		# is, and nudges him sideways for a few frames, rather than teleporting:
-		# the point of this sequence is that the movement is real input.
+		print("CRUCIBLE TRAVERSAL: leg=%s staged_at=%s path=%d cells hp=%s"
+			% [leg_name, start_cell, path.size(), _health_of(player)])
+		# The corridor is not empty: both legs run through the rooms the level
+		# populates with enemies, and walking past them gets the Knight killed --
+		# which is exactly what the previous evidence showed (a death modal, zero
+		# health, and a Knight who ignored every input). So the walk is a walk a
+		# player would make: advance along the route, stop and fight whatever is in
+		# melee, then continue. All of it is real input; nothing is scripted, no
+		# enemy is moved and no health value is touched.
 		var index := 0
 		var frames := 0
 		var replans := 0
 		var stuck := 0
-		var last_position := player.global_position
 		var shot_taken := 0
-		while frames < 2200:
-			var cell_now := Vector2i(int(player.global_position.x / TILE),
-				int(player.global_position.y / TILE))
-			if cell_now == door_cell or index >= path.size():
+		var swing_clock := 0
+		var engage := 0
+		var last_position := player.global_position
+		var died := false
+		while frames < 3200:
+			var hp := _number_property(player, "health")
+			if hp != null and int(hp) <= 0:
+				died = true
 				break
-			var target := Vector2(path[index].x * TILE + TILE * 0.5,
+			var here := Vector2i(int(player.global_position.x / TILE),
+				int(player.global_position.y / TILE))
+			if index >= path.size() or here == door_cell:
+				break
+			var waypoint := Vector2(path[index].x * TILE + TILE * 0.5,
 				path[index].y * TILE + TILE * 0.5)
-			var delta := target - player.global_position
-			if delta.length() < 7.0:
+			if player.global_position.distance_to(waypoint) < 9.0:
 				index += 1
 				continue
-			_drive(player, delta)
+			# Fight what is in the way, but do not get pinned to something that
+			# cannot be reached (a ranged enemy behind a wall still "is" within
+			# range), so after a long engagement the route wins for a while.
+			var threat := _nearest_enemy(dungeon, player.global_position, 84.0) if engage < 300 else null
+			if threat != null:
+				engage += 1
+			elif engage > 0:
+				engage = maxi(0, engage - 3)
+			var heading := waypoint - player.global_position
+			if threat != null:
+				heading = threat.global_position - player.global_position
+			_drive(player, heading)
+			swing_clock += 1
+			# Press, hold a few frames, release: the Knight reads just_pressed, so a
+			# held action would swing only once.
+			if swing_clock % 24 == 1:
+				Input.action_press(&"attack")
+			elif swing_clock % 24 == 9:
+				Input.action_release(&"attack")
 			await get_tree().physics_frame
 			frames += 1
-			if player.global_position.distance_to(last_position) < 0.4:
+			if player.global_position.distance_to(last_position) < 0.6 and threat == null:
 				stuck += 1
-				if stuck > 18:
+				if stuck > 20:
 					replans += 1
+					if replans > 8:
+						break
 					_release_movement()
-					# step off the corner: press perpendicular to the blocked heading
-					var side := Vector2(-delta.y, delta.x).normalized()
+					# Step off the obstacle, alternating sides, then re-plan from
+					# wherever the Knight actually is.
+					var side := Vector2(-heading.y, heading.x).normalized()
 					if replans % 2 == 0:
 						side = -side
-					_drive_direction(player, side)
-					for _k: int in range(16):
+					_drive(player, side * 12.0)
+					for _k: int in range(10):
 						await get_tree().physics_frame
+						frames += 1
 					_release_movement()
 					var from_here := Vector2i(int(player.global_position.x / TILE),
 						int(player.global_position.y / TILE))
-					var replanned := _path_around_enemies(walkable, enemy_cells, from_here, door_cell)
-					if replanned.is_empty() or replans > 12:
-						push_error("CRUCIBLE TRAVERSAL FAIL: no route from %s after %d replans"
-							% [from_here, replans])
+					var replanned := _path_cells(walkable, from_here, door_cell)
+					if replanned.is_empty():
+						push_error("CRUCIBLE TRAVERSAL FAIL: no route from %s" % from_here)
 						break
 					path = replanned
 					index = 0
+					replans += 0
 					stuck = 0
-					print("CRUCIBLE TRAVERSAL: leg=%s replan=%d from=%s path=%d"
-						% [leg["name"], replans, from_here, path.size()])
+					last_position = player.global_position
+					print("CRUCIBLE TRAVERSAL: leg=%s replan=%d from=%s path=%d hp=%s"
+						% [leg_name, replans, from_here, path.size(), _health_of(player)])
 			else:
 				stuck = 0
 				last_position = player.global_position
-			if shot_taken < 4 and frames > 26 * (shot_taken + 1):
+			if shot_taken < 4 and frames > 90 * (shot_taken + 1):
 				await RenderingServer.frame_post_draw
 				var image := get_viewport().get_texture().get_image()
-				var path_out := "%s/%s_traversal_%d.png" % [_out_dir, _tag, shot_taken + 1]
+				var path_out := "%s/%s_%s_walk_%d.png" % [_out_dir, _tag, leg_name, shot_taken + 1]
 				var saved := image.save_png(path_out) == OK
-				print("CRUCIBLE TRAVERSAL SHOT tag=%s leg=%s step=%d cell=%s out=%s ok=%s"
-					% [_tag, leg["name"], shot_taken + 1,
-						Vector2i(int(player.global_position.x / TILE),
-							int(player.global_position.y / TILE)), path_out, saved])
+				print("CRUCIBLE TRAVERSAL SHOT tag=%s leg=%s step=%d cell=%s hp=%s out=%s ok=%s"
+					% [_tag, leg_name, shot_taken + 1, here, _health_of(player), path_out, saved])
 				shot_taken += 1
 		_release_movement()
+		if Input.is_action_pressed(&"attack"):
+			Input.action_release(&"attack")
+		var at := Vector2i(int(player.global_position.x / TILE),
+			int(player.global_position.y / TILE))
 		var arrived := player.global_position.distance_to(
-			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5)) < 44.0
-		print("CRUCIBLE TRAVERSAL: leg=%s arrived=%s frames=%d at=%s"
-			% [leg["name"], arrived, frames,
-				Vector2i(int(player.global_position.x / TILE), int(player.global_position.y / TILE))])
+			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5)) < 48.0
+		print("CRUCIBLE TRAVERSAL: leg=%s arrived=%s died=%s frames=%d at=%s hp=%s"
+			% [leg_name, arrived, died, frames, at, _health_of(player)])
+		if died:
+			push_error("CRUCIBLE TRAVERSAL FAIL: the Knight died at %s on leg %s"
+				% [at, leg_name])
+			ok = false
+			continue
 		if not arrived:
 			ok = false
 			continue
-		if not await _use_door(player, dungeon, door_cell, leg["name"]):
+		if not await _use_door(player, dungeon, door_cell, leg_name):
 			ok = false
 	_drive_shots_done()
 	return ok
+
+
+## Nearest living enemy within `radius`, or null. Used to decide when the walk
+## stops to fight instead of pushing into a body that will not move.
+func _nearest_enemy(dungeon: DungeonLevel, from: Vector2, radius: float) -> Node2D:
+	var root := dungeon.get_node_or_null("Entities")
+	if root == null:
+		return null
+	var best: Node2D = null
+	var best_distance := radius
+	for child: Node in root.get_children():
+		if not child is Node2D or not (child is CharacterBody2D):
+			continue
+		if String(child.name) == "Knight":
+			continue
+		if "health" in child and int(child.get("health")) <= 0:
+			continue
+		var node := child as Node2D
+		var distance := node.global_position.distance_to(from)
+		if distance < best_distance:
+			best_distance = distance
+			best = node
+	return best
 
 
 ## Open a door with a real left click, and fall back to the door's own interact()
@@ -626,43 +685,6 @@ func _enum_name(node: Object, enum_name: String, value: Variant) -> String:
 				if int(table[key]) == int(value):
 					return key
 	return str(value)
-
-
-## Cells occupied by a living enemy, grown by `margin` cells.
-func _enemy_cells(dungeon: DungeonLevel, margin: int = 1) -> Dictionary:
-	var blocked := {}
-	var root := dungeon.get_node_or_null("Entities")
-	if root == null:
-		return blocked
-	for child: Node in root.get_children():
-		if not child is Node2D or not (child is CharacterBody2D):
-			continue
-		if String(child.name) == "Knight":
-			continue
-		if "health" in child and int(child.get("health")) <= 0:
-			continue
-		var cell := Vector2i(int((child as Node2D).global_position.x / TILE),
-			int((child as Node2D).global_position.y / TILE))
-		for dy: int in range(-margin, margin + 1):
-			for dx: int in range(-margin, margin + 1):
-				blocked[Vector2i(cell.x + dx, cell.y + dy)] = true
-	return blocked
-
-
-## Plan a route that respects the enemies standing on it, widening the margin
-## only when nothing else works.
-func _path_around_enemies(walkable: Dictionary, enemy_cells: Dictionary,
-		start: Vector2i, goal: Vector2i) -> Array:
-	for margin: int in [1, 0]:
-		var filtered := {}
-		for cell: Vector2i in walkable:
-			if margin == 1 and enemy_cells.has(cell):
-				continue
-			filtered[cell] = true
-		var path := _path_cells(filtered, start, goal)
-		if not path.is_empty():
-			return path
-	return _path_cells(walkable, start, goal)
 
 
 func _path_cells(walkable: Dictionary, start: Vector2i, goal: Vector2i) -> Array:
