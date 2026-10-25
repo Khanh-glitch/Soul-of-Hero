@@ -747,7 +747,11 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 	var target := before
 	if door_node != null:
 		target = door_node.global_position
-	var screen_position: Vector2 = get_viewport().get_canvas_transform() * target
+	# Window pixels, not viewport pixels: the project renders a 640x360 viewport into
+	# a 1280x720 window, and an injected event is stamped as if it came from the OS.
+	var viewport := get_viewport()
+	var screen_position: Vector2 = viewport.get_final_transform() \
+		* viewport.get_canvas_transform() * target
 	Input.warp_mouse(screen_position)
 	await get_tree().process_frame
 	for pressed: bool in [true, false]:
@@ -758,8 +762,11 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 		event.global_position = screen_position
 		Input.parse_input_event(event)
 		await get_tree().process_frame
+	var seen := false
 	for _i: int in range(24):
 		await get_tree().physics_frame
+		if "_frame_saw_lmb_press" in player and bool(player.get("_frame_saw_lmb_press")):
+			seen = true
 	var moved := player.global_position.distance_to(before)
 	var via := "input_click" if moved > 64.0 else "none"
 	if via == "none":
@@ -774,8 +781,8 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 	var image := get_viewport().get_texture().get_image()
 	var out := "%s/%s_traversal_door_%s.png" % [_out_dir, _tag, leg_name]
 	var saved := image.save_png(out) == OK
-	print("CRUCIBLE TRAVERSAL: leg=%s door_used_via=%s moved=%.1f from=%s to=%s ok=%s"
-		% [leg_name, via, moved, before, player.global_position, saved])
+	print("CRUCIBLE TRAVERSAL: leg=%s door_used_via=%s click_seen=%s click_at=%s moved=%.1f from=%s to=%s ok=%s"
+		% [leg_name, via, seen, screen_position, moved, before, player.global_position, saved])
 	return moved > 64.0
 
 

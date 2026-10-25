@@ -10,7 +10,7 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 | L02 | Ossuary Fork | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L03 | Crossfire Archive | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L04 | Spiral Reliquary | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L05 | Blood Crucible | 5 | `TECHNICALLY VALID — VISUAL NOT READY` |
+| L05 | Blood Crucible | 8 + 3 overviews + 6 walk frames (`L05-final/`) | `IN PROGRESS — AUTHORED ARCHITECTURE, SHORT OF THE REFERENCE (see architecture-breakthrough/DESIGN_REVIEW.md)` |
 | L06 | Soul Anchor Relay | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L07 | The Failing Beacon | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
 | L08 | Divided Reliquary | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
