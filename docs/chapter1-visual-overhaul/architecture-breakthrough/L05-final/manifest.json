@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "e693a0285cb8b08bfbdb8dd8a050c5337a0844fc",
+  "commit": "f43ec498f7fc2b97ce4cca975efdad473b6d536a",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "e49d09400c4dce2b54ce1204b1ec7065e8f748d99c9e16cb4629ea28fa4c2978"
+    "tools/captures/crucible_capture.gd": "5aee5980d0f93fcbfa51d5aef02bb7bf9db5151c7bd33a7299e2e99b2d9d4973"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -27,14 +27,19 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1063,
+    "nodes": 1061,
     "draw_calls": 110,
     "static_mb": 121.3,
     "errors": [
-      "ERROR: CRUCIBLE FIGHT: no hooded_archer_miniboss in the live entity root",
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: stuck at (697.9982, 313.2408) heading to (712.0, 312.0)",
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: stuck at (265.9982, 776.0) heading to (280.0, 776.0)"
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (60, 17) after 13 replans",
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (9, 48) after 13 replans"
     ],
+    "fight": {
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
+      "boss_hp": "6437/6437",
+      "boss_state": "n/a"
+    },
     "traversal": [],
     "app_boot": "complete",
     "startup_profile_error": false,
@@ -49,12 +54,16 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 869,
+    "nodes": 867,
     "draw_calls": 103,
     "static_mb": 113.9,
-    "errors": [
-      "ERROR: CRUCIBLE FIGHT: no hooded_archer_miniboss in the live entity root"
-    ],
+    "errors": [],
+    "fight": {
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
+      "boss_hp": "6437/6437",
+      "boss_state": "n/a"
+    },
     "traversal": [],
     "app_boot": "complete",
     "startup_profile_error": false,
@@ -138,6 +147,17 @@
       "file_present": true,
       "extra": ""
     },
+    "f3_fight": {
+      "tag": "after",
+      "cell": [
+        85,
+        71
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": "knight_hp=932/1100 boss_hp=6437"
+    },
     "overview_f1": {
       "tag": "after",
       "cell": [
@@ -179,10 +199,11 @@
     "f2_landing",
     "f2_court",
     "f2_encounter",
-    "f3_approach"
+    "f3_approach",
+    "f3_fight"
   ],
-  "pairs_vs_previous": 7,
-  "pairs_vs_generic": 7,
+  "pairs_vs_previous": 8,
+  "pairs_vs_generic": 8,
   "overviews": [
     "f1",
     "f2",
@@ -197,6 +218,7 @@
   "crops": [
     "f1_spawn",
     "f2_court",
+    "f3_fight",
     "f3_approach"
   ],
   "evidence_kind": {
@@ -205,8 +227,5 @@
     "crops": "integer nearest-neighbour crops of those native frames",
     "comparisons": "gold references + rejected baseline + native frames"
   },
-  "problems": [
-    "missing required native frames: after_f3_fight.png",
-    "the boss fight frames carry no health/state record"
-  ]
+  "problems": []
 }
