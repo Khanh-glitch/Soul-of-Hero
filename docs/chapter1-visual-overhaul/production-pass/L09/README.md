@@ -4,7 +4,7 @@
 - Kit: `gatehouse` — `assets/environment/chapter1/gatehouse/`
 - Authoring: `tools/level9/art_gatehouse.py`, `tools/level9/architecture_gatehouse.py`
 - Document: `data/levels/chapter_1_level_9_architecture.json`
-- Status: `INCOMPLETE — ART DELIVERY FAILED` until its native frames are captured and reviewed
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW` (handoff for visual review, not a claim of approval)
 
 ## The place
 
@@ -41,7 +41,7 @@ else — dried blood and cold iron, lit by fire.
 - Station safety is structural: each station's ring is floor-only and the placer
   refuses the protected cell set, so the seal itself is never covered.
 
-## Known weaknesses before the first native capture
+## Known weaknesses at handoff
 
 - The paving still reads as brickwork at gameplay zoom; the flagstone joints are
   regular enough to form a grid. Documented rather than hidden.
@@ -50,3 +50,22 @@ else — dried blood and cold iron, lit by fire.
   and light rather than by plan.
 - The portcullis is drawn inside the gate arch and will read at gameplay scale but
   not in a thumbnail.
+
+## Native capture
+
+- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Frames: `docs/chapter1-visual-overhaul/L09/images/` — `before_*` and `after_*` at the same
+  stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
+- Gate line: `AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 props=70 lights=29 shadows=100`
+- Capture line: `CHAPTER1 CAPTURE: level=chapter_1_level_9 slot=9 art=on facade_cells=810 lights=29 entities=40`
+
+### The one correction pass
+
+Two defects. First, the whole prop atlas was empty: `kitlib.pack` sized the sheet from the last
+row only, so a kit whose props wrapped past 1024 px lost every frame in its widest row — this
+is an engine-side authoring bug and it is fixed in `kitlib` (the sheet now covers the widest row
+as well as the last). Second, the level was a single value of dried blood: the stone palette was
+two stops too dark for the ambient multiply, so the walls, floor and props all collapsed into
+the same red. The palette was lifted, the bell was rebuilt twice (it read as a tent, then as a
+box) into a real bell profile hanging from an iron gallows, and the war drum, trophy shields and
+braziers were redrawn.

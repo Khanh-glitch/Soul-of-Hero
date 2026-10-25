@@ -4,7 +4,7 @@
 - Kit: `castellan` — `assets/environment/chapter1/castellan/`
 - Authoring: `tools/level10/art_castellan.py`, `tools/level10/architecture_castellan.py`
 - Document: `data/levels/chapter_1_level_10_architecture.json`
-- Status: `INCOMPLETE — ART DELIVERY FAILED` until its native frames are captured and reviewed
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW` (handoff for visual review, not a claim of approval)
 
 ## The place
 
@@ -43,7 +43,7 @@ gilt, and the difference is the temperature, not the saturation.
 - No boss statistic, mechanic, phase threshold, telegraph or HUD element is touched
   by this pass; the kit and the document only draw.
 
-## Known weaknesses before the first native capture
+## Known weaknesses at handoff
 
 - The arena's east and west flanks are wide and only lightly furnished: the map
   gives the boss room a lot of open floor, and filling it would work against the
@@ -51,3 +51,21 @@ gilt, and the difference is the temperature, not the saturation.
 - Flagstone joints are regular enough to read as a grid at 1x zoom.
 - The steps read as inlay more than as elevation: the map is one flat floor layer
   and the art cannot create an actual height difference.
+
+## Native capture
+
+- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Frames: `docs/chapter1-visual-overhaul/L10/images/` — `before_*` and `after_*` at the same
+  stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
+- Gate line: `AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 props=41 lights=23 shadows=68`
+- Capture line: `CHAPTER1 CAPTURE: level=chapter_1_level_10 slot=10 art=on facade_cells=572 lights=23 entities=33`
+
+### The one correction pass
+
+The first native frames showed a room with no focal point: the marble, the ambient and the
+fill lights were all the same violet value, so the throne and the portal were not the brightest
+things in their own room. Ambient and fill energy were cut, the marble shifted one step cooler
+and darker, and the bedrock lifted. The throne itself was rebuilt once — the first version read
+as a chair-shaped object at 1x, so it was redrawn as four large shapes (back, fins, seat, arms)
+and made monumental by width and by its four steps rather than by height, since the camera stops
+at the map edge.

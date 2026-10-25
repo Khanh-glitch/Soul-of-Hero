@@ -4,7 +4,7 @@
 - Kit: `vigil` — `assets/environment/chapter1/vigil/`
 - Authoring: `tools/level7/art_vigil.py`, `tools/level7/architecture_vigil.py`
 - Document: `data/levels/chapter_1_level_7_architecture.json`
-- Status: `INCOMPLETE — ART DELIVERY FAILED` until its native frames are captured and reviewed
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW` (handoff for visual review, not a claim of approval)
 
 ## The place
 
@@ -46,7 +46,7 @@ the eye lands on the Beacon's core before anything else in frame.
   `lane_cells()` marks a one-cell margin around them; every placement function
   tests it.
 
-## Known weaknesses before the first native capture
+## Known weaknesses at handoff
 
 - The design has not yet been judged in engine; the first native frames may force
   a value or hue correction like the one Level 6 needed.
@@ -55,3 +55,21 @@ the eye lands on the Beacon's core before anything else in frame.
 - The three waves themselves are runtime behaviour, not architecture; the capture
   harness photographs the yard, and the wave contract is covered by the frozen
   runtime suite rather than by a frame.
+
+## Native capture
+
+- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Frames: `docs/chapter1-visual-overhaul/L07/images/` — `before_*` and `after_*` at the same
+  stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
+- Gate line: `AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 props=193 lights=22 shadows=108`
+- Capture line: `CHAPTER1 CAPTURE: level=chapter_1_level_7 slot=7 art=on facade_cells=844 lights=22 entities=44`
+
+### The one correction pass
+
+The first native frames showed the yard lit like a furnace: the Beacon, the ward ring and the
+apron had all washed to the same pale cream, because every brazier, torch and pillar fire was
+authored at energy 0.85–1.25 with a 1.5–2.3 light scale **and** the flame palette was near-white,
+so the sprite and the additive light saturated the same pixels. Ember energy came down to
+0.30–0.42 with smaller scales, the flame colours dropped two stops, and the bedrock was lifted
+out of near-black so the yard stops floating. No placement, cell or collider changed. The centre
+of the yard is still the least legible area; that is recorded above rather than hidden.

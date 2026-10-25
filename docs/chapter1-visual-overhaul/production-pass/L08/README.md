@@ -4,7 +4,7 @@
 - Kit: `reliquary` — `assets/environment/chapter1/reliquary/`
 - Authoring: `tools/level8/art_reliquary.py`, `tools/level8/architecture_reliquary.py`
 - Document: `data/levels/chapter_1_level_8_architecture.json`
-- Status: `INCOMPLETE — ART DELIVERY FAILED` until its native frames are captured and reviewed
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW` (handoff for visual review, not a claim of approval)
 
 ## The place
 
@@ -42,10 +42,28 @@ gilt, spilled wine and rose light in the east.
   and a completely different mountain of assets per wing would have said two
   buildings.
 
-## Known weaknesses before the first native capture
+## Known weaknesses at handoff
 
 - The wings' own geometry is symmetric; the differentiation is material and
   furniture, which is the honest limit of a shared plan.
 - The paving flagstone joints are regular enough to read as a grid at 1x zoom.
 - The east wing's damage is authored as broken paving and rubble rather than as
   structural collapse: the map has one floor and the art does not create holes.
+
+## Native capture
+
+- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Frames: `docs/chapter1-visual-overhaul/L08/images/` — `before_*` and `after_*` at the same
+  stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
+- Gate line: `AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 props=94 lights=45 shadows=266`
+- Capture line: `CHAPTER1 CAPTURE: level=chapter_1_level_8 slot=8 art=on facade_cells=1114 lights=45 entities=44`
+
+### The one correction pass
+
+The first native frames showed the whole building on a black void: the bedrock was authored
+near (52, 54, 60) and then multiplied by a 0.44 ambient, so every lit room floated on nothing.
+Bedrock was lifted to the 84–130 range. In the same pass the marble veining was cut back — a
+bright vein tiled into wallpaper and made the floor read as a repeating glyph — and the floor
+medallions were baked onto the wings' own paving so they no longer sat in a dark square. The
+wine fountain was moved from the wing's corner to the middle of its hall and rebuilt as three
+real basins, and the exit gate was redrawn as a pointed arch with a lit opening.
