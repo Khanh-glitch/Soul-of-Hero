@@ -297,17 +297,57 @@ def wall_plinth_tile(base, trim) -> Image.Image:
 
 def wall_field_tile(seed: int, base, mortar, pier: bool = False,
                     dado: bool = False) -> Image.Image:
+    """One course of ashlar: a single bed joint, a single perpend, a lit arris.
+
+    This used to be eight-pixel courses of six-to-thirteen-pixel blocks, which is two
+    rows of brick per cell. At sixteen pixels per cell that is a texture of small
+    bright-edged rectangles repeating every ten pixels, and it was the strongest
+    structure on every wall in the chapter: in the L08 mosaic the wall read as graph
+    paper, and no amount of lighting change could fix a pattern baked into the tile.
+
+    A cell is one course now. The bed joint runs along the tile's bottom, the perpend
+    is a single joint at a position the seed chooses so consecutive cells do not line
+    up, and the arris catches the light along the top and the left. Blocks therefore
+    read as thirty-pixel stones rather than as ten-pixel bricks, and the wall has a
+    texture instead of a grid.
+    """
     img = new(T, T)
-    rect(img, 0, 0, T, T, base)
-    courses(img, 0, 0, T, T, base, row_h=8, seed=seed, mortar=mortar)
+    body = shade(base, 0.96 + _h01(seed, 3) * 0.10)
+    rect(img, 0, 0, T, T, body)
+    # stone grain: clustered, faint, and never in a pattern
+    for y in range(T):
+        for x in range(T):
+            h = _h01(seed, x // 2, y // 2)
+            if h > 0.90:
+                px(img, x, y, shade(body, 1.07))
+            elif h < 0.08:
+                px(img, x, y, shade(body, 0.94))
+    # lit arris along the top, shadow along the bottom, bed joint under it
+    hline(img, 0, 0, T, shade(body, 1.16))
+    hline(img, 0, 1, T, shade(body, 1.06))
+    hline(img, 0, T - 3, T, shade(body, 0.88))
+    hline(img, 0, T - 2, T, shade(body, 0.74))
+    rect(img, 0, T - 1, T, 1, mortar)
+    # one perpend, offset per seed so a run of cells is a running bond
+    joint_x = 3 + int(_h01(seed, 7) * (T - 6))
+    if seed % 4 != 0:
+        vline(img, joint_x, 0, T, mortar)
+        vline(img, joint_x + 1, 0, T - 1, shade(body, 0.86))
     if dado:
-        rect(img, 0, 4, T, 8, shade(base, 0.86))
-        hline(img, 0, 4, T, shade(base, 1.24))
-        hline(img, 0, 11, T, shade(base, 0.66))
+        # a recessed band with a moulded top and bottom: the wall's waist
+        rect(img, 0, 5, T, 6, shade(body, 0.88))
+        hline(img, 0, 4, T, shade(body, 1.20))
+        hline(img, 0, 5, T, shade(body, 1.10))
+        hline(img, 0, 11, T, shade(body, 0.70))
+        vline(img, 0, 5, 6, shade(body, 0.94))
+        vline(img, T - 1, 5, 6, shade(body, 0.94))
     if pier:
-        rect(img, 0, 0, 3, T, shade(base, 1.16))
-        rect(img, T - 3, 0, 3, T, shade(base, 0.76))
-        hline(img, 0, 0, T, shade(base, 1.26))
+        rect(img, 0, 0, 4, T, shade(body, 1.10))
+        rect(img, T - 4, 0, 4, T, shade(body, 0.80))
+        hline(img, 0, 0, T, shade(body, 1.22))
+        vline(img, 0, 0, T, shade(body, 1.20))
+        vline(img, T - 1, 0, T, shade(body, 0.66))
+        vline(img, 4, 0, T, shade(body, 0.86))
     return img
 
 
