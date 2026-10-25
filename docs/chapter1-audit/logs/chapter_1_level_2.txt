@@ -10,6 +10,8 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
 CHAPTER1 AUDIT: level=chapter_1_level_2 slot=2 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_2 frames=12 bounds=[0, 0, 2624, 2208] content=[64, 32, 2624, 2096]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
+CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
+CHAPTER1 AUDIT PROBE: camera_global=(648.0, 352.0) screen_centre=(648.0, 352.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-328.0, -172.0)]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=001 cell=(103, 18) rect=[1336.0, 108.0, 2616.0, 828.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=002 cell=(124, 22) rect=[1672.0, 172.0, 2952.0, 892.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=003 cell=(28, 67) rect=[136.0, 892.0, 1416.0, 1612.0] ok=true
@@ -22,7 +24,5 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=009 cell=(40, 115) rect=[328.
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=010 cell=(100, 115) rect=[1288.0, 1660.0, 2568.0, 2380.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=011 cell=(123, 116) rect=[1656.0, 1676.0, 2936.0, 2396.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_2 frames=12
-WARNING: 9 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)

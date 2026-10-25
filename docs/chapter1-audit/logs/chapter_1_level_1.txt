@@ -10,6 +10,8 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
 CHAPTER1 AUDIT: level=chapter_1_level_1 slot=1 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_1 frames=4 bounds=[0, 0, 1664, 1216] content=[48, 48, 1616, 1216]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
+CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
+CHAPTER1 AUDIT PROBE: camera_global=(648.0, 352.0) screen_centre=(648.0, 352.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-328.0, -172.0)]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=001 cell=(61, 19) rect=[664.0, 124.0, 1944.0, 844.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=002 cell=(36, 49) rect=[264.0, 604.0, 1544.0, 1324.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=003 cell=(60, 49) rect=[648.0, 604.0, 1928.0, 1324.0] ok=true

@@ -14,13 +14,13 @@ CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75
 CHAPTER1 AUDIT: level=chapter_1_level_6 slot=6 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_6 frames=6 bounds=[0, 0, 1920, 1408] content=[48, 48, 1856, 1392]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=000 cell=(35, 17) rect=[248.0, 92.0, 1528.0, 812.0] ok=true
+CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
+CHAPTER1 AUDIT PROBE: camera_global=(568.0, 272.0) screen_centre=(568.0, 272.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-248.0, -92.0)]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=001 cell=(78, 20) rect=[936.0, 140.0, 2216.0, 860.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=002 cell=(41, 55) rect=[344.0, 700.0, 1624.0, 1420.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=003 cell=(77, 53) rect=[920.0, 668.0, 2200.0, 1388.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=004 cell=(40, 65) rect=[328.0, 860.0, 1608.0, 1580.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=005 cell=(80, 65) rect=[968.0, 860.0, 2248.0, 1580.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_6 frames=6
-WARNING: 9 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)

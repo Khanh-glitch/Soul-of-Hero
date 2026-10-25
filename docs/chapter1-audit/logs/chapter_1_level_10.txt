@@ -14,6 +14,8 @@ CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2730 props=41 lights=23 s
 CHAPTER1 AUDIT: level=chapter_1_level_10 slot=10 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_10 frames=4 bounds=[0, 0, 1600, 1216] content=[384, 48, 1216, 1168]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=000 cell=(41, 21) rect=[344.0, 156.0, 1624.0, 876.0] ok=true
+CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
+CHAPTER1 AUDIT PROBE: camera_global=(664.0, 336.0) screen_centre=(664.0, 336.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-344.0, -156.0)]
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=001 cell=(58, 20) rect=[616.0, 140.0, 1896.0, 860.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=002 cell=(40, 53) rect=[328.0, 668.0, 1608.0, 1388.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=003 cell=(60, 53) rect=[648.0, 668.0, 1928.0, 1388.0] ok=true
