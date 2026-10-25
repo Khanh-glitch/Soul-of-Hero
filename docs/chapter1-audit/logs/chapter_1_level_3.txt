@@ -31,3 +31,7 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=015 cell=(96, 55) rect=[1216.
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=016 cell=(20, 72) rect=[8.0, 972.0, 648.0, 1332.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=017 cell=(50, 72) rect=[488.0, 972.0, 1128.0, 1332.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=018 cell=(80, 72) rect=[968.0, 972.0, 1608.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=019 cell=(96, 72) rect=[1216.0, 972.0, 1856.0, 1332.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_3 frames=20 limits_applied=true
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
