@@ -58,6 +58,7 @@ var _tag := "after"
 var _out_dir := "res://.artifacts/crucible/after"
 var _no_art := false
 var _level_id := "chapter_1_level_5"
+var _progress := "boot"
 
 
 func _ready() -> void:
@@ -71,7 +72,19 @@ func _ready() -> void:
 	if _no_art:
 		Engine.set_meta(&"chapter1_art_disabled", true)
 		Engine.set_meta(&"crucible_art_disabled", true)
+	# Watchdog: a CI capture must never hang. If any await never resolves (a
+	# viewport that stops drawing, a campaign boot that stalls), this quits with a
+	# non-zero code and a printed reason so the log says what happened.
+	var watchdog := Timer.new()
+	watchdog.wait_time = 150.0
+	watchdog.one_shot = true
+	watchdog.autostart = true
+	watchdog.timeout.connect(func() -> void:
+		push_error("CRUCIBLE CAPTURE TIMEOUT: last station started was %s" % _progress)
+		get_tree().quit(2))
+	add_child(watchdog)
 	_run.call_deferred()
+
 
 
 func _run() -> void:
@@ -80,6 +93,7 @@ func _run() -> void:
 		save_path = "user://tests/crucible_capture_%d.json" % Time.get_ticks_usec()
 	SaveService.call(&"configure_storage", save_path, true)
 	_seed_campaign_entry()
+	print("CRUCIBLE BOOT: save=%s" % save_path)
 
 	_app_root = APP_ROOT_SCENE.instantiate()
 	add_child(_app_root)
@@ -92,7 +106,9 @@ func _run() -> void:
 		_finish(1)
 		return
 	_level_id = String(definition.level_id)
-	AppFlow.start_campaign_level(StringName(_level_id))
+	_progress = "start_campaign_level"
+	var started := AppFlow.start_campaign_level(StringName(_level_id))
+	print("CRUCIBLE BOOT: level=%s started=%s" % [_level_id, started])
 	var game: Node2D = null
 	for _attempt: int in range(200):
 		game = _live_game()
@@ -237,6 +253,7 @@ func _capture(station: Dictionary, player: CharacterBody2D, overview_frame: bool
 	var zoom := float(station.get("zoom", 1.0))
 	var dungeon: DungeonLevel = player.get_parent().get_parent() as DungeonLevel
 	var cell := _valid_cell(dungeon, Vector2i(int(cell_raw[0]), int(cell_raw[1])))
+	_progress = String(station.get("id", "?"))
 	# Place the Knight at the station. These are all cells a player can stand on
 	# (the harness validates walkability first) and the camera is then snapped, so
 	# the frame is a real gameplay view from that spot.
@@ -285,6 +302,7 @@ func _capture_fight(station: Dictionary, dungeon: DungeonLevel, player: Characte
 	var target := Vector2i(88, 78) if archer == null else Vector2i(
 		int(archer.global_position.x / TILE) - 6, int(archer.global_position.y / TILE) + 1)
 	var cell := _valid_cell(dungeon, target)
+	_progress = "f3_fight"
 	player.global_position = Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE * 0.5)
 	var camera := get_viewport().get_camera_2d()
 	if camera != null:
