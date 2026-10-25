@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "f43ec498f7fc2b97ce4cca975efdad473b6d536a",
+  "commit": "da4ac0324989d9494a6b49338bc5aa5a3586e9f7",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "5aee5980d0f93fcbfa51d5aef02bb7bf9db5151c7bd33a7299e2e99b2d9d4973"
+    "tools/captures/crucible_capture.gd": "8fd4a5ddbeb67b60dfcad064e13bb6fdcc76a480b6fc7b5136237087dcf6370e"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -78,7 +78,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f1_gate": {
@@ -89,7 +89,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f1_altar": {
@@ -100,7 +100,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_landing": {
@@ -111,7 +111,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_court": {
@@ -122,7 +122,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_encounter": {
@@ -133,7 +133,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f3_approach": {
@@ -144,7 +144,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f3_fight": {
@@ -155,7 +155,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": "knight_hp=932/1100 boss_hp=6437"
     },
     "overview_f1": {
@@ -166,7 +166,7 @@
       ],
       "zoom": 0.5,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "overview_f2": {
@@ -177,7 +177,7 @@
       ],
       "zoom": 0.4,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "overview_f3": {
@@ -188,44 +188,34 @@
       ],
       "zoom": 0.45,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     }
   },
-  "frames": [
-    "f1_spawn",
-    "f1_gate",
-    "f1_altar",
-    "f2_landing",
-    "f2_court",
-    "f2_encounter",
-    "f3_approach",
-    "f3_fight"
-  ],
-  "pairs_vs_previous": 8,
-  "pairs_vs_generic": 8,
-  "overviews": [
-    "f1",
-    "f2",
-    "f3"
-  ],
-  "traversal_frames": [
-    "traversal_1",
-    "traversal_2",
-    "traversal_3",
-    "traversal_4"
-  ],
-  "crops": [
-    "f1_spawn",
-    "f2_court",
-    "f3_fight",
-    "f3_approach"
-  ],
+  "frames": [],
+  "pairs_vs_previous": 0,
+  "pairs_vs_generic": 0,
+  "overviews": [],
+  "traversal_frames": [],
+  "crops": [],
   "evidence_kind": {
     "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
     "traversal": "native frames from a path walked with real movement input; doors opened by input",
     "crops": "integer nearest-neighbour crops of those native frames",
     "comparisons": "gold references + rejected baseline + native frames"
   },
-  "problems": []
+  "problems": [
+    "missing required native frames: after_f1_spawn.png, after_f1_gate.png, after_f1_altar.png, after_f2_landing.png, after_f2_court.png, after_f2_encounter.png, after_f3_approach.png, after_f3_fight.png, overview_after_overview_f1.png, overview_after_overview_f2.png, overview_after_overview_f3.png",
+    "station f1_spawn: log_ok=True file_present=False",
+    "station f1_gate: log_ok=True file_present=False",
+    "station f1_altar: log_ok=True file_present=False",
+    "station f2_landing: log_ok=True file_present=False",
+    "station f2_court: log_ok=True file_present=False",
+    "station f2_encounter: log_ok=True file_present=False",
+    "station f3_approach: log_ok=True file_present=False",
+    "station f3_fight: log_ok=True file_present=False",
+    "station overview_f1: log_ok=True file_present=False",
+    "station overview_f2: log_ok=True file_present=False",
+    "station overview_f3: log_ok=True file_present=False"
+  ]
 }
