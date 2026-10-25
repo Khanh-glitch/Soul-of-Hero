@@ -1,0 +1,26 @@
+{
+  "level": "chapter_1_level_7",
+  "slot": 7,
+  "frames": 4,
+  "bounds": [
+    0,
+    0,
+    1536,
+    1120
+  ],
+  "content": [
+    48,
+    48,
+    1488,
+    1072
+  ],
+  "mosaic_origin": [
+    8,
+    -8
+  ],
+  "coverage_of_content": 1.0,
+  "mosaic_px": [
+    1536,
+    1120
+  ]
+}

@@ -1,0 +1,20 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+CHAPTER1 AUDIT: level=chapter_1_level_4 slot=4 art=on
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_4 frames=6 bounds=[0, 0, 1856, 1344] content=[48, 32, 1776, 1312]
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=000 cell=(39, 23) centre=(632, 368) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=001 cell=(75, 21) centre=(1208, 336) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=002 cell=(36, 52) centre=(584, 832) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=003 cell=(75, 53) centre=(1208, 848) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=004 cell=(40, 61) centre=(648, 976) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=005 cell=(76, 61) centre=(1224, 976) ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_4 frames=6
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
