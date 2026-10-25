@@ -486,7 +486,6 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var stuck := 0
 		var shot_taken := 0
 		var swing_clock := 0
-		var engage := 0
 		var dash_clock := 0
 		var last_position := player.global_position
 		var died := false
@@ -518,39 +517,28 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 					index += 1
 					continue
 			var heading := waypoint - player.global_position
-			# Combat policy: hit and step back. Standing in the pack and trading blows
-			# loses -- the last run lost 1060 health in seven seconds that way. The
-			# Knight's reach (17 px plus half his attack box) is longer than a
-			# skeleton's body, so each cycle closes, swings once facing the target,
-			# then backs off while the swing recharges.
-			var threat := _nearest_enemy(dungeon, player.global_position, 104.0)
+			# Policy: run the route and do not stop to trade blows. The Knight moves
+			# at 96 px/s and the patrols chase at 48-70, so a straight run through the
+			# enemy rooms costs a few hits; stopping to fight them one by one is what
+			# the last two runs did, and both ended in a death modal. He swings when
+			# something is already against him and dashes (the game's invulnerability
+			# window) when something is close, but the route keeps priority.
+			var threat := _nearest_enemy(dungeon, player.global_position, 64.0)
 			var threat_distance := 999.0
 			if threat != null:
 				threat_distance = player.global_position.distance_to(threat.global_position)
-			var fighting := threat != null and engage < 360
-			if fighting:
-				engage += 1
-			elif engage > 0:
-				engage = maxi(0, engage - 2)
 			swing_clock += 1
-			if fighting:
-				var towards := threat.global_position - player.global_position
-				if swing_clock % 40 < 16:
-					heading = towards
-					if threat_distance < 46.0 and swing_clock % 40 == 1:
-						Input.action_press(&"attack")
-					elif swing_clock % 40 == 9:
-						Input.action_release(&"attack")
-				else:
-					heading = -towards
-			# No enemy in reach means no swing: the attack action locks the Knight's
-			# movement for its duration, and swinging at nothing every half second
-			# was what pinned him in place for a thousand frames on the last run.
+			if threat != null and threat_distance < 34.0 and swing_clock % 20 == 1:
+				Input.action_press(&"attack")
+			elif swing_clock % 20 == 7:
+				Input.action_release(&"attack")
+			# The attack action locks the Knight's movement while it plays, so it is
+			# pressed only when something is already within a body length.
 			_drive(player, heading)
 			# Escape when something is already on top of him: dash is the game's own
 			# invulnerability window, and it points along the heading, i.e. away from
 			# the enemy while backing off.
-			if threat_distance < 40.0 and dash_clock <= 0:
+			if threat_distance < 46.0 and dash_clock <= 0:
 				Input.action_press(&"dash")
 				dash_clock = 14
 			elif dash_clock == 11:
