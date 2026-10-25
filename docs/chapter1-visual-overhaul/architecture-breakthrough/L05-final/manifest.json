@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "7f8e765cb9d1aa4c757c994be97cc78b62babb5c",
+  "commit": "165c46f1b7c51426f68ff4c39719650963fed221",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -11,8 +11,8 @@
     "data/levels/chapter_1_level_5.json": "f56a20f01f8266e386ef3dbf57333888460dbf53d032f4b9c143737a97de28b6",
     "data/levels/chapter_1_level_5_architecture.json": "4f3772df73e5ea5fe98c493ab2711fa2cccb4142e1fcda8525fc117af499d1c5",
     "assets/environment/chapter1/crucible/crucible_tiles.png": "83679e730a0886f218d1d01364f84fec3f781c8e6dbbb8d8ddd8b97ad5c94f0c",
-    "assets/environment/chapter1/crucible/crucible_props.png": "4e6fc0320745842f63a1b55ff61089e3afd271a4b095889501bfef9b66303bf0",
-    "tools/level5/art_crucible.py": "c76fe97dd5dafeb8fa7bce4a4dc11c0c11a39255f4ed1484e3e653df50ee2998",
+    "assets/environment/chapter1/crucible/crucible_props.png": "4b14464c3678650868cf7d742c0ee6d057626d913e9d989944018eca7556f504",
+    "tools/level5/art_crucible.py": "0342d5e9088628c62521205ce276698c45b31f813730dfabb1fe90e1bc55fd5f",
     "tools/level5/architecture.py": "045714a80cf91f38966718782dd6db05f4ab09ab461f6205aac342649f66b895",
     "game/levels/presentation/crucible_art.gd": "d0c44ac8a44251f65dcb599f91e9368057aa413cd76011917de7b875d97f43de",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
@@ -27,13 +27,13 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1071,
+    "nodes": 1075,
     "draw_calls": 110,
-    "static_mb": 121.7,
+    "static_mb": 121.8,
     "errors": [],
     "fight": {
-      "knight_hp_before": "764/1100",
-      "knight_hp_after": "764/1100",
+      "knight_hp_before": "740/1100",
+      "knight_hp_after": "740/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -51,15 +51,15 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 871,
+    "nodes": 869,
     "draw_calls": 103,
     "static_mb": 114.0,
     "errors": [],
     "fight": {
       "knight_hp_before": "932/1100",
       "knight_hp_after": "932/1100",
-      "boss_hp": "6057/6437",
-      "boss_state": "QUICK_AIM"
+      "boss_hp": "6337/6437",
+      "boss_state": "RECOVER"
     },
     "traversal": [],
     "app_boot": "complete",
@@ -153,7 +153,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=764/1100 boss_hp=6337"
+      "extra": "knight_hp=740/1100 boss_hp=6337"
     },
     "overview_f1": {
       "tag": "after",
