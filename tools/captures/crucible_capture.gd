@@ -170,13 +170,18 @@ func _run() -> void:
 	var exit_code := 0
 	for station: Dictionary in STATIONS:
 		if station["id"] == "f3_fight":
-			if not await _capture_fight(station, dungeon, player):
+			# GDScript refuses `not await call()` inside a condition, so the result
+			# is bound to a local first.
+			var fought: bool = await _capture_fight(station, dungeon, player)
+			if not fought:
 				exit_code = 1
 			continue
-		if not await _capture(station, player):
+		var shot: bool = await _capture(station, player)
+		if not shot:
 			exit_code = 1
 	for overview: Dictionary in OVERVIEWS:
-		if not await _capture(overview, player, overview_frame=true):
+		var wide: bool = await _capture(overview, player, true)
+		if not wide:
 			exit_code = 1
 	print("CRUCIBLE CAPTURE DONE: tag=%s" % _tag)
 	_finish(exit_code)
