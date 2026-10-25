@@ -2,38 +2,38 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "a87bf832ce350335135ede634790e7c238cd47e3",
+  "commit": "9d237bc3d79c7aa72bf769ae1722eb73dd4253fa",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
   },
   "source_pins": {
     "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
-    "data/levels/chapter_1_level_5_architecture.json": "f8b7c61e615aa85b645a1f3af690d6760a75ecc1c6ab6e1039f89cc2dc48eea0",
+    "data/levels/chapter_1_level_5_architecture.json": "f6f3628fe3a21e3097fb4e416c3345faefc65d57cf173d5c99c69b11b88d21df",
     "assets/environment/chapter1/crucible/crucible_tiles.png": "83679e730a0886f218d1d01364f84fec3f781c8e6dbbb8d8ddd8b97ad5c94f0c",
     "assets/environment/chapter1/crucible/crucible_props.png": "4e6fc0320745842f63a1b55ff61089e3afd271a4b095889501bfef9b66303bf0",
     "tools/level5/art_crucible.py": "c76fe97dd5dafeb8fa7bce4a4dc11c0c11a39255f4ed1484e3e653df50ee2998",
-    "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
+    "tools/level5/architecture.py": "fe62bc0dcc4fbd6ccb270460242af085fddfb9764f9ae64ee17a142088bc5cd6",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "e627ce008d0b7fa64fc261e9ecffb01bf3e735da6d0dbe0b6e67b0e72b11f1c5"
+    "tools/captures/crucible_capture.gd": "859e0dcaabf3a8a37d57e5ed7cb8577df89616e4a9946eae2eff4fef837e2a39"
   },
   "capture": {
     "level": "chapter_1_level_5",
     "art": "on",
     "walls": 3303,
-    "props": 158,
+    "props": 169,
     "lights": 29,
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1059,
+    "nodes": 1074,
     "draw_calls": 110,
-    "static_mb": 121.4,
+    "static_mb": 121.7,
     "errors": [],
     "fight": {
-      "knight_hp_before": "693/1100",
-      "knight_hp_after": "693/1100",
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -46,7 +46,7 @@
       [
         "f2_gate_door",
         "direct_call",
-        "1609.1"
+        "1608.5"
       ]
     ],
     "app_boot": "complete",
@@ -65,12 +65,10 @@
     "nodes": 867,
     "draw_calls": 103,
     "static_mb": 113.9,
-    "errors": [
-      "ERROR: 1 resources still in use at exit (run with --verbose for details)."
-    ],
+    "errors": [],
     "fight": {
-      "knight_hp_before": "1100/1100",
-      "knight_hp_after": "1100/1100",
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -166,7 +164,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=693/1100 boss_hp=6337"
+      "extra": "knight_hp=932/1100 boss_hp=6337"
     },
     "overview_f1": {
       "tag": "after",
