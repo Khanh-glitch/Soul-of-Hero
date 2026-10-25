@@ -36,7 +36,7 @@ import json
 import math
 from pathlib import Path
 
-from PIL import Image, ImageChops, ImageStat
+from PIL import Image, ImageChops, ImageFilter, ImageStat
 
 MIN_OVERLAP = 16
 SHIFT_SEARCH = 4
@@ -55,24 +55,26 @@ def _disagreement(earlier: Image.Image, later: Image.Image,
                   box: tuple[int, int, int, int]) -> tuple[float, int]:
     """How far apart two overlapping frames are, and by how many pixels.
 
-    Absolute brightness is not a fair test: torches flicker between frames, so a
-    perfectly aligned pair still differs. The question being asked is different —
-    is the *structure* in the same place. So the pair is compared over a small
-    shift search; if the smallest difference sits at zero offset, the stitching
-    is exact and whatever is left is animated light.
+    Brightness is the wrong thing to compare: torches flicker between frames, so a
+    perfectly aligned pair still differs, and in a bright region the smallest
+    difference can be found by sliding the frame towards the light. Both frames are
+    therefore reduced to edges first — flicker is a low-frequency change and moving
+    a light does not move a wall — and the comparison is done on those.
     """
     left, top, right, bottom = box
     pad = SHIFT_SEARCH
-    core = earlier.convert("L").crop((left + pad, top + pad, right - pad, bottom - pad))
-    if core.width < 8 or core.height < 8:
+    if right - left <= 2 * pad + 8 or bottom - top <= 2 * pad + 8:
         return 0.0, 0
+    window = (left, top, right, bottom)
+    earlier_edges = earlier.convert("L").filter(ImageFilter.FIND_EDGES).crop(window)
+    later_edges = later.convert("L").filter(ImageFilter.FIND_EDGES)
+    core = earlier_edges.crop((pad, pad, earlier_edges.width - pad, earlier_edges.height - pad))
     best = None
     best_shift = 0
-    grey = later.convert("L")
     for dy in range(-pad, pad + 1):
         for dx in range(-pad, pad + 1):
-            moved = grey.crop((left + pad + dx, top + pad + dy,
-                               right - pad + dx, bottom - pad + dy))
+            moved = later_edges.crop((left + pad + dx, top + pad + dy,
+                                      right - pad + dx, bottom - pad + dy))
             score = ImageStat.Stat(ImageChops.difference(core, moved)).mean[0]
             if best is None or score < best - 1e-9:
                 best, best_shift = score, max(abs(dx), abs(dy))
