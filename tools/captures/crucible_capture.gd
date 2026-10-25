@@ -357,7 +357,7 @@ func _capture_fight(station: Dictionary, dungeon: DungeonLevel, player: Characte
 	var hp_after := _health_of(player)
 	var boss_health := _number_property(archer, "health")
 	var boss_max := _number_property(archer, "max_health")
-	var boss_state := String(archer.get("state")) if archer.get("state") != null else "n/a"
+	var boss_state := str(archer.get("state")) if archer.get("state") != null else "n/a"
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	var path := "%s/%s_%s.png" % [_out_dir, _tag, station["id"]]
@@ -487,7 +487,7 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 		await get_tree().physics_frame
 	var before := player.global_position
 	var screen_position: Vector2 = get_viewport().get_canvas_transform() * before
-	for pressed in (true, false):
+	for pressed: bool in [true, false]:
 		var event := InputEventMouseButton.new()
 		event.button_index = MOUSE_BUTTON_LEFT
 		event.pressed = pressed
