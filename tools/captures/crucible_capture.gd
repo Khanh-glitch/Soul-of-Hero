@@ -762,11 +762,11 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 		event.global_position = screen_position
 		Input.parse_input_event(event)
 		await get_tree().process_frame
-	var seen := false
+	# `_frame_saw_lmb_press` is a per-physics-frame flag and is cleared inside the same
+	# frame it is set, so it cannot be sampled from here; the evidence for the click is
+	# that the door fired without the fallback, which is what `via` reports.
 	for _i: int in range(24):
 		await get_tree().physics_frame
-		if "_frame_saw_lmb_press" in player and bool(player.get("_frame_saw_lmb_press")):
-			seen = true
 	var moved := player.global_position.distance_to(before)
 	var via := "input_click" if moved > 64.0 else "none"
 	if via == "none":
@@ -781,8 +781,8 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 	var image := get_viewport().get_texture().get_image()
 	var out := "%s/%s_traversal_door_%s.png" % [_out_dir, _tag, leg_name]
 	var saved := image.save_png(out) == OK
-	print("CRUCIBLE TRAVERSAL: leg=%s door_used_via=%s click_seen=%s click_at=%s moved=%.1f from=%s to=%s ok=%s"
-		% [leg_name, via, seen, screen_position, moved, before, player.global_position, saved])
+	print("CRUCIBLE TRAVERSAL: leg=%s door_used_via=%s click_at=%s moved=%.1f from=%s to=%s ok=%s"
+		% [leg_name, via, screen_position, moved, before, player.global_position, saved])
 	return moved > 64.0
 
 

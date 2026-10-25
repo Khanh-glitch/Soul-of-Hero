@@ -173,10 +173,11 @@ Native frames (see `L05/images/`), reviewed at 1280×720:
   than papered over, and it is not relabelled as an art result.
 * Door interaction: the harness injects a real left-click at the door's screen
   position and logs `door_used_via=` so the evidence says which path opened the
-  door. In the current run both doors report `direct_call`, i.e. the injected click
-  did not reach the player controller and the fallback called the door's own
-  `interact()`; the log line states that, and `click_seen=` records whether the
-  Knight saw the press.
+  door. Both legs report `input_click` in the current run. Until this pass they
+  reported `direct_call` -- the fallback that calls the door's own `interact()` --
+  because the injected click was stamped in viewport pixels while the project
+  renders a 640x360 viewport into a 1280x720 window, so the click landed at half
+  the intended point. The log line keeps naming the path either way.
 
 ## 5. Open work, in priority order
 
@@ -189,7 +190,4 @@ Native frames (see `L05/images/`), reviewed at 1280×720:
    collapsed gallery with real depth) rather than more surface pattern.
 3. **Basin and apparatus masonry.** Both need visible courses and joints, not smooth
    fills, at 1:1.
-4. **Door click.** Make the injected click land in the player controller's input
-   path so the traversal can report `input_click` instead of the `direct_call`
-   fallback.
-5. Only then L7 (Failing Beacon) and L10 (Castellan Throne), with their own kit.
+4. Only then L7 (Failing Beacon) and L10 (Castellan Throne), with their own kit.
