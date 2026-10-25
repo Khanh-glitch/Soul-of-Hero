@@ -223,8 +223,8 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     # --- THE ALTAR: raised crucible on the existing solid island ----------
     plan.prop("crucible", (48, 15), z=1, low=True, anchor="center",
               note="raised crucible, built on the level's own solid island (x44..52, y11..18)",
-              light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.46, 0.30],
-                     "energy": 1.8, "scale": 7.6})
+              light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.56, 0.38],
+                     "energy": 1.25, "scale": 5.6})
     # altar dressing on the island's shoulders
     plan.prop("altar", (44, 11), z=2, note="offering table on the altar island's west shoulder")
     plan.prop("stand", (52, 12), z=2, note="brass feed pipes into the crucible's east side")
@@ -364,7 +364,7 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     plan.prop("crucible", (91, 46), z=1, low=True, anchor="center",
               note="monumental sunken basin at the centre of the blood court",
               light={"x": court_cx * T + 8, "y": court_cy * T + 8,
-                     "color": [1.0, 0.34, 0.20], "energy": 2.6, "scale": 8.0})
+                     "color": [1.0, 0.52, 0.34], "energy": 1.45, "scale": 5.4})
     # paved apron ringing the basin
     for y in range(court_cy - 6, court_cy + 7):
         for x in range(court_cx - 10, court_cx + 11):
