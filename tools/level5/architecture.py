@@ -187,9 +187,8 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
                 plan.floor_tile((x, y), "floor_aisle_h")
     # --- wear and stains: authored, sparse, away from the walking line -----
     for (x, y) in (
-        (30, 14), (31, 20), (35, 15), (36, 19), (38, 17), (43, 24), (48, 13),
-        (52, 15), (53, 20), (57, 17), (60, 14), (61, 21), (14, 13), (18, 21),
-        (21, 15), (11, 22), (16, 12), (7, 20), (20, 24), (13, 25),
+        (31, 20), (38, 17), (43, 24), (48, 13), (52, 15), (53, 20),
+        (14, 13), (21, 15), (11, 22), (20, 24),
     ):
         if (x, y) in floor and (x, y) not in guard:
             plan.floor_tile((x, y), "stain_a" if (x + y) % 3 else "stain_b")
@@ -352,7 +351,7 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
                 ring = max(abs((x - court_cx) / 9.0), abs((y - court_cy) / 6.0))
                 if 0.85 <= ring <= 1.0:
                     plan.floor_tile((x, y), "floor_aisle_h" if (x + y) % 2 else "floor_aisle_v")
-                elif ring > 1.0 and (x + y) % 3 == 0:
+                elif ring > 1.0 and (x + y) % 7 == 0:
                     plan.floor_tile((x, y), "stain_b")
     # four blood channels running from the basin to the court's wall stations
     for (dx, dy, frame_name) in ((0, -1, "floor_channel_v"), (0, 1, "floor_channel_v"),
@@ -400,7 +399,7 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     for cell in ((84, 49), (88, 43), (95, 44)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="bone drift across the court")
-    for cell in ((82, 44), (86, 51), (92, 53)):
+    for cell in ((82, 44), (92, 53)):
         if cell in floor and cell not in guard:
             plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
 
@@ -490,10 +489,10 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     plan.prop("rubble_column", (75, 68), z=1, low=True, note="fallen pier, arena's north west")
     plan.prop("rubble_small", (104, 80), z=1, low=True, note="debris behind the archer")
     plan.prop("slab", (75, 79), z=1, low=True, note="sacrificial slab at the arena's west side")
-    for cell in ((83, 84), (95, 85), (101, 76), (77, 74), (106, 74)):
+    for cell in ((83, 84), (95, 85), (106, 74)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="bone drift across the arena")
-    for cell in ((80, 84), (90, 85), (99, 78), (105, 70), (76, 70), (93, 83)):
+    for cell in ((90, 85), (99, 78), (76, 70)):
         if cell in floor and cell not in guard:
             plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
 
@@ -511,6 +510,17 @@ def build() -> dict:
     floor_one(plan, floor, geom, faces, guard)
     floor_two(plan, floor, geom, faces, guard)
     floor_three(plan, floor, geom, faces, guard)
+    # One global correction to the lights, applied after every floor has placed
+    # its own: the first native frames showed the light pool of a single brazier
+    # covering the whole screen, because the radius is the light texture (256 px)
+    # times texture_scale and 3-8 was read as "a bit bigger than a torch". It is
+    # 768-2048 px, i.e. the entire viewport, which is why every room looked
+    # evenly lit no matter where the braziers were. A pool wants to be 200-500 px,
+    # so the scale is pulled back to that range and the energy lifted slightly to
+    # keep the focus bright.
+    for light in plan.lights:
+        light["scale"] = round(float(light.get("scale", 1.0)) * 0.30, 2)
+        light["energy"] = round(float(light.get("energy", 1.0)) * 1.25, 2)
     document = {
         "schema": "chapter1_architecture/1",
         "level": "chapter_1_level_5",

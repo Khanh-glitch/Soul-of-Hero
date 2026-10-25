@@ -313,10 +313,10 @@ func _build_floor_detail(floor: Dictionary, geometry: Dictionary) -> void:
 ## stone, so a rebuild is byte-identical and a reload never shimmers.
 func _default_floor(cell: Vector2i) -> String:
 	var quad := (1 if cell.x % 2 else 0) + (2 if cell.y % 2 else 0)
-	var roll := posmod(cell.x * 31 + cell.y * 17, 19)
+	var roll := posmod(cell.x * 31 + cell.y * 17, 23)
 	if roll == 0:
 		return "floor_worn"
-	if roll == 5:
+	if roll == 9:
 		return "floor_broken"
 	return ["floor_a", "floor_b", "floor_c", "floor_d"][quad]
 

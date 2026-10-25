@@ -334,7 +334,7 @@ def floor_channel(kind: str) -> Image.Image:
     if kind in ("h", "cross", "end"):
         rect(img, 0, 6, T, 5, shade(BASALT_M, 0.62))
         rect(img, 0, 7, T, 3, delivered)
-        hline(img, 0, 7, T, mix(OX_L, FIRE_D, 0.30))
+        hline(img, 0, 7, T, mix(OX_M, OX_L, 0.45))
         hline(img, 0, 10, T, shade(BASALT_M, 0.80))
         hline(img, 0, 6, T, shade(BASALT_M, 0.52))
         for x in range(rng.randint(0, 3), T, 6):
@@ -342,7 +342,7 @@ def floor_channel(kind: str) -> Image.Image:
     if kind in ("v", "cross"):
         rect(img, 6, 0, 5, T, shade(BASALT_M, 0.62))
         rect(img, 7, 0, 3, T, delivered)
-        vline(img, 7, 0, T, mix(OX_L, FIRE_D, 0.30))
+        vline(img, 7, 0, T, mix(OX_M, OX_L, 0.45))
         vline(img, 10, 0, T, shade(BASALT_M, 0.80))
         vline(img, 6, 0, T, shade(BASALT_M, 0.52))
     if kind == "end":
