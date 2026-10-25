@@ -224,7 +224,23 @@ jobs:
           git config user.name "chapter1-art-bot"
           git config user.email "actions@users.noreply.github.com"
           git add docs/chapter1-visual-overhaul
-          if ! git diff --cached --quiet; then
-            git commit -m "ci(chapter1): publish visual overhaul evidence [skip ci]"
-            git push
+          if git diff --cached --quiet; then
+            echo "visual overhaul: nothing new to publish"
+            exit 0
           fi
+          git commit -m "ci(chapter1): publish visual overhaul evidence [skip ci]"
+          # The branch moves while a capture runs - the sweep and the architecture
+          # jobs publish their own evidence, and a human push lands too. A plain
+          # git push therefore loses the race and fails the job *after* every gate
+          # has passed, which reads as a red build for a publishing conflict.
+          for attempt in 1 2 3; do
+            git fetch --quiet origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}" >/dev/null 2>&1 || git rebase --abort
+            if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
+              echo "visual overhaul: published on attempt ${attempt}"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "visual overhaul: could not publish the evidence" >&2
+          exit 1
