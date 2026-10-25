@@ -3823,7 +3823,7 @@
       }
     },
     {
-      "frame": "crucible",
+      "frame": "crucible_small",
       "cell": [
         48,
         15
@@ -4484,7 +4484,7 @@
       "note": "preparation slab by the landing"
     },
     {
-      "frame": "crucible",
+      "frame": "crucible_grand",
       "cell": [
         91,
         46
@@ -4827,6 +4827,387 @@
       "low": true,
       "anchor": "base",
       "note": "bone drift across the court"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        72,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: engaged pier on the north range"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        80,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: engaged pier on the north range"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        88,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: engaged pier on the north range"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        96,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: engaged pier on the north range"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        104,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: engaged pier on the north range"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        76,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: order banner between piers"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        84,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: order banner between piers"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        92,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: order banner between piers"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        100,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: order banner between piers"
+    },
+    {
+      "frame": "emblem",
+      "cell": [
+        70,
+        39
+      ],
+      "z": 2,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: sigil at the range's end"
+    },
+    {
+      "frame": "emblem",
+      "cell": [
+        108,
+        39
+      ],
+      "z": 2,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: sigil at the range's end"
+    },
+    {
+      "frame": "torch",
+      "cell": [
+        74,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: bracket picking out the piers",
+      "light": {
+        "x": 1192,
+        "y": 636,
+        "color": [
+          1.0,
+          0.66,
+          0.38
+        ],
+        "energy": 1.0,
+        "scale": 2.4
+      }
+    },
+    {
+      "frame": "torch",
+      "cell": [
+        102,
+        39
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: bracket picking out the piers",
+      "light": {
+        "x": 1640,
+        "y": 636,
+        "color": [
+          1.0,
+          0.66,
+          0.38
+        ],
+        "energy": 1.0,
+        "scale": 2.4
+      }
+    },
+    {
+      "frame": "column",
+      "cell": [
+        90,
+        57
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: pier on the south ledge"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        95,
+        57
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "court wall: pier on the south ledge"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        80,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north west workstation: the blood is drawn here"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        81,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north west workstation: the blood is drawn here - offering stand"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        79,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north west workstation: the blood is drawn here - the offering"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        103,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north east workstation: the vessels are filled here"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        104,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north east workstation: the vessels are filled here - offering stand"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        102,
+        41
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "north east workstation: the vessels are filled here - the offering"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        80,
+        52
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south west workstation: the offering is prepared"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        81,
+        52
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south west workstation: the offering is prepared - offering stand"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        79,
+        53
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south west workstation: the offering is prepared - the offering"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        103,
+        52
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south east workstation: the tally is kept"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        104,
+        52
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south east workstation: the tally is kept - offering stand"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        102,
+        53
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "south east workstation: the tally is kept - the offering"
+    },
+    {
+      "frame": "brazier",
+      "cell": [
+        106,
+        44
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "dais fire, east end of the court",
+      "light": {
+        "x": 1704,
+        "y": 708,
+        "color": [
+          1.0,
+          0.6,
+          0.3
+        ],
+        "energy": 1.2,
+        "scale": 3.2
+      }
+    },
+    {
+      "frame": "altar",
+      "cell": [
+        105,
+        46
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "the court's principal altar, east end"
     },
     {
       "frame": "column",
@@ -5351,6 +5732,230 @@
       "note": "sacrificial slab at the arena's west side"
     },
     {
+      "frame": "column",
+      "cell": [
+        72,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena mouth: engaged jamb pier"
+    },
+    {
+      "frame": "column",
+      "cell": [
+        73,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena mouth: engaged jamb pier"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        72,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena mouth: banner over the threshold"
+    },
+    {
+      "frame": "brazier",
+      "cell": [
+        75,
+        74
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "arena mouth: fire at the threshold",
+      "light": {
+        "x": 1208,
+        "y": 1188,
+        "color": [
+          1.0,
+          0.62,
+          0.3
+        ],
+        "energy": 1.25,
+        "scale": 3.2
+      }
+    },
+    {
+      "frame": "brazier",
+      "cell": [
+        75,
+        77
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "arena mouth: fire at the threshold",
+      "light": {
+        "x": 1208,
+        "y": 1236,
+        "color": [
+          1.0,
+          0.62,
+          0.3
+        ],
+        "energy": 1.25,
+        "scale": 3.2
+      }
+    },
+    {
+      "frame": "column_broken",
+      "cell": [
+        85,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "island face: snapped pier behind the apparatus"
+    },
+    {
+      "frame": "column_broken",
+      "cell": [
+        91,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "island face: snapped pier behind the apparatus"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        84,
+        82
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "the offerings around the apparatus"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        92,
+        82
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "the offerings around the apparatus"
+    },
+    {
+      "frame": "altar_dry",
+      "cell": [
+        86,
+        82
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "dry altar: the rite ran out of blood"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        90,
+        82
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "overturned feed stand at the apparatus"
+    },
+    {
+      "frame": "torch",
+      "cell": [
+        74,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena wall: bracket beside the sigil",
+      "light": {
+        "x": 1192,
+        "y": 1052,
+        "color": [
+          1.0,
+          0.66,
+          0.38
+        ],
+        "energy": 1.0,
+        "scale": 2.4
+      }
+    },
+    {
+      "frame": "torch",
+      "cell": [
+        109,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena wall: bracket beside the sigil",
+      "light": {
+        "x": 1752,
+        "y": 1052,
+        "color": [
+          1.0,
+          0.66,
+          0.38
+        ],
+        "energy": 1.0,
+        "scale": 2.4
+      }
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        81,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena wall: torn standard"
+    },
+    {
+      "frame": "banner",
+      "cell": [
+        99,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "arena wall: torn standard"
+    },
+    {
       "frame": "skulls",
       "cell": [
         83,
@@ -5629,6 +6234,51 @@
       ]
     },
     {
+      "x": 1192,
+      "y": 636,
+      "color": [
+        1.0,
+        0.66,
+        0.38
+      ],
+      "energy": 1.25,
+      "scale": 0.72,
+      "cell": [
+        74,
+        39
+      ]
+    },
+    {
+      "x": 1640,
+      "y": 636,
+      "color": [
+        1.0,
+        0.66,
+        0.38
+      ],
+      "energy": 1.25,
+      "scale": 0.72,
+      "cell": [
+        102,
+        39
+      ]
+    },
+    {
+      "x": 1704,
+      "y": 708,
+      "color": [
+        1.0,
+        0.6,
+        0.3
+      ],
+      "energy": 1.5,
+      "scale": 0.96,
+      "cell": [
+        106,
+        44
+      ]
+    },
+    {
       "x": 648,
       "y": 1348,
       "color": [
@@ -5716,6 +6366,66 @@
       "cell": [
         92,
         82
+      ]
+    },
+    {
+      "x": 1208,
+      "y": 1188,
+      "color": [
+        1.0,
+        0.62,
+        0.3
+      ],
+      "energy": 1.56,
+      "scale": 0.96,
+      "cell": [
+        75,
+        74
+      ]
+    },
+    {
+      "x": 1208,
+      "y": 1236,
+      "color": [
+        1.0,
+        0.62,
+        0.3
+      ],
+      "energy": 1.56,
+      "scale": 0.96,
+      "cell": [
+        75,
+        77
+      ]
+    },
+    {
+      "x": 1192,
+      "y": 1052,
+      "color": [
+        1.0,
+        0.66,
+        0.38
+      ],
+      "energy": 1.25,
+      "scale": 0.72,
+      "cell": [
+        74,
+        65
+      ]
+    },
+    {
+      "x": 1752,
+      "y": 1052,
+      "color": [
+        1.0,
+        0.66,
+        0.38
+      ],
+      "energy": 1.25,
+      "scale": 0.72,
+      "cell": [
+        109,
+        65
       ]
     }
   ]

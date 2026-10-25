@@ -221,7 +221,7 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
               light={"x": 48 * T + 8, "y": 12 * T + 1, "color": [1.0, 0.64, 0.36],
                      "energy": 1.3, "scale": 3.6})
     # --- THE ALTAR: raised crucible on the existing solid island ----------
-    plan.prop("crucible", (48, 15), z=1, low=True, anchor="center",
+    plan.prop("crucible_small", (48, 15), z=1, low=True, anchor="center",
               note="raised crucible, built on the level's own solid island (x44..52, y11..18)",
               light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.56, 0.38],
                      "energy": 1.25, "scale": 5.6})
@@ -361,7 +361,7 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     # blocks the map already has along its north and south edges, and a
     # colonnade of piers on those same blocks.
     court_cx, court_cy = 91, 46
-    plan.prop("crucible", (91, 46), z=1, low=True, anchor="center",
+    plan.prop("crucible_grand", (91, 46), z=1, low=True, anchor="center",
               note="monumental sunken basin at the centre of the blood court",
               light={"x": court_cx * T + 8, "y": court_cy * T + 8,
                      "color": [1.0, 0.52, 0.34], "energy": 1.45, "scale": 5.4})
@@ -423,6 +423,59 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     for cell in ((82, 44), (92, 53)):
         if cell in floor and cell not in guard:
             plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
+
+    # --- THE COURT'S ARCHITECTURE, finished ------------------------------
+    # The north range is the court's monumental wall: engaged piers on a regular
+    # bay rhythm, banners between them, and the sigil of the order at each end.
+    # This is the object-scale architecture the reference rooms carry along their
+    # walls; the basin alone was never going to be enough.
+    for cell in ((72, 39), (80, 39), (88, 39), (96, 39), (104, 39)):
+        if cell in geom:
+            plan.prop("column", cell, z=1, note="court wall: engaged pier on the north range")
+    for cell in ((76, 39), (84, 39), (92, 39), (100, 39)):
+        if cell in geom:
+            plan.prop("banner", cell, z=1, note="court wall: order banner between piers")
+    for cell in ((70, 39), (108, 39)):
+        if cell in geom:
+            plan.prop("emblem", cell, z=2, note="court wall: sigil at the range's end")
+    for cell in ((74, 39), (102, 39)):
+        if cell in geom:
+            plan.prop("torch", cell, z=1, note="court wall: bracket picking out the piers",
+                      light={"x": cell[0] * T + 8, "y": cell[1] * T + 12,
+                             "color": [1.0, 0.66, 0.38], "energy": 1.0, "scale": 2.4})
+    # the south ledge is the low wall behind the fighting line: piers, so the
+    # court is enclosed on both long sides instead of only on the north
+    for cell in ((85, 57), (90, 57), (95, 57)):
+        if cell in geom:
+            plan.prop("column", cell, z=1, note="court wall: pier on the south ledge")
+
+    # --- four ritual workstations, set on the court's diagonals -----------
+    # Each is one object, not a pile: a working slab, its offering stand, and the
+    # fire that lights the work. They are the secondary points of interest that
+    # make the room a place where something was done, and they are placed on the
+    # diagonals so they frame the basin instead of crowding it.
+    workstations = (
+        ((80, 41), (81, 41), (79, 41), "north west workstation: the blood is drawn here"),
+        ((103, 41), (104, 41), (102, 41), "north east workstation: the vessels are filled here"),
+        ((80, 52), (81, 52), (79, 53), "south west workstation: the offering is prepared"),
+        ((103, 52), (104, 52), (102, 53), "south east workstation: the tally is kept"),
+    )
+    for slab_cell, stand_cell, skull_cell, note in workstations:
+        if slab_cell in floor and slab_cell not in guard:
+            plan.prop("slab", slab_cell, z=1, low=True, note=note)
+        if stand_cell in floor and stand_cell not in guard:
+            plan.prop("stand", stand_cell, z=1, low=True, note=note + " - offering stand")
+        if skull_cell in floor and skull_cell not in guard:
+            plan.prop("skulls", skull_cell, z=1, low=True, note=note + " - the offering")
+
+    # --- the court's east dais: a raised station the ritual served ---------
+    for cell in ((106, 44), (106, 48)):
+        if cell in floor and cell not in guard:
+            plan.prop("brazier", cell, z=1, low=True, note="dais fire, east end of the court",
+                      light={"x": cell[0] * T + 8, "y": cell[1] * T + 4,
+                             "color": [1.0, 0.60, 0.30], "energy": 1.2, "scale": 3.2})
+    if (105, 46) in floor and (105, 46) not in guard:
+        plan.prop("altar", (105, 46), z=1, low=True, note="the court's principal altar, east end")
 
 
 # ---------------------------------------------------------------------------
@@ -510,6 +563,46 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     plan.prop("rubble_column", (75, 68), z=1, low=True, note="fallen pier, arena's north west")
     plan.prop("rubble_small", (104, 80), z=1, low=True, note="debris behind the archer")
     plan.prop("slab", (75, 79), z=1, low=True, note="sacrificial slab at the arena's west side")
+
+    # --- THE ARENA'S MOUTH: a framed approach ----------------------------
+    # The player comes out of the dark antechamber into the boss room. Two
+    # engaged piers, a torn banner overhead and fire on both sides turn that
+    # threshold into a doorway worth walking through, and they are all on cells
+    # that are already solid or already open, so the lane stays clear.
+    for cell in ((72, 72), (73, 72)):
+        if cell in geom:
+            plan.prop("column", cell, z=1, note="arena mouth: engaged jamb pier")
+    plan.hang("banner", geom, 72, 72, note="arena mouth: banner over the threshold")
+    for cell in ((75, 74), (75, 77)):
+        if cell in floor and cell not in guard:
+            plan.prop("brazier", cell, z=1, low=True, note="arena mouth: fire at the threshold",
+                      light={"x": cell[0] * T + 8, "y": cell[1] * T + 4,
+                             "color": [1.0, 0.62, 0.30], "energy": 1.25, "scale": 3.2})
+
+    # --- the apparatus's own surroundings --------------------------------
+    # It stands on the island; the island's north face carries a low pier rhythm
+    # and its shoulders hold the remnants of the rite, so the centrepiece sits in
+    # built architecture rather than on a bare rock platform.
+    for cell in ((85, 79), (91, 79)):
+        if cell in geom:
+            plan.prop("column_broken", cell, z=1, note="island face: snapped pier behind the apparatus")
+    for cell in ((84, 82), (92, 82)):
+        if cell in floor and cell not in guard:
+            plan.prop("skulls", cell, z=1, low=True, note="the offerings around the apparatus")
+    if (86, 82) in floor and (86, 82) not in guard:
+        plan.prop("altar_dry", (86, 82), z=1, low=True, note="dry altar: the rite ran out of blood")
+    if (90, 82) in floor and (90, 82) not in guard:
+        plan.prop("stand", (90, 82), z=1, low=True, note="overturned feed stand at the apparatus")
+
+    # --- wall sculpture: torn standards and brackets along the arena ------
+    for cell in ((74, 65), (109, 65)):
+        if cell in geom:
+            plan.prop("torch", cell, z=1, note="arena wall: bracket beside the sigil",
+                      light={"x": cell[0] * T + 8, "y": cell[1] * T + 12,
+                             "color": [1.0, 0.66, 0.38], "energy": 1.0, "scale": 2.4})
+    for cell in ((81, 65), (99, 65)):
+        if cell in geom:
+            plan.prop("banner", cell, z=1, note="arena wall: torn standard")
     for cell in ((83, 84), (95, 85), (106, 74)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="bone drift across the arena")

@@ -107,12 +107,12 @@ def draw_walls(world: Image.Image, level: dict, arch: dict, frames, tiles, palet
         for row in range(top, y + 1):
             depth = y - row
             if overlay:
-                img = sprite(tiles, frames["crucible_tiles"][overlay])
+                name = overlay
             elif depth == 0:
                 name = "wall_plinth"
             elif depth == 1:
                 name = "wall_dado_a" if (x % 5) == 0 else ("wall_pier" if (x % 9) == 0 else "wall_field_a")
-            elif binary := (depth == 2):
+            elif depth == 2:
                 name = "wall_field_b"
             else:
                 name = "wall_field_a"
@@ -187,16 +187,20 @@ def apply_lighting(world: Image.Image, lights: list, ambient: float) -> Image.Im
     return lit
 
 
+# Matches the kit's value bands so the preview cannot flatter the composition:
+# floor is mid, wall face one step above it, wall top the brightest stone, and a
+# cool ambient that leaves the warm lights something to work against.
 PALETTE = {
-    "floor": [0.95, 0.86, 0.84],
-    "wall_face": [1.0, 0.92, 0.88],
-    "wall_top": [0.80, 0.72, 0.72],
+    "floor": [1.0, 0.97, 0.95],
+    "wall_face": [1.06, 1.00, 0.94],
+    "wall_top": [0.99, 0.94, 0.86],
 }
 
 
 def station_world(level, arch, frames, tiles, props_sheet, x0: int, y0: int,
                   w_cells: int, h_cells: int, *, ambient: float = 0.42) -> Image.Image:
-    world = Image.new("RGBA", (w_cells * T, h_cells * T), (14, 11, 13, 255))
+    # full-map canvas: draw_* functions use absolute cell coordinates
+    world = Image.new("RGBA", (130 * T, 96 * T), (26, 24, 30, 255))
     sub = {
         "layers": {
             "Backdrop": [t for t in level["layers"]["Backdrop"]
@@ -218,11 +222,13 @@ def station_world(level, arch, frames, tiles, props_sheet, x0: int, y0: int,
     return apply_lighting(window, shifted, ambient)
 
 
+# Window = one 1280x720 frame at 1:1, centred on the station the native harness
+# uses. Keep these in sync with STATIONS in tools/captures/crucible_capture.gd.
 STATIONS = [
-    ("f1_spawn", "F1 — spawn, first frame", 4, 8, 80, 45),
-    ("f1_gate", "F1 — the processional gate and the altar", 15, 4, 80, 45),
-    ("f2_court", "F2 — the blood court", 55, 32, 80, 45),
-    ("f3_arena", "F3 — the boss arena", 72, 62, 80, 45),
+    ("f1_spawn", "F1 - spawn, first frame", 10 - 40, 17 - 22, 80, 45),
+    ("f1_gate", "F1 - the processional gate and shrine", 16 - 40, 14 - 22, 80, 45),
+    ("f2_court", "F2 - the blood court", 91 - 40, 46 - 22, 80, 45),
+    ("f3_arena", "F3 - the boss arena", 88 - 40, 76 - 22, 80, 45),
 ]
 
 

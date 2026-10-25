@@ -45,23 +45,33 @@ T = 16
 # ---------------------------------------------------------------------------
 # Palette
 # ---------------------------------------------------------------------------
-# Value ladder, darkest to lightest. This is the single most important thing in
-# the kit: a room reads as architecture only when the unexcavated rock, the
-# socle, the wall field, the floor, the cornice and the wall top occupy
-# different steps of one ladder. The first version of this kit put floor and
-# wall in the same warm brown band, and the rooms turned into brown soup.
-BASALT_D = (44, 42, 46)
-BASALT_M = (98, 94, 90)     # flagstone body
-BASALT_L = (116, 111, 105)  # lit flag edge
-BASALT_HI = (138, 132, 124)
-GROUT = (47, 44, 46)
+# Six explicit value bands, darkest to lightest. The bands are the entire
+# material system: as long as rock < recess < wall face < floor < trim < lit
+# stone, a room reads as a building carved into a dark mass no matter what the
+# lights do. The previous pass had floor and wall in the same band, which is why
+# the rooms still flattened out under a torch.
+#
+#   rock      ~30   unexcavated mass, must lose against everything
+#   recess    ~18   joints, wall feet, anything the light cannot reach
+#   floor     ~76   walkable stone: mid, so props and light pools read on it
+#   wall      ~100  structural wall faces, one step above the floor
+#   trim      ~150  mouldings, cornices, pilasters
+#   lit stone ~200  wall top planes and focal architecture: the brightest stone
+ROCK_D = (26, 24, 30)
+ROCK_M = (34, 32, 39)
+RECESS = (16, 14, 18)
 
-WARM_D = (58, 54, 52)       # wall field, in shadow
-WARM_M = (86, 82, 78)       # wall field
-WARM_L = (124, 118, 110)    # lit mouldings, pilaster shafts
-WARM_HI = (170, 162, 148)   # cornice and wall top: the brightest stone
+BASALT_D = (42, 40, 43)
+BASALT_M = (76, 72, 70)     # flagstone body
+BASALT_L = (92, 87, 83)     # lit flag edge, dressed paving
+BASALT_HI = (116, 110, 103)
+GROUT = (36, 33, 36)
 
-CAP = (176, 168, 152)       # the top plane of a wall mass
+WARM_D = (58, 54, 51)       # wall field in shadow
+WARM_M = (100, 94, 86)      # structural wall face
+WARM_L = (148, 140, 124)    # mouldings, pilaster shafts, carved bands
+WARM_HI = (186, 176, 156)   # cornice
+CAP = (202, 190, 168)       # lit top plane of a wall mass
 
 OX_D = (48, 13, 15)
 OX_M = (78, 20, 22)
@@ -223,7 +233,7 @@ def bedrock(seed: int) -> Image.Image:
     """
     rng = random.Random(seed)
     img = new(T, T)
-    base = (40, 37, 40) if seed % 2 else (35, 32, 36)
+    base = ROCK_M if seed % 2 else ROCK_D
     rect(img, 0, 0, T, T, base)
     for row in range(0, T, 6):
         offset = (row // 6) % 2 * 5
@@ -550,6 +560,80 @@ def finish_prop(img: Image.Image, *, shadow: bool = True) -> Image.Image:
     return img
 
 
+
+def _hash01(*values: int) -> float:
+    """Deterministic pseudo-random in [0,1) from integers: no RNG state, so the
+    same block is always the same stone across a rebuild."""
+    h = 2166136261
+    for v in values:
+        h = (h ^ (int(v) & 0xFFFFFFFF)) * 16777619 & 0xFFFFFFFF
+    # FNV alone leaves almost all of its entropy in the low bits, so two inputs
+    # that differ only in the last value (an x, a y) come back nearly equal and
+    # the "random" speckle lines up in columns. The final avalanche fixes that.
+    h ^= h >> 15
+    h = (h * 2246822519) & 0xFFFFFFFF
+    h ^= h >> 13
+    h = (h * 3266489917) & 0xFFFFFFFF
+    h ^= h >> 16
+    return (h & 0xFFFF) / 65536.0
+
+
+def ring_masonry(img, cx: float, cy: float, rx: float, ry: float,
+                 d0: float, d1: float, base, seed: int, *, blocks: int = 26,
+                 damage=(), joint: float = 0.9, lit: bool = True) -> None:
+    """Concentric ring of individual cut stones, the way a basin rim is built.
+
+    Every block is a separate stone with its own tone, separated by a radial
+    joint, so the rim reads as masonry instead of as a smooth ellipse. The outer
+    edge catches the light and the inner edge falls into shade, which is what
+    gives the ring thickness. `damage` lists block indices to knock out.
+    """
+    if d1 <= d0:
+        return
+    span = math.tau / blocks
+    for y in range(int(cy - ry * d1) - 1, int(cy + ry * d1) + 2):
+        for x in range(int(cx - rx * d1) - 1, int(cx + rx * d1) + 2):
+            dx = (x - cx) / max(0.001, rx)
+            dy = (y - cy) / max(0.001, ry)
+            d = math.hypot(dx, dy)
+            if d < d0 or d > d1:
+                continue
+            a = math.atan2(dy, dx)
+            u = (a + math.pi) / math.tau
+            index = int(u * blocks) % blocks
+            if index in damage:
+                continue
+            tone = 0.93 + 0.16 * _hash01(seed, index, int(d * 40))
+            col = shade(base, tone)
+            # radial joints between cut stones
+            frac = (u * blocks) % 1.0
+            edge_px = min(frac, 1.0 - frac) * span * rx * max(0.25, d)
+            if edge_px < joint:
+                col = shade(base, 0.58)
+            else:
+                # concentric course lines
+                if lit:
+                    if dy < -0.45 and d > d1 - (d1 - d0) * 0.30:
+                        col = shade(col, 1.10)
+                    elif dy > 0.35 and d < d0 + (d1 - d0) * 0.30:
+                        col = shade(col, 0.84)
+            px(img, x, y, col)
+
+
+def _basin_steps(img, cx: float, base_y: int, w: int, base, seed: int) -> None:
+    """Three descending steps cut into the south face of a basin rim."""
+    for i, (sw, sy, depth) in enumerate(((84, base_y, 10), (70, base_y + 8, 9), (56, base_y + 16, 8))):
+        x0 = int(cx - sw / 2)
+        course_band(img, x0, sy, sw, depth, base, rows=2, seed=seed + i)
+        hline(img, x0, sy, sw, CAP)
+        hline(img, x0, sy + 1, sw, shade(base, 1.10))
+        # wear in the middle of the tread
+        for x in range(x0 + 6, x0 + sw - 6, 9):
+            px(img, x, sy + 3, shade(base, 0.74))
+            px(img, x + 1, sy + 4, shade(base, 0.80))
+        hline(img, x0, sy + depth - 1, sw, RECESS)
+
+
 def prop_column(seed: int, *, broken: bool = False) -> Image.Image:
     """A masonry pier: plinth, moulded base, drummed shaft, capital.
 
@@ -771,81 +855,134 @@ def _ellipse_top(img, cx: float, cy: float, rx: float, ry: float, colour, *,
                 px(img, x, y, col + (alpha,) if len(col) == 3 else col)
 
 
-def prop_crucible(w: int = 200, h: int = 156) -> Image.Image:
-    """The crucible: a sunken octagonal basin read in three dimensions.
+def prop_crucible(w: int = 216, h: int = 168, scale: float = 1.0) -> Image.Image:
+    """The Blood Court basin: a monumental sunken ritual basin in cut stone.
 
-    Painted as concentric elliptical tiers: each tier is a filled lip, and the
-    wall between it and the next tier is drawn as a shadowed band hanging below
-    the inner lip. That band is the whole trick - without it a ring of
-    concentric ellipses is a target painted on the floor, with it the basin has
-    walls and the eye reads depth.
+    Built the way the real thing would be: an apron of paving the basin is set
+    into, a coping course, a ring of jointed rim blocks with iron cramps, then the
+    bowl inside — coursed masonry walls going down, with the blood lying in it.
+    The near (south) wall is drawn *over* the blood, so the blood reads as a
+    surface below the rim rather than as a red disc dropped on top of one. Damage
+    on the north east rim (blocks knocked out, a snapped cramp, spill down the
+    face, rubble at the foot) is the story of the thing that got out.
     """
+    w, h = int(w * scale), int(h * scale)
     img = new(w, h)
     cx = w / 2
-    cy = 46.0
+    cy = 52.0 * scale
     rng = random.Random(0x51AC)
+    # Every ring is measured in *one* normalised radial space (RX, RY) so the
+    # bands tile edge to edge. Measuring each ring against its own radii leaves
+    # unpainted slivers between them, which is exactly what a previous version did.
+    RX, RY = 106.0 * scale, 64.0 * scale
+    open_rx, open_ry = RX * 0.60, RY * 0.60
 
-    # (rx, ry, top colour, wall colour, wall height)
-    tiers = [
-        (98, 54, shade(WARM_HI, 1.04), shade(WARM_D, 1.02), 8),
-        (90, 48, WARM_L, shade(WARM_D, 0.94), 8),
-        (81, 41, shade(WARM_M, 1.02), shade(WARM_D, 0.84), 7),
-        (72, 34, shade(WARM_M, 0.92), shade(WARM_D, 0.72), 6),
-    ]
-    for (rx, ry, top, _wall, _fh) in tiers:
-        _ellipse_top(img, cx, cy, rx, ry, top)
+    # --- the apron and the coping: the basin is set into built paving ------
+    ring_masonry(img, cx, cy, RX, RY, 0.91, 1.0, shade(BASALT_L, 0.94), 0x11, blocks=38)
+    ring_masonry(img, cx, cy, RX, RY, 0.82, 0.91, WARM_L, 0x22, blocks=32)
+    # --- the rim proper: big cut blocks, lit on the north edge ------------
+    ring_masonry(img, cx, cy, RX, RY, 0.68, 0.82, WARM_M, 0x33, blocks=20, damage=(4, 5))
+    # --- the lip: a hard shadow under the overhang ------------------------
+    ring_masonry(img, cx, cy, RX, RY, 0.60, 0.68, WARM_D, 0x44, blocks=20, lit=False)
 
-    # walls, innermost first so an outer wall never paints over a deeper tier
-    for i in range(len(tiers) - 1, -1, -1):
-        rx, ry, _top, wall_col, fh = tiers[i]
-        inner_ry = tiers[i + 1][1] if i + 1 < len(tiers) else ry
-        for x in range(int(cx - rx), int(cx + rx) + 1):
-            t = (x - cx) / max(0.001, rx)
-            if abs(t) >= 1.0:
-                continue
-            lip = cy + inner_ry * math.sqrt(max(0.0, 1.0 - t * t))
-            for k in range(1, fh + 1):
-                # wall is darkest at its base; its left side catches a little of
-                # the same northwest light every other surface here obeys.
-                amount = 1.10 - 0.13 * k - (0.09 if t > 0.35 else 0.0)
-                px(img, x, int(lip) + k, shade(wall_col, amount))
+    # --- the bowl: coursed masonry all the way down -----------------------
+    def bowl_tone(depth: int, u: float, band_y: int):
+        course = depth // 8
+        tone = 0.78 + 0.16 * _hash01(0x55, int(u * 9), course)
+        tone *= 1.0 - 0.30 * min(1.0, depth / 60.0)
+        col = shade(WARM_D, tone)
+        if abs((u * 9) % 1.0) < 0.05:
+            col = shade(WARM_D, 0.50)
+        if band_y % 8 == 0:
+            col = shade(col, 0.55)
+        return col
 
-    # --- the blood, deepest and most saturated thing on the floor ---------
-    bcy = cy + 20
-    for (rx, ry, col) in ((64, 29, OX_D), (57, 25, OX_M), (48, 20, OX_L),
-                          (36, 14, OX_HI), (24, 9, mix(OX_HI, FIRE_D, 0.45)),
-                          (13, 5, mix(OX_HI, FIRE_M, 0.3))):
-        _ellipse_top(img, cx, bcy, rx, ry, col, lit=False)
-    for _ in range(90):
-        a = rng.uniform(0, math.tau)
-        r = rng.uniform(0, 1) ** 0.55
-        px(img, int(cx + math.cos(a) * r * 56), int(bcy + math.sin(a) * r * 24),
-           mix(OX_L, FIRE_M, rng.uniform(0.05, 0.5)))
+    def opening_half(y: float) -> float:
+        dy = (y - cy) / open_ry
+        if abs(dy) >= 1.0:
+            return 0.0
+        return open_rx * math.sqrt(max(0.0, 1.0 - dy * dy))
+
+    for y in range(int(cy - open_ry) + 1, int(cy + open_ry)):
+        half = opening_half(y)
+        if half <= 0:
+            continue
+        depth = int(abs(y - cy) * 0.9)
+        for x in range(int(cx - half), int(cx + half) + 1):
+            u = (x - cx) / max(1.0, half)
+            px(img, x, y, bowl_tone(depth, u, y))
+
+    # --- the blood: a surface below the rim -------------------------------
+    # Clipped to the opening row by row, so it can never spill onto the bowl wall
+    # or the rim. It sits low in the bowl, which leaves lit masonry in front of
+    # it: that band of stone is what reads as depth.
+    bcy = cy + 18
+    brx, bry = open_rx * 0.74, open_ry * 0.60
+    for y in range(int(bcy - bry) + 1, int(bcy + bry)):
+        half_blood = brx * math.sqrt(max(0.0, 1.0 - ((y - bcy) / bry) ** 2))
+        half = min(half_blood, opening_half(y) - 2)
+        if half <= 1:
+            continue
+        for x in range(int(cx - half), int(cx + half) + 1):
+            u = abs((x - cx) / max(1.0, brx))
+            v = abs((y - bcy) / max(1.0, bry))
+            r = math.hypot(u, v)
+            if r > 0.94:
+                col = OX_D
+            elif r > 0.74:
+                col = OX_M
+            elif r > 0.52:
+                col = OX_L
+            elif r > 0.28:
+                col = OX_HI
+            else:
+                col = mix(OX_HI, FIRE_D, 0.30)
+            if _hash01(0x77, x, y) < 0.05:
+                col = mix(col, FIRE_M, 0.35)
+            px(img, x, y, col)
+    # skim and clots on the surface
     for _ in range(16):
         a = rng.uniform(0, math.tau)
-        bx = int(cx + math.cos(a) * rng.uniform(8, 46))
-        by = int(bcy + math.sin(a) * rng.uniform(4, 20))
-        hline(img, bx - 3, by, 7, mix(OX_HI, BONE, 0.32))
-    glow_blob(img, cx, bcy, 44, 18, FIRE_D, 70, 6)
-    glow_blob(img, cx, bcy, 18, 7, FIRE_M, 55, 5)
+        bx = int(cx + math.cos(a) * rng.uniform(6, brx * 0.8))
+        by = int(bcy + math.sin(a) * rng.uniform(3, bry * 0.7))
+        hline(img, bx - 4, by, 9, mix(OX_HI, BONE, 0.24))
+    # contact shadow where the blood meets the near wall
+    for y in range(int(bcy + bry * 0.55), int(bcy + bry) + 2):
+        half_blood = brx * math.sqrt(max(0.0, 1.0 - ((y - bcy) / bry) ** 2))
+        for x in range(int(cx - half_blood) - 4, int(cx + half_blood) + 5):
+            if y >= bcy + bry - 5:
+                px(img, x, y, shade(OX_D, 0.55))
 
-    # --- iron clamps at the octagon corners -------------------------------
-    for i in range(8):
-        a = math.radians(22.5 + i * 45)
-        x = int(cx + math.cos(a) * 90)
-        y = int(cy + math.sin(a) * 48)
+    # --- iron cramps on the rim joints ------------------------------------
+    for i in range(10):
+        a = math.radians(18 + i * 36)
+        if i in (2, 3):
+            continue
+        x = int(cx + math.cos(a) * RX * 0.75)
+        y = int(cy + math.sin(a) * RY * 0.75)
         rect(img, x - 3, y - 2, 7, 4, IRON_M)
         hline(img, x - 3, y - 2, 7, IRON_L)
         hline(img, x - 3, y + 1, 7, IRON_D)
 
-    # --- steps down into the basin on the south face ---------------------
-    for i, (sw, yy) in enumerate(((88, int(cy + 50)), (74, int(cy + 58)), (60, int(cy + 66)))):
-        block(img, int(cx - sw / 2), yy, sw, 9, shade(WARM_M, 0.92 + i * 0.05))
-        hline(img, int(cx - sw / 2), yy, sw, WARM_HI)
-        rect(img, int(cx - sw / 2) + 4, yy + 5, sw - 8, 2, OX_D + (150,))
-        for x in range(int(cx - sw / 2) + 2, int(cx + sw / 2) - 2, 7):
-            vline(img, x, yy, 9, shade(WARM_D, 0.82))
-    floor_shadow(img, cx, h - 1, 74, 6, 135)
+    # --- damage: knocked-out rim blocks on the north east side ------------
+    dmg_x = int(cx + RX * 0.60)
+    dmg_y = int(cy - RY * 0.52)
+    rect(img, dmg_x - 7, dmg_y - 3, 14, 7, shade(WARM_D, 0.46))
+    for k in range(12):
+        px(img, dmg_x - 6 + k, dmg_y - 3 + (k % 2), shade(IRON_D, 1.25))
+    for k in range(20):
+        px(img, dmg_x + 5 + (k % 3), dmg_y + 5 + k, OX_D + (140 + k * 5,))
+    for _ in range(18):
+        rx_ = dmg_x + rng.randint(-16, 20)
+        ry_ = dmg_y + rng.randint(10, 34)
+        rect(img, rx_, ry_, rng.randint(3, 6), rng.randint(2, 4), shade(WARM_M, 0.88))
+        hline(img, rx_, ry_, 4, shade(WARM_M, 1.06))
+
+    # --- steps cut into the south face ------------------------------------
+    # steps standing on the floor at the south face, leading up to the coping.
+    # Inside the bowl they crossed the blood and read as scratches.
+    _basin_steps(img, cx, int(cy + RY) - 6, 0, WARM_M, 0x66)
+    floor_shadow(img, cx, h - 1, 88, 7, 140)
     return img
 
 
@@ -1180,66 +1317,106 @@ def prop_emblem(seed: int) -> Image.Image:
 def prop_throne_apparatus(seed: int) -> Image.Image:
     """The broken sacrificial apparatus that closes the boss arena.
 
-    A stepped octagonal plinth carrying a snapped iron ring over a blood well,
-    with the broken arc lying where it fell.
+    An octagonal plinth of jointed masonry carrying four snapped iron uprights
+    over a blood well, with the snapped-off iron lying where it fell and the
+    plinth's north east corner knocked away. Built from the same ring-masonry
+    vocabulary as the court basin, so the two read as the same installation at
+    two scales — the complex's centrepiece and its portable altar.
     """
-    w, h = 132, 124
+    w, h = 148, 136
     img = new(w, h)
     cx = w / 2
-    cy = h * 0.44
+    cy = h * 0.46
     rng = random.Random(seed)
+    RX, RY = 70.0, 42.0
 
-    tiers = [(58, 26, shade(WARM_HI, 1.03), 8), (52, 22, WARM_L, 7), (45, 18, WARM_M, 6)]
-    for (rx, ry, top, _fh) in tiers:
-        _ellipse_top(img, cx, cy, rx, ry, top)
-    for i in range(len(tiers) - 1, -1, -1):
-        rx, ry, _t, fh = tiers[i]
-        inner_ry = tiers[i + 1][1] if i + 1 < len(tiers) else ry
-        for x in range(int(cx - rx), int(cx + rx) + 1):
-            t = (x - cx) / max(0.001, rx)
-            if abs(t) >= 1.0:
-                continue
-            lip = cy + inner_ry * math.sqrt(max(0.0, 1.0 - t * t))
-            for k in range(1, fh + 1):
-                px(img, x, int(lip) + k, shade(shade(WARM_D, 0.95), 1.08 - 0.12 * k))
-    # well
-    for (rx, ry, col) in ((38, 13, OX_D), (31, 10, OX_M), (22, 6, OX_L), (12, 3, OX_HI)):
-        _ellipse_top(img, cx, cy + 12, rx, ry, col, lit=False)
-    glow_blob(img, cx, cy + 12, 28, 9, FIRE_D, 80, 5)
-    for _ in range(34):
-        a = rng.uniform(0, math.tau)
-        r = rng.uniform(0, 1) ** 0.6
-        px(img, int(cx + math.cos(a) * r * 33), int(cy + 12 + math.sin(a) * r * 10),
-           mix(OX_L, FIRE_M, rng.uniform(0, 0.5)))
+    # --- plinth: apron, then two stepped courses of jointed stone ---------
+    ring_masonry(img, cx, cy, RX, RY, 0.90, 1.0, shade(BASALT_L, 0.94), seed + 1, blocks=24)
+    ring_masonry(img, cx, cy, RX, RY, 0.74, 0.90, WARM_L, seed + 2, blocks=20)
+    ring_masonry(img, cx, cy, RX, RY, 0.56, 0.74, WARM_M, seed + 3, blocks=18,
+                 damage=(1, 2))
+    ring_masonry(img, cx, cy, RX, RY, 0.44, 0.56, WARM_D, seed + 4, blocks=18, lit=False)
 
-    # snapped iron ring
-    ring_cy = cy - 24
-    for (a0, a1) in ((200, 352), (12, 158)):
-        steps = int((a1 - a0) * 1.4)
-        for i in range(steps + 1):
-            a = math.radians(a0 + (a1 - a0) * i / steps)
-            for r, col in ((34, IRON_L), (33, IRON_M), (32, IRON_M), (31, IRON_D)):
-                px(img, int(cx + math.cos(a) * r), int(ring_cy + math.sin(a) * r * 0.78), col)
-    for a in (200, 352, 12, 158):
-        rad = math.radians(a)
-        for r in range(30, 36):
-            px(img, int(cx + math.cos(rad) * r), int(ring_cy + math.sin(rad) * r * 0.78), IRON_HI)
-    for a in (245, 295, 65, 115):
-        rad = math.radians(a)
-        for t in range(10, 32):
-            x = int(cx + math.cos(rad) * t)
-            y = int(ring_cy + math.sin(rad) * t * 0.78 + 18)
-            px(img, x, y, IRON_M)
-            px(img, x, y + 1, IRON_D)
-    for i in range(18):
-        px(img, int(cx + 32 + i), int(cy + 18 - i // 2), IRON_M if i % 3 else IRON_L)
-        px(img, int(cx + 32 + i), int(cy + 19 - i // 2), IRON_D)
-    for _ in range(110):
-        a = rng.uniform(0, math.tau)
-        r = rng.uniform(0, 1) ** 0.5
-        px(img, int(cx + math.cos(a) * r * 50), int(cy + 8 + math.sin(a) * r * 16),
-           OX_M + (rng.randint(140, 220),))
-    floor_shadow(img, cx, h - 1, 60, 6, 130)
+    # --- the well: coursed masonry, then blood ----------------------------
+    open_rx, open_ry = RX * 0.44, RY * 0.44
+    for y in range(int(cy - open_ry), int(cy + open_ry) + 1):
+        dy = (y - cy) / open_ry
+        half = open_rx * math.sqrt(max(0.0, 1.0 - min(1.0, dy * dy)))
+        depth = int(abs(y - cy))
+        for x in range(int(cx - half), int(cx + half) + 1):
+            u = (x - cx) / max(1.0, half)
+            tone = 0.62 + 0.14 * _hash01(seed, int(u * 8), depth // 6)
+            tone *= 1.0 - 0.22 * (depth / max(1.0, open_ry))
+            col = shade(WARM_D, tone)
+            if abs((u * 8) % 1.0) < 0.06 or depth % 6 == 0:
+                col = shade(WARM_D, 0.44)
+            px(img, x, y, col)
+    bcy = cy + 5
+    brx, bry = open_rx * 0.86, open_ry * 0.80
+    for y in range(int(bcy - bry) + 1, int(bcy + bry)):
+        half = brx * math.sqrt(max(0.0, 1.0 - ((y - bcy) / bry) ** 2))
+        half = min(half, open_rx * math.sqrt(max(0.0, 1.0 - min(1.0, ((y - cy) / open_ry) ** 2))) - 1)
+        for x in range(int(cx - half), int(cx + half) + 1):
+            r = math.hypot((x - cx) / max(1.0, brx), (y - bcy) / max(1.0, bry))
+            col = OX_D if r > 0.9 else OX_M if r > 0.66 else OX_L if r > 0.4 else OX_HI
+            if _hash01(seed + 9, x, y) < 0.06:
+                col = mix(col, FIRE_M, 0.4)
+            px(img, x, y, col)
+
+    # --- four iron uprights, two of them snapped -------------------------
+    for i, angle in enumerate((205, 335, 262, 285)):
+        a = math.radians(angle)
+        bx = int(cx + math.cos(a) * RX * 0.66)
+        by = int(cy + math.sin(a) * RY * 0.66)
+        top = by - (44 if i < 2 else 24)
+        for y in range(top, by + 1):
+            for dx in (-2, -1, 0, 1, 2):
+                if dx == -2:
+                    col = IRON_HI
+                elif dx == -1:
+                    col = IRON_L
+                elif dx == 0:
+                    col = IRON_M
+                elif dx == 1:
+                    col = IRON_D
+                else:
+                    col = shade(IRON_D, 0.7)
+                px(img, bx + dx, y, col)
+            if y % 14 == 0:
+                px(img, bx - 2, y, IRON_HI)
+                px(img, bx + 1, y, IRON_HI)
+        # foot plate
+        rect(img, bx - 5, by - 1, 11, 3, IRON_M)
+        hline(img, bx - 5, by - 1, 11, IRON_L)
+        hline(img, bx - 5, by + 1, 11, IRON_D)
+        if i < 2:
+            # collar and chain stub at the top of the intact ones
+            rect(img, bx - 2, top, 5, 3, IRON_M)
+            hline(img, bx - 2, top, 5, IRON_HI)
+            for k in range(4):
+                px(img, bx, top - 2 - k, IRON_M if k % 2 else IRON_L)
+        else:
+            # snapped: a jagged bright fracture, and the broken length on the floor
+            px(img, bx, top, IRON_HI)
+            px(img, bx + 1, top + 1, IRON_HI)
+            # the snapped length, lying on the plinth at an angle
+            for k in range(26):
+                for d in (0, 1):
+                    px(img, bx + 12 + k, by + 14 - k // 3 + d,
+                       IRON_M if (k + d) % 4 else IRON_L)
+
+    # --- knocked-away corner: rubble and a sheared stone -----------------
+    for _ in range(26):
+        rx_ = int(cx + rng.uniform(20, 58))
+        ry_ = int(cy + rng.uniform(-6, 30))
+        rw, rh = rng.randint(3, 7), rng.randint(2, 4)
+        rect(img, rx_, ry_, rw, rh, shade(WARM_M, rng.choice([0.9, 1.0, 1.08])))
+        hline(img, rx_, ry_, rw, shade(WARM_L, 1.02))
+    # blood trail running off the plinth to the south east
+    for _ in range(60):
+        px(img, int(cx + rng.uniform(6, 40)), int(cy + rng.uniform(6, 46)),
+           OX_D + (rng.randint(90, 190),))
+    floor_shadow(img, cx, h - 2, 62, 6, 130)
     return img
 
 
@@ -1321,6 +1498,8 @@ def build_props() -> dict:
         "altar": (lambda: prop_altar(31), 2, 0),
         "altar_dry": (lambda: prop_altar(32, blood=False), 3, 0),
         "crucible": (lambda: prop_crucible(), 4, 0),
+        "crucible_small": (lambda: prop_crucible(216, 168, scale=0.78), 4, 0),
+        "crucible_grand": (lambda: prop_crucible(216, 168, scale=1.30), 4, 0),
         "apparatus": (lambda: prop_throne_apparatus(33), 5, 0),
         "column": (lambda: prop_column(41), 6, 0),
         "column_broken": (lambda: prop_column(42, broken=True), 7, 0),

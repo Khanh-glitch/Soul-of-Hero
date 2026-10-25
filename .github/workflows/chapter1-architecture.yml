@@ -146,7 +146,7 @@ jobs:
             [ "$mode" = "before" ] && extra="--no-art"
             export SOUL_OF_HERO_SAVE_PATH="user://crucible_${mode}_$GITHUB_RUN_ID.json"
             xvfb-run -a -s "-screen 0 1280x720x24" env LIBGL_ALWAYS_SOFTWARE=1 \
-              timeout 300s godot --path . --audio-driver Dummy \
+              timeout 600s godot --path . --audio-driver Dummy \
               --rendering-method gl_compatibility --rendering-driver opengl3 \
               --resolution 1280x720 res://tools/captures/crucible_capture.tscn \
               -- --out-dir="res://.artifacts/crucible/${mode}" --tag="${mode}" $extra \
@@ -165,14 +165,13 @@ jobs:
         continue-on-error: true
         run: |
           set +eo pipefail
-          mkdir -p docs/chapter1-visual-overhaul/architecture-breakthrough/L05/logs
-          shopt -s nullglob
-          for logfile in .artifacts/crucible/*.log .artifacts/crucible/suites/*.log; do
-            cp "$logfile" "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/logs/$(basename "$logfile" .log).txt"
-          done
-          shopt -u nullglob
           python3 -m pip install --quiet --break-system-packages pillow
-          python3 tools/level5/evidence_breakthrough.py || echo "evidence script failed; logs are still committed"
+          # The builder copies the logs itself and refuses to write a manifest that
+          # disagrees with them (ok flags vs files on disk, missing stations, the
+          # startup-profile error, a fight frame with no health record).
+          python3 tools/level5/evidence_breakthrough.py | tee .artifacts/crucible/evidence.log
+          evidence_rc=${PIPESTATUS[0]}
+          echo "EVIDENCE_EXIT=${evidence_rc}"
           git config user.name "chapter1-art-bot"
           git config user.email "actions@users.noreply.github.com"
           git add docs/chapter1-visual-overhaul/architecture-breakthrough
@@ -193,6 +192,7 @@ jobs:
           done
           echo "PUBLISH FAILED after 3 attempts"
           exit 1
+          # (the evidence builder's own verdict is asserted by the gate step below)
 
       - name: Verify the architecture actually built
         if: always()
@@ -201,14 +201,52 @@ jobs:
           rc=0
           for mode in after before; do
             logfile=".artifacts/crucible/${mode}.log"
+            if [ ! -f "$logfile" ]; then
+              echo "MISSING LOG: $logfile"; rc=1; continue
+            fi
             if [ "$mode" = "after" ]; then
               grep -qE "CRUCIBLE CAPTURE: .* art=on wall_cells=[1-9][0-9]*" "$logfile" \
                 || { echo "MISSING ARCHITECTURE in after run"; rc=1; }
-              grep -q "CRUCIBLE STATION tag=after station=f3_fight" "$logfile" \
-                || { echo "MISSING live boss frame"; rc=1; }
+              grep -q "CRUCIBLE CAPTURE DONE" "$logfile" \
+                || { echo "CAPTURE DID NOT COMPLETE"; rc=1; }
+              # every required station frame must exist and be a real picture
+              for shot in f1_spawn f1_gate f1_altar f2_landing f2_court f2_encounter \
+                          f3_approach f3_fight; do
+                file=".artifacts/crucible/after/after_${shot}.png"
+                if [ ! -s "$file" ]; then echo "MISSING FRAME: $shot"; rc=1; fi
+              done
+              for floor in f1 f2 f3; do
+                file=".artifacts/crucible/after/overview_after_overview_${floor}.png"
+                if [ ! -s "$file" ]; then echo "MISSING OVERVIEW: $floor"; rc=1; fi
+              done
+              # the fight frame must be backed by numbers from the live objects
+              grep -qE "CRUCIBLE FIGHT: knight_hp [0-9]+/[0-9]+ -> [0-9]+/[0-9]+ .* boss_hp=[0-9]+/" \
+                "$logfile" || { echo "BOSS FRAME HAS NO HEALTH RECORD"; rc=1; }
+              grep -q "boss_state=" "$logfile" || { echo "BOSS STATE NOT RECORDED"; rc=1; }
+              # input-driven traversal: two legs, each ending in a real door use
+              grep -q "CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate door_used_via=." "$logfile" \
+                || { echo "MISSING INPUT TRAVERSAL (leg 1)"; rc=1; }
+              grep -q "CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door door_used_via=." "$logfile" \
+                || { echo "MISSING INPUT TRAVERSAL (leg 2)"; rc=1; }
+              # the startup-profile boot error must be gone, not hidden
+              if grep -q "startup profile choice" "$logfile"; then
+                echo "STARTUP PROFILE BOOT ERROR IS BACK"; rc=1
+              fi
             else
-              grep -qE "CRUCIBLE CAPTURE: .* art=off" "$logfile" || { echo "before run did not disable art"; rc=1; }
+              grep -qE "CRUCIBLE CAPTURE: .* art=off" "$logfile" \
+                || { echo "before run did not disable art"; rc=1; }
             fi
           done
+          if [ -f .artifacts/crucible/evidence.log ]; then
+            if grep -q "EVIDENCE PROBLEM" .artifacts/crucible/evidence.log; then
+              echo "EVIDENCE BUILDER REPORTED PROBLEMS"
+              grep "EVIDENCE PROBLEM" .artifacts/crucible/evidence.log
+              rc=1
+            fi
+          else
+            echo "EVIDENCE BUILDER DID NOT RUN"; rc=1
+          fi
           [ $rc -eq 0 ] && echo "ARCHITECTURE OK"
           exit $rc
+
+
