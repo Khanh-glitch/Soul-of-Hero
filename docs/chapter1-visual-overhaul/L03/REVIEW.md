@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_3`
 - Map source: `data/levels/chapter_1_level_3.json`
-- Source sha256: `e5611beea1ceafa9445349e8c2be54c18872169c5748321e5d898bf40b5f3224`
+- Source sha256: `607b3afa29cbd802d8c83f0f77a072f07d228f26a4eb4911d0ea7ccb301ccfd4`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Crossfire Archive — warm archive stacks and long sightlines
 
@@ -28,7 +28,7 @@
 
 ## Cost of the layer
 
-- Nodes: 750 (art off) -> 772 (art on)
+- Nodes: 751 (art off) -> 772 (art on)
 - Draw calls: 69 -> 81
 - Static memory: 111.8 MiB with the layer on
 

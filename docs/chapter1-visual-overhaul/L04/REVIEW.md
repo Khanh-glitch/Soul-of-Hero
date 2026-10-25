@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_4`
 - Map source: `data/levels/chapter_1_level_4.json`
-- Source sha256: `86ea962af372f20f4779b394b2506b3d643e96266755cee34e13e5d3a939f6f5`
+- Source sha256: `0f46c997ef129c78ef1fd1b5530ed49c7c5ba5bf21226f4821f5c4e4de710b5d`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Spiral Reliquary — monumental concentric stone
 
@@ -28,9 +28,9 @@
 
 ## Cost of the layer
 
-- Nodes: 776 (art off) -> 802 (art on)
+- Nodes: 781 (art off) -> 799 (art on)
 - Draw calls: 72 -> 77
-- Static memory: 111.3 MiB with the layer on
+- Static memory: 111.2 MiB with the layer on
 
 ## Frames
 

@@ -2,7 +2,7 @@
 
 - Level id: `chapter_1_level_1`
 - Map source: `data/levels/crypt_entrance.json`
-- Source sha256: `1367f0d0f7a4c43634faf48235c6c016baca9933333b31146416abc97bf0db39`
+- Source sha256: `801db3885d74e2e78ec8c627f0f0c8a8962fd748b70656d5b351269dc22b8c1d`
 - Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Crypt Entrance — the chapter's approachable threshold
 
