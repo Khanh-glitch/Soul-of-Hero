@@ -437,6 +437,15 @@ func _number_property(node: Node, property: String) -> String:
 ## The Knight is staged at the start of the first leg (after the fight station he
 ## is standing in the arena). That staging is printed, because it is the only
 ## teleport in the sequence; everything after it is walked.
+## Where a Knight standing on `cell` actually is. His body shape is 12x16 with its
+## origin at his feet (BodyShape offset (0,-8)), so aiming the origin at the cell
+## *centre* -- which the harness did -- put his collision box in the cell above and
+## left him wedged against walls the route had declared clear. The anchor is the
+## middle of the cell's bottom edge instead.
+func _cell_anchor(cell: Vector2i) -> Vector2:
+	return Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE - 1.0)
+
+
 func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 	var camera := get_viewport().get_camera_2d()
 	if camera != null:
@@ -451,8 +460,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var start_cell: Vector2i = leg["start"]
 		var door_cell: Vector2i = leg["door"]
 		var leg_name: String = leg["name"]
-		player.global_position = Vector2(start_cell.x * TILE + TILE * 0.5,
-			start_cell.y * TILE + TILE * 0.5)
+		player.global_position = _cell_anchor(start_cell)
 		player.velocity = Vector2.ZERO
 		for _i: int in range(6):
 			await get_tree().physics_frame
@@ -482,8 +490,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var dash_clock := 0
 		var last_position := player.global_position
 		var died := false
-		var door_distance := player.global_position.distance_to(
-			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5))
+		var door_distance := player.global_position.distance_to(_cell_anchor(door_cell))
 		var no_progress := 0
 		var reported := false
 		var probed := false
@@ -496,8 +503,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 				int(player.global_position.y / TILE))
 			if index >= path.size() or here == door_cell:
 				break
-			var waypoint := Vector2(path[index].x * TILE + TILE * 0.5,
-				path[index].y * TILE + TILE * 0.5)
+			var waypoint := _cell_anchor(path[index])
 			if player.global_position.distance_to(waypoint) < 10.0:
 				index += 1
 				continue
@@ -507,8 +513,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			# which is what the previous run's cell trace showed.
 			if index + 1 < path.size():
 				var next_cell: Vector2i = path[index + 1]
-				var next_point := Vector2(next_cell.x * TILE + TILE * 0.5,
-					next_cell.y * TILE + TILE * 0.5)
+				var next_point := _cell_anchor(next_cell)
 				if (player.global_position - waypoint).dot(next_point - waypoint) > 0.0:
 					index += 1
 					continue
@@ -552,8 +557,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			# A corner can still hold the body where the grid says it can pass. When
 			# the Knight has not moved for a while, step off the obstacle and
 			# re-plan from where he actually is -- still under input.
-			var now_distance := player.global_position.distance_to(
-				Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5))
+			var now_distance := player.global_position.distance_to(_cell_anchor(door_cell))
 			if now_distance < door_distance - 8.0:
 				door_distance = now_distance
 				no_progress = 0
@@ -608,8 +612,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			Input.action_release(&"attack")
 		var at := Vector2i(int(player.global_position.x / TILE),
 			int(player.global_position.y / TILE))
-		var arrived := player.global_position.distance_to(
-			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5)) < 48.0
+		var arrived := player.global_position.distance_to(_cell_anchor(door_cell)) < 48.0
 		print("CRUCIBLE TRAVERSAL: leg=%s arrived=%s died=%s frames=%d at=%s hp=%s"
 			% [leg_name, arrived, died, frames, at, _health_of(player)])
 		if died:
