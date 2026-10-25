@@ -87,8 +87,10 @@ jobs:
             echo "COMPILE FAIL"
             exit 1
           fi
-          grep -q "CRUCIBLE BOOT: level=" "$log" || { echo "HARNESS DID NOT BOOT HEADLESS"; exit 1; }
-          grep -q "CRUCIBLE ART:" "$log" || { echo "CRUCIBLE ART DID NOT BUILD"; exit 1; }
+          # --quit-after ends the process a few frames in, on purpose: this step
+          # compiles the harness, it does not capture with it. So it asserts that
+          # the script ran at all, and the capture step below asserts the build.
+          grep -q "CRUCIBLE BOOT: save=" "$log" || { echo "HARNESS DID NOT RUN HEADLESS"; exit 1; }
           echo "COMPILE OK"
 
       - name: Frozen Level 5 suites
