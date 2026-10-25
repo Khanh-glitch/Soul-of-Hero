@@ -5,11 +5,11 @@ the rejected baseline and is still short of the Monastic Archive reference. The
 sections below say exactly where it lands, which frames prove it, and what is
 still wrong. No claim of acceptance is made here.
 
-**This pass (L05-final).** Source `9d237bc`, workflow run `40169831630`, native
+**This pass (L05-final).** Source `aa74d7a`, workflow run `40170302015`, native
 frames and logs under `L05-final/`. Counters from the run itself:
 `floor_detail=5851 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506`,
 83 entities, renderer `llvmpipe`, nodes 1074, draw calls 110, static memory
-121.7 MB. The screenshots in `L05-final/images/`, the crops in `crops/` and the
+121.7 MB. `CRUCIBLE EXIT: code=0`; the evidence builder's `problems` list is empty. The screenshots in `L05-final/images/`, the crops in `crops/` and the
 side-by-sides in `comparisons/` are the evidence for everything claimed below.
 
 Branch: `arena/6e89e68d-soul-of-hero`. Every image under `L05/` is a native
