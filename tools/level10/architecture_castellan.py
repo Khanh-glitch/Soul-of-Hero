@@ -62,7 +62,13 @@ def floor_base(plan, floor, geom) -> None:
 
 
 def runner(plan, floor, geom) -> int:
-    """The crimson runner up the axis, with two places where the fight broke it."""
+    """The crimson runner up the axis, with two places where the fight broke it.
+
+    Three cells wide is a runner; one border per cell is three thin rugs side by
+    side, which is what this was. The outer two cells carry the gold edge, the
+    middle carries the cloth, and a lozenge lands every six cells so the runner has
+    a rhythm up its length.
+    """
     painted = 0
     breaks = (49, 50, 36, 37)
     for (cx, cy) in sorted(floor):
@@ -72,6 +78,12 @@ def runner(plan, floor, geom) -> int:
             continue
         if cy in breaks:
             plan.floor_tile((cx, cy), "broken_" + "abcd"[(cx % 2) * 2 + (cy % 2)])
+        elif cx == AXIS[0]:
+            plan.floor_tile((cx, cy), "carpet_edge_w")
+        elif cx == AXIS[-1]:
+            plan.floor_tile((cx, cy), "carpet_edge_e")
+        elif cy % 6 == 0:
+            plan.floor_tile((cx, cy), "carpet_medallion")
         else:
             plan.floor_tile((cx, cy), "carpet_v")
         painted += 1
@@ -85,6 +97,14 @@ def cross(plan, floor, geom) -> int:
         for cx in range(CROSS_SPAN[0], CROSS_SPAN[1] + 1):
             cell = (cx, cy)
             if cell not in floor or cell in geom or cx in AXIS:
+                continue
+            if cy == CROSS_BAND[0]:
+                plan.floor_tile(cell, "carpet_edge_n")
+                painted += 1
+                continue
+            if cy == CROSS_BAND[-1]:
+                plan.floor_tile(cell, "carpet_edge_s")
+                painted += 1
                 continue
             plan.floor_tile(cell, "carpet_h")
             painted += 1
@@ -152,29 +172,35 @@ def wear(plan, floor, geom) -> int:
 
 
 def walls(plan, faces) -> int:
-    """Gold frieze and moon windows on the arena wall; plain ashlar elsewhere."""
+    """A regular order instead of scattered gold.
+
+    The old pass painted one facade tile here and there with a hash roll, which is
+    exactly what reads as noise: gold dashes at unrelated heights, a window wherever
+    the arithmetic happened to land. A room this formal has an order, so: a moon
+    window every nineteen cells along the great wall, measured from the axis so the
+    room is symmetric about the throne; a gold frieze course one row above the dado
+    on every face; and nothing else. The renderer supplies the plinth, the cornice
+    and the cap.
+    """
     painted = 0
     rows = face_rows(faces)
+    face_set = set(faces)
     for cell in sorted(faces):
         x, y = cell
-        roll = ((x * 71 + y * 37) % 100) / 100.0
-        if y == 13:
-            if roll < 0.24:
+        above = (x, y - 1)
+        below_face = (x, y + 1) not in face_set
+        if below_face:
+            # the bottom course of a visible face: a frieze band with a window every
+            # ten cells either side of the axis, so the wall has a rhythm a viewer can
+            # count instead of a scatter they cannot
+            offset = abs(x - AXIS[1])
+            if offset % 19 == 6:
                 plan.wall_tile(cell, "wall_window")
-            elif roll < 0.46:
+            else:
                 plan.wall_tile(cell, "wall_gold")
             painted += 1
-        elif y in (23, 34):
-            plan.wall_tile(cell, "wall_gold")
-            painted += 1
-        elif y == 3:
-            if roll < 0.4:
-                plan.wall_tile(cell, "wall_gold")
-                painted += 1
-        else:
-            if roll < 0.18:
-                plan.wall_tile(cell, "wall_dado_a")
-                painted += 1
+        elif above in face_set and (x, y - 1) in face_set:
+            continue
     return painted
 
 
@@ -236,25 +262,42 @@ def throne_and_steps(p: Placer, rows) -> int:
 
 
 def arena(p: Placer) -> int:
-    """The court: columns on the four pillars, candelabra round the crossing."""
+    """The court: columns on the four pillars, candelabra round the crossing.
+
+    One candelabrum per corner of the crossing and no more: ten of them at a regular
+    spacing was the "repetitive candelabra" finding, and a room does not need a
+    matching lamp at every position to be lit. The three that were here duplicated
+    nothing useful, so they became furnishings a court actually has - a throne-side
+    bench, a censer, a pile of the household's dead.
+    """
     placed = 0
     for cell in ((38, 23), (61, 23), (30, 34), (69, 34)):
         placed += p.wall("column", cell, note="pillar column")
-    for cell in ((46, 28), (54, 28), (46, 38), (54, 38)):
+    for cell in ((46, 28), (54, 28)):
         placed += p.floor_prop("candelabrum", cell, light=candle(cell),
                                note="court candelabrum")
     for cell in ((41, 42), (59, 42), (36, 18), (64, 18)):
         placed += p.floor_prop("rubble", cell, note="fallen masonry")
     # the flanks of the court: the Castellan's household stood here
-    for cell in ((30, 22), (70, 22), (30, 42), (70, 42)):
+    for cell in ((30, 22), (70, 22)):
         placed += p.floor_prop("candelabrum", cell, light=candle(cell),
                                note="flank candelabrum")
+    for cell in ((30, 42), (70, 42)):
+        placed += p.floor_prop("statue", cell, note="household statue")
     for cell in ((33, 36), (67, 36), (33, 28), (67, 28)):
         placed += p.floor_prop("bench", cell, note="court bench")
     for cell in ((28, 45), (72, 45), (44, 16), (56, 16)):
         placed += p.floor_prop("rubble", cell, note="fallen masonry")
     for cell in ((47, 43), (53, 43)):
         placed += p.floor_prop("bench", cell, note="bench")
+    # The two piers either side of the dais were hollow boxes: their inside was
+    # filled with the rock material rather than with masonry, so each one read as a
+    # pit in the middle of a column. That is fixed in the renderer; what they lacked
+    # here was a reason to be looked at, so each gets a brazier at its foot.
+    for cell in ((42, 21), (58, 21)):
+        placed += p.floor_prop("candelabrum", cell,
+                               light=candle(cell, 0.6, 1.5, -40, "pier candle"),
+                               note="candelabrum beside the seat")
     return placed
 
 

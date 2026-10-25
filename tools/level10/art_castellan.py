@@ -91,41 +91,72 @@ def marble(seed: int, quad: int, *, tone: float = 1.0):
     return img
 
 
-def carpet(direction: str, seed: int, *, end: bool = False):
-    """The crimson runner: a gold border, a woven field, and worn pile."""
-    img = marble(seed, 0, tone=0.86)
-    if direction == "v":
-        rect(img, 2, 0, 12, T, CARPET)
-        vline(img, 2, 0, T, GOLD_DARK)
-        vline(img, 3, 0, T, GOLD)
-        vline(img, 12, 0, T, GOLD)
-        vline(img, 13, 0, T, GOLD_DARK)
-    else:
-        rect(img, 0, 2, T, 12, CARPET)
-        hline(img, 0, 2, T, GOLD_DARK)
-        hline(img, 0, 3, T, GOLD)
-        hline(img, 0, 12, T, GOLD)
-        hline(img, 0, 13, T, GOLD_DARK)
-    # woven diagonals in the field
+def carpet_field(seed: int):
+    """The runner's cloth, without a border.
+
+    Three cells wide is a runner; one cell wide is three thin rugs side by side.
+    The old tile drew a gold border on every cell, so the crimson way up the axis
+    read as a hatch of parallel stripes at native scale - the exact "hairline motif"
+    fault the audit names on this chapter. The border now belongs to the two edge
+    tiles only, and the field carries a calm woven pile: two shading bands per
+    course, a stitch every four pixels, and no diagonal hatching anywhere.
+    """
+    img = new(T, T)
     for y in range(T):
         for x in range(T):
-            inside = (2 <= x <= 13) if direction == "v" else (2 <= y <= 13)
-            if not inside:
-                continue
-            if direction == "v" and not (3 <= x <= 12):
-                continue
-            if direction == "h" and not (3 <= y <= 12):
-                continue
-            fx, fy = (x, y) if direction == "v" else (y, x)
-            if (fx + fy) % 6 == 0:
-                px(img, x, y, CARPET_LIGHT)
-            elif (fx + fy) % 7 == 0:
-                px(img, x, y, CARPET_DARK)
-    if end:
-        for x in range(T):
-            for y in range(T):
-                if 2 <= x <= 13:
-                    px(img, x, y, CARPET) if False else None
+            r = _h01(seed, x, y)
+            colour = CARPET if r < 0.62 else (CARPET_DARK if r < 0.86 else CARPET_LIGHT)
+            # pile: a vertical weave, one shade apart, never brighter than the field
+            if x % 4 == 0:
+                colour = mix(CARPET, CARPET_DARK, 0.35)
+            elif x % 4 == 2:
+                colour = mix(CARPET, CARPET_LIGHT, 0.22)
+            px(img, x, y, colour)
+    # a gold stitch across the field every two tiles, so the runner has length
+    for x in range(0, T, 4):
+        px(img, x, 3, mix(GOLD, CARPET, 0.45))
+        px(img, x + 2, 12, mix(GOLD, CARPET, 0.55))
+    return img
+
+
+def carpet_edge(side: str, seed: int):
+    """A runner's edge: cloth, a gold band, and the marble it is laid on."""
+    img = carpet_field(seed)
+    if side == "w":
+        vline(img, 0, 0, T, GOLD_DARK)
+        vline(img, 1, 0, T, GOLD)
+        vline(img, 2, 0, T, GOLD_DARK)
+        for y in range(1, T, 5):
+            px(img, 1, y, GOLD_LIGHT)
+    elif side == "e":
+        vline(img, T - 1, 0, T, GOLD_DARK)
+        vline(img, T - 2, 0, T, GOLD)
+        vline(img, T - 3, 0, T, GOLD_DARK)
+        for y in range(1, T, 5):
+            px(img, T - 2, y, GOLD_LIGHT)
+    elif side == "n":
+        hline(img, 0, 0, T, GOLD_DARK)
+        hline(img, 0, 1, T, GOLD)
+        hline(img, 0, 2, T, GOLD_DARK)
+        for x in range(1, T, 5):
+            px(img, x, 1, GOLD_LIGHT)
+    else:
+        hline(img, 0, T - 1, T, GOLD_DARK)
+        hline(img, 0, T - 2, T, GOLD)
+        hline(img, 0, T - 3, T, GOLD_DARK)
+        for x in range(1, T, 5):
+            px(img, x, T - 2, GOLD_LIGHT)
+    return img
+
+
+def carpet_medallion(seed: int):
+    """One gold lozenge on the runner, placed once every few tiles by the planner."""
+    img = carpet_field(seed)
+    for k in range(5):
+        hline(img, 8 - k, 5 + k, 1 + 2 * k, GOLD_DARK if k % 2 else GOLD)
+        hline(img, 8 - k, 9 - k, 1 + 2 * k, GOLD_DARK if k % 2 else GOLD)
+    px(img, 7, 7, GOLD_LIGHT)
+    px(img, 8, 7, GOLD_PALE if "GOLD_PALE" in globals() else GOLD_LIGHT)
     return img
 
 
@@ -233,119 +264,160 @@ def wall_window():
 
 # --- props -----------------------------------------------------------------
 def prop_throne(seed: int = 1):
-    """The Castellan's seat: a monument built out of five masses, not a chair.
+    """The Castellan's seat: a monumental chair on a stepped dais, flanked by wings.
 
-    The previous version tried to do this with fine detail - three carved panels, a
-    gold crest, and a pair of "canopy fins" that were twenty-two one-pixel columns
-    two pixels apart. At gameplay zoom those columns averaged into a moire wash
-    behind the seat, so the largest object in the hall read as a hatched rectangle
-    with a small chair in front of it. That is the same mistake as the chapter's
-    hairline floor motifs: a monument described by lines instead of weights.
+    Read at gameplay scale on the mosaic, the previous throne was a white box with a
+    red door in it: the dais, the wings and the back all sat within one value band, so
+    the hall's largest object had no silhouette and the seat - the one thing a throne
+    is - was the same brightness as the stone around it. It also stood alone on an
+    empty platform, which is the "hollow flanks" finding in the audit.
 
-    So the throne is built the way a monument is: a dais of three steps, two solid
-    winged buttresses that step down and outward, a back slab framed by pilasters
-    with a crimson field between them, a seat that projects past the back, arms with
-    gold finials, and a crown that rests on the crest rather than floating over it.
-    Every mass is at least three cells across, so each survives being four times
-    smaller than this file draws it.
+    This version is built the way a monument is read at 640 x 360:
+
+    * a **dais** three steps deep, darker than the seat, wide enough to stand in;
+    * a **back** whose outer frame is dark marble and whose field is crimson, so the
+      chair reads as a seat against a wall rather than as a lit block;
+    * **arms** that project forward past the cushion, with gold finials, because a
+      silhouette needs a break in it;
+    * two **wing walls** stepping down and outward from the back, each with a sunk
+      panel and a gold fillet, filling the platform's flanks;
+    * a **crown** resting on the lintel, and a **footstool** at the seat's foot.
     """
-    w, h = 176, 136
+    # Height is set by the crown: the crest sits 36 px above the back's lintel, and
+    # the first version drew it off the top of the canvas, so the hall's largest
+    # object was also clipped.
+    w, h = 208, 180
     img = new(w, h)
     cx = w // 2
-    base_y = h - 4          # the dais foot sits on the cell floor
+    base_y = h - 4
 
-    # --- dais: three steps, widest at the foot ------------------------------
-    steps = ((0, base_y - 8, 172), (8, base_y - 15, 156), (18, base_y - 21, 136))
-    for inset, top, width in steps:
+    # --- dais: three steps, each darker than the one above it ----------------
+    dais_dark = shade(MARBLE_DARK, 1.06)
+    for inset, top, width, tone in ((0, base_y - 10, 200, 0.92),
+                                    (10, base_y - 19, 180, 1.0),
+                                    (22, base_y - 27, 156, 1.10)):
         x0 = (w - width) // 2
-        block(img, x0, top, width, base_y - top, MARBLE_LIGHT, bevel=2)
-        hline(img, x0, top, width, MARBLE_PALE)
+        block(img, x0, top, width, base_y - top, shade(dais_dark, tone), bevel=2)
+        hline(img, x0, top, width, shade(MARBLE_LIGHT, 0.94))
         hline(img, x0, base_y - 1, width, JOINT)
-        # tread joints, so the steps read as cut stone and not as a plinth
-        for x in range(x0 + 18, x0 + width - 12, 26):
-            vline(img, x, top + 2, base_y - top - 3, shade(MARBLE_BASE, 0.88))
+        for x in range(x0 + 20, x0 + width - 14, 30):
+            vline(img, x, top + 2, base_y - top - 4, shade(MARBLE_DARK, 0.9))
+            px(img, x, top + 2, shade(MARBLE_LIGHT, 0.98))
 
-    seat_top = base_y - 21
-    # --- winged buttresses: three stepped masses each, sweeping outward ------
-    # They sit *outboard* of the back slab, so their stepped silhouette is visible
-    # against the hall instead of being swallowed by it. The first version buried
-    # them behind the back and all that survived was two thin gold strips.
+    seat_y = base_y - 27
+    # --- wing walls: three stepped masses each, swept outward and down ------
     for side in (-1, 1):
-        for reach, drop, thick in ((80, 20, 24), (68, 40, 20), (58, 58, 16)):
+        for reach, drop, thick in ((104, 14, 34), (92, 40, 30), (80, 64, 26)):
             x_edge = cx + side * reach
             x_in = x_edge - side * thick
             x0, x1 = sorted((x_in, x_edge))
-            top = seat_top - drop
-            block(img, x0, top, x1 - x0, base_y - 14 - top, MARBLE_BASE, bevel=2)
+            top = seat_y - drop
+            block(img, x0, top, x1 - x0, seat_y - 4 - top, shade(MARBLE_DARK, 1.14), bevel=2)
             hline(img, x0, top, x1 - x0, MARBLE_PALE)
-            # gold fillet down the outer edge: the only ornament on the mass
-            vline(img, x_edge - side, top + 2, base_y - 18 - top, GOLD_DARK)
-            vline(img, x_edge - side * 2, top + 2, base_y - 18 - top, GOLD)
-            # a carved panel sunk into the face of each mass
-            panel_w = (x1 - x0) - 6
-            if panel_w > 6:
-                rect(img, x0 + 3, top + 6, panel_w, base_y - 22 - top, shade(MARBLE_DARK, 1.15))
-                hline(img, x0 + 3, top + 6, panel_w, JOINT)
-                vline(img, x0 + 3, top + 6, base_y - 22 - top, MARBLE_DARK)
+            vline(img, x_edge - side, top + 2, seat_y - 8 - top, GOLD_DARK)
+            vline(img, x_edge - side * 2, top + 2, seat_y - 8 - top, GOLD)
+            panel_w = (x1 - x0) - 8
+            panel_h = seat_y - 16 - top
+            if panel_w > 6 and panel_h > 8:
+                # A sunk panel has to be a real value step or it is invisible at native
+                # scale: the first version differed from its surround by one shade and
+                # the wings read as plain dark steps. This is three stops down, with a
+                # bright inner moulding round it.
+                rect(img, x0 + 4, top + 6, panel_w, panel_h, shade(MARBLE_DARK, 0.62))
+                rect(img, x0 + 5, top + 7, panel_w - 2, panel_h - 2, shade(MARBLE_DARK, 0.72))
+                hline(img, x0 + 4, top + 6, panel_w, MARBLE_LIGHT)
+                vline(img, x0 + 4, top + 6, panel_h, MARBLE_LIGHT)
+                hline(img, x0 + 4, top + 6 + panel_h - 1, panel_w, JOINT)
+                vline(img, x0 + 4 + panel_w - 1, top + 6, panel_h, JOINT)
+                # a gold stud at the head of the panel, and a carved lozenge in it
+                px(img, cx + side * (reach - thick // 2), top + 9, GOLD)
+                mid_y = top + 6 + panel_h // 2
+                for k in range(4):
+                    hline(img, cx + side * (reach - thick // 2) - 3 + k, mid_y + k, 7 - 2 * k, GOLD_DARK)
+                    hline(img, cx + side * (reach - thick // 2) - 3 + k, mid_y - k, 7 - 2 * k, GOLD_DARK)
 
-    # --- back: two pilasters carrying a lintel, crimson field between -------
-    back_top = seat_top - 92
-    lintel_y = back_top
-    outer = 56
-    # The back stops above the seat. Running it down to the dais hid the cushion
-    # behind the same crimson as the field, and the seat - the thing a throne is -
-    # disappeared into its own back.
-    back_bottom = seat_top - 20
-    block(img, cx - outer, lintel_y + 10, outer * 2, back_bottom - lintel_y - 10, MARBLE_BASE, bevel=2)
-    # the crimson field, inset behind the pilasters
-    field_x, field_w = cx - 44, 88
-    rect(img, field_x, lintel_y + 16, field_w, back_bottom - lintel_y - 20, CARPET_DARK)
-    rect(img, field_x + 2, lintel_y + 18, field_w - 4, back_bottom - lintel_y - 24, CARPET)
-    # a gold spine and studs: enough to read as tooled leather at native scale
-    vline(img, cx, lintel_y + 20, back_bottom - lintel_y - 26, GOLD_DARK)
-    vline(img, cx + 1, lintel_y + 20, back_bottom - lintel_y - 26, GOLD)
-    for y in range(lintel_y + 24, back_bottom - 8, 12):
-        for side in (-1, 1):
-            px(img, cx + side * 24, y, GOLD)
-            px(img, cx + side * 24 + 1, y, GOLD_DARK)
-            px(img, cx + side * 24, y + 1, GOLD_DARK)
-    # pilasters either side of the field, with capitals and bases
+    # --- canopy spires above the back --------------------------------------
+    # A throne is read by its canopy before its cushion. Three spires over a moulded
+    # cornice give the seat a crown of silhouette against the dark wall behind it.
+    for dx, height in ((-58, 40), (0, 62), (58, 40)):
+        base = seat_y - 112
+        for i in range(height):
+            half = max(1, int((1.0 - i / float(height)) * 9) + 1)
+            for x in range(cx + dx - half, cx + dx + half):
+                colour = GOLD if (x - (cx + dx) + half) % 6 < 3 else GOLD_DARK
+                if i > height - 6:
+                    colour = GOLD_LIGHT
+                px(img, x, base - i, colour)
+        px(img, cx + dx, base - height - 1, GOLD_PALE)
+        px(img, cx + dx, base - height - 2, GOLD_LIGHT)
+        # a finial ball on each spire
+        for k in range(3):
+            px(img, cx + dx - 1 + k, base - height + 1, GOLD_LIGHT)
+    block(img, cx - 74, seat_y - 122, 149, 12, MARBLE_PALE, bevel=2)
+    hline(img, cx - 74, seat_y - 122, 149, GOLD_LIGHT)
+    hline(img, cx - 74, seat_y - 121, 149, GOLD)
+    hline(img, cx - 74, seat_y - 111, 149, JOINT)
+    for x in range(cx - 68, cx + 68, 11):
+        rect(img, x, seat_y - 119, 4, 6, shade(MARBLE_LIGHT, 0.9))
+
+    # --- the back: a dark frame with a crimson inset, not a crimson door ----
+    outer = 62
+    back_top = seat_y - 108
+    back_bottom = seat_y - 8
+    block(img, cx - outer, back_top, outer * 2, back_bottom - back_top,
+          shade(MARBLE_DARK, 1.2), bevel=2)
+    hline(img, cx - outer, back_top, outer * 2, MARBLE_PALE)
+    field_x, field_w = cx - 33, 67
+    field_top = back_top + 14
+    field_h = back_bottom - back_top - 34
+    # the inset is recessed: a lit lip on the top and left, shadow on the bottom
+    rect(img, field_x - 2, field_top - 2, field_w + 4, field_h + 4, GOLD_DARK)
+    rect(img, field_x, field_top, field_w, field_h, CARPET_DARK)
+    rect(img, field_x + 2, field_top + 2, field_w - 4, field_h - 4, CARPET)
+    hline(img, field_x, field_top, field_w, GOLD)
+    vline(img, field_x, field_top, field_h, GOLD)
+    hline(img, field_x, field_top + field_h - 1, field_w, shade(CARPET_DARK, 0.8))
+    # tooled chevrons and a central spine, readable at 3x
+    for step in range(0, 24, 4):
+        px(img, cx - 22 + step, field_top + 18 + step, GOLD)
+        px(img, cx + 22 - step, field_top + 18 + step, GOLD)
+    for step in range(0, 24, 4):
+        px(img, cx - 22 + step, field_top + field_h - 22 - step, GOLD)
+        px(img, cx + 22 - step, field_top + field_h - 22 - step, GOLD)
+    vline(img, cx, field_top + 4, field_h - 8, GOLD_DARK)
+    vline(img, cx + 1, field_top + 4, field_h - 8, GOLD)
+    # pilasters flanking the inset
     for side in (-1, 1):
-        x0 = cx + side * 44 - (11 if side > 0 else 0)
-        block(img, x0, lintel_y + 12, 11, back_bottom - lintel_y - 6, MARBLE_LIGHT, bevel=1)
-        block(img, x0 - 2, lintel_y + 12, 15, 7, MARBLE_PALE, bevel=1)
-        hline(img, x0 - 2, lintel_y + 12, 15, GOLD)
-    # lintel and crest
-    block(img, cx - outer - 4, lintel_y, (outer + 4) * 2, 12, MARBLE_PALE, bevel=2)
-    hline(img, cx - outer - 4, lintel_y, (outer + 4) * 2, GOLD_LIGHT)
-    hline(img, cx - outer - 4, lintel_y + 1, (outer + 4) * 2, GOLD)
-    # the crown rests on the lintel: a band, three points and a jewel
-    band_y = lintel_y - 9
-    block(img, cx - 20, band_y, 41, 10, GOLD, bevel=1)
-    hline(img, cx - 20, band_y, 41, GOLD_LIGHT)
-    for dx, tall in ((-16, 7), (-6, 11), (4, 11), (14, 7)):
-        for i in range(tall):
-            hline(img, cx + dx, band_y - 1 - i, 3, GOLD_LIGHT if i > tall - 3 else GOLD)
-        hline(img, cx + dx, band_y - tall - 1, 3, GOLD_PALE)
-    px(img, cx, band_y + 4, CARPET_LIGHT)
-    px(img, cx + 1, band_y + 4, CARPET_DARK)
+        x0 = cx + side * 48 - (14 if side > 0 else 0)
+        block(img, x0, back_top + 8, 14, back_bottom - back_top - 12, MARBLE_LIGHT, bevel=1)
+        block(img, x0 - 2, back_top + 8, 18, 9, MARBLE_PALE, bevel=1)
+        hline(img, x0 - 2, back_top + 8, 18, GOLD)
+        hline(img, x0 - 2, back_bottom - 5, 18, GOLD_DARK)
 
-    # --- seat, cushion and arms --------------------------------------------
-    block(img, cx - 44, seat_top - 12, 89, 12, MARBLE_LIGHT, bevel=2)
-    rect(img, cx - 40, seat_top - 17, 81, 7, CARPET)
-    hline(img, cx - 40, seat_top - 17, 81, CARPET_LIGHT)
-    hline(img, cx - 40, seat_top - 11, 81, CARPET_DARK)
-    for x in range(cx - 38, cx + 39, 6):
-        px(img, x, seat_top - 11, GOLD_DARK)
+    # --- the seat: a cushion proud of the frame, arms, legs, footstool ------
+    block(img, cx - 50, seat_y - 12, 101, 12, shade(MARBLE_LIGHT, 0.94), bevel=2)
+    hline(img, cx - 50, seat_y - 12, 101, MARBLE_PALE)
+    block(img, cx - 44, seat_y - 20, 89, 10, MARBLE_PALE, bevel=2)
+    rect(img, cx - 40, seat_y - 19, 81, 8, CARPET_LIGHT)
+    hline(img, cx - 40, seat_y - 19, 81, GOLD_LIGHT)
+    hline(img, cx - 40, seat_y - 12, 81, GOLD_DARK)
+    # seat legs down to the dais - a seat that floats is a shelf
     for side in (-1, 1):
-        x0 = cx + side * 44 - (9 if side > 0 else 0)
-        block(img, x0, seat_top - 26, 9, 15, MARBLE_PALE, bevel=1)
-        block(img, x0 - 2, seat_top - 30, 13, 6, MARBLE_LIGHT, bevel=1)
-        hline(img, x0 - 2, seat_top - 30, 13, GOLD_LIGHT)
-        px(img, x0 + 4, seat_top - 33, GOLD_PALE)
-
-    # a warm pool on the cushion, so the eye lands on the seat first
-    glow(img, cx, seat_top - 14, 40, 16, CANDLE, 46, steps=3)
+        lx = cx + side * 44
+        block(img, lx - 5, seat_y - 2, 11, 10, shade(MARBLE_DARK, 1.24), bevel=1)
+        hline(img, lx - 5, seat_y - 2, 11, MARBLE_LIGHT)
+    # arms: a horizontal rail on two posts, gold on top
+    for side in (-1, 1):
+        ax = cx + side * 56
+        block(img, ax - 3, seat_y - 30, 7, 22, MARBLE_LIGHT, bevel=1)
+        block(img, ax - 7, seat_y - 34, 15, 6, MARBLE_PALE, bevel=1)
+        hline(img, ax - 7, seat_y - 34, 15, GOLD_LIGHT)
+        px(img, ax, seat_y - 37, GOLD)
+    # footstool on the first tread
+    block(img, cx - 27, base_y - 16, 55, 6, MARBLE_LIGHT, bevel=1)
+    hline(img, cx - 27, base_y - 16, 55, MARBLE_PALE)
+    for x in range(cx - 23, cx + 23, 9):
+        px(img, x, base_y - 14, GOLD_DARK)
     return finish(img)
 
 
@@ -596,10 +668,16 @@ def build_tiles() -> list:
     tiles.append(("wall_cap", lambda: wall_cap_tile(shade(MARBLE_PALE, 0.9), MARBLE_LIGHT)))
     tiles.append(("wall_gold", lambda: wall_gold()))
     tiles.append(("wall_window", lambda: wall_window()))
+    # The runner is three cells wide and two deep in the crossing: a border per cell
+    # turns it into a hatch of stripes, so the tiles carry one edge each and the
+    # planner decides where the edges are.
+    tiles.append(("carpet_v", lambda: carpet_field(17)))
+    tiles.append(("carpet_h", lambda: carpet_field(19)))
+    for side in ("w", "e", "n", "s"):
+        tiles.append(("carpet_edge_" + side, lambda s=side: carpet_edge(s, 23)))
+    tiles.append(("carpet_medallion", lambda: carpet_medallion(29)))
     for direction in ("h", "v"):
-        tiles.append(("carpet_" + direction, lambda d=direction: carpet(d, 17)))
-    for direction in ("h", "v"):
-        tiles.append(("carpet_end_" + direction, lambda d=direction: carpet(d, 19, end=True)))
+        tiles.append(("carpet_end_" + direction, lambda d=direction: carpet_edge("n" if d == "v" else "w", 19)))
     for quad, name in enumerate(("aisle_a", "aisle_b", "aisle_c", "aisle_d")):
         tiles.append((name, lambda q=quad: aisle(23, q)))
     for quad, name in enumerate(("broken_a", "broken_b", "broken_c", "broken_d")):

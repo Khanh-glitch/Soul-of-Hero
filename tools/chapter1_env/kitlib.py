@@ -255,16 +255,30 @@ def flag_quadrant(seed: int, quad: int, base, joint, *, tone: float = 1.0,
                 px(img, x, y, shade(base, tone * (0.95 + r * 0.16)))
             elif r > 0.991:
                 px(img, x, y, shade(base, tone * 1.08))
-    if quad in (0, 2):
+    # The joint goes on the flag's outer edges and nowhere else.
+    #
+    # This used to draw a vertical joint on the east edge of the north-east quadrant
+    # and a horizontal one on the south edge of the south-west quadrant as well, so
+    # every 32 px flag was cut down its middle on both axes: the paving came out as
+    # a 16 px grid of light lines on a flat field, which is what makes a hall of
+    # these tiles read as graph paper at gameplay scale. Measured on the L10 mosaic,
+    # that grid was the single strongest structure in a room whose dominant material
+    # should be the floor's slabs. Only the NW and SE quadrants carry a joint now,
+    # and only on the two edges that belong to the outside of the flag.
+    if quad == 0:
         vline(img, 0, 0, T, joint)
         vline(img, 1, 0, T, shade(base, tone * 0.90))
-    else:
-        vline(img, T - 1, 0, T, shade(base, tone * 0.87))
-    if quad in (0, 1):
         hline(img, 0, 0, T, joint)
         hline(img, 0, 1, T, shade(base, tone * 0.90))
-    else:
+    elif quad == 3:
+        vline(img, T - 1, 0, T, shade(base, tone * 0.87))
         hline(img, 0, T - 1, T, shade(base, tone * 0.87))
+    else:
+        # the inside of the flag: a soft arris where the slab was worked, no line
+        if quad == 1:
+            vline(img, T - 1, 0, T, shade(base, tone * 0.94))
+        else:
+            hline(img, 0, T - 1, T, shade(base, tone * 0.94))
     if crack:
         x = 3 + int(_h01(seed, quad, 3) * 8)
         for i in range(2, T - 2):

@@ -336,6 +336,25 @@ func _build_bedrock(floor: Dictionary, geometry: Dictionary) -> void:
 		min_y = mini(min_y, cell.y)
 		max_x = maxi(max_x, cell.x)
 		max_y = maxi(max_y, cell.y)
+	# The fill covers the map's own rectangle, not the content plus a margin.
+	#
+	# Measuring the mosaics at 0edc5a1 found 35.7% of L10's frame at or below 20/255,
+	# and all of it was the outer thirds of the picture - the strip between the
+	# content's six-cell margin and the camera's own bounds. A six-cell margin is
+	# enough for a hall that fills its map; it is nothing for a level whose rooms are
+	# a cross in the middle of a hundred-cell document, and the result is a black
+	# flare at the left and right of every frame of that level. The keep is solid to
+	# the edge of its own map, so that is what gets drawn. This changes no cell the
+	# level defines, adds no collision, and cannot cover a room: the fill still skips
+	# every Backdrop and Geometry cell.
+	var level_data: Variant = get_parent().get("level_data")
+	if level_data is Dictionary:
+		var map_width := int((level_data as Dictionary).get("width", 0))
+		var map_height := int((level_data as Dictionary).get("height", 0))
+		if map_width > 0 and map_height > 0:
+			min_x = mini(min_x, 0)
+			max_x = maxi(max_x, map_width - 1)
+			max_y = maxi(max_y, map_height - 1)
 	# The fill has to reach the top of the visible world, not merely a fixed margin
 	# above the content: a level whose rooms start on row 3 would otherwise show
 	# three rows of background above its own rock.
@@ -435,13 +454,22 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 					(raw as Dictionary).get("frame", ""))
 
 	var faces: Array[Vector2i] = []
+	var face_set := {}
 	for cell: Vector2i in geometry:
 		if floor.has(Vector2i(cell.x, cell.y + 1)):
 			faces.append(cell)
+			face_set[cell] = true
 	faces.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
 		if a.y == b.y:
 			return a.x < b.x
 		return a.y < b.y)
+
+	# Vertical articulation. A wall band painted with one field tile for eighty cells
+	# is a plane, not architecture: it is what "no architectural detailing" means when
+	# you look at the frames. Two rules give it order without inventing anything -
+	# every end of a visible run is a pier, so openings and corners are framed, and a
+	# document may ask for a pier every N cells so a long wall has bays.
+	var pier_every := int(document.get("wall_pier_every", 0))
 
 	var painted := 0
 	for face: Vector2i in faces:
@@ -461,6 +489,11 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 					frame = "wall_dado_a" if posmod(face.x, 6) == 0 else "wall_field_a"
 				else:
 					frame = "wall_field_b"
+				if depth >= 1:
+					var run_end := not face_set.has(Vector2i(face.x - 1, row)) \
+						or not face_set.has(Vector2i(face.x + 1, row))
+					if run_end or (pier_every > 0 and posmod(face.x, pier_every) == 0):
+						frame = "wall_pier"
 			if _put(layer, cell, frame):
 				painted += 1
 		# 2. Extrude upward into rock only: never over walkable ground or over
@@ -499,12 +532,17 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 			if not floor.has(coping) and not geometry.has(coping):
 				_put(layer, coping, "wall_cap")
 	# 4. every solid cell the wall pass did not cover is the interior of the
-	#    masonry: paint it as unexcavated rock so no stock grey brick shows through
+	#    masonry, so it is painted as masonry - coursed stone, not rock. It used to
+	#    be bedrock, and that is the whole of the "hollow blocks flanking the throne"
+	#    finding: a four-by-four pillar with a two-by-two hollow is a wall ring, and
+	#    filling its inside with the darker rock material drew a pit in the middle of
+	#    a pier. Rock belongs to the void outside the rooms, which is a different
+	#    layer and a different material.
 	for cell: Vector2i in geometry:
 		if layer.get_cell_source_id(cell) != -1:
 			continue
-		var rock := "bedrock_a" if posmod(cell.x * 7 + cell.y * 13, 3) else "bedrock_b"
-		if _put(layer, cell, rock):
+		var course := "wall_field_b" if posmod(cell.x + cell.y, 2) else "wall_field_a"
+		if _put(layer, cell, course):
 			painted += 1
 	layer.update_internals()
 	stats["walls"] = painted

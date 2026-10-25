@@ -1981,14 +1981,14 @@
           34,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           34,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -2205,14 +2205,14 @@
           35,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           35,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -2429,14 +2429,14 @@
           36,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           36,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -2625,14 +2625,14 @@
           37,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           37,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -2821,14 +2821,14 @@
           38,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           38,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -3017,14 +3017,14 @@
           39,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           39,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -3311,14 +3311,14 @@
           40,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           40,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -3703,14 +3703,14 @@
           41,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           41,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -4179,14 +4179,14 @@
           42,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           42,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -4655,14 +4655,14 @@
           43,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           43,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -5131,14 +5131,14 @@
           44,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           44,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -5607,14 +5607,14 @@
           45,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           45,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -6083,14 +6083,14 @@
           46,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           46,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -6559,14 +6559,14 @@
           47,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           47,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -7035,14 +7035,14 @@
           48,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           48,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -7462,84 +7462,84 @@
           49,
           24
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           25
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           26
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           27
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           28
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           29
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           30
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           31
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           32
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           33
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           34
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           35
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
@@ -7560,77 +7560,77 @@
           49,
           38
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           39
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           40
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           41
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           42
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           43
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           44
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           45
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           46
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           47
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           48
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
@@ -7651,147 +7651,147 @@
           49,
           51
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           52
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           53
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           54
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           55
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           56
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           57
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           58
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           59
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           60
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           61
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           62
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           63
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           64
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           65
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           66
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           67
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           68
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           69
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           70
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
           49,
           71
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_w"
       },
       {
         "cell": [
@@ -7938,7 +7938,7 @@
           50,
           24
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -7980,7 +7980,7 @@
           50,
           30
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8064,7 +8064,7 @@
           50,
           42
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8106,7 +8106,7 @@
           50,
           48
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8148,7 +8148,7 @@
           50,
           54
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8190,7 +8190,7 @@
           50,
           60
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8232,7 +8232,7 @@
           50,
           66
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_medallion"
       },
       {
         "cell": [
@@ -8414,84 +8414,84 @@
           51,
           24
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           25
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           26
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           27
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           28
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           29
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           30
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           31
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           32
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           33
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           34
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           35
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
@@ -8512,77 +8512,77 @@
           51,
           38
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           39
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           40
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           41
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           42
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           43
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           44
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           45
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           46
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           47
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           48
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
@@ -8603,147 +8603,147 @@
           51,
           51
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           52
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           53
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           54
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           55
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           56
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           57
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           58
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           59
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           60
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           61
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           62
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           63
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           64
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           65
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           66
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           67
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           68
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           69
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           70
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
           51,
           71
         ],
-        "frame": "carpet_v"
+        "frame": "carpet_edge_e"
       },
       {
         "cell": [
@@ -8939,14 +8939,14 @@
           52,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           52,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -9415,14 +9415,14 @@
           53,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           53,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -9891,14 +9891,14 @@
           54,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           54,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -10367,14 +10367,14 @@
           55,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           55,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -10843,14 +10843,14 @@
           56,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           56,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -11319,14 +11319,14 @@
           57,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           57,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -11795,14 +11795,14 @@
           58,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           58,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -12173,14 +12173,14 @@
           59,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           59,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -12467,14 +12467,14 @@
           60,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           60,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -12761,14 +12761,14 @@
           61,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           61,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -12957,14 +12957,14 @@
           62,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           62,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -13181,14 +13181,14 @@
           63,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           63,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -13405,14 +13405,14 @@
           64,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           64,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -13629,14 +13629,14 @@
           65,
           31
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_n"
       },
       {
         "cell": [
           65,
           32
         ],
-        "frame": "carpet_h"
+        "frame": "carpet_edge_s"
       },
       {
         "cell": [
@@ -15574,7 +15574,28 @@
     "wall": [
       {
         "cell": [
+          25,
+          13
+        ],
+        "frame": "wall_window"
+      },
+      {
+        "cell": [
           26,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          27,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          28,
           13
         ],
         "frame": "wall_gold"
@@ -15605,7 +15626,7 @@
           30,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
@@ -15617,7 +15638,21 @@
       {
         "cell": [
           31,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          31,
           34
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          32,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -15637,6 +15672,20 @@
       },
       {
         "cell": [
+          34,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          35,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
           36,
           13
         ],
@@ -15647,7 +15696,7 @@
           37,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
@@ -15659,7 +15708,21 @@
       {
         "cell": [
           38,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          38,
           23
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          39,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -15675,7 +15738,7 @@
           40,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
@@ -15693,10 +15756,24 @@
       },
       {
         "cell": [
-          44,
+          42,
           3
         ],
         "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          43,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          44,
+          3
+        ],
+        "frame": "wall_window"
       },
       {
         "cell": [
@@ -15707,7 +15784,35 @@
       },
       {
         "cell": [
+          46,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          47,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
           48,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          49,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          50,
           3
         ],
         "frame": "wall_gold"
@@ -15728,7 +15833,35 @@
       },
       {
         "cell": [
+          53,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          54,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
           55,
+          3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          56,
+          3
+        ],
+        "frame": "wall_window"
+      },
+      {
+        "cell": [
+          57,
           3
         ],
         "frame": "wall_gold"
@@ -15737,6 +15870,13 @@
         "cell": [
           58,
           3
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          59,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -15766,12 +15906,19 @@
           61,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
           61,
           23
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          62,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -15784,7 +15931,28 @@
       },
       {
         "cell": [
+          63,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
           64,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          65,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          66,
           13
         ],
         "frame": "wall_gold"
@@ -15808,7 +15976,7 @@
           68,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
@@ -15820,7 +15988,21 @@
       {
         "cell": [
           69,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          69,
           34
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          70,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -15836,12 +16018,26 @@
           71,
           13
         ],
-        "frame": "wall_window"
+        "frame": "wall_gold"
       },
       {
         "cell": [
           71,
           34
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          72,
+          13
+        ],
+        "frame": "wall_gold"
+      },
+      {
+        "cell": [
+          73,
+          13
         ],
         "frame": "wall_gold"
       },
@@ -16232,62 +16428,6 @@
       }
     },
     {
-      "frame": "candelabrum",
-      "cell": [
-        46,
-        38
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "court candelabrum",
-      "light": {
-        "x": 744,
-        "y": 568,
-        "color": [
-          1.0,
-          0.84,
-          0.6
-        ],
-        "energy": 0.75,
-        "scale": 1.19,
-        "cell": [
-          46,
-          38
-        ],
-        "note": "candle"
-      }
-    },
-    {
-      "frame": "candelabrum",
-      "cell": [
-        54,
-        38
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "court candelabrum",
-      "light": {
-        "x": 872,
-        "y": 568,
-        "color": [
-          1.0,
-          0.84,
-          0.6
-        ],
-        "energy": 0.75,
-        "scale": 1.19,
-        "cell": [
-          54,
-          38
-        ],
-        "note": "candle"
-      }
-    },
-    {
       "frame": "rubble",
       "cell": [
         41,
@@ -16462,6 +16602,62 @@
       "low": false,
       "anchor": "base",
       "note": "bench"
+    },
+    {
+      "frame": "candelabrum",
+      "cell": [
+        42,
+        21
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "candelabrum beside the seat",
+      "light": {
+        "x": 680,
+        "y": 296,
+        "color": [
+          1.0,
+          0.84,
+          0.6
+        ],
+        "energy": 0.6,
+        "scale": 1.16,
+        "cell": [
+          42,
+          21
+        ],
+        "note": "pier candle"
+      }
+    },
+    {
+      "frame": "candelabrum",
+      "cell": [
+        58,
+        21
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "candelabrum beside the seat",
+      "light": {
+        "x": 936,
+        "y": 296,
+        "color": [
+          1.0,
+          0.84,
+          0.6
+        ],
+        "energy": 0.6,
+        "scale": 1.16,
+        "cell": [
+          58,
+          21
+        ],
+        "note": "pier candle"
+      }
     },
     {
       "frame": "bench",
@@ -16782,38 +16978,6 @@
       "note": "candle"
     },
     {
-      "x": 744,
-      "y": 568,
-      "color": [
-        1.0,
-        0.84,
-        0.6
-      ],
-      "energy": 0.75,
-      "scale": 1.19,
-      "cell": [
-        46,
-        38
-      ],
-      "note": "candle"
-    },
-    {
-      "x": 872,
-      "y": 568,
-      "color": [
-        1.0,
-        0.84,
-        0.6
-      ],
-      "energy": 0.75,
-      "scale": 1.19,
-      "cell": [
-        54,
-        38
-      ],
-      "note": "candle"
-    },
-    {
       "x": 488,
       "y": 312,
       "color": [
@@ -16844,6 +17008,38 @@
         22
       ],
       "note": "candle"
+    },
+    {
+      "x": 680,
+      "y": 296,
+      "color": [
+        1.0,
+        0.84,
+        0.6
+      ],
+      "energy": 0.6,
+      "scale": 1.16,
+      "cell": [
+        42,
+        21
+      ],
+      "note": "pier candle"
+    },
+    {
+      "x": 936,
+      "y": 296,
+      "color": [
+        1.0,
+        0.84,
+        0.6
+      ],
+      "energy": 0.6,
+      "scale": 1.16,
+      "cell": [
+        58,
+        21
+      ],
+      "note": "pier candle"
     },
     {
       "x": 760,
@@ -16992,7 +17188,7 @@
   ],
   "stats": {
     "floor_overrides": 2222,
-    "wall_overrides": 40,
+    "wall_overrides": 68,
     "props": 41,
     "lights": 23,
     "runner_cells": 156,
@@ -17000,7 +17196,7 @@
     "step_cells": 49,
     "portal_cells": 45,
     "wear_cells": 83,
-    "wall_dressing": 58,
+    "wall_dressing": 68,
     "lights_resized": 23,
     "lights_dimmed": 0
   }
