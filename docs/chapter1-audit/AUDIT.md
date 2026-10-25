@@ -60,19 +60,25 @@ view it disagrees with the pixels by tens of pixels. The first mosaics were buil
 from it and invented seams that looked exactly like map defects.
 
 **The stitch.** `tools/chapter1_audit/audit_sheets.py` puts the frames back where
-they were drawn, then checks that overlapping frames agree. Absolute brightness is
-not a fair test (torches flicker between frames), so it searches a small shift and
-reports the worst shift that produced the best agreement: `overlap_worst_shift_px`
-in each `L<nn>_mosaic.json`. A non-zero value there would mean the mosaic is lying;
-the alignment claim in this report only holds while it is 0.
+they were drawn, then checks that overlapping frames agree. Brightness is not a
+fair test — torches flicker between frames, and in a bright room the smallest
+difference can be found by sliding a frame *towards the light* — so both frames are
+reduced to edges first and compared over a small shift search. Each mosaic records
+`overlaps_checked`, `overlaps_at_zero_shift` and `overlap_worst_shift_px`.
+
+**Result on the published mosaics: 198 of 200 overlaps agree at zero shift.** Both
+exceptions are in L02 (2 of its 47 overlaps, worst 3 px) — the level with the most
+animated light. That is stated rather than smoothed over: it is the one place where
+a reader should check a detail crop against the level itself.
 
 **The scale.** The chapter renders to a 640×360 canvas which the window upscales
 by 2. A 1280×720 screenshot is therefore 640×360 *world* units. Frames are reduced
 by that integer factor with nearest-neighbour sampling, so **one mosaic pixel is
 one art pixel** — the resolution the tiles were drawn at.
 
-**Coverage** (`coverage_of_content`): 0.990–1.000 of the authored content rectangle
-in every level. The mosaics live in `docs/chapter1-audit/`, with the per-level
+**Coverage** (`coverage_of_content`): 0.990 (L1) to 1.000 of the authored content
+rectangle in every level; the L1 shortfall is the mosaic's outer margin, not a gap
+in the map. The mosaics live in `docs/chapter1-audit/`, with the per-level
 manifests in `manifests/` and the run logs in `logs/`.
 
 **Second, independent eye.** A model of both renderers
