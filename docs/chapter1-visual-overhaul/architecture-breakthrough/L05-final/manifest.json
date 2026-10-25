@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "2ca72e73cc6f984348742281594b6c6ebaa462ae",
+  "commit": "f1cacfc3a648e3b28375fb12681ed0675670b931",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -14,7 +14,7 @@
     "assets/environment/chapter1/crucible/crucible_props.png": "d59cd347a03e3e5a504fb2ee591906ca38884a02a65c8ce2049f811aaeef73b2",
     "tools/level5/art_crucible.py": "e0fa1565de626270b2b53a2a866ca7222f43918a5bd8ceca7836bc32995c0fd3",
     "tools/level5/architecture.py": "5cdd1d12916f3395fe552ecb4304b4475763f8a5803b5055ea71ca6d382387fe",
-    "game/levels/presentation/crucible_art.gd": "d0c44ac8a44251f65dcb599f91e9368057aa413cd76011917de7b875d97f43de",
+    "game/levels/presentation/crucible_art.gd": "c40936f23accaeb57cc717364721eb3323570f0774b962b2432e7eb4f3b17f19",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
     "tools/captures/crucible_capture.gd": "f8e83325bd9b342ba9cc503b0630c725547da4f739c93b49ac1b1bc0c417e434"
   },
@@ -27,13 +27,13 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1071,
+    "nodes": 1072,
     "draw_calls": 110,
-    "static_mb": 121.7,
+    "static_mb": 121.9,
     "errors": [],
     "fight": {
-      "knight_hp_before": "764/1100",
-      "knight_hp_after": "764/1100",
+      "knight_hp_before": "740/1100",
+      "knight_hp_after": "740/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -51,9 +51,9 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 871,
+    "nodes": 870,
     "draw_calls": 103,
-    "static_mb": 114.0,
+    "static_mb": 114.1,
     "errors": [],
     "fight": {
       "knight_hp_before": "932/1100",
@@ -153,7 +153,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=764/1100 boss_hp=6337"
+      "extra": "knight_hp=740/1100 boss_hp=6337"
     },
     "overview_f1": {
       "tag": "after",
