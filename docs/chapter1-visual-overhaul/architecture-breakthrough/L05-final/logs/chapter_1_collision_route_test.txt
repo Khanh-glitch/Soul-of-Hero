@@ -4,16 +4,39 @@ CHAPTER 1 COLLISION ROUTE: slot=1 safe=3552/3552 targets=12
 CHAPTER 1 COLLISION ROUTE: slot=2 safe=7320/7320 targets=13
 CHAPTER 1 COLLISION ROUTE: slot=3 safe=4604/4604 targets=14
 CHAPTER 1 COLLISION ROUTE: slot=4 safe=4172/4172 targets=13
-AUTHORED ART: kit=crucible floor_detail=5851 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
-CRUCIBLE ART: floor_detail=5851 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=5 safe=4575/4575 targets=13
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=6 safe=4786/4786 targets=12
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=7 safe=5239/5239 targets=5
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 safe=1759/3367 targets=5
+AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
+CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=9 safe=2724/2724 targets=5
+AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
+CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=10 safe=2144/2144 targets=2
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=reaper reachable=2566
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+AUTHORED PROPS: missing=0 clamped=0
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=vampire reachable=2566
 CHAPTER 1 COLLISION ROUTE TEST PASSED - 161 checks across ten live maps
