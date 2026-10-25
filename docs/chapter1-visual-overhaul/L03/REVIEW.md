@@ -9,7 +9,7 @@
 ## What the native frames show
 
 - Derived facade cells: 1318
-- Landmark lights: 13
+- Landmark lights: 14
 - Authored entities preserved: 77
 
 ### Improved
