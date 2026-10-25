@@ -293,10 +293,11 @@ def floor_slab(seed: int, tone: float = 1.0, cracks: int = 0,
 def floor_aisle(seed: int, variant: str = "h") -> Image.Image:
     """Processional paving: the same stone, dressed finer and cut to a band.
 
-    The band is legible because its edges are a recessed cut and a single brass
-    stud row — not because it is painted a bright orange. The rejected version
-    drew two brass stripes across the whole tile and turned the nave into a
-    hazard-striped corridor.
+    The band has to read as a built edge, not as a painted stripe. An earlier
+    version studded the edge with brass every eight pixels and drew two full
+    width lines, which tiled into something that looked like a ladder lying on
+    the floor. This version is just finer, paler stone with one recessed shadow
+    line on each edge and a single brass witness mark where the courses meet.
     """
     rng = random.Random(seed)
     body = shade(BASALT_L, rng.choice([0.99, 1.02]))
@@ -304,25 +305,17 @@ def floor_aisle(seed: int, variant: str = "h") -> Image.Image:
     rect(img, 0, 0, T, T, body)
     horizontal = variant in ("h", "end")
     if horizontal:
-        hline(img, 0, 0, T, shade(BASALT_M, 0.86))
-        hline(img, 0, 1, T, shade(BASALT_M, 1.0))
-        hline(img, 0, 14, T, shade(BASALT_M, 1.02))
-        hline(img, 0, 15, T, shade(BASALT_M, 0.86))
-        for x in range(0, T, 8):
-            px(img, x, 1, BRASS_M)
-            px(img, x + 1, 14, BRASS_D)
-            vline(img, x, 2, 12, shade(body, 0.97))
+        hline(img, 0, 0, T, shade(body, 0.86))
+        hline(img, 0, 1, T, shade(body, 1.05))
+        hline(img, 0, 15, T, shade(body, 0.88))
     else:
-        vline(img, 0, 0, T, shade(BASALT_M, 0.86))
-        vline(img, 1, 0, T, shade(BASALT_M, 1.0))
-        vline(img, 14, 0, T, shade(BASALT_M, 1.02))
-        vline(img, 15, 0, T, shade(BASALT_M, 0.86))
-        for y in range(0, T, 8):
-            px(img, 1, y, BRASS_M)
-            px(img, 14, y + 1, BRASS_D)
-            hline(img, 2, y, 12, shade(body, 0.97))
-    for _ in range(10):
+        vline(img, 0, 0, T, shade(body, 0.86))
+        vline(img, 1, 0, T, shade(body, 1.05))
+        vline(img, 15, 0, T, shade(body, 0.88))
+    for _ in range(12):
         px(img, rng.randint(2, 13), rng.randint(2, 13), shade(body, rng.choice([0.97, 1.04])))
+    px(img, 7, 7, BRASS_D)
+    px(img, 8, 8, BRASS_D)
     return img
 
 
