@@ -131,6 +131,245 @@ def iron_band(direction: str, seed: int):
     return img
 
 
+# --- the avenue, the dais ring and the piers ---------------------------------
+# The gate hall is 82 x 18 cells of one floor material, which is why it reads as a
+# car park with furniture on it. Three new families give the floor a plan: a dressed
+# processional avenue in paler stone, a carved dais ring that each seal shrine stands
+# in, and free-standing piers so the hall has a nave and aisles instead of one
+# undivided field. All of it is architecture cut into the ground, not decoration
+# dropped on top of it.
+DRESSED = mix(STONE_BASE, (156, 146, 152), 0.62)
+DRESSED_LIGHT = mix(DRESSED, (198, 190, 196), 0.45)
+
+
+def dressed_flag(seed: int, quad: int):
+    """The avenue's paving: longer slabs, a finer joint, a polished face.
+
+    Deliberately a stop and a half lighter and much less red than the hall floor:
+    the avenue has to read as a different material at 640 x 360 or it is just more
+    of the same grey, and the whole point is that the eye can follow it from the
+    spawn to the gate without a marker.
+    """
+    img = new(T, T)
+    base = DRESSED
+    rect(img, 0, 0, T, T, base)
+    for y in range(T):
+        for x in range(T):
+            r = _h01(seed, quad, x, y)
+            if r < 0.30:
+                px(img, x, y, shade(base, 0.96 + r * 0.12))
+            elif r > 0.988:
+                px(img, x, y, DRESSED_LIGHT)
+    # one joint per 32 px module, on the outer edges only
+    if quad in (0, 2):
+        vline(img, 0, 0, T, shade(base, 0.72))
+        vline(img, 1, 0, T, DRESSED_LIGHT)
+    else:
+        vline(img, T - 1, 0, T, shade(base, 0.80))
+    if quad in (0, 1):
+        hline(img, 0, 0, T, shade(base, 0.72))
+        hline(img, 0, 1, T, DRESSED_LIGHT)
+    else:
+        hline(img, 0, T - 1, T, shade(base, 0.80))
+    # a chiselled diagonal sheen: dressed stone is worked flat, not left rough
+    if (quad + seed) % 2 == 0:
+        for i in range(3 + int(_h01(seed, quad, 5) * 5)):
+            px(img, 4 + i, 11 - i, DRESSED_LIGHT)
+    return img
+
+
+def rail_decal(side: str):
+    """The iron rail that terminates the avenue: a dressed course with a rail set in it.
+
+    Drawn on a dressed base, not as a floating three-pixel bar: a rail alone on the
+    hall's dark paving read as a black gutter beside a bright platform, which is the
+    opposite of what a chancel line is for.
+    """
+    img = dressed_flag(107, 0 if side == "w" else 3)
+    x = 3 if side == "w" else T - 8
+    rect(img, x, 0, 5, T, IRON)
+    vline(img, x, 0, T, IRON_LIGHT)
+    vline(img, x + 4, 0, T, IRON_DARK)
+    for y in (2, 8, 14):
+        px(img, x + 2, y, IRON_LIGHT)
+        px(img, x + 2, y + 1, IRON_DARK)
+    # the dressed course behind the rail steps down towards the hall
+    edge = x - 1 if side == "w" else x + 5
+    vline(img, edge, 0, T, shade(DRESSED, 0.72))
+    return img
+
+
+def chancel_step(part: str):
+    """The step up into the processional way: a nosing, a shadow, a course of stone.
+
+    The first version of this was a hatched chevron band, which at gameplay zoom read
+    as a zebra crossing - a graphic pattern on the floor of a gatehouse. A threshold
+    is architecture: the paving changes level here, so it is drawn as a lit nosing, a
+    shadow beneath it, and dressed stone behind.
+    """
+    img = new(T, T)
+    rect(img, 0, 0, T, T, DRESSED)
+    for y in range(T):
+        for x in range(T):
+            if _h01(131, x, y) < 0.25:
+                px(img, x, y, shade(DRESSED, 0.96))
+    if part == "nosing":
+        hline(img, 0, 0, T, DRESSED_LIGHT)
+        hline(img, 0, 1, T, DRESSED_LIGHT)
+        hline(img, 0, 2, T, shade(DRESSED, 0.78))
+        hline(img, 0, 3, T, shade(DRESSED, 0.62))
+        rect(img, 0, 4, T, T - 4, DRESSED)
+        # carved dentils along the nosing: small, regular, architectural
+        for x in range(2, T - 2, 5):
+            rect(img, x, 1, 2, 2, shade(DRESSED, 0.86))
+    else:
+        hline(img, 0, T - 4, T, shade(DRESSED, 0.66))
+        hline(img, 0, T - 3, T, shade(DRESSED, 0.80))
+        hline(img, 0, T - 1, T, shade(DRESSED, 0.58))
+        rect(img, 0, 0, T, T - 4, DRESSED)
+        for x in range(0, T, 8):
+            vline(img, x, 0, T - 4, shade(DRESSED, 0.86))
+    return img
+
+
+def medallion_tiles(radius: int = 4):
+    """A carved stone dais ring, drawn as floor decals under the seal shrines.
+
+    The shrines stand on a 5 x 5 iron ring that is already part of the kit; this is
+    the platform that ring is set into. Concentric courses: an inner bevel, a riveted
+    iron hoop, a broad dressed band with four carved diamonds and radial grooves,
+    then a dark setting joint and an outer rim. Drawn per pixel from the centre so
+    the bands stay true circles across 9 x 9 cells, and transparent everywhere
+    outside the ring so it decorates the paving instead of replacing it.
+    """
+    out = {}
+    half = T * radius + T // 2
+    inner = 38.0
+    for dy in range(-radius, radius + 1):
+        for dx in range(-radius, radius + 1):
+            img = new(T, T)
+            x0 = (radius + dx) * T
+            y0 = (radius + dy) * T
+            for y in range(T):
+                for x in range(T):
+                    ddx = x0 + x + 0.5 - half
+                    ddy = y0 + y + 0.5 - half
+                    r = math.hypot(ddx, ddy)
+                    if r < inner or r > 66.0:
+                        continue
+                    ang = math.atan2(ddy, ddx)
+                    grain = _h01(71, dx, dy, x, y)
+                    if r < inner + 3.0:
+                        colour = mix(DRESSED_LIGHT, IRON_DARK, 0.35)
+                    elif r < 44.0:
+                        colour = IRON if grain < 0.9 else IRON_LIGHT
+                        # rivets, every 45 degrees round the hoop
+                        spoke = (ang + math.pi) / (2.0 * math.pi) * 8.0
+                        if abs(spoke - round(spoke)) < 0.055:
+                            colour = IRON_LIGHT if r < 41.0 else IRON_DARK
+                    elif r < 58.0:
+                        colour = DRESSED if grain < 0.94 else DRESSED_LIGHT
+                        # carved radial grooves
+                        groove = (ang + math.pi) / (2.0 * math.pi) * 16.0
+                        if abs(groove - round(groove)) < 0.035:
+                            colour = mix(DRESSED, JOINT, 0.45)
+                        # four diamonds on the cardinal points
+                        spoke = (ang + math.pi) / (2.0 * math.pi) * 4.0
+                        off = abs(spoke - round(spoke)) * (2.0 * math.pi / 4.0) * r
+                        if 47.0 < r < 55.0 and off + abs(r - 51.0) * 1.35 < 4.6:
+                            colour = DRESSED_LIGHT if grain < 0.80 else mix(DRESSED_LIGHT, JOINT, 0.30)
+                    elif r < 61.0:
+                        colour = mix(JOINT, DRESSED, 0.25)
+                    else:
+                        colour = mix(DRESSED, JOINT, 0.55) if grain < 0.85 else mix(DRESSED, JOINT, 0.30)
+                    px(img, x, y, colour)
+            out["medal_%d_%d" % (dx, dy)] = img
+    return out
+
+
+def prop_pier():
+    """A free-standing pier: the hall's nave needs columns, not just banners.
+
+    Wall props can only hang on wall cells, so the great hall had no vertical
+    element anywhere inside it - eighteen cells of flat floor with furniture
+    scattered on it. This is a four-faced pier: a stepped plinth, a chamfered
+    shaft with fluting and visible stone courses, an iron collar with a hasp, a
+    moulded capital and a carved abacus. 44 x 126, designed to stand on a floor
+    cell and read as architecture at gameplay zoom.
+    """
+    w, h = 44, 126
+    img = new(w, h)
+    base_y = h - 3
+    shaft_top = 26
+    left, right = 9, w - 9
+
+    def stone(u: float, grain: float) -> tuple:
+        """The shaft's cylindrical shading, sampled by the horizontal position."""
+        if u < 0.14:
+            return shade(STONE_LIGHT, 1.05 + grain * 0.06)
+        if u < 0.34:
+            return STONE_LIGHT if grain < 0.5 else shade(STONE_LIGHT, 1.04)
+        if u < 0.68:
+            return STONE_BASE if grain < 0.5 else shade(STONE_BASE, 1.05)
+        if u < 0.88:
+            return shade(STONE_BASE, 0.84)
+        return STONE_DARK
+
+    # plinth: three stepped mouldings, each wider than the one above it
+    block(img, 1, base_y - 9, w - 2, 9, shade(STONE_BASE, 0.88), bevel=2)
+    hline(img, 1, base_y - 10, w - 2, STONE_PALE)
+    hline(img, 2, base_y - 1, w - 4, JOINT)
+    block(img, 4, base_y - 15, w - 8, 6, STONE_BASE, bevel=1)
+    hline(img, 4, base_y - 16, w - 8, shade(STONE_LIGHT, 1.05))
+    block(img, 7, base_y - 20, w - 14, 5, shade(STONE_LIGHT, 0.94), bevel=1)
+    hline(img, 7, base_y - 21, w - 14, STONE_PALE)
+
+    # shaft: four faces, fluting, and a stone course every twelve pixels
+    for y in range(shaft_top, base_y - 20):
+        for x in range(left, right):
+            u = (x - left) / float(right - left - 1)
+            grain = _h01(97, x, y)
+            colour = stone(u, grain)
+            if x == left or x == right - 1:
+                colour = JOINT
+            px(img, x, y, colour)
+        # courses: a joint line and its lit bed, so the column is built, not extruded
+        if (y - shaft_top) % 12 == 11:
+            hline(img, left + 1, y, right - left - 2, shade(STONE_DARK, 0.86))
+        elif (y - shaft_top) % 12 == 0 and y > shaft_top:
+            hline(img, left + 1, y, right - left - 2, shade(STONE_LIGHT, 1.10))
+        # flutes: a dark groove with a lit edge, offset so they do not read as bars
+        for gx in (14, 22, 30):
+            px(img, gx, y, shade(STONE_BASE, 0.78))
+            px(img, gx + 1, y, shade(STONE_LIGHT, 1.12))
+
+    # iron collar with a hasp and rivets
+    collar = shaft_top + 34
+    rect(img, 6, collar, w - 12, 8, IRON)
+    hline(img, 6, collar, w - 12, IRON_LIGHT)
+    hline(img, 6, collar + 7, w - 12, IRON_DARK)
+    for x in range(9, w - 9, 5):
+        px(img, x, collar + 3, IRON_LIGHT)
+        px(img, x, collar + 4, IRON_DARK)
+    rect(img, w // 2 - 3, collar + 2, 6, 4, shade(IRON, 1.25))
+    px(img, w // 2, collar + 3, IRON_LIGHT)
+
+    # capital: a moulded neck, a leaf course, then a projecting abacus
+    block(img, 5, shaft_top - 9, w - 10, 9, STONE_LIGHT, bevel=2)
+    hline(img, 5, shaft_top - 10, w - 10, STONE_PALE)
+    for x in range(8, w - 8, 4):
+        rect(img, x, shaft_top - 6, 2, 5, shade(STONE_LIGHT, 0.86))
+        px(img, x, shaft_top - 7, STONE_PALE)
+    block(img, 2, shaft_top - 17, w - 4, 8, shade(STONE_PALE, 0.97), bevel=1)
+    hline(img, 2, shaft_top - 18, w - 4, STONE_PALE)
+    for x in range(4, w - 4, 6):
+        rect(img, x, shaft_top - 15, 3, 3, shade(STONE_LIGHT, 0.80))
+    block(img, 0, shaft_top - 24, w, 7, shade(STONE_LIGHT, 1.02), bevel=1)
+    hline(img, 0, shaft_top - 25, w, STONE_PALE)
+    hline(img, 1, shaft_top - 18, w - 2, JOINT)
+    return finish(img)
+
+
 def blood_floor(seed: int, quad: int):
     """Paving over which something died, and nobody washed it.
 
@@ -890,6 +1129,14 @@ def build_tiles() -> list:
     tiles.append(("wall_banner", lambda: wall_banner()))
     for direction in ("h", "v"):
         tiles.append(("iron_" + direction, lambda d=direction: iron_band(d, 61)))
+    for quad, name in enumerate(("aisle_a", "aisle_b", "aisle_c", "aisle_d")):
+        tiles.append((name, lambda q=quad: dressed_flag(83, q)))
+    for side in ("w", "e"):
+        tiles.append(("rail_" + side, lambda s=side: rail_decal(s)))
+    for part in ("nosing", "tread"):
+        tiles.append(("step_" + part, lambda p=part: chancel_step(p)))
+    for name, image in medallion_tiles(4).items():
+        tiles.append((name, lambda i=image: i.copy()))
     for tag, opening in (("ring", None), ("ringE", "E"), ("ringW", "W")):
         for name, image in ring_tiles(2, opening, tag).items():
             tiles.append((name, lambda i=image: i.copy()))
@@ -916,6 +1163,7 @@ def build_props() -> list:
         ("altar", lambda: prop_altar()),
         ("rubble", lambda: prop_rubble()),
         ("bench", lambda: prop_bench()),
+        ("pier", lambda: prop_pier()),
     ]
 
 

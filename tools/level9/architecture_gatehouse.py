@@ -202,6 +202,96 @@ def seal_glow(cell):
             "cell": [cell[0], cell[1]], "note": "seal ring glow"}
 
 
+# --- the great hall ---------------------------------------------------------
+# The hall is eighty-four cells wide and eighteen deep, and until now it was one
+# floor material with furniture scattered on it: no axis, no bays, no edge, nothing
+# for the eye to follow. That is why the room read as a car park in the audit. The
+# four passes below give it a plan.
+HALL = (36, 53)                 # rows of the great hall
+AVENUE_X = (43, 52)             # the dressed processional way
+RAIL_X = (42, 53)               # the iron rails that bound it
+# Each seal shrine stands in a carved dais ring: concentric stone courses with a
+# riveted iron hoop and four carved diamonds, nine cells across.
+MEDALLIONS = ((18, 45), (78, 45), (48, 32), (48, 11), (48, 20))
+# Free-standing piers turn the hall into a nave with aisles. They flank the avenue
+# five cells out, three bays deep, and they are the only vertical mass inside the
+# room - the one thing a great hall of this size cannot do without.
+PIERS = tuple((x, y) for x in (38, 57) for y in (38, 44, 50))
+
+
+def avenue(plan, floor, geom) -> int:
+    """The processional way: dressed stone down the middle, rails, thresholds.
+
+    The iron band that was already here ran the length of the building on its axis
+    as two cells of riveted iron. On its own that is a stripe, not an avenue, and it
+    was the only floor material in a room eighty-four cells wide. The avenue is the
+    band plus eight cells of paler dressed paving either side of it, two iron rails
+    terminating the courses, and a carved threshold at each end of the hall. The
+    band stays where it was: it is the spine the level is navigated by.
+    """
+    painted = 0
+    for y in range(HALL[0], HALL[1] + 1):
+        for x in range(AVENUE_X[0], AVENUE_X[1] + 1):
+            cell = (x, y)
+            if cell not in floor or cell in geom:
+                continue
+            # 47 and 48 are the iron spine the level is navigated by; the avenue is
+            # dressed stone either side of it, not a replacement for it.
+            if x in (47, 48):
+                continue
+            quad = (x % 2) * 2 + (y % 2)
+            plan.floor_tile(cell, "aisle_" + "abcd"[quad])
+            painted += 1
+    for x in RAIL_X:
+        for y in range(HALL[0], HALL[1] + 1):
+            cell = (x, y)
+            if cell not in floor or cell in geom:
+                continue
+            plan.floor_tile(cell, "rail_e" if x == RAIL_X[0] else "rail_w")
+            painted += 1
+    # a two-cell chancel step at each end of the hall, wider than the avenue by a
+    # cell so it reads as the avenue being set into the hall rather than drawn on it
+    for row, part in ((HALL[0], "nosing"), (HALL[0] + 1, "tread"),
+                      (HALL[1] - 1, "tread"), (HALL[1], "nosing")):
+        for x in range(AVENUE_X[0] - 1, AVENUE_X[1] + 2):
+            cell = (x, row)
+            if cell not in floor or cell in geom:
+                continue
+            plan.floor_tile(cell, "step_" + part)
+            painted += 1
+    return painted
+
+
+def medallions(plan, floor, geom) -> int:
+    """Carve a dais ring into the paving under every station and the altar.
+
+    The shrines already stood in a 5 x 5 iron seal ring, which read as a marking on
+    the floor rather than as a platform the shrine is built on. This is the platform:
+    an inner bevel, a riveted hoop, a broad dressed band with four carved diamonds
+    and radial grooves, a setting joint and an outer rim, nine cells across. Painted
+    before the seal rings so the mechanism still sits inside its own dais.
+    """
+    painted = 0
+    radius = 4
+    for centre in MEDALLIONS:
+        for dy in range(-radius, radius + 1):
+            for dx in range(-radius, radius + 1):
+                cell = (centre[0] + dx, centre[1] + dy)
+                if cell not in floor or cell in geom:
+                    continue
+                plan.floor_tile(cell, "medal_%d_%d" % (dx, dy))
+                painted += 1
+    return painted
+
+
+def colonnade(p: Placer) -> int:
+    """Six piers, three bays: the hall gets a nave and two aisles."""
+    placed = 0
+    for cell in PIERS:
+        placed += p.floor_prop("pier", cell, note="nave pier")
+    return placed
+
+
 def gate_assembly(p: Placer, faces) -> int:
     """The monumental gate: towers, arch, portcullis teeth, banners either side."""
     placed = 0
@@ -352,7 +442,9 @@ def build():
 
     plan = Plan()
     floor_base(plan, floor, geom)
+    painted_avenue = avenue(plan, floor, geom)
     painted_aisle = aisle(plan, floor, geom)
+    painted_medallions = medallions(plan, floor, geom)
     painted_rings = rings(plan, floor, geom)
     painted_blood = blood(plan, floor, geom)
     painted_walls = walls(plan, faces)
@@ -366,6 +458,7 @@ def build():
     placed += north_station(p)
     placed += nave(p)
     placed += south(p, {})
+    placed += colonnade(p)
 
     # fill light: the gatehouse is lit by fire, so the ember lights do the work
     for cell in ((48, 43), (48, 57), (20, 45), (76, 45), (48, 25)):
@@ -402,6 +495,9 @@ def build():
             "props": len(plan.props),
             "lights": len(plan.lights),
             "aisle_cells": painted_aisle,
+            "avenue_cells": painted_avenue,
+            "medallion_cells": painted_medallions,
+            "piers": len(PIERS),
             "ring_cells": painted_rings,
             "blood_cells": painted_blood,
             "wall_dressing": painted_walls,

@@ -1046,35 +1046,35 @@
           14,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-4"
       },
       {
         "cell": [
           14,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-3"
       },
       {
         "cell": [
           14,
           47
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_2"
       },
       {
         "cell": [
           14,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_3"
       },
       {
         "cell": [
           14,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_4"
       },
       {
         "cell": [
@@ -1144,35 +1144,35 @@
           15,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-4"
       },
       {
         "cell": [
           15,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-3"
       },
       {
         "cell": [
           15,
           47
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_2"
       },
       {
         "cell": [
           15,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_3"
       },
       {
         "cell": [
           15,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_4"
       },
       {
         "cell": [
@@ -1242,14 +1242,14 @@
           16,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_-4"
       },
       {
         "cell": [
           16,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_-3"
       },
       {
         "cell": [
@@ -1270,7 +1270,7 @@
           16,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_4"
       },
       {
         "cell": [
@@ -1340,14 +1340,14 @@
           17,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_-1_-4"
       },
       {
         "cell": [
           17,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_-1_-3"
       },
       {
         "cell": [
@@ -1389,14 +1389,14 @@
           17,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_-1_3"
       },
       {
         "cell": [
           17,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_-1_4"
       },
       {
         "cell": [
@@ -1466,14 +1466,14 @@
           18,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_0_-4"
       },
       {
         "cell": [
           18,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_0_-3"
       },
       {
         "cell": [
@@ -1515,14 +1515,14 @@
           18,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_0_3"
       },
       {
         "cell": [
           18,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_0_4"
       },
       {
         "cell": [
@@ -1592,7 +1592,7 @@
           19,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_-4"
       },
       {
         "cell": [
@@ -1641,14 +1641,14 @@
           19,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_3"
       },
       {
         "cell": [
           19,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_4"
       },
       {
         "cell": [
@@ -1718,14 +1718,14 @@
           20,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_-4"
       },
       {
         "cell": [
           20,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-3"
       },
       {
         "cell": [
@@ -1767,14 +1767,14 @@
           20,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_3"
       },
       {
         "cell": [
           20,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_4"
       },
       {
         "cell": [
@@ -1844,63 +1844,63 @@
           21,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-4"
       },
       {
         "cell": [
           21,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_-3"
       },
       {
         "cell": [
           21,
           43
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-2"
       },
       {
         "cell": [
           21,
           44
         ],
-        "frame": "iron_h"
+        "frame": "medal_3_-1"
       },
       {
         "cell": [
           21,
           45
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_0"
       },
       {
         "cell": [
           21,
           46
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_1"
       },
       {
         "cell": [
           21,
           47
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_2"
       },
       {
         "cell": [
           21,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_3"
       },
       {
         "cell": [
           21,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_4"
       },
       {
         "cell": [
@@ -1970,63 +1970,63 @@
           22,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-4"
       },
       {
         "cell": [
           22,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-3"
       },
       {
         "cell": [
           22,
           43
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-2"
       },
       {
         "cell": [
           22,
           44
         ],
-        "frame": "iron_h"
+        "frame": "medal_4_-1"
       },
       {
         "cell": [
           22,
           45
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_0"
       },
       {
         "cell": [
           22,
           46
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_1"
       },
       {
         "cell": [
           22,
           47
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_2"
       },
       {
         "cell": [
           22,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_3"
       },
       {
         "cell": [
           22,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_4"
       },
       {
         "cell": [
@@ -7234,126 +7234,126 @@
           42,
           36
         ],
-        "frame": "floor_a"
+        "frame": "step_nosing"
       },
       {
         "cell": [
           42,
           37
         ],
-        "frame": "floor_b"
+        "frame": "step_tread"
       },
       {
         "cell": [
           42,
           38
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           39
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           40
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           41
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           42
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           43
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           44
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           45
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           46
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           47
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           48
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           49
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           50
         ],
-        "frame": "floor_a"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           51
         ],
-        "frame": "floor_b"
+        "frame": "rail_e"
       },
       {
         "cell": [
           42,
           52
         ],
-        "frame": "floor_a"
+        "frame": "step_tread"
       },
       {
         "cell": [
           42,
           53
         ],
-        "frame": "floor_b"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -7724,126 +7724,126 @@
           43,
           36
         ],
-        "frame": "floor_c"
+        "frame": "step_nosing"
       },
       {
         "cell": [
           43,
           37
         ],
-        "frame": "floor_d"
+        "frame": "step_tread"
       },
       {
         "cell": [
           43,
           38
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           39
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           40
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           41
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           42
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           43
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           44
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           45
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           46
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           47
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           48
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           49
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           50
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           43,
           51
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           43,
           52
         ],
-        "frame": "floor_c"
+        "frame": "step_tread"
       },
       {
         "cell": [
           43,
           53
         ],
-        "frame": "floor_d"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -8011,14 +8011,14 @@
           44,
           7
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-4"
       },
       {
         "cell": [
           44,
           8
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-3"
       },
       {
         "cell": [
@@ -8039,42 +8039,42 @@
           44,
           11
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_0"
       },
       {
         "cell": [
           44,
           12
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_1"
       },
       {
         "cell": [
           44,
           13
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_2"
       },
       {
         "cell": [
           44,
           14
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_3"
       },
       {
         "cell": [
           44,
           15
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_4"
       },
       {
         "cell": [
           44,
           16
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-4"
       },
       {
         "cell": [
@@ -8095,42 +8095,42 @@
           44,
           19
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-1"
       },
       {
         "cell": [
           44,
           20
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_0"
       },
       {
         "cell": [
           44,
           21
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_1"
       },
       {
         "cell": [
           44,
           22
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_2"
       },
       {
         "cell": [
           44,
           23
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_3"
       },
       {
         "cell": [
           44,
           24
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_4"
       },
       {
         "cell": [
@@ -8158,28 +8158,28 @@
           44,
           28
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-4"
       },
       {
         "cell": [
           44,
           29
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-3"
       },
       {
         "cell": [
           44,
           30
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-2"
       },
       {
         "cell": [
           44,
           31
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-1"
       },
       {
         "cell": [
@@ -8193,147 +8193,147 @@
           44,
           33
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_1"
       },
       {
         "cell": [
           44,
           34
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_2"
       },
       {
         "cell": [
           44,
           35
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_3"
       },
       {
         "cell": [
           44,
           36
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_4"
       },
       {
         "cell": [
           44,
           37
         ],
-        "frame": "floor_b"
+        "frame": "step_tread"
       },
       {
         "cell": [
           44,
           38
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           39
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           40
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           41
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           42
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           43
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           44
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           45
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           46
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           47
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           48
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           49
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           50
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           44,
           51
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           44,
           52
         ],
-        "frame": "floor_a"
+        "frame": "step_tread"
       },
       {
         "cell": [
           44,
           53
         ],
-        "frame": "floor_b"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -8501,35 +8501,35 @@
           45,
           7
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-4"
       },
       {
         "cell": [
           45,
           8
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-3"
       },
       {
         "cell": [
           45,
           9
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-2"
       },
       {
         "cell": [
           45,
           10
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-1"
       },
       {
         "cell": [
           45,
           11
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_0"
       },
       {
         "cell": [
@@ -8550,42 +8550,42 @@
           45,
           14
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_3"
       },
       {
         "cell": [
           45,
           15
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_4"
       },
       {
         "cell": [
           45,
           16
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-4"
       },
       {
         "cell": [
           45,
           17
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-3"
       },
       {
         "cell": [
           45,
           18
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-2"
       },
       {
         "cell": [
           45,
           19
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-1"
       },
       {
         "cell": [
@@ -8599,28 +8599,28 @@
           45,
           21
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_1"
       },
       {
         "cell": [
           45,
           22
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_2"
       },
       {
         "cell": [
           45,
           23
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_3"
       },
       {
         "cell": [
           45,
           24
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_4"
       },
       {
         "cell": [
@@ -8648,182 +8648,182 @@
           45,
           28
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-4"
       },
       {
         "cell": [
           45,
           29
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-3"
       },
       {
         "cell": [
           45,
           30
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-2"
       },
       {
         "cell": [
           45,
           31
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-1"
       },
       {
         "cell": [
           45,
           32
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_0"
       },
       {
         "cell": [
           45,
           33
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_1"
       },
       {
         "cell": [
           45,
           34
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_2"
       },
       {
         "cell": [
           45,
           35
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_3"
       },
       {
         "cell": [
           45,
           36
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_4"
       },
       {
         "cell": [
           45,
           37
         ],
-        "frame": "floor_d"
+        "frame": "step_tread"
       },
       {
         "cell": [
           45,
           38
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           39
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           40
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           41
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           42
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           43
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           44
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           45
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           46
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           47
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           48
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           49
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           50
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           45,
           51
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           45,
           52
         ],
-        "frame": "floor_c"
+        "frame": "step_tread"
       },
       {
         "cell": [
           45,
           53
         ],
-        "frame": "floor_d"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -9012,35 +9012,35 @@
           46,
           10
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_-1"
       },
       {
         "cell": [
           46,
           11
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_0"
       },
       {
         "cell": [
           46,
           12
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_1"
       },
       {
         "cell": [
           46,
           13
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_2"
       },
       {
         "cell": [
           46,
           14
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_3"
       },
       {
         "cell": [
@@ -9061,56 +9061,56 @@
           46,
           17
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_-3"
       },
       {
         "cell": [
           46,
           18
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_-2"
       },
       {
         "cell": [
           46,
           19
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_-1"
       },
       {
         "cell": [
           46,
           20
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_0"
       },
       {
         "cell": [
           46,
           21
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_1"
       },
       {
         "cell": [
           46,
           22
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_2"
       },
       {
         "cell": [
           46,
           23
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_3"
       },
       {
         "cell": [
           46,
           24
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_4"
       },
       {
         "cell": [
@@ -9138,14 +9138,14 @@
           46,
           28
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_-4"
       },
       {
         "cell": [
           46,
           29
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_-3"
       },
       {
         "cell": [
@@ -9187,133 +9187,133 @@
           46,
           35
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_3"
       },
       {
         "cell": [
           46,
           36
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_4"
       },
       {
         "cell": [
           46,
           37
         ],
-        "frame": "floor_b"
+        "frame": "step_tread"
       },
       {
         "cell": [
           46,
           38
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           39
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           40
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           41
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           42
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           43
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           44
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           45
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           46
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           47
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           48
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           49
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           50
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           46,
           51
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           46,
           52
         ],
-        "frame": "floor_a"
+        "frame": "step_tread"
       },
       {
         "cell": [
           46,
           53
         ],
-        "frame": "floor_b"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -9502,7 +9502,7 @@
           47,
           10
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_-1"
       },
       {
         "cell": [
@@ -9516,42 +9516,42 @@
           47,
           12
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_1"
       },
       {
         "cell": [
           47,
           13
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_2"
       },
       {
         "cell": [
           47,
           14
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_3"
       },
       {
         "cell": [
           47,
           15
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_4"
       },
       {
         "cell": [
           47,
           16
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_-4"
       },
       {
         "cell": [
           47,
           17
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_-3"
       },
       {
         "cell": [
@@ -9572,35 +9572,35 @@
           47,
           20
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_0"
       },
       {
         "cell": [
           47,
           21
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_1"
       },
       {
         "cell": [
           47,
           22
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_2"
       },
       {
         "cell": [
           47,
           23
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_3"
       },
       {
         "cell": [
           47,
           24
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_4"
       },
       {
         "cell": [
@@ -9628,14 +9628,14 @@
           47,
           28
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_-4"
       },
       {
         "cell": [
           47,
           29
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_-3"
       },
       {
         "cell": [
@@ -9677,14 +9677,14 @@
           47,
           35
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_3"
       },
       {
         "cell": [
           47,
           36
         ],
-        "frame": "iron_v"
+        "frame": "medal_-1_4"
       },
       {
         "cell": [
@@ -9992,28 +9992,28 @@
           48,
           10
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-1"
       },
       {
         "cell": [
           48,
           11
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_0"
       },
       {
         "cell": [
           48,
           12
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_1"
       },
       {
         "cell": [
           48,
           13
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_2"
       },
       {
         "cell": [
@@ -10027,70 +10027,70 @@
           48,
           15
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_4"
       },
       {
         "cell": [
           48,
           16
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-4"
       },
       {
         "cell": [
           48,
           17
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-3"
       },
       {
         "cell": [
           48,
           18
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-2"
       },
       {
         "cell": [
           48,
           19
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-1"
       },
       {
         "cell": [
           48,
           20
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_0"
       },
       {
         "cell": [
           48,
           21
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_1"
       },
       {
         "cell": [
           48,
           22
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_2"
       },
       {
         "cell": [
           48,
           23
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_3"
       },
       {
         "cell": [
           48,
           24
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_4"
       },
       {
         "cell": [
@@ -10118,7 +10118,7 @@
           48,
           28
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_-4"
       },
       {
         "cell": [
@@ -10167,14 +10167,14 @@
           48,
           35
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_3"
       },
       {
         "cell": [
           48,
           36
         ],
-        "frame": "iron_v"
+        "frame": "medal_0_4"
       },
       {
         "cell": [
@@ -10489,42 +10489,42 @@
           49,
           11
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_0"
       },
       {
         "cell": [
           49,
           12
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_1"
       },
       {
         "cell": [
           49,
           13
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_2"
       },
       {
         "cell": [
           49,
           14
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_3"
       },
       {
         "cell": [
           49,
           15
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_4"
       },
       {
         "cell": [
           49,
           16
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_-4"
       },
       {
         "cell": [
@@ -10538,49 +10538,49 @@
           49,
           18
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_-2"
       },
       {
         "cell": [
           49,
           19
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_-1"
       },
       {
         "cell": [
           49,
           20
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_0"
       },
       {
         "cell": [
           49,
           21
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_1"
       },
       {
         "cell": [
           49,
           22
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_2"
       },
       {
         "cell": [
           49,
           23
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_3"
       },
       {
         "cell": [
           49,
           24
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_4"
       },
       {
         "cell": [
@@ -10608,14 +10608,14 @@
           49,
           28
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_-4"
       },
       {
         "cell": [
           49,
           29
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_-3"
       },
       {
         "cell": [
@@ -10657,133 +10657,133 @@
           49,
           35
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_3"
       },
       {
         "cell": [
           49,
           36
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_4"
       },
       {
         "cell": [
           49,
           37
         ],
-        "frame": "floor_d"
+        "frame": "step_tread"
       },
       {
         "cell": [
           49,
           38
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           39
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           40
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           41
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           42
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           43
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           44
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           45
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           46
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           47
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           48
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           49
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           50
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           49,
           51
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           49,
           52
         ],
-        "frame": "floor_c"
+        "frame": "step_tread"
       },
       {
         "cell": [
           49,
           53
         ],
-        "frame": "floor_d"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -10972,14 +10972,14 @@
           50,
           10
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-1"
       },
       {
         "cell": [
           50,
           11
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_0"
       },
       {
         "cell": [
@@ -11000,42 +11000,42 @@
           50,
           14
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_3"
       },
       {
         "cell": [
           50,
           15
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_4"
       },
       {
         "cell": [
           50,
           16
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-4"
       },
       {
         "cell": [
           50,
           17
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_-3"
       },
       {
         "cell": [
           50,
           18
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-2"
       },
       {
         "cell": [
           50,
           19
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_-1"
       },
       {
         "cell": [
@@ -11049,28 +11049,28 @@
           50,
           21
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_1"
       },
       {
         "cell": [
           50,
           22
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_2"
       },
       {
         "cell": [
           50,
           23
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_3"
       },
       {
         "cell": [
           50,
           24
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_4"
       },
       {
         "cell": [
@@ -11098,14 +11098,14 @@
           50,
           28
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-4"
       },
       {
         "cell": [
           50,
           29
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_-3"
       },
       {
         "cell": [
@@ -11154,126 +11154,126 @@
           50,
           36
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_4"
       },
       {
         "cell": [
           50,
           37
         ],
-        "frame": "floor_b"
+        "frame": "step_tread"
       },
       {
         "cell": [
           50,
           38
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           39
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           40
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           41
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           42
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           43
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           44
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           45
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           46
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           47
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           48
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           49
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           50
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           50,
           51
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           50,
           52
         ],
-        "frame": "floor_a"
+        "frame": "step_tread"
       },
       {
         "cell": [
           50,
           53
         ],
-        "frame": "floor_b"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -11455,42 +11455,42 @@
           51,
           9
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-2"
       },
       {
         "cell": [
           51,
           10
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_-1"
       },
       {
         "cell": [
           51,
           11
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_0"
       },
       {
         "cell": [
           51,
           12
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_1"
       },
       {
         "cell": [
           51,
           13
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_2"
       },
       {
         "cell": [
           51,
           14
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_3"
       },
       {
         "cell": [
@@ -11511,56 +11511,56 @@
           51,
           17
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-3"
       },
       {
         "cell": [
           51,
           18
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_-2"
       },
       {
         "cell": [
           51,
           19
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-1"
       },
       {
         "cell": [
           51,
           20
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_0"
       },
       {
         "cell": [
           51,
           21
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_1"
       },
       {
         "cell": [
           51,
           22
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_2"
       },
       {
         "cell": [
           51,
           23
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_3"
       },
       {
         "cell": [
           51,
           24
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_4"
       },
       {
         "cell": [
@@ -11588,14 +11588,14 @@
           51,
           28
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_-4"
       },
       {
         "cell": [
           51,
           29
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-3"
       },
       {
         "cell": [
@@ -11609,161 +11609,161 @@
           51,
           31
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-1"
       },
       {
         "cell": [
           51,
           32
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_0"
       },
       {
         "cell": [
           51,
           33
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_1"
       },
       {
         "cell": [
           51,
           34
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_2"
       },
       {
         "cell": [
           51,
           35
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_3"
       },
       {
         "cell": [
           51,
           36
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_4"
       },
       {
         "cell": [
           51,
           37
         ],
-        "frame": "floor_d"
+        "frame": "step_tread"
       },
       {
         "cell": [
           51,
           38
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           39
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           40
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           41
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           42
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           43
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           44
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           45
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           46
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           47
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           48
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           49
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           50
         ],
-        "frame": "floor_c"
+        "frame": "aisle_c"
       },
       {
         "cell": [
           51,
           51
         ],
-        "frame": "floor_d"
+        "frame": "aisle_d"
       },
       {
         "cell": [
           51,
           52
         ],
-        "frame": "floor_c"
+        "frame": "step_tread"
       },
       {
         "cell": [
           51,
           53
         ],
-        "frame": "floor_d"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -11931,21 +11931,21 @@
           52,
           7
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-4"
       },
       {
         "cell": [
           52,
           8
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-3"
       },
       {
         "cell": [
           52,
           9
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-2"
       },
       {
         "cell": [
@@ -11966,42 +11966,42 @@
           52,
           12
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_1"
       },
       {
         "cell": [
           52,
           13
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_2"
       },
       {
         "cell": [
           52,
           14
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_3"
       },
       {
         "cell": [
           52,
           15
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_4"
       },
       {
         "cell": [
           52,
           16
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-4"
       },
       {
         "cell": [
           52,
           17
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-3"
       },
       {
         "cell": [
@@ -12022,35 +12022,35 @@
           52,
           20
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_0"
       },
       {
         "cell": [
           52,
           21
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_1"
       },
       {
         "cell": [
           52,
           22
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_2"
       },
       {
         "cell": [
           52,
           23
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_3"
       },
       {
         "cell": [
           52,
           24
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_4"
       },
       {
         "cell": [
@@ -12078,35 +12078,35 @@
           52,
           28
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-4"
       },
       {
         "cell": [
           52,
           29
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-3"
       },
       {
         "cell": [
           52,
           30
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-2"
       },
       {
         "cell": [
           52,
           31
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-1"
       },
       {
         "cell": [
           52,
           32
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_0"
       },
       {
         "cell": [
@@ -12120,140 +12120,140 @@
           52,
           34
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_2"
       },
       {
         "cell": [
           52,
           35
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_3"
       },
       {
         "cell": [
           52,
           36
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_4"
       },
       {
         "cell": [
           52,
           37
         ],
-        "frame": "floor_b"
+        "frame": "step_tread"
       },
       {
         "cell": [
           52,
           38
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           39
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           40
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           41
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           42
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           43
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           44
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           45
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           46
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           47
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           48
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           49
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           50
         ],
-        "frame": "floor_a"
+        "frame": "aisle_a"
       },
       {
         "cell": [
           52,
           51
         ],
-        "frame": "floor_b"
+        "frame": "aisle_b"
       },
       {
         "cell": [
           52,
           52
         ],
-        "frame": "floor_a"
+        "frame": "step_tread"
       },
       {
         "cell": [
           52,
           53
         ],
-        "frame": "floor_b"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -12624,126 +12624,126 @@
           53,
           36
         ],
-        "frame": "floor_c"
+        "frame": "step_nosing"
       },
       {
         "cell": [
           53,
           37
         ],
-        "frame": "floor_d"
+        "frame": "step_tread"
       },
       {
         "cell": [
           53,
           38
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           39
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           40
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           41
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           42
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           43
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           44
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           45
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           46
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           47
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           48
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           49
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           50
         ],
-        "frame": "floor_c"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           51
         ],
-        "frame": "floor_d"
+        "frame": "rail_w"
       },
       {
         "cell": [
           53,
           52
         ],
-        "frame": "floor_c"
+        "frame": "step_tread"
       },
       {
         "cell": [
           53,
           53
         ],
-        "frame": "floor_d"
+        "frame": "step_nosing"
       },
       {
         "cell": [
@@ -18000,63 +18000,63 @@
           74,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-4"
       },
       {
         "cell": [
           74,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_-3"
       },
       {
         "cell": [
           74,
           43
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_-2"
       },
       {
         "cell": [
           74,
           44
         ],
-        "frame": "iron_h"
+        "frame": "medal_-4_-1"
       },
       {
         "cell": [
           74,
           45
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_0"
       },
       {
         "cell": [
           74,
           46
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_1"
       },
       {
         "cell": [
           74,
           47
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_2"
       },
       {
         "cell": [
           74,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_-4_3"
       },
       {
         "cell": [
           74,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_-4_4"
       },
       {
         "cell": [
@@ -18126,63 +18126,63 @@
           75,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-4"
       },
       {
         "cell": [
           75,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_-3"
       },
       {
         "cell": [
           75,
           43
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_-2"
       },
       {
         "cell": [
           75,
           44
         ],
-        "frame": "iron_h"
+        "frame": "medal_-3_-1"
       },
       {
         "cell": [
           75,
           45
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_0"
       },
       {
         "cell": [
           75,
           46
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_1"
       },
       {
         "cell": [
           75,
           47
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_2"
       },
       {
         "cell": [
           75,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_-3_3"
       },
       {
         "cell": [
           75,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_-3_4"
       },
       {
         "cell": [
@@ -18252,14 +18252,14 @@
           76,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_-4"
       },
       {
         "cell": [
           76,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_-3"
       },
       {
         "cell": [
@@ -18301,14 +18301,14 @@
           76,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_-2_3"
       },
       {
         "cell": [
           76,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_-2_4"
       },
       {
         "cell": [
@@ -18378,14 +18378,14 @@
           77,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_-1_-4"
       },
       {
         "cell": [
           77,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_-1_-3"
       },
       {
         "cell": [
@@ -18427,14 +18427,14 @@
           77,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_-1_3"
       },
       {
         "cell": [
           77,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_-1_4"
       },
       {
         "cell": [
@@ -18504,7 +18504,7 @@
           78,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_0_-4"
       },
       {
         "cell": [
@@ -18553,14 +18553,14 @@
           78,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_0_3"
       },
       {
         "cell": [
           78,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_0_4"
       },
       {
         "cell": [
@@ -18630,14 +18630,14 @@
           79,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_-4"
       },
       {
         "cell": [
           79,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_-3"
       },
       {
         "cell": [
@@ -18651,14 +18651,14 @@
           79,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_1_3"
       },
       {
         "cell": [
           79,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_1_4"
       },
       {
         "cell": [
@@ -18728,14 +18728,14 @@
           80,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_-4"
       },
       {
         "cell": [
           80,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_2_-3"
       },
       {
         "cell": [
@@ -18756,7 +18756,7 @@
           80,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_2_4"
       },
       {
         "cell": [
@@ -18826,35 +18826,35 @@
           81,
           41
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_-4"
       },
       {
         "cell": [
           81,
           42
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_-3"
       },
       {
         "cell": [
           81,
           47
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_2"
       },
       {
         "cell": [
           81,
           48
         ],
-        "frame": "floor_c"
+        "frame": "medal_3_3"
       },
       {
         "cell": [
           81,
           49
         ],
-        "frame": "floor_d"
+        "frame": "medal_3_4"
       },
       {
         "cell": [
@@ -18924,35 +18924,35 @@
           82,
           41
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_-4"
       },
       {
         "cell": [
           82,
           42
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_-3"
       },
       {
         "cell": [
           82,
           47
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_2"
       },
       {
         "cell": [
           82,
           48
         ],
-        "frame": "floor_a"
+        "frame": "medal_4_3"
       },
       {
         "cell": [
           82,
           49
         ],
-        "frame": "floor_b"
+        "frame": "medal_4_4"
       },
       {
         "cell": [
@@ -21450,6 +21450,78 @@
       "low": false,
       "anchor": "base",
       "note": "war drum"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        38,
+        38
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        38,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        38,
+        50
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        57,
+        38
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        57,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        57,
+        50
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "nave pier"
     }
   ],
   "lights": [
@@ -21921,9 +21993,12 @@
   "stats": {
     "floor_overrides": 2834,
     "wall_overrides": 58,
-    "props": 70,
+    "props": 76,
     "lights": 29,
     "aisle_cells": 232,
+    "avenue_cells": 228,
+    "medallion_cells": 377,
+    "piers": 6,
     "ring_cells": 88,
     "blood_cells": 113,
     "wall_dressing": 58,
