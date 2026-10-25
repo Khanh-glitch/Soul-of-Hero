@@ -486,7 +486,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var stuck := 0
 		var shot_taken := 0
 		var swing_clock := 0
-		var dash_clock := 0
+		var roll_clock := 0
 		var last_position := player.global_position
 		var died := false
 		var door_distance := player.global_position.distance_to(_cell_anchor(door_cell))
@@ -535,16 +535,17 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			# The attack action locks the Knight's movement while it plays, so it is
 			# pressed only when something is already within a body length.
 			_drive(player, heading)
-			# Escape when something is already on top of him: dash is the game's own
-			# invulnerability window, and it points along the heading, i.e. away from
-			# the enemy while backing off.
-			if threat_distance < 46.0 and dash_clock <= 0:
-				Input.action_press(&"dash")
-				dash_clock = 14
-			elif dash_clock == 11:
-				Input.action_release(&"dash")
-			if dash_clock > 0:
-				dash_clock -= 1
+			# Roll while anything is near. The roll is 0.48 s at 155 px/s with most of
+			# that time spent invulnerable -- it is both the fastest way across the
+			# room and the way a player survives it, and at 96 px/s walking through
+			# the same room costs a hundred health a second.
+			if threat_distance < 150.0 and roll_clock <= 0:
+				Input.action_press(&"roll")
+				roll_clock = 32
+			elif roll_clock == 29:
+				Input.action_release(&"roll")
+			if roll_clock > 0:
+				roll_clock -= 1
 			await get_tree().physics_frame
 			frames += 1
 			if frames % 60 == 0:
