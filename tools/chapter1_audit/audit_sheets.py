@@ -110,6 +110,7 @@ def stitch(folder: Path) -> dict | None:
     covered = Image.new("L", canvas.size, 0)
 
     checked = 0
+    exact = 0
     worst = 0.0
     worst_shift = 0
     for x0, y0, x1, y1, image in placed:
@@ -123,6 +124,7 @@ def stitch(folder: Path) -> dict | None:
             diff, shift = _disagreement(earlier, image, box)
             worst = max(worst, diff)
             worst_shift = max(worst_shift, shift)
+            exact += 1 if shift == 0 else 0
             checked += 1
         canvas.paste(image, (ox, oy))
         covered.paste(255, (ox, oy, ox + image.width, oy + image.height))
@@ -152,6 +154,10 @@ def stitch(folder: Path) -> dict | None:
             # zero on a correct mosaic, but the shift that produces it must be 0.
             "overlap_best_diff": round(worst, 2),
             "overlap_worst_shift_px": worst_shift,
+            # Every overlap that agrees at zero offset. This should be all of them;
+            # one that does not is either a moving sprite in the frame (a flame)
+            # or a stitch that drifted, and the two are told apart by looking.
+            "overlaps_at_zero_shift": exact,
         },
     }
 
