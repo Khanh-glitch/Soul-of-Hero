@@ -3,7 +3,7 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
 AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
 CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
 AUTHORED PROPS: missing=0 clamped=0

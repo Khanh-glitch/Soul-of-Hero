@@ -29,7 +29,7 @@
   ],
   "coverage_of_content": 0.9897,
   "overlaps_checked": 19,
-  "overlap_best_diff": 35.05,
+  "overlap_best_diff": 31.37,
   "overlap_worst_shift_px": 0,
   "overlaps_at_zero_shift": 19
 }
