@@ -72,22 +72,24 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p .artifacts/crucible
-          rc=0
-          for script in \
-            res://tools/captures/crucible_capture.gd \
-            res://game/levels/presentation/crucible_art.gd \
-            res://game/levels/dungeon_level.gd; do
-            log=".artifacts/crucible/check_$(basename "$script" .gd).log"
-            timeout 180s godot --headless --path . --check-only --script "$script" \
-              > "$log" 2>&1
-            echo "--- $script ---"
-            cat "$log"
-            if grep -qE "SCRIPT ERROR|Parse Error|Compile Error" "$log"; then
-              echo "COMPILE FAIL: $script"
-              rc=1
-            fi
-          done
-          exit $rc
+          # --check-only cannot be used here: it loads a script without the
+          # project's autoloads, so every reference to AppFlow or SaveService
+          # reads as a missing identifier. Running the real scene headless for a
+          # few frames compiles it in its real environment instead, and
+          # --quit-after guarantees the step cannot hang on a capture.
+          log=".artifacts/crucible/check_harness.log"
+          timeout 180s godot --headless --path . --quit-after 20 \
+            res://tools/captures/crucible_capture.tscn -- --out-dir=res://.artifacts/crucible/check \
+            > "$log" 2>&1
+          echo "--- compile check ---"
+          cat "$log"
+          if grep -qE "Parse Error|Compile Error|Failed to load script" "$log"; then
+            echo "COMPILE FAIL"
+            exit 1
+          fi
+          grep -q "CRUCIBLE BOOT: level=" "$log" || { echo "HARNESS DID NOT BOOT HEADLESS"; exit 1; }
+          grep -q "CRUCIBLE ART:" "$log" || { echo "CRUCIBLE ART DID NOT BUILD"; exit 1; }
+          echo "COMPILE OK"
 
       - name: Frozen Level 5 suites
         continue-on-error: true
