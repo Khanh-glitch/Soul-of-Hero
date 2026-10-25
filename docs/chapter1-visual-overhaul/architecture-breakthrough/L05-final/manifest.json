@@ -2,19 +2,19 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "3215a150d90788461b7acb56d66d3f35dd000c43",
+  "commit": "0a7bbcef3d2450212c2d491476077e05eed76380",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
   },
   "source_pins": {
-    "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
+    "data/levels/chapter_1_level_5.json": "f56a20f01f8266e386ef3dbf57333888460dbf53d032f4b9c143737a97de28b6",
     "data/levels/chapter_1_level_5_architecture.json": "f6f3628fe3a21e3097fb4e416c3345faefc65d57cf173d5c99c69b11b88d21df",
     "assets/environment/chapter1/crucible/crucible_tiles.png": "83679e730a0886f218d1d01364f84fec3f781c8e6dbbb8d8ddd8b97ad5c94f0c",
     "assets/environment/chapter1/crucible/crucible_props.png": "4e6fc0320745842f63a1b55ff61089e3afd271a4b095889501bfef9b66303bf0",
     "tools/level5/art_crucible.py": "c76fe97dd5dafeb8fa7bce4a4dc11c0c11a39255f4ed1484e3e653df50ee2998",
     "tools/level5/architecture.py": "fe62bc0dcc4fbd6ccb270460242af085fddfb9764f9ae64ee17a142088bc5cd6",
-    "game/levels/presentation/crucible_art.gd": "14e44127560727aceccdcee48f662ce4ac35de2941aac43152f680087471ec68",
+    "game/levels/presentation/crucible_art.gd": "d0c44ac8a44251f65dcb599f91e9368057aa413cd76011917de7b875d97f43de",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
     "tools/captures/crucible_capture.gd": "f8e83325bd9b342ba9cc503b0630c725547da4f739c93b49ac1b1bc0c417e434"
   },
@@ -75,7 +75,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f1_gate": {
@@ -86,7 +86,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f1_altar": {
@@ -97,7 +97,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_landing": {
@@ -108,7 +108,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_court": {
@@ -119,7 +119,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f2_encounter": {
@@ -130,7 +130,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f3_approach": {
@@ -141,7 +141,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "f3_fight": {
@@ -152,7 +152,7 @@
       ],
       "zoom": 1.0,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": "knight_hp=740/1100 boss_hp=6337"
     },
     "overview_f1": {
@@ -163,7 +163,7 @@
       ],
       "zoom": 0.5,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "overview_f2": {
@@ -174,7 +174,7 @@
       ],
       "zoom": 0.4,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     },
     "overview_f3": {
@@ -185,42 +185,34 @@
       ],
       "zoom": 0.45,
       "log_ok": true,
-      "file_present": true,
+      "file_present": false,
       "extra": ""
     }
   },
-  "frames": [
-    "f1_spawn",
-    "f1_gate",
-    "f1_altar",
-    "f2_landing",
-    "f2_court",
-    "f2_encounter",
-    "f3_approach",
-    "f3_fight"
-  ],
-  "pairs_vs_previous": 8,
-  "pairs_vs_generic": 8,
-  "overviews": [
-    "f1",
-    "f2",
-    "f3"
-  ],
-  "traversal_frames": [
-    "traversal_door_f1_gate_door",
-    "traversal_door_f2_gate_door"
-  ],
-  "crops": [
-    "f1_spawn",
-    "f2_court",
-    "f3_fight",
-    "f3_approach"
-  ],
+  "frames": [],
+  "pairs_vs_previous": 0,
+  "pairs_vs_generic": 0,
+  "overviews": [],
+  "traversal_frames": [],
+  "crops": [],
   "evidence_kind": {
     "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
     "traversal": "native frames from a path walked with real movement input; doors opened by input",
     "crops": "integer nearest-neighbour crops of those native frames",
     "comparisons": "gold references + rejected baseline + native frames"
   },
-  "problems": []
+  "problems": [
+    "missing required native frames: after_f1_spawn.png, after_f1_gate.png, after_f1_altar.png, after_f2_landing.png, after_f2_court.png, after_f2_encounter.png, after_f3_approach.png, after_f3_fight.png, overview_after_overview_f1.png, overview_after_overview_f2.png, overview_after_overview_f3.png",
+    "station f1_spawn: log_ok=True file_present=False",
+    "station f1_gate: log_ok=True file_present=False",
+    "station f1_altar: log_ok=True file_present=False",
+    "station f2_landing: log_ok=True file_present=False",
+    "station f2_court: log_ok=True file_present=False",
+    "station f2_encounter: log_ok=True file_present=False",
+    "station f3_approach: log_ok=True file_present=False",
+    "station f3_fight: log_ok=True file_present=False",
+    "station overview_f1: log_ok=True file_present=False",
+    "station overview_f2: log_ok=True file_present=False",
+    "station overview_f3: log_ok=True file_present=False"
+  ]
 }

@@ -1,5 +1,164 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-AUTHORED ART: kit=crucible floor_detail=5851 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
-CRUCIBLE ART: floor_detail=5851 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
-CHAPTER 1 MAP DESIGN 837/837
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_1: passes LevelSchema v2: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_map (res://tests/chapter_1_map_design_test.gd:70)
+       [2] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: Invalid level schema at res://data/levels/crypt_entrance.json: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] reload_from_disk (res://game/levels/dungeon_level.gd:74)
+       [1] _ready (res://game/levels/dungeon_level.gd:43)
+       [2] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:221)
+       [3] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [4] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_1: runtime loader accepts the selected map
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:223)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_2: passes LevelSchema v2: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_map (res://tests/chapter_1_map_design_test.gd:70)
+       [2] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: Invalid level schema at res://data/levels/chapter_1_level_2.json: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] reload_from_disk (res://game/levels/dungeon_level.gd:74)
+       [1] _ready (res://game/levels/dungeon_level.gd:43)
+       [2] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:221)
+       [3] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [4] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_2: runtime loader accepts the selected map
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:223)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_2: runtime applies every Backdrop cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:224)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_2: runtime applies every Geometry cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:225)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_3: passes LevelSchema v2: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_map (res://tests/chapter_1_map_design_test.gd:70)
+       [2] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: Invalid level schema at res://data/levels/chapter_1_level_3.json: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] reload_from_disk (res://game/levels/dungeon_level.gd:74)
+       [1] _ready (res://game/levels/dungeon_level.gd:43)
+       [2] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:221)
+       [3] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [4] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_3: runtime loader accepts the selected map
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:223)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_3: runtime applies every Backdrop cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:224)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_3: runtime applies every Geometry cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:225)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_4: passes LevelSchema v2: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_map (res://tests/chapter_1_map_design_test.gd:70)
+       [2] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: Invalid level schema at res://data/levels/chapter_1_level_4.json: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] reload_from_disk (res://game/levels/dungeon_level.gd:74)
+       [1] _ready (res://game/levels/dungeon_level.gd:43)
+       [2] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:221)
+       [3] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [4] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_4: runtime loader accepts the selected map
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:223)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_4: runtime applies every Backdrop cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:224)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_4: runtime applies every Geometry cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:225)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_5: passes LevelSchema v2: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_map (res://tests/chapter_1_map_design_test.gd:70)
+       [2] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: Invalid level schema at res://data/levels/chapter_1_level_5.json: metadata.camera_bounds must define a positive rectangle inside the level.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] reload_from_disk (res://game/levels/dungeon_level.gd:74)
+       [1] _ready (res://game/levels/dungeon_level.gd:43)
+       [2] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:221)
+       [3] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [4] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_5: runtime loader accepts the selected map
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:223)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_5: runtime applies every Backdrop cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:224)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+ERROR: CHAPTER 1 MAP DESIGN FAIL: chapter_1_level_5: runtime applies every Geometry cell
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _expect (res://tests/chapter_1_map_design_test.gd:571)
+       [1] _test_runtime_load (res://tests/chapter_1_map_design_test.gd:225)
+       [2] _test_map (res://tests/chapter_1_map_design_test.gd:83)
+       [3] _run (res://tests/chapter_1_map_design_test.gd:60)
+CHAPTER 1 MAP DESIGN 819/837
