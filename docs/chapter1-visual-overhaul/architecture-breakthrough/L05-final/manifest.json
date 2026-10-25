@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "219e584efa1d7d187899a535c51c3498ab5473bf",
+  "commit": "4a4151a62b83fcc3cf95814ec238ad0029a5f525",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "18d0b55b161ecf41e1a0b794b3092d7fbcd98b504d723a7a797eece4fbca2118"
+    "tools/captures/crucible_capture.gd": "45547d4a23d242fd73d17d01520debf703667c8d6da486153e4abd62d6219889"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -27,18 +27,18 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1063,
+    "nodes": 1062,
     "draw_calls": 110,
     "static_mb": 121.4,
     "errors": [
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (64, 10) after 13 replans",
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (9, 48) after 13 replans"
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (66, 20) on leg f1_spawn_to_f1_gate",
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (9, 48) on leg f2_landing_to_f2_f3_door"
     ],
     "fight": {
-      "knight_hp_before": "891/1100",
-      "knight_hp_after": "891/1100",
-      "boss_hp": "6337/6437",
-      "boss_state": "RECOVER"
+      "knight_hp_before": "0/1100",
+      "knight_hp_after": "0/1100",
+      "boss_hp": "6437/6437",
+      "boss_state": "SEEK_BAND"
     },
     "traversal": [],
     "app_boot": "complete",
@@ -54,15 +54,15 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 869,
+    "nodes": 870,
     "draw_calls": 103,
     "static_mb": 113.9,
     "errors": [],
     "fight": {
-      "knight_hp_before": "932/1100",
-      "knight_hp_after": "932/1100",
+      "knight_hp_before": "891/1100",
+      "knight_hp_after": "891/1100",
       "boss_hp": "6337/6437",
-      "boss_state": "RECOVER"
+      "boss_state": "SEEK_BAND"
     },
     "traversal": [],
     "app_boot": "complete",
@@ -156,7 +156,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=891/1100 boss_hp=6337"
+      "extra": "knight_hp=0/1100 boss_hp=6437"
     },
     "overview_f1": {
       "tag": "after",
@@ -209,12 +209,7 @@
     "f2",
     "f3"
   ],
-  "traversal_frames": [
-    "traversal_1",
-    "traversal_2",
-    "traversal_3",
-    "traversal_4"
-  ],
+  "traversal_frames": [],
   "crops": [
     "f1_spawn",
     "f2_court",
