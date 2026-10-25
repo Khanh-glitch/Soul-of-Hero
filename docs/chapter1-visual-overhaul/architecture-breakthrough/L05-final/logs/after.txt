@@ -3,129 +3,65 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_after_40167819706.json
+CRUCIBLE BOOT: save=user://crucible_after_40168099477.json
 CRUCIBLE BOOT: app_boot=complete
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=158 lights=29 entities=83
-CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1063 draw_calls=110 static_mb=121.4 tree_objects=14621
+CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1058 draw_calls=110 static_mb=121.4 tree_objects=14595
 CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate staged_at=(10, 17) path=100 cells hp=1100/1100
-CRUCIBLE TRAVERSAL STALL: leg=f1_spawn_to_f1_gate frame=17 at=(168.25, 287.0) velocity=(0.0, 0.0) heading=(15.75, 0.0) pressed=["move_right"]
-CRUCIBLE TRAVERSAL RAY: (-1.0, 0.0) -> Knight (CharacterBody2D) at=(168.25, 287.0)
-CRUCIBLE TRAVERSAL RAY: (1.0, 0.0) -> Knight (CharacterBody2D) at=(168.25, 287.0)
-CRUCIBLE TRAVERSAL RAY: (0.0, -1.0) -> Knight (CharacterBody2D) at=(168.25, 287.0)
-CRUCIBLE TRAVERSAL RAY: (0.0, 1.0) -> Knight (CharacterBody2D) at=(168.25, 287.0)
-CRUCIBLE TRAVERSAL SHAPE: BodyShape shape=RectangleShape2D disabled=false
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=60 cell=(14, 17) at=(238.0, 287.0) waypoint=(15, 17) index=4/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=1 cell=(13, 17) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_1.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=120 cell=(16, 17) at=(268.0, 287.0) waypoint=(17, 17) index=6/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=180 cell=(22, 17) at=(357.0, 287.0) waypoint=(23, 17) index=12/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=2 cell=(22, 17) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_2.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=240 cell=(24, 17) at=(391.0, 287.0) waypoint=(27, 17) index=16/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=3 cell=(27, 17) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_3.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=300 cell=(28, 17) at=(464.0, 287.0) waypoint=(30, 17) index=19/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=360 cell=(31, 17) at=(499.0, 287.0) waypoint=(34, 17) index=23/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=4 cell=(31, 17) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_4.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=420 cell=(36, 17) at=(579.0, 287.0) waypoint=(37, 17) index=26/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=480 cell=(36, 17) at=(592.0, 287.0) waypoint=(37, 17) index=26/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=540 cell=(36, 17) at=(583.0, 287.0) waypoint=(39, 17) index=28/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=600 cell=(38, 17) at=(618.0, 287.0) waypoint=(41, 17) index=30/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=660 cell=(41, 17) at=(658.0, 287.0) waypoint=(43, 17) index=32/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=720 cell=(43, 18) at=(698.0, 290.0) waypoint=(43, 18) index=33/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=780 cell=(43, 18) at=(698.0, 291.0) waypoint=(43, 18) index=33/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=840 cell=(43, 19) at=(697.0, 318.0) waypoint=(44, 19) index=35/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=1 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=900 cell=(43, 19) at=(698.0, 318.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=2 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=3 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=960 cell=(43, 19) at=(698.0, 318.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1020 cell=(43, 19) at=(698.0, 317.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=4 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=5 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=6 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1140 cell=(42, 19) at=(682.0, 316.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=7 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1200 cell=(43, 19) at=(698.0, 317.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL COLLIDERS: leg=f1_spawn_to_f1_gate frame=1202 at=(697.9936, 316.5561) door_distance=977.9
-CRUCIBLE TRAVERSAL COLLIDER: AttackHitbox type=Area2D at=(714.9936, 308.5561)
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=60 cell=(17, 18) at=(274.0, 288.0) waypoint=(18, 17) index=7/100 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=1 cell=(20, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_1.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=120 cell=(24, 18) at=(399.0, 288.0) waypoint=(25, 17) index=14/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=180 cell=(31, 18) at=(511.0, 288.0) waypoint=(32, 17) index=21/100 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=2 cell=(31, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_2.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=240 cell=(39, 18) at=(634.0, 288.0) waypoint=(40, 17) index=29/100 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=3 cell=(43, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_3.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=300 cell=(45, 20) at=(727.0, 322.0) waypoint=(46, 19) index=37/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=360 cell=(52, 20) at=(839.0, 322.0) waypoint=(53, 19) index=44/100 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=4 cell=(52, 20) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_4.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=420 cell=(59, 20) at=(959.0, 322.0) waypoint=(60, 19) index=51/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=480 cell=(53, 20) at=(853.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=540 cell=(53, 20) at=(849.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=600 cell=(48, 20) at=(774.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=660 cell=(47, 20) at=(764.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=720 cell=(43, 20) at=(697.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=780 cell=(43, 20) at=(697.0, 322.0) waypoint=(61, 19) index=52/100 hp=1100/1100
+CRUCIBLE TRAVERSAL COLLIDERS: leg=f1_spawn_to_f1_gate frame=838 at=(659.8129, 322.235) door_distance=716.7
+CRUCIBLE TRAVERSAL COLLIDER: AttackHitbox type=Area2D at=(642.8129, 314.235)
 CRUCIBLE TRAVERSAL COLLIDER: Geometry type=TileMapLayer at=(0.0, 0.0)
-CRUCIBLE TRAVERSAL COLLIDER: Knight type=CharacterBody2D at=(697.9936, 316.5561)
-CRUCIBLE TRAVERSAL COLLIDER: L5Spikes02 type=Area2D at=(712.0, 344.0)
+CRUCIBLE TRAVERSAL COLLIDER: AttackArea type=Area2D at=(679.8502, 322.2392)
+CRUCIBLE TRAVERSAL COLLIDER: Knight type=CharacterBody2D at=(659.8129, 322.235)
 CRUCIBLE TRAVERSAL COLLIDER: InteractionArea type=Area2D at=(680.0, 328.0)
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=8 from=(43, 19) path=65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1260 cell=(42, 19) at=(673.0, 315.0) waypoint=(44, 19) index=0/65 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate arrived=false died=false frames=1305 at=(43, 19) hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door staged_at=(9, 48) path=107 cells hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=60 cell=(10, 47) at=(174.0, 767.0) waypoint=(12, 48) index=2/107 hp=1100/1100
-CRUCIBLE TRAVERSAL STALL: leg=f2_landing_to_f2_f3_door frame=78 at=(173.6832, 767.6059) velocity=(0.0, 0.0) heading=(26.31683, 15.3941) pressed=["move_right", "move_down"]
-CRUCIBLE TRAVERSAL RAY: (-1.0, 0.0) -> Knight (CharacterBody2D) at=(173.6832, 767.6059)
-CRUCIBLE TRAVERSAL RAY: (1.0, 0.0) -> Knight (CharacterBody2D) at=(173.6832, 767.6059)
-CRUCIBLE TRAVERSAL RAY: (0.0, -1.0) -> Knight (CharacterBody2D) at=(173.6832, 767.6059)
-CRUCIBLE TRAVERSAL RAY: (0.0, 1.0) -> Knight (CharacterBody2D) at=(173.6832, 767.6059)
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=840 cell=(41, 20) at=(657.0, 322.0) waypoint=(61, 19) index=52/100 hp=932/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=900 cell=(39, 20) at=(626.0, 322.0) waypoint=(61, 19) index=52/100 hp=932/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=960 cell=(37, 20) at=(604.0, 323.0) waypoint=(61, 19) index=52/100 hp=764/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1020 cell=(38, 19) at=(611.0, 312.0) waypoint=(61, 19) index=52/100 hp=764/1100
+CRUCIBLE TRAVERSAL STALL: leg=f1_spawn_to_f1_gate frame=1022 at=(610.799, 311.8862) velocity=(0.0, 0.0) heading=(-26.8009, 2.51236) pressed=["move_left", "attack"]
+CRUCIBLE TRAVERSAL RAY: (-1.0, 0.0) -> Knight (CharacterBody2D) at=(610.799, 311.8862)
+CRUCIBLE TRAVERSAL RAY: (1.0, 0.0) -> Knight (CharacterBody2D) at=(610.799, 311.8862)
+CRUCIBLE TRAVERSAL RAY: (0.0, -1.0) -> Knight (CharacterBody2D) at=(610.799, 311.8862)
+CRUCIBLE TRAVERSAL RAY: (0.0, 1.0) -> Knight (CharacterBody2D) at=(610.799, 311.8862)
 CRUCIBLE TRAVERSAL SHAPE: BodyShape shape=RectangleShape2D disabled=false
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_landing_to_f2_f3_door step=1 cell=(11, 48) hp=1100/1100 out=res://.artifacts/crucible/after/after_f2_landing_to_f2_f3_door_walk_1.png ok=true
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=120 cell=(14, 47) at=(230.0, 753.0) waypoint=(14, 48) index=4/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=180 cell=(13, 48) at=(214.0, 778.0) waypoint=(14, 48) index=4/107 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_landing_to_f2_f3_door step=2 cell=(13, 48) hp=1100/1100 out=res://.artifacts/crucible/after/after_f2_landing_to_f2_f3_door_walk_2.png ok=true
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=240 cell=(14, 48) at=(240.0, 770.0) waypoint=(16, 48) index=6/107 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_landing_to_f2_f3_door step=3 cell=(16, 47) hp=1100/1100 out=res://.artifacts/crucible/after/after_f2_landing_to_f2_f3_door_walk_3.png ok=true
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=300 cell=(15, 46) at=(255.0, 738.0) waypoint=(17, 48) index=7/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=360 cell=(17, 44) at=(277.0, 714.0) waypoint=(17, 48) index=7/107 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_landing_to_f2_f3_door step=4 cell=(17, 44) hp=1100/1100 out=res://.artifacts/crucible/after/after_f2_landing_to_f2_f3_door_walk_4.png ok=true
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=420 cell=(16, 45) at=(260.0, 734.0) waypoint=(17, 48) index=7/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=480 cell=(17, 44) at=(274.0, 720.0) waypoint=(19, 48) index=9/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=540 cell=(18, 44) at=(302.0, 710.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=600 cell=(19, 44) at=(314.0, 704.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=660 cell=(18, 44) at=(295.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=720 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=780 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=840 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=900 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL COLLIDERS: leg=f2_landing_to_f2_f3_door frame=936 at=(307.1487, 714.6245) door_distance=1395.2
-CRUCIBLE TRAVERSAL COLLIDER: Geometry type=TileMapLayer at=(0.0, 0.0)
-CRUCIBLE TRAVERSAL COLLIDER: Geometry type=TileMapLayer at=(0.0, 0.0)
-CRUCIBLE TRAVERSAL COLLIDER: AttackHitbox type=Area2D at=(322.3158, 698.946)
-CRUCIBLE TRAVERSAL COLLIDER: Knight type=CharacterBody2D at=(307.1487, 714.6245)
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=960 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1020 cell=(18, 44) at=(296.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1080 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1140 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1200 cell=(18, 44) at=(298.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1260 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1320 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1380 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1440 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1500 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1560 cell=(18, 44) at=(298.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1620 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1680 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1740 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1800 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1860 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1920 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=1980 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2040 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2100 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2160 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2220 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2280 cell=(18, 44) at=(300.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2340 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2400 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2460 cell=(18, 44) at=(298.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2520 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2580 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2640 cell=(18, 44) at=(298.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2700 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2760 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2820 cell=(18, 44) at=(298.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2880 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=2940 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=3000 cell=(18, 44) at=(296.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=3060 cell=(18, 44) at=(289.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=3120 cell=(19, 44) at=(314.0, 708.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door frame=3180 cell=(18, 44) at=(296.0, 720.0) waypoint=(20, 48) index=10/107 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door arrived=false died=false frames=3200 at=(19, 44) hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1080 cell=(40, 19) at=(653.0, 307.0) waypoint=(61, 19) index=52/100 hp=764/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1140 cell=(39, 19) at=(634.0, 311.0) waypoint=(61, 19) index=52/100 hp=596/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1200 cell=(37, 19) at=(601.0, 306.0) waypoint=(61, 19) index=52/100 hp=428/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1260 cell=(38, 20) at=(610.0, 323.0) waypoint=(61, 19) index=52/100 hp=428/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1320 cell=(38, 20) at=(614.0, 330.0) waypoint=(61, 19) index=52/100 hp=260/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1380 cell=(38, 20) at=(612.0, 336.0) waypoint=(61, 19) index=52/100 hp=92/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1440 cell=(33, 17) at=(540.0, 277.0) waypoint=(61, 19) index=52/100 hp=92/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate arrived=false died=true frames=1475 at=(34, 18) hp=0/1100
+ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (34, 18) on leg f1_spawn_to_f1_gate
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _traverse (res://tools/captures/crucible_capture.gd:632)
+CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door staged_at=(9, 48) path=107 cells hp=0/1100
+CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door arrived=false died=true frames=0 at=(9, 49) hp=0/1100
+ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (9, 49) on leg f2_landing_to_f2_f3_door
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _traverse (res://tools/captures/crucible_capture.gd:632)
 CRUCIBLE TRAVERSAL: sequence complete
 CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
 CRUCIBLE STATION tag=after station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_gate.png ok=true
@@ -136,8 +72,8 @@ CRUCIBLE STATION tag=after station=f2_encounter cell=(91, 47) zoom=1.00 out=res:
 CRUCIBLE STATION tag=after station=f3_approach cell=(70, 76) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_approach.png ok=true
 CRUCIBLE FIGHT: archer found at (1528.0, 1192.0)
 CRUCIBLE FIGHT: swings=6 boss_hp 6437 -> 6437
-CRUCIBLE FIGHT: knight_hp 908/1100 -> 908/1100 | boss_hp=6437/6437 boss_state=SEEK_BAND
-CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=908/1100 boss_hp=6437
+CRUCIBLE FIGHT: knight_hp 0/1100 -> 0/1100 | boss_hp=6437/6437 boss_state=SEEK_BAND
+CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=0/1100 boss_hp=6437
 CRUCIBLE STATION tag=after station=overview_f1 cell=(32, 16) zoom=0.50 out=res://.artifacts/crucible/after/overview_after_overview_f1.png ok=true
 CRUCIBLE STATION tag=after station=overview_f2 cell=(53, 44) zoom=0.40 out=res://.artifacts/crucible/after/overview_after_overview_f2.png ok=true
 CRUCIBLE STATION tag=after station=overview_f3 cell=(60, 75) zoom=0.45 out=res://.artifacts/crucible/after/overview_after_overview_f3.png ok=true

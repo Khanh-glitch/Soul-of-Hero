@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "593f9162206dc515f52480ed981e6e13913c98db",
+  "commit": "db34a5e66cd4c7f3d5037847f20690831295d4f6",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "63683450a24191fafd920031af356400422c7d1c239ee2a33a7f3f687756f10c"
+    "tools/captures/crucible_capture.gd": "3c91fb4352bfa222594ac010e49cb19cb10b7986bb713eef194ea28685e87ed2"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -27,13 +27,16 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1063,
+    "nodes": 1058,
     "draw_calls": 110,
     "static_mb": 121.4,
-    "errors": [],
+    "errors": [
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (34, 18) on leg f1_spawn_to_f1_gate",
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (9, 49) on leg f2_landing_to_f2_f3_door"
+    ],
     "fight": {
-      "knight_hp_before": "908/1100",
-      "knight_hp_after": "908/1100",
+      "knight_hp_before": "0/1100",
+      "knight_hp_after": "0/1100",
       "boss_hp": "6437/6437",
       "boss_state": "SEEK_BAND"
     },
@@ -51,13 +54,15 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 867,
+    "nodes": 869,
     "draw_calls": 103,
     "static_mb": 113.9,
-    "errors": [],
+    "errors": [
+      "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+    ],
     "fight": {
-      "knight_hp_before": "1100/1100",
-      "knight_hp_after": "1100/1100",
+      "knight_hp_before": "932/1100",
+      "knight_hp_after": "932/1100",
       "boss_hp": "6337/6437",
       "boss_state": "RECOVER"
     },
@@ -153,7 +158,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=908/1100 boss_hp=6437"
+      "extra": "knight_hp=0/1100 boss_hp=6437"
     },
     "overview_f1": {
       "tag": "after",
