@@ -496,6 +496,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			if player.global_position.distance_to(waypoint) < 9.0:
 				index += 1
 				continue
+			var heading := waypoint - player.global_position
 			# Fight what is in the way, but do not get pinned to something that
 			# cannot be reached (a ranged enemy behind a wall still "is" within
 			# range), so after a long engagement the route wins for a while.
