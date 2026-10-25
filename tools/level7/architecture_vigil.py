@@ -98,7 +98,7 @@ def ward(plan, floor, geom) -> int:
             painted += 1
     plan.lights.append({
         "x": BEACON[0] * 16 + 8, "y": BEACON[1] * 16 + 8,
-        "color": [1.0, 0.62, 0.30], "energy": 0.85, "scale": 2.1,
+        "color": [1.0, 0.62, 0.30], "energy": 0.55, "scale": 2.0,
         "cell": [BEACON[0], BEACON[1]], "note": "the Beacon's own light",
     })
     return painted
@@ -170,7 +170,7 @@ def beacon_frame(plan, floor, geom, guard) -> None:
             plan.prop("watch_pillar", cell, note="ward ring corner pillar")
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.66, 0.34], "energy": 0.70, "scale": 1.6,
+                "color": [1.0, 0.66, 0.34], "energy": 0.55, "scale": 1.5,
                 "cell": [cell[0], cell[1]], "note": "pillar fire",
             })
     for dx, dy in ((0, -3), (0, 3), (-3, 0), (3, 0)):
@@ -178,7 +178,7 @@ def beacon_frame(plan, floor, geom, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("brazier", cell, note="ring brazier", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 14,
-                "color": [1.0, 0.58, 0.26], "energy": 0.75, "scale": 1.7,
+                "color": [1.0, 0.58, 0.26], "energy": 0.45, "scale": 1.5,
                 "cell": [cell[0], cell[1]], "note": "ring brazier",
             })
     for dx in (-2, 2):
