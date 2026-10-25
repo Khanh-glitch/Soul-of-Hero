@@ -518,26 +518,41 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 					index += 1
 					continue
 			var heading := waypoint - player.global_position
-			# Fight what is in the way, but do not get pinned to something that
-			# cannot be reached (a ranged enemy behind a wall still "is" within
-			# range), so after a long engagement the route wins for a while.
-			var threat := _nearest_enemy(dungeon, player.global_position, 64.0) if engage < 240 else null
+			# Combat policy: hit and step back. Standing in the pack and trading blows
+			# loses -- the last run lost 1060 health in seven seconds that way. The
+			# Knight's reach (17 px plus half his attack box) is longer than a
+			# skeleton's body, so each cycle closes, swings once facing the target,
+			# then backs off while the swing recharges.
+			var threat := _nearest_enemy(dungeon, player.global_position, 104.0)
+			var threat_distance := 999.0
 			if threat != null:
+				threat_distance = player.global_position.distance_to(threat.global_position)
+			var fighting := threat != null and engage < 360
+			if fighting:
 				engage += 1
 			elif engage > 0:
-				engage = maxi(0, engage - 3)
-			# Keep moving. Standing still in the middle of a pack is what killed the
-			# previous attempt; the Knight out-runs the patrols (96 px/s against
-			# 48-70), so the walk is a run past them, with a swing at whatever is in
-			# front and a dash -- which the game grants invulnerability for -- when
-			# something is close.
-			_drive(player, heading)
+				engage = maxi(0, engage - 2)
 			swing_clock += 1
-			if swing_clock % 30 == 1:
-				Input.action_press(&"attack")
-			elif swing_clock % 30 == 9:
-				Input.action_release(&"attack")
-			if threat != null and dash_clock <= 0:
+			if fighting:
+				var towards := threat.global_position - player.global_position
+				if swing_clock % 40 < 16:
+					heading = towards
+					if threat_distance < 46.0 and swing_clock % 40 == 1:
+						Input.action_press(&"attack")
+					elif swing_clock % 40 == 9:
+						Input.action_release(&"attack")
+				else:
+					heading = -towards
+			else:
+				if swing_clock % 30 == 1:
+					Input.action_press(&"attack")
+				elif swing_clock % 30 == 9:
+					Input.action_release(&"attack")
+			_drive(player, heading)
+			# Escape when something is already on top of him: dash is the game's own
+			# invulnerability window, and it points along the heading, i.e. away from
+			# the enemy while backing off.
+			if threat_distance < 40.0 and dash_clock <= 0:
 				Input.action_press(&"dash")
 				dash_clock = 14
 			elif dash_clock == 11:
