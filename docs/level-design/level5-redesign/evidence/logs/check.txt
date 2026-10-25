@@ -1,2 +1,1 @@
 CONTRACT: OK — 5105 floor / 1968 geometry / 50 decor cells, 83 entities
-CHECK: data/levels/chapter_1_level_5.json is byte-identical to the author output
