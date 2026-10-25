@@ -88,7 +88,7 @@ def ward(plan, floor, geom) -> int:
             painted += 1
     plan.lights.append({
         "x": BEACON[0] * 16 + 8, "y": BEACON[1] * 16 + 8,
-        "color": [1.0, 0.62, 0.30], "energy": 0.85, "scale": 2.3,
+        "color": [1.0, 0.62, 0.30], "energy": 0.34, "scale": 1.9,
         "cell": [BEACON[0], BEACON[1]], "note": "the Beacon's own light",
     })
     return painted
@@ -160,7 +160,7 @@ def beacon_frame(plan, floor, geom, guard) -> None:
             plan.prop("watch_pillar", cell, note="ward ring corner pillar")
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.66, 0.34], "energy": 1.25, "scale": 1.9,
+                "color": [1.0, 0.66, 0.34], "energy": 0.42, "scale": 1.5,
                 "cell": [cell[0], cell[1]], "note": "pillar fire",
             })
     for dx, dy in ((0, -3), (0, 3), (-3, 0), (3, 0)):
@@ -239,7 +239,7 @@ def stores(plan, floor, geom, faces, guard, clear) -> None:
         if roll < 12:
             plan.prop("torch_bracket", cell, note="wall torch", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 26,
-                "color": [1.0, 0.72, 0.40], "energy": 0.9, "scale": 1.5,
+                "color": [1.0, 0.72, 0.40], "energy": 0.30, "scale": 1.2,
                 "cell": [cell[0], cell[1]], "note": "wall torch",
             })
         elif roll < 20:
@@ -330,7 +330,7 @@ def bastion_towers(plan, floor, geom, faces, guard) -> None:
         if face in faces:
             plan.prop("watch_pillar", face, note="bastion watch pillar", light={
                 "x": face[0] * 16 + 8, "y": face[1] * 16 - 96,
-                "color": [1.0, 0.68, 0.36], "energy": 1.15, "scale": 1.7,
+                "color": [1.0, 0.68, 0.36], "energy": 0.38, "scale": 1.4,
                 "cell": [face[0], face[1]], "note": "bastion fire",
             })
 
@@ -360,7 +360,7 @@ def objectives(plan, floor, geom, faces, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("watch_pillar", cell, note="gate pillar", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.70, 0.38], "energy": 1.1, "scale": 1.7,
+                "color": [1.0, 0.70, 0.38], "energy": 0.34, "scale": 1.4,
                 "cell": [cell[0], cell[1]], "note": "gate pillar fire",
             })
     for cell in ((CHECKPOINT[0] - 3, CHECKPOINT[1]), (CHECKPOINT[0] + 3, CHECKPOINT[1])):
