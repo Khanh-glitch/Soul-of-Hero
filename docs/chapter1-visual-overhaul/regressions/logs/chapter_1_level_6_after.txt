@@ -3,16 +3,16 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=90 shadows=360
-CHAPTER1 CAPTURE: level=chapter_1_level_6 slot=6 art=on facade_cells=2720 lights=90 entities=73
-CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1116 draw_calls=73 static_mb=118.9 fps=5
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
+CHAPTER1 CAPTURE: level=chapter_1_level_6 slot=6 art=on facade_cells=2720 lights=75 entities=73
+CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1105 draw_calls=73 static_mb=118.9 fps=5
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=entry cell=(9, 23) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=landmark cell=(74, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=checkpoint cell=(16, 46) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_checkpoint.png ok=true
