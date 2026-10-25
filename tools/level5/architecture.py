@@ -223,8 +223,8 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     # --- THE ALTAR: raised crucible on the existing solid island ----------
     plan.prop("crucible", (48, 15), z=1, low=True, anchor="center",
               note="raised crucible, built on the level's own solid island (x44..52, y11..18)",
-              light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.36, 0.22],
-                     "energy": 2.4, "scale": 7.6})
+              light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.46, 0.30],
+                     "energy": 1.8, "scale": 7.6})
     # altar dressing on the island's shoulders
     plan.prop("altar", (44, 11), z=2, note="offering table on the altar island's west shoulder")
     plan.prop("stand", (52, 12), z=2, note="brass feed pipes into the crucible's east side")
@@ -248,6 +248,27 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
                       note="fire bowl on the processional line",
                       light={"x": cell[0] * T + 8, "y": cell[1] * T + 4,
                              "color": [1.0, 0.66, 0.32], "energy": 1.25, "scale": 3.4})
+
+    # --- THE FOREGROUND RITE: the shrine the first frame has to show ------
+    # The brief is explicit that the altar must be inside the spawn camera view,
+    # not thirty-four tiles east of it. The basin still stands on its island, but
+    # the room the player opens in now holds the station the level's own name
+    # promises: a sacrificial stone on the gate's axis, fire on both sides, the
+    # bones of what was offered, and blood in the paving around it. Everything is
+    # furniture on walkable ground, so nothing here invents collision.
+    plan.prop("slab", (15, 15), z=1, low=True, note="sacrificial stone on the gate's axis")
+    plan.prop("stand", (18, 14), z=1, low=True, note="brass offering stand beside the stone")
+    for cell in ((11, 15), (20, 15)):
+        if cell in floor and cell not in guard:
+            plan.prop("brazier", cell, z=1, low=True, note="fire at the shrine's shoulder",
+                      light={"x": cell[0] * T + 8, "y": cell[1] * T + 4,
+                             "color": [1.0, 0.62, 0.30], "energy": 1.5, "scale": 3.2})
+    for cell in ((13, 16), (17, 16)):
+        if cell in floor and cell not in guard:
+            plan.prop("skulls", cell, z=1, low=True, note="offerings at the shrine's step")
+    for cell in ((14, 14), (16, 14), (15, 16), (13, 15), (17, 15)):
+        if cell in floor and cell not in guard:
+            plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
 
     # --- the antechamber: banner + emblem + torch rhythm -----------------
     for cell in ((7, 10), (9, 10), (22, 10), (24, 10)):

@@ -1155,6 +1155,41 @@
       },
       {
         "cell": [
+          14,
+          14
+        ],
+        "frame": "stain_b"
+      },
+      {
+        "cell": [
+          16,
+          14
+        ],
+        "frame": "stain_b"
+      },
+      {
+        "cell": [
+          15,
+          16
+        ],
+        "frame": "stain_a"
+      },
+      {
+        "cell": [
+          13,
+          15
+        ],
+        "frame": "stain_b"
+      },
+      {
+        "cell": [
+          17,
+          15
+        ],
+        "frame": "stain_b"
+      },
+      {
+        "cell": [
           6,
           43
         ],
@@ -3803,10 +3838,10 @@
         "y": 232,
         "color": [
           1.0,
-          0.36,
-          0.22
+          0.46,
+          0.3
         ],
-        "energy": 2.4,
+        "energy": 1.8,
         "scale": 7.6
       }
     },
@@ -3940,6 +3975,100 @@
         "energy": 1.25,
         "scale": 3.4
       }
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        15,
+        15
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "sacrificial stone on the gate's axis"
+    },
+    {
+      "frame": "stand",
+      "cell": [
+        18,
+        14
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "brass offering stand beside the stone"
+    },
+    {
+      "frame": "brazier",
+      "cell": [
+        11,
+        15
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "fire at the shrine's shoulder",
+      "light": {
+        "x": 184,
+        "y": 244,
+        "color": [
+          1.0,
+          0.62,
+          0.3
+        ],
+        "energy": 1.5,
+        "scale": 3.2
+      }
+    },
+    {
+      "frame": "brazier",
+      "cell": [
+        20,
+        15
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "fire at the shrine's shoulder",
+      "light": {
+        "x": 328,
+        "y": 244,
+        "color": [
+          1.0,
+          0.62,
+          0.3
+        ],
+        "energy": 1.5,
+        "scale": 3.2
+      }
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        13,
+        16
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings at the shrine's step"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        17,
+        16
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings at the shrine's step"
     },
     {
       "frame": "banner",
@@ -5294,10 +5423,10 @@
       "y": 232,
       "color": [
         1.0,
-        0.36,
-        0.22
+        0.46,
+        0.3
       ],
-      "energy": 3.0,
+      "energy": 2.25,
       "scale": 2.28,
       "cell": [
         48,
@@ -5317,6 +5446,36 @@
       "cell": [
         16,
         25
+      ]
+    },
+    {
+      "x": 184,
+      "y": 244,
+      "color": [
+        1.0,
+        0.62,
+        0.3
+      ],
+      "energy": 1.88,
+      "scale": 0.96,
+      "cell": [
+        11,
+        15
+      ]
+    },
+    {
+      "x": 328,
+      "y": 244,
+      "color": [
+        1.0,
+        0.62,
+        0.3
+      ],
+      "energy": 1.88,
+      "scale": 0.96,
+      "cell": [
+        20,
+        15
       ]
     },
     {

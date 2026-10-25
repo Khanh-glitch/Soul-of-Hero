@@ -949,7 +949,7 @@ def prop_cage(seed: int) -> Image.Image:
 
 def prop_banner(seed: int) -> Image.Image:
     """Wall banner: oxblood wool with a gilded crucible sigil, torn hem."""
-    w, h = 40, 84
+    w, h = 30, 62
     img = new(w, h)
     rng = random.Random(seed)
     # rod and finials
@@ -957,9 +957,9 @@ def prop_banner(seed: int) -> Image.Image:
     px(img, 0, 1, BRASS_L)
     px(img, w - 1, 1, BRASS_L)
     # cloth: two panels falling with a slight sway, ragged bottom edge
-    for x in range(4, w - 4):
-        sway = int(round(1.6 * math.sin((x - 4) / 7.0)))
-        bottom = h - 6 - int(3 * math.sin(x * 0.7)) - (5 if rng.random() < 0.22 else 0)
+    for x in range(3, w - 3):
+        sway = int(round(1.2 * math.sin((x - 3) / 6.0)))
+        bottom = h - 5 - int(2.5 * math.sin(x * 0.8)) - (4 if rng.random() < 0.22 else 0)
         u = (x - 4) / max(1.0, (w - 8) - 1)
         body = mix(shade(OX_L, 1.02), OX_D, u * 0.7)
         for y in range(5, bottom):
@@ -967,13 +967,13 @@ def prop_banner(seed: int) -> Image.Image:
         # central fold highlight and side shadow
         px(img, x + sway // 2, 5, OX_HI)
     # fold shading: three vertical bands
-    for x in (10, 20, 30):
+    for x in (9, 15, 21):
         for y in range(6, h - 12):
             px(img, x, y, shade(OX_D, 0.86))
             px(img, x + 1, y, shade(OX_L, 1.06))
     # sigil
     cx = w // 2
-    pts = [(cx, 22), (cx - 9, 40), (cx + 9, 40)]
+    pts = [(cx, 16), (cx - 7, 32), (cx + 7, 32)]
     for i in range(3):
         x0, y0 = pts[i]
         x1, y1 = pts[(i + 1) % 3]
@@ -981,12 +981,12 @@ def prop_banner(seed: int) -> Image.Image:
             tt = t / 30
             px(img, int(x0 + (x1 - x0) * tt), int(y0 + (y1 - y0) * tt), BRASS_L)
             px(img, int(x0 + (x1 - x0) * tt), int(y0 + (y1 - y0) * tt) + 1, BRASS_D)
-    for y in range(34, 42):
-        half = int((y - 34) * 0.45)
+    for y in range(27, 33):
+        half = int((y - 27) * 0.45)
         for x in range(cx - half, cx + half + 1):
             px(img, x, y, OX_HI)
     # grommets
-    for x in (7, w - 8):
+    for x in (6, w - 7):
         rect(img, x - 1, 2, 3, 3, IRON_M)
         px(img, x, 2, IRON_HI)
     return img
