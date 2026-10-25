@@ -30,6 +30,7 @@ const SpriteFramesFactory := preload("res://game/world/sprite_frame_factory.gd")
 
 const THEME_DIR := "res://data/environment/chapter1"
 const BEDROCK_NODE := "EnvironmentBedrock"
+const BEDROCK_OUTER_NODE := "EnvironmentBedrockOuter"
 const FACADE_NODE := "EnvironmentFacade"
 const BACKING_NODE := "EnvironmentWallBacking"
 const TRIM_NODE := "EnvironmentWallTrim"
@@ -326,21 +327,41 @@ func _build_bedrock() -> void:
 		consider.call(cell + Vector2i(0, 1))
 		consider.call(cell - Vector2i(0, 1))
 
+	# Two layers, because the two voids mean different things. The enclosed mass is
+	# the stone the rooms were cut out of, and it is lit like the walls it belongs to.
+	# The outer void is the country outside the keep: it is rock too, but held right
+	# down in value, so the level sits *in* something instead of floating as a floor
+	# plan on a black field. Rooms stay silhouetted because the difference between the
+	# two is a whole stop of light.
+	var inner_colour: Color = _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
+	var outer_colour: Color = _to_color(config.get("outer_color", []),
+		Color(inner_colour.r * 0.42, inner_colour.g * 0.42, inner_colour.b * 0.46, 1.0))
 	var rock := TileMapLayer.new()
 	rock.name = BEDROCK_NODE
 	rock.z_index = -11
 	rock.tile_set = reference.tile_set
-	rock.modulate = _to_color(config.get("color", []), Color(0.42, 0.40, 0.45, 1.0))
+	rock.modulate = inner_colour
 	add_child(rock)
+	var outer := TileMapLayer.new()
+	outer.name = BEDROCK_OUTER_NODE
+	outer.z_index = -12
+	outer.tile_set = reference.tile_set
+	outer.modulate = outer_colour
+	add_child(outer)
 	var filled := 0
 	for y: int in range(height):
 		for x: int in range(width):
 			var cell := Vector2i(x, y)
-			if floor.has(cell) or geometry.has(cell) or open.has(cell):
+			if floor.has(cell) or geometry.has(cell):
 				continue
-			_put(rock, cell, tiles[posmod(x * 73 + y * 151, tiles.size())])
-			filled += 1
+			var entry: Array = tiles[posmod(x * 73 + y * 151, tiles.size())]
+			if open.has(cell):
+				_put(outer, cell, entry)
+			else:
+				_put(rock, cell, entry)
+				filled += 1
 	rock.update_internals()
+	outer.update_internals()
 	print("ENVIRONMENT BEDROCK: enclosed_void=%d outside_void=%d" % [filled, open.size()])
 
 
