@@ -1,10 +1,10 @@
 {
   "level": "chapter_1_level_6",
   "slot": 6,
-  "frames": 24,
+  "frames": 20,
   "bounds": [
     0,
-    -96,
+    0,
     1920,
     1408
   ],
@@ -21,15 +21,15 @@
   "limits_applied": true,
   "mosaic_origin": [
     8,
-    -96
+    0
   ],
   "mosaic_px": [
     1912,
-    1492
+    1396
   ],
   "coverage_of_content": 1.0,
-  "overlaps_checked": 23,
-  "overlap_best_diff": 21.16,
+  "overlaps_checked": 19,
+  "overlap_best_diff": 21.56,
   "overlap_worst_shift_px": 0,
-  "overlaps_at_zero_shift": 23
+  "overlaps_at_zero_shift": 19
 }

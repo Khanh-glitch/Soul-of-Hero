@@ -1,0 +1,36 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
+
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+AUTHORED PROPS: missing=0 clamped=0
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=22 shadows=108
+AUTHORED PROPS: missing=0 clamped=0
+CHAPTER1 AUDIT: level=chapter_1_level_7 slot=7 art=on
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_7 frames=15 bounds=[0, -96, 1536, 1120] content=[48, 48, 1488, 1072] world_view=(640.0, 360.0)
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=000 cell=(20, 5) rect=[8.0, -96.0, 648.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=001 cell=(50, 5) rect=[488.0, -96.0, 1128.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=002 cell=(76, 5) rect=[896.0, -96.0, 1536.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=003 cell=(20, 22) rect=[8.0, 172.0, 648.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=004 cell=(50, 22) rect=[488.0, 172.0, 1128.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=005 cell=(76, 22) rect=[896.0, 172.0, 1536.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=006 cell=(20, 39) rect=[8.0, 444.0, 648.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=007 cell=(50, 39) rect=[488.0, 444.0, 1128.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=008 cell=(76, 39) rect=[896.0, 444.0, 1536.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=009 cell=(20, 55) rect=[8.0, 700.0, 648.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=010 cell=(50, 55) rect=[488.0, 700.0, 1128.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=011 cell=(76, 55) rect=[896.0, 700.0, 1536.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=012 cell=(20, 58) rect=[8.0, 748.0, 648.0, 1108.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=013 cell=(50, 58) rect=[488.0, 748.0, 1128.0, 1108.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=014 cell=(76, 58) rect=[896.0, 748.0, 1536.0, 1108.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_7 frames=15 limits_applied=true
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

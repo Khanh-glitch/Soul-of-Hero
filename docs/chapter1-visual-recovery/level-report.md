@@ -1,13 +1,13 @@
 # Per-level report
 
-Native scale is 640×360; the mosaics in `docs/chapter1-audit/` are 1:1 world pixels,
+Native scale is 640×360; the mosaics in `docs/chapter1-visual-recovery/after/` are 1:1 world pixels,
 so every frame is twice the size the player actually sees. Review order used here:
 the whole mosaic first for composition, then crops at 1:1 for detail. No smoothing,
 no exposure compensation — where a frame is dark, the note says so rather than the
 crop hiding it.
 
 The native numbers in each entry come from the branch's own logs
-(`docs/chapter1-audit/logs/chapter_1_level_N.txt`), not from the audit's estimated
+(`docs/chapter1-visual-recovery/after/logs/chapter_1_level_N.txt`), not from the audit's estimated
 counts.
 
 ---

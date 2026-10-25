@@ -1,0 +1,35 @@
+{
+  "level": "chapter_1_level_10",
+  "slot": 10,
+  "frames": 15,
+  "bounds": [
+    0,
+    -96,
+    1600,
+    1216
+  ],
+  "content": [
+    384,
+    48,
+    1216,
+    1168
+  ],
+  "world_view": [
+    640.0,
+    360.0
+  ],
+  "limits_applied": true,
+  "mosaic_origin": [
+    8,
+    -96
+  ],
+  "mosaic_px": [
+    1592,
+    1300
+  ],
+  "coverage_of_content": 1.0,
+  "overlaps_checked": 14,
+  "overlap_best_diff": 17.22,
+  "overlap_worst_shift_px": 0,
+  "overlaps_at_zero_shift": 14
+}

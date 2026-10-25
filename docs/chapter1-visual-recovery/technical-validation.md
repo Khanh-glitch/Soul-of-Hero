@@ -43,7 +43,7 @@ asset gate, and the architecture workflow runs it as its own step.
 ## 3. Native runtime evidence
 
 From the audit sweep's published logs on the branch
-(`docs/chapter1-audit/logs/chapter_1_level_N.txt`):
+(`docs/chapter1-visual-recovery/after/logs/chapter_1_level_N.txt`):
 
 ```
 level 5  CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
@@ -95,7 +95,7 @@ torches flicker between frames and a brightness comparison is minimised by slidi
 pool rather than by lining up the architecture.
 
 On the mosaics committed with this report
-(`docs/chapter1-audit/L*_mosaic.json`):
+(`docs/chapter1-visual-recovery/after/L*_mosaic.json`):
 
 | level | frames | coverage of authored content | worst overlap shift | overlaps agreeing at 0 |
 | --- | --- | --- | --- | --- |

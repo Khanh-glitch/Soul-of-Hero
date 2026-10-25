@@ -70,7 +70,9 @@ python3 tools/validate_chapter1_art_refs.py     # every authored frame resolves
 powershell -File tools/validate_chapter_1_assets.ps1
 ```
 
-The AFTER mosaics are `docs/chapter1-audit/L01..L10_mosaic.png`, regenerated from
-the branch by the audit sweep workflow. The BEFORE mosaics that the audit shipped
-are the same paths at commit `e613242`; the sweep overwrites the working copies, so
-the audit's own set is preserved by the commit, not by the file.
+The AFTER mosaics are `docs/chapter1-visual-recovery/after/L01..L10_mosaic.png`,
+regenerated from this branch by the sweep workflow. The BEFORE mosaics are
+`docs/chapter1-audit/`, which is frozen at `e613242` and is not written to by any
+workflow: a BEFORE frame that gets overwritten by a later build is not evidence of
+anything. The two sets are separate directories on purpose, and the AFTER set is
+labelled as such wherever it is used.
