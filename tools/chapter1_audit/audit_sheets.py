@@ -26,7 +26,7 @@ Output: <out>/L<nn>_mosaic.png           the stitched level, 1 mosaic px = 1 art
         <out>/manifests/level_<n>.json   the manifest, for provenance
 
 Usage: python3 tools/chapter1_audit/audit_sheets.py [--artifacts .artifacts/audit]
-                                                   [--out docs/chapter1-audit]
+                                                   [--out docs/chapter1-visual-recovery/after]
 """
 
 from __future__ import annotations
@@ -165,11 +165,20 @@ def stitch(folder: Path) -> dict | None:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--artifacts", default=".artifacts/audit")
-    parser.add_argument("--out", default="docs/chapter1-audit")
+    parser.add_argument("--out", default="docs/chapter1-visual-recovery/after")
     args = parser.parse_args()
 
     root = Path(args.artifacts)
     out = Path(args.out)
+    # The audit's own mosaics are the BEFORE evidence for the visual recovery pass and
+    # are frozen at e613242. Writing a later build into that directory would destroy
+    # the only comparison the pass has, and it would do it silently, so the tool
+    # refuses instead. This is not a style preference: it happened once.
+    frozen = Path("docs/chapter1-audit").resolve()
+    if out.resolve() == frozen:
+        print("audit mosaics: refusing to write into %s - that set is frozen BEFORE "
+              "evidence. Publish to docs/chapter1-visual-recovery/after/ instead." % frozen)
+        return 2
     (out / "manifests").mkdir(parents=True, exist_ok=True)
     written = 0
     for folder in sorted(root.glob("level_*")):
