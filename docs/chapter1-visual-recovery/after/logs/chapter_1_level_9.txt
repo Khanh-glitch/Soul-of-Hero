@@ -4,15 +4,15 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
 ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
-AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=71 lights=29 shadows=100
-CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=71 lights=29 shadows=100
+AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
+CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
 AUTHORED PROPS: missing=0 clamped=0
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=71 lights=29 shadows=100
-CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=71 lights=29 shadows=100
+AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
+CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 AUDIT: level=chapter_1_level_9 slot=9 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_9 frames=15 bounds=[0, -96, 1536, 1248] content=[80, 48, 1456, 1200] world_view=(640.0, 360.0)
@@ -32,5 +32,7 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_9 frame=012 cell=(20, 66) rect=[8.0, 
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_9 frame=013 cell=(50, 66) rect=[488.0, 876.0, 1128.0, 1236.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_9 frame=014 cell=(76, 66) rect=[896.0, 876.0, 1536.0, 1236.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_9 frames=15 limits_applied=true
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 13 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

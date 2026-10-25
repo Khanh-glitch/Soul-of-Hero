@@ -37,7 +37,5 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=017 cell=(50, 64) rect=[488.0
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=018 cell=(80, 64) rect=[968.0, 844.0, 1608.0, 1204.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=019 cell=(84, 64) rect=[1024.0, 844.0, 1664.0, 1204.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_8 frames=20 limits_applied=true
-WARNING: 12 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
-ERROR: 1 resources still in use at exit (run with --verbose for details).
-   at: clear (core/io/resource.cpp:822)
