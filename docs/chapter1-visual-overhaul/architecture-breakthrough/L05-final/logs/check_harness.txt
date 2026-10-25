@@ -1,5 +1,8 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-CRUCIBLE BOOT: save=user://tests/crucible_capture_954770.json
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-   at: cleanup (core/object/object.cpp:2535)
+SCRIPT ERROR: Parse Error: Function "get_world_2d()" not found in base self.
+          at: GDScript::reload (res://tools/captures/crucible_capture.gd:638)
+SCRIPT ERROR: Parse Error: Cannot infer the type of "hits" variable because the value doesn't have a set type.
+          at: GDScript::reload (res://tools/captures/crucible_capture.gd:638)
+ERROR: Failed to load script "res://tools/captures/crucible_capture.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
