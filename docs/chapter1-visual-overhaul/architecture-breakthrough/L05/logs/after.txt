@@ -3,16 +3,16 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_after_40157582630.json
-CRUCIBLE ART: floor_detail=5630 wall_cells=3303 bedrock=4084 props=110 lights=20
+CRUCIBLE BOOT: save=user://crucible_after_40157742223.json
+CRUCIBLE ART: floor_detail=5612 wall_cells=3303 bedrock=4084 props=108 lights=20
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
-CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=110 lights=20 entities=83
-CRUCIBLE PERF: art=on nodes=1003 draw_calls=109 static_mb=115.7 fps=1
+CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=108 lights=20 entities=83
+CRUCIBLE PERF: art=on nodes=1000 draw_calls=109 static_mb=115.7 fps=1
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-CRUCIBLE ART: floor_detail=5630 wall_cells=3303 bedrock=4084 props=110 lights=20
+CRUCIBLE ART: floor_detail=5612 wall_cells=3303 bedrock=4084 props=108 lights=20
 CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
 CRUCIBLE STATION tag=after station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_gate.png ok=true
 CRUCIBLE STATION tag=after station=f1_altar cell=(46, 19) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_altar.png ok=true

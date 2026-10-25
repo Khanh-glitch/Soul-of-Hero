@@ -4,7 +4,7 @@ CHAPTER 1 COLLISION ROUTE: slot=1 safe=3552/3552 targets=12
 CHAPTER 1 COLLISION ROUTE: slot=2 safe=7320/7320 targets=13
 CHAPTER 1 COLLISION ROUTE: slot=3 safe=4604/4604 targets=14
 CHAPTER 1 COLLISION ROUTE: slot=4 safe=4172/4172 targets=13
-CRUCIBLE ART: floor_detail=5630 wall_cells=3303 bedrock=4084 props=110 lights=20
+CRUCIBLE ART: floor_detail=5612 wall_cells=3303 bedrock=4084 props=108 lights=20
 CHAPTER 1 COLLISION ROUTE: slot=5 safe=4575/4575 targets=13
 CHAPTER 1 COLLISION ROUTE: slot=6 safe=4786/4786 targets=12
 CHAPTER 1 COLLISION ROUTE: slot=7 safe=5239/5239 targets=5
