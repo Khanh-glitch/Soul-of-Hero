@@ -154,6 +154,13 @@ func _run() -> void:
 		})
 		print("CHAPTER1 AUDIT SHOT: level=%s frame=%03d cell=%s rect=%s ok=%s"
 			% [_level_id, index, cell, rect, str(saved == OK)])
+		if camera != null and index == 0:
+			var probe := canvas * player.global_position
+			print("CHAPTER1 AUDIT PROBE: viewport=%s visible=%s image=%s zoom=%s"
+				% [get_viewport().get_visible_rect().size, get_viewport().get_visible_rect(),
+					Vector2(image.get_width(), image.get_height()), camera.zoom])
+			print("CHAPTER1 AUDIT PROBE: camera_global=%s screen_centre=%s player_on_screen=%s transform=%s"
+				% [camera.global_position, camera.get_screen_center_position(), probe, canvas])
 		index += 1
 
 	# Whether the camera actually obeyed its limits. If it did not, the sweep has
