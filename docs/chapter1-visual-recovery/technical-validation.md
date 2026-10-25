@@ -120,14 +120,20 @@ missing frame.
 | Workflow | At baseline `e613242` | At this pass | Note |
 | --- | --- | --- | --- |
 | Chapter 1 — architecture breakthrough | success at `3215a15`, then failure at `0a7bbce` | **success** at `7f8e765` | The failure was this pass's own regression: the schema rejected the headroom. Fixed in `951552f`, verified green. Includes the frozen Level 5 suites, the collision route test and the map design tests |
-| Chapter 1 — audit sweep | success | **success** | Regenerated the mosaics from the branch; this is what the AFTER evidence is |
-| Chapter 1 — visual overhaul | success | in progress at time of writing | Pre-existing path; not a gate for this pass |
+| Chapter 1 — audit sweep | success | **success** at `e9f6a6a` | Regenerated the mosaics from the branch into `docs/chapter1-visual-recovery/after/`; this is the AFTER evidence |
+| Chapter 1 — visual overhaul | success | **success** at `db05ae6` | Every gate inside it passed with this pass's art: compile check, frozen gameplay suites, capture of all ten levels art-on and art-off, evidence tree, and "verify the art layer built on every level" |
 | Godot 4.7 Runtime Validation | **failure** | **failure** | Pre-existing at the baseline and at every commit since. Not caused by, and not fixed by, this pass |
 | Level 2 Audition QA | **failure** | **failure** | Pre-existing (`a39dcf1`, `b87dbaf` before this pass) |
 | Level 5 — Blood Crucible redesign | **failure** | **failure** | Pre-existing (`9d237bc`, `2d859d5` before this pass) |
 
 No workflow is described as green here unless it is green, and the three pre-existing
 failures are separated from this pass's work rather than counted as fixes.
+
+Both evidence jobs spent several runs failing *after* every gate had passed, on the
+publishing step, because the branch moved under them mid-capture. That is a publishing
+conflict, not an art verdict, and it is fixed rather than tolerated: both now fetch,
+rebase and retry, and say so in the log. The distinction matters in both directions —
+a red build that only means "someone pushed" teaches the team to ignore red builds.
 
 ## 5. Gameplay invariants
 

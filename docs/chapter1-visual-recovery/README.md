@@ -51,7 +51,10 @@ A partly-done gate is not a passed gate. The visual verdict at the bottom of
 | `bc3d3a3` | C | The keep sits in rock instead of on a black field |
 | `408a451` | E | The chain is drawn as a chain, not a dotted seam |
 | `b0a7268`, `7c5e4d5` | C | Rock measured on the native frames and corrected twice: out of black, then to one value with rock in the headroom |
-| `869aa67` | — | The audit sweep now re-photographs the chapter when the chapter changes |
+| `bc3d3a3`…`7c5e4d5` | C | The rock measured on native frames and corrected twice: out of black, then to one value with rock in the headroom |
+| `408a451` | E | The chain is drawn as a chain, not a dotted seam |
+| `869aa67` | — | The audit sweep re-photographs the chapter when the chapter changes, and publishes to `after/` |
+| `e9f6a6a` | — | `docs/chapter1-audit/` frozen at `e613242` and protected by a guard; publishing made race-proof |
 | `165c46f` | — | This documentation |
 
 ## Documents here
