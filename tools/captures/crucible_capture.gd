@@ -468,9 +468,10 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		# populates with enemies, and walking past them gets the Knight killed --
 		# which is exactly what the previous evidence showed (a death modal, zero
 		# health, and a Knight who ignored every input). So the walk is a walk a
-		# player would make: advance along the route, stop and fight whatever is in
-		# melee, then continue. All of it is real input; nothing is scripted, no
-		# enemy is moved and no health value is touched.
+		# player would make: run the route, swing at what is in front, and dash
+		# through what is too close -- dash is the game's own invulnerability move.
+		# All of it is real input; nothing is scripted, no enemy is moved and no
+		# health value is touched.
 		var index := 0
 		var frames := 0
 		var replans := 0
@@ -478,6 +479,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var shot_taken := 0
 		var swing_clock := 0
 		var engage := 0
+		var dash_clock := 0
 		var last_position := player.global_position
 		var died := false
 		while frames < 3200:
@@ -497,33 +499,46 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			# Fight what is in the way, but do not get pinned to something that
 			# cannot be reached (a ranged enemy behind a wall still "is" within
 			# range), so after a long engagement the route wins for a while.
-			var threat := _nearest_enemy(dungeon, player.global_position, 84.0) if engage < 300 else null
+			var threat := _nearest_enemy(dungeon, player.global_position, 64.0) if engage < 240 else null
 			if threat != null:
 				engage += 1
 			elif engage > 0:
 				engage = maxi(0, engage - 3)
-			var heading := waypoint - player.global_position
-			if threat != null:
-				heading = threat.global_position - player.global_position
+			# Keep moving. Standing still in the middle of a pack is what killed the
+			# previous attempt; the Knight out-runs the patrols (96 px/s against
+			# 48-70), so the walk is a run past them, with a swing at whatever is in
+			# front and a dash -- which the game grants invulnerability for -- when
+			# something is close.
 			_drive(player, heading)
 			swing_clock += 1
-			# Press, hold a few frames, release: the Knight reads just_pressed, so a
-			# held action would swing only once.
-			if swing_clock % 24 == 1:
+			if swing_clock % 30 == 1:
 				Input.action_press(&"attack")
-			elif swing_clock % 24 == 9:
+			elif swing_clock % 30 == 9:
 				Input.action_release(&"attack")
+			if threat != null and dash_clock <= 0:
+				Input.action_press(&"dash")
+				dash_clock = 14
+			elif dash_clock == 11:
+				Input.action_release(&"dash")
+			if dash_clock > 0:
+				dash_clock -= 1
 			await get_tree().physics_frame
 			frames += 1
-			if player.global_position.distance_to(last_position) < 0.6 and threat == null:
+			if frames % 60 == 0:
+				print("CRUCIBLE TRAVERSAL: leg=%s frame=%d cell=%s hp=%s"
+					% [leg_name, frames,
+						Vector2i(int(player.global_position.x / TILE),
+							int(player.global_position.y / TILE)), _health_of(player)])
+			# A corner can still hold the body where the grid says it can pass. When
+			# the Knight has not moved for a while, step off the obstacle and
+			# re-plan from where he actually is -- still under input.
+			if player.global_position.distance_to(last_position) < 0.6:
 				stuck += 1
-				if stuck > 20:
+				if stuck > 24:
 					replans += 1
 					if replans > 8:
 						break
 					_release_movement()
-					# Step off the obstacle, alternating sides, then re-plan from
-					# wherever the Knight actually is.
 					var side := Vector2(-heading.y, heading.x).normalized()
 					if replans % 2 == 0:
 						side = -side
@@ -540,7 +555,6 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 						break
 					path = replanned
 					index = 0
-					replans += 0
 					stuck = 0
 					last_position = player.global_position
 					print("CRUCIBLE TRAVERSAL: leg=%s replan=%d from=%s path=%d hp=%s"
