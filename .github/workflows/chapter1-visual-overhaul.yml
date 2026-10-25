@@ -11,8 +11,12 @@ on:
       - "game/levels/presentation/**"
       - "game/levels/dungeon_level.gd"
       - "data/environment/chapter1/**"
+      - "data/levels/*_architecture.json"
+      - "assets/environment/chapter1/**"
       - "tools/captures/chapter1_visual_capture.*"
       - "tools/chapter1_art/**"
+      - "tools/chapter1_env/**"
+      - "tools/level*/**"
       - "docs/chapter1-visual-overhaul/**"
       - ".github/workflows/chapter1-visual-overhaul.yml"
   workflow_dispatch:
@@ -134,12 +138,29 @@ jobs:
         run: |
           set -uo pipefail
           rc=0
-          for level_id in chapter_1_level_{1..10}; do
+          # A level ships art when it ships an architecture document. For those the
+          # capture must prove the authored layer attached and drew a facade; for
+          # the rest it must prove the layer stayed off, so a document can never be
+          # silently orphaned or a level silently skipped.
+          for n in {1..10}; do
+            level_id="chapter_1_level_${n}"
             logfile=".artifacts/chapter1/${level_id}_after.log"
-            if ! grep -qE "CHAPTER1 CAPTURE: .* art=on facade_cells=[1-9]" "$logfile" 2>/dev/null; then
-              echo "MISSING ART: ${level_id}"
-              grep -hE "SCRIPT ERROR|Parse Error|CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -5
-              rc=1
+            if [ -f "data/levels/${level_id}_architecture.json" ]; then
+              if ! grep -qE "CHAPTER1 CAPTURE: .* art=on facade_cells=[1-9]" "$logfile" 2>/dev/null; then
+                echo "MISSING ART: ${level_id} ships a document but drew no facade"
+                grep -hE "SCRIPT ERROR|Parse Error|CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -5
+                rc=1
+              else
+                echo "ART OK: ${level_id}"
+              fi
+            else
+              if grep -qE "CHAPTER1 CAPTURE: .* art=off" "$logfile" 2>/dev/null; then
+                echo "BASELINE OK: ${level_id} has no architecture document yet"
+              else
+                echo "UNEXPECTED ART: ${level_id} has no document but attached a layer"
+                grep -hE "CHAPTER1 CAPTURE" "$logfile" 2>/dev/null | head -3
+                rc=1
+              fi
             fi
           done
           [ $rc -eq 0 ] && echo "ART LAYER OK on all ten levels"

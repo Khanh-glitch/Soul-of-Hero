@@ -29,11 +29,19 @@ extends Node2D
 ##
 ## Entry point: CrucibleArt.attach(level) — idempotent, rebuilds on map reload.
 
-const TILE_ART := "res://assets/environment/chapter1/crucible/crucible_tiles.png"
-const TILE_INDEX := "res://assets/environment/chapter1/crucible/crucible_tiles.json"
-const PROP_ART := "res://assets/environment/chapter1/crucible/crucible_props.png"
-const PROP_INDEX := "res://assets/environment/chapter1/crucible/crucible_props.json"
-const LIGHT_ART := "res://assets/environment/chapter1/crucible/light_radial.png"
+## Asset folder for a kit. Every Chapter 1 authored environment is one kit:
+## a tile atlas, a prop atlas and a light texture, all built by its own Python
+## authoring script under tools/level<N>/. The document names its kit, so a level
+## carries its own materials and this renderer never decides what a level looks
+## like.
+const KIT_ROOT := "res://assets/environment/chapter1/%s/"
+const DEFAULT_KIT := "crucible"
+
+var tile_art := ""
+var tile_index := ""
+var prop_art := ""
+var prop_index := ""
+var light_art := ""
 
 const NODE_NAME := "CrucibleArt"
 const BEDROCK := "CrucibleBedrock"
@@ -66,6 +74,9 @@ const BACKGROUND := Color(0.035, 0.028, 0.032, 1.0)
 
 var level_data_path := ""
 var document: Dictionary = {}
+var kit := DEFAULT_KIT
+var ambient := AMBIENT
+var background := BACKGROUND
 var _wall_frames := {}
 var _tile_frames := {}
 var _prop_frames := {}
@@ -111,10 +122,24 @@ func rebuild() -> void:
 	if document.is_empty():
 		push_warning("CrucibleArt: architecture document missing for %s" % level_data_path)
 		return
-	_tile_frames = _frame_table(TILE_INDEX)
-	_prop_frames = _frame_table(PROP_INDEX)
-	_tile_texture = load(TILE_ART)
-	_prop_texture = load(PROP_ART)
+	kit = String(document.get("kit", DEFAULT_KIT))
+	var root := KIT_ROOT % kit
+	tile_art = root + kit + "_tiles.png"
+	tile_index = root + kit + "_tiles.json"
+	prop_art = root + kit + "_props.png"
+	prop_index = root + kit + "_props.json"
+	light_art = root + "light_radial.png"
+	# Mood is part of the document, not of this renderer: two levels may share the
+	# pipeline and still be lit like two different places.
+	ambient = _colour(document.get("ambient"), AMBIENT)
+	background = _colour(document.get("background"), BACKGROUND)
+	_tile_frames = _frame_table(tile_index)
+	_prop_frames = _frame_table(prop_index)
+	_tile_texture = load(tile_art)
+	_prop_texture = load(prop_art)
+	if _tile_texture == null or _prop_texture == null:
+		push_error("CrucibleArt: kit %s has no atlas at %s" % [kit, root])
+		return
 	_apply_lighting()
 	var floor := _cells("Backdrop")
 	var geometry := _cells("Geometry")
@@ -124,6 +149,14 @@ func rebuild() -> void:
 	_build_walls(floor, geometry)
 	_build_props(geometry)
 	_build_lights()
+	print("AUTHORED ART: kit=%s floor_detail=%d wall_cells=%d bedrock=%d props=%d lights=%d shadows=%d"
+		% [
+			kit, int(stats.get("floor", 0)), int(stats.get("walls", 0)),
+			int(stats.get("bedrock", 0)), int(stats.get("props", 0)),
+			int(stats.get("lights", 0)), int(stats.get("shadows", 0)),
+		])
+	# Kept for the Level 5 evidence gate, which reads this exact line: the same
+	# numbers, published under the name that workflow has always grepped.
 	print("CRUCIBLE ART: floor_detail=%d wall_cells=%d bedrock=%d props=%d lights=%d shadows=%d"
 		% [
 			int(stats.get("floor", 0)), int(stats.get("walls", 0)),
@@ -160,6 +193,17 @@ func _read_json(path: String) -> Dictionary:
 	var parsed: Variant = JSON.parse_string(file.get_as_text())
 	file.close()
 	return parsed if parsed is Dictionary else {}
+
+
+## [r, g, b] or [r, g, b, a] from the document, falling back to the kit default.
+static func _colour(raw: Variant, fallback: Color) -> Color:
+	if raw is Array and (raw as Array).size() >= 3:
+		var alpha := 1.0
+		if (raw as Array).size() >= 4:
+			alpha = float((raw as Array)[3])
+		return Color(float((raw as Array)[0]), float((raw as Array)[1]),
+			float((raw as Array)[2]), alpha)
+	return fallback
 
 
 func _frame_table(path: String) -> Dictionary:
@@ -473,7 +517,10 @@ func _build_props(geometry: Dictionary) -> void:
 
 # -- lights ------------------------------------------------------------------
 func _build_lights() -> void:
-	var textures := load(LIGHT_ART) as Texture2D
+	var textures := load(light_art) as Texture2D
+	if textures == null:
+		push_error("CrucibleArt: kit %s has no light texture" % kit)
+		return
 	var holder := Node2D.new()
 	holder.name = LIGHT_ROOT
 	holder.z_as_relative = false
@@ -509,10 +556,10 @@ func _apply_lighting() -> void:
 	if host != null:
 		var world_tint := host.get_node_or_null("WorldTint") as CanvasModulate
 		if world_tint != null:
-			world_tint.color = AMBIENT
-		var background := host.get_node_or_null("Background/Color") as Polygon2D
-		if background != null:
-			background.color = BACKGROUND
+			world_tint.color = ambient
+		var background_node := host.get_node_or_null("Background/Color") as Polygon2D
+		if background_node != null:
+			background_node.color = background
 	# the authored art carries its own material colours; the level's own tints are
 	# left neutral so the two do not multiply into mud. DungeonLevel applies its
 	# exported tints once in _ready(), so the live layers have to be repainted too
