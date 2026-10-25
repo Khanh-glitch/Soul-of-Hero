@@ -92,20 +92,29 @@ def cross(plan, floor, geom) -> int:
 
 
 def steps(plan, floor, geom) -> int:
-    """The four steps up to the throne: widening as they come down into the room."""
+    """The four steps up to the throne: widening as they come down into the room.
+
+    Each tier is one row of tread tiles, and the last tier carries the riser, so
+    the flight reads as four continuous bands of light with four continuous
+    shadows under them instead of four rows of scattered ornament. The runner
+    carries on over the treads: a carpet up the middle of a staircase is exactly
+    what a throne room is for.
+    """
     painted = 0
     tiers = ((20, 47, 54), (21, 46, 55), (22, 44, 57), (23, 42, 59))
+    last = tiers[-1][0]
     for (cy, x0, x1) in tiers:
         for cx in range(x0, x1 + 1):
             cell = (cx, cy)
             if cell not in floor or cell in geom:
                 continue
+            quad = "abcd"[(cx % 2) * 2 + (cy % 2)]
             if cx in AXIS:
                 plan.floor_tile(cell, "carpet_v")
-            elif cx in (x0, x1):
-                plan.floor_tile(cell, "aisle_" + "abcd"[(cx % 2) * 2 + (cy % 2)])
+            elif cy == last:
+                plan.floor_tile(cell, "riser_" + quad)
             else:
-                plan.floor_tile(cell, "lane_" + "abcd"[(cx % 2) * 2 + (cy % 2)])
+                plan.floor_tile(cell, "step_" + quad)
             painted += 1
     return painted
 

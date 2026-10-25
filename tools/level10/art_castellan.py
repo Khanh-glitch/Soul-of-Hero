@@ -130,11 +130,22 @@ def carpet(direction: str, seed: int, *, end: bool = False):
 
 
 def aisle(seed: int, quad: int):
-    """The processional paving: marble with a gold inlay down the middle."""
+    """The processional paving: marble with a gold inlay down the middle.
+
+    The inlay is a centred band, not a hairline at the tile's top edge. Drawn as
+    a two-pixel rule on the seam, an isolated aisle cell read as a gold scratch
+    floating on the floor - one of the tics every room in this chapter was
+    covered in. A four-pixel band with a dark bed and a lit arris reads as inlay
+    whether it is one cell long or forty, and it runs continuously when cells are
+    adjacent.
+    """
     img = marble(seed, quad, tone=1.02)
-    if quad in (0, 1):
-        hline(img, 0, 4, T, GOLD_DARK)
-        hline(img, 0, 5, T, GOLD_LIGHT)
+    rect(img, 0, 6, T, 4, GOLD_DARK)
+    hline(img, 0, 6, T, GOLD)
+    hline(img, 0, 7, T, GOLD_LIGHT)
+    hline(img, 0, 9, T, shade(GOLD_DARK, 0.78))
+    for x in range(3, T, 6):
+        px(img, x, 8, GOLD_PALE)
     return img
 
 
@@ -152,10 +163,39 @@ def aisle_broken(seed: int, quad: int):
 
 
 def lane(seed: int, quad: int):
-    """The crossing lanes of the fight: plainer, paler, uncluttered paving."""
+    """The crossing lanes: paler paving, banded down the middle, no hairlines.
+
+    The old version drew a single pale pixel down the tile's left seam, which on
+    its own read as a scratch and in a stack read as a grid drawn on the floor.
+    A centred two-pixel band with a joint either side reads as dressed stone.
+    """
     img = marble(seed, quad, tone=1.08)
-    for y in range(T):
-        px(img, 0, y, mix(MARBLE_PALE, JOINT, 0.25))
+    vline(img, 7, 0, T, mix(MARBLE_PALE, JOINT, 0.18))
+    vline(img, 8, 0, T, mix(MARBLE_PALE, JOINT, 0.30))
+    for y in range(4, T, 6):
+        px(img, 7, y, MARBLE_PALE)
+    return img
+
+
+def step(seed: int, quad: int, *, riser: bool = False):
+    """A stair tread: a lit nosing at the top, a shadowed riser at the foot.
+
+    The steps to the throne were drawn as scattered aisle and lane tiles, so the
+    staircase read as gold scratches on the paving and the dais appeared to float
+    over noise. A tread has to be a *band*: one continuous highlight where the
+    nosing catches the light and one continuous shadow where the riser drops.
+    Then four rows of them read as four steps, at any width.
+    """
+    img = marble(seed, quad, tone=1.10)
+    hline(img, 0, 0, T, shade(MARBLE_PALE, 1.06))
+    hline(img, 0, 1, T, shade(MARBLE_PALE, 1.02))
+    hline(img, 0, 2, T, mix(MARBLE_LIGHT, JOINT, 0.35))
+    if riser:
+        rect(img, 0, T - 5, T, 5, mix(JOINT, MARBLE_DARK, 0.55))
+        hline(img, 0, T - 5, T, shade(JOINT, 0.82))
+        hline(img, 0, T - 1, T, shade(JOINT, 1.35))
+    else:
+        hline(img, 0, T - 1, T, mix(MARBLE_LIGHT, JOINT, 0.30))
     return img
 
 
@@ -566,6 +606,10 @@ def build_tiles() -> list:
         tiles.append((name, lambda q=quad: aisle_broken(37, q)))
     for quad, name in enumerate(("lane_a", "lane_b", "lane_c", "lane_d")):
         tiles.append((name, lambda q=quad: lane(43, q)))
+    for quad, name in enumerate(("step_a", "step_b", "step_c", "step_d")):
+        tiles.append((name, lambda q=quad: step(51, q)))
+    for quad, name in enumerate(("riser_a", "riser_b", "riser_c", "riser_d")):
+        tiles.append((name, lambda q=quad: step(53, q, riser=True)))
     return tiles
 
 

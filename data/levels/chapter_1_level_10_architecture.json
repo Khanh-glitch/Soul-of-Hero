@@ -4123,7 +4123,7 @@
           42,
           23
         ],
-        "frame": "aisle_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -4599,7 +4599,7 @@
           43,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -5068,14 +5068,14 @@
           44,
           22
         ],
-        "frame": "aisle_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           44,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -5544,14 +5544,14 @@
           45,
           22
         ],
-        "frame": "lane_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           45,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -6013,21 +6013,21 @@
           46,
           21
         ],
-        "frame": "aisle_b"
+        "frame": "step_b"
       },
       {
         "cell": [
           46,
           22
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           46,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -6482,28 +6482,28 @@
           47,
           20
         ],
-        "frame": "aisle_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           47,
           21
         ],
-        "frame": "lane_d"
+        "frame": "step_d"
       },
       {
         "cell": [
           47,
           22
         ],
-        "frame": "lane_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           47,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -6958,28 +6958,28 @@
           48,
           20
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           48,
           21
         ],
-        "frame": "lane_b"
+        "frame": "step_b"
       },
       {
         "cell": [
           48,
           22
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           48,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -8862,28 +8862,28 @@
           52,
           20
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           52,
           21
         ],
-        "frame": "lane_b"
+        "frame": "step_b"
       },
       {
         "cell": [
           52,
           22
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           52,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -9338,28 +9338,28 @@
           53,
           20
         ],
-        "frame": "lane_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           53,
           21
         ],
-        "frame": "lane_d"
+        "frame": "step_d"
       },
       {
         "cell": [
           53,
           22
         ],
-        "frame": "lane_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           53,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -9814,28 +9814,28 @@
           54,
           20
         ],
-        "frame": "aisle_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           54,
           21
         ],
-        "frame": "lane_b"
+        "frame": "step_b"
       },
       {
         "cell": [
           54,
           22
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           54,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -10297,21 +10297,21 @@
           55,
           21
         ],
-        "frame": "aisle_d"
+        "frame": "step_d"
       },
       {
         "cell": [
           55,
           22
         ],
-        "frame": "lane_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           55,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -10780,14 +10780,14 @@
           56,
           22
         ],
-        "frame": "lane_a"
+        "frame": "step_a"
       },
       {
         "cell": [
           56,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
@@ -11256,14 +11256,14 @@
           57,
           22
         ],
-        "frame": "aisle_c"
+        "frame": "step_c"
       },
       {
         "cell": [
           57,
           23
         ],
-        "frame": "lane_d"
+        "frame": "riser_d"
       },
       {
         "cell": [
@@ -11739,7 +11739,7 @@
           58,
           23
         ],
-        "frame": "lane_b"
+        "frame": "riser_b"
       },
       {
         "cell": [
