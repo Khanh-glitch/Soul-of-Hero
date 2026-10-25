@@ -2,7 +2,7 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "fa8ccda986c4d16384b284c364296364259ddce3",
+  "commit": "a87bf832ce350335135ede634790e7c238cd47e3",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
@@ -16,7 +16,7 @@
     "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
     "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
-    "tools/captures/crucible_capture.gd": "e0160ec639194e9895ea860980ec58e5a35aa03a3013b3c475193d460cb08ca2"
+    "tools/captures/crucible_capture.gd": "e627ce008d0b7fa64fc261e9ecffb01bf3e735da6d0dbe0b6e67b0e72b11f1c5"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -27,20 +27,28 @@
     "shadows": 506,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1062,
+    "nodes": 1059,
     "draw_calls": 110,
     "static_mb": 121.4,
-    "errors": [
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (68, 21) on leg f1_spawn_to_f1_gate",
-      "ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (9, 49) on leg f2_landing_to_f2_f3_door"
-    ],
+    "errors": [],
     "fight": {
-      "knight_hp_before": "0/1100",
-      "knight_hp_after": "0/1100",
-      "boss_hp": "6437/6437",
-      "boss_state": "SEEK_BAND"
+      "knight_hp_before": "693/1100",
+      "knight_hp_after": "693/1100",
+      "boss_hp": "6337/6437",
+      "boss_state": "RECOVER"
     },
-    "traversal": [],
+    "traversal": [
+      [
+        "f1_gate_door",
+        "direct_call",
+        "1591.5"
+      ],
+      [
+        "f2_gate_door",
+        "direct_call",
+        "1609.1"
+      ]
+    ],
     "app_boot": "complete",
     "startup_profile_error": false,
     "leaks": []
@@ -54,15 +62,17 @@
     "shadows": 0,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 869,
+    "nodes": 867,
     "draw_calls": 103,
     "static_mb": 113.9,
-    "errors": [],
+    "errors": [
+      "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+    ],
     "fight": {
-      "knight_hp_before": "932/1100",
-      "knight_hp_after": "932/1100",
+      "knight_hp_before": "1100/1100",
+      "knight_hp_after": "1100/1100",
       "boss_hp": "6337/6437",
-      "boss_state": "SEEK_BAND"
+      "boss_state": "RECOVER"
     },
     "traversal": [],
     "app_boot": "complete",
@@ -156,7 +166,7 @@
       "zoom": 1.0,
       "log_ok": true,
       "file_present": true,
-      "extra": "knight_hp=0/1100 boss_hp=6437"
+      "extra": "knight_hp=693/1100 boss_hp=6337"
     },
     "overview_f1": {
       "tag": "after",
@@ -209,7 +219,10 @@
     "f2",
     "f3"
   ],
-  "traversal_frames": [],
+  "traversal_frames": [
+    "traversal_door_f1_gate_door",
+    "traversal_door_f2_gate_door"
+  ],
   "crops": [
     "f1_spawn",
     "f2_court",

@@ -3,53 +3,36 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_after_40168567676.json
+CRUCIBLE BOOT: save=user://crucible_after_40168794214.json
 CRUCIBLE BOOT: app_boot=complete
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=158 lights=29 entities=83
-CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1062 draw_calls=110 static_mb=121.4 tree_objects=14612
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate staged_at=(10, 17) path=100 cells hp=1100/1100
+CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1059 draw_calls=110 static_mb=121.4 tree_objects=14599
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk staged_at=(10, 17) path=48 cells hp=1100/1100
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=60 cell=(17, 18) at=(274.0, 288.0) waypoint=(18, 17) index=7/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=1 cell=(20, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_1.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=120 cell=(24, 18) at=(397.0, 288.0) waypoint=(25, 17) index=14/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=180 cell=(31, 18) at=(509.0, 288.0) waypoint=(32, 17) index=21/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=2 cell=(31, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_2.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=240 cell=(39, 18) at=(632.0, 288.0) waypoint=(40, 17) index=29/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=3 cell=(43, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_3.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=300 cell=(45, 20) at=(724.0, 322.0) waypoint=(46, 19) index=37/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=360 cell=(52, 20) at=(836.0, 322.0) waypoint=(53, 19) index=44/100 hp=1100/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=4 cell=(52, 20) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_to_f1_gate_walk_4.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=420 cell=(59, 20) at=(948.0, 322.0) waypoint=(60, 19) index=51/100 hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=480 cell=(61, 19) at=(984.0, 318.0) waypoint=(62, 19) index=53/100 hp=932/1100
-CRUCIBLE TRAVERSAL STALL: leg=f1_spawn_to_f1_gate frame=499 at=(984.6653, 318.2638) velocity=(0.0, 0.0) heading=(15.33472, 1.736176) pressed=["move_right"]
-CRUCIBLE TRAVERSAL RAY: (-1.0, 0.0) -> Knight (CharacterBody2D) at=(984.6653, 318.2638)
-CRUCIBLE TRAVERSAL RAY: (1.0, 0.0) -> Knight (CharacterBody2D) at=(984.6653, 318.2638)
-CRUCIBLE TRAVERSAL RAY: (0.0, -1.0) -> Knight (CharacterBody2D) at=(984.6653, 318.2638)
-CRUCIBLE TRAVERSAL RAY: (0.0, 1.0) -> Knight (CharacterBody2D) at=(984.6653, 318.2638)
-CRUCIBLE TRAVERSAL SHAPE: BodyShape shape=RectangleShape2D disabled=false
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=1 from=(62, 18) path=45 hp=932/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=540 cell=(63, 17) at=(1017.0, 280.0) waypoint=(64, 18) index=1/45 hp=932/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=600 cell=(63, 17) at=(1023.0, 281.0) waypoint=(64, 18) index=1/45 hp=932/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=660 cell=(64, 19) at=(1039.0, 307.0) waypoint=(66, 18) index=3/45 hp=912/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=720 cell=(67, 20) at=(1082.0, 334.0) waypoint=(68, 18) index=5/45 hp=744/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=780 cell=(68, 21) at=(1089.0, 343.0) waypoint=(68, 18) index=5/45 hp=576/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=840 cell=(67, 20) at=(1087.0, 327.0) waypoint=(68, 18) index=5/45 hp=576/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=900 cell=(66, 22) at=(1060.0, 368.0) waypoint=(68, 18) index=5/45 hp=576/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=2 from=(65, 22) path=46 hp=367/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate frame=1020 cell=(68, 22) at=(1091.0, 368.0) waypoint=(69, 21) index=4/46 hp=158/1100
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate arrived=false died=true frames=1053 at=(68, 21) hp=0/1100
-ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (68, 21) on leg f1_spawn_to_f1_gate
-   at: push_error (core/variant/variant_utility.cpp:1023)
-   GDScript backtrace (most recent call first):
-       [0] _traverse (res://tools/captures/crucible_capture.gd:621)
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door staged_at=(9, 48) path=107 cells hp=0/1100
-CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door arrived=false died=true frames=0 at=(9, 49) hp=0/1100
-ERROR: CRUCIBLE TRAVERSAL FAIL: the Knight died at (9, 49) on leg f2_landing_to_f2_f3_door
-   at: push_error (core/variant/variant_utility.cpp:1023)
-   GDScript backtrace (most recent call first):
-       [0] _traverse (res://tools/captures/crucible_capture.gd:621)
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=60 cell=(17, 18) at=(274.0, 288.0) waypoint=(18, 17) index=7/48 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_walk step=1 cell=(20, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_walk_walk_1.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=120 cell=(24, 18) at=(388.0, 288.0) waypoint=(25, 17) index=14/48 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=180 cell=(31, 18) at=(500.0, 288.0) waypoint=(32, 17) index=21/48 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_walk step=2 cell=(31, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_walk_walk_2.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=240 cell=(38, 18) at=(619.0, 288.0) waypoint=(39, 17) index=28/48 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_walk step=3 cell=(42, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_walk_walk_3.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=300 cell=(44, 20) at=(709.0, 321.0) waypoint=(45, 19) index=36/48 hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk frame=360 cell=(51, 20) at=(821.0, 321.0) waypoint=(52, 19) index=43/48 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_walk step=4 cell=(51, 20) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_spawn_walk_walk_4.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_spawn_walk arrived=true died=false frames=396 at=(54, 18) hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_gate_door staged_at=(92, 17) path=12 cells hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_gate_door frame=60 cell=(99, 18) at=(1586.0, 288.0) waypoint=(100, 17) index=7/12 hp=1100/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_gate_door step=1 cell=(102, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_gate_door_walk_1.png ok=true
+CRUCIBLE TRAVERSAL: leg=f1_gate_door arrived=true died=false frames=101 at=(103, 18) hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_gate_door door_used_via=direct_call moved=1591.5 from=(1666.881, 288.0) to=(152.0, 776.0) ok=true
+CRUCIBLE TRAVERSAL: leg=f2_gate_door staged_at=(94, 48) path=12 cells hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f2_gate_door frame=60 cell=(99, 48) at=(1595.0, 781.0) waypoint=(100, 48) index=5/12 hp=861/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_gate_door step=1 cell=(103, 48) hp=861/1100 out=res://.artifacts/crucible/after/after_f2_gate_door_walk_1.png ok=true
+CRUCIBLE TRAVERSAL: leg=f2_gate_door arrived=true died=false frames=112 at=(105, 48) hp=861/1100
+CRUCIBLE TRAVERSAL: leg=f2_gate_door door_used_via=direct_call moved=1609.1 from=(1699.615, 783.5107) to=(152.0, 1224.0) ok=true
+CRUCIBLE TRAVERSAL SCOPE: walked segments are the level's spawn corridor and both gate approaches; the encounter rooms between them are not walked by this harness because a level 1 seeded Knight does not survive them
 CRUCIBLE TRAVERSAL: sequence complete
 CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
 CRUCIBLE STATION tag=after station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_gate.png ok=true
@@ -59,13 +42,13 @@ CRUCIBLE STATION tag=after station=f2_court cell=(91, 47) zoom=1.00 out=res://.a
 CRUCIBLE STATION tag=after station=f2_encounter cell=(91, 47) zoom=1.00 out=res://.artifacts/crucible/after/after_f2_encounter.png ok=true
 CRUCIBLE STATION tag=after station=f3_approach cell=(70, 76) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_approach.png ok=true
 CRUCIBLE FIGHT: archer found at (1528.0, 1192.0)
-CRUCIBLE FIGHT: swings=6 boss_hp 6437 -> 6437
-CRUCIBLE FIGHT: knight_hp 0/1100 -> 0/1100 | boss_hp=6437/6437 boss_state=SEEK_BAND
-CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=0/1100 boss_hp=6437
+CRUCIBLE FIGHT: swings=6 boss_hp 6437 -> 6337
+CRUCIBLE FIGHT: knight_hp 693/1100 -> 693/1100 | boss_hp=6337/6437 boss_state=RECOVER
+CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=693/1100 boss_hp=6337
 CRUCIBLE STATION tag=after station=overview_f1 cell=(32, 16) zoom=0.50 out=res://.artifacts/crucible/after/overview_after_overview_f1.png ok=true
 CRUCIBLE STATION tag=after station=overview_f2 cell=(53, 44) zoom=0.40 out=res://.artifacts/crucible/after/overview_after_overview_f2.png ok=true
 CRUCIBLE STATION tag=after station=overview_f3 cell=(60, 75) zoom=0.45 out=res://.artifacts/crucible/after/overview_after_overview_f3.png ok=true
 CRUCIBLE CAPTURE DONE: tag=after
-CRUCIBLE EXIT: code=1
+CRUCIBLE EXIT: code=0
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
