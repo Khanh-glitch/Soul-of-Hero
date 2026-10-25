@@ -43,8 +43,5 @@ CHAPTER 1 COLLISION ROUTE: slot=8 branch=reaper reachable=2566
 AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
 CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=vampire reachable=2566
 CHAPTER 1 COLLISION ROUTE TEST PASSED - 161 checks across ten live maps

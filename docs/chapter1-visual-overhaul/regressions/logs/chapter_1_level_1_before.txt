@@ -10,3 +10,12 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
 CHAPTER1 CAPTURE: level=chapter_1_level_1 slot=1 art=off facade_cells=0 lights=0 entities=61
 CHAPTER1 PERF: level=chapter_1_level_1 art=off nodes=677 draw_calls=74 static_mb=103.4 fps=1
 CHAPTER1 STATION tag=before level=chapter_1_level_1 station=entry cell=(6, 6) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_entry.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=landmark cell=(76, 10) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_landmark.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=checkpoint cell=(16, 39) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_checkpoint.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=landmark_2 cell=(84, 38) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_landmark_2.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=landmark_3 cell=(68, 65) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_landmark_3.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=checkpoint_2 cell=(16, 66) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_checkpoint_2.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_1 station=exit cell=(91, 66) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_1/before/before_exit.png ok=true
+CHAPTER1 CAPTURE DONE: tag=before level=chapter_1_level_1
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
