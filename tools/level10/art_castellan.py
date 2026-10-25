@@ -193,67 +193,119 @@ def wall_window():
 
 # --- props -----------------------------------------------------------------
 def prop_throne(seed: int = 1):
-    """The Castellan's seat: colossal by width, built out of four big shapes.
+    """The Castellan's seat: a monument built out of five masses, not a chair.
 
-    A small, detailed throne reads as furniture. This one is a back, two fins, a
-    seat and two arms, each of them at least two cells across, so it is legible
-    from the far end of the arena at gameplay zoom.
+    The previous version tried to do this with fine detail - three carved panels, a
+    gold crest, and a pair of "canopy fins" that were twenty-two one-pixel columns
+    two pixels apart. At gameplay zoom those columns averaged into a moire wash
+    behind the seat, so the largest object in the hall read as a hatched rectangle
+    with a small chair in front of it. That is the same mistake as the chapter's
+    hairline floor motifs: a monument described by lines instead of weights.
+
+    So the throne is built the way a monument is: a dais of three steps, two solid
+    winged buttresses that step down and outward, a back slab framed by pilasters
+    with a crimson field between them, a seat that projects past the back, arms with
+    gold finials, and a crown that rests on the crest rather than floating over it.
+    Every mass is at least three cells across, so each survives being four times
+    smaller than this file draws it.
     """
-    w, h = 176, 120
+    w, h = 176, 136
     img = new(w, h)
     cx = w // 2
-    base_y = h - 3
-    # platform: two steps under the seat
-    block(img, 2, base_y - 12, w - 4, 12, MARBLE_LIGHT, bevel=2)
-    block(img, 14, base_y - 20, w - 28, 9, MARBLE_BASE, bevel=1)
-    hline(img, 14, base_y - 21, w - 28, MARBLE_PALE)
-    # the canopy fins: two swept horns rising from the back corners
+    base_y = h - 4          # the dais foot sits on the cell floor
+
+    # --- dais: three steps, widest at the foot ------------------------------
+    steps = ((0, base_y - 8, 172), (8, base_y - 15, 156), (18, base_y - 21, 136))
+    for inset, top, width in steps:
+        x0 = (w - width) // 2
+        block(img, x0, top, width, base_y - top, MARBLE_LIGHT, bevel=2)
+        hline(img, x0, top, width, MARBLE_PALE)
+        hline(img, x0, base_y - 1, width, JOINT)
+        # tread joints, so the steps read as cut stone and not as a plinth
+        for x in range(x0 + 18, x0 + width - 12, 26):
+            vline(img, x, top + 2, base_y - top - 3, shade(MARBLE_BASE, 0.88))
+
+    seat_top = base_y - 21
+    # --- winged buttresses: three stepped masses each, sweeping outward ------
+    # They sit *outboard* of the back slab, so their stepped silhouette is visible
+    # against the hall instead of being swallowed by it. The first version buried
+    # them behind the back and all that survived was two thin gold strips.
     for side in (-1, 1):
-        for i in range(22):
-            x = cx + side * (52 + i * 2)
-            if not (0 <= x < w):
-                continue
-            top = 26 + i
-            for y in range(top, base_y - 20):
-                px(img, x, y, MARBLE_BASE if i % 4 else MARBLE_DARK)
-                px(img, x, y, MARBLE_BASE) if False else None
-            hline(img, x, top, 2, GOLD)
-        for i in range(5):
-            px(img, cx + side * (52 + i * 2), 24 - i, GOLD_LIGHT)
-    # the back: one slab, three carved panels, a gold rim
-    back_x, back_w, back_top = cx - 52, 105, 20
-    block(img, back_x, back_top, back_w, base_y - 26 - back_top, MARBLE_BASE, bevel=2)
-    for panel in range(3):
-        px0 = back_x + 8 + panel * 33
-        rect(img, px0, back_top + 8, 26, base_y - 46 - back_top, shade(MARBLE_DARK, 1.12))
-        vline(img, px0, back_top + 8, base_y - 46 - back_top, MARBLE_PALE)
-        vline(img, px0 + 25, back_top + 8, base_y - 46 - back_top, JOINT)
-        for i in range(20):
-            px(img, px0 + 4 + i, back_top + 12 + i // 3, MARBLE_LIGHT)
-        rect(img, px0 + 9, back_top + 12, 9, 9, GOLD_DARK)
-        px(img, px0 + 13, back_top + 14, GOLD_LIGHT)
-    hline(img, back_x, back_top, back_w, GOLD_LIGHT)
-    hline(img, back_x, back_top + 1, back_w, GOLD)
-    # the crest: a gold crown above the middle panel
-    for i in range(13):
-        half = int(13 - abs(6 - i) * 1.4)
-        for x in range(cx - half, cx + half):
-            px(img, x, 6 + i, GOLD_LIGHT if (x + i) % 4 else GOLD)
-    for dx in (-9, 0, 9):
-        rect(img, cx + dx - 1, 4, 3, 5, GOLD_PALE)
-    # arms: two thick blocks with gold knobs
+        for reach, drop, thick in ((80, 20, 24), (68, 40, 20), (58, 58, 16)):
+            x_edge = cx + side * reach
+            x_in = x_edge - side * thick
+            x0, x1 = sorted((x_in, x_edge))
+            top = seat_top - drop
+            block(img, x0, top, x1 - x0, base_y - 14 - top, MARBLE_BASE, bevel=2)
+            hline(img, x0, top, x1 - x0, MARBLE_PALE)
+            # gold fillet down the outer edge: the only ornament on the mass
+            vline(img, x_edge - side, top + 2, base_y - 18 - top, GOLD_DARK)
+            vline(img, x_edge - side * 2, top + 2, base_y - 18 - top, GOLD)
+            # a carved panel sunk into the face of each mass
+            panel_w = (x1 - x0) - 6
+            if panel_w > 6:
+                rect(img, x0 + 3, top + 6, panel_w, base_y - 22 - top, shade(MARBLE_DARK, 1.15))
+                hline(img, x0 + 3, top + 6, panel_w, JOINT)
+                vline(img, x0 + 3, top + 6, base_y - 22 - top, MARBLE_DARK)
+
+    # --- back: two pilasters carrying a lintel, crimson field between -------
+    back_top = seat_top - 92
+    lintel_y = back_top
+    outer = 56
+    # The back stops above the seat. Running it down to the dais hid the cushion
+    # behind the same crimson as the field, and the seat - the thing a throne is -
+    # disappeared into its own back.
+    back_bottom = seat_top - 20
+    block(img, cx - outer, lintel_y + 10, outer * 2, back_bottom - lintel_y - 10, MARBLE_BASE, bevel=2)
+    # the crimson field, inset behind the pilasters
+    field_x, field_w = cx - 44, 88
+    rect(img, field_x, lintel_y + 16, field_w, back_bottom - lintel_y - 20, CARPET_DARK)
+    rect(img, field_x + 2, lintel_y + 18, field_w - 4, back_bottom - lintel_y - 24, CARPET)
+    # a gold spine and studs: enough to read as tooled leather at native scale
+    vline(img, cx, lintel_y + 20, back_bottom - lintel_y - 26, GOLD_DARK)
+    vline(img, cx + 1, lintel_y + 20, back_bottom - lintel_y - 26, GOLD)
+    for y in range(lintel_y + 24, back_bottom - 8, 12):
+        for side in (-1, 1):
+            px(img, cx + side * 24, y, GOLD)
+            px(img, cx + side * 24 + 1, y, GOLD_DARK)
+            px(img, cx + side * 24, y + 1, GOLD_DARK)
+    # pilasters either side of the field, with capitals and bases
     for side in (-1, 1):
-        x = cx + side * 56
-        block(img, x - 8, base_y - 44, 17, 24, MARBLE_PALE, bevel=2)
-        rect(img, x - 6, base_y - 42, 13, 4, GOLD)
-        block(img, x - 6, base_y - 22, 13, 12, MARBLE_BASE, bevel=1)
-    # seat and its crimson cushion
-    block(img, cx - 40, base_y - 32, 81, 12, MARBLE_LIGHT, bevel=2)
-    rect(img, cx - 36, base_y - 38, 73, 8, CARPET)
-    hline(img, cx - 36, base_y - 38, 73, CARPET_LIGHT)
-    for x in range(cx - 34, cx + 35, 4):
-        px(img, x, base_y - 31, GOLD_DARK)
-    glow(img, cx, base_y - 46, 34, 20, CANDLE, 40, steps=3)
+        x0 = cx + side * 44 - (11 if side > 0 else 0)
+        block(img, x0, lintel_y + 12, 11, back_bottom - lintel_y - 6, MARBLE_LIGHT, bevel=1)
+        block(img, x0 - 2, lintel_y + 12, 15, 7, MARBLE_PALE, bevel=1)
+        hline(img, x0 - 2, lintel_y + 12, 15, GOLD)
+    # lintel and crest
+    block(img, cx - outer - 4, lintel_y, (outer + 4) * 2, 12, MARBLE_PALE, bevel=2)
+    hline(img, cx - outer - 4, lintel_y, (outer + 4) * 2, GOLD_LIGHT)
+    hline(img, cx - outer - 4, lintel_y + 1, (outer + 4) * 2, GOLD)
+    # the crown rests on the lintel: a band, three points and a jewel
+    band_y = lintel_y - 9
+    block(img, cx - 20, band_y, 41, 10, GOLD, bevel=1)
+    hline(img, cx - 20, band_y, 41, GOLD_LIGHT)
+    for dx, tall in ((-16, 7), (-6, 11), (4, 11), (14, 7)):
+        for i in range(tall):
+            hline(img, cx + dx, band_y - 1 - i, 3, GOLD_LIGHT if i > tall - 3 else GOLD)
+        hline(img, cx + dx, band_y - tall - 1, 3, GOLD_PALE)
+    px(img, cx, band_y + 4, CARPET_LIGHT)
+    px(img, cx + 1, band_y + 4, CARPET_DARK)
+
+    # --- seat, cushion and arms --------------------------------------------
+    block(img, cx - 44, seat_top - 12, 89, 12, MARBLE_LIGHT, bevel=2)
+    rect(img, cx - 40, seat_top - 17, 81, 7, CARPET)
+    hline(img, cx - 40, seat_top - 17, 81, CARPET_LIGHT)
+    hline(img, cx - 40, seat_top - 11, 81, CARPET_DARK)
+    for x in range(cx - 38, cx + 39, 6):
+        px(img, x, seat_top - 11, GOLD_DARK)
+    for side in (-1, 1):
+        x0 = cx + side * 44 - (9 if side > 0 else 0)
+        block(img, x0, seat_top - 26, 9, 15, MARBLE_PALE, bevel=1)
+        block(img, x0 - 2, seat_top - 30, 13, 6, MARBLE_LIGHT, bevel=1)
+        hline(img, x0 - 2, seat_top - 30, 13, GOLD_LIGHT)
+        px(img, x0 + 4, seat_top - 33, GOLD_PALE)
+
+    # a warm pool on the cushion, so the eye lands on the seat first
+    glow(img, cx, seat_top - 14, 40, 16, CANDLE, 46, steps=3)
     return finish(img)
 
 
