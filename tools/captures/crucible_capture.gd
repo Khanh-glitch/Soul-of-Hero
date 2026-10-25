@@ -482,6 +482,10 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		var dash_clock := 0
 		var last_position := player.global_position
 		var died := false
+		var door_distance := player.global_position.distance_to(
+			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5))
+		var no_progress := 0
+		var reported := false
 		while frames < 3200:
 			var hp := _number_property(player, "health")
 			if hp != null and int(hp) <= 0:
@@ -493,9 +497,20 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 				break
 			var waypoint := Vector2(path[index].x * TILE + TILE * 0.5,
 				path[index].y * TILE + TILE * 0.5)
-			if player.global_position.distance_to(waypoint) < 9.0:
+			if player.global_position.distance_to(waypoint) < 10.0:
 				index += 1
 				continue
+			# A waypoint can also be "behind" the Knight: his body is wider than the
+			# waypoint's tolerance, so he can pass one without ever coming within
+			# ten pixels of its centre. Without this he walks back to it forever,
+			# which is what the previous run's cell trace showed.
+			if index + 1 < path.size():
+				var next_cell: Vector2i = path[index + 1]
+				var next_point := Vector2(next_cell.x * TILE + TILE * 0.5,
+					next_cell.y * TILE + TILE * 0.5)
+				if (player.global_position - waypoint).dot(next_point - waypoint) > 0.0:
+					index += 1
+					continue
 			var heading := waypoint - player.global_position
 			# Fight what is in the way, but do not get pinned to something that
 			# cannot be reached (a ranged enemy behind a wall still "is" within
@@ -526,13 +541,26 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			await get_tree().physics_frame
 			frames += 1
 			if frames % 60 == 0:
-				print("CRUCIBLE TRAVERSAL: leg=%s frame=%d cell=%s hp=%s"
+				print("CRUCIBLE TRAVERSAL: leg=%s frame=%d cell=%s at=%s waypoint=%s index=%d/%d hp=%s"
 					% [leg_name, frames,
 						Vector2i(int(player.global_position.x / TILE),
-							int(player.global_position.y / TILE)), _health_of(player)])
+							int(player.global_position.y / TILE)),
+						Vector2(roundf(player.global_position.x), roundf(player.global_position.y)),
+						path[index] if index < path.size() else door_cell,
+						index, path.size(), _health_of(player)])
 			# A corner can still hold the body where the grid says it can pass. When
 			# the Knight has not moved for a while, step off the obstacle and
 			# re-plan from where he actually is -- still under input.
+			var now_distance := player.global_position.distance_to(
+				Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5))
+			if now_distance < door_distance - 8.0:
+				door_distance = now_distance
+				no_progress = 0
+			else:
+				no_progress += 1
+				if no_progress > 420 and not reported:
+					reported = true
+					_report_colliders(player, leg_name, frames, door_distance)
 			if player.global_position.distance_to(last_position) < 0.6:
 				stuck += 1
 				if stuck > 24:
@@ -592,6 +620,31 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			ok = false
 	_drive_shots_done()
 	return ok
+
+
+## Say exactly what the Knight is touching. Guessing at a stall from the tile
+## data has cost several runs already; this prints the physics bodies around him.
+func _report_colliders(player: CharacterBody2D, leg_name: String, frames: int,
+		door_distance: float) -> void:
+	print("CRUCIBLE TRAVERSAL COLLIDERS: leg=%s frame=%d at=%s door_distance=%.1f"
+		% [leg_name, frames, player.global_position, door_distance])
+	var query := PhysicsShapeQueryParameters2D.new()
+	var shape := CircleShape2D.new()
+	shape.radius = 18.0
+	query.shape = shape
+	query.transform = Transform2D(0.0, player.global_position)
+	query.collide_with_bodies = true
+	query.collide_with_areas = true
+	var hits := get_world_2d().direct_space_state.intersect_shape(query, 12)
+	for hit: Dictionary in hits:
+		var collider: Object = hit.get("collider")
+		if collider == null:
+			continue
+		var node := collider as Node
+		print("CRUCIBLE TRAVERSAL COLLIDER: %s type=%s at=%s"
+			% [node.name if node != null else "<unnamed>",
+				collider.get_class(),
+				(node as Node2D).global_position if node is Node2D else Vector2.ZERO])
 
 
 ## Nearest living enemy within `radius`, or null. Used to decide when the walk
