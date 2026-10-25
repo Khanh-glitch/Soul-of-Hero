@@ -15,7 +15,7 @@ claim of approval.
 | Slot | Working title | Kit | Authoring | Evidence run | Status |
 |---|---|---|---|---|---|
 | L06 | The Relay House — "Two Souls, One Path" | `relay` | `tools/level6/` | [run 40174706175](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40174706175), evidence commit `8c13ef0` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L07 | Soul Beacon defence | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
+| L07 | The Beacon Yard — Soul Beacon defence | `vigil` | `tools/level7/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
 | L08 | Reliquary of two wings | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
 | L09 | The Crimson Gate | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
 | L10 | The Castellan's throne | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
