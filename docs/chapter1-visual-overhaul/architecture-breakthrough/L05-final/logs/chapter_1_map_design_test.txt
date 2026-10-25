@@ -1,5 +1,9 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
+ENVIRONMENT BEDROCK: enclosed_void=112 outside_void=3052
+ENVIRONMENT BEDROCK: enclosed_void=762 outside_void=9886
+ENVIRONMENT BEDROCK: enclosed_void=182 outside_void=3454
+ENVIRONMENT BEDROCK: enclosed_void=640 outside_void=3368
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
