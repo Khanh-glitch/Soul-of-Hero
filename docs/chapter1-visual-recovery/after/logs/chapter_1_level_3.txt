@@ -9,9 +9,9 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696
 CHAPTER1 AUDIT: level=chapter_1_level_3 slot=3 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_3 frames=24 bounds=[0, -96, 1856, 1344] content=[48, 0, 1840, 1312] world_view=(640.0, 360.0)
+ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=000 cell=(20, 5) rect=[8.0, -96.0, 648.0, 264.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=001 cell=(50, 5) rect=[488.0, -96.0, 1128.0, 264.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_3 frame=002 cell=(80, 5) rect=[968.0, -96.0, 1608.0, 264.0] ok=true
