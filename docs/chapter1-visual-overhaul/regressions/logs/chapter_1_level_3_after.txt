@@ -11,7 +11,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
        [0] _finish_boot (res://game/app/app_root.gd:270)
 ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696
 CHAPTER1 CAPTURE: level=chapter_1_level_3 slot=3 art=on facade_cells=1318 lights=13 entities=77
-CHAPTER1 PERF: level=chapter_1_level_3 art=on nodes=772 draw_calls=81 static_mb=111.8 fps=8
+CHAPTER1 PERF: level=chapter_1_level_3 art=on nodes=772 draw_calls=81 static_mb=111.8 fps=4
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=entry cell=(8, 13) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=landmark cell=(60, 3) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=checkpoint cell=(16, 42) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_checkpoint.png ok=true

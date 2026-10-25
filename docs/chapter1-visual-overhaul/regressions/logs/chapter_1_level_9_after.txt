@@ -15,7 +15,7 @@ AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=
 CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 CAPTURE: level=chapter_1_level_9 slot=9 art=on facade_cells=810 lights=29 entities=40
-CHAPTER1 PERF: level=chapter_1_level_9 art=on nodes=846 draw_calls=129 static_mb=107.9 fps=5
+CHAPTER1 PERF: level=chapter_1_level_9 art=on nodes=848 draw_calls=140 static_mb=108.6 fps=5
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=entry cell=(48, 68) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=checkpoint cell=(48, 65) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_checkpoint.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_9 station=boss cell=(60, 53) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_9/after/after_boss.png ok=true
