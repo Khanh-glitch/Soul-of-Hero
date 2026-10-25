@@ -515,6 +515,65 @@ def prop_drape(seed: int = 8):
     return finish(img, shadow=False)
 
 
+def prop_banner_pale(seed: int = 21):
+    """A pale linen mourning banner: the nave's hangings, not the east wing's.
+
+    The reliquary hangs two cloths. The east wing is wine velvet with a gilt rod
+    and a heraldic bat; the nave and the gallery hang pale linen, a narrower and
+    taller drop, roped rather than rodded, with the house's chalice sigil in iron
+    thread and a hem that has actually torn away. They are deliberately different
+    gestures: velvet says the family is rich, linen says the family is in mourning.
+
+    The document has asked for this frame since the nave was dressed. The kit never
+    had it, so the two banners flanking the nave never appeared at all.
+    """
+    w, h = 28, 92
+    img = new(w, h)
+    cx = w // 2
+    # rope and rings: the banner is tied to its bar, not hung from a golden rod
+    hline(img, 3, 5, w - 6, IRON_DARK)
+    hline(img, 3, 6, w - 6, IRON)
+    for x in range(4, w - 3, 4):
+        vline(img, x, 2, 4, IRON_LIGHT)
+        px(img, x, 2, IRON)
+    # the cloth: pale linen with cool shadow in the folds, so it stays pale on a
+    # pale marble wall instead of dissolving into it
+    for y in range(9, 82):
+        t = (y - 9) / 73.0
+        half = int(11 - t * 1.2)
+        # a slow sway, so the drop is not a rectangle
+        sway = int(math.sin(t * 1.8) * 1.6)
+        for x in range(cx - half + sway, cx + half + sway):
+            fold = math.sin((x - cx - sway) / 2.5 + t * 0.5)
+            if fold > 0.75:
+                colour = shade(MARBLE_PALE, 1.04)
+            elif fold > 0.25:
+                colour = MARBLE_PALE
+            elif fold > -0.45:
+                colour = mix(MARBLE_PALE, MARBLE_LIGHT, 0.75)
+            else:
+                colour = mix(MARBLE_LIGHT, MARBLE_BASE, 0.55)
+            px(img, x, y, colour)
+    # iron-thread chalice: the house sigil, small enough to read as stitching
+    sig = 48
+    rect(img, cx - 3 + 1, sig, 5, 6, IRON_DARK)
+    rect(img, cx - 2 + 1, sig + 1, 3, 4, IRON)
+    vline(img, cx + 1, sig + 6, 5, IRON_DARK)
+    hline(img, cx - 3 + 1, sig + 11, 7, IRON_DARK)
+    # torn hem: the cloth is cut away in ragged fingers, which is the whole point
+    for x in range(cx - 12, cx + 13):
+        cut = 1 + int(_h01(seed, x, 3) * 8)
+        for y in range(82 - cut, 84):
+            img.putpixel((x, y), (0, 0, 0, 0))
+    # a frayed thread hanging from the hem, one per tear
+    for x in range(cx - 10, cx + 11, 5):
+        cut = 1 + int(_h01(seed, x, 3) * 8)
+        for y in range(82 - cut, 82 - cut + 3):
+            if 0 <= y < h:
+                px(img, x, y, mix(MARBLE_LIGHT, MARBLE_BASE, 0.4))
+    return finish(img, shadow=False)
+
+
 def prop_mirror(seed: int = 9):
     """A cracked gilt mirror, still reflecting something."""
     w, h = 40, 62
@@ -805,6 +864,7 @@ def build_props() -> list:
         ("censer", lambda: prop_censer()),
         ("candlestand", lambda: prop_candlestand()),
         ("drape", lambda: prop_drape()),
+        ("banner_pale", lambda: prop_banner_pale()),
         ("mirror", lambda: prop_mirror()),
         ("fountain", lambda: prop_fountain()),
         ("banquet", lambda: prop_banquet()),

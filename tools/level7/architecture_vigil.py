@@ -216,8 +216,13 @@ def stores(plan, floor, geom, faces, guard, clear) -> None:
     cells below a wall face: the yard's south boundary is a wall the camera never
     sees the face of, and it still needs its crates and its sandbags.
     """
-    kinds = ["spears", "crates", "barrels", "fire_wood", "sandbags", "barrel",
-             "spears", "crates", "arrows", "rubble", "bench", "barrels"]
+    # Frame names, not descriptions: every string here must be a frame the vigil
+    # prop atlas actually contains, or the stores cell renders as nothing at all.
+    # "barrels" was never a frame — the atlas has "barrel" — so twenty wall-foot
+    # store cells across the yard drew empty while the document claimed a prop.
+    # tools/validate_chapter1_art_refs.py now refuses that class of typo.
+    kinds = ["spears", "crates", "barrel", "fire_wood", "sandbags", "barrel",
+             "spears", "crates", "arrows", "rubble", "bench", "barrel"]
     index = 0
     for cell in sorted(floor):
         if cell in geom or cell in guard or cell in clear:

@@ -55,12 +55,27 @@ jobs:
           set -euo pipefail
           python3 tools/level5/art_crucible.py > /dev/null
           python3 tools/level5/architecture.py > /dev/null
-          if ! git diff --quiet -- assets/environment/chapter1/crucible data/levels/chapter_1_level_5_architecture.json; then
+          python3 tools/level8/art_reliquary.py > /dev/null
+          python3 tools/level7/architecture_vigil.py > /dev/null
+          watched=(assets/environment/chapter1/crucible
+                   data/levels/chapter_1_level_5_architecture.json
+                   assets/environment/chapter1/reliquary
+                   data/levels/chapter_1_level_7_architecture.json)
+          if ! git diff --quiet -- "${watched[@]}"; then
             echo "ART/PLAN DRIFT: regenerating changed the committed files"
-            git diff --stat -- assets/environment/chapter1/crucible data/levels/chapter_1_level_5_architecture.json
+            git diff --stat -- "${watched[@]}"
             exit 1
           fi
           echo "ART/PLAN REGEN: byte-identical"
+
+      - name: Every authored frame resolves to its kit atlas
+        run: |
+          set -euo pipefail
+          # A document may name a frame the kit does not have, and the renderer will
+          # draw nothing there without a single error. Level 7 lost twenty barrels to
+          # that, Level 8 two banners. This check reads the documents and the atlases
+          # against each other, so the class cannot come back.
+          python3 tools/validate_chapter1_art_refs.py
 
       - name: Import the project
         run: |
