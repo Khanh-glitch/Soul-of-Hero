@@ -1,11 +1,12 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
+CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=114 lights=22 shadows=506
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=988 lights=14 entities=83
-CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=889 draw_calls=0 static_mb=181.6 fps=1
-CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=988 lights=14
+CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=3303 lights=22 entities=83
+CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1007 draw_calls=0 static_mb=187.9 fps=1
+CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=3303 lights=22
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

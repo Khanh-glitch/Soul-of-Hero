@@ -33,7 +33,7 @@
 
 - Nodes: 677 (art off) -> 697 (art on)
 - Draw calls: 74 -> 77
-- Static memory: 104.7 MiB with the layer on
+- Static memory: 104.9 MiB with the layer on
 
 ## Frames
 

@@ -8,8 +8,8 @@
 
 ## What the native frames show
 
-- Derived facade cells: 988
-- Landmark lights: 14
+- Derived facade cells: 3303
+- Landmark lights: 22
 - Authored entities preserved: 83
 
 ### Improved
@@ -29,9 +29,9 @@
 
 ## Cost of the layer
 
-- Nodes: 867 (art off) -> 889 (art on)
+- Nodes: 868 (art off) -> 1012 (art on)
 - Draw calls: 103 -> 110
-- Static memory: 114.3 MiB with the layer on
+- Static memory: 119.1 MiB with the layer on
 
 ## Frames
 
