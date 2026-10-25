@@ -15,10 +15,10 @@ claim of approval.
 | Slot | Working title | Kit | Authoring | Evidence run | Status |
 |---|---|---|---|---|---|
 | L06 | The Relay House — "Two Souls, One Path" | `relay` | `tools/level6/` | [run 40174706175](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40174706175), evidence commit `8c13ef0` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L07 | The Beacon Yard — Soul Beacon defence | `vigil` | `tools/level7/` | [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475), evidence commit `b1dbced` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L08 | The Divided Reliquary — Reaper and Vampire wings | `reliquary` | `tools/level8/` | [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475), evidence commit `b1dbced` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L09 | The Crimson Gate — three seals, one named elite | `gatehouse` | `tools/level9/` | [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475), evidence commit `b1dbced` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
-| L10 | The Castellan's Throne — two-phase boss and chapter portal | `castellan` | `tools/level10/` | [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475), evidence commit `b1dbced` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L07 | The Beacon Yard — Soul Beacon defence | `vigil` | `tools/level7/` | [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413), evidence commit `4ef3212` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L08 | The Divided Reliquary — Reaper and Vampire wings | `reliquary` | `tools/level8/` | [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413), evidence commit `4ef3212` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L09 | The Crimson Gate — three seals, one named elite | `gatehouse` | `tools/level9/` | [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413), evidence commit `4ef3212` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L10 | The Castellan's Throne — two-phase boss and chapter portal | `castellan` | `tools/level10/` | [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413), evidence commit `4ef3212` | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 
 `gallery/README.md` holds all ten locations in one table; `regressions/README.md`
 records what was checked and what was already broken before this pass.

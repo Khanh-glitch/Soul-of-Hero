@@ -52,7 +52,7 @@ gilt, spilled wine and rose light in the east.
 
 ## Native capture
 
-- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Run: [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413) (all steps green), evidence commit `4ef3212`.
 - Frames: `docs/chapter1-visual-overhaul/L08/images/` — `before_*` and `after_*` at the same
   stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
 - Gate line: `AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 props=94 lights=45 shadows=266`

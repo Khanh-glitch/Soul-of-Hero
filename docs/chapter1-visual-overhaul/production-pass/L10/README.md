@@ -54,7 +54,7 @@ gilt, and the difference is the temperature, not the saturation.
 
 ## Native capture
 
-- Run: [run 40178671475](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40178671475) (all steps green), evidence commit `b1dbced`.
+- Run: [run 40179536413](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40179536413) (all steps green), evidence commit `4ef3212`.
 - Frames: `docs/chapter1-visual-overhaul/L10/images/` — `before_*` and `after_*` at the same
   stations, plus 3x crops and side-by-side pairs, all native Godot 4.7 at 1280×720.
 - Gate line: `AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 props=41 lights=23 shadows=68`
