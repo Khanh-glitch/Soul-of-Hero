@@ -3,36 +3,43 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
+ENVIRONMENT BEDROCK: enclosed_void=112 outside_void=3052
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+AUTHORED PROPS: missing=0 clamped=0
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=5780 props=156 lights=75 shadows=360
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 AUDIT: level=chapter_1_level_6 slot=6 art=on
-CHAPTER1 AUDIT PLAN: level=chapter_1_level_6 frames=20 bounds=[0, 0, 1920, 1408] content=[48, 48, 1856, 1392] world_view=(640.0, 360.0)
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=000 cell=(20, 11) rect=[8.0, 0.0, 648.0, 360.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=001 cell=(50, 11) rect=[488.0, 0.0, 1128.0, 360.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=002 cell=(80, 11) rect=[968.0, 0.0, 1608.0, 360.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=003 cell=(100, 11) rect=[1280.0, 0.0, 1920.0, 360.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=004 cell=(20, 28) rect=[8.0, 268.0, 648.0, 628.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=005 cell=(50, 28) rect=[488.0, 268.0, 1128.0, 628.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=006 cell=(80, 28) rect=[968.0, 268.0, 1608.0, 628.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=007 cell=(100, 28) rect=[1280.0, 268.0, 1920.0, 628.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=008 cell=(20, 45) rect=[8.0, 540.0, 648.0, 900.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=009 cell=(50, 45) rect=[488.0, 540.0, 1128.0, 900.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=010 cell=(80, 45) rect=[968.0, 540.0, 1608.0, 900.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=011 cell=(100, 45) rect=[1280.0, 540.0, 1920.0, 900.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=012 cell=(20, 61) rect=[8.0, 796.0, 648.0, 1156.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=013 cell=(50, 61) rect=[488.0, 796.0, 1128.0, 1156.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=014 cell=(80, 61) rect=[968.0, 796.0, 1608.0, 1156.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=015 cell=(100, 61) rect=[1280.0, 796.0, 1920.0, 1156.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=016 cell=(20, 76) rect=[8.0, 1036.0, 648.0, 1396.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=017 cell=(50, 76) rect=[488.0, 1036.0, 1128.0, 1396.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=018 cell=(80, 76) rect=[968.0, 1036.0, 1608.0, 1396.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=019 cell=(100, 76) rect=[1280.0, 1036.0, 1920.0, 1396.0] ok=true
-CHAPTER1 AUDIT DONE: level=chapter_1_level_6 frames=20 limits_applied=true
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_6 frames=24 bounds=[0, -96, 1920, 1408] content=[48, 48, 1856, 1392] world_view=(640.0, 360.0)
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=000 cell=(20, 5) rect=[8.0, -96.0, 648.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=001 cell=(50, 5) rect=[488.0, -96.0, 1128.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=002 cell=(80, 5) rect=[968.0, -96.0, 1608.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=003 cell=(100, 5) rect=[1280.0, -96.0, 1920.0, 264.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=004 cell=(20, 22) rect=[8.0, 172.0, 648.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=005 cell=(50, 22) rect=[488.0, 172.0, 1128.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=006 cell=(80, 22) rect=[968.0, 172.0, 1608.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=007 cell=(100, 22) rect=[1280.0, 172.0, 1920.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=008 cell=(20, 39) rect=[8.0, 444.0, 648.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=009 cell=(50, 39) rect=[488.0, 444.0, 1128.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=010 cell=(80, 39) rect=[968.0, 444.0, 1608.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=011 cell=(100, 39) rect=[1280.0, 444.0, 1920.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=012 cell=(20, 55) rect=[8.0, 700.0, 648.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=013 cell=(50, 55) rect=[488.0, 700.0, 1128.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=014 cell=(80, 55) rect=[968.0, 700.0, 1608.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=015 cell=(100, 55) rect=[1280.0, 700.0, 1920.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=016 cell=(20, 72) rect=[8.0, 972.0, 648.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=017 cell=(50, 72) rect=[488.0, 972.0, 1128.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=018 cell=(80, 72) rect=[968.0, 972.0, 1608.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=019 cell=(100, 72) rect=[1280.0, 972.0, 1920.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=020 cell=(20, 76) rect=[8.0, 1036.0, 648.0, 1396.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=021 cell=(50, 76) rect=[488.0, 1036.0, 1128.0, 1396.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=022 cell=(80, 76) rect=[968.0, 1036.0, 1608.0, 1396.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_6 frame=023 cell=(100, 76) rect=[1280.0, 1036.0, 1920.0, 1396.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_6 frames=24 limits_applied=true
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

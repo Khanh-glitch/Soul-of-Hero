@@ -4,7 +4,7 @@
   "frames": 15,
   "bounds": [
     0,
-    0,
+    -96,
     1600,
     1216
   ],
@@ -21,15 +21,15 @@
   "limits_applied": true,
   "mosaic_origin": [
     8,
-    0
+    -96
   ],
   "mosaic_px": [
     1592,
-    1204
+    1300
   ],
   "coverage_of_content": 1.0,
   "overlaps_checked": 14,
-  "overlap_best_diff": 18.79,
+  "overlap_best_diff": 17.25,
   "overlap_worst_shift_px": 0,
   "overlaps_at_zero_shift": 14
 }
