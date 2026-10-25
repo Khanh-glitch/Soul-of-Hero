@@ -1,0 +1,212 @@
+{
+  "schema": "chapter1_architecture_evidence/2",
+  "level": "chapter_1_level_5",
+  "branch": "arena/6e89e68d-soul-of-hero",
+  "commit": "e693a0285cb8b08bfbdb8dd8a050c5337a0844fc",
+  "previous_pass": {
+    "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
+    "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
+  },
+  "source_pins": {
+    "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
+    "data/levels/chapter_1_level_5_architecture.json": "f8b7c61e615aa85b645a1f3af690d6760a75ecc1c6ab6e1039f89cc2dc48eea0",
+    "assets/environment/chapter1/crucible/crucible_tiles.png": "83679e730a0886f218d1d01364f84fec3f781c8e6dbbb8d8ddd8b97ad5c94f0c",
+    "assets/environment/chapter1/crucible/crucible_props.png": "4e6fc0320745842f63a1b55ff61089e3afd271a4b095889501bfef9b66303bf0",
+    "tools/level5/art_crucible.py": "c76fe97dd5dafeb8fa7bce4a4dc11c0c11a39255f4ed1484e3e653df50ee2998",
+    "tools/level5/architecture.py": "d51371b4605e9a937282e592ac2b82c6c1960cc8948397c729dbdb868065018e",
+    "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569",
+    "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
+    "tools/captures/crucible_capture.gd": "e49d09400c4dce2b54ce1204b1ec7065e8f748d99c9e16cb4629ea28fa4c2978"
+  },
+  "capture": {
+    "level": "chapter_1_level_5",
+    "art": "on",
+    "walls": 3303,
+    "props": 158,
+    "lights": 29,
+    "shadows": 506,
+    "entities": 83,
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "nodes": 1063,
+    "draw_calls": 110,
+    "static_mb": 121.3,
+    "errors": [
+      "ERROR: CRUCIBLE FIGHT: no hooded_archer_miniboss in the live entity root",
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: stuck at (697.9982, 313.2408) heading to (712.0, 312.0)",
+      "ERROR: CRUCIBLE TRAVERSAL FAIL: stuck at (265.9982, 776.0) heading to (280.0, 776.0)"
+    ],
+    "traversal": [],
+    "app_boot": "complete",
+    "startup_profile_error": false,
+    "leaks": []
+  },
+  "capture_before": {
+    "level": "chapter_1_level_5",
+    "art": "off",
+    "walls": 0,
+    "props": 0,
+    "lights": 0,
+    "shadows": 0,
+    "entities": 83,
+    "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
+    "nodes": 869,
+    "draw_calls": 103,
+    "static_mb": 113.9,
+    "errors": [
+      "ERROR: CRUCIBLE FIGHT: no hooded_archer_miniboss in the live entity root"
+    ],
+    "traversal": [],
+    "app_boot": "complete",
+    "startup_profile_error": false,
+    "leaks": []
+  },
+  "stations": {
+    "f1_spawn": {
+      "tag": "after",
+      "cell": [
+        10,
+        17
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f1_gate": {
+      "tag": "after",
+      "cell": [
+        16,
+        14
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f1_altar": {
+      "tag": "after",
+      "cell": [
+        46,
+        19
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f2_landing": {
+      "tag": "after",
+      "cell": [
+        8,
+        47
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f2_court": {
+      "tag": "after",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f2_encounter": {
+      "tag": "after",
+      "cell": [
+        91,
+        47
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "f3_approach": {
+      "tag": "after",
+      "cell": [
+        70,
+        76
+      ],
+      "zoom": 1.0,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "overview_f1": {
+      "tag": "after",
+      "cell": [
+        32,
+        16
+      ],
+      "zoom": 0.5,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "overview_f2": {
+      "tag": "after",
+      "cell": [
+        53,
+        44
+      ],
+      "zoom": 0.4,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    },
+    "overview_f3": {
+      "tag": "after",
+      "cell": [
+        60,
+        75
+      ],
+      "zoom": 0.45,
+      "log_ok": true,
+      "file_present": true,
+      "extra": ""
+    }
+  },
+  "frames": [
+    "f1_spawn",
+    "f1_gate",
+    "f1_altar",
+    "f2_landing",
+    "f2_court",
+    "f2_encounter",
+    "f3_approach"
+  ],
+  "pairs_vs_previous": 7,
+  "pairs_vs_generic": 7,
+  "overviews": [
+    "f1",
+    "f2",
+    "f3"
+  ],
+  "traversal_frames": [
+    "traversal_1",
+    "traversal_2",
+    "traversal_3",
+    "traversal_4"
+  ],
+  "crops": [
+    "f1_spawn",
+    "f2_court",
+    "f3_approach"
+  ],
+  "evidence_kind": {
+    "images": "native Godot 4.7 frames, 1280x720, production AppRoot -> AppFlow campaign boot",
+    "traversal": "native frames from a path walked with real movement input; doors opened by input",
+    "crops": "integer nearest-neighbour crops of those native frames",
+    "comparisons": "gold references + rejected baseline + native frames"
+  },
+  "problems": [
+    "missing required native frames: after_f3_fight.png",
+    "the boss fight frames carry no health/state record"
+  ]
+}

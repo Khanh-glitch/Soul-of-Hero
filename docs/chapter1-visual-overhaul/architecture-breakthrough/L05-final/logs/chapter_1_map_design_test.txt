@@ -1,0 +1,4 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+
+CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
+CHAPTER 1 MAP DESIGN 837/837
