@@ -124,7 +124,7 @@ jobs:
             fi
             echo "SUITE OK: ${name} — $(grep -h "$expect" "$log" | tail -1)"
           }
-          run chapter_1_map_design_test res://tests/chapter_1_map_design_test.gd script "PASSED"
+          run chapter_1_map_design_test res://tests/chapter_1_map_design_test.gd script "CHAPTER 1 MAP DESIGN 837/837"
           run chapter_1_campaign_map_design_test res://tests/chapter_1_campaign_map_design_test.gd script "PASSED"
           run chapter_1_collision_route_test res://tests/chapter_1_collision_route_test.tscn scene "PASSED"
           run level5_miniboss res://tests/chapter_1_level_5_miniboss_test.gd script "PASSED"
