@@ -3,7 +3,30 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-SCRIPT ERROR: Parse Error: Assignment is not allowed inside an expression.
-          at: GDScript::reload (res://tools/captures/crucible_capture.gd:179)
-ERROR: Failed to load script "res://tools/captures/crucible_capture.gd" with error "Parse error".
-   at: load (modules/gdscript/gdscript_resource_format.cpp:46)
+CRUCIBLE BOOT: save=user://crucible_after_40157113746.json
+CRUCIBLE ART: floor_detail=5633 wall_cells=3303 bedrock=4084 props=113 lights=20
+CRUCIBLE BOOT: level=chapter_1_level_5 started=true
+CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=113 lights=20 entities=83
+CRUCIBLE PERF: art=on nodes=1010 draw_calls=110 static_mb=115.8 fps=1
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+CRUCIBLE ART: floor_detail=5633 wall_cells=3303 bedrock=4084 props=113 lights=20
+CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
+CRUCIBLE STATION tag=after station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_gate.png ok=true
+CRUCIBLE STATION tag=after station=f1_altar cell=(46, 19) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_altar.png ok=true
+CRUCIBLE STATION tag=after station=f2_landing cell=(8, 47) zoom=1.00 out=res://.artifacts/crucible/after/after_f2_landing.png ok=true
+CRUCIBLE STATION tag=after station=f2_court cell=(91, 47) zoom=1.00 out=res://.artifacts/crucible/after/after_f2_court.png ok=true
+CRUCIBLE STATION tag=after station=f2_encounter cell=(91, 47) zoom=1.00 out=res://.artifacts/crucible/after/after_f2_encounter.png ok=true
+CRUCIBLE STATION tag=after station=f3_approach cell=(70, 76) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_approach.png ok=true
+CRUCIBLE FIGHT: archer=found
+CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=n/a
+CRUCIBLE STATION tag=after station=overview_f1 cell=(32, 16) zoom=0.50 out=res://.artifacts/crucible/after/overview_after_overview_f1.png ok=true
+CRUCIBLE STATION tag=after station=overview_f2 cell=(53, 44) zoom=0.40 out=res://.artifacts/crucible/after/overview_after_overview_f2.png ok=true
+CRUCIBLE STATION tag=after station=overview_f3 cell=(60, 75) zoom=0.45 out=res://.artifacts/crucible/after/overview_after_overview_f3.png ok=true
+CRUCIBLE CAPTURE DONE: tag=after
+WARNING: 1 RID of type "CanvasItem" was leaked.
+   at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2733)
+WARNING: 8 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
