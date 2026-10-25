@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_5`
 - Map source: `data/levels/chapter_1_level_5.json`
 - Source sha256: `2b72582559654d678fe2e1f5728f0dea5584d704b2ee1f482a977af260a8fdb6`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
 - Art direction: Blood Crucible — dark ceremonial stone and sacrificial masonry
 
 ## What the native frames show
@@ -29,7 +29,7 @@
 
 ## Cost of the layer
 
-- Nodes: 867 (art off) -> 1070 (art on)
+- Nodes: 866 (art off) -> 1070 (art on)
 - Draw calls: 103 -> 110
 - Static memory: 119.7 MiB with the layer on
 

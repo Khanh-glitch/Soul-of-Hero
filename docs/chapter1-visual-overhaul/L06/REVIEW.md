@@ -3,32 +3,37 @@
 - Level id: `chapter_1_level_6`
 - Map source: `data/levels/chapter_1_level_6.json`
 - Source sha256: `32724da3b58cba60e1b431160ee62729baa782dee5d42f925438eb55adb084c8`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
 - Art direction: Soul Anchor Relay — spectral mechanism bound in old stone
 
 ## What the native frames show
 
 - Derived facade cells: 2720
-- Landmark lights: 90
+- Landmark lights: 75
 - Authored entities preserved: 73
 
 ### Improved
 
-- Spectral palette reads immediately as a different place from the crypt, and the anchor landmarks cast cool light.
+- The level is a distinct place: pale cool limestone, verdigris copper and cold soul-light, built from its own kit rather than the Crucible's red basalt and brass.
+- Each of the three Soul Anchors stands on a dais with an inlaid relay medallion cut into the paving, framed by two pylons and four conduit posts, with its crystal monument on the axis behind the core. The Anchor is now inside something instead of being a light on open floor.
+- The split diamond is legible as two lanes: conduit runs around the central block on both sides and the floor chevrons run east on the north lane and west on the south one, so the two directions the level teaches are visible without a tooltip.
+- The east approach is terraced, with risers under each band and a pylon pair at every second brow, so the climb to the first Anchor is counted by the eye.
+- The last Anchor's conduit circles the chamber and turns back west to the exit arch, which carries the same two-ring mark as the medallions.
 
 ### Still missing against the brief
 
-- The three anchor chambers are distinguished only by a light colour; there is no architecture saying 'chamber'.
-- Split lanes are not readable as lanes.
+- The east rooms and the two landings are still large and thinly furnished; the authored layer reads best where the composition is dense and weakest in the biggest empty floors.
+- Wall architecture is carried by inlaid panels and lancets on broadside faces only; a wall seen end-on still shows the default course, and the transition between the two is visible.
+- The relief panel on the third floor's hollow centre is rock, not architecture: the massif reads correctly but adds nothing to the return loop.
 
 ### Next correction pass
 
-- Frame each anchor with a stone housing (plinth, jamb, cap) so the anchor is inside something.
-- Mark the split with a central pier rather than an open floor.
+- Furnish the three landing rooms at the same density as the Anchor chambers.
+- Give the exit room a second element beyond the arch and the two pylons, so the last frame of the level has its own composition.
 
 ## Cost of the layer
 
-- Nodes: 864 (art off) -> 1116 (art on)
+- Nodes: 863 (art off) -> 1105 (art on)
 - Draw calls: 66 -> 73
 - Static memory: 118.9 MiB with the layer on
 

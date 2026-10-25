@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_8`
 - Map source: `data/levels/chapter_1_level_8.json`
 - Source sha256: `6dd0317f0e2ba2fdaa1ad4f570f9c3f1180717466c8f77496bd8a0dd4612747a`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Divided Reliquary — two opposed wings around one decision
 
 ## What the native frames show
@@ -28,9 +28,9 @@
 
 ## Cost of the layer
 
-- Nodes: 689 (art off) -> 698 (art on)
-- Draw calls: 117 -> 128
-- Static memory: 104.1 MiB with the layer on
+- Nodes: 689 (art off) -> 721 (art on)
+- Draw calls: 120 -> 134
+- Static memory: 104.3 MiB with the layer on
 
 ## Frames
 

@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_7`
 - Map source: `data/levels/chapter_1_level_7.json`
 - Source sha256: `d17730dbd5d4116761f32050172994d6cd73ca5a865e3bb3fc8b61ccdf1b08c9`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: The Failing Beacon — besieged ember-lit defence yard
 
 ## What the native frames show
@@ -28,7 +28,7 @@
 
 ## Cost of the layer
 
-- Nodes: 661 (art off) -> 678 (art on)
+- Nodes: 663 (art off) -> 678 (art on)
 - Draw calls: 92 -> 103
 - Static memory: 107.8 MiB with the layer on
 
