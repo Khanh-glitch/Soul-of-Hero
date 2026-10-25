@@ -824,7 +824,7 @@ def build() -> dict:
             "tools/level5/architecture.py."
         ),
         "kit": "crucible",
-        "ambient": [0.30, 0.32, 0.40],
+        "ambient": [0.44, 0.45, 0.53],
         "background": [0.035, 0.028, 0.032],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,
