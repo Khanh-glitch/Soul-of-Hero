@@ -1,5 +1,7 @@
 # Chapter 1 — audit sweep
 
+**Start here: [AUDIT.md](AUDIT.md)** — the findings report.
+
 Mosaicked native frames of every level, taken by
 `tools/captures/chapter1_audit_sweep.tscn` and stitched 1:1 by
 `tools/chapter1_audit/audit_sheets.py`.
@@ -17,3 +19,7 @@ so the stitching can be re-derived without re-running the game.
 These images are **not** the evidence tree: `docs/chapter1-visual-overhaul/`
 remains the handoff evidence. This folder exists to be looked through for defects,
 and it is read-only with respect to the game.
+
+`detail/` holds the 1:1 crops AUDIT.md cites. Level-1–4 and level-5–10 mosaics are
+different palettes by design; the crops are shown at 2–3× nearest-neighbour, with a
+brightness lift where noted, and never resampled smoothly.

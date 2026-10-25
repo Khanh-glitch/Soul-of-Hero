@@ -39,6 +39,7 @@ from pathlib import Path
 from PIL import Image, ImageChops, ImageStat
 
 MIN_OVERLAP = 16
+SHIFT_SEARCH = 4
 
 
 def _rect(entry: dict) -> tuple[float, float, float, float]:
@@ -48,6 +49,34 @@ def _rect(entry: dict) -> tuple[float, float, float, float]:
     cx, cy = entry["centre"]  # very old manifests
     w, h = entry["size"]
     return (cx - w / 2.0, cy - h / 2.0, cx + w / 2.0, cy + h / 2.0)
+
+
+def _disagreement(earlier: Image.Image, later: Image.Image,
+                  box: tuple[int, int, int, int]) -> tuple[float, int]:
+    """How far apart two overlapping frames are, and by how many pixels.
+
+    Absolute brightness is not a fair test: torches flicker between frames, so a
+    perfectly aligned pair still differs. The question being asked is different —
+    is the *structure* in the same place. So the pair is compared over a small
+    shift search; if the smallest difference sits at zero offset, the stitching
+    is exact and whatever is left is animated light.
+    """
+    left, top, right, bottom = box
+    pad = SHIFT_SEARCH
+    core = earlier.convert("L").crop((left + pad, top + pad, right - pad, bottom - pad))
+    if core.width < 8 or core.height < 8:
+        return 0.0, 0
+    best = None
+    best_shift = 0
+    grey = later.convert("L")
+    for dy in range(-pad, pad + 1):
+        for dx in range(-pad, pad + 1):
+            moved = grey.crop((left + pad + dx, top + pad + dy,
+                               right - pad + dx, bottom - pad + dy))
+            score = ImageStat.Stat(ImageChops.difference(core, moved)).mean[0]
+            if best is None or score < best - 1e-9:
+                best, best_shift = score, max(abs(dx), abs(dy))
+    return float(best or 0.0), best_shift
 
 
 def stitch(folder: Path) -> dict | None:
@@ -80,6 +109,7 @@ def stitch(folder: Path) -> dict | None:
 
     checked = 0
     worst = 0.0
+    worst_shift = 0
     for x0, y0, x1, y1, image in placed:
         ox, oy = int(round(x0)) - left, int(round(y0)) - top
         if image.size != (int(round(x1 - x0)), int(round(y1 - y0))):
@@ -88,8 +118,9 @@ def stitch(folder: Path) -> dict | None:
         box = already.getbbox()
         if box is not None and (box[2] - box[0]) >= MIN_OVERLAP and (box[3] - box[1]) >= MIN_OVERLAP:
             earlier = canvas.crop((ox, oy, ox + image.width, oy + image.height))
-            diff = ImageChops.difference(earlier, image).convert("L").crop(box)
-            worst = max(worst, ImageStat.Stat(diff).mean[0])
+            diff, shift = _disagreement(earlier, image, box)
+            worst = max(worst, diff)
+            worst_shift = max(worst_shift, shift)
             checked += 1
         canvas.paste(image, (ox, oy))
         covered.paste(255, (ox, oy, ox + image.width, oy + image.height))
@@ -115,7 +146,10 @@ def stitch(folder: Path) -> dict | None:
             "mosaic_px": [canvas.width, canvas.height],
             "coverage_of_content": round(seen / float(total), 4),
             "overlaps_checked": checked,
-            "overlap_mean_abs_diff": round(worst, 2),
+            # Residual after aligning the frames: torches flicker, so this is not
+            # zero on a correct mosaic, but the shift that produces it must be 0.
+            "overlap_best_diff": round(worst, 2),
+            "overlap_worst_shift_px": worst_shift,
         },
     }
 
@@ -141,10 +175,10 @@ def main() -> int:
         (out / "manifests" / ("level_%d.json" % slot)).write_text(
             json.dumps(result["manifest"], indent=2) + "\n")
         written += 1
-        print("audit mosaic: L%02d frames=%d coverage=%.3f px=%s overlaps=%d diff=%.2f limits=%s"
+        print("audit mosaic: L%02d frames=%d coverage=%.3f px=%s overlaps=%d shift=%dpx limits=%s"
               % (slot, result["meta"]["frames"], result["meta"]["coverage_of_content"],
                  result["meta"]["mosaic_px"], result["meta"]["overlaps_checked"],
-                 result["meta"]["overlap_mean_abs_diff"], result["meta"]["limits_applied"]))
+                 result["meta"]["overlap_worst_shift_px"], result["meta"]["limits_applied"]))
     if not written:
         print("audit mosaics: nothing to stitch")
         return 1
