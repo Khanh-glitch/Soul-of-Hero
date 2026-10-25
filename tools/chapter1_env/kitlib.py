@@ -614,6 +614,87 @@ def validate(document: dict, level: dict, *, tall: set | None = None) -> list:
     return problems
 
 
+# ---------------------------------------------------------------------------
+# light discipline
+# ---------------------------------------------------------------------------
+# A PointLight2D's radius is the 256 px light texture times texture_scale, so the
+# authored scales were describing radii from 180 px to 768 px: a "torch" with less
+# than a third of the reach of another level's torch, and a brazier whose pool was
+# bigger than the room it stood in. A pool that covers the whole frame does not light
+# the room, it flattens it - the floor, the walls and the props all end up at the same
+# value, which is the single biggest reason the later levels read as evenly lit fog
+# rather than as places.
+#
+# The rule is deliberately narrow: a pool may be 140-400 px across, and its core may
+# not exceed 1.15 energy, at which point the bright centre starts clipping to white
+# and detail inside it disappears. This normalises the *range*, not the value - each
+# placement keeps its own colour, its own energy and its own intent, and a candle is
+# still dimmer than a brazier.
+LIGHT_TEXTURE_PX = 256.0
+LIGHT_RADIUS_MIN = 140.0
+LIGHT_RADIUS_MAX = 400.0
+LIGHT_RADIUS_CURVE = 0.6      # compress, do not clip: see below
+LIGHT_KNEE = 0.85             # below this energy the author's value is kept as is
+LIGHT_ENERGY_MAX = 1.15
+
+
+def clamp_light(light: dict) -> tuple[bool, bool]:
+    """Pull one light into the art direction's range. Returns (resized, dimmed).
+
+    The radius is *compressed*, not clipped. A hard cap put twenty-nine of the
+    Crucible's twenty-nine lights on the same 400 px radius, which is exactly the
+    uniformity the pass exists to remove: every pool the same size reads as a
+    lighting rig, not as a room with a fire in it. Raising the normalised radius to
+    the power 0.6 halves the spread without flattening it - a 184 px pool stays
+    visibly smaller than a 491 px one - and only the extremes touch the bounds.
+
+    Energy uses a soft knee for the same reason. A light's core above 1.15 starts to
+    clip whatever it is lighting to white, so it cannot be allowed to stay there; but
+    a hard cut put twenty-one of them on exactly 1.15. Above the knee the value is
+    rolled off towards 1.15 instead, so the order the author wrote survives.
+    """
+    resized = dimmed = False
+    if "scale" in light:
+        radius = LIGHT_TEXTURE_PX * float(light["scale"])
+        target = LIGHT_TEXTURE_PX * pow(radius / LIGHT_TEXTURE_PX, LIGHT_RADIUS_CURVE)
+        target = min(max(target, LIGHT_RADIUS_MIN), LIGHT_RADIUS_MAX)
+        if abs(target - radius) > 1.0:
+            light["scale"] = round(target / LIGHT_TEXTURE_PX, 2)
+            resized = True
+    if "energy" in light:
+        energy = float(light["energy"])
+        if energy > LIGHT_KNEE:
+            rolled = LIGHT_KNEE + (LIGHT_ENERGY_MAX - LIGHT_KNEE) * (
+                1.0 - math.exp(-(energy - LIGHT_KNEE) / (LIGHT_ENERGY_MAX - LIGHT_KNEE)))
+            if abs(rolled - energy) > 0.005:
+                light["energy"] = round(rolled, 2)
+                dimmed = True
+    return resized, dimmed
+
+
+def normalise_lights(document: dict) -> dict:
+    """Apply clamp_light to every light in a document, twice over.
+
+    The document carries lights in two places: the flat `lights` list the renderer
+    reads, and a copy inside each prop's `light` field, which the props carry so a
+    tool can find what a prop is lit by. Both are normalised, or the two disagree.
+    """
+    resized = dimmed = 0
+    for light in document.get("lights") or []:
+        if isinstance(light, dict):
+            a, b = clamp_light(light)
+            resized += int(a)
+            dimmed += int(b)
+    for entry in document.get("props") or []:
+        light = entry.get("light") if isinstance(entry, dict) else None
+        if isinstance(light, dict):
+            clamp_light(light)
+    stats = document.setdefault("stats", {})
+    stats["lights_resized"] = resized
+    stats["lights_dimmed"] = dimmed
+    return stats
+
+
 def write_document(path: str, document: dict) -> None:
     with open(path, "w", encoding="utf-8") as fh:
         json.dump(document, fh, indent=2)

@@ -35,6 +35,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 
 from kitlib import (  # noqa: E402
     ROOT, Plan, cells, load_level, protected, validate, wall_faces, write_document,
+    normalise_lights,
 )
 from art_gatehouse import ring_tiles  # noqa: E402
 
@@ -178,8 +179,13 @@ def ember(cell, energy=0.95, scale=1.6, y=-40, note="brazier"):
 
 
 def gate_light(cell, y=-70):
+    # The gate's light is a threshold glow, not a floodlight: a 614 px pool at 1.05
+    # energy was covering the arch, the towers and half the arena floor at once, and
+    # the detail of the relief disappeared inside its own light. A pool of roughly
+    # 330 px behind the bars keeps the arch dark enough to read while still marking
+    # the gate as the coldest thing in the room.
     return {"x": cell[0] * 16 + 8, "y": cell[1] * 16 + y,
-            "color": [0.62, 0.76, 1.0], "energy": 1.05, "scale": 2.4,
+            "color": [0.62, 0.76, 1.0], "energy": 0.66, "scale": 1.3,
             "cell": [cell[0], cell[1]], "note": "the gate's light"}
 
 
@@ -199,6 +205,13 @@ def gate_assembly(p: Placer, faces) -> int:
                            note="the Crimson Gate")
     placed += p.floor_prop("gate_tower", (41, 11), note="west gate tower")
     placed += p.floor_prop("gate_tower_l", (55, 11), note="east gate tower")
+    # The portcullis. The kit has drawn one since the gatehouse was authored and the
+    # assembly never placed it, so the gate read as a lit arch with a blue bloom in
+    # it - the light was doing all the work of telling the player "this is the way
+    # out". The bars give the opening something to be seen through. Hung one cell up
+    # from the threshold: it is raised, the way a gate is raised when the garrison
+    # expects to close it.
+    placed += p.floor_prop("portcullis", (48, 10), note="raised portcullis in the gate mouth")
     for x in (36, 60):
         placed += p.wall("banner", (x, 3), note="gate banner")
     for x in (34, 62):
@@ -388,6 +401,7 @@ def build():
 def main() -> None:
     document, level = build()
     problems = validate(document, level, tall=TALL)
+    normalise_lights(document)
     write_document(OUT, document)
     print("level 9 architecture -> %s" % os.path.relpath(OUT, ROOT))
     for key, value in document["stats"].items():

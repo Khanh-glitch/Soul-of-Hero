@@ -782,17 +782,37 @@ def build() -> dict:
     floor_one(plan, floor, geom, faces, guard)
     floor_two(plan, floor, geom, faces, guard)
     floor_three(plan, floor, geom, faces, guard)
-    # One global correction to the lights, applied after every floor has placed
-    # its own: the first native frames showed the light pool of a single brazier
-    # covering the whole screen, because the radius is the light texture (256 px)
-    # times texture_scale and 3-8 was read as "a bit bigger than a torch". It is
-    # 768-2048 px, i.e. the entire viewport, which is why every room looked
-    # evenly lit no matter where the braziers were. A pool wants to be 200-500 px,
-    # so the scale is pulled back to that range and the energy lifted slightly to
-    # keep the focus bright.
+    # One global correction to the lights, applied after every floor has placed its
+    # own. The radius of a light is the 256 px light texture times texture_scale, so
+    # the authored scales were describing 768-2048 px pools: the whole viewport, which
+    # is why every room looked evenly lit no matter where the braziers were. The first
+    # correction multiplied the scale down and the energy *up*, which brought the pools
+    # into range but pushed the cores past 2.5 energy, and a core that bright clips to
+    # white and takes the detail of whatever it is lighting with it.
+    #
+    # So the rule is now the one the rest of the chapter uses (kitlib.clamp_light,
+    # restated here because the Level 5 pipeline does not import the shared kit): a
+    # pool is 140-400 px across and its core stays at or under 1.15. The range of a
+    # light is normalised; its colour and its relative brightness are the author's.
+    # The 2.4-6.4 scales this file was written with are the ones that produced those
+    # 2048 px pools, so the authored value is corrected first, then the radius is
+    # *compressed* rather than clipped - a hard cap put all 29 lights on the same
+    # radius, which is the uniformity this pass exists to remove. Energy gets a soft
+    # knee at 0.85 for the same reason: the core may not exceed 1.15 (it clips to
+    # white and eats the detail it is lighting), but the order the author wrote has
+    # to survive, so the excess is rolled off instead of cut.
+    resized = dimmed = 0
     for light in plan.lights:
-        light["scale"] = round(float(light.get("scale", 1.0)) * 0.30, 2)
-        light["energy"] = round(float(light.get("energy", 1.0)) * 1.25, 2)
+        radius = 256.0 * 0.30 * float(light.get("scale", 1.0))
+        radius = 256.0 * (radius / 256.0) ** 0.6
+        target = min(max(radius, 140.0), 400.0)
+        if abs(target - 256.0 * 0.30 * float(light.get("scale", 1.0))) > 1.0:
+            light["scale"] = round(target / 256.0, 2)
+            resized += 1
+        energy = float(light.get("energy", 1.0))
+        if energy > 0.85:
+            light["energy"] = round(0.85 + 0.30 * (1.0 - math.exp(-(energy - 0.85) / 0.30)), 2)
+            dimmed += 1
     document = {
         "schema": "chapter1_architecture/1",
         "level": "chapter_1_level_5",
@@ -817,6 +837,8 @@ def build() -> dict:
         "lights": len(document["lights"]),
         "floor_claims_resolved": plan.claims,
         "lane_clashes": len(plan.lane_clashes),
+        "lights_resized": resized,
+        "lights_dimmed": dimmed,
     }
     return document
 

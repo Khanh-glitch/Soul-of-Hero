@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 
 from kitlib import (  # noqa: E402
     ROOT, Plan, cells, load_level, protected, validate, wall_faces, write_document,
+    normalise_lights,
 )
 from art_vigil import ward_offsets  # noqa: E402
 
@@ -446,6 +447,7 @@ def build():
 def main() -> None:
     document, level = build()
     problems = validate(document, level)
+    normalise_lights(document)
     write_document(OUT, document)
     print("level 7 architecture -> %s" % os.path.relpath(OUT, ROOT))
     for key, value in document["stats"].items():
