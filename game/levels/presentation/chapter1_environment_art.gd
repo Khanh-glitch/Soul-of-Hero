@@ -158,6 +158,13 @@ static func attach(level: Node) -> Chapter1EnvironmentArt:
 		return null
 	var existing := level.get_node_or_null(NodePath("EnvironmentArt")) as Chapter1EnvironmentArt
 	if existing != null:
+		# The path has to follow the level, not the node's creation. A campaign run
+		# swaps the map under one long-lived DungeonLevel, so a rebuilt layer that
+		# kept the path it was born with went on painting level 1's theme over levels
+		# 2, 3 and 4 - identical walls, identical floors, three different documents.
+		# Measured on the audit mosaics: L2, L3 and L4 shared the exact same wall
+		# colour (110, 90, 76) while L1 sat at (116, 96, 83), which is L1's theme.
+		existing.level_data_path = path
 		existing.rebuild()
 		return existing
 	var layer := Chapter1EnvironmentArt.new()
