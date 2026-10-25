@@ -738,13 +738,26 @@ func _use_door(player: CharacterBody2D, dungeon: DungeonLevel, door_cell: Vector
 	for _i: int in range(4):
 		await get_tree().physics_frame
 	var before := player.global_position
-	var screen_position: Vector2 = get_viewport().get_canvas_transform() * before
+	# Click the door, not the Knight: the previous attempt aimed the injected click
+	# at the player's own position, which is why every door in the evidence was
+	# opened by the fallback direct_call rather than by input. The door's own global
+	# position is converted through the canvas transform, and the pointer is warped
+	# there first so an Area2D that wants the mouse inside it sees it.
+	var door_node := _door_near(dungeon, door_cell)
+	var target := before
+	if door_node != null:
+		target = door_node.global_position
+	var screen_position: Vector2 = get_viewport().get_canvas_transform() * target
+	Input.warp_mouse(screen_position)
+	await get_tree().process_frame
 	for pressed: bool in [true, false]:
 		var event := InputEventMouseButton.new()
 		event.button_index = MOUSE_BUTTON_LEFT
 		event.pressed = pressed
 		event.position = screen_position
+		event.global_position = screen_position
 		Input.parse_input_event(event)
+		await get_tree().process_frame
 	for _i: int in range(24):
 		await get_tree().physics_frame
 	var moved := player.global_position.distance_to(before)

@@ -3570,6 +3570,1644 @@
       },
       {
         "cell": [
+          77,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          81,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          85,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          89,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          93,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          97,
+          69
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          82,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          86,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          90,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          94,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          98,
+          70
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          80,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          81,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          82,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          83,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          84,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          85,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          86,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          87,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          88,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          89,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          90,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          91,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          92,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          93,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          94,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          95,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          96,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          71
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          98,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          99,
+          71
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          76,
+          72
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          72
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          79,
+          72
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          72
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          77,
+          73
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          73
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          73
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          74
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          74
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          78,
+          75
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          79,
+          75
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          99,
+          75
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          76,
+          76
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          76
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          76
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          76
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          77,
+          77
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          77
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          77
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          97,
+          77
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          98,
+          77
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          78
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          79,
+          78
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          78
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          78
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          79
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          79
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          79
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          79
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          99,
+          79
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          76,
+          80
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          80
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          80
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          97,
+          80
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          98,
+          80
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          80
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          77,
+          81
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          78,
+          81
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          79,
+          81
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          81
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          81
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          82
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          82
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          82
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          82
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          78,
+          83
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          83
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          97,
+          83
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          98,
+          83
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          99,
+          83
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          76,
+          84
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          98,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          84
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          77,
+          85
+        ],
+        "frame": "stain_c"
+      },
+      {
+        "cell": [
+          80,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          81,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          82,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          83,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          84,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          85,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          86,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          87,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          88,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          89,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          90,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          91,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          92,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          93,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          94,
+          85
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          95,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          98,
+          85
+        ],
+        "frame": "floor_broken"
+      },
+      {
+        "cell": [
+          76,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          77,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          80,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          81,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          82,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          83,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          84,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          85,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          86,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          87,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          88,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          89,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          90,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          91,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          92,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          93,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          94,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          95,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          96,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          97,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          99,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          101,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          102,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          103,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          104,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          105,
+          69
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          70
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          83,
+          70
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          94,
+          70
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          70
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          71
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          90,
+          71
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          101,
+          71
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          71
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          72
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          105,
+          72
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          73
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          82,
+          73
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          104,
+          73
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          73
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          74
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          78,
+          74
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          100,
+          74
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          74
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          75
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          105,
+          75
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          76
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          81,
+          76
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          103,
+          76
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          76
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          77
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          77,
+          77
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          99,
+          77
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          77
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          78
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          95,
+          78
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          78
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          79
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          80,
+          79
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          102,
+          79
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          79
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          80
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          87,
+          80
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          98,
+          80
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          80
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          81
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          83,
+          81
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          94,
+          81
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          81
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          82
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          79,
+          82
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          90,
+          82
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          101,
+          82
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          82
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          83
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          86,
+          83
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          97,
+          83
+        ],
+        "frame": "floor_grate"
+      },
+      {
+        "cell": [
+          105,
+          83
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          76,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          77,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          80,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          81,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          82,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          83,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          84,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          85,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          86,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          87,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          88,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          89,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          90,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          91,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          92,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          93,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          94,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          95,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          98,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          99,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          100,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          101,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          102,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          103,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          104,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          105,
+          84
+        ],
+        "frame": "floor_worn"
+      },
+      {
+        "cell": [
+          80,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          81,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          82,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          83,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          84,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          85,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          86,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          87,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          88,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          89,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          90,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          91,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          92,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          93,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          94,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          95,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          98,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          99,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          100,
+          85
+        ],
+        "frame": "floor_channel_h"
+      },
+      {
+        "cell": [
+          101,
+          85
+        ],
+        "frame": "floor_channel_end"
+      },
+      {
+        "cell": [
           90,
           85
         ],
@@ -4533,18 +6171,6 @@
     {
       "frame": "column",
       "cell": [
-        98,
-        42
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "court colonnade on the north block range"
-    },
-    {
-      "frame": "column",
-      "cell": [
         75,
         55
       ],
@@ -5472,7 +7098,7 @@
     {
       "frame": "column",
       "cell": [
-        78,
+        81,
         86
       ],
       "z": 1,
@@ -5496,7 +7122,7 @@
     {
       "frame": "column",
       "cell": [
-        98,
+        100,
         86
       ],
       "z": 1,
@@ -5532,31 +7158,7 @@
     {
       "frame": "banner",
       "cell": [
-        85,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "arena banner: torn, at the boss's back"
-    },
-    {
-      "frame": "banner",
-      "cell": [
         97,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "arena banner: torn, at the boss's back"
-    },
-    {
-      "frame": "banner",
-      "cell": [
-        103,
         65
       ],
       "z": 1,
@@ -5744,18 +7346,6 @@
       "note": "arena mouth: engaged jamb pier"
     },
     {
-      "frame": "column",
-      "cell": [
-        73,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "note": "arena mouth: engaged jamb pier"
-    },
-    {
       "frame": "banner",
       "cell": [
         72,
@@ -5817,25 +7407,25 @@
       "frame": "column_broken",
       "cell": [
         85,
-        79
+        73
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "island face: snapped pier behind the apparatus"
+      "note": "island back edge: snapped pier behind the apparatus"
     },
     {
       "frame": "column_broken",
       "cell": [
         91,
-        79
+        73
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "island face: snapped pier behind the apparatus"
+      "note": "island back edge: snapped pier behind the apparatus"
     },
     {
       "frame": "skulls",
@@ -5884,6 +7474,66 @@
       "low": true,
       "anchor": "base",
       "note": "overturned feed stand at the apparatus"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        78,
+        71
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "footing of the ruined gallery over the arena"
+    },
+    {
+      "frame": "slab",
+      "cell": [
+        83,
+        70
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "footing of the ruined gallery over the arena"
+    },
+    {
+      "frame": "rubble_large",
+      "cell": [
+        80,
+        70
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "the gallery span that came down between the footings"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        79,
+        69
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "debris under the gallery footing"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        84,
+        69
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "debris under the gallery footing"
     },
     {
       "frame": "torch",
@@ -5946,7 +7596,7 @@
     {
       "frame": "banner",
       "cell": [
-        99,
+        101,
         65
       ],
       "z": 1,
@@ -5954,6 +7604,30 @@
       "low": false,
       "anchor": "base",
       "note": "arena wall: torn standard"
+    },
+    {
+      "frame": "cage",
+      "cell": [
+        76,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "gibbet over the arena's west flank"
+    },
+    {
+      "frame": "cage",
+      "cell": [
+        104,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "note": "gibbet over the arena's west flank"
     },
     {
       "frame": "skulls",
@@ -5990,6 +7664,102 @@
       "low": true,
       "anchor": "base",
       "note": "bone drift across the arena"
+    },
+    {
+      "frame": "altar_dry",
+      "cell": [
+        78,
+        80
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "dry altar on the arena's west flank: the rite stopped here"
+    },
+    {
+      "frame": "altar_dry",
+      "cell": [
+        79,
+        83
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "dry altar on the arena's west flank: the rite stopped here"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        77,
+        81
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings left where the rite stopped"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        80,
+        81
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings left where the rite stopped"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        80,
+        84
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings left where the rite stopped"
+    },
+    {
+      "frame": "skulls",
+      "cell": [
+        77,
+        84
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "offerings left where the rite stopped"
+    },
+    {
+      "frame": "rubble_column",
+      "cell": [
+        77,
+        78
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "fallen gallery pier, arena's west flank"
+    },
+    {
+      "frame": "rubble_large",
+      "cell": [
+        76,
+        83
+      ],
+      "z": 1,
+      "y_sort": false,
+      "low": true,
+      "anchor": "base",
+      "note": "collapsed gallery masonry against the west wall"
     }
   ],
   "lights": [

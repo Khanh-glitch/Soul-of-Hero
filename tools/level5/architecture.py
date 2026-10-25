@@ -382,9 +382,19 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
             y = court_cy + dy * step
             if (x, y) in floor and (x, y) not in guard:
                 plan.floor_tile((x, y), frame_name)
-    # ritual stations and piers on the court's own solid blocks
+    # ritual stations and piers on the court's own solid blocks. The north range
+    # stops west of the basin: the basin is 276 px wide and 166 tall, so a pier at
+    # x 86, 94 or 98 was drawn straight through its rim -- the first native frames
+    # of this court showed piers standing in the bowl.
+    basin_left, basin_right = court_cx - 9, court_cx + 9
+    basin_top, basin_bottom = court_cy - 5, court_cy + 5
+
+    def clear_of_basin(cell: tuple) -> bool:
+        return not (basin_left <= cell[0] <= basin_right
+                    and basin_top <= cell[1] <= basin_bottom)
+
     for cell in ((74, 42), (79, 42), (86, 42), (94, 42), (98, 42)):
-        if cell in geom:
+        if cell in geom and clear_of_basin(cell):
             plan.prop("column", cell, z=1, note="court colonnade on the north block range")
     for cell in ((75, 55), (85, 55), (91, 55), (97, 55), (107, 55)):
         if cell in geom:
@@ -392,8 +402,8 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     for cell in ((74, 54), (107, 54)):
         if cell in geom:
             plan.prop("altar", cell, z=1, low=True, note="raised ritual station at the court's corner")
-    for cell in ((77, 43), (96, 43)):
-        if cell in geom:
+    for cell in ((77, 43), (103, 43)):
+        if cell in geom and clear_of_basin(cell):
             plan.prop("banner", cell, z=1, note="court banner on the north range")
     for cell in ((86, 55), (97, 55)):
         if cell in geom:
@@ -537,10 +547,12 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     for cell in ((76, 65), (82, 65), (94, 65), (100, 65), (106, 65)):
         if cell in geom:
             plan.prop("column", cell, z=1, note="arena colonnade, north wall")
-    for cell in ((78, 86), (88, 86), (98, 86), (106, 86)):
+    # the braziers stand at x 78 and 92 just above this line, so the south piers
+    # start beyond them rather than growing out of the fire
+    for cell in ((81, 86), (88, 86), (100, 86), (106, 86)):
         if cell in geom:
             plan.prop("column", cell, z=1, note="arena colonnade, south wall")
-    for cell in ((79, 65), (85, 65), (97, 65), (103, 65)):
+    for cell in ((79, 65), (97, 65)):
         if cell in geom:
             plan.prop("banner", cell, z=1, note="arena banner: torn, at the boss's back")
     for cell in ((74, 65), (109, 65)):
@@ -569,7 +581,9 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     # engaged piers, a torn banner overhead and fire on both sides turn that
     # threshold into a doorway worth walking through, and they are all on cells
     # that are already solid or already open, so the lane stays clear.
-    for cell in ((72, 72), (73, 72)):
+    # one engaged pier each side of the mouth. Two adjacent columns read as a
+    # single doubled, blurry pillar in the native frame, not as a portal.
+    for cell in ((72, 72), (72, 76)):
         if cell in geom:
             plan.prop("column", cell, z=1, note="arena mouth: engaged jamb pier")
     plan.hang("banner", geom, 72, 72, note="arena mouth: banner over the threshold")
@@ -583,9 +597,12 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     # It stands on the island; the island's north face carries a low pier rhythm
     # and its shoulders hold the remnants of the rite, so the centrepiece sits in
     # built architecture rather than on a bare rock platform.
-    for cell in ((85, 79), (91, 79)):
+    # snapped piers sit on the island's back edge, one row *above* the apparatus's
+    # base, so y-sorting draws them behind the centrepiece. On the front edge they
+    # were drawn over it and the arena read as clutter.
+    for cell in ((85, 73), (91, 73)):
         if cell in geom:
-            plan.prop("column_broken", cell, z=1, note="island face: snapped pier behind the apparatus")
+            plan.prop("column_broken", cell, z=1, note="island back edge: snapped pier behind the apparatus")
     for cell in ((84, 82), (92, 82)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="the offerings around the apparatus")
@@ -594,18 +611,98 @@ def floor_three(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> N
     if (90, 82) in floor and (90, 82) not in guard:
         plan.prop("stand", (90, 82), z=1, low=True, note="overturned feed stand at the apparatus")
 
+    # --- the arena floor: a duel ground, not a bare plate -----------------
+    # The hall is 36 by 20 cells and the earlier pass left most of it untouched,
+    # which is exactly the "large empty chamber" failure. The floor now carries the
+    # reading: a scorched, broken ring where the apparatus has been burning, a
+    # blood trench along the south wall that fed it, and the footings of the ruined
+    # gallery on the west side.
+    for y in range(69, 86):
+        for x in range(76, 108):
+            if (x, y) not in floor or (x, y) in guard:
+                continue
+            dx = abs(x - 88) / 9.0
+            dy = abs(y - 78) / 7.0
+            ring = max(dx, dy)
+            if 0.92 <= ring <= 1.12:
+                plan.floor_tile((x, y), "floor_worn" if (x + y) % 3 else "floor_broken")
+            elif 1.12 < ring <= 1.35 and (x * 7 + y * 5) % 4 == 0:
+                plan.floor_tile((x, y), "stain_c")
+    # the avenue: the duelling floor is paved, with a worn border, so the arena
+    # reads as a built hall rather than as leftover ground
+    for y in range(69, 85):
+        for x in range(76, 106):
+            if (x, y) not in floor or (x, y) in guard:
+                continue
+            if 84 <= x <= 92 and 72 <= y <= 79:
+                continue
+            edge = x in (76, 105) or y in (69, 84)
+            if edge:
+                plan.floor_tile((x, y), "floor_worn")
+            elif (x * 3 + y) % 11 == 0:
+                plan.floor_tile((x, y), "floor_grate")
+    # the trench: a channel along the arena's south wall, capped at both ends
+    for x in range(80, 101):
+        if (x, 85) in floor and (x, 85) not in guard:
+            plan.floor_tile((x, 85), "floor_channel_h")
+    for x in (79, 101):
+        if (x, 85) in floor and (x, 85) not in guard:
+            plan.floor_tile((x, 85), "floor_channel_end")
+    # the ruined gallery's footing on the west side: three piers' bases with the
+    # span between them gone. Not a row: two stand, the third has collapsed.
+    for cell in ((78, 71), (83, 70)):
+        if cell in floor and cell not in guard:
+            plan.prop("slab", cell, z=1, low=True, note="footing of the ruined gallery over the arena")
+    if (80, 70) in floor and (80, 70) not in guard:
+        plan.prop("rubble_large", (80, 70), z=1, low=True,
+                  note="the gallery span that came down between the footings")
+    for cell in ((79, 69), (84, 69)):
+        if cell in floor and cell not in guard:
+            plan.prop("skulls", cell, z=1, low=True, note="debris under the gallery footing")
+
     # --- wall sculpture: torn standards and brackets along the arena ------
     for cell in ((74, 65), (109, 65)):
         if cell in geom:
             plan.prop("torch", cell, z=1, note="arena wall: bracket beside the sigil",
                       light={"x": cell[0] * T + 8, "y": cell[1] * T + 12,
                              "color": [1.0, 0.66, 0.38], "energy": 1.0, "scale": 2.4})
-    for cell in ((81, 65), (99, 65)):
+    # Two torn standards, at the two ends of the wall, not a row of six banners at
+    # even spacing: the earlier set read as wallpaper.
+    for cell in ((81, 65), (101, 65)):
         if cell in geom:
             plan.prop("banner", cell, z=1, note="arena wall: torn standard")
+    # gibbets over the flanks, so the west side of the hall is not empty air
+    for cell in ((76, 65), (104, 65)):
+        if cell in geom:
+            plan.hang("cage", geom, cell[0], cell[1], note="gibbet over the arena's west flank")
     for cell in ((83, 84), (95, 85), (106, 74)):
         if cell in floor and cell not in guard:
             plan.prop("skulls", cell, z=1, low=True, note="bone drift across the arena")
+    # --- the west flank: a rite that failed before the archer arrived ------
+    # A row of dry altars on the arena's west side, its offerings still on the
+    # ground, and the collapsed masonry of the gallery that once stood over it.
+    # This is authored content with a reading, not another evenly spaced prop.
+    for cell in ((78, 80), (79, 83)):
+        if cell in floor and cell not in guard:
+            plan.prop("altar_dry", cell, z=1, low=True,
+                      note="dry altar on the arena's west flank: the rite stopped here")
+    for cell in ((77, 81), (80, 81), (80, 84), (77, 84)):
+        if cell in floor and cell not in guard:
+            plan.prop("skulls", cell, z=1, low=True, note="offerings left where the rite stopped")
+    if (77, 78) in floor and (77, 78) not in guard:
+        plan.prop("rubble_column", (77, 78), z=1, low=True,
+                  note="fallen gallery pier, arena's west flank")
+    if (76, 83) in floor and (76, 83) not in guard:
+        plan.prop("rubble_large", (76, 83), z=1, low=True,
+                  note="collapsed gallery masonry against the west wall")
+    if (76, 71) in geom:
+        plan.prop("torch", (76, 71), z=1, note="bracket on the west wall, over the fallen gallery",
+                  light={"x": 76 * T + 8, "y": 72 * T, "color": [1.0, 0.62, 0.34],
+                         "energy": 1.15, "scale": 3.0})
+    if (76, 85) in geom:
+        plan.prop("torch", (76, 85), z=1, note="bracket at the west wall's foot",
+                  light={"x": 76 * T + 8, "y": 86 * T, "color": [1.0, 0.58, 0.32],
+                         "energy": 1.0, "scale": 2.6})
     for cell in ((90, 85), (99, 78), (76, 70)):
         if cell in floor and cell not in guard:
             plan.floor_tile(cell, "stain_a" if (cell[0] + cell[1]) % 2 else "stain_b")
