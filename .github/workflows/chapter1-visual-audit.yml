@@ -6,9 +6,13 @@ name: Chapter 1 — audit sweep (native Godot 4.7, read-only)
 # whole map.
 #
 # This workflow changes nothing in the game: it runs the same production AppRoot,
-# hides actors and HUD, moves the player camera, and publishes pictures. It writes
-# only to docs/chapter1-audit/, which is deliberately outside the paths the
-# evidence workflow watches, so publishing a mosaic cannot retrigger a capture.
+# hides actors and HUD, moves the player camera, and publishes pictures.
+#
+# It writes to docs/chapter1-visual-recovery/after/, not to docs/chapter1-audit/.
+# The audit directory holds the BEFORE evidence for the visual recovery pass and is
+# frozen at e613242: a BEFORE frame that gets overwritten by a later build is no
+# longer evidence of anything. The two sets stay in separate directories on purpose,
+# and the AFTER set is labelled as such wherever it is used.
 on:
   push:
     branches:
@@ -91,21 +95,21 @@ jobs:
           set -euo pipefail
           python3 -m pip install --quiet pillow
           python3 tools/chapter1_audit/audit_sheets.py --artifacts .artifacts/audit \
-            --out docs/chapter1-audit
+            --out docs/chapter1-visual-recovery/after
 
       - name: Publish the mosaics
         if: always()
         run: |
           set -eo pipefail
-          mkdir -p docs/chapter1-audit/logs
+          mkdir -p docs/chapter1-visual-recovery/after/logs
           shopt -s nullglob
           for logfile in .artifacts/audit/*.log; do
-            cp "$logfile" "docs/chapter1-audit/logs/$(basename "$logfile" .log).txt"
+            cp "$logfile" "docs/chapter1-visual-recovery/after/logs/$(basename "$logfile" .log).txt"
           done
           shopt -u nullglob
           git config user.name "chapter1-art-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add docs/chapter1-audit
+          git add docs/chapter1-visual-recovery/after
           if git diff --cached --quiet; then
             echo "audit sweep: nothing new to publish"
             exit 0
