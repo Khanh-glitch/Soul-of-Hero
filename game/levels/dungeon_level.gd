@@ -16,6 +16,10 @@ const LevelSchemaValidator := preload("res://game/levels/level_schema.gd")
 ## res://data/environment/chapter1/ is left exactly as it was, so this hook can
 ## never change a map that has not opted in.
 const EnvironmentArt := preload("res://game/levels/presentation/chapter1_environment_art.gd")
+## Authored environment for a level that has a hand-composed architecture
+## document. Takes precedence over the generic Chapter 1 layer, which stays in
+## place for the levels that have not been given authored architecture yet.
+const AuthoredArt := preload("res://game/levels/presentation/crucible_art.gd")
 
 @export_file("*.json") var level_data_path := "res://data/levels/crypt_entrance.json"
 @export var watch_file_changes := true
@@ -98,6 +102,14 @@ func reload_from_disk() -> bool:
 
 func _refresh_environment_art() -> void:
 	if Engine.is_editor_hint():
+		return
+	if AuthoredArt.has_document(level_data_path):
+		AuthoredArt.attach(self)
+		# one environment per level: the generic facade would draw a second,
+		# conflicting wall over the authored one
+		var generic := get_node_or_null(NodePath("EnvironmentArt"))
+		if generic != null:
+			generic.queue_free()
 		return
 	EnvironmentArt.attach(self)
 

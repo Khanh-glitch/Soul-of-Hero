@@ -60,6 +60,7 @@ func _ready() -> void:
 		# Read by Chapter1EnvironmentArt.attach(): the map, its collision and every
 		# entity stay exactly as they are; only the derived art layer is skipped.
 		Engine.set_meta(&"chapter1_art_disabled", true)
+		Engine.set_meta(&"crucible_art_disabled", true)
 	_run.call_deferred()
 
 
@@ -95,12 +96,19 @@ func _run() -> void:
 		return
 
 	var art := dungeon.get_node_or_null("EnvironmentArt")
+	var authored := dungeon.get_node_or_null("CrucibleArt")
+	if art == null:
+		art = authored
 	var facade_cells := 0
 	var light_count := 0
 	if art != null:
 		var facade := art.get_node_or_null("EnvironmentFacade") as TileMapLayer
+		if facade == null:
+			facade = art.get_node_or_null("CrucibleWalls") as TileMapLayer
 		facade_cells = facade.get_used_cells().size() if facade != null else 0
 		var lights := art.get_node_or_null("EnvironmentLights")
+		if lights == null:
+			lights = art.get_node_or_null("CrucibleLights")
 		light_count = lights.get_child_count() if lights != null else 0
 	print("CHAPTER1 CAPTURE: level=%s slot=%d art=%s facade_cells=%d lights=%d entities=%d"
 		% [
