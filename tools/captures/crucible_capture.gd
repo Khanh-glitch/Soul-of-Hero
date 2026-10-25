@@ -635,7 +635,8 @@ func _report_colliders(player: CharacterBody2D, leg_name: String, frames: int,
 	query.transform = Transform2D(0.0, player.global_position)
 	query.collide_with_bodies = true
 	query.collide_with_areas = true
-	var hits := get_world_2d().direct_space_state.intersect_shape(query, 12)
+	# The harness itself is not a CanvasItem, so the space comes from the Knight.
+	var hits: Array = player.get_world_2d().direct_space_state.intersect_shape(query, 12)
 	for hit: Dictionary in hits:
 		var collider: Object = hit.get("collider")
 		if collider == null:
