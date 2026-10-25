@@ -6,16 +6,16 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 
 | Level | Title | Native frames | Status |
 | --- | --- | --- | --- |
-| L01 | Crypt Entrance | 7 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L02 | Ossuary Fork | 8 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L03 | Crossfire Archive | 9 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L04 | Spiral Reliquary | 8 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L05 | Blood Crucible | 9 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L06 | Soul Anchor Relay | 7 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L07 | The Failing Beacon | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L08 | Divided Reliquary | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L09 | The Crimson Gate | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
-| L10 | Castellan Throne | 4 | `TECHNICALLY VALID — VISUAL NOT READY` |
+| L01 | Crypt Entrance | 7 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L02 | Ossuary Fork | 8 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L03 | Crossfire Archive | 9 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L04 | Spiral Reliquary | 8 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L05 | Blood Crucible | 9 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L06 | Soul Anchor Relay | 7 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L07 | The Failing Beacon | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L08 | Divided Reliquary | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L09 | The Crimson Gate | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L10 | Castellan Throne | 4 | `INCOMPLETE — ART DELIVERY FAILED` |
 
 ## Gameplay gates (frozen, unchanged expectations)
 
@@ -43,13 +43,13 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-| chapter_1_level_10 | 645 -> 666 | 97 -> 107 | 98.2 MiB |
+| chapter_1_level_10 | 662 -> 654 | 100 -> 109 | 98.1 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 105.0 MiB |
 | chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.8 MiB |
 | chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 110.0 MiB |
-| chapter_1_level_4 | 778 -> 800 | 72 -> 76 | 109.3 MiB |
-| chapter_1_level_5 | 867 -> 1070 | 103 -> 110 | 119.7 MiB |
-| chapter_1_level_6 | 864 -> 1116 | 66 -> 73 | 118.9 MiB |
-| chapter_1_level_7 | 661 -> 678 | 92 -> 103 | 107.8 MiB |
-| chapter_1_level_8 | 689 -> 698 | 117 -> 128 | 104.1 MiB |
-| chapter_1_level_9 | 718 -> 743 | 111 -> 127 | 101.4 MiB |
+| chapter_1_level_4 | 778 -> 797 | 72 -> 76 | 109.3 MiB |
+| chapter_1_level_5 | 866 -> 1070 | 103 -> 110 | 119.7 MiB |
+| chapter_1_level_6 | 863 -> 1105 | 66 -> 73 | 118.9 MiB |
+| chapter_1_level_7 | 663 -> 678 | 92 -> 103 | 107.8 MiB |
+| chapter_1_level_8 | 689 -> 721 | 120 -> 134 | 104.3 MiB |
+| chapter_1_level_9 | 737 -> 744 | 119 -> 119 | 101.4 MiB |

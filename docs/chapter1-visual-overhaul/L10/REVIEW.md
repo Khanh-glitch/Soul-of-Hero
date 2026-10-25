@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_10`
 - Map source: `data/levels/chapter_1_level_10.json`
 - Source sha256: `84a5af5d70c5bffcb0e0fd72d5642fbfee4ed65ee0ccc0eb6b84c86ec8a2ae30`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Castellan Throne — the fallen ruler's hall
 
 ## What the native frames show
@@ -29,9 +29,9 @@
 
 ## Cost of the layer
 
-- Nodes: 645 (art off) -> 666 (art on)
-- Draw calls: 97 -> 107
-- Static memory: 98.2 MiB with the layer on
+- Nodes: 662 (art off) -> 654 (art on)
+- Draw calls: 100 -> 109
+- Static memory: 98.1 MiB with the layer on
 
 ## Frames
 

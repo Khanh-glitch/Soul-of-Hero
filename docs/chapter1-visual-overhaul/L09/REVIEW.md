@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_9`
 - Map source: `data/levels/chapter_1_level_9.json`
 - Source sha256: `40b5d7dfe1ba4a93498562bf934591e38c1da8ed902a777d2b46e5ba5abc3227`
-- Status: `TECHNICALLY VALID — VISUAL NOT READY`
+- Status: `INCOMPLETE — ART DELIVERY FAILED`
 - Art direction: Crimson Gate — fortress seal chamber
 
 ## What the native frames show
@@ -28,8 +28,8 @@
 
 ## Cost of the layer
 
-- Nodes: 718 (art off) -> 743 (art on)
-- Draw calls: 111 -> 127
+- Nodes: 737 (art off) -> 744 (art on)
+- Draw calls: 119 -> 119
 - Static memory: 101.4 MiB with the layer on
 
 ## Frames
