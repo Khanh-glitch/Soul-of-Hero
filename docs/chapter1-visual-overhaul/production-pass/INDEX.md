@@ -18,7 +18,7 @@ claim of approval.
 | L07 | The Beacon Yard — Soul Beacon defence | `vigil` | `tools/level7/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
 | L08 | The Divided Reliquary — Reaper and Vampire wings | `reliquary` | `tools/level8/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
 | L09 | The Crimson Gate — three seals, one named elite | `gatehouse` | `tools/level9/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
-| L10 | The Castellan's throne | — | — | — | `INCOMPLETE — ART DELIVERY FAILED` |
+| L10 | The Castellan's Throne — two-phase boss and chapter portal | `castellan` | `tools/level10/` | authored, first capture pending | `INCOMPLETE — ART DELIVERY FAILED` |
 
 Every image referenced from these pages is a native Godot 4.7 frame, 1280×720,
 taken through the production `AppRoot` campaign boot by
