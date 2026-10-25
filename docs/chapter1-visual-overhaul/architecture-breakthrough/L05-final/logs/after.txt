@@ -3,12 +3,12 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_after_40165242705.json
+CRUCIBLE BOOT: save=user://crucible_after_40165702033.json
 CRUCIBLE BOOT: app_boot=complete
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=158 lights=29 entities=83
-CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1061 draw_calls=110 static_mb=121.3 tree_objects=14608
+CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1063 draw_calls=110 static_mb=121.4 tree_objects=14620
 CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=158 lights=29 shadows=506
 CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
 CRUCIBLE STATION tag=after station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_gate.png ok=true
@@ -18,38 +18,35 @@ CRUCIBLE STATION tag=after station=f2_court cell=(91, 47) zoom=1.00 out=res://.a
 CRUCIBLE STATION tag=after station=f2_encounter cell=(91, 47) zoom=1.00 out=res://.artifacts/crucible/after/after_f2_encounter.png ok=true
 CRUCIBLE STATION tag=after station=f3_approach cell=(70, 76) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_approach.png ok=true
 CRUCIBLE FIGHT: archer found at (1528.0, 1192.0)
-CRUCIBLE FIGHT: knight_hp 932/1100 -> 932/1100 | boss_hp=6437/6437 boss_state=n/a
-CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=932/1100 boss_hp=6437
-WARNING: CRUCIBLE FIGHT: boss state n/a looked like it had not engaged
-     at: push_warning (core/variant/variant_utility.cpp:1033)
-     GDScript backtrace (most recent call first):
-         [0] _capture_fight (res://tools/captures/crucible_capture.gd:376)
+CRUCIBLE FIGHT: swings=6 boss_hp 6437 -> 6337
+CRUCIBLE FIGHT: knight_hp 891/1100 -> 891/1100 | boss_hp=6337/6437 boss_state=RECOVER
+CRUCIBLE STATION tag=after station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/after/after_f3_fight.png ok=true knight_hp=891/1100 boss_hp=6337
 CRUCIBLE STATION tag=after station=overview_f1 cell=(32, 16) zoom=0.50 out=res://.artifacts/crucible/after/overview_after_overview_f1.png ok=true
 CRUCIBLE STATION tag=after station=overview_f2 cell=(53, 44) zoom=0.40 out=res://.artifacts/crucible/after/overview_after_overview_f2.png ok=true
 CRUCIBLE STATION tag=after station=overview_f3 cell=(60, 75) zoom=0.45 out=res://.artifacts/crucible/after/overview_after_overview_f3.png ok=true
 CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate staged_at=(10, 17)
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate path=98 cells
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate path=112 cells
 CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=1 cell=(14, 17) out=res://.artifacts/crucible/after/after_traversal_1.png ok=true
 CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=2 cell=(17, 17) out=res://.artifacts/crucible/after/after_traversal_2.png ok=true
 CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=3 cell=(18, 17) out=res://.artifacts/crucible/after/after_traversal_3.png ok=true
 CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_spawn_to_f1_gate step=4 cell=(22, 17) out=res://.artifacts/crucible/after/after_traversal_4.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=1 from=(43, 20) path=64
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=2 from=(59, 18) path=46
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=3 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=4 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=5 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=6 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=7 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=8 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=9 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=10 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=11 from=(60, 17) path=44
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=12 from=(60, 17) path=44
-ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (60, 17) after 13 replans
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=1 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=2 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=3 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=4 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=5 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=6 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=7 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=8 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=9 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=10 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=11 from=(64, 10) path=51
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate replan=12 from=(64, 10) path=51
+ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (64, 10) after 13 replans
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
-       [0] _traverse (res://tools/captures/crucible_capture.gd:478)
-CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate arrived=false frames=1055 at=(60, 17)
+       [0] _traverse (res://tools/captures/crucible_capture.gd:510)
+CRUCIBLE TRAVERSAL: leg=f1_spawn_to_f1_gate arrived=false frames=1207 at=(64, 10)
 CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door staged_at=(9, 48)
 CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door path=105 cells
 CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door replan=1 from=(9, 48) path=105
@@ -71,7 +68,7 @@ CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door replan=12 from=(9, 48) path=105
 ERROR: CRUCIBLE TRAVERSAL FAIL: no route from (9, 48) after 13 replans
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
-       [0] _traverse (res://tools/captures/crucible_capture.gd:478)
+       [0] _traverse (res://tools/captures/crucible_capture.gd:510)
 CRUCIBLE TRAVERSAL: leg=f2_landing_to_f2_f3_door arrived=false frames=247 at=(9, 48)
 CRUCIBLE TRAVERSAL: sequence complete
 CRUCIBLE CAPTURE DONE: tag=after
