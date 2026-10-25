@@ -1,8 +1,3 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-ERROR: Cannot open file 'res://tests/chapter_1_campaign_map_design_test.tscn'.
-   at: load (scene/resources/resource_format_text.cpp:1442)
-ERROR: Failed loading resource: res://tests/chapter_1_campaign_map_design_test.tscn.
-   at: _load (core/io/resource_loader.cpp:317)
-ERROR: Failed loading scene: res://tests/chapter_1_campaign_map_design_test.tscn.
-   at: start (main/main.cpp:4763)
+CHAPTER 1 CAMPAIGN MAP DESIGN PASSED - 46292 checks across ten maps

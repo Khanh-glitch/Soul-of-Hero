@@ -1,8 +1,219 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-ERROR: Cannot open file 'res://tests/chapter_1_balance_matrix_test.tscn'.
-   at: load (scene/resources/resource_format_text.cpp:1442)
-ERROR: Failed loading resource: res://tests/chapter_1_balance_matrix_test.tscn.
-   at: _load (core/io/resource_loader.cpp:317)
-ERROR: Failed loading scene: res://tests/chapter_1_balance_matrix_test.tscn.
-   at: start (main/main.cpp:4763)
+CHAPTER 1 BALANCE MATRIX TEST FAILED - 583 checks
+ERROR: FAIL  l1_floor_skeleton action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l1_floor_skeleton stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l2_floor_skeleton stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_floor_reaper stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_lesson_reaper stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hp_lesson_reaper stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_damage_focus_reaper stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper action sword_1 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper action sword_2 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper action sword_3 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper action sword_4 uses canonical formula v1
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper stays inside its hit breakpoint band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper stays inside its TTK band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  l3_hard_replay_reaper stays inside its survivability band
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  five learned Power points cross a visible Reaper combo breakpoint
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  five learned HP points cross a visible survivability breakpoint
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  all-in early Power helps without deleting the elite lesson in one or two hits
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  five learned Mana points cross a real three-minute cast breakpoint
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
+ERROR: FAIL  Mana allocation changes the same effective resource pool used by tempo simulation
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://tests/chapter_1_balance_matrix_test.gd:154)
