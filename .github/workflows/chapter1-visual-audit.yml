@@ -88,7 +88,7 @@ jobs:
       - name: Publish the mosaics
         if: always()
         run: |
-          set +eo pipefail
+          set -eo pipefail
           mkdir -p docs/chapter1-audit/logs
           shopt -s nullglob
           for logfile in .artifacts/audit/*.log; do
@@ -98,7 +98,22 @@ jobs:
           git config user.name "chapter1-art-bot"
           git config user.email "actions@users.noreply.github.com"
           git add docs/chapter1-audit
-          if ! git diff --cached --quiet; then
-            git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
-            git push
+          if git diff --cached --quiet; then
+            echo "audit sweep: nothing new to publish"
+            exit 0
           fi
+          git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
+          # The branch can move while the sweep runs - a push that merely edits a
+          # doc lands without triggering this workflow, but it still makes this
+          # commit a non-fast-forward. Rebase onto whatever is there now.
+          for attempt in 1 2 3; do
+            git fetch --quiet origin "${GITHUB_REF_NAME}"
+            git rebase "origin/${GITHUB_REF_NAME}" >/dev/null 2>&1 || git rebase --abort
+            if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
+              echo "audit sweep: published on attempt ${attempt}"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "audit sweep: could not publish the mosaics" >&2
+          exit 1
