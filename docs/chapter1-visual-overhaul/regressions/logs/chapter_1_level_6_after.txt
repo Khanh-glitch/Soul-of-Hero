@@ -3,7 +3,8 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
+ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
 AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
 CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
 AUTHORED PROPS: missing=0 clamped=0
@@ -15,7 +16,7 @@ AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156
 CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 CAPTURE: level=chapter_1_level_6 slot=6 art=on facade_cells=2720 lights=75 entities=73
-CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1102 draw_calls=73 static_mb=119.1 fps=5
+CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1101 draw_calls=73 static_mb=119.1 fps=4
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=entry cell=(9, 23) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=landmark cell=(74, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=checkpoint cell=(16, 46) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_checkpoint.png ok=true

@@ -1,9 +1,13 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
+ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
 ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
-ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=8019,2403,739,471
-ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696 bands=4072,254,6,0
-ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696 bands=4452,245,7,0
+ENVIRONMENT PALETTE: theme=chapter_1_level_2.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.72, 0.72, 0.72, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.92, 0.88, 0.79, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.72, 0.72, 0.72, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=7923,2516,722,471
+ENVIRONMENT PALETTE: theme=chapter_1_level_3.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.7, 0.7, 0.7, 1.0) decor=(1.4, 1.4, 1.4, 1.0) world=(0.98, 0.9, 0.77, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.7, 0.7, 0.7, 1.0) Decor=(1.4, 1.4, 1.4, 1.0)
+ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696 bands=4195,137,0,0
+ENVIRONMENT PALETTE: theme=chapter_1_level_4.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.66, 0.66, 0.66, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.84, 0.87, 0.98, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.66, 0.66, 0.66, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696 bands=4289,394,21,0
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
