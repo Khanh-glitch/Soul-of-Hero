@@ -57972,7 +57972,7 @@
     "required_sigils": 1,
     "camera_bounds": [
       0,
-      0,
+      -96,
       1536,
       1120
     ],

@@ -78,7 +78,7 @@ func _init() -> void:
 		"metadata": {
 			"objective": "Khám phá các phòng, thu thập 3 ấn ký rồi tới cổng thoát",
 			"required_sigils": 3,
-			"camera_bounds": [0, 0, WIDTH * 16, HEIGHT * 16],
+			"camera_bounds": [0, -96, WIDTH * 16, HEIGHT * 16],  # six rows of headroom, as chapter_1_map_builder.gd
 			"layout_profile": "three_floor_door_progression_dungeon",
 			"tileset": "0x72 DungeonTileset II v1.7 (CC0)",
 			"rooms": ROOM_METADATA,

@@ -58,6 +58,15 @@ const BEDROCK_MARGIN := 6
 ## How many courses of wall are built above a wall band when there is rock above
 ## it. Three is what makes a wall read as a storey rather than as a kerb.
 const WALL_EXTRUDE := 3
+## The world above the map's first row that the camera is allowed to enter, in
+## rows. The architecture needs this: a wall band at the top of the map used to
+## extrude, cornice and cap five rows upward, all of them above the camera's top
+## limit, so every top wall was sliced flat and every banner hung on it was cut in
+## half. The camera bounds are widened by the same amount (see
+## chapter_1_map_builder.gd) and the bedrock fill reaches the same row, so the
+## headroom is real space with stone in it rather than a hole in the frame.
+const HEADROOM_ROWS := 6
+const WORLD_TOP_ROW := -HEADROOM_ROWS
 ## The authored wall stack has to draw over the level's own collision tiles
 ## (Geometry, z 0) or the grey brick tileset covers the architecture built on
 ## top of it, and under the entity root (z 3) so the Knight still walks in front.
@@ -163,6 +172,8 @@ func rebuild() -> void:
 			int(stats.get("bedrock", 0)), int(stats.get("props", 0)),
 			int(stats.get("lights", 0)), int(stats.get("shadows", 0)),
 		])
+	print("AUTHORED PROPS: missing=%d clamped=%d" % [
+		int(stats.get("props_missing", 0)), int(stats.get("props_clamped", 0))])
 
 
 func _clear() -> void:
@@ -306,8 +317,12 @@ func _build_bedrock(floor: Dictionary, geometry: Dictionary) -> void:
 		min_y = mini(min_y, cell.y)
 		max_x = maxi(max_x, cell.x)
 		max_y = maxi(max_y, cell.y)
+	# The fill has to reach the top of the visible world, not merely a fixed margin
+	# above the content: a level whose rooms start on row 3 would otherwise show
+	# three rows of background above its own rock.
+	var fill_top := mini(min_y - BEDROCK_MARGIN, WORLD_TOP_ROW)
 	var painted := 0
-	for y: int in range(min_y - BEDROCK_MARGIN, max_y + BEDROCK_MARGIN + 1):
+	for y: int in range(fill_top, max_y + BEDROCK_MARGIN + 1):
 		for x: int in range(min_x - BEDROCK_MARGIN, max_x + BEDROCK_MARGIN + 1):
 			var cell := Vector2i(x, y)
 			if content.has(cell):
@@ -428,31 +443,41 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 					frame = "wall_field_b"
 			if _put(layer, cell, frame):
 				painted += 1
-		# 2. extrude upward into rock only: never over walkable ground or over
-		#    another room's floor
+		# 2. Extrude upward into rock only: never over walkable ground or over
+		#    another room's floor, and never above the world's own top, because paint
+		#    there is invisible and a stack that runs out of world reads as a wall
+		#    sliced by the screen edge. Two rows are always kept back for the
+		#    cornice and the cap, so even a wall one row under the ceiling finishes
+		#    with a crown instead of stopping dead.
+		var headroom := top - WORLD_TOP_ROW
+		var extrude := clampi(headroom - 2, 0, WALL_EXTRUDE)
 		var highest := top - 1
-		for step: int in range(1, WALL_EXTRUDE + 1):
+		for step: int in range(1, extrude + 1):
 			var cell := Vector2i(face.x, top - step)
 			if floor.has(cell) or geometry.has(cell):
 				break
 			var frame_name := "wall_field_a"
 			if posmod(face.x, 4) == 0:
 				frame_name = "wall_pier"
-			elif posmod(face.x, 4) == 0:
-				frame_name = "wall_field_b"
 			if not _put(layer, cell, frame_name):
 				break
 			painted += 1
 			highest = cell.y
 		# 3. cornice and cap above the highest course
 		var cornice := Vector2i(face.x, highest - 1)
-		if not floor.has(cornice) and not geometry.has(cornice):
+		if cornice.y >= WORLD_TOP_ROW and not floor.has(cornice) and not geometry.has(cornice):
 			if _put(layer, cornice, "wall_cornice"):
 				painted += 1
 			var cap := Vector2i(face.x, highest - 2)
-			if not floor.has(cap) and not geometry.has(cap):
+			if cap.y >= WORLD_TOP_ROW and not floor.has(cap) and not geometry.has(cap):
 				if _put(layer, cap, "wall_cap"):
 					painted += 1
+		elif headroom <= 1:
+			# No room even for a cornice: the band's own top course becomes the
+			# coping, so the wall still reads as finished where the world ends.
+			var coping := Vector2i(face.x, top)
+			if not floor.has(coping) and not geometry.has(coping):
+				_put(layer, coping, "wall_cap")
 	# 4. every solid cell the wall pass did not cover is the interior of the
 	#    masonry: paint it as unexcavated rock so no stock grey brick shows through
 	for cell: Vector2i in geometry:
@@ -475,12 +500,21 @@ func _build_props(geometry: Dictionary) -> void:
 		root.z_index = 0
 		add_child(root)
 	var placed := 0
+	var clamped := 0
+	var missing := 0
 	for raw: Variant in document.get("props", []):
 		if not raw is Dictionary:
 			continue
 		var entry: Dictionary = raw
 		var frame_data: Variant = _prop_frames.get(String(entry.get("frame", "")))
 		if not frame_data is Dictionary:
+			# A placement naming a frame the atlas does not have used to vanish
+			# without a word, so a document could ask for twenty barrels and draw
+			# none. It is counted and reported now, and the architecture validator
+			# fails the build long before it reaches a player.
+			missing += 1
+			push_warning("CrucibleArt: %s places prop frame '%s', which kit '%s' does not have"
+				% [level_data_path.get_file(), String(entry.get("frame", "")), kit])
 			continue
 		var spec: Dictionary = frame_data
 		var width := float(int(spec["w"]))
@@ -499,10 +533,22 @@ func _build_props(geometry: Dictionary) -> void:
 		sprite.centered = true
 		sprite.set_meta(&"crucible_prop", true)
 		sprite.name = "Prop_%s_%d_%d" % [String(entry.get("frame", "prop")), cell.x, cell.y]
+		# A sprite may not reach above the top of the world. With the camera's
+		# headroom this should never bite, but a document edited by hand can still
+		# hang a banner three rows too high, and a sprite whose top is cut by the
+		# frame edge is the single most obvious sign of an unfinished room. It is
+		# moved down to fit and counted, so the number shows up in the gate.
+		var world_top := float(WORLD_TOP_ROW * TILE)
+		var sprite_top := float((cell.y + 1) * TILE) - height
+		var drop := 0.0
+		if sprite_top < world_top:
+			var needed := (world_top - sprite_top) / float(TILE)
+			drop = ceilf(needed) * float(TILE)
+			clamped += 1
 		if bool(entry.get("y_sort", true)):
 			# base-anchored: the sprite's feet sit on the bottom of its cell, and
 			# the y-sorted root then sorts it against the Knight and the enemies
-			sprite.position = Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE)
+			sprite.position = Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE + drop)
 			sprite.offset = Vector2(0.0, -height * 0.5)
 		else:
 			sprite.position = Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE * 0.5)
@@ -513,6 +559,8 @@ func _build_props(geometry: Dictionary) -> void:
 		root.add_child(sprite)
 		placed += 1
 	stats["props"] = placed
+	stats["props_clamped"] = clamped
+	stats["props_missing"] = missing
 
 
 # -- lights ------------------------------------------------------------------

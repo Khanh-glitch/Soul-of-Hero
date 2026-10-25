@@ -38,6 +38,12 @@ const SHADOW_NODE := "EnvironmentShadow"
 const LIGHT_NODE := "EnvironmentLights"
 
 const SOURCE_WALL_SHEET := 1   # atlas_walls_low.png, the chapter's shared stone
+## The world above the map's first row that the camera is allowed to enter, in
+## rows. Shared with CrucibleArt and with the map generator that widens
+## camera_bounds: a derived facade that stacks upward past this row is painted
+## where nobody can see it, and the wall below it reads as sliced by the frame.
+const HEADROOM_ROWS := 6
+const WORLD_TOP_ROW := -HEADROOM_ROWS
 
 
 class _ShadowPainter extends Node2D:
@@ -305,8 +311,13 @@ func _build_facade() -> void:
 			top -= 1
 		if placed.has(Vector2i(cell.x, top)):
 			continue
+		# The storey is built inside the world, never above it: two rows are held
+		# back for the coping, and when the wall is close to the top of the world
+		# the courses are compressed rather than painted out of sight.
+		var headroom := top - WORLD_TOP_ROW
+		var build := clampi(headroom - 2, 0, rows)
 		var stack := 0
-		for step: int in range(1, rows + 1):
+		for step: int in range(1, build + 1):
 			var target := Vector2i(cell.x, top - step)
 			if floor.has(target) or geometry.has(target) or placed.has(target):
 				break
@@ -315,14 +326,17 @@ func _build_facade() -> void:
 			stack = step
 		# Pilasters: every few bays the facade steps one course higher, which
 		# gives a long wall a rhythm of built bays instead of a flat ribbon.
-		if stack == rows and posmod(cell.x, maxi(3, int(config.get("pier_every", 7)))) == 0:
-			var crest := Vector2i(cell.x, top - rows - 1)
-			if not floor.has(crest) and not geometry.has(crest) and not placed.has(crest):
+		if stack == build and build == rows \
+				and posmod(cell.x, maxi(3, int(config.get("pier_every", 7)))) == 0:
+			var crest := Vector2i(cell.x, top - build - 1)
+			if crest.y >= WORLD_TOP_ROW and not floor.has(crest) \
+					and not geometry.has(crest) and not placed.has(crest):
 				_put(facade, crest, courses[posmod(cell.x, courses.size())])
 				placed[crest] = true
-		if stack == rows:
-			var cap_cell := Vector2i(cell.x, top - rows - 1)
-			if not floor.has(cap_cell) and not geometry.has(cap_cell) and not placed.has(cap_cell):
+		if stack == build:
+			var cap_cell := Vector2i(cell.x, top - build - 1)
+			if cap_cell.y >= WORLD_TOP_ROW and not floor.has(cap_cell) \
+					and not geometry.has(cap_cell) and not placed.has(cap_cell):
 				_put(facade, cap_cell, cap[posmod(cell.x * 3 + cell.y, cap.size())])
 				placed[cap_cell] = true
 
