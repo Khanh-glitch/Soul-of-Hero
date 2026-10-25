@@ -14,7 +14,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
 ENVIRONMENT PALETTE: theme=chapter_1_level_2.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.72, 0.72, 0.72, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.92, 0.88, 0.79, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.72, 0.72, 0.72, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
 ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=7923,2516,722,471
 CHAPTER1 CAPTURE: level=chapter_1_level_2 slot=2 art=on facade_cells=2304 lights=11 entities=64
-CHAPTER1 PERF: level=chapter_1_level_2 art=on nodes=718 draw_calls=96 static_mb=133.9 fps=7
+CHAPTER1 PERF: level=chapter_1_level_2 art=on nodes=718 draw_calls=96 static_mb=133.9 fps=6
 CHAPTER1 STATION tag=after level=chapter_1_level_2 station=entry cell=(12, 26) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_2/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_2 station=landmark cell=(122, 12) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_2/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_2 station=checkpoint cell=(10, 68) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_2/after/after_checkpoint.png ok=true
