@@ -8,8 +8,8 @@
 
 ## What the native frames show
 
-- Derived facade cells: 1340
-- Landmark lights: 12
+- Derived facade cells: 2720
+- Landmark lights: 90
 - Authored entities preserved: 73
 
 ### Improved
@@ -28,27 +28,36 @@
 
 ## Cost of the layer
 
-- Nodes: 865 (art off) -> 884 (art on)
-- Draw calls: 66 -> 78
-- Static memory: 110.0 MiB with the layer on
+- Nodes: 864 (art off) -> 1116 (art on)
+- Draw calls: 66 -> 73
+- Static memory: 118.9 MiB with the layer on
 
 ## Frames
 
 - `images/after_checkpoint.png`
+- `images/after_checkpoint_2.png`
 - `images/after_entry.png`
 - `images/after_exit.png`
 - `images/after_landmark.png`
+- `images/after_landmark_2.png`
+- `images/after_landmark_3.png`
 - `images/before_checkpoint.png`
+- `images/before_checkpoint_2.png`
 - `images/before_entry.png`
 - `images/before_exit.png`
 - `images/before_landmark.png`
+- `images/before_landmark_2.png`
+- `images/before_landmark_3.png`
 - `images/crop3x_entry.png`
 - `images/crop3x_exit.png`
 - `images/crop3x_landmark.png`
 - `images/pair_checkpoint.png`
+- `images/pair_checkpoint_2.png`
 - `images/pair_entry.png`
 - `images/pair_exit.png`
 - `images/pair_landmark.png`
+- `images/pair_landmark_2.png`
+- `images/pair_landmark_3.png`
 
 Every image above is a native Godot frame from the production `AppRoot`
 campaign boot at 1280x720. `before_*` is the same map with the art layer

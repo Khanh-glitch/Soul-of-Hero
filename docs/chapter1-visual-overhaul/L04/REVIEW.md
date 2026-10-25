@@ -28,27 +28,39 @@
 
 ## Cost of the layer
 
-- Nodes: 780 (art off) -> 798 (art on)
+- Nodes: 778 (art off) -> 800 (art on)
 - Draw calls: 72 -> 76
-- Static memory: 108.1 MiB with the layer on
+- Static memory: 109.3 MiB with the layer on
 
 ## Frames
 
 - `images/after_checkpoint.png`
+- `images/after_checkpoint_2.png`
 - `images/after_entry.png`
 - `images/after_exit.png`
 - `images/after_landmark.png`
+- `images/after_landmark_2.png`
+- `images/after_landmark_3.png`
+- `images/after_landmark_4.png`
 - `images/before_checkpoint.png`
+- `images/before_checkpoint_2.png`
 - `images/before_entry.png`
 - `images/before_exit.png`
 - `images/before_landmark.png`
+- `images/before_landmark_2.png`
+- `images/before_landmark_3.png`
+- `images/before_landmark_4.png`
 - `images/crop3x_entry.png`
 - `images/crop3x_exit.png`
 - `images/crop3x_landmark.png`
 - `images/pair_checkpoint.png`
+- `images/pair_checkpoint_2.png`
 - `images/pair_entry.png`
 - `images/pair_exit.png`
 - `images/pair_landmark.png`
+- `images/pair_landmark_2.png`
+- `images/pair_landmark_3.png`
+- `images/pair_landmark_4.png`
 
 Every image above is a native Godot frame from the production `AppRoot`
 campaign boot at 1280x720. `before_*` is the same map with the art layer
