@@ -8,10 +8,14 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 CAPTURE: level=chapter_1_level_4 slot=4 art=off facade_cells=0 lights=0 entities=74
-CHAPTER1 PERF: level=chapter_1_level_4 art=off nodes=780 draw_calls=72 static_mb=105.9 fps=1
+CHAPTER1 PERF: level=chapter_1_level_4 art=off nodes=778 draw_calls=72 static_mb=107.1 fps=11
 CHAPTER1 STATION tag=before level=chapter_1_level_4 station=entry cell=(8, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_entry.png ok=true
 CHAPTER1 STATION tag=before level=chapter_1_level_4 station=landmark cell=(70, 24) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_landmark.png ok=true
 CHAPTER1 STATION tag=before level=chapter_1_level_4 station=checkpoint cell=(16, 43) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_checkpoint.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_4 station=landmark_2 cell=(106, 8) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_landmark_2.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_4 station=landmark_3 cell=(62, 51) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_landmark_3.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_4 station=landmark_4 cell=(80, 70) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_landmark_4.png ok=true
+CHAPTER1 STATION tag=before level=chapter_1_level_4 station=checkpoint_2 cell=(16, 72) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_checkpoint_2.png ok=true
 CHAPTER1 STATION tag=before level=chapter_1_level_4 station=exit cell=(101, 71) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/before/before_exit.png ok=true
 CHAPTER1 CAPTURE DONE: tag=before level=chapter_1_level_4
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
