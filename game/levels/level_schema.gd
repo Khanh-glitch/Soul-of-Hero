@@ -2,6 +2,11 @@
 class_name LevelSchema
 extends RefCounted
 
+## How far above the map grid a level may let its camera look, in pixels: sixteen
+## rows, enough for a wall cornice, a hanging banner and a gate tower together and
+## small enough that the headroom stays a strip rather than a second map.
+const HEADROOM_LIMIT := 256
+
 const CURRENT_VERSION := 2
 const MOVEMENT_MODE := "top_down"
 const TILE_SIZE := 16
@@ -309,8 +314,16 @@ static func _validate_camera_bounds(metadata: Dictionary, pixel_width: int, pixe
 	var top := float(bounds[1])
 	var right := float(bounds[2])
 	var bottom := float(bounds[3])
-	if left < 0.0 or top < 0.0 or right <= left or bottom <= top:
-		return _failure("metadata.camera_bounds must define a positive rectangle inside the level.")
+	# A level may declare headroom *above* its first row. The map grid starts at row
+	# 0, but the presentation layer builds upward from the top wall - the cornice and
+	# the cap on a wall stack, a hanging banner, the towers of a gate - and that paint
+	# lives in negative rows. If the camera cannot enter those rows the architecture is
+	# cut flat by the top of the screen, which is what every wall in chapter 1 used to
+	# look like. The headroom is bounded, and it is art only: no collision, no route
+	# and no entity may live there, so a camera that can see it can never see a place
+	# the player is able to stand.
+	if left < 0.0 or top < -HEADROOM_LIMIT or right <= left or bottom <= top:
+		return _failure("metadata.camera_bounds must define a positive rectangle inside the level (top may be up to %d px above row 0 for headroom)." % HEADROOM_LIMIT)
 	if right > pixel_width or bottom > pixel_height:
 		return _failure("metadata.camera_bounds exceeds %dx%d pixel level bounds." % [pixel_width, pixel_height])
 	return {"ok": true}
