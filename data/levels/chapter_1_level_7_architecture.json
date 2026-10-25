@@ -14,6 +14,11 @@
     0.035,
     0.03
   ],
+  "bedrock_tint": [
+    0.55,
+    0.55,
+    0.56
+  ],
   "layers": {
     "floor": [
       {
@@ -13414,7 +13419,23 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier"
+      "note": "ring brazier",
+      "light": {
+        "x": 776,
+        "y": 498,
+        "color": [
+          1.0,
+          0.58,
+          0.26
+        ],
+        "energy": 0.75,
+        "scale": 1.21,
+        "cell": [
+          48,
+          32
+        ],
+        "note": "ring brazier"
+      }
     },
     {
       "frame": "brazier",
@@ -13426,7 +13447,23 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier"
+      "note": "ring brazier",
+      "light": {
+        "x": 776,
+        "y": 594,
+        "color": [
+          1.0,
+          0.58,
+          0.26
+        ],
+        "energy": 0.75,
+        "scale": 1.21,
+        "cell": [
+          48,
+          38
+        ],
+        "note": "ring brazier"
+      }
     },
     {
       "frame": "brazier",
@@ -13438,7 +13475,23 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier"
+      "note": "ring brazier",
+      "light": {
+        "x": 728,
+        "y": 546,
+        "color": [
+          1.0,
+          0.58,
+          0.26
+        ],
+        "energy": 0.75,
+        "scale": 1.21,
+        "cell": [
+          45,
+          35
+        ],
+        "note": "ring brazier"
+      }
     },
     {
       "frame": "brazier",
@@ -13450,7 +13503,23 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier"
+      "note": "ring brazier",
+      "light": {
+        "x": 824,
+        "y": 546,
+        "color": [
+          1.0,
+          0.58,
+          0.26
+        ],
+        "energy": 0.75,
+        "scale": 1.21,
+        "cell": [
+          51,
+          35
+        ],
+        "note": "ring brazier"
+      }
     },
     {
       "frame": "banner",
@@ -13806,8 +13875,8 @@
           0.7,
           0.38
         ],
-        "energy": 0.34,
-        "scale": 1.13,
+        "energy": 0.6,
+        "scale": 1.16,
         "cell": [
           45,
           8
@@ -13834,8 +13903,8 @@
           0.7,
           0.38
         ],
-        "energy": 0.34,
-        "scale": 1.13,
+        "energy": 0.6,
+        "scale": 1.16,
         "cell": [
           51,
           8
@@ -15350,8 +15419,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           6,
           3
@@ -15378,8 +15447,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           8,
           3
@@ -15430,8 +15499,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           21,
           3
@@ -15458,8 +15527,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           23,
           3
@@ -15498,8 +15567,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           26,
           25
@@ -15538,8 +15607,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           28,
           25
@@ -15566,8 +15635,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           28,
           49
@@ -15606,8 +15675,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           38,
           3
@@ -15634,8 +15703,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           40,
           3
@@ -15698,8 +15767,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           55,
           3
@@ -15726,8 +15795,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           57,
           3
@@ -15790,8 +15859,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           72,
           3
@@ -15818,8 +15887,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           74,
           3
@@ -15870,8 +15939,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           89,
           3
@@ -15898,8 +15967,8 @@
           0.72,
           0.4
         ],
-        "energy": 0.3,
-        "scale": 1.07,
+        "energy": 0.5,
+        "scale": 1.12,
         "cell": [
           91,
           3
@@ -16170,8 +16239,8 @@
         0.62,
         0.3
       ],
-      "energy": 0.34,
-      "scale": 1.47,
+      "energy": 0.85,
+      "scale": 1.56,
       "cell": [
         48,
         35
@@ -16186,8 +16255,8 @@
         0.66,
         0.34
       ],
-      "energy": 0.42,
-      "scale": 1.28,
+      "energy": 0.7,
+      "scale": 1.33,
       "cell": [
         44,
         31
@@ -16202,8 +16271,8 @@
         0.66,
         0.34
       ],
-      "energy": 0.42,
-      "scale": 1.28,
+      "energy": 0.7,
+      "scale": 1.33,
       "cell": [
         52,
         31
@@ -16218,8 +16287,8 @@
         0.66,
         0.34
       ],
-      "energy": 0.42,
-      "scale": 1.28,
+      "energy": 0.7,
+      "scale": 1.33,
       "cell": [
         44,
         39
@@ -16234,13 +16303,77 @@
         0.66,
         0.34
       ],
-      "energy": 0.42,
-      "scale": 1.28,
+      "energy": 0.7,
+      "scale": 1.33,
       "cell": [
         52,
         39
       ],
       "note": "pillar fire"
+    },
+    {
+      "x": 776,
+      "y": 498,
+      "color": [
+        1.0,
+        0.58,
+        0.26
+      ],
+      "energy": 0.75,
+      "scale": 1.21,
+      "cell": [
+        48,
+        32
+      ],
+      "note": "ring brazier"
+    },
+    {
+      "x": 776,
+      "y": 594,
+      "color": [
+        1.0,
+        0.58,
+        0.26
+      ],
+      "energy": 0.75,
+      "scale": 1.21,
+      "cell": [
+        48,
+        38
+      ],
+      "note": "ring brazier"
+    },
+    {
+      "x": 728,
+      "y": 546,
+      "color": [
+        1.0,
+        0.58,
+        0.26
+      ],
+      "energy": 0.75,
+      "scale": 1.21,
+      "cell": [
+        45,
+        35
+      ],
+      "note": "ring brazier"
+    },
+    {
+      "x": 824,
+      "y": 546,
+      "color": [
+        1.0,
+        0.58,
+        0.26
+      ],
+      "energy": 0.75,
+      "scale": 1.21,
+      "cell": [
+        51,
+        35
+      ],
+      "note": "ring brazier"
     },
     {
       "x": 728,
@@ -16250,8 +16383,8 @@
         0.7,
         0.38
       ],
-      "energy": 0.34,
-      "scale": 1.13,
+      "energy": 0.6,
+      "scale": 1.16,
       "cell": [
         45,
         8
@@ -16266,8 +16399,8 @@
         0.7,
         0.38
       ],
-      "energy": 0.34,
-      "scale": 1.13,
+      "energy": 0.6,
+      "scale": 1.16,
       "cell": [
         51,
         8
@@ -16282,8 +16415,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         6,
         3
@@ -16298,8 +16431,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         8,
         3
@@ -16314,8 +16447,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         21,
         3
@@ -16330,8 +16463,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         23,
         3
@@ -16346,8 +16479,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         26,
         25
@@ -16362,8 +16495,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         28,
         25
@@ -16378,8 +16511,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         28,
         49
@@ -16394,8 +16527,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         38,
         3
@@ -16410,8 +16543,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         40,
         3
@@ -16426,8 +16559,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         55,
         3
@@ -16442,8 +16575,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         57,
         3
@@ -16458,8 +16591,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         72,
         3
@@ -16474,8 +16607,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         74,
         3
@@ -16490,8 +16623,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         89,
         3
@@ -16506,8 +16639,8 @@
         0.72,
         0.4
       ],
-      "energy": 0.3,
-      "scale": 1.07,
+      "energy": 0.5,
+      "scale": 1.12,
       "cell": [
         91,
         3
@@ -16519,11 +16652,11 @@
     "floor_overrides": 1855,
     "wall_overrides": 50,
     "props": 213,
-    "lights": 22,
+    "lights": 26,
     "lane_cells": 324,
     "apron_cells": 341,
     "ward_cells": 169,
-    "lights_resized": 22,
+    "lights_resized": 26,
     "lights_dimmed": 0
   }
 }

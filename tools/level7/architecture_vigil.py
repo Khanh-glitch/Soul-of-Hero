@@ -80,6 +80,15 @@ def long_run(cell, faces) -> bool:
     return run >= 3
 
 
+## Light energies, not light count.
+##
+## The yard authored twenty-two lights and every one of them sat between 0.30 and
+## 0.42 energy, under an ambient of 0.74 - the fires were drawn, they just could not
+## be seen on the floor they stood on. The frames show it: a uniform tan field with
+## candle sprites in it, no pool, no focus, which buries the Beacon's ownership of
+## the room. The energies here are roughly doubled and the ring braziers, which had
+## no light at all, now carry one. Nothing about position, radius, colour or ambient
+## moved, so this adds local contrast rather than a chapter-wide brightening.
 def ward(plan, floor, geom) -> int:
     painted = 0
     for (dx, dy), frame in ward_offsets(RADIUS).items():
@@ -89,7 +98,7 @@ def ward(plan, floor, geom) -> int:
             painted += 1
     plan.lights.append({
         "x": BEACON[0] * 16 + 8, "y": BEACON[1] * 16 + 8,
-        "color": [1.0, 0.62, 0.30], "energy": 0.34, "scale": 1.9,
+        "color": [1.0, 0.62, 0.30], "energy": 0.85, "scale": 2.1,
         "cell": [BEACON[0], BEACON[1]], "note": "the Beacon's own light",
     })
     return painted
@@ -161,13 +170,17 @@ def beacon_frame(plan, floor, geom, guard) -> None:
             plan.prop("watch_pillar", cell, note="ward ring corner pillar")
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.66, 0.34], "energy": 0.42, "scale": 1.5,
+                "color": [1.0, 0.66, 0.34], "energy": 0.70, "scale": 1.6,
                 "cell": [cell[0], cell[1]], "note": "pillar fire",
             })
     for dx, dy in ((0, -3), (0, 3), (-3, 0), (3, 0)):
         cell = (BEACON[0] + dx, BEACON[1] + dy)
         if cell in floor and cell not in guard:
-            plan.prop("brazier", cell, note="ring brazier")
+            plan.prop("brazier", cell, note="ring brazier", light={
+                "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 14,
+                "color": [1.0, 0.58, 0.26], "energy": 0.75, "scale": 1.7,
+                "cell": [cell[0], cell[1]], "note": "ring brazier",
+            })
     for dx in (-2, 2):
         cell = (BEACON[0] + dx, BEACON[1] - 2)
         if cell in floor and cell not in guard:
@@ -245,7 +258,7 @@ def stores(plan, floor, geom, faces, guard, clear) -> None:
         if roll < 12:
             plan.prop("torch_bracket", cell, note="wall torch", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 26,
-                "color": [1.0, 0.72, 0.40], "energy": 0.30, "scale": 1.2,
+                "color": [1.0, 0.72, 0.40], "energy": 0.50, "scale": 1.35,
                 "cell": [cell[0], cell[1]], "note": "wall torch",
             })
         elif roll < 20:
@@ -336,7 +349,7 @@ def bastion_towers(plan, floor, geom, faces, guard) -> None:
         if face in faces:
             plan.prop("watch_pillar", face, note="bastion watch pillar", light={
                 "x": face[0] * 16 + 8, "y": face[1] * 16 - 96,
-                "color": [1.0, 0.68, 0.36], "energy": 0.38, "scale": 1.4,
+                "color": [1.0, 0.68, 0.36], "energy": 0.62, "scale": 1.5,
                 "cell": [face[0], face[1]], "note": "bastion fire",
             })
 
@@ -366,7 +379,7 @@ def objectives(plan, floor, geom, faces, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("watch_pillar", cell, note="gate pillar", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.70, 0.38], "energy": 0.34, "scale": 1.4,
+                "color": [1.0, 0.70, 0.38], "energy": 0.60, "scale": 1.5,
                 "cell": [cell[0], cell[1]], "note": "gate pillar fire",
             })
     for cell in ((CHECKPOINT[0] - 3, CHECKPOINT[1]), (CHECKPOINT[0] + 3, CHECKPOINT[1])):
@@ -434,6 +447,10 @@ def build():
         # A yard at dusk: warm dust in the air, the fire doing the lighting.
         "ambient": [0.74, 0.70, 0.64],
         "background": [0.045, 0.035, 0.030],
+        # The ledger had the yard at paving 99, wall 90 and the rock it is cut into
+        # at 118: the void was the brightest thing in the frame, so the mass read as
+        # a lit field the room was dropped onto. Rock goes under the paving.
+        "bedrock_tint": [0.55, 0.55, 0.56],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,
         "lights": plan.lights,

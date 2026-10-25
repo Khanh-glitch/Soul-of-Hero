@@ -255,6 +255,18 @@ func _apply_palette() -> void:
 	var background := host.get_node_or_null("Background/Color") as Polygon2D
 	if background != null:
 		background.color = _color("background", "palette")
+	# Read back what the layers are actually carrying. A theme that is loaded but
+	# never reaches the canvas is invisible to every other check in this pipeline:
+	# the capture still succeeds, the frame still looks like a room, and the palette
+	# work silently does nothing. This line makes that state visible in the log.
+	var live := PackedStringArray()
+	for layer_name: String in ["Backdrop", "Geometry", "Decor"]:
+		var painted := level.get_node_or_null(layer_name) as TileMapLayer
+		live.append("%s=%s" % [layer_name, "missing" if painted == null else str(painted.modulate)])
+	print("ENVIRONMENT PALETTE: theme=%s keys=%d backdrop=%s geometry=%s decor=%s world=%s %s"
+		% [theme_path_for(level_data_path).get_file(), theme.size(),
+			str(_color("backdrop", "palette")), str(_color("geometry", "palette")),
+			str(_color("decor", "palette")), str(_color("world", "palette")), " ".join(live)])
 
 
 # -- architecture ------------------------------------------------------------

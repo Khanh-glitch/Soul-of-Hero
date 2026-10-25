@@ -274,6 +274,24 @@ func _layer(node_name: String, z: int, tile_set: TileSet) -> TileMapLayer:
 	return layer
 
 
+## Per-level material value.
+##
+## A frame holds three materials - paving, wall mass and the rock the rooms are cut
+## into - and they have to read as three values, or the room is one texture with
+## furniture on it. Which value each of them takes is a property of the level, not of
+## the kit: the Relay House's cool limestone and the Beacon Yard's dry chalk share a
+## value plan that no single ambient can give them, and the ambient is already doing
+## the job of "how lit is this chapter". So the two surroundings, the wall mass and
+## the rock, take a per-document tint. 1.0 leaves the kit exactly as generated, which
+## is what every document that does not name the key gets.
+func _material_tint(key: String) -> Color:
+	var raw: Variant = document.get(key, [])
+	if raw is Array and (raw as Array).size() >= 3:
+		var channels: Array = raw as Array
+		return Color(float(channels[0]), float(channels[1]), float(channels[2]), 1.0)
+	return Color(1.0, 1.0, 1.0, 1.0)
+
+
 func _atlas(frame_name: String) -> Vector2i:
 	var frame: Variant = _tile_frames.get(frame_name)
 	if not frame is Dictionary:
@@ -301,6 +319,7 @@ func _put(layer: TileMapLayer, cell: Vector2i, frame_name: String) -> bool:
 func _build_bedrock(floor: Dictionary, geometry: Dictionary) -> void:
 	var tile_set := _tileset()
 	var layer := _layer(BEDROCK, BEDROCK_Z, tile_set)
+	layer.modulate = _material_tint("bedrock_tint")
 	var content := {}
 	for cell: Vector2i in floor:
 		content[cell] = true
@@ -406,6 +425,7 @@ func _build_shadows(floor: Dictionary, geometry: Dictionary) -> void:
 ## instead of being a two-tile kerb.
 func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 	var layer := _layer(WALL_STACK, WALL_Z, _tileset())
+	layer.modulate = _material_tint("wall_tint")
 	var overlays: Dictionary = {}
 	for raw: Variant in document.get("layers", {}).get("wall", []):
 		if raw is Dictionary:

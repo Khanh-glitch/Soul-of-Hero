@@ -388,6 +388,11 @@ def build():
         # A gatehouse lit by fire and nothing else.
         "ambient": [0.76, 0.68, 0.68],
         "background": [0.046, 0.028, 0.032],
+        # Ledger: paving 93, wall mass 93. The gate hall had no mid value at all, so
+        # its walls dissolved into its floor. The wall mass steps down; the rock,
+        # already under both, comes down a little further to keep the order.
+        "wall_tint": [0.84, 0.83, 0.83],
+        "bedrock_tint": [0.80, 0.80, 0.82],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,
         "lights": plan.lights,

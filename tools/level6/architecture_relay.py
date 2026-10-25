@@ -496,6 +496,12 @@ def build() -> dict:
         # palette that never warms past the copper fittings.
         "ambient": [0.72, 0.76, 0.82],
         "background": [0.020, 0.032, 0.045],
+        # Three materials have to read as three values. The audit sweep's own
+        # ledger had this level at paving 110, wall mass 111, rock 106 - one
+        # texture with furniture on it, which is exactly what the frames look like.
+        # The wall mass and the rock come down; the paving does not move.
+        "wall_tint": [0.76, 0.77, 0.78],
+        "bedrock_tint": [0.60, 0.62, 0.64],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,
         "lights": plan.lights,
