@@ -443,7 +443,7 @@ func _number_property(node: Node, property: String) -> String:
 ## left him wedged against walls the route had declared clear. The anchor is the
 ## middle of the cell's bottom edge instead.
 func _cell_anchor(cell: Vector2i) -> Vector2:
-	return Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE - 1.0)
+	return Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE)
 
 
 func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
@@ -543,11 +543,9 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 						Input.action_release(&"attack")
 				else:
 					heading = -towards
-			else:
-				if swing_clock % 30 == 1:
-					Input.action_press(&"attack")
-				elif swing_clock % 30 == 9:
-					Input.action_release(&"attack")
+			# No enemy in reach means no swing: the attack action locks the Knight's
+			# movement for its duration, and swinging at nothing every half second
+			# was what pinned him in place for a thousand frames on the last run.
 			_drive(player, heading)
 			# Escape when something is already on top of him: dash is the game's own
 			# invulnerability window, and it points along the heading, i.e. away from
