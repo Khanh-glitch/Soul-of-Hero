@@ -386,9 +386,9 @@ func _capture_fight(station: Dictionary, dungeon: DungeonLevel, player: Characte
 	# rather than guessing a public name.
 	var boss_state := "n/a"
 	if "_state" in archer:
-		boss_state = str(archer.get("_state"))
+		boss_state = _enum_name(archer, "State", archer.get("_state"))
 	elif "state" in archer:
-		boss_state = str(archer.get("state"))
+		boss_state = _enum_name(archer, "State", archer.get("state"))
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	var path := "%s/%s_%s.png" % [_out_dir, _tag, station["id"]]
@@ -614,6 +614,20 @@ func _walkable_cells(dungeon: DungeonLevel) -> Dictionary:
 	return floor
 
 
+## Turn an enum integer into its declared name, so the log reads RECOVER rather
+## than 10. Falls back to the raw value when the enum is not on the script.
+func _enum_name(node: Object, enum_name: String, value: Variant) -> String:
+	var script: Script = node.get_script() as Script
+	if script != null:
+		var constants := script.get_script_constant_map()
+		var table: Variant = constants.get(enum_name)
+		if table is Dictionary:
+			for key: String in table:
+				if int(table[key]) == int(value):
+					return key
+	return str(value)
+
+
 ## Cells occupied by a living enemy, grown by `margin` cells.
 func _enemy_cells(dungeon: DungeonLevel, margin: int = 1) -> Dictionary:
 	var blocked := {}
@@ -625,8 +639,7 @@ func _enemy_cells(dungeon: DungeonLevel, margin: int = 1) -> Dictionary:
 			continue
 		if String(child.name) == "Knight":
 			continue
-		var health: Variant = child.get("health")
-		if health is int and int(health) <= 0:
+		if "health" in child and int(child.get("health")) <= 0:
 			continue
 		var cell := Vector2i(int((child as Node2D).global_position.x / TILE),
 			int((child as Node2D).global_position.y / TILE))
@@ -640,7 +653,7 @@ func _enemy_cells(dungeon: DungeonLevel, margin: int = 1) -> Dictionary:
 ## only when nothing else works.
 func _path_around_enemies(walkable: Dictionary, enemy_cells: Dictionary,
 		start: Vector2i, goal: Vector2i) -> Array:
-	for margin in (1, 0):
+	for margin: int in [1, 0]:
 		var filtered := {}
 		for cell: Vector2i in walkable:
 			if margin == 1 and enemy_cells.has(cell):
