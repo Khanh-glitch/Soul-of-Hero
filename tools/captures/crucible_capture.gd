@@ -331,7 +331,11 @@ func _capture_fight(station: Dictionary, dungeon: DungeonLevel, player: Characte
 	var root := dungeon.get_node_or_null("Entities")
 	if root != null:
 		for child: Node in root.get_children():
-			if String(child.get_meta(&"entity_type", "")) == "hooded_archer_miniboss":
+			# main.gd stamps entities with level_entity_type; older builds used
+			# entity_type. Read both rather than silently missing the boss.
+			var kind := String(child.get_meta(&"level_entity_type",
+				child.get_meta(&"entity_type", "")))
+			if kind == "hooded_archer_miniboss":
 				archer = child as Node2D
 				break
 	if archer == null:
@@ -429,11 +433,22 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			ok = false
 			continue
 		print("CRUCIBLE TRAVERSAL: leg=%s path=%d cells" % [leg["name"], path.size()])
+		# Walk leg by leg. The path is planned on the tile grid; the Knight is a
+		# body with a radius, so a corner can stop him where a cell is technically
+		# walkable. When that happens the harness re-plans from wherever he actually
+		# is, and nudges him sideways for a few frames, rather than teleporting:
+		# the point of this sequence is that the movement is real input.
 		var index := 0
-		var stuck := 0
 		var frames := 0
+		var replans := 0
+		var stuck := 0
 		var last_position := player.global_position
-		while index < path.size() and frames < 1400:
+		var shot_taken := 0
+		while frames < 2200:
+			var cell_now := Vector2i(int(player.global_position.x / TILE),
+				int(player.global_position.y / TILE))
+			if cell_now == door_cell or index >= path.size():
+				break
 			var target := Vector2(path[index].x * TILE + TILE * 0.5,
 				path[index].y * TILE + TILE * 0.5)
 			var delta := target - player.global_position
@@ -445,25 +460,42 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 			frames += 1
 			if player.global_position.distance_to(last_position) < 0.4:
 				stuck += 1
-				if stuck > 45:
-					push_error("CRUCIBLE TRAVERSAL FAIL: stuck at %s heading to %s"
-						% [player.global_position, target])
+				if stuck > 18:
+					replans += 1
 					_release_movement()
-					ok = false
-					break
+					# step off the corner: press perpendicular to the blocked heading
+					var side := Vector2(-delta.y, delta.x).normalized()
+					if replans % 2 == 0:
+						side = -side
+					_drive_direction(player, side)
+					for _k: int in range(16):
+						await get_tree().physics_frame
+					_release_movement()
+					var from_here := Vector2i(int(player.global_position.x / TILE),
+						int(player.global_position.y / TILE))
+					var replanned := _path_cells(walkable, from_here, door_cell)
+					if replanned.is_empty() or replans > 12:
+						push_error("CRUCIBLE TRAVERSAL FAIL: no route from %s after %d replans"
+							% [from_here, replans])
+						break
+					path = replanned
+					index = 0
+					stuck = 0
+					print("CRUCIBLE TRAVERSAL: leg=%s replan=%d from=%s path=%d"
+						% [leg["name"], replans, from_here, path.size()])
 			else:
 				stuck = 0
 				last_position = player.global_position
-			if shot < 4 and frames > 26 * (shot + 1):
+			if shot_taken < 4 and frames > 26 * (shot_taken + 1):
 				await RenderingServer.frame_post_draw
 				var image := get_viewport().get_texture().get_image()
-				var path_out := "%s/%s_traversal_%d.png" % [_out_dir, _tag, shot + 1]
+				var path_out := "%s/%s_traversal_%d.png" % [_out_dir, _tag, shot_taken + 1]
 				var saved := image.save_png(path_out) == OK
 				print("CRUCIBLE TRAVERSAL SHOT tag=%s leg=%s step=%d cell=%s out=%s ok=%s"
-					% [_tag, leg["name"], shot + 1,
+					% [_tag, leg["name"], shot_taken + 1,
 						Vector2i(int(player.global_position.x / TILE),
 							int(player.global_position.y / TILE)), path_out, saved])
-				shot += 1
+				shot_taken += 1
 		_release_movement()
 		var arrived := player.global_position.distance_to(
 			Vector2(door_cell.x * TILE + TILE * 0.5, door_cell.y * TILE + TILE * 0.5)) < 44.0
@@ -529,6 +561,10 @@ func _drive(player: CharacterBody2D, delta: Vector2) -> void:
 				Input.action_press(action)
 		elif Input.is_action_pressed(action):
 			Input.action_release(action)
+
+
+func _drive_direction(player: CharacterBody2D, direction: Vector2) -> void:
+	_drive(player, direction * 12.0)
 
 
 func _release_movement() -> void:
