@@ -3,15 +3,15 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_after_40193126679.json
+CRUCIBLE BOOT: save=user://crucible_after_40202174162.json
 CRUCIBLE BOOT: app_boot=complete
-ENVIRONMENT BEDROCK: enclosed_void=112 outside_void=3052
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=169 lights=29 entities=83
-CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1075 draw_calls=110 static_mb=121.8 tree_objects=14644
+CRUCIBLE PERF: art=on renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=1070 draw_calls=110 static_mb=121.7 tree_objects=14621
 CRUCIBLE TRAVERSAL: leg=f1_spawn_walk staged_at=(10, 17) path=48 cells hp=1100/1100
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
@@ -30,13 +30,13 @@ CRUCIBLE TRAVERSAL: leg=f1_spawn_walk arrived=true died=false frames=385 at=(54,
 CRUCIBLE TRAVERSAL: leg=f1_gate_door staged_at=(92, 17) path=12 cells hp=1100/1100
 CRUCIBLE TRAVERSAL: leg=f1_gate_door frame=60 cell=(99, 18) at=(1586.0, 288.0) waypoint=(100, 17) index=7/12 hp=1100/1100
 CRUCIBLE TRAVERSAL SHOT tag=after leg=f1_gate_door step=1 cell=(102, 18) hp=1100/1100 out=res://.artifacts/crucible/after/after_f1_gate_door_walk_1.png ok=true
-CRUCIBLE TRAVERSAL: leg=f1_gate_door arrived=true died=false frames=96 at=(103, 18) hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f1_gate_door door_used_via=input_click click_at=(784.0, 360.0) moved=1591.5 from=(1666.881, 288.0) to=(152.0, 776.0) ok=true
+CRUCIBLE TRAVERSAL: leg=f1_gate_door arrived=true died=false frames=95 at=(103, 18) hp=1100/1100
+CRUCIBLE TRAVERSAL: leg=f1_gate_door door_used_via=input_click click_at=(784.0002, 360.0) moved=1591.5 from=(1666.881, 288.0) to=(152.0333, 776.0) ok=true
 CRUCIBLE TRAVERSAL: leg=f2_gate_door staged_at=(94, 48) path=12 cells hp=1100/1100
-CRUCIBLE TRAVERSAL: leg=f2_gate_door frame=60 cell=(99, 48) at=(1585.0, 783.0) waypoint=(100, 48) index=5/12 hp=908/1100
-CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_gate_door step=1 cell=(103, 48) hp=908/1100 out=res://.artifacts/crucible/after/after_f2_gate_door_walk_1.png ok=true
-CRUCIBLE TRAVERSAL: leg=f2_gate_door arrived=true died=false frames=100 at=(105, 48) hp=908/1100
-CRUCIBLE TRAVERSAL: leg=f2_gate_door door_used_via=input_click click_at=(848.0, 361.0947) moved=1608.9 from=(1699.452, 783.4526) to=(152.0, 1224.0) ok=true
+CRUCIBLE TRAVERSAL: leg=f2_gate_door frame=60 cell=(99, 49) at=(1588.0, 784.0) waypoint=(100, 48) index=5/12 hp=908/1100
+CRUCIBLE TRAVERSAL SHOT tag=after leg=f2_gate_door step=1 cell=(102, 49) hp=908/1100 out=res://.artifacts/crucible/after/after_f2_gate_door_walk_1.png ok=true
+CRUCIBLE TRAVERSAL: leg=f2_gate_door arrived=true died=false frames=110 at=(105, 49) hp=908/1100
+CRUCIBLE TRAVERSAL: leg=f2_gate_door door_used_via=input_click click_at=(848.0, 359.3292) moved=1608.3 from=(1699.084, 784.3354) to=(152.0, 1224.0) ok=true
 CRUCIBLE TRAVERSAL SCOPE: walked segments are the level's spawn corridor and both gate approaches; the encounter rooms between them are not walked by this harness because a level 1 seeded Knight does not survive them
 CRUCIBLE TRAVERSAL: sequence complete
 CRUCIBLE STATION tag=after station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/after/after_f1_spawn.png ok=true
