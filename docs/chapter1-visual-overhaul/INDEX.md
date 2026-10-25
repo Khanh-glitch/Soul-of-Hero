@@ -43,13 +43,13 @@ Measured on the capture frame of the same run, art off vs art on:
 
 | Level | Nodes | Draw calls | Static memory |
 | --- | --- | --- | --- |
-| chapter_1_level_10 | 662 -> 654 | 100 -> 109 | 98.1 MiB |
+| chapter_1_level_10 | 640 -> 673 | 97 -> 108 | 98.3 MiB |
 | chapter_1_level_1 | 677 -> 697 | 74 -> 77 | 105.0 MiB |
 | chapter_1_level_2 | 695 -> 715 | 72 -> 91 | 128.8 MiB |
 | chapter_1_level_3 | 750 -> 771 | 69 -> 80 | 110.0 MiB |
-| chapter_1_level_4 | 778 -> 797 | 72 -> 76 | 109.3 MiB |
-| chapter_1_level_5 | 866 -> 1070 | 103 -> 110 | 119.7 MiB |
-| chapter_1_level_6 | 863 -> 1105 | 66 -> 73 | 118.9 MiB |
-| chapter_1_level_7 | 663 -> 678 | 92 -> 103 | 107.8 MiB |
-| chapter_1_level_8 | 689 -> 721 | 120 -> 134 | 104.3 MiB |
-| chapter_1_level_9 | 737 -> 744 | 119 -> 119 | 101.4 MiB |
+| chapter_1_level_4 | 777 -> 800 | 72 -> 76 | 109.3 MiB |
+| chapter_1_level_5 | 868 -> 1070 | 103 -> 110 | 119.7 MiB |
+| chapter_1_level_6 | 867 -> 1098 | 66 -> 73 | 118.8 MiB |
+| chapter_1_level_7 | 662 -> 884 | 92 -> 94 | 115.4 MiB |
+| chapter_1_level_8 | 677 -> 848 | 106 -> 127 | 112.7 MiB |
+| chapter_1_level_9 | 720 -> 837 | 111 -> 132 | 107.8 MiB |
