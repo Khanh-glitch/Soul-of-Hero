@@ -17,6 +17,14 @@ on:
       - "tools/captures/chapter1_audit_sweep.*"
       - "tools/chapter1_audit/*.py"
       - ".github/workflows/chapter1-visual-audit.yml"
+      # The evidence has to be of the code that is on the branch. A capture that
+      # only re-runs when the sweep script changes can sit for a week while the
+      # presentation layer, the level documents and the kits all move underneath it,
+      # and then the mosaics describe a build nobody can reproduce.
+      - "game/levels/presentation/**"
+      - "data/levels/**"
+      - "data/environment/**"
+      - "assets/environment/chapter1/**"
   workflow_dispatch:
 
 permissions:
