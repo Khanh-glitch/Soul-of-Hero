@@ -13,10 +13,10 @@ AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=2730 props=
 CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2730 props=41 lights=23 shadows=68
 CHAPTER1 AUDIT: level=chapter_1_level_10 slot=10 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_10 frames=4 bounds=[0, 0, 1600, 1216] content=[384, 48, 1216, 1168]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=000 cell=(41, 21) centre=(664, 336) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=001 cell=(58, 20) centre=(936, 320) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=002 cell=(40, 53) centre=(648, 848) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=003 cell=(60, 53) centre=(968, 848) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=000 cell=(41, 21) rect=[344.0, 156.0, 1624.0, 876.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=001 cell=(58, 20) rect=[616.0, 140.0, 1896.0, 860.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=002 cell=(40, 53) rect=[328.0, 668.0, 1608.0, 1388.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_10 frame=003 cell=(60, 53) rect=[648.0, 668.0, 1928.0, 1388.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_10 frames=4
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

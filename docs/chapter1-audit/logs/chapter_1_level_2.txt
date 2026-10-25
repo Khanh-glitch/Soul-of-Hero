@@ -9,18 +9,20 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 AUDIT: level=chapter_1_level_2 slot=2 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_2 frames=12 bounds=[0, 0, 2624, 2208] content=[64, 32, 2624, 2096]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=000 cell=(40, 22) centre=(648, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=001 cell=(103, 18) centre=(1656, 288) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=002 cell=(124, 22) centre=(1992, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=003 cell=(28, 67) centre=(456, 1072) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=004 cell=(99, 56) centre=(1592, 896) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=005 cell=(124, 56) centre=(1992, 896) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=006 cell=(27, 77) centre=(440, 1232) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=007 cell=(99, 89) centre=(1592, 1424) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=008 cell=(124, 90) centre=(1992, 1440) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=009 cell=(40, 115) centre=(648, 1840) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=010 cell=(100, 115) centre=(1608, 1840) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=011 cell=(123, 116) centre=(1976, 1856) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=001 cell=(103, 18) rect=[1336.0, 108.0, 2616.0, 828.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=002 cell=(124, 22) rect=[1672.0, 172.0, 2952.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=003 cell=(28, 67) rect=[136.0, 892.0, 1416.0, 1612.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=004 cell=(99, 56) rect=[1272.0, 716.0, 2552.0, 1436.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=005 cell=(124, 56) rect=[1672.0, 716.0, 2952.0, 1436.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=006 cell=(27, 77) rect=[120.0, 1052.0, 1400.0, 1772.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=007 cell=(99, 89) rect=[1272.0, 1244.0, 2552.0, 1964.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=008 cell=(124, 90) rect=[1672.0, 1260.0, 2952.0, 1980.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=009 cell=(40, 115) rect=[328.0, 1660.0, 1608.0, 2380.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=010 cell=(100, 115) rect=[1288.0, 1660.0, 2568.0, 2380.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=011 cell=(123, 116) rect=[1656.0, 1676.0, 2936.0, 2396.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_2 frames=12
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 9 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

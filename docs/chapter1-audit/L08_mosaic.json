@@ -8,6 +8,7 @@
     1664,
     1216
   ],
+  "limits_applied": false,
   "content": [
     64,
     48,
@@ -15,12 +16,14 @@
     1168
   ],
   "mosaic_origin": [
-    8,
-    -8
+    328,
+    172
   ],
-  "coverage_of_content": 1.0,
+  "coverage_of_content": 0.7364,
   "mosaic_px": [
     1664,
     1216
-  ]
+  ],
+  "overlaps_checked": 3,
+  "overlap_mean_abs_diff": 71.48
 }

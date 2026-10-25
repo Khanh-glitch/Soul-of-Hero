@@ -13,10 +13,12 @@ AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4632 props
 CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4632 props=94 lights=45 shadows=266
 CHAPTER1 AUDIT: level=chapter_1_level_8 slot=8 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_8 frames=4 bounds=[0, 0, 1664, 1216] content=[64, 48, 1600, 1168]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=000 cell=(40, 22) centre=(648, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=001 cell=(64, 22) centre=(1032, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=002 cell=(40, 53) centre=(648, 848) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=003 cell=(64, 53) centre=(1032, 848) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=001 cell=(64, 22) rect=[712.0, 172.0, 1992.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=002 cell=(40, 53) rect=[328.0, 668.0, 1608.0, 1388.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_8 frame=003 cell=(64, 53) rect=[712.0, 668.0, 1992.0, 1388.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_8 frames=4
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+WARNING: 11 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
+ERROR: 2 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:822)

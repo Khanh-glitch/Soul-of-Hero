@@ -13,10 +13,10 @@ AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2028 props=193 
 CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2028 props=193 lights=22 shadows=108
 CHAPTER1 AUDIT: level=chapter_1_level_7 slot=7 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_7 frames=4 bounds=[0, 0, 1536, 1120] content=[48, 48, 1488, 1072]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=000 cell=(40, 22) centre=(648, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=001 cell=(56, 22) centre=(904, 352) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=002 cell=(40, 47) centre=(648, 752) ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=003 cell=(56, 47) centre=(904, 752) ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=001 cell=(56, 22) rect=[584.0, 172.0, 1864.0, 892.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=002 cell=(40, 47) rect=[328.0, 572.0, 1608.0, 1292.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=003 cell=(56, 47) rect=[584.0, 572.0, 1864.0, 1292.0] ok=true
 CHAPTER1 AUDIT DONE: level=chapter_1_level_7 frames=4
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
