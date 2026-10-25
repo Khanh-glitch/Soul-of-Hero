@@ -2,15 +2,15 @@
   "schema": "chapter1_architecture_evidence/1",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "8494961e6e7f2f29042bd219b1cbf0f6b7d0acd1",
+  "commit": "a4b76a32ad121f8b8aae411d68847ed47a05abad",
   "source_pins": {
     "data/levels/chapter_1_level_5.json": "d0e623097b3cd8d568d8f2834e10b3ffa93306071428c9b8c2a0e615d8c8552a",
     "data/levels/chapter_1_level_5_architecture.json": "cc8be31580da0af995a910e533022759939c9f1729e6a6d831592a578dfa84d4",
-    "assets/environment/chapter1/crucible/crucible_tiles.png": "36e207f4bfb58d6cb4c79efbfa08fe64997604d131cbc74222f3777930eb660f",
+    "assets/environment/chapter1/crucible/crucible_tiles.png": "db5eba2dcc3bba511530086164098c784a5f6c823599ed66ead8557bf2182d52",
     "assets/environment/chapter1/crucible/crucible_props.png": "efae810cce3d2c649ca46e2b4423d737ffc5379efe3f0f5d3f295ee52b42aa95",
-    "tools/level5/art_crucible.py": "799a5aa6041a0e9b684c3048d123d281876e4016398a68f53422bcfa2dbfb955",
+    "tools/level5/art_crucible.py": "c1a0bb25cc0e2bf1bd6d93a7b79b91ed8b8e5e691d88d6181d67ca4ccaa08297",
     "tools/level5/architecture.py": "3f54a8a7b7731c4c2f79606c50d1e64a8800ba937b08c34a7c3aca19e791b16f",
-    "game/levels/presentation/crucible_art.gd": "938da928a058ace95fff927e22c7081b3b8b3e4e2ac879ee8a352b2264609bf7"
+    "game/levels/presentation/crucible_art.gd": "fa2cf4d0678cd62019fde7bb92824cd076c8452aac302efd3d557911bda5d569"
   },
   "capture": {
     "level": "chapter_1_level_5",
@@ -19,9 +19,9 @@
     "props": 108,
     "lights": 20,
     "entities": 83,
-    "perf_nodes": 999,
-    "draw_calls": 109,
-    "static_mb": 115.9,
+    "perf_nodes": 1006,
+    "draw_calls": 110,
+    "static_mb": 116.4,
     "fps": 1,
     "errors": []
   },
@@ -32,7 +32,7 @@
     "props": 0,
     "lights": 0,
     "entities": 83,
-    "perf_nodes": 870,
+    "perf_nodes": 867,
     "draw_calls": 103,
     "static_mb": 109.2,
     "fps": 1,
