@@ -3,12 +3,15 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624
+ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
+ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696
 CHAPTER1 CAPTURE: level=chapter_1_level_4 slot=4 art=on facade_cells=1403 lights=13 entities=74
-CHAPTER1 PERF: level=chapter_1_level_4 art=on nodes=798 draw_calls=76 static_mb=109.3 fps=8
+CHAPTER1 PERF: level=chapter_1_level_4 art=on nodes=802 draw_calls=77 static_mb=111.3 fps=7
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=entry cell=(8, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=landmark cell=(70, 24) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=checkpoint cell=(16, 43) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_checkpoint.png ok=true
