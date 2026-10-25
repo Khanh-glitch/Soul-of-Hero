@@ -13410,7 +13410,7 @@
       "note": "ward ring corner pillar"
     },
     {
-      "frame": "brazier",
+      "frame": "ward_stone",
       "cell": [
         48,
         32
@@ -13419,26 +13419,26 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier",
+      "note": "ward stone",
       "light": {
         "x": 776,
-        "y": 498,
+        "y": 486,
         "color": [
           1.0,
-          0.58,
-          0.26
+          0.62,
+          0.3
         ],
-        "energy": 0.45,
-        "scale": 1.16,
+        "energy": 0.3,
+        "scale": 1.07,
         "cell": [
           48,
           32
         ],
-        "note": "ring brazier"
+        "note": "ward sigil light"
       }
     },
     {
-      "frame": "brazier",
+      "frame": "ward_stone",
       "cell": [
         48,
         38
@@ -13447,26 +13447,26 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier",
+      "note": "ward stone",
       "light": {
         "x": 776,
-        "y": 594,
+        "y": 582,
         "color": [
           1.0,
-          0.58,
-          0.26
+          0.62,
+          0.3
         ],
-        "energy": 0.45,
-        "scale": 1.16,
+        "energy": 0.3,
+        "scale": 1.07,
         "cell": [
           48,
           38
         ],
-        "note": "ring brazier"
+        "note": "ward sigil light"
       }
     },
     {
-      "frame": "brazier",
+      "frame": "ward_stone",
       "cell": [
         45,
         35
@@ -13475,26 +13475,26 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier",
+      "note": "ward stone",
       "light": {
         "x": 728,
-        "y": 546,
+        "y": 534,
         "color": [
           1.0,
-          0.58,
-          0.26
+          0.62,
+          0.3
         ],
-        "energy": 0.45,
-        "scale": 1.16,
+        "energy": 0.3,
+        "scale": 1.07,
         "cell": [
           45,
           35
         ],
-        "note": "ring brazier"
+        "note": "ward sigil light"
       }
     },
     {
-      "frame": "brazier",
+      "frame": "ward_stone",
       "cell": [
         51,
         35
@@ -13503,22 +13503,22 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "ring brazier",
+      "note": "ward stone",
       "light": {
         "x": 824,
-        "y": 546,
+        "y": 534,
         "color": [
           1.0,
-          0.58,
-          0.26
+          0.62,
+          0.3
         ],
-        "energy": 0.45,
-        "scale": 1.16,
+        "energy": 0.3,
+        "scale": 1.07,
         "cell": [
           51,
           35
         ],
-        "note": "ring brazier"
+        "note": "ward sigil light"
       }
     },
     {
@@ -16313,67 +16313,67 @@
     },
     {
       "x": 776,
-      "y": 498,
+      "y": 486,
       "color": [
         1.0,
-        0.58,
-        0.26
+        0.62,
+        0.3
       ],
-      "energy": 0.45,
-      "scale": 1.16,
+      "energy": 0.3,
+      "scale": 1.07,
       "cell": [
         48,
         32
       ],
-      "note": "ring brazier"
+      "note": "ward sigil light"
     },
     {
       "x": 776,
-      "y": 594,
+      "y": 582,
       "color": [
         1.0,
-        0.58,
-        0.26
+        0.62,
+        0.3
       ],
-      "energy": 0.45,
-      "scale": 1.16,
+      "energy": 0.3,
+      "scale": 1.07,
       "cell": [
         48,
         38
       ],
-      "note": "ring brazier"
+      "note": "ward sigil light"
     },
     {
       "x": 728,
-      "y": 546,
+      "y": 534,
       "color": [
         1.0,
-        0.58,
-        0.26
+        0.62,
+        0.3
       ],
-      "energy": 0.45,
-      "scale": 1.16,
+      "energy": 0.3,
+      "scale": 1.07,
       "cell": [
         45,
         35
       ],
-      "note": "ring brazier"
+      "note": "ward sigil light"
     },
     {
       "x": 824,
-      "y": 546,
+      "y": 534,
       "color": [
         1.0,
-        0.58,
-        0.26
+        0.62,
+        0.3
       ],
-      "energy": 0.45,
-      "scale": 1.16,
+      "energy": 0.3,
+      "scale": 1.07,
       "cell": [
         51,
         35
       ],
-      "note": "ring brazier"
+      "note": "ward sigil light"
     },
     {
       "x": 728,

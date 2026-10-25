@@ -173,13 +173,16 @@ def beacon_frame(plan, floor, geom, guard) -> None:
                 "color": [1.0, 0.66, 0.34], "energy": 0.55, "scale": 1.5,
                 "cell": [cell[0], cell[1]], "note": "pillar fire",
             })
+    # the cardinals are masonry, not more fire: eight identical flames around one
+    # small circle was the repetition finding in the room the player is meant to look
+    # at. The ward stones take the ring's light instead of adding their own.
     for dx, dy in ((0, -3), (0, 3), (-3, 0), (3, 0)):
         cell = (BEACON[0] + dx, BEACON[1] + dy)
         if cell in floor and cell not in guard:
-            plan.prop("brazier", cell, note="ring brazier", light={
-                "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 14,
-                "color": [1.0, 0.58, 0.26], "energy": 0.45, "scale": 1.5,
-                "cell": [cell[0], cell[1]], "note": "ring brazier",
+            plan.prop("ward_stone", cell, note="ward stone", light={
+                "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 26,
+                "color": [1.0, 0.62, 0.30], "energy": 0.30, "scale": 1.2,
+                "cell": [cell[0], cell[1]], "note": "ward sigil light",
             })
     for dx in (-2, 2):
         cell = (BEACON[0] + dx, BEACON[1] - 2)

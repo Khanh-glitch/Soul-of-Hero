@@ -165,40 +165,144 @@ def ward_ring_plate(seed: int = 0):
     return seed
 
 
+def _oct(dx: float, dy: float) -> float:
+    """Octagonal distance, so a 'ring' is a ring a mason could cut."""
+    return max(abs(dx), abs(dy)) * 0.92 + min(abs(dx), abs(dy)) * 0.34
+
+
 def ward_tiles(radius: int = 6):
+    """The ward ring around the Beacon: an inlaid octagon, not a smudge.
+
+    The previous version drew concentric bands of ash every ten pixels with a thin
+    pair of iron arcs over them. At gameplay scale that is a grey ripple: the bands
+    were the same value as the yard once the room's lamps reached them, the iron arc
+    was two pixels wide, and nothing in it had an edge a player could read. It is now
+    built the way an inlay is built - a kerbed dark bed, a wide octagonal iron band
+    with a hot core line, eight radial spurs to the compass points with a stud at each
+    end, and a second inner octagon around the fire itself. Everything is drawn at a
+    width that survives 16 px per cell.
+    """
     span = 2 * radius + 1
     size = span * T
     canvas = new(size, size)
-    cx = cy = size / 2 - 0.5
-    r_out = radius * T - 6
-    # a plate of ash-darkened chalk, so the ring separates from the pale yard
+    c = size / 2 - 0.5
+    r_kerb = radius * T - 5          # outer edge of the inlay
+    r_band = r_kerb - 13             # centre line of the iron band
+    r_inner = 30                     # inner octagon around the fire
+
+    ash = mix(CHALK_DARK, MORTAR, 0.42)
+    ash_hi = mix(CHALK_DARK, MORTAR, 0.28)
+    ash_lo = mix(MORTAR, ROCK_DARK, 0.55)
+
     for y in range(size):
         for x in range(size):
-            d = math.hypot(x - cx, y - cy)
-            if d > r_out + 2:
-                n = ((x * 29 + y * 17) % 13) / 13.0
-                px(canvas, x, y, shade(mix(CHALK_BASE, MORTAR, 0.35), 0.94 + n * 0.10))
+            dx, dy = x - c, y - c
+            d = _oct(dx, dy)
+            n = ((x * 29 + y * 17) % 13) / 13.0
+            if d > r_kerb:
+                # outside the inlay is the yard's own chalk paving, so the square
+                # reads as a cut in the floor and not as a hole in it
+                px(canvas, x, y, shade(mix(CHALK_BASE, MORTAR, 0.22), 0.95 + n * 0.10))
+                if r_kerb < d < r_kerb + 2:
+                    px(canvas, x, y, IRON_DARK)
                 continue
-            band = int((r_out - d) // 10)
-            base = mix(CHALK_DARK, MORTAR, 0.35)
-            tone = 1.05 if band % 2 == 0 else 0.86
-            n = ((x * 13 + y * 7) % 11) / 11.0
-            px(canvas, x, y, shade(base, tone * (0.96 + n * 0.08)))
-    # the ring itself: iron, with a hot line down the middle of it
-    arc(canvas, cx, cy, r_out - 12, 0, 360, IRON_DARK, 5)
-    arc(canvas, cx, cy, r_out - 12, 0, 360, IRON, 3)
-    arc(canvas, cx, cy, r_out - 12, 0, 360, EMBER_DEEP, 1)
-    arc(canvas, cx, cy, r_out - 30, 0, 360, IRON, 2)
-    # eight ward marks, one per compass point, like stubs of burnt rope
+            if d > r_kerb - 4:
+                # dressed kerb course, cut in four segments so it has joints a mason
+                # made rather than one continuous machined edge
+                seg = int((math.atan2(dy, dx) + math.pi) / (math.pi / 4)) % 2
+                px(canvas, x, y, CHALK_PALE if seg else shade(CHALK_BASE, 1.06))
+                continue
+            # the bed: laid ash and crushed chalk, darker as it nears the fire.
+            # Grain is clustered in 2x2 patches rather than scattered per pixel:
+            # per-pixel noise at this scale reads as woven cloth, not as ash.
+            depth = 1.0 - d / r_kerb
+            base = mix(ash_lo, ash_hi, 1.0 - depth * 1.35)
+            grain = _h01(51, x // 3, y // 3)
+            patch = _h01(52, x // 9, y // 9)
+            base = shade(base, 0.94 + patch * 0.12)
+            if grain > 0.86:
+                base = shade(base, 1.10)
+            elif grain < 0.14:
+                base = shade(base, 0.92)
+            px(canvas, x, y, shade(base, 0.97 + n * 0.05))
+    # the bed is a floor that has been swept and raked: faint raking rings, no pattern
+    for y in range(size):
+        for x in range(size):
+            dx, dy = x - c, y - c
+            d = _oct(dx, dy)
+            if d > r_kerb - 4:
+                continue
+            if int(d) % 7 == 0 and ((x + y) % 3):
+                px(canvas, x, y, shade(canvas.getpixel((x, y)), 0.94))
+
+    # the iron band: wide, with an ember core and rivet heads on the eight spurs
+    for y in range(size):
+        for x in range(size):
+            dx, dy = x - c, y - c
+            d = _oct(dx, dy)
+            e = d - r_band
+            if abs(e) > 7:
+                continue
+            if abs(e) > 6:
+                px(canvas, x, y, IRON_DARK)
+            elif abs(e) > 1.2:
+                n = ((x * 7 + y * 11) % 9) / 9.0
+                px(canvas, x, y, shade(IRON, 0.90 + n * 0.22))
+            elif abs(e) < 0.8:
+                px(canvas, x, y, EMBER_DEEP if (x + y) % 5 else EMBER)
+            # rivets, every ninth pixel of arc, on the band's inner edge
+            if abs(e) < 2 and (int(d) % 11 == 0):
+                px(canvas, x, y, IRON_LIGHT)
+
+    # eight spurs running *inward* from the band to the hearth, with a ward notch
+    # cut across each one. Outward they read as whiskers; inward they read as rays.
     for i in range(8):
-        a = math.radians(i * 45)
-        for r in range(10, int(r_out) - 34):
-            if r % 7 > 3:
-                continue
-            px(canvas, int(cx + math.cos(a) * r), int(cy + math.sin(a) * r), IRON)
-    # a hot core where the Beacon stands
-    glow(canvas, cx, cy, 13, 13, EMBER, 90, steps=3)
-    glow(canvas, cx, cy, 6, 6, EMBER_LIGHT, 110, steps=2)
+        a = math.pi / 4 * i + math.pi / 8
+        ca, sa = math.cos(a), math.sin(a)
+        r = r_band - 7
+        t = 0
+        while r > r_inner + 6:
+            t += 1
+            r = r_band - 7 - t
+            x, y = int(c + ca * r), int(c + sa * r)
+            for w in (-1, 0, 1):
+                px_ = x + int(-sa * w)
+                py_ = y + int(ca * w)
+                if 0 <= px_ < size and 0 <= py_ < size:
+                    px(canvas, px_, py_, IRON if w else IRON_LIGHT)
+            if t % 6 == 3:
+                for w in (-2, -1, 0, 1, 2):
+                    px_ = x + int(-sa * w)
+                    py_ = y + int(ca * w)
+                    if 0 <= px_ < size and 0 <= py_ < size:
+                        px(canvas, px_, py_, EMBER if abs(w) < 2 else EMBER_DEEP)
+
+    # inner octagon: the fire's own hearth. A pale kerb, then a charcoal bed that is
+    # hotter than the floor around it, because the ring is the one thing in the room
+    # that is supposed to be lit from below.
+    for y in range(size):
+        for x in range(size):
+            dx, dy = x - c, y - c
+            d = _oct(dx, dy)
+            if r_inner - 1 <= d <= r_inner + 1:
+                px(canvas, x, y, CHALK_PALE if d < r_inner else shade(CHALK_BASE, 0.8))
+            elif d < r_inner - 1:
+                n = ((x * 13 + y * 5) % 11) / 11.0
+                bed = mix(shade(IRON_DARK, 1.15), EMBER_DEEP, max(0.0, 1.0 - d / r_inner) * 0.55)
+                px(canvas, x, y, shade(bed, 0.92 + n * 0.16))
+    # cracks in the hearth bed, hot at the centre
+    for i in range(7):
+        a = math.pi * 2 * i / 7 + 0.4
+        for t in range(4, r_inner - 6):
+            x = int(c + math.cos(a) * t + math.sin(t / 2.0) * 2)
+            y = int(c + math.sin(a) * t + math.cos(t / 2.0) * 2)
+            if 0 <= x < size and 0 <= y < size:
+                px(canvas, x, y, EMBER if t < r_inner - 14 else EMBER_DEEP)
+
+    # the fire itself, at the centre of the hearth
+    glow(canvas, c, c, 19, 19, EMBER, 150, steps=4)
+    glow(canvas, c, c, 10, 10, EMBER_LIGHT, 120, steps=3)
+    glow(canvas, c, c, 5, 5, FLAME, 130, steps=2)
     frames = {}
     for ty in range(span):
         for tx in range(span):
@@ -356,34 +460,127 @@ def prop_brazier(seed: int = 2):
 
 
 def prop_banner(seed: int = 3, *, torn: bool = False):
-    """A muster banner: saffron field, iron rod, the chapter's two-ring mark."""
-    w, h = 34, 94
+    """A muster banner: dyed saffron cloth on an iron rod, one mark, tasselled hem.
+
+    It used to be a pale linen rectangle with two iron arcs on it. Pale cloth on pale
+    chalk is invisible at gameplay scale, and two thin rings over each other read as a
+    printed figure eight rather than as a device. So the field is now dyed to the
+    chapter's ember, it is shaded in folds rather than as a flat panel, the rod carries
+    finials, and the mark is a single lozenge with an ember eye in it - a shape that
+    survives being nine pixels wide.
+    """
+    w, h = 36, 100
     img = new(w, h)
     cx = w // 2
-    block(img, 1, 6, w - 2, 3, IRON)
-    hline(img, 1, 6, w - 2, IRON_LIGHT)
-    for y in range(9, 86):
-        t = (y - 9) / 77
-        half = int(13 - t * 1.5)
+    cloth_hi = mix(EMBER_DEEP, EMBER, 0.55)
+    cloth = EMBER_DEEP
+    cloth_lo = shade(EMBER_DEEP, 0.66)
+    # rod with finials
+    block(img, 1, 8, w - 2, 3, IRON)
+    hline(img, 1, 8, w - 2, IRON_LIGHT)
+    hline(img, 1, 10, w - 2, IRON_DARK)
+    for x in (1, w - 4):
+        block(img, x, 6, 3, 7, IRON)
+        px(img, x + 1, 5, IRON_LIGHT)
+    # cloth: two folds, a hem, and the bar it hangs from showing through
+    for y in range(11, 92):
+        t = (y - 11) / 81.0
+        half = int(14 - t * 2.0)
         for x in range(cx - half, cx + half):
-            if torn and y > 56 and (x + y) % 11 < 2:
+            if torn and y > 52 and ((x * 5 + y * 3) % 13) < 3:
                 continue
-            colour = LINEN if (x * 7 + y * 3) % 29 else LINEN_DARK
-            if x in (cx - half, cx + half - 1):
-                colour = shade(LINEN, 0.80)
+            fold = (x - (cx - half)) % 7
+            if fold in (0, 6):
+                colour = cloth_lo
+            elif fold == 3:
+                colour = cloth_hi
+            else:
+                colour = cloth
+            n = ((x * 11 + y * 5) % 17) / 17.0
+            if n > 0.93:
+                colour = shade(colour, 1.10)
             px(img, x, y, colour)
-    # ember-dyed chevron band and the two-ring mark
-    for y in range(20, 25):
-        for x in range(cx - 12, cx + 12):
-            if (x + y) % 3:
+        # selvedge
+        px(img, cx - half, y, shade(cloth_lo, 0.8))
+        px(img, cx + half - 1, y, shade(cloth_lo, 0.72))
+    # the mark: a lozenge with an ember eye, and a bar across it
+    for k in range(-8, 9):
+        for wgt in range(-(8 - abs(k)), (8 - abs(k)) + 1):
+            x, y = cx + wgt, 40 + k
+            if abs(wgt) + abs(k) >= 21:
+                continue
+            edge = abs(wgt) + abs(k)
+            if edge >= 19:
+                px(img, x, y, IRON)
+            elif abs(wgt) + abs(k) <= 4:
+                px(img, x, y, FLAME if abs(wgt) + abs(k) <= 2 else EMBER_LIGHT)
+            else:
+                px(img, x, y, shade(cloth, 1.25))
+    hline(img, cx - 11, 40, 22, IRON_DARK)
+    # tasselled hem
+    for x in range(cx - 12, cx + 12):
+        if torn:
+            px(img, x, 88 + (x % 4), shade(cloth_lo, 0.7))
+        elif (x - cx) % 3 == 0:
+            px(img, x, 92, IRON_DARK)
+            px(img, x, 93, IRON)
+    return finish(img)
+
+
+def prop_ward_stone(seed: int = 16):
+    """A ward stone: a low carved obelisk with an ember-lit sigil, one per compass point.
+
+    The ring used to be framed by four braziers at the cardinal points as well as four
+    fire-topped pillars on the diagonals, which is eight identical flames around one
+    small circle - the repetition finding, in the room where the player is meant to be
+    looking at one thing. The cardinals are masonry now: broad-footed, slightly tapered,
+    with an inlaid sigil that takes the ring's light instead of adding a flame of its
+    own.
+    """
+    w, h = 30, 66
+    img = new(w, h)
+    cx = w // 2
+    base_y = h - 3
+    stone = mix(CHALK_DARK, MORTAR, 0.30)
+    # plinth
+    block(img, 2, base_y - 9, w - 4, 9, shade(stone, 0.86))
+    hline(img, 2, base_y - 9, w - 4, shade(stone, 1.22))
+    block(img, 4, base_y - 14, w - 8, 5, stone)
+    hline(img, 4, base_y - 14, w - 8, shade(stone, 1.18))
+    # tapering shaft, lit from the north-west like everything else in this room
+    top = base_y - 56
+    for y in range(top, base_y - 14):
+        t = (base_y - 14 - y) / 42.0
+        half = int(10 - t * 2)
+        rect(img, cx - half, y, half * 2, 1, stone)
+        px(img, cx - half, y, shade(stone, 1.30))
+        px(img, cx - half + 1, y, shade(stone, 1.12))
+        px(img, cx + half - 1, y, shade(stone, 0.70))
+        px(img, cx + half - 2, y, shade(stone, 0.84))
+    # moulded cap
+    block(img, cx - 9, top - 7, 18, 7, shade(stone, 1.06))
+    hline(img, cx - 9, top - 7, 18, shade(stone, 1.30))
+    hline(img, cx - 9, top - 1, 18, shade(stone, 0.72))
+    block(img, cx - 3, top - 12, 6, 5, shade(stone, 0.94))
+    # inlaid sigil: a lozenge with a hot centre and a ward cross above it
+    for k in range(-9, 10):
+        for wgt in range(-9, 10):
+            if abs(wgt) + abs(k) > 11:
+                continue
+            edge = abs(wgt) + abs(k)
+            y = base_y - 30 + k
+            x = cx + wgt
+            if edge >= 10:
+                px(img, x, y, IRON_DARK)
+            elif edge >= 8:
                 px(img, x, y, EMBER_DEEP)
-    arc(img, cx, 44, 7, 0, 360, IRON_DARK, 2)
-    arc(img, cx, 52, 7, 0, 360, IRON_DARK, 2)
-    arc(img, cx, 44, 7, 200, 340, EMBER, 1)
-    arc(img, cx, 52, 7, 20, 160, EMBER, 1)
-    if torn:
-        for x in range(cx - 12, cx + 13):
-            px(img, x, 84 + (x % 5), shade(LINEN, 0.7))
+            elif edge <= 1:
+                px(img, x, y, EMBER_LIGHT)
+            else:
+                px(img, x, y, shade(stone, 0.84))
+    vline(img, cx, base_y - 44, 6, EMBER_DEEP)
+    hline(img, cx - 4, base_y - 41, 9, EMBER_DEEP)
+    glow(img, cx, base_y - 30, 9, 9, EMBER, 70, steps=3)
     return finish(img)
 
 
@@ -632,6 +829,7 @@ def build_props() -> list:
         ("torch_bracket", lambda: prop_torch_bracket()),
         ("sandbags", lambda: prop_sandbags()),
         ("fire_wood", lambda: prop_fire_wood()),
+        ("ward_stone", lambda: prop_ward_stone()),
     ]
 
 
