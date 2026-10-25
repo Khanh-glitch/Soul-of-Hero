@@ -123,6 +123,20 @@ jobs:
           10 chapter_1_level_10
           LEVELS
 
+      # The capture logs are the only place the authored layer reports what it
+      # built (kit, floor detail, wall cells, props, lights) and the only place a
+      # parse error or a missing atlas is visible. Upload them before any gate
+      # runs, so a red job still comes with its diagnosis attached.
+      - name: Upload capture logs and statuses
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: chapter1-capture-logs
+          path: |
+            .artifacts/chapter1/*.log
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Build the evidence tree
         continue-on-error: true
         run: |

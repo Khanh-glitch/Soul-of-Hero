@@ -209,6 +209,13 @@ func _stations(dungeon: DungeonLevel) -> Array:
 	stations.append(_station("entry", "Entry — first impression", by_type, "player"))
 	stations.append(_station("landmark", "Primary landmark", by_type, "sigil"))
 	stations.append(_station("checkpoint", "Checkpoint breather", by_type, "checkpoint"))
+	# A level with more than one Anchor can only be evidenced floor by floor, so
+	# every sigil and every checkpoint gets a frame of its own. The first one keeps
+	# its historic station id; the rest are numbered from two.
+	for extra: Dictionary in _extra_stations(by_type, "sigil", "landmark", "Anchor"):
+		stations.append(extra)
+	for extra: Dictionary in _extra_stations(by_type, "checkpoint", "checkpoint", "Checkpoint"):
+		stations.append(extra)
 	# The boss frame is captured before the exit frame: standing on the exit gate
 	# completes the level and raises the completion dialog, which then covered the
 	# arena in the boss frame of the first evidence run.
@@ -235,6 +242,28 @@ func _stations(dungeon: DungeonLevel) -> Array:
 				"cell": Vector2i(int((spawn as Array)[0]), int((spawn as Array)[1])),
 			})
 	return result
+
+
+## One frame per instance after the first, so a three-floor level is photographed
+## three times instead of once.
+func _extra_stations(by_type: Dictionary, kind: String, prefix: String,
+		label: String) -> Array:
+	var out: Array = []
+	if not by_type.has(kind):
+		return out
+	var list: Array = by_type[kind]
+	for index: int in range(1, list.size()):
+		var entity: Dictionary = list[index] as Dictionary
+		var position: Variant = entity.get("position", [])
+		if not position is Array or (position as Array).size() < 2:
+			continue
+		out.append({
+			"id": "%s_%d" % [prefix, index + 1],
+			"label": "%s %d — %s" % [label, index + 1, String(entity.get("id", ""))],
+			"cell": Vector2i(int((position as Array)[0]) / 16,
+				int((position as Array)[1]) / 16),
+		})
+	return out
 
 
 func _station(
