@@ -117,14 +117,25 @@ jobs:
           git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
           # The branch can move while the sweep runs - a push that merely edits a
           # doc lands without triggering this workflow, but it still makes this
-          # commit a non-fast-forward. Rebase onto whatever is there now.
+          # commit a non-fast-forward. Rebasing used to be the fix, and it is not
+          # one: the visual overhaul job publishes into the same docs tree, so the
+          # rebase conflicts, the abort leaves this commit behind the branch, and
+          # the push fails three times in a row. The mosaics are artefacts, not
+          # history - so the recovery takes the new base and rebuilds the commit on
+          # top of it from the files already generated on disk.
           for attempt in 1 2 3; do
-            git fetch --quiet origin "${GITHUB_REF_NAME}"
-            git rebase "origin/${GITHUB_REF_NAME}" >/dev/null 2>&1 || git rebase --abort
             if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
               echo "audit sweep: published on attempt ${attempt}"
               exit 0
             fi
+            rm -rf /tmp/published-after
+            cp -a docs/chapter1-visual-recovery/after /tmp/published-after
+            git fetch --quiet origin "${GITHUB_REF_NAME}"
+            git reset --hard "origin/${GITHUB_REF_NAME}"
+            rm -rf docs/chapter1-visual-recovery/after
+            cp -a /tmp/published-after docs/chapter1-visual-recovery/after
+            git add docs/chapter1-visual-recovery/after
+            git commit -m "ci(chapter1): publish audit sweep mosaics [skip ci]"
             sleep 10
           done
           echo "audit sweep: could not publish the mosaics" >&2

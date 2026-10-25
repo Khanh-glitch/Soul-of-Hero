@@ -231,15 +231,23 @@ jobs:
           git commit -m "ci(chapter1): publish visual overhaul evidence [skip ci]"
           # The branch moves while a capture runs - the sweep and the architecture
           # jobs publish their own evidence, and a human push lands too. A plain
-          # git push therefore loses the race and fails the job *after* every gate
-          # has passed, which reads as a red build for a publishing conflict.
+          # git push therefore loses the race, and a rebase does not help: the two
+          # bots write overlapping docs, the rebase conflicts, and the abort leaves
+          # this commit behind the branch. The evidence is regenerable, so the
+          # recovery takes the new base and re-adds it.
           for attempt in 1 2 3; do
-            git fetch --quiet origin "${GITHUB_REF_NAME}"
-            git rebase "origin/${GITHUB_REF_NAME}" >/dev/null 2>&1 || git rebase --abort
             if git push origin "HEAD:refs/heads/${GITHUB_REF_NAME}"; then
               echo "visual overhaul: published on attempt ${attempt}"
               exit 0
             fi
+            rm -rf /tmp/published-overhaul
+            cp -a docs/chapter1-visual-overhaul /tmp/published-overhaul
+            git fetch --quiet origin "${GITHUB_REF_NAME}"
+            git reset --hard "origin/${GITHUB_REF_NAME}"
+            rm -rf docs/chapter1-visual-overhaul
+            cp -a /tmp/published-overhaul docs/chapter1-visual-overhaul
+            git add docs/chapter1-visual-overhaul
+            git commit -m "ci(chapter1): publish visual overhaul evidence [skip ci]"
             sleep 10
           done
           echo "visual overhaul: could not publish the evidence" >&2

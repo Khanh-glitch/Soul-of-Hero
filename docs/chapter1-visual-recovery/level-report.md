@@ -298,16 +298,21 @@ a light.
 
 | Level | floor | wall | rock | frame median | p10 | p90 | >245 |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| L01 | 133 | 66 | 44 near, 28 far | 63 | 20 | 171 | 0.9% |
+| L01 | 133 | 66 | 44 near, 28 far | 63 | 20 | 171 | 0.91% |
 | L02 | 117 | 62 | | 48 | 18 | 122 | 0.35% |
 | L03 | 121 | 62 | | 58 | 17 | 161 | 0.54% |
 | L04 | 115 | 56 | | 54 | 16 | 140 | 0.45% |
 | L05 | 83 | 74 | 55 | 76 | 34 | 113 | 0.03% |
 | L06 | 110 | 87 | 75 | 87 | 43 | 144 | 0.28% |
-| L07 | 106 | 96 | 48 far, 159 under a brazier | 107 | 44 | 153 | 0.33% |
-| L08 | 133 | 122 | 91 | 97 | 70 | 175 | 1.25% |
+| L07 | 104 | 96 | 48 far, 121 under a brazier | 107 | 44 | 145 | 0.10% |
+| L08 | 138 | 126 | 88 | 91 | 67 | 189 | 2.42% |
 | L09 | 93 | 79 | 66 | 65 | 54 | 106 | 0.04% |
 | L10 | 110 | 103 | 45 | 81 | 6 | 125 | 0.13% |
+
+The L7 and L8 rows are the second attempt. The first one (`d94a344`) over-corrected
+both: L7 clipped 0.33% of the frame at a white beacon core, and L8 went from flat to
+blown at 5.0% above 245. `8c1f2da` pulled L7's stacked shrine lights back to 0.45-0.55
+energy (0.10% clipping now) and L8 to ambient 0.64 with a 1.2x lamp gain.
 
 What the ledger says, item by item:
 
@@ -322,22 +327,35 @@ What the ledger says, item by item:
   different walls and different colour. At 1:1 the rooms still share one floor
   material, the same repeating dentil along every wall band, and the same dust speckle,
   because all four are cut from one shared sheet that this pass does not change.
-* **L7 focus - FIXED, over-corrected.** Twenty-two lights at 0.30-0.42 under a 0.74
+* **L7 focus - FIXED, then re-balanced.** Twenty-two lights at 0.30-0.42 under a 0.74
   ambient, and the ring braziers with no light at all: the yard was a uniformly lit tan
   field. It now has a pool. The beacon core measures white - the braziers, the pillar
   fires and the beacon's own light stack on the same 4x4 cells - so the shrine's centre
-  is blown out and its silhouette is lost. That is a new defect of this pass and it is
-  still open.
+  first attempt at the fix blew that core out: the shrine clipped 0.33% of the frame.
+  At `8c1f2da` the stacked lights are back to 0.45-0.55 and the core holds - 0.10%
+  clipping against 0.33% before the lights were touched at all - so the yard has a
+  pool and the beacon keeps its silhouette.
 * **L6 material hierarchy - FIXED.** 110/87/75 against 110/111/106 before. The floors
   and walls are separable at 1:1 for the first time.
 * **L9 wall mass - FIXED.** 93/79/66 against 93/93/81.
-* **L8 over-exposure - STILL OPEN.** 1.25% of pixels above 245, the highest in the
-  chapter, with p10 at 70: it is bright everywhere rather than bright where something is
-  lit.
+* **L8 over-exposure - PARTIAL, and worse before it got better.** The level lit
+  itself with ambient while its 45 lamps averaged 0.41 energy. Dropping the ambient to
+  0.58 and doubling the lamps traded flat for blown - 5.0% of the frame above 245, by
+  far the worst in the chapter. At 0.64 ambient and a 1.2x gain it measures 2.42%
+  against 1.25% at the start: the range is wider (p10 67, p90 189) and the clipping is
+  concentrated in lamp cores rather than spread across the floor, but it is still twice
+  the chapter's worst-case before this pass and the level is not finished.
 * **L10 deep shadows - STILL OPEN.** p10 at 6 means a tenth of the frame is at or near
   black; the rock averages 45 and the throne flanks are still hollow.
 * **E1 hairline motifs, E2 prop composition, E3 bedrock strata, G3–G5 - STILL OPEN.**
   Nothing in this pass touched them.
+* **CI publish step - FIXED (workflow).** The evidence-publishing step failed on three
+  separate sweeps while every compile, gameplay, capture and verification step passed.
+  Both publishing workflows rebased their own commit onto the moved branch; the two
+  jobs write overlapping docs, so the rebase conflicted, the abort left the commit
+  behind the branch, and the push failed three times. Each step now takes the new base
+  and rebuilds its commit from the files already generated - the artefacts are
+  regenerable, so the history does not need to be rebased.
 
 **P1/P2 resolution:** partly. Floor/wall value separation (D3) and L1–L4 identity
 (F1) moved from "not attempted" to "measurably present, materially incomplete";
