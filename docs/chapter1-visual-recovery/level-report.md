@@ -15,30 +15,30 @@ counts.
 ## L01 — Crypt Entrance
 
 `AUTHORED ART` is not printed for L1–L4 (they are procedural, not document-driven).
-Native pass prints `ENVIRONMENT BEDROCK: enclosed_void=112 outside_void=3052` on
-the level's own load.
+The native pass prints `ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624`.
 
 **Before.** Rooms sat as rectangles in a black field. The wall band was one tile
 thick with a lit lip, the facade above it ended flush at row 0 with no coping, and
 the space between rooms — 112 enclosed cells, 3052 outer — was background. The
 level read as a floor plan, not as a place.
 
-**After.** Every void is rock: 112 cells of enclosed mass at wall value, the rest at
-a bit under half that. Rooms are visible as rooms because they are cut out of
-something. Wall bands now finish with a cornice and a cap inside the world's top
+**After.** Every void is rock — 3164 cells inside the map and 624 in the headroom
+above it — in one value, so the rooms are lit islands of floor cut out of a
+continuous mass. Wall bands finish with a cornice and a cap inside the world's top
 row instead of stopping at the frame edge.
 
 **Still wrong.** The four rooms are interchangeable: same band, same floor, same
-scatter of debris. There is no prop layer, no door, no buttress, no fixture. The
+scatter of debris. The rock and the wall band are also the same material, so the only
+thing separating a room from the stone around it is the coping strip, and the hard-
+edged shadow rectangles drawn inside the rock read as holes rather than as shade. There is no prop layer, no door, no buttress, no fixture. The
 tiny free-standing boxes in the middle of two halls (a 5×4 walled cell) have no
 readable purpose. The exterior rock is three tiles hashed, not strata.
 
 ## L02 — (largest of L1–L4)
 
-`ENVIRONMENT BEDROCK: enclosed_void=762 outside_void=9886`.
+`ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984`.
 
-**Before.** 762 enclosed voids, the most in the chapter, plus 19 cells painted above
-row 0. At 1:1 the interior read as corridors of floor separated by black.
+**Before.** The most unmarked cells in the chapter, plus 19 cells painted above row 0. At 1:1 the interior read as corridors of floor separated by black.
 
 **After.** Voids filled; the corridors sit in rock. Walls crown.
 
@@ -48,10 +48,10 @@ of room they are in.
 
 ## L03 — crossfire floors
 
-`ENVIRONMENT BEDROCK: enclosed_void=182 outside_void=3454`.
+`ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696`.
 
 **Before.** 48 cells above row 0, including the whole coping of the optional
-top-floor cache whose ceiling *is* the map's first row, and 182 voids.
+top-floor cache whose ceiling *is* the map's first row.
 
 **After.** The cache's architecture has room to finish; the voids are rock.
 
@@ -59,10 +59,10 @@ top-floor cache whose ceiling *is* the map's first row, and 182 voids.
 
 ## L04 — Spiral Reliquary
 
-`ENVIRONMENT BEDROCK: enclosed_void=640 outside_void=3368`.
+`ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696`.
 
-**Before.** 640 voids — the level is mostly masonry by area — and 50 cells above
-row 0, so the heavy walls were cut flat at the top of the screen.
+**Before.** The level is mostly masonry by area, and 50 cells were painted above row
+0, so the heavy walls were cut flat at the top of the screen.
 
 **After.** The masonry is material on both sides of the wall band.
 
