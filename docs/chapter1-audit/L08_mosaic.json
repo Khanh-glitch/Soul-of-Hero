@@ -1,29 +1,33 @@
 {
   "level": "chapter_1_level_8",
   "slot": 8,
-  "frames": 4,
+  "frames": 20,
   "bounds": [
     0,
     0,
     1664,
     1216
   ],
-  "limits_applied": false,
   "content": [
     64,
     48,
     1600,
     1168
   ],
+  "world_view": [
+    640.0,
+    360.0
+  ],
+  "limits_applied": true,
   "mosaic_origin": [
-    328,
-    172
+    8,
+    0
   ],
-  "coverage_of_content": 0.7364,
   "mosaic_px": [
-    1664,
-    1216
+    1656,
+    1204
   ],
-  "overlaps_checked": 3,
-  "overlap_mean_abs_diff": 71.51
+  "coverage_of_content": 1.0,
+  "overlaps_checked": 19,
+  "overlap_mean_abs_diff": 86.57
 }

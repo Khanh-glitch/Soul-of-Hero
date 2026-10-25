@@ -8,15 +8,27 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 AUDIT: level=chapter_1_level_4 slot=4 art=on
-CHAPTER1 AUDIT PLAN: level=chapter_1_level_4 frames=6 bounds=[0, 0, 1856, 1344] content=[48, 32, 1776, 1312]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=000 cell=(39, 23) rect=[312.0, 188.0, 1592.0, 908.0] ok=true
-CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
-CHAPTER1 AUDIT PROBE: camera_global=(632.0, 368.0) screen_centre=(632.0, 368.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-312.0, -188.0)]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=001 cell=(75, 21) rect=[888.0, 156.0, 2168.0, 876.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=002 cell=(36, 52) rect=[264.0, 652.0, 1544.0, 1372.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=003 cell=(75, 53) rect=[888.0, 668.0, 2168.0, 1388.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=004 cell=(40, 61) rect=[328.0, 796.0, 1608.0, 1516.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=005 cell=(76, 61) rect=[904.0, 796.0, 2184.0, 1516.0] ok=true
-CHAPTER1 AUDIT DONE: level=chapter_1_level_4 frames=6
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_4 frames=20 bounds=[0, 0, 1856, 1344] content=[48, 32, 1776, 1312] world_view=(640.0, 360.0)
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=000 cell=(20, 11) rect=[8.0, 0.0, 648.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=001 cell=(50, 11) rect=[488.0, 0.0, 1128.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=002 cell=(80, 11) rect=[968.0, 0.0, 1608.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=003 cell=(96, 11) rect=[1216.0, 0.0, 1856.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=004 cell=(20, 28) rect=[8.0, 268.0, 648.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=005 cell=(50, 28) rect=[488.0, 268.0, 1128.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=006 cell=(80, 28) rect=[968.0, 268.0, 1608.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=007 cell=(96, 28) rect=[1216.0, 268.0, 1856.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=008 cell=(20, 45) rect=[8.0, 540.0, 648.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=009 cell=(50, 45) rect=[488.0, 540.0, 1128.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=010 cell=(80, 45) rect=[968.0, 540.0, 1608.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=011 cell=(96, 45) rect=[1216.0, 540.0, 1856.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=012 cell=(20, 61) rect=[8.0, 796.0, 648.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=013 cell=(50, 61) rect=[488.0, 796.0, 1128.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=014 cell=(80, 61) rect=[968.0, 796.0, 1608.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=015 cell=(96, 61) rect=[1216.0, 796.0, 1856.0, 1156.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=016 cell=(20, 72) rect=[8.0, 972.0, 648.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=017 cell=(50, 72) rect=[488.0, 972.0, 1128.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=018 cell=(80, 72) rect=[968.0, 972.0, 1608.0, 1332.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_4 frame=019 cell=(96, 72) rect=[1216.0, 972.0, 1856.0, 1332.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_4 frames=20 limits_applied=true
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)

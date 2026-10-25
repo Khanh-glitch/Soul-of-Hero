@@ -12,13 +12,19 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
 AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2028 props=193 lights=22 shadows=108
 CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2028 props=193 lights=22 shadows=108
 CHAPTER1 AUDIT: level=chapter_1_level_7 slot=7 art=on
-CHAPTER1 AUDIT PLAN: level=chapter_1_level_7 frames=4 bounds=[0, 0, 1536, 1120] content=[48, 48, 1488, 1072]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=000 cell=(40, 22) rect=[328.0, 172.0, 1608.0, 892.0] ok=true
-CHAPTER1 AUDIT PROBE: viewport=(640.0, 360.0) visible=[P: (0.0, 0.0), S: (640.0, 360.0)] image=(1280.0, 720.0) zoom=(1.0, 1.0)
-CHAPTER1 AUDIT PROBE: camera_global=(648.0, 352.0) screen_centre=(648.0, 352.0) player_on_screen=(320.0, 188.0) transform=[X: (1.0, 0.0), Y: (0.0, 1.0), O: (-328.0, -172.0)]
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=001 cell=(56, 22) rect=[584.0, 172.0, 1864.0, 892.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=002 cell=(40, 47) rect=[328.0, 572.0, 1608.0, 1292.0] ok=true
-CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=003 cell=(56, 47) rect=[584.0, 572.0, 1864.0, 1292.0] ok=true
-CHAPTER1 AUDIT DONE: level=chapter_1_level_7 frames=4
+CHAPTER1 AUDIT PLAN: level=chapter_1_level_7 frames=12 bounds=[0, 0, 1536, 1120] content=[48, 48, 1488, 1072] world_view=(640.0, 360.0)
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=000 cell=(20, 11) rect=[8.0, 0.0, 648.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=001 cell=(50, 11) rect=[488.0, 0.0, 1128.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=002 cell=(76, 11) rect=[896.0, 0.0, 1536.0, 360.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=003 cell=(20, 28) rect=[8.0, 268.0, 648.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=004 cell=(50, 28) rect=[488.0, 268.0, 1128.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=005 cell=(76, 28) rect=[896.0, 268.0, 1536.0, 628.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=006 cell=(20, 45) rect=[8.0, 540.0, 648.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=007 cell=(50, 45) rect=[488.0, 540.0, 1128.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=008 cell=(76, 45) rect=[896.0, 540.0, 1536.0, 900.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=009 cell=(20, 58) rect=[8.0, 748.0, 648.0, 1108.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=010 cell=(50, 58) rect=[488.0, 748.0, 1128.0, 1108.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_7 frame=011 cell=(76, 58) rect=[896.0, 748.0, 1536.0, 1108.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_7 frames=12 limits_applied=true
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
