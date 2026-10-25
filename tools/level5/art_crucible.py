@@ -215,25 +215,31 @@ def glow_blob(img, cx: float, cy: float, rx: float, ry: float, colour, alpha: in
 # Floors
 # ---------------------------------------------------------------------------
 def bedrock(seed: int) -> Image.Image:
-    """Unexcavated rock: what is behind every room in a crypt.
+    """Unexcavated rock: the mass every room is cut out of.
 
-    Deliberately near-black and low contrast so it recedes, but with real stone
-    joints so it reads as rock rather than as a hole in the renderer.
+    Dark, but not black: it has to read as stone strata at gameplay scale or the
+    area around a lit room turns into a hole in the picture. Broken courses and
+    a few damp seams give it scale without competing with the architecture.
     """
     rng = random.Random(seed)
     img = new(T, T)
-    base = (22, 19, 21) if seed % 2 else (17, 15, 17)
+    base = (54, 50, 52) if seed % 2 else (48, 45, 48)
     rect(img, 0, 0, T, T, base)
-    for row in range(0, T, 5):
-        offset = (row // 5) % 2 * 4
+    for row in range(0, T, 6):
+        offset = (row // 6) % 2 * 5
         hline(img, 0, row, T, shade(base, 0.72))
-        for x in range(-offset, T, 9):
-            vline(img, x % T, row, 5, shade(base, 0.78))
-    for _ in range(9):
-        px(img, rng.randint(1, 14), rng.randint(1, 14), shade(base, rng.choice([1.22, 1.4, 0.85])))
-    # a faint damp sheen, never enough to compete with the room
-    for _ in range(3):
-        px(img, rng.randint(2, 13), rng.randint(2, 13), (34, 36, 42, 190))
+        hline(img, 0, row + 1, T, shade(base, 0.90))
+        for x in range(-offset, T, 11):
+            vline(img, x % T, row, 6, shade(base, 0.74))
+    for _ in range(26):
+        px(img, rng.randint(0, 15), rng.randint(0, 15), shade(base, rng.choice([1.10, 1.20, 0.86, 0.92])))
+    # a couple of damp seams, the only cool note down here
+    for _ in range(2):
+        x = rng.randint(2, 13)
+        y = rng.randint(1, 6)
+        for step in range(rng.randint(4, 9)):
+            px(img, x, (y + step) % T, (38, 40, 46, 220))
+            x += rng.choice([-1, 0, 1])
     return img
 
 
@@ -502,6 +508,35 @@ def floor_shadow(img, cx: float, y: float, rx: float, ry: float, alpha: int = 11
             continue
         for xx in range(int(cx - rx * (i / ry)), int(cx + rx * (i / ry)) + 1):
             px(img, xx, int(y - (i - ry * 0.5)), (0, 0, 0, a))
+
+
+def finish_prop(img: Image.Image, *, shadow: bool = True) -> Image.Image:
+    """Give a prop the two things that make it sit in the world.
+
+    A one pixel dark outline, so a pale stone prop separates from a pale stone
+    floor at gameplay scale, and a soft contact shadow at its foot, so it reads
+    as standing on the ground rather than pasted onto it. Both are baked here
+    once, for every prop, instead of being special-cased per prop.
+    """
+    if shadow:
+        floor_shadow(img, img.width / 2, img.height - 2,
+                     img.width * 0.34, max(3.0, img.height * 0.07), 120)
+    px_data = img.load()
+    w, h = img.size
+    outline = (16, 14, 17, 220)
+    edges = []
+    for y in range(h):
+        for x in range(w):
+            if px_data[x, y][3] > 24:
+                continue
+            for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < w and 0 <= ny < h and px_data[nx, ny][3] > 190:
+                    edges.append((x, y))
+                    break
+    for (x, y) in edges:
+        px_data[x, y] = outline
+    return img
 
 
 def prop_column(seed: int, *, broken: bool = False) -> Image.Image:
@@ -1298,7 +1333,9 @@ def build_props() -> dict:
     max_w = 0
     placed = []
     for name, (builder, _c, _r) in builders.items():
-        image = builder()
+        # whole-sprite finish: outline + contact shadow, applied uniformly so no
+        # prop looks pasted on the floor
+        image = finish_prop(builder())
         if cursor_x + image.width > 1024:
             cursor_y += row_h
             cursor_x, row_h = 0, 0

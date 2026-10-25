@@ -43,9 +43,9 @@ const PROP_ROOT := "CrucibleProps"
 const LIGHT_ROOT := "CrucibleLights"
 
 const TILE := 16
-## How far into the surrounding rock the bedrock fill reaches. Enough to cover
-## any camera frame that touches a room, without paving the whole 120x88 map.
-const BEDROCK_RADIUS := 7
+## How far past the authored cells the rock fill reaches, so the map's own
+## edges are surrounded by stone rather than ending in a straight black line.
+const BEDROCK_MARGIN := 6
 ## How many courses of wall are built above a wall band when there is rock above
 ## it. Three is what makes a wall read as a storey rather than as a kerb.
 const WALL_EXTRUDE := 3
@@ -232,9 +232,14 @@ func _put(layer: TileMapLayer, cell: Vector2i, frame_name: String) -> bool:
 
 
 # -- bedrock -----------------------------------------------------------------
-## Fill the rock around the rooms. Without this every room is a lit box floating
-## in a black background; with it the rooms are carved into a mass, which is what
-## the reference rooms do and what the black voids in our maps were hiding.
+## Fill the rock around and between the rooms.
+##
+## Without this every room is a lit box floating on black, and the black areas
+## inside the map read as holes in the renderer rather than as the mountain the
+## complex was cut into. The first version only reached seven cells out from the
+## authored cells, which left large black voids in the middle of the frame; the
+## fill now covers the whole map rectangle, so a room is always surrounded by
+## stone and the eye reads excavation rather than emptiness.
 func _build_bedrock(floor: Dictionary, geometry: Dictionary) -> void:
 	var tile_set := _tileset()
 	var layer := _layer(BEDROCK, BEDROCK_Z, tile_set)
@@ -245,30 +250,24 @@ func _build_bedrock(floor: Dictionary, geometry: Dictionary) -> void:
 		content[cell] = true
 	if content.is_empty():
 		return
-	# breadth-first from every authored cell, so the fill hugs the map's shape
-	var seen := {}
-	var frontier: Array = content.keys()
-	for cell: Vector2i in frontier:
-		seen[cell] = 0
-	for depth: int in range(1, BEDROCK_RADIUS + 1):
-		var next: Array = []
-		for cell: Vector2i in frontier:
-			for offset: Vector2i in [Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN]:
-				var neighbour: Vector2i = cell + offset
-				if seen.has(neighbour):
-					continue
-				seen[neighbour] = depth
-				next.append(neighbour)
-		frontier = next
-		if frontier.is_empty():
-			break
+	var min_x := 1 << 30
+	var min_y := 1 << 30
+	var max_x := -(1 << 30)
+	var max_y := -(1 << 30)
+	for cell: Vector2i in content:
+		min_x = mini(min_x, cell.x)
+		min_y = mini(min_y, cell.y)
+		max_x = maxi(max_x, cell.x)
+		max_y = maxi(max_y, cell.y)
 	var painted := 0
-	for cell: Vector2i in seen:
-		if content.has(cell):
-			continue
-		var frame := "bedrock_a" if posmod(cell.x * 7 + cell.y * 13, 3) else "bedrock_b"
-		if _put(layer, cell, frame):
-			painted += 1
+	for y: int in range(min_y - BEDROCK_MARGIN, max_y + BEDROCK_MARGIN + 1):
+		for x: int in range(min_x - BEDROCK_MARGIN, max_x + BEDROCK_MARGIN + 1):
+			var cell := Vector2i(x, y)
+			if content.has(cell):
+				continue
+			var frame := "bedrock_a" if posmod(cell.x * 7 + cell.y * 13, 3) else "bedrock_b"
+			if _put(layer, cell, frame):
+				painted += 1
 	layer.update_internals()
 	stats["bedrock"] = painted
 
@@ -373,7 +372,7 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 			if floor.has(cell) or geometry.has(cell):
 				break
 			var frame_name := "wall_field_a"
-			if posmod(face.x, 9) == 0:
+			if posmod(face.x, 4) == 0:
 				frame_name = "wall_pier"
 			elif posmod(face.x, 4) == 0:
 				frame_name = "wall_field_b"
