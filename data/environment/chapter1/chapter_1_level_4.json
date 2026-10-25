@@ -1,23 +1,23 @@
 {
   "schema": "chapter1_environment_theme/1",
   "level": "chapter_1_level_4",
-  "concept": "Spiral Reliquary — monumental concentric stone",
+  "concept": "Spiral Reliquary \u2014 monumental concentric stone",
   "tile_size": 16,
   "palette": {
     "backdrop": [
-      0.97,
-      0.95,
-      0.94
+      1.36,
+      1.36,
+      1.36
     ],
     "geometry": [
-      0.94,
-      0.92,
-      0.92
+      1.32,
+      1.32,
+      1.32
     ],
     "decor": [
-      1.0,
-      0.98,
-      0.96
+      1.34,
+      1.34,
+      1.34
     ],
     "world": [
       0.85,

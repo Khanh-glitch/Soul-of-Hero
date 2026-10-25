@@ -345,7 +345,7 @@ def build():
             "tools/level10/architecture_castellan.py."
         ),
         # A throne room at nightfall: violet stone, warm candles, cold moonlight.
-        "ambient": [0.44, 0.40, 0.52],
+        "ambient": [0.72, 0.68, 0.78],
         "background": [0.040, 0.034, 0.052],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,

@@ -1,23 +1,23 @@
 {
   "schema": "chapter1_environment_theme/1",
   "level": "chapter_1_level_2",
-  "concept": "Ossuary Fork — burial galleries, bone masonry",
+  "concept": "Ossuary Fork \u2014 burial galleries, bone masonry",
   "tile_size": 16,
   "palette": {
     "backdrop": [
-      0.98,
-      0.95,
-      0.88
+      1.45,
+      1.45,
+      1.45
     ],
     "geometry": [
-      0.95,
-      0.92,
-      0.85
+      1.4,
+      1.4,
+      1.4
     ],
     "decor": [
-      1.0,
-      0.98,
-      0.94
+      1.42,
+      1.42,
+      1.42
     ],
     "world": [
       0.86,

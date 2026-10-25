@@ -432,7 +432,7 @@ def build():
             "tools/level7/architecture_vigil.py."
         ),
         # A yard at dusk: warm dust in the air, the fire doing the lighting.
-        "ambient": [0.52, 0.46, 0.42],
+        "ambient": [0.74, 0.70, 0.64],
         "background": [0.045, 0.035, 0.030],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,

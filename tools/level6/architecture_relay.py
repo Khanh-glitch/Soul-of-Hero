@@ -494,7 +494,7 @@ def build() -> dict:
         ),
         # A cold, damp signal-house: teal shadow, a pale sky-lit background, and a
         # palette that never warms past the copper fittings.
-        "ambient": [0.44, 0.48, 0.54],
+        "ambient": [0.72, 0.76, 0.82],
         "background": [0.020, 0.032, 0.045],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,

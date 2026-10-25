@@ -396,12 +396,39 @@ def pack_grid(builders: list, columns: int = 64) -> tuple:
     return frames, sheet
 
 
+def apply_exposure(image: Image.Image, gamma: float) -> Image.Image:
+    """Lift the mid-tones of a finished frame, leaving black and white alone.
+
+    Measured on the native mosaics, the chapter's rooms sat at a median luminance
+    of 33-67 out of 255: at 640x360 the player was looking at near-black mush, and
+    no amount of prop detail survives that. Multiplying would clip the ember and
+    candle highlights, so the lift is a gamma curve instead - it raises the stone
+    into a readable band and compresses the shoulder rather than blowing it.
+
+    Gamma is per kit, because a pale marble room and a basalt room do not start at
+    the same value. It is *not* a substitute for light: the authored lights, their
+    ordering and their falloff are untouched, so the contrast between a lit pool
+    and a dark corner survives the lift.
+    """
+    if not gamma or abs(gamma - 1.0) < 1e-6:
+        return image
+    table = [min(255, int(round(255.0 * ((v / 255.0) ** gamma)))) for v in range(256)]
+    bands = image.split()
+    if len(bands) == 4:
+        r, g, b, a = bands
+        return Image.merge("RGBA", (r.point(table), g.point(table), b.point(table), a))
+    return image.point(table)
+
+
 def write_kit(art_dir: str, kit: str, tiles: list, props: list,
-              light_colour=(255, 236, 200)) -> None:
+              light_colour=(255, 236, 200), gamma: float = 1.0) -> None:
     """Write `<kit>_tiles.png/.json`, `<kit>_props.png/.json` and the light."""
     os.makedirs(art_dir, exist_ok=True)
     tile_frames, tile_sheet = pack_grid(tiles)
     prop_frames, prop_sheet = pack(kit + "_props", props)
+    if gamma and abs(gamma - 1.0) > 1e-6:
+        tile_sheet = apply_exposure(tile_sheet, gamma)
+        prop_sheet = apply_exposure(prop_sheet, gamma)
     tile_sheet.save(os.path.join(art_dir, kit + "_tiles.png"))
     prop_sheet.save(os.path.join(art_dir, kit + "_props.png"))
     radial_light(colour=light_colour).save(os.path.join(art_dir, "light_radial.png"))

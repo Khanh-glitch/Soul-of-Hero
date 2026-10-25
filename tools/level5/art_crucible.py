@@ -1459,6 +1459,27 @@ def radial_light(size: int = 256) -> Image.Image:
 # ---------------------------------------------------------------------------
 # Manifest
 # ---------------------------------------------------------------------------
+KIT_GAMMA = 0.72
+
+
+def apply_exposure(image, gamma: float):
+    """Lift the mid-tones of a finished atlas, leaving black and white alone.
+
+    Measured on the native mosaic this level's rooms sat at a median luminance of
+    33 out of 255: the player was looking at near-black mush and the basins read
+    only because they are lit. Multiplying would clip the blood and the embers,
+    so the lift is a gamma curve - the stone comes up into a readable band and the
+    shoulder compresses instead of blowing. The authored lights, their ordering
+    and their falloff are untouched, so a lit pool still separates from a corner.
+    """
+    table = [min(255, int(round(255.0 * ((v / 255.0) ** gamma)))) for v in range(256)]
+    bands = image.split()
+    if len(bands) == 4:
+        r, g, b, a = bands
+        return Image.merge("RGBA", (r.point(table), g.point(table), b.point(table), a))
+    return image.point(table)
+
+
 def build_tiles() -> dict:
     frames = {}
     grid = 8
@@ -1506,7 +1527,7 @@ def build_tiles() -> dict:
         image = builder()
         sheet.alpha_composite(image, (col * T, row * T))
         place(name, image, col, row)
-    sheet.save(os.path.join(ART, "crucible_tiles.png"))
+    apply_exposure(sheet, KIT_GAMMA).save(os.path.join(ART, "crucible_tiles.png"))
     return frames
 
 
@@ -1558,7 +1579,7 @@ def build_props() -> dict:
     sheet = new(max_w, cursor_y + row_h)
     for (x, y, image) in placed:
         sheet.alpha_composite(image, (x, y))
-    sheet.save(os.path.join(ART, "crucible_props.png"))
+    apply_exposure(sheet, KIT_GAMMA).save(os.path.join(ART, "crucible_props.png"))
     return frames
 
 

@@ -386,7 +386,7 @@ def build():
             "tools/level9/architecture_gatehouse.py."
         ),
         # A gatehouse lit by fire and nothing else.
-        "ambient": [0.54, 0.46, 0.46],
+        "ambient": [0.76, 0.68, 0.68],
         "background": [0.046, 0.028, 0.032],
         "layers": {"floor": plan.floor, "wall": plan.wall},
         "props": plan.props,

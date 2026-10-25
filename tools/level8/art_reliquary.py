@@ -877,7 +877,7 @@ def build_props() -> list:
 
 
 def main() -> None:
-    write_kit(ART, KIT, build_tiles(), build_props(), light_colour=(236, 226, 255))
+    write_kit(ART, KIT, build_tiles(), build_props(), light_colour=(236, 226, 255), gamma=0.86)
 
 
 if __name__ == "__main__":
