@@ -87,7 +87,12 @@ const DEFAULT_SHADOW := {"color": [0.0, 0.0, 0.0, 0.46], "depth": 7, "side": 4}
 ## competes with the floor the player fights on.
 const DEFAULT_BEDROCK := {
 	"tiles": [[0, 2, 1], [0, 1, 1], [0, 3, 1]],
-	"color": [0.42, 0.40, 0.45, 1.0],
+	# Measured on the L02 mosaic: rock at a 0.42 modulate landed at a mean luminance
+	# of 22/255 next to a 57/255 floor, which is not "the keep is cut out of rock",
+	# it is "the keep floats on a black field" - the exact defect this layer was
+	# added to remove. At 0.78 the rock reads as darker mass with visible coursing,
+	# still a full stop under the floor it surrounds.
+	"color": [0.78, 0.74, 0.80, 1.0],
 }
 
 ## Landmark lights are derived from the authored entities, not hand-placed: an
