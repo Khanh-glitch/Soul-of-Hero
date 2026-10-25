@@ -355,13 +355,40 @@ func _capture_fight(station: Dictionary, dungeon: DungeonLevel, player: Characte
 	# boss's health, poise and state machine. Values are read through `get` so the
 	# harness does not depend on a particular script interface.
 	var hp_before := _health_of(player)
+	var boss_before := _number_property(archer, "health")
 	await get_tree().physics_frame
-	for _i: int in range(150):
+	# The fight runs under input: the Knight closes the distance and swings. The
+	# harness never touches health values, so any damage in this frame is the
+	# game's own combat resolving.
+	var attack_frames := 0
+	for frame: int in range(240):
+		var to_archer := archer.global_position - player.global_position
+		if to_archer.length() > 92.0:
+			_drive(player, to_archer)
+		else:
+			_release_movement()
+		if frame % 40 < 8:
+			if not Input.is_action_pressed(&"attack"):
+				Input.action_press(&"attack")
+				attack_frames += 1
+		elif Input.is_action_pressed(&"attack"):
+			Input.action_release(&"attack")
 		await get_tree().physics_frame
+	var boss_after := _number_property(archer, "health")
+	_release_movement()
+	if Input.is_action_pressed(&"attack"):
+		Input.action_release(&"attack")
+	print("CRUCIBLE FIGHT: swings=%d boss_hp %s -> %s" % [attack_frames, boss_before, boss_after])
 	var hp_after := _health_of(player)
 	var boss_health := _number_property(archer, "health")
 	var boss_max := _number_property(archer, "max_health")
-	var boss_state := str(archer.get("state")) if archer.get("state") != null else "n/a"
+	# The archer keeps its machine in `_state`; read it through the script property
+	# rather than guessing a public name.
+	var boss_state := "n/a"
+	if "_state" in archer:
+		boss_state = str(archer.get("_state"))
+	elif "state" in archer:
+		boss_state = str(archer.get("state"))
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	var path := "%s/%s_%s.png" % [_out_dir, _tag, station["id"]]
@@ -415,6 +442,11 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		{"name": "f2_landing_to_f2_f3_door", "start": Vector2i(9, 48), "door": Vector2i(106, 48)},
 	]
 	var walkable := _walkable_cells(dungeon)
+	# Enemies are solid bodies, so a route that ignores them ends with the Knight
+	# walking into a skeleton and stopping. Their cells are treated as blocked for
+	# planning (with a margin that shrinks if no route exists), and the walk itself
+	# is still real input: the harness does not move enemies or teleport past them.
+	var enemy_cells := _enemy_cells(dungeon)
 	var shot := 0
 	var ok := true
 	for leg: Dictionary in legs:
@@ -426,7 +458,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 		for _i: int in range(6):
 			await get_tree().physics_frame
 		print("CRUCIBLE TRAVERSAL: leg=%s staged_at=%s" % [leg["name"], start_cell])
-		var path := _path_cells(walkable, start_cell, door_cell)
+		var path := _path_around_enemies(walkable, enemy_cells, start_cell, door_cell)
 		if path.is_empty():
 			push_error("CRUCIBLE TRAVERSAL FAIL: no walkable path %s -> %s"
 				% [start_cell, door_cell])
@@ -473,7 +505,7 @@ func _traverse(player: CharacterBody2D, dungeon: DungeonLevel) -> bool:
 					_release_movement()
 					var from_here := Vector2i(int(player.global_position.x / TILE),
 						int(player.global_position.y / TILE))
-					var replanned := _path_cells(walkable, from_here, door_cell)
+					var replanned := _path_around_enemies(walkable, enemy_cells, from_here, door_cell)
 					if replanned.is_empty() or replans > 12:
 						push_error("CRUCIBLE TRAVERSAL FAIL: no route from %s after %d replans"
 							% [from_here, replans])
@@ -580,6 +612,44 @@ func _walkable_cells(dungeon: DungeonLevel) -> Dictionary:
 	for tile: Dictionary in dungeon.level_data.get("layers", {}).get("Geometry", []):
 		floor.erase(Vector2i(int(tile["x"]), int(tile["y"])))
 	return floor
+
+
+## Cells occupied by a living enemy, grown by `margin` cells.
+func _enemy_cells(dungeon: DungeonLevel, margin: int = 1) -> Dictionary:
+	var blocked := {}
+	var root := dungeon.get_node_or_null("Entities")
+	if root == null:
+		return blocked
+	for child: Node in root.get_children():
+		if not child is Node2D or not (child is CharacterBody2D):
+			continue
+		if String(child.name) == "Knight":
+			continue
+		var health: Variant = child.get("health")
+		if health is int and int(health) <= 0:
+			continue
+		var cell := Vector2i(int((child as Node2D).global_position.x / TILE),
+			int((child as Node2D).global_position.y / TILE))
+		for dy: int in range(-margin, margin + 1):
+			for dx: int in range(-margin, margin + 1):
+				blocked[Vector2i(cell.x + dx, cell.y + dy)] = true
+	return blocked
+
+
+## Plan a route that respects the enemies standing on it, widening the margin
+## only when nothing else works.
+func _path_around_enemies(walkable: Dictionary, enemy_cells: Dictionary,
+		start: Vector2i, goal: Vector2i) -> Array:
+	for margin in (1, 0):
+		var filtered := {}
+		for cell: Vector2i in walkable:
+			if margin == 1 and enemy_cells.has(cell):
+				continue
+			filtered[cell] = true
+		var path := _path_cells(filtered, start, goal)
+		if not path.is_empty():
+			return path
+	return _path_cells(walkable, start, goal)
 
 
 func _path_cells(walkable: Dictionary, start: Vector2i, goal: Vector2i) -> Array:
