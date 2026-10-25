@@ -211,14 +211,33 @@ def ring_tiles(radius: int, opening: str | None = None, tag: str = "ring"):
             canvas.paste(flag(43, (tx % 2) + (ty % 2) * 2), (tx * T, ty * T))
     cx = cy = (size - 1) / 2.0
     r_out = radius * T - 3
-    gap = {"E": (-52.0, 52.0), "W": (128.0, 232.0),
-           "N": (-142.0, -38.0), "S": (38.0, 142.0)}.get(opening or "")
+    # The cuts are wide on purpose. At the west and east stations the wall stands
+    # only two cells from the seal, so a cut at 52 degrees would put both ends in
+    # cells that belong to the wall - and a floor frame cannot be painted there.
+    # At 80 degrees the ends fall inside the last paintable column, which is the
+    # only place a socket on the end of a horseshoe can visibly exist.
+    gap = {"E": (-80.0, 80.0), "W": (100.0, 260.0),
+           "N": (-170.0, -10.0), "S": (10.0, 170.0)}.get(opening or "")
 
     def in_gap(angle_deg: float) -> bool:
         if gap is None:
             return False
         a = ((angle_deg + 180.0) % 360.0) - 180.0
         return gap[0] <= a <= gap[1]
+
+    # A dark inlaid pad under the whole mechanism. The ring is nearly black iron
+    # and brass: on oxblood paving, at a third of its value under this level's
+    # ambient, a ring drawn straight onto the floor was invisible. The pad gives
+    # the metal something to sit on, and reads as a channel cut into the paving.
+    pad = mix(STONE_DARK, JOINT, 0.62)
+    for y in range(size):
+        for x in range(size):
+            d = math.hypot(x - cx, y - cy)
+            if d > r_out + 3:
+                continue
+            if in_gap(math.degrees(math.atan2(y - cy, x - cx))):
+                continue
+            px(canvas, x, y, pad)
 
     for y in range(size):
         for x in range(size):
@@ -258,21 +277,23 @@ def ring_tiles(radius: int, opening: str | None = None, tag: str = "ring"):
                 px(canvas, x, y, BRONZE)
             elif d < 5:
                 px(canvas, x, y, IRON_DARK)
-    # terminal collars: each cut end is capped with a bronze socket and a bolt,
-    # so the break is an authored stop where the mechanism enters the plinth
+    # Terminal socket: where a horseshoe is cut at the wall, the mechanism does
+    # not just stop - it enters a bronze socket set into the paving. Drawn on the
+    # *painted* side of the cut, because the cells beyond it are wall and can
+    # never carry a floor frame; a collar drawn in the gap was never visible.
     if gap is not None:
         for angle_deg in gap:
             a = math.radians(angle_deg)
-            bx = cx + math.cos(a) * (r_out - 4)
-            by = cy + math.sin(a) * (r_out - 4)
+            bx = int(cx + math.cos(a) * (r_out - 3))
+            by = int(cy + math.sin(a) * (r_out - 3))
             for oy in range(-3, 4):
                 for ox in range(-3, 4):
                     if abs(ox) + abs(oy) > 4:
                         continue
-                    px(canvas, int(bx) + ox, int(by) + oy,
+                    px(canvas, bx + ox, by + oy,
                        BRONZE_LIGHT if abs(ox) + abs(oy) < 3 else BRONZE_DARK)
-            px(canvas, int(bx), int(by), IRON_DARK)
-            px(canvas, int(bx) + 1, int(by) + 1, BRONZE)
+            px(canvas, bx, by, IRON_DARK)
+            px(canvas, bx, by + 1, BRONZE)
     frames = {}
     for ty in range(span):
         for tx in range(span):
