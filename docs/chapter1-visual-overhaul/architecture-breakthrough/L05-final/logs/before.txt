@@ -3,11 +3,11 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_before_40166386455.json
+CRUCIBLE BOOT: save=user://crucible_before_40166615572.json
 CRUCIBLE BOOT: app_boot=complete
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=off wall_cells=0 props=0 lights=0 entities=83
-CRUCIBLE PERF: art=off renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=869 draw_calls=103 static_mb=113.9 tree_objects=13574
+CRUCIBLE PERF: art=off renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=869 draw_calls=103 static_mb=113.9 tree_objects=13578
 CRUCIBLE STATION tag=before station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_spawn.png ok=true
 CRUCIBLE STATION tag=before station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_gate.png ok=true
 CRUCIBLE STATION tag=before station=f1_altar cell=(46, 19) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_altar.png ok=true
