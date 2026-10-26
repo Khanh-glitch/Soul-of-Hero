@@ -170,35 +170,75 @@ def step_lip_v(seed: int):
 
 
 def conduit(name_dir: str, seed: int):
-    """A 4 px copper signal channel cut into pale paving, with mint light in it."""
+    """A copper signal channel cut into the paving, with mint light in it.
+
+    A channel is a *recess*, not a printed rule. The first version drew one dark
+    pixel, two soul pixels and one bright pixel across a tile: at gameplay scale
+    that is a hairline of four flat colours with nothing in it, and the review read
+    it as unfinished line art rather than as masonry. What a cut channel actually
+    has is a bed that is darker than the floor around it, a far lip that is
+    copper-dark where the floor's own shadow falls on it, and a near lip that
+    catches the light - so the channel has a bottom, a far side and a near side,
+    and the light inside it sits in the bed rather than floating on the surface.
+
+    The copper edges are two pixels wide because one pixel of copper on pale stone
+    at 640 x 360 reads as a scratch; two reads as a lip.
+    """
     img = flag(seed, 0, tone=0.98)
-    chan = shade(STONE_DARK, 0.86)
+    bed = shade(STONE_DARK, 0.78)
     if name_dir == "h":
-        rect(img, 0, 6, T, 6, chan)
+        # far lip (top), the bed, the near lip (bottom)
+        hline(img, 0, 5, T, shade(STONE_DARK, 0.94))
         hline(img, 0, 6, T, COPPER_DARK)
-        hline(img, 0, 11, T, COPPER_LIGHT)
-        hline(img, 0, 8, T, SOUL_DEEP)
-        hline(img, 0, 9, T, SOUL_MID)
-        px(img, 4, 9, SOUL)
-        px(img, 11, 9, SOUL)
+        hline(img, 0, 7, T, COPPER)
+        for y in (8, 9, 10):
+            depth = (y - 7) / 3.0
+            hline(img, 0, y, T, shade(bed, 0.86 + 0.28 * depth))
+        hline(img, 0, 11, T, SOUL_DEEP)
+        hline(img, 0, 12, T, SOUL_MID)
+        hline(img, 0, 13, T, COPPER_LIGHT)
+        hline(img, 0, 14, T, COPPER_PALE)
+        # the light inside the channel, and a rivet where the channel is joined
+        px(img, 4, 11, SOUL)
+        px(img, 11, 12, SOUL)
+        px(img, 3, 13, COPPER_PALE)
+        px(img, 12, 13, COPPER_PALE)
     elif name_dir == "v":
-        rect(img, 6, 0, 6, T, chan)
+        vline(img, 5, 0, T, shade(STONE_DARK, 0.94))
         vline(img, 6, 0, T, COPPER_DARK)
-        vline(img, 11, 0, T, COPPER_LIGHT)
-        vline(img, 8, 0, T, SOUL_DEEP)
-        vline(img, 9, 0, T, SOUL_MID)
-        px(img, 9, 4, SOUL)
-        px(img, 9, 11, SOUL)
-    elif name_dir == "node":
-        rect(img, 0, 6, T, 6, chan)
-        rect(img, 6, 0, 6, T, chan)
+        vline(img, 7, 0, T, COPPER)
+        for x in (8, 9, 10):
+            depth = (x - 7) / 3.0
+            vline(img, x, 0, T, shade(bed, 0.86 + 0.28 * depth))
+        vline(img, 11, 0, T, SOUL_DEEP)
+        vline(img, 12, 0, T, SOUL_MID)
+        vline(img, 13, 0, T, COPPER_LIGHT)
+        vline(img, 14, 0, T, COPPER_PALE)
+        px(img, 11, 4, SOUL)
+        px(img, 12, 11, SOUL)
+        px(img, 13, 3, COPPER_PALE)
+        px(img, 13, 12, COPPER_PALE)
+    else:
+        # the junction: the two channels meet and the medallion is cast over them
+        rect(img, 0, 5, T, 10, shade(bed, 0.90))
+        rect(img, 5, 0, 10, T, shade(bed, 0.90))
+        hline(img, 0, 5, T, COPPER_DARK)
+        vline(img, 5, 0, T, COPPER_DARK)
+        hline(img, 0, 14, T, COPPER_PALE)
+        vline(img, 14, 0, T, COPPER_PALE)
         for y in range(T):
             for x in range(T):
                 d = math.hypot(x - 7.5, y - 7.5)
-                if d < 4:
-                    px(img, x, y, SOUL_DEEP if d > 2.4 else SOUL_MID)
-                elif d < 5.6:
+                if d < 4.2:
+                    px(img, x, y, SOUL_DEEP if d > 2.6 else SOUL_MID)
+                elif d < 5.8:
                     px(img, x, y, COPPER)
+        # the medallion's own rim, so it is a casting and not a painted disc
+        for y in range(T):
+            for x in range(T):
+                d = math.hypot(x - 7.5, y - 7.5)
+                if 5.8 <= d < 6.6:
+                    px(img, x, y, COPPER_LIGHT if d > 6.1 else COPPER_DARK)
     return img
 
 
