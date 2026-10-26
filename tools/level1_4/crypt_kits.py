@@ -1030,17 +1030,25 @@ def ossuary_charnel_hearth(p: dict):
 # Level 3 - the Crossfire Archive
 # ---------------------------------------------------------------------------
 def archive_soot_band(p: dict):
-    """Stone above a burnt shelf: coursed sandstone, blackened at the top."""
+    """Stone above a burnt shelf: coursed sandstone, blackened at the top.
+
+    The body is mixed *down* toward soot, not left at the paving's own value. Floor
+    and wall were within a few percent of each other across the whole level, so a
+    room had no ground plane at all - the floor, the wall below the cornice and the
+    cases all sat in one brown field and the only thing separating them was a joint
+    line. A burnt archive's walls are soot-blackened stone; the paving under the ash
+    is not.
+    """
     img = new(T, T)
-    body = shade(p["stone"], 0.94)
+    body = shade(mix(p["stone_dark"], p["soot"], 0.42), 1.12)
     rect(img, 0, 0, T, T, body)
     courses(img, 0, 0, T, T, body, row_h=T, seed=81, mortar=p["mortar"])
     for i in range(30):
         x = int(_h01(81, i, 1) * T)
         y = int(_h01(81, i, 2) * 7)
-        px(img, x, y, p["soot"])
-    hline(img, 0, 0, T, p["soot"])
-    hline(img, 0, 1, T, shade(p["soot"], 1.3))
+        px(img, x, y, shade(p["soot"], 0.9))
+    hline(img, 0, 0, T, shade(p["soot"], 0.9))
+    hline(img, 0, 1, T, shade(p["soot"], 1.55))
     return img
 
 
@@ -1491,6 +1499,80 @@ def spiral_processional_dais(p: dict):
     return finish(img)
 
 
+def spiral_route_floor(p: dict):
+    """The processional way: darker paving with a bronze lozenge set in it.
+
+    A tonal change alone does not read as a route at gameplay zoom - the eye needs a
+    repeating *mark* along the line, and a chain of bronze lozenges is the cheapest
+    honest one: each cell of the way carries a metal inlay, so the path is legible
+    from across the hall without a painted stripe.
+    """
+    img = flag(p, 73, 2, tone=0.86)
+    bronze = p["accent"]
+    bright = p["accent_light"]
+    dark = shade(p["accent"], 0.60)
+    cx, cy = T // 2 - 1, T // 2 - 1
+    for i in range(4):
+        for j in range(4 - i):
+            if i == 0 and j == 0:
+                px(img, cx, cy - 1, bright)
+                continue
+            px(img, cx + j, cy - i + 1, bronze if i + j < 3 else dark)
+            px(img, cx - j, cy - i + 1, bronze if i + j < 3 else dark)
+            px(img, cx + j, cy + i + 1, dark if i + j > 1 else bronze)
+            px(img, cx - j, cy + i + 1, dark if i + j > 1 else bronze)
+    # a bronze arris along the tile's own edges, so a run of these is continuous
+    hline(img, 0, 0, T, shade(p["accent"], 0.55))
+    hline(img, 0, 1, T, shade(p["stone_pale"], 0.80))
+    return img
+
+
+def spiral_pier(p: dict):
+    """An engaged pier: ivory drum, bronze astragals, jade capital.
+
+    The reliquary had no vertical elements at all outside the five chapel niches,
+    so its halls were a continuous pale floor with a small opening in the far wall
+    and nothing to give the eye a scale or a depth cue. A run of these along the
+    walls is what makes a hall read as a hall: each pier is a lit arris, a shadowed
+    side and a cast shadow on the paving.
+
+    Built wide on purpose. The first version was two cells of shaft in a thirty-pixel
+    frame, and at gameplay zoom a run of them read as a row of white sticks rather
+    than as architecture - a colonnade needs enough stone in the shaft to carry two
+    flutes and a shadow on its own east side.
+    """
+    w, h = 40, 84
+    img = new(w, h)
+    stone = shade(p["stone"], 1.04)
+    shaft_x, shaft_w = 5, w - 10
+    # shaft, lit from the north-west: lit west face, shadowed east face
+    block(img, shaft_x, 12, shaft_w, h - 18, stone, bevel=1)
+    rect(img, shaft_x + 2, 14, 9, h - 22, shade(stone, 1.08))
+    rect(img, shaft_x + shaft_w - 11, 14, 9, h - 22, shade(stone, 0.82))
+    rect(img, shaft_x + shaft_w - 3, 14, 3, h - 22, shade(stone, 0.70))
+    # fluting: grooves that catch the light on their west edge
+    for x in (shaft_x + 12, shaft_x + 16, shaft_x + 20):
+        vline(img, x, 15, h - 24, shade(stone, 0.84))
+        vline(img, x + 1, 15, h - 24, shade(stone, 1.10))
+    # bronze astragals at the waist, jade capital
+    for y in (28, 52):
+        rect(img, shaft_x - 1, y, shaft_w + 2, 4, p["accent"])
+        hline(img, shaft_x - 1, y, shaft_w + 2, p["accent_light"])
+        hline(img, shaft_x - 1, y + 3, shaft_w + 2, shade(p["accent"], 0.62))
+    block(img, 1, 2, w - 2, 12, shade(stone, 1.12), bevel=1)
+    hline(img, 1, 2, w - 2, p["stone_pale"])
+    hline(img, 1, 12, w - 2, shade(stone, 0.66))
+    rect(img, 6, 5, w - 12, 4, p["jade"])
+    hline(img, 6, 5, w - 12, p["jade_light"])
+    hline(img, 6, 8, w - 12, shade(p["jade"], 0.66))
+    # base, wider than the shaft, with a moulded course
+    block(img, 1, h - 14, w - 2, 12, shade(stone, 0.92), bevel=1)
+    hline(img, 1, h - 14, w - 2, p["stone_pale"])
+    hline(img, 1, h - 10, w - 2, shade(stone, 0.78))
+    hline(img, 1, h - 3, w - 2, shade(stone, 0.58))
+    return finish(img)
+
+
 def spiral_ossuary_urn(p: dict):
     """A tall jade urn on a bronze tripod: liquid offerings at each turn."""
     w, h = 28, 46
@@ -1647,9 +1729,16 @@ def build_spiral_kit() -> None:
     tiles = base_tiles(p, floor_extra=[
         ("floor_shrine", lambda: flag(p, 67, 2, tone=1.04)),
         ("floor_dais", lambda: flag(p, 69, 0, tone=0.90)),
+        ("floor_route", lambda: spiral_route_floor(p)),
     ], wall={
-        "field_a": lambda: wall_field_tile(63, shade(p["stone"], 0.90), p["mortar"]),
-        "field_b": lambda: wall_field_tile(65, shade(p["stone"], 0.80), p["mortar"]),
+        # The reliquary's walls are a dark warm plaster, and the ivory is what the
+        # *piers*, the shrine band and the paving are made of. Walls cut from the same
+        # ivory as the floor left the level as one pale field with no ground plane;
+        # the contrast is carried by material, not by turning the lights down.
+        "field_a": lambda: wall_field_tile(63, shade(mix(p["stone_dark"], p["cloth"], 0.45),
+                                                     0.92), p["mortar"]),
+        "field_b": lambda: wall_field_tile(65, shade(mix(p["stone_dark"], p["cloth"], 0.45),
+                                                     0.80), p["mortar"]),
         "dado": lambda: spiral_shrine_band(p),
         "cornice": lambda: wall_cornice_tile(p["accent"], shade(p["stone"], 0.86)),
     })
@@ -1666,6 +1755,7 @@ def build_spiral_kit() -> None:
         ("reliquary_lamp", lambda: spiral_hanging_lamp(p)),
         ("shrine", lambda: spiral_shrine(p)),
         ("processional_dais", lambda: spiral_processional_dais(p)),
+        ("pier", lambda: spiral_pier(p)),
         ("jade_urn", lambda: spiral_ossuary_urn(p)),
         ("serpent_relief", lambda: spiral_serpent_relief(p)),
     ]

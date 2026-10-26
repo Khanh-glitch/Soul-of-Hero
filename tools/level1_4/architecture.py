@@ -751,6 +751,20 @@ def build_level4(level: dict) -> dict:
             plan.floor_tile(cell, "floor_shrine")
             shrine_floor += 1
 
+    # --- the processional route. The reliquary's halls are one continuous field of
+    #     ivory paving with nothing in them: from the camera, a wide room and an empty
+    #     room look the same. The route from the entrance to the shrine is walked out
+    #     and inlaid in the darker stone, so the level has a legible spine and the
+    #     player can see where the relic is from anywhere on it. Only cells the map
+    #     already makes walkable are painted, so this cannot change collision.
+    route_cells = []
+    start = ent.get("player_spawn") or (8, 14)
+    goal = L4_SHRINE
+    if start in floor and goal in floor:
+        route_cells = _route(floor, geom, start, goal)
+        for cell in route_cells:
+            plan.floor_tile(cell, "floor_route")
+
     # --- walls. The shrine niche is the kit's dado course. The document puts the
     #     bronze-framed one in the wall behind each of the level's four chapels, so
     #     the room a sigil is in is the room the wall was built for.
@@ -822,6 +836,21 @@ def build_level4(level: dict) -> dict:
                 props += 1
                 lights += 1
                 orbit += 1
+    # --- the colonnade: engaged piers down the long walls, so a hall has verticals
+    #     and therefore depth. They stand on the floor against the wall, which is
+    #     where a pier belongs, so they never stand in the way of a crossing.
+    piers = 0
+    for cell in wall_adjacent(floor, geom):
+        if not p.free(cell, spacing=3):
+            continue
+        if (cell[0] * 7 + cell[1] * 11) % 9 != 4:
+            continue
+        if math.hypot(cell[0] - L4_SHRINE[0], cell[1] - L4_SHRINE[1]) < 3:
+            continue
+        if p.put("pier", cell):
+            props += 1
+            piers += 1
+
     # --- jade urns and serpent reliefs, set against the walls
     for cell in wall_adjacent(floor, geom):
         if not p.free(cell, spacing=3):
@@ -839,10 +868,42 @@ def build_level4(level: dict) -> dict:
         "turn_cells": turns,
         "shrine_floor_cells": shrine_floor,
         "orbit_lamps": orbit,
+        "piers": piers,
+        "route_cells": len(route_cells),
         "wall_dressing": walls,
         "props": props,
     })
     return document
+
+
+def _route(floor: set, geom: set, start, goal):
+    """The shortest walkable route between two cells, as a list of cells.
+
+    Four-way, over the map's own floor. Used to lay the processional inlay along the
+    way the player actually walks rather than along a straight line through rock.
+    """
+    from collections import deque
+    previous = {start: None}
+    queue = deque([start])
+    while queue:
+        cell = queue.popleft()
+        if cell == goal:
+            break
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            step = (cell[0] + dx, cell[1] + dy)
+            if step in previous or step not in floor or step in geom:
+                continue
+            previous[step] = cell
+            queue.append(step)
+    if goal not in previous:
+        return []
+    path = []
+    cell = goal
+    while cell is not None:
+        path.append(cell)
+        cell = previous[cell]
+    path.reverse()
+    return path
 
 
 def _ring_dist(dx: int, dy: int) -> int:
