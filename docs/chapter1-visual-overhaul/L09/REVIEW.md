@@ -33,9 +33,9 @@
 
 ## Cost of the layer
 
-- Nodes: 725 (art off) -> 845 (art on)
-- Draw calls: 113 -> 136
-- Static memory: 112.6 MiB with the layer on
+- Nodes: 728 (art off) -> 837 (art on)
+- Draw calls: 111 -> 127
+- Static memory: 112.5 MiB with the layer on
 
 ## Frames
 
