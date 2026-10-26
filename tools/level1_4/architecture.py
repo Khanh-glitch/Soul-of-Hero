@@ -851,6 +851,49 @@ def build_level4(level: dict) -> dict:
             props += 1
             piers += 1
 
+    # --- the middle of the halls. Everything placed so far either lines a wall or
+    #     rings the shrine, and L4's halls are wide enough that the gameplay camera
+    #     sits in the middle of them: at (65,70) the frame was a field of paving with
+    #     one pier in it. Scattering small props through the open floor does not fix
+    #     that - it reads as confetti, and confetti has no architecture in it. The
+    #     hall gets a hypostyle instead: columns on an 8-cell lattice, so the bays
+    #     are seven cells wide and the aisles read from the camera, with votive urns
+    #     on the line between the columns. Both keep clear of the processional way
+    #     (one cell either side of it) and of the shrine's own court, and stand only
+    #     on floor the map already makes walkable, so no column can close a route.
+    route_guard = set()
+    for cell in route_cells:
+        route_guard.add(cell)
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            route_guard.add((cell[0] + dx, cell[1] + dy))
+    columns = 0
+    aisle_urns = 0
+    for cell in sorted(floor):
+        if cell in geom or cell in route_guard:
+            continue
+        if max(abs(cell[0] - L4_SHRINE[0]), abs(cell[1] - L4_SHRINE[1])) <= 9:
+            continue
+        on_column = cell[0] % 8 == 4 and cell[1] % 8 == 4
+        in_aisle = cell[0] % 8 == 4 and cell[1] % 8 == 0
+        if not (on_column or in_aisle):
+            continue
+        # a lattice with every slot filled is a grid, not a room; a share of the
+        # columns is left standing missing so the hall reads as the older building
+        # the reliquary was cut into rather than as something extruded from a tile.
+        if (cell[0] * 23 + cell[1] * 41) % 7 == 0:
+            continue
+        if not p.free(cell, spacing=2):
+            continue
+        bay = cell[0] // 8 + cell[1] // 8
+        if on_column:
+            name = "processional_dais" if bay % 4 == 0 else "pier"
+            if p.put(name, cell):
+                columns += 1
+        elif bay % 2 == 0:
+            if p.put("jade_urn", cell):
+                aisle_urns += 1
+    props += columns + aisle_urns
+
     # --- jade urns and serpent reliefs, set against the walls
     for cell in wall_adjacent(floor, geom):
         if not p.free(cell, spacing=3):
@@ -869,6 +912,8 @@ def build_level4(level: dict) -> dict:
         "shrine_floor_cells": shrine_floor,
         "orbit_lamps": orbit,
         "piers": piers,
+        "hall_columns": columns,
+        "aisle_urns": aisle_urns,
         "route_cells": len(route_cells),
         "wall_dressing": walls,
         "props": props,

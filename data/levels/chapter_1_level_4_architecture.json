@@ -32887,9 +32887,9 @@
       "anchor": "base"
     },
     {
-      "frame": "serpent_relief",
+      "frame": "pier",
       "cell": [
-        21,
+        4,
         12
       ],
       "z": 1,
@@ -32898,10 +32898,890 @@
       "anchor": "base"
     },
     {
+      "frame": "jade_urn",
+      "cell": [
+        4,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        4,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        4,
+        48
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        4,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        4,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        12,
+        8
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        12,
+        12
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        12,
+        36
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        12,
+        40
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        12,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        12,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        12,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        20,
+        36
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        20,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        20,
+        48
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        20,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        28,
+        8
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        28,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        28,
+        24
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        28,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        28,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        36,
+        36
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        36,
+        48
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        36,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        36,
+        60
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        36,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        36,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        36,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        36,
+        80
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        44,
+        24
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        44,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        44,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        44,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        52,
+        4
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        52,
+        32
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        52,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        52,
+        60
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        52,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        52,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        52,
+        80
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        60,
+        4
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        60,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        60,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        60,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        60,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        60,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        68,
+        12
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        68,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        68,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        68,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        76,
+        36
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        76,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        76,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        76,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        76,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        84,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        84,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        84,
+        48
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        84,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        92,
+        8
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        92,
+        12
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        92,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        92,
+        24
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        92,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        92,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        92,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        100,
+        12
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        100,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        100,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        100,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "processional_dais",
+      "cell": [
+        100,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        100,
+        76
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        108,
+        8
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        108,
+        12
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        108,
+        24
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        108,
+        36
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        108,
+        40
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        108,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "pier",
+      "cell": [
+        108,
+        68
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "jade_urn",
+      "cell": [
+        108,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
       "frame": "serpent_relief",
       "cell": [
-        23,
-        41
+        21,
+        12
       ],
       "z": 1,
       "y_sort": true,
@@ -32933,30 +33813,8 @@
     {
       "frame": "jade_urn",
       "cell": [
-        35,
-        60
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "jade_urn",
-      "cell": [
         50,
         48
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "jade_urn",
-      "cell": [
-        51,
-        3
       ],
       "z": 1,
       "y_sort": true,
@@ -32997,17 +33855,6 @@
       "anchor": "base"
     },
     {
-      "frame": "serpent_relief",
-      "cell": [
-        74,
-        41
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
       "frame": "jade_urn",
       "cell": [
         78,
@@ -33041,17 +33888,6 @@
       "anchor": "base"
     },
     {
-      "frame": "jade_urn",
-      "cell": [
-        84,
-        48
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
       "frame": "serpent_relief",
       "cell": [
         92,
@@ -33071,17 +33907,6 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "jade_urn",
-      "cell": [
-        108,
-        5
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
       "anchor": "base"
     }
   ],
@@ -33237,12 +34062,14 @@
     "shrine_floor_cells": 65,
     "orbit_lamps": 3,
     "piers": 40,
+    "hall_columns": 52,
+    "aisle_urns": 29,
     "route_cells": 73,
     "wall_dressing": 14,
-    "props": 67,
+    "props": 142,
     "floor_overrides": 4582,
     "wall_overrides": 14,
-    "props_total": 67,
+    "props_total": 142,
     "lights_total": 9,
     "lights_resized": 9,
     "lights_dimmed": 0
