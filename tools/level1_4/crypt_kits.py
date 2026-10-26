@@ -801,19 +801,77 @@ def ossuary_skull_band(p: dict):
 
 
 def ossuary_charnel_floor(p: dict, seed: int = 5):
-    """Paving under a charnel: slabs dusted with bone grit and old dark stains."""
+    """Paving under a charnel: slabs dusted with bone grit and old damp.
+
+    The grit is dust, not glitter. It settles into the joint and into the low
+    corner of a slab, so it is drawn in two- and three-pixel runs at a few units
+    of contrast. The first version scattered twenty-six single bone pixels over
+    sixteen pixels of stone, and at the camera's double scale a bright pixel with
+    nothing around it reads as salt on the floor: the eye found the speckle before
+    it found the slabs.
+    """
     img = flag(p, seed, 3, tone=0.98)
-    for i in range(26):
-        x = int(_h01(seed, i, 1) * T)
-        y = int(_h01(seed, i, 2) * T)
-        px(img, x, y, p["bone_dark"] if i % 3 else p["bone"])
-    for i in range(3):
-        cx = int(_h01(seed, i, 9) * T)
-        cy = int(_h01(seed, i, 10) * T)
-        for dy in (-1, 0, 1):
-            for dx in (-1, 0, 1):
-                if abs(dx) + abs(dy) < 2:
-                    px(img, cx + dx, cy + dy, mix(p["stone"], p["cloth"], 0.30))
+    base = shade(p["stone"], 0.98)
+    grit = mix(p["bone"], base, 0.34)
+    grit_dark = mix(p["bone_dark"], base, 0.52)
+    # dust drifts along the joint, thicker where the joint meets its neighbour
+    for i in range(7):
+        x = int(_h01(seed, i, 3) * T)
+        y = T - 1 - int(_h01(seed, i, 4) * 3)
+        run = 2 + int(_h01(seed, i, 7) * 2)
+        hline(img, x, y, run, grit)
+        if i % 3 == 0:
+            px(img, x + 1, y - 1, grit_dark)
+    # a little loose grit on the face of the slab, in runs rather than dots
+    for i in range(5):
+        x = 1 + int(_h01(seed, i, 8) * (T - 4))
+        y = 3 + int(_h01(seed, i, 9) * (T - 7))
+        hline(img, x, y, 2, grit)
+        if i % 2:
+            px(img, x, y + 1, grit_dark)
+    # old damp: two soft patches sunk *into* the stone, not painted on it
+    for i in range(2):
+        cx = 3 + int(_h01(seed, i, 10) * (T - 6))
+        cy = 3 + int(_h01(seed, i, 11) * (T - 6))
+        rx = 3.0 + _h01(seed, i, 12)
+        ry = 2.2 + _h01(seed, i, 13)
+        for y in range(cy - 4, cy + 5):
+            for x in range(cx - 5, cx + 6):
+                d = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2
+                if d > 1.8:
+                    continue
+                px(img, x, y, mix(p["stone"], p["cloth"], 0.05 + 0.09 * (1.0 - d)))
+    return img
+
+
+def ossuary_bone_cornice(p: dict):
+    """The crowning course: a corbel table of vertebrae under a pale lintel.
+
+    This used to be `ossuary_skull_band`, which is also the wall's dado, so the
+    top of every wall repeated the bottom of it at the same value and the wall had
+    no crown at all - the cornice was the *fourth* place a skull appeared in one
+    storey. The crown now belongs to a different order: a projecting pale lintel
+    with a shadow under it and corbel tabs carrying it, so the eye reads the wall
+    bottom-up as plinth, coursing, frieze, crown.
+    """
+    img = new(T, T)
+    rect(img, 0, 0, T, T, shade(p["stone"], 0.88))
+    hline(img, 0, 12, T, shade(p["stone"], 0.50))
+    rect(img, 0, 4, T, 8, p["stone_pale"])
+    hline(img, 0, 4, T, shade(p["stone_pale"], 1.18))
+    hline(img, 0, 11, T, shade(p["stone"], 0.56))
+    vline(img, 0, 4, 8, shade(p["stone_pale"], 1.10))
+    vline(img, T - 1, 4, 8, shade(p["stone_pale"], 0.78))
+    # cornea beads along the course - the one bone ornament that belongs to the crown
+    for x in range(2, T, 6):
+        px(img, x, 7, p["bone_dark"])
+        px(img, x + 1, 7, p["bone"])
+        px(img, x + 1, 8, shade(p["bone"], 0.86))
+    # corbels carrying the projection, with the shadow gap between them
+    for x in range(1, T, 4):
+        rect(img, x, 12, 2, 3, shade(p["stone_pale"], 0.94))
+        px(img, x, 14, shade(p["stone"], 0.44))
+        px(img, x + 1, 14, shade(p["stone"], 0.52))
     return img
 
 
@@ -1668,7 +1726,7 @@ def build_ossuary_kit() -> None:
         "field_b": lambda: ossuary_bone_course(p, seed=3, skulls=False),
         "dado": lambda: ossuary_skull_band(p),
         "plinth": lambda: wall_plinth_tile(shade(p["stone"], 0.70), p["iron"]),
-        "cornice": lambda: ossuary_skull_band(p),
+        "cornice": lambda: ossuary_bone_cornice(p),
         "cap": lambda: wall_cap_tile(p["stone_pale"], shade(p["stone"], 0.9)),
     })
     tiles += [
