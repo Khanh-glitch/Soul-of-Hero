@@ -1174,6 +1174,46 @@ def archive_soot_band(p: dict):
     return img
 
 
+def archive_gallery_band(p: dict):
+    """A railed gallery above a reading room: the archive's second storey.
+
+    The walls ended at the cornice and stopped - soot, a grille, a boarded recess,
+    and above them nothing but plain coursing to the cap, so nothing in the room
+    said how tall it was or that anyone had ever walked a floor above it. A
+    scriptorium is a tall room with a gallery round it, and a gallery is the
+    cheapest second storey there is: an opening in shadow, a rail carried on
+    corbels, and the kit's own coursing under it.
+    """
+    img = new(T, T)
+    body = shade(mix(p["stone_dark"], p["soot"], 0.30), 1.10)
+    rect(img, 0, 0, T, T, body)
+    courses(img, 0, 0, T, T, body, row_h=T, seed=91, mortar=p["mortar"])
+    # the gallery opening: a dark recess under the rail
+    rect(img, 0, 0, T, 7, shade(p["soot"], 0.84))
+    hline(img, 0, 0, T, shade(p["soot"], 0.60))
+    hline(img, 0, 6, T, shade(p["soot"], 1.24))
+    # ledgers glimpsed inside it, so it reads as a room and not as a slit
+    for x in (2, 7, 12):
+        px(img, x, 3, shade(p["paper_dark"], 0.70))
+        px(img, x + 1, 3, shade(p["paper_dark"], 0.58))
+    # the rail: an iron top rail on posts, then the stone sill it stands on
+    rect(img, 0, 7, T, 2, p["iron"])
+    hline(img, 0, 7, T, p["iron_light"])
+    hline(img, 0, 8, T, shade(p["iron_dark"], 1.15))
+    for x in range(1, T, 4):
+        px(img, x, 9, p["iron"])
+        px(img, x, 10, shade(p["iron_dark"], 1.3))
+    # the sill: a lit course with dentils that catch the light and a shadow under it
+    rect(img, 0, 11, T, 3, shade(p["stone_light"], 0.92))
+    hline(img, 0, 11, T, p["stone_pale"])
+    hline(img, 0, 13, T, shade(p["stone_dark"], 0.80))
+    for x in range(0, T, 4):
+        px(img, x, 12, shade(p["stone_pale"], 1.04))
+    hline(img, 0, 14, T, shade(p["stone_dark"], 0.62))
+    hline(img, 0, 15, T, body)
+    return img
+
+
 def archive_grille_band(p: dict):
     """An iron grille over a shelf recess, and a second one barred with boards.
 
@@ -1935,6 +1975,7 @@ def build_archive_kit() -> None:
     tiles += [
         ("wall_soot", lambda: archive_soot_band(p)),
         ("wall_grille", lambda: archive_grille_band(p)),
+        ("wall_gallery", lambda: archive_gallery_band(p)),
         ("wall_boarded", lambda: archive_boarded_band(p)),
     ]
     props = [
