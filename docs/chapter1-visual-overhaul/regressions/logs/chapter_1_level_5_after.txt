@@ -17,7 +17,7 @@ AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=6127 props=
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=3303 lights=29 entities=83
-CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1071 draw_calls=110 static_mb=120.2 fps=4
+CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1069 draw_calls=110 static_mb=120.2 fps=4
 CHAPTER1 STATION tag=after level=chapter_1_level_5 station=entry cell=(9, 17) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_5/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_5 station=landmark cell=(88, 17) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_5/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_5 station=checkpoint cell=(10, 49) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_5/after/after_checkpoint.png ok=true

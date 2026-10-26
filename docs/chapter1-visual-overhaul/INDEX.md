@@ -47,9 +47,9 @@ Measured on the capture frame of the same run, art off vs art on:
 | chapter_1_level_1 | 677 -> 748 | 74 -> 81 | 112.3 MiB |
 | chapter_1_level_2 | 695 -> 810 | 72 -> 94 | 143.7 MiB |
 | chapter_1_level_3 | 750 -> 960 | 69 -> 83 | 119.7 MiB |
-| chapter_1_level_4 | 779 -> 849 | 72 -> 79 | 118.7 MiB |
-| chapter_1_level_5 | 866 -> 1071 | 103 -> 110 | 120.2 MiB |
-| chapter_1_level_6 | 863 -> 1102 | 66 -> 73 | 119.3 MiB |
+| chapter_1_level_4 | 779 -> 850 | 72 -> 79 | 118.8 MiB |
+| chapter_1_level_5 | 870 -> 1069 | 103 -> 110 | 120.2 MiB |
+| chapter_1_level_6 | 863 -> 1103 | 66 -> 73 | 119.3 MiB |
 | chapter_1_level_7 | 665 -> 908 | 92 -> 120 | 115.9 MiB |
 | chapter_1_level_8 | 687 -> 849 | 118 -> 128 | 113.1 MiB |
 | chapter_1_level_9 | 736 -> 837 | 118 -> 135 | 109.3 MiB |
