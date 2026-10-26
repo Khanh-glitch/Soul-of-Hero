@@ -24,9 +24,3 @@ CHAPTER1 STATION tag=after level=chapter_1_level_3 station=checkpoint cell=(16, 
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=landmark_2 cell=(108, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_landmark_2.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=landmark_3 cell=(51, 56) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_landmark_3.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_3 station=landmark_4 cell=(108, 42) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_landmark_4.png ok=true
-CHAPTER1 STATION tag=after level=chapter_1_level_3 station=landmark_5 cell=(78, 70) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_landmark_5.png ok=true
-CHAPTER1 STATION tag=after level=chapter_1_level_3 station=checkpoint_2 cell=(16, 72) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_checkpoint_2.png ok=true
-CHAPTER1 STATION tag=after level=chapter_1_level_3 station=exit cell=(101, 71) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_3/after/after_exit.png ok=true
-CHAPTER1 CAPTURE DONE: tag=after level=chapter_1_level_3
-WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
-   at: cleanup (core/object/object.cpp:2535)
