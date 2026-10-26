@@ -89,12 +89,13 @@ CRITIQUE = {
             "The spiral is cut around the shrine's own cell and the relic stands behind the live objective, so the thing the level is named for is what the floor turns around; the five chapels each have a bronze-framed shrine niche in the wall behind them.",
         ],
         "missing": [
-            "Outside the route and the shrine, the halls are still large and sparsely furnished: at the densest camera position the middle of the frame is paving.",
+            "The middle of the halls is a hypostyle now - piers on an eight-cell lattice with votive urns on the line between them and dais drums where four bays meet - so the densest camera position is a room with colonnades running out of frame instead of a field of paving.",
             "The four secondary turns are five-by-five discs of two floor families, so they read as patches of a different stone rather than as smaller spirals.",
-            "The piers stand on the wall line only; there is no free-standing colonnade and no arcade, so the room's depth comes from one plane of verticals.",
+            "The free-standing columns stand on an eight-cell lattice with a slot missing in seven, so the bays repeat measured rather than ruined: the eye can count the same column across a whole hall.",
+            "The wall piers and the free-standing ones are the same frame, so a column in the middle of a hall is lit and modelled like one engaged to a wall.",
         ],
         "next": [
-            "Furnish the middle of the two largest halls at the density of the shrine court.",
+            "Break the column stride further with a second, heavier order at the bay crossings.",
             "Draw the secondary turns as spirals, not as discs - the floor families exist for it.",
         ],
     },
