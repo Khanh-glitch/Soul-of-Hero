@@ -364,7 +364,34 @@ hero objects (D4), hairline motifs (E1), prop composition (E2) and L9's seal sta
 designed. One defect was introduced by this pass - L7's blown-out beacon core - and is
 recorded as open rather than as a win.
 
-**Visual production review:** **NOT READY.** The chapter no longer has holes in its
+## Final state — the exposure, material and identity pass
+
+Recorded after the repairs below, which are all on the branch and all measured
+either off the kit sheets or off native frames published by CI.
+
+| Repair | What was wrong | What changed | Measurement |
+| --- | --- | --- | --- |
+| L1–L4 paving | Eight stone variants hashed per cell average into one value; the floor read as a flat field whose only feature was the flag joint | The family is chosen from a smooth value field (a lot of stone, a repaired patch) and the cell varies only within it; wear is a second, coarser field thresholded into areas | Kit frame means; `validation: clean` on all four |
+| L2/L4 columns | Every prop was a Sprite2D, so the hero, the enemies and the hitboxes passed through load-bearing masonry | `solid: true` gives a prop a StaticBody2D with a box across the middle of its own cell; the generator marks a cell solid only after re-walking the floor without it | 44 solid piers (L4), 34 solid shafts (L2); `chapter_1_collision_route_test` PASSED in CI |
+| L3 archive | Shelf ranks on a fixed stride on both axes; no storey above the grille course | Runs three cells apart with rows seven apart, a cross aisle every fifth bay and a case missing every fourth; `wall_gallery` two rows up where the masonry is thick enough | 28 gallery overrides; frames at the same cells |
+| L7 Beacon | The ward ring is laid across a thirteen-cell disc, so the cell the Beacon stands on was a ward tile on chalk at 193 and its own lamp made it the brightest thing in the room | New kit frame `hearth` over the ring's inner octagon and nothing else; apron one step down | hearth 71.7, ward 90.8, apron 181.4, floor 147–156 |
+| L7 lamps | Clipping in a band centred on the camera in all four frames: torches in pairs 32 px apart on a 140+ px radius, and five lamps on the Beacon's cell | Each lamp to what one lamp can carry: torches 0.50→0.30, pillar fires 0.55→0.34, Beacon 0.55→0.40, sigils 0.30→0.22, gate pillars 0.60→0.40 | 26 lights, max energy 0.40; exit frame 3.94 % → 3.88 % (the lamp pass landed after that frame was published — see the status note) |
+| L8 vault | Three lamps stacking on the shared pale marble floor between the arch and the dais | Arch 0.38→0.30, dais 0.36→0.29 before the level's own lamp gain | Exit frame clipping 2.51 % → 1.97 % on the published native frames |
+| L9 paving | The gatehouse kit drew one more line inside every slab, cutting each 32 px flag in half on both axes — a 16 px grid | The two extra strokes are gone; each slab carries a sheen from the light's side | Internal seam flat (95.0/94.0/94.1/93.5), NW quadrant 87→95.7→92 |
+| L5 basin | The court's, forecourt's and arena's basins were one drawing at three scales; the court's had to be the thing the eye finds from the spawn station and was a blob at that distance | The grand vessel carries a bronze crest — a band on the rim's ellipse, four tapered horns with finials, a chain and the order's disc; the lesser basins keep the plain rim | 27 tiles, 25 props unchanged; the small basin byte-identical |
+
+**Status note on the measurements.** The last native frames this branch has published
+are the `614fdf87` visual-overhaul run: they cover the L7 hearth and the L8 vault
+lamps (L07 exit 3.88 %, L08 exit 1.97 % against 3.94 % and 2.51 % before). The L7
+lamp pass, the L9 paving and the L5 crest landed in later commits, and the
+visual-overhaul workflow did not start for those pushes — every push received a
+`Godot 4.7 Runtime Validation` run and none of them started a visual-overhaul or
+audit-sweep run, although the changed files match both workflows' path lists
+(`tools/level*/**`, `assets/environment/chapter1/**`). Those three repairs are
+verified off the kit sheets and by the level validators, not off native frames, and
+that is stated rather than glossed.
+
+**Visual production review:** **READY FOR OWNER REVIEW.** The chapter no longer has holes in its
 maps, sliced walls, invisible props or lamps that erase the room, and since this pass
 it also has, level by level, a floor that out-values its walls and walls that
 out-value their rock - a hierarchy it did not have on six of its ten levels. That is
