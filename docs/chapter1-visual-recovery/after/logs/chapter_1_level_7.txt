@@ -3,9 +3,8 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-AUTHORED ART: kit=crypt floor_detail=7628 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
-CRUCIBLE ART: floor_detail=7628 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
-AUTHORED PROPS: missing=0 clamped=0
+ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
 AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
 CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
 AUTHORED PROPS: missing=0 clamped=0
