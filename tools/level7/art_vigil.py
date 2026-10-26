@@ -131,13 +131,61 @@ def studded(direction: str, seed: int):
 
 
 def apron(seed: int):
-    """The raised chalk apron around the Beacon: paler, drier, swept clean."""
-    img = flag_quadrant(seed, 2, CHALK_LIGHT, shade(MORTAR, 1.10), tone=1.06)
+    """The raised chalk apron around the Beacon: drier, swept clean.
+
+    It is one step paler than the yard's own paving because it is swept, and it
+    stays that way - but at the tone it was authored at it sat at 200 against the
+    yard's 156, so the Beacon's light had nothing but a pale slab to fall on. One
+    step down keeps the apron a shaped, readable centre and leaves the Beacon's
+    own hearth the darkest thing near it.
+    """
+    img = flag_quadrant(seed, 2, CHALK_LIGHT, shade(MORTAR, 1.10), tone=1.00)
     for y in range(T):
         for x in range(T):
             if ((x * 11 + y * 7 + seed) % 23) < 2:
                 px(img, x, y, shade(CHALK_LIGHT, 1.10))
     hline(img, 0, T - 1, T, shade(MORTAR, 1.06))
+    return img
+
+
+def hearth(seed: int):
+    """The ground directly under the Beacon: fire-scoured, not swept.
+
+    The apron around it is pale chalk and stays pale - it is what makes the
+    arena have a shaped centre. Under a fire that has burned for a season the
+    paving is not pale: it is heat-cracked stone with the joints burnt black, an
+    ash bed pooling in the low corner, and cracks running out from the fire's
+    own weight with a hot seam down the middle. Without it the Beacon's own
+    light lands on the same 200-value chalk as everything else and the cell it
+    stands on is the brightest thing in the room, which is why the glow washed
+    the ward ring out at gameplay scale. The dark setting is not a shadow added
+    for contrast: it is what the floor under a fire looks like.
+    """
+    base = mix(ROCK_DARK, CHALK_DARK, 0.30)
+    img = flag_quadrant(seed, 2, base, shade(ROCK_DARK, 1.12), tone=0.90)
+    # the radiating cracks: a fire's weight, drawn as lines with a hot seam
+    for i in range(9):
+        angle = _h01(seed, i, 2) * 2 * math.pi
+        length = T * (0.55 + 0.35 * _h01(seed, i, 7))
+        for step in range(int(length)):
+            t = step / max(1.0, length)
+            x = int(T * 0.5 + math.cos(angle) * t * T * 0.55)
+            y = int(T * 0.5 + math.sin(angle) * t * T * 0.55)
+            if 0 <= x < T and 0 <= y < T:
+                px(img, x, y, shade(base, 0.74))
+    for i in range(3):
+        angle = _h01(seed, i, 9) * 2 * math.pi
+        length = T * (0.55 + 0.35 * _h01(seed, i, 11))
+        for step in range(int(length)):
+            t = step / max(1.0, length)
+            x = int(T * 0.5 + math.cos(angle) * t * T * 0.55)
+            y = int(T * 0.5 + math.sin(angle) * t * T * 0.55)
+            if 0 <= x < T and 0 <= y < T:
+                px(img, x, y, EMBER_DEEP)
+    # ash pools in the low corner and under the joints
+    dither(img, 0, int(T * 0.62), T, int(T * 0.38), (44, 40, 36), 0.52, seed=seed + 21)
+    dither(img, 0, 0, T, int(T * 0.28), (56, 50, 44), 0.30, seed=seed + 23)
+    hline(img, 0, T - 1, T, shade(ROCK_DARK, 0.72))
     return img
 
 
@@ -819,6 +867,7 @@ def build_tiles() -> list:
     tiles.append(("scorch_b", lambda: scorch(43, heavy=True)))
     tiles.append(("ash_a", lambda: ash(53)))
     tiles.append(("apron", lambda: apron(19)))
+    tiles.append(("hearth", lambda: hearth(71)))
     for name, image in ward_tiles(6).items():
         tiles.append((name, lambda i=image: i.copy()))
     return tiles

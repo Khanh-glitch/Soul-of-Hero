@@ -162,8 +162,20 @@ def beacon_frame(plan, floor, geom, guard) -> None:
 
     The Beacon cell itself is left entirely alone: it carries the live objective
     sprite and its health, and the architecture's job is to frame that, not to
-    stand on it.
+    stand on it. Nothing in here is a prop or a light aimed at it.
+
+    The one thing added under it is a floor: a fire-scoured hearth. The ward ring
+    inlaid into the apron reaches the cell the Beacon stands on, and at gameplay
+    scale the Beacon's own light landed on that pale chalk and clipped - the cell
+    it stands on was the brightest thing in the room, which is why the glow washed
+    the ring out. A fire that has burned here for a season leaves the stone under
+    it heat-cracked and black, and it eats the inlay at its centre: the hearth is
+    painted over the ring's inner octagon and under nothing else, so the outer
+    band, its spurs and its studs are still there.
     """
+    for cell in sorted(hearth_cells()):
+        if cell in floor and cell not in geom:
+            plan.floor_tile(cell, "hearth")
     for dx, dy in ((-4, -4), (4, -4), (-4, 4), (4, 4)):
         cell = (BEACON[0] + dx, BEACON[1] + dy)
         if cell in floor and cell not in guard:
@@ -393,10 +405,27 @@ def objectives(plan, floor, geom, faces, guard) -> None:
             plan.prop("crates", cell, note="supply stack")
 
 
+HEARTH_RADIUS = 2
+
+
+def hearth_cells() -> set:
+    """The fire-scoured setting under the Beacon, in the ward ring's own terms.
+
+    Painted over the inlay's inner octagon and nothing else: the outer band, its
+    spurs and its studs stay. A wear pass is what would otherwise take it away -
+    the Beacon's own cell rolls under the general scorch rule - so every pass that
+    writes floor below here has to know these cells are not its business.
+    """
+    return {(BEACON[0] + dx, BEACON[1] + dy)
+            for dx in range(-HEARTH_RADIUS, HEARTH_RADIUS + 1)
+            for dy in range(-HEARTH_RADIUS, HEARTH_RADIUS + 1)}
+
+
 def wear(plan, floor, geom, clear) -> None:
     """Ash and broken paving at the wall feet, scorch under the lanes."""
+    hearth = hearth_cells()
     for (cx, cy) in sorted(floor):
-        if (cx, cy) in geom:
+        if (cx, cy) in geom or (cx, cy) in hearth:
             continue
         near_wall = any((cx + dx, cy + dy) in geom
                         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
