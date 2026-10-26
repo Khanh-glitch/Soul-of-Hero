@@ -232,19 +232,39 @@ def chancel_step(part: str):
     return img
 
 
-def medallion_tiles(radius: int = 4):
-    """A carved stone dais ring, drawn as floor decals under the seal shrines.
+# Each station's dais carries its own device. The iron seal ring inside it is one
+# emblem for all of them on purpose - three locks on one gate - but the platform the
+# lock is set into was the same drawing five times over, so the bell, the cauldron,
+# the winch and the gate itself read as five copies of one marker instead of four
+# stations with four different jobs. The device lives in the dressed band, outside
+# the footprint the shrine covers, and is drawn at the four cardinals at a size that
+# survives the gameplay zoom.
+STATION_DEVICES = {
+    # tag        hoop        band                     mark          glyph     spokes
+    "bell": (BRONZE_DARK,  DRESSED,                  BRONZE_LIGHT, "diamond", 16),
+    "flame": (mix(IRON, BLOOD, 0.5), mix(DRESSED, BLOOD, 0.22), EMBER_LIGHT, "chevron", 12),
+    "wheel": (IRON,        DRESSED,                   IRON_LIGHT,  "spoke",   20),
+    "gate": (IRON_DARK,    mix(DRESSED, IRON, 0.30),  GATE_PALE,   "grid",     8),
+    "altar": (mix(IRON_DARK, BLOOD, 0.35), mix(DRESSED, IRON_DARK, 0.35), BONE, "cross", 16),
+}
 
-    The shrines stand on a 5 x 5 iron ring that is already part of the kit; this is
-    the platform that ring is set into. Concentric courses: an inner bevel, a riveted
-    iron hoop, a broad dressed band with four carved diamonds and radial grooves,
-    then a dark setting joint and an outer rim. Drawn per pixel from the centre so
-    the bands stay true circles across 9 x 9 cells, and transparent everywhere
-    outside the ring so it decorates the paving instead of replacing it.
+
+def medallion_tiles(radius: int = 4, tag: str = "bell"):
+    """A carved stone dais ring, drawn as floor decals under one station.
+
+    Concentric courses: an inner bevel, a riveted hoop, a broad dressed band with a
+    station device and radial grooves, then a dark setting joint and an outer rim.
+    Drawn per pixel from the centre so the bands stay true circles across 9 x 9
+    cells, and transparent everywhere outside the ring so it decorates the paving
+    instead of replacing it. The `tag` picks the station's hoop, band, mark and
+    glyph (see STATION_DEVICES), and the frame names carry it, so five different
+    stations can stand on one level without sharing a drawing.
     """
+    hoop, band, mark, glyph, spokes = STATION_DEVICES[tag]
     out = {}
     half = T * radius + T // 2
     inner = 38.0
+    cardinals = 4
     for dy in range(-radius, radius + 1):
         for dx in range(-radius, radius + 1):
             img = new(T, T)
@@ -260,30 +280,46 @@ def medallion_tiles(radius: int = 4):
                     ang = math.atan2(ddy, ddx)
                     grain = _h01(71, dx, dy, x, y)
                     if r < inner + 3.0:
-                        colour = mix(DRESSED_LIGHT, IRON_DARK, 0.35)
+                        colour = mix(band, IRON_DARK, 0.35)
                     elif r < 44.0:
-                        colour = IRON if grain < 0.9 else IRON_LIGHT
-                        # rivets, every 45 degrees round the hoop
+                        colour = hoop if grain < 0.9 else mix(hoop, IRON_LIGHT, 0.5)
+                        # rivets round the hoop
                         spoke = (ang + math.pi) / (2.0 * math.pi) * 8.0
                         if abs(spoke - round(spoke)) < 0.055:
-                            colour = IRON_LIGHT if r < 41.0 else IRON_DARK
+                            colour = mix(hoop, IRON_LIGHT, 0.7) if r < 41.0 else IRON_DARK
                     elif r < 58.0:
-                        colour = DRESSED if grain < 0.94 else DRESSED_LIGHT
-                        # carved radial grooves
-                        groove = (ang + math.pi) / (2.0 * math.pi) * 16.0
+                        colour = band if grain < 0.94 else mix(band, STONE_PALE, 0.25)
+                        # carved radial grooves: the count is part of the station
+                        groove = (ang + math.pi) / (2.0 * math.pi) * float(spokes)
                         if abs(groove - round(groove)) < 0.035:
-                            colour = mix(DRESSED, JOINT, 0.45)
-                        # four diamonds on the cardinal points
-                        spoke = (ang + math.pi) / (2.0 * math.pi) * 4.0
-                        off = abs(spoke - round(spoke)) * (2.0 * math.pi / 4.0) * r
-                        if 47.0 < r < 55.0 and off + abs(r - 51.0) * 1.35 < 4.6:
-                            colour = DRESSED_LIGHT if grain < 0.80 else mix(DRESSED_LIGHT, JOINT, 0.30)
+                            colour = mix(band, JOINT, 0.45)
+                        # the station's device, once per cardinal, at 51 px out
+                        step = 2.0 * math.pi / cardinals
+                        nearest = round((ang + math.pi) / step)
+                        motif = -math.pi + nearest * step
+                        ca, sa = math.cos(motif), math.sin(motif)
+                        px_, py_ = ddx - 51.0 * ca, ddy - 51.0 * sa
+                        u = px_ * ca + py_ * sa          # along the band
+                        v = -px_ * sa + py_ * ca         # across it
+                        device = False
+                        if glyph == "diamond":
+                            device = abs(u) + abs(v) * 1.35 < 4.6
+                        elif glyph == "chevron":
+                            device = abs(u) < 4.6 and abs(v + 2.2 - abs(u) * 0.55) < 1.3
+                        elif glyph == "spoke":
+                            device = abs(u) < 1.0 and abs(v) < 5.4
+                        elif glyph == "grid":
+                            device = (abs(u) < 4.6 and abs(v) < 0.9) or (abs(u) < 0.9 and abs(v) < 5.0)
+                        else:  # cross
+                            device = abs(abs(u) - abs(v)) < 0.9 and abs(u) < 3.8
+                        if device:
+                            colour = mark if grain < 0.82 else mix(mark, JOINT, 0.30)
                     elif r < 61.0:
-                        colour = mix(JOINT, DRESSED, 0.25)
+                        colour = mix(JOINT, band, 0.25)
                     else:
-                        colour = mix(DRESSED, JOINT, 0.55) if grain < 0.85 else mix(DRESSED, JOINT, 0.30)
+                        colour = mix(band, JOINT, 0.55) if grain < 0.85 else mix(band, JOINT, 0.30)
                     px(img, x, y, colour)
-            out["medal_%d_%d" % (dx, dy)] = img
+            out["medal_%s_%d_%d" % (tag, dx, dy)] = img
     return out
 
 
@@ -1135,8 +1171,9 @@ def build_tiles() -> list:
         tiles.append(("rail_" + side, lambda s=side: rail_decal(s)))
     for part in ("nosing", "tread"):
         tiles.append(("step_" + part, lambda p=part: chancel_step(p)))
-    for name, image in medallion_tiles(4).items():
-        tiles.append((name, lambda i=image: i.copy()))
+    for tag in STATION_DEVICES:
+        for name, image in medallion_tiles(4, tag).items():
+            tiles.append((name, lambda i=image: i.copy()))
     for tag, opening in (("ring", None), ("ringE", "E"), ("ringW", "W")):
         for name, image in ring_tiles(2, opening, tag).items():
             tiles.append((name, lambda i=image: i.copy()))

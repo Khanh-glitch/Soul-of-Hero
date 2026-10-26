@@ -210,9 +210,12 @@ def seal_glow(cell):
 HALL = (36, 53)                 # rows of the great hall
 AVENUE_X = (43, 52)             # the dressed processional way
 RAIL_X = (42, 53)               # the iron rails that bound it
-# Each seal shrine stands in a carved dais ring: concentric stone courses with a
-# riveted iron hoop and four carved diamonds, nine cells across.
-MEDALLIONS = ((18, 45), (78, 45), (48, 32), (48, 11), (48, 20))
+# Each seal shrine stands in a carved dais ring, nine cells across: concentric
+# stone courses, a riveted hoop and four carved devices.
+# Each dais carries its station's device (bell, cauldron, winch, gate, altar), so
+# the five platforms under the five centres are five drawings, not one repeated.
+MEDALLIONS = ((18, 45, "bell"), (78, 45, "flame"), (48, 32, "wheel"),
+              (48, 11, "gate"), (48, 20, "altar"))
 # Free-standing piers turn the hall into a nave with aisles. They flank the avenue
 # five cells out, three bays deep, and they are the only vertical mass inside the
 # room - the one thing a great hall of this size cannot do without.
@@ -265,6 +268,8 @@ def avenue(plan, floor, geom) -> int:
 def medallions(plan, floor, geom) -> int:
     """Carve a dais ring into the paving under every station and the altar.
 
+    The shrine's device goes in the dais as well as on the shrine, so a station is
+    recognisable from the paving before the fixture is on screen.
     The shrines already stood in a 5 x 5 iron seal ring, which read as a marking on
     the floor rather than as a platform the shrine is built on. This is the platform:
     an inner bevel, a riveted hoop, a broad dressed band with four carved diamonds
@@ -273,13 +278,14 @@ def medallions(plan, floor, geom) -> int:
     """
     painted = 0
     radius = 4
-    for centre in MEDALLIONS:
+    for cx, cy, tag in MEDALLIONS:
+        centre = (cx, cy)
         for dy in range(-radius, radius + 1):
             for dx in range(-radius, radius + 1):
                 cell = (centre[0] + dx, centre[1] + dy)
                 if cell not in floor or cell in geom:
                     continue
-                plan.floor_tile(cell, "medal_%d_%d" % (dx, dy))
+                plan.floor_tile(cell, "medal_%s_%d_%d" % (tag, dx, dy))
                 painted += 1
     return painted
 
