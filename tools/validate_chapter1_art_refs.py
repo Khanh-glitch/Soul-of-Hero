@@ -191,7 +191,7 @@ def check_theme(path: pathlib.Path) -> list[str]:
 def check_level_references() -> list[str]:
     """Every level that claims authored art must point at a document that exists."""
     problems: list[str] = []
-    for path in sorted(LEVEL_DIR.glob("chapter_1_level_*.json")):
+    for path in sorted(LEVEL_DIR.glob("*.json")):
         if path.name.endswith("_architecture.json"):
             continue
         document = json.loads(path.read_text(encoding="utf-8"))
@@ -211,7 +211,10 @@ def main(argv: list[str]) -> int:
     only = None
     if "--level" in argv:
         only = argv[argv.index("--level") + 1]
-    documents = sorted(LEVEL_DIR.glob("chapter_1_level_*_architecture.json"))
+    # Every authored document in the directory, not just the numbered ones: Level 1
+    # is `crypt_entrance_architecture.json` and a `chapter_1_level_*` glob skipped it,
+    # so the first level's 36 wall placements were never checked against its kit.
+    documents = sorted(LEVEL_DIR.glob("*_architecture.json"))
     if only:
         documents = [p for p in documents if p.name.startswith(only)]
     problems: list[str] = []

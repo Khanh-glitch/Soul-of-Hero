@@ -276,9 +276,14 @@ def build_level1(level: dict) -> dict:
     aisle = 0
     aisle += column(plan, floor, geom, 51, 0, 75, "floor_aisle_w")
     aisle += column(plan, floor, geom, 52, 0, 75, "floor_aisle_e")
-    # the cross-passage at the central shaft, so the aisle reads as a crossing
+    # The cross-passage at the central shaft, so the aisle reads as a crossing.
+    # The two aisle frames are *halves* of the strip - each carries the kerb on its
+    # outside edge - so the crossing has to keep the split. Naming a single
+    # `floor_aisle` frame that the kit does not draw left all 92 crossing cells with
+    # no floor at all, which the validator missed while it skipped Level 1.
     for y in (36, 37, 44, 45):
-        aisle += band(plan, floor, geom, y, 36, 68, "floor_aisle")
+        aisle += band(plan, floor, geom, y, 36, 51, "floor_aisle_w")
+        aisle += band(plan, floor, geom, y, 52, 68, "floor_aisle_e")
     # thresholds: the sill under every doorway, in the level's own worn stone
     thresholds = 0
     for door in ("door_f1_to_f2", "door_f2_to_f1", "door_f2_to_f3", "door_f3_to_f2"):
