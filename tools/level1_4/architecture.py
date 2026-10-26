@@ -38,7 +38,8 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "chapter1_env"))
 
 from kitlib import (  # noqa: E402
-    ROOT, Plan, cells, normalise_lights, protected, validate, wall_faces, write_document,
+    ROOT, Plan, _h01, cells, normalise_lights, protected, validate, wall_faces,
+    write_document,
 )
 
 LEVELS = {
@@ -68,19 +69,57 @@ def entity_cells(level: dict) -> dict:
     return out
 
 
+def _value_noise(x: int, y: int, scale: int, seed: int, period: int = 11) -> float:
+    """Smooth value noise over cells: bilinearly interpolated hashed lattice points.
+
+    Paving is not a checkerboard and it is not a hash either. A threshold on a
+    per-cell hash gives salt and pepper; a threshold on a *banded* hash - the block
+    index - gives rectangles with hard edges, which is worse still, because a band of
+    one flat colour across a flagstone field reads as a mis-tinted tile. Stone wear
+    arrives in soft areas. This interpolates, so what it thresholds is a blob.
+    """
+    gx, fx = x // scale, (x % scale) / float(scale)
+    gy, fy = y // scale, (y % scale) / float(scale)
+
+    def node(ix: int, iy: int) -> float:
+        return _h01(seed, ix % period, iy % period)
+
+    top = node(gx, gy) * (1 - fx) + node(gx + 1, gy) * fx
+    bottom = node(gx, gy + 1) * (1 - fx) + node(gx + 1, gy + 1) * fx
+    return top * (1 - fy) + bottom * fy
+
+
 def floor_base(plan, floor, geom) -> None:
-    """Lay the paving: quadrants for the flag joints, a hash for the variation.
+    """Lay the paving: quadrants for the flag joints, patched stone over them.
 
     The quadrant is parity, so the four cells of one 32 px flag always meet on the
-    same slab. Which of the eight variants a cell gets is a hash of its position, so
-    two neighbours are usually different stones and the repeat is not visible as a
-    period. Deterministic: the same cell gets the same slab on every rebuild.
+    same slab. Which of the eight variants a cell gets used to be a hash of its
+    position: two neighbours were usually different stones, and at gameplay scale
+    that is exactly what a per-pixel hash looks like - one flat field of paving,
+    because eight stones within a few points of each other, scattered evenly, average
+    into the same value everywhere.
+
+    Stone is bought and laid in lots. A floor is a few *areas* of one quarry, a
+    repaired patch, a strip worn dark where the traffic went, so the family is chosen
+    for a patch of four by three cells and the cell only varies within its patch.
+    The wear is a separate, coarser pass: a cell is worn when the block it belongs to
+    is, so worn stone also arrives in areas instead of in a dither.
+
+    Deterministic: the same cell gets the same slab on every rebuild.
     """
     for cell in sorted(floor):
         if cell in geom:
             continue
-        variant = (cell[0] * 37 + cell[1] * 61 + cell[0] * cell[1] * 13) % 8
-        plan.floor_tile(cell, "floor_%s" % "abcdefgh"[variant])
+        x, y = cell
+        # the lot: which quarry this area of the floor came from, as a soft field
+        lot = _value_noise(x, y, 5, 11)
+        variant = (int(lot * 8) + (x + y * 3) % 2) % 8
+        frame = "floor_%s" % "abcdefgh"[variant]
+        # the traffic: a second, coarser field, thresholded so wear arrives as blobs
+        wear = _value_noise(x, y, 7, 29)
+        if wear > 0.70:
+            frame = "floor_worn"
+        plan.floor_tile(cell, frame)
 
 
 def walk(floor, geom):
