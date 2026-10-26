@@ -33,8 +33,8 @@ Two examples of what that means in practice:
 | B | Architectural boundaries and clipping | **Partly done** — camera headroom and wall crowns done; per-level boundary work on L5's portal, L9's gate framing and L10's hall is open |
 | C | L1–L4 enclosed voids finished as architecture | **Partly done** — every void is rock, in the headroom too; room-level architecture is open |
 | D | Visual hierarchy (floor/wall, light, hero objects) | **Partly done** — light pools normalised; L10's throne, L7's ward ring, L9's seal stations and L5's exposure repaired; L6/L7 value structure and L5's bowl still open |
-| E | Art direction (motifs, composition, bedrock, variation) | **Partly done** — L10's seam rules and L9's rings are built features now; L6's conduits, L7's lanes, prop repetition and bedrock detail are open |
-| F | Level identity L1–L4, polish | **Open** — L1–L4 were not touched beyond Gate C |
+| E | Art direction (motifs, composition, bedrock, variation) | **Partly done** — L10's seam rules and L9's rings are built features; the L1–L4 kits carry their own motifs, surfaces and prop variants, and the ossuary's frieze is now a frieze rather than wallpaper; L6's conduits, L7's lanes and the rock outside the rooms are open |
+| F | Level identity L1–L4, polish | **Done for identity** — four kits, four documents, four prop layers (see `repair-ledger.md` F1 and section H). Interior variety within a level is a P1 and still open |
 
 A partly-done gate is not a passed gate. The visual verdict at the bottom of
 `level-report.md` follows from that.

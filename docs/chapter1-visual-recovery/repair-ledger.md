@@ -34,7 +34,7 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 | C1 | Unmarked cells inside the map draw the level background, so rooms have holes punched between them: L1 112, L2 762, L3 182, L4 640 enclosed | Audit void count per level | Every unmarked cell inside the map gets rock, on a layer behind the backdrops, derived from the map and never painted in | The first version printed exactly the audit's numbers (`enclosed_void=112/762/182/640`); the shipped version prints `void_cells=3164 / 10648 / 3636 / 4008` plus `headroom_cells` | fixed |
 | C2 | The outer void is background, so the keep reads as a floor plan floating on black | AFTER mosaics of L01–L04 at 1:1 | The outer void gets rock too, and so does the headroom strip above the map. Two values were tried first and rejected on the evidence (see C4) | Mosaics `L01..L04_mosaic.png` on the branch; `headroom_cells` in the log | fixed |
 | C4 | The two-value rock split painted rectangular patches of two greys across the maps, which reads as inconsistent material rather than as depth; and the headroom strip was still background | AFTER frames at `bc3d3a3` | One rock value everywhere, including the headroom: hierarchy comes from the floor being a lighter material, not from the outside being a hole | Frames at `7c5e4d5` | fixed |
-| C3 | Rooms are still repetitive: identical wall bands, no doors, no buttresses, no niches, and the outer rock is undifferentiated | L01–L04 mosaics | — | — | open |
+| C3 | Rooms are still repetitive: identical wall bands, no doors, no buttresses, no niches, and the outer rock is undifferentiated | L01–L04 mosaics | **Partly repaired.** Every wall in L1–L4 is now kit-specific material rather than one generic band: a columbarium course in L1, bone coursing with a skull frieze in L2, soot-blackened coursing with boarded recesses in L3, dark plaster with ivory piers and a bronze-banded shrine course in L4. L4 gained 40 engaged piers, the only verticals it had. L1 still has no doors beyond the map's own, and the rock outside the rooms is still one value | Frames at the densest camera position of each level | partial |
 
 ## D — hierarchy
 
@@ -51,13 +51,13 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 | --- | --- | --- | --- | --- | --- |
 | E1 | 1-px hairline motifs (L6 conduit, L7 lane, L9 iron band, L10 carpet) read as unfinished line art | Audit G | L10's aisle and lane tiles were the worst of them: a 2-px rule on the tile's top seam and a 1-px line down its left seam, so any isolated cell read as a gold scratch on the floor. Both are centred bands with a dark bed and an arris now. L9's ring arcs were restated as steel and brass on a dark pad. L6's conduits and L7's lanes are unchanged | L10 AFTER mosaic and document composites; art-ref validator | partial |
 | E2 | Prop composition is mechanical: prop runs at fixed spacing, identical silhouettes repeated | Audit J; L09 and L10 mosaics show chains of identical props at a constant interval | L9's four seal rings are no longer one emblem stamped four times: the throat and the gate carry a whole ring, the west and east stations carry a horseshoe cut at the wall with a bronze socket on each end. Everything else still stands at a constant interval | L9 kit preview and the ring frame sets; AFTER mosaic | partial |
-| E3 | Bedrock is a flat field of one tile | Audit F | Partly addressed by C1/C2 (two values, three tiles, hashed per cell) | Mosaics | partial |
+| E3 | Bedrock is a flat field of one tile | Audit F | Partly addressed by C1/C2 (two values, three tiles, hashed per cell); the four new kits carry their own rock palette, so the outside of L1–L4 is *that level's* rock rather than one shared grey | Mosaics | partial |
 
 ## F — identity
 
 | # | Defect | Evidence | Repair | Verification | Status |
 | --- | --- | --- | --- | --- | --- |
-| F1 | L1–L4 share one theme and have no prop layer, so four different dungeon roles look the same | Audit L | — | — | open |
+| F1 | L1–L4 share one theme and have no prop layer, so four different dungeon roles look the same | Audit L | **Repaired.** Four kits (`crypt`, `ossuary`, `archive`, `spiral`) built from four palettes and four material vocabularies, four architecture documents, and a prop layer on every level. Level 1 is a columbarium of loculi and tomb ranks; Level 2 a charnel hall of bone coursing, a skull frieze at eye height and bone stacks in ranks; Level 3 a scriptorium of bookcase ranks, grilles, boarded recesses and ash; Level 4 an ivory reliquary of engaged piers, a bronze-inlaid route and a spiral inlay turned around the shrine. `tools/level1_4/crypt_kits.py`, `tools/level1_4/architecture.py`, `data/levels/*_architecture.json` | `validate_chapter1_art_refs.py` PASS on 10 documents / 10 kits; each level rendered at its densest camera position with `preview.py` | fixed |
 | F2 | L9's four seal medallions do not read as four stations | Audit E | — | — | open |
 
 ## Scorekeeping
@@ -65,7 +65,11 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 * Gates A and B's clipping mechanism: repaired and verified on the branch.
 * Gates C and D: the two structural causes (hollow maps, flooded light) are
   repaired and verified; the art direction on top of them is not.
-* Gates E and F: not started.
+* Gate F: **L1–L4 repaired.** Four kits, four documents, four prop layers; see F1.
+  The remaining shortfall is interior variety within a level (F1's row lists it),
+  which is a P1, not a P0.
+* Gates C, D and E: still partly done. The four L1–L4 kits moved C3, D3 and E3
+  forward and did not finish them.
 
 ## New findings this pass
 
@@ -76,3 +80,25 @@ this pass), **partial** (the mechanism is repaired, the art direction is not).
 | G3 | L1-L4 still carry single-pixel noise decals (X marks, tics, short dashes) scattered on the floor, which read as scratches at gameplay zoom | `L01..L04_mosaic.png` at 1:1 | — | — | open |
 | G4 | L7's "banners" read as free-standing monoliths: a pale cloth rectangle with no pole, no rail and no attachment, standing on the floor | 2x crop of the ward ring in `L07_mosaic.png` | — | — | open |
 | G5 | L10 has two hollow 4x4 blocks flanking the throne (x 37-40 and 59-62, y 20-23) whose 2x2 interiors are neither floor nor geometry; they read as black holes in the hall, and the one-cell walls around them read as a thin frame | Level JSON grid dump plus the AFTER mosaic | — | — | open |
+
+## H — the L1–L4 authored-art pass
+
+Everything below was found by rendering the levels, not by reading the generators.
+The renderer is `preview.py`'s mirror of `crucible_art.gd`, driven at gameplay zoom
+and at the level's densest camera position. It is a *composition* instrument: its
+exposure is not the engine's, so nothing here is a colour verdict.
+
+| # | Defect | Evidence | Repair | Verification | Status |
+| --- | --- | --- | --- | --- | --- |
+| H1 | The validator never looked at Level 1: it globbed `chapter_1_level_*_architecture.json`, and Level 1's document is `crypt_entrance_architecture.json` | `tools/validate_chapter1_art_refs.py` main() | Globs every `*_architecture.json`; 10 documents, 10 kits. `check_level_references()` no longer skips the unnumbered map either | PASS, and the first run found H2 | fixed |
+| H2 | Level 1's central crossing — 92 cells at the exact centre of the processional axis — named a `floor_aisle` frame the crypt kit does not draw, so those cells had no floor at all | The validator, immediately after H1 | The aisle is two half-strips; the crossing keeps the split at the centre line | Regenerated document: only the frame mix moved; props, lights, stats identical | fixed |
+| H3 | The crossing and the aisle columns ran the north-south halves *across* an east-west passage, so the kerb became a row of railings perpendicular to the way you walk | 3x frame at (52,40) | Four sides (`floor_aisle_w/e/n/s`) whose joints and kerbs turn with the strip, and a crossing laid as two-row passages that stops at the aisle | Frame at (52,40) | fixed |
+| H4 | The ossuary's skull frieze was stamped up every course of every wall: the kit put a skull in `field_a`, and the renderer extruded the storey above a face with `field_a` too | 3x frame of a Level 2 wall | The skull belongs to the framed course and to the `wall_skulls` special; the plain coursing is plain bone, and `CrucibleArt` extrudes with `field_b` | Kit regenerated, frame re-rendered | fixed |
+| H5 | Surfaces that only exist to be seen at 2x were generated at 1x: the paving was a 2x2 block mosaic in two tones (a 16 px checkerboard once the camera doubles it), `worn` was a 24% single-pixel dither, `floor_ash` stamped the same blobs and the same scrap of paper into every cell, and the archive's rank drew nine byte-identical bookcases | 4x crops of the floor of all four levels | Paving grain is a bilinearly interpolated lattice with a fine dither and the variant tones are within two units; `worn` is a wash that thickens toward the joints; `floor_ash` is a gradient with the debris moved to props; the archive has three shelf variants and two burnt ones | 4x crops before/after | fixed |
+| H6 | Level 4 had no verticals outside its five chapel niches, and its wall material was within a few percent of its floor, so its halls were one pale field | Frames at (54,69), (40,17), (8,14) | Dark plaster walls, an engaged pier at a 9-cell stride along the walls, and the processional route walked out with a BFS and inlaid with a bronze lozenge per cell | Frames at the same cells | fixed |
+| H7 | Level 4's densest camera position still shows a large open floor with two bone stacks and nothing else in frame | Frame at (130,72) of L2 and (54,69) of L4 | The kits and the props are placed; what is missing at that particular cell is *furniture density in the middle of a big hall*, which no generator currently decides | — | open |
+| H8 | Level 1's gallery ranks still read as a field of the same grey box at gameplay zoom, because a sarcophagus is drawn dark against a dark floor | 2x frame at (50,63) | Four burial variants (effigy, plain with a cut cross, a two-burial chest, the opened one) at a fixed 8-cell stride | 2x frame at (50,63): the rank has a rhythm now; the value structure is still flat | partial |
+
+Nothing in this section deletes or shrinks a prop, a monument or a light: H2 and H3
+*add* floor where the document had none, H4 changes one course's motif, and H5–H6
+replace a flat surface with a drawn one.
