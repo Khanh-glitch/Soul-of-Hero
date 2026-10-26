@@ -391,11 +391,18 @@ def vault(p: Placer, rect, exit_cell, chest_cell) -> int:
     # 6.5 % of the field above 245 after the energies had already come down twice.
     # The opening is lit once, from the arch itself, with a tighter pool, and the
     # pale banners either side carry a fraction of the light they had.
+    #
+    # It still measures 2.5 % above 245 on the exit frame, in a band between the
+    # arch and the dais: the shared base is pale marble (floor 143-153 against the
+    # wing's own darker stone), and the arch lamp plus the two dais lamps all land
+    # on it at once. Three lamps aimed at one pale floor is not a threshold, it is a
+    # flood, so each of the three comes down a fifth. The arch is still lit - it is
+    # a lamp on an arch over a doorway - but the floor under it stops clipping.
     for dx in (-2, 2):
         placed += p.wall("column", (exit_cell[0] + dx, VAULT_WALL),
                          note="exit gate pier")
     placed += p.wall("gate_frame", (exit_cell[0], VAULT_WALL),
-                     light=gold_light((exit_cell[0], VAULT_WALL), 0.38, 1.3, 8,
+                     light=gold_light((exit_cell[0], VAULT_WALL), 0.30, 1.25, 8,
                                       "exit gate light"),
                      note="exit gate arch")
     for cell in ((x0 + 2, VAULT_WALL), (x1 - 2, VAULT_WALL)):
@@ -417,7 +424,7 @@ def vault(p: Placer, rect, exit_cell, chest_cell) -> int:
     placed += p.floor_prop("goblets", (x0 + 6, y1 - 1), note="offering cups")
     # the dais is lit from the wall, not by furniture standing in the walkway
     for cx in (chest_cell[0] - 5, chest_cell[0] + 5):
-        plan_light = rose_light((cx, chest_cell[1] + 1), 0.36, 1.5, 0,
+        plan_light = rose_light((cx, chest_cell[1] + 1), 0.29, 1.4, 0,
                                 "vault dais light")
         p.plan.lights.append(plan_light)
     return placed
