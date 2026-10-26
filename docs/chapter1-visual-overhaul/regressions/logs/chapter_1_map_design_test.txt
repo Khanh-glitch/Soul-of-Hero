@@ -9,8 +9,8 @@ AUTHORED PROPS: missing=0 clamped=0
 AUTHORED ART: kit=archive floor_detail=10008 wall_cells=2770 bedrock=6180 props=197 lights=7 shadows=382
 CRUCIBLE ART: floor_detail=10008 wall_cells=2770 bedrock=6180 props=197 lights=7 shadows=382
 AUTHORED PROPS: missing=0 clamped=0
-AUTHORED ART: kit=spiral floor_detail=9164 wall_cells=2866 bedrock=6552 props=67 lights=9 shadows=389
-CRUCIBLE ART: floor_detail=9164 wall_cells=2866 bedrock=6552 props=67 lights=9 shadows=389
+AUTHORED ART: kit=spiral floor_detail=9164 wall_cells=2866 bedrock=6552 props=142 lights=9 shadows=389
+CRUCIBLE ART: floor_detail=9164 wall_cells=2866 bedrock=6552 props=142 lights=9 shadows=389
 AUTHORED PROPS: missing=0 clamped=0
 AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
 CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
