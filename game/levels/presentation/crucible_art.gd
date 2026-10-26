@@ -235,8 +235,22 @@ func _cells(layer: String) -> Dictionary:
 	if not entries is Array:
 		return out
 	for raw: Variant in entries:
-		if raw is Dictionary and (raw as Dictionary).has("x"):
-			out[Vector2i(int((raw as Dictionary)["x"]), int((raw as Dictionary)["y"]))] = true
+		if not raw is Dictionary:
+			continue
+		var cell: Dictionary = raw
+		# The gameplay documents write a layer entry as {"x": .., "y": ..}; the
+		# architecture documents write it as {"cell": [x, y], "frame": ..}. A tile is
+		# a tile in both, and the architecture documents are the ones this renderer
+		# was written for, so both shapes are read. Reading only one of them is why
+		# the four Level 1-4 documents produced a floor and a wall pass of zero cells
+		# even with the document present and the kit loaded.
+		if cell.has("cell"):
+			var pair: Variant = cell.get("cell")
+			if pair is Array and (pair as Array).size() >= 2:
+				out[Vector2i(int((pair as Array)[0]), int((pair as Array)[1]))] = true
+				continue
+		if cell.has("x") and cell.has("y"):
+			out[Vector2i(int(cell.get("x", 0)), int(cell.get("y", 0)))] = true
 	return out
 
 
