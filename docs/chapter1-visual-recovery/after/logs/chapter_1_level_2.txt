@@ -3,16 +3,19 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
-ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
-ENVIRONMENT PALETTE: theme=chapter_1_level_2.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.72, 0.72, 0.72, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.92, 0.88, 0.79, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.72, 0.72, 0.72, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
-ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=7923,2516,722,471
+AUTHORED ART: kit=crypt floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
+CRUCIBLE ART: floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
+AUTHORED PROPS: missing=0 clamped=0
+AUTHORED ART: kit=ossuary floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
+CRUCIBLE ART: floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
+AUTHORED PROPS: missing=0 clamped=0
 ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    at: push_error (core/variant/variant_utility.cpp:1023)
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
-ENVIRONMENT PALETTE: theme=chapter_1_level_2.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.72, 0.72, 0.72, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.92, 0.88, 0.79, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.72, 0.72, 0.72, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
-ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=7923,2516,722,471
+AUTHORED ART: kit=ossuary floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
+CRUCIBLE ART: floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
+AUTHORED PROPS: missing=0 clamped=0
 CHAPTER1 AUDIT: level=chapter_1_level_2 slot=2 art=on
 CHAPTER1 AUDIT PLAN: level=chapter_1_level_2 frames=54 bounds=[0, -96, 2624, 2208] content=[64, 32, 2624, 2096] world_view=(640.0, 360.0)
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_2 frame=000 cell=(20, 5) rect=[8.0, -96.0, 648.0, 264.0] ok=true
