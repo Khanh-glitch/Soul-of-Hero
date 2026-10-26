@@ -517,6 +517,36 @@ def build_level2(level: dict) -> dict:
         if p.put("ossuary_stack", cell):
             props += 1
 
+    # --- the floor between the stacks. A stack is a two-by-six case on an eleven-cell
+    #     stride, which is right for the stacks and leaves the middle of a hall empty
+    #     for a camera standing in it: the frame at (130,72) was paving with one stack
+    #     in it. Low furniture - a bank of skulls, a bundle of femurs - goes on the
+    #     half-stride between them, so a hall has middle-distance content and the
+    #     passages the stacks leave stay open.
+    props += ranks(p, ("skull_bank", "bone_bundle", "skull_bank", "bone_bundle"),
+                   every_x=11, every_y=11, off_x=8, off_y=9, skip=3)
+
+    # --- the middle of the halls. The floor between the stacks is still a field of
+    #     paving at the camera: props alone cannot fill a hall, because a hall is made
+    #     of architecture. The kit already has the column - `ossuary_stack_shaft` is a
+    #     lathed stack of long bones two cells high - so the open floor takes a
+    #     hypostyle of them on a nine-cell lattice, a slot in five left missing so it
+    #     does not read as an extruded grid. They keep clear of both processional ways
+    #     and stand only on floor the map already makes walkable.
+    shafts = 0
+    for cell in sorted(floor):
+        if cell in geom or cell[0] % 9 != 7 or cell[1] % 9 != 7:
+            continue
+        if abs(cell[0] - 75) <= 2 or abs(cell[1] - 66) <= 2:
+            continue
+        if (cell[0] * 19 + cell[1] * 37) % 5 == 0:
+            continue
+        if not p.free(cell, spacing=2):
+            continue
+        if p.put("ossuary_stack_shaft", cell):
+            shafts += 1
+    props += shafts
+
     # --- charnel hearths: the cold fires the bone lanterns answer to
     for cell in ((52, 62), (98, 62)):
         if p.put("charnel_hearth", cell, light=p.lamp(cell, [0.62, 0.86, 0.92], 0.45, 1.4,
@@ -547,6 +577,7 @@ def build_level2(level: dict) -> dict:
         "charnel_cells": charnel,
         "skull_banks": banks,
         "bone_stacks": stacks,
+        "hall_shafts": shafts,
         "wall_dressing": walls,
         "props": props,
     })

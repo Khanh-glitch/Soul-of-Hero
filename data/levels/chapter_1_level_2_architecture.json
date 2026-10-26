@@ -57513,6 +57513,1137 @@
       "anchor": "base"
     },
     {
+      "frame": "bone_bundle",
+      "cell": [
+        8,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        19,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        19,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        19,
+        108
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        19,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        30,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        41,
+        31
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        41,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        52,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        52,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        52,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        52,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        63,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        63,
+        31
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        63,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        63,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        85,
+        42
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        85,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        85,
+        86
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        85,
+        108
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        85,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        96,
+        86
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        96,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        107,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        107,
+        42
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        107,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        107,
+        108
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        118,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        118,
+        42
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        118,
+        53
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        118,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        118,
+        86
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        118,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        129,
+        53
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        129,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        129,
+        86
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        129,
+        119
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        140,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        140,
+        42
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        140,
+        64
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        140,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        151,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        151,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        151,
+        42
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        151,
+        75
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "skull_bank",
+      "cell": [
+        162,
+        20
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base",
+      "flip": true
+    },
+    {
+      "frame": "bone_bundle",
+      "cell": [
+        162,
+        31
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": true,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        7,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        7,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        16,
+        25
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        16,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        16,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        16,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        16,
+        124
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        25,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        43,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        43,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        52,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        52,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        52,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        61,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        61,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        61,
+        61
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        61,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        61,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        70,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        70,
+        88
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        79,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        79,
+        88
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        88,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        88,
+        61
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        88,
+        88
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        88,
+        106
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        97,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        97,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        97,
+        124
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        106,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        106,
+        61
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        106,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        106,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        106,
+        124
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        7
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        43
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        61
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        115,
+        124
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        124,
+        88
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        124,
+        115
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        133,
+        43
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        133,
+        52
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        133,
+        61
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        133,
+        88
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        142,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        142,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        142,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        151,
+        25
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        151,
+        70
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        151,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        160,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "ossuary_stack_shaft",
+      "cell": [
+        160,
+        34
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
       "frame": "charnel_hearth",
       "cell": [
         98,
@@ -57553,41 +58684,8 @@
     {
       "frame": "bone_bundle",
       "cell": [
-        18,
-        18
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "bone_bundle",
-      "cell": [
-        19,
-        107
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "bone_bundle",
-      "cell": [
         32,
         22
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "bone_bundle",
-      "cell": [
-        52,
-        8
       ],
       "z": 1,
       "y_sort": true,
@@ -57641,17 +58739,6 @@
     {
       "frame": "bone_bundle",
       "cell": [
-        119,
-        83
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": true,
-      "anchor": "base"
-    },
-    {
-      "frame": "bone_bundle",
-      "cell": [
         142,
         60
       ],
@@ -57684,11 +58771,12 @@
     "charnel_cells": 159,
     "skull_banks": 58,
     "bone_stacks": 37,
+    "hall_shafts": 54,
     "wall_dressing": 2,
-    "props": 108,
+    "props": 205,
     "floor_overrides": 8057,
     "wall_overrides": 2,
-    "props_total": 108,
+    "props_total": 205,
     "lights_total": 1,
     "lights_resized": 1,
     "lights_dimmed": 0
