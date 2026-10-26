@@ -21,14 +21,13 @@
 
 ### Still missing against the brief
 
-- The shelf ranks are a lattice at a fixed stride, and from any single camera position the repeat is legible as a grid.
-- Between the ranks are three and four cells of bare paving with nothing in them; the rooms read as shelving with floor between it rather than as rooms with books in them.
-- The level has no second storey of readable structure - no gallery, no rail, no upper face - so its walls end at the cornice and stop.
+- The cases stand in rows with cross aisles, not on a lattice: a run of three or four cases along a row, a gap every fourth bay and a wider aisle every fifth, so the room has a direction to read and the player has somewhere to fight.
+- Above the shelf courses the wall carries a gallery: an opening in shadow with ledgers inside it, an iron rail on posts and a lit sill under it, so the reading rooms have a storey above the floor you are standing on.
+- The aisles between the runs are clear and counted: no rank is more than four cases long before a way through it, which is also what stops the rank reading as wallpaper.
 
 ### Next correction pass
 
-- Break the lattice with a second offset rank and a few cases standing out from the wall.
-- Add a gallery rail course above the hall so the room has two readable layers.
+- Give two of the runs a reading table and a lamp between the stacks, so the rooms have a place to stand still.
 
 ## Cost of the layer
 
