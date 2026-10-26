@@ -172,8 +172,9 @@ func rebuild() -> void:
 			int(stats.get("bedrock", 0)), int(stats.get("props", 0)),
 			int(stats.get("lights", 0)), int(stats.get("shadows", 0)),
 		])
-	print("AUTHORED PROPS: missing=%d clamped=%d" % [
-		int(stats.get("props_missing", 0)), int(stats.get("props_clamped", 0))])
+	print("AUTHORED PROPS: missing=%d clamped=%d solid=%d" % [
+		int(stats.get("props_missing", 0)), int(stats.get("props_clamped", 0)),
+		int(stats.get("props_solid", 0))])
 
 
 func _clear() -> void:
@@ -578,6 +579,7 @@ func _build_props(geometry: Dictionary) -> void:
 	var placed := 0
 	var clamped := 0
 	var missing := 0
+	var solid := 0
 	for raw: Variant in document.get("props", []):
 		if not raw is Dictionary:
 			continue
@@ -634,9 +636,29 @@ func _build_props(geometry: Dictionary) -> void:
 			sprite.flip_h = true
 		root.add_child(sprite)
 		placed += 1
+		# A prop that reads as load-bearing architecture is load-bearing: an intact
+		# column the hero can walk through is a lie the camera tells every time the
+		# party crosses a hall. A solid placement gets a body across the middle of
+		# its own cell - not the whole sprite, which stands two to six cells tall and
+		# would wall off the room it is standing in.
+		if bool(entry.get("solid", false)):
+			var body := StaticBody2D.new()
+			body.name = "Solid_%s_%d_%d" % [String(entry.get("frame", "prop")), cell.x, cell.y]
+			body.collision_layer = 1
+			body.collision_mask = 0
+			body.position = Vector2(cell.x * TILE + TILE * 0.5, cell.y * TILE + TILE * 0.5)
+			var box := RectangleShape2D.new()
+			box.size = Vector2(TILE * 0.75, TILE * 0.5)
+			var shape := CollisionShape2D.new()
+			shape.shape = box
+			body.add_child(shape)
+			body.set_meta(&"crucible_prop", true)
+			root.add_child(body)
+			solid += 1
 	stats["props"] = placed
 	stats["props_clamped"] = clamped
 	stats["props_missing"] = missing
+	stats["props_solid"] = solid
 
 
 # -- lights ------------------------------------------------------------------
