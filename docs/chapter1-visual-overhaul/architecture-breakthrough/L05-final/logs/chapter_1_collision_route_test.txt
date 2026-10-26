@@ -1,54 +1,50 @@
 Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
 
-AUTHORED ART: kit=crypt floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
-CRUCIBLE ART: floor_detail=7720 wall_cells=2190 bedrock=5468 props=59 lights=6 shadows=296
-AUTHORED PROPS: missing=0 clamped=0
+ENVIRONMENT PALETTE: theme=crypt_entrance.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.68, 0.68, 0.68, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.95, 0.94, 0.92, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.68, 0.68, 0.68, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=3164 headroom_cells=624 bands=3374,336,66,12
 CHAPTER 1 COLLISION ROUTE: slot=1 safe=3552/3552 targets=12
-AUTHORED ART: kit=ossuary floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
-CRUCIBLE ART: floor_detail=16114 wall_cells=6424 bedrock=14416 props=108 lights=1 shadows=724
-AUTHORED PROPS: missing=0 clamped=0
+ENVIRONMENT PALETTE: theme=chapter_1_level_2.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.72, 0.72, 0.72, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.92, 0.88, 0.79, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.72, 0.72, 0.72, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=10648 headroom_cells=984 bands=7923,2516,722,471
 CHAPTER 1 COLLISION ROUTE: slot=2 safe=7320/7320 targets=13
-AUTHORED ART: kit=archive floor_detail=10008 wall_cells=2770 bedrock=6180 props=197 lights=7 shadows=382
-CRUCIBLE ART: floor_detail=10008 wall_cells=2770 bedrock=6180 props=197 lights=7 shadows=382
-AUTHORED PROPS: missing=0 clamped=0
+ENVIRONMENT PALETTE: theme=chapter_1_level_3.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.7, 0.7, 0.7, 1.0) decor=(1.4, 1.4, 1.4, 1.0) world=(0.98, 0.9, 0.77, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.7, 0.7, 0.7, 1.0) Decor=(1.4, 1.4, 1.4, 1.0)
+ENVIRONMENT BEDROCK: void_cells=3636 headroom_cells=696 bands=4195,137,0,0
 CHAPTER 1 COLLISION ROUTE: slot=3 safe=4604/4604 targets=14
-AUTHORED ART: kit=spiral floor_detail=9164 wall_cells=2866 bedrock=6552 props=56 lights=9 shadows=389
-CRUCIBLE ART: floor_detail=9164 wall_cells=2866 bedrock=6552 props=56 lights=9 shadows=389
-AUTHORED PROPS: missing=0 clamped=0
+ENVIRONMENT PALETTE: theme=chapter_1_level_4.json keys=9 backdrop=(2.15, 2.15, 2.15, 1.0) geometry=(0.66, 0.66, 0.66, 1.0) decor=(1.35, 1.35, 1.35, 1.0) world=(0.84, 0.87, 0.98, 1.0) Backdrop=(2.15, 2.15, 2.15, 1.0) Geometry=(0.66, 0.66, 0.66, 1.0) Decor=(1.35, 1.35, 1.35, 1.0)
+ENVIRONMENT BEDROCK: void_cells=4008 headroom_cells=696 bands=4289,394,21,0
 CHAPTER 1 COLLISION ROUTE: slot=4 safe=4172/4172 targets=13
-AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
-CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=6127 props=169 lights=29 shadows=506
+AUTHORED ART: kit=crucible floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
+CRUCIBLE ART: floor_detail=5761 wall_cells=3303 bedrock=4609 props=169 lights=29 shadows=506
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=5 safe=4575/4575 targets=13
-AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6980 props=156 lights=75 shadows=360
-CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6980 props=156 lights=75 shadows=360
+AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
+CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6155 props=156 lights=75 shadows=360
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=6 safe=4786/4786 targets=12
-AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
-CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
+AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=26 shadows=108
+CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=2334 props=213 lights=26 shadows=108
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=7 safe=5239/5239 targets=5
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 safe=1759/3367 targets=5
-AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=6534 props=76 lights=29 shadows=100
-CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=6534 props=76 lights=29 shadows=100
+AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
+CRUCIBLE ART: floor_detail=5668 wall_cells=810 bedrock=5340 props=70 lights=29 shadows=100
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=9 safe=2724/2724 targets=5
-AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=7338 props=41 lights=23 shadows=68
-CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=7338 props=41 lights=23 shadows=68
+AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
+CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=2922 props=41 lights=23 shadows=68
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=10 safe=2144/2144 targets=2
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=reaper reachable=2566
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=4956 props=96 lights=45 shadows=266
 AUTHORED PROPS: missing=0 clamped=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=vampire reachable=2566
 CHAPTER 1 COLLISION ROUTE TEST PASSED - 161 checks across ten live maps
