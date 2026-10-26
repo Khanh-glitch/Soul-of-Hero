@@ -523,7 +523,11 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 			var cell := Vector2i(face.x, top - step)
 			if floor.has(cell) or geometry.has(cell):
 				break
-			var frame_name := "wall_field_a"
+			# The storey above the face is the wall's plain coursing, never its
+			# framed course: a kit whose framed course carries a motif (the ossuary's
+			# skull frieze is set into `field_a`) otherwise stamps that motif up every
+			# row of every wall in the level, and the room reads as wallpaper.
+			var frame_name := "wall_field_b"
 			if posmod(face.x, 4) == 0:
 				frame_name = "wall_pier"
 			if not _put(layer, cell, frame_name):

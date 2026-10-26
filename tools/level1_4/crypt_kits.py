@@ -714,12 +714,20 @@ def skull(img, x0: int, y0: int, p: dict, *, tone: float = 1.0, sockets=True) ->
         px(img, x0 + 3 + i * 2, y0 + 8, shade(bone, 0.66))
 
 
-def ossuary_bone_course(p: dict, seed: int = 0):
+def ossuary_bone_course(p: dict, seed: int = 0, *, skulls: bool = True):
     """A wall coursed from stacked long bones, with a skull at every joint.
 
     This is the Ossuary Fork's wall. The bones are drawn as paired rounded shafts
     with dark seams between them; the skulls sit at the quarter points, so a run of
     these tiles reads as a *bond* of bone rather than as texture.
+
+    The skull is a *frieze*, not a texture, and that is why `skulls` exists. Stamped
+    into every course of every wall it was a repeating motif over the whole storey -
+    the renderer paints `field_a` on the second course and `field_b` above it - so
+    the level's walls read as wallpaper made of identical faces. The kit now gives
+    the skull to the framed course only and leaves the courses above it plain bone,
+    which is how a charnel wall is actually built: a frieze at eye height over plain
+    coursing.
     """
     img = new(T, T)
     base = shade(p["stone"], 0.88)
@@ -736,8 +744,9 @@ def ossuary_bone_course(p: dict, seed: int = 0):
             px(img, x0 + 3, y0 + 3, shade(shaft, 0.92))
             px(img, x0 + 6, y0 + 2, shade(shaft, 0.86))
         hline(img, 0, y0 + 7, T, p["mortar"])
-    # a skull set into the bond
-    skull(img, 1, 5, p, tone=1.04)
+    # a skull set into the bond - on the framed course only
+    if skulls:
+        skull(img, 1, 5, p, tone=1.04)
     return img
 
 
@@ -1527,14 +1536,14 @@ def build_ossuary_kit() -> None:
         ("floor_procession", lambda: ossuary_procession(p)),
     ], wall={
         "field_a": lambda: ossuary_bone_course(p),
-        "field_b": lambda: ossuary_bone_course(p, seed=3),
+        "field_b": lambda: ossuary_bone_course(p, seed=3, skulls=False),
         "dado": lambda: ossuary_skull_band(p),
         "plinth": lambda: wall_plinth_tile(shade(p["stone"], 0.70), p["iron"]),
         "cornice": lambda: ossuary_skull_band(p),
         "cap": lambda: wall_cap_tile(p["stone_pale"], shade(p["stone"], 0.9)),
     })
     tiles += [
-        ("wall_bone", lambda: ossuary_bone_course(p)),
+        ("wall_bone", lambda: ossuary_bone_course(p, skulls=False)),
         ("wall_skulls", lambda: ossuary_skull_band(p)),
         ("wall_field_c", lambda: wall_field_tile(61, shade(p["stone"], 0.94), p["mortar"])),
     ]
