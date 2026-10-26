@@ -248,8 +248,13 @@ def base_tiles(p: dict, *, floor_extra=None, wall=None) -> list:
     # wallpaper whatever is standing on it. The extra four are the same quadrants at
     # a different tone and with a different grain seed, so the joint rhythm is
     # untouched and the repeat no longer lands on a two-cell period.
-    variants = ((29, 1.00), (33, 0.94), (35, 1.05), (39, 0.97),
-                (29, 0.92), (33, 1.08), (35, 0.98), (39, 1.02))
+    # The tone spread is deliberately tiny. It was five to eight percent, and the
+    # renderer picks the variant from the cell's parity, so a room's floor came out as
+    # a checkerboard of 16 px squares in two greys - the single most generated-looking
+    # thing in the frame. Variation belongs in the *grain* (a different seed per
+    # variant), not in the value: a flagstone floor is one material.
+    variants = ((29, 1.00), (33, 0.985), (35, 1.010), (39, 0.995),
+                (41, 1.005), (43, 0.990), (45, 1.000), (47, 0.995))
     for index, (seed, tone) in enumerate(variants):
         name = "floor_%s" % "abcdefgh"[index]
         tiles.append((name, lambda sd=seed, tn=tone, q=index % 4: flag(p, sd, q, tone=tn)))
