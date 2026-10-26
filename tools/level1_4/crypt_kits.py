@@ -346,18 +346,38 @@ def crypt_floor_aisle(p: dict, side: str, seed: int = 3):
                 px(img, x, y, shade(dressed, 1.06))
             elif h < 0.10:
                 px(img, x, y, shade(dressed, 0.95))
-    # cross joints, so it reads as laid slabs rather than as a painted stripe
-    for y in (0, 8):
-        hline(img, 0, y, T, shade(dressed, 0.80))
-        hline(img, 0, y + 1, T, shade(dressed, 1.06))
+    # Cross joints, so it reads as laid slabs rather than as a painted stripe. They
+    # run *across* the strip, so they turn with it: a horizontal passage needs the
+    # joints standing up, not lying down.
+    if side in ("w", "e"):
+        for y in (0, 8):
+            hline(img, 0, y, T, shade(dressed, 0.80))
+            hline(img, 0, y + 1, T, shade(dressed, 1.06))
+    else:
+        for x in (0, 8):
+            vline(img, x, 0, T, shade(dressed, 0.80))
+            vline(img, x + 1, 0, T, shade(dressed, 1.06))
+    # The kerb sits on the strip's *outside* edge and the bronze inlay on its inside
+    # one, which is the joint it shares with the other half of the strip. That is why
+    # the frame comes in four sides rather than two: the crossing at Level 1's shaft
+    # runs east-west, and laying the north-south halves across it turned the kerb into
+    # a row of railings perpendicular to the passage.
     if side == "w":
         vline(img, 0, 0, T, p["stone_dark"])
         vline(img, 1, 0, T, p["stone_pale"])
         vline(img, T - 1, 0, T, p["accent"])
-    else:
+    elif side == "e":
         vline(img, T - 1, 0, T, p["stone_dark"])
         vline(img, T - 2, 0, T, p["stone_pale"])
         vline(img, 0, 0, T, p["accent"])
+    elif side == "n":
+        hline(img, 0, 0, T, p["stone_dark"])
+        hline(img, 0, 1, T, p["stone_pale"])
+        hline(img, 0, T - 1, T, p["accent"])
+    else:
+        hline(img, 0, T - 1, T, p["stone_dark"])
+        hline(img, 0, T - 2, T, p["stone_pale"])
+        hline(img, 0, 0, T, p["accent"])
     return img
 
 
@@ -400,6 +420,76 @@ def crypt_sarcophagus(p: dict):
     rect(img, 38, 13, 8, 2, shade(body, 1.18))
     rect(img, 46, 12, 4, 3, p["stone_pale"])
     hline(img, 2, 17, w - 4, shade(body, 0.64))
+    return finish(img)
+
+
+def crypt_sarcophagus_worn(p: dict) -> "Image.Image":
+    """A plainer tomb: a lid with a cross cut into it, weathered, and chipped.
+
+    Nine gisants in a row is a stamped pattern however well the figure is carved.
+    This is the same chest in a cheaper stone - no effigy, a cut cross and an
+    inscription band - and a corner knocked off, so a rank of tombs reads as a rank
+    of tombs rather than as one sprite repeated.
+    """
+    w, h = 58, 46
+    img = new(w, h)
+    body = shade(p["stone"], 0.94)          # a cheaper stone than the effigy chests
+    rect(img, 3, 32, w - 6, 4, shade(body, 0.74))
+    rect(img, 4, 34, w - 8, 8, shade(body, 0.60))
+    block(img, 3, 15, w - 6, 19, body, bevel=1)
+    # two panels, not four: a plain lid goes with a plain chest
+    for x0 in (7, w // 2 + 2):
+        rect(img, x0, 19, w // 2 - 12, 11, shade(body, 0.86))
+        frame_box(img, x0, 19, w // 2 - 12, 11, shade(body, 1.12))
+    # the lid: a cut cross and a band of lettering below it
+    block(img, 2, 9, w - 4, 8, shade(body, 1.10), bevel=1)
+    hline(img, 2, 9, w - 4, shade(p["stone_pale"], 0.94))
+    cx = w // 2 - 1
+    vline(img, cx, 10, 4, shade(body, 0.56))
+    hline(img, cx - 4, 12, 9, shade(body, 0.56))
+    for x in range(6, w - 6, 3):
+        px(img, x, 15, shade(body, 0.70))
+    # weathering: a few pale lichen spots and a chipped corner
+    for i, (x, y) in enumerate(((9, 36), (w - 12, 24), (16, 21), (w - 18, 37))):
+        px(img, x, y, mix(body, p["stone_pale"], 0.55))
+        px(img, x + 1, y, mix(body, p["stone_pale"], 0.35))
+    for y in range(h - 6, h):
+        for x in range(w - 7, w - 1):
+            if (x + y) % 3:
+                px(img, x, y, (0, 0, 0, 0))
+    hline(img, 2, 16, w - 4, shade(body, 0.66))
+    return finish(img)
+
+
+def crypt_sarcophagus_pair(p: dict) -> "Image.Image":
+    """Two small chests end to end in one slot: a family tomb, not a single burial.
+
+    The rank reads as furniture because every occupant is the same size. Splitting
+    one slot into two smaller chests changes the rhythm of the rank without changing
+    the floor it occupies.
+    """
+    w, h = 64, 44
+    img = new(w, h)
+    body = shade(p["stone_dark"], 1.12)
+    for index, (x0, cw) in enumerate(((2, 28), (34, 28))):
+        tone = shade(body, 1.0 if index == 0 else 0.94)
+        rect(img, x0, 30, cw, 3, shade(tone, 0.74))
+        rect(img, x0 + 1, 32, cw - 2, 7, shade(tone, 0.60))
+        block(img, x0, 16, cw, 16, tone, bevel=1)
+        rect(img, x0 + 4, 20, cw - 8, 8, shade(tone, 0.84))
+        frame_box(img, x0 + 4, 20, cw - 8, 8, shade(tone, 1.12))
+        # a small lid, one with a cross, one with a plain panel
+        block(img, x0, 11, cw, 6, shade(tone, 1.10), bevel=1)
+        hline(img, x0, 11, cw, shade(p["stone_pale"], 0.92))
+        if index == 0:
+            vline(img, x0 + cw // 2, 12, 3, shade(tone, 0.56))
+            hline(img, x0 + cw // 2 - 3, 13, 7, shade(tone, 0.56))
+        else:
+            rect(img, x0 + 6, 13, cw - 12, 2, shade(tone, 0.72))
+        hline(img, x0, 22, cw, shade(tone, 0.92))
+    # the gap between them is shadow, not floor
+    vline(img, 31, 12, 25, (18, 19, 22))
+    vline(img, 32, 12, 25, (30, 32, 36))
     return finish(img)
 
 
@@ -1395,6 +1485,8 @@ def build_crypt_kit() -> None:
     tiles = base_tiles(p, floor_extra=[
         ("floor_aisle_w", lambda: crypt_floor_aisle(p, "w")),
         ("floor_aisle_e", lambda: crypt_floor_aisle(p, "e")),
+        ("floor_aisle_n", lambda: crypt_floor_aisle(p, "n")),
+        ("floor_aisle_s", lambda: crypt_floor_aisle(p, "s")),
         ("floor_threshold", lambda: crypt_threshold_floor(p)),
     ], wall={
         # the storey above the socle is the columbarium: two arched loculi per cell,
@@ -1412,6 +1504,8 @@ def build_crypt_kit() -> None:
     ]
     props = [
         ("sarcophagus", lambda: crypt_sarcophagus(p)),
+        ("sarcophagus_worn", lambda: crypt_sarcophagus_worn(p)),
+        ("sarcophagus_pair", lambda: crypt_sarcophagus_pair(p)),
         ("sarcophagus_open", lambda: crypt_sarcophagus_open(p)),
         ("crypt_door", lambda: crypt_door(p)),
         ("crypt_door_ajar", lambda: crypt_door(p, ajar=True)),

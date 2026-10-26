@@ -281,9 +281,9 @@ def build_level1(level: dict) -> dict:
     # outside edge - so the crossing has to keep the split. Naming a single
     # `floor_aisle` frame that the kit does not draw left all 92 crossing cells with
     # no floor at all, which the validator missed while it skipped Level 1.
-    for y in (36, 37, 44, 45):
-        aisle += band(plan, floor, geom, y, 36, 51, "floor_aisle_w")
-        aisle += band(plan, floor, geom, y, 52, 68, "floor_aisle_e")
+    for y, side in ((36, "n"), (37, "s"), (44, "n"), (45, "s")):
+        aisle += band(plan, floor, geom, y, 36, 50, "floor_aisle_" + side)
+        aisle += band(plan, floor, geom, y, 53, 68, "floor_aisle_" + side)
     # thresholds: the sill under every doorway, in the level's own worn stone
     thresholds = 0
     for door in ("door_f1_to_f2", "door_f2_to_f1", "door_f2_to_f3", "door_f3_to_f2"):
@@ -380,7 +380,11 @@ def build_level1(level: dict) -> dict:
 
     # --- the galleries' own furniture: tomb rows down each long room, so a gallery
     #     reads as a place full of tombs rather than a corridor with two in it
-    tombs = ranks(p, ("sarcophagus", "sarcophagus", "sarcophagus_open"),
+    # Four kinds of burial, not one repeated: an effigy chest, a cheaper chest with a
+    # cut cross and a chipped corner, a two-burial chest, and the one that has been
+    # opened. A rank of identical gisants read as wallpaper from the camera.
+    tombs = ranks(p, ("sarcophagus", "sarcophagus_worn", "sarcophagus_pair",
+                      "sarcophagus", "sarcophagus_worn", "sarcophagus_open"),
                   every_x=8, every_y=8, off_x=3, off_y=2, skip=5)
     props += tombs
     for cell in ((30, 20), (60, 46), (86, 52), (44, 66)):

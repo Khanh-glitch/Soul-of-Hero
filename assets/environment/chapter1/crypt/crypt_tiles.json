@@ -133,26 +133,38 @@
       "w": 16,
       "h": 16
     },
-    "floor_threshold": {
+    "floor_aisle_n": {
       "x": 352,
       "y": 0,
       "w": 16,
       "h": 16
     },
-    "wall_loculus": {
+    "floor_aisle_s": {
       "x": 368,
       "y": 0,
       "w": 16,
       "h": 16
     },
-    "wall_threshold": {
+    "floor_threshold": {
       "x": 384,
       "y": 0,
       "w": 16,
       "h": 16
     },
-    "wall_vault": {
+    "wall_loculus": {
       "x": 400,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    "wall_threshold": {
+      "x": 416,
+      "y": 0,
+      "w": 16,
+      "h": 16
+    },
+    "wall_vault": {
+      "x": 432,
       "y": 0,
       "w": 16,
       "h": 16
