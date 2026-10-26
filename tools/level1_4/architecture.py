@@ -699,12 +699,22 @@ def build_level3(level: dict) -> dict:
     #     because that is where a locked cabinet would be: ornament tied to function,
     #     and it moves when the shelves move.
     walls = 0
+    galleries = 0
     for cell in sorted(faces):
         x, y = cell
         behind = (x, y - 2)
         if behind in geom:
             plan.wall_tile(cell, "wall_grille")
             walls += 1
+        # The storey above: a railed gallery carried round the room. The walls had
+        # nothing above the grille course but plain coursing to the cap, so the
+        # reading rooms had no height in them and no second floor to be read from
+        # the floor. The gallery is one course, two rows up, and only where the wall
+        # is actually thick enough behind it to be a wall and not a room's floor.
+        gallery = (x, y - 1)
+        if gallery in geom and (x, y - 3) in geom:
+            plan.wall_tile(gallery, "wall_gallery")
+            galleries += 1
 
     p = Placer(plan, level, floor, geom)
     props = 0
@@ -718,8 +728,26 @@ def build_level3(level: dict) -> dict:
     # A rank every five cells across and seven down, so a 44 px case leaves a
     # two-cell aisle on either side: dense enough that the room reads as a
     # scriptorium, open enough that the player can run and fight in it.
-    shelves = ranks(p, ("bookshelf", "bookshelf_b", "bookshelf_c", "bookshelf_b",
-                        "bookshelf_c"), every_x=5, every_y=7, off_x=1, off_y=2)
+    # A library is rows of cases with a cross aisle between the runs, not cases on a
+    # lattice: at a fixed stride on both axes the eye counts the same case in every
+    # direction and the room reads as a grid of furniture. A case is 44 px wide and
+    # stands in a 16 px cell, so cases sit three cells apart along a row (the bays),
+    # the rows are seven apart, and every fifth bay is a cross aisle the player can
+    # walk straight through. The runs are what give the room its direction.
+    shelves = 0
+    lane_frames = ("bookshelf", "bookshelf_b", "bookshelf_c", "bookshelf_b", "bookshelf_c")
+    for cell in sorted(walk(floor, geom)):
+        if cell[1] % 7 != 2 or cell[0] % 3 != 1:
+            continue
+        bay = cell[0] // 3
+        if bay % 5 == 3:
+            continue
+        if (bay + cell[1] // 7) % 4 == 0:
+            continue
+        if not p.free(cell, spacing=1):
+            continue
+        if p.put(lane_frames[(bay + cell[1] // 7) % len(lane_frames)], cell):
+            shelves += 1
     props += shelves
     # a few of the ranks are burnt out: the shell of a case, no books
     burnt = 0
@@ -788,6 +816,7 @@ def build_level3(level: dict) -> dict:
         "shelves": shelves,
         "burnt_shelves": burnt,
         "wall_dressing": walls,
+        "gallery_courses": galleries,
         "props": props,
     })
     return document

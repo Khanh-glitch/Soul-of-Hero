@@ -35065,6 +35065,13 @@
       },
       {
         "cell": [
+          20,
+          9
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           22,
           39
         ],
@@ -35073,9 +35080,23 @@
       {
         "cell": [
           22,
+          38
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
+          22,
           69
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          22,
+          68
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35086,10 +35107,24 @@
       },
       {
         "cell": [
+          29,
+          9
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           31,
           39
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          31,
+          38
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35100,10 +35135,24 @@
       },
       {
         "cell": [
+          33,
+          68
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           40,
           12
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          40,
+          11
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35114,10 +35163,24 @@
       },
       {
         "cell": [
+          43,
+          45
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           44,
           60
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          44,
+          59
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35129,9 +35192,23 @@
       {
         "cell": [
           48,
+          11
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
+          48,
           72
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          48,
+          71
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35142,10 +35219,24 @@
       },
       {
         "cell": [
+          53,
+          2
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           54,
           19
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          54,
+          18
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35156,10 +35247,24 @@
       },
       {
         "cell": [
+          54,
+          45
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           59,
           60
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          59,
+          59
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35170,10 +35275,24 @@
       },
       {
         "cell": [
+          62,
+          18
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           63,
           72
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          63,
+          71
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35184,10 +35303,24 @@
       },
       {
         "cell": [
+          66,
+          38
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           68,
           3
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          68,
+          2
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35198,10 +35331,24 @@
       },
       {
         "cell": [
+          72,
+          9
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           73,
           39
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          73,
+          38
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35212,10 +35359,24 @@
       },
       {
         "cell": [
+          80,
+          68
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           81,
           10
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          81,
+          9
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35226,10 +35387,24 @@
       },
       {
         "cell": [
+          86,
+          39
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           89,
           69
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          89,
+          68
+        ],
+        "frame": "wall_gallery"
       },
       {
         "cell": [
@@ -35240,6 +35415,13 @@
       },
       {
         "cell": [
+          90,
+          39
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           98,
           47
         ],
@@ -35247,18 +35429,32 @@
       },
       {
         "cell": [
+          98,
+          46
+        ],
+        "frame": "wall_gallery"
+      },
+      {
+        "cell": [
           102,
           47
         ],
         "frame": "wall_grille"
+      },
+      {
+        "cell": [
+          102,
+          46
+        ],
+        "frame": "wall_gallery"
       }
     ]
   },
   "props": [
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        6,
+        4,
         9
       ],
       "z": 1,
@@ -35269,20 +35465,8 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        6,
+        4,
         16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        6,
-        37
       ],
       "z": 1,
       "y_sort": true,
@@ -35292,43 +35476,73 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        6,
+        4,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        4,
         44
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        6,
+        4,
         72
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        11,
+        7,
         9
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        7,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        13,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        11,
+        13,
         16
       ],
       "z": 1,
@@ -35337,21 +35551,20 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        11,
+        13,
         37
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        11,
+        13,
         44
       ],
       "z": 1,
@@ -35360,9 +35573,9 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        11,
+        13,
         72
       ],
       "z": 1,
@@ -35371,7 +35584,7 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
         16,
         16
@@ -35379,11 +35592,10 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
         16,
         37
@@ -35402,26 +35614,13 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        21,
-        37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        21,
-        44
+        19,
+        9
       ],
       "z": 1,
       "y_sort": true,
@@ -35429,9 +35628,20 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        21,
+        22,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        28,
         72
       ],
       "z": 1,
@@ -35444,18 +35654,6 @@
       "cell": [
         31,
         9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        31,
-        16
       ],
       "z": 1,
       "y_sort": true,
@@ -35471,47 +35669,23 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        31,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
       "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        36,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        36,
+        34,
         16
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        36,
+        34,
         23
       ],
       "z": 1,
@@ -35520,10 +35694,10 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        36,
-        37
+        34,
+        30
       ],
       "z": 1,
       "y_sort": true,
@@ -35531,22 +35705,21 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        36,
+        34,
         44
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        36,
-        65
+        34,
+        72
       ],
       "z": 1,
       "y_sort": true,
@@ -35554,9 +35727,9 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        36,
+        34,
         79
       ],
       "z": 1,
@@ -35567,8 +35740,41 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        41,
+        37,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        37,
         16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        37,
+        23
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        37,
+        37
       ],
       "z": 1,
       "y_sort": true,
@@ -35578,31 +35784,7 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        41,
-        23
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        41,
-        37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        41,
+        37,
         44
       ],
       "z": 1,
@@ -35613,32 +35795,63 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        41,
+        37,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        37,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        43,
+        23
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        43,
+        30
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        43,
         51
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        41,
+        43,
         65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        41,
-        72
       ],
       "z": 1,
       "y_sort": true,
@@ -35646,19 +35859,18 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        41,
+        43,
         79
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
         46,
         16
@@ -35666,8 +35878,7 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
@@ -35681,7 +35892,18 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
+      "cell": [
+        46,
+        30
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
       "cell": [
         46,
         51
@@ -35700,22 +35922,10 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        46,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
         46,
         72
@@ -35723,8 +35933,7 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
@@ -35738,21 +35947,75 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        51,
+        49,
         9
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        51,
+        49,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        49,
+        23
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        49,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        49,
+        79
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        52,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        52,
         16
       ],
       "z": 1,
@@ -35763,31 +36026,18 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        51,
-        23
+        52,
+        30
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        51,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        51,
+        52,
         58
       ],
       "z": 1,
@@ -35796,32 +36046,20 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        56,
+        58,
         2
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        56,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        56,
+        58,
         23
       ],
       "z": 1,
@@ -35832,8 +36070,19 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        56,
-        37
+        58,
+        30
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        58,
+        44
       ],
       "z": 1,
       "y_sort": true,
@@ -35843,19 +36092,7 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        56,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        56,
+        58,
         51
       ],
       "z": 1,
@@ -35864,32 +36101,20 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        56,
+        58,
         58
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        56,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        56,
+        58,
         79
       ],
       "z": 1,
@@ -35906,8 +36131,7 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
@@ -35918,11 +36142,10 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
         61,
         37
@@ -35930,8 +36153,7 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
@@ -35945,7 +36167,7 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
         61,
         51
@@ -35953,11 +36175,10 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
         61,
         65
@@ -35965,8 +36186,7 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
@@ -35977,25 +36197,23 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        66,
+        64,
         2
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        66,
+        64,
         9
       ],
       "z": 1,
@@ -36006,19 +36224,95 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        66,
+        64,
         16
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        64,
+        30
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        66,
+        64,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        64,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        64,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        64,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        67,
+        2
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        67,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        67,
         23
       ],
       "z": 1,
@@ -36029,7 +36323,7 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        66,
+        67,
         65
       ],
       "z": 1,
@@ -36040,19 +36334,7 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        66,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        66,
+        67,
         79
       ],
       "z": 1,
@@ -36061,56 +36343,9 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        71,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        71,
-        16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        71,
-        23
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        71,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        71,
+        73,
         72
       ],
       "z": 1,
@@ -36119,78 +36354,9 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        71,
-        79
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
-        37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        76,
+        73,
         79
       ],
       "z": 1,
@@ -36199,160 +36365,9 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf",
       "cell": [
-        81,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        81,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        86,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        86,
-        16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        86,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        86,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        86,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        91,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        91,
-        37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        91,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        91,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        91,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        96,
-        16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        96,
+        76,
         37
       ],
       "z": 1,
@@ -36363,19 +36378,359 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        96,
+        76,
         44
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        76,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        76,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
     },
     {
       "frame": "bookshelf_b",
       "cell": [
-        96,
+        79,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        82,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        82,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        82,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        88,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        88,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        88,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        91,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        91,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        91,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        94,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        94,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        97,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        97,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        97,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        97,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        97,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        97,
+        72
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        103,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        103,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        103,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        103,
+        65
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        106,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        106,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        106,
+        51
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        109,
+        9
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        109,
+        16
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_b",
+      "cell": [
+        109,
+        37
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf_c",
+      "cell": [
+        109,
+        44
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        109,
         65
       ],
       "z": 1,
@@ -36386,78 +36741,7 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        96,
-        72
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
-        9
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
-        16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
-        37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        101,
+        109,
         72
       ],
       "z": 1,
@@ -36468,65 +36752,18 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        106,
-        16
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        106,
-        44
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        106,
-        51
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        106,
-        65
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        111,
+        112,
         9
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        111,
+        112,
         16
       ],
       "z": 1,
@@ -36535,22 +36772,10 @@
       "anchor": "base"
     },
     {
-      "frame": "bookshelf_b",
+      "frame": "bookshelf_c",
       "cell": [
-        111,
+        112,
         37
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base",
-      "flip": true
-    },
-    {
-      "frame": "bookshelf_b",
-      "cell": [
-        111,
-        44
       ],
       "z": 1,
       "y_sort": true,
@@ -36560,14 +36785,13 @@
     {
       "frame": "bookshelf_b",
       "cell": [
-        111,
-        51
+        112,
+        44
       ],
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base",
-      "flip": true
+      "anchor": "base"
     },
     {
       "frame": "bookshelf",
@@ -36583,8 +36807,8 @@
     {
       "frame": "bookshelf",
       "cell": [
-        11,
-        66
+        10,
+        7
       ],
       "z": 1,
       "y_sort": true,
@@ -36594,8 +36818,19 @@
     {
       "frame": "bookshelf",
       "cell": [
-        14,
-        7
+        10,
+        35
+      ],
+      "z": 1,
+      "y_sort": true,
+      "low": false,
+      "anchor": "base"
+    },
+    {
+      "frame": "bookshelf",
+      "cell": [
+        11,
+        66
       ],
       "z": 1,
       "y_sort": true,
@@ -36616,30 +36851,8 @@
     {
       "frame": "bookshelf",
       "cell": [
-        18,
-        7
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         26,
         11
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
-        27,
-        70
       ],
       "z": 1,
       "y_sort": true,
@@ -36660,8 +36873,8 @@
     {
       "frame": "bookshelf",
       "cell": [
-        33,
-        4
+        31,
+        70
       ],
       "z": 1,
       "y_sort": true,
@@ -36671,8 +36884,8 @@
     {
       "frame": "bookshelf",
       "cell": [
-        35,
-        30
+        33,
+        4
       ],
       "z": 1,
       "y_sort": true,
@@ -36748,17 +36961,6 @@
     {
       "frame": "bookshelf",
       "cell": [
-        43,
-        30
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         44,
         13
       ],
@@ -36803,17 +37005,6 @@
     {
       "frame": "bookshelf",
       "cell": [
-        47,
-        30
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         48,
         13
       ],
@@ -36849,17 +37040,6 @@
       "cell": [
         50,
         47
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
-        51,
-        30
       ],
       "z": 1,
       "y_sort": true,
@@ -36957,28 +37137,6 @@
     {
       "frame": "bookshelf",
       "cell": [
-        59,
-        30
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
-        60,
-        1
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         60,
         61
       ],
@@ -37012,17 +37170,6 @@
     {
       "frame": "bookshelf",
       "cell": [
-        63,
-        30
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         64,
         61
       ],
@@ -37036,17 +37183,6 @@
       "cell": [
         68,
         61
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
-        69,
-        4
       ],
       "z": 1,
       "y_sort": true,
@@ -37331,17 +37467,6 @@
     {
       "frame": "bookshelf",
       "cell": [
-        109,
-        64
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "bookshelf",
-      "cell": [
         110,
         31
       ],
@@ -37571,28 +37696,6 @@
       "y_sort": true,
       "low": false,
       "anchor": "base"
-    },
-    {
-      "frame": "ladder",
-      "cell": [
-        46,
-        30
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
-    },
-    {
-      "frame": "ladder",
-      "cell": [
-        58,
-        58
-      ],
-      "z": 1,
-      "y_sort": true,
-      "low": false,
-      "anchor": "base"
     }
   ],
   "lights": [
@@ -37713,13 +37816,14 @@
     "ash_cells": 1252,
     "board_cells": 127,
     "register_cells": 46,
-    "shelves": 186,
+    "shelves": 185,
     "burnt_shelves": 0,
     "wall_dressing": 28,
-    "props": 197,
+    "gallery_courses": 28,
+    "props": 194,
     "floor_overrides": 5004,
-    "wall_overrides": 28,
-    "props_total": 197,
+    "wall_overrides": 56,
+    "props_total": 194,
     "lights_total": 7,
     "lights_resized": 7,
     "lights_dimmed": 0
