@@ -165,13 +165,30 @@ jobs:
           rc = 0
           capture_re = re.compile(r"CHAPTER1 CAPTURE: level=(\S+) slot=(\d+) art=(\w+) facade_cells=(\d+) lights=(\d+)")
           authored_re = re.compile(r"AUTHORED ART: kit=(\w+) floor_detail=(\d+) wall_cells=(\d+) bedrock=(\d+) props=(\d+) lights=(\d+) shadows=(\d+)")
+          # Renderer contract: `CrucibleArt.doc_for()` resolves a level's document from
+          # its map file name, so `<map stem>_architecture.json`. Level 1's map is
+          # `crypt_entrance.json`, not `chapter_1_level_1.json`, so a gate that assumed
+          # the level id was the map name skipped Level 1 - the level it was written to
+          # check first - and reported "shared presentation layer only" for a level that
+          # ships 36 wall placements and 59 props.
+          index = json.loads(pathlib.Path("data/environment/chapter1/chapter_index.json").read_text())
+          map_for = {row["level_id"]: row["map"] for row in index.get("levels", [])}
           for n in range(1, 11):
               level = "chapter_1_level_%d" % n
               log = pathlib.Path(".artifacts/chapter1/%s_after.log" % level)
               text = log.read_text(errors="replace") if log.exists() else ""
               capture = capture_re.search(text)
-              authored = authored_re.search(text)
-              document = pathlib.Path("data/levels/%s_architecture.json" % level)
+              # The authored layer is reported for every level the app builds, and the
+              # app builds one at boot before the campaign level is entered - so the
+              # *first* AUTHORED ART line in a log belongs to that boot level, not to
+              # the level being captured. Read the last authored build that precedes
+              # this level's own capture line, and nothing else.
+              head = text[:capture.start()] if capture is not None else text
+              authored = None
+              for authored in authored_re.finditer(head):
+                  pass
+              stem = pathlib.Path(map_for.get(level, level + ".json")).stem
+              document = pathlib.Path("data/levels/%s_architecture.json" % stem)
               if capture is None:
                   print("GATE FAIL %s: no CHAPTER1 CAPTURE line; the level never photographed" % level)
                   for line in text.splitlines():
