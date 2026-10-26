@@ -563,6 +563,74 @@ func _build_walls(floor: Dictionary, geometry: Dictionary) -> void:
 		var course := "wall_field_b" if posmod(cell.x + cell.y, 2) else "wall_field_a"
 		if _put(layer, cell, course):
 			painted += 1
+	# 5. A sealed pocket in the masonry is masonry. Step 4 only reaches cells the
+	#    *map* calls solid; the two four-by-four pier blocks flanking L10's throne are
+	#    drawn as a one-cell ring, and their two-by-two interiors are in neither
+	#    Backdrop nor Geometry. The fill skipped them, the layer below showed through,
+	#    and from the gameplay camera the piers read as two black holes ringed by
+	#    paper-thin wall. A four-sided neighbour test cannot see them, because each
+	#    interior cell's neighbours are the other interior cells, so the test is
+	#    reachability: flood the open space out from every floor cell, then group what
+	#    the flood could not reach into pockets and close the small ones.
+	#
+	#    Size is the discriminator, not distance. The void outside a room is sealed
+	#    too, and it is meant to be dark - painting it would put masonry over the
+	#    surround the chapter is framed by. A pocket this small cannot be a space the
+	#    player is ever in; it is the inside of a pier, a baluster or a wall mass.
+	var void_lo := Vector2i(1 << 30, 1 << 30)
+	var void_hi := Vector2i(-(1 << 30), -(1 << 30))
+	for cell: Vector2i in geometry:
+		void_lo.x = mini(void_lo.x, cell.x)
+		void_lo.y = mini(void_lo.y, cell.y)
+		void_hi.x = maxi(void_hi.x, cell.x)
+		void_hi.y = maxi(void_hi.y, cell.y)
+	var reached := {}
+	var queue: Array[Vector2i] = []
+	for cell: Vector2i in floor:
+		reached[cell] = true
+		queue.append(cell)
+	var head := 0
+	while head < queue.size():
+		var open: Vector2i = queue[head]
+		head += 1
+		for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var next := open + step
+			if next.x < void_lo.x or next.x > void_hi.x or next.y < void_lo.y or next.y > void_hi.y:
+				continue
+			if reached.has(next) or geometry.has(next):
+				continue
+			reached[next] = true
+			queue.append(next)
+	const POCKET_CELLS := 12
+	var grouped := {}
+	for y: int in range(void_lo.y, void_hi.y + 1):
+		for x: int in range(void_lo.x, void_hi.x + 1):
+			var cell := Vector2i(x, y)
+			if floor.has(cell) or geometry.has(cell) or reached.has(cell) or grouped.has(cell):
+				continue
+			var pocket: Array[Vector2i] = [cell]
+			var pocket_seen := {cell: true}
+			var cursor := 0
+			while cursor < pocket.size() and pocket.size() <= POCKET_CELLS:
+				var inside: Vector2i = pocket[cursor]
+				cursor += 1
+				for step: Vector2i in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+					var next := inside + step
+					if pocket_seen.has(next) or geometry.has(next) or floor.has(next):
+						continue
+					if reached.has(next):
+						continue
+					pocket_seen[next] = true
+					pocket.append(next)
+			for member: Vector2i in pocket:
+				grouped[member] = true
+			if pocket.size() > POCKET_CELLS:
+				continue
+			for member: Vector2i in pocket:
+				if layer.get_cell_source_id(member) != -1:
+					continue
+				if _put(layer, member, "wall_field_b"):
+					painted += 1
 	layer.update_internals()
 	stats["walls"] = painted
 
