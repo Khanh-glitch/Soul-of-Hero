@@ -347,7 +347,7 @@ def vampire_wing(p: Placer, rect, wing_of) -> int:
             placed += p.wall("candlestand", cell, light=rose_light(cell, 0.50, 1.4),
                              note="candelabrum")
     placed += p.floor_prop("fountain", (x0 + 9, y0 + 12), light=rose_light(
-        (x0 + 9, y0 + 12), 0.9, 2.3, -34, "the wine fountain"), note="wine fountain")
+        (x0 + 9, y0 + 12), 0.62, 2.0, -34, "the wine fountain"), note="wine fountain")
     placed += p.floor_prop("banquet", (x0 + 13, y0 + 1), note="banquet left standing")
     placed += p.floor_prop("banquet", (x0 + 22, y0 + 1), note="banquet left standing")
     placed += p.floor_prop("banquet", (x0 + 13, y1 - 1), note="banquet left standing")
@@ -389,7 +389,7 @@ def vault(p: Placer, rect, exit_cell, chest_cell) -> int:
     for dx in (-2, 2):
         placed += p.wall("column", (exit_cell[0] + dx, VAULT_WALL),
                          light=gold_light((exit_cell[0] + dx, VAULT_WALL),
-                                          0.75, 1.8, 8, "exit gate light"),
+                                          0.42, 1.5, 8, "exit gate light"),
                          note="exit gate pier")
     placed += p.wall("gate_frame", (exit_cell[0], VAULT_WALL),
                      note="exit gate arch")
@@ -412,7 +412,7 @@ def vault(p: Placer, rect, exit_cell, chest_cell) -> int:
     placed += p.floor_prop("goblets", (x0 + 6, y1 - 1), note="offering cups")
     # the dais is lit from the wall, not by furniture standing in the walkway
     for cx in (chest_cell[0] - 5, chest_cell[0] + 5):
-        plan_light = rose_light((cx, chest_cell[1] + 1), 0.5, 1.6, 0,
+        plan_light = rose_light((cx, chest_cell[1] + 1), 0.36, 1.5, 0,
                                 "vault dais light")
         p.plan.lights.append(plan_light)
     return placed
