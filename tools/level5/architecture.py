@@ -216,6 +216,21 @@ class Plan:
         self.props.append(entry)
 
 
+# The crucible is no longer a flat basin sunk into its cell: it is a raised vessel
+# whose blood bowl sits far above the cell it is anchored to. A light placed at the
+# anchor therefore lit the plinth and the floor while the vessel itself stayed cold,
+# which is the opposite of what a fire in a bowl does. Anchor the glow to the bowl.
+CRUCIBLE_H = 224        # sprite height, from art_crucible.prop_crucible
+CRUCIBLE_BOWL_Y = 58    # rim ellipse, measured from the sprite's top
+
+
+def crucible_glow(cell, scale, *, energy, radius, colour=(1.0, 0.56, 0.38)):
+    """A point light in the bowl of a crucible drawn at `scale`, anchored at `cell`."""
+    x = cell[0] * T + T // 2
+    y = (cell[1] + 1) * T - int((CRUCIBLE_H - CRUCIBLE_BOWL_Y) * scale)
+    return {"x": x, "y": y, "color": list(colour), "energy": energy, "scale": radius}
+
+
 # ---------------------------------------------------------------------------
 # Floor 1 — Processional Forecourt (y 0..30)
 # ---------------------------------------------------------------------------
@@ -284,8 +299,7 @@ def floor_one(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     # --- THE ALTAR: raised crucible on the existing solid island ----------
     plan.prop("crucible_small", (48, 15), z=1, low=True, anchor="center",
               note="raised crucible, built on the level's own solid island (x44..52, y11..18)",
-              light={"x": 48 * T + 8, "y": 14 * T + 8, "color": [1.0, 0.56, 0.38],
-                     "energy": 1.25, "scale": 5.6})
+              light=crucible_glow((48, 15), 0.80, energy=1.02, radius=3.4))
     # altar dressing on the island's shoulders
     plan.prop("altar", (44, 11), z=2, note="offering table on the altar island's west shoulder")
     plan.prop("stand", (52, 12), z=2, note="brass feed pipes into the crucible's east side")
@@ -424,8 +438,8 @@ def floor_two(plan: Plan, floor: set, geom: set, faces: list, guard: set) -> Non
     court_cx, court_cy = 91, 46
     plan.prop("crucible_grand", (91, 46), z=1, low=True, anchor="center",
               note="monumental sunken basin at the centre of the blood court",
-              light={"x": court_cx * T + 8, "y": court_cy * T + 8,
-                     "color": [1.0, 0.52, 0.34], "energy": 1.45, "scale": 5.4})
+              light=crucible_glow((court_cx, court_cy), 1.24, energy=1.12, radius=4.0,
+                                  colour=(1.0, 0.52, 0.34)))
     # paved apron ringing the basin
     for y in range(court_cy - 6, court_cy + 7):
         for x in range(court_cx - 10, court_cx + 11):

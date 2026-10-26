@@ -855,72 +855,280 @@ def _ellipse_top(img, cx: float, cy: float, rx: float, ry: float, colour, *,
                 px(img, x, y, col + (alpha,) if len(col) == 3 else col)
 
 
-def prop_crucible(w: int = 216, h: int = 168, scale: float = 1.0) -> Image.Image:
-    """The Blood Court basin: a monumental sunken ritual basin in cut stone.
+def _ellipse_span(cx: float, cy: float, rx: float, ry: float, y: int) -> tuple:
+    """Horizontal extent of an ellipse on one row, or (0, 0) outside it."""
+    dy = (y - cy) / max(0.001, ry)
+    if abs(dy) >= 1.0:
+        return 0.0, 0.0
+    half = rx * math.sqrt(max(0.0, 1.0 - dy * dy))
+    return cx - half, cx + half
 
-    Built the way the real thing would be: an apron of paving the basin is set
-    into, a coping course, a ring of jointed rim blocks with iron cramps, then the
-    bowl inside — coursed masonry walls going down, with the blood lying in it.
-    The near (south) wall is drawn *over* the blood, so the blood reads as a
-    surface below the rim rather than as a red disc dropped on top of one. Damage
-    on the north east rim (blocks knocked out, a snapped cramp, spill down the
-    face, rubble at the foot) is the story of the thing that got out.
+
+def prop_crucible(w: int = 232, h: int = 224, scale: float = 1.0) -> Image.Image:
+    """The Blood Court's crucible: a raised cauldron on a stepped plinth.
+
+    The first version was drawn from above - concentric rings of cut stone round an
+    ellipse of blood - and from the gameplay camera that is a drain cover. A ritual
+    vessel is a *thing with height*, and height is what a top-down drawing has to
+    fake, so this one is built in three-quarter view out of five parts:
+
+    * three steps, each with a lit tread and a shadowed riser, so the base grows;
+    * a barrel: an elliptical drum whose silhouette between its two ellipses is the
+      wider of the two on every row (drawing two ellipses and joining them with a
+      rectangle leaves the corners of the barrel unpainted and the vessel comes
+      apart into a disc floating over a bucket);
+    * three iron hoops that follow that silhouette, each with rivets and a hasp;
+    * a heavy overhanging rim: an outer ellipse wider than the barrel, a shadowed
+      underside, and an opening whose near edge is drawn over the blood, so the
+      blood sits *inside* the vessel with stone in front of it;
+    * a bronze delivery pipe bolted to the rim, running blood out to the channel.
+
+    All five are measured from the same two ellipses, so the bands cannot drift.
     """
     w, h = int(w * scale), int(h * scale)
     img = new(w, h)
-    cx = w / 2
-    cy = 52.0 * scale
     rng = random.Random(0x51AC)
-    # Every ring is measured in *one* normalised radial space (RX, RY) so the
-    # bands tile edge to edge. Measuring each ring against its own radii leaves
-    # unpainted slivers between them, which is exactly what a previous version did.
-    RX, RY = 106.0 * scale, 64.0 * scale
-    open_rx, open_ry = RX * 0.60, RY * 0.60
+    cx = w / 2.0
 
-    # --- the apron and the coping: the basin is set into built paving ------
-    ring_masonry(img, cx, cy, RX, RY, 0.91, 1.0, shade(BASALT_L, 0.94), 0x11, blocks=38)
-    ring_masonry(img, cx, cy, RX, RY, 0.82, 0.91, WARM_L, 0x22, blocks=32)
-    # --- the rim proper: big cut blocks, lit on the north edge ------------
-    ring_masonry(img, cx, cy, RX, RY, 0.68, 0.82, WARM_M, 0x33, blocks=20, damage=(4, 5))
-    # --- the lip: a hard shadow under the overhang ------------------------
-    ring_masonry(img, cx, cy, RX, RY, 0.60, 0.68, WARM_D, 0x44, blocks=20, lit=False)
+    rim_y = 58.0 * scale                  # centre of the rim ellipse
+    RX, RY = 96.0 * scale, 32.0 * scale    # the rim: the widest part of the vessel
+    drum_rx, drum_ry = RX * 0.92, RY * 0.96
+    drum_top = rim_y + 6 * scale
+    drum_bottom = rim_y + 108 * scale
+    foot_ry = drum_ry * 0.46
+    step_h = int(13 * scale)              # the plinth's three steps
+    y_floor = h - int(20 * scale)
 
-    # --- the bowl: coursed masonry all the way down -----------------------
-    def bowl_tone(depth: int, u: float, band_y: int):
-        course = depth // 8
-        tone = 0.78 + 0.16 * _hash01(0x55, int(u * 9), course)
-        tone *= 1.0 - 0.30 * min(1.0, depth / 60.0)
-        col = shade(WARM_D, tone)
-        if abs((u * 9) % 1.0) < 0.05:
-            col = shade(WARM_D, 0.50)
-        if band_y % 8 == 0:
-            col = shade(col, 0.55)
-        return col
+    def span(cx_, cy_, rx_, ry_, y_):
+        return _ellipse_span(cx_, cy_, rx_, ry_, y_)
 
-    def opening_half(y: float) -> float:
-        dy = (y - cy) / open_ry
-        if abs(dy) >= 1.0:
-            return 0.0
-        return open_rx * math.sqrt(max(0.0, 1.0 - dy * dy))
+    # --- the barrel ---------------------------------------------------------
+    def barrel_span(y):
+        """The silhouette of a cylinder: straight sides, elliptical ends.
 
-    for y in range(int(cy - open_ry) + 1, int(cy + open_ry)):
-        half = opening_half(y)
-        if half <= 0:
+        Taking the union of the top and bottom ellipses row by row is *not* the
+        silhouette of the cylinder between them - it pinches at the waist and leaves
+        the vessel looking like two discs with a stem. Between the two end ellipses a
+        cylinder is vertical, so the sides are the drum's own radius, and only the
+        ends curve.
+        """
+        if drum_top <= y <= drum_bottom:
+            return cx - drum_rx, cx + drum_rx
+        if y < drum_top:
+            return span(cx, drum_top, drum_rx, drum_ry, y)
+        return span(cx, drum_bottom, drum_rx, foot_ry, y)
+
+    band = max(8, int(13 * scale))
+    for y in range(int(drum_top - drum_ry), int(drum_bottom + foot_ry) + 1):
+        x0, x1 = barrel_span(y)
+        if x1 <= x0:
             continue
-        depth = int(abs(y - cy) * 0.9)
-        for x in range(int(cx - half), int(cx + half) + 1):
-            u = (x - cx) / max(1.0, half)
-            px(img, x, y, bowl_tone(depth, u, y))
+        t = max(0.0, min(1.0, (y - drum_top) / max(1.0, drum_bottom - drum_top)))
+        course = int((y - (drum_top - drum_ry)) // band)
+        for x in range(int(x0), int(x1) + 1):
+            u = (x - cx) / max(1.0, drum_rx)
+            tone = 1.14 - 0.34 * max(0.0, u) - 0.10 * t - 0.16 * abs(u)
+            grain = 0.95 + 0.10 * _hash01(0x61, int(u * 13), course)
+            px(img, x, y, shade(WARM_M, tone * grain))
+        # bed joint along the bottom of each course
+        if (y - (drum_top - drum_ry)) % band == 0:
+            for x in range(int(x0), int(x1) + 1):
+                px(img, x, y, shade(WARM_D, 0.78))
+        # staggered perpends, inside the barrel only
+        for j in range(-7, 8):
+            jx = int(cx + j * 14 * scale + (course % 2) * 7 * scale)
+            if x0 + 2 < jx < x1 - 2:
+                for dy in range(1, band):
+                    if (y - (drum_top - drum_ry)) % band == dy:
+                        px(img, jx, y, shade(WARM_D, 0.92))
 
-    # --- the blood: a surface below the rim -------------------------------
-    # Clipped to the opening row by row, so it can never spill onto the bowl wall
-    # or the rim. It sits low in the bowl, which leaves lit masonry in front of
-    # it: that band of stone is what reads as depth.
-    bcy = cy + 18
-    brx, bry = open_rx * 0.74, open_ry * 0.60
+    # --- the delivery pipe: bolted to the rim, hanging in front of the barrel
+    # It is drawn *before* the plinth, so the base occludes its foot: a pipe running
+    # over the front of the base would be in front of the stone it is bolted to.
+    pipe_x = int(cx + RX * 0.56)
+    pipe_top = int(rim_y + 10 * scale)
+    pipe_len = int(drum_bottom - rim_y - 4 * scale)
+    pw = max(3, int(8 * scale))
+    rect(img, pipe_x - pw // 2, pipe_top, pw, pipe_len, BRASS_D)
+    rect(img, pipe_x - pw // 2 + 1, pipe_top, max(2, pw // 2 - 1), pipe_len, BRASS_M)
+    hline(img, pipe_x - pw // 2, pipe_top, pw, BRASS_HI)
+    rect(img, pipe_x - pw, pipe_top - int(3 * scale), pw * 2, int(5 * scale), BRASS_M)
+    hline(img, pipe_x - pw, pipe_top - int(3 * scale), pw * 2, BRASS_HI)
+    # the tap, and the blood leaving it
+    tap_y = pipe_top + int(8 * scale)
+    rect(img, pipe_x + pw // 2 - 1, tap_y, int(9 * scale), max(2, int(3 * scale)), BRASS_L)
+    px(img, pipe_x + pw // 2 + int(8 * scale), tap_y + 1, BRASS_HI)
+    spill_x = pipe_x + pw // 2
+    spout_y = tap_y + int(4 * scale)
+    spill_end = y_floor - step_h * 3 + int(foot_ry * 0.2)
+    for y in range(spout_y, spill_end):
+        t = (y - spout_y) / max(1.0, float(spill_end - spout_y))
+        width = max(1, int((2 + t * 7) * scale))
+        for x in range(spill_x - width, spill_x + width + 1):
+            px(img, x, y, OX_D if (x + y) % 3 else OX_M)
+
+    # --- the plinth: three steps, drawn after the barrel so they occlude it --
+    # Each step is a *slice of a cylinder*: a top ellipse (the tread you would stand
+    # on), a bottom ellipse, and straight sides between them. Painting the tread
+    # separately from the riser at the same centre - the earlier attempt - reads as a
+    # stack of pancakes, and letting the joint lines run past the bottom ellipse
+    # leaves a row of posts hanging under the base.
+    for index, width_scale in enumerate((1.22, 1.10, 1.00)):   # bottom first
+        rx = drum_rx * width_scale
+        ry = foot_ry * width_scale
+        y_top = y_floor - step_h * (3 - index)
+        y_bot = y_top + step_h
+        # The base stands in the vessel's own shadow, so it is drawn one step
+        # lighter than the logic of the palette suggests: at the grand scale a dark
+        # plinth reads as a hole in the floor rather than as stone.
+        tread_col, riser_col = (WARM_L, WARM_M)
+        for y in range(int(y_top - ry), int(y_bot + ry) + 1):
+            if y_top <= y <= y_bot:
+                x0, x1 = cx - rx, cx + rx
+            elif y < y_top:
+                x0, x1 = span(cx, y_top, rx, ry, y)
+            else:
+                x0, x1 = span(cx, y_bot, rx, ry, y)
+            if x1 <= x0:
+                continue
+            for x in range(int(x0), int(x1) + 1):
+                u = (x - cx) / max(1.0, rx)
+                on_tread = math.hypot((x - cx) / rx, (y - y_top) / ry) <= 1.0
+                if on_tread:
+                    col = shade(tread_col, 1.02 - 0.16 * abs(u) - 0.12 * max(0.0, u))
+                else:
+                    down = max(0.0, min(1.0, (y - y_top) / float(step_h)))
+                    col = shade(riser_col, 0.96 - 0.34 * down - 0.18 * max(0.0, u))
+                px(img, x, y, col)
+        # the tread's front lip catches light; the rim of the step below it does not
+        for x in range(int(cx - rx), int(cx + rx) + 1):
+            for y in range(int(y_top), int(y_top + ry) + 1):
+                if math.hypot((x - cx) / rx, (y - y_top) / ry) <= 1.0 and \
+                        math.hypot((x - cx) / rx, (y - y_top - 1) / ry) > 1.0:
+                    px(img, x, y, shade(WARM_HI, 0.88))
+                    break
+        # grain in the tread, and the drum's own footprint cast onto the top step:
+        # without the cast shadow the base reads as a table the vessel stands behind,
+        # not one it stands on
+        for y in range(int(y_top - ry), int(y_bot + ry) + 1):
+            for x in range(int(cx - rx), int(cx + rx) + 1):
+                if math.hypot((x - cx) / rx, (y - y_top) / ry) > 1.0:
+                    continue
+                if index == 2:
+                    # contact shadow: darkest where the barrel meets the step, gone by
+                    # the step's edge. A hard ellipse here reads as a hole in the base.
+                    d = math.hypot((x - cx) / (drum_rx * 1.04),
+                                   (y - drum_bottom) / (foot_ry * 1.35))
+                    if d < 1.0:
+                        px(img, x, y, shade(riser_col, 0.48 + 0.46 * d))
+        # a shadow arc under the step's front lip, so each setback separates from the
+        # one below it instead of the whole plinth reading as one pale slab
+        for x in range(int(cx - rx) + 1, int(cx + rx)):
+            for y in (int(y_bot + ry) - 1, int(y_bot + ry)):
+                if math.hypot((x - cx) / rx, (y - y_bot) / ry) <= 1.0:
+                    px(img, x, y, shade(riser_col, 0.52))
+        # a course line across each riser, so the base is masonry and not a wash
+        mid = int((y_top + y_bot) / 2 + ry * 0.35)
+        for x in range(int(cx - rx) + 1, int(cx + rx)):
+            if math.hypot((x - cx) / rx, (mid - y_bot) / ry) <= 0.99:
+                px(img, x, mid, shade(riser_col, 0.72))
+        # block joints, confined to the riser so nothing hangs past the silhouette
+        for j in range(-3, 4):
+            jx = int(cx + j * rx / 3.3)
+            if not (cx - rx + 2 < jx < cx + rx - 2):
+                continue
+            for y in range(int(y_top + ry * 0.6), int(y_bot + ry * 0.9) + 1):
+                if y_top <= y <= y_bot or math.hypot((jx - cx) / rx, (y - y_bot) / ry) <= 0.98:
+                    px(img, jx, y, shade(riser_col, 0.60))
+
+    # the stain where the blood runs off the pipe: it falls down the drum's face and
+    # is lost behind the plinth, so what you actually see is the wet darkening at the
+    # foot of the barrel and a pool on the floor beside the base - not a rope of blood
+    # hanging in front of masonry it could not be in front of
+    for y in range(spill_end - int(10 * scale), spill_end + 2):
+        t = (y - (spill_end - 10 * scale)) / max(1.0, 10 * scale)
+        half = max(1, int((3 + t * 9) * scale))
+        for x in range(spill_x - half, spill_x + half + 1):
+            px(img, x, y, OX_D if (x + y) % 4 else OX_M)
+
+    # --- iron hoops: bands whose ends follow the barrel's own silhouette ----
+    for hoop_t, tone in ((0.46, 1.0), (0.72, 0.92), (0.96, 0.84)):
+        hy = int(drum_top + (drum_bottom - drum_top) * hoop_t)
+        hoop_h = max(4, int(7 * scale))
+        for x in range(0, w):
+            x0, x1 = barrel_span(hy)
+            if not (x0 + 1 <= x <= x1 - 1):
+                continue
+            u = (x - cx) / max(1.0, drum_rx)
+            sag = int((1.0 - math.sqrt(max(0.0, 1.0 - min(1.0, u * u)))) * 5 * scale)
+            for dy in range(hoop_h):
+                px(img, x, hy + sag + dy,
+                   shade(IRON_M, tone * (1.14 - 0.55 * (dy / hoop_h) - 0.28 * max(0.0, u))))
+            px(img, x, hy + sag - 1, shade(IRON_L, tone))
+        # rivets and a hasp on the front
+        for x in range(int(cx - drum_rx) + 6, int(cx + drum_rx) - 4, max(6, int(11 * scale))):
+            x0, x1 = barrel_span(hy)
+            if not (x0 + 1 <= x <= x1 - 1):
+                continue
+            u = (x - cx) / max(1.0, drum_rx)
+            sag = int((1.0 - math.sqrt(max(0.0, 1.0 - min(1.0, u * u)))) * 5 * scale)
+            px(img, x, hy + sag + 2, IRON_HI)
+        plate_w, plate_h = max(6, int(14 * scale)), max(5, int(10 * scale))
+        rect(img, int(cx - plate_w / 2), hy + int(4 * scale), plate_w, plate_h,
+             shade(IRON_L, 0.92))
+        hline(img, int(cx - plate_w / 2), hy + int(4 * scale), plate_w, IRON_HI)
+        rect(img, int(cx - 2 * scale), hy + int(6 * scale), max(2, int(4 * scale)),
+             max(2, int(3 * scale)), BRASS_M)
+
+    # --- a skull frieze round the drum's top course, and one repaired block --
+    # The frieze belongs on the band of plain stone just under the rim's near edge:
+    # a mason carves it high, and it is also the only band of the drum the
+    # overhanging rim does not paint over. It was invisible where it started.
+    frieze_y = int(rim_y + RY + 5 * scale)
+    for index in range(-3, 4):
+        if index == 2:
+            continue
+        _skull_mark(img, int(cx + index * 22 * scale - 6 * scale), frieze_y, scale)
+    rx0 = int(cx + 2 * 22 * scale - 10 * scale)
+    rect(img, rx0, frieze_y - 5, int(18 * scale), int(15 * scale), shade(WARM_L, 0.94))
+    hline(img, rx0, frieze_y - 5, int(18 * scale), WARM_HI)
+    hline(img, rx0, frieze_y + 9, int(18 * scale), WARM_D)
+
+    # --- the rim: an overhanging ring, wider than the barrel ---------------
+    ring_masonry(img, cx, rim_y, RX, RY, 0.76, 1.0, WARM_L, 0x11,
+                 blocks=max(12, int(24 * scale)), damage=(4, 5))
+    # underside shadow, cast by the overhang onto the barrel below it
+    for y in range(int(rim_y), int(rim_y + RY) + 1):
+        x0, x1 = span(cx, rim_y, RX, RY, y)
+        if x1 <= x0:
+            continue
+        for x in range(int(x0), int(x1) + 1):
+            dx, dy = (x - cx) / RX, (y - rim_y) / RY
+            d = math.hypot(dx, dy)
+            if 0.70 < d <= 0.78:
+                px(img, x, y, shade(WARM_D, 0.70 - 0.2 * dy))
+
+    # --- the opening, the wall inside it, and the blood --------------------
+    iy = rim_y + 3 * scale
+    ix, iy_r = RX * 0.74, RY * 0.74
+    for y in range(int(iy - iy_r), int(iy + iy_r) + 1):
+        x0, x1 = span(cx, iy, ix, iy_r, y)
+        if x1 <= x0:
+            continue
+        for x in range(int(x0), int(x1) + 1):
+            dx, dy = (x - cx) / ix, (y - iy) / iy_r
+            d = math.hypot(dx, dy)
+            if d > 1.0:
+                continue
+            # the inner face: darkest at the top, where the rim shadows it, and
+            # lightening toward the surface below
+            px(img, x, y, shade(WARM_D, 0.34 + 0.52 * d))
+    bcy = iy + RY * 0.16
+    brx, bry = ix * 0.78, iy_r * 0.68
     for y in range(int(bcy - bry) + 1, int(bcy + bry)):
         half_blood = brx * math.sqrt(max(0.0, 1.0 - ((y - bcy) / bry) ** 2))
-        half = min(half_blood, opening_half(y) - 2)
+        span_limit = span(cx, iy, ix, iy_r, y)[1] - cx - 2
+        half = min(half_blood, max(0.0, span_limit))
         if half <= 1:
             continue
         for x in range(int(cx - half), int(cx + half) + 1):
@@ -940,50 +1148,105 @@ def prop_crucible(w: int = 216, h: int = 168, scale: float = 1.0) -> Image.Image
             if _hash01(0x77, x, y) < 0.05:
                 col = mix(col, FIRE_M, 0.35)
             px(img, x, y, col)
-    # skim and clots on the surface
-    for _ in range(16):
+    for _ in range(12):
         a = rng.uniform(0, math.tau)
-        bx = int(cx + math.cos(a) * rng.uniform(6, brx * 0.8))
-        by = int(bcy + math.sin(a) * rng.uniform(3, bry * 0.7))
+        bx = int(cx + math.cos(a) * rng.uniform(6, brx * 0.75))
+        by = int(bcy + math.sin(a) * rng.uniform(3, bry * 0.65))
         hline(img, bx - 4, by, 9, mix(OX_HI, BONE, 0.24))
-    # contact shadow where the blood meets the near wall
-    for y in range(int(bcy + bry * 0.55), int(bcy + bry) + 2):
-        half_blood = brx * math.sqrt(max(0.0, 1.0 - ((y - bcy) / bry) ** 2))
-        for x in range(int(cx - half_blood) - 4, int(cx + half_blood) + 5):
-            if y >= bcy + bry - 5:
-                px(img, x, y, shade(OX_D, 0.55))
+    # a glowing heart: this is the thing the level is lit around
+    for i in range(5):
+        rad = brx * (0.22 - i * 0.035)
+        for y in range(int(bcy - rad), int(bcy + rad) + 1):
+            for x in range(int(cx - rad), int(cx + rad) + 1):
+                if (x - cx) ** 2 + (y - bcy) ** 2 <= rad * rad:
+                    px(img, x, y, mix(OX_HI, FIRE_M, 0.20 + i * 0.16))
+    # the near edge of the opening, over the blood: this is what makes it a bowl
+    for y in range(int(iy + iy_r * 0.50), int(iy + iy_r) + 1):
+        x0, x1 = span(cx, iy, ix, iy_r, y)
+        if x1 <= x0:
+            continue
+        for x in range(int(x0), int(x1) + 1):
+            dx, dy = (x - cx) / ix, (y - iy) / iy_r
+            d = math.hypot(dx, dy)
+            if d > 0.995 or d < 0.90:
+                continue
+            px(img, x, y, shade(WARM_D, 0.60 + 0.18 * (1.0 - abs(dx))))
 
     # --- iron cramps on the rim joints ------------------------------------
-    for i in range(10):
-        a = math.radians(18 + i * 36)
+    for i in range(8):
+        a = math.radians(20 + i * 45)
         if i in (2, 3):
             continue
-        x = int(cx + math.cos(a) * RX * 0.75)
-        y = int(cy + math.sin(a) * RY * 0.75)
-        rect(img, x - 3, y - 2, 7, 4, IRON_M)
-        hline(img, x - 3, y - 2, 7, IRON_L)
-        hline(img, x - 3, y + 1, 7, IRON_D)
+        x = int(cx + math.cos(a) * RX * 0.90)
+        y = int(rim_y + math.sin(a) * RY * 0.90)
+        rect(img, x - int(3 * scale), y - int(2 * scale), max(3, int(7 * scale)),
+             max(2, int(4 * scale)), IRON_M)
+        hline(img, x - int(3 * scale), y - int(2 * scale), max(3, int(7 * scale)), IRON_L)
 
-    # --- damage: knocked-out rim blocks on the north east side ------------
-    dmg_x = int(cx + RX * 0.60)
-    dmg_y = int(cy - RY * 0.52)
-    rect(img, dmg_x - 7, dmg_y - 3, 14, 7, shade(WARM_D, 0.46))
-    for k in range(12):
-        px(img, dmg_x - 6 + k, dmg_y - 3 + (k % 2), shade(IRON_D, 1.25))
-    for k in range(20):
-        px(img, dmg_x + 5 + (k % 3), dmg_y + 5 + k, OX_D + (140 + k * 5,))
-    for _ in range(18):
-        rx_ = dmg_x + rng.randint(-16, 20)
-        ry_ = dmg_y + rng.randint(10, 34)
-        rect(img, rx_, ry_, rng.randint(3, 6), rng.randint(2, 4), shade(WARM_M, 0.88))
-        hline(img, rx_, ry_, 4, shade(WARM_M, 1.06))
+    # blood pooled on the floor at the foot of the base, where the pipe drains
+    pool_cx, pool_cy = int(spill_x + 6 * scale), int(y_floor + 4 * scale)
+    pool_rx, pool_ry = int(20 * scale), max(3, int(6 * scale))
+    for y in range(pool_cy - pool_ry, pool_cy + pool_ry + 1):
+        half = pool_rx * math.sqrt(max(0.0, 1.0 - ((y - pool_cy) / float(pool_ry)) ** 2))
+        for x in range(int(pool_cx - half), int(pool_cx + half) + 1):
+            u = abs((x - pool_cx) / max(1.0, half))
+            px(img, x, y, (OX_M if u > 0.78 else (OX_HI if u > 0.42 else OX_L)))
+    for i in range(7):
+        px(img, pool_cx + rng.randint(-pool_rx, pool_rx), pool_cy + rng.randint(-2, 2),
+           mix(OX_HI, BONE, 0.28))
 
-    # --- steps cut into the south face ------------------------------------
-    # steps standing on the floor at the south face, leading up to the coping.
-    # Inside the bowl they crossed the blood and read as scratches.
-    _basin_steps(img, cx, int(cy + RY) - 6, 0, WARM_M, 0x66)
-    floor_shadow(img, cx, h - 1, 88, 7, 140)
+    floor_shadow(img, cx, h - 2, RX * 1.12, max(4.0, 9 * scale), 150)
     return img
+
+
+def _skull_mark(img, x0: int, y0: int, scale: float) -> None:
+    """A skull carved in relief on the drum's frieze.
+
+    Carved, not stamped: the silhouette is a rounded cranium over a tapered jaw, the
+    relief throws a shadow to the south-east, and the sockets, nasal and teeth are
+    cut dark. The previous version was a light rectangle with three dots, which at
+    gameplay scale read as a blank tile.
+    """
+    W = max(9, int(13 * scale))
+    H = max(8, int(11 * scale))
+    bone = mix(WARM_L, BONE, 0.52)
+    bone_hi = mix(WARM_HI, BONE, 0.62)
+    bone_d = shade(WARM_D, 1.05)
+    cut = (26, 22, 20)
+
+    def inside(px_, py_):
+        cx_, cy_ = (W - 1) / 2.0, H * 0.46
+        if py_ <= H * 0.66:
+            return ((px_ - cx_) / (W / 2.0)) ** 2 + ((py_ - cy_) / (H * 0.58)) ** 2 <= 1.0
+        # the jaw: a narrower block under the cranium
+        return abs(px_ - cx_) <= W * 0.23 and py_ <= H - 1
+
+    # relief first: the skull stands proud, so it casts its shadow down and right
+    for yy in range(H + 1):
+        for xx in range(W + 1):
+            if inside(xx, yy) and not inside(xx - 1, yy - 1):
+                px(img, x0 + xx, y0 + yy, shade(WARM_D, 0.74))
+    for yy in range(H):
+        for xx in range(W):
+            if not inside(xx, yy):
+                continue
+            if not inside(xx, yy - 1):
+                px(img, x0 + xx, y0 + yy, bone_hi)     # lit top edge
+            elif not inside(xx - 1, yy):
+                px(img, x0 + xx, y0 + yy, bone_hi)     # lit west edge
+            elif yy > H * 0.72:
+                px(img, x0 + xx, y0 + yy, bone_d)      # jaw in its own shadow
+            else:
+                px(img, x0 + xx, y0 + yy, bone)
+    # sockets, nasal, teeth
+    for sy in range(max(2, int(H * 0.30)), max(3, int(H * 0.30)) + max(2, int(2 * scale))):
+        for sx in (int(W * 0.26), int(W * 0.66)):
+            for dx in range(max(2, int(2 * scale))):
+                px(img, x0 + sx + dx, y0 + sy, cut)
+    px(img, x0 + W // 2, y0 + int(H * 0.60), cut)
+    px(img, x0 + W // 2 - 1, y0 + int(H * 0.60), cut)
+    for tx in range(int(W * 0.28), int(W * 0.72), max(2, int(2 * scale))):
+        px(img, x0 + tx, y0 + H - 2, cut)
 
 
 def prop_brazier(seed: int, *, broken: bool = False) -> Image.Image:
@@ -1539,8 +1802,8 @@ def build_props() -> dict:
         "altar": (lambda: prop_altar(31), 2, 0),
         "altar_dry": (lambda: prop_altar(32, blood=False), 3, 0),
         "crucible": (lambda: prop_crucible(), 4, 0),
-        "crucible_small": (lambda: prop_crucible(216, 168, scale=0.78), 4, 0),
-        "crucible_grand": (lambda: prop_crucible(216, 168, scale=1.30), 4, 0),
+        "crucible_small": (lambda: prop_crucible(232, 226, scale=0.80), 4, 0),
+        "crucible_grand": (lambda: prop_crucible(232, 226, scale=1.24), 4, 0),
         "apparatus": (lambda: prop_throne_apparatus(33), 5, 0),
         "column": (lambda: prop_column(41), 6, 0),
         "column_broken": (lambda: prop_column(42, broken=True), 7, 0),
