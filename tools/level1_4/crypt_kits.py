@@ -175,8 +175,11 @@ def flag(p: dict, seed: int, quad: int, *, tone: float = 1.0, joint=None):
             a = lattice(gx, gy) * (1 - tx) + lattice(gx + 1, gy) * tx
             b = lattice(gx, gy + 1) * (1 - tx) + lattice(gx + 1, gy + 1) * tx
             value = a * (1 - ty) + b * ty
-            grain = (value - 0.5) * 0.075
-            grain += (_h01(seed, x, y, 13) - 0.5) * 0.022
+            grain = (value - 0.5) * 0.085
+            # No per-pixel term on top. A dither of one percent of the value is
+            # invisible in the atlas and is a field of single-pixel scratches through
+            # the camera's 2x - the audit's "X marks, tics and short dashes" on the
+            # L1-L4 floors were this term, not a decal anyone had drawn.
             if abs(grain) > 0.004:
                 px(img, x, y, shade(base, 1.0 + grain))
     # a single vein or fault, sometimes
