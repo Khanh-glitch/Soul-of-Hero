@@ -17,7 +17,7 @@ AUTHORED ART: kit=spiral floor_detail=9164 wall_cells=2866 bedrock=6552 props=14
 CRUCIBLE ART: floor_detail=9164 wall_cells=2866 bedrock=6552 props=142 lights=9 shadows=389
 AUTHORED PROPS: missing=0 clamped=0 solid=44
 CHAPTER1 CAPTURE: level=chapter_1_level_4 slot=4 art=on facade_cells=2866 lights=9 entities=74
-CHAPTER1 PERF: level=chapter_1_level_4 art=on nodes=1026 draw_calls=80 static_mb=119.9 fps=7
+CHAPTER1 PERF: level=chapter_1_level_4 art=on nodes=1022 draw_calls=80 static_mb=119.9 fps=6
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=entry cell=(8, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=landmark cell=(70, 24) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_4 station=checkpoint cell=(16, 43) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_4/after/after_checkpoint.png ok=true
