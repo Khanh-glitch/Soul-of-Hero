@@ -1030,6 +1030,70 @@ def ossuary_ossuary_stack(p: dict, kind: str = "mixed"):
     return finish(img)
 
 
+def ossuary_stack_broken(p: dict):
+    """A bone case that has come open: the top courses gone, the bones spilled out.
+
+    The ossuary's cases stand in ranks, and a rank of eight identical cabinets is a
+    run of wallpaper. This one is the same cabinet with its top third broken away -
+    the frame snapped, the shelves exposed, the contents on the floor - which gives a
+    rank a hierarchy (this one has been opened) and, like the reliquary's broken
+    pier, marks the bays a player can cross. Same 36 x 92 frame as the intact case.
+    """
+    w, h = 36, 92
+    img = new(w, h)
+    frame = shade(p["stone"], 1.00)
+    break_y = 30
+    # the standing carcass
+    block(img, 0, break_y, w, h - break_y, frame)
+    rect(img, 4, break_y + 4, w - 8, h - break_y - 10, shade(frame, 0.72))
+    for y0 in range(max(break_y + 8, 31), h - 12, 11):
+        row = y0 // 11
+        if row % 2 == 0:
+            for i in range(2):
+                skull(img, 5 + i * 12, y0 + 1, p, tone=0.96 + 0.04 * i)
+        else:
+            for i in range(3):
+                x0 = 6 + i * 8
+                shaft = mix(p["bone"], p["stone"], 0.10 + 0.10 * ((row + i) % 2))
+                rect(img, x0, y0, 7, 9, shaft)
+                hline(img, x0, y0, 7, shade(shaft, 1.14))
+                hline(img, x0, y0 + 8, 7, shade(shaft, 0.72))
+        hline(img, 4, y0 + 9, w - 8, shade(frame, 1.22))
+        hline(img, 4, y0 + 10, w - 8, shade(frame, 0.6))
+    # the torn top: the frame's stiles snapped at different heights, filled down
+    # from their outline - a per-pixel edge over nothing reads as a comb of spikes
+    profile = _ragged(w, 53, lo=4, hi=9, run=6)
+    # the left stile is the one that is still standing
+    profile[0:4] = [2, 2, 2, 2]
+    profile[w - 4:w] = [4, 4, 4, 4]
+    for i in range(w):
+        d = profile[i]
+        rect(img, i, break_y - d, 1, d + 8, frame)
+        px(img, i, break_y - d, shade(frame, 0.58))
+        px(img, i, break_y - d + 1, shade(frame, 1.22))
+        px(img, i, break_y - d + 2, shade(frame, 1.08))
+    for i in range(1, w):
+        if profile[i] != profile[i - 1]:
+            vline(img, i, break_y - max(profile[i], profile[i - 1]), 1 + abs(profile[i] - profile[i - 1]),
+                  shade(frame, 1.14))
+    # the empty interior, going dark behind the break
+    rect(img, 5, break_y + 2, w - 10, 5, shade(frame, 0.46))
+    hline(img, 5, break_y + 2, w - 10, shade(frame, 0.32))
+    # contents on the floor: long bones thrown down at the foot, and a loose skull
+    for i, (x0, y0) in enumerate(((2, h - 8), (7, h - 5), (13, h - 9), (19, h - 6), (14, h - 3))):
+        bone = mix(p["bone"], p["stone"], 0.06 + 0.05 * (i % 3))
+        rect(img, x0, y0, 10, 4, bone)
+        hline(img, x0, y0, 10, shade(bone, 1.18))
+        hline(img, x0, y0 + 3, 10, shade(bone, 0.68))
+        px(img, x0, y0 + 1, shade(bone, 0.80))
+        px(img, x0 + 9, y0 + 1, shade(bone, 0.80))
+    skull(img, 25, h - 14, p, tone=0.94)
+    hline(img, 0, h - 1, w, shade(frame, 0.6))
+    vline(img, 0, break_y, h - break_y, shade(frame, 1.24))
+    vline(img, w - 1, break_y, h - break_y, shade(frame, 0.6))
+    return finish(img)
+
+
 def ossuary_bone_lantern(p: dict):
     """A lantern hung inside a vertebra cage: the ossuary's own light."""
     w, h = 26, 66
@@ -1585,6 +1649,22 @@ def spiral_route_floor(p: dict):
     return img
 
 
+def _ragged(n: int, seed: int, *, lo: int = 0, hi: int = 7, run: int = 4) -> list:
+    """A stepped break outline: short runs of one height with a step between them.
+
+    The first version of the broken-column break used a sine, and a sine on a
+    four-pixel run is a wave: the stump read as a battlement, and on the ossuary's
+    broken case it read as drapery. Masonry does not tear in curves. It snaps in
+    straight runs at whatever height the stone was weakest, so the profile is a
+    staircase, and the crown of a broken column is a set of steps.
+    """
+    out = []
+    while len(out) < n:
+        depth = lo + int(_h01(seed, len(out) // max(1, run), 3) * (hi - lo))
+        out.extend([depth] * run)
+    return out[:n]
+
+
 def spiral_pier(p: dict):
     """An engaged pier: ivory drum, bronze astragals, jade capital.
 
@@ -1628,6 +1708,97 @@ def spiral_pier(p: dict):
     hline(img, 1, h - 14, w - 2, p["stone_pale"])
     hline(img, 1, h - 10, w - 2, shade(stone, 0.78))
     hline(img, 1, h - 3, w - 2, shade(stone, 0.58))
+    return finish(img)
+
+
+def spiral_pier_broken(p: dict):
+    """A pier whose upper drum has gone: a stump, a break, and its own fallen stone.
+
+    Two things wanted this frame. The reliquary's halls were a nine-cell lattice of
+    identical piers, and a lattice is a grid, not a building; a colonnade that has
+    lost a few columns is what an old one looks like. More importantly, a column the
+    player can walk through is a lie, so the columns that *are* solid are now solid
+    geometry (see `solid` on a prop placement) - and a hall needs some bays the
+    player can actually cross between two columns. A broken stump with the fallen
+    drums lying at its foot says that in stone: you can see the way is open, and you
+    step over the rubble.
+
+    Same 40 x 84 frame as the intact pier on purpose: the two are the same piece of
+    architecture at two moments in its life, so they share an anchor, a base course
+    and a width, and a run of mixed pairs still reads as one colonnade.
+    """
+    w, h = 40, 84
+    img = new(w, h)
+    stone = shade(p["stone"], 1.04)
+    shaft_x, shaft_w = 5, w - 10
+    break_y = 40
+    # the shaft, standing to the break
+    block(img, shaft_x, break_y, shaft_w, h - 14 - break_y, stone, bevel=1)
+    rect(img, shaft_x + 2, break_y + 2, 9, h - 18 - break_y, shade(stone, 1.08))
+    rect(img, shaft_x + shaft_w - 11, break_y + 2, 9, h - 18 - break_y, shade(stone, 0.82))
+    rect(img, shaft_x + shaft_w - 3, break_y + 2, 3, h - 18 - break_y, shade(stone, 0.70))
+    for x in (shaft_x + 12, shaft_x + 16, shaft_x + 20):
+        vline(img, x, break_y + 2, h - 20 - break_y, shade(stone, 0.84))
+        vline(img, x + 1, break_y + 2, h - 20 - break_y, shade(stone, 1.10))
+    # the one astragal it still has
+    rect(img, shaft_x - 1, 60, shaft_w + 2, 4, p["accent"])
+    hline(img, shaft_x - 1, 60, shaft_w + 2, p["accent_light"])
+    hline(img, shaft_x - 1, 63, shaft_w + 2, shade(p["accent"], 0.62))
+    # the break: an uneven crown of torn stone, its bed facing the camera and its
+    # core hollow behind the arris. The crown is filled down from its own outline -
+    # a per-pixel edge with nothing under it is a comb of pale spikes, which is what
+    # the first version of this frame looked like.
+    profile = _ragged(shaft_w, 91, lo=3, hi=6, run=6)
+    # the break is roughly level - a snapped shaft is not a saw - with one drum's
+    # worth of stone gone from the west shoulder and a spur left standing east
+    profile[2:9] = [8, 8, 8, 8, 8, 8, 8]
+    profile[shaft_w - 8:shaft_w - 2] = [1, 1, 1, 1, 1, 1]
+    for i in range(shaft_w):
+        x = shaft_x + i
+        d = profile[i]
+        rect(img, x, break_y - d, 1, d + 8, stone)
+        px(img, x, break_y - d, shade(stone, 0.62))
+        px(img, x, break_y - d + 1, shade(stone, 1.18))
+        px(img, x, break_y - d + 2, shade(stone, 1.06))
+        px(img, x, break_y - d + 3, shade(stone, 0.90))
+    # the step between two heights gets its own vertical arris, or the crown reads
+    # as a single torn sheet rather than as stone snapped at different depths
+    for i in range(1, shaft_w):
+        if profile[i] != profile[i - 1]:
+            x = shaft_x + i
+            vline(img, x, break_y - max(profile[i], profile[i - 1]), 1 + abs(profile[i] - profile[i - 1]),
+                  shade(stone, 1.10))
+    # the hollow core, in shadow, with a torn bronze tie bar standing out of it
+    rect(img, shaft_x + 3, break_y + 2, shaft_w - 6, 4, shade(stone, 0.46))
+    hline(img, shaft_x + 3, break_y + 2, shaft_w - 6, shade(stone, 0.34))
+    rect(img, shaft_x + 13, break_y - 5, 3, 9, shade(p["accent"], 0.92))
+    px(img, shaft_x + 13, break_y - 6, p["accent_light"])
+    px(img, shaft_x + 14, break_y - 6, shade(p["accent"], 0.70))
+    # base, exactly as the intact pier has it
+    block(img, 1, h - 14, w - 2, 12, shade(stone, 0.92), bevel=1)
+    hline(img, 1, h - 14, w - 2, p["stone_pale"])
+    hline(img, 1, h - 10, w - 2, shade(stone, 0.78))
+    hline(img, 1, h - 3, w - 2, shade(stone, 0.58))
+    # a drum fallen against the base, and the rubble of the crown on the paving
+    cx, cy, bw, bh = 28, h - 9, 15, 9
+    for dy in range(bh):
+        t = abs(dy - bh / 2.0 + 0.5) / (bh / 2.0)
+        inset = int(round(t * t * 2.0))
+        hline(img, cx - bw // 2 + inset, cy - bh // 2 + dy, bw - 2 * inset, shade(stone, 0.94 - 0.20 * t))
+    hline(img, cx - bw // 2 + 1, cy - bh // 2, bw - 2, shade(stone, 1.16))
+    hline(img, cx - bw // 2 + 1, cy + bh // 2 - 1, bw - 2, shade(stone, 0.54))
+    # its sawn face, turned to the camera
+    rect(img, cx - 4, cy - 2, 7, 4, shade(stone, 0.86))
+    hline(img, cx - 4, cy - 2, 7, shade(stone, 1.10))
+    px(img, cx, cy, shade(stone, 0.46))
+    px(img, cx + 2, cy, shade(stone, 0.46))
+    for x0, w0, tone in ((3, 7, 0.98), (12, 5, 1.06), (18, 4, 0.86), (23, 3, 0.92)):
+        rect(img, x0, h - 4, w0, 3, shade(stone, tone))
+        hline(img, x0, h - 4, w0, shade(stone, min(1.2, tone + 0.14)))
+    # the jade capital's fragment, lying where it fell
+    px(img, 20, h - 5, p["jade"])
+    px(img, 21, h - 5, shade(p["jade"], 0.72))
+    px(img, 20, h - 3, p["jade_light"])
     return finish(img)
 
 
@@ -1740,6 +1911,7 @@ def build_ossuary_kit() -> None:
         ("ossuary_stack", lambda: ossuary_ossuary_stack(p)),
         ("ossuary_stack_skull", lambda: ossuary_ossuary_stack(p, "skull")),
         ("ossuary_stack_shaft", lambda: ossuary_ossuary_stack(p, "shaft")),
+        ("ossuary_stack_broken", lambda: ossuary_stack_broken(p)),
         ("bone_lantern", lambda: ossuary_bone_lantern(p)),
         ("bone_bundle", lambda: ossuary_femur_bundle(p)),
         ("charnel_hearth", lambda: ossuary_charnel_hearth(p)),
@@ -1814,6 +1986,8 @@ def build_spiral_kit() -> None:
         ("shrine", lambda: spiral_shrine(p)),
         ("processional_dais", lambda: spiral_processional_dais(p)),
         ("pier", lambda: spiral_pier(p)),
+        ("pier_broken", lambda: spiral_pier_broken(p)),
+        ("pier_broken", lambda: spiral_pier_broken(p)),
         ("jade_urn", lambda: spiral_ossuary_urn(p)),
         ("serpent_relief", lambda: spiral_serpent_relief(p)),
     ]
