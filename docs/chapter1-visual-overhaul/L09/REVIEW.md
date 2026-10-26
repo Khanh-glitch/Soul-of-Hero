@@ -28,14 +28,14 @@
 
 ### Next correction pass
 
-- The paving is repaired at the source; if the owner still reads the joint rhythm as too regular, the lever is the slab's own size in the kit, not more lines.
+- The paving is the one thing worth a second structural attempt if the owner asks: fewer, larger joints and per-slab highlights rather than a repeating course.
 - The gate's chains could be extended down the arena walls to tie the arch into the room.
 
 ## Cost of the layer
 
-- Nodes: 714 (art off) -> 862 (art on)
-- Draw calls: 103 -> 136
-- Static memory: 112.7 MiB with the layer on
+- Nodes: 720 (art off) -> 844 (art on)
+- Draw calls: 103 -> 141
+- Static memory: 112.6 MiB with the layer on
 
 ## Frames
 

@@ -24,12 +24,12 @@
 
 ### Next correction pass
 
-- The spawn frame's composition is the camera's business, not the art layer's: the basin is now a silhouette, and whether the first frame actually contains it is a level-design call about where the player spawns relative to the court.
+- Compose the spawn frame around the processional arch and the basin rim so both are visible on arrival.
 - Give each floor its own floor family and trim rhythm so the three-storey progression is legible.
 
 ## Cost of the layer
 
-- Nodes: 868 (art off) -> 1072 (art on)
+- Nodes: 870 (art off) -> 1071 (art on)
 - Draw calls: 103 -> 110
 - Static memory: 120.2 MiB with the layer on
 

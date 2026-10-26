@@ -22,19 +22,18 @@
 
 ### Still missing against the brief
 
-- The Beacon's own light no longer washes its own cell out: the cell it stands on was a ward tile on swept chalk at 193, which made it the brightest thing in the room. It now stands on a fire-scoured hearth at 71.7, with the ward ring's iron band at 90.8 ringing it and the apron at 181 beyond that - a value ladder the fire's own light can fall down instead of clipping against.
-- The clipping that was left (a band centred on the camera in all four capture frames) was lamps stacking, not one hot lamp: the wall torches are authored in pairs thirty-two pixels apart on a radius of a hundred and forty or more, and the Beacon's cell took its own lamp plus two pillar fires plus two ward sigils. Each lamp is now at what one lamp can carry on its own, and the fire is still the only saturated colour in the room.
-- The drill squares still read more strongly as prop clusters than as painted squares: the outline is a floor tile and at 1x it disappears under the props that define it.
+- The Beacon's own light and the entity's glow still wash the centre of the yard to a pale cream, which flattens the ward ring at gameplay zoom. The correction pass cut the authored ember energy by two thirds, which fixed the furnace, but the centre is still the least legible part of the room.
+- The drill squares read more strongly as prop clusters than as painted squares: the outline is a floor tile and at 1x it disappears under the props that define it.
 - The three waves are runtime behaviour and are not photographable as architecture; the frames show the yard, not the wave pacing.
 
 ### Next correction pass
 
-- The beacon's own cell is the one place the light still has to be judged by eye: the hearth is a repair of the setting, not of the composition around it (four braziers, two watch pillars and two free-standing cloth panels stand on and around the ring).
+- Give the Beacon's cell a darker apron so the entity's glow has something to fall on.
 - Consider a second, coarser floor mark for the drill squares so they survive the props standing on them.
 
 ## Cost of the layer
 
-- Nodes: 661 (art off) -> 908 (art on)
+- Nodes: 664 (art off) -> 909 (art on)
 - Draw calls: 92 -> 120
 - Static memory: 116.0 MiB with the layer on
 

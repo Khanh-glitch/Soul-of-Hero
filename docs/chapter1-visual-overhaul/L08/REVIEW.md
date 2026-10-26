@@ -26,19 +26,16 @@
 - Flagstone joints are regular enough to read as a grid at 1x zoom; the veining that was meant to break it up had to be made faint because a bright vein tiled into wallpaper.
 - The east wing's damage is authored as broken paving and rubble rather than structural collapse, because the map has one floor layer.
 
-- The exit frame clipped 2.5 % of the field even after the arch was lit once instead of twice: the band between the arch and the dais takes the arch lamp and both dais lamps at once, on the shared pale marble base. All three are down a fifth now and the exit frame measures 1.97 % - the arch is still lit, the floor under it is not white.
-
 ### Next correction pass
 
 - If the owner wants the wings further apart, the cheapest honest lever is the wing's ceiling light colour, not more props.
 - The reaper statue's scythe reads at 3x and merges into the robe at 1x; it may want a paler blade.
-- 1.97 % is still the second-worst clip in the chapter. The vault's floor is the shared pale marble and it is the one place three lamps can still meet; if it is still bright after this pass, the lever is the vault's own floor family, not another lamp.
 
 ## Cost of the layer
 
-- Nodes: 676 (art off) -> 843 (art on)
-- Draw calls: 114 -> 124
-- Static memory: 113.1 MiB with the layer on
+- Nodes: 682 (art off) -> 830 (art on)
+- Draw calls: 112 -> 119
+- Static memory: 112.9 MiB with the layer on
 
 ## Frames
 
