@@ -988,7 +988,12 @@ METADATA = {
         "authored_counts_are_anchors": True,
     },
     "required_sigils": 4,
-    "camera_bounds": [0, 0, WIDTH * TILE, HEIGHT * TILE],
+    # Six rows (96 px) of headroom above the map's first row, so architecture painted
+    # above row 0 is not sliced flat by the camera limit. This is a chapter-wide
+    # contract (`0a7bbcef` gave every Chapter 1 map the same headroom); Level 5's
+    # author emitted `0` and was the last document still doing so, which is what made
+    # `--check` report DRIFT for a single integer.
+    "camera_bounds": [0, -96, WIDTH * TILE, HEIGHT * TILE],
     "layout_profile": "three_floor_blood_crucible_forecourt_ring_and_tiered_arena",
     "tileset": "0x72 DungeonTileset II v1.7 (CC0)",
     "rooms": [

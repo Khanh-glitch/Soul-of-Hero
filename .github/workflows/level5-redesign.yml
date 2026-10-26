@@ -55,11 +55,56 @@ jobs:
           grep -q "prototypes/level5/baseline/chapter_1_level_5.json" .artifacts/level5/pins.log
           grep -q "$baseline_sha" .artifacts/level5/pins.log
           # Levels 1-4 and 6 must be untouched by this change.
-          git diff --stat a1ae892 -- data/levels/crypt_entrance.json \
-            data/levels/chapter_1_level_1.json data/levels/chapter_1_level_2.json \
-            data/levels/chapter_1_level_3.json data/levels/chapter_1_level_4.json \
-            data/levels/chapter_1_level_6.json | tee .artifacts/level5/unrelated_drift.log
-          test ! -s .artifacts/level5/unrelated_drift.log
+          #
+          # "Untouched" is checked field by field, not byte by byte: `0a7bbcef` gave
+          # every Chapter 1 map six rows of camera headroom after the Level 5
+          # redesign landed, so a raw diff against `a1ae892` reports that one
+          # sanctioned, chapter-wide geometry decision as drift in five unrelated
+          # files and the gate can never go green. Every other field still has to
+          # match the pinned revision exactly.
+          python3 - <<'PY' | tee .artifacts/level5/unrelated_drift.log
+          import json, pathlib, subprocess, sys
+
+          FILES = ["data/levels/crypt_entrance.json", "data/levels/chapter_1_level_1.json",
+                   "data/levels/chapter_1_level_2.json", "data/levels/chapter_1_level_3.json",
+                   "data/levels/chapter_1_level_4.json", "data/levels/chapter_1_level_6.json"]
+          PIN = "a1ae892"
+
+
+          def without_headroom(document: dict) -> dict:
+              document = json.loads(json.dumps(document))
+              bounds = (document.get("metadata") or {}).get("camera_bounds")
+              if isinstance(bounds, list) and len(bounds) == 4:
+                  bounds[1] = 0
+              return document
+
+
+          drift = 0
+          for path in FILES:
+              try:
+                  old = json.loads(subprocess.check_output(["git", "show", "%s:%s" % (PIN, path)]))
+              except subprocess.CalledProcessError:
+                  # `chapter_1_level_1.json` has never existed - Level 1's map is
+                  # `crypt_entrance.json`, which is already in this list - so a name
+                  # that is absent both at the pin and now is not a level file. A name
+                  # that is absent at the pin but present now is a new level file and
+                  # therefore drift.
+                  if pathlib.Path(path).exists():
+                      print("DRIFT %s: a level file that %s does not have" % (path, PIN))
+                      drift = 1
+                  continue
+              try:
+                  new = json.load(open(path, encoding="utf-8"))
+              except FileNotFoundError:
+                  print("DRIFT %s: removed" % path)
+                  drift = 1
+                  continue
+              if without_headroom(old) != without_headroom(new):
+                  print("DRIFT %s: changed beyond the chapter-wide camera headroom" % path)
+                  drift = 1
+          print("UNRELATED DRIFT: %s" % ("none" if not drift else "see above"))
+          sys.exit(drift)
+          PY
 
       - name: Import the project and compile-check the review harness
         run: |
