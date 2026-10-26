@@ -864,7 +864,8 @@ def _ellipse_span(cx: float, cy: float, rx: float, ry: float, y: int) -> tuple:
     return cx - half, cx + half
 
 
-def prop_crucible(w: int = 232, h: int = 224, scale: float = 1.0) -> Image.Image:
+def prop_crucible(w: int = 232, h: int = 224, scale: float = 1.0,
+                  crest: bool = False) -> Image.Image:
     """The Blood Court's crucible: a raised cauldron on a stepped plinth.
 
     The first version was drawn from above - concentric rings of cut stone round an
@@ -1107,6 +1108,60 @@ def prop_crucible(w: int = 232, h: int = 224, scale: float = 1.0) -> Image.Image
             d = math.hypot(dx, dy)
             if 0.70 < d <= 0.78:
                 px(img, x, y, shade(WARM_D, 0.70 - 0.2 * dy))
+
+    # --- the crest: four bronze horns and a hanging chain ------------------
+    # The grand basin is the level's monument and it has to be the thing the eye
+    # finds from the spawn station, which is a long way off and behind a
+    # colonnade. A vessel at that distance is a blob; a vessel with four upright
+    # horns and a chain between them is a silhouette, and a silhouette is what
+    # reads. It is also what separates the court's basin from the forecourt's and
+    # the arena's, which were the same drawing at a smaller scale and were read as
+    # three copies of one prop rather than as one order with three vessels.
+    #
+    # Drawn above the rim, in the space the overhang leaves empty, so nothing in the
+    # vessel's own construction is covered: the horns rise from a bronze band that
+    # sits just outside the rim's own ellipse.
+    if crest:
+        band_y = rim_y - RY * 0.55
+        band_rx, band_ry = RX * 1.03, RY * 0.52
+        for y in range(int(band_y - band_ry), int(band_y + band_ry) + 1):
+            x0, x1 = span(cx, band_y, band_rx, band_ry, y)
+            if x1 <= x0:
+                continue
+            for x in range(int(x0), int(x1) + 1):
+                dx = (x - cx) / max(1.0, band_rx)
+                if math.hypot(dx, (y - band_y) / max(1.0, band_ry)) <= 1.0:
+                    px(img, x, y, shade(BRASS_M, 1.06 - 0.30 * max(0.0, dx)))
+        hline(img, 0, int(band_y - band_ry), w, shade(BRASS_L, 1.10))
+        # four upright horns on the cardinals, each a tapered plate with a flared top
+        horn_h = int(24 * scale)
+        horn_w = max(5, int(8 * scale))
+        for angle in (math.pi / 2, math.pi, 3 * math.pi / 2, 0.0):
+            hx = int(cx + math.cos(angle) * band_rx * 0.86)
+            base_y = int(band_y + math.sin(angle) * band_ry * 0.72)
+            for dy in range(horn_h):
+                t = dy / max(1.0, float(horn_h))
+                half = max(2, int(horn_w * (0.55 + 0.45 * (1.0 - t))))
+                top_y = base_y - dy
+                if 0 <= top_y < h:
+                    rect(img, hx - half, top_y, half * 2, 1,
+                         shade(BRASS_M, 1.10 - 0.34 * t))
+            if 0 <= base_y - horn_h < h:
+                rect(img, hx - horn_w, base_y - horn_h, horn_w * 2, max(2, int(3 * scale)),
+                     shade(BRASS_L, 1.06))
+                rect(img, hx - max(2, int(2 * scale)), base_y - horn_h - max(2, int(4 * scale)),
+                     max(4, int(4 * scale)), max(2, int(4 * scale)), BRASS_HI)
+        # a chain between the two side horns, with the order's own disc
+        chain_y = int(band_y - band_ry * 0.35)
+        for x in range(int(cx - band_rx * 0.78), int(cx + band_rx * 0.78) + 1):
+            px(img, x, chain_y, shade(IRON_M, 0.86))
+            px(img, x, chain_y + 1, shade(IRON_D, 0.90))
+        disc_r = max(4, int(7 * scale))
+        for dy in range(-disc_r, disc_r + 1):
+            for dx in range(-disc_r, disc_r + 1):
+                if math.hypot(dx, dy) <= disc_r:
+                    px(img, int(cx + dx), chain_y - int(10 * scale) + dy,
+                       shade(BRASS_M, 1.08 - 0.22 * abs(dy) / max(1.0, disc_r)))
 
     # --- the opening, the wall inside it, and the blood --------------------
     iy = rim_y + 3 * scale
@@ -1803,7 +1858,7 @@ def build_props() -> dict:
         "altar_dry": (lambda: prop_altar(32, blood=False), 3, 0),
         "crucible": (lambda: prop_crucible(), 4, 0),
         "crucible_small": (lambda: prop_crucible(232, 226, scale=0.80), 4, 0),
-        "crucible_grand": (lambda: prop_crucible(232, 226, scale=1.24), 4, 0),
+        "crucible_grand": (lambda: prop_crucible(232, 226, scale=1.24, crest=True), 4, 0),
         "apparatus": (lambda: prop_throne_apparatus(33), 5, 0),
         "column": (lambda: prop_column(41), 6, 0),
         "column_broken": (lambda: prop_column(42, broken=True), 7, 0),
