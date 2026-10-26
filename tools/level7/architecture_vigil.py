@@ -82,6 +82,22 @@ def long_run(cell, faces) -> bool:
 
 ## Light energies, not light count.
 ##
+## A second pass over the same rule. The first one doubled the energies and gave the
+## ring braziers a light, which is why the yard now has a pool - but it also left
+## every lamp at the top of its range, and the frames show what that costs: the
+## clipping in this level is a band centred on the camera in all four capture
+## frames, because the lamps stack. The wall torches are authored in pairs thirty-two
+## pixels apart on a radius of a hundred and forty or more, so each pair lights the
+## same stone twice; the Beacon's own cell takes its own lamp plus two pillar fires
+## plus two ward sigils, five lamps on one floor. Two lamps at 0.5 energy on chalk at
+## 150 land near 260 before ambient; five land near 400.
+##
+## Each lamp comes down to what one lamp can carry on its own: the torches 0.50 ->
+## 0.30, the pillar fires 0.55 -> 0.34, the Beacon 0.55 -> 0.40, the sigils 0.30 ->
+## 0.22. Nothing is added, nothing moves, no lamp is removed, and the fire is still
+## the only saturated colour in the room - what changes is that the stone under it
+## stops being white.
+##
 ## The yard authored twenty-two lights and every one of them sat between 0.30 and
 ## 0.42 energy, under an ambient of 0.74 - the fires were drawn, they just could not
 ## be seen on the floor they stood on. The frames show it: a uniform tan field with
@@ -98,7 +114,7 @@ def ward(plan, floor, geom) -> int:
             painted += 1
     plan.lights.append({
         "x": BEACON[0] * 16 + 8, "y": BEACON[1] * 16 + 8,
-        "color": [1.0, 0.62, 0.30], "energy": 0.55, "scale": 2.0,
+        "color": [1.0, 0.62, 0.30], "energy": 0.40, "scale": 1.30,
         "cell": [BEACON[0], BEACON[1]], "note": "the Beacon's own light",
     })
     return painted
@@ -182,7 +198,7 @@ def beacon_frame(plan, floor, geom, guard) -> None:
             plan.prop("watch_pillar", cell, note="ward ring corner pillar")
             plan.lights.append({
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.66, 0.34], "energy": 0.55, "scale": 1.5,
+                "color": [1.0, 0.66, 0.34], "energy": 0.34, "scale": 1.3,
                 "cell": [cell[0], cell[1]], "note": "pillar fire",
             })
     # the cardinals are masonry, not more fire: eight identical flames around one
@@ -193,7 +209,7 @@ def beacon_frame(plan, floor, geom, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("ward_stone", cell, note="ward stone", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 26,
-                "color": [1.0, 0.62, 0.30], "energy": 0.30, "scale": 1.2,
+                "color": [1.0, 0.62, 0.30], "energy": 0.22, "scale": 1.1,
                 "cell": [cell[0], cell[1]], "note": "ward sigil light",
             })
     for dx in (-2, 2):
@@ -273,7 +289,7 @@ def stores(plan, floor, geom, faces, guard, clear) -> None:
         if roll < 12:
             plan.prop("torch_bracket", cell, note="wall torch", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 26,
-                "color": [1.0, 0.72, 0.40], "energy": 0.50, "scale": 1.35,
+                "color": [1.0, 0.72, 0.40], "energy": 0.30, "scale": 1.15,
                 "cell": [cell[0], cell[1]], "note": "wall torch",
             })
         elif roll < 20:
@@ -364,7 +380,7 @@ def bastion_towers(plan, floor, geom, faces, guard) -> None:
         if face in faces:
             plan.prop("watch_pillar", face, note="bastion watch pillar", light={
                 "x": face[0] * 16 + 8, "y": face[1] * 16 - 96,
-                "color": [1.0, 0.68, 0.36], "energy": 0.62, "scale": 1.5,
+                "color": [1.0, 0.68, 0.36], "energy": 0.42, "scale": 1.3,
                 "cell": [face[0], face[1]], "note": "bastion fire",
             })
 
@@ -394,7 +410,7 @@ def objectives(plan, floor, geom, faces, guard) -> None:
         if cell in floor and cell not in guard:
             plan.prop("watch_pillar", cell, note="gate pillar", light={
                 "x": cell[0] * 16 + 8, "y": cell[1] * 16 - 96,
-                "color": [1.0, 0.70, 0.38], "energy": 0.60, "scale": 1.5,
+                "color": [1.0, 0.70, 0.38], "energy": 0.40, "scale": 1.3,
                 "cell": [cell[0], cell[1]], "note": "gate pillar fire",
             })
     for cell in ((CHECKPOINT[0] - 3, CHECKPOINT[1]), (CHECKPOINT[0] + 3, CHECKPOINT[1])):
