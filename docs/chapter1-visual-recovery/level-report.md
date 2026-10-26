@@ -375,21 +375,51 @@ either off the kit sheets or off native frames published by CI.
 | L2/L4 columns | Every prop was a Sprite2D, so the hero, the enemies and the hitboxes passed through load-bearing masonry | `solid: true` gives a prop a StaticBody2D with a box across the middle of its own cell; the generator marks a cell solid only after re-walking the floor without it | 44 solid piers (L4), 34 solid shafts (L2); `chapter_1_collision_route_test` PASSED in CI |
 | L3 archive | Shelf ranks on a fixed stride on both axes; no storey above the grille course | Runs three cells apart with rows seven apart, a cross aisle every fifth bay and a case missing every fourth; `wall_gallery` two rows up where the masonry is thick enough | 28 gallery overrides; frames at the same cells |
 | L7 Beacon | The ward ring is laid across a thirteen-cell disc, so the cell the Beacon stands on was a ward tile on chalk at 193 and its own lamp made it the brightest thing in the room | New kit frame `hearth` over the ring's inner octagon and nothing else; apron one step down | hearth 71.7, ward 90.8, apron 181.4, floor 147–156 |
-| L7 lamps | Clipping in a band centred on the camera in all four frames: torches in pairs 32 px apart on a 140+ px radius, and five lamps on the Beacon's cell | Each lamp to what one lamp can carry: torches 0.50→0.30, pillar fires 0.55→0.34, Beacon 0.55→0.40, sigils 0.30→0.22, gate pillars 0.60→0.40 | 26 lights, max energy 0.40; exit frame 3.94 % → 3.88 % (the lamp pass landed after that frame was published — see the status note) |
-| L8 vault | Three lamps stacking on the shared pale marble floor between the arch and the dais | Arch 0.38→0.30, dais 0.36→0.29 before the level's own lamp gain | Exit frame clipping 2.51 % → 1.97 % on the published native frames |
+| L7 lamps | Clipping in a band centred on the camera in all four frames: torches in pairs 32 px apart on a 140+ px radius, and five lamps on the Beacon's cell | Each lamp to what one lamp can carry: torches 0.50→0.30, pillar fires 0.55→0.34, Beacon 0.55→0.40, sigils 0.30→0.22, gate pillars 0.60→0.40 | 26 lights, max energy 0.40; native frames 0.81 % → 0.53 % at exit, 0.58 % → 0.38 % at entry, 0.50 % → 0.29 % at landmark, 0.11 % → 0.06 % at checkpoint |
+| L8 vault | Three lamps stacking on the shared pale marble floor between the arch and the dais | Arch 0.38→0.30, dais 0.36→0.29 before the level's own lamp gain | Exit frame clipping 2.51 % → 1.97 % on the `614fdf87` native frames; 1.60 % → 1.25 % on the reconciled `a0c85892` frames under the metric above |
 | L9 paving | The gatehouse kit drew one more line inside every slab, cutting each 32 px flag in half on both axes — a 16 px grid | The two extra strokes are gone; each slab carries a sheen from the light's side | Internal seam flat (95.0/94.0/94.1/93.5), NW quadrant 87→95.7→92 |
 | L5 basin | The court's, forecourt's and arena's basins were one drawing at three scales; the court's had to be the thing the eye finds from the spawn station and was a blob at that distance | The grand vessel carries a bronze crest — a band on the rim's ellipse, four tapered horns with finials, a chain and the order's disc; the lesser basins keep the plain rim | 27 tiles, 25 props unchanged; the small basin byte-identical |
 
-**Status note on the measurements.** The last native frames this branch has published
-are the `614fdf87` visual-overhaul run: they cover the L7 hearth and the L8 vault
-lamps (L07 exit 3.88 %, L08 exit 1.97 % against 3.94 % and 2.51 % before). The L7
-lamp pass, the L9 paving and the L5 crest landed in later commits, and the
-visual-overhaul workflow did not start for those pushes — every push received a
-`Godot 4.7 Runtime Validation` run and none of them started a visual-overhaul or
-audit-sweep run, although the changed files match both workflows' path lists
-(`tools/level*/**`, `assets/environment/chapter1/**`). Those three repairs are
-verified off the kit sheets and by the level validators, not off native frames, and
-that is stated rather than glossed.
+**Status note on the measurements — updated after the branch reconciliation.**
+The visual-overhaul and audit-sweep workflows did not start for the last seven
+pushes, and the cause was the branch name's casing, not the file paths: every
+session push used `git push origin HEAD:refs/heads/arena/6e89e68d-soul-of-Hero`
+(uppercase H, matching the repository's own name) while all three workflows'
+`on.push.branches` filters — overhaul line 9, audit line 19, architecture lines 9
+and 203-204 — name `arena/6e89e68d-soul-of-hero` (lowercase h). No workflow watches
+the uppercase branch, so every push after `614fdf87` produced only an unfiltered
+`Godot 4.7 Runtime Validation` run. The lowercase branch has been fast-forwarded to
+`a0c85892`, a strict superset of the uppercase branch's `43bababf` (no divergence,
+no merge, no new branch, uppercase branch preserved). Both visual workflows then ran
+on `a0c85892` and succeeded — overhaul `40305715932`, audit sweep `40305715916` —
+and their evidence commits (`b315e19f`, `e975edd7`, `dbbf8e7d`) are on the branch.
+
+All 43 `source_pins.txt` hashes in that run resolve to files at `a0c85892` (43/43),
+so the frames below were rendered from this branch's delivered source, not from an
+earlier commit.
+
+Re-measuring one metric on both published frame sets — the fraction of the camera
+frame whose minimum channel is at or above 250, i.e. blown out to white:
+
+| level | station | before `614fdf87` | after `a0c85892` | frame mean before → after |
+| --- | --- | --- | --- | --- |
+| L07 | exit | 0.81 % | 0.53 % | 116.9 → 109.9 |
+| L07 | entry | 0.58 % | 0.38 % | 114.5 → 109.5 |
+| L07 | landmark | 0.50 % | 0.29 % | 120.8 → 112.1 |
+| L07 | checkpoint | 0.11 % | 0.06 % | 113.0 → 109.1 |
+| L08 | exit | 1.60 % | 1.25 % | 122.2 → 120.2 |
+| L08 | boss | 0.03 % | 0.01 % | 107.4 → 107.5 |
+| L09 | boss | 0.22 % | 0.13 % | 99.4 → 99.1 |
+| L05 | landmark_3 | 0.37 % | 0.35 % | 86.2 → 85.9 |
+| L06 | max, all stations | 0.65 % | 0.68 % | unchanged |
+
+The L7 lamp pass improved all four of its frames and lowered the frame mean in each,
+which confirms the stacked-lamp diagnosis by measurement rather than assertion. The
+L8 vault pass improved its exit frame. L09 improved. L05 and L06 are neutral, which
+is what a crest and a recessed channel should be — they change silhouette and
+material, not exposure. L02's checkpoint remains the worst frame in the chapter at
+2.20 % and is unchanged by this pass; it is a pre-existing L2 exposure issue, not a
+regression introduced here.
 
 **Visual production review:** **READY FOR OWNER REVIEW.** The chapter no longer has holes in its
 maps, sliced walls, invisible props or lamps that erase the room, and since this pass
