@@ -17,7 +17,7 @@ AUTHORED ART: kit=relay floor_detail=6300 wall_cells=2720 bedrock=6980 props=156
 CRUCIBLE ART: floor_detail=6300 wall_cells=2720 bedrock=6980 props=156 lights=75 shadows=360
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER1 CAPTURE: level=chapter_1_level_6 slot=6 art=on facade_cells=2720 lights=75 entities=73
-CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1098 draw_calls=73 static_mb=119.3 fps=5
+CHAPTER1 PERF: level=chapter_1_level_6 art=on nodes=1103 draw_calls=73 static_mb=119.3 fps=7
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=entry cell=(9, 23) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_entry.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=landmark cell=(74, 14) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_landmark.png ok=true
 CHAPTER1 STATION tag=after level=chapter_1_level_6 station=checkpoint cell=(16, 46) size=1280x720 out=res://.artifacts/chapter1/chapter_1_level_6/after/after_checkpoint.png ok=true
