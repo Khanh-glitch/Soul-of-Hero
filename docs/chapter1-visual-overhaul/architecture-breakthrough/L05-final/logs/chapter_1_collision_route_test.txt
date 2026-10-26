@@ -28,8 +28,8 @@ AUTHORED ART: kit=vigil floor_detail=7211 wall_cells=844 bedrock=3132 props=213 
 CRUCIBLE ART: floor_detail=7211 wall_cells=844 bedrock=3132 props=213 lights=26 shadows=108
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER 1 COLLISION ROUTE: slot=7 safe=5239/5239 targets=5
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER 1 COLLISION ROUTE: slot=8 safe=1759/3367 targets=5
 AUTHORED ART: kit=gatehouse floor_detail=5668 wall_cells=810 bedrock=6534 props=76 lights=29 shadows=100
@@ -40,15 +40,12 @@ AUTHORED ART: kit=castellan floor_detail=4444 wall_cells=572 bedrock=7338 props=
 CRUCIBLE ART: floor_detail=4444 wall_cells=572 bedrock=7338 props=41 lights=23 shadows=68
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER 1 COLLISION ROUTE: slot=10 safe=2144/2144 targets=2
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=reaper reachable=2566
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-AUTHORED PROPS: missing=0 clamped=0 solid=0
-AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
-CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=45 shadows=266
+AUTHORED ART: kit=reliquary floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
+CRUCIBLE ART: floor_detail=7296 wall_cells=1114 bedrock=5984 props=96 lights=44 shadows=266
 AUTHORED PROPS: missing=0 clamped=0 solid=0
 CHAPTER 1 COLLISION ROUTE: slot=8 branch=vampire reachable=2566
 CHAPTER 1 COLLISION ROUTE TEST PASSED - 161 checks across ten live maps
