@@ -475,7 +475,20 @@ def prop_banner(seed: int = 3, *, torn: bool = False):
     cloth_hi = mix(EMBER_DEEP, EMBER, 0.55)
     cloth = EMBER_DEEP
     cloth_lo = shade(EMBER_DEEP, 0.66)
-    # rod with finials
+    # Two uprights and a foot, so the banner stands on something. It was a cloth
+    # rectangle on a rod with finials, hung in mid-air over a floor cell: at gameplay
+    # scale that reads as a monolith standing in the hall, not as a muster banner.
+    # A stand has two posts and a cross bar, and the posts have to reach the ground.
+    for x in (1, w - 4):
+        block(img, x, 6, 3, h - 8, IRON)
+        vline(img, x, 6, h - 8, IRON)
+        vline(img, x + 1, 6, h - 8, IRON_LIGHT)
+        vline(img, x + 2, 6, h - 8, IRON_DARK)
+        # a weighted foot: the stand is free-standing, so it must have one
+        block(img, x - 2, h - 6, 7, 4, IRON_DARK)
+        hline(img, x - 2, h - 6, 7, IRON)
+        hline(img, x - 2, h - 3, 7, shade(IRON_DARK, 0.6))
+    # rod with finials, over the posts
     block(img, 1, 8, w - 2, 3, IRON)
     hline(img, 1, 8, w - 2, IRON_LIGHT)
     hline(img, 1, 10, w - 2, IRON_DARK)
@@ -485,7 +498,7 @@ def prop_banner(seed: int = 3, *, torn: bool = False):
     # cloth: two folds, a hem, and the bar it hangs from showing through
     for y in range(11, 92):
         t = (y - 11) / 81.0
-        half = int(14 - t * 2.0)
+        half = int(13 - t * 2.0)
         for x in range(cx - half, cx + half):
             if torn and y > 52 and ((x * 5 + y * 3) % 13) < 3:
                 continue
