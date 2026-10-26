@@ -23,7 +23,8 @@
 
 - The middle of the halls is a hypostyle now - piers on an eight-cell lattice with votive urns on the line between them and dais drums where four bays meet - so the densest camera position is a room with colonnades running out of frame instead of a field of paving.
 - The four secondary turns are five-by-five discs of two floor families, so they read as patches of a different stone rather than as smaller spirals.
-- The free-standing columns stand on an eight-cell lattice with a slot missing in seven, so the bays repeat measured rather than ruined: the eye can count the same column across a whole hall.
+- The free-standing columns stand on an eight-cell lattice, and the bays that were lost come out as broken stumps - a stepped break, the bed of the stone exposed, the fallen drums at the foot - in clusters rather than sprinkled, so a hall reads as a colonnade with bays missing rather than as a grid.
+- The intact columns are solid: the hero and the enemies cannot walk through architecture that reads as load-bearing. The stumps are not, which is what makes the collapsed bays legible as the way across.
 - The wall piers and the free-standing ones are the same frame, so a column in the middle of a hall is lit and modelled like one engaged to a wall.
 
 ### Next correction pass

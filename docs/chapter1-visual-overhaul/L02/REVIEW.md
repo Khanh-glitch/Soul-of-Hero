@@ -18,14 +18,14 @@
 - A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.
 - The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.
 - Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.
-- A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall.
+- A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall. The standing shafts are solid and the opened ones are not.
 - The crown of the wall is its own order - a projecting pale lintel carried on corbel tabs with a shadow under it - instead of the skull frieze repeated at the top of the storey, so a wall reads bottom-up as plinth, coursing, frieze, crown.
 - The charnel drift is dust that settles into the joints and the low corner of a slab, in runs, not single pale pixels scattered over the stone.
 
 ### Still missing against the brief
 
 - The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.
-- The hall shafts stand on a fixed nine-cell lattice and are one frame, so a long view counts the same column; the hall shafts and the tall bone stacks are also one silhouette at one height.
+- The broken case is the same cabinet as the standing one, so a rank of them is still one ossuary, but the opened ones give the rank a hierarchy and mark the bays that can be crossed.
 - The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.
 
 ### Next correction pass

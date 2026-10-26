@@ -52,13 +52,13 @@ CRITIQUE = {
             "A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.",
             "The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.",
             "Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.",
-            "A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall.",
+            "A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall. The standing shafts are solid and the opened ones are not.",
             "The crown of the wall is its own order - a projecting pale lintel carried on corbel tabs with a shadow under it - instead of the skull frieze repeated at the top of the storey, so a wall reads bottom-up as plinth, coursing, frieze, crown.",
             "The charnel drift is dust that settles into the joints and the low corner of a slab, in runs, not single pale pixels scattered over the stone.",
         ],
         "missing": [
             "The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.",
-            "The hall shafts stand on a fixed nine-cell lattice and are one frame, so a long view counts the same column; the hall shafts and the tall bone stacks are also one silhouette at one height.",
+            "The broken case is the same cabinet as the standing one, so a rank of them is still one ossuary, but the opened ones give the rank a hierarchy and mark the bays that can be crossed.",
             "The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.",
         ],
         "next": [
@@ -94,7 +94,8 @@ CRITIQUE = {
         "missing": [
             "The middle of the halls is a hypostyle now - piers on an eight-cell lattice with votive urns on the line between them and dais drums where four bays meet - so the densest camera position is a room with colonnades running out of frame instead of a field of paving.",
             "The four secondary turns are five-by-five discs of two floor families, so they read as patches of a different stone rather than as smaller spirals.",
-            "The free-standing columns stand on an eight-cell lattice with a slot missing in seven, so the bays repeat measured rather than ruined: the eye can count the same column across a whole hall.",
+            "The free-standing columns stand on an eight-cell lattice, and the bays that were lost come out as broken stumps - a stepped break, the bed of the stone exposed, the fallen drums at the foot - in clusters rather than sprinkled, so a hall reads as a colonnade with bays missing rather than as a grid.",
+            "The intact columns are solid: the hero and the enemies cannot walk through architecture that reads as load-bearing. The stumps are not, which is what makes the collapsed bays legible as the way across.",
             "The wall piers and the free-standing ones are the same frame, so a column in the middle of a hall is lit and modelled like one engaged to a wall.",
         ],
         "next": [
