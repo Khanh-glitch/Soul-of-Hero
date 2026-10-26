@@ -623,7 +623,8 @@ def build_level3(level: dict) -> dict:
     # A rank every five cells across and seven down, so a 44 px case leaves a
     # two-cell aisle on either side: dense enough that the room reads as a
     # scriptorium, open enough that the player can run and fight in it.
-    shelves = ranks(p, "bookshelf", every_x=5, every_y=7, off_x=1, off_y=2)
+    shelves = ranks(p, ("bookshelf", "bookshelf_b", "bookshelf_c", "bookshelf_b",
+                        "bookshelf_c"), every_x=5, every_y=7, off_x=1, off_y=2)
     props += shelves
     # a few of the ranks are burnt out: the shell of a case, no books
     burnt = 0
@@ -631,7 +632,8 @@ def build_level3(level: dict) -> dict:
         if (cell[0] * 7 + cell[1] * 11) % 7 == 0:
             for entry in plan.props:
                 if tuple(entry["cell"]) == cell:
-                    entry["frame"] = "bookshelf_burnt"
+                    entry["frame"] = ("bookshelf_burnt" if (cell[1] // 7) % 2
+                                      else "bookshelf_burnt_b")
                     burnt += 1
                     break
     # and cases standing against the walls, where a reader would actually take a

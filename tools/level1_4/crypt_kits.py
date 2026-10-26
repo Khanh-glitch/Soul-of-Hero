@@ -154,13 +154,31 @@ def flag(p: dict, seed: int, quad: int, *, tone: float = 1.0, joint=None):
     mortar = joint or p["mortar"]
     img = new(T, T)
     rect(img, 0, 0, T, T, base)
+    # The grain is *smooth*, and that is a correction. It used to be a flat tone per
+    # 2x2 block, and on a pale stone a five-percent step between adjacent blocks is
+    # plainly visible once the camera doubles the sprite: the floor of the Ossuary
+    # read as a mosaic of soft grey squares, which is the loudest possible way to say
+    # "generated". Stone mottles continuously, so the value is now read from a coarse
+    # lattice of hash values and bilinearly interpolated, with a fine dither of one
+    # or two units on top.
+    step = 4
+    nodes = T // step + 1
+
+    def lattice(ix, iy):
+        return _h01(seed, ix % nodes, iy % nodes, 11)
+
     for y in range(T):
+        gy, fy = divmod(y, step)
         for x in range(T):
-            h = _h01(seed, x // 2, y // 2)
-            if h > 0.88:
-                px(img, x, y, shade(base, 1.050))
-            elif h < 0.10:
-                px(img, x, y, shade(base, 0.960))
+            gx, fx = divmod(x, step)
+            tx, ty = fx / float(step), fy / float(step)
+            a = lattice(gx, gy) * (1 - tx) + lattice(gx + 1, gy) * tx
+            b = lattice(gx, gy + 1) * (1 - tx) + lattice(gx + 1, gy + 1) * tx
+            value = a * (1 - ty) + b * ty
+            grain = (value - 0.5) * 0.075
+            grain += (_h01(seed, x, y, 13) - 0.5) * 0.022
+            if abs(grain) > 0.004:
+                px(img, x, y, shade(base, 1.0 + grain))
     # a single vein or fault, sometimes
     if _h01(seed, quad, 5) < 0.35:
         vein = mix(base, p["stone_dark"], 0.35)
@@ -190,8 +208,23 @@ def flag(p: dict, seed: int, quad: int, *, tone: float = 1.0, joint=None):
 
 
 def worn(p: dict, seed: int):
+    """A slab that feet have darkened, and dirt gathered in its joints.
+
+    The darkening used to be a 24% single-pixel dither, which at gameplay zoom is a
+    spray of dark specks over the paving - "grit" only if you are looking at one
+    pixel at a time. Traffic wears a path and grime collects at the edges, so both
+    are drawn as regions: a cool wash over the slab and a shadow in the joint.
+    """
     img = flag(p, seed, 2, tone=0.90)
-    dither(img, 0, 0, T, T, shade(p["stone_dark"], 1.05), 0.24, seed=seed + 1)
+    grime = shade(p["stone_dark"], 1.05)
+    for y in range(T):
+        for x in range(T):
+            # a soft wash, densest toward the joints and toward the south-east corner
+            edge = min(x, y, T - 1 - x, T - 1 - y)
+            wash = max(0.0, (3.5 - edge) / 3.5) * 0.55 + 0.15
+            wash *= 0.6 + 0.4 * _h01(seed + 1, x // 3, y // 3)
+            if wash > 0.18:
+                px(img, x, y, mix(p["stone"], grime, min(0.55, wash)))
     return img
 
 
@@ -1059,21 +1092,23 @@ def archive_ash_floor(p: dict, seed: int = 7):
     scriptorium. Ash settles in drifts, so it is drawn as two or three soft patches
     placed by patch, not as noise.
     """
-    img = flag(p, seed, 1, tone=0.96)
-    for i in range(3):
-        cx = int(_h01(seed, i, 4) * T)
-        cy = int(_h01(seed, i, 5) * T)
-        rx = 2 + int(_h01(seed, i, 6) * 3)
-        ry = 1 + int(_h01(seed, i, 7) * 2)
-        for dy in range(-ry, ry + 1):
-            for dx in range(-rx, rx + 1):
-                if (dx / rx) ** 2 + (dy / ry) ** 2 > 1.0:
-                    continue
-                px(img, cx + dx, cy + dy, mix(p["stone"], p["soot"], 0.35))
-    x = int(_h01(seed, 9, 4) * (T - 5))
-    y = int(_h01(seed, 9, 5) * (T - 5))
-    rect(img, x, y, 4, 3, p["paper_dark"])
-    hline(img, x, y, 4, p["paper"])
+    img = flag(p, seed, 2, tone=0.96)
+    # Ash is a *continuous* deposit, not a set of marks. The blobs and the scrap of
+    # paper that used to sit on this tile were placed by a fixed hash, so they landed
+    # in the same spot inside every cell of the room - a repeating glyph on a grid,
+    # which is the loudest thing in the frame at gameplay zoom. What repeats safely
+    # is a gradient, so the tile carries a soft drift of ash across one corner and
+    # nothing else; the debris is furniture and belongs in props, where it can be
+    # placed once.
+    ashy = mix(p["stone"], p["soot"], 0.30)
+    for y in range(T):
+        for x in range(T):
+            # a drift that thickens toward the south-east corner, with a torn edge
+            reach = ((x + y) / float(2 * T - 2))
+            torn = 0.72 + 0.28 * _h01(seed, x // 2, y // 2, 3)
+            amount = max(0.0, (reach - torn) / max(1e-6, 1.0 - torn))
+            if amount > 0.02:
+                px(img, x, y, mix(img.getpixel((x, y))[:3], ashy, min(0.75, amount)))
     return img
 
 
@@ -1106,8 +1141,15 @@ def archive_register_ring(p: dict):
 
 
 # --- L3 props ---------------------------------------------------------------
-def archive_shelf(p: dict, *, burnt=False):
-    """A tall bookcase: five shelves, chains on the rare volumes, one gap."""
+def archive_shelf(p: dict, *, burnt=False, variant: int = 0):
+    """A tall bookcase: five shelves, chains on the rare volumes, one gap.
+
+    `variant` re-rolls the books. A rank of a scriptorium's cases is nine copies of
+    one sprite, and because every copy is byte-identical the eye reads the spines as
+    a printed pattern rather than as nine different cases of books - the same
+    stamping fault as a repeated prop, one level down. Three variants of the same
+    case cost three frames and break the repeat.
+    """
     w, h = 44, 96
     img = new(w, h)
     frame = shade(p["stone_dark"], 1.06)
@@ -1123,16 +1165,16 @@ def archive_shelf(p: dict, *, burnt=False):
             continue
         for i in range(4):
             x0 = 5 + i * 10
-            if _h01(11, shelf, i) < 0.16:
+            if _h01(11 + variant * 7, shelf, i) < 0.16:
                 continue
-            tall = 9 + int(_h01(12, shelf, i) * 4)
-            body = shade(p["paper_dark"], 0.8 + 0.35 * _h01(13, shelf, i))
+            tall = 9 + int(_h01(12 + variant * 7, shelf, i) * 4)
+            body = shade(p["paper_dark"], 0.8 + 0.35 * _h01(13 + variant * 7, shelf, i))
             rect(img, x0, y0 + 14 - tall, 7, tall, body)
             vline(img, x0, y0 + 14 - tall, tall, shade(body, 1.20))
             vline(img, x0 + 6, y0 + 14 - tall, tall, shade(body, 0.74))
             hline(img, x0, y0 + 14 - tall + 2, 7, shade(body, 0.80))
         # a chained volume left out on the shelf
-        if shelf in (0, 3):
+        if shelf in ((0, 3) if variant % 2 == 0 else (1,)):
             rect(img, w - 14, y0 + 6, 8, 8, p["cloth"])
             hline(img, w - 14, y0 + 6, 8, p["accent"])
             for k in range(4):
@@ -1580,7 +1622,10 @@ def build_archive_kit() -> None:
     ]
     props = [
         ("bookshelf", lambda: archive_shelf(p)),
+        ("bookshelf_b", lambda: archive_shelf(p, variant=1)),
+        ("bookshelf_c", lambda: archive_shelf(p, variant=2)),
         ("bookshelf_burnt", lambda: archive_shelf(p, burnt=True)),
+        ("bookshelf_burnt_b", lambda: archive_shelf(p, burnt=True, variant=1)),
         ("lectern", lambda: archive_lectern(p)),
         ("scroll_rack", lambda: archive_scroll_rack(p)),
         ("chandelier", lambda: archive_chandelier(p)),
