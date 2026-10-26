@@ -144,6 +144,56 @@ class Placer:
                 "energy": energy, "scale": scale, "cell": [cell[0], cell[1]], "note": note}
 
 
+def _reachable_from(floor: set, geom: set, blocked: set, start) -> set:
+    """Every walkable cell the player can walk to, given cells that are solid.
+
+    Four-way over the map's own floor, exactly the graph the collision route test
+    builds: a cell is walkable when it is floor, is not geometry, and is not covered
+    by a solid prop. Nothing here decides what the level *means*; it only answers
+    whether a proposed obstacle is on the far side of a passage.
+    """
+    open_cells = {c for c in floor if c not in geom and c not in blocked}
+    if start not in open_cells:
+        return set()
+    seen = {start}
+    stack = [start]
+    while stack:
+        x, y = stack.pop()
+        for step in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+            if step in open_cells and step not in seen:
+                seen.add(step)
+                stack.append(step)
+    return seen
+
+
+def _keeps_open(floor: set, geom: set, blocked: set, start, baseline: set) -> bool:
+    """Would blocking `blocked` leave every cell of `baseline` reachable?
+
+    `baseline` is the set the map reaches before any prop is made solid, so a level
+    with a pre-existing sealed pocket does not veto every column in it. This is what
+    lets a column be solid *and* keeps the promise the collision route test checks in
+    CI: every collision-clear floor cell belongs to the playable route graph.
+    """
+    if start is None:
+        return False
+    reach = _reachable_from(floor, geom, blocked, start)
+    return all(cell in reach for cell in baseline if cell not in blocked)
+
+
+def _solid_footprint(cell) -> set:
+    """The cells a solid column standing at `cell` takes away from the player.
+
+    The renderer gives a solid prop a box across the middle of its own cell (12 x 8
+    px, at y +4 .. +12 inside the cell). The Knight's collision shape is 12 x 16 and
+    reaches 8 px north and 8 px south of the cell it stands in, so only the column's
+    own cell is taken away: the cells beside it, behind it and in front of it stay
+    walkable. Modelling the footprint exactly - rather than guessing at an inflated
+    one - is what lets the generator promise the CI route test the same thing the
+    renderer will actually do.
+    """
+    return {cell}
+
+
 def band(plan, floor, geom, y: int, x0: int, x1: int, frame: str) -> int:
     """Paint one horizontal run of floor, wherever the level actually has floor."""
     painted = 0
@@ -533,7 +583,11 @@ def build_level2(level: dict) -> dict:
     #     hypostyle of them on a nine-cell lattice, a slot in five left missing so it
     #     does not read as an extruded grid. They keep clear of both processional ways
     #     and stand only on floor the map already makes walkable.
+    start = ent.get("player_spawn") or (75, 100)
+    baseline = _reachable_from(floor, geom, set(), start)
     shafts = 0
+    shafts_broken = 0
+    solid = set()
     for cell in sorted(floor):
         if cell in geom or cell[0] % 9 != 7 or cell[1] % 9 != 7:
             continue
@@ -543,9 +597,17 @@ def build_level2(level: dict) -> dict:
             continue
         if not p.free(cell, spacing=2):
             continue
-        if p.put("ossuary_stack_shaft", cell):
+        # Every fifth shaft has come open: the case is the same frame at two moments
+        # in its life, so a rank still reads as one ossuary. Only the standing ones
+        # are solid, and only where blocking them is provably safe for the route.
+        bay = cell[0] // 9 + cell[1] // 9
+        if (bay % 7) not in (3, 4) and _keeps_open(floor, geom, solid | _solid_footprint(cell),
+                                        start, baseline) and p.put("ossuary_stack_shaft", cell, solid=True):
+            solid |= _solid_footprint(cell)
             shafts += 1
-    props += shafts
+        elif p.put("ossuary_stack_broken", cell):
+            shafts_broken += 1
+    props += shafts + shafts_broken
 
     # --- charnel hearths: the cold fires the bone lanterns answer to
     for cell in ((52, 62), (98, 62)):
@@ -578,6 +640,8 @@ def build_level2(level: dict) -> dict:
         "skull_banks": banks,
         "bone_stacks": stacks,
         "hall_shafts": shafts,
+        "hall_shafts_broken": shafts_broken,
+        "solid_cells": len(solid),
         "wall_dressing": walls,
         "props": props,
     })
@@ -897,8 +961,12 @@ def build_level4(level: dict) -> dict:
         route_guard.add(cell)
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             route_guard.add((cell[0] + dx, cell[1] + dy))
+    start = ent.get("player_spawn") or (8, 14)
+    baseline = _reachable_from(floor, geom, set(), start)
     columns = 0
+    ruined = 0
     aisle_urns = 0
+    solid = set()
     for cell in sorted(floor):
         if cell in geom or cell in route_guard:
             continue
@@ -909,21 +977,30 @@ def build_level4(level: dict) -> dict:
         if not (on_column or in_aisle):
             continue
         # a lattice with every slot filled is a grid, not a room; a share of the
-        # columns is left standing missing so the hall reads as the older building
-        # the reliquary was cut into rather than as something extruded from a tile.
+        # columns is left standing broken so the hall reads as the older building the
+        # reliquary was cut into rather than as something extruded from a tile.
         if (cell[0] * 23 + cell[1] * 41) % 7 == 0:
             continue
         if not p.free(cell, spacing=2):
             continue
         bay = cell[0] // 8 + cell[1] // 8
         if on_column:
-            name = "processional_dais" if bay % 4 == 0 else "pier"
-            if p.put(name, cell):
+            # An intact column is solid architecture, and a broken one is a bay you
+            # can cross: the two are the same frame at two moments in its life. A
+            # column is only made solid when blocking it provably leaves every
+            # walkable cell of the level reachable, so a bay that would close a
+            # passage comes out broken instead of walling the player in.
+            if ((bay % 11) not in (4, 5) and _keeps_open(floor, geom, solid | _solid_footprint(cell),
+                                             start, baseline)
+                    and p.put("pier", cell, solid=True)):
+                solid |= _solid_footprint(cell)
                 columns += 1
+            elif p.put("pier_broken", cell):
+                ruined += 1
         elif bay % 2 == 0:
             if p.put("jade_urn", cell):
                 aisle_urns += 1
-    props += columns + aisle_urns
+    props += columns + ruined + aisle_urns
 
     # --- jade urns and serpent reliefs, set against the walls
     for cell in wall_adjacent(floor, geom):
@@ -944,7 +1021,9 @@ def build_level4(level: dict) -> dict:
         "orbit_lamps": orbit,
         "piers": piers,
         "hall_columns": columns,
+        "hall_columns_broken": ruined,
         "aisle_urns": aisle_urns,
+        "solid_cells": len(solid),
         "route_cells": len(route_cells),
         "wall_dressing": walls,
         "props": props,

@@ -610,9 +610,15 @@ class Plan:
 
     def prop(self, frame_name: str, cell, *, low: bool = False, z: int = 1,
              light: dict | None = None, hang: bool = False, flip: bool = False,
-             note: str = "") -> None:
+             solid: bool = False, note: str = "") -> None:
         entry = {"frame": frame_name, "cell": [cell[0], cell[1]], "z": z,
                  "y_sort": not hang, "low": low, "anchor": "base"}
+        # A prop that reads as load-bearing architecture - a column, a standing case -
+        # is solid: the renderer gives it a StaticBody2D. A prop that is dressing is
+        # not, and the generator only marks a cell solid after proving that blocking
+        # it still leaves every walkable cell on the level reachable.
+        if solid:
+            entry["solid"] = True
         if flip:
             entry["flip"] = True
         if note:

@@ -58058,7 +58058,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58069,10 +58070,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         16,
         25
@@ -58091,7 +58093,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58102,7 +58105,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58113,7 +58117,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58124,10 +58129,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         25,
         79
@@ -58146,7 +58152,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58157,7 +58164,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58168,7 +58176,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58179,10 +58188,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         52,
         115
@@ -58201,7 +58211,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58212,7 +58223,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58223,7 +58235,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58234,7 +58247,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58245,10 +58259,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         70,
         34
@@ -58267,10 +58282,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         79,
         34
@@ -58281,7 +58297,7 @@
       "anchor": "base"
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         79,
         88
@@ -58292,7 +58308,7 @@
       "anchor": "base"
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         88,
         16
@@ -58311,10 +58327,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         88,
         88
@@ -58333,10 +58350,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         97,
         70
@@ -58355,7 +58373,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58366,7 +58385,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58377,10 +58397,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         106,
         61
@@ -58391,7 +58412,7 @@
       "anchor": "base"
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         106,
         70
@@ -58410,10 +58431,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         106,
         124
@@ -58432,7 +58454,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58443,7 +58466,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58454,10 +58478,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         115,
         61
@@ -58476,10 +58501,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         115,
         124
@@ -58498,10 +58524,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         124,
         115
@@ -58512,7 +58539,7 @@
       "anchor": "base"
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         133,
         43
@@ -58531,7 +58558,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58542,7 +58570,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58553,10 +58582,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         142,
         34
@@ -58575,7 +58605,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "ossuary_stack_shaft",
@@ -58586,10 +58617,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         151,
         25
@@ -58608,10 +58640,11 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         151,
         79
@@ -58622,7 +58655,7 @@
       "anchor": "base"
     },
     {
-      "frame": "ossuary_stack_shaft",
+      "frame": "ossuary_stack_broken",
       "cell": [
         160,
         16
@@ -58641,7 +58674,8 @@
       "z": 1,
       "y_sort": true,
       "low": false,
-      "anchor": "base"
+      "anchor": "base",
+      "solid": true
     },
     {
       "frame": "charnel_hearth",
@@ -58771,7 +58805,9 @@
     "charnel_cells": 159,
     "skull_banks": 58,
     "bone_stacks": 37,
-    "hall_shafts": 54,
+    "hall_shafts": 34,
+    "hall_shafts_broken": 20,
+    "solid_cells": 34,
     "wall_dressing": 2,
     "props": 205,
     "floor_overrides": 8057,
