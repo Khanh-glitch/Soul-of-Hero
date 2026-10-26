@@ -19,3 +19,19 @@ CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=003 cell=(84, 5) rect=[1024.0
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=004 cell=(20, 22) rect=[8.0, 172.0, 648.0, 532.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=005 cell=(50, 22) rect=[488.0, 172.0, 1128.0, 532.0] ok=true
 CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=006 cell=(80, 22) rect=[968.0, 172.0, 1608.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=007 cell=(84, 22) rect=[1024.0, 172.0, 1664.0, 532.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=008 cell=(20, 39) rect=[8.0, 444.0, 648.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=009 cell=(50, 39) rect=[488.0, 444.0, 1128.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=010 cell=(80, 39) rect=[968.0, 444.0, 1608.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=011 cell=(84, 39) rect=[1024.0, 444.0, 1664.0, 804.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=012 cell=(20, 55) rect=[8.0, 700.0, 648.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=013 cell=(50, 55) rect=[488.0, 700.0, 1128.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=014 cell=(80, 55) rect=[968.0, 700.0, 1608.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=015 cell=(84, 55) rect=[1024.0, 700.0, 1664.0, 1060.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=016 cell=(20, 64) rect=[8.0, 844.0, 648.0, 1204.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=017 cell=(50, 64) rect=[488.0, 844.0, 1128.0, 1204.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=018 cell=(80, 64) rect=[968.0, 844.0, 1608.0, 1204.0] ok=true
+CHAPTER1 AUDIT SHOT: level=chapter_1_level_1 frame=019 cell=(84, 64) rect=[1024.0, 844.0, 1664.0, 1204.0] ok=true
+CHAPTER1 AUDIT DONE: level=chapter_1_level_1 frames=20 limits_applied=true
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)
