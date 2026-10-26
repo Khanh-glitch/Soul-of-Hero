@@ -18,17 +18,20 @@
 - A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.
 - The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.
 - Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.
+- A hypostyle of long-bone shafts stands through the middle of the halls, so the widest camera frame has architecture in it rather than paving with one cabinet against a wall.
+- The crown of the wall is its own order - a projecting pale lintel carried on corbel tabs with a shadow under it - instead of the skull frieze repeated at the top of the storey, so a wall reads bottom-up as plinth, coursing, frieze, crown.
+- The charnel drift is dust that settles into the joints and the low corner of a slab, in runs, not single pale pixels scattered over the stone.
 
 ### Still missing against the brief
 
 - The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.
-- The big halls are still unevenly furnished. At the level's densest camera position the frame holds two bone stacks and a lot of bare paving; the rank stride leaves more empty floor than the room's character can carry.
+- The hall shafts stand on a fixed nine-cell lattice and are one frame, so a long view counts the same column; the hall shafts and the tall bone stacks are also one silhouette at one height.
 - The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.
 
 ### Next correction pass
 
 - Signal the risky branch with a spill, a rubble fall or a darker paving family, and leave the safe branch plain.
-- Decide furniture density inside a hall, not only along its walls: a second, offset rank in the large rooms.
+- Give the hall shaft a second order - a heavier base or a different crown - so the colonnade has two ranks to count.
 - Drop the wall coursing a value so the props carry the light.
 
 ## Cost of the layer
