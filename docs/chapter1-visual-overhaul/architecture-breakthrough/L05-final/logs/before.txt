@@ -3,11 +3,11 @@ WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by 
      at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
 OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.4 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CRUCIBLE BOOT: save=user://crucible_before_40210251818.json
+CRUCIBLE BOOT: save=user://crucible_before_40262726292.json
 CRUCIBLE BOOT: app_boot=complete
 CRUCIBLE BOOT: level=chapter_1_level_5 started=true
 CRUCIBLE CAPTURE: level=chapter_1_level_5 art=off wall_cells=0 props=0 lights=0 entities=83
-CRUCIBLE PERF: art=off renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=870 draw_calls=103 static_mb=114.1 tree_objects=13580
+CRUCIBLE PERF: art=off renderer=llvmpipe (LLVM 20.1.2, 256 bits) nodes=868 draw_calls=103 static_mb=114.1 tree_objects=13577
 CRUCIBLE STATION tag=before station=f1_spawn cell=(10, 17) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_spawn.png ok=true
 CRUCIBLE STATION tag=before station=f1_gate cell=(16, 14) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_gate.png ok=true
 CRUCIBLE STATION tag=before station=f1_altar cell=(46, 19) zoom=1.00 out=res://.artifacts/crucible/before/before_f1_altar.png ok=true
@@ -17,7 +17,7 @@ CRUCIBLE STATION tag=before station=f2_encounter cell=(91, 47) zoom=1.00 out=res
 CRUCIBLE STATION tag=before station=f3_approach cell=(70, 76) zoom=1.00 out=res://.artifacts/crucible/before/before_f3_approach.png ok=true
 CRUCIBLE FIGHT: archer found at (1528.0, 1192.0)
 CRUCIBLE FIGHT: swings=6 boss_hp 6437 -> 6337
-CRUCIBLE FIGHT: knight_hp 932/1100 -> 932/1100 | boss_hp=6337/6437 boss_state=RECOVER
+CRUCIBLE FIGHT: knight_hp 932/1100 -> 932/1100 | boss_hp=6337/6437 boss_state=SEEK_BAND
 CRUCIBLE STATION tag=before station=f3_fight cell=(85, 71) zoom=1.00 out=res://.artifacts/crucible/before/before_f3_fight.png ok=true knight_hp=932/1100 boss_hp=6337
 CRUCIBLE STATION tag=before station=overview_f1 cell=(32, 16) zoom=0.50 out=res://.artifacts/crucible/before/overview_before_overview_f1.png ok=true
 CRUCIBLE STATION tag=before station=overview_f2 cell=(53, 44) zoom=0.40 out=res://.artifacts/crucible/before/overview_before_overview_f2.png ok=true

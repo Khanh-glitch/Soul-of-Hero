@@ -11,7 +11,7 @@ ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
    GDScript backtrace (most recent call first):
        [0] _finish_boot (res://game/app/app_root.gd:270)
 CHAPTER1 CAPTURE: level=chapter_1_level_5 slot=5 art=on facade_cells=3303 lights=29 entities=83
-CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1070 draw_calls=0 static_mb=189.5 fps=2
+CHAPTER1 PERF: level=chapter_1_level_5 art=on nodes=1073 draw_calls=0 static_mb=190.1 fps=1
 CHAPTER1 HARNESS CHECK OK: level=chapter_1_level_5 facade_cells=3303 lights=29
 WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
    at: cleanup (core/object/object.cpp:2535)
