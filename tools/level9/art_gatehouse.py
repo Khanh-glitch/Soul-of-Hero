@@ -93,10 +93,20 @@ def flag(seed: int, quad: int, *, tone: float = 1.0):
     """
     base = mix(STONE_BASE, FLOOR_COOL, 0.42)
     img = flag_quadrant(seed, quad, base, mix(JOINT, base, 0.30), tone=tone)
-    if quad in (0, 3):
-        hline(img, 0, 1, T, shade(base, 1.16))
-    if quad in (0, 1):
-        vline(img, 1, 0, T, shade(base, 1.09))
+    # The joint rhythm is the flag_quadrant's: one 32 px slab, its joint on its own
+    # outer edges. This function used to draw one more line inside every slab - a
+    # horizontal stroke across the north-west quadrant's top and the south-east's,
+    # and a vertical one down the north-east's left - which cut each 32 px flag in
+    # half on both axes and turned the hall's paving back into a 16 px grid. At
+    # gameplay zoom that grid was the strongest thing in the room: the review read
+    # the floor as brickwork and the slabs themselves as the grout.
+    #
+    # What a slab needs instead is a face: a sheen from the light source's side, so
+    # the slab has an lit edge and a shaded one and reads as stone rather than as
+    # tile. The sheen is on the north-west quadrant only, which is where the hall's
+    # lights come from, and it stops well short of the joint.
+    if quad == 0:
+        glow(img, T * 0.30, T * 0.24, T * 0.52, T * 0.34, shade(base, 1.20), 46, steps=6)
     # a broad chisel mark that never repeats within a room
     if _h01(seed, quad, 2) < 0.5:
         offset = 4 + int(_h01(seed, quad, 3) * 7)
