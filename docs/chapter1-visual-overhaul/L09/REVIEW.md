@@ -28,7 +28,7 @@
 
 ### Next correction pass
 
-- The paving is the one thing worth a second structural attempt if the owner asks: fewer, larger joints and per-slab highlights rather than a repeating course.
+- The paving is repaired at the source; if the owner still reads the joint rhythm as too regular, the lever is the slab's own size in the kit, not more lines.
 - The gate's chains could be extended down the arena walls to tie the arch into the room.
 
 ## Cost of the layer
