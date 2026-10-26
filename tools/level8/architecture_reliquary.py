@@ -550,12 +550,30 @@ def build():
     # the authored energies are scaled together here, so the relative order the author
     # wrote survives (normalise_lights' soft knee still caps the top) and the lamps can
     # carry the lighting instead of decorating it.
+    # The gain is applied once per light, not once per place the light is written down.
+    # A prop's light is the same dict that also goes into plan.lights (kitlib's
+    # Placer.prop appends it to both), so applying the gain in both loops multiplied
+    # every lamp carried by a wall prop by 1.44 instead of 1.2 - the exit gate piers,
+    # the wine fountain, the candle stands and the niches were all 20 % hotter than
+    # authored, while the lights the generators append directly were correct. That is
+    # the whole of the vault's remaining blow-out: measured on the exit frame, mean
+    # 151.8 and 15.2 % of the field above 245 before any of this pass.
+    gained = 0
+    seen: set[int] = set()
     for light in plan.lights:
+        if not isinstance(light, dict) or "energy" not in light or id(light) in seen:
+            continue
+        seen.add(id(light))
         light["energy"] = round(float(light["energy"]) * LAMP_GAIN, 2)
+        gained += 1
     for entry in plan.props:
         light = entry.get("light") if isinstance(entry, dict) else None
-        if isinstance(light, dict) and "energy" in light:
-            light["energy"] = round(float(light["energy"]) * LAMP_GAIN, 2)
+        if not isinstance(light, dict) or "energy" not in light or id(light) in seen:
+            continue
+        seen.add(id(light))
+        light["energy"] = round(float(light["energy"]) * LAMP_GAIN, 2)
+        gained += 1
+    document["stats"]["lights_gained"] = gained
     return document, level
 
 
