@@ -386,15 +386,20 @@ def vault(p: Placer, rect, exit_cell, chest_cell) -> int:
     x0, y0, x1, y1 = rect
     placed = 0
     # the gate is a real arch over the exit: piers either side, arch above
+    # Two lamps on the two piers lit the same 200 px of wall twice. On pale marble
+    # that is not "a lit threshold", it is a white band: the exit frame measured
+    # 6.5 % of the field above 245 after the energies had already come down twice.
+    # The opening is lit once, from the arch itself, with a tighter pool, and the
+    # pale banners either side carry a fraction of the light they had.
     for dx in (-2, 2):
         placed += p.wall("column", (exit_cell[0] + dx, VAULT_WALL),
-                         light=gold_light((exit_cell[0] + dx, VAULT_WALL),
-                                          0.42, 1.5, 8, "exit gate light"),
                          note="exit gate pier")
     placed += p.wall("gate_frame", (exit_cell[0], VAULT_WALL),
+                     light=gold_light((exit_cell[0], VAULT_WALL), 0.38, 1.3, 8,
+                                      "exit gate light"),
                      note="exit gate arch")
     for cell in ((x0 + 2, VAULT_WALL), (x1 - 2, VAULT_WALL)):
-        placed += p.wall("banner_pale", cell, light=cold_light(cell, 0.35, 1.4, 8),
+        placed += p.wall("banner_pale", cell, light=cold_light(cell, 0.18, 1.4, 8),
                          note="reliquary banner")
     # the dais corners, and the founders either side of the chest
     placed += p.floor_prop("sarcophagus", (chest_cell[0] - 4, chest_cell[1] + 3),

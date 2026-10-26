@@ -27410,23 +27410,7 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "exit gate pier",
-      "light": {
-        "x": 808,
-        "y": 56,
-        "color": [
-          1.0,
-          0.82,
-          0.55
-        ],
-        "energy": 0.5,
-        "scale": 1.16,
-        "cell": [
-          50,
-          3
-        ],
-        "note": "exit gate light"
-      }
+      "note": "exit gate pier"
     },
     {
       "frame": "column",
@@ -27438,23 +27422,7 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "exit gate pier",
-      "light": {
-        "x": 872,
-        "y": 56,
-        "color": [
-          1.0,
-          0.82,
-          0.55
-        ],
-        "energy": 0.5,
-        "scale": 1.16,
-        "cell": [
-          54,
-          3
-        ],
-        "note": "exit gate light"
-      }
+      "note": "exit gate pier"
     },
     {
       "frame": "gate_frame",
@@ -27466,7 +27434,23 @@
       "y_sort": true,
       "low": false,
       "anchor": "base",
-      "note": "exit gate arch"
+      "note": "exit gate arch",
+      "light": {
+        "x": 840,
+        "y": 56,
+        "color": [
+          1.0,
+          0.82,
+          0.55
+        ],
+        "energy": 0.46,
+        "scale": 1.1,
+        "cell": [
+          52,
+          3
+        ],
+        "note": "exit gate light"
+      }
     },
     {
       "frame": "banner_pale",
@@ -27487,7 +27471,7 @@
           0.78,
           1.0
         ],
-        "energy": 0.42,
+        "energy": 0.22,
         "scale": 1.13,
         "cell": [
           45,
@@ -27515,7 +27499,7 @@
           0.78,
           1.0
         ],
-        "energy": 0.42,
+        "energy": 0.22,
         "scale": 1.13,
         "cell": [
           58,
@@ -28167,33 +28151,17 @@
       "note": "the wine fountain"
     },
     {
-      "x": 808,
+      "x": 840,
       "y": 56,
       "color": [
         1.0,
         0.82,
         0.55
       ],
-      "energy": 0.5,
-      "scale": 1.16,
+      "energy": 0.46,
+      "scale": 1.1,
       "cell": [
-        50,
-        3
-      ],
-      "note": "exit gate light"
-    },
-    {
-      "x": 872,
-      "y": 56,
-      "color": [
-        1.0,
-        0.82,
-        0.55
-      ],
-      "energy": 0.5,
-      "scale": 1.16,
-      "cell": [
-        54,
+        52,
         3
       ],
       "note": "exit gate light"
@@ -28206,7 +28174,7 @@
         0.78,
         1.0
       ],
-      "energy": 0.42,
+      "energy": 0.22,
       "scale": 1.13,
       "cell": [
         45,
@@ -28222,7 +28190,7 @@
         0.78,
         1.0
       ],
-      "energy": 0.42,
+      "energy": 0.22,
       "scale": 1.13,
       "cell": [
         58,
@@ -28395,15 +28363,15 @@
     "floor_overrides": 3648,
     "wall_overrides": 57,
     "props": 96,
-    "lights": 45,
+    "lights": 44,
     "spine_cells": 194,
     "emblem_cells": 98,
     "dais_cells": 88,
     "tomb_slab_cells": 110,
     "wall_dressing": 57,
     "wear_cells": 94,
-    "lights_gained": 45,
-    "lights_resized": 45,
+    "lights_gained": 44,
+    "lights_resized": 44,
     "lights_dimmed": 0
   }
 }
