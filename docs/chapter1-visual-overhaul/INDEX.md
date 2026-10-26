@@ -6,10 +6,10 @@ Native frames: `.github/workflows/chapter1-visual-overhaul.yml` (production `App
 
 | Level | Title | Native frames | Status |
 | --- | --- | --- | --- |
-| L01 | Crypt Entrance | 7 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L02 | Ossuary Fork | 8 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L03 | Crossfire Archive | 9 | `INCOMPLETE — ART DELIVERY FAILED` |
-| L04 | Spiral Reliquary | 8 | `INCOMPLETE — ART DELIVERY FAILED` |
+| L01 | Crypt Entrance | 7 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L02 | Ossuary Fork | 8 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L03 | Crossfire Archive | 9 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
+| L04 | Spiral Reliquary | 8 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 | L05 | Blood Crucible | 9 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 | L06 | Soul Anchor Relay | 7 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |
 | L07 | The Failing Beacon | 4 | `COMPLETE — AWAITING OWNER VISUAL REVIEW` |

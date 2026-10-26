@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_3`
 - Map source: `data/levels/chapter_1_level_3.json`
 - Source sha256: `c9a6ab13be74fda58ed29a2ee707ae8b7213242fb95799d0249d2cd5b3514dbd`
-- Status: `INCOMPLETE — ART DELIVERY FAILED`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
 - Art direction: Crossfire Archive — warm archive stacks and long sightlines
 
 ## What the native frames show
@@ -14,17 +14,21 @@
 
 ### Improved
 
-- Amber palette and masonry framing make the archive hall warmer while leaving the production map and its collision untouched.
+- The archive reads as a scriptorium: ranks of bookcases through the halls, in three variants with different spines, different gaps and the chained volume on a different shelf, plus two kinds of burnt shell where the fire reached them.
+- Its walls are soot-blackened coursing, stepped well below the paving in value, with iron grilles over shelf recesses and boarded-over recesses as the wall's own language - so floor, wall and furniture are three planes instead of one brown field.
+- The floor carries ash as a drift that thickens into one corner, with boardwalks and register rings where the level has reading rooms.
+- Lecterns, scroll racks and braziers are placed with candles that light the shelves they face.
 
 ### Still missing against the brief
 
-- The archive identity lives in scattered shelf props; there are no constructed shelf bays, no reading alcoves, no gallery rail.
-- The Gate 3 geometry was deliberately not promoted, so the room still reads as a hall with books in it.
+- The shelf ranks are a lattice at a fixed stride, and from any single camera position the repeat is legible as a grid.
+- Between the ranks are three and four cells of bare paving with nothing in them; the rooms read as shelving with floor between it rather than as rooms with books in them.
+- The level has no second storey of readable structure - no gallery, no rail, no upper face - so its walls end at the cornice and stop.
 
 ### Next correction pass
 
-- Build shelf bays from the decor sheet against wall faces, three tiles wide, with a lintel course.
-- Add a gallery rail course above the hall to give the room a second storey of readable structure.
+- Break the lattice with a second offset rank and a few cases standing out from the wall.
+- Add a gallery rail course above the hall so the room has two readable layers.
 
 ## Cost of the layer
 

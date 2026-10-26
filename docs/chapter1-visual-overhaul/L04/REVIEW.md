@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_4`
 - Map source: `data/levels/chapter_1_level_4.json`
 - Source sha256: `11d82555e179a76bd9e7bbd6ed16e6a0fa76988d200241c49a15cb58b6740ca4`
-- Status: `INCOMPLETE — ART DELIVERY FAILED`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
 - Art direction: Spiral Reliquary — monumental concentric stone
 
 ## What the native frames show
@@ -14,17 +14,21 @@
 
 ### Improved
 
-- Neutral stone palette and a paved margin make the reliquary floor read as cut stone rather than a tile grid.
+- The reliquary has verticals now: engaged piers with fluted ivory shafts, bronze astragals, jade capitals and moulded bases stand along the walls at a nine-cell stride, so the halls have bays to count and depth to see.
+- Walls are a dark warm plaster and the ivory is what the piers, the shrine band and the paving are made of, so the floor is a ground plane rather than a continuation of the wall.
+- The processional route is walked out over the map's own floor and inlaid in darker paving with a bronze lozenge in every cell, so the way to the relic is legible from across the hall without a painted stripe.
+- The spiral is cut around the shrine's own cell and the relic stands behind the live objective, so the thing the level is named for is what the floor turns around; the five chapels each have a bronze-framed shrine niche in the wall behind them.
 
 ### Still missing against the brief
 
-- The concentric ritual stonework and the central landmark the brief asks for are in the plan, not in the picture.
-- The final apse is architecturally identical to the rest of the floor.
+- Outside the route and the shrine, the halls are still large and sparsely furnished: at the densest camera position the middle of the frame is paving.
+- The four secondary turns are five-by-five discs of two floor families, so they read as patches of a different stone rather than as smaller spirals.
+- The piers stand on the wall line only; there is no free-standing colonnade and no arcade, so the room's depth comes from one plane of verticals.
 
 ### Next correction pass
 
-- Ring the central landmark with a concentric band of paving and four cardinal inlays.
-- Give the apse a distinct floor family and a heavier coping so the room change is visible from the doorway.
+- Furnish the middle of the two largest halls at the density of the shrine court.
+- Draw the secondary turns as spirals, not as discs - the floor families exist for it.
 
 ## Cost of the layer
 

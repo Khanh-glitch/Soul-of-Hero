@@ -3,7 +3,7 @@
 - Level id: `chapter_1_level_2`
 - Map source: `data/levels/chapter_1_level_2.json`
 - Source sha256: `abff2dcd9694b791d2903f1e38fada91067a542275577879afeee493eca68a0e`
-- Status: `INCOMPLETE — ART DELIVERY FAILED`
+- Status: `COMPLETE — AWAITING OWNER VISUAL REVIEW`
 - Art direction: Ossuary Fork — burial galleries, bone masonry
 
 ## What the native frames show
@@ -14,18 +14,22 @@
 
 ### Improved
 
-- The burial gallery keeps its authored bone piles and urns and now sits inside brick walls with a coping line and contact shadow.
-- Warm bone-toned palette separates this floor from Level 1 without changing the map.
+- The Ossuary Fork's walls are built from what the place is made of: coursed long bones with dark seams, a skull frieze set into the framed course at eye height, and plain bone coursing above it. The frieze is one band, not a stamped motif on every row.
+- A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.
+- The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.
+- Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.
 
 ### Still missing against the brief
 
-- Burial niches are not architectural yet: the bone galleries are props on a floor, not constructed recesses in a wall.
-- Safe and risky branches read the same; the brief asked for the environment to signal which fork is dangerous.
+- The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.
+- The big halls are still unevenly furnished. At the level's densest camera position the frame holds two bone stacks and a lot of bare paving; the rank stride leaves more empty floor than the room's character can carry.
+- The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.
 
 ### Next correction pass
 
-- Add a niche band on wall faces (a recessed dark tile framed by two jambs) at fixed intervals.
-- Differentiate the branches with a blood channel or rubble fall on the risky side.
+- Signal the risky branch with a spill, a rubble fall or a darker paving family, and leave the safe branch plain.
+- Decide furniture density inside a hall, not only along its walls: a second, offset rank in the large rooms.
+- Drop the wall coursing a value so the props carry the light.
 
 ## Cost of the layer
 

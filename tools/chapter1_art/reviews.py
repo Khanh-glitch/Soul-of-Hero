@@ -31,58 +31,71 @@ Chapter 1 visual overhaul - shared presentation layer
 CRITIQUE = {
     "chapter_1_level_1": {
         "improved": [
-            "The slate-blue floor and flat grey wall tops are now warm sandstone with brick courses, a coping course and side returns, so the first room reads as built masonry.",
-            "Wall torches and banners hang at a fixed rhythm with real point lights, and the room has lit pools instead of uniform brightness.",
-            "A dark paved margin runs around the room, so the walkable floor no longer runs edge to edge into its own walls.",
+            "The walls of the first room are the crypt's own storey now: coursed ashlar with a dado course of arched columbarium recesses, each holding a shelf of urns, so the room is an underground burial hall rather than a box with a pattern on it.",
+            "The hall is laid out around the level's processional axis: an aisle of dressed stone with a raised kerb on both sides and a bronze inlay down its joint, running the length of the level and crossing at the shaft.",
+            "The burial business is furniture, not decoration: sarcophagi stand in ranks through the galleries in four kinds (an effigy chest, a plainer chest with a cut cross and a chipped corner, a two-burial chest, and one levered open), with loculi in the corners, biers, and candelabra with real lights.",
+            "Beyond the rooms the rock is the crypt's own, in the crypt's own palette, so the level no longer floats on a shared grey field.",
         ],
         "missing": [
-            "The tutorial must stay readable, so the world tint is only 0.95; contrast is therefore weaker here than in later levels, and the room can still read flat.",
-            "There is no doorway frame or arch at the room mouth - transitions are still a gap in a wall.",
-            "Identity is carried by palette and props; nothing in the derived architecture says 'crypt entrance' specifically.",
+            "Value structure inside the galleries is still flat: the tomb chests are cut from a stone close to the paving they stand on, so a rank of them reads as dark shapes on a dark floor rather than as carved objects with a lit top plane.",
+            "There is still no door surround at a room mouth; transitions remain a gap in a wall.",
+            "The columbarium dado repeats on a fixed six-cell rhythm, which is visible as a rhythm rather than as an accident of construction.",
         ],
         "next": [
-            "Author a masonry door surround (jambs + lintel) at each room opening.",
-            "Add paired sconces flanking the spawn and the sigil so the eye has a landmark to lock onto immediately.",
+            "Raise the tomb lid's top plane and darken the chest's shaded side, so a rank of them separates from the floor at 1x.",
+            "Author a masonry jamb-and-lintel surround at each room opening, in the kit's own stone.",
         ],
     },
     "chapter_1_level_2": {
         "improved": [
-            "The burial gallery keeps its authored bone piles and urns and now sits inside brick walls with a coping line and contact shadow.",
-            "Warm bone-toned palette separates this floor from Level 1 without changing the map.",
+            "The Ossuary Fork's walls are built from what the place is made of: coursed long bones with dark seams, a skull frieze set into the framed course at eye height, and plain bone coursing above it. The frieze is one band, not a stamped motif on every row.",
+            "A bone arch stands over the crossing the level is named for, with a lantern either side of it, and banks of skulls are built into the wall where the fork's ways meet.",
+            "The halls are furnished as an ossuary is: ranks of bone stacks in three kinds (a plain stack, one crowned with a skull, one with a shaft), with passages between them.",
+            "Charnel fires burn cold in two places and are the only cool light in the level, which gives the warm bone stone something to answer.",
         ],
         "missing": [
-            "Burial niches are not architectural yet: the bone galleries are props on a floor, not constructed recesses in a wall.",
-            "Safe and risky branches read the same; the brief asked for the environment to signal which fork is dangerous.",
+            "The fork does not yet tell the player which way is dangerous: both branches are furnished and lit the same way, and the brief asks the environment to signal the choice.",
+            "The big halls are still unevenly furnished. At the level's densest camera position the frame holds two bone stacks and a lot of bare paving; the rank stride leaves more empty floor than the room's character can carry.",
+            "The plain bone coursing is close to the value of bleach, so in a wide frame the walls out-punch the props standing in front of them.",
         ],
         "next": [
-            "Add a niche band on wall faces (a recessed dark tile framed by two jambs) at fixed intervals.",
-            "Differentiate the branches with a blood channel or rubble fall on the risky side.",
+            "Signal the risky branch with a spill, a rubble fall or a darker paving family, and leave the safe branch plain.",
+            "Decide furniture density inside a hall, not only along its walls: a second, offset rank in the large rooms.",
+            "Drop the wall coursing a value so the props carry the light.",
         ],
     },
     "chapter_1_level_3": {
         "improved": [
-            "Amber palette and masonry framing make the archive hall warmer while leaving the production map and its collision untouched.",
+            "The archive reads as a scriptorium: ranks of bookcases through the halls, in three variants with different spines, different gaps and the chained volume on a different shelf, plus two kinds of burnt shell where the fire reached them.",
+            "Its walls are soot-blackened coursing, stepped well below the paving in value, with iron grilles over shelf recesses and boarded-over recesses as the wall's own language - so floor, wall and furniture are three planes instead of one brown field.",
+            "The floor carries ash as a drift that thickens into one corner, with boardwalks and register rings where the level has reading rooms.",
+            "Lecterns, scroll racks and braziers are placed with candles that light the shelves they face.",
         ],
         "missing": [
-            "The archive identity lives in scattered shelf props; there are no constructed shelf bays, no reading alcoves, no gallery rail.",
-            "The Gate 3 geometry was deliberately not promoted, so the room still reads as a hall with books in it.",
+            "The shelf ranks are a lattice at a fixed stride, and from any single camera position the repeat is legible as a grid.",
+            "Between the ranks are three and four cells of bare paving with nothing in them; the rooms read as shelving with floor between it rather than as rooms with books in them.",
+            "The level has no second storey of readable structure - no gallery, no rail, no upper face - so its walls end at the cornice and stop.",
         ],
         "next": [
-            "Build shelf bays from the decor sheet against wall faces, three tiles wide, with a lintel course.",
-            "Add a gallery rail course above the hall to give the room a second storey of readable structure.",
+            "Break the lattice with a second offset rank and a few cases standing out from the wall.",
+            "Add a gallery rail course above the hall so the room has two readable layers.",
         ],
     },
     "chapter_1_level_4": {
         "improved": [
-            "Neutral stone palette and a paved margin make the reliquary floor read as cut stone rather than a tile grid.",
+            "The reliquary has verticals now: engaged piers with fluted ivory shafts, bronze astragals, jade capitals and moulded bases stand along the walls at a nine-cell stride, so the halls have bays to count and depth to see.",
+            "Walls are a dark warm plaster and the ivory is what the piers, the shrine band and the paving are made of, so the floor is a ground plane rather than a continuation of the wall.",
+            "The processional route is walked out over the map's own floor and inlaid in darker paving with a bronze lozenge in every cell, so the way to the relic is legible from across the hall without a painted stripe.",
+            "The spiral is cut around the shrine's own cell and the relic stands behind the live objective, so the thing the level is named for is what the floor turns around; the five chapels each have a bronze-framed shrine niche in the wall behind them.",
         ],
         "missing": [
-            "The concentric ritual stonework and the central landmark the brief asks for are in the plan, not in the picture.",
-            "The final apse is architecturally identical to the rest of the floor.",
+            "Outside the route and the shrine, the halls are still large and sparsely furnished: at the densest camera position the middle of the frame is paving.",
+            "The four secondary turns are five-by-five discs of two floor families, so they read as patches of a different stone rather than as smaller spirals.",
+            "The piers stand on the wall line only; there is no free-standing colonnade and no arcade, so the room's depth comes from one plane of verticals.",
         ],
         "next": [
-            "Ring the central landmark with a concentric band of paving and four cardinal inlays.",
-            "Give the apse a distinct floor family and a heavier coping so the room change is visible from the doorway.",
+            "Furnish the middle of the two largest halls at the density of the shrine court.",
+            "Draw the secondary turns as spirals, not as discs - the floor families exist for it.",
         ],
     },
     "chapter_1_level_5": {
