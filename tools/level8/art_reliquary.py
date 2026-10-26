@@ -37,12 +37,20 @@ ART = os.path.join(ROOT, "assets", "environment", "chapter1", "reliquary")
 KIT = "reliquary"
 
 # --- palette ---------------------------------------------------------------
-MARBLE_DARK = (96, 98, 106)
-MARBLE_BASE = (150, 152, 158)
-MARBLE_LIGHT = (186, 188, 190)
-MARBLE_PALE = (214, 214, 210)
-VEIN = (118, 120, 132)
-MORTAR = (78, 80, 88)
+# The marble's bright end was the exposure problem, not the lamps. At 214 the pale
+# course sits at 0.84 already; this level's ambient (0.64) and forty-five warm lamps
+# then push it past 245 wherever two pools touch, and the joints - which is all the
+# detail a wall course has - go with it. Measured on the vault frame: 9.6 % of the
+# field above 245. So the top of the range comes down, the joints and the veining go
+# down further (they have to read at a high key, not hide in it), and the lamps and
+# the ambient are left exactly where they were. A darker marble with its bed joints
+# cut in is the chapter's own material; a washed one is not.
+MARBLE_DARK = (88, 90, 98)
+MARBLE_BASE = (140, 142, 149)
+MARBLE_LIGHT = (172, 174, 178)
+MARBLE_PALE = (196, 197, 194)
+VEIN = (100, 102, 116)
+MORTAR = (60, 62, 70)
 ROCK_DARK = (84, 86, 94)
 ROCK_BASE = (104, 106, 114)
 ROCK_LIGHT = (130, 132, 140)
