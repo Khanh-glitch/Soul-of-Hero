@@ -2,18 +2,18 @@
   "schema": "chapter1_architecture_evidence/2",
   "level": "chapter_1_level_5",
   "branch": "arena/6e89e68d-soul-of-hero",
-  "commit": "a9131d357ddf56a84420ac8d5b509da6ec9e1542",
+  "commit": "cc7665a8cef9176a91d8f082b348f0a11e89e85e",
   "previous_pass": {
     "evidence": "docs/chapter1-visual-overhaul/architecture-breakthrough/L05/manifest.json",
     "commit": "29e88fc689ac81e795134cf00b1aaea9e6d8fa0c"
   },
   "source_pins": {
     "data/levels/chapter_1_level_5.json": "f56a20f01f8266e386ef3dbf57333888460dbf53d032f4b9c143737a97de28b6",
-    "data/levels/chapter_1_level_5_architecture.json": "63a8c8eade45840f5e8ab5e3df96650e0c7d7ba3f87f03762edbcd750c731501",
+    "data/levels/chapter_1_level_5_architecture.json": "5af9558c4119d647eee9682b8758433e8a1e5094a95dab61a160636f1d5c5f6e",
     "assets/environment/chapter1/crucible/crucible_tiles.png": "5b292e87508141286ba6e38a8f9a5432c9c491239446a79bbc28ec7f2c3e339f",
-    "assets/environment/chapter1/crucible/crucible_props.png": "d59cd347a03e3e5a504fb2ee591906ca38884a02a65c8ce2049f811aaeef73b2",
-    "tools/level5/art_crucible.py": "e0fa1565de626270b2b53a2a866ca7222f43918a5bd8ceca7836bc32995c0fd3",
-    "tools/level5/architecture.py": "5cdd1d12916f3395fe552ecb4304b4475763f8a5803b5055ea71ca6d382387fe",
+    "assets/environment/chapter1/crucible/crucible_props.png": "c8e4fd91156cfedcaa42b41a55abc26e154e83e34e33275c954351d70ed0b65d",
+    "tools/level5/art_crucible.py": "3d7b2ad8bf6662fe69ac783607be2e0bf3fd639416bc4f5d12025700a10193a7",
+    "tools/level5/architecture.py": "1b526d6657a7f299483423423eb5907a2467dccaa0488fc021dc7d8484376191",
     "game/levels/presentation/crucible_art.gd": "9ba2dcca0396eed0b78d94b9c6aeb49cce7f374e4d2d761d62c626cdf0ace287",
     "game/levels/dungeon_level.gd": "e9a2c468d70268d5096a89f6b24c50e881805b064c7accbad31e08206ebce3dc",
     "tools/captures/crucible_capture.gd": "f8e83325bd9b342ba9cc503b0630c725547da4f739c93b49ac1b1bc0c417e434"
@@ -27,7 +27,7 @@
     "shadows": 296,
     "entities": 83,
     "renderer": "llvmpipe (LLVM 20.1.2, 256 bits)",
-    "nodes": 1074,
+    "nodes": 1069,
     "draw_calls": 110,
     "static_mb": 122.1,
     "errors": [],
@@ -54,7 +54,9 @@
     "nodes": 868,
     "draw_calls": 103,
     "static_mb": 114.1,
-    "errors": [],
+    "errors": [
+      "ERROR: 1 resources still in use at exit (run with --verbose for details)."
+    ],
     "fight": {
       "knight_hp_before": "932/1100",
       "knight_hp_after": "932/1100",
