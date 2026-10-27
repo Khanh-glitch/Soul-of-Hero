@@ -25,8 +25,11 @@ Separate fifth group: 20 ARCANA Fusion *design plans* (`unresolved-multi-engine-
 | 1 Primitive Parity | Source-versus-Godot geometry, RNG, lifetime, shader tests | A smoke test with manually authored shapes |
 | 2 Visual Fidelity | Same 60 Hz tick/seed/viewport/camera, multi-frame side-by-side + effect-ROI IoU/MAE/p95 | Background-dominated MAE or one flattering still |
 | 3 Dynamic Fidelity | Full animation, moving enemy, occlusion, multiple targets, cancel/hit-stop/cleanup | GIF or finite still sequence |
-| 4 Native Integration | Godot actor/enemy, combat event authority, tile interactions in *isolated* scene | A stand-alone HTML only |
-| 5 Load + Quality | Dense combat, overlap, 1080p/1440p/2160p nearest scaling and real GPU benchmarks | One software renderer FPS |
+| 4 Environment Fidelity (MANDATORY) | Per-skill source audit of ALL environmental events, with frame-timed world-ground grooves/cracks/scorch/rubble/debris/shaders/lights, persistent effects and cleanup on an ACTUAL authored map | Smoke/character-only effect; decorated static scar; missing terrain layers; simulated empty floor |
+| 5 Native Integration | Godot actor/enemy, combat event authority, tile interactions in *isolated* scene | A stand-alone HTML only |
+| 6 Load + Quality | Dense combat, overlap, 1080p/1440p/2160p nearest scaling and real GPU benchmarks | One software renderer FPS |
+
+**Environmental policy applies to all 155 entries:** A skill cannot be approved until every source environment call is classified and its rendered consequences reproduced on an actual map. Classify a truly environment-free skill as `source_verified_none` ONLY with a cited original code-audit proof; do not assume a missing port feature was absent from Gold. Particle/dust/spark/ground displacement/terrain damage or aftermath are NEVER safe to silently omit. If Gold deforms terrain only visually, do not invent physical TileMap collision destruction. Environmental image/temporal parity on a live, authored terrain is a separate acceptance gate from actor VFX and generic shader parity. The source color/compositing operation must be applied to map texture without replacing it with Gold's example room.
 
 **Queue logic:** establish ONE gold-diagnostic representative per rendering family. Finish S01 to full skill parity first. Then batch **3–5 skills sharing verified components** per PR, each with explicit source-diff and frame-level evidence. Do not promise a batch completion date. If a primitive is wrong, quarantine dependent skills and fix the primitive once. Keep Fusion design-only entries outside the integration queue.
 
