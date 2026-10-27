@@ -65,7 +65,9 @@ func _run() -> void:
     var changed := 0
     for y in range(128, 156):
         for x in range(100, 376):
-            if base_image.get_pixel(x, y).distance_to(image.get_pixel(x, y)) > 0.02:
+            var before: Color = base_image.get_pixel(x, y)
+            var after: Color = image.get_pixel(x, y)
+            if absf(before.r - after.r) + absf(before.g - after.g) + absf(before.b - after.b) > 0.02:
                 changed += 1
     print("GOLD_SHADER_CHANGED_PIXELS: %d" % changed)
     if changed < 100:
