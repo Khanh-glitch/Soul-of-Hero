@@ -55,6 +55,39 @@ func _run() -> void:
                 instance.call("step_gold",DT,2.5+float(frame+1)*DT)
             else:
                 instance.call("step_gold",DT)
+    # Original World.RingFx post displacement. Source AFTER world layers.
+    # RingFx is deliberately not drawn as an arbitrary pixel-circle.
+    var ring: Dictionary = {}
+    for item: Dictionary in sources:
+        if String(item["kind"]) == "ring":
+            ring = item["source"]
+            break
+    if ring.is_empty():
+        push_error("GOLD_LIVE_WAVE: source post ring missing")
+        quit(1)
+        return
+    var rp := 15.0 * DT / float(ring["life"])
+    var eased := 1.0 - pow(1.0-rp,3.0)
+    var ring_radius := lerpf(float(ring["r0"]),float(ring["r1"]),eased)
+    var ring_strength := float(ring["s"])*(1.0-rp)
+    var rect := ColorRect.new()
+    rect.size = Vector2(480,270)
+    rect.color = Color.WHITE
+    rect.z_index = 100
+    var post := ShaderMaterial.new()
+    post.shader = load("res://prototypes/gold_fidelity/gold_post.gdshader") as Shader
+    rect.material = post
+    var ring_values := PackedVector4Array()
+    var ring_strengths := PackedFloat32Array()
+    for index in range(12):
+        ring_values.append(Vector4(float(ring["x"]),float(ring["y"]),ring_radius,float(ring["wd"])) if index == 0 else Vector4.ZERO)
+        ring_strengths.append(ring_strength if index == 0 else 0.0)
+    post.set_shader_parameter(&"u_ring",ring_values)
+    post.set_shader_parameter(&"u_ring_s",ring_strengths)
+    post.set_shader_parameter(&"u_nr",1)
+    post.set_shader_parameter(&"u_amb",1.0)
+    post.set_shader_parameter(&"u_time",2.75)
+    viewport.add_child(rect)
     await process_frame
     await RenderingServer.frame_post_draw
     var image: Image = viewport.get_texture().get_image()
@@ -74,7 +107,7 @@ func _run() -> void:
         quit(1)
         return
     var folder := ProjectSettings.globalize_path("res://.artifacts/gold_fidelity")
-    if DirAccess.make_dir_recursive_absolute(folder) != OK or image.save_png(folder.path_join("s01_live_wave_tick15.png")) != OK:
+    if DirAccess.make_dir_recursive_absolute(folder) != OK or image.save_png(folder.path_join("s01_live_wave_post_tick15.png")) != OK:
         push_error("GOLD_LIVE_WAVE: couldn't save screenshot")
         quit(1)
         return
