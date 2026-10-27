@@ -2,6 +2,11 @@ name: Gold S01 live wave source visual capture
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/gold-s01-live-wave.yml'
+      - 'prototypes/gold_fidelity/gold_*.gd'
+      - 'prototypes/gold_fidelity/gold_*.gdshader'
+      - 'prototypes/gold_fidelity/tests/live_wave_native_capture.gd'
   workflow_dispatch:
 permissions:
   contents: read

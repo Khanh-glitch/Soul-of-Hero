@@ -2,6 +2,12 @@ name: Gold fidelity source math and native shader
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/gold-fidelity-shader.yml'
+      - 'prototypes/gold_fidelity/gold_post.gdshader'
+      - 'prototypes/gold_fidelity/segment_math.gd'
+      - 'prototypes/gold_fidelity/tests/segment_math_smoke.gd'
+      - 'prototypes/gold_fidelity/tests/gold_shader_smoke.gd'
   workflow_dispatch:
 permissions:
   contents: read

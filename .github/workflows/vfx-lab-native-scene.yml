@@ -2,6 +2,9 @@ name: VFX Lab native scene smoke
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/vfx-lab-native-scene.yml'
+      - 'prototypes/vfx_lab/**'
   workflow_dispatch:
 permissions:
   contents: read

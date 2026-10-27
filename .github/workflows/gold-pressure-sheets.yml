@@ -2,6 +2,13 @@ name: Hairline Gold 14-sheet source port
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/gold-pressure-sheets.yml'
+      - 'prototypes/gold_fidelity/*plate*'
+      - 'prototypes/gold_fidelity/*ground*'
+      - 'prototypes/gold_fidelity/hairline_*'
+      - 'prototypes/gold_fidelity/tests/*plate*'
+      - 'prototypes/gold_fidelity/tests/hairline_*'
   workflow_dispatch:
 permissions:
   contents: read

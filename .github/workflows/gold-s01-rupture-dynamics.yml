@@ -2,6 +2,13 @@ name: Gold S01 source rupture dynamics
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/gold-s01-rupture-dynamics.yml'
+      - 'prototypes/gold_fidelity/gold_rupture_*'
+      - 'prototypes/gold_fidelity/gold_fx_dynamics.gd'
+      - 'prototypes/gold_fidelity/gold_source_wave_emitter.gd'
+      - 'prototypes/gold_fidelity/tests/rupture_*'
+      - 'prototypes/gold_fidelity/tests/isolated_wave_emitter_smoke.gd'
   workflow_dispatch:
 permissions:
   contents: read

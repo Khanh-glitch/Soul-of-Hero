@@ -2,6 +2,11 @@ name: Gold S01 original Blob shader and live runtime
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - '.github/workflows/gold-s01-blob-shader.yml'
+      - 'prototypes/gold_fidelity/gold_blob_primitive.gd'
+      - 'prototypes/gold_fidelity/gold_s01_blob.gdshader'
+      - 'prototypes/gold_fidelity/tests/*blob*'
   workflow_dispatch:
 permissions:
   contents: read

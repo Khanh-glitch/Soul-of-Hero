@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - "feature/vfx-lab-gate0-20261027"
+    paths:
+      - '.github/workflows/vfx-lab-timeline.yml'
+      - 'prototypes/vfx_lab/vfx_timeline.gd'
+      - 'prototypes/vfx_lab/tests/timeline_smoke.gd'
   workflow_dispatch:
 permissions:
   contents: read
