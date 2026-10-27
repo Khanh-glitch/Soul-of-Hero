@@ -1,0 +1,36 @@
+name: Gold source camera and hitstop primitives
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/gold_source_camera_fx.gd'
+      - 'prototypes/gold_fidelity/gold_source_hitstop_clock.gd'
+      - 'prototypes/gold_fidelity/tests/gold_source_camera_clock_smoke.gd'
+      - '.github/workflows/gold-source-camera-clock.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-camera-clock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot 4.7 source import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-camera-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-camera-import.log; then exit 1; fi
+      - name: Source camera and hitstop numerical invariants
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/gold_source_camera_clock_smoke.gd 2>&1 | tee /tmp/gold-camera.log
+          grep -F 'GOLD_SOURCE_CAMERA_CLOCK: PASS' /tmp/gold-camera.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-camera.log; then exit 1; fi
