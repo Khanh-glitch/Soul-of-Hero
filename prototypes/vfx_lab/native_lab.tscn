@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/vfx_lab/native_lab.gd" id="1_lab"]
+
+[node name="NativeVfxLab" type="Node2D"]
+script = ExtResource("1_lab")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 100
+
+[node name="Label" type="Label" parent="HUD"]
+offset_left = 8.0
+offset_top = 7.0
+offset_right = 637.0
+offset_bottom = 95.0
+theme_override_font_sizes/font_size = 9
+theme_override_colors/font_color = Color(0.95, 0.93, 0.89, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 1
