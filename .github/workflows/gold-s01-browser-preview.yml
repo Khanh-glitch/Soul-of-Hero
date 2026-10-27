@@ -61,6 +61,11 @@ jobs:
           echo "Preserving stable root build:"
           cat site/BUILD_INFO.txt
           cp -a vfx-src/prototypes/gold_fidelity game-src/prototypes/
+          # Bring only the review harness into the review-only export:
+          # don't package hundreds of root tests, intentionally broken fixtures
+          # or unused overworld scripts on the real-map branch.
+          cp game-src/tests/chapter_1_campaign_level_visual_capture.gd game-src/prototypes/gold_fidelity/tests/_base_campaign_capture.gd
+          sed -i 's|res://tests/chapter_1_campaign_level_visual_capture.gd|res://prototypes/gold_fidelity/tests/_base_campaign_capture.gd|' game-src/prototypes/gold_fidelity/tests/s01_live_map_playtest.gd
           cp web-config/export_presets.cfg game-src/export_presets.cfg
           python3 - <<'PY'
           from pathlib import Path
@@ -73,9 +78,9 @@ jobs:
           preset=Path('game-src/export_presets.cfg')
           p=preset.read_text()
           p=p.replace('exclude_filter=".artifacts/*,tests/*,tools/*,docs/*,.github/*"',
-              'exclude_filter=".artifacts/*,tools/*,docs/*,.github/*"')
+              'exclude_filter=".artifacts/*,tests/*,tools/*,docs/*,.github/*,game/overworld/*"')
           preset.write_text(p)
-          assert 'tests/*' not in p
+          assert 'game/overworld/*' in p
           PY
           test -f game-src/prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn
           # game/ data/ assets/ and authored map remain unchanged by construction.
