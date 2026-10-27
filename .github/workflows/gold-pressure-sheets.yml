@@ -63,5 +63,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: hairline-gold-source-14-sheets
-          path: |\n            .artifacts/gold_fidelity/hairline_14_source_plates.png\n            .artifacts/gold_fidelity/hairline_ground_plates_146.png\n            .artifacts/gold_fidelity/hairline_ground_rupture_270.png
+          path: |
+            .artifacts/gold_fidelity/hairline_14_source_plates.png
+            .artifacts/gold_fidelity/hairline_ground_plates_146.png
+            .artifacts/gold_fidelity/hairline_ground_rupture_270.png
           if-no-files-found: warn
