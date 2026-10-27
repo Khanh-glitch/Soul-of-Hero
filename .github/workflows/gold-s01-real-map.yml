@@ -1,0 +1,77 @@
+name: Gold S01 on REAL Chapter 1 Level 2 map
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/tests/s01_real_campaign_map_integration.*'
+      - '.github/workflows/gold-s01-real-map.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-real-map:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout immutable real-map branch baseline (no mutation)
+        uses: actions/checkout@v4
+        with:
+          ref: f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          path: real-map
+          persist-credentials: false
+      - name: Checkout Gold VFX implementation at this triggering SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: vfx-only
+          persist-credentials: false
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Overlay VFX prototypes exclusively into temporary real-map checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C real-map rev-parse HEAD)" = f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          test -f real-map/data/levels/chapter_1_level_2.json
+          test -f real-map/tests/chapter_1_campaign_level_visual_capture.gd
+          test -f real-map/game/characters/knight/knight.tscn
+          mkdir -p real-map/prototypes/gold_fidelity
+          cp -a vfx-only/prototypes/gold_fidelity/. real-map/prototypes/gold_fidelity/
+          echo "VFX source SHA: $(git -C vfx-only rev-parse HEAD)"
+          echo "Real map SHA: $(git -C real-map rev-parse HEAD)"
+          if git -C real-map status --short -- game/ data/ assets/ project.godot | grep .; then
+            echo "Production map or gameplay modifications detected"; exit 1
+          fi
+      - name: Import actual production map, actors, dependencies and VFX modules
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 180s godot --headless --editor --path real-map --import --quit 2>&1 | tee /tmp/real-map-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/real-map-import.log; then exit 1; fi
+      - name: Run live AppFlow Level2 with original S01 world-space VFX and capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p real-map/.artifacts/vfx_real_map
+          timeout 180s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/gold_fidelity/tests/s01_real_campaign_map_integration.tscn -- --level-slot=2 --capture-point=mid --expected-width=1280 --expected-height=720 2>&1 | tee /tmp/real-map-vfx.log
+          grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/real-map-vfx.log
+          grep -F 'GOLD_S01_REAL_MAP: PASS' /tmp/real-map-vfx.log
+          test -s real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
+          test -s real-map/.artifacts/chapter_1_level_02_mid_runtime.png
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|GOLD_COMPOSITE.*FAIL' /tmp/real-map-vfx.log; then exit 1; fi
+          if git -C real-map status --short -- game/ data/ assets/ project.godot | grep .; then
+            echo "Real source game files changed during run"; exit 1
+          fi
+      - name: Upload independent baseline and real-map VFX frames
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-s01-on-production-ch1-level2-genuine-map
+          path: |
+            real-map/.artifacts/chapter_1_level_02_mid_runtime.png
+            real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
+            /tmp/real-map-vfx.log
+          if-no-files-found: warn
