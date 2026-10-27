@@ -202,7 +202,7 @@ jobs:
             const cast=logs.some(x=>x.includes('GOLD_S01_WEB_CAST'));
             const seek=logs.some(x=>x.includes('GOLD_S01_WEB_SEEK'));
             const terrainLog=logs.find(x=>x.includes('GOLD_S01_WEB_SEEK: t=5'));
-            const terrain=terrainLog?.match(/ground_mutations=(\\d+) ground_marked=(\\d+)/);
+            const terrain=terrainLog?.match(/ground_mutations=(\d+) ground_marked=(\d+)/);
             const envOk=Boolean(terrain && Number(terrain[1])===28 && Number(terrain[2])>300);
             console.log(JSON.stringify({started:ok,cast,seek,environment:envOk,sourceTerrainLog:terrainLog,errors:err.slice(0,8),canvas:await p.locator('canvas').count()}));
             await b.close();
