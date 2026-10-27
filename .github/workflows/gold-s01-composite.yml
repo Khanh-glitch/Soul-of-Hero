@@ -4,6 +4,7 @@ on:
     branches: [feature/vfx-lab-gate0-20261027]
     paths:
       - 'prototypes/gold_fidelity/**'
+      - '!prototypes/gold_fidelity/*.md'
       - '.github/workflows/gold-s01-composite.yml'
   workflow_dispatch:
 permissions:
