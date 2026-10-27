@@ -44,7 +44,7 @@ static func state_at(world_time: float, random_sign: float = 1.0) -> Dictionary:
         "world_time":world_time,
         "source_width":widened,
         "source_wobble":wobble,
-        "source_live":age <= END_AGE,
+        "source_live":age <= END_AGE + 0.000001,
         "source_end_age":END_AGE if not terminated else 1.9333333333333313,
         "source_life":0.3 if terminated else 3.6,
         "source_fade_mode":1 if terminated else 0
