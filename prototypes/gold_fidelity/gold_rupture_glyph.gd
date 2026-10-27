@@ -7,6 +7,7 @@ extends Node2D
 const DYNAMICS = preload("res://prototypes/gold_fidelity/gold_fx_dynamics.gd")
 const SHARD = [1.15, 0.0, -0.45, 0.17, -0.35, -0.12]
 const CRIMSON_RAMP := [0xffd0c0, 0xff5a4a, 0xc01830, 0x6a0a20, 0x2a0818]
+const SILVER_RAMP := [0xffffff, 0xdfe8f5, 0xa9b8cf, 0x6a7a94, 0x2c3446]
 var kind := ""
 var state: Dictionary = {}
 var dead := false
@@ -67,8 +68,12 @@ static func _rgb(h: int) -> Color:
 
 func _part_draw() -> void:
     var p := clampf(float(state["t"]) / maxf(float(state["life"]), 0.0001), 0.0, 1.0)
-    var color_index := mini(CRIMSON_RAMP.size()-1, int(floor(p * float(CRIMSON_RAMP.size()))))
-    var col: Color = _rgb(CRIMSON_RAMP[color_index])
+    var source_ramp: String = String(state.get("ramp", "crimson"))
+    # Original world.ts Part.draw uses its source ramp; contact sparks are
+    # SILVER, whereas delayed S01 rupture sparks are CRIMSON.
+    var ramp: Array = SILVER_RAMP if source_ramp == "silver" else CRIMSON_RAMP
+    var color_index := mini(ramp.size()-1, int(floor(p * float(ramp.size()))))
+    var col: Color = _rgb(int(ramp[color_index]))
     var size: float = float(state.get("size", 1.0))
     var streak: float = float(state.get("streak", 0.0))
     if streak > 0.0:
