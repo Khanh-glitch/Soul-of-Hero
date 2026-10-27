@@ -30,6 +30,8 @@ for s in items:
         errors.append(k+" missing mandatory environment audit classification")
     if not isinstance(env.get("operations",[]),list):
         errors.append(k+" environmental source operations must be an array")
+    if audit=="source_verified_none" and not env.get("source_none_audit_proof"):
+        errors.append(k+" environment none asserted without original source audit evidence")
     if g.get("environment_parity")=="passed":
         if audit=="unassessed":
             errors.append(k+" illegal environment approval without per-skill gold source audit")
