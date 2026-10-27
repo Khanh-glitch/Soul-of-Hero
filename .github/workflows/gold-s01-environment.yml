@@ -1,0 +1,36 @@
+name: GOLD source persistent environment on real maps
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/gold_s01_transparent_ground.gd'
+      - 'prototypes/gold_fidelity/gold_s01_terrain_ink.gd'
+      - 'prototypes/gold_fidelity/tests/s01_terrain_source_oracle.gd'
+      - '.github/workflows/gold-s01-environment.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-terrain:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import original world environment shader and texture source
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/source-env-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/source-env-import.log; then exit 1; fi
+      - name: Test real-world environmental ink mathematically and confirm zero per-frame uploads
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --path . --script res://prototypes/gold_fidelity/tests/s01_terrain_source_oracle.gd 2>&1 | tee /tmp/source-env.log
+          grep -F 'GOLD_S01_TERRAIN: PASS' /tmp/source-env.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/source-env.log; then exit 1; fi
