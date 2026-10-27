@@ -1,0 +1,116 @@
+name: Gold S01 REVIEWABLE real Level 2 playtest bundle
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/tests/s01_live_map_playtest.*'
+      - 'prototypes/gold_fidelity/gold_s01_world_pressure_sheets.gd'
+      - '.github/workflows/gold-s01-reviewable-playtest.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build-native-playtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout known-good real authored Chapter 1 map
+        uses: actions/checkout@v4
+        with:
+          ref: f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          path: real-map
+          persist-credentials: false
+      - name: Checkout Gold VFX review implementation
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: vfx-only
+          persist-credentials: false
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Merge in disposable runner; never touch production files or map branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C real-map rev-parse HEAD)" = f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          mkdir -p real-map/prototypes/gold_fidelity
+          cp -a vfx-only/prototypes/gold_fidelity/. real-map/prototypes/gold_fidelity/
+          test -f real-map/prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn
+          test -f real-map/game/app/app_root.tscn
+          test -f real-map/data/levels/chapter_1_level_2.json
+          if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
+            echo "Refusing production file change"; exit 1
+          fi
+      - name: Import full Godot 4.7 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 180s godot --headless --editor --path real-map --import --quit 2>&1 | tee /tmp/gold-playtest-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-playtest-import.log; then exit 1; fi
+      - name: Native smoke actual playable reviewer scene
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p real-map/.artifacts/vfx_playtest
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn -- --gold-playtest-smoke 2>&1 | tee /tmp/gold-playtest.log
+          grep -F 'GOLD_S01_INTERACTIVE_PLAYTEST: PASS' /tmp/gold-playtest.log
+          grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/gold-playtest.log
+          for tick in 1467 2050 2840; do
+            test -s "real-map/.artifacts/vfx_playtest/real_map_interactive_$(printf '%04d' "$tick").png"
+          done
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|CHAPTER 1 CAMPAIGN CAPTURE TEST FAILED' /tmp/gold-playtest.log; then exit 1; fi
+          if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
+            echo "Tracked production changed in smoke"; exit 1
+          fi
+      - name: Package self-contained Godot test project for human reviewer
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release/SOH_Gold_S01_Real_Level2_Playtest
+          tar -C real-map --exclude='./.git' --exclude='./.godot' --exclude='./.artifacts' --exclude='./.github' -cf - . | tar -C release/SOH_Gold_S01_Real_Level2_Playtest -xf -
+          cat > release/SOH_Gold_S01_Real_Level2_Playtest/PLAYTEST_START_HERE.txt <<'EOF'
+          SOUL OF HERO — Hairline Rupture 01 — REVIEW BUILD (NOT FINAL)
+          
+          Requirements: Godot 4.7 Stable, desktop OpenGL Compatibility.
+          1. Unzip the project, import project.godot into Godot Project Manager.
+          2. Allow Godot to finish importing assets (first open can take time).
+          3. Open: res://prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn
+          4. Press F6 (Run Current Scene) to start real Chapter 1 Level 2.
+          
+          Controls:
+            K       Cast Gold S01 effects from real Knight position, facing right
+            T       Center S01 impact on the nearest real enemy (visual staging)
+            R       Replay last cast
+            1/2/3   Seek to source 1.467s / 2.05s / 2.84s
+            Space   Pause/resume visual timeline
+            G       Toggle source ground displacement
+            P       Toggle original 14 pressure sheets
+            V       Toggle original 13 explosion waves
+            Knight keeps the normal game's movement controls.
+          
+          IMPORTANT — This is a REVIEW/DIAGNOSTIC prototype.
+          The three modules move across the real level, but are NOT yet a
+          player-equipped skill. Damage, full contact, actor animation,
+          global source RNG/hitstop and persistent TileMap ground cracks
+          are not finished. Neither K nor T causes any VFX-owned damage.
+          Original authored map branch is pinned and untouched.
+          The application uses an isolated temporary SaveService test save.
+          Please report where image/animation differs from your source GOLD.
+          
+          To leave, close the game window. This scene does not auto-quit.
+          EOF
+          (cd release && zip -q -r -6 SOH_Gold_S01_Real_Level2_Playtest.zip SOH_Gold_S01_Real_Level2_Playtest)
+          test -s release/SOH_Gold_S01_Real_Level2_Playtest.zip
+          du -h release/SOH_Gold_S01_Real_Level2_Playtest.zip
+      - name: Upload fully reviewable project and native screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: SOH-Gold-S01-Real-Level2-Interactive-Playtest
+          path: |
+            release/SOH_Gold_S01_Real_Level2_Playtest.zip
+            real-map/.artifacts/vfx_playtest/*.png
+          if-no-files-found: error
+          retention-days: 14
