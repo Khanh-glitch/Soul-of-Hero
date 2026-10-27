@@ -36,3 +36,10 @@ jobs:
           timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/isolated_wave_emitter_smoke.gd 2>&1 | tee /tmp/gold-emitter.log
           grep -F 'GOLD_WAVE_EMITTER: PASS' /tmp/gold-emitter.log
           if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-emitter.log; then exit 1; fi
+      - name: Deterministic thirteen-wave propagation and 286 live objects
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_sequence_smoke.gd 2>&1 | tee /tmp/gold-sequence.log
+          grep -F 'GOLD_S01_SEQUENCE: PASS' /tmp/gold-sequence.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-sequence.log; then exit 1; fi
