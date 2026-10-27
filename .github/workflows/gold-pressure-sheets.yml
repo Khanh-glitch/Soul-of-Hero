@@ -29,6 +29,13 @@ jobs:
           timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/plate_source_geometry_test.gd 2>&1 | tee /tmp/geometry.log
           grep -F 'GOLD_PLATE_GEOMETRY: PASS' /tmp/geometry.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/geometry.log; then exit 1; fi
+      - name: Rebuild the actual gold source courtyard, exact 518400 RGBA bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 75s godot --headless --path . --script res://prototypes/gold_fidelity/tests/hairline_source_floor_test.gd 2>&1 | tee /tmp/gold-floor.log
+          grep -F 'GOLD_SOURCE_FLOOR: PASS' /tmp/gold-floor.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-floor.log; then exit 1; fi
       - name: Compare native ground writes with source TypeScript pixel hashes
         shell: bash
         run: |
