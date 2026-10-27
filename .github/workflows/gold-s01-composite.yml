@@ -38,5 +38,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gold-s01-native-composite-gate6
-          path: .artifacts/gold_fidelity/s01_composite_284.png
+          path: .artifacts/gold_fidelity/s01_composite_*.png
           if-no-files-found: warn
