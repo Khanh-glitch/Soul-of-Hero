@@ -29,6 +29,13 @@ jobs:
           timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/plate_source_geometry_test.gd 2>&1 | tee /tmp/geometry.log
           grep -F 'GOLD_PLATE_GEOMETRY: PASS' /tmp/geometry.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/geometry.log; then exit 1; fi
+      - name: Compare native ground writes with source TypeScript pixel hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/hairline_ground_source_test.gd 2>&1 | tee /tmp/ground.log
+          grep -F 'GOLD_GROUND_SOURCE_CPU: PASS' /tmp/ground.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/ground.log; then exit 1; fi
       - name: Shader compile and native plate capture
         shell: bash
         run: |
