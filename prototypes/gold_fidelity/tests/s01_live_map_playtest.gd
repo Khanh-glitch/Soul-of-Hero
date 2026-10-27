@@ -292,6 +292,17 @@ func _update_effect() -> void:
     _post.set_shader_parameter(&"u_seg",segments)
     _post.set_shader_parameter(&"u_seg_p",widths)
     _post.set_shader_parameter(&"u_ns",1 if _casting and _show_warp and strength>0.0 else 0)
+    # A full-screen post-process is a major WebGL fill-rate cost at 2K/4K.
+    # The source displacement/ring/light pass is only necessary while source
+    # environmental warps or sourced light/ring events are ACTUALLY alive.
+    # Ribbon/plates/terrain ink remain independently rendered. Do not lower
+    # resolution, omit sprites or simplify the source shader.
+    var active_warp: bool=_casting and _show_warp and strength>0.0
+    var wave_diag: Dictionary=_waves.diagnostics()
+    var active_wave_post: bool=_casting and _show_waves and (
+        int(wave_diag.get("ring_count",0))>0 or
+        int(wave_diag.get("light_count",0))>0)
+    _post_rect.visible = active_warp or active_wave_post
     _post.set_shader_parameter(&"u_time",t)
     _post.set_shader_parameter(&"u_res",get_viewport().get_visible_rect().size)
 
