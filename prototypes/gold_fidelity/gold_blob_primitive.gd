@@ -8,7 +8,7 @@ var source: Dictionary
 var age := 0.0
 var dead := false
 var visual: MeshInstance2D
-var material: ShaderMaterial
+var source_material: ShaderMaterial
 
 func configure(attrs: Dictionary) -> void:
     source = attrs.duplicate(true)
@@ -30,9 +30,9 @@ func configure(attrs: Dictionary) -> void:
     mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays,[],{},Mesh.ARRAY_FLAG_USE_2D_VERTICES)
     visual.mesh = mesh
     visual.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-    material = ShaderMaterial.new()
-    material.shader = SHADER
-    visual.material = material
+    source_material = ShaderMaterial.new()
+    source_material.shader = SHADER
+    visual.material = source_material
     add_child(visual)
     update_gold_pose(0.0)
 
@@ -68,12 +68,12 @@ func update_gold_pose(world_time: float) -> void:
     var alpha: float = float(source.get("alpha",1.0))
     if progress > fade_start:
         alpha *= 1.0-(progress-fade_start)/(1.0-fade_start)
-    material.set_shader_parameter(&"u_time",world_time)
-    material.set_shader_parameter(&"u_progress",progress)
-    material.set_shader_parameter(&"u_alpha",alpha)
-    material.set_shader_parameter(&"u_seed",float(source.get("seed",0.0)))
-    material.set_shader_parameter(&"u_shape",int(source.get("shape",2)))
-    material.set_shader_parameter(&"u_palette",int(source.get("pal",1)))
-    material.set_shader_parameter(&"u_heat",float(source.get("heat",1.0)))
-    material.set_shader_parameter(&"u_k1",float(source.get("k1",0.3)))
-    material.set_shader_parameter(&"u_k2",float(source.get("k2",0.0)))
+    source_material.set_shader_parameter(&"u_time",world_time)
+    source_material.set_shader_parameter(&"u_progress",progress)
+    source_material.set_shader_parameter(&"u_alpha",alpha)
+    source_material.set_shader_parameter(&"u_seed",float(source.get("seed",0.0)))
+    source_material.set_shader_parameter(&"u_shape",int(source.get("shape",2)))
+    source_material.set_shader_parameter(&"u_palette",int(source.get("pal",1)))
+    source_material.set_shader_parameter(&"u_heat",float(source.get("heat",1.0)))
+    source_material.set_shader_parameter(&"u_k1",float(source.get("k1",0.3)))
+    source_material.set_shader_parameter(&"u_k2",float(source.get("k2",0.0)))
