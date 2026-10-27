@@ -1,0 +1,31 @@
+name: VFX Lab native scene smoke
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-scene:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot 4.7 import and GDScript parse
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --version
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/vfx-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/vfx-import.log; then exit 1; fi
+      - name: Play the native VFX scene for 120 frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --quit-after 120 res://prototypes/vfx_lab/native_lab.tscn 2>&1 | tee /tmp/vfx-scene.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/vfx-scene.log; then exit 1; fi
