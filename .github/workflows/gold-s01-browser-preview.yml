@@ -1,0 +1,213 @@
+name: Gold S01 play-in-browser preview (preserves stable web site)
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/tests/s01_live_map_playtest.gd'
+      - '.github/workflows/gold-s01-browser-preview.yml'
+  workflow_dispatch:
+concurrency:
+  group: web-playtest-pages
+  cancel-in-progress: false
+permissions:
+  contents: read
+  actions: read
+jobs:
+  export-and-verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout untouched production Chapter 1 Level 2
+        uses: actions/checkout@v4
+        with:
+          ref: f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          path: game-src
+          persist-credentials: false
+      - name: Checkout isolated Gold S01 code from triggering SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: vfx-src
+          persist-credentials: false
+      - name: Checkout already-proven Web export configuration
+        uses: actions/checkout@v4
+        with:
+          ref: feat/web-playtest-deploy
+          path: web-config
+          persist-credentials: false
+      - name: Restore original stable site from successful deployment artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: soul-of-hero-web-build
+          run-id: 39894890430
+          github-token: ${{ github.token }}
+          path: stable-web-artifact
+      - name: Stage existing site untouched; overlay new VFX only at /vfx-s01/
+        shell: bash
+        run: |
+          set -euo pipefail
+          # IMPORTANT: never risk overwriting stable Pages with a placeholder.
+          old_index="$(find stable-web-artifact -type f -name index.html | head -n 1)"
+          test -n "$old_index"
+          old_root="$(dirname "$old_index")"
+          test -s "$old_root/index.js"
+          test -s "$old_root/index.pck"
+          test -s "$old_root/index.wasm"
+          test -s "$old_root/BUILD_INFO.txt"
+          grep -F '1c21a49c2eb3775c4b421dab86d057c7256f5964' "$old_root/BUILD_INFO.txt"
+          mkdir -p site/vfx-s01
+          cp -a "$old_root"/. site/
+          test -s site/index.html
+          echo "Preserving stable root build:"
+          cat site/BUILD_INFO.txt
+          cp -a vfx-src/prototypes/gold_fidelity game-src/prototypes/
+          cp web-config/export_presets.cfg game-src/export_presets.cfg
+          python3 - <<'PY'
+          from pathlib import Path
+          proj=Path('game-src/project.godot')
+          data=proj.read_text()
+          old='run/main_scene="res://game/app/app_root.tscn"'
+          new='run/main_scene="res://prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn"'
+          assert old in data
+          proj.write_text(data.replace(old,new,1))
+          preset=Path('game-src/export_presets.cfg')
+          p=preset.read_text()
+          p=p.replace('exclude_filter=".artifacts/*,tests/*,tools/*,docs/*,.github/*"',
+              'exclude_filter=".artifacts/*,tools/*,docs/*,.github/*"')
+          preset.write_text(p)
+          assert 'tests/*' not in p
+          PY
+          test -f game-src/prototypes/gold_fidelity/tests/s01_live_map_playtest.tscn
+          # game/ data/ assets/ and authored map remain unchanged by construction.
+          if ! git -C game-src diff --quiet HEAD -- game/ data/ assets/; then exit 1; fi
+      - name: Set up official Godot 4.7
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Use cached official Web export template if possible
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/godot/export_templates/4.7.stable
+          key: godot-4.7-stable-web-nothreads-v1-${{ runner.os }}
+      - name: Install official single-thread Web templates
+        if: steps.cache.outputs.cache-hit != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --connect-timeout 30 --max-time 1000 \
+            https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_export_templates.tpz \
+            -o "$RUNNER_TEMP/templates.tpz"
+          python3 - <<'PY'
+          from pathlib import Path
+          from zipfile import ZipFile
+          import os, shutil
+          output=Path.home()/'.local/share/godot/export_templates/4.7.stable'
+          output.mkdir(parents=True,exist_ok=True)
+          with ZipFile(Path(os.environ['RUNNER_TEMP'])/'templates.tpz') as z:
+              lookup={Path(n).name:n for n in z.namelist() if not n.endswith('/')}
+              for name in ('web_nothreads_release.zip','web_nothreads_debug.zip','version.txt'):
+                  assert name in lookup
+                  with z.open(lookup[name]) as src, (output/name).open('wb') as dst: shutil.copyfileobj(src,dst)
+          PY
+      - name: Import complete production map and isolated VFX renderer
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 160s godot --headless --audio-driver Dummy --editor --path game-src --import --quit 2>&1 | tee web-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' web-import.log; then exit 1; fi
+      - name: Export source-timed Gold VFX native project as browser WebGL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p game-src/build/web
+          timeout 240s godot --headless --audio-driver Dummy --path game-src \
+            --export-release "Web Playtest" build/web/index.html 2>&1 | tee web-export.log
+          test -s game-src/build/web/index.html
+          test -s game-src/build/web/index.js
+          test -s game-src/build/web/index.wasm
+          test -s game-src/build/web/index.pck
+          if grep -E 'SCRIPT ERROR:|Parse Error:|ERROR:.*(Export|Template|Failed to load|Failed to save)' web-export.log; then exit 1; fi
+          cp -a game-src/build/web/. site/vfx-s01/
+          printf 'Gold S01 REVIEW only; branch=%s; commit=%s; map=%s\n' \
+            'feature/vfx-lab-gate0-20261027' '${{ github.sha }}' \
+            'f9fb8d4b7490a2579426bd5c4ee4667704d3a05e' > site/vfx-s01/BUILD_INFO.txt
+          touch site/.nojekyll
+          echo "Browser files:"
+          du -h site/vfx-s01/index.pck site/vfx-s01/index.wasm
+          echo "Root still preserved:"
+          test -s site/index.pck
+          test -s site/index.html
+      - name: Smoke-test the *actual browser WebGL startup* in Chrome
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p webqa
+          npm install --prefix webqa --no-save --no-audit --no-fund playwright-core@1.56.1
+          python3 -m http.server 8787 --bind 127.0.0.1 --directory site > web-http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          export CHROME_BIN="$(command -v google-chrome || command -v chromium || true)"
+          if [[ -z "$CHROME_BIN" ]]; then echo "Chrome unavailable"; exit 1; fi
+          cat > webqa/check.cjs <<'JS'
+          const {chromium}=require('playwright-core');
+          (async()=>{
+            const b=await chromium.launch({executablePath:process.env.CHROME_BIN,headless:false,
+              args:['--no-sandbox','--use-gl=angle','--use-angle=swiftshader','--enable-webgl']});
+            const p=await b.newPage({viewport:{width:1280,height:720},deviceScaleFactor:1});
+            const logs=[];
+            p.on('console',m=>logs.push(m.text()));
+            p.on('pageerror',e=>logs.push('PAGE ERROR: '+e.message));
+            await p.goto('http://127.0.0.1:8787/vfx-s01/',{waitUntil:'domcontentloaded',timeout:30000});
+            await p.waitForFunction(()=>document.querySelector('canvas')?.width>200,{timeout:60000});
+            await p.waitForTimeout(18000);
+            const ok=logs.some(x=>x.includes('GOLD_S01_WEB_PLAYTEST_READY'));
+            const err=logs.filter(x=>/PAGE ERROR:|SCRIPT ERROR:|Failed to load/.test(x));
+            await p.screenshot({path:'webqa/gold-s01-browser.png'});
+            require('fs').writeFileSync('webqa/browser.log',logs.join('\n'));
+            console.log(JSON.stringify({started:ok,errors:err.slice(0,8),canvas:await p.locator('canvas').count()}));
+            await b.close();
+            if(!ok || err.length)process.exit(1);
+            console.log('GOLD_S01_WEB_BROWSER_PLAYTEST: PASS');
+          })().catch(e=>{console.error(e);process.exit(1)});
+          JS
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 125s node webqa/check.cjs 2>&1 | tee webqa/qa.log
+          grep -F 'GOLD_S01_WEB_BROWSER_PLAYTEST: PASS' webqa/qa.log
+      - name: Package both stable and VFX site as Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Upload build and WebGL browser QA evidence
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: SOH-S01-Browser-Preview-QA
+          path: |
+            web-import.log
+            web-export.log
+            web-http.log
+            webqa/
+            site/vfx-s01/BUILD_INFO.txt
+          if-no-files-found: warn
+  deploy-vfx-preview:
+    needs: export-and-verify
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+    environment:
+      name: playtest-preview
+      url: ${{ steps.pages.outputs.page_url }}/vfx-s01/
+    steps:
+      - name: Configure existing GitHub Pages project
+        uses: actions/configure-pages@v5
+      - name: Deploy stable root + new S01 preview subpath
+        id: pages
+        uses: actions/deploy-pages@v4
+      - name: Publish actual browser URL
+        run: |
+          echo "GOLD S01 PLAY NOW: ${{ steps.pages.outputs.page_url }}vfx-s01/"
