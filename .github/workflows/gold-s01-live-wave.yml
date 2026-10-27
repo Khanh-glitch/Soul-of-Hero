@@ -35,5 +35,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: gold-s01-live-wave-native-frame
-          path: .artifacts/gold_fidelity/s01_live_wave_post_tick15.png
+          path: .artifacts/gold_fidelity/s01_live_wave_post_tick*.png
           if-no-files-found: warn
