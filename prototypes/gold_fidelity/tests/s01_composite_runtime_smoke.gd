@@ -76,8 +76,16 @@ func _run() -> void:
     if not _check("all 13 source waves",state,13,286,273):
         quit(1)
         return
-    if int(state.get("ring_count",-1)) < 1 or int(state.get("ring_count",-1)) > 12:
+    if int(state.get("ring_count",-1)) < 1 or int(state.get("ring_count",-1)) > 14:
         push_error("GOLD_COMPOSITE: original rings absent or unbounded: "+str(state))
+        quit(1)
+        return
+    if int(state.get("center_ring_count",-1)) != 1 or int(state.get("light_count",-1)) != 1 or int(state.get("contact_cue_count",-1)) != 3:
+        push_error("GOLD_COMPOSITE: missing S01 source center/secondary special descriptors: "+str(state))
+        quit(1)
+        return
+    if bool(state.get("center_contact_damage_or_fx_ported",true)):
+        push_error("GOLD_COMPOSITE: a render-only source cue must never claim combat integration")
         quit(1)
         return
     # Rewind and replay must preserve exactly one copy of every emitted object.
