@@ -1,0 +1,39 @@
+name: Gold S01 source Blob shader native render
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-blob:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import source-derived shaders
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit > /tmp/gold-blob-import.log 2>&1
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-blob-import.log; then cat /tmp/gold-blob-import.log; exit 1; fi
+      - name: Render native source blob modes 1 2 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_blob_shader_smoke.gd 2>&1 | tee /tmp/gold-blob-shader.log
+          grep -F 'GOLD_BLOB_SHADER_NATIVE: PASS' /tmp/gold-blob-shader.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' -e 'Shader compilation failed' /tmp/gold-blob-shader.log; then exit 1; fi
+      - name: Publish original-math blob shader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-s01-original-blob-shader
+          path: .artifacts/gold_fidelity/source_blob_modes_1_2_5.png
+          if-no-files-found: warn
