@@ -156,7 +156,7 @@ func _sword() -> void:
     for i in range(7):
       for side in [-1, 1]:
         var x := 101 + i * 39
-        var yy := 176 + side * (28 + (i * 13) % 24) * k
+        var yy: float = 176.0 + float(side) * float(28 + (i * 13) % 24) * k
         draw_colored_polygon(PackedVector2Array([Vector2(x, 176), Vector2(x + 36, 176), Vector2(x + 28, yy), Vector2(x - 6, yy)]), Color(0.52, 0.2, 0.27, 0.75 * f))
   if clock >= 2.8 and clock < 3.5:
     var p := (clock - 2.8) / 0.7
