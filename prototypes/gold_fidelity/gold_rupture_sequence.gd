@@ -26,7 +26,7 @@ func reset(rng_seed: int, world_offset: Vector2 = Vector2.ZERO) -> void:
     elapsed = 0.0
     cursor = 0
     emitter = SOURCE_EMITTER.new(seed)
-    schedule = SOURCE_SCHEDULE.source_waves(offset)
+    schedule = SOURCE_SCHEDULE.waves(offset)
     emitted.clear()
 
 func advance(dt: float) -> Array[Dictionary]:
@@ -39,12 +39,12 @@ func advance(dt: float) -> Array[Dictionary]:
             "order":cursor,
             "delay":float(wave["delay"]),
             "position":wave["position"],
-            "k":int(wave["k"]),
+            "k":int(wave["step"]),
             "side":int(wave["side"]),
             # Critical: emitter reuses .objects and clears it on the next wave.
             # Keep a deep-copy of original live object INITIAL STATES, not pixels.
             "objects":objects.duplicate(true),
-            "central_additions_missing":int(wave["k"])==0
+            "central_additions_missing":int(wave["step"])==0
         }
         frame_waves.append(event)
         emitted.append(event)
