@@ -51,10 +51,17 @@ jobs:
           timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/plate_native_capture.gd 2>&1 | tee /tmp/plates.log
           grep -F 'GOLD_PRESSURE_SHEETS_NATIVE: PASS' /tmp/plates.log
           if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:' /tmp/plates.log; then exit 1; fi
+      - name: Render native gold ground plus sheets plus segment at two phases
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/hairline_component_scene_capture.gd 2>&1 | tee /tmp/composite.log
+          grep -F 'GOLD_SOURCE_COMPOSITE: PASS 2 native snapshots' /tmp/composite.log
+          if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:' /tmp/composite.log; then exit 1; fi
       - name: Upload unretouched native evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: hairline-gold-source-14-sheets
-          path: .artifacts/gold_fidelity/hairline_14_source_plates.png
+          path: |\n            .artifacts/gold_fidelity/hairline_14_source_plates.png\n            .artifacts/gold_fidelity/hairline_ground_plates_146.png\n            .artifacts/gold_fidelity/hairline_ground_rupture_270.png
           if-no-files-found: warn
