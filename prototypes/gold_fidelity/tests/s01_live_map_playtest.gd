@@ -208,6 +208,7 @@ func _start_cast(target_enemy: bool) -> void:
     _fx_elapsed = 0.0
     _waves.reset()
     _update_effect()
+    print("GOLD_S01_WEB_CAST: anchored source Gold review, visual-only")
 
 func _replay_cast() -> void:
     if not _casting:
@@ -231,6 +232,7 @@ func _seek_effect(t: float) -> void:
     _fx_elapsed = clampf(t,0.0,7.0)
     _paused_fx = true
     _update_effect()
+    print("GOLD_S01_WEB_SEEK: t="+str(_fx_elapsed))
 
 func _process(delta: float) -> void:
     if not _casting or _paused_fx or _game == null:
