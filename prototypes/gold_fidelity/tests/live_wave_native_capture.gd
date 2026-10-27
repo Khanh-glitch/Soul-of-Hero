@@ -111,5 +111,41 @@ func _run() -> void:
         push_error("GOLD_LIVE_WAVE: couldn't save screenshot")
         quit(1)
         return
+    # Two further SOURCE-timed observations; these are live physics and shader,
+    # not images reused from the 15-tick checkpoint.
+    var last_mark := 15
+    var last_image: Image = image
+    for mark in [30,60]:
+        for frame in range(last_mark,mark):
+            for instance: Node2D in instances:
+                if not is_instance_valid(instance) or instance.get("dead"):
+                    continue
+                if instance is GoldBlobPrimitive:
+                    instance.call("step_gold",DT,2.5+float(frame+1)*DT)
+                else:
+                    instance.call("step_gold",DT)
+        post.set_shader_parameter(&"u_time",2.5+float(mark)*DT)
+        post.set_shader_parameter(&"u_nr",1 if float(mark)*DT < float(ring["life"]) else 0)
+        await process_frame
+        await RenderingServer.frame_post_draw
+        var next_image: Image = viewport.get_texture().get_image()
+        if next_image == null or next_image.get_width() != 480:
+            push_error("GOLD_LIVE_WAVE: bad advanced capture")
+            quit(1)
+            return
+        var change_count := 0
+        for yy in range(80,200):
+            for xx in range(210,345):
+                var aa: Color = last_image.get_pixel(xx,yy)
+                var bb: Color = next_image.get_pixel(xx,yy)
+                if absf(aa.r-bb.r)+absf(aa.g-bb.g)+absf(aa.b-bb.b) > 0.08:
+                    change_count += 1
+        if change_count < 80 or next_image.save_png(folder.path_join("s01_live_wave_post_tick%d.png" % mark)) != OK:
+            push_error("GOLD_LIVE_WAVE: advanced visual frame is static or missing: "+str(mark)+" diff="+str(change_count))
+            quit(1)
+            return
+        print("GOLD_LIVE_WAVE_ADVANCED: tick=%d changed=%d" % [mark,change_count])
+        last_image = next_image
+        last_mark = mark
     print("GOLD_LIVE_WAVE: PASS / 22 source objects / 21 direct visual objects / pixels="+str(visible_count))
     quit(0)
