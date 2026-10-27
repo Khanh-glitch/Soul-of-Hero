@@ -50,3 +50,18 @@ jobs:
           timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_sequence_smoke.gd 2>&1 | tee /tmp/gold-sequence.log
           grep -F 'GOLD_S01_SEQUENCE: PASS' /tmp/gold-sequence.log
           if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-sequence.log; then exit 1; fi
+      - name: Render all thirteen original base-wave objects natively
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/rupture_runtime_smoke.gd 2>&1 | tee /tmp/gold-runtime.log
+          grep -F 'GOLD_13_WAVE_RUNTIME: PASS' /tmp/gold-runtime.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' -e 'Shader compilation failed' /tmp/gold-runtime.log; then exit 1; fi
+      - name: Save rendered 13-wave baseline fixture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: s01-live-thirteen-wave-native
+          path: .artifacts/gold_fidelity/s01_thirteen_wave_runtime_tick27.png
+          if-no-files-found: warn
