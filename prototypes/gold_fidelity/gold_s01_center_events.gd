@@ -36,7 +36,7 @@ static func for_wave(wave: Dictionary) -> Dictionary:
             "missing_source_contact_particles":true})
     # Source condition: Math.abs(x - 352) < 14.
     # It is not 'every second wave': it only triggers at world x344.
-    if absf(position.x-352.0)<14.0:
+    if absf((300.0+float(order*side)*22.0)-352.0)<14.0:
         contact_cues.append({"enemy_index":GRUNT_A,"direction":-PI/2.0,
             "power":150.0,"lift":60.0,"stun":0.6,
             "display_only":true,"missing_source_contact_particles":true})
