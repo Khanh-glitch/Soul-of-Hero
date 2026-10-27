@@ -25,6 +25,13 @@ jobs:
           set -euo pipefail
           timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/composite-import.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/composite-import.log; then exit 1; fi
+      - name: Verify original center ring, light and target contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 45s godot --headless --path . --script res://prototypes/gold_fidelity/tests/s01_center_source_contract.gd 2>&1 | tee /tmp/gold-center-source.log
+          grep -F 'GOLD_S01_CENTER_SOURCE: PASS' /tmp/gold-center-source.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-center-source.log; then exit 1; fi
       - name: Run integrated floor sheets and waves regression
         shell: bash
         run: |
