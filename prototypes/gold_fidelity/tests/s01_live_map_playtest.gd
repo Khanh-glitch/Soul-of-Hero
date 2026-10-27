@@ -114,12 +114,12 @@ func _make_controls() -> void:
     add_child(hud)
     var panel := PanelContainer.new()
     panel.position = Vector2(10,72)
-    panel.custom_minimum_size = Vector2(385,0)
+    panel.custom_minimum_size = Vector2(300,0)
     hud.add_child(panel)
     var label := Label.new()
     label.name = "ReviewerHelp"
     label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-    label.add_theme_font_size_override("font_size",13)
+    label.add_theme_font_size_override("font_size",10)
     panel.add_child(label)
     _interface_label = label
 
@@ -127,17 +127,14 @@ func _update_label() -> void:
     if _interface_label == null:
         return
     _interface_label.text = (
-        "GOLD #01 / REAL LEVEL 2  [INCOMPLETE PROTOTYPE]\n" +
-        "K = cast at Knight | T = stage at nearest real enemy\n" +
-        "1 / 2 / 3 = Gold t1.467 / 2.05 / 2.84\n" +
-        "Space = pause VFX | R = replay | G = ground warp ON/OFF\n" +
-        "P = 14 pressure sheets ON/OFF | V = 13 waves ON/OFF\n" +
-        "Knight still uses normal game controls; VFX deals NO damage.\n" +
-        "MISSING: persistent terrain cracks / full enemy hits / source RNG.\n" +
-        "t=%.3fs  %s | ground:%s plates:%s waves:%s | source frames: %d" %
+        "GOLD S01 — LEVEL 2 [VFX REVIEW, NOT FINAL]\\n" +
+        "K: cast | T: nearest enemy | R: replay | H: hide panel\\n" +
+        "1/2/3: stages | Space: pause | G/P/V: layers\\n" +
+        "VFX-only; no damage / permanent cracks yet.\\n" +
+        "t=%.2fs %s | warp:%s plates:%s waves:%s" %
         [_fx_elapsed, "PLAY" if _casting and not _paused_fx else "PAUSE",
         "ON" if _show_warp else "OFF","ON" if _show_plates else "OFF",
-        "ON" if _show_waves else "OFF",_frame_samples]
+        "ON" if _show_waves else "OFF"]
     )
 
 func _input(event: InputEvent) -> void:
@@ -168,6 +165,10 @@ func _input(event: InputEvent) -> void:
             _show_plates = not _show_plates
         KEY_V:
             _show_waves = not _show_waves
+        KEY_H:
+            var controls := get_node_or_null("GoldVisualReviewControls") as CanvasLayer
+            if controls != null:
+                controls.visible = not controls.visible
         _:
             return
     get_viewport().set_input_as_handled()
