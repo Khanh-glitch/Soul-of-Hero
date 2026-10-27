@@ -5,7 +5,7 @@ extends Node2D
 ## engine/world.ts. The procedural vertices are recalculated every live tick.
 ## Not a baked flipbook. One isolated non-center wave is the fidelity target.
 const DYNAMICS = preload("res://prototypes/gold_fidelity/gold_fx_dynamics.gd")
-const SHARD := PackedFloat32Array([1.15, 0.0, -0.45, 0.17, -0.35, -0.12])
+const SHARD = [1.15, 0.0, -0.45, 0.17, -0.35, -0.12]
 const CRIMSON_RAMP := [0xffd0c0, 0xff5a4a, 0xc01830, 0x6a0a20, 0x2a0818]
 var kind := ""
 var state: Dictionary = {}
@@ -19,7 +19,7 @@ func configure(source_kind: String, input: Dictionary) -> void:
         state = DYNAMICS.chunk(input)
         # Chunk.init('shard') is a fixed THREE-vertex polygon in original.
         if String(state.get("kind", "shard")) in ["shard", "crimson"]:
-            state["shape"] = SHARD
+            state["shape"] = PackedFloat32Array(SHARD)
         else:
             push_error("GoldRuptureGlyph requires original randomized source shape for non-shards.")
             dead = true
