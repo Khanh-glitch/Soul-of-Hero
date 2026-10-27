@@ -29,3 +29,11 @@ jobs:
           timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_dynamics_smoke.gd 2>&1 | tee /tmp/gold-s01-physics.log
           grep -E '^GOLD_RUPTURE_NATIVE: PASS [0-9]+ checks$' /tmp/gold-s01-physics.log
           if grep -E 'SCRIPT ERROR:|Parse Error:|^ERROR:' /tmp/gold-s01-physics.log; then exit 1; fi
+      - name: Gold source seeded 22-object emission parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/isolated_wave_emitter_smoke.gd 2>&1 | tee /tmp/gold-wave-emitter.log
+          grep -E '^GOLD_WAVE_EMITTER: PASS [0-9]+ checks
+ /tmp/gold-wave-emitter.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|^ERROR:' /tmp/gold-wave-emitter.log; then exit 1; fi
