@@ -100,6 +100,7 @@ func _run() -> void:
     _make_controls()
     _reset_effect()
     _update_label()
+    print("GOLD_S01_WEB_PLAYTEST_READY: real AppFlow Level2, user controls active")
 
     # CI smoke mode exits; manual F6 mode intentionally NEVER exits.
     if _is_smoke:
