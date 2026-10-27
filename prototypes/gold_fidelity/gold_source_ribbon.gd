@@ -102,6 +102,9 @@ func rebuild() -> void:
     var n: int = source_points.size()
     if n < 2:
         return
+    # Original Ribbon.update kills completed ribbons after endT+life.
+    if not source_live and source_age-source_end_age >= source_life:
+        return
     var length_by_point := PackedFloat32Array([0.0])
     for i in range(1,n):
         length_by_point.append(length_by_point[i-1]+source_points[i].distance_to(source_points[i-1]))
