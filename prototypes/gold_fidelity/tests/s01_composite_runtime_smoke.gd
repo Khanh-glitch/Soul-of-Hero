@@ -19,6 +19,27 @@ func _run() -> void:
     root.add_child(instance)
     current_scene = instance
     instance.set("_playing",false)
+    # An EARLIER frame must be captured from this very same scene while
+    # source pressure sheets are still alive, before any rupture wave.
+    instance.call("set_gold_time",1.466666666666667)
+    var sheets: Array = instance.get("_meshes")
+    var visible_sheets := 0
+    for plate: MeshInstance2D in sheets:
+        if plate.visible:
+            visible_sheets += 1
+    if visible_sheets != 14:
+        push_error("GOLD_COMPOSITE: expected 14 gold pressure sheets at t1.4667, got %d" % visible_sheets)
+        quit(1)
+        return
+    await process_frame
+    await RenderingServer.frame_post_draw
+    var first_tex: Texture2D = instance.call("get_gold_texture")
+    var first_img: Image = first_tex.get_image()
+    var folder := ProjectSettings.globalize_path("res://.artifacts/gold_fidelity")
+    if first_img == null or first_img.get_width()!=480 or DirAccess.make_dir_recursive_absolute(folder)!=OK or first_img.save_png(folder.path_join("s01_composite_146.png"))!=OK:
+        push_error("GOLD_COMPOSITE: cannot capture sheet-phase evidence")
+        quit(1)
+        return
     instance.call("set_gold_time",2.40)
     if not _check("before rupture",instance.call("wave_diagnostics"),0,0,0):
         quit(1)
@@ -65,7 +86,6 @@ func _run() -> void:
         push_error("GOLD_COMPOSITE: scene may be blank (%d lit probe samples)" % sample)
         quit(1)
         return
-    var folder := ProjectSettings.globalize_path("res://.artifacts/gold_fidelity")
     if DirAccess.make_dir_recursive_absolute(folder) != OK or img.save_png(folder.path_join("s01_composite_284.png")) != OK:
         push_error("GOLD_COMPOSITE: cannot save native evidence")
         quit(1)
