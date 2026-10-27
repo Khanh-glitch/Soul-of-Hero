@@ -104,9 +104,10 @@ func _capture_campaign_state(game: Node2D) -> void:
     var post_rect := ColorRect.new()
     post_rect.name="OriginalGoldDisplacementOfRealMap"
     post_rect.color=Color.WHITE
-    post_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
     post_rect.mouse_filter=Control.MOUSE_FILTER_IGNORE
     final_post.add_child(post_rect)
+    # CanvasLayer is NOT a Control anchor parent; use explicit viewport size.
+    post_rect.position=Vector2.ZERO
     post_rect.size=get_viewport().get_visible_rect().size
     var shader_material := ShaderMaterial.new()
     shader_material.shader=POST
