@@ -122,7 +122,10 @@ func _capture_campaign_state(game: Node2D) -> void:
     shader_material.shader=POST
     post_rect.material=shader_material
     shader_material.set_shader_parameter(&"u_amb",1.0)
-    var resolution: Vector2=get_viewport().get_visible_rect().size
+    # In canvas_items stretch, get_visible_rect() is 640x360 LOGICAL,
+    # while get_texture().get_image() is 1280x720 PHYSICAL.
+    # Gold post sampler reads the PHYSICAL SCREEN_TEXTURE texel grid.
+    var resolution := Vector2(get_viewport().get_texture().get_size())
     shader_material.set_shader_parameter(&"u_res",resolution)
     shader_material.set_shader_parameter(&"u_time",1.46666666667)
     var scene_canvas: Transform2D=get_viewport().get_canvas_transform()
