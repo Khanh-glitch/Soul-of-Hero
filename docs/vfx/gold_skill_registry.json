@@ -6113,13 +6113,60 @@
         "environment_parity": "not_passed"
       },
       "environment_fx": {
-        "source_audit": "unassessed",
-        "operations": [],
-        "real_map_adapter": "not_verified",
-        "persistence_and_cleanup": "not_verified",
-        "gold_native_dynamic_evidence": [],
-        "regression_report": null,
-        "note": "Mandatory per-skill source audit. Classify verified_none ONLY with source proof; otherwise reproduce every gold environmental operation on a real map."
+        "source_audit": "source_verified_present",
+        "source_none_audit_proof": null,
+        "operations": [
+          {
+            "kind": "ground_groove",
+            "count": 2,
+            "source_times": [
+              0.85,
+              2.5
+            ],
+            "algorithm": "GoldHairlineGround.groove(source Bezier)"
+          },
+          {
+            "kind": "ground_crack",
+            "count": 13,
+            "source_time_range": [
+              2.5166666666666626,
+              2.799999999999995
+            ],
+            "algorithm": "GoldHairlineGround.crack(source RNG branches)"
+          },
+          {
+            "kind": "ground_rubble",
+            "count": 13,
+            "source_time_range": [
+              2.5166666666666626,
+              2.799999999999995
+            ],
+            "algorithm": "GoldHairlineGround.rubble(source RNG and pixels)"
+          },
+          {
+            "kind": "terrain_displacement",
+            "count": 1,
+            "algorithm": "Gold POST_FRAG segment warp, ring warp"
+          },
+          {
+            "kind": "pressure_sheets",
+            "count": 14,
+            "algorithm": "source quad geometry + original fractured-plate shader"
+          },
+          {
+            "kind": "dust_debris_ambient",
+            "count": "source driven",
+            "algorithm": "gold world Particle/Chunk/Blob/LightFX"
+          }
+        ],
+        "real_map_adapter": "prototype_verified_component_only",
+        "persistence_and_cleanup": "prototype_verified_component_only",
+        "gold_native_dynamic_evidence": [
+          "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40558158709",
+          "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40549937404"
+        ],
+        "regression_report": "prototypes/gold_fidelity/tests/s01_terrain_source_oracle.gd",
+        "note": "Source environment callgraph audited. Live TileMap decal + post displacement component implemented; still must compare full 7s environment on actual production map against Gold and verify game actor occlusion/timing at every stage. NOT an approved skill."
       }
     },
     {
