@@ -24,11 +24,28 @@ for s in items:
         errors.append(k+" fusion design incorrectly reported implemented")
     if s["port_state"] in ("integrated","production_ready") and not s["integration_approved"]:
         errors.append(k+" integrated flag without approval")
+    env=s.get("environment_fx",{})
+    audit=env.get("source_audit")
+    if audit not in ("unassessed","source_verified_none","source_verified_present"):
+        errors.append(k+" missing mandatory environment audit classification")
+    if not isinstance(env.get("operations",[]),list):
+        errors.append(k+" environmental source operations must be an array")
+    if g.get("environment_parity")=="passed":
+        if audit=="unassessed":
+            errors.append(k+" illegal environment approval without per-skill gold source audit")
+        elif audit=="source_verified_present" and (not env.get("operations") or
+            env.get("real_map_adapter")!="verified" or
+            env.get("persistence_and_cleanup")!="verified" or
+            not env.get("gold_native_dynamic_evidence") or
+            not env.get("regression_report")):
+            errors.append(k+" missing real-map environmental evidence/cleanup")
     if s["gold_visual_acceptance"] or s["integration_approved"]:
-        if not all(g.get(name)=="passed" for name in gates):errors.append(k+" approval without six completed gates")
+        if not all(g.get(name)=="passed" for name in gates):errors.append(k+" approval without all seven completed gates")
+        if audit=="unassessed" or (audit=="source_verified_present" and g.get("environment_parity")!="passed"):
+            errors.append(k+" forbidden final approval without gold-authored environmental parity")
         if not (evidence["gold_frames"] and evidence["godot_frames"] and evidence["automated_comparison_report"] and evidence["runtime_report"]):
             errors.append(k+" approval without paired visual/native evidence")
 if errors:
     for e in errors[:30]:print("GOLD_REGISTRY_ERROR:",e,file=sys.stderr)
     raise SystemExit(1)
-print("GOLD_REGISTRY: PASS 155 entries = 135 authored + 20 planned; no false approvals")
+print("GOLD_REGISTRY: PASS 155 entries = 135 authored + 20 planned; separate environment fidelity required, no false approvals")
