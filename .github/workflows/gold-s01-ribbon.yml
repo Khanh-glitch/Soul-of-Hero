@@ -50,5 +50,5 @@ jobs:
           name: gold-source-ribbon-native-style4
           path: |
             .artifacts/gold_fidelity/source_ribbon_style4.png
-            .artifacts/gold_fidelity/s01_gold_seam_tick125_native.png
+            .artifacts/gold_fidelity/s01_gold_seam_tick*_native.png
           if-no-files-found: warn
