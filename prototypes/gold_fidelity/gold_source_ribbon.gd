@@ -18,6 +18,7 @@ var source_transparency := 0.7
 var source_wobble := 0.0
 var source_wobble_frequency := 50.0
 var source_age := 0.0
+var source_world_time := 0.0
 var source_life := 3.6
 var source_end_age := 0.0
 var source_live := true
@@ -55,8 +56,9 @@ func configure(opts: Dictionary) -> void:
     source_fade_mode = int(opts.get("fadeMode",source_fade_mode))
     z_index = int(opts.get("layer",5))
 
-func set_source_frame(time: float, points: PackedVector2Array, live: bool, end_age: float = 0.0) -> void:
+func set_source_frame(time: float, points: PackedVector2Array, live: bool, end_age: float = 0.0, world_time: float = -1.0) -> void:
     source_age = time
+    source_world_time = world_time if world_time >= 0.0 else time
     source_points = points
     source_live = live
     source_end_age = end_age
@@ -174,7 +176,7 @@ func rebuild() -> void:
     mesh = generated
     visible = true
     if ribbon_material != null:
-        ribbon_material.set_shader_parameter(&"u_time",source_age)
+        ribbon_material.set_shader_parameter(&"u_time",source_world_time)
         ribbon_material.set_shader_parameter(&"u_seed",source_seed)
         ribbon_material.set_shader_parameter(&"u_style",source_style)
         ribbon_material.set_shader_parameter(&"u_extra",source_extra)
@@ -184,4 +186,4 @@ func rebuild() -> void:
 
 func source_summary() -> Dictionary:
     return {"point_count":source_points.size(),"triangle_count":source_last_triangles,
-        "age":source_age,"width":source_width,"is_live":source_live,"seed":source_seed}
+        "age":source_age,"world_time":source_world_time,"width":source_width,"is_live":source_live,"seed":source_seed}
