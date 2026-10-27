@@ -45,7 +45,13 @@ func step_gold(dt: float) -> void:
 
 func update_gold_pose() -> void:
     # World uses x/y in logical 480x270 screen space; z is altitude.
-    position = Vector2(roundf(float(state["x"])), roundf(float(state["y"]) - float(state["z"])))
+    # Gold Part.draw streak keeps subpixel x/y; Chunk.draw rounds cx/cy.
+    var x := float(state["x"])
+    var projected_y := float(state["y"]) - float(state["z"])
+    if kind == "part" and float(state.get("streak",0.0)) > 0.0:
+        position = Vector2(x,projected_y)
+    else:
+        position = Vector2(roundf(x),roundf(projected_y))
     queue_redraw()
 
 func _draw() -> void:
