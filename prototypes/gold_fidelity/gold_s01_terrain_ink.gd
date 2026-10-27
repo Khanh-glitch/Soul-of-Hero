@@ -20,6 +20,19 @@ var _cursor:=0
 var _time:=0.0
 var _texture_uploads:=0
 var _last_alpha_count:=0
+var _visible_alpha_count:=0
+var _floor_layer: TileMapLayer
+var _wall_layer: TileMapLayer
+
+## Bind the ACTUAL authored terrain layers. The original Gold ground stencil
+## must never paint on a real map's void or solid walls. This changes only
+## the COMPOSITING MASK, never source random draws or crack geometry.
+## Without binding, isolated Gold oracle remains an unmasked source fixture.
+func bind_actual_map(backdrop: TileMapLayer, geometry: TileMapLayer) -> void:
+    _floor_layer=backdrop
+    _wall_layer=geometry
+    if _ink!=null:
+        _refresh_decal()
 
 func _ready() -> void:
     centered=false
@@ -61,9 +74,33 @@ func seek_source_time(t: float) -> void:
         _cursor+=1
         changed=true
     if changed:
-        _texture.update(_ink.as_image())
-        _texture_uploads+=1
-        _last_alpha_count=_ink.marked_count()
+        _refresh_decal()
+
+func _refresh_decal() -> void:
+    # The source ink buffer remains untouched for RNG/geometry parity.
+    # Mask the DISPLAY alpha only against actual authored walkable floor.
+    var image: Image=_ink.as_image()
+    _last_alpha_count=_ink.marked_count()
+    _visible_alpha_count=_last_alpha_count
+    if _floor_layer!=null and _wall_layer!=null:
+        var data: PackedByteArray=image.get_data()
+        _visible_alpha_count=0
+        for p in range(3,data.size(),4):
+            if data[p]==0:
+                continue
+            var index: int=(p-3)/4
+            var x: int=index%_ink.W
+            var y: int=index/_ink.W
+            var pos: Vector2=to_global(Vector2(x+0.5,y+0.5))
+            var floor_cell: Vector2i=_floor_layer.local_to_map(_floor_layer.to_local(pos))
+            var wall_cell: Vector2i=_wall_layer.local_to_map(_wall_layer.to_local(pos))
+            if _floor_layer.get_cell_source_id(floor_cell)<0 or _wall_layer.get_cell_source_id(wall_cell)>=0:
+                data[p]=0
+            else:
+                _visible_alpha_count+=1
+        image=Image.create_from_data(_ink.W,_ink.H,false,Image.FORMAT_RGBA8,data)
+    _texture.update(image)
+    _texture_uploads+=1
 
 func source_diagnostics() -> Dictionary:
     return {
@@ -71,6 +108,8 @@ func source_diagnostics() -> Dictionary:
         "source_total_mutations":_events.size(),
         "texture_uploads":_texture_uploads,
         "marked_pixels":_last_alpha_count,
+        "visible_floor_pixels":_visible_alpha_count,
+        "floor_mask_bound":_floor_layer!=null and _wall_layer!=null,
         "visible":visible,
         "source_time":_time,
         "terrain_visual_only":true,
