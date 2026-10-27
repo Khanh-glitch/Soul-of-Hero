@@ -243,7 +243,7 @@ func _seek_effect(t: float) -> void:
     _fx_elapsed = clampf(t,0.0,7.0)
     _paused_fx = true
     _update_effect()
-    print("GOLD_S01_WEB_SEEK: t="+str(_fx_elapsed))
+    print("GOLD_S01_WEB_SEEK: t="+str(_fx_elapsed)+" ground_mutations="+str(_terrain_ink.source_diagnostics()["source_mutations"])+" ground_marked="+str(_terrain_ink.source_diagnostics()["marked_pixels"]))
 
 func _process(delta: float) -> void:
     if not _casting or _paused_fx or _game == null:
