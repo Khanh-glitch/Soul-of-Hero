@@ -18,7 +18,7 @@ static func _hash(x: int,y: int) -> float:
     h=int(float(h^(h>>13))*1274126177.0)&0xFFFFFFFF
     return float((h^(h>>16))&0xFFFFFFFF)/4294967296.0
 
-func _old_line(ground: RefCounted,x0: float,y0: float,angle: float,length: float) -> void:
+func _old_line(ground: GoldHairlineGround,x0: float,y0: float,angle: float,length: float) -> void:
     var x:=x0
     var y:=y0
     var a:=angle
