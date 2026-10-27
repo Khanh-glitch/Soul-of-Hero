@@ -1,0 +1,46 @@
+name: Hairline Gold 14-sheet source port
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  sheet-port:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Parse and import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/import.log; then exit 1; fi
+      - name: Numerical original-source parity of 14-sheet geometry
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/plate_source_geometry_test.gd 2>&1 | tee /tmp/geometry.log
+          grep -F 'GOLD_PLATE_GEOMETRY: PASS' /tmp/geometry.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/geometry.log; then exit 1; fi
+      - name: Shader compile and native plate capture
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/plate_native_capture.gd 2>&1 | tee /tmp/plates.log
+          grep -F 'GOLD_PRESSURE_SHEETS_NATIVE: PASS' /tmp/plates.log
+          if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:' /tmp/plates.log; then exit 1; fi
+      - name: Upload unretouched native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hairline-gold-source-14-sheets
+          path: .artifacts/gold_fidelity/hairline_14_source_plates.png
+          if-no-files-found: warn
