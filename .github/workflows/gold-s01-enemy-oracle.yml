@@ -1,0 +1,35 @@
+name: Gold S01 enemy original-source oracle
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/gold_s01_enemy_presentation.gd'
+      - 'prototypes/gold_fidelity/tests/s01_enemy_source_oracle_smoke.gd'
+      - '.github/workflows/gold-s01-enemy-oracle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  enemy-source-oracle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Source Godot import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/s01-enemy-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/s01-enemy-import.log; then exit 1; fi
+      - name: Compare actual compiled TypeScript gold actor samples with native Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/s01_enemy_source_oracle_smoke.gd 2>&1 | tee /tmp/s01-enemy-test.log
+          grep -F 'GOLD_S01_ENEMY_ORACLE: PASS' /tmp/s01-enemy-test.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/s01-enemy-test.log; then exit 1; fi
