@@ -30,10 +30,17 @@ jobs:
           timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_blob_shader_smoke.gd 2>&1 | tee /tmp/gold-blob-shader.log
           grep -F 'GOLD_BLOB_SHADER_NATIVE: PASS' /tmp/gold-blob-shader.log
           if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' -e 'Shader compilation failed' /tmp/gold-blob-shader.log; then exit 1; fi
+      - name: Runtime original smoke Blob 15 ticks, original shader and expiry
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/live_blob_runtime_smoke.gd 2>&1 | tee /tmp/live-blob.log
+          grep -F 'GOLD_LIVE_BLOB: PASS' /tmp/live-blob.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' -e 'Shader compilation failed' /tmp/live-blob.log; then exit 1; fi
       - name: Publish original-math blob shader evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gold-s01-original-blob-shader
-          path: .artifacts/gold_fidelity/source_blob_modes_1_2_5.png
+          path: |\n            .artifacts/gold_fidelity/source_blob_modes_1_2_5.png\n            .artifacts/gold_fidelity/live_smoke_after_15_ticks.png
           if-no-files-found: warn
