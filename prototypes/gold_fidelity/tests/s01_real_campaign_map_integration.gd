@@ -65,6 +65,15 @@ func _capture_campaign_state(game: Node2D) -> void:
     camera.reset_smoothing()
     camera.force_update_scroll()
     await get_tree().process_frame
+    await RenderingServer.frame_post_draw
+    var output := "res://.artifacts/vfx_real_map"
+    var folder := ProjectSettings.globalize_path(output)
+    if DirAccess.make_dir_recursive_absolute(folder)!=OK:
+        _verify(false,"cannot create source evidence folder")
+        return
+    var aligned_baseline: Image=get_viewport().get_texture().get_image()
+    _verify(aligned_baseline!=null and aligned_baseline.save_png(folder.path_join("chapter1_l2_aligned_baseline.png"))==OK,
+        "actual level baseline from the SAME camera view as source VFX")
 
     var offset := enemy.global_position-SOURCE_TARGET
     var fx_world := Node2D.new()
@@ -128,7 +137,10 @@ func _capture_campaign_state(game: Node2D) -> void:
         seg_params.append(Vector2(14.0*canvas_scale,MATH.strength_at(1.46666666667-0.55)*canvas_scale) if i==0 else Vector2.ZERO)
     shader_material.set_shader_parameter(&"u_seg",segs)
     shader_material.set_shader_parameter(&"u_seg_p",seg_params)
-    shader_material.set_shader_parameter(&"u_ns",1)
+    # First measure THE SAME map and VFX with source ground displacement off.
+    # Then enable ONLY the exact Gold segment shader math. Pairwise image
+    # comparison isolates tile displacement from particles, ribbon and camera.
+    shader_material.set_shader_parameter(&"u_ns",0)
     var viewport_rect: Rect2=get_viewport().get_visible_rect()
     _verify(viewport_rect.has_point(segment_a) or viewport_rect.has_point(segment_b),
         "source rupture world-space segment overlaps active Knight camera screen")
@@ -140,11 +152,12 @@ func _capture_campaign_state(game: Node2D) -> void:
     var hp_before: Variant=enemy.get("health")
     await get_tree().process_frame
     await RenderingServer.frame_post_draw
-    var output := "res://.artifacts/vfx_real_map"
-    var folder := ProjectSettings.globalize_path(output)
-    if DirAccess.make_dir_recursive_absolute(folder)!=OK:
-        _verify(false,"could not make native test evidence directory")
-        return
+    var no_warp: Image=get_viewport().get_texture().get_image()
+    _verify(no_warp!=null and no_warp.save_png(folder.path_join("chapter1_l2_gold_vfx_no_ground_warp.png"))==OK,
+        "native real map with source VFX but displacement disabled")
+    shader_material.set_shader_parameter(&"u_ns",1)
+    await get_tree().process_frame
+    await RenderingServer.frame_post_draw
     var screenshot: Image=get_viewport().get_texture().get_image()
     _verify(screenshot!=null and screenshot.get_width()>=640,
         "non-headless actual gameplay viewport image is available")
@@ -158,6 +171,24 @@ func _capture_campaign_state(game: Node2D) -> void:
     _verify(painted>250,"screenshot has full live playable level, not blank prototype")
     _verify(screenshot.save_png(folder.path_join("chapter1_l2_real_map_gold_vfx.png"))==OK,
         "captured original source Ribbon plus 13 waves on actual playable level")
+    # Real TileMap under the identical FX must move as GOLD warped its own
+    # ground texture. Smoke/ribbon/camera remain otherwise identical.
+    var region := Rect2i(
+        Vector2i(int(minf(segment_a.x,segment_b.x))-22,
+            int(minf(segment_a.y,segment_b.y))-22),
+        Vector2i(int(absf(segment_b.x-segment_a.x))+44,
+            int(absf(segment_b.y-segment_a.y))+44)
+    ).intersection(Rect2i(Vector2i.ZERO,screenshot.get_size()))
+    var changed_warp := 0
+    for yy in range(region.position.y,region.end.y):
+        for xx in range(region.position.x,region.end.x):
+            var w: Color=screenshot.get_pixel(xx,yy)
+            var n: Color=no_warp.get_pixel(xx,yy)
+            if absf(w.r-n.r)+absf(w.g-n.g)+absf(w.b-n.b)>0.06:
+                changed_warp+=1
+    _verify(changed_warp>60,
+        "source segment actually displaces rendered real-map tiles (not just a red seam); changed=%d" % changed_warp)
+    print("GOLD_S01_REAL_MAP_GROUND_WARP_PIXELS: %d in camera-projected authored tile region" % changed_warp)
     _verify(enemy.get("health")==hp_before,"VFX did not deal damage to real enemy")
     _verify(knight.get("health")==before_knight_hp,"VFX did not damage live Knight")
     _verify(before_enemy_hp==hp_before,"baseline enemy health preserved")
