@@ -1,0 +1,46 @@
+name: Gold fidelity — source math and native shader
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-shader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import actual project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-import.log; then exit 1; fi
+      - name: Exact segment-envelope numerical tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/segment_math_smoke.gd 2>&1 | tee /tmp/gold-math.log
+          grep -F 'GOLD_SEGMENT_MATH: PASS' /tmp/gold-math.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-math.log; then exit 1; fi
+      - name: Compile and render original shader math
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_shader_smoke.gd 2>&1 | tee /tmp/gold-shader.log
+          grep -F 'GOLD_POST_SHADER_NATIVE: PASS' /tmp/gold-shader.log
+          if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:|ERROR:' /tmp/gold-shader.log; then exit 1; fi
+      - name: Save native shader diagnostic (not a full skill)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-source-math-shader-diagnostic
+          path: .artifacts/gold_fidelity/*.png
+          if-no-files-found: warn
