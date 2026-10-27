@@ -31,6 +31,11 @@ func _run() -> void:
         push_error("GOLD_COMPOSITE: expected 14 gold pressure sheets at t1.4667, got %d" % visible_sheets)
         quit(1)
         return
+    var early_seam: Dictionary = instance.call("ribbon_diagnostics")
+    if not bool(early_seam.get("visible",false)) or int(early_seam.get("point_count",-1))!=16:
+        push_error("GOLD_COMPOSITE: Gold Ribbon source path missing in 14-sheet phase: "+str(early_seam))
+        quit(1)
+        return
     await process_frame
     await RenderingServer.frame_post_draw
     var first_tex: Texture2D = instance.call("get_gold_texture")
@@ -38,6 +43,19 @@ func _run() -> void:
     var folder := ProjectSettings.globalize_path("res://.artifacts/gold_fidelity")
     if first_img == null or first_img.get_width()!=480 or DirAccess.make_dir_recursive_absolute(folder)!=OK or first_img.save_png(folder.path_join("s01_composite_146.png"))!=OK:
         push_error("GOLD_COMPOSITE: cannot capture sheet-phase evidence")
+        quit(1)
+        return
+    instance.call("set_gold_time",2.05)
+    var mid_seam: Dictionary = instance.call("ribbon_diagnostics")
+    if not bool(mid_seam.get("visible",false)) or absf(float(mid_seam.get("width",0.0))-6.0)>0.0001:
+        push_error("GOLD_COMPOSITE: original silver-red seam did not widen to 6px: "+str(mid_seam))
+        quit(1)
+        return
+    await process_frame
+    await RenderingServer.frame_post_draw
+    var mid_img: Image = (instance.call("get_gold_texture") as Texture2D).get_image()
+    if mid_img==null or mid_img.get_width()!=480 or mid_img.save_png(folder.path_join("s01_composite_205.png"))!=OK:
+        push_error("GOLD_COMPOSITE: original seam mid-phase framebuffer export failed")
         quit(1)
         return
     instance.call("set_gold_time",2.40)
@@ -49,6 +67,11 @@ func _run() -> void:
         quit(1)
         return
     instance.call("set_gold_time",2.84)
+    var late_seam: Dictionary = instance.call("ribbon_diagnostics")
+    if bool(late_seam.get("visible",true)):
+        push_error("GOLD_COMPOSITE: source Ribbon persists past endT + 0.3 lifespan: "+str(late_seam))
+        quit(1)
+        return
     var state: Dictionary = instance.call("wave_diagnostics")
     if not _check("all 13 source waves",state,13,286,273):
         quit(1)
@@ -90,5 +113,5 @@ func _run() -> void:
         push_error("GOLD_COMPOSITE: cannot save native evidence")
         quit(1)
         return
-    print("GOLD_S01_COMPOSITE: PASS / floor+14 sheets+13 waves+286 source objects / deterministic rewind / 480x270 / probes=%d" % sample)
+    print("GOLD_S01_COMPOSITE: PASS / floor+14 sheets+source Ribbon+13 waves+286 source objects / deterministic rewind / 480x270 / probes=%d" % sample)
     quit(0)
