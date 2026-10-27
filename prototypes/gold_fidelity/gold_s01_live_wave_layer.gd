@@ -59,13 +59,31 @@ func seek_seconds(seconds_since_rupture: float) -> void:
 
 func _step_one() -> void:
     # Existing fx advances first; newly emitted fx begins at source age zero.
+    # The original WebGL World deletes expired objects every tick. Old Godot
+    # implementation kept expired Glyphs in _render_nodes forever and scanned
+    # all 273 originals on each later tick (even after their draw life ended).
+    # Compact the active list in-place while retaining the EXACT original
+    # 60 Hz update order of living source particles.
+    var survivors: Array[Node2D] = []
     for fx: Node2D in _render_nodes:
-        if not is_instance_valid(fx) or bool(fx.get("dead")):
+        if not is_instance_valid(fx):
+            continue
+        if bool(fx.get("dead")):
+            if not fx.is_queued_for_deletion():
+                fx.visible = false
+                fx.queue_free()
             continue
         if fx is GoldBlobPrimitive:
             fx.call("step_gold",DT,2.5+float(_ticks+1)*DT)
         else:
             fx.call("step_gold",DT)
+        if bool(fx.get("dead")):
+            if not fx.is_queued_for_deletion():
+                fx.visible = false
+                fx.queue_free()
+        else:
+            survivors.append(fx)
+    _render_nodes = survivors
     for ring: Dictionary in _rings:
         ring["t"] = float(ring["t"]) + DT
     _rings = _rings.filter(func(r: Dictionary) -> bool:
@@ -156,6 +174,7 @@ func diagnostics() -> Dictionary:
         "wave_count":_total_waves,
         "source_count":_total_sources,
         "visual_count":_total_visuals,
+        "active_visual_count":_render_nodes.size(),
         "ring_count":_rings.size(),
         "center_ring_count":_central_large_ring_count,
         "light_count":_lights.size(),
