@@ -122,29 +122,22 @@ func _capture_campaign_state(game: Node2D) -> void:
     shader_material.shader=POST
     post_rect.material=shader_material
     shader_material.set_shader_parameter(&"u_amb",1.0)
-    # In canvas_items stretch, get_visible_rect() is 640x360 LOGICAL,
-    # while get_texture().get_image() is 1280x720 PHYSICAL.
-    # Gold post sampler reads the PHYSICAL SCREEN_TEXTURE texel grid.
-    var resolution := Vector2(get_viewport().get_texture().get_size())
+    # The source shader's u_res and u_seg share one LOGICAL 640x360 space.
+    # Godot may report 2560x1440 for its backing viewport texture whereas
+    # get_image() creates a 1280x720 PNG: neither size is the shader's
+    # logical coordinate system. Pixel assertions project to PNG later.
+    var resolution: Vector2=get_viewport().get_visible_rect().size
     shader_material.set_shader_parameter(&"u_res",resolution)
     shader_material.set_shader_parameter(&"u_time",1.46666666667)
     var scene_canvas: Transform2D=get_viewport().get_canvas_transform()
-    # Camera2D canvas coordinates are logical 640x360, but SCREEN_UV in the
-    # 1280x720 native window shader indexes PHYSICAL framebuffer pixels.
-    # Convert world->logical camera->physical screen before binding u_seg.
-    # Otherwise the distortion silently fires a 2x-downscaled/offscreen area.
-    var logical_size := Vector2(
-        float(ProjectSettings.get_setting("display/window/size/viewport_width",640)),
-        float(ProjectSettings.get_setting("display/window/size/viewport_height",360)))
-    var screen_scale := Vector2(resolution.x/logical_size.x,resolution.y/logical_size.y)
-    var logical_a: Vector2=scene_canvas*(offset+MATH.SOURCE_START)
-    var logical_b: Vector2=scene_canvas*(offset+MATH.SOURCE_END)
-    var segment_a := logical_a*screen_scale
-    var segment_b := logical_b*screen_scale
-    var canvas_scale: float=scene_canvas.x.length()*screen_scale.x
+    # Bind source Gold displacement in the original shader's logical space.
+    var segment_a: Vector2=scene_canvas*(offset+MATH.SOURCE_START)
+    var segment_b: Vector2=scene_canvas*(offset+MATH.SOURCE_END)
+    var canvas_scale: float=scene_canvas.x.length()
     print("GOLD_REAL_MAP_PROJECTED_SEGMENT: a="+str(segment_a)+" b="+str(segment_b)+
-        " physical="+str(resolution)+" logical="+str(logical_size)+
-        " camera_scale="+str(scene_canvas.x.length()))
+        " shader_logical="+str(resolution)+
+        " texture_backing="+str(get_viewport().get_texture().get_size())+
+        " camera_scale="+str(canvas_scale))
     _verify(canvas_scale>0.0,"actual Camera2D world-to-viewport projection exists")
     var segs := PackedVector4Array()
     var seg_params := PackedVector2Array()
@@ -189,12 +182,20 @@ func _capture_campaign_state(game: Node2D) -> void:
         "captured original source Ribbon plus 13 waves on actual playable level")
     # Real TileMap under the identical FX must move as GOLD warped its own
     # ground texture. Smoke/ribbon/camera remain otherwise identical.
+    # Convert only the comparison rectangle to PNG pixel coordinates.
+    # The image-to-logical scale is determined from the image we just read,
+    # rather than assuming either the backing texture size or a 2x factor.
+    var png_scale := Vector2(screenshot.get_width()/resolution.x,
+        screenshot.get_height()/resolution.y)
+    var physical_a := segment_a*png_scale
+    var physical_b := segment_b*png_scale
     var region := Rect2i(
-        Vector2i(int(minf(segment_a.x,segment_b.x))-22,
-            int(minf(segment_a.y,segment_b.y))-22),
-        Vector2i(int(absf(segment_b.x-segment_a.x))+44,
-            int(absf(segment_b.y-segment_a.y))+44)
+        Vector2i(int(minf(physical_a.x,physical_b.x)-22.0*png_scale.x),
+            int(minf(physical_a.y,physical_b.y)-22.0*png_scale.y)),
+        Vector2i(int(absf(physical_b.x-physical_a.x)+44.0*png_scale.x),
+            int(absf(physical_b.y-physical_a.y)+44.0*png_scale.y))
     ).intersection(Rect2i(Vector2i.ZERO,screenshot.get_size()))
+    _verify(region.has_area(),"projected Gold rupture intersects actual screenshot raster")
     var changed_warp := 0
     for yy in range(region.position.y,region.end.y):
         for xx in range(region.position.x,region.end.x):
@@ -204,7 +205,7 @@ func _capture_campaign_state(game: Node2D) -> void:
                 changed_warp+=1
     _verify(changed_warp>60,
         "source segment actually displaces rendered real-map tiles (not just a red seam); changed=%d" % changed_warp)
-    print("GOLD_S01_REAL_MAP_GROUND_WARP_PIXELS: %d in camera-projected authored tile region" % changed_warp)
+    print("GOLD_S01_REAL_MAP_GROUND_WARP_PIXELS: %d in camera-projected authored tile region; png_size=%s; region=%s" % [changed_warp,str(screenshot.get_size()),str(region)])
     _verify(enemy.get("health")==hp_before,"VFX did not deal damage to real enemy")
     _verify(knight.get("health")==before_knight_hp,"VFX did not damage live Knight")
     _verify(before_enemy_hp==hp_before,"baseline enemy health preserved")
