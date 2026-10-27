@@ -8,6 +8,7 @@ extends "res://tests/chapter_1_campaign_level_visual_capture.gd"
 ## contact visuals, source actor reaction/animation, authoritative 7s RNG
 ## and hitstop. Explicitly show these limitations instead of claiming parity.
 const GOLD_PLATES = preload("res://prototypes/gold_fidelity/gold_s01_world_pressure_sheets.gd")
+const GOLD_TERRAIN = preload("res://prototypes/gold_fidelity/gold_s01_terrain_ink.gd")
 const GOLD_RIBBON = preload("res://prototypes/gold_fidelity/gold_source_ribbon.gd")
 const GOLD_SEAM = preload("res://prototypes/gold_fidelity/gold_s01_seam_timeline.gd")
 const GOLD_WAVE = preload("res://prototypes/gold_fidelity/gold_s01_live_wave_layer.gd")
@@ -19,6 +20,7 @@ var _game: Node2D
 var _knight: CharacterBody2D
 var _stage: Node2D
 var _plates: GoldS01WorldPressureSheets
+var _terrain_ink: GoldS01TerrainInk
 var _ribbon: GoldSourceRibbon
 var _waves: GoldS01LiveWaveLayer
 var _post: ShaderMaterial
@@ -30,6 +32,7 @@ var _paused_fx := false
 var _show_plates := true
 var _show_waves := true
 var _show_warp := true
+var _show_ground_ink := true
 var _cast_offset := Vector2.ZERO
 var _gold_anchor := Vector2(86.0,150.0)
 var _last_target: Node2D
@@ -68,6 +71,9 @@ func _run() -> void:
     _stage = Node2D.new()
     _stage.name = "GoldS01_RuntimeReview_NotGameplaySkill"
     _game.add_child(_stage)
+    _terrain_ink = GOLD_TERRAIN.new()
+    _terrain_ink.name = "OriginalGold_PersistentGroundInk_OnRealTiles"
+    _stage.add_child(_terrain_ink)
     _plates = GOLD_PLATES.new()
     _plates.name = "Original14PressureSheets"
     _stage.add_child(_plates)
@@ -129,8 +135,8 @@ func _update_label() -> void:
     _interface_label.text = (
         "GOLD S01 — LEVEL 2 [VFX REVIEW, NOT FINAL]\\n" +
         "K: cast | T: nearest enemy | R: replay | H: hide panel\\n" +
-        "1/2/3: stages | Space: pause | G/P/V: layers\\n" +
-        "VFX-only; no damage / permanent cracks yet.\\n" +
+        "1/2/3: stages | Space: pause | G/P/V/B: layers\\n" +
+        "VFX-only; ground marks cosmetic, no TileMap damage.\\n" +
         "t=%.2fs %s | warp:%s plates:%s waves:%s" %
         [_fx_elapsed, "PLAY" if _casting and not _paused_fx else "PAUSE",
         "ON" if _show_warp else "OFF","ON" if _show_plates else "OFF",
@@ -161,6 +167,8 @@ func _input(event: InputEvent) -> void:
             _seek_effect(2.84)
         KEY_G:
             _show_warp = not _show_warp
+        KEY_B:
+            _show_ground_ink = not _show_ground_ink
         KEY_P:
             _show_plates = not _show_plates
         KEY_V:
@@ -248,6 +256,8 @@ func _update_effect() -> void:
     if _post == null or _stage == null:
         return
     var t := _fx_elapsed
+    _terrain_ink.seek_source_time(t if _casting else 0.0)
+    _terrain_ink.visible = _casting and _show_ground_ink
     _plates.seek_source_time(t)
     _plates.visible = _casting and _show_plates
     var state: Dictionary = GOLD_SEAM.state_at(t,-1.0)
@@ -303,4 +313,15 @@ func _smoke_capture() -> void:
     _expect(int(_waves.diagnostics().get("wave_count",-1))==13,
         "live VFX source thirteen-wave emission works in playable scene")
     _expect(not _ribbon.visible,"source Ribbon expires by late phase")
+    _seek_effect(5.0)
+    await get_tree().process_frame
+    await RenderingServer.frame_post_draw
+    var settled: Image = get_viewport().get_texture().get_image()
+    _expect(settled!=null and settled.save_png(out_dir.path_join("real_map_environment_settled_5000.png"))==OK,
+        "persistent environmental grooves cracks rubble survive past smoke and ribbon")
+    var ink_stats: Dictionary = _terrain_ink.source_diagnostics()
+    _expect(int(ink_stats.get("source_mutations",0))==28 and int(ink_stats.get("marked_pixels",0))>150,
+        "Gold source 2 grooves + 13 cracks + 13 rubble writes persist after effects")
+    _expect(int(ink_stats.get("texture_uploads",1000))<=30,
+        "terrain texture uploads only on source mutations not every rendered frame")
     print("GOLD_S01_INTERACTIVE_PLAYTEST: PASS | real AppFlow Level2, 3 source-timed frames, user controls and source modules")
