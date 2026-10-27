@@ -38,6 +38,7 @@ var _gold_anchor := Vector2(86.0,150.0)
 var _last_target: Node2D
 var _is_smoke := false
 var _frame_samples := 0
+var _ui_refresh_seconds := 0.0
 
 func _ready() -> void:
     _slot = 2
@@ -139,8 +140,9 @@ func _update_label() -> void:
         "1/2/3/4: stages(+settled terrain) | Space: pause\\n" +
         "G: warp | B: ground marks | P: plates | V: waves\\n" +
         "VFX-only; ground marks cosmetic, no TileMap damage.\\n" +
-        "t=%.2fs %s | warp:%s plates:%s waves:%s" %
+        "t=%.2fs %s | fps:%d liveFX:%d | warp:%s plates:%s waves:%s" %
         [_fx_elapsed, "PLAY" if _casting and not _paused_fx else "PAUSE",
+        Engine.get_frames_per_second(),int(_waves.diagnostics().get("active_visual_count",0)),
         "ON" if _show_warp else "OFF","ON" if _show_plates else "OFF",
         "ON" if _show_waves else "OFF"]
     )
@@ -259,7 +261,14 @@ func _process(delta: float) -> void:
             int(q["texture_uploads"]),int(_waves.diagnostics()["active_visual_count"])])
     if _fx_elapsed>=7.0:
         _paused_fx = true
-    _update_label()
+    # Text layout every rendered frame used to force a Canvas redraw even
+    # when the VFX itself was rendering at fixed 60 Hz. 4 Hz review metrics
+    # keep UI readable and reduce browser CPU/GPU overhead without touching
+    # Gold particle/ground/ribbon source simulation.
+    _ui_refresh_seconds += delta
+    if _ui_refresh_seconds>=0.25:
+        _ui_refresh_seconds=0.0
+        _update_label()
 
 func _update_effect() -> void:
     if _post == null or _stage == null:
