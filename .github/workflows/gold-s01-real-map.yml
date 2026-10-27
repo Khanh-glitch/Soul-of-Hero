@@ -42,8 +42,10 @@ jobs:
           cp -a vfx-only/prototypes/gold_fidelity/. real-map/prototypes/gold_fidelity/
           echo "VFX source SHA: $(git -C vfx-only rev-parse HEAD)"
           echo "Real map SHA: $(git -C real-map rev-parse HEAD)"
-          if git -C real-map status --short -- game/ data/ assets/ project.godot | grep .; then
-            echo "Production map or gameplay modifications detected"; exit 1
+          # Godot generates new UNTRACKED .import/.uid files on first native load.
+          # Check tracked production content only; the runner checkout is disposable.
+          if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
+            echo "Tracked production map or gameplay files modified"; exit 1
           fi
       - name: Import actual production map, actors, dependencies and VFX modules
         shell: bash
@@ -62,8 +64,10 @@ jobs:
           test -s real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
           test -s real-map/.artifacts/chapter_1_level_02_mid_runtime.png
           if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|GOLD_COMPOSITE.*FAIL' /tmp/real-map-vfx.log; then exit 1; fi
-          if git -C real-map status --short -- game/ data/ assets/ project.godot | grep .; then
-            echo "Real source game files changed during run"; exit 1
+          # Godot generates new UNTRACKED .import/.uid files on first native load.
+          # Check tracked production content only; the runner checkout is disposable.
+          if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
+            echo "Tracked real source files changed during run"; exit 1
           fi
       - name: Upload independent baseline and real-map VFX frames
         if: always()
