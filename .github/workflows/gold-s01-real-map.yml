@@ -4,6 +4,8 @@ on:
     branches: [feature/vfx-lab-gate0-20261027]
     paths:
       - 'prototypes/gold_fidelity/tests/s01_real_campaign_map_integration.*'
+      - 'prototypes/gold_fidelity/tests/s01_real_map_source_timeline.*'
+      - 'prototypes/gold_fidelity/gold_s01_world_pressure_sheets.gd'
       - '.github/workflows/gold-s01-real-map.yml'
   workflow_dispatch:
 permissions:
@@ -72,6 +74,20 @@ jobs:
           if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
             echo "Tracked real source files changed during run"; exit 1
           fi
+      - name: Run 3 source-timed checkpoints on actual authored map
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 180s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/gold_fidelity/tests/s01_real_map_source_timeline.tscn -- --level-slot=2 --capture-point=mid --expected-width=1280 --expected-height=720 2>&1 | tee /tmp/real-map-source-timeline.log
+          grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/real-map-source-timeline.log
+          grep -F 'GOLD_S01_TRUE_MAP_TIMELINE: PASS' /tmp/real-map-source-timeline.log
+          for mark in 146 205 284; do
+            test -s "real-map/.artifacts/vfx_real_map/s01_map_source_${mark}.png"
+          done
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|GOLD S01 TRUE MAP TIMELINE.*FAIL' /tmp/real-map-source-timeline.log; then exit 1; fi
+          if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then
+            echo "Tracked map/gameplay altered by source-timed VFX"; exit 1
+          fi
       - name: Upload independent baseline and real-map VFX frames
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,4 +97,5 @@ jobs:
             real-map/.artifacts/chapter_1_level_02_mid_runtime.png
             real-map/.artifacts/vfx_real_map/*.png
             /tmp/real-map-vfx.log
+            /tmp/real-map-source-timeline.log
           if-no-files-found: warn
