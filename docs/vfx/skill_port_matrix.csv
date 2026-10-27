@@ -1,0 +1,156 @@
+source,id,name,variant,status,method,integration_risk,source_path,mechanic,target_type
+venomwright,1,Glassfang Hunt,vessel,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Living vessel · hunting glass predator,target
+venomwright,2,Blooming Parasite,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Fungal colony · spore currents,ground
+venomwright,3,Leechwater Rush,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Slide · swarm currents · life drain,cone
+venomwright,4,Porcelain Bastion,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Ceramic guardian · pressure rupture,ground
+venomwright,5,Bellows Toad,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Inhale · vapour blast · inflation,cone
+venomwright,6,Graft Caravan,vessel,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Flask-bearing beetles · curved route,path
+venomwright,7,Hatchery Fall,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Cocoon · flocking brood · insect form,ground
+venomwright,8,Brine Serpents,vessel,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Emerging streams · coil · lunge · rupture,multi
+venomwright,9,Molting Harvester,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Scythe colossus · molt · cleave,dir
+venomwright,10,The Walking Crucible,vessel,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Ultimate · monumental walking laboratory,ground
+venomwright,11,Unsealed Catalyst,trans,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Transformation · enter Venomcraft,self
+venomwright,12,Verdigris Wake,venom,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Oxidising stream · branching rupture,path
+venomwright,13,Mercury Garden,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Liquid-metal flowers · blade collapse,ground
+venomwright,14,Reaction Cascade,venom,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Chain reagent · coherent fragments,target
+venomwright,15,Breath of the Vat,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Rolling toxic mass · internal eruptions,dir
+venomwright,16,Crystal Rot,venom,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Branching growth · synchronised shatter,target
+venomwright,17,Reverse Extraction,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Vortex · vessel compression · burst,dir
+venomwright,18,Bitter Rain,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Arcing vessels · droplet storm · boil,ground
+venomwright,19,False Remedy,venom,web_authored,interactive_procedural+status,high,src/game/skills/index.ts,Healing lacework turns hostile,target
+venomwright,20,Plague Cartography,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Drag a route · flooding channel network,drag
+venomwright,21,The Last Distillation,venom,web_authored,interactive_procedural+status,medium_high,src/game/skills/index.ts,Ultimate · distil the battlefield,ground
+k_night,1,Gravewake Pursuit,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,2,Coffin Turn,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,3,Blindside Testament,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,4,Debt of the Wounded,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,5,Black March,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,6,Deadlock Reversal,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,7,Severed Formation,RV,web_authored,cpu_pixel+timeline+ground,very_high,src/revision/skills/physB.ts,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,8,Burial of Footsteps,RV,web_authored,cpu_pixel+timeline+ground,very_high,src/revision/skills/physB.ts,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,9,Funeral Convergence,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,10,The Pursuit That Never Ended,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,11,The Severance of Flesh,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,12,Beneath Their Shadows,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,13,Escape Denied,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,14,The Turning Hunt,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,15,The Hollow Gate,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,16,Every Shadow Betrays,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,17,Unmarked Graves,RV,web_authored,cpu_pixel+timeline+ground,very_high,src/revision/skills/s17.ts,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,18,Blades Without Masters,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,19,Vengeance of the Displaced,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,20,The Warrior Who Wasn,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+k_night,21,The Field of Final Witnesses,OG,web_authored,cpu_pixel+timeline+ground,high,src/skills/,3D-ish 2D knight/choreography/renderer-specific,multi
+arcana_iii,1,Black Sun Coronation,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/eclipse.ts,halo,multi
+arcana_iii,2,Orbitbreaker Waltz,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/eclipse.ts,halo,multi
+arcana_iii,3,Sevenfold Dawnfall,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/eclipse.ts,halo,multi
+arcana_iii,4,Meridian Collapse,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/eclipse.ts,halo,multi
+arcana_iii,5,Wyrm Uncoiled,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/dragonbone.ts,chain,multi
+arcana_iii,6,Cathedral of Shackles,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/dragonbone.ts,chain,multi
+arcana_iii,7,Hell-Tide Harpoon,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/dragonbone.ts,chain,multi
+arcana_iii,8,Leviathan,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/dragonbone.ts,chain,multi
+arcana_iii,9,Seven-Color Tempest,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/fan.ts,fan,multi
+arcana_iii,10,Glass Monsoon,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/fan.ts,fan,multi
+arcana_iii,11,Imperial Inkstorm,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/fan.ts,fan,multi
+arcana_iii,12,Butterfly Cataclysm,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/fan.ts,fan,multi
+arcana_iii,13,Starlace Execution,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/spindle.ts,spindle,multi
+arcana_iii,14,The Seam Between Seconds,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/spindle.ts,spindle,multi
+arcana_iii,15,Marionette Eclipse,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/spindle.ts,spindle,multi
+arcana_iii,16,Loom of the Last Horizon,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/spindle.ts,spindle,multi
+arcana_iii,17,Procession of Hollow Kings,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/lantern.ts,lantern,multi
+arcana_iii,18,Funeral Fireworks,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/lantern.ts,lantern,multi
+arcana_iii,19,The Drowned Choir,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/lantern.ts,lantern,multi
+arcana_iii,20,God-Eater,ultimate,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/lantern.ts,lantern,multi
+arcana_iii,101,Solar Sickle,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,curved split blades,mixed
+arcana_iii,102,Comet Rebound,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,tangent deflection,mixed
+arcana_iii,103,Star Nail,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,single piercing meteor,mixed
+arcana_iii,104,Horizon Shear,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,displaced spatial strip,mixed
+arcana_iii,105,Vertebra Lash,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,segmented tightening vertebra,mixed
+arcana_iii,106,Serrated Manacle,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,paired V-lock chains,mixed
+arcana_iii,107,Dragline,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,off-axis drag into a launch rail,mixed
+arcana_iii,108,Rib Hook,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,closing pairs of ribs,mixed
+arcana_iii,109,Chromatic Split,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,one ray splits into three delayed cuts,mixed
+arcana_iii,110,False-Face Shatter,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,reflected decoy and deflected glass strike,mixed
+arcana_iii,111,Ink Fang,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,ink stroke grows into predatory jaw,mixed
+arcana_iii,112,Scissorwing,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,two luminous wings scissor a target,mixed
+arcana_iii,113,Needle Gate,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,gate carries a pulse to a target,mixed
+arcana_iii,114,Backstitch,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,rewound strike follows an old dash,mixed
+arcana_iii,115,Predator Thread,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,angled pull bends into a blade,mixed
+arcana_iii,116,Aegis Unfurl,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,woven shield dimples then rebounds,mixed
+arcana_iii,117,Phantom Passage,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,three ghosts follow and strike along a track,mixed
+arcana_iii,118,Soul Comet,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,one arcing soul blossoms upon collision,mixed
+arcana_iii,119,Resonance Fang,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,wave rebounds after enemy collision,mixed
+arcana_iii,120,Void Bite,minor,web_authored_visual_unverified,pixijs_webgl+shader,high,src/skills/v2-independent.ts,collapsing aperture bites the world,mixed
+arcana_iii,201,Penumbra Siege,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,three light-draining eclipses converge,mixed
+arcana_iii,202,Retrograde Collision,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,opposed figure-eights reverse through crossings,mixed
+arcana_iii,203,Skyfall Relay,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,impact platforms redirect falling bodies,mixed
+arcana_iii,204,Orthogonal Collapse,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,two orthogonal rings shear and fold terrain,mixed
+arcana_iii,205,Hydra Coil,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,three independently hunting serpent heads,mixed
+arcana_iii,206,Cage-Shift,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,polyhedral prison refolds against targets,mixed
+arcana_iii,207,Undertow Engine,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,opposing coupled vortices exchange pressure,mixed
+arcana_iii,208,Cardiac Breaker,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,heartbeat travels through three skeletal chambers,mixed
+arcana_iii,209,Chromatic Maelstrom,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,seven differently-behaving fluid light lanes,mixed
+arcana_iii,210,Kaleidoscope Guillotine,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,beam reflections turn mirrors into guillotine blades,mixed
+arcana_iii,211,Script Execution,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,three connected strokes become successive ink blades,mixed
+arcana_iii,212,Murmuration Cathedral,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,swarm assembles architecture then giant severing wings,mixed
+arcana_iii,213,Fate Crossfire,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,reconnecting needle graph routes combined pulses,mixed
+arcana_iii,214,Temporal Avalanche,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,three frozen events reactivate in reverse order,mixed
+arcana_iii,215,String Orchestra,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,three different tension systems drive triangle convergence,mixed
+arcana_iii,216,Loom Guillotine,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,fabric rows rise as sequential slicing folds,mixed
+arcana_iii,217,Wraith Cavalcade,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,two spectral armies converge on the group,mixed
+arcana_iii,218,Mortuary Bloomfield,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,impact seeds ignite a branching field of flowers,mixed
+arcana_iii,219,Antiphonal Destruction,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,two interference fields make a moving damage seam,mixed
+arcana_iii,220,Abyss Fold,major,web_authored_visual_unverified,pixijs_webgl+shader,very_high,src/skills/v2-independent.ts,paired portals ingest and expel the same energy stream,mixed
+arcana_iii,301,Corona of Shackled Kings,fusion_legacy,web_authored_visual_unverified,dual_system_timeline,very_high,src/skills/remixes.ts,two full procedural systems overlap,multi
+arcana_iii,302,Reflected Orbit,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,303,Ink-Blood Wyrm,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,304,Meteor Sutures,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,305,Time Meridian,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,306,Resonant Undertow,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,307,Prism Loom,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,308,Soulwing Ascension,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,309,Spectral Puppetry,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,310,Abyssal Ribgate,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,311,Chromatic Lockdown,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+arcana_iii,312,Singularity Harpoon,fusion_v2,web_authored_visual_unverified,coupled_webgl_mechanism,very_high,src/skills/v2-fusion.ts,coupled causal fusion,multi
+top_sword,1,Hairline Rupture,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills1.ts,"parametric geometry, 7s timeline",multi
+top_sword,2,Triple Fold,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills1.ts,"parametric geometry, 7s timeline",multi
+top_sword,3,Quarry Rise,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills1.ts,"parametric geometry, 8s timeline",multi
+top_sword,4,Soot Curtain,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills1.ts,"parametric geometry, 9s timeline",multi
+top_sword,5,Late Reckoning,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills1.ts,"parametric geometry, 9s timeline",multi
+top_sword,6,Pincer Walls,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills2.ts,"parametric geometry, 8s timeline",multi
+top_sword,7,Borrowed Force,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills2.ts,"parametric geometry, 8s timeline",multi
+top_sword,8,Skyfall Sheet,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills2.ts,"parametric geometry, 8s timeline",multi
+top_sword,9,Serrated Storm,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills2.ts,"parametric geometry, 9s timeline",multi
+top_sword,10,Three Seams,normal,web_authored,webgl2_geometry+layers,high,src/skills/skills2.ts,"parametric geometry, 10s timeline",multi
+top_sword,11,Ember Ignition,transform,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 12s timeline",multi
+top_sword,12,Ribbon Detonation,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 10s timeline",multi
+top_sword,13,Furnace Shell,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 10s timeline",multi
+top_sword,14,Crust Sculptures,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 10s timeline",multi
+top_sword,15,Tidal Recall,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 11s timeline",multi
+top_sword,16,Crossfire Dive,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills3.ts,"parametric geometry, 10s timeline",multi
+top_sword,17,Flood Breakers,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills4.ts,"parametric geometry, 11s timeline",multi
+top_sword,18,Molten Canopy,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills4.ts,"parametric geometry, 12s timeline",multi
+top_sword,19,Chain Brand,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills4.ts,"parametric geometry, 11s timeline",multi
+top_sword,20,White Wall,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills4.ts,"parametric geometry, 11s timeline",multi
+top_sword,21,Living Conflagration,flame,web_authored,webgl2_geometry+layers,very_high,src/skills/skills4.ts,"parametric geometry, 18s timeline",multi
+arcana_fusion,1,Cinder Crown,A+C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"A: crown formation, collapse & impact. C: complementary outer flame geometry and contrast; choose sequence where each adds recognizable value.",enemy_on_body_required
+arcana_fusion,2,Furnace Wyrm,B,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,B is the single elected visual. Protect the wyrm’s head and serpentine body; do not replace with A trail.,enemy_on_body_required
+arcana_fusion,3,Meteor Loom,B,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,Preserve B meteors and body/tail distinction; ensure ballistic trajectories actually meet the ground.,enemy_on_body_required
+arcana_fusion,4,Ashen Guillotine,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,Neither accepted. Recompose readable *diagonal* world-space guillotine: thin slit→material blade→single ultra-fast cut→delayed rupture; C fire column + A crack/split as study material.,enemy_on_body_required
+arcana_fusion,5,Abyssal Bloom,A+C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"A opening and peak are the structural lead; replace extraneous A explosion tails with C water-column, rain and gravity.",enemy_on_body_required
+arcana_fusion,6,Riptide Calligraphy,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"Neither accepted. C provides physically coherent water writing, A smoother/sharper water ribbons. Organize strokes into legible authored glyph then weaponize.",enemy_on_body_required
+arcana_fusion,7,Mirrorfrost Basilica,C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"Keep C superior structure, rhythm and crystalline breakup; do not add A’s bulky rejected architecture.",enemy_on_body_required
+arcana_fusion,8,Undertow Maw,B,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,B selected vortex opening and depth hierarchy; retain coherent acceleration and pressure reversal.,enemy_on_body_required
+arcana_fusion,9,Chain Verdict,A+B+C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"A logical chain branching and enemy-body shock; B two-color charged palette; C cleaner bolt branching/density/impact. One network, not three layered chains.",enemy_on_body_required
+arcana_fusion,10,Thunderloom,C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,C storm geometry/condensation leads; preserve C concentrated spear silhouette.,enemy_on_body_required
+arcana_fusion,11,Volt Carousel,A+C(#9),PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"A elaborate rotating spatial machine and timing; replace weak arcs with C’s #9 Chain Verdict bolt/branch generator, carefully re-mapped to A moving connectors.",enemy_on_body_required
+arcana_fusion,12,Skybreaker Script,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,Neither accepted. A complex glyph composition may remain. Use C #9 lightning craft and assure full legible rune draw→circuit→failure→climactic final strike.,enemy_on_body_required
+arcana_fusion,13,Rootwake,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"Neither accepted. B/C excellent opening, C slightly preferable; redesign biomechanics: exploratory growth→root thickness→arched tension→targeted thorns.",enemy_on_body_required
+arcana_fusion,14,Spore Nebula,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,Neither accepted (all random). Design a causal bioluminescent fungal network: seed→colonies→hyphal links→signal propagation→sporulation.,enemy_on_body_required
+arcana_fusion,15,Thorn Opera,C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,C chosen whip/vine forms and strikes; preserve choreography and strong silhouette.,enemy_on_body_required
+arcana_fusion,16,Worldseed,A+C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,A smoother living unfolding and C stronger selected palette. Marry smooth motion to C color without dulling it.,enemy_on_body_required
+arcana_fusion,17,Event Horizon,C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,C chosen black-hole silhouette/orbital flow. Preserve negative space and accretion.,enemy_on_body_required
+arcana_fusion,18,Chronoshard,NEW,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,Neither accepted. B crystal art is favored. Replace illogical bouncing with clearly readable temporal sequence: pre-echo→captured event shards→reverse release→single synchronized impact.,enemy_on_body_required
+arcana_fusion,19,Constellation Engine,D(+A combat),PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"USER OVERRIDE: primary spell visuals from fourth standalone HTML. A won initial three-way but is not final visual source here. D uses original Constellation Engine (src in bundled HTML); optional OUT study shows a fade/contraction, not final approval.",enemy_on_body_required
+arcana_fusion,20,Reality Ripper,A+C,PLANNED_NOT_IMPLEMENTED,multiple_incompatible_original_renderers,extreme,ARCANA_FUSION_HANDOFF/fusion_manifest.json,"C rift contour/movement and physically understandable tear, A strongest environmental deformation. Spatial continuity matters.",enemy_on_body_required

@@ -1,0 +1,22 @@
+name: VFX gold registry (batch gate)
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'docs/vfx/skill_port_matrix.csv'
+      - 'docs/vfx/gold_skill_registry.json'
+      - 'tools/vfx/**'
+      - '.github/workflows/vfx-gold-catalog.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  static-registry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify all 155 gold references without overclaiming
+        run: python3 tools/vfx/validate_registry.py
+      - name: Syntax compile reusable image comparator
+        run: python3 -m py_compile tools/vfx/compare_gold_frames.py
