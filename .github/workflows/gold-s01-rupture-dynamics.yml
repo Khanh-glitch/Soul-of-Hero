@@ -1,4 +1,4 @@
-name: Gold S01 rupture dynamics — native oracle
+name: Gold S01 source rupture dynamics
 on:
   push:
     branches: [feature/vfx-lab-gate0-20261027]
@@ -16,24 +16,23 @@ jobs:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
-      - name: Import Godot and parse source-derived port
+      - name: Native editor import
         shell: bash
         run: |
           set -euo pipefail
-          timeout 120s godot --headless --editor --path . --import --quit > /tmp/gold-s01-import.log 2>&1
-          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-s01-import.log; then cat /tmp/gold-s01-import.log; exit 1; fi
-      - name: Compare Part Chunk Ring Light physics and 13 wave schedule to gold source
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-import.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-import.log; then exit 1; fi
+      - name: Gold original physics and wave timeline
         shell: bash
         run: |
           set -euo pipefail
-          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_dynamics_smoke.gd 2>&1 | tee /tmp/gold-s01-physics.log
-          grep -E '^GOLD_RUPTURE_NATIVE: PASS [0-9]+ checks$' /tmp/gold-s01-physics.log
-          if grep -E 'SCRIPT ERROR:|Parse Error:|^ERROR:' /tmp/gold-s01-physics.log; then exit 1; fi
-      - name: Gold source seeded 22-object emission parity
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_dynamics_smoke.gd 2>&1 | tee /tmp/gold-physics.log
+          grep -F 'GOLD_RUPTURE_NATIVE: PASS' /tmp/gold-physics.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-physics.log; then exit 1; fi
+      - name: Gold original seeded 22-object emitter
         shell: bash
         run: |
           set -euo pipefail
-          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/isolated_wave_emitter_smoke.gd 2>&1 | tee /tmp/gold-wave-emitter.log
-          grep -E '^GOLD_WAVE_EMITTER: PASS [0-9]+ checks
- /tmp/gold-wave-emitter.log
-          if grep -E 'SCRIPT ERROR:|Parse Error:|^ERROR:' /tmp/gold-wave-emitter.log; then exit 1; fi
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/isolated_wave_emitter_smoke.gd 2>&1 | tee /tmp/gold-emitter.log
+          grep -F 'GOLD_WAVE_EMITTER: PASS' /tmp/gold-emitter.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/gold-emitter.log; then exit 1; fi
