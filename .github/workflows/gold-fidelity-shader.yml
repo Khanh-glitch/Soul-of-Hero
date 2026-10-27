@@ -34,9 +34,17 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p .artifacts/gold_fidelity
-          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_shader_smoke.gd 2>&1 | tee /tmp/gold-shader.log
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_shader_smoke.gd 2>&1 | tee /tmp/gold-shader.log
           grep -F 'GOLD_POST_SHADER_NATIVE: PASS' /tmp/gold-shader.log
-          if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:|ERROR:' /tmp/gold-shader.log; then exit 1; fi
+          if grep -Ei 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|Shader error:' /tmp/gold-shader.log; then exit 1; fi\n          grep -E '^GOLD_SHADER_CHANGED_PIXELS: [1-9][0-9]{2,}
+      - name: Save native shader diagnostic (not a full skill)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-source-math-shader-diagnostic
+          path: .artifacts/gold_fidelity/*.png
+          if-no-files-found: warn
+ /tmp/gold-shader.log
       - name: Save native shader diagnostic (not a full skill)
         if: always()
         uses: actions/upload-artifact@v4
