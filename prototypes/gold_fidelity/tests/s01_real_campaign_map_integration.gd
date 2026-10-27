@@ -126,9 +126,22 @@ func _capture_campaign_state(game: Node2D) -> void:
     shader_material.set_shader_parameter(&"u_res",resolution)
     shader_material.set_shader_parameter(&"u_time",1.46666666667)
     var scene_canvas: Transform2D=get_viewport().get_canvas_transform()
-    var segment_a: Vector2=scene_canvas*(offset+MATH.SOURCE_START)
-    var segment_b: Vector2=scene_canvas*(offset+MATH.SOURCE_END)
-    var canvas_scale: float=scene_canvas.x.length()
+    # Camera2D canvas coordinates are logical 640x360, but SCREEN_UV in the
+    # 1280x720 native window shader indexes PHYSICAL framebuffer pixels.
+    # Convert world->logical camera->physical screen before binding u_seg.
+    # Otherwise the distortion silently fires a 2x-downscaled/offscreen area.
+    var logical_size := Vector2(
+        float(ProjectSettings.get_setting("display/window/size/viewport_width",640)),
+        float(ProjectSettings.get_setting("display/window/size/viewport_height",360)))
+    var screen_scale := Vector2(resolution.x/logical_size.x,resolution.y/logical_size.y)
+    var logical_a: Vector2=scene_canvas*(offset+MATH.SOURCE_START)
+    var logical_b: Vector2=scene_canvas*(offset+MATH.SOURCE_END)
+    var segment_a := logical_a*screen_scale
+    var segment_b := logical_b*screen_scale
+    var canvas_scale: float=scene_canvas.x.length()*screen_scale.x
+    print("GOLD_REAL_MAP_PROJECTED_SEGMENT: a="+str(segment_a)+" b="+str(segment_b)+
+        " physical="+str(resolution)+" logical="+str(logical_size)+
+        " camera_scale="+str(scene_canvas.x.length()))
     _verify(canvas_scale>0.0,"actual Camera2D world-to-viewport projection exists")
     var segs := PackedVector4Array()
     var seg_params := PackedVector2Array()
