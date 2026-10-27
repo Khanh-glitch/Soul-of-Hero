@@ -1,0 +1,42 @@
+name: Gold S01 unified composite gate
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/**'
+      - '.github/workflows/gold-s01-composite.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  composite-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import actual Godot 4.7 project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/composite-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/composite-import.log; then exit 1; fi
+      - name: Run integrated floor sheets and waves regression
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/s01_composite_runtime_smoke.gd 2>&1 | tee /tmp/composite-native.log
+          grep -F 'GOLD_S01_COMPOSITE: PASS' /tmp/composite-native.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/composite-native.log; then exit 1; fi
+      - name: Publish raw composite image
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-s01-native-composite-gate6
+          path: .artifacts/gold_fidelity/s01_composite_284.png
+          if-no-files-found: warn
