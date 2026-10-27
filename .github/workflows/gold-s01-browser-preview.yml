@@ -167,18 +167,35 @@ jobs:
             p.on('pageerror',e=>logs.push('PAGE ERROR: '+e.message));
             await p.goto('http://127.0.0.1:8787/vfx-s01/',{waitUntil:'domcontentloaded',timeout:30000});
             await p.waitForFunction(()=>document.querySelector('canvas')?.width>200,{timeout:60000});
-            await p.waitForTimeout(18000);
+            for (let i=0;i<50 && !logs.some(x=>x.includes('GOLD_S01_WEB_PLAYTEST_READY'));i++){
+              await p.waitForTimeout(1500);
+            }
             const ok=logs.some(x=>x.includes('GOLD_S01_WEB_PLAYTEST_READY'));
             const err=logs.filter(x=>/PAGE ERROR:|SCRIPT ERROR:|Failed to load/.test(x));
             await p.screenshot({path:'webqa/gold-s01-browser.png'});
-            require('fs').writeFileSync('webqa/browser.log',logs.join('\n'));
-            console.log(JSON.stringify({started:ok,errors:err.slice(0,8),canvas:await p.locator('canvas').count()}));
+            if(ok){
+              await p.locator('canvas').click({position:{x:650,y:490}});
+              await p.keyboard.press('k');
+              for (let i=0;i<12 && !logs.some(x=>x.includes('GOLD_S01_WEB_CAST'));i++){
+                await p.waitForTimeout(500);
+              }
+              await p.keyboard.press('3');
+              for (let i=0;i<12 && !logs.some(x=>x.includes('GOLD_S01_WEB_SEEK'));i++){
+                await p.waitForTimeout(500);
+              }
+              await p.waitForTimeout(700);
+              await p.screenshot({path:'webqa/gold-s01-after-cast-seek.png'});
+            }
+            require('fs').writeFileSync('webqa/browser.log',logs.join('\\n'));
+            const cast=logs.some(x=>x.includes('GOLD_S01_WEB_CAST'));
+            const seek=logs.some(x=>x.includes('GOLD_S01_WEB_SEEK'));
+            console.log(JSON.stringify({started:ok,cast,seek,errors:err.slice(0,8),canvas:await p.locator('canvas').count()}));
             await b.close();
-            if(!ok || err.length)process.exit(1);
+            if(!ok || !cast || !seek || err.length)process.exit(1);
             console.log('GOLD_S01_WEB_BROWSER_PLAYTEST: PASS');
           })().catch(e=>{console.error(e);process.exit(1)});
           JS
-          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 125s node webqa/check.cjs 2>&1 | tee webqa/qa.log
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout 180s node webqa/check.cjs 2>&1 | tee webqa/qa.log
           grep -F 'GOLD_S01_WEB_BROWSER_PLAYTEST: PASS' webqa/qa.log
       - name: Package both stable and VFX site as Pages artifact
         uses: actions/upload-pages-artifact@v3
