@@ -20,6 +20,9 @@ func _quad(center: Vector2,extent: Vector2,parameters: Dictionary) -> MeshInstan
     var mesh := ArrayMesh.new()
     mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,data,[],{},Mesh.ARRAY_FLAG_USE_2D_VERTICES)
     node.mesh = mesh
+    # Preserve original Renderer LAYER ordering instead of Canvas child order.
+    var mode: int = int(parameters.get("u_shape",0))
+    node.z_index = 6 if mode==5 else (3 if mode==2 else 1)
     var material := ShaderMaterial.new()
     material.shader = SHADER
     for key: String in parameters:
