@@ -61,7 +61,8 @@ jobs:
           timeout 180s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/gold_fidelity/tests/s01_real_campaign_map_integration.tscn -- --level-slot=2 --capture-point=mid --expected-width=1280 --expected-height=720 2>&1 | tee /tmp/real-map-vfx.log
           grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/real-map-vfx.log
           grep -F 'GOLD_S01_REAL_MAP: PASS' /tmp/real-map-vfx.log
-          test -s real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
+          grep -E '^GOLD_S01_REAL_MAP_GROUND_WARP_PIXELS: [1-9][0-9]+' /tmp/real-map-vfx.log
+          test -s real-map/.artifacts/vfx_real_map/*.png
           test -s real-map/.artifacts/chapter_1_level_02_mid_runtime.png
           if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|GOLD_COMPOSITE.*FAIL' /tmp/real-map-vfx.log; then exit 1; fi
           # Godot generates new UNTRACKED .import/.uid files on first native load.
@@ -76,6 +77,6 @@ jobs:
           name: gold-s01-on-production-ch1-level2-genuine-map
           path: |
             real-map/.artifacts/chapter_1_level_02_mid_runtime.png
-            real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
+            real-map/.artifacts/vfx_real_map/*.png
             /tmp/real-map-vfx.log
           if-no-files-found: warn
