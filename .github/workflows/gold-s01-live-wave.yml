@@ -1,0 +1,39 @@
+name: Gold S01 live wave source visual capture
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-source-wave:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import native GDScript and shader
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/wave-import.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' /tmp/wave-import.log; then exit 1; fi
+      - name: Render original seeded wave at tick 15
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/live_wave_native_capture.gd 2>&1 | tee /tmp/wave-native.log
+          grep -F 'GOLD_LIVE_WAVE: PASS' /tmp/wave-native.log
+          if grep -e 'SCRIPT ERROR:' -e 'Parse Error:' -e 'Shader compilation failed' /tmp/wave-native.log; then exit 1; fi
+      - name: Upload raw native wave capture
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-s01-live-wave-native-frame
+          path: .artifacts/gold_fidelity/s01_live_wave_tick15.png
+          if-no-files-found: warn
