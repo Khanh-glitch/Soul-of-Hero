@@ -5,6 +5,8 @@ on:
     paths:
       - 'prototypes/gold_fidelity/gold_source_ribbon.*'
       - 'prototypes/gold_fidelity/tests/gold_ribbon_source_smoke.gd'
+      - 'prototypes/gold_fidelity/gold_s01_seam_timeline.gd'
+      - 'prototypes/gold_fidelity/tests/s01_seam_gold_oracle_smoke.gd'
       - '.github/workflows/gold-s01-ribbon.yml'
   workflow_dispatch:
 permissions:
@@ -34,10 +36,19 @@ jobs:
           timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/gold_ribbon_source_smoke.gd 2>&1 | tee /tmp/ribbon-native.log
           grep -F 'GOLD_RIBBON_NATIVE: PASS' /tmp/ribbon-native.log
           if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/ribbon-native.log; then exit 1; fi
+      - name: Gold S01 real-source dash path and Ribbon frame oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/s01_seam_gold_oracle_smoke.gd 2>&1 | tee /tmp/seam-oracle.log
+          grep -F 'GOLD_S01_SEAM_ORACLE: PASS' /tmp/seam-oracle.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/seam-oracle.log; then exit 1; fi
       - name: Archive native ribbon evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: gold-source-ribbon-native-style4
-          path: .artifacts/gold_fidelity/source_ribbon_style4.png
+          path: |
+            .artifacts/gold_fidelity/source_ribbon_style4.png
+            .artifacts/gold_fidelity/s01_gold_seam_tick125_native.png
           if-no-files-found: warn
