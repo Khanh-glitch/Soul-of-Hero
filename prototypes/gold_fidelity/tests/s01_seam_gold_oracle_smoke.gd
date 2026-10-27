@@ -84,5 +84,27 @@ func _run() -> void:
     if DirAccess.make_dir_recursive_absolute(dir)!=OK or img.save_png(dir.path_join("s01_gold_seam_tick125_native.png"))!=OK:
         _fail("frame evidence failed to save")
         return
-    print("GOLD_S01_SEAM_ORACLE: PASS / gold tick35 and tick52 path / tick105 width / tick125 signed wobble / correct world shader clock / lit=%d" % occupied)
+    # Replay three more REAL source-world samples in the SAME native renderer.
+    # Each random-sign observation came from the original seeded WebGL engine.
+    for sample: Dictionary in [
+        {"frame":52,"time":0.8333333333333343,"sign":1.0},
+        {"frame":105,"time":1.7166666666666655,"sign":1.0},
+        {"frame":160,"time":2.533333333333329,"sign":1.0}
+    ]:
+        var t: float = float(sample["time"])
+        var state_i: Dictionary = SEAM.state_at(t,float(sample["sign"]))
+        ribbon.source_width = float(state_i["source_width"])
+        ribbon.source_wobble = float(state_i["source_wobble"])
+        ribbon.source_life = float(state_i["source_life"])
+        ribbon.source_fade_mode = int(state_i["source_fade_mode"])
+        ribbon.set_source_frame(float(state_i["source_age"]),state_i["source_points"],
+            bool(state_i["source_live"]),float(state_i["source_end_age"]),t)
+        material.set_shader_parameter(&"u_time",t)
+        await process_frame
+        await RenderingServer.frame_post_draw
+        var image_i: Image = viewport.get_texture().get_image()
+        if image_i==null or image_i.save_png(dir.path_join("s01_gold_seam_tick%d_native.png" % int(sample["frame"])))!=OK:
+            _fail("failed to capture original seed/timeline at frame "+str(sample["frame"]))
+            return
+    print("GOLD_S01_SEAM_ORACLE: PASS / gold 4-frame source oracle (52/105/125/160) / tick35 and tick52 path / tick105 width / tick125 signed wobble / correct world shader clock / lit=%d" % occupied)
     quit(0)
