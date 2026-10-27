@@ -1,0 +1,40 @@
+name: VFX Lab fixed-frame visual evidence
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit > /tmp/vfx-import.log 2>&1
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/vfx-import.log; then exit 1; fi
+      - name: Save 3 native scene frames under software OpenGL
+        shell: bash
+        run: |
+          set -euo pipefail
+          command -v xvfb-run
+          mkdir -p .artifacts/vfx_lab
+          timeout 120s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --script res://prototypes/vfx_lab/tests/native_capture.gd 2>&1 | tee /tmp/vfx-capture.log
+          grep -F 'VFX_NATIVE_CAPTURE: PASS 3/3' /tmp/vfx-capture.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/vfx-capture.log; then exit 1; fi
+      - name: Upload unretouched native PNG evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vfx-lab-native-fixed-frames
+          path: .artifacts/vfx_lab/*.png
+          if-no-files-found: warn
