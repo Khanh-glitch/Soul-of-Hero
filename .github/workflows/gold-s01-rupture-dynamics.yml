@@ -1,0 +1,31 @@
+name: Gold S01 rupture dynamics — native oracle
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gold-rupture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import Godot and parse source-derived port
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit > /tmp/gold-s01-import.log 2>&1
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-s01-import.log; then cat /tmp/gold-s01-import.log; exit 1; fi
+      - name: Compare Part Chunk Ring Light physics and 13 wave schedule to gold source
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_fidelity/tests/rupture_dynamics_smoke.gd 2>&1 | tee /tmp/gold-s01-physics.log
+          grep -E '^GOLD_RUPTURE_NATIVE: PASS [0-9]+ checks$' /tmp/gold-s01-physics.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|^ERROR:' /tmp/gold-s01-physics.log; then exit 1; fi
