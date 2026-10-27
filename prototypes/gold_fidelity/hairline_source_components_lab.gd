@@ -25,7 +25,7 @@ const CRACKS = [
     [102,1.0917216290396194,2.799999999999995]
 ]
 var _viewport: SubViewport
-var _ground: RefCounted
+var _ground: GoldHairlineGround
 var _baseline: PackedByteArray
 var _ground_texture: ImageTexture
 var _meshes: Array[MeshInstance2D] = []
