@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/gold_fidelity/tests/s01_real_map_source_timeline.gd" id="1"]
+
+[node name="GoldS01_SourceTimed_RealChapter1Level2" type="Node"]
+script = ExtResource("1")
