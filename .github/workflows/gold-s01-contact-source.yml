@@ -1,0 +1,44 @@
+name: Gold S01 source enemy contact FX
+on:
+  push:
+    branches: [feature/vfx-lab-gate0-20261027]
+    paths:
+      - 'prototypes/gold_fidelity/gold_s01_contact_source.gd'
+      - 'prototypes/gold_fidelity/gold_rupture_glyph.gd'
+      - 'prototypes/gold_fidelity/tests/s01_contact_source_oracle_smoke.gd'
+      - '.github/workflows/gold-s01-contact-source.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-source-contact:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native Godot 4.7 import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/contact-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/contact-import.log; then exit 1; fi
+      - name: Numeric Gold contact replay and screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold_fidelity
+          timeout 100s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path . --rendering-method gl_compatibility --script res://prototypes/gold_fidelity/tests/s01_contact_source_oracle_smoke.gd 2>&1 | tee /tmp/contact-run.log
+          grep -F 'GOLD_S01_CONTACT_ORACLE: PASS' /tmp/contact-run.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/contact-run.log; then exit 1; fi
+      - name: Archive source contact native frame
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-s01-contact-heavy-source
+          path: .artifacts/gold_fidelity/s01_source_contact_heavy_tick8.png
+          if-no-files-found: warn
