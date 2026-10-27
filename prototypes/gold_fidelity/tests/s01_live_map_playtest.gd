@@ -135,7 +135,8 @@ func _update_label() -> void:
     _interface_label.text = (
         "GOLD S01 — LEVEL 2 [VFX REVIEW, NOT FINAL]\\n" +
         "K: cast | T: nearest enemy | R: replay | H: hide panel\\n" +
-        "1/2/3: stages | Space: pause | G/P/V/B: layers\\n" +
+        "1/2/3/4: stages(+settled terrain) | Space: pause\\n" +
+        "G: warp | B: ground marks | P: plates | V: waves\\n" +
         "VFX-only; ground marks cosmetic, no TileMap damage.\\n" +
         "t=%.2fs %s | warp:%s plates:%s waves:%s" %
         [_fx_elapsed, "PLAY" if _casting and not _paused_fx else "PAUSE",
@@ -165,6 +166,8 @@ func _input(event: InputEvent) -> void:
             _seek_effect(2.05)
         KEY_3:
             _seek_effect(2.84)
+        KEY_4:
+            _seek_effect(5.0)
         KEY_G:
             _show_warp = not _show_warp
         KEY_B:
@@ -248,6 +251,11 @@ func _process(delta: float) -> void:
     _fx_elapsed = minf(7.0,_fx_elapsed+minf(delta,0.1))
     _update_effect()
     _frame_samples += 1
+    if _frame_samples%120==0:
+        var q: Dictionary=_terrain_ink.source_diagnostics()
+        print("GOLD_S01_WEB_PERF: engine_fps=%d fixed_ticks=%d source_terrain_uploads=%d active_wave_visuals=%d" %
+            [Engine.get_frames_per_second(),int(_waves.diagnostics()["ticks"]),
+            int(q["texture_uploads"]),int(_waves.diagnostics()["active_visual_count"])])
     if _fx_elapsed>=7.0:
         _paused_fx = true
     _update_label()
