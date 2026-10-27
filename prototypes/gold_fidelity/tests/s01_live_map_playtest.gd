@@ -74,6 +74,7 @@ func _run() -> void:
     _terrain_ink = GOLD_TERRAIN.new()
     _terrain_ink.name = "OriginalGold_PersistentGroundInk_OnRealTiles"
     _stage.add_child(_terrain_ink)
+    _terrain_ink.bind_actual_map(level.backdrop,level.geometry)
     _plates = GOLD_PLATES.new()
     _plates.name = "Original14PressureSheets"
     _stage.add_child(_plates)
@@ -243,7 +244,7 @@ func _seek_effect(t: float) -> void:
     _fx_elapsed = clampf(t,0.0,7.0)
     _paused_fx = true
     _update_effect()
-    print("GOLD_S01_WEB_SEEK: t="+str(_fx_elapsed)+" ground_mutations="+str(_terrain_ink.source_diagnostics()["source_mutations"])+" ground_marked="+str(_terrain_ink.source_diagnostics()["marked_pixels"]))
+    print("GOLD_S01_WEB_SEEK: t="+str(_fx_elapsed)+" ground_mutations="+str(_terrain_ink.source_diagnostics()["source_mutations"])+" ground_marked="+str(_terrain_ink.source_diagnostics()["marked_pixels"])+" floor_visible="+str(_terrain_ink.source_diagnostics()["visible_floor_pixels"]))
 
 func _process(delta: float) -> void:
     if not _casting or _paused_fx or _game == null:
@@ -341,6 +342,12 @@ func _smoke_capture() -> void:
     var ink_stats: Dictionary = _terrain_ink.source_diagnostics()
     _expect(int(ink_stats.get("source_mutations",0))==28 and int(ink_stats.get("marked_pixels",0))>150,
         "Gold source 2 grooves + 13 cracks + 13 rubble writes persist after effects")
+    _expect(bool(ink_stats.get("floor_mask_bound",false)),
+        "environmental scar mask bound to REAL authored floor/wall TileMaps")
+    print("GOLD_S01_ENV_REAL_MAP: source_marked=%d visible_walkable=%d source_ops=%d" %
+        [int(ink_stats.get("marked_pixels",0)),
+         int(ink_stats.get("visible_floor_pixels",0)),
+         int(ink_stats.get("source_mutations",0))])
     _expect(int(ink_stats.get("texture_uploads",1000))<=30,
         "terrain texture uploads only on source mutations not every rendered frame")
     print("GOLD_S01_INTERACTIVE_PLAYTEST: PASS | real AppFlow Level2, 3 source-timed frames, user controls and source modules")
