@@ -51,6 +51,12 @@ func reset() -> void:
 
 func seek_seconds(seconds_since_rupture: float) -> void:
     var target_tick := maxi(0, int(floor(seconds_since_rupture * 60.0 + 0.000001)))
+    # WebGL can render above the Gold 60 Hz simulation rate. Re-publishing
+    # the full 12 RingFx + 12 LightFx shader uniform arrays on those
+    # intermediate presentation frames changes NOTHING in original source.
+    # Never resubmit uniform arrays unless fixed-tick state has advanced.
+    if target_tick == _ticks:
+        return
     if target_tick < _ticks:
         reset()
     while _ticks < target_tick:
