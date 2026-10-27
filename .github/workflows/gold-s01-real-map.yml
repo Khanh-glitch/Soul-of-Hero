@@ -62,7 +62,9 @@ jobs:
           grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/real-map-vfx.log
           grep -F 'GOLD_S01_REAL_MAP: PASS' /tmp/real-map-vfx.log
           grep -E '^GOLD_S01_REAL_MAP_GROUND_WARP_PIXELS: [1-9][0-9]+' /tmp/real-map-vfx.log
-          test -s real-map/.artifacts/vfx_real_map/*.png
+          test -s real-map/.artifacts/vfx_real_map/chapter1_l2_aligned_baseline.png
+          test -s real-map/.artifacts/vfx_real_map/chapter1_l2_gold_vfx_no_ground_warp.png
+          test -s real-map/.artifacts/vfx_real_map/chapter1_l2_real_map_gold_vfx.png
           test -s real-map/.artifacts/chapter_1_level_02_mid_runtime.png
           if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed|GOLD_COMPOSITE.*FAIL' /tmp/real-map-vfx.log; then exit 1; fi
           # Godot generates new UNTRACKED .import/.uid files on first native load.
