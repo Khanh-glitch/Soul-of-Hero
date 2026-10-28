@@ -5,6 +5,9 @@ on:
     paths:
       - 'prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.*'
       - 'prototypes/gold_pair/venom_combat_readability.gd'
+      - 'prototypes/gold_pair/venom_glassfang_live_environment.gd'
+      - 'prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd'
+      - 'prototypes/gold_pair/venom_source_particles_world.gd'
       - '.github/workflows/venom-gold-glassfang-level2-comparison.yml'
   workflow_dispatch:
 permissions:
