@@ -1,0 +1,51 @@
+name: Venomwright Glassfang original full-cast live actor pixels
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_fang_canvas.gd'
+      - 'prototypes/gold_pair/venom_source_fang.gd'
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - 'prototypes/gold_pair/venom_source_chain.gd'
+      - 'prototypes/gold_pair/venom_glassfang_motion.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_live_pixel_oracle.gd'
+      - '.github/workflows/venom-gold-glassfang-live-pixels.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  real-source-motion-to-OpenGL:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot project import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/glassfang-pixels-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-pixels-import.log; then exit 1; fi
+      - name: Run source 60Hz full actor + 24 original Gold frame hashes with real GPU readback
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 170s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_glassfang_live_pixel_oracle.gd 2>&1 | tee /tmp/glassfang-pixels.log
+          grep -F 'VENOM_GLASSFANG_LIVE_PIXELS: PASS / 24 native RGBA source hashes' /tmp/glassfang-pixels.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-pixels.log; then exit 1; fi
+          test -s /tmp/glassfang-live-single.png
+          test -s /tmp/glassfang-live-retarget.png
+      - name: Attach native 600x340 full-cast actor frames (NOT full skill acceptance)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-glassfang-live-actor-frames
+          path: |
+            /tmp/glassfang-live-single.png
+            /tmp/glassfang-live-retarget.png
+          if-no-files-found: warn
+          retention-days: 7
