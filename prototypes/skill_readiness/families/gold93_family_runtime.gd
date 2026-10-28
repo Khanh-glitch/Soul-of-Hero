@@ -16,7 +16,7 @@ var density: int = 2
 var canvas_parent: Node = null
 var attached: bool = false
 var _owned_nodes: Array[Node] = []
-var _dispatch_cursor: int = 0
+var _dispatch_cursors: Dictionary = {}
 var dispatched_intents: int = 0
 
 
@@ -145,12 +145,14 @@ func dispatch_pending_intents(module: Gold93SkillModule) -> int:
 	if ports == null:
 		return 0
 	var emitted: Array = module.bus().emitted
+	var cursor: int = int(_dispatch_cursors.get(module.cast_id(), 0))
 	var count: int = 0
-	while _dispatch_cursor < emitted.size():
-		var intent: Dictionary = emitted[_dispatch_cursor]
-		_dispatch_cursor += 1
+	while cursor < emitted.size():
+		var intent: Dictionary = emitted[cursor]
+		cursor += 1
 		_route(ports, intent, module)
 		count += 1
+	_dispatch_cursors[module.cast_id()] = cursor
 	dispatched_intents += count
 	return count
 
@@ -197,4 +199,5 @@ func stats() -> Dictionary:
 		"attached": attached,
 		"owned_nodes": _owned_nodes.size(),
 		"dispatched_intents": dispatched_intents,
+		"tracked_casts": _dispatch_cursors.size(),
 	}

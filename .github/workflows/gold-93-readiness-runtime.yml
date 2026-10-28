@@ -73,7 +73,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 \
             | tee /tmp/gold93-api.log
           if ! grep -F 'GOLD93_READINESS_API: PASS' /tmp/gold93-api.log; then
-            echo "::group::gold93-api.log"; cat /tmp/gold93-api.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-api] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-api.log | tail -40)
             exit 1
           fi
       - name: Full native lifecycle and fail-closed coverage
@@ -84,7 +84,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 \
             | tee /tmp/gold93-lifecycle.log
           if ! grep -F 'GOLD93_LIFECYCLE: PASS' /tmp/gold93-lifecycle.log; then
-            echo "::group::gold93-lifecycle.log"; cat /tmp/gold93-lifecycle.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-lifecycle.log | tail -40)
             exit 1
           fi' /tmp/gold93-lifecycle.log
       - name: Port authority, once-only hits and concurrent casts
@@ -95,7 +95,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd 2>&1 \
             | tee /tmp/gold93-ports.log
           if ! grep -F 'GOLD93_PORTS: PASS' /tmp/gold93-ports.log; then
-            echo "::group::gold93-ports.log"; cat /tmp/gold93-ports.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-ports] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-ports.log | tail -40)
             exit 1
           fi' /tmp/gold93-ports.log
       - name: Two independent original engine families
@@ -106,7 +106,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd 2>&1 \
             | tee /tmp/gold93-family.log
           if ! grep -F 'GOLD93_FAMILY_CLOCK: PASS' /tmp/gold93-family.log; then
-            echo "::group::gold93-family.log"; cat /tmp/gold93-family.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-family] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-family.log | tail -40)
             exit 1
           fi' /tmp/gold93-family.log
       - name: Venomwright authored baseline oracle (21 skills)
@@ -117,7 +117,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd 2>&1 \
             | tee /tmp/gold93-baseline.log
           if ! grep -F 'GOLD93_VENOM_BASELINE: PASS' /tmp/gold93-baseline.log; then
-            echo "::group::gold93-baseline.log"; cat /tmp/gold93-baseline.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-baseline] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-baseline.log | tail -40)
             exit 1
           fi' /tmp/gold93-baseline.log
       - name: SkillReadinessLab walks all 93 canonical ids
@@ -128,7 +128,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd 2>&1 \
             | tee /tmp/gold93-lab.log
           if ! grep -F 'GOLD93_LAB_PROBE: PASS' /tmp/gold93-lab.log; then
-            echo "::group::gold93-lab.log"; cat /tmp/gold93-lab.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-lab] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-lab.log | tail -40)
             exit 1
           fi' /tmp/gold93-lab.log
       - name: Honest readiness roll-up
@@ -210,7 +210,7 @@ jobs:
             --script res://prototypes/skill_readiness/tests/gold93_real_map_overlay_runner.gd 2>&1 \
             | tee /tmp/gold93-overlay.log
           if ! grep -F 'GOLD93_REAL_MAP_OVERLAY: PASS' /tmp/gold93-overlay.log; then
-            echo "::group::gold93-overlay.log"; cat /tmp/gold93-overlay.log; echo "::endgroup::"
+            while IFS= read -r line; do echo "::error::[gold93-overlay] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-overlay.log | tail -40)
             exit 1
           fi
       - name: Verify the overlay never edited authored production content
