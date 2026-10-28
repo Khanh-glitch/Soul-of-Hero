@@ -1,0 +1,44 @@
+name: Venomwright original Gold Ultra k2 fluid Field/Pool visuals parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
+      - 'prototypes/gold_pair/venom_source_pool_shade.gd'
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_ultra_source_oracle.gd'
+      - '.github/workflows/venom-gold-pool-ultra.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-ultra-float-field:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Project import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 140s godot --headless --editor --path . --import  --quit 2>&1 | tee /tmp/pool-ultra-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-ultra-import.log; then exit 1; fi
+      - name: Compare 21 real Gold 1200x680 Field Float32 and two pixel passes
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 100s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_ultra_source_oracle.gd 2>&1 | tee /tmp/pool-ultra.log
+          grep -F 'VENOM_POOL_ULTRA: PASS / 21' /tmp/pool-ultra.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-ultra.log; then exit 1; fi
+      - name: Guard previous Classic k1 full Pool RGBA reference
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd 2>&1 | tee /tmp/pool-classic.log
+          grep -F 'VENOM_POOL_COLOR: PASS / 2 original noise tiles / 10' /tmp/pool-classic.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-classic.log; then exit 1; fi
