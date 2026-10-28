@@ -23,7 +23,10 @@ func _initialize() -> void:
             return
         for i in range(TIMES.size()):
             var bytes: PackedByteArray = decal.ground_bytes(float(TIMES[i]),float(TIMES[i]))
-            var actual := bytes.sha256_text()
+            var ctx := HashingContext.new()
+            ctx.start(HashingContext.HASH_SHA256)
+            ctx.update(bytes)
+            var actual: String = ctx.finish().hex_encode()
             var expected := String(c[4][i])
             if actual != expected:
                 push_error("VENOM_DECAL_ORACLE: %s age=%s expected=%s got=%s" % [c[0],str(TIMES[i]),expected,actual])
