@@ -14,6 +14,7 @@ const FANG_CANVAS=preload("res://prototypes/gold_pair/venom_source_fang_canvas.g
 const POOL_CANVAS=preload("res://prototypes/gold_pair/venom_source_pool_canvas.gd")
 const ENV_CANVAS=preload("res://prototypes/gold_pair/venom_glassfang_environment_canvas.gd")
 const REVIEW_LEDGER=preload("res://prototypes/gold_pair/venom_glassfang_environment_review_ledger.gd")
+const READABILITY=preload("res://prototypes/gold_pair/venom_combat_readability.gd")
 const TICKS=[6,15,31,63,96,147,177,220,330]
 const DENSITY=2
 const SOURCE_PLAYER=Vector2(260.0,160.0)
@@ -42,6 +43,8 @@ var _map_visible:int=0
 var _masked:int=0
 var _source_pool_total:int=0
 var _new_environment_seen:int=0
+var _contrast_images:int=0
+var _contrast_roi_samples:Array=[]
 
 func _capture_campaign_state(game:Node2D)->void:
     await super._capture_campaign_state(game)
@@ -107,6 +110,10 @@ func _capture_campaign_state(game:Node2D)->void:
     var baseline:=get_viewport().get_texture().get_image()
     _expect(baseline.save_png(out_dir.path_join("level2_aligned_baseline.png"))==OK,
         "GLASSFANG_COMPARE: real aligned Level2 baseline saved")
+    # OPTIONAL contrast must affect only existing authored Level2 terrain;
+    # original Gold procedural FX buffers and Knight/enemy are never tinted.
+    var contrast=READABILITY.new()
+    contrast.bind_level(level)
     var previous_bites:int=0
     var sampled:Array=[]
     for frame in range(1,331):
@@ -177,6 +184,38 @@ func _capture_campaign_state(game:Node2D)->void:
                 "GLASSFANG_COMPARE: saved actual on-map checkpoint "+name)
             _evidence+=1
             _map_visible+=_count_lit(shot)
+            if frame in [15,147,177]:
+                # First capture: exact same source tick with optional assist OFF.
+                # Next: luminance-based adaptive attenuation on original map
+                # layers only, skill state/RNG/tick unchanged between images.
+                var canvas_pos:Vector2=enemy.get_global_transform_with_canvas().origin
+                var screen_center:Vector2i=Vector2i(roundi(canvas_pos.x),roundi(canvas_pos.y))
+                var roi:=Rect2i(screen_center-Vector2i(180,125),Vector2i(360,250))
+                var measured:float=contrast.sample_roi(shot,roi,5)
+                var auto_strength:float=contrast.request_for_luminance(measured,true)
+                contrast.set_strength(auto_strength)
+                await get_tree().process_frame
+                await get_tree().process_frame
+                await RenderingServer.frame_post_draw
+                var adjusted:Image=get_viewport().get_texture().get_image()
+                var outname:String="level2_glassfang_auto_contrast_gold_tick_%03d.png" % frame
+                _expect(adjusted.save_png(out_dir.path_join(outname))==OK,
+                    "GLASSFANG_COMPARE: adaptive actual Level2 image saved")
+                _contrast_images+=1
+                var layer_changed:int=_diff_pixels(shot,adjusted)
+                if auto_strength>0.015:
+                    _expect(layer_changed>40,
+                        "GLASSFANG_COMPARE: smart dim must change actual map pixels")
+                _contrast_roi_samples.append({"source_tick":frame,
+                    "viewport_roi":[roi.position.x,roi.position.y,roi.size.x,roi.size.y],
+                    "measured_linear_luminance":measured,
+                    "adaptive_strength":auto_strength,
+                    "actual_changed_sampled_pixels":layer_changed,
+                    "source_gold_actor_and_environment_buffers_modified":false})
+                contrast.restore()
+                await get_tree().process_frame
+                await get_tree().process_frame
+                await RenderingServer.frame_post_draw
             if frame in [31,63,96,147]:
                 var changed:=_diff_pixels(baseline,shot)
                 _found_painted=maxi(_found_painted,changed)
@@ -190,6 +229,9 @@ func _capture_campaign_state(game:Node2D)->void:
         await get_tree().process_frame
 
     _expect(_evidence==TICKS.size(),"GLASSFANG_COMPARE: all nine Gold timestamps")
+    _expect(_contrast_images==3,"GLASSFANG_COMPARE: all three source-matched auto-contrast captures")
+    _expect(contrast.strength==0.0,
+        "GLASSFANG_COMPARE: map visual palette not restored after contrast captures")
     _expect(_found_painted>100,"GLASSFANG_COMPARE: original active FX changes actual level screenshot")
     _expect(_map_visible>2000,"GLASSFANG_COMPARE: game floor is visible, not transparent staging")
     _expect(motion.bite_cues.size()==5,"GLASSFANG_COMPARE: source five bite cues survived")
@@ -217,15 +259,25 @@ func _capture_campaign_state(game:Node2D)->void:
         "actual_enemy_entity":enemy.name,
         "actual_map_backdrop_cells":floor_before,
         "actual_map_wall_cells":walls_before,
-        "source_checkpoints":sampled
+        "source_checkpoints":sampled,
+        "readability_review":{
+            "mode":"OPTIONAL native map-only auto brightness; source Gold effects unchanged",
+            "captures":_contrast_images,
+            "src_tick_results":_contrast_roi_samples,
+            "sensor":"real Godot Level2 baseline ROI mean linear luminance",
+            "map_layers_only":["Backdrop","Geometry","Decor"],
+            "source_gold_visual_pixels_changed":false,
+            "hero_enemy_hud_pixels_tinted":false,
+            "non_authoritative_hud_or_health_state_changes":false
+        }
     }
     var file=FileAccess.open(out_dir.path_join("comparison_manifest.json"),FileAccess.WRITE)
     _expect(file!=null,"GLASSFANG_COMPARE: manifest writable")
     if file!=null:
         file.store_string(JSON.stringify(evidence,"\t"))
         file.close()
-    print("GLASSFANG_LEVEL2_VISUAL_COMPARE: PASS PARTIAL STAGE | real Level2 screenshots=%d sourcePools=%d environmentFX=%d masked=%d changed=%d" %
-        [_evidence,_source_pool_total,_new_environment_seen,_masked,_found_painted])
+    print("GLASSFANG_LEVEL2_VISUAL_COMPARE: PASS PARTIAL STAGE | real Level2 screenshots=%d contrastPairs=%d sourcePools=%d environmentFX=%d masked=%d changed=%d" %
+        [_evidence,_contrast_images,_source_pool_total,_new_environment_seen,_masked,_found_painted])
 
 func _mask_pool_to_actual_floor(pool:Node2D,stage:Node2D,level:DungeonLevel,
         definition:Array)->int:
