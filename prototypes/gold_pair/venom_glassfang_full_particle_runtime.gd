@@ -84,7 +84,7 @@ static func _options(c:Dictionary)->Dictionary:
         if c.has(key):out[key]=c[key]
     return out
 
-func step_source_60hz(targets:Array)->void:
+func step_source_60hz(targets:Array,post_cast_enemy_update:Callable=Callable())->void:
     if motion==null:
         push_error("Glassfang source World runtime must begin first")
         return
@@ -95,6 +95,13 @@ func step_source_60hz(targets:Array)->void:
         return
     for c in motion.new_fx_cues:
         _emit_source_cue(c)
+    # Original World.step() runs Enemy.update AFTER generator.next but BEFORE
+    # FX Pool.upd: hitE knockback can therefore change e.x/y used for
+    # w.hit(kind=acid) and freshly spawned droplets within this same tick.
+    # Native SOH uses its real enemy system; source numeric oracle injects the
+    # original Enemy.update kx/ky terms for elite source screenshot fixture.
+    if post_cast_enemy_update.is_valid():
+        post_cast_enemy_update.call(targets,motion.bite_cues,world_frame)
     # Original World.step: all FX Pool updates run in insertion order *after*
     # cast generator, and before Particles.update, sharing World RNG.
     for p in active_pools:
