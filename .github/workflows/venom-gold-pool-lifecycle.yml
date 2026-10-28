@@ -1,0 +1,37 @@
+name: Venomwright original Gold acid Pool boil/damage lifecycle 60Hz oracle
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_pool_lifecycle.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_source_lifecycle_oracle.gd'
+      - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
+      - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
+      - '.github/workflows/venom-gold-pool-lifecycle.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-source-world-tick:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and check Godot parser
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/acid-lifecycle-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/acid-lifecycle-import.log; then exit 1; fi
+      - name: Exact Gold Pool 253 frame source World RNG, bubble and damage cue parity
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 100s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_lifecycle_oracle.gd 2>&1 | tee /tmp/acid-lifecycle.log
+          grep -F 'VENOM_POOL_LIFECYCLE: PASS / 253 source World ticks SHA' /tmp/acid-lifecycle.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/acid-lifecycle.log; then exit 1; fi
