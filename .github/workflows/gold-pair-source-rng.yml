@@ -3,7 +3,8 @@ on:
   push:
     branches: [feature/gold-venom-arcana-factory-20261028]
     paths:
-      - 'prototypes/gold_pair/**'
+      - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
+      - 'prototypes/gold_pair/tests/gold_mulberry32_source_test.gd'
       - '.github/workflows/gold-pair-source-rng.yml'
   workflow_dispatch:
 permissions:
