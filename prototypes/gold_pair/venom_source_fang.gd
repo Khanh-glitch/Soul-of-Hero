@@ -57,7 +57,7 @@ func front(layer:VenomSourcePixelLayer,t:float)->void:
     layer.worm_body(reversed,GLASS)
     for i in [2,4]:
         layer.disc(float(pts[i].x)+0.5,float(pts[i].y)+0.5,1.3,int(P.e0))
-        layer.px(float(pts[i].x),float(pts[i].y),int(P.k0))
+        layer.px(float(LAYER.jsround(float(pts[i].x))),float(LAYER.jsround(float(pts[i].y))),int(P.k0))
     var pi:int=int(floor(fposmod(t*11.0,10.0)))
     for k in range(3):
         var i:int=pi-k
@@ -72,8 +72,8 @@ func front(layer:VenomSourcePixelLayer,t:float)->void:
     var op:float=open*0.55+0.2
     for sd in [-1,1]:
         layer.shard(float(h.x)+fx*3.0+qx*float(sd)*1.2,float(h.y)+fy*3.0+qy*float(sd)*1.2,heading+float(sd)*op,5.4,1.4,int(P.y2),int(P.v1),int(P.w))
-    layer.px(float(h.x)+fx+qx*1.6,float(h.y)+fy+qy*1.6-1.0,int(P.c2))
-    layer.px(float(h.x)+fx-qx*1.6,float(h.y)+fy-qy*1.6-1.0,int(P.c2))
+    layer.px(float(LAYER.jsround(float(h.x)+fx+qx*1.6)),float(LAYER.jsround(float(h.y)+fy+qy*1.6-1.0)),int(P.c2))
+    layer.px(float(LAYER.jsround(float(h.x)+fx-qx*1.6)),float(LAYER.jsround(float(h.y)+fy-qy*1.6-1.0)),int(P.c2))
 
 func light(layer:VenomSourcePixelLayer)->void:
     layer.glow(chain.sx[0],chain.sy[0]-z-3.0,8.0,int(P.c1),0.3,3)
