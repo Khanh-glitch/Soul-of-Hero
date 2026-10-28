@@ -1,0 +1,35 @@
+name: Venom Gold exact 21-skill shared TS particle emission source parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_particle_emitters.gd'
+      - 'prototypes/gold_pair/tests/venom_source_particle_emitters_oracle.gd'
+      - '.github/workflows/venom-gold-particles-emission-21.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-gold-burst-emission:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native Godot strict import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-parts-emit-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-parts-emit-import.log; then exit 1; fi
+      - name: Verify exact source shard/drop/chip/steam/dust original fields and World RNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_source_particle_emitters_oracle.gd 2>&1 | tee /tmp/gold-parts-emit.log
+          grep -F 'VENOM_SOURCE_EMITTERS: PASS / 5 original TS full particle-field SHA' /tmp/gold-parts-emit.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-parts-emit.log; then exit 1; fi
