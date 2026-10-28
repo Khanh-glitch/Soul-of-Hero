@@ -482,23 +482,51 @@ jobs:
           # diagnosis when a PNG is missing. GitHub keeps only the last ten
           # annotations per step, so this is ONE multi-line annotation (literal
           # %0A separators) rather than one per line.
-          diag=$({
+          # GitHub truncates an annotation at roughly four kilobytes - a single
+          # big notice published six rows of one station out of thirteen - so the
+          # evidence is split into several small notices, newest-last, and the
+          # per-station frame report is budgeted at two stations per notice.
+          notice() {
+            printf '%s\n' "$2" | sed -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN{ORS="%0A"} {print}' >/tmp/notice.txt
+            echo "::notice::$1%0A$(cat /tmp/notice.txt)"
+          }
+
+          listing=$({
             echo "PNG listing:"
             ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
             echo "native dir (res:// side):"
             ls -la .artifacts/overworld/native/ 2>&1 || true
+          })
+          notice "evidence files" "$listing"
+
+          # The frame report is the only view anyone gets of the rendered pixels:
+          # this project's CI cannot hand its PNGs back, so the numbers and the
+          # luminance maps are what a reviewer actually reads.
+          report="$ARTIFACT_DIR/frame-report.txt"
+          grep -E "^OVERWORLD (LOOK|MAP) " "$ARTIFACT_DIR/overworld-capture.log" >"$report" 2>/dev/null || true
+          echo "frame report lines: $(wc -l <"$report")"
+          awk '/^OVERWORLD LOOK /{n++} {print int((n-1)/2)+1 "\t" $0}' "$report" >"$ARTIFACT_DIR/frame-groups.txt"
+          groups=$(cut -f1 "$ARTIFACT_DIR/frame-groups.txt" | sort -un | tail -1)
+          groups=${groups:-0}
+          for g in $(seq 1 "$groups"); do
+            body=$(awk -F'\t' -v g="$g" '$1==g {$1=""; sub(/^\t/, ""); print}' \
+              "$ARTIFACT_DIR/frame-groups.txt" | sed -e 's/^ //')
+            notice "native frame report ${g}/${groups}" "$body"
+          done
+
+          # Last, so these survive even if GitHub drops earlier annotations.
+          diagnostics=$({
             echo "first OVERWORLD lines:"
-            grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -18 || true
-            echo "frame report (native pixels, station by station):"
-            grep -E "^OVERWORLD (LOOK|MAP) " "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -240 || true
+            grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -12 || true
             echo "capture script/engine errors:"
             grep -nE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -10 || true
             echo "world_overview mentions:"
             grep -c "world_overview" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null || true
             echo "capture station lines:"
             grep -E "^OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | tail -6 || true
-          } | sed -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN{ORS="%0A"} {print}')
-          echo "::notice::${diag}"
+          })
+          notice "capture diagnostics" "$diagnostics"
+
           required=(
             "overworld_world_overview.png"
             "overworld_refuge_start.png"
