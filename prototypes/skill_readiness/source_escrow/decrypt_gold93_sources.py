@@ -57,7 +57,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--out-dir', required=True, type=Path)
     args = parser.parse_args()
-    repo_directory = Path(__file__).resolve().parents[3]
+    repo_directory = Path(__file__).resolve().parents[2]
     target = args.out_dir.resolve()
     if target == repo_directory or repo_directory in target.parents:
         sys.exit('ERROR: decrypted GOLD ZIPs must remain OUTSIDE the git working tree')
