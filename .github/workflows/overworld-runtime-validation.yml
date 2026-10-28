@@ -210,7 +210,9 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_regress \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_regression_guard_test.gd >"$ARTIFACT_DIR/overworld-regression.log" 2>&1
-          rc=$?; echo "regression exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-regression.log"; exit $rc
+          rc=$?; echo "regression exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-regression.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-regression.log" "Regression guard" "OVERWORLD_REGRESSION_GUARD PASSED"
+          exit $rc
 
       - name: Knight prefab mini-smoke (isolation)
         run: |
@@ -219,7 +221,9 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_knight \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_knight_mini_test.gd >"$ARTIFACT_DIR/overworld-knight.log" 2>&1
-          rc=$?; echo "knight exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-knight.log"; exit $rc
+          rc=$?; echo "knight exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-knight.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-knight.log" "Knight mini" "KNIGHT_MINI PASSED"
+          exit $rc
 
       - name: Entry / AppFlow API surface (static contract)
         run: |
@@ -250,18 +254,7 @@ jobs:
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_scene_runtime_test.gd >"$ARTIFACT_DIR/overworld-scene.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-scene.log"
-          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-scene.log"; then
-            echo "::error::Scene log contains engine/script errors"
-            # Surface the offending lines as annotations: the workflow log itself
-            # is not always retrievable from an external sandbox, but check-run
-            # annotations are.
-            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-scene.log" | head -12 | \
-              while IFS= read -r line; do
-                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
-                echo "::error::${safe}"
-              done
-            exit 1
-          fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-scene.log" "Scene" "OVERWORLD SCENE_RUNTIME_TEST PASSED"
           exit $rc
 
       - name: Movement + terrain collision (state-asserting)
@@ -271,7 +264,11 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_move \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_movement_runtime_test.gd >"$ARTIFACT_DIR/overworld-movement.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-movement.log"; exit $rc
+          rc=$?; cat "$ARTIFACT_DIR/overworld-movement.log"
+          # Exit code is not evidence: the gate fails on engine/script
+          # errors in the log and on a missing PASS summary.
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-movement.log" "Movement" "OVERWORLD MOVEMENT_RUNTIME_TEST PASSED"
+          exit $rc
 
       - name: "Provisions: drain, hazards, camps, fatigue (state-asserting)"
         run: |
@@ -280,7 +277,11 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_prov \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_provisions_runtime_test.gd >"$ARTIFACT_DIR/overworld-provisions.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-provisions.log"; exit $rc
+          rc=$?; cat "$ARTIFACT_DIR/overworld-provisions.log"
+          # Exit code is not evidence: the gate fails on engine/script
+          # errors in the log and on a missing PASS summary.
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-provisions.log" "Provisions" "OVERWORLD PROVISIONS_RUNTIME_TEST PASSED"
+          exit $rc
 
       - name: Save/reload persistence (disk bytes + rebuild)
         run: |
@@ -289,7 +290,11 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_persist \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_persistence_runtime_test.gd >"$ARTIFACT_DIR/overworld-persistence.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-persistence.log"; exit $rc
+          rc=$?; cat "$ARTIFACT_DIR/overworld-persistence.log"
+          # Exit code is not evidence: the gate fails on engine/script
+          # errors in the log and on a missing PASS summary.
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-persistence.log" "Persistence" "OVERWORLD PERSISTENCE_RUNTIME_TEST PASSED"
+          exit $rc
 
       - name: "Gates: L01 open, L10 sealed, clears flip state"
         run: |
@@ -298,7 +303,11 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_gates \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_gate_runtime_test.gd >"$ARTIFACT_DIR/overworld-gates.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-gates.log"; exit $rc
+          rc=$?; cat "$ARTIFACT_DIR/overworld-gates.log"
+          # Exit code is not evidence: the gate fails on engine/script
+          # errors in the log and on a missing PASS summary.
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-gates.log" "Gates" "OVERWORLD GATE_RUNTIME_TEST PASSED"
+          exit $rc
 
       - name: "Shortcuts: carve collision, swap sprite, restore terrain"
         run: |
@@ -307,7 +316,11 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_short \
                   --resolution 640x480 --windowed \
                   --script res://tests/overworld_shortcut_runtime_test.gd >"$ARTIFACT_DIR/overworld-shortcut.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-shortcut.log"; exit $rc
+          rc=$?; cat "$ARTIFACT_DIR/overworld-shortcut.log"
+          # Exit code is not evidence: the gate fails on engine/script
+          # errors in the log and on a missing PASS summary.
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-shortcut.log" "Shortcuts" "OVERWORLD SHORTCUT_RUNTIME_TEST PASSED"
+          exit $rc
 
       - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |
@@ -319,18 +332,7 @@ jobs:
                   >"$ARTIFACT_DIR/overworld-roundtrip.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-roundtrip.log"
           # A green exit must not mask errors printed to the log.
-          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-roundtrip.log"; then
-            echo "::error::Roundtrip log contains engine/script errors"
-            # Surface the offending lines as annotations: the workflow log itself
-            # is not always retrievable from an external sandbox, but check-run
-            # annotations are.
-            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-roundtrip.log" | head -12 | \
-              while IFS= read -r line; do
-                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
-                echo "::error::${safe}"
-              done
-            exit 1
-          fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-roundtrip.log" "Roundtrip" "OVERWORLD ROUNDTRIP_RUNTIME PASSED"
           exit $rc
 
       - name: "Acceptance: HOME → Marches → L01 → victory → Marches → save/reload"
@@ -343,18 +345,7 @@ jobs:
                   >"$ARTIFACT_DIR/overworld-acceptance.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-acceptance.log"
           # A green exit code must not mask errors printed to the log.
-          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-acceptance.log"; then
-            echo "::error::Acceptance log contains engine/script errors"
-            # Surface the offending lines as annotations: the workflow log itself
-            # is not always retrievable from an external sandbox, but check-run
-            # annotations are.
-            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-acceptance.log" | head -12 | \
-              while IFS= read -r line; do
-                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
-                echo "::error::${safe}"
-              done
-            exit 1
-          fi
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-acceptance.log" "Acceptance" "0 failures"
           exit $rc
 
       - name: Upload native runtime logs
