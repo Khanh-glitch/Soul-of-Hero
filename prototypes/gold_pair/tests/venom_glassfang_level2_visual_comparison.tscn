@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.gd" id="1"]
+
+[node name="GlassfangOriginalGoldVersusActualLevel2Review" type="Node"]
+script = ExtResource("1")
