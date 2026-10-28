@@ -1,0 +1,219 @@
+name: Gold 93 Native Readiness Runtime
+
+on:
+  push:
+    branches:
+      - feature/gold-93-skill-readiness-20261028
+      - arena/4fa0fa84-soul-of-hero
+    paths:
+      - 'docs/vfx/skill_readiness/**'
+      - 'prototypes/skill_readiness/**'
+      - '.github/workflows/gold-93-readiness-*.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  path-ownership:
+    name: Reject any production or source-factory mutation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Allowlist and read-only production paths
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=bd24daa607e65d9423c53a29f6dd94b601de0d75
+          git cat-file -e "${BASE}^{commit}"
+          git merge-base --is-ancestor "$BASE" HEAD
+          while IFS= read -r path; do
+            case "$path" in
+              docs/vfx/skill_readiness/*|prototypes/skill_readiness/*|.github/workflows/gold-93-readiness-*.yml)
+                echo "ALLOWED: $path" ;;
+              *)
+                echo "::error::UNAUTHORIZED CHANGE in overworld-safe factory: $path"
+                exit 1 ;;
+            esac
+          done < <(git diff --name-only "$BASE" HEAD)
+          git diff --exit-code "$BASE" HEAD -- game/ data/ assets/ config/ addons/ tests/ tools/ prototypes/gold_pair/ prototypes/gold_fidelity/ project.godot README.md
+          echo "GOLD93_PATH_OWNERSHIP: PASS"
+
+  native-runtime:
+    name: Native Godot 4.7 runtime contract
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    needs: path-ownership
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project and the native readiness library
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1200s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
+            echo "::error::Godot import reported script errors"
+            exit 1
+          fi
+      - name: Catalog and cast-context API
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 300s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 \
+            | tee /tmp/gold93-api.log
+          grep -F 'GOLD93_READINESS_API: PASS' /tmp/gold93-api.log
+      - name: Full native lifecycle and fail-closed coverage
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 \
+            | tee /tmp/gold93-lifecycle.log
+          grep -F 'GOLD93_LIFECYCLE: PASS' /tmp/gold93-lifecycle.log
+      - name: Port authority, once-only hits and concurrent casts
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd 2>&1 \
+            | tee /tmp/gold93-ports.log
+          grep -F 'GOLD93_PORTS: PASS' /tmp/gold93-ports.log
+      - name: Two independent original engine families
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd 2>&1 \
+            | tee /tmp/gold93-family.log
+          grep -F 'GOLD93_FAMILY_CLOCK: PASS' /tmp/gold93-family.log
+      - name: Venomwright authored baseline oracle (21 skills)
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd 2>&1 \
+            | tee /tmp/gold93-baseline.log
+          grep -F 'GOLD93_VENOM_BASELINE: PASS' /tmp/gold93-baseline.log
+      - name: SkillReadinessLab walks all 93 canonical ids
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 600s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd 2>&1 \
+            | tee /tmp/gold93-lab.log
+          grep -F 'GOLD93_LAB_PROBE: PASS' /tmp/gold93-lab.log
+      - name: Honest readiness roll-up
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -E 'NATIVE_PORT_READY' /tmp/gold93-lab.log | tee /tmp/gold93-summary.txt
+      - name: Upload native runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold93-native-runtime-evidence
+          path: |
+            /tmp/gold93-import.log
+            /tmp/gold93-api.log
+            /tmp/gold93-lifecycle.log
+            /tmp/gold93-ports.log
+            /tmp/gold93-family.log
+            /tmp/gold93-baseline.log
+            /tmp/gold93-lab.log
+            /tmp/gold93-summary.txt
+            .artifacts/gold93/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  disposable-real-map-overlay:
+    name: Disposable immutable Level 2 overlay
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: path-ownership
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Build the disposable workspace from the immutable map commit
+        shell: bash
+        run: |
+          set -euo pipefail
+          MAP_SHA=f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          OVERLAY="$RUNNER_TEMP/gold93-overlay"
+          rm -rf "$OVERLAY"
+          mkdir -p "$OVERLAY"
+          cd "$OVERLAY"
+          git init -q .
+          git remote add origin "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY"
+          git fetch --depth 1 origin "$MAP_SHA" || {
+            echo "::error::REAL_MAP_OVERLAY_BLOCKED: immutable map commit $MAP_SHA could not be fetched"
+            exit 1
+          }
+          git checkout -q FETCH_HEAD
+          git log -1 --format='GOLD93_OVERLAY_BASE=%H'
+          # Overlay ONLY the owned readiness library and the pinned READ-ONLY
+          # Gold components the VFX depends on. Nothing from this branch's
+          # production tree is copied over.
+          mkdir -p prototypes
+          cp -r "$GITHUB_WORKSPACE/prototypes/skill_readiness" prototypes/
+          cp -r "$GITHUB_WORKSPACE/prototypes/gold_pair" prototypes/
+          mkdir -p docs
+          cp -r "$GITHUB_WORKSPACE/docs/vfx" docs/
+          echo "GOLD93_OVERLAY: disposable workspace built from $MAP_SHA"
+          echo "OVERLAY=$OVERLAY" >> "$GITHUB_ENV"
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import the disposable overlay
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$OVERLAY"
+          timeout 1200s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-overlay-import.log
+      - name: Cast on the real authored Level 2 and prove zero map mutation
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$OVERLAY"
+          timeout 900s godot --headless --path . \
+            --script res://prototypes/skill_readiness/tests/gold93_real_map_overlay_runner.gd 2>&1 \
+            | tee /tmp/gold93-overlay.log
+          grep -F 'GOLD93_REAL_MAP_OVERLAY: PASS' /tmp/gold93-overlay.log
+      - name: Verify the overlay never edited authored production content
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "$OVERLAY"
+          # The disposable workspace is a real git checkout of the immutable map
+          # commit, so any authored production edit shows up as a dirty path.
+          DIRTY="$(git status --porcelain -- game data assets config addons project.godot)"
+          if [ -n "$DIRTY" ]; then
+            echo "::error::REAL_MAP_OVERLAY_BLOCKED: authored production content changed"
+            echo "$DIRTY"
+            exit 1
+          fi
+          echo "GOLD93_OVERLAY_ISOLATION: PASS / game data assets config addons project.godot unchanged"
+      - name: Upload real-map overlay evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold93-real-map-overlay-evidence
+          path: |
+            /tmp/gold93-overlay-import.log
+            /tmp/gold93-overlay.log
+            ${{ runner.temp }}/gold93-overlay/.artifacts/gold93/*.json
+          if-no-files-found: warn
+          retention-days: 14
