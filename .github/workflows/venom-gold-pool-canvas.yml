@@ -1,0 +1,51 @@
+name: Venomwright Gold acid Pool exact 2-pass native OpenGL and cleanup
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_noise.gd'
+      - 'prototypes/gold_pair/venom_source_pool_shade.gd'
+      - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - 'prototypes/gold_pair/venom_source_pool_canvas.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_canvas_smoke.gd'
+      - '.github/workflows/venom-gold-pool-canvas.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  two-pass-native-source-display:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-pool-canvas-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-pool-canvas-import.log; then exit 1; fi
+      - name: Native OpenGL 600x340 source Pool and additive light two-pass GPU bytes and expiry
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_pool_canvas_smoke.gd 2>&1 | tee /tmp/venom-pool-canvas.log
+          grep -F 'VENOM_POOL_CANVAS: PASS / 4 original source full RGBA pass hashes' /tmp/venom-pool-canvas.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-pool-canvas.log; then exit 1; fi
+          test -s /tmp/venom-pool-trail.png
+          test -s /tmp/venom-pool-finisher.png
+      - name: Attach actual Godot Pool GPU frames (not full-skill Gold acceptance)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-pool-native-two-pass-preview
+          path: |
+            /tmp/venom-pool-trail.png
+            /tmp/venom-pool-finisher.png
+          if-no-files-found: warn
+          retention-days: 7
