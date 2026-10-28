@@ -64,6 +64,41 @@ func px(x:float,y:float,col:int)->void:
 func dot(x:float,y:float,col:int)->void:
     raw_px(jsround(x*float(k)),jsround(y*float(k)),col)
 
+## Exact Gold src/game/pixel.ts Layer.rect and Layer.arc, used heavily
+## by enemy status overlays and many of the 21 source Gold custom skills.
+func rect(x:float,y:float,w:float,h:float,col:int)->void:
+    var gx:int=jsround(x*float(k))
+    var gy:int=jsround(y*float(k))
+    var gw:int=maxi(1,jsround(w*float(k)))
+    var gh:int=maxi(1,jsround(h*float(k)))
+    for j in range(gh):
+        raw_hline(gx,gx+gw-1,gy+j,col)
+
+func arc(cx:float,cy:float,r:float,w:float,a0:float,a1:float,
+        col:int,ry:float=-1.0)->int:
+    var gcx:int=jsround(cx*float(k))
+    var gcy:int=jsround(cy*float(k))
+    var gr:float=r*float(k)
+    var gry:float=(ry if ry>=0.0 else r)*float(k)
+    var gw:float=maxf(1.0,w*float(k))
+    var ri:int=int(ceil(gr))
+    var span:float=fposmod(a1-a0,PI*2.0)
+    if is_zero_approx(span):span=PI*2.0
+    var steps:int=maxi(12,int(ceil(span*maxf(gr,gry)*1.4)))
+    for i in range(steps+1):
+        var angle:float=a0+span*float(i)/float(steps)
+        var x:float=float(gcx)+cos(angle)*gr
+        var y:float=float(gcy)+sin(angle)*gry
+        if gw<=1.2:
+            raw_px(jsround(x),jsround(y),col)
+        else:
+            var radius:float=gw/2.0-0.2
+            var bound:int=int(ceil(radius))
+            for dy in range(-bound,bound+1):
+                var ww:int=int(floor(sqrt(maxf(0.0,radius*radius-float(dy*dy)))))
+                raw_hline(jsround(x)-ww,jsround(x)+ww,jsround(y)+dy,col)
+    return ri
+
 func disc(cx:float,cy:float,r:float,col:int)->void:
     var gx:int=jsround(cx*float(k))
     var gy:int=jsround(cy*float(k))
