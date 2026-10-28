@@ -19,15 +19,22 @@ var requested:float=0.0
 var last_luminance:float=0.0
 var last_sample_count:int=0
 
-func bind_level(level:Node)->void:
+func bind_level(level:Node,background:CanvasItem=null)->void:
     restore()
     layers.clear()
     originals.clear()
-    for layer_name in ["Backdrop","Geometry","Decor"]:
+    # The live Chapter1 Level2 includes a separate CrucibleArt facade root.
+    # Dimming only TileMapLayers misses most of the actual bright architecture.
+    # Never modulate Level root: its Entities child contains real Knight/enemy.
+    for layer_name in ["Backdrop","Geometry","Decor","CrucibleArt"]:
         var item:CanvasItem=level.get_node_or_null(NodePath(layer_name)) as CanvasItem
         if item!=null:
             layers.append(item)
             originals.append(item.modulate)
+    # Optional actual parallax/sky background, if used by this map.
+    if background!=null:
+        layers.append(background)
+        originals.append(background.modulate)
     strength=0.0
     requested=0.0
 
@@ -94,7 +101,13 @@ func report()->Dictionary:
         "pixels_sampled":last_sample_count,
         "requested_attenuation":requested,
         "actual_attenuation":strength,
-        "layer_names":["Backdrop","Geometry","Decor"],
+        "layer_names":_layer_names(),
         "changes_original_gold_effects":false,
         "changes_real_enemy_or_hero":false
     }
+
+func _layer_names()->Array:
+    var out:Array=[]
+    for item in layers:
+        if is_instance_valid(item):out.append(String(item.name))
+    return out
