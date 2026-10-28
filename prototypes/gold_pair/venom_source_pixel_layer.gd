@@ -86,6 +86,26 @@ func ellipse(cx:float,cy:float,rx:float,ry:float,col:int)->void:
         var w:int=int(floor((sr_x+0.35)*sqrt(q)))
         raw_hline(gx-w,gx+w,gy+dy,col)
 
+## Gold pixel.ts Layer.ring() exact k=1/k=2 raster semantics.
+func ring(cx:float,cy:float,r:float,w:float,col:int)->void:
+    var gx:int=jsround(cx*float(k))
+    var gy:int=jsround(cy*float(k))
+    var gr:float=r*float(k)
+    var gw:float=maxf(1.0,w*float(k))
+    var ro:float=gr+0.35
+    var rin:float=maxf(0.0,gr-gw+0.35)
+    var ri:int=int(ceil(gr))
+    for dy in range(-ri,ri+1):
+        var dyf:float=float(dy)
+        var outer:int=int(floor(sqrt(maxf(0.0,ro*ro-dyf*dyf))))
+        var inside:float=rin*rin-dyf*dyf-0.01
+        if absi(dy)<rin and inside>0.0:
+            var inner:int=int(floor(sqrt(inside)))
+            raw_hline(gx-outer,gx-inner-1,gy+dy,col)
+            raw_hline(gx+inner+1,gx+outer,gy+dy,col)
+        else:
+            raw_hline(gx-outer,gx+outer,gy+dy,col)
+
 func line(x0:float,y0:float,x1:float,y1:float,col:int,w:float=1.0)->void:
     var gx0:int=jsround(x0*float(k))
     var gy0:int=jsround(y0*float(k))
