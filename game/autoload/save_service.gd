@@ -1094,6 +1094,37 @@ func save_now() -> bool:
 	return _commit_candidate(_data.duplicate(true))
 
 
+## Overwrites a nested state path with a deep-copied value WITHOUT appending a
+## transaction receipt. Intended for throttled auto-saves (e.g. overworld
+## position/provisions state) where content-hash transaction keys would grow
+## unbounded. IMPORTANT: do NOT use this for first-clear rewards or other
+## one-shot entitlements — those must continue to use transact_once for
+## idempotent delivery. Returns false if the path is invalid or commit fails.
+func patch_state_path(path: Array, value: Variant) -> bool:
+	_ensure_loaded()
+	if path.is_empty():
+		_push_failure("patch_state_path requires a non-empty path.")
+		return false
+	for segment in path:
+		if not (segment is String or segment is StringName):
+			_push_failure("patch_state_path path segments must be strings.")
+			return false
+		if String(segment).is_empty():
+			_push_failure("patch_state_path path segment is empty.")
+			return false
+	var candidate := _data.duplicate(true)
+	var target: Dictionary = candidate
+	for i in range(path.size() - 1):
+		var segment := String(path[i])
+		var child: Variant = target.get(segment, {})
+		if not child is Dictionary:
+			child = {}
+		target[segment] = child
+		target = child
+	target[String(path[-1])] = value if not value is Dictionary else (value as Dictionary).duplicate(true)
+	return _commit_candidate(candidate)
+
+
 func is_transaction_applied(transaction_key: String) -> bool:
 	_ensure_loaded()
 	var transactions: Dictionary = _data.get("applied_transactions", {})

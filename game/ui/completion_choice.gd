@@ -63,7 +63,13 @@ func present(result: Dictionary, options: Dictionary = {}) -> void:
 	if level_name.is_empty():
 		level_name = String(_options.get("current_level_id", _result.get("level_id", "ẢI"))).replace("_", " ").to_upper()
 	title_label.text = "%s ĐÃ HOÀN TẤT" % level_name.to_upper()
-	question_label.text = "Bạn muốn đi tiếp qua ải sau hay trở về nhà?"
+	# When the run was launched from the Chapter 1 overworld, relabel the "Home"
+	# button to return the player to the Hollow Marches instead of the Home Map.
+	var from_overworld := flow != null and flow.has_method(&"has_pending_overworld_return") \
+		and bool(flow.call(&"has_pending_overworld_return"))
+	question_label.text = "Bạn muốn đi tiếp qua ải sau hay trở về Vùng Đất Hoang?" if from_overworld \
+		else "Bạn muốn đi tiếp qua ải sau hay trở về nhà?"
+	home_button.text = "VỀ VÙNG ĐẤT HOANG" if from_overworld else "VỀ NHÀ"
 	next_button.disabled = not bool(_options.get("can_continue", false))
 	next_button.text = "ĐI ẢI KẾ" if not next_button.disabled else "ĐÃ HẾT CHƯƠNG"
 	picker_button.disabled = not bool(_options.get("can_replay", true))

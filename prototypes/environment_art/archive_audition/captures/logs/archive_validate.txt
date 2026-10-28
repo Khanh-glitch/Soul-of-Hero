@@ -1,0 +1,18 @@
+room 50x30  floor 880 cells  walkable-from-spawn 607  solid props 273
+WARN  prop: column shares tile 9,6 with shelf_partial
+WARN  prop: column shares tile 14,6 with armarium_open
+WARN  prop: column shares tile 26,6 with shelf_closed
+WARN  prop: column shares tile 37,6 with rubble_mid
+WARN  prop: bench shares tile 18,11 with long_table
+WARN  prop: bench shares tile 19,11 with long_table
+WARN  prop: bench shares tile 20,11 with long_table
+WARN  prop: bench shares tile 28,12 with long_table
+WARN  prop: bench shares tile 29,12 with long_table
+WARN  prop: bench shares tile 30,12 with long_table
+WARN  prop: bench shares tile 34,19 with column
+WARN  prop: bench shares tile 35,19 with column
+WARN  prop: rubble_large shares tile 34,22 with column
+WARN  prop: rubble_large shares tile 35,22 with column
+WARN  prop: rubble_mid shares tile 42,20 with column
+WARN  prop: rubble_mid shares tile 42,21 with column
+ROOM VALIDATION PASSED (16 warnings)

@@ -1,0 +1,27 @@
+{
+  "schema": "overworld_landmark_registry/v1",
+  "landmarks": {
+    "chapter_1_level_1":  {"world_id": "lm_crypt",     "tier": 1, "refuge_sector": "west_funerary"},
+    "chapter_1_level_2":  {"world_id": "lm_ossuary",   "tier": 1, "refuge_sector": "west_funerary"},
+    "chapter_1_level_3":  {"world_id": "lm_archive",   "tier": 2, "refuge_sector": "central_ruins"},
+    "chapter_1_level_4":  {"world_id": "lm_reliquary", "tier": 2, "refuge_sector": "east_terraces"},
+    "chapter_1_level_5":  {"world_id": "lm_crucible",  "tier": 2, "refuge_sector": "central_basin"},
+    "chapter_1_level_6":  {"world_id": "lm_relay",     "tier": 3, "refuge_sector": "east_watershed"},
+    "chapter_1_level_7":  {"world_id": "lm_beacon",    "tier": 3, "refuge_sector": "north_ridge"},
+    "chapter_1_level_8":  {"world_id": "lm_divided",   "tier": 4, "refuge_sector": "north_precinct"},
+    "chapter_1_level_9":  {"world_id": "lm_gate",      "tier": 4, "refuge_sector": "north_pass"},
+    "chapter_1_level_10": {"world_id": "lm_throne",    "tier": 5, "refuge_sector": "north_citadel"}
+  },
+  "camp_levels_by_world_id": {
+    "lm_crypt":     "chapter_1_level_1",
+    "lm_ossuary":   "chapter_1_level_2",
+    "lm_archive":   "chapter_1_level_3",
+    "lm_reliquary": "chapter_1_level_4",
+    "lm_crucible":  "chapter_1_level_5",
+    "lm_relay":     "chapter_1_level_6",
+    "lm_beacon":    "chapter_1_level_7",
+    "lm_divided":   "chapter_1_level_8",
+    "lm_gate":      "chapter_1_level_9",
+    "lm_throne":    "chapter_1_level_10"
+  }
+}

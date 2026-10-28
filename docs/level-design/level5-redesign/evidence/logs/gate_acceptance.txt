@@ -1,0 +1,62 @@
+PASSED chapter_1_map_design_test — CHAPTER 1 MAP DESIGN 837/837
+PASSED chapter_1_campaign_map_design_test — CAMPAIGN MAP DESIGN PASSED
+PASSED chapter_1_level_5_miniboss_test — LEVEL 5 ARCHER MINIBOSS TEST PASSED - 77 checks
+PASSED level_5_archer_pickup_test — LEVEL 5 ARCHER PICKUP TEST PASSED - 59 checks
+PASSED chapter_1_level_5_live_loot_regression — LEVEL 5 LIVE LOOT PASSED - 22 checks
+PASSED chapter_1_collision_route_test — COLLISION ROUTE TEST PASSED - 161 checks across ten live maps
+PRE-EXISTING chapter_1_balance_matrix_test (identical at pinned baseline a1ae892):
+FAIL  Mana allocation changes the same effective resource pool used by tempo simulation
+FAIL  all-in early Power helps without deleting the elite lesson in one or two hits
+FAIL  five learned HP points cross a visible survivability breakpoint
+FAIL  five learned Mana points cross a real three-minute cast breakpoint
+FAIL  five learned Power points cross a visible Reaper combo breakpoint
+FAIL  l1_floor_skeleton action sword_1 uses canonical formula v1
+FAIL  l1_floor_skeleton action sword_2 uses canonical formula v1
+FAIL  l1_floor_skeleton action sword_3 uses canonical formula v1
+FAIL  l1_floor_skeleton action sword_4 uses canonical formula v1
+FAIL  l1_floor_skeleton stays inside its TTK band
+FAIL  l1_floor_skeleton stays inside its hit breakpoint band
+FAIL  l1_floor_skeleton stays inside its survivability band
+FAIL  l2_floor_skeleton action sword_1 uses canonical formula v1
+FAIL  l2_floor_skeleton action sword_2 uses canonical formula v1
+FAIL  l2_floor_skeleton action sword_3 uses canonical formula v1
+FAIL  l2_floor_skeleton action sword_4 uses canonical formula v1
+FAIL  l2_floor_skeleton stays inside its TTK band
+FAIL  l2_floor_skeleton stays inside its hit breakpoint band
+FAIL  l2_floor_skeleton stays inside its survivability band
+FAIL  l3_damage_focus_reaper action sword_1 uses canonical formula v1
+FAIL  l3_damage_focus_reaper action sword_2 uses canonical formula v1
+FAIL  l3_damage_focus_reaper action sword_3 uses canonical formula v1
+FAIL  l3_damage_focus_reaper action sword_4 uses canonical formula v1
+FAIL  l3_damage_focus_reaper stays inside its TTK band
+FAIL  l3_damage_focus_reaper stays inside its hit breakpoint band
+FAIL  l3_damage_focus_reaper stays inside its survivability band
+FAIL  l3_damage_lesson_reaper action sword_1 uses canonical formula v1
+FAIL  l3_damage_lesson_reaper action sword_2 uses canonical formula v1
+FAIL  l3_damage_lesson_reaper action sword_3 uses canonical formula v1
+FAIL  l3_damage_lesson_reaper action sword_4 uses canonical formula v1
+FAIL  l3_damage_lesson_reaper stays inside its TTK band
+FAIL  l3_damage_lesson_reaper stays inside its hit breakpoint band
+FAIL  l3_damage_lesson_reaper stays inside its survivability band
+FAIL  l3_floor_reaper action sword_1 uses canonical formula v1
+FAIL  l3_floor_reaper action sword_2 uses canonical formula v1
+FAIL  l3_floor_reaper action sword_3 uses canonical formula v1
+FAIL  l3_floor_reaper action sword_4 uses canonical formula v1
+FAIL  l3_floor_reaper stays inside its TTK band
+FAIL  l3_floor_reaper stays inside its hit breakpoint band
+FAIL  l3_floor_reaper stays inside its survivability band
+FAIL  l3_hard_replay_reaper action sword_1 uses canonical formula v1
+FAIL  l3_hard_replay_reaper action sword_2 uses canonical formula v1
+FAIL  l3_hard_replay_reaper action sword_3 uses canonical formula v1
+FAIL  l3_hard_replay_reaper action sword_4 uses canonical formula v1
+FAIL  l3_hard_replay_reaper stays inside its TTK band
+FAIL  l3_hard_replay_reaper stays inside its hit breakpoint band
+FAIL  l3_hard_replay_reaper stays inside its survivability band
+FAIL  l3_hp_lesson_reaper action sword_1 uses canonical formula v1
+FAIL  l3_hp_lesson_reaper action sword_2 uses canonical formula v1
+FAIL  l3_hp_lesson_reaper action sword_3 uses canonical formula v1
+FAIL  l3_hp_lesson_reaper action sword_4 uses canonical formula v1
+FAIL  l3_hp_lesson_reaper stays inside its TTK band
+FAIL  l3_hp_lesson_reaper stays inside its hit breakpoint band
+FAIL  l3_hp_lesson_reaper stays inside its survivability band
+ACCEPTANCE GATE PASSED (rc=0)

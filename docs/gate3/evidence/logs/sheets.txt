@@ -1,0 +1,21 @@
+GATE3 SHEETS: 20 files
+  comparison_spawn.png
+  comparison_archive_entry.png
+  comparison_landmark.png
+  comparison_cloister.png
+  comparison_south_loop.png
+  comparison_combat_space.png
+  comparison_return_route.png
+  comparison_floor2_arrival.png
+  comparison_floor2_stacks.png
+  comparison_floor3_camp.png
+  inspection_crop_armarium_alcove_3x.png
+  inspection_crop_cloister_garth_3x.png
+  inspection_crop_descent_landing_3x.png
+  inspection_crop_south_loop_3x.png
+  inspection_crop_bay_rhythm_3x.png
+  inspection_crop_shade_depth_3x.png
+  inspection_crop_hazard_bay_3x.png
+  combat_under_load.png
+  camera_comparison.png
+  route_and_connectivity_diagram.png

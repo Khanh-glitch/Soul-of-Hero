@@ -1,0 +1,16 @@
+{
+  "schema": "chapter1_review_status/1",
+  "_note": "Authored after inspecting the native frames. COMPLETE means the pass is handed to the owner for visual review and is not a claim of approval; INCOMPLETE means the environment has not been authored yet.",
+  "levels": {
+    "chapter_1_level_1": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_2": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_3": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_4": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_5": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_6": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_7": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_8": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_9": "COMPLETE — AWAITING OWNER VISUAL REVIEW",
+    "chapter_1_level_10": "COMPLETE — AWAITING OWNER VISUAL REVIEW"
+  }
+}

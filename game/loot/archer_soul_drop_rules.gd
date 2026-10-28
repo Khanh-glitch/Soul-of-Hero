@@ -63,38 +63,54 @@ static func rarity_from_unit_roll(difficulty_id: Variant, unit_roll: float) -> i
 static func roll_rarity(run_id: String, difficulty_id: Variant) -> int:
 	return rarity_from_unit_roll(
 		difficulty_id,
-		DIFFICULTY_RULES.deterministic_roll(
-			_normalize_run_id(run_id),
-			BOSS_ENTITY_ID,
-			ROLL_CHANNEL,
+		(
+			DIFFICULTY_RULES
+			. deterministic_roll(
+				_normalize_run_id(run_id),
+				BOSS_ENTITY_ID,
+				ROLL_CHANNEL,
+			)
 		),
 	)
 
 
 static func create_replay_soul(
-		run_id: String,
-		difficulty_id: Variant,
-		item_level: int,
+	run_id: String,
+	difficulty_id: Variant,
+	item_level: int,
 ) -> Dictionary:
 	var normalized_run_id := _normalize_run_id(run_id)
-	return HERO_SOUL_RULES.create_instance(
-		HERO_ID,
-		roll_rarity(normalized_run_id, difficulty_id),
-		clampi(item_level, 1, MAX_ITEM_LEVEL),
-		SOURCE_ID,
-		_seed_from_run(normalized_run_id),
-		AFFINITY,
-		&"",
-		PackedStringArray([
-			"normal_attack", "ranged", "projectile", "active", "summon",
-			"departure", "relay", "dash", "moving_attack",
-		]),
+	return (
+		HERO_SOUL_RULES
+		. create_instance(
+			HERO_ID,
+			roll_rarity(normalized_run_id, difficulty_id),
+			clampi(item_level, 1, MAX_ITEM_LEVEL),
+			SOURCE_ID,
+			_seed_from_run(normalized_run_id),
+			AFFINITY,
+			&"",
+			PackedStringArray(
+				[
+					"normal_attack",
+					"ranged",
+					"projectile",
+					"active",
+					"summon",
+					"departure",
+					"relay",
+					"dash",
+					"moving_attack",
+				]
+			),
+		)
 	)
 
 
 static func replay_transaction_key(run_id: String) -> String:
-	return "campaign:chapter_1_level_5:archer_soul_replay:%s" % (
-		_normalize_run_id(run_id).sha256_text().substr(0, 24)
+	return (
+		"campaign:chapter_1_level_5:archer_soul_replay:%s"
+		% (_normalize_run_id(run_id).sha256_text().substr(0, 24))
 	)
 
 
@@ -104,13 +120,12 @@ static func replay_transaction_key(run_id: String) -> String:
 ## If an old receipt exists without its deterministic Soul, the first payload is
 ## emitted again and GroundLoot's generic reconciliation seam repairs it.
 static func build_guaranteed_payload(
-		run_context: Dictionary,
-		save_snapshot: Dictionary,
+	run_context: Dictionary,
+	save_snapshot: Dictionary,
 ) -> Dictionary:
-	# Recruitment rewards are now ten durable shards on first-clear results.
-	# No Hero Weapon or physical Soul pickup is produced by this legacy profile.
-	return {}
-	# Compatibility implementation below remains unreachable for old inspectors.
+	# The first acquisition is a physical, guaranteed Normal Soul. Its unique
+	# reward bundle commits only when GroundLoot is collected; completion never
+	# grants ownership or changes the player's active/reserve team.
 	var run_id := _normalize_run_id(String(run_context.get("run_id", "")))
 	var difficulty := DIFFICULTY_RULES.normalize_id(run_context.get("difficulty", &"easy"))
 	var item_level := clampi(int(run_context.get("stage_level", 5)), 1, MAX_ITEM_LEVEL)
@@ -121,13 +136,18 @@ static func build_guaranteed_payload(
 		String(fixed_soul.get("instance_id", "")),
 	)
 	var first_clear := not fixed_receipt or not fixed_soul_owned
-	var soul := fixed_soul if first_clear else create_replay_soul(
-		run_id,
-		difficulty,
-		item_level,
+	var soul := (
+		fixed_soul
+		if first_clear
+		else create_replay_soul(
+			run_id,
+			difficulty,
+			item_level,
+		)
 	)
-	var transaction_key := FIRST_PICKUP_TRANSACTION_KEY if first_clear \
-		else replay_transaction_key(run_id)
+	var transaction_key := (
+		FIRST_PICKUP_TRANSACTION_KEY if first_clear else replay_transaction_key(run_id)
+	)
 	var rarity_index := int(soul.get("rarity", HERO_SOUL_RULES.Rarity.NORMAL))
 	var rarity_id := StringName(HERO_SOUL_RULES.rarity_name(rarity_index).to_lower())
 	return {
@@ -155,8 +175,8 @@ static func build_guaranteed_payload(
 
 
 static func high_rarity_tail_probability(
-		difficulty_id: Variant,
-		minimum_rarity: int,
+	difficulty_id: Variant,
+	minimum_rarity: int,
 ) -> float:
 	var probabilities := normalized_probabilities(difficulty_id)
 	var result := 0.0
@@ -196,7 +216,9 @@ static func _snapshot_owns_instance(snapshot: Dictionary, instance_id: String) -
 	if not souls_value is Array:
 		return false
 	for raw_soul: Variant in souls_value:
-		if raw_soul is Dictionary \
-				and String((raw_soul as Dictionary).get("instance_id", "")) == instance_id:
+		if (
+			raw_soul is Dictionary
+			and String((raw_soul as Dictionary).get("instance_id", "")) == instance_id
+		):
 			return true
 	return false

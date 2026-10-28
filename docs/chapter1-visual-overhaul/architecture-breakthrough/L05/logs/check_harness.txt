@@ -1,0 +1,13 @@
+Godot Engine v4.7.stable.official.5b4e0cb0f - https://godotengine.org
+
+CRUCIBLE BOOT: save=user://tests/crucible_capture_1223303.json
+CRUCIBLE ART: floor_detail=5617 wall_cells=3303 bedrock=4609 props=114 lights=22 shadows=506
+CRUCIBLE BOOT: level=chapter_1_level_5 started=true
+CRUCIBLE CAPTURE: level=chapter_1_level_5 art=on wall_cells=3303 props=114 lights=22 entities=83
+CRUCIBLE PERF: art=on nodes=1011 draw_calls=0 static_mb=187.9 fps=1
+ERROR: Home scene loaded, but AppFlow did not open the startup profile choice.
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] _finish_boot (res://game/app/app_root.gd:270)
+WARNING: 7 ObjectDB instances were leaked at exit (run with `--verbose` for details).
+   at: cleanup (core/object/object.cpp:2535)

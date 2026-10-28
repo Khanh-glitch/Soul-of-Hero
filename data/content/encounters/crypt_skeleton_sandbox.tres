@@ -12,9 +12,7 @@
 script = ExtResource("7_completion")
 required_objective_ids = PackedStringArray("clear_crypt_skeletons")
 gate_action = 1
-gate_entity_ids = PackedStringArray("exit_gate")
-reward_bundle_id = &"sandbox_clear_reward"
-reward_transaction_id = &"sandbox_crypt_skeleton_clear"
+gate_entity_ids = PackedStringArray("training_exit")
 
 [sub_resource type="Resource" id="ClearObjective"]
 script = ExtResource("6_objective")
@@ -37,7 +35,8 @@ script = ExtResource("2_spawn")
 entry_id = &"crypt_skeleton_batch"
 enemy_id = &"skeleton_chaser_sandbox"
 count = 5
-spawn_region_id = &"legacy_authored_positions"
+spawn_marker_ids = PackedStringArray("training_skeleton_01", "training_skeleton_02", "training_skeleton_03", "training_skeleton_04", "training_skeleton_05")
+formation_id = &"training_loop"
 interval_seconds = 0.15
 maximum_alive = 5
 
@@ -58,7 +57,7 @@ encounter_id = &"crypt_skeleton_sandbox"
 display_name = "Crypt Skeleton Encounter (Sandbox)"
 encounter_tags = PackedStringArray("crypt", "skeleton", "sandbox")
 development_only = true
-authoring_notes = "DATA-ONLY SANDBOX EXAMPLE; not campaign-complete and not a runtime authority. The legacy crypt currently authors five skeleton entities in JSON and gates exit with sigils, so a future encounter runner must deliberately migrate that behavior before using this gate/reward contract."
+authoring_notes = "PLAYABLE SANDBOX RUNTIME CONTRACT. Five authored Training markers feed the live enemy/death objective; campaign_slot stays zero and completion declares no reward or feature grant."
 waves = Array[ExtResource("4_wave")]([SubResource("PatrolWave")])
 warnings = Array[ExtResource("5_warning")]([SubResource("GroupWarning")])
 objectives = Array[ExtResource("6_objective")]([SubResource("ClearObjective")])

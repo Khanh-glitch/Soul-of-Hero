@@ -1,0 +1,97 @@
+level            prototypes/gate0/level_data/chapter_1_level_3_a.json
+size             116x96 cells
+authored floor   3351 cells   geometry 1702
+spawn            (17, 13)
+floor 1 rows 0..33: floor  1008  standable   841
+floor 2 rows 34..65: floor  1259  standable  1086
+floor 3 rows 66..95: floor  1084  standable   937
+
+reachable from spawn, no door edges: 819 cells
+reachable with door edges:          2798 cells
+  door edge used: f1_f2_down -> (106, 42)
+  door edge used: f2_f3_down -> (9, 80)
+
+entity reachability by floor
+  floor 1: 16/16 entities reachable
+  floor 2: 17/17 entities reachable
+  floor 3: 14/14 entities reachable
+
+south ambulatory, cells x38..56 rows 19..24
+  strict (hazard cells treated as blocked): PASS 23 cells
+  permissive (hazard cells occupiable, HP cost): PASS 23 cells
+
+hazards
+  (21, 51): l3_spikes_12
+  (21, 52): l3_spikes_12
+  (22, 51): l3_spikes_12
+  (22, 52): l3_spikes_12
+  (25, 40): l3_spikes_10
+  (25, 41): l3_spikes_10
+  (26, 40): l3_spikes_10
+  (26, 41): l3_spikes_10
+  (31, 11): l3_spikes_01
+  (31, 12): l3_spikes_01
+  (32, 11): l3_spikes_01
+  (32, 12): l3_spikes_01
+  (34, 52): l3_spikes_11
+  (34, 53): l3_spikes_11
+  (35, 52): l3_spikes_11
+  (35, 53): l3_spikes_11
+  (36, 14): l3_spikes_02
+  (36, 15): l3_spikes_02
+  (37, 14): l3_spikes_02
+  (37, 15): l3_spikes_02
+  (45, 20): l3_spikes_03
+  (45, 21): l3_spikes_03
+  (46, 20): l3_spikes_03
+  (46, 21): l3_spikes_03
+  (51, 77): l3_spikes_13
+  (51, 78): l3_spikes_13
+  (52, 77): l3_spikes_13
+  (52, 78): l3_spikes_13
+  (56, 83): l3_spikes_14
+  (56, 84): l3_spikes_14
+  (57, 14): l3_spikes_04
+  (57, 15): l3_spikes_04
+  (57, 51): l3_spikes_09
+  (57, 52): l3_spikes_09
+  (57, 83): l3_spikes_14
+  (57, 84): l3_spikes_14
+  (57, 89): l3_spikes_16
+  (57, 90): l3_spikes_16
+  (58, 14): l3_spikes_04
+  (58, 15): l3_spikes_04
+  (58, 51): l3_spikes_09
+  (58, 52): l3_spikes_09
+  (58, 89): l3_spikes_16
+  (58, 90): l3_spikes_16
+  (60, 44): l3_spikes_08
+  (60, 45): l3_spikes_08
+  (61, 44): l3_spikes_08
+  (61, 45): l3_spikes_08
+  (67, 77): l3_spikes_15
+  (67, 78): l3_spikes_15
+  (68, 40): l3_spikes_07
+  (68, 41): l3_spikes_07
+  (68, 77): l3_spikes_15
+  (68, 78): l3_spikes_15
+  (69, 40): l3_spikes_07
+  (69, 41): l3_spikes_07
+  (77, 16): l3_spikes_05
+  (77, 17): l3_spikes_05
+  (78, 16): l3_spikes_05
+  (78, 17): l3_spikes_05
+  (87, 82): l3_spikes_17
+  (87, 83): l3_spikes_17
+  (87, 85): l3_spikes_18
+  (87, 86): l3_spikes_18
+  (88, 82): l3_spikes_17
+  (88, 83): l3_spikes_17
+  (88, 85): l3_spikes_18
+  (88, 86): l3_spikes_18
+  (91, 16): l3_spikes_06
+  (91, 17): l3_spikes_06
+  (92, 16): l3_spikes_06
+  (92, 17): l3_spikes_06
+
+result           OK (0 unreachable entities)

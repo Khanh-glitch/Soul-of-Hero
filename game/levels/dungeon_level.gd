@@ -12,6 +12,14 @@ const ATLAS_GRIDS := {
 	1: Vector2i(12, 4),
 }
 const LevelSchemaValidator := preload("res://game/levels/level_schema.gd")
+## Optional Chapter 1 presentation layer. A level that has no theme document in
+## res://data/environment/chapter1/ is left exactly as it was, so this hook can
+## never change a map that has not opted in.
+const EnvironmentArt := preload("res://game/levels/presentation/chapter1_environment_art.gd")
+## Authored environment for a level that has a hand-composed architecture
+## document. Takes precedence over the generic Chapter 1 layer, which stays in
+## place for the levels that have not been given authored architecture yet.
+const AuthoredArt := preload("res://game/levels/presentation/crucible_art.gd")
 
 @export_file("*.json") var level_data_path := "res://data/levels/crypt_entrance.json"
 @export var watch_file_changes := true
@@ -81,6 +89,7 @@ func reload_from_disk() -> bool:
 	var events := get_node_or_null("/root/GameEvents")
 	if events != null:
 		events.emit_signal("map_changed", "file")
+	_refresh_environment_art()
 	if not Engine.is_editor_hint():
 		var realtime_bridge := get_node_or_null("/root/RealtimeBridge")
 		if realtime_bridge != null and realtime_bridge.has_method(&"publish_event"):
@@ -89,6 +98,20 @@ func reload_from_disk() -> bool:
 				"geometry_cells": geometry.get_used_cells().size(),
 			})
 	return true
+
+
+func _refresh_environment_art() -> void:
+	if Engine.is_editor_hint():
+		return
+	if AuthoredArt.has_document(level_data_path):
+		AuthoredArt.attach(self)
+		# one environment per level: the generic facade would draw a second,
+		# conflicting wall over the authored one
+		var generic := get_node_or_null(NodePath("EnvironmentArt"))
+		if generic != null:
+			generic.queue_free()
+		return
+	EnvironmentArt.attach(self)
 
 
 func _get_layer_cells(layer_name: String) -> Array:
@@ -215,10 +238,13 @@ func _apply_dungeon_palette() -> void:
 func _make_tile_set(with_collision: bool) -> TileSet:
 	var tile_set := TileSet.new()
 	tile_set.tile_size = TILE_SIZE
+	var physics_layer := -1
 	if with_collision:
-		tile_set.add_physics_layer(0)
-		tile_set.set_physics_layer_collision_layer(0, 1)
-		tile_set.set_physics_layer_collision_mask(0, 0)
+		# add_physics_layer() returns the new layer index; it takes no argument
+		# in Godot 4.
+		physics_layer = tile_set.add_physics_layer()
+		tile_set.set_physics_layer_collision_layer(physics_layer, 1)
+		tile_set.set_physics_layer_collision_mask(physics_layer, 0)
 
 	for source_id: int in TILESET_TEXTURES:
 		var source := TileSetAtlasSource.new()
@@ -229,16 +255,18 @@ func _make_tile_set(with_collision: bool) -> TileSet:
 			for x: int in range(atlas_grid.x):
 				source.create_tile(Vector2i(x, y))
 		tile_set.add_source(source, source_id)
-		# TileData receives its physics layer layout only after the atlas source is
-		# attached to the TileSet, so collision polygons are assigned in a second pass.
-		if with_collision:
+		# TileData collision APIs require the physics layer to exist on the
+		# owning TileSet (which it now does, right after add_source above).
+		if with_collision and physics_layer >= 0:
+			var solid_poly := PackedVector2Array([
+				Vector2(-8, -8), Vector2(8, -8),
+				Vector2(8, 8), Vector2(-8, 8),
+			])
 			for y: int in range(atlas_grid.y):
 				for x: int in range(atlas_grid.x):
 					var coordinates := Vector2i(x, y)
 					var tile_data := source.get_tile_data(coordinates, 0)
-					tile_data.set_collision_polygons_count(0, 1)
-					tile_data.set_collision_polygon_points(0, 0, PackedVector2Array([
-						Vector2(-8, -8), Vector2(8, -8),
-						Vector2(8, 8), Vector2(-8, 8),
-					]))
+					if tile_data != null:
+						tile_data.set_collision_polygons_count(physics_layer, 1)
+						tile_data.set_collision_polygon_points(physics_layer, 0, solid_poly)
 	return tile_set

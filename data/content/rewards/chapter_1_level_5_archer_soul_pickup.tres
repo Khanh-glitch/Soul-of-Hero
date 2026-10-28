@@ -1,9 +1,23 @@
-[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="RewardBundleDefinition" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://game/content/rewards/reward_bundle_definition.gd" id="1_bundle"]
+[ext_resource type="Script" path="res://game/content/rewards/reward_hero_soul_grant.gd" id="2_soul"]
+
+[sub_resource type="Resource" id="ArcherRecruitmentSoul"]
+script = ExtResource("2_soul")
+grant_id = &"chapter_1_level_5_archer_recruitment"
+hero_id = &"archer_hero"
+rarity = 0
+item_level = 1
+source_id = &"chapter_1_level_5_archer_drop"
+seed = 15005
+affinity = "ranger"
+supported_action_tags = PackedStringArray("normal_attack", "ranged", "projectile", "active", "summon", "departure", "relay", "dash", "moving_attack")
+granted_feature_ids = PackedStringArray("soul_hero", "soul_relay")
+assign_to_first_reserve = false
 
 [resource]
 resource_name = "Chapter 1 Level 5 Archer Soul Physical Pickup"
 script = ExtResource("1_bundle")
 bundle_id = &"chapter_1_level_5_archer_soul_pickup"
-hero_shards = {"archer_hero": 10}
+hero_soul_grants = Array[Resource]([SubResource("ArcherRecruitmentSoul")])
