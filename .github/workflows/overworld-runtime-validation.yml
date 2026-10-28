@@ -181,7 +181,7 @@ jobs:
       - name: Install Xvfb for native GL-backed runtime tests
         run: |
           sudo apt-get update -y || true
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb || true
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb libgl1-mesa-dri || true
           mkdir -p "$ARTIFACT_DIR"
 
       - name: Prepare artifact directory
@@ -384,7 +384,7 @@ jobs:
       - name: Install Xvfb (non-critical; absence => blocked status)
         run: |
           sudo apt-get update -y || true
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb || true
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb libgl1-mesa-dri || true
           mkdir -p "$ARTIFACT_DIR"
 
       - name: Import project assets (editor import pass)
@@ -408,7 +408,7 @@ jobs:
           timeout --signal=TERM --kill-after=20s 180s \
             xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             stdbuf -oL -eL godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
-                  --user-data-dir artifacts/ud_control --resolution 1280x720 --windowed \
+                  --resolution 1280x720 \
                   res://tests/chapter_2_level_visual_capture.tscn -- \
                   --level-slot=11 --expected-width=1280 --expected-height=720 \
             >"$ARTIFACT_DIR/control-capture.log" 2>&1
@@ -419,6 +419,11 @@ jobs:
           echo "control_rc=$rc" >> "$GITHUB_OUTPUT"
           if [ "$rc" -ne 0 ]; then
             echo "::warning::control capture rc=$rc — this runner could not photograph the project; the overworld capture below cannot be blamed for that."
+            tail -20 "$ARTIFACT_DIR/control-capture.log" | \
+              while IFS= read -r line; do
+                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+                echo "::warning::control tail: ${safe}"
+              done
           fi
 
       - name: Capture stations (Xvfb + real GL -> PNGs)
@@ -431,8 +436,8 @@ jobs:
           timeout --signal=TERM --kill-after=20s 420s \
             xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
             stdbuf -oL -eL godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
-                  --user-data-dir artifacts/ud_capture --resolution 1280x720 \
-                  --windowed --verbose \
+                  --resolution 1280x720 \
+                  --verbose \
                   res://tools/captures/chapter1_overworld_native_capture.tscn -- \
                   --out-dir=res://.artifacts/overworld/native \
             >"$ARTIFACT_DIR/overworld-capture.log" 2>&1
