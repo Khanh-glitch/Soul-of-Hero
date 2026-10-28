@@ -1,0 +1,215 @@
+{
+  "schema": "gold93/venomwright-source-runtime-baseline/v1",
+  "purpose": "Canonical ORIGINAL source runtime baseline for the 21 Venomwright skills, captured by executing the authored TypeScript World.step(1/60) and each SKILL_BY_ID run function unmodified, then drawing into two independent 1200x680 native Ultra (k=2) RGBA8 buffers at the listed source tick. Provenance: docs/vfx/VENOM_21_SOURCE_RUNTIME_ULTRA_ALL_CAST_BASELINES.md.",
+  "source_archive": {
+    "filename": "venomwright-combat-vfx-design (4).zip",
+    "sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
+    "logical_resolution": [
+      600,
+      340
+    ],
+    "native_frame_resolution": [
+      1200,
+      680
+    ],
+    "raster_density_k": 2,
+    "world_step_hz": 60
+  },
+  "limitations": [
+    "Prefixes are identification aids only; the baseline document states they are NOT a sufficient final equality oracle.",
+    "Pre-original-WebGL-post and does not draw the Gold floor; never use it to mislabel a full Gold screenshot.",
+    "Synthetic deterministic actors were used for the original capture.",
+    "This is a canonical INPUT baseline and proves no Godot port is complete."
+  ],
+  "rows": [
+    {
+      "key": "venomwright:001",
+      "original_skill_id": 1,
+      "original_name": "Glassfang Hunt",
+      "source_mid_cast_tick": 150,
+      "source_fx_count": 34,
+      "source_particle_count": 77,
+      "whole_source_rgba_sha256_prefix": "e6dd375125135435"
+    },
+    {
+      "key": "venomwright:002",
+      "original_skill_id": 2,
+      "original_name": "Blooming Parasite",
+      "source_mid_cast_tick": 240,
+      "source_fx_count": 48,
+      "source_particle_count": 173,
+      "whole_source_rgba_sha256_prefix": "2d26f42aff6335a7"
+    },
+    {
+      "key": "venomwright:003",
+      "original_skill_id": 3,
+      "original_name": "Leechwater Rush",
+      "source_mid_cast_tick": 180,
+      "source_fx_count": 65,
+      "source_particle_count": 22,
+      "whole_source_rgba_sha256_prefix": "ec23586f14d398eb"
+    },
+    {
+      "key": "venomwright:004",
+      "original_skill_id": 4,
+      "original_name": "Porcelain Bastion",
+      "source_mid_cast_tick": 360,
+      "source_fx_count": 6,
+      "source_particle_count": 26,
+      "whole_source_rgba_sha256_prefix": "eb2bc45c44ca7281"
+    },
+    {
+      "key": "venomwright:005",
+      "original_skill_id": 5,
+      "original_name": "Bellows Toad",
+      "source_mid_cast_tick": 180,
+      "source_fx_count": 40,
+      "source_particle_count": 100,
+      "whole_source_rgba_sha256_prefix": "13938c47330d288b"
+    },
+    {
+      "key": "venomwright:006",
+      "original_skill_id": 6,
+      "original_name": "Graft Caravan",
+      "source_mid_cast_tick": 240,
+      "source_fx_count": 66,
+      "source_particle_count": 96,
+      "whole_source_rgba_sha256_prefix": "cb44b03562b66497"
+    },
+    {
+      "key": "venomwright:007",
+      "original_skill_id": 7,
+      "original_name": "Hatchery Fall",
+      "source_mid_cast_tick": 300,
+      "source_fx_count": 68,
+      "source_particle_count": 0,
+      "whole_source_rgba_sha256_prefix": "c4435ebc198a2b0d"
+    },
+    {
+      "key": "venomwright:008",
+      "original_skill_id": 8,
+      "original_name": "Brine Serpents",
+      "source_mid_cast_tick": 240,
+      "source_fx_count": 36,
+      "source_particle_count": 0,
+      "whole_source_rgba_sha256_prefix": "26c179d392b2a767"
+    },
+    {
+      "key": "venomwright:009",
+      "original_skill_id": 9,
+      "original_name": "Molting Harvester",
+      "source_mid_cast_tick": 270,
+      "source_fx_count": 47,
+      "source_particle_count": 95,
+      "whole_source_rgba_sha256_prefix": "24805b0e024a8535"
+    },
+    {
+      "key": "venomwright:010",
+      "original_skill_id": 10,
+      "original_name": "The Walking Crucible",
+      "source_mid_cast_tick": 450,
+      "source_fx_count": 28,
+      "source_particle_count": 9,
+      "whole_source_rgba_sha256_prefix": "42e92d9e6f9b4b82"
+    },
+    {
+      "key": "venomwright:011",
+      "original_skill_id": 11,
+      "original_name": "Unsealed Catalyst",
+      "source_mid_cast_tick": 120,
+      "source_fx_count": 10,
+      "source_particle_count": 54,
+      "whole_source_rgba_sha256_prefix": "c86178cc4a4ddb1b"
+    },
+    {
+      "key": "venomwright:012",
+      "original_skill_id": 12,
+      "original_name": "Verdigris Wake",
+      "source_mid_cast_tick": 240,
+      "source_fx_count": 149,
+      "source_particle_count": 245,
+      "whole_source_rgba_sha256_prefix": "4a72490dcae2b56e"
+    },
+    {
+      "key": "venomwright:013",
+      "original_skill_id": 13,
+      "original_name": "Mercury Garden",
+      "source_mid_cast_tick": 270,
+      "source_fx_count": 11,
+      "source_particle_count": 65,
+      "whole_source_rgba_sha256_prefix": "16ead1f9c7a6310f"
+    },
+    {
+      "key": "venomwright:014",
+      "original_skill_id": 14,
+      "original_name": "Reaction Cascade",
+      "source_mid_cast_tick": 180,
+      "source_fx_count": 1,
+      "source_particle_count": 16,
+      "whole_source_rgba_sha256_prefix": "5b43df7587e15f21"
+    },
+    {
+      "key": "venomwright:015",
+      "original_skill_id": 15,
+      "original_name": "Breath of the Vat",
+      "source_mid_cast_tick": 270,
+      "source_fx_count": 8,
+      "source_particle_count": 48,
+      "whole_source_rgba_sha256_prefix": "abe07f706ca6f324"
+    },
+    {
+      "key": "venomwright:016",
+      "original_skill_id": 16,
+      "original_name": "Crystal Rot",
+      "source_mid_cast_tick": 210,
+      "source_fx_count": 36,
+      "source_particle_count": 183,
+      "whole_source_rgba_sha256_prefix": "cb4ee1f5785486e5"
+    },
+    {
+      "key": "venomwright:017",
+      "original_skill_id": 17,
+      "original_name": "Reverse Extraction",
+      "source_mid_cast_tick": 210,
+      "source_fx_count": 14,
+      "source_particle_count": 109,
+      "whole_source_rgba_sha256_prefix": "5cd74142b5d2e574"
+    },
+    {
+      "key": "venomwright:018",
+      "original_skill_id": 18,
+      "original_name": "Bitter Rain",
+      "source_mid_cast_tick": 270,
+      "source_fx_count": 14,
+      "source_particle_count": 108,
+      "whole_source_rgba_sha256_prefix": "7d8ecaccf85f30f6"
+    },
+    {
+      "key": "venomwright:019",
+      "original_skill_id": 19,
+      "original_name": "False Remedy",
+      "source_mid_cast_tick": 210,
+      "source_fx_count": 9,
+      "source_particle_count": 86,
+      "whole_source_rgba_sha256_prefix": "9d5a71a26297bfdf"
+    },
+    {
+      "key": "venomwright:020",
+      "original_skill_id": 20,
+      "original_name": "Plague Cartography",
+      "source_mid_cast_tick": 270,
+      "source_fx_count": 17,
+      "source_particle_count": 66,
+      "whole_source_rgba_sha256_prefix": "8f7c343a63907e1a"
+    },
+    {
+      "key": "venomwright:021",
+      "original_skill_id": 21,
+      "original_name": "The Last Distillation",
+      "source_mid_cast_tick": 420,
+      "source_fx_count": 28,
+      "source_particle_count": 98,
+      "whole_source_rgba_sha256_prefix": "9751ee5b9fd944a2"
+    }
+  ]
+}
