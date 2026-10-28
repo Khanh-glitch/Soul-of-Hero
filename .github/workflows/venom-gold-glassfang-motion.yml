@@ -1,0 +1,38 @@
+name: Venomwright Glassfang full-source moving target motion and retarget oracle
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_glassfang_motion.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_motion_oracle.gd'
+      - 'prototypes/gold_pair/venom_source_fang.gd'
+      - 'prototypes/gold_pair/venom_source_chain.gd'
+      - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
+      - '.github/workflows/venom-gold-glassfang-motion.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-full-cast-motion:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and reject Godot script errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/glassfang-motion-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-motion-import.log; then exit 1; fi
+      - name: Compare TWO 240-tick dynamic source cast simulations against native generator port
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_motion_oracle.gd 2>&1 | tee /tmp/glassfang-motion.log
+          grep -F 'VENOM_GLASSFANG_MOTION: PASS / 2 original source World-step scenarios / 480 frames / 10 real bite cues' /tmp/glassfang-motion.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-motion.log; then exit 1; fi
