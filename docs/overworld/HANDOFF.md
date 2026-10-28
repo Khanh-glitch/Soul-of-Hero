@@ -11,8 +11,8 @@ from a green exit code.
 | Item | Value |
 | --- | --- |
 | Branch | `arena/54306b59-soul-of-hero` (only branch written to; `main` untouched) |
-| HEAD | tip of `arena/54306b59-soul-of-hero` (this document); the last content commit is `e205d3aa` |
-| Verified code state | `e205d3aa` — run `40691921302`, all three jobs green (and the browser playtest run `40691921184`, both jobs green) |
+| HEAD | tip of `arena/54306b59-soul-of-hero`; the verified content state is `a00e837f` |
+| Verified | run `40692926869` — all three jobs green (15/15 PNGs, frame report published); browser playtest run `40692926892` green. Commits after `a00e837f` are documentation, and this workflow ignores `docs/**` |
 | Playable | <https://khanh-glitch.github.io/Soul-of-Hero/> (Web export, Chromium smoke-tested before publish) |
 | Base | `5214788933b1a827f3a177d11ff486433dfe5e8a` (`main`) |
 | Engine | Godot `4.7.stable.custom_build`, built from source in-sandbox (scons 4.11.1 + local `pkg-config` shim) |
@@ -175,6 +175,7 @@ can never stand in for a behavioural result.
 
 | Run | Commit | Result |
 | --- | --- | --- |
+| [`40692926869`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40692926869) | `a00e837f` | **all three green** — 15/15 PNGs, `OVERWORLD CAPTURE PASSED - 15 images`, twelve annotations carrying the frame report |
 | [`40691921302`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40691921302) | `e205d3aa` | **all three green** — 15/15 PNGs including the two new landmark stations, with a structure report per station |
 | [`40691921184`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40691921184) | `e205d3aa` | Play in Browser: export + Chromium smoke + Pages deploy, both jobs green |
 | [`40686549192`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40686549192) | `c8dfd4ef` | **all three green** — STATIC 36 s, VISUAL 1 m 9 s (13/13 PNGs, `OVERWORLD CAPTURE PASSED - 13 images`), NATIVE 1 m 21 s |
