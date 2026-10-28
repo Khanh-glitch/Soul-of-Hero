@@ -5,6 +5,8 @@ on:
     paths:
       - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
       - 'prototypes/gold_pair/venom_source_fang.gd'
+      - 'prototypes/gold_pair/venom_source_fang_canvas.gd'
+      - 'prototypes/gold_pair/tests/venom_fang_ultra_gpu_smoke.gd'
       - 'prototypes/gold_pair/tests/venom_fang_ultra_source_pixel_oracle.gd'
       - '.github/workflows/venom-gold-fang-ultra.yml'
   workflow_dispatch:
@@ -41,3 +43,19 @@ jobs:
           timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_source_pixel_oracle.gd 2>&1 | tee /tmp/venom-classic-regression.log
           grep -F 'VENOM_FANG_PIXEL: PASS / 18' /tmp/venom-classic-regression.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-classic-regression.log; then exit 1; fi
+      - name: Render original Ultra k2 in real Godot OpenGL GPU and inspect output
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 130s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_fang_ultra_gpu_smoke.gd 2>&1 | tee /tmp/venom-ultra-gpu.log
+          grep -F 'VENOM_FANG_ULTRA_GPU: PASS / exact Gold 1200x680' /tmp/venom-ultra-gpu.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-ultra-gpu.log; then exit 1; fi
+          test -s /tmp/glassfang-godot-original-ultra-k2.png
+      - name: Publish true Ultra k2 native image for manual visual inspection
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-glassfang-native-original-ultra-k2
+          path: /tmp/glassfang-godot-original-ultra-k2.png
+          if-no-files-found: warn
+          retention-days: 7
