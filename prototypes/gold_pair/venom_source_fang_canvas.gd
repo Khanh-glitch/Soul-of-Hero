@@ -5,13 +5,27 @@ extends Node2D
 ## never a sprite sheet or approximated keyframe sequence. Preview only:
 ## not yet a registered playable Glassfang skill / Level2 map acceptance.
 const FANG=preload("res://prototypes/gold_pair/venom_source_fang.gd")
-const W:int=600
-const H:int=340
+var W:int=600
+var H:int=340
+var source_density:int=1
 const PASSES=["shd","up","lit"]
 var fang:VenomSourceFang
 var sprites:Dictionary={}
 var images:Dictionary={}
 var textures:Dictionary={}
+
+## Set before adding the node to a live scene. Rebuild is intentionally blocked
+## after _ready to prevent silently reusing k1 textures as false Ultra.
+func set_source_density(density:int)->void:
+    if sprites.size()>0:
+        push_error("Source Fang density must be set before Canvas initialization")
+        return
+    if density!=1 and density!=2:
+        push_error("Original Venom Gold supports Classic k1 / Ultra k2 only")
+        return
+    source_density=density
+    W=600*density
+    H=340*density
 
 func _ready()->void:
     _ensure_layers()
@@ -72,7 +86,7 @@ func render_live_actor_frame(source_fang:VenomSourceFang,source_time:float)->Dic
     fang=source_fang
     var outputs:Dictionary={}
     for key in PASSES:
-        var rgba:PackedByteArray=fang.render_pass(key,source_time)
+        var rgba:PackedByteArray=fang.render_pass(key,source_time,source_density)
         if rgba.size()!=W*H*4:
             push_error("Source Fang Canvas unexpected Gold RGBA size "+key)
             return {}
