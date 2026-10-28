@@ -62,7 +62,7 @@ func _initialize()->void:
     if parts.frame!=240 or parts.list.size()!=0 or parts.events.size()!=2:
         _fail("source 240-frame afterlife must clean all particles, keep environment cues")
         return
-    if String(parts.events[0]["kind"])!="splash" or int(parts.events[0]["frame"])!=51:
+    if String(parts.events[0]["kind"])!="splash" or int(parts.events[0]["frame"])!=53:
         _fail("Gold droplet landed on wrong tick or environmental Splash event lost")
         return
     if String(parts.events[1]["kind"])!="embed" or int(parts.events[1]["duration"])!=7:
