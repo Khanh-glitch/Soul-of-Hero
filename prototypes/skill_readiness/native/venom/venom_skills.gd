@@ -91,6 +91,8 @@ static func run_factory(skill_id: int):
 	match skill_id:
 		1:
 			return func(c): return S1.make(c)
+		2:
+			return func(c): return S1.parasite(c)
 	return null
 
 

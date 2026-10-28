@@ -183,7 +183,7 @@ func reset(seed_: int, formation: bool = false) -> void:
 	fx = []
 	parts.clear()
 	nums = []
-	tasks = []
+	_end_all_tasks()
 	shocks = []
 	time = 0.0
 	frame = 0
@@ -283,6 +283,23 @@ func add(f):
 
 func run(gen, name_: String = "") -> void:
 	tasks.append({"gen": gen, "wait": 0.0, "name": name_})
+
+
+## Release a finished generator. A `VenomGen` body runs on its own thread, so it
+## must always be drained: dropping it would leak the thread and leave the body
+## suspended against a world that is about to be reset.
+func _end_task(t: Dictionary) -> void:
+	var g = t["gen"]
+	if g != null and g.has_method("dispose"):
+		g.dispose()
+
+
+## Drain every running generator before the world's state is cleared, so no
+## suspended body can write into a half-reset world.
+func _end_all_tasks() -> void:
+	for t in tasks:
+		_end_task(t)
+	tasks = []
 
 
 func alive() -> Array:
@@ -573,10 +590,12 @@ func step(dt: float) -> void:
 		while float(t["wait"]) < -1e-6 and n < 60:
 			n += 1
 			if not t["gen"].is_valid():
+				_end_task(t)
 				tasks.remove_at(i)
 				break
 			var r = t["gen"].resume()
 			if not t["gen"].is_valid():
+				_end_task(t)
 				tasks.remove_at(i)
 				break
 			t["wait"] = float(t["wait"]) + (float(r) if r != null else 1.0 / 60.0)
@@ -965,7 +984,7 @@ func draw(g) -> void:
 	for f in fx:
 		if f.has_method("up"):
 			items.append({"y": f.sy if f.sy != 0.0 else f.y, "k": "fx", "o": f})
-	items.sort_custom(func(a, b): return float(a["y"]) < float(b["y"]))
+	M.stable_sort(items, func(a, b): return float(a["y"]) - float(b["y"]))
 	for it in items:
 		match it["k"]:
 			"enemy":

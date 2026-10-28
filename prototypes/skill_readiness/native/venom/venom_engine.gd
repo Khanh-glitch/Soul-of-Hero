@@ -97,9 +97,9 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 		for e in al:
 			if sqrt(pow(e.x - p.x, 2.0) + pow(e.y - p.y, 2.0)) - e.r < float(ai["range"]):
 				cand.append(e)
-		cand.sort_custom(func(a, b):
+		M.stable_sort(cand, func(a, b):
 			return (sqrt(pow(a.x - mx, 2.0) + pow(a.y - my, 2.0))
-					- sqrt(pow(b.x - mx, 2.0) + pow(b.y - my, 2.0))) < 0)
+					- sqrt(pow(b.x - mx, 2.0) + pow(b.y - my, 2.0))))
 		var n: int = int(ai.get("n", 3))
 		r["targets"] = cand.slice(0, mini(n, cand.size()))
 		r["ok"] = r["targets"].size() > 0

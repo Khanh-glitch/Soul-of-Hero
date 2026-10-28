@@ -540,7 +540,22 @@ func _dump_rasters(g: Dictionary, sid: int, tick: int) -> void:
 	var gp := "%s/skill%03d_t%04d_glow.png" % [dir, sid, tick]
 	_write_png(ProjectSettings.globalize_path(sp), g["s"])
 	_write_png(ProjectSettings.globalize_path(gp), g["l"])
+	# Raw RGBA next to the PNGs. `GOLD93_RAW_DIR` makes the ORIGINAL engine emit
+	# the same buffers from the oracle driver, so a divergence can be located
+	# pixel by pixel instead of only being reported as a hash mismatch.
+	var raw_dir: String = OS.get_environment("GOLD93_RAW_DIR")
+	if raw_dir != "":
+		_write_raw("%s/native_t%04d_scene.bin" % [raw_dir, tick], g["s"])
+		_write_raw("%s/native_t%04d_glow.bin" % [raw_dir, tick], g["l"])
 	print("GOLD93_DUMP %s %s" % [sp, gp])
+
+
+func _write_raw(path: String, L) -> void:
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f != null:
+		f.store_buffer(L.bytes)
+		f.close()
+		print("GOLD93_RAW %s" % path)
 
 
 func _write_png(path: String, L) -> void:

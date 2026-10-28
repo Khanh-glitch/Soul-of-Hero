@@ -10,6 +10,7 @@
 // status / environment cue log. This is the authoritative reference the native
 // Godot port must match.
 import { createHash } from 'node:crypto';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import { Field, Layer, Rng, makeGround } from './game/pixel';
 import { World, resetIds, ATK } from './game/world';
 import { SKILL_BY_ID } from './game/skills';
@@ -20,6 +21,20 @@ import type { Enemy } from './game/world';
 const F = 1 / 60;
 const RW = 1200, RH = 680, K = 2;
 const W = 600, H = 340;
+
+/**
+ * Raw raster dump for the differential debugger. The oracle normally records
+ * only hashes -- enough to prove parity, not enough to explain a divergence.
+ * With GOLD93_RAW_DIR set, the original's own scene/glow buffers are written
+ * byte-for-byte at every sampled tick so they can be diffed against the native
+ * buffers pixel by pixel.
+ */
+const rawDir = process.env.GOLD93_RAW_DIR || '';
+if (rawDir) mkdirSync(rawDir, { recursive: true });
+function writeRaw(dir: string, tick: number, scene: Uint32Array, glow: Uint32Array) {
+  writeFileSync(`${dir}/orig_t${String(tick).padStart(4, '0')}_scene.bin`, Buffer.from(scene.buffer, scene.byteOffset, scene.byteLength));
+  writeFileSync(`${dir}/orig_t${String(tick).padStart(4, '0')}_glow.bin`, Buffer.from(glow.buffer, glow.byteOffset, glow.byteLength));
+}
 
 function sha(u32: Uint32Array): string {
   return createHash('sha256').update(Buffer.from(u32.buffer, u32.byteOffset, u32.byteLength)).digest('hex');
@@ -149,6 +164,7 @@ class Stage {
       this.simStep();
       this.render();
       if (all || sampleTicks.includes(i)) {
+        if (rawDir) writeRaw(rawDir, i, this.scene, this.glow);
         out.push({
           tick: i,
           scene_sha256: sha(this.scene).slice(0, 32),

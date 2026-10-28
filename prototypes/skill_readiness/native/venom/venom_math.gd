@@ -88,6 +88,66 @@ static func smoothstep(t: float) -> float:
 	return t * t * (3.0 - 2.0 * t)
 
 
+## `Array#sort(comparator)` as the ORIGINAL uses it.
+##
+## Two things have to match, and Godot's `Array.sort_custom` matches neither:
+##   * the comparator returns a NUMBER (`a - b`), where any non-zero value is
+##     truthy -- a GDScript `sort_custom` comparator must return a BOOL, so
+##     `-1` and `+1` both mean "a comes first";
+##   * JavaScript's sort is STABLE (V8), while Godot's is an introsort and is
+##     not, so equal keys may be reordered.
+##
+## Both matter: e.g. `Decal` sorts its pixels halo-before-core with a
+## comparator that returns 0 for every same-key pair, and the draw order of
+## overlapping pixels depends on the ties keeping their authored order. This is
+## a bottom-up merge sort, which is stable by construction.
+static func stable_sort(arr: Array, cmp: Callable) -> Array:
+	var n: int = arr.size()
+	if n < 2:
+		return arr
+	# Work on private copies: `arr` is the caller's array, so it must not be
+	# used as merge scratch (an earlier version swapped it into the scratch
+	# slot and silently corrupted the caller's data).
+	var src: Array = arr.duplicate()
+	var dst: Array = []
+	dst.resize(n)
+	var width: int = 1
+	while width < n:
+		var i: int = 0
+		while i < n:
+			var lo: int = i
+			var mid: int = mini(i + width, n)
+			var hi: int = mini(i + width * 2, n)
+			var a: int = lo
+			var b: int = mid
+			var k: int = lo
+			while a < mid and b < hi:
+				# strictly less, so equal keys keep their authored order
+				if float(cmp.call(src[b], src[a])) < 0.0:
+					dst[k] = src[b]
+					b += 1
+				else:
+					dst[k] = src[a]
+					a += 1
+				k += 1
+			while a < mid:
+				dst[k] = src[a]
+				a += 1
+				k += 1
+			while b < hi:
+				dst[k] = src[b]
+				b += 1
+				k += 1
+			i += width * 2
+		var t: Array = src
+		src = dst
+		dst = t
+		width *= 2
+	for i in range(n):
+		arr[i] = src[i]
+	return arr
+
+
 static func ang_diff(a: float, b: float) -> float:
 	var d: float = fmod(b - a, TAU)
 	if d > PI:

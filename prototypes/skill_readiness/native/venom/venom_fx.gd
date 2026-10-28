@@ -561,8 +561,14 @@ class GroundDecal extends Fx:
 		glowCol = cols_["c"]
 		var r = RNG.new(seed * 7 + 3)
 		if kind_ == "veins":
-			_branch(r, 0.0, 0.0, 0.0, 0, 0)
-			pxs.sort_custom(func(p, q): return (0 if p["g"] < 0 else 1) - (0 if q["g"] < 0 else 1))
+			var nv: int = 4 + int(floor(size / 14))
+			for i in range(nv):
+				_branch(r, 0.0, 0.0,
+						(float(i) / float(nv)) * M.TAU + r.range(-0.3, 0.3),
+						int(floor(size * r.range(0.5, 1))), 0, 0)
+			# V8's Array#sort is stable and the comparator returns 0 for equal
+			# keys, so the authored halo-before-core order survives.
+			M.stable_sort(pxs, func(p, q): return float((0 if p["g"] < 0 else 1) - (0 if q["g"] < 0 else 1)))
 		elif kind_ == "cracks":
 			var n: int = 5 + int(floor(size / 10))
 			for i in range(n):
@@ -634,35 +640,29 @@ class GroundDecal extends Fx:
 	func _push(px: float, py: float, c: int, g: int = -1) -> void:
 		pxs.append({"x": px, "y": py, "c": c, "g": g})
 
-	# veins: recursive branching, flattened to an explicit stack so GDScript does
-	# not need a closure over `r`.
-	func _branch(r, bx: float, by: float, a: float, len: int, depth: int, d0: int = 0) -> void:
-		var stack: Array = [[bx, by, a, len, depth, d0]]
-		while not stack.is_empty():
-			var fr: Array = stack.pop_back()
-			var x0: float = fr[0]
-			var y0: float = fr[1]
-			var a0: float = fr[2]
-			var ln: int = fr[3]
-			var dp: int = fr[4]
-			var g0: int = fr[5]
-			var branches: Array = []
-			for i in range(ln):
-				a0 += r.range(-0.45, 0.45)
-				x0 += cos(a0)
-				y0 += sin(a0) * 0.9
-				var g: int = g0 + i
-				_push(x0 + 1, y0, cols["a"])
-				_push(x0, y0 + 1, cols["a"])
-				_push(x0 - 1, y0, cols["a"])
-				_push(x0, y0, cols["b"], g)
-				if dp < 3 and i > 3 and r.next() < 0.12:
-					branches.append([x0, y0, a0 + r.sign() * r.range(0.6, 1.2),
-							int(floor(float(ln) * 0.55)), dp + 1, g])
-			# original recurses immediately (depth-first); push in reverse so the
-			# first branch is popped first
-			for j in range(branches.size() - 1, -1, -1):
-				stack.append(branches[j])
+	# veins: the ORIGINAL builds them with a recursive closure that branches
+	# *inside* the segment loop, so a child branch consumes RNG before the
+	# parent's next iteration. Flattening that to a worklist reorders the
+	# stream and produces a different vein layout, so this stays a direct
+	# translation of the recursion.
+	func _branch(r, bx: float, by: float, a: float, ln: int, depth: int,
+			d0: int) -> void:
+		var x0: float = bx
+		var y0: float = by
+		var a0: float = a
+		for i in range(ln):
+			a0 += r.range(-0.45, 0.45)
+			x0 += cos(a0)
+			y0 += sin(a0) * 0.9
+			var g: int = d0 + i
+			_push(x0 + 1, y0, cols["a"])
+			_push(x0, y0 + 1, cols["a"])
+			_push(x0 - 1, y0, cols["a"])
+			_push(x0, y0, cols["b"], g)
+			if depth < 3 and i > 3 and r.next() < 0.12:
+				_branch(r, x0, y0, a0 + r.sign() * r.range(0.6, 1.2),
+						int(floor(float(ln) * 0.55)), depth + 1, g)
+
 
 	func upd(_w, _dt: float) -> void:
 		if age > life:
@@ -780,7 +780,7 @@ class Cloud extends Fx:
 			var p: Dictionary = puffs[i]
 			list.append({"p": p, "q": pos(p, t), "i": i,
 					"d": sin(float(p["ph"]) + t * float(p["sp"])) * 0.5 + float(p.get("lay", 0.0))})
-		list.sort_custom(func(a, b): return a["d"] < b["d"])
+		M.stable_sort(list, func(a, b): return float(a["d"]) - float(b["d"]))
 		var rem: float = life - age
 		var f: float = rem / 1.2 if rem < 1.2 else 1.0
 		for o in list:
