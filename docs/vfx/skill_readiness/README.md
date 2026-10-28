@@ -35,11 +35,12 @@ and both are kept in the CI trigger list).
   probe that walks all 93 ids in CI.
 - `prototypes/skill_readiness/integration/external_adapter_sample.gd` — host
   adapter that consumes any of the 93 ids without recoding VFX.
-- `prototypes/skill_readiness/tests/` — nine native Godot tests (catalog/API,
+- `prototypes/skill_readiness/tests/` — ten native Godot tests (catalog/API,
   full lifecycle + fail-closed coverage, port authority + concurrency,
-  two-family clock/RNG/scar, lab 93-id probe, **per-skill independent native
-  harness for all 93**, **G7 host adapter contract**, Venomwright 21-skill
-  authored baseline oracle) plus the disposable real-map overlay test.
+  two-family clock/RNG/scar, lab 93-id probe, **both-family render path**,
+  **per-skill independent native harness for all 93**, **G7 host adapter
+  contract**, Venomwright 21-skill authored baseline oracle) plus the
+  disposable real-map overlay test.
 - `.github/workflows/gold-93-readiness-runtime.yml` — path ownership, a native
   Godot job with nine test steps and a **disposable immutable Level 2 overlay**
   job (`f9fb8d4b7490a2579426bd5c4ee4667704d3a05e`).
