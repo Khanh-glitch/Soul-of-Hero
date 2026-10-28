@@ -9,7 +9,7 @@
   ],
   "builder_sha256_16": "d4fdd9fda9c401c7",
   "cast_tick": 1,
-  "driver_sha256_16": "ac246debadd1e398",
+  "driver_sha256_16": "5e4a34a2d43d22cd",
   "enemy_density": 16,
   "enemy_placement": "formation (World.reset(seed, true))",
   "ground_seed": 17,
@@ -33,34 +33,14 @@
  "schema": "gold93/venomwright-oracle-index/v1",
  "skills": [
   {
-   "canonical_id": "venomwright:003",
-   "cues": 52,
-   "file": "docs/vfx/skill_readiness/oracle/venomwright_003.json",
-   "hits": 43,
-   "name": "Leechwater Rush",
-   "sampled_ticks": 63,
-   "skill": 3,
-   "ticks": 235
-  },
-  {
-   "canonical_id": "venomwright:004",
-   "cues": 12,
-   "file": "docs/vfx/skill_readiness/oracle/venomwright_004.json",
-   "hits": 7,
-   "name": "Porcelain Bastion",
-   "sampled_ticks": 96,
-   "skill": 4,
-   "ticks": 400
-  },
-  {
-   "canonical_id": "venomwright:005",
-   "cues": 40,
-   "file": "docs/vfx/skill_readiness/oracle/venomwright_005.json",
-   "hits": 44,
-   "name": "Bellows Toad",
-   "sampled_ticks": 75,
-   "skill": 5,
-   "ticks": 295
+   "canonical_id": "venomwright:006",
+   "cues": 30,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_006.json",
+   "hits": 25,
+   "name": "Graft Caravan",
+   "sampled_ticks": 93,
+   "skill": 6,
+   "ticks": 385
   }
  ],
  "source_archive_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716"

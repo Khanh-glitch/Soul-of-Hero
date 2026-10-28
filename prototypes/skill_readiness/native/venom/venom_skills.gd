@@ -11,6 +11,7 @@ extends RefCounted
 ## `run` factories return a state-machine object exposing `resume()` / `is_valid()`,
 ## the GDScript equivalent of the original `function*` skill bodies.
 
+const S2 = preload("res://prototypes/skill_readiness/native/venom/venom_s2.gd")
 const S1 = preload("res://prototypes/skill_readiness/native/venom/venom_s1.gd")
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 
@@ -99,6 +100,8 @@ static func run_factory(skill_id: int):
 			return func(c): return S1.bastion(c)
 		5:
 			return func(c): return S1.toad(c)
+		6:
+			return func(c): return S2.caravan(c)
 	return null
 
 

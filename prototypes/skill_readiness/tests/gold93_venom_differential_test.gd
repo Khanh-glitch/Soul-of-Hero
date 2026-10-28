@@ -443,6 +443,17 @@ func _trace_fx(w, tick: int) -> void:
 						"up" if f.has_method("up") else "",
 						"air" if f.has_method("air") else "",
 						"lit" if f.has_method("lit") else ""])])
+	if OS.get_environment("GOLD93_TRACE_ALL") == "1":
+		for e in w.enemies:
+			print("    en id=%d k=%s x=%.2f y=%.2f r=%.2f hp=%.2f dying=%.3f dyT=%.3f dyKind=%s st=%s" % [
+				int(e.id), str(e.kind), float(e.x), float(e.y), float(e.r),
+				float(e.hp), float(e.dying), float(e.dyT), str(e.dyKind),
+				str(e.st.keys())])
+		for q in w.parts.list:
+			print("    pt k=%s x=%.2f y=%.2f z=%.2f sz=%.2f c1=%08x" % [
+				str(q.get("k")), float(q.get("x", 0.0)), float(q.get("y", 0.0)),
+				float(q.get("z", 0.0)), float(q.get("size", 0.0)),
+				int(q.get("c1", 0)) & 0xFFFFFFFF])
 
 
 ## `Object.get` takes exactly one argument in Godot 4, so optional properties

@@ -165,6 +165,10 @@ class Stage {
       this.render();
       if (all || sampleTicks.includes(i)) {
         if (rawDir) writeRaw(rawDir, i, this.scene, this.glow);
+        if (process.env.GOLD93_TRACE_TICK === String(i)) {
+          for (const e of this.world.enemies) console.error(`    en id=${e.id} k=${e.kind} x=${e.x.toFixed(2)} y=${e.y.toFixed(2)} r=${e.r.toFixed(2)} hp=${e.hp.toFixed(2)} dying=${e.dying.toFixed(3)} dyT=${(e as any).dyT.toFixed(3)} dyKind=${(e as any).dyKind} st=${JSON.stringify(Object.keys(e.st))}`);
+          for (const q of this.world.parts.list) console.error(`    pt k=${(q as any).k} x=${(q as any).x.toFixed(2)} y=${(q as any).y.toFixed(2)} z=${(q as any).z.toFixed(2)} sz=${(q as any).size.toFixed(2)} c1=${((q as any).c1 >>> 0).toString(16)}`);
+        }
         out.push({
           tick: i,
           scene_sha256: sha(this.scene).slice(0, 32),

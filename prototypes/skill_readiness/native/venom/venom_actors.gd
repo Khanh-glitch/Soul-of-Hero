@@ -204,6 +204,12 @@ static func _with(c: CF, which: String) -> CF:
 	n.rk = c.rk
 	n.rcol = c.rcol
 	n.fl = c.fl
+	# The death compositing must survive the derivation: the original wraps the
+	# WHOLE closure (`const b = C; C = c => mix(b(c), P.e1, ...)`), so the imp
+	# head is dissolved by exactly the same amount as the body. Dropping these
+	# two fields left a dead imp with a tinted body and a living-coloured head.
+	n.poison_fade = c.poison_fade
+	n.death_white = c.death_white
 	n.pre_mix = int(M.P["r3"])
 	n.pre_k = 0.18
 	return n
