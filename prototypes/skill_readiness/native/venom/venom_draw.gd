@@ -324,107 +324,41 @@ static func _rune_ring(L, cx: float, cy: float, r: float, c: int) -> void:
 # ---------------------------------------------------------------------------
 # Liquid shading passes (original Field.shade / Field.vapor)
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# volumetric vapour puff (original `puff()` from fx.ts)
+# ---------------------------------------------------------------------------
 
-static func field_shade(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> void:
-	if F.x1 < 0:
-		return
-	var W: int = F.W
-	var h = F.h
-	var rk: float = F.k
-	var ramp: Array = m["ramp"]
-	var nR: int = ramp.size()
-	var fx: float = float(o.get("fx", m.get("fx", 0.0))) * t
-	var fy: float = float(o.get("fy", m.get("fy", 0.0))) * t
-	var sd: float = float(o.get("seed", 0)) * 13.0
-	var dep: float = float(o.get("dep", m.get("dep", 1.0))) * rk
-	var sdl: int = L.dl
-	L.dl = int(o.get("dl", m.get("dl", 16)))
-	var sc: float = float(m.get("sc", 1.0)) / rk
-	var hi_w: float = float(m.get("hiW", 0.0)) * rk
-	var hi_t: float = float(m.get("hiT", 0.25))
-	var amp: float = float(m.get("amp", 0.5))
-	for y in range(F.y0, F.y1 + 1):
-		for x in range(F.x0, F.x1 + 1):
-			var i: int = y * W + x
-			var v: float = h[i]
-			if v <= 0.0:
-				continue
-			var c: int
-			if v < 1.0 * rk:
-				c = int(m["outline"])
-			else:
-				var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
-						+ (h[i + W] - h[i - W]) * -0.7) * 0.5
-				if v < 2.0 * rk:
-					c = int(m["rimLit"]) if lit > 0.25 else int(m["rim"])
-				else:
-					var sx: float = float(x) * sc + sd
-					var sy: float = float(y) * sc
-					var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
-							- 128.0) * 0.05
-					var n: float = float(RNG.nz1(sx + fx + wp * 9.0,
-							sy + fy + wp * 9.0)) / 255.0
-					var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
-					var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
-					var kk: int = int(floor(q * float(nR)
-							+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
-					if kk < 0:
-						kk = 0
-					elif kk >= nR:
-						kk = nR - 1
-					c = int(ramp[kk])
-					if v < hi_w:
-						if lit > hi_t:
-							c = int(m["hi"])
-						elif lit < -hi_t:
-							c = int(m["sh"])
-					if float(m.get("vw", 0.0)) > 0.0:
-						var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
-						if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
-							c = int(m["vein"])
-			L.raw_px(x, y, c)
-	L.dl = sdl
+# ---------------------------------------------------------------------------
+# volumetric vapour
+# ---------------------------------------------------------------------------
 
-
-static func field_vapor(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> void:
-	if F.x1 < 0:
-		return
-	var W: int = F.W
-	var h = F.h
-	var rk: float = F.k
-	var ramp: Array = m["ramp"]
-	var nR: int = ramp.size()
-	var fx: float = float(o.get("fx", m.get("fx", 0.0))) * t
-	var fy: float = float(o.get("fy", m.get("fy", 0.0))) * t
-	var sd: float = float(o.get("seed", 0)) * 13.0
-	var dens: float = float(o.get("dens", 1.0))
-	var sdl: int = L.dl
-	var sc: float = float(m.get("sc", 1.0)) / rk
-	for y in range(F.y0, F.y1 + 1):
-		for x in range(F.x0, F.x1 + 1):
-			var i: int = y * W + x
-			var v: float = h[i]
-			if v <= 0.0:
+static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
+		t: float, seed: int, outline: bool = false) -> void:
+	var k: float = L.k
+	var gcx: int = M.js_round(cx * k)
+	var gcy: int = M.js_round(cy * k)
+	var gr: float = r * k
+	var ri: int = int(ceil(gr))
+	var R: float = gr + 0.4
+	var sd: int = L.dl
+	for dy in range(-ri, ri + 1):
+		for dx in range(-ri, ri + 1):
+			var q: float = (float(dx * dx) + float(dy * dy)) / (R * R)
+			if q > 1:
 				continue
-			var sx: float = float(x) * sc + sd
-			var sy: float = float(y) * sc
-			var wp: float = (float(RNG.nz2(sx * 1.7 + fy * 0.5, sy * 1.7 - fx * 0.5))
-					- 128.0) * 0.05
-			var n: float = float(RNG.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
-			var n2: float = float(RNG.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
-			var d: float = (M.clampf(v / (float(m["dep"]) * rk), 0.0, 1.0) * 0.55
-					+ n * 0.55 + (n2 - 0.5) * 0.25)
-			if d < 0.28:
+			var gx: int = gcx + dx
+			var gy: int = gcy + dy
+			var wx: float = float(gx) / k
+			var wy: float = float(gy) / k
+			var n: float = float(RNG.nz1(wx * 0.22 + float(seed) * 7 + t * 2.2,
+					wy * 0.22 + t * 1.3)) / 255.0
+			var n2: float = float(RNG.nz2(wx * 0.5 - t * 3 + float(seed), wy * 0.5)) / 255.0
+			var s: float = -(float(dx) / R) * 0.55 - (float(dy) / R) * 0.65 \
+					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
+			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
+			var keep: float = dl * (1 - q * q * 0.75) + (n2 - 0.5) * 4
+			if M.BAYER[((gy & 3) << 2) | (gx & 3)] >= keep:
 				continue
-			var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
-					+ (h[i + W] - h[i - W]) * -0.7) * 0.5
-			var kk: int = int(floor(d * float(nR) * 0.95
-					+ (1.0 if lit > 0.3 else 0.0) - (1.0 if lit < -0.3 else 0.0)))
-			if kk < 0:
-				kk = 0
-			elif kk >= nR:
-				kk = nR - 1
-			L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
-					0.0, 16.0))
-			L.raw_px(x, y, int(m["rim"]) if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
-	L.dl = sdl
+			L.dl = 16
+			L.raw_px(gx, gy, ramp[0] if outline and q > 0.8 else ramp[mini(idx, ramp.size() - 1)])
+	L.dl = sd

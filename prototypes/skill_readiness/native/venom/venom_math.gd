@@ -39,8 +39,11 @@ static func imul(a: int, b: int) -> int:
 
 
 # `Math.imul(n, 0x27d4eb2d)` style hash used for ground and geometry jitter.
-static func hash_n(n: int) -> float:
-	n = i32(n)
+# NOTE: the original is `n = n | 0`, i.e. ToInt32 (truncate toward zero).
+# Callers pass fractional coordinates, so the argument is untyped and truncated
+# here rather than relying on GDScript float->int parameter coercion.
+static func hash_n(n) -> float:
+	n = i32(int(n))
 	n = i32(i32(n ^ 61) ^ (u32(n) >> 16))
 	n = i32(n + i32(u32(n) << 3))
 	n = i32(n ^ (u32(n) >> 4))

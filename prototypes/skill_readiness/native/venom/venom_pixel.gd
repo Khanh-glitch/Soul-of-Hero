@@ -429,3 +429,112 @@ class Field extends RefCounted:
 				var v: float = gra + (grb - gra) * t - sqrt(dx * dx + dy * dy) + 0.5
 				if v > 0.0 and v > h[y * W + x]:
 					h[y * W + x] = v
+
+	# -------------------------------------------------------------------------
+	# liquid shading (original Field.shade / Field.vapor)
+	# -------------------------------------------------------------------------
+
+
+	func shade(L, m: Dictionary, t: float, o: Dictionary = {}) -> void:
+		if self.x1 < 0:
+			return
+		var W: int = self.W
+		var h = self.h
+		var rk: float = self.k
+		var ramp: Array = m["ramp"]
+		var nR: int = ramp.size()
+		var fx: float = float(o.get("fx", m.get("fx", 0.0))) * t
+		var fy: float = float(o.get("fy", m.get("fy", 0.0))) * t
+		var sd: float = float(o.get("seed", 0)) * 13.0
+		var dep: float = float(o.get("dep", m.get("dep", 1.0))) * rk
+		var sdl: int = L.dl
+		L.dl = int(o.get("dl", m.get("dl", 16)))
+		var sc: float = float(m.get("sc", 1.0)) / rk
+		var hi_w: float = float(m.get("hiW", 0.0)) * rk
+		var hi_t: float = float(m.get("hiT", 0.25))
+		var amp: float = float(m.get("amp", 0.5))
+		for y in range(self.y0, self.y1 + 1):
+			for x in range(self.x0, self.x1 + 1):
+				var i: int = y * W + x
+				var v: float = h[i]
+				if v <= 0.0:
+					continue
+				var c: int
+				if v < 1.0 * rk:
+					c = int(m["outline"])
+				else:
+					var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
+							+ (h[i + W] - h[i - W]) * -0.7) * 0.5
+					if v < 2.0 * rk:
+						c = int(m["rimLit"]) if lit > 0.25 else int(m["rim"])
+					else:
+						var sx: float = float(x) * sc + sd
+						var sy: float = float(y) * sc
+						var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
+								- 128.0) * 0.05
+						var n: float = float(RNG.nz1(sx + fx + wp * 9.0,
+								sy + fy + wp * 9.0)) / 255.0
+						var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
+						var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
+						var kk: int = int(floor(q * float(nR)
+								+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
+						if kk < 0:
+							kk = 0
+						elif kk >= nR:
+							kk = nR - 1
+						c = int(ramp[kk])
+						if v < hi_w:
+							if lit > hi_t:
+								c = int(m["hi"])
+							elif lit < -hi_t:
+								c = int(m["sh"])
+						if float(m.get("vw", 0.0)) > 0.0:
+							var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
+							if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
+								c = int(m["vein"])
+				L.raw_px(x, y, c)
+		L.dl = sdl
+
+
+	func vapor(L, m: Dictionary, t: float, o: Dictionary = {}) -> void:
+		if self.x1 < 0:
+			return
+		var W: int = self.W
+		var h = self.h
+		var rk: float = self.k
+		var ramp: Array = m["ramp"]
+		var nR: int = ramp.size()
+		var fx: float = float(o.get("fx", m.get("fx", 0.0))) * t
+		var fy: float = float(o.get("fy", m.get("fy", 0.0))) * t
+		var sd: float = float(o.get("seed", 0)) * 13.0
+		var dens: float = float(o.get("dens", 1.0))
+		var sdl: int = L.dl
+		var sc: float = float(m.get("sc", 1.0)) / rk
+		for y in range(self.y0, self.y1 + 1):
+			for x in range(self.x0, self.x1 + 1):
+				var i: int = y * W + x
+				var v: float = h[i]
+				if v <= 0.0:
+					continue
+				var sx: float = float(x) * sc + sd
+				var sy: float = float(y) * sc
+				var wp: float = (float(RNG.nz2(sx * 1.7 + fy * 0.5, sy * 1.7 - fx * 0.5))
+						- 128.0) * 0.05
+				var n: float = float(RNG.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
+				var n2: float = float(RNG.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
+				var d: float = (M.clampf(v / (float(m["dep"]) * rk), 0.0, 1.0) * 0.55
+						+ n * 0.55 + (n2 - 0.5) * 0.25)
+				if d < 0.28:
+					continue
+				var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
+						+ (h[i + W] - h[i - W]) * -0.7) * 0.5
+				var kk: int = int(floor(d * float(nR) * 0.95
+						+ (1.0 if lit > 0.3 else 0.0) - (1.0 if lit < -0.3 else 0.0)))
+				if kk < 0:
+					kk = 0
+				elif kk >= nR:
+					kk = nR - 1
+				L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
+						0.0, 16.0))
+				L.raw_px(x, y, int(m["rim"]) if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
+		L.dl = sdl
