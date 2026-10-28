@@ -65,17 +65,17 @@ func capture(source)->void:
         _accept({"kind":"splash","x":x,"y":y,"radius":4.0,
             "c1":0xFF30EAA6,"c2":0xFFA0FFEE},born)
         _accept({"kind":"ring","x":x,"y":y,"radius":10.0,
-            "duration":0.2,"colors":[WHITE,0xFFDCBCE6,0xFF62A3A6],
+            "duration":0.2,"colors":[WHITE,0xFFEBE08E,0xFF717D26],
             "width":2.0,"r0":0.0,"ease":2.0},born)
         _accept({"kind":"flash","x":x,"y":y,"radius":6.0,
-            "duration":0.14,"color":0xFFFCE0D4,"z":6.0},born)
+            "duration":0.14,"color":0xFFFCF7D4,"z":6.0},born)
         if bool(bite.get("final",false)):
             # Original finisher blast is centered at fang/ground impact,
             # independently from contact ring.
             _accept({"kind":"flash","x":x,"y":y,"radius":22.0,
                 "duration":0.3,"color":0xFFA0FFEE,"z":8.0},born)
             _accept({"kind":"ring","x":x,"y":y,"radius":34.0,
-                "duration":0.35,"colors":[WHITE,0xFF529A27,0xFF080904],
+                "duration":0.35,"colors":[WHITE,0xFF58FAD4,0xFF22B56F],
                 "width":3.0,"r0":0.0,"ease":2.0},born)
     last_bite=bites.size()
     # Old effects must be disposed even on ticks where no screenshot is taken.
