@@ -11,12 +11,13 @@ func _initialize()->void:
     var initial:Array[Color]=[
         Color(0.68,0.73,0.82,1.0),
         Color(0.74,0.78,0.86,0.9),
-        Color(0.84,0.8,0.78,0.7)
+        Color(0.84,0.8,0.78,0.7),
+        Color(0.98,0.92,0.86,1.0)
     ]
     var nodes:Array[Node2D]=[]
-    for i in range(3):
+    for i in range(4):
         var layer:=Node2D.new()
-        layer.name=["Backdrop","Geometry","Decor"][i]
+        layer.name=["Backdrop","Geometry","Decor","CrucibleArt"][i]
         layer.modulate=initial[i]
         map.add_child(layer)
         nodes.append(layer)
@@ -31,8 +32,13 @@ func _initialize()->void:
     var actor_before:Color=knight.modulate
     var enemy_before:Color=enemy.modulate
 
+    var parallax:=Node2D.new()
+    parallax.name="Background"
+    parallax.modulate=Color(0.45,0.55,0.68,1.0)
+    map.add_child(parallax)
+    var parallax_original:Color=parallax.modulate
     var assist=CONTROL.new()
-    assist.bind_level(map)
+    assist.bind_level(map,parallax)
     var image:=Image.create(96,96,false,Image.FORMAT_RGBA8)
     image.fill(Color(0.87,0.85,0.83,1.0))
     var bright:float=assist.sample_roi(image,Rect2i(8,8,70,70),3)
@@ -48,7 +54,7 @@ func _initialize()->void:
     if absf(assist.strength-target)>0.009:
         _fail("deterministic 60Hz ramp to dim target failed")
         return
-    for i in range(3):
+    for i in range(4):
         var c:Color=nodes[i].modulate
         if not is_equal_approx(c.a,initial[i].a):
             _fail("authored tile alpha changed")
@@ -79,6 +85,9 @@ func _initialize()->void:
         if nodes[i].modulate!=initial[i]:
             _fail("restoring original authored map tint is not exact")
             return
+    if parallax.modulate!=parallax_original:
+        _fail("original parallax brightness did not restore")
+        return
     if knight.modulate!=actor_before or enemy.modulate!=enemy_before:
         _fail("source artists' actor colors changed after cleanup")
         return
