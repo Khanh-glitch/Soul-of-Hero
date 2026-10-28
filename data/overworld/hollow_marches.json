@@ -1,208 +1,610 @@
 {
-  "world_id": "hollow_marches",
-  "world_name": "The Hollow Marches",
-  "schema": "hollow_marches_overworld/v1",
-  "tile_size": 16,
-  "world_bounds": {"x": 0, "y": 0, "w": 384, "h": 256},
-  "camera_default": {"zoom": 2.0},
-  "default_tint": [0.45, 0.42, 0.55, 1.0],
-  "palette": {
-    "void": [18, 14, 28],
-    "rock": [46, 48, 62],
-    "rock_shadow": [30, 32, 44],
-    "rock_hi": [72, 74, 92],
-    "gravel": [62, 60, 74],
-    "grass": [52, 60, 48],
-    "grass_hi": [76, 88, 60],
-    "grass_dead": [78, 72, 58],
-    "mud": [58, 48, 42],
-    "road": [110, 100, 86],
-    "road_hi": [140, 128, 106],
-    "road_dk": [80, 72, 60],
-    "stone_wall": [96, 98, 110],
-    "stone_wall_dk": [60, 62, 76],
-    "stone_wall_hi": [132, 134, 148],
-    "wood": [96, 68, 42],
-    "wood_dk": [60, 38, 24],
-    "roof_red": [120, 38, 38],
-    "metal": [170, 160, 140],
-    "water": [36, 60, 80],
-    "water_hi": [60, 96, 120],
-    "soul_cyan": [120, 220, 210],
-    "fire_orange": [230, 140, 60],
-    "blood_red": [140, 30, 30],
-    "gold": [200, 160, 70],
-    "moss": [90, 110, 60]
+ "schema": "hollow_marches_overworld/v2",
+ "world_id": "hollow_marches",
+ "world_name": "The Hollow Marches",
+ "world_name_vi": "Biên Vực Tàn Vong",
+ "tile_size": 16,
+ "world_bounds": {
+  "x": 0,
+  "y": 0,
+  "w": 384,
+  "h": 256
+ },
+ "layers_path": "res://data/overworld/hollow_marches_layers.json",
+ "props_path": "res://data/overworld/hollow_marches_props.json",
+ "tiles_path": "res://data/overworld/overworld_tiles.json",
+ "tiles_texture": "res://assets/environment/overworld/overworld_tiles.png",
+ "props_texture": "res://assets/environment/overworld/overworld_props.png",
+ "light_texture": "res://assets/environment/overworld/light_radial.png",
+ "camera_default": {
+  "zoom": 2.0
+ },
+ "default_tint": [
+  0.88,
+  0.85,
+  0.93,
+  1.0
+ ],
+ "refuge": {
+  "id": "refuge_start",
+  "label": "Ashen Refuge",
+  "pos": [
+   56,
+   218
+  ]
+ },
+ "start_position": [
+  56,
+  218
+ ],
+ "regions": [
+  {
+   "id": "western_funerary_quarter",
+   "label": "Western Funerary Quarter",
+   "anchor": [
+    88,
+    180
+   ],
+   "landmarks": [
+    "lm_crypt"
+   ]
   },
-  "refuge": {"id": "refuge_start", "label": "Refuge", "pos": [64, 232]},
-  "start_position": [56, 232],
-  "landmarks": [
-    {
-      "id": "lm_crypt",
-      "campaign_level_id": "chapter_1_level_1",
-      "title": "Crypt Entrance",
-      "region": "western_funerary_quarter",
-      "pos": [88, 180],
-      "facing": "down",
-      "short_prereq": [],
-      "shortcut_grants": [],
-      "visual": "crypt_entry"
-    },
-    {
-      "id": "lm_ossuary",
-      "campaign_level_id": "chapter_1_level_2",
-      "title": "Ossuary Fork",
-      "region": "western_funerary_quarter",
-      "pos": [64, 128],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_1"],
-      "shortcut_grants": [],
-      "visual": "ossuary_entry"
-    },
-    {
-      "id": "lm_archive",
-      "campaign_level_id": "chapter_1_level_3",
-      "title": "Crossfire Archive",
-      "region": "central_ruins",
-      "pos": [132, 152],
-      "facing": "left",
-      "short_prereq": ["chapter_1_level_2"],
-      "shortcut_grants": [],
-      "visual": "archive_entry"
-    },
-    {
-      "id": "lm_reliquary",
-      "campaign_level_id": "chapter_1_level_4",
-      "title": "Spiral Reliquary",
-      "region": "eastern_terraces",
-      "pos": [200, 136],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_3"],
-      "shortcut_grants": [],
-      "visual": "shrine_entry"
-    },
-    {
-      "id": "lm_crucible",
-      "campaign_level_id": "chapter_1_level_5",
-      "title": "Blood Crucible",
-      "region": "central_ritual_basin",
-      "pos": [192, 192],
-      "facing": "up",
-      "short_prereq": ["chapter_1_level_3"],
-      "shortcut_grants": ["short_crucible_bridge"],
-      "visual": "crucible_entry"
-    },
-    {
-      "id": "lm_relay",
-      "campaign_level_id": "chapter_1_level_6",
-      "title": "Soul Anchor Relay",
-      "region": "eastern_relay_watershed",
-      "pos": [288, 140],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_4"],
-      "shortcut_grants": ["short_relay_power"],
-      "visual": "relay_entry"
-    },
-    {
-      "id": "lm_beacon",
-      "campaign_level_id": "chapter_1_level_7",
-      "title": "The Failing Beacon",
-      "region": "northern_military_watch",
-      "pos": [208, 80],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_4", "short_relay_power"],
-      "shortcut_grants": ["short_beacon_road"],
-      "visual": "beacon_entry"
-    },
-    {
-      "id": "lm_divided",
-      "campaign_level_id": "chapter_1_level_8",
-      "title": "Divided Reliquary",
-      "region": "northern_religious_precinct",
-      "pos": [272, 72],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_7", "short_beacon_road"],
-      "shortcut_grants": [],
-      "visual": "divided_entry"
-    },
-    {
-      "id": "lm_gate",
-      "campaign_level_id": "chapter_1_level_9",
-      "title": "Crimson Gate",
-      "region": "northern_fortified_pass",
-      "pos": [208, 40],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_7"],
-      "shortcut_grants": ["short_gate_valve"],
-      "visual": "gate_entry"
-    },
-    {
-      "id": "lm_throne",
-      "campaign_level_id": "chapter_1_level_10",
-      "title": "Castellan Throne",
-      "region": "northern_citadel",
-      "pos": [280, 36],
-      "facing": "down",
-      "short_prereq": ["chapter_1_level_9", "short_gate_valve"],
-      "shortcut_grants": [],
-      "visual": "citadel_entry"
-    }
-  ],
-  "camps": [
-    {"id": "camp_refuge",   "pos": [56, 216], "name": "Ashen Refuge",  "initial": true},
-    {"id": "camp_crossroads","pos": [152, 188], "name": "Wayfarer Stones","initial": false, "discover_prereq": []},
-    {"id": "camp_relay_base","pos": [248, 152], "name": "Relay Foot",     "initial": false, "discover_prereq": []},
-    {"id": "camp_ridge",     "pos": [208, 104], "name": "Watch Ridge Camp","initial": false, "discover_prereq": ["short_beacon_road"]}
-  ],
-  "discoveries": [
-    {"id": "d_crypt_offer",  "pos": [76, 196],  "kind": "coin_cache", "reward": {"account": 40}},
-    {"id": "d_ossuary_stash","pos": [48, 144],  "kind": "material_cache", "reward": {"hero_materials": 1}},
-    {"id": "d_archive_lore", "pos": [144, 136], "kind": "lore",        "reward": {}},
-    {"id": "d_shrine_grove", "pos": [176, 120], "kind": "shrine",      "reward": {"restore": 0.5}},
-    {"id": "d_crucible_cove","pos": [168, 212], "kind": "material_cache", "reward": {"monster_fragments": 1}, "prereq": ["short_crucible_bridge"]},
-    {"id": "d_relay_shard",  "pos": [312, 156], "kind": "sigil_cache", "reward": {"sigils": 1}},
-    {"id": "d_quartermaster","pos": [232, 96],  "kind": "coin_cache",  "reward": {"account": 80}, "prereq": ["short_beacon_road"]},
-    {"id": "d_gate_plunder", "pos": [184, 56],  "kind": "material_cache", "reward": {"hero_materials": 2, "monster_fragments": 1}, "prereq": ["short_gate_valve"]}
-  ],
-  "shortcuts": [
-    {
-      "id": "short_crucible_bridge",
-      "kind": "broken_bridge",
-      "pos": [184, 208],
-      "granted_by": "chapter_1_level_5",
-      "repair_label": "The western span has collapsed — requires Crucible ritual to relight its span"
-    },
-    {
-      "id": "short_relay_power",
-      "kind": "powered_conduit",
-      "pos": [256, 128],
-      "granted_by": "chapter_1_level_6",
-      "repair_label": "The conduit lies dark — requires an active Soul Anchor"
-    },
-    {
-      "id": "short_beacon_road",
-      "kind": "rubble_block",
-      "pos": [208, 96],
-      "granted_by": "chapter_1_level_7",
-      "repair_label": "A landslide bars the ridge road — requires the Beacon's watch"
-    },
-    {
-      "id": "short_gate_valve",
-      "kind": "gate_valve",
-      "pos": [232, 52],
-      "granted_by": "chapter_1_level_9",
-      "repair_label": "The inner valve is sealed — requires the Crimson Gate ritual"
-    }
-  ],
-  "survival": {
-    "resource_id": "provisions",
-    "resource_label": "Provisions",
-    "max": 100,
-    "start": 80,
-    "drain_per_second_wild": 0.4,
-    "drain_per_second_safe": 0.0,
-    "drain_per_second_hazard": 1.2,
-    "camp_restore": 60,
-    "discovery_restore": 20
+  {
+   "id": "ossuary_ravines",
+   "label": "Ossuary Ravines",
+   "anchor": [
+    64,
+    128
+   ],
+   "landmarks": [
+    "lm_ossuary"
+   ]
+  },
+  {
+   "id": "central_ruins",
+   "label": "Central Ruins",
+   "anchor": [
+    132,
+    152
+   ],
+   "landmarks": [
+    "lm_archive"
+   ]
+  },
+  {
+   "id": "sacred_terraces",
+   "label": "Sacred Terraces",
+   "anchor": [
+    200,
+    136
+   ],
+   "landmarks": [
+    "lm_reliquary"
+   ]
+  },
+  {
+   "id": "ritual_basin",
+   "label": "Ritual Basin",
+   "anchor": [
+    192,
+    192
+   ],
+   "landmarks": [
+    "lm_crucible"
+   ]
+  },
+  {
+   "id": "relay_watershed",
+   "label": "Relay Watershed",
+   "anchor": [
+    288,
+    140
+   ],
+   "landmarks": [
+    "lm_relay"
+   ]
+  },
+  {
+   "id": "watch_ridge",
+   "label": "Watch Ridge",
+   "anchor": [
+    208,
+    80
+   ],
+   "landmarks": [
+    "lm_beacon"
+   ]
+  },
+  {
+   "id": "northern_precinct",
+   "label": "Northern Precinct",
+   "anchor": [
+    272,
+    72
+   ],
+   "landmarks": [
+    "lm_divided"
+   ]
+  },
+  {
+   "id": "fortified_pass",
+   "label": "Fortified Pass",
+   "anchor": [
+    208,
+    40
+   ],
+   "landmarks": [
+    "lm_gate"
+   ]
+  },
+  {
+   "id": "citadel",
+   "label": "Citadel",
+   "anchor": [
+    280,
+    36
+   ],
+   "landmarks": [
+    "lm_throne"
+   ]
   }
+ ],
+ "landmarks": [
+  {
+   "id": "lm_crypt",
+   "campaign_level_id": "chapter_1_level_1",
+   "title": "Crypt Entrance",
+   "subtitle": "The Sealed Steps",
+   "region": "western_funerary_quarter",
+   "visual": "lm_crypt",
+   "kind": "undead",
+   "pos": [
+    88,
+    180
+   ],
+   "threshold": [
+    88,
+    181
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "lm_ossuary",
+   "campaign_level_id": "chapter_1_level_2",
+   "title": "Ossuary Fork",
+   "subtitle": "The Bone Galleries",
+   "region": "ossuary_ravines",
+   "visual": "lm_ossuary",
+   "kind": "bone",
+   "pos": [
+    64,
+    128
+   ],
+   "threshold": [
+    64,
+    129
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "lm_archive",
+   "campaign_level_id": "chapter_1_level_3",
+   "title": "Crossfire Archive",
+   "subtitle": "Crossfire Archive",
+   "region": "central_ruins",
+   "visual": "lm_archive",
+   "kind": "knowledge",
+   "pos": [
+    132,
+    152
+   ],
+   "threshold": [
+    132,
+    153
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "lm_reliquary",
+   "campaign_level_id": "chapter_1_level_4",
+   "title": "Spiral Reliquary",
+   "subtitle": "The Spiral Reliquary",
+   "region": "sacred_terraces",
+   "visual": "lm_reliquary",
+   "kind": "sacred",
+   "pos": [
+    200,
+    136
+   ],
+   "threshold": [
+    200,
+    137
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    0
+   ]
+  },
+  {
+   "id": "lm_crucible",
+   "campaign_level_id": "chapter_1_level_5",
+   "title": "Blood Crucible",
+   "subtitle": "The Blood Crucible",
+   "region": "ritual_basin",
+   "visual": "lm_crucible",
+   "kind": "ritual",
+   "pos": [
+    192,
+    192
+   ],
+   "threshold": [
+    192,
+    193
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    1
+   ]
+  },
+  {
+   "id": "lm_relay",
+   "campaign_level_id": "chapter_1_level_6",
+   "title": "Soul Anchor Relay",
+   "subtitle": "Soul Anchor Relay",
+   "region": "relay_watershed",
+   "visual": "lm_relay",
+   "kind": "soul",
+   "pos": [
+    288,
+    140
+   ],
+   "threshold": [
+    288,
+    141
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "lm_beacon",
+   "campaign_level_id": "chapter_1_level_7",
+   "title": "The Failing Beacon",
+   "subtitle": "The Failing Beacon",
+   "region": "watch_ridge",
+   "visual": "lm_beacon",
+   "kind": "fire",
+   "pos": [
+    208,
+    80
+   ],
+   "threshold": [
+    208,
+    81
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    -3
+   ]
+  },
+  {
+   "id": "lm_divided",
+   "campaign_level_id": "chapter_1_level_8",
+   "title": "Divided Reliquary",
+   "subtitle": "The Divided Reliquary",
+   "region": "northern_precinct",
+   "visual": "lm_divided",
+   "kind": "schism",
+   "pos": [
+    272,
+    72
+   ],
+   "threshold": [
+    272,
+    73
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "lm_gate",
+   "campaign_level_id": "chapter_1_level_9",
+   "title": "Crimson Gate",
+   "subtitle": "The Crimson Gate",
+   "region": "fortified_pass",
+   "visual": "lm_gate",
+   "kind": "military",
+   "pos": [
+    208,
+    40
+   ],
+   "threshold": [
+    208,
+    41
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    -1
+   ]
+  },
+  {
+   "id": "lm_throne",
+   "campaign_level_id": "chapter_1_level_10",
+   "title": "Castellan Throne",
+   "subtitle": "Castellan's Citadel",
+   "region": "citadel",
+   "visual": "lm_throne",
+   "kind": "throne",
+   "pos": [
+    280,
+    36
+   ],
+   "threshold": [
+    280,
+    37
+   ],
+   "facing": "up",
+   "capture_offset": [
+    0,
+    -3
+   ]
+  }
+ ],
+ "camps": [
+  {
+   "id": "camp_refuge",
+   "name": "Ashen Refuge",
+   "pos": [
+    56,
+    216
+   ],
+   "initial": true
+  },
+  {
+   "id": "camp_crossroads",
+   "name": "Wayfarer Stones",
+   "pos": [
+    152,
+    188
+   ],
+   "initial": false
+  },
+  {
+   "id": "camp_relay_base",
+   "name": "Relay Foot",
+   "pos": [
+    248,
+    158
+   ],
+   "initial": false
+  },
+  {
+   "id": "camp_ridge",
+   "name": "Watch Ridge Camp",
+   "pos": [
+    208,
+    104
+   ],
+   "initial": false
+  }
+ ],
+ "discoveries": [
+  {
+   "id": "d_crypt_offer",
+   "pos": [
+    76,
+    196
+   ],
+   "kind": "coin_cache",
+   "reward": {
+    "account": 40
+   }
+  },
+  {
+   "id": "d_ossuary_stash",
+   "pos": [
+    48,
+    146
+   ],
+   "kind": "material_cache",
+   "reward": {
+    "hero_materials": 1
+   }
+  },
+  {
+   "id": "d_archive_lore",
+   "pos": [
+    146,
+    138
+   ],
+   "kind": "lore",
+   "reward": {}
+  },
+  {
+   "id": "d_shrine_grove",
+   "pos": [
+    176,
+    118
+   ],
+   "kind": "shrine",
+   "reward": {
+    "restore": 0.5
+   }
+  },
+  {
+   "id": "d_crucible_cove",
+   "pos": [
+    200,
+    226
+   ],
+   "kind": "material_cache",
+   "reward": {
+    "monster_fragments": 1
+   }
+  },
+  {
+   "id": "d_relay_shard",
+   "pos": [
+    312,
+    156
+   ],
+   "kind": "sigil_cache",
+   "reward": {
+    "sigils": 1
+   }
+  },
+  {
+   "id": "d_quartermaster",
+   "pos": [
+    232,
+    96
+   ],
+   "kind": "coin_cache",
+   "reward": {
+    "account": 80
+   }
+  },
+  {
+   "id": "d_gate_plunder",
+   "pos": [
+    184,
+    52
+   ],
+   "kind": "material_cache",
+   "reward": {
+    "hero_materials": 2,
+    "monster_fragments": 1
+   }
+  }
+ ],
+ "shortcuts": [
+  {
+   "id": "short_crucible_bridge",
+   "kind": "broken_bridge",
+   "pos": [
+    184,
+    210
+   ],
+   "granted_by": "chapter_1_level_5",
+   "carve": [
+    181,
+    209,
+    187,
+    211
+   ],
+   "label": "The old span is down. Relight the Crucible and its span returns."
+  },
+  {
+   "id": "short_relay_power",
+   "kind": "powered_conduit",
+   "pos": [
+    256,
+    125
+   ],
+   "granted_by": "chapter_1_level_6",
+   "carve": [
+    254,
+    122,
+    258,
+    128
+   ],
+   "label": "The conduit is dark. Wake the Soul Anchor and it will carry you up the ridge."
+  },
+  {
+   "id": "short_beacon_road",
+   "kind": "rubble_block",
+   "pos": [
+    208,
+    96
+   ],
+   "granted_by": "chapter_1_level_7",
+   "carve": [
+    204,
+    93,
+    212,
+    98
+   ],
+   "label": "A fall of stone blocks the ridge stair. Light the Beacon and the stair is cleared."
+  },
+  {
+   "id": "short_gate_valve",
+   "kind": "gate_valve",
+   "pos": [
+    233,
+    50
+   ],
+   "granted_by": "chapter_1_level_9",
+   "carve": [
+    232,
+    48,
+    234,
+    52
+   ],
+   "label": "The valve is sealed. Hold the Crimson Gate and the inner postern opens."
+  }
+ ],
+ "survival": {
+  "resource_id": "provisions",
+  "resource_label": "Provisions",
+  "max": 100,
+  "start": 80,
+  "drain_per_second_wild": 0.22,
+  "drain_per_second_safe": 0.0,
+  "drain_per_second_hazard": 0.75,
+  "camp_restore": 60,
+  "discovery_restore": 20
+ },
+ "hazards": [
+  {
+   "id": "crucible_basin",
+   "rect": [
+    160,
+    184,
+    64,
+    40
+   ],
+   "label": "The basin's heat"
+  },
+  {
+   "id": "fen_marsh",
+   "rect": [
+    232,
+    196,
+    104,
+    48
+   ],
+   "label": "Fen rot"
+  },
+  {
+   "id": "relay_watershed",
+   "rect": [
+    246,
+    122,
+    62,
+    34
+   ],
+   "label": "Cold conduit bleed"
+  }
+ ]
 }

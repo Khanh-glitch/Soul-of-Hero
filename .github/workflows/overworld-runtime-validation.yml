@@ -2,7 +2,7 @@ name: Overworld (Hollow Marches) Runtime Validation
 
 on:
   push:
-    branches: [arena/bc641b4c-soul-of-hero]
+    branches: [arena/54306b59-soul-of-hero]
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -23,14 +23,15 @@ env:
 
 # ---------------------------------------------------------------------------
 # Three independently-reported gates:
-#   1. static-contracts  : data/authored invariants (no engine required beyond
-#                         a single --headless JSON-contract pass).
-#   2. native-runtime    : real engine boot, scene instantiation, movement,
-#                         gates, persistence, shortcut, round-trip — all must
-#                         pass fail-closed.
-#   3. visual-evidence   : real GL render under xvfb, PNG evidence of 7
-#                         required waypoints; blocked (rc=2) when xvfb is
-#                         unavailable so we don't fake success.
+#   1. static-contracts  : data/authored invariants + production parse gate.
+#   2. native-runtime    : real engine boot; every test asserts observable
+#                         state (build stage, collision cells, save bytes) and
+#                         fails closed. No frame-count pumps, no stubs.
+#   3. visual-evidence   : real GL render under Xvfb → PNGs of the authored
+#                         stations, then a strict PNG validator. "Blocked" is
+#                         only ever reported by the capture tool itself when
+#                         there is no display server — the job no longer
+#                         hardcodes rc=2.
 # ---------------------------------------------------------------------------
 
 jobs:
@@ -99,6 +100,26 @@ jobs:
           print("overworld topology OK: %d landmarks, %d camps, %d discoveries, %d shortcuts, registry bijective" % (len(lm), len(camps), len(discs), len(shorts)))
           PY
 
+      - name: Production parse gate (every overworld script, mandatory)
+        run: |
+          # gdparse-free: the engine itself is the parser. Each file is loaded as
+          # a script; a syntax error makes Godot exit non-zero and print the
+          # offending line. This covers every runtime file, not just one scene.
+          status=0
+          : >"$ARTIFACT_DIR/parse-gate.log"
+          for f in game/overworld/*.gd; do
+            mkdir -p artifacts/ud_parse
+            if ! timeout --signal=TERM --kill-after=10s 60s \
+                godot --headless --path . --user-data-dir artifacts/ud_parse \
+                      --check-only --script "res://$f" >>"$ARTIFACT_DIR/parse-gate.log" 2>&1; then
+              echo "::error::parse gate failed for $f"
+              tail -20 "$ARTIFACT_DIR/parse-gate.log"
+              status=1
+            fi
+          done
+          cat "$ARTIFACT_DIR/parse-gate.log"
+          exit $status
+
       - name: Static JSON contracts (GDScript, mandatory)
         run: |
           mkdir -p artifacts/ud_static
@@ -140,6 +161,7 @@ jobs:
             artifacts/overworld-static.log
             artifacts/godot-import.log
             artifacts/overworld-fixture-broken.log
+            artifacts/parse-gate.log
           if-no-files-found: warn
           retention-days: 14
 
@@ -199,15 +221,6 @@ jobs:
                   --script res://tests/overworld_knight_mini_test.gd >"$ARTIFACT_DIR/overworld-knight.log" 2>&1
           rc=$?; echo "knight exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-knight.log"; exit $rc
 
-      - name: Scene instantiate + TileMapLayers + Knight/Camera spawn
-        run: |
-          mkdir -p artifacts/ud_scene
-          timeout --signal=TERM --kill-after=15s 90s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --verbose --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_scene \
-                  --resolution 640x480 --windowed --no-window-border \
-                  --script res://tests/overworld_scene_runtime_test.gd 2>&1 | tee "$ARTIFACT_DIR/overworld-scene.log"
-          rc=${PIPESTATUS[0]}; echo "scene exit_code=$rc"; exit $rc
-
       - name: Entry / AppFlow API surface (static contract)
         run: |
           # Pure source grep: verify AppFlow.gd declares every overworld-facing
@@ -229,59 +242,95 @@ jobs:
           grep -q 'chapter_1_boss_gate' data/content/levels/chapter_1_level_10.tres || { echo "entry FAIL: L10 missing boss_gate prerequisite"; exit 1; }
           echo "OVERWORLD_ENTRY_STATIC PASSED - all methods present, L10 gated"
 
-      - name: Movement + physics
+      - name: World build, layers, props, spawn (state-asserting)
+        run: |
+          mkdir -p artifacts/ud_scene
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_scene \
+                  --resolution 640x480 --windowed --no-window-border \
+                  --script res://tests/overworld_scene_runtime_test.gd >"$ARTIFACT_DIR/overworld-scene.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-scene.log"
+          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-scene.log"; then
+            echo "::error::Scene log contains engine/script errors"; exit 1
+          fi
+          exit $rc
+
+      - name: Movement + terrain collision (state-asserting)
         run: |
           mkdir -p artifacts/ud_move
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_move \
                   --resolution 640x480 --windowed --no-window-border \
                   --script res://tests/overworld_movement_runtime_test.gd >"$ARTIFACT_DIR/overworld-movement.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-movement.log"; exit $rc
 
-      - name: Provisions drain rates (runtime)
+      - name: "Provisions: drain, hazards, camps, fatigue (state-asserting)"
         run: |
           mkdir -p artifacts/ud_prov
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_prov \
                   --resolution 640x480 --windowed --no-window-border \
                   --script res://tests/overworld_provisions_runtime_test.gd >"$ARTIFACT_DIR/overworld-provisions.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-provisions.log"; exit $rc
 
-      - name: Save/reload persistence (bounded single slot, dirty semantics)
+      - name: Save/reload persistence (disk bytes + rebuild)
         run: |
           mkdir -p artifacts/ud_persist
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 240s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_persist \
                   --resolution 640x480 --windowed --no-window-border \
                   --script res://tests/overworld_persistence_runtime_test.gd >"$ARTIFACT_DIR/overworld-persistence.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-persistence.log"; exit $rc
 
-      - name: L01 accepts, L10 locked (gate enforcement)
+      - name: "Gates: L01 open, L10 sealed, clears flip state"
         run: |
           mkdir -p artifacts/ud_gates
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_gates \
                   --resolution 640x480 --windowed --no-window-border \
                   --script res://tests/overworld_gate_runtime_test.gd >"$ARTIFACT_DIR/overworld-gates.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-gates.log"; exit $rc
 
-      - name: Shortcut opens clear collision swath
+      - name: "Shortcuts: carve collision, swap sprite, restore terrain"
         run: |
           mkdir -p artifacts/ud_short
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_short \
                   --resolution 640x480 --windowed --no-window-border \
                   --script res://tests/overworld_shortcut_runtime_test.gd >"$ARTIFACT_DIR/overworld-shortcut.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-shortcut.log"; exit $rc
 
-      - name: Round-trip (gate interaction → pending return → complete_active_run → clear)
+      - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |
           mkdir -p artifacts/ud_trip
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
             godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_trip \
                   --resolution 640x480 --windowed --no-window-border \
-                  --script res://tests/overworld_roundtrip_runtime_test.gd >"$ARTIFACT_DIR/overworld-roundtrip.log" 2>&1
-          rc=$?; cat "$ARTIFACT_DIR/overworld-roundtrip.log"; exit $rc
+                  res://game/app/app_root.tscn -- --overworld-roundtrip-test \
+                  >"$ARTIFACT_DIR/overworld-roundtrip.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-roundtrip.log"
+          # A green exit must not mask errors printed to the log.
+          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-roundtrip.log"; then
+            echo "::error::Roundtrip log contains engine/script errors"
+            exit 1
+          fi
+          exit $rc
+
+      - name: "Acceptance: HOME → Marches → L01 → victory → Marches → save/reload"
+        run: |
+          mkdir -p artifacts/ud_accept
+          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_accept \
+                  --resolution 1280x720 --windowed --no-window-border \
+                  res://game/app/app_root.tscn -- --overworld-acceptance-test \
+                  >"$ARTIFACT_DIR/overworld-acceptance.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-acceptance.log"
+          # A green exit code must not mask errors printed to the log.
+          if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-acceptance.log"; then
+            echo "::error::Acceptance log contains engine/script errors"
+            exit 1
+          fi
+          exit $rc
 
       - name: Upload native runtime logs
         if: always()
@@ -299,6 +348,7 @@ jobs:
             artifacts/overworld-gates.log
             artifacts/overworld-shortcut.log
             artifacts/overworld-roundtrip.log
+            artifacts/overworld-acceptance.log
           if-no-files-found: warn
           retention-days: 14
 
@@ -330,70 +380,57 @@ jobs:
           tail -40 "$ARTIFACT_DIR/godot-import.log"
           exit $rc
 
-      - name: Capture mosaic (Xvfb + real GL → PNGs)
+      - name: Capture stations (Xvfb + real GL -> PNGs)
         id: capture
         run: |
-          mkdir -p artifacts/ud_capture artifacts
-          # Visual capture is BLOCKED: booting a GL windowed scene (or
-          # --script SceneTree that drives heavy physics/tiles) hangs or
-          # returns nonzero on hosted runners. Native runtime tests above
-          # already prove GL-backed boot. Mark BLOCKED unconditionally to
-          # keep the gate green without faking PASS.
-          echo "Visual capture BLOCKED on hosted CI; native runtime --script tests cover GL boot." >"$ARTIFACT_DIR/overworld-capture.log"
-          rc=2
+          mkdir -p artifacts/ud_capture "$ARTIFACT_DIR"
+          # The capture tool is the only thing allowed to declare "blocked": it
+          # exits 2 when there is no display server, 1 on a real render failure.
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s \
+            xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
+            godot --display-driver x11 --rendering-driver opengl3 --path . \
+                  --user-data-dir artifacts/ud_capture --resolution 1280x720 \
+                  --windowed --no-window-border \
+                  res://tools/captures/chapter1_overworld_native_capture.tscn -- \
+                  --out-dir=res://.artifacts/overworld/native \
+            >"$ARTIFACT_DIR/overworld-capture.log" 2>&1
+          rc=$?
+          set -e
           echo "capture exit_code=$rc"
-          echo "--- capture log (first 200 lines) ---"
-          head -200 "$ARTIFACT_DIR/overworld-capture.log"
-          echo "--- workspace PNGs ---"
-          ls -la artifacts/overworld_*.png 2>&1 || true
-          # Move any PNGs into artifact dir so the next step sees them uniformly.
-          mkdir -p "$ARTIFACT_DIR"
-          cp -v artifacts/overworld_*.png "$ARTIFACT_DIR/" 2>/dev/null || true
+          cat "$ARTIFACT_DIR/overworld-capture.log"
+          cp -v .artifacts/overworld/native/*.png "$ARTIFACT_DIR"/ 2>/dev/null || true
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
-          # rc=0 => pass; rc=2 => blocked (don't fail the workflow but mark clearly);
-          # any other nonzero => capture script reported an error -> fail-closed.
           if [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; then
             exit 0
           fi
-          exit $rc
+          exit "$rc"
 
       - name: Verify PNG artifacts (fail-closed)
-        if: steps.capture.outputs.rc != '2'
+        if: steps.capture.outputs.rc == '0'
         run: |
           shopt -s nullglob
           echo "PNGs in artifact dir:"
           ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
           required=(
-            "overworld_overview.png"
+            "overworld_world_overview.png"
             "overworld_refuge_start.png"
-            "overworld_gate_l01_crypt.png"
-            "overworld_gate_l05_crucible.png"
-            "overworld_gate_l07_beacon.png"
-            "overworld_gate_l09_gate.png"
-            "overworld_gate_l10_citadel.png"
+            "overworld_crypt_approach.png"
+            "overworld_ossuary_approach.png"
+            "overworld_road_terrain.png"
+            "overworld_camp_crossroads.png"
+            "overworld_shortcut_before.png"
+            "overworld_shortcut_after.png"
+            "overworld_crucible.png"
+            "overworld_beacon.png"
+            "overworld_gate.png"
+            "overworld_throne.png"
           )
           missing=()
           for name in "${required[@]}"; do
             r="$ARTIFACT_DIR/$name"
             if [ ! -s "$r" ]; then missing+=("$name (missing/empty)"); continue; fi
-            # Validate PNG signature (8-byte magic) and IHDR dimensions.
-            python3 - "$r" <<'PY'
-            import struct, sys
-            p = sys.argv[1]
-            with open(p, "rb") as f:
-                data = f.read()
-            if data[:8] != b"\x89PNG\r\n\x1a\n":
-                print("INVALID PNG signature:", p); sys.exit(2)
-            if len(data) < 24:
-                print("PNG too small:", p); sys.exit(2)
-            w = struct.unpack(">I", data[16:20])[0]
-            h = struct.unpack(">I", data[20:24])[0]
-            if w < 100 or h < 100:
-                print("PNG too small %dx%d:" % (w, h), p); sys.exit(2)
-            print("OK %s (%dx%d, %d bytes)" % (p, w, h, len(data)))
-            sys.exit(0)
-            PY
-            if [ $? -ne 0 ]; then
+            if ! python3 tools/ci/validate_png.py "$r"; then
               echo "::error::PNG failed validation: $name"
               missing+=("$name (invalid)")
             fi
@@ -405,11 +442,10 @@ jobs:
           fi
           echo "All required PNGs present and valid"
 
-      - name: Report blocked status (xvfb unavailable)
+      - name: Report blocked status (no display server)
         if: steps.capture.outputs.rc == '2'
         run: |
-          echo "::warning::Visual evidence BLOCKED: xvfb-run unavailable in this environment. No PNGs produced. This is an environment limitation, not a production failure."
-          echo "blocked=true"
+          echo "::warning::Visual evidence BLOCKED: the capture tool found no display server. No PNGs produced. This is an environment limitation reported by the tool itself, not a production failure and not a pass."
 
       - name: Upload visual evidence (PNGs + logs)
         if: always()
@@ -422,3 +458,4 @@ jobs:
             artifacts/overworld_*.png
           if-no-files-found: warn
           retention-days: 14
+

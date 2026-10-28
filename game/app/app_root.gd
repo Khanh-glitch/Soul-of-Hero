@@ -13,7 +13,8 @@ const FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT := "--fresh-player-loop-accepta
 const HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT := "--hero-skill-live-runtime-test"
 const ARCHER_HERO_COMBAT_TEST_ARGUMENT := "--archer-hero-combat-test"
 const GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT := "--gameplay-click-auto-pickup-test"
-const OVERWORLD_ENTRY_TEST_ARGUMENT := "--overworld-entry-test"
+const OVERWORLD_ACCEPTANCE_TEST_ARGUMENT := "--overworld-acceptance-test"
+const OVERWORLD_ROUNDTRIP_TEST_ARGUMENT := "--overworld-roundtrip-test"
 const STARTUP_PROFILE_CHOICE_TEST_ARGUMENT := "--startup-profile-choice-test"
 const DIRECT_GAME_ARGUMENTS := [
 	"--smoke-test",
@@ -88,10 +89,15 @@ func _ready() -> void:
 		add_child(campaign_entry_test)
 		campaign_entry_test.start(self)
 		return
-	if OS.get_cmdline_user_args().has(OVERWORLD_ENTRY_TEST_ARGUMENT):
-		var overworld_entry_test: Node = (load("res://tests/overworld_entry_test.gd") as GDScript).new()
-		add_child(overworld_entry_test)
-		overworld_entry_test.start(self)
+	if OS.get_cmdline_user_args().has(OVERWORLD_ROUNDTRIP_TEST_ARGUMENT):
+		var roundtrip_test: Node = (load("res://tests/overworld_roundtrip_runtime_test.gd") as GDScript).new()
+		add_child(roundtrip_test)
+		roundtrip_test.start(self)
+		return
+	if OS.get_cmdline_user_args().has(OVERWORLD_ACCEPTANCE_TEST_ARGUMENT):
+		var overworld_test: Node = (load("res://tests/overworld_acceptance_test.gd") as GDScript).new()
+		add_child(overworld_test)
+		overworld_test.start(self)
 		return
 	if AppFlow.has_active_run():
 		AppFlow.retry_active_run()

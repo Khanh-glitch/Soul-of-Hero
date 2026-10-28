@@ -1,68 +1,169 @@
 # Hollow Marches — Validation
 
-## Offline validator (runs anywhere with Python 3, no Godot required)
+Three kinds of evidence, kept separate on purpose:
+
+| Kind | What it proves | Can it be faked by a green exit code? |
+| --- | --- | --- |
+| **Static contract** | the authored data is internally consistent and the production scripts parse | No — every check is an assertion about file content |
+| **Native behaviour** | the real engine builds the world, moves the Knight, saves and reloads | No — each test asserts observable state and exits non-zero on failure |
+| **Visual evidence** | pixels rendered from the real scene | No — a PNG is validated for size and non-uniformity, and the tool reports `BLOCKED` (exit 2) only when there is no display server |
+
+## 1. Static contracts
+
+### Geography gate (part of the bake)
+
+```
+python3 tools/overworld/author.py
+```
+
+`author.py` floods from the refuge `(56, 216)` across the **real** baked grids,
+twice: once with all shortcuts closed, once with all four open. Any unreachable
+threshold, camp or discovery aborts the bake with `refusing to bake` and writes
+nothing. It also asserts that every shortcut's carve rectangle is fully solid
+while closed — if it is not, the "opened shortcut" would be a sprite swap over a
+wall that was never there.
+
+The bake is deterministic (`stable_seed()` uses `crc32`, not Python's salted
+`hash()`), so two runs produce byte-identical JSON.
+
+Current result (engine 4.7-stable, this branch):
+
+```
+ground: ;=19194 ,=18629 g=18107 d=11005 b=9457 r=8000 f=6270 m=2592 -=1529 ~=1260 a=1030 v=636 y=595
+solid cells 23338, detail cells 6328, props 4451
+baked OK
+```
+
+### Data consistency
+
 ```
 python3 tools/validate_overworld_topology.py
+python3 tools/ci/validate_png.py <file.png>      # used by the visual job
 ```
-Checks:
-- Exactly 10 landmarks, each with a unique world id and 1:1 mapping in
-  `data/overworld/landmark_registry.json`.
-- ≥3 camps, ≥3 discoveries, ≥3 shortcuts.
-- Every landmark reachable from the refuge given the canonical shortcut
-  unlock sequence (L5 → bridge, L6 → conduit, L7 → beacon road, L9 → valve).
-- L1 reachable with zero shortcuts unlocked; L10 only reachable when every
-  shortcut and prior level is open.
 
-## Runtime tests (require Godot 4.7 headless)
-```
-# Unit / structural tests (standalone GDScript):
-godot --headless --path . --script res://tests/overworld_integration_test.gd
-godot --headless --path . --script res://tests/overworld_persistence_test.gd
-godot --headless --path . --script res://tests/overworld_transition_test.gd
-godot --headless --path . --script res://tests/overworld_provisions_test.gd
+`validate_overworld_topology.py` reads the *baked* layers and the emitted world
+document. It checks the envelope matches the grid, every campaign level maps to
+a landmark, the registry is bijective, every threshold stands on walkable
+ground, every carve box is solid, camps/discoveries sit on real ground, and the
+survival rates are ordered. It deliberately does **not** re-derive the map from
+a second private model.
 
-# End-to-end AppRoot entry test:
-godot --headless --path . -- --overworld-entry-test
 ```
-These exercise:
-- Scene loads, all 10 gates spawn with correct IDs.
-- ≥3 camps, ≥3 discoveries, populated TileMapLayers.
-- L1 enterable, L10 locked at start.
-- Provisions balance (caps, floors, burn times, safe/hazard/wild ordering).
-- Persistence SaveService transaction surface.
-- AppFlow routing surface (open_overworld / pending return / configure).
+OVERWORLD TOPOLOGY VALIDATION PASSED
+  10 landmarks, 4 camps, 8 discoveries, 4 shortcuts
+  grid 384x256, solid cells 23338
+```
 
-## Capture (requires a rendering driver; headless logs positions)
-```
-godot --headless --path . --script res://tools/captures/chapter1_overworld_capture.gd
-```
-Writes `.artifacts/overworld_<name>.png` for overview + each of the 10
-landmarks when a rendering driver is available; on a headless build it logs
-the camera positions instead (matching existing project convention).
+### Parse gate
 
-## Manual visual QA checklist
-1. Start game → Home → Campaign tab → "VÀO VÙNG BIÊN / THE HOLLOW MARCHES"
-   button → enter.
-2. Player spawns at Ashen Refuge; camera clamps to world bounds; HUD shows
-   camp = camp_refuge, Provisions 80/100.
-3. Walk the principal road north: visible stone path, no invisible walls.
-   Western detour leads to Crypt (L1, ENTER) and Ossuary (L2); east leads to
-   Archive/Reliquary/Crossroads camp.
-4. Broken bridge west of Crucible (L5) is impassable and looks broken; upon
-   defeating L5 the bridge visually fills in and becomes walkable.
-5. Walking east from Crossroads reaches Relay (L6) and the powered conduit
-   to the ridge (blocked until L6 clear).
-6. Beacon ascent blocked by rubble until L7 clear; Ridge camp accessible
-   after that.
-7. Gate (L9) initially blocks access to the Citadel (L10).
-8. Resting at a camp refills provisions, updates HUD camp ID.
-9. Discoveries sparkle; interacting with one grants the advertised reward
-    and provisions; second interaction does nothing.
-10. Provisions decrease slowly while walking; standing at a camp doesn't
-    drain. Zero provisions doesn't softlock the player.
-11. Pressing Escape returns to Home. Entering a gate and aborting/clearing
-    offers "VỀ VÙNG ĐẤT HOANG" (not Home) on the completion screen; returning
-    lands you at the gate threshold on victory or at the last camp on
-    death/abandon.
-12. No visible unpainted void cells within the authored envelope; camera
-    never pans outside the world bounds.
+```
+godot --headless --path . --script res://tests/overworld_static_contracts_test.gd
+godot --headless --path . --script res://tests/overworld_regression_guard_test.gd
+```
+
+`overworld_regression_guard_test.gd` preloads the production scene and `load()`s
+all eight overworld scripts (a syntax error kills the run before the first
+assertion), then checks the specific mistakes that previously reached `main`:
+`push_print(`, `.call_deferred(func`, `PackedVector2Array(0, 0)`, a Pythonic
+list comprehension, and `add_physics_layer(<int>)`. It also asserts every
+AppFlow hand-off method still exists.
+
+The workflow additionally runs `godot --check-only --script` over every file in
+`game/overworld/`, and runs the intentionally broken fixture
+(`tests/fixtures/intentionally_broken_parse_error.gd`) expecting a non-zero exit
+or a parse error in the log — if that fixture ever *passes*, the guard is dead
+and the job fails.
+
+## 2. Native behaviour tests
+
+Every one of these boots the production scene (or the production `app_root.tscn`
+for routing) and waits on the observable build contract, never on a frame count.
+`tests/overworld_runtime_case.gd` is the single shared harness.
+
+| Test | Asserts |
+| --- | --- |
+| `tests/overworld_scene_runtime_test.gd` | 384×256 envelope; ground/detail/solid are real `TileMapLayer`s with the expected cell counts; the TileSet declares a physics layer; `is_solid_cell()` agrees; >1500 prop sprites in a y-sorted parent; the Knight spawns in group `player` on walkable ground with a camera bounded to the world; 10 gates / 4 camps / 8 discoveries; HUD mounted; **ten named regions in the world document, every point of the map resolves to one, and two distant points resolve differently** |
+| `tests/overworld_movement_runtime_test.gd` | walking on clear ground moves ≥24 px under the real `move_right` action; a cliff face stops the same input; the camera follows the body |
+| `tests/overworld_provisions_runtime_test.gd` | 10 s of wild drain removes exactly the authored amount; a hazard costs more; safe ground costs nothing; a camp restores; an empty pack slows but never stops the march; provisions clamp at 0 |
+| `tests/overworld_gate_runtime_test.gd` | all ten thresholds exist on walkable ground; L01 is `ENTER` and L10 is `LOCKED` on a fresh profile; a sealed gate starts no run; writing a clear flips L01 to `CLEARED` and L02 to `ENTER`; campaign authority agrees |
+| `tests/overworld_shortcut_runtime_test.gd` | each shortcut's authored box is blocked closed, unblocked open, remembered as open, and its sprite is the crossing frame; closing restores the original terrain token; re-opening is a no-op |
+| `tests/overworld_persistence_runtime_test.gd` | the schema-2 snapshot reaches disk as JSON under `overworld.hollow_marches`; a torn-down and rebuilt world restores provisions, camp, discovery, shortcut *and* the carved collision; the Knight resumes within 48 px; a future-schema block boots with defaults instead of crashing |
+| `tests/overworld_roundtrip_runtime_test.gd` | Home → Marches through `AppFlow`; lighting a camp sets the anchor; a gate launches the **real** `chapter_1_level_1` (asserting `DungeonLevel` geometry cells and the production Knight); retreating returns to the Marches, not Home; no clear is awarded; the Knight lands at the last camp; a second descent still works |
+| `tests/overworld_acceptance_test.gd` | the whole feature: Home → Marches → ten thresholds in map space → walk → terrain collision → shortcut open (collision + sprite) → camp → discovery (paid exactly once) → L01 enterable / L10 sealed → descend the real L01 → complete the real run → the real completion screen → back to the Marches → progress retained → save/reload → fatigue |
+
+Commands. Locally these run headless (`--headless`), which is enough because
+none of them reads a pixel; the CI workflow runs the same files under
+`xvfb-run` with `--display-driver x11 --rendering-driver opengl3`, which also
+exercises the real render path.
+
+```
+godot --path . --script res://tests/overworld_scene_runtime_test.gd
+godot --path . --script res://tests/overworld_movement_runtime_test.gd
+godot --path . --script res://tests/overworld_provisions_runtime_test.gd
+godot --path . --script res://tests/overworld_gate_runtime_test.gd
+godot --path . --script res://tests/overworld_shortcut_runtime_test.gd
+godot --path . --script res://tests/overworld_persistence_runtime_test.gd
+godot --path . --script res://tests/overworld_roundtrip_runtime_test.gd
+godot --path . res://game/app/app_root.tscn -- --overworld-acceptance-test
+```
+
+## 3. Visual evidence
+
+```
+xvfb-run -s "-screen 0 1280x720x24" godot --path . \
+  res://tools/captures/chapter1_overworld_native_capture.tscn -- \
+  --out-dir=res://.artifacts/overworld/native
+```
+
+Photographs `world_overview` plus twelve stations derived from the authored
+world document (so the camera follows the geography if it is re-authored):
+`refuge_start`, `crypt_approach`, `ossuary_approach`, `road_terrain`,
+`camp_crossroads`, `shortcut_before`, `shortcut_after`, `crucible`, `beacon`,
+`gate`, `throne`, `region_north`. A station is a landmark id from
+`hollow_marches.json` plus that landmark's own `capture_offset`, which
+`author.py` derives from the height of the sprite standing there — nothing is
+hand-placed in the capture script. Each frame is rejected if it is blank
+(sampled pixels identical). Exit codes: `0` wrote every station, `2` no display
+server (reported as `BLOCKED` by the tool itself), anything else is a failure.
+
+**Status in this sandbox: BLOCKED.** The capture scene exits 2 with
+`OVERWORLD CAPTURE BLOCKED - no display server`. There is no `Xvfb`, no
+`libGL` (`ldconfig -p | grep -c libGL` is 0) and no `/dev/dri` in this
+container, so a native framebuffer cannot be created here — the engine is a
+headless-capable build and `SaveService`/`DungeonLevel` tests all pass, but
+`DisplayServer` refuses to open a window. This is an environment limit, not a
+product finding; the CI job installs `xvfb` and takes the real frames.
+
+### Offline (supporting) evidence — not native screenshots
+
+```
+python3 tools/overworld/evidence.py
+```
+
+`evidence.py` composites the **shipped atlas** with Pillow using the same
+per-cell variant hash as `OverworldTiles.variant_index`, at the camera's real
+2x zoom in a 640×360 frame, and writes the ten PNGs in
+`docs/overworld/evidence/` (`overworld_world_overview.png` plus eight
+stations, `overworld_shortcut_before.png`). It proves the art and the geography
+are what was authored; it does **not** prove that Godot drew them.
+
+The workflow then validates each required PNG (signature, ≥320×180, ≥6 KB so a
+flat-colour frame cannot pass) via `tools/ci/validate_png.py`.
+
+## Manual playtest checklist
+
+1. Home → Campaign → enter the Marches. The Ashen Refuge is lit, provisions
+   read 80/100, the region label follows you.
+2. Walk the road north. Stone, grass, mud and marsh bands change underfoot; no
+   invisible walls; cliffs and deep water stop you.
+3. Approach L01: the threshold reads `ENTER`, clicking descends into
+   `chapter_1_level_1`.
+4. Finish or retreat. Victory returns you to the threshold; retreat puts you at
+   the last lit camp, never back in Home.
+5. Clear L05 and watch the crucible bridge: the sprite changes *and* the water
+   collision under it is gone — walk across it.
+6. Rest at a camp: provisions jump, the camp lights, the HUD counts move.
+7. Search a discovery: paid once; clicking again does nothing.
+8. Quit and relaunch: position, camps, discoveries, shortcuts and provisions
+   are all where you left them.
+9. Walk until provisions hit 0: the Knight slows to ~66 % and keeps walking.

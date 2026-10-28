@@ -4,7 +4,7 @@ extends SceneTree
 var failures: Array[String] = []
 var checks := 0
 
-const KNIGHT := preload("res://game/characters/knight/knight.tscn")
+const KNIGHT_PATH := "res://game/characters/knight/knight.tscn"
 
 
 func _initialize() -> void:
@@ -12,8 +12,13 @@ func _initialize() -> void:
 
 
 func _run() -> void:
-	_expect(KNIGHT != null, "knight PackedScene loads")
-	var k := KNIGHT.instantiate()
+	# Runtime load: see overworld_runtime_case.gd for why preload is unsafe here.
+	var knight_scene := load(KNIGHT_PATH) as PackedScene
+	_expect(knight_scene != null, "knight PackedScene loads")
+	if knight_scene == null:
+		_finish()
+		return
+	var k := knight_scene.instantiate()
 	_expect(k != null, "knight instantiates")
 	if k != null:
 		var host := Node2D.new()

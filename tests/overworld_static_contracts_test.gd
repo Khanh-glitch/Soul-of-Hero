@@ -70,6 +70,67 @@ func _run() -> void:
 			_expect(float(max_p) / wild >= 120.0, "wild drain lasts ≥ 2 min")
 		_expect(is_equal_approx(safe, 0.0), "safe drain is 0")
 
+	# Shortcut carve boxes: authored, four numbers, and solid in the baked layers.
+	var layers_file := FileAccess.open("res://data/overworld/hollow_marches_layers.json", FileAccess.READ)
+	_expect(layers_file != null, "hollow_marches_layers.json accessible")
+	var solid_grid: PackedStringArray = PackedStringArray()
+	var grid_width := 0
+	var grid_height := 0
+	if layers_file != null:
+		var layer_doc: Variant = JSON.parse_string(layers_file.get_as_text())
+		layers_file.close()
+		_expect(layer_doc is Dictionary, "layer document parses")
+		if layer_doc is Dictionary:
+			grid_width = int((layer_doc as Dictionary).get("width", 0))
+			grid_height = int((layer_doc as Dictionary).get("height", 0))
+			var layers: Dictionary = (layer_doc as Dictionary).get("layers", {})
+			var solid_layer: Dictionary = layers.get("solid", {})
+			var rle: Array = solid_layer.get("rle", [])
+			solid_grid = _decode_rle(rle)
+			_expect_equal(solid_grid.size(), grid_width * grid_height,
+				"solid layer decodes to W*H cells (%dx%d)" % [grid_width, grid_height])
+	var blocked := ["#", "W", "T", "!"]
+	for raw_shortcut: Variant in shortcuts:
+		if not raw_shortcut is Dictionary:
+			continue
+		var entry: Dictionary = raw_shortcut
+		var sid := String(entry.get("id", "?"))
+		var carve: Array = entry.get("carve", []) as Array
+		_expect(carve.size() == 4, "%s declares a 4-number carve box" % sid)
+		if carve.size() != 4 or solid_grid.is_empty():
+			continue
+		var all_solid := true
+		for y in range(int(carve[1]), int(carve[3]) + 1):
+			for x in range(int(carve[0]), int(carve[2]) + 1):
+				var index := y * grid_width + x
+				if index < 0 or index >= solid_grid.size():
+					all_solid = false
+					continue
+				var token := String(solid_grid[index])
+				if not blocked.has(token.substr(0, 1) if not token.is_empty() else "."):
+					all_solid = false
+		_expect(all_solid, "%s carve box is solid while closed (baked)" % sid)
+
+	# Every landmark threshold must be walkable in the baked layers.
+	if not solid_grid.is_empty():
+		var unwalkable := 0
+		for raw_landmark: Variant in landmarks:
+			if not raw_landmark is Dictionary:
+				continue
+			var lm: Dictionary = raw_landmark
+			var threshold: Array = lm.get("threshold", lm.get("pos", []))
+			if threshold.size() < 2:
+				unwalkable += 1
+				continue
+			var index2 := int(threshold[1]) * grid_width + int(threshold[0])
+			if index2 < 0 or index2 >= solid_grid.size():
+				unwalkable += 1
+				continue
+			var token2 := String(solid_grid[index2])
+			if blocked.has(token2.substr(0, 1) if not token2.is_empty() else "."):
+				unwalkable += 1
+		_expect_equal(unwalkable, 0, "all ten thresholds stand on walkable ground")
+
 	# Registry bijectivity.
 	var by_world: Dictionary = reg.get("camp_levels_by_world_id", {}) as Dictionary
 	_expect(by_world.size() == 10, "registry camp_levels_by_world_id has 10 entries")
@@ -86,8 +147,24 @@ func _run() -> void:
 	quit(0)
 
 
+func _expect_equal(actual: Variant, expected: Variant, msg: String) -> void:
+	_expect(actual == expected, "%s (expected %s, got %s)" % [msg, expected, actual])
+
+
 func _expect(cond: bool, msg: String) -> void:
 	checks += 1
 	if not cond:
 		failures.append(msg)
 		push_error("OW_STATIC_FAIL: " + msg)
+
+
+func _decode_rle(rle: Array) -> PackedStringArray:
+	var out := PackedStringArray()
+	for entry: Variant in rle:
+		if not entry is Array or (entry as Array).size() < 2:
+			continue
+		var token := String((entry as Array)[0])
+		var count := int((entry as Array)[1])
+		for _i in range(maxi(0, count)):
+			out.append(token)
+	return out

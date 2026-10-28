@@ -1,100 +1,168 @@
 # Overworld implementation notes
 
-## Scene entry point
-- Scene: `res://game/overworld/chapter1_overworld.tscn`
-- Route constant added to `AppFlow`: `OVERWORLD_SCENE`; entered via
-  `AppFlow.open_overworld(payload)` which clears any stale dungeon run and shows
-  the scene through `AppRoot.show_route`.
-- A production-facing entry button ("BƯỚC VÀO VÙNG BIÊN / THE HOLLOW MARCHES") is
-  added to the Home campaign tab.
+> Status line, so this file cannot drift into aspiration: every statement below
+> describes code that exists **in this branch**. Runtime claims are marked
+> `[verified]` (executed) or `[unverified]` (written and parsed, not yet run);
+> see `VALIDATION.md` for what was actually executed and where.
 
-## File layout
+## Entry point
+
+- Scene: `res://game/overworld/chapter1_overworld.tscn` — a `Node2D` with
+  `Entities` (y-sorted), `Places` (y-sorted), a dark `Backdrop` CanvasLayer and
+  a `CanvasModulate`.
+- `AppFlow.OVERWORLD_SCENE` points at it. Entry is `AppFlow.open_overworld(payload)`,
+  which clears stale run state and routes through `AppRoot.show_route`.
+- `AppFlow.set_pending_overworld_return(payload)` is called the moment a
+  threshold is entered, so the normal completion/abort screens can route back
+  to the Marches instead of dumping the player in Home.
+- Home entry: `%EnterOverworldButton` in the campaign tab.
+
+## Files
+
 ```
 game/overworld/
-  chapter1_overworld.gd / .tscn     -- main controller, scene
-  chapter1_environment_art.gd       -- (intentionally absent; not a dungeon level)
-  overworld_painter.gd              -- procedural terrain/road/pad painter
-  overworld_state.gd                -- persistent state (position, camp, provisions,
-                                      discoveries, shortcuts), persists through SaveService
-  overworld_camera.gd               -- camera tuning (zoom 2x, smoothing, limits)
-  overworld_gate.gd / .tscn         -- dungeon entrance interactable
-  overworld_camp.gd / .tscn         -- rest-site interactable
-  overworld_discovery.gd / .tscn    -- searchable discovery interactable
+  chapter1_overworld.gd / .tscn   controller: build order, player, thresholds,
+                                  camps, discoveries, survival tick, hand-off
+  overworld_world.gd              decodes the baked RLE layers, builds the three
+                                  TileMapLayers, paints props, owns collision and
+                                  the shortcut carve
+  overworld_state.gd              persistence (provisions, camps, discoveries,
+                                  shortcuts, position) through SaveService
+  overworld_tiles.gd              TileSet builder + token decoder + stable variant
+                                  index (shared with tools/overworld/preview.py)
+  overworld_gate.gd               dungeon threshold (Area2D, player_interactable)
+  overworld_camp.gd               rest site (Area2D, player_interactable)
+  overworld_discovery.gd          find (Area2D, player_interactable)
+  overworld_hud.gd                CanvasLayer 20: region, provisions bar, counts,
+                                  prompt, hint
+
+tools/overworld/
+  art.py          palette + primitives → overworld_tiles.png / .json, light_radial
+  art_props.py    47 props → overworld_props.png / .json
+  author.py       the single source of geography: fields, landforms, roads,
+                  rivers, camps, discoveries, shortcuts, landmarks; owns the
+                  reachability gate and writes the baked layers
+  preview.py      offline Pillow compositor (same atlas, same variant hash)
 
 data/overworld/
-  hollow_marches.json               -- world data: bounds, palette, landmarks, camps,
-                                      discoveries, shortcuts, survival config
-  landmark_registry.json            -- bijective mapping campaign_level_id <-> world_id
+  hollow_marches.json          world document (bounds, landmarks, camps,
+                               discoveries, shortcuts incl. carve boxes, survival,
+                               hazards, regions)
+  hollow_marches_layers.json   baked RLE: ground / detail / solid
+  hollow_marches_props.json    baked prop placements
+                               (no preview PNG is committed: render any crop with
+                                `python3 tools/overworld/preview.py --at x,y,w,h`)
+  overworld_tiles.json         frame index + symbol→frame codes
+  overworld_props.json         prop frame atlas
+  landmark_registry.json       campaign_level_id ↔ world_id
 
-assets/environment/overworld/        -- (terrain textures will live here for art pass)
-tools/validate_overworld_topology.py
-tests/overworld/
-docs/overworld/
+assets/environment/overworld/
+  overworld_tiles.png          212 frames, 512x112, 16 px grid
+  overworld_props.png          47 frames, 512x370
+
+tools/overworld/evidence.py     renders the capture station list offline from the
+                                shipped atlas → docs/overworld/evidence/*.png
+                                (supporting evidence, never a native screenshot)
 ```
 
+There is **no** `overworld_painter.gd`, `overworld_camera.gd`, or per-place
+`.tscn` any more. The greybox ColorRect painter and the runtime camera node were
+deleted: terrain is a real `TileMapLayer` stack and the camera is the Knight's
+own `Camera2D` with limits derived from the world size.
+
+## Build order (observable, not timed)
+
+`chapter1_overworld.gd` builds in one deferred call and advances
+`BuildStage`: `IDLE → LOADING_DATA → PAINTING_TERRAIN → SPAWNING_PLAYER →
+SPAWNING_PLACES → RESTORING_PROGRESS → READY` (or `FAILED` with `build_error`).
+`is_world_ready()` and the `world_ready` signal are the contract; **no test
+waits on a frame count.**
+
+Terrain painting is ~98k tile cells across three layers plus ~4.4k prop sprites,
+which is why the build is deferred rather than done inside `_ready()`: touching
+autoloads and the RenderingServer mid-tree is a race.
+
 ## Terrain pipeline
-Terrain is authored in grid space (16 px cells, 384x256 world envelope) by
-`OverworldPainter` from `hollow_marches.json`. At load time the painter generates
-a small TileSet texture from the palette (one 16x16 tile per distinct terrain
-code, with a subtle etched border to avoid the "giant flat" look), fills the
-three TileMapLayers (Ground, Decor, Collision) with the authored terrain, and
-applies collision polygons to every tile painted into the Collision layer.
-Player collision mask (5 = World bit 1 + Enemy bit 3) collides with the
-Collision layer (layer 1 = World) without any additional static bodies.
 
-Tile codes:
-- `g`/`G`/`d` grass (walkable)
-- `r`/`R` dirt / road stone (walkable)
-- `s` stone/courtyard (walkable)
-- `w` water (blocks; bridge `b` walks over it)
-- `m` mud (walkable, potential hazard)
-- `b` bridge (walkable over water)
-- `c` camp pad, `L` landmark pad (walkable)
-- `#` cliff / wall / rubble / valve (blocks; unlocked by shortcuts)
-- `x` broken bridge (blocks; unlocked by crucible completion)
-- `f`/`t` forest / thicket (blocks; pure decor).
+1. `art.py` emits one packed atlas for the whole overworld: a 16 px grid, with
+   every ground/detail/solid family as a row of frames and a 16-way neighbour
+   mask for anything that needs edging (cliffs, water banks, road edges,
+   canopies). The mask is *interior* bits, so art that only draws on an exposed
+   side must invert it (`opened_mask()`) — otherwise every tile paints its own
+   outline and a road or a copse becomes a grid of 16 px boxes.
+2. `author.py` paints a 384×256 grid in three ASCII layers (`ground`, `detail`,
+   `solid`), then runs a flood fill from the refuge with shortcuts both closed
+   and open. If any threshold, camp or discovery is unreachable, **the bake
+   refuses to write**.
+3. `bake()` RLEs the three layers to `hollow_marches_layers.json`.
+4. `OverworldWorld` decodes them; the solid layer gets a TileSet physics layer,
+   so cliffs, walls, canopies and deep water collide for free.
+5. Props are `Sprite2D`s with `AtlasTexture` regions, parented into the y-sorted
+   `Entities` node so the Knight can walk behind a tower and in front of a tree.
 
-## Entry / return loop
-1. Player presses [E] on a gate (OverworldGate).
-2. Controller verifies `AppFlow.is_campaign_level_unlocked(level_id)` and that any
-   required overworld shortcut is open.
-3. Controller calls `AppFlow.set_pending_overworld_return({return_pos, last_camp,
-   world_id})` so the completion/abort screen knows to offer "Return to Marches"
-   instead of "Return Home", then invokes `AppFlow.start_campaign_level(level_id)`
-   (the canonical authority). The dungeon loads through the existing `main.tscn`.
-4. While the run is active, AppFlow's `abort_to_home`, `return_home_after_completion`,
-   and the completion choice screen honour the pending-return flag: the
-   "Home" button is relabelled "VỀ VÙNG ĐẤT HOANG" and routes back through
-   `AppFlow.show_route(OVERWORLD_SCENE, {from_return: true})` rather than to Home.
-5. The `run_completion_ready` signal listener in the overworld grants any
-   shortcut tied to the completed level (e.g. L5 opens the crucible bridge)
-   via `state.open_shortcut(...)`, which repaints the barrier swath. Rewards
-   and unlocks continue to flow through the canonical
-   `_commit_campaign_completion()` transaction — the overworld never writes
-   rewards directly.
-6. On re-entry, the scene's `configure(payload)` restores the player to either
-   the dungeon threshold (victory return) or their last activated camp (death
-   / abandon), by reading `state.get_spawn_position()` which is populated from
-   the persisted `last_camp`/`last_position`.
+Tokens are `symbol` or `symbol+hexmask` (e.g. `#c`, `T3`, `!f`). Solid symbols
+are `#` cliff, `W` wall, `T` canopy, `!` deep-water blocker, `R` rubble.
 
-## Survival MVP
-- One resource: **Provisions** (0–100). Start at 80, camps restore 60, discoveries
-  restore 20.
-- Drain is 0.4/sec in the wild, 0 in camp radius, 1.2/sec in explicit hazard
-  zones (crucible valley + eastern watershed bounding bands). A fractional
-  accumulator ensures sub-per-frame rates drain over time rather than rounding
-  to zero.
-- Provisions reaching zero does not kill the player in V1 (fairness rule); it
-  leaves the player vulnerable to future attrition effects but cannot create an
-  unwinnable save. Recovery is always available by returning to any camp.
-- State persists under `save["overworld"]["hollow_marches"]` at schema version 1
-  via `SaveService.transact_once` with per-revision transaction keys plus a
-  one-time schema migration receipt.
+Ground families carry several variants per code (`d` dirt, `,` grass, `;` moor,
+`g` gravel, `r` rock, `f` flagstone …) and the runtime picks one with the stable
+per-cell hash shared with `preview.py`, so a wide apron does not visibly repeat.
+Surfaces are grained in 2 px clusters rather than single pixels: the camera runs
+at zoom 2, which turns a per-pixel speckle into noise and a per-tile border into
+a visible lattice.
 
-## Shortcuts and routing
-Shortcuts block their associated choke point by painting `#` (cliff) into the
-Collision layer. When opened (by a dungeon clear or explicit event), the
-controller erases the collision cell(s) and repaints walkable ground/road at
-the same position. The topology validator in
-`tools/validate_overworld_topology.py` confirms that every landmark is reachable
-after the canonical unlock sequence.
+## Landmarks and framing
+
+A landmark's sprite is placed at its authored `(tx, ty)` with its **base** on the
+north edge of the plaza, so the building sits at the end of its paved approach
+rather than five tiles behind it. The world document also carries a
+`capture_offset` per landmark, derived from the height of the sprite standing
+there (`prop_height_tiles()` reads the generated prop index); the capture script
+and the offline renderer both use it, so a station always frames the building the
+player is walking towards. `regions` names the ten regions and their anchors; the
+HUD label resolves a position to its nearest landmark and reads the display name
+from that table.
+
+## Shortcuts are world surgery, not sprite swaps
+
+Each shortcut owns an authored rectangle (`carve` in `hollow_marches.json`),
+produced by `author.py` from the same numbers it draws with, and validated at
+bake time to be **fully solid while closed**. Opening one:
+
+- swaps the prop to its second frame (`short_bridge_broken → short_bridge_fixed`),
+- zeroes the prop body's collision layer,
+- clears exactly that rectangle in the solid grid and in the TileMapLayer, and
+- remembers the token each cell held, so closing restores the terrain byte for
+  byte instead of drawing a guess.
+
+Opening is persisted twice over: as a flag in the overworld state and as a
+fallback derived from the campaign level that grants it
+(`OverworldState.is_shortcut_open(id, app_flow)`), so an existing profile that
+already cleared L5 keeps its bridge.
+
+## Survival
+
+Provisions (max 100, start 80) drain at the authored rates — 0.22/s wild,
+0.0/s at a camp, 0.75/s inside a hazard rect. Camps restore 60 and set the
+respawn anchor; discoveries restore 20 or the authored `restore` ratio. An
+empty pack scales move speed to 0.66× — it never blocks the march.
+
+## Interaction
+
+The Marches use the project's existing interaction contract and invent nothing:
+`KnightController` resolves `player_interactable` on a left-click or the
+`interact` action. Gates, camps and discoveries join that group and implement
+`can_interact()` / `interact(player)`.
+
+## Persistence
+
+`OverworldState` reads and writes `["overworld", "hollow_marches"]` through
+`SaveService.patch_state_path`, schema 2. A newer schema in the file is ignored
+rather than reinterpreted; the world then boots with authored defaults.
+Discovery rewards are one-shot through `transact_once("overworld:discovery:<id>")`,
+so a re-entry, reload or replay cannot pay twice.
+
+Return policy, in one place (`_apply_payload_spawn`):
+
+- cleared level → back at the threshold you entered by,
+- uncleared level (death or retreat) → back at the last camp you lit,
+- no valid point → nearest walkable cell, then the authored spawn.

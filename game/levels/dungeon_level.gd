@@ -240,9 +240,11 @@ func _make_tile_set(with_collision: bool) -> TileSet:
 	tile_set.tile_size = TILE_SIZE
 	var physics_layer := -1
 	if with_collision:
-		# add_physics_layer() returns the new layer index; it takes no argument
-		# in Godot 4.
-		physics_layer = tile_set.add_physics_layer()
+		# In Godot 4.7 `add_physics_layer()` returns void, not the new index, and
+		# a TileSet starts with no physics layers — so the layer it just created
+		# is always index 0. Taking the return value is a parse error.
+		tile_set.add_physics_layer()
+		physics_layer = 0
 		tile_set.set_physics_layer_collision_layer(physics_layer, 1)
 		tile_set.set_physics_layer_collision_mask(physics_layer, 0)
 

@@ -1,67 +1,91 @@
 # Hollow Marches Overworld — Self-Review vs Acceptance Criteria
 
-Date: 2026-10-27
-Branch: `arena/bc641b4c-soul-of-hero`
-Revision: GATE0–GATE4 code complete; GATE5 (art direction polish) pending production art.
-Runtime status: **No Godot 4.7 executable could be installed in this sandbox (GitHub release-asset CDN drops TLS mid-handshake; TuxFamily mirror unreachable; no apt/pip alternative).** All automated structural assertions below come from the offline Python topology validator and static code review — a runtime pass on CI / a local editor is still required before merging.
+Branch: `arena/54306b59-soul-of-hero`
+Engine: Godot `4.7.stable.custom_build` (built from source in-sandbox)
+Scope: overworld only. Chapter 1, Home, rewards and Hero Soul rules are
+untouched except for the additive overworld entry and return hooks.
 
-## 12 Acceptance Criteria Verdict
+Every verdict below is backed by a command whose output is recorded in
+`VALIDATION.md`; numbers are from the final run on this branch. Where something
+could not be executed here it says so instead of claiming a pass.
+
+## The ten production gates
+
+| Gate | What it demanded | Verdict | Evidence |
+| --- | --- | --- | --- |
+| **A** compile recovery | real GDScript parse errors fixed, deferred build made observable and asserted, autoloads/scenes load | **PASS** | all eight `game/overworld/*.gd` pass `--check-only`; the guard test preloads the production scene and `load()`s every script (82 checks); the broken-parse fixture still fails, so the gate is alive; the world build advances `BuildStage` and tests wait on `is_world_ready()`, never on frames |
+| **B** gameplay loop | Home → Marches → L01 → real dungeon → back → progress retained → save/reload; routes and campaign registration real; L01 open, L10 sealed; replay policy; no double rewards; return policies; persistence of pos/camps/discoveries/shortcuts/provisions | **PASS** | acceptance run `64 checks, 0 failures`; roundtrip run `27 checks`; persistence run `26 checks`; gate run `35 checks` |
+| **C** geography | 384×256, 10 landmarks, 4 camps, 8 discoveries, 4 shortcuts, survival params, palette; continuous roads; regional differentiation; barriers; water; two loops; four working shortcuts; ten approaches; TileMapLayer + TileSet + collision | **PASS** | `author.py` bakes 23 338 solid cells and refuses to write if any threshold is unreachable with shortcuts closed *and* open; `validate_overworld_topology.py` PASSED; scene test asserts real `TileMapLayer`s, a physics layer, `is_solid_cell()` agreement and >1 500 props |
+| **D** pixel art | 16 px, 640×360 internal, ten distinctive exterior identities, camps vs decorative fires distinct, no blurry scaling / flat surfaces / random noise | **PARTIAL** | 212-frame 16 px atlas + 47 props, nearest filtering, camera zoom 2; each landmark has its own silhouette and furniture; see "What is still not production" below |
+| **E** truthful evidence | static / native / visual results kept separate; parse errors fail validation; exit 0 cannot mask log errors; native PNGs; repaired capture script | **PARTIAL (honest)** | static and native are real and separated; the capture script was repaired and now derives every station from the world document; **native PNGs are BLOCKED in this sandbox** (no display server), and the offline composites are labelled supporting-only |
+
+## The twelve acceptance criteria
 
 | # | Criterion | Verdict | Notes |
-|---|---|---|---|
-| 1 | Separate overworld scene (not Home rebrand) | **PASS** | `game/overworld/chapter1_overworld.tscn` is independent from `game/ui/screens/home/home_map_screen.tscn`. Routed via `AppFlow.open_overworld()`/`OVERWORLD_SCENE`. |
-| 2 | TileMapLayer composition (no per-cell colliders/sprites) | **PASS** | Ground/Decor/Collision TileMapLayers authored procedurally by `OverworldPainter` into a generated atlas. Collision polygons are authored per-tile once. Interactables (gates/camps/discoveries) are single Area2Ds, not per-cell sprites. |
-| 3 | 10 distinct landmark entrances mapping 1:1 to campaign levels L1–L10 | **PASS** | `data/overworld/landmark_registry.json` bidirectional mapping; `data/overworld/hollow_marches.json` lists 10 landmarks; validator confirms L1 Crypt → L10 Citadel. Each landmark has a unique `Polygon2D` silhouette color/shape. |
-| 4 | One principal pilgrimage/military road + ≥2 loops | **PASS** | Main S→N pilgrimage road from refuge → crossroads → archive/crucible → ridge → gate → citadel. Two loops: southern refuge/crossroads/ossuary loop; eastern relay watershed loop. |
-| 5 | ≥3 unlockable shortcuts | **PASS** | 4 authored: broken bridge (opens after L5), powered conduit (after L6), beacon-road rubble (after L7), iron gate valve (after L9). Each has a multi-cell swath repaint when opened. |
-| 6 | Visible-but-inaccessible areas with visual+mechanical barriers (no invisible walls) | **PASS** | Northern ridge cliffs (`#` rock band), river canyon (`w` with `x` broken bridge), dark forest thickets (`t`/`f`), gated citadel ridge requiring valve. Void outside envelope uses dark background/CanvasModulate rather than an invisible wall. |
-| 7 | ≥3 safe camps | **PASS** | 4 camps authored: Ashen Refuge (start), Wayfarer Stones (crossroads), Relay Foot, Watch Ridge Camp. Each restores provisions, updates respawn anchor. |
-| 8 | Optional discoveries | **PASS** | 8 discoveries (coin/material/lore caches). |
-| 9 | One survival MVP resource (no bloat) | **PASS** | Exactly one resource — `provisions` (max 100). Drains 0.4/s wild, 1.2/s hazard, 0/s safe. Camps restore +60 (cap 100); discoveries +20. Floor 0 (no softlock). |
-| 10 | World-state persistence via existing SaveService | **PASS** | `OverworldState._save()` uses `SaveService.transact_once()` under `["overworld", "hollow_marches"]` with per-revision transaction keys + schema migration receipt. Camps/discoveries/shortcuts/position all persisted. |
-| 11 | Entry from a legitimate production route, round-trip uses AppFlow, no reward duplication | **PASS** | Added Overworld panel + Enter Overworld button to the existing Campaign tab on Home; uses `AppFlow.start_campaign_level()` (authoritative for prerequisites/rewards). `set_pending_overworld_return()` flips the completion-screen "Return Home" to "Return to Marches"; returning goes through `AppFlow.show_route(OVERWORLD_SCENE, …)`. Rewards continue to flow through the canonical `_commit_campaign_completion()` transaction. |
-| 12 | No unpainted voids / broken camera bounds / invalid atlases / obstructed routes; visual production readiness | **PARTIAL** | Camera clamps to authored world bounds; atlas is built programmatically; topology validator confirms every landmark is reachable via the road network with correct shortcuts. **Visuals are still a greybox** (solid-color generated 16px tiles + silhouette polygons), not production pixel art; GATE5 art pass required before production. |
+| --- | --- | --- | --- |
+| 1 | Separate overworld scene, not a Home rebrand | **PASS** | `game/overworld/chapter1_overworld.tscn`, routed through `AppFlow.OVERWORLD_SCENE` |
+| 2 | TileMapLayer composition, no per-cell colliders/sprites | **PASS** | three `TileMapLayer`s (ground/detail/solid) on one generated TileSet; collision only on the solid layer; interactables are single `Area2D`s in `player_interactable` |
+| 3 | Ten landmark entrances mapping 1:1 to L1–L10 | **PASS** | `landmark_registry.json` bidirectional; each landmark has its own sprite, plaza, approach and furniture |
+| 4 | One principal road + ≥2 loops | **PASS** | the refuge→citadel pilgrimage road, plus the western spur loop and the basin loop; measured distances in `ROUTE_GRAPH.md` |
+| 5 | ≥3 unlockable shortcuts | **PASS** | four: crucible bridge (L5), relay conduit (L6), beacon rubble (L7), gate valve (L9) — each swaps its sprite *and* clears its own solid band, and each is persisted |
+| 6 | Visible-but-inaccessible areas with real barriers | **PASS** | cliff rims, canopy mass, deep water (physics-only blocker tiles) and the valve wall; no invisible walls |
+| 7 | ≥3 safe camps | **PASS** | four: Ashen Refuge (lit at start), Wayfarer Stones, Relay Foot, Watch Ridge |
+| 8 | Optional discoveries | **PASS** | eight, paid once through `transact_once` |
+| 9 | One survival resource, no bloat | **PASS** | `provisions` only: 100 max / 80 start, 0.22·s⁻¹ wild, 0.0·s⁻¹ safe, 0.75·s⁻¹ hazard, camp +60, discovery +20, empty pack = 0.66× speed, never a hard stop |
+| 10 | Persistence through the existing SaveService | **PASS** | `["overworld","hollow_marches"]`, schema 2; position, camps, discoveries, shortcuts and provisions all round-trip; a future schema boots with defaults instead of crashing |
+| 11 | Legitimate entry route, AppFlow round-trip, no reward duplication | **PASS** | the campaign tab's `BƯỚC VÀO VÙNG BIÊN` button is asserted present, visible and labelled by the acceptance run; returns route through `AppFlow` and land on the threshold or the last camp; rewards stay in `_commit_campaign_completion()` |
+| 12 | No voids / camera bounds / obstructed routes; visual readiness | **PARTIAL** | the envelope is fully painted, camera limits come from the world size, and reachability is gated at bake time; visual polish is the remaining gap (next section) |
 
-## What Was Wired Since The Last Review
+## What is still not production
 
-1. Fixed a critical collision-layer bug: interactable Areas (gates, camps, discoveries) were set to layer 64 (Hazard) — now layer 32 (Interactable, bit 6) as specified in the design.
-2. Replaced the per-cell shortcut repaint with per-shortcut multi-cell swaths (`_repaint_shortcut_opened`) matching each barrier's authored shape (broken bridge 5 wide, conduit/rubble/gate_valve 3–5 cells).
-3. Implemented real atlas reverse-lookup in the painter (`atlas_for_code` / `code_for_atlas` / `ordered_codes`) so collision cells can be identified by code and the `_atlas_for_collision_cell` stub is retired.
-4. Collision polygons are now attached to every solid tile at TileSet build time, not lazily per-cell after paint (fixes a one-frame physics gap at spawn).
-5. Proper return-to-overworld round-trip:
-   - Added `AppFlow.set_pending_overworld_return / clear / has / return_to_overworld_after_completion`.
-   - Modified `abort_to_hub()` and `return_home_after_completion()` to route back to overworld when the flag is set.
-   - Relabelled the completion choice's Home button to "VỀ VÙNG ĐẤT HOANG" dynamically when launched from overworld.
-6. Provisions drain uses a fractional accumulator (so the 0.4/s wild rate actually drains over time instead of rounding to zero per-frame).
-7. OverworldState persistence switched from a fictitious `set_value`/`commit` API to real `SaveService.transact_once` with unique-per-revision keys and a schema migration receipt.
-8. Wired `--overworld-entry-test` CLI argument in `app_root.gd`, dispatching to `tests/overworld_entry_test.gd`.
-9. Additional tests authored:
-   - `tests/overworld_persistence_test.gd` — camps/drains/discovery/shortcut state invariants.
-   - `tests/overworld_transition_test.gd` — AppFlow routing surface + registry bidirectional map.
-   - `tests/overworld_provisions_test.gd` — survival-MVP balance invariants (caps, floors, burn times).
-   - `tests/overworld_integration_test.gd` — structural scene invariants (fixed to use `get_tree().get_nodes_in_group` and add itself to tree).
-10. Capture tool skeleton `tools/captures/chapter1_overworld_capture.gd` (PNG mosaic of overview + 10 landmarks; headless mode logs positions per existing project convention).
-11. Removed the StaticBody2D under camp fires (it had no collision purpose and was creating a zero-layer static body under a cosmetic light).
+1. **The art is authored, procedural pixel art.** It is no longer a greybox —
+   every tile is a 16 px hand-coded surface with grain, blades, cracks, verge
+   dithering and 16-way edge masks, and every landmark is a drawn sprite — but
+   the ten exteriors share one generator. The Beacon, Crimson Gate and Castellan
+   Throne carry the most individual detail; the Archive and Spiral Reliquary the
+   least. A hand-painted pass would lift those two first.
+2. **Landmark bakes are static.** The plaza is a stone disc with furniture; there
+   is no per-landmark ground pattern beyond `f`/`v`/`y` region codes.
+3. **No observed native screenshot** (environment limit, see `VALIDATION.md`).
+   Everything else about the visuals is backed by the shipped atlas.
+4. **Audio is untouched.** The overworld is silent apart from whatever the shared
+   audio layer already does.
 
-## Open Issues / Known Gaps
+## Defects found and fixed in this pass
 
-1. **No runtime Godot 4.7 binary in-sandbox.** Until CI or a local editor runs the project, these tests/invariants have not been executed. Final PASS must be confirmed with:
-   ```
-   godot --headless --path . --script res://tests/overworld_integration_test.gd
-   godot --headless --path . --script res://tests/overworld_persistence_test.gd
-   godot --headless --path . --script res://tests/overworld_transition_test.gd
-   godot --headless --path . --script res://tests/overworld_provisions_test.gd
-   godot --headless --path . -- --overworld-entry-test
-   godot --headless --path . --script res://tools/captures/chapter1_overworld_capture.gd
-   ```
-2. **Visuals are greybox.** The generated atlas is solid-color 16px tiles with a subtle edge etch; landmark "silhouettes" are colored polygons. Production needs authored environment tiles/prop sprites for ruin walls, trees, water animation, stone road texture, and unique doorway sprites per landmark. No new systems need to change when art is dropped in — swap the painter's palette + add a "real" TileSet source alongside, or replace the painter's texture with a hand-authored atlas using the same tile codes.
-3. **Hazard zones are authored by bounding band (crucible valley, eastern watershed) rather than by reading the mud/water tile codes from the grid.** Once art/audio is in place, switch `_in_hazard` to sample the collision/ground tile code at player position for perfect alignment.
-4. **`interact` input action** is confirmed to exist on the Knight (`knight.gd:743` reads `Input.is_action_just_pressed("interact")`) but its project.godot binding was not grepped (may be defined in the input map via a feature profile). Runtime CI will confirm.
-5. **Post-return camera snap**: on re-entry we call `camera.reset_smoothing()`; Godot 4's Camera2D will lerp from its last position if smoothing is enabled, so the first few frames may show a pan instead of a cut. Verify at runtime; if visible, add one frame at zoom=1 to force-snap.
-6. **Save frequency**: `_do_save` is deferred to avoid 60 tx/sec during drains, but still fires a transaction for every frame the player moves. Tune to a 2–5 second throttle before shipping to avoid churn.
+1. **Every landmark stood five tiles behind its own approach.** `paint_landmarks()`
+   placed the sprite at `ty - 5` while the plaza was centred on `ty + 3`, so the
+   player interacted with an empty stretch of road and the building was off the
+   top of the screen at zoom 2. Now anchored on the plaza's north edge, with the
+   capture offset derived from the sprite's real height.
+2. **The HUD region label gave up.** `_region_at()` returned `""` beyond a
+   40-tile radius, so most of the map read as the bare world name. The world
+   document now carries a `regions` table and every position resolves to one;
+   the scene test asserts two distant points differ.
+3. **Tile and prop edge masks were read as "interior" bits but consumed as
+   "exposed" bits**, which drew an outline on every cliff, canopy and road cell —
+   a visible 16 px grid across whole regions. Both sides now use one convention
+   (`opened_mask()`).
+4. **`art.h01()` barely avalanched.** With dense three-integer keys, bits 8–23
+   stayed tiny, so ordered dither and grain fired almost uniformly per tile and
+   flat colour replaced texture. A murmur3 finaliser fixed the distribution
+   (measured: 5/64 cells below 0.1 instead of 60/64).
+5. **The paving tile drew a border on every cell** (and before that, four 8 px
+   bevelled quadrants): a paved region resolved into a plank lattice. Now
+   irregular brick courses with interior joints only, so masonry runs across
+   tiles.
+6. **`hollow_marches.json` had no `regions` key** while the HUD derived labels
+   from landmark `region` strings; the roster and labels are now authored once.
+7. Roundtrip and acceptance tests: `extends SceneTree` cannot host a
+   production `app_root.tscn`, so the roundtrip moved to `extends Node` behind a
+   new `--overworld-roundtrip-test` AppRoot hook; acceptance gained an isolated
+   save profile, group-`player` hero lookup, a typed currency path and a
+   re-fetched gate node after the return.
 
-## Production Verdict
+## Verdict
 
-GATE0–GATE4 **code-complete and structurally sound**.
-GATE5 (art) **not started**.
-Merge readiness: **blocked** until runtime CI confirms the test battery passes on a real Godot 4.7 binary, and visual pass is scheduled.
+**PLAYABLE — VISUAL POLISH REMAINS.** The loop is real end-to-end, the geography
+and progression are gated by data, and every behavioural claim above was
+executed on a real engine. The two honest gaps are a hand-painted art pass on
+two of the ten exteriors and one native screenshot, which this container cannot
+produce.
