@@ -26,11 +26,13 @@ const BAYER=[0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5]
 var pool
 var noise
 var _output
+var _light
 
 func _init()->void:
     pool=POOL.new()
     noise=NOISE.new()
     _output=LAYER.new()
+    _light=LAYER.new()
 
 func begin(x:float,y:float,radius:float,duration:float,
         blob_count:int,growth:float,seed:int=-1)->void:
@@ -94,3 +96,17 @@ func _shade(source_world_time:float,source_age:float,flow_x:float,flow_y:float)-
 
 func full_rgba_sha(data:PackedByteArray)->String:
     return NOISE.sha(data)
+
+
+## Original fx.ts Pool.lit(): stepped additive source glow is a separate
+## rendering layer. It is NOT merged into ground SDF or cast as fake sprite.
+func source_light_frame(source_age:float)->PackedByteArray:
+    _light.bytes.fill(0)
+    _light.a=255
+    _light.dl=16
+    _light.additive=false
+    var gs:float=POOL._smooth(source_age/pool.grow)
+    var rem:float=pool.life-source_age
+    _light.glow(pool.x,pool.y,pool.radius*1.3*gs,RAMP[3],
+        0.18*clampf(rem,0.0,1.0),3)
+    return _light.bytes
