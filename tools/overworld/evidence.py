@@ -33,17 +33,24 @@ VIEW_W, VIEW_H = 640, 360
 # (station, landmark-or-cell anchor). The camera offset is NOT authored here: it
 # comes from the world document's `capture_offset`, which `author.py` derives
 # from the height of the sprite standing at the end of each approach.
+# Every destination and every camp, in the order a player meets them. One list:
+# the gallery, the native capture scene and this renderer all agree on coverage.
 STATIONS = [
     ("refuge_start", "refuge"),
     ("crypt_approach", "lm_crypt"),
     ("ossuary_approach", "lm_ossuary"),
     ("archive_approach", "lm_archive"),
     ("reliquary_approach", "lm_reliquary"),
-    ("camp_crossroads", "camp_crossroads"),
     ("crucible", "lm_crucible"),
+    ("relay", "lm_relay"),
     ("beacon", "lm_beacon"),
+    ("divided", "lm_divided"),
     ("gate", "lm_gate"),
     ("throne", "lm_throne"),
+    ("camp_refuge", "camp_refuge"),
+    ("camp_crossroads", "camp_crossroads"),
+    ("camp_relay_base", "camp_relay_base"),
+    ("camp_ridge", "camp_ridge"),
 ]
 
 
@@ -202,11 +209,32 @@ def _label(image: Image.Image, text: str) -> Image.Image:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--out", default=os.path.join(ROOT, "docs", "overworld", "evidence"))
+    parser.add_argument("--stations", action="store_true",
+                        help="render only the station list, into <out>/stations/")
     args = parser.parse_args()
-    os.makedirs(args.out, exist_ok=True)
 
     world = json.load(open(os.path.join(DATA, "hollow_marches.json")))
     lookup = anchors(world)
+
+    if args.stations:
+        out_dir = os.path.join(args.out, "stations")
+        os.makedirs(out_dir, exist_ok=True)
+        count = 0
+        for station, anchor in STATIONS:
+            base = lookup.get(anchor)
+            if base is None:
+                print("SKIP %s: no anchor '%s'" % (station, anchor))
+                continue
+            # Camps are framed one tile lower so the fire is under the player's
+            # eyeline rather than at the frame's top edge.
+            if anchor.startswith("camp_"):
+                base = (base[0], base[1] + 2)
+            render_station(station, base, out_dir, world)
+            count += 1
+        print("wrote %d station frames to %s" % (count, out_dir))
+        return 0
+
+    os.makedirs(args.out, exist_ok=True)
 
     written = [render_overview(args.out, world)]
     written.append(render_occlusion_pair(args.out, world))

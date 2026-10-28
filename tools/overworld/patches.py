@@ -154,8 +154,7 @@ def apply(doc: dict, ground, detail, solid, props, width: int, height: int,
                 radius = float(within.get("radius", 6))
                 tile_x = (item["x"] - tile * 0.5) / tile
                 tile_y = (item["y"] - tile * 0.5) / tile
-                return (Vector2(tile_x - cx, tile_y - cy).length() if False else
-                        ((tile_x - cx) ** 2 + (tile_y - cy) ** 2) ** 0.5) <= radius
+                return ((tile_x - cx) ** 2 + (tile_y - cy) ** 2) ** 0.5 <= radius
             return (round(item["x"], 1), round(item["y"], 1)) == (round(position[0], 1), round(position[1], 1))
 
         touched = 0
@@ -184,7 +183,11 @@ def apply(doc: dict, ground, detail, solid, props, width: int, height: int,
                     "z": int(entry.get("z", 0)),
                     "lit": bool(entry.get("lit", False)),
                 })
-            touched += 1
+                # Counted only when the prop is really written. An `add` whose
+                # destination already holds that frame is a world that has this
+                # patch applied already, and must report zero edits or the
+                # idempotency check fails on a correct patch.
+                touched += 1
         prop_count += touched
         if report is not None:
             report.append({"id": entry.get("id", "?"), "kind": "prop", "op": op,

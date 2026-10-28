@@ -3,52 +3,52 @@
  "why": "Local, hand-authored corrections to the baked world. Applied before the bake's gates.",
  "terrain": [
   {
-   "id": "camp_refuge_apron",
-   "layer": "detail",
-   "set": ":",
+   "id": "camp_refuge_hearth",
+   "layer": "ground",
+   "set": ",",
    "rect": [
-    52,
-    214,
-    60,
+    54,
+    217,
+    58,
     219
    ],
-   "why": "flagstone clearing around the fire, so the camp reads as a place"
+   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
   },
   {
-   "id": "camp_crossroads_apron",
-   "layer": "detail",
-   "set": ":",
+   "id": "camp_crossroads_hearth",
+   "layer": "ground",
+   "set": ",",
    "rect": [
-    148,
-    186,
-    156,
+    150,
+    189,
+    154,
     191
    ],
-   "why": "flagstone clearing around the fire, so the camp reads as a place"
+   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
   },
   {
-   "id": "camp_relay_base_apron",
-   "layer": "detail",
-   "set": ":",
+   "id": "camp_relay_base_hearth",
+   "layer": "ground",
+   "set": ",",
    "rect": [
-    244,
-    156,
-    252,
+    246,
+    159,
+    250,
     161
    ],
-   "why": "flagstone clearing around the fire, so the camp reads as a place"
+   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
   },
   {
-   "id": "camp_ridge_apron",
-   "layer": "detail",
-   "set": ":",
+   "id": "camp_ridge_hearth",
+   "layer": "ground",
+   "set": ",",
    "rect": [
-    204,
-    102,
-    212,
+    206,
+    105,
+    210,
     107
    ],
-   "why": "flagstone clearing around the fire, so the camp reads as a place"
+   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
   }
  ],
  "props": [

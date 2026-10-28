@@ -366,10 +366,38 @@ jobs:
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-occlusion-reuse.log" "Occlusion reuse" "OVERWORLD OCCLUSION_CHAPTER1_REUSE_TEST PASSED"
           exit $rc
 
+      - name: "Performance: frame script time, occlusion step, no node churn"
+        run: |
+          mkdir -p artifacts/ud_perf
+          timeout --signal=TERM --kill-after=15s 240s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_perf \
+                  --resolution 640x480 --windowed \
+                  --script res://tests/overworld_performance_probe.gd >"$ARTIFACT_DIR/overworld-perf.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-perf.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-perf.log" "Performance" "OVERWORLD PERF PASSED"
+          exit $rc
+
       - name: "World patches: deterministic, idempotent, non-destructive"
         run: |
           python3 tools/overworld/patches.py --empty
           python3 tools/overworld/patches.py --check
+
+      # The sandbox that runs these pushes cannot read job logs (the log blob
+      # host is blocked), and annotations are the only channel that survives. On
+      # failure, surface the tail of every captured log as annotations so a red
+      # run says *which* assertion failed and why, instead of just "exit 1".
+      - name: "Diagnostics: surface the end of each log"
+        if: failure()
+        run: |
+          for f in "$ARTIFACT_DIR"/*.log; do
+            [ -f "$f" ] || continue
+            name="$(basename "$f")"
+            tail -n 8 "$f" | while IFS= read -r line; do
+              line="${line//'%'/'%25'}"
+              line="${line//$'\r'/}"
+              echo "::error title=$name::${line:0:900}"
+            done
+          done
 
       - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |

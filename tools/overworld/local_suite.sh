@@ -41,6 +41,7 @@ run TRAV    res://tests/overworld_traversability_runtime_test.gd "OVERWORLD TRAV
 run OCC     res://tests/overworld_occlusion_runtime_test.gd  "OVERWORLD OCCLUSION_RUNTIME_TEST PASSED" occ
 run OCCSEL  res://tests/overworld_occlusion_selective_test.gd "OVERWORLD OCCLUSION_SELECTIVE_TEST PASSED" occsel
 run OCCREUSE res://tests/overworld_occlusion_chapter1_reuse_test.gd "OVERWORLD OCCLUSION_CHAPTER1_REUSE_TEST PASSED" occreuse
+run PERF    res://tests/overworld_performance_probe.gd      "OVERWORLD PERF PASSED" perf
 # Round trip and acceptance boot the real app; they report their own summary lines.
 for mode in roundtrip acceptance; do
   mkdir -p "$OUT/ud_$mode"

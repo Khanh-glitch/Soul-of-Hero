@@ -2,32 +2,32 @@
  "schema": "hollow_marches_patch_report/v1",
  "applied": [
   {
-   "id": "camp_refuge_apron",
+   "id": "camp_refuge_hearth",
    "kind": "terrain",
-   "layer": "detail",
-   "code": ":",
-   "cells": 54
+   "layer": "ground",
+   "code": ",",
+   "cells": 15
   },
   {
-   "id": "camp_crossroads_apron",
+   "id": "camp_crossroads_hearth",
    "kind": "terrain",
-   "layer": "detail",
-   "code": ":",
-   "cells": 54
+   "layer": "ground",
+   "code": ",",
+   "cells": 15
   },
   {
-   "id": "camp_relay_base_apron",
+   "id": "camp_relay_base_hearth",
    "kind": "terrain",
-   "layer": "detail",
-   "code": ":",
-   "cells": 54
+   "layer": "ground",
+   "code": ",",
+   "cells": 15
   },
   {
-   "id": "camp_ridge_apron",
+   "id": "camp_ridge_hearth",
    "kind": "terrain",
-   "layer": "detail",
-   "code": ":",
-   "cells": 54
+   "layer": "ground",
+   "code": ",",
+   "cells": 15
   },
   {
    "id": "camp_refuge_no_grave_cross",
@@ -141,9 +141,9 @@
   }
  ],
  "summary": {
-  "terrain_cells": 216,
+  "terrain_cells": 60,
   "prop_edits": 16,
   "patches": 14,
-  "hash": "1d75e67bbd8c8142488d63576aff66a2d88f0cf64361f4e3c697408e50db4d12"
+  "hash": "9639e0a6c583514b0b47a3e21f91613189cdc1b1487bb014cca0ad1ea8e6102d"
  }
 }
