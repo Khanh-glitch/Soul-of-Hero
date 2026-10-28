@@ -1,0 +1,612 @@
+extends SceneTree
+
+## GOLD93 Venomwright DIFFERENTIAL parity gate.
+##
+## Runs the NATIVE GDScript port (venom_world / venom_engine / venom_skills /
+## venom_s1) under exactly the protocol recorded in
+## docs/vfx/skill_readiness/oracle/venomwright_NNN.json — the same world seed,
+## enemy density, cast tick, buffer fill values and sampling schedule the
+## original TypeScript engine was driven with — and compares, per sampled tick:
+##
+##   * scene raster SHA-256 (32 hex, as the oracle records it)
+##   * glow  raster SHA-256
+##   * fx count, particle count, live enemy count
+##
+## and, across the whole cast, every authored hit and every status / camera /
+## environmental cue the skill emits.
+##
+## The native run is instrumented by SUBCLASSING the world and overriding the
+## authored effect entry points (hit / mark / poison / shake / shock /
+## screenFlash). GDScript dispatches those calls virtually, so skill code that
+## calls `c.w.hit(...)` is captured; the override records the event and then
+## delegates to the original implementation, so behaviour is unchanged.
+##
+## On the first divergence the test reports the tick, the field, and both
+## values, then continues so a single run surfaces the whole picture.
+## The verdict is written into docs/vfx/skill_readiness/parity/index.json.
+
+const WORLD = preload("res://prototypes/skill_readiness/native/venom/venom_world.gd")
+const ENGINE = preload("res://prototypes/skill_readiness/native/venom/venom_engine.gd")
+const SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")
+const REGISTRY = preload("res://prototypes/skill_readiness/core/gold93_parity_registry.gd")
+const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
+
+const ORACLE_DIR := "res://docs/vfx/skill_readiness/oracle"
+const DIAG_DIR := "res://docs/vfx/skill_readiness/diagnostics"
+const F: float = 1.0 / 60.0
+
+var _failures: Array = []
+var _rows_out: Array = []
+var _verbose: bool = false
+var _dump_tick: int = -1
+
+
+func _init() -> void:
+	var only := ""
+	var world_only := false
+	for a in OS.get_cmdline_user_args():
+		if a.begins_with("--skill="):
+			only = a.substr(8)
+		elif a == "--verbose":
+			_verbose = true
+		elif a == "--world-only":
+			world_only = true
+		elif a.begins_with("--dump-tick="):
+			_dump_tick = int(a.substr(12))
+	if world_only:
+		var wok := _run_world_only()
+		print("GOLD93_VENOM_WORLD_DIFFERENTIAL: " + ("PASS" if wok else "FAIL"))
+		for f in _failures:
+			print("  FAIL " + str(f))
+		quit(0 if wok else 1)
+		return
+	var ids: Array = []
+	if only != "":
+		ids = [int(only)]
+	else:
+		for k in SKILLS.defs():
+			if SKILLS.has_generator(int(k)):
+				ids.append(int(k))
+		ids.sort()
+	if ids.is_empty():
+		print("GOLD93_VENOM_DIFFERENTIAL: no ported generators")
+		quit(1)
+		return
+	var ok := true
+	for sid in ids:
+		if not _run(int(sid)):
+			ok = false
+	print("GOLD93_VENOM_DIFFERENTIAL: " + ("PASS" if ok else "FAIL"))
+	for f in _failures:
+		print("  FAIL " + str(f))
+	quit(0 if ok else 1)
+
+
+func _fail(msg: String) -> void:
+	_failures.append(msg)
+	push_error("GOLD93_DIFF: " + msg)
+
+
+func _sha(b: PackedByteArray) -> String:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(b)
+	return ctx.finish().hex_encode().substr(0, 32)
+
+
+## The world in isolation: `World.step` + `World.draw` with no skill at all.
+## This is the pre-condition for every skill parity claim - if the world
+## simulation or the renderer drifts, no skill can match - and it is the first
+## thing to look at when a cast diverges on tick 1.
+func _run_world_only() -> bool:
+	var variants := _world_oracle_variants()
+	if variants.is_empty():
+		_fail("world: no diagnostics/venomwright_world_only*.json oracle found")
+		return false
+	var all_ok := true
+	for v in variants:
+		var oracle: Dictionary = _load_json(String(v["path"]))
+		if oracle.is_empty():
+			_fail("world: unreadable oracle %s" % v["path"])
+			all_ok = false
+			continue
+		if not _run_world_seed(oracle, String(v["canonical"])):
+			all_ok = false
+	return all_ok
+
+
+## Every world-only oracle on disk: the canonical seed-7 reference plus any
+## `venomwright_world_only_sN.json` variants. Parity proven on a single world is
+## a single data point; the variants make it a claim about the simulation.
+func _world_oracle_variants() -> Array:
+	var out: Array = []
+	var d := DirAccess.open("res://docs/vfx/skill_readiness/diagnostics")
+	if d == null:
+		return out
+	for name in d.get_files():
+		if not name.begins_with("venomwright_world_only") or not name.ends_with(".json"):
+			continue
+		var path := "res://docs/vfx/skill_readiness/diagnostics/" + name
+		var data: Dictionary = _load_json(path)
+		var dproto: Dictionary = data.get("protocol", {})
+		var seed_: int = int(dproto.get("seed", 7))
+		out.append({
+			"path": path, "seed": seed_,
+			"canonical": "venomwright:world" if seed_ == 7 else "venomwright:world@s%d" % seed_,
+		})
+	out.sort_custom(func(a, b): return int(a["seed"]) < int(b["seed"]))
+	return out
+
+
+func _load_json(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path):
+		return {}
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return {}
+	var parsed = JSON.parse_string(f.get_as_text())
+	f.close()
+	return parsed if parsed is Dictionary else {}
+
+
+func _run_world_seed(oracle: Dictionary, canonical: String) -> bool:
+	var proto: Dictionary = oracle.get("protocol", {})
+	var seed_: int = int(proto.get("seed", 7))
+	var density: int = int(proto.get("enemy_density", 16))
+	var ticks: int = int(oracle.get("ticks", 0))
+	var want: Dictionary = {}
+	for row in oracle.get("rows", []):
+		want[int(row["tick"])] = row
+
+	var w := ProbeWorld.new(ENGINE.WW, ENGINE.WH)
+	w.cfg["density"] = density
+	w.reset_ids()
+	w.uid = 1
+	w.reset(seed_, true)
+	w.lab = true
+	w.stats = {"total": 0.0, "kills": 0, "hits": 0, "ev": []}
+	var p = w.player
+	p.form = "vessel"
+	p.venomT = 0
+	p.cat = 100
+
+	var g: Dictionary = ENGINE.build_gfx()
+	var ground = ENGINE.make_ground_buffer()
+
+	var n: int = 0
+	var divergent_tick: int = -1
+	var first_mismatch := ""
+	var compared: int = 0
+	while n < ticks:
+		w.step(F)
+		n += 1
+		g["s"].copy_from(ground)
+		g["l"].clear(0xFF000000)
+		g["s"].reset()
+		g["l"].reset()
+		g["t"] = w.time
+		w.draw(g)
+		if _dump_tick == n:
+			_dump_rasters(g, 0, n)
+		if want.has(n):
+			var got := {
+				"tick": n,
+				"scene_sha256": _sha(g["s"].bytes),
+				"glow_sha256": _sha(g["l"].bytes),
+				"fx": w.fx.size(),
+				"parts": w.parts.list.size(),
+			}
+			var live: int = 0
+			for e in w.enemies:
+				if e.dying <= 0:
+					live += 1
+			got["enemies"] = live
+			compared += 1
+			var which := _mismatch(want[n], got)
+			if which != "" and divergent_tick < 0:
+				divergent_tick = n
+				first_mismatch = which
+			if _verbose and which == "":
+				print("  world tick %4d OK" % n)
+
+	if w.hits.size() or w.cues.size():
+		_fail("world: no cast was fired yet %d hits / %d cues were emitted"
+				% [w.hits.size(), w.cues.size()])
+	var matched: bool = divergent_tick < 0
+	print(JSON.stringify({
+		"check": canonical,
+		"seed": seed_,
+		"ticks_run": ticks,
+		"sampled_compared": compared,
+		"first_divergent_tick": divergent_tick,
+		"first_mismatch": first_mismatch,
+		"parity": matched,
+	}, "  "))
+	if divergent_tick >= 0:
+		_fail("%s: first raster divergence at tick %d -> %s"
+				% [canonical, divergent_tick, first_mismatch])
+	REGISTRY.record(canonical, REGISTRY.PASS if matched else REGISTRY.FAIL, {
+			"check": "world-only",
+			"seed": seed_,
+			"compared_ticks": compared,
+			"first_divergent_tick": divergent_tick,
+			"first_mismatch": first_mismatch,
+			"ticks": ticks,
+	})
+	return matched
+
+
+func _run(sid: int) -> bool:
+	var variants := _oracle_variants(sid)
+	if variants.is_empty():
+		_fail("skill %d: oracle file missing" % sid)
+		return false
+	var all_ok := true
+	for v in variants:
+		var oracle: Dictionary = _load_json(String(v["path"]))
+		if oracle.is_empty():
+			_fail("skill %d: unreadable oracle %s" % [sid, v["path"]])
+			all_ok = false
+			continue
+		if not _run_seed(sid, oracle, String(v["canonical"])):
+			all_ok = false
+	return all_ok
+
+
+## The canonical seed-7 oracle plus every `venomwright_NNN_sN.json` variant in
+## the diagnostics directory. Different worlds exercise different targets,
+## different enemy clusters and different kill/no-kill outcomes, so parity is
+## checked against more than one authored scenario.
+func _oracle_variants(sid: int) -> Array:
+	var out: Array = []
+	var main := "%s/venomwright_%03d.json" % [ORACLE_DIR, sid]
+	if FileAccess.file_exists(main):
+		out.append({"path": main, "seed": 7,
+				"canonical": "venomwright:%03d" % sid})
+	var d := DirAccess.open(DIAG_DIR)
+	if d != null:
+		var prefix := "venomwright_%03d_s" % sid
+		for name in d.get_files():
+			if not name.begins_with(prefix) or not name.ends_with(".json"):
+				continue
+			var path := DIAG_DIR + "/" + name
+			var data: Dictionary = _load_json(path)
+			var dproto: Dictionary = data.get("protocol", {})
+			var fallback_seed: int = int(name.get_basename().split("_s")[1])
+			var seed_: int = int(dproto.get("seed", fallback_seed))
+			out.append({"path": path, "seed": seed_,
+					"canonical": "venomwright:%03d@s%d" % [sid, seed_]})
+	out.sort_custom(func(a, b): return int(a["seed"]) < int(b["seed"]))
+	return out
+
+
+func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
+	if oracle.is_empty():
+		_fail("skill %d: oracle file missing" % sid)
+		return false
+	var defs: Dictionary = SKILLS.defs()
+	if not defs.has(sid):
+		_fail("skill %d: no native def" % sid)
+		return false
+	var def: Dictionary = defs[sid]
+	if not SKILLS.has_generator(sid):
+		_fail("skill %d: generator not ported" % sid)
+		return false
+	var factory: Callable = SKILLS.run_factory(sid)
+
+	var proto: Dictionary = oracle.get("protocol", {})
+	var seed_: int = int(proto.get("seed", 7))
+	var density: int = int(proto.get("enemy_density", 16))
+	var ground_seed: int = int(proto.get("ground_seed", 17))
+	var cast_tick: int = int(oracle.get("cast_tick", 1))
+	var ticks: int = int(oracle.get("ticks", 0))
+	if ticks == 0:
+		_fail("skill %d: oracle has no tick count" % sid)
+		return false
+	if ground_seed != 17:
+		_fail("skill %d: oracle ground_seed %d != supported 17" % [sid, ground_seed])
+		return false
+
+	# ---- world, exactly as the oracle drove the original -------------------
+	var w := ProbeWorld.new(ENGINE.WW, ENGINE.WH)
+	w.cfg["density"] = density
+	w.reset_ids()
+	w.uid = 1
+	w.reset(seed_, true)
+	w.lab = true
+	w.stats = {"total": 0.0, "kills": 0, "hits": 0, "ev": []}
+	var p = w.player
+	p.form = "venom" if String(def["form"]) == "venom" else "vessel"
+	p.venomT = 999
+	p.cat = 100
+	if String(def["form"]) != "venom":
+		p.venomT = 0
+
+	# ---- rasters -----------------------------------------------------------
+	var g: Dictionary = ENGINE.build_gfx()
+	var ground = ENGINE.make_ground_buffer()
+
+	# ---- sampled ticks -----------------------------------------------------
+	var want: Dictionary = {}
+	for row in oracle.get("rows", []):
+		want[int(row["tick"])] = row
+
+	var n: int = 0
+	var casted := false
+	var divergent_tick: int = -1
+	var first_mismatch := ""
+	var compared: int = 0
+
+	while n < ticks:
+		w.step(F)
+		n += 1
+		if n == cast_tick and not casted:
+			casted = true
+			var r: Dictionary = ENGINE.auto_aim(w, def)
+			ENGINE.cast(w, def, r, factory)
+		# render: scene <- ground, glow <- 0xFF000000, then w.draw(g)
+		g["s"].copy_from(ground)
+		g["l"].clear(0xFF000000)
+		g["s"].reset()
+		g["l"].reset()
+		g["t"] = w.time
+		w.draw(g)
+		if _dump_tick == n:
+			_dump_rasters(g, sid, n)
+		if want.has(n):
+			var exp: Dictionary = want[n]
+			var got := {
+				"tick": n,
+				"scene_sha256": _sha(g["s"].bytes),
+				"glow_sha256": _sha(g["l"].bytes),
+				"fx": w.fx.size(),
+				"parts": w.parts.list.size(),
+			}
+			var live: int = 0
+			for e in w.enemies:
+				if e.dying <= 0:
+					live += 1
+			got["enemies"] = live
+			compared += 1
+			var which := _mismatch(exp, got)
+			if which != "" and divergent_tick < 0:
+				divergent_tick = n
+				first_mismatch = which
+				_trace_fx(w, n)
+			if _verbose and which == "":
+				print("  tick %4d OK  scene=%s" % [n, got["scene_sha256"]])
+
+	if not casted:
+		_fail("skill %d: cast never fired (cast_tick=%d, ticks=%d)"
+				% [sid, cast_tick, ticks])
+
+	# ---- authored event logs ----------------------------------------------
+	var hit_res := _compare_events(oracle.get("hits", []), w.hits)
+	var cue_res := _compare_events(oracle.get("cues", []), w.cues)
+
+	var matched: bool = (divergent_tick < 0) and casted and hit_res[0] and cue_res[0]
+	print(JSON.stringify({
+		"skill": sid,
+		"canonical": canonical,
+		"seed": seed_,
+		"name": String(def["name"]),
+		"ticks_run": ticks,
+		"sampled_compared": compared,
+		"cast_tick": cast_tick,
+		"hits_original": oracle.get("hits", []).size(),
+		"hits_native": w.hits.size(),
+		"cues_original": oracle.get("cues", []).size(),
+		"cues_native": w.cues.size(),
+		"first_divergent_tick": divergent_tick,
+		"first_mismatch": first_mismatch,
+		"hit_mismatch": hit_res[1],
+		"cue_mismatch": cue_res[1],
+		"parity": matched,
+	}, "  "))
+	if divergent_tick >= 0:
+		_fail("%s: first raster divergence at tick %d -> %s"
+				% [canonical, divergent_tick, first_mismatch])
+	if not hit_res[0]:
+		_fail("%s: authored hits differ -> %s" % [canonical, hit_res[1]])
+	if not cue_res[0]:
+		_fail("%s: authored cues differ -> %s" % [canonical, cue_res[1]])
+
+	REGISTRY.record(canonical,
+			REGISTRY.PASS if matched else REGISTRY.FAIL, {
+				"skill": sid,
+				"seed": seed_,
+				"compared_ticks": compared,
+				"first_divergent_tick": divergent_tick,
+				"first_mismatch": first_mismatch,
+				"hit_mismatch": hit_res[1],
+				"cue_mismatch": cue_res[1],
+				"oracle_schema": String(oracle.get("schema", "")),
+				"oracle_cast_tick": cast_tick,
+				"ticks": ticks,
+			})
+	return matched
+
+
+## On the first divergent tick, dump the native effect list so the difference can
+## be located without a debugger: what effects exist, where they are, and which
+## of the original's draw hooks they actually implement.
+func _trace_fx(w, tick: int) -> void:
+	print("  trace tick %d: %d fx, %d parts, %d enemies"
+			% [tick, w.fx.size(), w.parts.list.size(), w.enemies.size()])
+	for f in w.fx:
+		print("    fx kind=%s x=%.2f y=%.2f z=%.2f sy=%.2f age=%.3f dead=%s hooks=%s"
+				% [String(_fx(f, "kind", "?")), float(_fx(f, "x", 0.0)),
+					float(_fx(f, "y", 0.0)), float(_fx(f, "z", 0.0)),
+					float(_fx(f, "sy", 0.0)), float(_fx(f, "age", 0.0)),
+					str(_fx(f, "dead", "?")),
+					str(["gnd" if f.has_method("gnd") else "",
+						"up" if f.has_method("up") else "",
+						"air" if f.has_method("air") else "",
+						"lit" if f.has_method("lit") else ""])])
+
+
+## `Object.get` takes exactly one argument in Godot 4, so optional properties
+## are read through this helper instead of the usual two-argument form.
+func _fx(o, key: String, fallback):
+	return o.get(key) if key in o else fallback
+
+
+func _mismatch(exp: Dictionary, got: Dictionary) -> String:
+	for k in ["scene_sha256", "glow_sha256"]:
+		if String(exp.get(k, "")) != String(got.get(k, "")):
+			return "%s: original=%s native=%s" % [k, String(exp.get(k, "")),
+					String(got.get(k, ""))]
+	for k in ["fx", "parts", "enemies"]:
+		if int(exp.get(k, -1)) != int(got.get(k, -2)):
+			return "%s: original=%d native=%d" % [k, int(exp.get(k, -1)),
+					int(got.get(k, -2))]
+	return ""
+
+
+## Order-insensitive canonical rendering of a value so two dictionaries with the
+## same content but different key insertion order still compare equal.
+func _canon(v) -> String:
+	if v is Dictionary:
+		var d: Dictionary = v
+		var keys: Array = d.keys()
+		keys.sort()
+		var parts: Array = []
+		for k in keys:
+			parts.append("%s=%s" % [str(k), _canon(d[k])])
+		return "{" + ",".join(parts) + "}"
+	if v is Array:
+		var a: Array = v
+		var parts2: Array = []
+		for e in a:
+			parts2.append(_canon(e))
+		return "[" + ",".join(parts2) + "]"
+	if typeof(v) == TYPE_FLOAT:
+		return "%.6f" % [float(v)]
+	if v == null:
+		return "null"
+	return str(v)
+
+
+## Compares two authored event logs element by element, rounding floats to the
+## precision the oracle recorded them at.
+func _compare_events(exp: Array, got: Array) -> Array:
+	if exp.size() != got.size():
+		return [false, "count: original=%d native=%d  (original_tail=%s native_tail=%s)"
+				% [exp.size(), got.size(),
+					_canon(exp[exp.size() - 1]) if exp.size() else "-",
+					_canon(got[got.size() - 1]) if got.size() else "-"]]
+	for i in range(exp.size()):
+		var a: String = _canon(_round_event(exp[i]))
+		var b: String = _canon(_round_event(got[i]))
+		if a != b:
+			return [false, "event %d:\n      original=%s\n      native  =%s" % [i, a, b]]
+	return [true, ""]
+
+
+## JSON carries every number as a float, so an integral id read from the oracle
+## arrives as `13.0` while the native log holds the int `13`. Both are snapped to
+## the precision the oracle recorded and integral values are normalised to ints
+## so the comparison is about the VALUE, not the JSON number type.
+func _round_event(e: Dictionary) -> Dictionary:
+	var o: Dictionary = {}
+	for k in e.keys():
+		o[k] = _norm(e[k])
+	return o
+
+
+func _norm(v):
+	if typeof(v) == TYPE_FLOAT:
+		var f: float = snappedf(float(v), 1e-6)
+		if absf(f - roundf(f)) < 1e-9:
+			return int(roundf(f))
+		return f
+	if v is Array:
+		var a: Array = []
+		for x in v:
+			a.append(_norm(x))
+		return a
+	if v is Dictionary:
+		var d: Dictionary = {}
+		for k in v.keys():
+			d[k] = _norm(v[k])
+		return d
+	return v
+
+
+func _dump_rasters(g: Dictionary, sid: int, tick: int) -> void:
+	var dir := "user://gold93_diff"
+	DirAccess.make_dir_recursive_absolute(dir)
+	var sp := "%s/skill%03d_t%04d_scene.png" % [dir, sid, tick]
+	var gp := "%s/skill%03d_t%04d_glow.png" % [dir, sid, tick]
+	_write_png(ProjectSettings.globalize_path(sp), g["s"])
+	_write_png(ProjectSettings.globalize_path(gp), g["l"])
+	print("GOLD93_DUMP %s %s" % [sp, gp])
+
+
+func _write_png(path: String, L) -> void:
+	var img := Image.create_from_data(L.W, L.H, false, Image.FORMAT_RGBA8, L.bytes)
+	img.save_png(path)
+	# Raw RGBA alongside the PNG so the two engines can be diffed byte-exactly
+	# without going through an image decoder.
+	var raw := FileAccess.open(path.get_basename() + ".bin", FileAccess.WRITE)
+	raw.store_buffer(L.bytes)
+	raw.close()
+
+
+# ---------------------------------------------------------------------------
+# The instrumented world. Behaviour is untouched: every override records the
+# event and then delegates to the original implementation.
+# ---------------------------------------------------------------------------
+
+class ProbeWorld extends "res://prototypes/skill_readiness/native/venom/venom_world.gd":
+	var hits: Array = []
+	var cues: Array = []
+
+	func _r6(v: float) -> float:
+		return snappedf(v, 1e-6)
+
+	func _p3(v: float) -> float:
+		return snappedf(v, 1e-6)
+
+	## The oracle records shock positions with `toFixed(3)`, so those two fields
+	## are compared at that precision; everything else is compared at 1e-6.
+	func _shock_v(v: float) -> float:
+		return snappedf(v, 1e-3)
+
+	func hit(e, amt: float, o: Dictionary) -> bool:
+		var r: bool = super.hit(e, amt, o)
+		hits.append({
+			"t": _r6(time), "e": e.id, "amt": snappedf(amt, 1e-4),
+			"kind": String(o.get("kind", "impact")), "src": o.get("src", null),
+			"at": o.get("at", null), "kx": _p3(float(o.get("kx", 0.0))),
+			"ky": _p3(float(o.get("ky", 0.0))), "stag": _p3(float(o.get("stagger", 0.0))),
+			"big": bool(o.get("big", false)), "heal": _p3(float(o.get("heal", 0.0))),
+			"killed": r,
+		})
+		return r
+
+	func mark(e, key: String, dur: float, k: float = 1.0) -> void:
+		cues.append({"t": _r6(time), "k": "mark", "e": e.id, "key": key,
+				"dur": _p3(dur)})
+		super.mark(e, key, dur, k)
+
+	func poison(e, total: float, dur: float, key: int, src: int,
+			every: float = 0.5) -> void:
+		cues.append({"t": _r6(time), "k": "poison", "e": e.id,
+				"total": _p3(total), "dur": _p3(dur), "src": src})
+		super.poison(e, total, dur, key, src, every)
+
+	func shake(m: float, d: float = 0.25) -> void:
+		cues.append({"t": _r6(time), "k": "shake", "m": _p3(m), "d": _p3(d)})
+		super.shake(m, d)
+
+	func shock(x: float, y: float, max_: float, dur: float, amp: float = 3) -> void:
+		cues.append({"t": _r6(time), "k": "shock", "x": _shock_v(x),
+				"y": _shock_v(y), "max": _p3(max_), "dur": _p3(dur),
+				"amp": _p3(amp)})
+		super.shock(x, y, max_, dur, amp)
+
+	func screen_flash(c: int, a: float, dur: float = 0.2) -> void:
+		cues.append({"t": _r6(time), "k": "flash", "c": c & 0xFFFFFFFF,
+				"a": _p3(a), "dur": _p3(dur)})
+		super.screen_flash(c, a, dur)

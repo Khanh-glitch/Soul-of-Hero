@@ -40,8 +40,12 @@ class Fx extends RefCounted:
 	var resid: bool = false
 	var hf: float = 0.0
 
-	# Optional render hooks, dispatched by World.draw in z-order:
-	#   gnd (on the ground) -> shd (shadow) -> up (upright, on the actor plane)
+	# Render hooks. The original declares these OPTIONAL (`gnd?.(g, w)`) and only
+	# calls them when the subclass defines them. Mirroring that with no-op base
+	# methods would make `if (f.up)` true for every entity and change the
+	# y-sorted draw list, so the base class deliberately does not define them and
+	# World dispatches with `has_method`.
+	#   gnd (on the ground) -> shd (shadow) -> up (upright, actor plane)
 	#   -> air (above everything) -> lit (additive glow pass)
 	func upd(_w, _dt: float) -> void:
 		pass
@@ -49,21 +53,6 @@ class Fx extends RefCounted:
 	func hurt(_w, amt: float) -> void:
 		hp -= amt
 		hf = 0.12
-
-	func gnd(_g, _w) -> void:
-		pass
-
-	func shd(_g, _w) -> void:
-		pass
-
-	func up(_g, _w) -> void:
-		pass
-
-	func air(_g, _w) -> void:
-		pass
-
-	func lit(_g, _w) -> void:
-		pass
 
 
 # ---------------------------------------------------------------------------
@@ -581,7 +570,7 @@ class GroundDecal extends Fx:
 				var y0: float = 0.0
 				var a0: float = (float(i) / float(n)) * M.TAU + r.range(-0.3, 0.3)
 				var len: float = size * r.range(0.4, 1.0)
-				for k in range(int(len)):
+				for k in range(ceili(len)):
 					a0 += r.range(-0.4, 0.4)
 					x0 += cos(a0)
 					y0 += sin(a0) * 0.9
@@ -615,7 +604,7 @@ class GroundDecal extends Fx:
 						cols_["c"] if a2 > 3.5 and a2 < 5.6 else cols_["b"])
 				_push(cos(a2) * (rr - 1.3), sin(a2) * (rr - 1.3) * 0.85, cols_["a"])
 				a2 += 0.04
-			for i in range(int(size * 1.4)):
+			for i in range(ceili(size * 1.4)):
 				var ca: float = r.range(0.0, M.TAU)
 				var cd: float = r.range(size * 0.2, size * 0.88)
 				_push(cos(ca) * cd, sin(ca) * cd * 0.85,
@@ -630,13 +619,13 @@ class GroundDecal extends Fx:
 					var qx: float = cos(a3 + ang) * rr
 					var qy: float = sin(a3 + ang) * rr * 0.9
 					var thick: float = (1 - absf(a3) / 1.3) * 2.3
-					for t in range(int(thick)):
+					for t in range(ceili(thick)):
 						_push(qx - cos(a3 + ang) * float(t) * 0.9,
 								qy - sin(a3 + ang) * float(t) * 0.9, c,
 								M.js_round((a3 + 1.2) * 20) if k == 0 else -1)
 					a3 += 0.03
 		elif kind_ == "scorch":
-			for i in range(int(size * 2.4)):
+			for i in range(ceili(size * 2.4)):
 				var sa: float = r.range(0.0, M.TAU)
 				var sd: float = sqrt(r.next()) * size
 				_push(cos(sa) * sd, sin(sa) * sd * 0.85,
@@ -827,6 +816,10 @@ class Proj extends Fx:
 	var on_end = null
 	var on_tick = null
 	var shadow: float = 2.0
+	# `throwArc` assigns `p.lit = g => glow(...)` in the original, an optional
+	# hook. GDScript cannot add methods at runtime, so the hook is a Callable
+	# that `lit()` dispatches; unset it draws nothing, matching `p.lit?.()`.
+	var lit_fn = null
 
 	func _init(px: float, py: float, tx_: float, ty_: float, dur_: float, arc_: float,
 			draw_: Callable, on_end_: Callable, on_tick_ = null, shadow_: float = 2.0) -> void:
@@ -850,11 +843,11 @@ class Proj extends Fx:
 		y = M.lerpf(y0, ty, a)
 		z = 4 * arc * a * (1 - a) + 6
 		if on_tick != null:
-			on_tick.call(w, self, a)
+			_emit(on_tick, [w, self, a])
 		if a >= 1:
 			dead = true
 			z = 0
-			on_end.call(w, self)
+			_emit(on_end, [w, self])
 
 	func air(g, _w) -> void:
 		var a: float = M.clampf(age / dur, 0.0, 1.0)
@@ -862,7 +855,22 @@ class Proj extends Fx:
 		L.dl = 6
 		L.ellipse(x, y, shadow, shadow * 0.6, int(M.P["bk"]))
 		L.dl = 16
-		draw_fn.call(g, x, y - z, z, a, self)
+		_emit(draw_fn, [g, x, y - z, z, a, self])
+
+	func lit(g, _w) -> void:
+		if lit_fn != null and lit_fn.is_valid():
+			_emit(lit_fn, [g, _w])
+
+	## JS tolerates a callee that declares fewer parameters than the call site
+	## passes; GDScript does not. `_emit` truncates the argument list to the
+	## arity the callback actually declares, which is exactly the original
+	## semantics (`fns.lit?.(g, a, f)` with `lit: (g) => ...`).
+	static func _emit(cb: Callable, args: Array) -> void:
+		var n: int = cb.get_argument_count()
+		if n < 0 or n >= args.size():
+			cb.callv(args)
+		else:
+			cb.callv(args.slice(0, n))
 
 
 class Shot extends Fx:
@@ -928,3 +936,196 @@ class Shot extends Fx:
 			dead = true
 			if on_land != null and on_land.is_valid():
 				on_land.call(w, self)
+
+
+# ---------------------------------------------------------------------------
+# particle emitters (original `drops` / `shards` / `chips` / `steam` / `dust`)
+#
+# The RNG draw ORDER inside each emitter is part of the authored output: these
+# routines share the world stream with everything else, so calling
+# `rng.next()` in a different sequence moves every subsequent particle in the
+# frame. The order below matches the original object-literal evaluation order
+# exactly (angle, speed, then the fields in literal order).
+# ---------------------------------------------------------------------------
+
+static func drops(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
+		c3: int, o: Dictionary = {}) -> void:
+	var spread: float = float(o.get("spread", M.TAU))
+	for _i in range(n):
+		var a: float
+		if o.has("ang"):
+			a = float(o["ang"]) + (w.rng.next() - 0.5) * spread
+		else:
+			a = w.rng.next() * M.TAU
+		var s: float = sp * (0.35 + w.rng.next() * 0.65)
+		var sz0: float = float((o.get("size", [1.2, 3.0]))[0])
+		var sz1: float = float((o.get("size", [1.2, 3.0]))[1])
+		w.parts.add({"k": "drop", "x": x, "y": y, "z": float(o.get("z", 2.0)),
+				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vz": float(o.get("up", 60.0)) * (0.4 + w.rng.next() * 0.9),
+				"grav": 230, "size": w.rng.range(sz0, sz1),
+				"c1": c1, "c2": c2, "c3": c3, "land": int(o.get("land", 1)),
+				"max": float(o.get("max", 2.0)), "glow": float(o.get("glow", 0.0)),
+				"trail": 1})
+
+
+static func shards(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
+		c3: int, o: Dictionary = {}) -> void:
+	var spread: float = float(o.get("spread", M.TAU))
+	for _i in range(n):
+		var a: float
+		if o.has("ang"):
+			a = float(o["ang"]) + (w.rng.next() - 0.5) * spread
+		else:
+			a = w.rng.next() * M.TAU
+		var s: float = sp * (0.3 + w.rng.next() * 0.7)
+		var sz0: float = float((o.get("size", [3.0, 6.0]))[0])
+		var sz1: float = float((o.get("size", [3.0, 6.0]))[1])
+		w.parts.add({"k": "shard", "x": x, "y": y, "z": float(o.get("z", 3.0)),
+				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vz": float(o.get("up", 70.0)) * (0.4 + w.rng.next()),
+				"grav": 240, "size": w.rng.range(sz0, sz1),
+				"rot": w.rng.range(0.0, M.TAU), "vr": w.rng.range(-12.0, 12.0),
+				"c1": c1, "c2": c2, "c3": c3, "land": int(o.get("land", 2)),
+				"max": 3})
+
+
+static func chips(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
+		c3: int, o: Dictionary = {}) -> void:
+	var spread: float = float(o.get("spread", M.TAU))
+	for _i in range(n):
+		var a: float
+		if o.has("ang"):
+			a = float(o["ang"]) + (w.rng.next() - 0.5) * spread
+		else:
+			a = w.rng.next() * M.TAU
+		var s: float = sp * (0.3 + w.rng.next() * 0.7)
+		var sz0: float = float((o.get("size", [1.8, 3.8]))[0])
+		var sz1: float = float((o.get("size", [1.8, 3.8]))[1])
+		w.parts.add({"k": "chip", "x": x, "y": y, "z": float(o.get("z", 3.0)),
+				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vz": float(o.get("up", 80.0)) * (0.4 + w.rng.next()),
+				"grav": 260, "size": w.rng.range(sz0, sz1),
+				"rot": w.rng.range(0.0, 3.0), "vr": w.rng.range(-14.0, 14.0),
+				"c1": c1, "c2": c2, "c3": c3, "land": 3, "max": 3.5})
+
+
+static func steam(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
+		size: float = 4.0, o: Dictionary = {}) -> void:
+	for _i in range(n):
+		var a: float = w.rng.next() * M.TAU
+		var s: float = sp * w.rng.next()
+		w.parts.add({"k": "steam", "x": x, "y": y, "z": float(o.get("z", 2.0)),
+				"vx": cos(a) * s, "vy": sin(a) * s * 0.7,
+				"vz": float(o.get("vz", 14.0)) * (0.5 + w.rng.next()),
+				"size": size * (0.7 + w.rng.next() * 0.6),
+				"max": float(o.get("max", 0.9)) * (0.7 + w.rng.next() * 0.6),
+				"c1": c1, "c2": c2, "drag": 1.5})
+
+
+static func dust(w, x: float, y: float, n: int, sp: float, size: float = 4.0) -> void:
+	steam(w, x, y, n, sp, int(M.P["i3"]), int(M.P["i2"]), size,
+			{"vz": 4.0, "max": 0.6})
+
+
+# ---------------------------------------------------------------------------
+# hit bookkeeping (original `Hits`)
+# ---------------------------------------------------------------------------
+
+class Hits extends RefCounted:
+	var m: Dictionary = {}
+
+	func ok(e, now: float, cd = 1e18, mx = 1e18) -> bool:
+		var r = m.get(e.id, null)
+		if r != null:
+			if int(r["n"]) >= int(mx) or now - float(r["t"]) < cd:
+				return false
+			r["t"] = now
+			r["n"] = int(r["n"]) + 1
+			return true
+		m[e.id] = {"t": now, "n": 1}
+		return true
+
+	func n(e) -> int:
+		var r = m.get(e.id, null)
+		return int(r["n"]) if r != null else 0
+
+
+# ---------------------------------------------------------------------------
+# free-form scripted effect (original `Custom`)
+# ---------------------------------------------------------------------------
+
+class Custom extends Fx:
+	var life: float = 0.0
+	var fns: Dictionary = {}
+
+	func _init(px: float, py: float, life_: float, fns_: Dictionary, sy_: float = -999999.0) -> void:
+		x = px
+		y = py
+		sy = sy_ if sy_ != -999999.0 else py
+		kind = "custom"
+		life = life_
+		fns = fns_
+
+	func upd(_w, _dt: float) -> void:
+		if fns.has("upd"):
+			_emit(fns["upd"], [_w, _dt, self])
+		if age >= life:
+			dead = true
+
+	func gnd(g, _w) -> void:
+		if fns.has("gnd"):
+			_emit(fns["gnd"], [g, age / life, self])
+
+	func up(g, _w) -> void:
+		if fns.has("up"):
+			_emit(fns["up"], [g, age / life, self])
+
+	func air(g, _w) -> void:
+		if fns.has("air"):
+			_emit(fns["air"], [g, age / life, self])
+
+	func lit(g, _w) -> void:
+		if fns.has("lit"):
+			_emit(fns["lit"], [g, age / life, self])
+
+	## Arity-tolerant dispatch (see `Proj._emit`): the original JavaScript
+	## callbacks declare only the parameters they use (`(g)`, `(g, a)`) while
+	## `Custom` always calls them with `(g, a, f)`.
+	static func _emit(cb: Callable, args: Array) -> void:
+		var n: int = cb.get_argument_count()
+		if n < 0 or n >= args.size():
+			cb.callv(args)
+		else:
+			cb.callv(args.slice(0, n))
+
+
+# ---------------------------------------------------------------------------
+# segmented body helper (original `Chain`, from fx.ts)
+# ---------------------------------------------------------------------------
+
+class Chain extends RefCounted:
+	var s: Array = []
+	var n: int = 0
+	var gap: float = 0.0
+
+	func _init(cx: float, cy: float, n_: int, gap_: float, ang: float = 0.0) -> void:
+		n = n_
+		gap = gap_
+		for i in range(n):
+			s.append({"x": cx - cos(ang) * gap * float(i),
+					"y": cy - sin(ang) * gap * float(i)})
+
+	func move(cx: float, cy: float) -> void:
+		s[0]["x"] = cx
+		s[0]["y"] = cy
+		for i in range(1, n):
+			var a: Dictionary = s[i - 1]
+			var b: Dictionary = s[i]
+			var dx: float = float(b["x"]) - float(a["x"])
+			var dy: float = float(b["y"]) - float(a["y"])
+			var d: float = sqrt(dx * dx + dy * dy)
+			if d == 0.0:
+				d = 1.0
+			b["x"] = float(a["x"]) + (dx / d) * gap
+			b["y"] = float(a["y"]) + (dy / d) * gap

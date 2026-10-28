@@ -150,6 +150,12 @@ def main() -> int:
     )
     ap.add_argument("--only", default="", help="Comma separated skill ids to regenerate.")
     ap.add_argument("--out-dir", default=str(ORACLE_DIR))
+    ap.add_argument(
+        "--extra-seeds", default=os.environ.get("GOLD93_EXTRA_SEEDS", ""),
+        help="Comma separated extra world seeds. The canonical oracle stays at "
+             "seed 7; variants are written to the diagnostics directory so the "
+             "differential test can compare more than one world.",
+    )
     args = ap.parse_args()
 
     src = Path(args.src).expanduser() if args.src else None
@@ -188,6 +194,7 @@ def main() -> int:
             staged.unlink(missing_ok=True)
 
         wanted = [int(x) for x in args.only.split(",") if x.strip()] or sorted(TOTALS)
+        extra_seeds = [int(x) for x in args.extra_seeds.split(",") if x.strip()]
         index_skills = []
         for sid in wanted:
             total = TOTALS[sid]
@@ -195,6 +202,32 @@ def main() -> int:
             samples = sample_ticks(total)
             env = dict(os.environ, GOLD93_CAST_TICK=str(CAST_TICK),
                        GOLD93_DENSITY="16", GOLD93_FORMATION="1")
+            for seed in extra_seeds:
+                venv = dict(env, GOLD93_SEED=str(seed))
+                vproc = subprocess.run(
+                    ["node", str(bundle), str(sid), str(ticks),
+                     ",".join(str(t) for t in samples)],
+                    capture_output=True, text=True, env=venv, check=False,
+                )
+                if vproc.returncode != 0:
+                    print(f"  skill {sid} seed {seed}: FAILED\n{vproc.stderr[:800]}")
+                    return 1
+                vdata = json.loads(vproc.stdout)
+                vproto = dict(PROTOCOL)
+                vproto["seed"] = seed
+                vdata["protocol"] = vproto
+                assert_cast_tick(vdata, CAST_TICK)
+                vdata["purpose"] = (
+                    "ORIGINAL engine replay of venomwright:%03d at world seed %d; "
+                    "a second differential reference so parity is not proven on a "
+                    "single world." % (sid, seed))
+                diag_dir = REPO / "docs" / "vfx" / "skill_readiness" / "diagnostics"
+                diag_dir.mkdir(parents=True, exist_ok=True)
+                vtarget = diag_dir / ("venomwright_%03d_s%d.json" % (sid, seed))
+                vtarget.write_text(json.dumps(vdata, indent=1, sort_keys=True) + "\n")
+                print("  %2d %-26s seed=%-3d rows=%-4d hits=%-4d cues=%-4d -> %s"
+                      % (sid, vdata["name"], seed, len(vdata["rows"]),
+                         len(vdata["hits"]), len(vdata["cues"]), vtarget.name))
             proc = subprocess.run(
                 ["node", str(bundle), str(sid), str(ticks),
                  ",".join(str(t) for t in samples)],

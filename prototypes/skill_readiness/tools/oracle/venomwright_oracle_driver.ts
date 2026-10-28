@@ -166,8 +166,13 @@ class Stage {
 const argId = parseInt(process.argv[2] ?? '1', 10);
 const argTicks = parseInt(process.argv[3] ?? '600', 10);
 const samples = (process.argv[4] ?? '').split(',').filter(Boolean).map(Number);
+// The world seed is an input, not a constant: `Stage.start` always took it, but
+// the entry point hardcoded 7, so an oracle could only ever be produced for the
+// default seed. GOLD93_SEED selects it and is echoed into the output, so a
+// record can never claim a seed it was not generated with.
+const argSeed = parseInt(process.env.GOLD93_SEED ?? '7', 10);
 const st = new Stage();
-st.start(argId, 7);
+st.start(argId, argSeed);
 const def = SKILL_BY_ID[argId];
 const rows = st.run(argTicks, samples);
 // `cast_tick` is reported from the value the run ACTUALLY used (Stage.castN,
@@ -177,7 +182,7 @@ const rows = st.run(argTicks, samples);
 console.log(JSON.stringify({
   schema: 'gold93/venomwright-oracle/v1',
   skill: argId, name: def.name, duration: def.dur, total: def.total,
-  seed: 7, logical: [W, H], native: [RW, RH], k: K, hz: 60,
+  seed: argSeed, logical: [W, H], native: [RW, RH], k: K, hz: 60,
   cast_tick: st.castN, ticks: argTicks, sampled_ticks: rows.length,
   rows, hits: st.hits, cues: st.cues,
 }));

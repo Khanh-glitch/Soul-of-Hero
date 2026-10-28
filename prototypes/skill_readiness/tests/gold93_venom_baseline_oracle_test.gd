@@ -76,18 +76,18 @@ func _initialize() -> void:
 		if runtime.can_cast(key):
 			evidence.append(_replay(runtime, key, b))
 			replayed += 1
-			else:
-				awaiting += 1
-				evidence.append({
-					"key": key,
-					"status": "BASELINE_RECORDED_AWAITING_MODULE",
-					"blocker": runtime.blocker_for(key),
-				"source_mid_cast_tick": int(b.get("source_mid_cast_tick", 0)),
-				"source_fx_count": int(b.get("source_fx_count", 0)),
-				"source_particle_count": int(b.get("source_particle_count", 0)),
-				"whole_source_rgba_sha256_prefix": String(
-						b.get("whole_source_rgba_sha256_prefix", "")),
-			})
+		else:
+			awaiting += 1
+			evidence.append({
+				"key": key,
+				"status": "BASELINE_RECORDED_AWAITING_MODULE",
+				"blocker": runtime.blocker_for(key),
+			"source_mid_cast_tick": int(b.get("source_mid_cast_tick", 0)),
+			"source_fx_count": int(b.get("source_fx_count", 0)),
+			"source_particle_count": int(b.get("source_particle_count", 0)),
+			"whole_source_rgba_sha256_prefix": String(
+					b.get("whole_source_rgba_sha256_prefix", "")),
+		})
 
 	_check(replayed + awaiting == 21, "every Venomwright skill must be accounted for")
 

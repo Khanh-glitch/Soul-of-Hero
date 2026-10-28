@@ -117,8 +117,15 @@ func _initialize() -> void:
 	_check(blocked != null, "a catalogued id must return a handle, not null")
 	if blocked != null:
 		_check(blocked.is_blocked(), BLOCKED_ID + " must be BLOCKED, not silently cast")
-		_check(blocked.block_reason.find("ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE") >= 0,
-				"the blocker must name the real missing source material")
+		_check(not blocked.block_reason.is_empty(),
+				"the blocker must name a reason, not fail silently")
+		_check(blocked.block_reason == adapter.runtime.blocker_for(BLOCKED_ID),
+				"the adapter must surface the runtime's real blocker for " + BLOCKED_ID)
+		# The original source archive HAS been recovered and verified, so
+		# claiming the archive is unavailable would be a lie. The honest
+		# blocker for an unported skill is the generator.
+		_check(blocked.block_reason.find("ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE") < 0,
+				"the recovered archive must not be blamed for work not yet ported")
 		_check(blocked.tick_source(64) == 0,
 				"a blocked handle must never advance a source tick")
 		_check(blocked.status_name() == "BLOCKED", "blocked handle keeps BLOCKED status")

@@ -170,6 +170,55 @@ jobs:
             exit 1
           fi
 
+      - name: Native world simulation matches the original engine (no cast)
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-venom-world-diff.log
+          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --world-only 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_WORLD_DIFFERENTIAL: PASS' "$LOG"; then
+            echo "::error::[gold93-venom-world-diff] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-venom-world-diff] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+
+      - name: Native full cast matches the original engine tick-by-tick
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-venom-diff.log
+          timeout 1200s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_DIFFERENTIAL: PASS' "$LOG"; then
+            echo "::error::[gold93-venom-diff] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-venom-diff] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+          # Surface the per-skill verdicts so a regression is visible in the log
+          # even when the job as a whole is green.
+          grep -E '"canonical"|"parity"|"first_divergent_tick"' "$LOG" | tee /tmp/gold93-venom-diff-summary.txt
+
+      - name: Capture the ported casts (real rendered frames)
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-capture.log
+          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_capture.gd -- --skill=1 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_CAPTURE: PASS' "$LOG"; then
+            echo "::error::[gold93-capture] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-capture] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+          # A capture that does not verify against the original oracle is not
+          # evidence. Fail loudly rather than upload decorative frames.
+          if grep -q 'MISMATCH' docs/vfx/skill_readiness/captures/venomwright_*/manifest.json; then
+            echo "::error::[gold93-capture] a captured frame does not hash-match the original engine"
+            grep -o '"oracle": "MISMATCH[^"]*"' docs/vfx/skill_readiness/captures/venomwright_*/manifest.json || true
+            exit 1
+          fi
+
       - name: Per-skill independent native harness (all 93)
         shell: bash
         run: |
@@ -216,6 +265,10 @@ jobs:
             /tmp/gold93-baseline.log
             /tmp/gold93-lab.log
             /tmp/gold93-venom-ground.log
+            /tmp/gold93-venom-world-diff.log
+            /tmp/gold93-venom-diff.log
+            /tmp/gold93-venom-diff-summary.txt
+            /tmp/gold93-capture.log
             /tmp/gold93-render.log
             /tmp/gold93-harness.log
             /tmp/gold93-adapter.log

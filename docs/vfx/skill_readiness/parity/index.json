@@ -1,0 +1,78 @@
+{
+	"note": "source_parity_verified requires a PASS here: the native cast was diffed tick-by-tick against the ORIGINAL engine and matched.",
+	"schema": "gold93/parity-evidence/v1",
+	"skills": {
+		"venomwright:001": {
+			"compared_ticks": 65.0,
+			"cue_mismatch": "",
+			"first_divergent_tick": -1.0,
+			"first_mismatch": "",
+			"hit_mismatch": "",
+			"oracle_cast_tick": 1.0,
+			"oracle_schema": "gold93/venomwright-oracle/v1",
+			"recorded_utc": "2026-10-28T15:24:06",
+			"seed": 7.0,
+			"skill": 1.0,
+			"status": "PASS",
+			"ticks": 245.0
+		},
+		"venomwright:001@s21": {
+			"compared_ticks": 65.0,
+			"cue_mismatch": "",
+			"first_divergent_tick": -1.0,
+			"first_mismatch": "",
+			"hit_mismatch": "",
+			"oracle_cast_tick": 1.0,
+			"oracle_schema": "gold93/venomwright-oracle/v1",
+			"recorded_utc": "2026-10-28T15:25:27",
+			"seed": 21.0,
+			"skill": 1.0,
+			"status": "PASS",
+			"ticks": 245.0
+		},
+		"venomwright:001@s99": {
+			"compared_ticks": 65,
+			"cue_mismatch": "",
+			"first_divergent_tick": -1,
+			"first_mismatch": "",
+			"hit_mismatch": "",
+			"oracle_cast_tick": 1,
+			"oracle_schema": "gold93/venomwright-oracle/v1",
+			"recorded_utc": "2026-10-28T15:26:49",
+			"seed": 99,
+			"skill": 1,
+			"status": "PASS",
+			"ticks": 245
+		},
+		"venomwright:world": {
+			"check": "world-only",
+			"compared_ticks": 65.0,
+			"first_divergent_tick": -1.0,
+			"first_mismatch": "",
+			"recorded_utc": "2026-10-28T14:56:52",
+			"seed": 7.0,
+			"status": "PASS",
+			"ticks": 245.0
+		},
+		"venomwright:world@s21": {
+			"check": "world-only",
+			"compared_ticks": 65.0,
+			"first_divergent_tick": -1.0,
+			"first_mismatch": "",
+			"recorded_utc": "2026-10-28T14:58:03",
+			"seed": 21.0,
+			"status": "PASS",
+			"ticks": 245.0
+		},
+		"venomwright:world@s99": {
+			"check": "world-only",
+			"compared_ticks": 65.0,
+			"first_divergent_tick": -1.0,
+			"first_mismatch": "",
+			"recorded_utc": "2026-10-28T14:59:14",
+			"seed": 99.0,
+			"status": "PASS",
+			"ticks": 245.0
+		}
+	}
+}

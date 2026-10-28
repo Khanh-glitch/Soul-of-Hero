@@ -43,8 +43,13 @@ func _initialize() -> void:
 
 	var runtime = RUNTIME.new()
 	var report: Dictionary = runtime.readiness_report()
-	_check(int(report["native_port_ready"].size()) == int(probe.get("native", 0)),
-			"lab probe native count must match runtime report")
+	# The lab probe counts ids that can actually run a cast, which is the
+	# `native_executable` axis - not `native_port_ready`, which additionally
+	# demands parity evidence and Gold visual approval.
+	_check(int(report["native_executable"].size()) == int(probe.get("native", 0)),
+			"lab probe native count must match the runtime native_executable axis")
+	_check(int(report["source_parity_verified"].size()) <= int(report["native_executable"].size()),
+			"parity can never be claimed for more ids than can execute")
 
 	# Persist the coverage artifact so CI can archive it.
 	DirAccess.make_dir_recursive_absolute("res://.artifacts/gold93")
