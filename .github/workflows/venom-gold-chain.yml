@@ -1,0 +1,35 @@
+name: Venomwright Glassfang original Chain motion parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_chain.gd'
+      - 'prototypes/gold_pair/tests/venom_chain_source_oracle.gd'
+      - '.github/workflows/venom-gold-chain.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-chain-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 140s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-chain-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-chain-import.log; then exit 1; fi
+      - name: Replay original 90-tick Glassfang Chain coordinates in native Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_chain_source_oracle.gd 2>&1 | tee /tmp/venom-chain-test.log
+          grep -F 'VENOM_CHAIN_ORACLE: PASS / 96' /tmp/venom-chain-test.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-chain-test.log; then exit 1; fi
