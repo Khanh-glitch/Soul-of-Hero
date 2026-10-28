@@ -176,7 +176,10 @@ func _spawn_landmarks() -> void:
 		var arch := _make_landmark_sprite(String(lm.get("visual", "generic_entry")))
 		arch.position = Vector2(0, -18)
 		gate.add_child(arch)
-		gate.refresh()
+		# NOTE: gate.refresh() calls AppFlow.is_campaign_level_unlocked which
+		# reads save data and CAMPAIGN_REGISTRY during spawn; defer it one idle
+		# frame so the parent scene has finished entering the tree.
+		call_deferred(gate.refresh)
 
 
 func _make_landmark_sprite(visual_id: String) -> Node2D:
