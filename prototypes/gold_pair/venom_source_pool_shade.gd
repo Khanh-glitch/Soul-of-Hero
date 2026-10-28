@@ -28,11 +28,11 @@ var noise
 var _output
 var _light
 
-func _init()->void:
-    pool=POOL.new()
+func _init(source_density:int=1)->void:
+    pool=POOL.new(source_density)
     noise=NOISE.new()
-    _output=LAYER.new()
-    _light=LAYER.new()
+    _output=LAYER.new(source_density)
+    _light=LAYER.new(source_density)
 
 func begin(x:float,y:float,radius:float,duration:float,
         blob_count:int,growth:float,seed:int=-1)->void:
@@ -54,12 +54,13 @@ func _shade(source_world_time:float,source_age:float,flow_x:float,flow_y:float)-
     var dl:int=maxi(2,int(floor(16.0*rem+0.5))) if rem<1.0 else 16
     _output.dl=dl
     var f:PackedFloat32Array=pool.field
-    var W:int=600
+    var W:int=pool.W
+    var rk:float=float(pool.source_density)
     var fx:float=flow_x*source_world_time
     var fy:float=flow_y*source_world_time
     var sd:float=float(pool.seed)*13.0
-    var dep:float=7.0
-    var sc:float=0.17
+    var dep:float=7.0*rk
+    var sc:float=0.17/rk
     var amp:float=0.55
     for y in range(pool.y0,pool.y1+1):
         for x in range(pool.x0,pool.x1+1):
@@ -67,29 +68,29 @@ func _shade(source_world_time:float,source_age:float,flow_x:float,flow_y:float)-
             var v:float=f[idx]
             if v<=0.0:continue
             var color:int=0
-            if v<1.0:
+            if v<rk:
                 color=OUTLINE
             else:
                 var lit:float=-((f[idx+1]-f[idx-1])*(-0.7)+(f[idx+W]-f[idx-W])*(-0.7))*0.5
-                if v<2.0:
+                if v<2.0*rk:
                     color=RIM_LIT if lit>0.25 else RIM
                 else:
                     var sx:float=float(x)*sc+sd
                     var sy:float=float(y)*sc
                     var wp:float=float(noise.value2(sx*1.9-fy*0.6,sy*1.9+fx*0.6)-128)*0.05
                     var n:float=float(noise.value1(sx+fx+wp*9.0,sy+fy+wp*9.0))/255.0
-                    var dn:float=clampf((v-2.0)/dep,0.0,1.0)
+                    var dn:float=clampf((v-2.0*rk)/dep,0.0,1.0)
                     var q:float=(1.0-dn)*(1.0-amp)+n*amp
                     var ramp_idx:int=int(floor(q*float(RAMP.size())+(float(BAYER[((y&3)<<2)|(x&3)])-7.5)*0.05))
                     ramp_idx=clampi(ramp_idx,0,RAMP.size()-1)
                     color=RAMP[ramp_idx]
-                    if v<5.0:
+                    if v<5.0*rk:
                         if lit>0.3:
                             color=HI
                         elif lit< -0.3:
                             color=SH
                     var n2:int=noise.value2(sx*1.3+fx*1.5,sy*1.3+fy*1.5+5.0)
-                    if abs(n2-128)<5 and v>3.0:
+                    if abs(n2-128)<5 and v>3.0*rk:
                         color=VEIN
             _output.raw_px(x,y,color)
     _output.dl=16
