@@ -1,0 +1,36 @@
+name: ARCANA III original source crackScar ground geometry parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/arcana_source_crack_scar.gd'
+      - 'prototypes/gold_pair/tests/arcana_crack_source_oracle.gd'
+      - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
+      - '.github/workflows/arcana-gold-crackscar.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  arcana-source-ground:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and reject GDScript parser failures
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 145s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/arcana-scar-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-scar-import.log; then exit 1; fi
+      - name: Reproduce all 12 original source geometry+RNG ledger SHA256 hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 85s godot --headless --path . --script res://prototypes/gold_pair/tests/arcana_crack_source_oracle.gd 2>&1 | tee /tmp/arcana-scar.log
+          grep -F 'ARCANA_SCAR_ORACLE: PASS / 12' /tmp/arcana-scar.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-scar.log; then exit 1; fi
