@@ -7,8 +7,9 @@ extends Node2D
 ## Caller must supply original source-world→map transform and fixed 60Hz clock.
 ## No source Pool.upd gameplay or damage yet; this is presentation staging.
 const SHADE=preload("res://prototypes/gold_pair/venom_source_pool_shade.gd")
-const W:int=600
-const H:int=340
+var W:int=600
+var H:int=340
+var source_density:int=1
 var shader
 var sprites:Dictionary={}
 var images:Dictionary={}
@@ -16,6 +17,19 @@ var textures:Dictionary={}
 var source_age:float=0.0
 var elapsed_frames:int=0
 var finished:bool=false
+
+## Gold density must be set before allocating image textures; k1 cannot be
+## stretched to impersonate k2, which has independent native distance samples.
+func set_source_density(density:int)->void:
+    if sprites.size()>0:
+        push_error("Pool source pixel density cannot be changed after texture initialization")
+        return
+    if density!=1 and density!=2:
+        push_error("Original Pool supports Gold Classic k1 and Ultra k2 only")
+        return
+    source_density=density
+    W=600*density
+    H=340*density
 
 func _ready()->void:
     _ensure_passes()
@@ -44,7 +58,7 @@ func _ensure_passes()->void:
 func begin_source_pool(source_x:float,source_y:float,radius:float,life:float,
         blobs:int,grow:float,seed:int=-1)->void:
     _ensure_passes()
-    shader=SHADE.new()
+    shader=SHADE.new(source_density)
     shader.begin(source_x,source_y,radius,life,blobs,grow,seed)
     source_age=0.0
     elapsed_frames=0
