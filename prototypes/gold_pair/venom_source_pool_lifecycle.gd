@@ -50,9 +50,16 @@ func begin(source_x:float,source_y:float,radius:float,source_life:float,
     nt=0.0
     frame=0
     dead=false
-    hits.clear()
+    # A new pool must never clear the ledger of an earlier pool in this cast.
+    # Glassfang's three finisher pools bind the same Hits object after begin().
+    hits={}
     events.clear()
     current_frame_events.clear()
+
+func bind_shared_hits(shared_ledger:Dictionary)->void:
+    # Godot Dictionaries share backing storage. All three source finisher
+    # Pools must use the SAME ledger for the three-hit cap and cooldown.
+    hits=shared_ledger
 
 func _hit_allowed(id:int,source_time:float)->bool:
     if hits.has(id):
@@ -66,9 +73,11 @@ func _hit_allowed(id:int,source_time:float)->bool:
     hits[id]={"t":source_time,"n":1}
     return true
 
-func step_source_60hz(targets:Array)->void:
+func step_source_60hz(targets:Array,source_world_time:float=-1.0)->void:
     frame+=1
-    now+=F
+    # Original Hits.ok consults World.time, not age relative to this Pool.
+    # Default preserves the original isolated Pool oracle's zero-based clock.
+    now=source_world_time if source_world_time>=0.0 else now+F
     age+=F
     current_frame_events.clear()
     # Source Pool.upd checks dead before touching RNG/tick clocks.
