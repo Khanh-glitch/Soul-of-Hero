@@ -1,0 +1,34 @@
+name: Gold pair shared source RNG (Venomwright + ARCANA III)
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/**'
+      - '.github/workflows/gold-pair-source-rng.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-rng-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import Godot project and reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/pair-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pair-import.log; then exit 1; fi
+      - name: Replay original TypeScript numerical outputs in native Godot
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 65s godot --headless --path . --script res://prototypes/gold_pair/tests/gold_mulberry32_source_test.gd 2>&1 | tee /tmp/pair-rng.log
+          grep -F 'GOLD_PAIR_RNG: PASS / 80' /tmp/pair-rng.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pair-rng.log; then exit 1; fi
