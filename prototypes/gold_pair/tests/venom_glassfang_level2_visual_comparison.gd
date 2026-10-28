@@ -10,6 +10,8 @@ extends "res://tests/chapter_1_campaign_level_visual_capture.gd"
 ## Production map is checked out by CI at pinned immutable SHA, copies only
 ## prototypes/gold_pair/ in a disposable GitHub runner. No gameplay changes.
 const MOTION=preload("res://prototypes/gold_pair/venom_glassfang_motion.gd")
+const LIVE_WORLD=preload("res://prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd")
+const PARTICLES_CANVAS=preload("res://prototypes/gold_pair/venom_source_particles_canvas.gd")
 const FANG_CANVAS=preload("res://prototypes/gold_pair/venom_source_fang_canvas.gd")
 const POOL_CANVAS=preload("res://prototypes/gold_pair/venom_source_pool_canvas.gd")
 const ENV_CANVAS=preload("res://prototypes/gold_pair/venom_glassfang_environment_canvas.gd")
@@ -43,6 +45,8 @@ var _map_visible:int=0
 var _masked:int=0
 var _source_pool_total:int=0
 var _new_environment_seen:int=0
+var _source_particle_samples:int=0
+var _source_particle_source_gold_verified:bool=false
 var _contrast_images:int=0
 var _contrast_roi_samples:Array=[]
 
@@ -99,9 +103,19 @@ func _capture_campaign_state(game:Node2D)->void:
     stage.add_child(env_renderer)
     env_renderer.set_source_to_map_transform(to_logical)
     env_renderer.release_source_environment()
+    var particles_renderer=PARTICLES_CANVAS.new()
+    particles_renderer.name="OriginalGoldPhysicalWorldLiveParticlesAll11Shapes"
+    particles_renderer.set_source_density(DENSITY)
+    stage.add_child(particles_renderer)
+    particles_renderer.set_source_to_map_transform(to_logical)
+    particles_renderer.release_source_particles()
 
-    var motion=MOTION.new()
-    motion.begin(SOURCE_PLAYER.x,SOURCE_PLAYER.y,atan2(30.0,115.0),17,1765485952)
+    # Runtime uses exact same cast state plus shared source World RNG; it is
+    # NOT a fixture player/particle animation. Gold World.step owns timings.
+    var source_world=LIVE_WORLD.new()
+    source_world.begin(SOURCE_PLAYER.x,SOURCE_PLAYER.y,atan2(30.0,115.0),
+        17,1765485952,0x20261027)
+    var motion=source_world.motion
     var source_enemy={"id":17,"x":375.0,"y":190.0,"r":9.5,"dying":0.0,"hp":900,"exists":true}
     var out_dir:=ProjectSettings.globalize_path("res://.artifacts/venom_level2_compare")
     _expect(DirAccess.make_dir_recursive_absolute(out_dir)==OK,"GLASSFANG_COMPARE: output directory")
@@ -116,20 +130,46 @@ func _capture_campaign_state(game:Node2D)->void:
     var true_world_background:=game.get_node_or_null("Background") as CanvasItem
     contrast.bind_level(level,true_world_background)
     var previous_bites:int=0
+    var recorded_knockback:Dictionary={"kx":0.0,"ky":0.0,"last_bite":0}
+    var original_enemy_update=func(known:Array,bites:Array,_frame:int)->void:
+        # Source e.kx/kY stage occurs between generator.next and Pool.upd;
+        # actual Level2 enemy is displayed at the same final source position.
+        for n in range(int(recorded_knockback["last_bite"]),bites.size()):
+            var bite:Dictionary=bites[n]
+            recorded_knockback["kx"]=float(recorded_knockback["kx"])+float(bite["knock_x"])*0.5
+            recorded_knockback["ky"]=float(recorded_knockback["ky"])+float(bite["knock_y"])*0.5
+        recorded_knockback["last_bite"]=bites.size()
+        var target:Dictionary=known[0]
+        target["x"]=float(target["x"])+float(recorded_knockback["kx"])/60.0
+        target["y"]=float(target["y"])+float(recorded_knockback["ky"])/60.0
+        var kd:float=1.0-5.5/60.0
+        recorded_knockback["kx"]=float(recorded_knockback["kx"])*kd
+        recorded_knockback["ky"]=float(recorded_knockback["ky"])*kd
     var sampled:Array=[]
     for frame in range(1,331):
         source_enemy["x"]=375.0+8.0*sin(float(frame)*0.070)
         source_enemy["y"]=190.0+5.0*cos(float(frame)*0.055)
         # The real enemy is actually visible in Godot at the matching Gold
         # fixture coordinates, not a screenshot cutout or dummy sprite.
+        source_world.step_source_60hz([source_enemy],original_enemy_update)
         enemy.global_position=offset+Vector2(float(source_enemy["x"]),float(source_enemy["y"]))
-        motion.step_60hz([source_enemy])
         # Gold source HP tracked independently; no VFX damage to SOH enemies.
         for j in range(previous_bites,motion.bite_cues.size()):
             source_enemy["hp"]=int(source_enemy["hp"])-int(motion.bite_cues[j]["amount"])
         previous_bites=motion.bite_cues.size()
         if not TICKS.has(frame):continue
 
+        var expected_counts:Dictionary={15:35,31:36,63:31,96:27,
+            147:77,177:90,220:36,330:35}
+        if expected_counts.has(frame):
+            _expect(source_world.particles().size()==int(expected_counts[frame]),
+                "GLASSFANG_COMPARE: Gold original World dynamic particle count drift frame "+str(frame))
+            _source_particle_source_gold_verified=true
+        var source_particles:Dictionary=particles_renderer.render_source_world_particles(
+            source_world.particles(),frame)
+        _expect(source_particles.size()==2,
+            "GLASSFANG_COMPARE: Gold source whole particle textures missing")
+        _source_particle_samples+=source_world.particles().size()
         var rendered_fang:bool=motion.fang!=null
         if rendered_fang:
             var result:Dictionary=fang_renderer.render_live_actor_frame(motion.fang,float(frame)/60.0)
@@ -226,6 +266,8 @@ func _capture_campaign_state(game:Node2D)->void:
         sampled.append({"tick":frame,"source_enemy_hp":source_enemy["hp"],
             "fang_present":rendered_fang,"active_pools":pools_this_frame,
             "source_authored_other_environment_events":environmental_events.size(),
+            "original_source_live_particles":source_world.particles().size(),
+            "world_rng_state":source_world.emitters.rng.state,
             "masked_non_floor_px":source_masked})
         for pool in present_pool_nodes:
             pool.queue_free()
@@ -239,6 +281,8 @@ func _capture_campaign_state(game:Node2D)->void:
     _expect(_map_visible>2000,"GLASSFANG_COMPARE: game floor is visible, not transparent staging")
     _expect(motion.bite_cues.size()==5,"GLASSFANG_COMPARE: source five bite cues survived")
     _expect(_new_environment_seen>=55,"GLASSFANG_COMPARE: source-authored splash/ring/flash/embed visuals actually staged")
+    _expect(_source_particle_source_gold_verified and _source_particle_samples>=250,
+        "GLASSFANG_COMPARE: native full original 60Hz particle runtime never rendered")
     _expect(_source_pool_total>=10,"GLASSFANG_COMPARE: source simultaneous pool afterlife staged")
     _expect(knight.get("health")==knight_hp and enemy.get("health")==enemy_hp,
         "GLASSFANG_COMPARE: no double damage or real game health change")
@@ -266,12 +310,15 @@ func _capture_campaign_state(game:Node2D)->void:
         "original_gold":"unmodified Venomwright TS World.draw in original 600x340 world at native Ultra k2",
         "level2":"real pinned Chapter1 Level2 AppFlow/TileMaps/Knight/enemy/Camera2D",
         "implemented_here":"exact source Fang 60Hz; source acid Pools on floor; ORIGINAL Splash+Flash+Ring+Embed procedural renderer with 24 standalone original Ultra image hashes, source fixture frames 15/147/177",
-        "not_implemented_here":"vial projectile, shards and drop particles, bubble sprites, corrode enemy, camera shock/flash, exact full-World simultaneous FX ordering and final GLSL post; environmental overlay at 3 source checkpoint fixtures is NOT full-skill runtime",
+        "not_implemented_here":"projectile vial geometry, enemy crystal/corrode overlays, camera shader post, original gnd/air lit order and full runtime for all environment events; environmental overlay at 3 source review checkpoints remains partial",
         "original_tick_list":TICKS,
         "image_files":_evidence,
         "maximum_changed_pixels_vs_baseline":_found_painted,
         "masked_pool_pixels":_masked,
         "source_pool_instances_at_samples":_source_pool_total,
+        "live_source_original_particles_at_nine_frames":_source_particle_samples,
+        "source_particles_physics_continuous":true,
+        "dynamic_world_original_source_oracle":"40654216349",
         "original_other_fx_events_procedurally_rendered_at_three_snapshots":_new_environment_seen,
         "actual_enemy_entity":enemy.name,
         "actual_map_backdrop_cells":floor_before,
