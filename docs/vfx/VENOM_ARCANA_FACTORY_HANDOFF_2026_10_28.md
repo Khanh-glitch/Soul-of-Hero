@@ -35,12 +35,12 @@ Venomwright source uses 600×340 logical world plus adaptive CPU raster, custom 
 No task can report 21/21 or 72/72 as Godot ports based on this source-only audit.
 
 
-## 2026-10-28 08:5x ICT — validated branch progress
+## 2026-10-28 morning ICT — validated branch progress
 
 Branch head at this checkpoint: \`0ee5b326832b7d5ea92eaef0607cbd1d24bd0658\`. Two new Venomwright components under \`prototypes/gold_pair/\`:
 
 - \`venom_source_decal.gd\` ports the six original source \`Decal.gnd()\` procedural ground raster variants: veins, cracks, pits, crater, crescent, scorch. Original TS oracle: 6 kinds × 4 source ages = **24/24 exact SHA-256 RGBA 600×340 frames**. Source palette, seed, point counts, source visibility/fade and glow pulse raster logic included. Commit \`4df4b810283ae61d9c135792c32d574e61cc5cb3\` initially failed due incorrect Godot API \`PackedByteArray.sha256_text()\`, not a source mismatch. Fixed to \`HashingContext.HASH_SHA256\` in commit \`bb8a1b71e8e0d8da79315a5150ff0196903e6288\`; CI \`40617696557\` SUCCESS.
-- \`venom_source_decal_canvas.gd\` stages the original source RGBA output in an isolated Godot \`Sprite2D\` + \`ImageTexture\`, nearest-filtered and non-centered at the source 600×340 logical origin, with explicit source-to-map transform and NO variable-rate \`_process\` clock. \`venom_decal_canvas_smoke.gd\` checks texture dimensions, pixel hash from the original TS oracle, explicit transform, source lifetime boundary and fixed-clock policy. Commit \`0ee5b326832b7d5ea92eaef0607cbd1d24bd0658\`; CI \`40617847435\` SUCCESS (import + 24 original hashes + native staging). Shared RNG CI \`40617847557\` was triggered; verify its conclusion before subsequent edits.
+- \`venom_source_decal_canvas.gd\` stages the original source RGBA output in an isolated Godot \`Sprite2D\` + \`ImageTexture\`, nearest-filtered and non-centered at the source 600×340 logical origin, with explicit source-to-map transform and NO variable-rate \`_process\` clock. \`venom_decal_canvas_smoke.gd\` checks texture dimensions, pixel hash from the original TS oracle, explicit transform, source lifetime boundary and fixed-clock policy. Commit \`0ee5b326832b7d5ea92eaef0607cbd1d24bd0658\`; CI \`40617847435\` SUCCESS (import + 24 original hashes + native staging). Shared RNG CI \`40617847557\` also completed SUCCESS.
 
 **No per-skill promotion**: this is only the Decal primitive and isolated texture staging. Glassfang Hunt remains incomplete: enemy/actor animation, status, contact, particles, pools, all source runtime events and full Gold-vs-Godot skill video not yet ported. ARCANA Black Sun Coronation not yet ported. No real Level2 map adapter, real GPU capture, performance/2160p, WebGL, collision/gameplay authority or production integration is approved.
 
