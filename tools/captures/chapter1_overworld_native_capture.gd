@@ -32,7 +32,6 @@ extends Node
 ## station produced a non-blank image of the expected size.
 
 const APP_ROOT_SCENE: PackedScene = preload("res://game/app/app_root.tscn")
-const INTERNAL := Vector2i(640, 360)
 const TILE := 16.0
 
 var _out_dir := "res://.artifacts/overworld/native"
@@ -57,10 +56,14 @@ func _ready() -> void:
 		print("OVERWORLD CAPTURE BLOCKED - no display server")
 		get_tree().quit(2)
 		return
-	get_window().size = INTERNAL * 2
-	get_window().content_scale_size = INTERNAL
-	get_window().content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
-	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
+	# Do NOT touch the root window here. project.godot already declares the
+	# presentation (640x360 base viewport, 1280x720 window override, canvas_items
+	# stretch); re-setting size/content_scale from _ready() fights the stretch
+	# calculation, and on a WM-less Xvfb that resize never settles - the capture
+	# ran the full timeout without ever drawing a frame or printing a station.
+	# The window geometry comes from the command line (--resolution 1280x720).
+	print("OVERWORLD CAPTURE geometry window=%s viewport=%s" % [
+		get_window().size, get_viewport().get_visible_rect().size])
 	_run.call_deferred()
 
 
@@ -177,8 +180,25 @@ func _overview(ow: Node) -> void:
 		camera.make_current()
 
 
+func _await_post_draw(timeout_msec: int = 10000) -> bool:
+	# Bounded: if the driver never presents a frame, say so and fail that station
+	# instead of blocking the whole job until `timeout` kills it.
+	var drawn := [false]
+	var on_draw := func() -> void: drawn[0] = true
+	RenderingServer.frame_post_draw.connect(on_draw, CONNECT_ONE_SHOT)
+	var deadline := Time.get_ticks_msec() + timeout_msec
+	while not drawn[0] and Time.get_ticks_msec() < deadline:
+		await get_tree().process_frame
+	if RenderingServer.frame_post_draw.is_connected(on_draw):
+		RenderingServer.frame_post_draw.disconnect(on_draw)
+	return drawn[0]
+
+
 func _shoot(station: String) -> void:
-	await RenderingServer.frame_post_draw
+	if not await _await_post_draw():
+		_failed.append(station)
+		push_error("OVERWORLD CAPTURE: %s never got a presented frame" % station)
+		return
 	var image := get_viewport().get_texture().get_image()
 	if image == null or image.get_width() < 2:
 		_failed.append(station)

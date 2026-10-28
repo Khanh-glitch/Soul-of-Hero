@@ -414,7 +414,7 @@ jobs:
           set +e
           timeout --signal=TERM --kill-after=20s 900s \
             xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
-            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            stdbuf -oL -eL godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
                   --user-data-dir artifacts/ud_capture --resolution 1280x720 \
                   --windowed \
                   res://tools/captures/chapter1_overworld_native_capture.tscn -- \
