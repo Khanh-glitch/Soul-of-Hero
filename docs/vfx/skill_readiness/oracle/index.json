@@ -1,6 +1,35 @@
 {
  "engine": "ORIGINAL TypeScript src/game/** executed headlessly in Node",
  "generated_by": "prototypes/skill_readiness/tools/oracle/build_venomwright_oracle.py",
+ "protocol": {
+  "aim": "Engine.autoAim(def) -> Engine.resolve(def, cluster centroid)",
+  "buffers_hashed": [
+   "scene RGBA8 (g.s.d)",
+   "glow RGBA8 (g.l.d)"
+  ],
+  "builder_sha256_16": "955e1346023b6909",
+  "cast_tick": 1,
+  "driver_sha256_16": "ab8cfabda34a6983",
+  "enemy_density": 16,
+  "enemy_placement": "formation (World.reset(seed, true))",
+  "ground_seed": 17,
+  "hash": "sha256 of the raw little-endian Uint32 buffer, truncated to 32 hex",
+  "logical_resolution": [
+   600,
+   340
+  ],
+  "native_resolution": [
+   1200,
+   680
+  ],
+  "out_dir": "docs/vfx/skill_readiness/oracle",
+  "overlays": "none (no aim reticle, no mouse cursor, no HUD text)",
+  "raster_density_k": 2,
+  "rng": "World Rng(seed) for the world stream; cast Rng = (seed*1315423911 + id*2654435761 + skill*97) >>> 0",
+  "schema": "gold93/venomwright-oracle-protocol/v1",
+  "seed": 7,
+  "world_step_hz": 60
+ },
  "schema": "gold93/venomwright-oracle-index/v1",
  "skills": [
   {

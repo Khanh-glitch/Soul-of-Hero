@@ -25,9 +25,18 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-REPO = HERE.parents[4]  # .../prototypes/skill_readiness/tools/oracle -> repo root
+# .../prototypes/skill_readiness/tools/oracle
+#   parents[0] = tools, [1] = skill_readiness, [2] = prototypes, [3] = repo root
+# parents[4] is the HOME directory: using it silently wrote the whole oracle tree
+# to ~/docs/... outside the repository. Asserted below so it cannot regress.
+REPO = HERE.parents[3]
 ORACLE_DIR = REPO / "docs" / "vfx" / "skill_readiness" / "oracle"
 DRIVER = HERE / "venomwright_oracle_driver.ts"
+
+# The cast tick the ORIGINAL engine is driven with, and the value every emitted
+# file must report. The driver reads GOLD93_CAST_TICK; the protocol block and the
+# per-file `cast_tick` field must both end up equal to this or the run aborts.
+CAST_TICK = 1
 
 VENOMWRIGHT_ARCHIVE_SHA256 = (
     "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716"
@@ -51,7 +60,7 @@ PROTOCOL = {
     "seed": 7,
     "enemy_placement": "formation (World.reset(seed, true))",
     "enemy_density": 16,
-    "cast_tick": 1,
+    "cast_tick": CAST_TICK,
     "ground_seed": 17,
     "aim": "Engine.autoAim(def) -> Engine.resolve(def, cluster centroid)",
     "buffers_hashed": ["scene RGBA8 (g.s.d)", "glow RGBA8 (g.l.d)"],
@@ -77,6 +86,61 @@ def sample_ticks(total: int) -> list[int]:
     return sorted({t for t in range(1, ticks + 1) if t % 5 == 0 or t <= 20} | {ticks})
 
 
+def assert_repo_root() -> None:
+    """Fail loudly rather than writing the oracle outside the repository.
+
+    `REPO` used to be HERE.parents[4], which is the home directory: the entire
+    tree landed in ~/docs/... while the run still reported success. An oracle
+    nobody can find is worse than a crash, so both the root marker and the
+    containment of the output directory are checked before anything is written.
+    """
+    if not (REPO / "project.godot").is_file():
+        sys.exit(
+            f"REPO is not the repository root: {REPO}\n"
+            f"  expected project.godot inside it (HERE={HERE})"
+        )
+    if ORACLE_DIR != REPO / "docs" / "vfx" / "skill_readiness" / "oracle":
+        sys.exit(f"ORACLE_DIR escaped the repository: {ORACLE_DIR}")
+    if REPO.name in ("", "/") or len(REPO.parts) < 2:
+        sys.exit(f"implausible repository root: {REPO}")
+
+
+def assert_cast_tick(data: dict, requested: int) -> None:
+    """The recorded cast tick must equal the tick the engine was driven with.
+
+    The driver previously hardcoded `cast_tick: 18` in its output while this
+    builder drove it with GOLD93_CAST_TICK=1, so every oracle file advertised a
+    timing it was never generated with.
+    """
+    got = data.get("cast_tick")
+    if got != requested:
+        sys.exit(
+            f"cast-tick mismatch: driver reported {got!r}, builder requested "
+            f"{requested!r}. Refusing to write an oracle whose recorded timing "
+            f"does not describe how it was produced."
+        )
+    protocol = data.get("protocol") or {}
+    if protocol and protocol.get("cast_tick") != requested:
+        sys.exit(
+            f"protocol cast_tick {protocol.get('cast_tick')!r} != requested "
+            f"{requested!r}"
+        )
+
+
+def reproducibility_block() -> dict:
+    """Fingerprints so a regenerated oracle can be proven byte-comparable."""
+    import hashlib
+
+    def digest(path: Path) -> str:
+        return hashlib.sha256(path.read_bytes()).hexdigest()[:16]
+
+    return {
+        "driver_sha256_16": digest(DRIVER),
+        "builder_sha256_16": digest(Path(__file__).resolve()),
+        "out_dir": str(ORACLE_DIR.relative_to(REPO)),
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument(
@@ -95,8 +159,15 @@ def main() -> int:
             "`src` directory (expected game/world.ts inside it)."
         )
 
+    assert_repo_root()
     esbuild = find_esbuild()
     out_dir = Path(args.out_dir)
+    if not out_dir.is_absolute():
+        out_dir = (REPO / out_dir).resolve()
+    # Containment check: --out-dir must not be used to smuggle the oracle
+    # outside the repository the way the old parents[4] bug did.
+    if REPO not in out_dir.parents and out_dir != REPO:
+        sys.exit(f"--out-dir is outside the repository root {REPO}: {out_dir}")
     out_dir.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory() as tmp:
@@ -122,8 +193,8 @@ def main() -> int:
             total = TOTALS[sid]
             ticks = total + 40
             samples = sample_ticks(total)
-            env = dict(os.environ, GOLD93_CAST_TICK="1", GOLD93_DENSITY="16",
-                       GOLD93_FORMATION="1")
+            env = dict(os.environ, GOLD93_CAST_TICK=str(CAST_TICK),
+                       GOLD93_DENSITY="16", GOLD93_FORMATION="1")
             proc = subprocess.run(
                 ["node", str(bundle), str(sid), str(ticks),
                  ",".join(str(t) for t in samples)],
@@ -133,11 +204,16 @@ def main() -> int:
                 print(f"  skill {sid}: FAILED\n{proc.stderr[:800]}")
                 return 1
             data = json.loads(proc.stdout)
+            data["protocol"] = PROTOCOL
+            assert_cast_tick(data, CAST_TICK)
             data["canonical_id"] = "venomwright:%03d" % sid
             data["archive_sha256"] = VENOMWRIGHT_ARCHIVE_SHA256
-            data["protocol"] = PROTOCOL
             name = "venomwright_%03d.json" % sid
-            (out_dir / name).write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
+            target = out_dir / name
+            (target).write_text(json.dumps(data, indent=1, sort_keys=True) + "\n")
+            # Reproducibility check: the file must be where the index says it is.
+            if not target.is_file():
+                sys.exit(f"oracle file was not written: {target}")
             index_skills.append({
                 "canonical_id": data["canonical_id"], "skill": sid,
                 "name": data["name"], "ticks": ticks,
@@ -149,16 +225,31 @@ def main() -> int:
                   % (sid, data["name"], ticks, len(data["rows"]),
                      len(data["hits"]), len(data["cues"])))
 
+    proto = dict(PROTOCOL)
+    proto.update(reproducibility_block())
     index = {
         "schema": "gold93/venomwright-oracle-index/v1",
         "source_archive_sha256": VENOMWRIGHT_ARCHIVE_SHA256,
         "generated_by": "prototypes/skill_readiness/tools/oracle/build_venomwright_oracle.py",
         "engine": "ORIGINAL TypeScript src/game/** executed headlessly in Node",
-        "protocol": PROTOCOL,
+        "protocol": proto,
         "skills": index_skills,
     }
     (out_dir / "index.json").write_text(json.dumps(index, indent=1, sort_keys=True) + "\n")
+
+    # Reproducibility checks: every file the index advertises must exist inside
+    # the repository, and the index must agree with what is on disk.
+    missing = [s["file"] for s in index_skills
+               if not (REPO / s["file"]).is_file()]
+    if missing:
+        sys.exit(f"index references missing oracle files: {missing}")
+    stale = sorted(p.name for p in out_dir.glob("venomwright_*.json")
+                   if int(p.stem.split("_")[1]) not in wanted)
+    if stale and not args.only:
+        print(f"  note: {len(stale)} oracle file(s) not regenerated: {stale[:5]}")
     print(f"oracle written: {len(index_skills)} skills -> {out_dir}")
+    print(f"  repository root asserted: {REPO}")
+    print(f"  cast tick asserted: {CAST_TICK} (driver, per-file and protocol agree)")
     return 0
 
 

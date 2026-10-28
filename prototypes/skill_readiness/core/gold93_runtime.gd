@@ -19,14 +19,23 @@ const MODULE_PATHS: Dictionary = {
 }
 
 ## Human-readable reason recorded for every id without a source-locked module.
-## This is a real material blocker: the original ZIP bytes are stored in neither
-## this repository nor this execution environment, so the authored generators
-## cannot be re-derived without inventing algorithms.
-const DEFAULT_BLOCKER: String = ("ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the "
-	+ "original Gold ZIP bytes are not present in this repository or execution "
-	+ "environment, so this skill's authored generator cannot be source-locked. "
-	+ "Infrastructure, ports, lifecycle and acceptance harness are ready; supply "
-	+ "the pinned original archive to add the module without porting again.")
+##
+## CORRECTED 2026-10-28: this used to claim the original ZIP bytes were absent.
+## They are not. Both original archives have been recovered, decrypted and
+## SHA-256 verified, and the extracted TypeScript engine is what the oracle in
+## `docs/vfx/skill_readiness/oracle/` is generated from. The escrow (encrypted
+## ZIPs plus the decryption tool) lives in
+## `prototypes/skill_readiness/source_escrow/`; the private key and the
+## plaintext sources are deliberately NOT committed and are held outside the
+## repository.
+##
+## The remaining blocker is therefore honest and actionable: the authored
+## generator has simply not been ported to GDScript yet.
+const DEFAULT_BLOCKER: String = ("GENERATOR_NOT_YET_PORTED: the original "
+	+ "source archive for this skill HAS been recovered and verified, and the "
+	+ "original generator is available; it has not been ported to a native "
+	+ "GDScript module yet. This is pending implementation work, not missing "
+	+ "input material.")
 
 var catalog
 var _families: Dictionary = {}
@@ -127,36 +136,88 @@ func cast(canonical_id: StringName, ctx, params: Gold93SkillParameters = null):
 	return handle
 
 
+## Readiness of a single skill, separated per axis.
+##
+## `can_cast()` answers only "does a native module load and run". That is
+## `native_executable`. It is NOT source parity and it is NOT visual approval,
+## and reporting it as `native_port_ready` made a scaffolded module look
+## finished. The three axes are reported independently and `native_port_ready`
+## is their strict conjunction.
+func status_for(canonical_id: String) -> Dictionary:
+	var entry: Dictionary = catalog.skill(canonical_id)
+	var executable := can_cast(canonical_id)
+	var parity := Gold93ParityRegistry.is_source_parity_verified(canonical_id)
+	var visual := bool(entry.get("gold_visual_approved", false))
+	var parity_status := Gold93ParityRegistry.status_for(canonical_id)
+	return {
+		"canonical_id": canonical_id,
+		"native_executable": executable,
+		"source_parity_verified": parity,
+		"source_parity_status": parity_status,
+		"gold_visual_approved": visual,
+		"native_port_ready": executable and parity and visual,
+		"blocked": not executable,
+		"block_reason": blocker_for(canonical_id) if not executable else "",
+		"gameplay_configured": bool(entry.get("gameplay_configured", false)),
+		"production_integrated": bool(entry.get("production_integrated", false)),
+	}
+
+
 ## Machine-readable readiness roll-up, kept strictly separated per axis.
+##
+## `native_port_ready` is retained for historical consumers but is now the
+## strict conjunction of native-executable AND source-parity-verified AND
+## gold-visual-approved. Use `native_executable` when you mean "a cast runs".
 func readiness_report() -> Dictionary:
 	var report: Dictionary = {
 		"scope": 93,
+		"native_executable": [],
+		"source_parity_verified": [],
+		"source_parity_status": {},
 		"native_port_ready": [],
 		"blocked": [],
 		"blocked_reasons": {},
 		"gold_visual_approved": [],
 		"gameplay_configured": [],
 		"production_integrated": [],
+		"counts": {},
 	}
 	for id in catalog.ids():
-		if can_cast(id):
-			report["native_port_ready"].append(id)
+		var st := status_for(id)
+		if bool(st["native_executable"]):
+			report["native_executable"].append(id)
 		else:
 			report["blocked"].append(id)
-			report["blocked_reasons"][id] = blocker_for(id)
-		var entry: Dictionary = catalog.skill(id)
-		if bool(entry.get("gold_visual_approved", false)):
+			report["blocked_reasons"][id] = st["block_reason"]
+		if bool(st["source_parity_verified"]):
+			report["source_parity_verified"].append(id)
+		report["source_parity_status"][id] = st["source_parity_status"]
+		if bool(st["gold_visual_approved"]):
 			report["gold_visual_approved"].append(id)
-		if bool(entry.get("gameplay_configured", false)):
+		if bool(st["native_port_ready"]):
+			report["native_port_ready"].append(id)
+		if bool(st["gameplay_configured"]):
 			report["gameplay_configured"].append(id)
-		if bool(entry.get("production_integrated", false)):
+		if bool(st["production_integrated"]):
 			report["production_integrated"].append(id)
+	report["counts"] = {
+		"native_executable": report["native_executable"].size(),
+		"source_parity_verified": report["source_parity_verified"].size(),
+		"gold_visual_approved": report["gold_visual_approved"].size(),
+		"native_port_ready": report["native_port_ready"].size(),
+		"gameplay_configured": report["gameplay_configured"].size(),
+		"production_integrated": report["production_integrated"].size(),
+		"blocked": report["blocked"].size(),
+	}
 	return report
 
 
 func summary_line() -> String:
 	var r := readiness_report()
-	return ("X/%d NATIVE_PORT_READY, Y/%d SOURCE_VISUAL_APPROVED, "
-		% [r["native_port_ready"].size(), r["gold_visual_approved"].size()]) + (
-		"Z/%d PRODUCTION_INTEGRATED, %d/%d SOURCE_MATERIAL_BLOCKED"
-		% [r["production_integrated"].size(), r["blocked"].size(), 93])
+	var c: Dictionary = r["counts"]
+	return ("%d/%d NATIVE_EXECUTABLE, %d/%d SOURCE_PARITY_VERIFIED, "
+		% [c["native_executable"], 93, c["source_parity_verified"], 93]) + (
+		"%d/%d SOURCE_VISUAL_APPROVED, %d/%d NATIVE_PORT_READY, "
+		% [c["gold_visual_approved"], 93, c["native_port_ready"], 93]) + (
+		"%d/%d GAMEPLAY_CONFIGURED, %d/%d PRODUCTION_INTEGRATED"
+		% [c["gameplay_configured"], 93, c["production_integrated"], 93])

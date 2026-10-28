@@ -100,7 +100,10 @@ class Stage {
     const p = w.player; p.form = def.form === 'venom' ? 'venom' : 'vessel'; p.venomT = 999; p.cat = 100;
     if (def.form !== 'venom') p.venomT = 0;
     this.id = id; this.seed = seed; this.n = 0;
-    this.castN = parseInt(process.env.GOLD93_CAST_TICK ?? '18', 10);
+    // Default matches the documented protocol (`cast_tick: 1`). Whatever value
+    // is used is echoed into the output as `cast_tick` so the record can never
+    // disagree with the run.
+    this.castN = parseInt(process.env.GOLD93_CAST_TICK ?? '1', 10);
     this.hits = []; this.cues = [];
     this.installProbes();
   }
@@ -167,9 +170,14 @@ const st = new Stage();
 st.start(argId, 7);
 const def = SKILL_BY_ID[argId];
 const rows = st.run(argTicks, samples);
+// `cast_tick` is reported from the value the run ACTUALLY used (Stage.castN,
+// read from GOLD93_CAST_TICK), never a hardcoded literal. A generator that is
+// cast at a different tick than it advertises is useless as an equality oracle,
+// and this field previously claimed 18 while the builder drove it with 1.
 console.log(JSON.stringify({
   schema: 'gold93/venomwright-oracle/v1',
   skill: argId, name: def.name, duration: def.dur, total: def.total,
-  seed: 7, logical: [W, H], native: [RW, RH], k: K, hz: 60, cast_tick: 18,
+  seed: 7, logical: [W, H], native: [RW, RH], k: K, hz: 60,
+  cast_tick: st.castN, ticks: argTicks, sampled_ticks: rows.length,
   rows, hits: st.hits, cues: st.cues,
 }));

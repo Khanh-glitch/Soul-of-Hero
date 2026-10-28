@@ -215,6 +215,7 @@ jobs:
             /tmp/gold93-family.log
             /tmp/gold93-baseline.log
             /tmp/gold93-lab.log
+            /tmp/gold93-venom-ground.log
             /tmp/gold93-render.log
             /tmp/gold93-harness.log
             /tmp/gold93-adapter.log

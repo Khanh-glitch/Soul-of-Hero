@@ -76,12 +76,12 @@ func _initialize() -> void:
 		if runtime.can_cast(key):
 			evidence.append(_replay(runtime, key, b))
 			replayed += 1
-		else:
-			awaiting += 1
-			evidence.append({
-				"key": key,
-				"status": "BASELINE_RECORDED_AWAITING_MODULE",
-				"blocker": runtime.catalog.blocker(key),
+			else:
+				awaiting += 1
+				evidence.append({
+					"key": key,
+					"status": "BASELINE_RECORDED_AWAITING_MODULE",
+					"blocker": runtime.blocker_for(key),
 				"source_mid_cast_tick": int(b.get("source_mid_cast_tick", 0)),
 				"source_fx_count": int(b.get("source_fx_count", 0)),
 				"source_particle_count": int(b.get("source_particle_count", 0)),
@@ -97,9 +97,13 @@ func _initialize() -> void:
 		"replayed": replayed,
 		"awaiting_module": awaiting,
 		"equality_asserted": false,
-		"equality_blocker": ("the original capture used the archive's own "
-			+ "synthetic actor fixture, which is not replicated in this "
-			+ "environment; counts are recorded as evidence, not yet asserted"),
+		"equality_blocker": ("this legacy hand-written baseline was captured "
+				+ "against a synthetic actor fixture whose exact positions were "
+				+ "never recorded, so it cannot be regenerated or verified. It is "
+				+ "NOT a parity gate. The authoritative, reproducible comparison "
+				+ "is docs/vfx/skill_readiness/oracle/venomwright_NNN.json, "
+				+ "generated from the recovered ORIGINAL TypeScript engine under a "
+				+ "fully recorded protocol; see gold93_venom_differential_test.gd"),
 	}
 	DirAccess.make_dir_recursive_absolute("res://.artifacts/gold93")
 	var file := FileAccess.open(

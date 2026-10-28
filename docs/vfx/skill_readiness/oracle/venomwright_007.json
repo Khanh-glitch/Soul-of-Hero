@@ -1,7 +1,7 @@
 {
  "archive_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
  "canonical_id": "venomwright:007",
- "cast_tick": 18,
+ "cast_tick": 1,
  "cues": [
   {
    "d": 0.3,
@@ -561,6 +561,32 @@
   1200,
   680
  ],
+ "protocol": {
+  "aim": "Engine.autoAim(def) -> Engine.resolve(def, cluster centroid)",
+  "buffers_hashed": [
+   "scene RGBA8 (g.s.d)",
+   "glow RGBA8 (g.l.d)"
+  ],
+  "cast_tick": 1,
+  "enemy_density": 16,
+  "enemy_placement": "formation (World.reset(seed, true))",
+  "ground_seed": 17,
+  "hash": "sha256 of the raw little-endian Uint32 buffer, truncated to 32 hex",
+  "logical_resolution": [
+   600,
+   340
+  ],
+  "native_resolution": [
+   1200,
+   680
+  ],
+  "overlays": "none (no aim reticle, no mouse cursor, no HUD text)",
+  "raster_density_k": 2,
+  "rng": "World Rng(seed) for the world stream; cast Rng = (seed*1315423911 + id*2654435761 + skill*97) >>> 0",
+  "schema": "gold93/venomwright-oracle-protocol/v1",
+  "seed": 7,
+  "world_step_hz": 60
+ },
  "rows": [
   {
    "enemies": 16,
@@ -1203,8 +1229,10 @@
    "tick": 320
   }
  ],
+ "sampled_ticks": 80,
  "schema": "gold93/venomwright-oracle/v1",
  "seed": 7,
  "skill": 7,
+ "ticks": 320,
  "total": 280
 }
