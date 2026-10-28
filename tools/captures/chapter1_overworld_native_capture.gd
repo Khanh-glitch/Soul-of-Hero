@@ -76,8 +76,9 @@ func _run() -> void:
 	add_child(_app_root)
 	await get_tree().process_frame
 
-	AppFlow.call(&"open_home")
-	await _settle(4)
+	# Straight to the Marches. Going via Home here fired the Home screen's own
+	# "AppFlow did not open the startup profile choice" error, and the Home ->
+	# Marches entry is the acceptance test's job, not the photographer's.
 	AppFlow.call(&"open_overworld", {})
 	var ow := await _await_world(40.0)
 	if ow == null:
@@ -161,7 +162,11 @@ func _overview(ow: Node) -> void:
 	var saved_limits := [0, 0, 0, 0]
 	if camera != null:
 		saved_limits = [camera.limit_left, camera.limit_top, camera.limit_right, camera.limit_bottom]
-		camera.clear_current()
+		# Godot 4 has no Camera2D.clear_current() (that was the 3.x API): making
+		# the overview camera current is what unsets this one. Calling the 3.x
+		# method threw "Nonexistent function 'clear_current'", which aborted this
+		# whole function, skipped the overview shot and still let the capture
+		# exit 0 - the reason the missing PNG had no failure attached to it.
 	var overview := Camera2D.new()
 	overview.name = "OverviewCamera"
 	# 6144x4096 world into a 640x360 frame: zoom > 1 shrinks what is shown.
