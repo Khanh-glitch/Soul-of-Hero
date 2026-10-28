@@ -7,6 +7,7 @@ extends RefCounted
 ## a re-tinted or "close enough" approximation.
 
 const PX = preload("res://prototypes/skill_readiness/native/venom/venom_pixel.gd")
+const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 const DRAW = preload("res://prototypes/skill_readiness/native/venom/venom_draw.gd")
 
 
@@ -22,7 +23,7 @@ static func _mat(extra: Dictionary) -> Dictionary:
 
 
 static func MAT() -> Dictionary:
-	var P: Dictionary = PX.P
+	var P: Dictionary = M.P
 	return {
 		"acid": _mat({"outline": P["k0"], "rim": P["c1"], "rimLit": P["c3"],
 				"ramp": [P["e0"], P["e1"], P["e2"], P["e3"], P["c0"], P["c1"]],
@@ -40,10 +41,10 @@ static func MAT() -> Dictionary:
 				"ramp": [P["e0"], P["e1"], P["v0"], P["v1"], P["v2"], P["g1"], P["g2"]],
 				"hi": P["v3"], "sh": P["e0"], "vein": P["g2"], "vw": 5, "dep": 7,
 				"sc": 0.15, "fx": 8, "fy": 4, "amp": 0.7, "hiT": 0.3}),
-		"merc": _mat({"outline": PX.hex("#06181a"), "rim": P["y1"], "rimLit": P["w"],
-				"ramp": [PX.hex("#0a2a2c"), PX.hex("#15484a"), PX.hex("#3c8582"),
-						PX.hex("#8fc9c3"), PX.hex("#d6fff8")],
-				"hi": P["w"], "sh": PX.hex("#06181a"), "vein": 0, "vw": 0, "dep": 4,
+		"merc": _mat({"outline": M.hex("#06181a"), "rim": P["y1"], "rimLit": P["w"],
+				"ramp": [M.hex("#0a2a2c"), M.hex("#15484a"), M.hex("#3c8582"),
+						M.hex("#8fc9c3"), M.hex("#d6fff8")],
+				"hi": P["w"], "sh": M.hex("#06181a"), "vein": 0, "vw": 0, "dep": 4,
 				"sc": 0.12, "fx": 4, "fy": 2, "amp": 0.3, "hiT": 0.15, "hiW": 6}),
 		"bile": _mat({"outline": P["e0"], "rim": P["c3"], "rimLit": P["w"],
 				"ramp": [P["g0"], P["g1"], P["g2"], P["c2"], P["c3"]],
@@ -69,7 +70,7 @@ static func MAT() -> Dictionary:
 
 
 static func VAP() -> Dictionary:
-	var P: Dictionary = PX.P
+	var P: Dictionary = M.P
 	return {
 		"green": [P["e0"], P["e1"], P["e2"], P["c0"]],
 		"dark": [P["k0"], P["k1"], P["e0"], P["e1"]],
@@ -82,37 +83,37 @@ static func VAP() -> Dictionary:
 
 
 static func PAL() -> Dictionary:
-	var P: Dictionary = PX.P
+	var P: Dictionary = M.P
 	return {
-		"glass": DRAW.pal(PX.hex("#0b2d2e"), P["v0"], P["v1"], P["v2"], P["v3"]),
-		"glassHi": DRAW.pal(PX.hex("#0b2d2e"), P["v1"], P["v2"], P["v3"], P["y2"]),
+		"glass": DRAW.pal(M.hex("#0b2d2e"), P["v0"], P["v1"], P["v2"], P["v3"]),
+		"glassHi": DRAW.pal(M.hex("#0b2d2e"), P["v1"], P["v2"], P["v3"], P["y2"]),
 		"chitin": DRAW.pal(P["k0"], P["n1"], P["n2"], P["n3"], P["c1"]),
-		"chitinHot": DRAW.pal(P["k0"], PX.hex("#2a1d12"), PX.hex("#6a4a1c"),
+		"chitinHot": DRAW.pal(P["k0"], M.hex("#2a1d12"), M.hex("#6a4a1c"),
 				P["g1"], P["g2"]),
-		"cer": DRAW.pal(PX.hex("#26242e"), P["i2"], P["i1"], P["i0"], P["w"]),
-		"cerB": DRAW.pal(P["n0"], PX.hex("#2f3f80"), PX.hex("#4f6bc0"),
-				PX.hex("#9fb8f0"), P["w"]),
+		"cer": DRAW.pal(M.hex("#26242e"), P["i2"], P["i1"], P["i0"], P["w"]),
+		"cerB": DRAW.pal(P["n0"], M.hex("#2f3f80"), M.hex("#4f6bc0"),
+				M.hex("#9fb8f0"), P["w"]),
 		"copper": DRAW.pal(P["u0"], P["u0"], P["u1"], P["u2"], P["g2"]),
 		"toad": DRAW.pal(P["k0"], P["e0"], P["e1"], P["e2"], P["c1"]),
-		"toadSac": DRAW.pal(P["e0"], PX.hex("#8fb04a"), PX.hex("#c8d878"),
-				PX.hex("#eef2b0"), P["w"]),
+		"toadSac": DRAW.pal(P["e0"], M.hex("#8fb04a"), M.hex("#c8d878"),
+				M.hex("#eef2b0"), P["w"]),
 		"leech": DRAW.pal(P["k0"], P["n0"], P["n1"], P["m0"], P["m2"]),
-		"seed": DRAW.pal(PX.hex("#3a3326"), P["i2"], P["i1"], P["i0"], P["w"]),
+		"seed": DRAW.pal(M.hex("#3a3326"), P["i2"], P["i1"], P["i0"], P["w"]),
 		"liquid": DRAW.pal(P["k0"], P["e1"], P["e3"], P["c1"], P["c3"]),
 		"gold": DRAW.pal(P["u0"], P["g0"], P["g1"], P["g2"], P["w"]),
-		"merc": DRAW.pal(PX.hex("#06181a"), PX.hex("#15484a"), PX.hex("#4c8f8a"),
-				PX.hex("#b5e6df"), P["w"]),
+		"merc": DRAW.pal(M.hex("#06181a"), M.hex("#15484a"), M.hex("#4c8f8a"),
+				M.hex("#b5e6df"), P["w"]),
 		"rot": DRAW.pal(P["k0"], P["k1"], P["e0"], P["e1"], P["c0"]),
-		"crys": DRAW.pal(PX.hex("#0b2d3a"), P["v0"], P["y0"], P["y1"], P["y2"]),
-		"iron": DRAW.pal(P["k0"], PX.hex("#3a3a46"), PX.hex("#5d5d70"),
-				PX.hex("#8d8da3"), P["w"]),
-		"imp": DRAW.pal(PX.hex("#1a0b10"), P["r0"], P["r1"], P["r2"], P["r3"]),
-		"crab": DRAW.pal(PX.hex("#1a0f08"), P["u0"], P["u1"], P["u2"], P["g2"]),
-		"bone": DRAW.pal(PX.hex("#14110d"), P["i3"], P["i2"], P["i1"], P["i0"]),
-		"hood": DRAW.pal(PX.hex("#0b0a10"), PX.hex("#1b1a28"), PX.hex("#2b2940"),
-				PX.hex("#46436a"), PX.hex("#7a76b0")),
-		"stone": DRAW.pal(P["k0"], PX.hex("#2a2420"), PX.hex("#4a403a"),
-				PX.hex("#7a6a5a"), P["i1"]),
-		"brute": DRAW.pal(PX.hex("#150808"), P["r0"], PX.hex("#7a2b2b"),
-				PX.hex("#b0473a"), P["r3"]),
+		"crys": DRAW.pal(M.hex("#0b2d3a"), P["v0"], P["y0"], P["y1"], P["y2"]),
+		"iron": DRAW.pal(P["k0"], M.hex("#3a3a46"), M.hex("#5d5d70"),
+				M.hex("#8d8da3"), P["w"]),
+		"imp": DRAW.pal(M.hex("#1a0b10"), P["r0"], P["r1"], P["r2"], P["r3"]),
+		"crab": DRAW.pal(M.hex("#1a0f08"), P["u0"], P["u1"], P["u2"], P["g2"]),
+		"bone": DRAW.pal(M.hex("#14110d"), P["i3"], P["i2"], P["i1"], P["i0"]),
+		"hood": DRAW.pal(M.hex("#0b0a10"), M.hex("#1b1a28"), M.hex("#2b2940"),
+				M.hex("#46436a"), M.hex("#7a76b0")),
+		"stone": DRAW.pal(P["k0"], M.hex("#2a2420"), M.hex("#4a403a"),
+				M.hex("#7a6a5a"), P["i1"]),
+		"brute": DRAW.pal(M.hex("#150808"), P["r0"], M.hex("#7a2b2b"),
+				M.hex("#b0473a"), P["r3"]),
 	}

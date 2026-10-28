@@ -11,6 +11,8 @@ extends RefCounted
 ## file that declares them.
 
 const PX = preload("res://prototypes/skill_readiness/native/venom/venom_pixel.gd")
+const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
+const RNG = preload("res://prototypes/skill_readiness/native/venom/venom_rng.gd")
 
 const GL: Dictionary = {
 	"0": "111101101101111", "1": "010110010010111", "2": "111001111100111",
@@ -29,9 +31,9 @@ static func text_w(s: String, sc: float = 1.0) -> float:
 
 static func text(L, x: float, y: float, s: String, c: int, outline: int = 0,
 		sc: float = 1.0) -> void:
-	var gx: int = PX.js_round(x * L.k)
-	var gy: int = PX.js_round(y * L.k)
-	var gsc: int = maxi(1, PX.js_round(sc * maxf(1.0, L.k * 0.95)))
+	var gx: int = M.js_round(x * L.k)
+	var gy: int = M.js_round(y * L.k)
+	var gsc: int = maxi(1, M.js_round(sc * maxf(1.0, L.k * 0.95)))
 	if outline != 0:
 		for off in [[-1, 0], [1, 0], [0, -1], [0, 1], [1, 1], [-1, -1]]:
 			_text_pass(L, gx, gy, gsc, s, outline, off[0], off[1])
@@ -64,8 +66,8 @@ static func ball(L, cx: float, cy: float, r: float, p: Dictionary,
 	if ry < 0.0:
 		ry = r
 	var k: float = L.k
-	var gcx: int = PX.js_round(cx * k)
-	var gcy: int = PX.js_round(cy * k)
+	var gcx: int = M.js_round(cx * k)
+	var gcy: int = M.js_round(cy * k)
 	var grx: float = (r + 0.35) * k
 	var gry: float = (ry + 0.35) * k
 	var ir: int = int(ceil(r * k))
@@ -82,7 +84,7 @@ static func ball(L, cx: float, cy: float, r: float, p: Dictionary,
 			if outline and (1.0 - sqrt(q)) * mn < maxf(1.0, 0.9 * k):
 				c = int(p["o"])
 			else:
-				var bayer: int = PX.BAYER[(((gcy + dy) & 3) << 2) | ((gcx + dx) & 3)]
+				var bayer: int = M.BAYER[(((gcy + dy) & 3) << 2) | ((gcx + dx) & 3)]
 				var I: float = (-nx * 0.45 - ny * 0.55 + sqrt(1.0 - q) * 0.72
 						+ (float(bayer) - 7.5) * 0.014)
 				if I < 0.22:
@@ -116,7 +118,7 @@ static func shard(L, x: float, y: float, ang: float, len: float, wid: float,
 	L.tri(tx, ty, lx, ly, bx, by, lit)
 	L.tri(tx, ty, rx, ry, bx, by, dark)
 	L.line(tx, ty, lx, ly, edge)
-	L.line(tx, ty, bx, by, PX.mix(edge, lit, 0.5))
+	L.line(tx, ty, bx, by, M.mix(edge, lit, 0.5))
 
 
 static func bubble(L, x: float, y: float, r: float, tint: int, edge: int,
@@ -171,7 +173,7 @@ static func glow(L, cx: float, cy: float, r: float, c: int, k: float = 0.5,
 		bands: int = 4) -> void:
 	L.add = true
 	var n: int = maxi(2, mini(bands, int(ceil((r * L.k) / 2.5))))
-	L.a = PX.js_round((255.0 * k) / float(n))
+	L.a = M.js_round((255.0 * k) / float(n))
 	for i in range(n):
 		L.disc(cx, cy, r * (1.0 - float(i) / float(n)), c)
 	L.add = false
@@ -187,8 +189,8 @@ static func crystal_prism(L, x: float, y: float, h: float, w: float, lean: float
 	L.poly([x, y + 1.0, tipx, y, tipx, tipy, x + w + lean * 0.2, y - h + sh, x + w, y], dark)
 	L.line(x - w, y, x - w + lean * 0.2, y - h + sh, edge)
 	L.line(x - w + lean * 0.2, y - h + sh, tipx, tipy, edge)
-	L.line(tipx, tipy, x, y, PX.mix(edge, lit, 0.6))
-	L.line(tipx, tipy, x + w + lean * 0.2, y - h + sh, PX.mix(edge, dark, 0.4))
+	L.line(tipx, tipy, x, y, M.mix(edge, lit, 0.6))
+	L.line(tipx, tipy, x + w + lean * 0.2, y - h + sh, M.mix(edge, dark, 0.4))
 	if h > 6.0:
 		var cx: float = x + lean * 0.5
 		var cy: float = y - h * 0.45
@@ -201,15 +203,15 @@ static func crystal_prism(L, x: float, y: float, h: float, w: float, lean: float
 # Ground
 # ---------------------------------------------------------------------------
 
-static func make_ground(L, seed: int) -> void:
+static func make_ground(L, seed: int, stage: int = 5) -> void:
 	var W: int = L.W
 	var H: int = L.H
 	var k: float = L.k
-	var r = PX.Rng.new(seed)
-	var base: Array = [PX.P["k1"], PX.P["k2"], PX.hex("#13251f"), PX.hex("#0e1e1b"),
-		PX.hex("#173429")]
-	var tw: int = PX.js_round(28.0 * k)
-	var th: int = PX.js_round(20.0 * k)
+	var r = RNG.new(seed)
+	var base: Array = [M.P["k1"], M.P["k2"], M.hex("#13251f"), M.hex("#0e1e1b"),
+		M.hex("#173429")]
+	var tw: int = M.js_round(28.0 * k)
+	var th: int = M.js_round(20.0 * k)
 	var ty: int = -1
 	while float(ty) * float(th) < float(H + th):
 		var off: float = float(ty & 1) * (float(tw) / 2.0)
@@ -217,64 +219,75 @@ static func make_ground(L, seed: int) -> void:
 		while float(tx) * float(tw) < float(W + tw):
 			var x0: int = int(float(tx) * float(tw) + off)
 			var y0: int = ty * th
-			var tone: int = int(base[int(floor(PX.hash_n(tx * 73 + ty * 131 + seed)
+			var tone: int = int(base[int(floor(M.hash_n(tx * 73 + ty * 131 + seed)
 					* float(base.size())))])
 			for j in range(th):
 				L.raw_hline(x0, x0 + tw - 1, y0 + j, tone)
-			L.raw_hline(x0, x0 + tw - 1, y0, PX.hex("#1f3a30"))
+			L.raw_hline(x0, x0 + tw - 1, y0, M.hex("#1f3a30"))
 			for j in range(th):
-				L.raw_px(x0, y0 + j, PX.hex("#1b3329"))
-			L.raw_hline(x0, x0 + tw - 1, y0 + th - 1, int(PX.P["k0"]))
+				L.raw_px(x0, y0 + j, M.hex("#1b3329"))
+			L.raw_hline(x0, x0 + tw - 1, y0 + th - 1, int(M.P["k0"]))
 			for j in range(th):
-				L.raw_px(x0 + tw - 1, y0 + j, int(PX.P["k0"]))
+				L.raw_px(x0 + tw - 1, y0 + j, int(M.P["k0"]))
 			for k2 in range(7):
-				var px: int = x0 + 2 + int(floor(PX.hash_n(tx * 5 + ty * 17 + k2 * 3)
+				var px: int = x0 + 2 + int(floor(M.hash_n(tx * 5 + ty * 17 + k2 * 3)
 						* float(tw - 4)))
-				var py: int = y0 + 2 + int(floor(PX.hash_n(tx * 11 + ty * 7 + k2 * 9)
+				var py: int = y0 + 2 + int(floor(M.hash_n(tx * 11 + ty * 7 + k2 * 9)
 						* float(th - 4)))
-				L.raw_px(px, py, PX.hex("#1e3d31") if PX.hash_n(k2 + tx) > 0.5
-						else int(PX.P["k0"]))
+				L.raw_px(px, py, M.hex("#1e3d31") if M.hash_n(k2 + tx) > 0.5
+						else int(M.P["k0"]))
 			tx += 1
 		ty += 1
+	if stage < 2:
+		return
 	# moss & dark soil patches via noise dither
 	for y in range(H):
 		for x in range(W):
-			var n: float = float(PX.nz1((float(x) / k) * 0.11 + 3.0,
+			var n: float = float(RNG.nz1((float(x) / k) * 0.11 + 3.0,
 					(float(y) / k) * 0.11)) / 255.0
-			var n2: float = float(PX.nz2((float(x) / k) * 0.3,
+			var n2: float = float(RNG.nz2((float(x) / k) * 0.3,
 					(float(y) / k) * 0.3)) / 255.0
-			var b: float = float(PX.BAYER[((y & 3) << 2) | (x & 3)]) / 16.0
+			var b: float = float(M.BAYER[((y & 3) << 2) | (x & 3)]) / 16.0
 			if n > 0.62 and n2 + b * 0.5 > 0.8:
-				L.raw_px(x, y, PX.hex("#143a2a"))
+				L.raw_px(x, y, M.hex("#143a2a"))
 			elif n < 0.25 and n2 + b * 0.4 > 0.9:
-				L.raw_px(x, y, PX.hex("#0b1713"))
+				L.raw_px(x, y, M.hex("#0b1713"))
 			if n > 0.72 and n2 > 0.58 and b > 0.65:
-				L.raw_px(x, y, PX.hex("#1c5238"))
+				L.raw_px(x, y, M.hex("#1c5238"))
+	if stage < 3:
+		return
 	# cracks
 	var cracks: int = int(floor(float(W * H) / (12000.0 * k * k)))
 	for _k2 in range(cracks):
 		var x: float = r.range(0.0, float(W))
 		var y: float = r.range(0.0, float(H))
-		var a: float = r.range(0.0, PX.TAU)
-		var steps: int = (r.int_n(40) + 25) * int(k)
-		for i in range(steps):
-			L.raw_px(PX.js_round(x), PX.js_round(y), int(PX.P["k0"]))
+		var a: float = r.range(0.0, M.TAU)
+		# The original `for (let i = 0; i < (r.int(40) + 25) * k; i++)` re-evaluates
+		# the bound EVERY iteration, so `r.int(40)` burns one RNG draw per step
+		# (including the final failing check). Hoisting it changes the stream and
+		# therefore every crack path, so the condition is kept inline.
+		var i: int = 0
+		while float(i) < float((r.int_n(40) + 25) * int(k)):
+			L.raw_px(M.js_round(x), M.js_round(y), int(M.P["k0"]))
 			if i % 5 == 0:
-				L.raw_px(PX.js_round(x) + 1, PX.js_round(y) + 1, PX.hex("#1f3a30"))
+				L.raw_px(M.js_round(x) + 1, M.js_round(y) + 1, M.hex("#1f3a30"))
 			a += r.range(-0.45, 0.45)
 			x += cos(a)
 			y += sin(a)
+			i += 1
+	if stage < 4:
+		return
 	# faint central alchemical sigil
 	var cx: float = float(W) / 2.0
 	var cy: float = float(H) / 2.0
 	var rr: float = minf(float(W), float(H)) * 0.34
-	var rune: int = PX.hex("#1d4a3b")
-	var rune2: int = PX.hex("#16372c")
+	var rune: int = M.hex("#1d4a3b")
+	var rune2: int = M.hex("#16372c")
 	_rune_ring(L, cx, cy, rr, rune2)
 	_rune_ring(L, cx, cy, rr - 6.0 * k, rune)
 	_rune_ring(L, cx, cy, rr * 0.55, rune2)
 	for i in range(12):
-		var a2: float = (float(i) / 12.0) * PX.TAU
+		var a2: float = (float(i) / 12.0) * M.TAU
 		var x0f: float = cx + cos(a2) * (rr - 6.0 * k)
 		var y0f: float = cy + sin(a2) * (rr - 6.0 * k)
 		var x1f: float = cx + cos(a2 + 0.5) * rr * 0.55
@@ -284,18 +297,20 @@ static func make_ground(L, seed: int) -> void:
 			continue
 		var s2: int = 0
 		while s2 <= steps2:
-			L.raw_px(PX.js_round(x0f + ((x1f - x0f) * float(s2)) / float(steps2)),
-					PX.js_round(y0f + ((y1f - y0f) * float(s2)) / float(steps2)), rune2)
+			L.raw_px(M.js_round(x0f + ((x1f - x0f) * float(s2)) / float(steps2)),
+					M.js_round(y0f + ((y1f - y0f) * float(s2)) / float(steps2)), rune2)
 			s2 += 2
+	if stage < 5:
+		return
 	# stepped vignette at the screen edges
 	for y in range(H):
 		for x in range(W):
 			var e: float = minf(float(x), minf(float(y), minf(float(W - 1 - x),
 					float(H - 1 - y))))
 			if e < 14.0 * k:
-				var b3: float = float(PX.BAYER[((y & 3) << 2) | (x & 3)])
+				var b3: float = float(M.BAYER[((y & 3) << 2) | (x & 3)])
 				if b3 > (e / k) + 3.0:
-					L.raw_px(x, y, int(PX.P["k0"]))
+					L.raw_px(x, y, int(M.P["k0"]))
 
 
 static func _rune_ring(L, cx: float, cy: float, r: float, c: int) -> void:
@@ -345,14 +360,14 @@ static func field_shade(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> vo
 				else:
 					var sx: float = float(x) * sc + sd
 					var sy: float = float(y) * sc
-					var wp: float = (float(PX.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
+					var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
 							- 128.0) * 0.05
-					var n: float = float(PX.nz1(sx + fx + wp * 9.0,
+					var n: float = float(RNG.nz1(sx + fx + wp * 9.0,
 							sy + fy + wp * 9.0)) / 255.0
-					var dn: float = PX.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
+					var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
 					var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
 					var kk: int = int(floor(q * float(nR)
-							+ (float(PX.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
+							+ (float(M.BAYER[((y & 3) << 2) | (x & 3)]) - 7.5) * 0.05))
 					if kk < 0:
 						kk = 0
 					elif kk >= nR:
@@ -364,7 +379,7 @@ static func field_shade(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> vo
 						elif lit < -hi_t:
 							c = int(m["sh"])
 					if float(m.get("vw", 0.0)) > 0.0:
-						var n2: int = PX.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
+						var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
 						if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
 							c = int(m["vein"])
 			L.raw_px(x, y, c)
@@ -393,11 +408,11 @@ static func field_vapor(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> vo
 				continue
 			var sx: float = float(x) * sc + sd
 			var sy: float = float(y) * sc
-			var wp: float = (float(PX.nz2(sx * 1.7 + fy * 0.5, sy * 1.7 - fx * 0.5))
+			var wp: float = (float(RNG.nz2(sx * 1.7 + fy * 0.5, sy * 1.7 - fx * 0.5))
 					- 128.0) * 0.05
-			var n: float = float(PX.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
-			var n2: float = float(PX.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
-			var d: float = (PX.clampf(v / (float(m["dep"]) * rk), 0.0, 1.0) * 0.55
+			var n: float = float(RNG.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
+			var n2: float = float(RNG.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
+			var d: float = (M.clampf(v / (float(m["dep"]) * rk), 0.0, 1.0) * 0.55
 					+ n * 0.55 + (n2 - 0.5) * 0.25)
 			if d < 0.28:
 				continue
@@ -409,7 +424,7 @@ static func field_vapor(F, L, m: Dictionary, t: float, o: Dictionary = {}) -> vo
 				kk = 0
 			elif kk >= nR:
 				kk = nR - 1
-			L.dl = PX.js_round(PX.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
+			L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
 					0.0, 16.0))
 			L.raw_px(x, y, int(m["rim"]) if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
 	L.dl = sdl

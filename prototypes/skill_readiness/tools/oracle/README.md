@@ -60,3 +60,50 @@ whose exact positions were never recorded. Its SHA prefixes and fx/particle
 counts therefore cannot be reproduced and are **not** used as an equality
 oracle here. This oracle replaces it: it is generated from the original source
 under a fully recorded protocol, so it is reproducible and auditable.
+
+## Native parity harness
+
+`prototypes/skill_readiness/tests/gold93_venom_ground_parity_test.gd` builds the
+same ground as `makeGround(Layer, 17)` at 1200×680 / `k=2` and compares the
+SHA-256 of the raw LE RGBA8 buffer with the reference above.
+
+```sh
+prototypes/skill_readiness/tools/oracle/run_native_probe.sh \
+  res://prototypes/skill_readiness/tests/gold93_venom_ground_parity_test.gd
+```
+
+Expected (GDScript, Godot 4.7 built from godotengine/godot 4.7-stable):
+
+```
+{"bit_exact":true,"ground_sha256":"ba1207e70d8a7b82b3d6a134a792bc5f9bec32d74a28236d0cf11d3c82487594"}
+```
+
+`run_native_probe.sh` exists because the repository's own project autoloads
+`game/autoload/realtime_bridge.gd`, which loops inside `_process` and blocks
+`godot --script`. The probe therefore runs against a throwaway project outside
+the repo whose `prototypes/` is a symlink to the real one, so no file under
+`game/**` has to be touched.
+
+### Transcription rules proven by bit-exactness
+
+These are not stylistic preferences; each one was found by diffing the native
+buffer against the original byte-for-byte.
+
+1. **Packed colour is `0xAABBGGRR`.** Writing the `#RRGGBB` literal straight
+   into the table as `0xFFRRGGBB` swaps R and B in the LE buffer — it produced
+   304 692 differing pixels before it was caught.
+2. **`Math.round` is `floor(v + 0.5)`**, never GDScript's `round()` (banker's
+   rounding on `.5`).
+3. **Never hoist a `for`-loop bound that calls the RNG.** The original crack
+   loop is `for (let i = 0; i < (r.int(40) + 25) * k; i++)`: the bound is
+   re-evaluated every iteration, so `r.int(40)` burns one draw per step plus one
+   for the final failing check. Hoisting it into a variable looked equivalent
+   and diverged every crack path (2 390 differing pixels).
+4. GDScript `sin`, `cos`, `sqrt`, `pow`, `atan2` and the mulberry32 port are
+   bit-identical to the original at double precision (verified by comparing IEEE
+   bit patterns, not decimal strings).
+5. An inner `class` cannot call the enclosing script's `static func`, and a
+   script cannot reference its own `class_name` while compiling — hence the
+   split into `venom_math.gd` (pure helpers) and `venom_rng.gd` (which *is* the
+   RNG, so its instance methods and its noise statics share one
+   implementation).

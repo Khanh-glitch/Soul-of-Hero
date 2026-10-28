@@ -1,6 +1,10 @@
 class_name VenomPixel
 extends RefCounted
 
+const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
+const RNG = preload("res://prototypes/skill_readiness/native/venom/venom_rng.gd")
+const P: Dictionary = M.P
+
 ## Native port of the ORIGINAL Venomwright `src/game/pixel.ts`.
 ##
 ## Every function below is transcribed 1:1 from the recovered original
@@ -13,189 +17,6 @@ extends RefCounted
 ##
 ## The raster is a PackedByteArray in little-endian RGBA8 order, which is
 ## bit-identical to the original `Uint32Array` view on x86-64.
-
-const TAU: float = 6.283185307179586
-const BAYER: PackedByteArray = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]
-
-# ---------------------------------------------------------------------------
-# 32-bit integer semantics
-# ---------------------------------------------------------------------------
-
-static func u32(v: int) -> int:
-	return v & 0xFFFFFFFF
-
-
-static func i32(v: int) -> int:
-	v = v & 0xFFFFFFFF
-	if v >= 0x80000000:
-		v -= 0x100000000
-	return v
-
-
-static func imul(a: int, b: int) -> int:
-	return i32(u32(a) * u32(b))
-
-
-# `Math.imul(n, 0x27d4eb2d)` style hash used for ground and geometry jitter.
-static func hash_n(n: int) -> float:
-	n = i32(n)
-	n = i32(i32(n ^ 61) ^ (u32(n) >> 16))
-	n = i32(n + i32(u32(n) << 3))
-	n = i32(n ^ (u32(n) >> 4))
-	n = imul(n, 0x27d4eb2d)
-	n = i32(n ^ (u32(n) >> 15))
-	return float(u32(n)) / 4294967296.0
-
-
-# ---------------------------------------------------------------------------
-# Colours (0xAABBGGRR)
-# ---------------------------------------------------------------------------
-
-static func rgb(r: int, g: int, b: int) -> int:
-	return u32(0xFF000000 | (b << 16) | (g << 8) | r)
-
-
-static func hex(s: String) -> int:
-	var v: int = s.lstrip("#").hex_to_int()
-	return rgb((v >> 16) & 255, (v >> 8) & 255, v & 255)
-
-
-static func mix(a: int, b: int, t: float) -> int:
-	var ar: int = a & 255
-	var ag: int = (a >> 8) & 255
-	var ab: int = (a >> 16) & 255
-	var br: int = b & 255
-	var bg: int = (b >> 8) & 255
-	var bb: int = (b >> 16) & 255
-	return rgb(int(ar + (br - ar) * t), int(ag + (bg - ag) * t), int(ab + (bb - ab) * t))
-
-
-static func clampf(v: float, a: float, b: float) -> float:
-	return a if v < a else (b if v > b else v)
-
-
-static func lerpf(a: float, b: float, t: float) -> float:
-	return a + (b - a) * t
-
-
-static func smoothstep(t: float) -> float:
-	t = clampf(t, 0.0, 1.0)
-	return t * t * (3.0 - 2.0 * t)
-
-
-static func ang_diff(a: float, b: float) -> float:
-	var d: float = fmod(b - a, TAU)
-	if d > PI:
-		d -= TAU
-	if d < -PI:
-		d += TAU
-	return d
-
-
-# JavaScript `Math.round` (halves go up).
-static func js_round(v: float) -> int:
-	return int(floor(v + 0.5))
-
-
-# ---------------------------------------------------------------------------
-# Original palette
-# ---------------------------------------------------------------------------
-
-const P: Dictionary = {
-	"k0": 0xFF040908, "k1": 0xFF081510, "k2": 0xFF0E221B, "k3": 0xFF153227,
-	"e0": 0xFF0A2E22, "e1": 0xFF124D35, "e2": 0xFF1A6F47, "e3": 0xFF279A52,
-	"c0": 0xFF6FB522, "c1": 0xFFA6EA30, "c2": 0xFFD4FA58, "c3": 0xFFEEFFA0,
-	"g0": 0xFF967422, "g1": 0xFFC8A432, "g2": 0xFFF2D658,
-	"i0": 0xFFEEE5CF, "i1": 0xFFCEBF9B, "i2": 0xFF9E8F6E, "i3": 0xFF6E624C, "i4": 0xFF3E362A,
-	"v0": 0xFF184E49, "v1": 0xFF267D71, "v2": 0xFF52B8A0, "v3": 0xFF95E4CC,
-	"u0": 0xFF4E2717, "u1": 0xFF965227, "u2": 0xFFCA7C3E,
-	"n0": 0xFF090716, "n1": 0xFF14102C, "n2": 0xFF221C48, "n3": 0xFF372D68,
-	"y0": 0xFF42A5B6, "y1": 0xFF8EE0EB, "y2": 0xFFD4F7FC,
-	"m0": 0xFF78125E, "m1": 0xFFC22295, "m2": 0xFFF86FC8,
-	"w": 0xFFFFFFFF, "bk": 0xFF020406,
-	"r0": 0xFF3E1414, "r1": 0xFF763122, "r2": 0xFFB4522E, "r3": 0xFFE28C4A,
-}
-
-
-# ---------------------------------------------------------------------------
-# Rng — original mulberry32 variant
-# ---------------------------------------------------------------------------
-
-class Rng extends RefCounted:
-	var s: int = 1
-
-	func _init(seed_: int = 1) -> void:
-		s = VenomPixel.u32(seed_)
-
-	func next() -> float:
-		s = VenomPixel.u32(s + 0x6D2B79F5)
-		var t: int = s
-		t = VenomPixel.imul(VenomPixel.i32(t ^ (VenomPixel.u32(t) >> 15)),
-				VenomPixel.i32(VenomPixel.u32(t) | 1))
-		t = VenomPixel.i32(t ^ VenomPixel.i32(
-				VenomPixel.i32(t) + VenomPixel.imul(
-						VenomPixel.i32(t ^ (VenomPixel.u32(t) >> 7)),
-						VenomPixel.i32(VenomPixel.u32(t) | 61))))
-		return float(VenomPixel.u32(VenomPixel.i32(t ^ (VenomPixel.u32(t) >> 14)))) / 4294967296.0
-
-	func range(a: float, b: float) -> float:
-		return a + (b - a) * next()
-
-	func int_n(n: int) -> int:
-		return int(floor(next() * float(n)))
-
-	func sign() -> float:
-		return -1.0 if next() < 0.5 else 1.0
-
-	func pick(a: Array):
-		return a[int_n(a.size())]
-
-
-# ---------------------------------------------------------------------------
-# Value-noise lattices (original mkNoise)
-# ---------------------------------------------------------------------------
-
-static func _mk_noise(cells: int, seed: int) -> PackedByteArray:
-	var lat: Array = []
-	var r = Rng.new(seed)
-	for _i in range(cells * cells):
-		lat.append(r.next())
-	var out := PackedByteArray()
-	out.resize(4096)
-	var cs: float = 64.0 / float(cells)
-	for y in range(64):
-		for x in range(64):
-			var gx: float = float(x) / cs
-			var gy: float = float(y) / cs
-			var x0: int = int(floor(gx))
-			var y0: int = int(floor(gy))
-			var fx: float = gx - float(x0)
-			var fy: float = gy - float(y0)
-			fx = fx * fx * (3.0 - 2.0 * fx)
-			fy = fy * fy * (3.0 - 2.0 * fy)
-			var a: float = lat[(y0 % cells) * cells + (x0 % cells)]
-			var b: float = lat[(y0 % cells) * cells + ((x0 + 1) % cells)]
-			var c: float = lat[((y0 + 1) % cells) * cells + (x0 % cells)]
-			var d: float = lat[((y0 + 1) % cells) * cells + ((x0 + 1) % cells)]
-			out[y * 64 + x] = int(floor((a + (b - a) * fx + (c - a + (d - c - (b - a)) * fx) * fy) * 255.0)) & 255
-	return out
-
-
-static var NZ1: PackedByteArray = _mk_noise(8, 11)
-static var NZ2: PackedByteArray = _mk_noise(16, 29)
-
-
-static func nz1(x: float, y: float) -> int:
-	return NZ1[((int(floor(y)) & 63) << 6) | (int(floor(x)) & 63)]
-
-
-static func nz2(x: float, y: float) -> int:
-	return NZ2[((int(floor(y)) & 63) << 6) | (int(floor(x)) & 63)]
-
-
-# ---------------------------------------------------------------------------
-# Layer — the original software rasteriser
-# ---------------------------------------------------------------------------
 
 class Layer extends RefCounted:
 	var bytes: PackedByteArray
@@ -241,7 +62,7 @@ class Layer extends RefCounted:
 	func raw_px(gx: int, gy: int, c: int) -> void:
 		if gx < 0 or gy < 0 or gx >= W or gy >= H:
 			return
-		if dl < 16 and BAYER[((gy & 3) << 2) | (gx & 3)] >= dl:
+		if dl < 16 and M.BAYER[((gy & 3) << 2) | (gx & 3)] >= dl:
 			return
 		var i: int = (gy * W + gx) * 4
 		if add:
@@ -277,8 +98,8 @@ class Layer extends RefCounted:
 			bytes[i + 3] = 255
 
 	func px(x: float, y: float, c: int) -> void:
-		var gx: int = js_round(x * k)
-		var gy: int = js_round(y * k)
+		var gx: int = M.js_round(x * k)
+		var gy: int = M.js_round(y * k)
 		raw_px(gx, gy, c)
 		if k >= 1.8:
 			raw_px(gx + 1, gy, c)
@@ -286,7 +107,7 @@ class Layer extends RefCounted:
 			raw_px(gx + 1, gy + 1, c)
 
 	func dot(x: float, y: float, c: int) -> void:
-		raw_px(js_round(x * k), js_round(y * k), c)
+		raw_px(M.js_round(x * k), M.js_round(y * k), c)
 
 	func raw_hline(x0: int, x1: int, y: int, c: int) -> void:
 		if not (y >= 0 and y < H) or not (x0 <= x1):
@@ -313,24 +134,24 @@ class Layer extends RefCounted:
 			raw_px(x, y, c)
 
 	func hline(x0: float, x1: float, y: float, c: int) -> void:
-		var gy: int = js_round(y * k)
-		var gx0: int = js_round(x0 * k)
-		var gx1: int = js_round(x1 * k)
-		var sz: int = maxi(1, js_round(k))
+		var gy: int = M.js_round(y * k)
+		var gx0: int = M.js_round(x0 * k)
+		var gx1: int = M.js_round(x1 * k)
+		var sz: int = maxi(1, M.js_round(k))
 		for j in range(sz):
 			raw_hline(gx0, gx1, gy + j, c)
 
 	func rect(x: float, y: float, w: float, h: float, c: int) -> void:
-		var gx: int = js_round(x * k)
-		var gy: int = js_round(y * k)
-		var gw: int = maxi(1, js_round(w * k))
-		var gh: int = maxi(1, js_round(h * k))
+		var gx: int = M.js_round(x * k)
+		var gy: int = M.js_round(y * k)
+		var gw: int = maxi(1, M.js_round(w * k))
+		var gh: int = maxi(1, M.js_round(h * k))
 		for j in range(gh):
 			raw_hline(gx, gx + gw - 1, gy + j, c)
 
 	func disc(cx: float, cy: float, r: float, c: int) -> void:
-		var gcx: int = js_round(cx * k)
-		var gcy: int = js_round(cy * k)
+		var gcx: int = M.js_round(cx * k)
+		var gcy: int = M.js_round(cy * k)
 		var gr: float = r * k
 		var R: float = gr + 0.35
 		var ri: int = int(ceil(gr))
@@ -339,8 +160,8 @@ class Layer extends RefCounted:
 			raw_hline(gcx - w, gcx + w, gcy + dy, c)
 
 	func ellipse(cx: float, cy: float, rx: float, ry: float, c: int) -> void:
-		var gcx: int = js_round(cx * k)
-		var gcy: int = js_round(cy * k)
+		var gcx: int = M.js_round(cx * k)
+		var gcy: int = M.js_round(cy * k)
 		var grx: float = rx * k
 		var gry: float = ry * k
 		var RY: float = gry + 0.35
@@ -353,8 +174,8 @@ class Layer extends RefCounted:
 			raw_hline(gcx - w, gcx + w, gcy + dy, c)
 
 	func ring(cx: float, cy: float, r: float, w: float, c: int) -> void:
-		var gcx: int = js_round(cx * k)
-		var gcy: int = js_round(cy * k)
+		var gcx: int = M.js_round(cx * k)
+		var gcy: int = M.js_round(cy * k)
 		var gr: float = r * k
 		var gw: float = maxf(1.0, w * k)
 		var ro: float = gr + 0.35
@@ -374,37 +195,37 @@ class Layer extends RefCounted:
 			c: int, ry: float = -1.0) -> int:
 		if ry < 0.0:
 			ry = r
-		var gcx: int = js_round(cx * k)
-		var gcy: int = js_round(cy * k)
+		var gcx: int = M.js_round(cx * k)
+		var gcy: int = M.js_round(cy * k)
 		var gr: float = r * k
 		var gry: float = ry * k
 		var gw: float = maxf(1.0, w * k)
 		var ri: int = int(ceil(gr))
-		var span: float = fmod(a1 - a0, TAU)
-		span = fmod(span + TAU, TAU)
+		var span: float = fmod(a1 - a0, M.TAU)
+		span = fmod(span + M.TAU, M.TAU)
 		if span == 0.0:
-			span = TAU
+			span = M.TAU
 		var steps: int = maxi(12, int(ceil(span * maxf(gr, gry) * 1.4)))
 		for i in range(steps + 1):
 			var ang: float = a0 + (span * float(i)) / float(steps)
 			var x: float = float(gcx) + cos(ang) * gr
 			var y: float = float(gcy) + sin(ang) * gry
 			if gw <= 1.2:
-				raw_px(js_round(x), js_round(y), c)
+				raw_px(M.js_round(x), M.js_round(y), c)
 			else:
 				var rad: float = gw / 2.0 - 0.2
 				var rri: int = int(ceil(rad))
 				for dy in range(-rri, rri + 1):
 					var ww: int = int(floor(sqrt(maxf(0.0, rad * rad - float(dy * dy)))))
-					raw_hline(js_round(x) - ww, js_round(x) + ww, js_round(y) + dy, c)
+					raw_hline(M.js_round(x) - ww, M.js_round(x) + ww, M.js_round(y) + dy, c)
 		return ri
 
 	func line(x0: float, y0: float, x1: float, y1: float, c: int, w: float = 1.0) -> void:
-		var gx0: int = js_round(x0 * k)
-		var gy0: int = js_round(y0 * k)
-		var gx1: int = js_round(x1 * k)
-		var gy1: int = js_round(y1 * k)
-		var gw: int = maxi(1, js_round(w * k))
+		var gx0: int = M.js_round(x0 * k)
+		var gy0: int = M.js_round(y0 * k)
+		var gx1: int = M.js_round(x1 * k)
+		var gy1: int = M.js_round(y1 * k)
+		var gw: int = maxi(1, M.js_round(w * k))
 		var dx: int = absi(gx1 - gx0)
 		var dy: int = -absi(gy1 - gy0)
 		var sx: int = 1 if gx0 < gx1 else -1
@@ -502,7 +323,9 @@ class Field extends RefCounted:
 		if x1 < 0:
 			return
 		for y in range(y0, y1 + 1):
-			self.h.fill(0.0, y * W + x0, y * W + x1 + 1)
+			var base: int = y * W
+			for x in range(x0, x1 + 1):
+				self.h[base + x] = 0.0
 		x0 = 1000000000
 		y0 = 1000000000
 		x1 = -1
@@ -600,7 +423,7 @@ class Field extends RefCounted:
 			for x in range(xa, xb + 1):
 				var pxx: float = float(x) + 0.5 - gax
 				var pyy: float = float(y) + 0.5 - gay
-				var t: float = clampf((pxx * vx + pyy * vy) / l2, 0.0, 1.0)
+				var t: float = M.clampf((pxx * vx + pyy * vy) / l2, 0.0, 1.0)
 				var dx: float = pxx - vx * t
 				var dy: float = pyy - vy * t
 				var v: float = gra + (grb - gra) * t - sqrt(dx * dx + dy * dy) + 0.5
