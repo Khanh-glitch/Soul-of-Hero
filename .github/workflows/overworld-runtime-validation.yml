@@ -322,6 +322,28 @@ jobs:
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-shortcut.log" "Shortcuts" "OVERWORLD SHORTCUT_RUNTIME_TEST PASSED"
           exit $rc
 
+      - name: "Traversability: the built world is connected, shortcuts change it"
+        run: |
+          mkdir -p artifacts/ud_trav
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_trav \
+                  --resolution 640x480 --windowed \
+                  --script res://tests/overworld_traversability_runtime_test.gd >"$ARTIFACT_DIR/overworld-traversability.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-traversability.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-traversability.log" "Traversability" "OVERWORLD TRAVERSABILITY_RUNTIME_TEST PASSED"
+          exit $rc
+
+      - name: "Occlusion: the Knight stays visible behind architecture"
+        run: |
+          mkdir -p artifacts/ud_occ
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_occ \
+                  --resolution 640x480 --windowed \
+                  --script res://tests/overworld_occlusion_runtime_test.gd >"$ARTIFACT_DIR/overworld-occlusion.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-occlusion.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-occlusion.log" "Occlusion" "OVERWORLD OCCLUSION_RUNTIME_TEST PASSED"
+          exit $rc
+
       - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |
           mkdir -p artifacts/ud_trip
@@ -533,6 +555,8 @@ jobs:
             "overworld_ossuary_approach.png"
             "overworld_archive_approach.png"
             "overworld_reliquary_approach.png"
+            "overworld_occlusion_off.png"
+            "overworld_occlusion_on.png"
             "overworld_road_terrain.png"
             "overworld_camp_crossroads.png"
             "overworld_shortcut_before.png"

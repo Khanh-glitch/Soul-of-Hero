@@ -1005,6 +1005,13 @@ def main():
     with open(os.path.join(DATA_DIR, "overworld_props.json"), "w") as f:
         json.dump({"tile_size": T, "frames": frames}, f, indent=1, sort_keys=True)
     print("props: %d frames, sheet %dx%d" % (len(frames), sheet.width, sheet.height))
+    # Hand-painted overrides last, exactly like art.py: a manual prop survives
+    # every regeneration. See tools/overworld/overrides.py.
+    try:
+        import overrides as _overrides
+        _overrides.compose("props")
+    except Exception as error:  # pragma: no cover - the generator must not die over art
+        print("override pass skipped: %s" % error)
 
 
 if __name__ == "__main__":

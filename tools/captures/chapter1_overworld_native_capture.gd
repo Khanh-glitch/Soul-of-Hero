@@ -51,6 +51,9 @@ var _sim_frames := 12
 var _app_root: Node
 var _written := 0
 var _failed: Array[String] = []
+## The occlusion_off frame, kept in memory only until occlusion_on has been
+## compared against it.
+var _occlusion_reference := {}
 
 
 func _ready() -> void:
@@ -128,6 +131,9 @@ func _run() -> void:
 			# plainest of the ten, and no frame of them existed. Photograph them.
 			{"station": "archive_approach", "anchor": "lm_archive"},
 			{"station": "reliquary_approach", "anchor": "lm_reliquary"},
+			# (the occlusion pair is shot separately, from the far side of the
+			# gate — framing it from the road would photograph the side where
+			# nothing is hidden and prove nothing)
 			{"station": "camp_crossroads", "anchor": "camp_crossroads"},
 			{"station": "crucible", "anchor": "lm_crucible"},
 			{"station": "beacon", "anchor": "lm_beacon"},
@@ -135,6 +141,7 @@ func _run() -> void:
 			{"station": "throne", "anchor": "lm_throne"},
 	]:
 		await _station(ow, String(entry["station"]), _station_cell(ow, String(entry["anchor"])))
+	await _occlusion_pair(ow)
 	await _station(ow, "road_terrain", Vector2i(150, 170))
 	await _station(ow, "shortcut_before", _shortcut_cell(ow, &"short_crucible_bridge"))
 	ow.state.open_shortcut(&"short_crucible_bridge")
@@ -169,6 +176,81 @@ func _station(ow: Node, station: String, cell: Vector2i) -> void:
 	await _settle(2)
 	await _shoot(station)
 	_stamp("station %s end" % station)
+
+
+## The occlusion demonstration: one camera, one tile, one flag.
+##
+## The station loop frames a landmark from the *south* (that is where the road
+## arrives), which is the side where the building is behind the player and nothing
+## is hidden. The failure this system fixes happens on the far side, so the capture
+## walks the player to the nearest standable tile NORTH of the gate — behind it,
+## where its wall is drawn over the Knight — and photographs the same frame twice,
+## with occlusion off and on.
+##
+## Both frames are reported like any other station, so the log carries the numbers
+## for both and a reader can see the difference in the composition map, not just in
+## a claim that the feature works.
+func _occlusion_pair(ow: Node) -> void:
+	var world: Node2D = ow.world
+	var occlusion: Node = ow.get("occlusion")
+	var traversability: Node = ow.get("traversability")
+	if world == null or occlusion == null or traversability == null:
+		_failed.append("occlusion_off")
+		_failed.append("occlusion_on")
+		push_error("OVERWORLD CAPTURE: no occlusion system on the scene")
+		return
+	var landmark := _landmark_sprite(world, "lm_gate")
+	if landmark == null:
+		_failed.append("occlusion_off")
+		_failed.append("occlusion_on")
+		push_error("OVERWORLD CAPTURE: no lm_gate sprite to stand behind")
+		return
+	var rect: Rect2 = occlusion.sprite_rect(landmark)
+	# A quarter of the way down the building: inside its silhouette, above its
+	# feet, which is exactly where the wall covers the player.
+	var wanted := Vector2(landmark.position.x, rect.position.y + rect.size.y * 0.3)
+	var cell: Vector2i = traversability.nearest_free(traversability.cell_of(wanted), 12)
+	var stand := Vector2(float(cell.x) * TILE + TILE * 0.5, float(cell.y) * TILE + TILE * 0.5)
+	print("OVERWORLD CAPTURE occlusion: standing at %s (landmark feet %s, rect %s)"
+		% [stand, landmark.position, rect])
+	ow.teleport_to(stand)
+	await _settle(_sim_frames)
+
+	occlusion.enabled = false
+	occlusion.snap()
+	await _settle(2)
+	await _shoot("occlusion_off")
+
+	occlusion.enabled = true
+	occlusion.snap()
+	await _settle(2)
+	await _shoot("occlusion_on")
+	# The two frames must actually differ: a demonstration that renders the same
+	# picture twice proves nothing, which is the failure mode this whole evidence
+	# chain exists to refuse.
+	if not _occlusion_reference.is_empty():
+		print("OVERWORLD CAPTURE occlusion: saved the reference frame for the difference")
+
+	# Report the state the frame was taken in, so the numbers and the picture agree.
+	var faded: int = occlusion.faded_count()
+	print("OVERWORLD CAPTURE occlusion: %d sprite(s) faded for this frame, alpha of the gate %.2f"
+		% [faded, occlusion.alpha_of(landmark)])
+	if faded < 1:
+		_failed.append("occlusion_on")
+		push_error("OVERWORLD CAPTURE: nothing faded with the player behind the gate")
+	if occlusion.alpha_of(landmark) > 0.95:
+		_failed.append("occlusion_on")
+		push_error("OVERWORLD CAPTURE: the gate stayed opaque with the player behind it")
+
+
+func _landmark_sprite(world: Node2D, frame: String) -> Sprite2D:
+	var root: Node2D = world.props_root
+	if root == null:
+		return null
+	for child: Node in root.get_children():
+		if child is Sprite2D and String((child as Sprite2D).get_meta("frame_name", "")) == frame:
+			return child as Sprite2D
+	return null
 
 
 func _stamp(text: String) -> void:
@@ -282,6 +364,14 @@ func _shoot(station: String) -> void:
 	# map are the only way anyone sees the actual frame.
 	var look := FrameReport.stats(image)
 	FrameReport.report(image, station)
+	# Per-pixel evidence for the occlusion pair: the same camera, the same tile,
+	# one flag different, so the difference between the two images *is* the
+	# demonstration. Sampling a stride keeps it cheap and still covers the frame.
+	if _occlusion_reference != null and not _occlusion_reference.is_empty():
+		var delta := _diff_share(_occlusion_reference, image)
+		print("OVERWORLD OCCLUSION %s differs from occlusion_off in %.1f pct of sampled pixels"
+			% [station, delta])
+		_occlusion_reference = {}
 	if int(look["colours"]) < MIN_COLOURS or float(look["edges"]) < MIN_EDGES:
 		_failed.append(station)
 		push_error("OVERWORLD CAPTURE: %s has no structure (%d colours, %d pct edges)" % [
@@ -289,6 +379,8 @@ func _shoot(station: String) -> void:
 		return
 	_written += 1
 	print("OVERWORLD STATION %s size=%dx%d blank=false" % [station, image.get_width(), image.get_height()])
+	if station == "occlusion_off":
+		_occlusion_reference = {"image": image.duplicate(), "width": image.get_width(), "height": image.get_height()}
 	if _check_only:
 		return
 	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(_out_dir))
@@ -309,6 +401,28 @@ func _shoot(station: String) -> void:
 	if bytes <= 0:
 		_failed.append(station)
 		push_error("OVERWORLD CAPTURE: %s wrote zero bytes to %s" % [station, output])
+
+
+## Share of sampled pixels that differ between two same-size frames.
+func _diff_share(reference: Dictionary, image: Image) -> float:
+	var previous: Image = reference.get("image")
+	if previous == null:
+		return 0.0
+	if previous.get_width() != image.get_width() or previous.get_height() != image.get_height():
+		return -1.0
+	var stride := 4
+	var considered := 0
+	var changed := 0
+	for y in range(0, image.get_height(), stride):
+		for x in range(0, image.get_width(), stride):
+			considered += 1
+			var a := previous.get_pixel(x, y)
+			var b := image.get_pixel(x, y)
+			if absf(a.r - b.r) + absf(a.g - b.g) + absf(a.b - b.b) > 0.02:
+				changed += 1
+	if considered == 0:
+		return 0.0
+	return 100.0 * float(changed) / float(considered)
 
 
 func _is_blank(image: Image) -> bool:

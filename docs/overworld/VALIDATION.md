@@ -229,3 +229,108 @@ flat-colour frame cannot pass) via `tools/ci/validate_png.py`.
 8. Quit and relaunch: position, camps, discoveries, shortcuts and provisions
    are all where you left them.
 9. Walk until provisions hit 0: the Knight slows to ~66 % and keeps walking.
+
+---
+
+# Mission 2 additions: occlusion, traversability, hybrid overrides
+
+## Two new runtime gates
+
+Both run on the production scene (`chapter1_overworld.tscn`), assert observable
+state, and fail closed. Neither is a screenshot: they read the same objects the
+game reads.
+
+### `tests/overworld_traversability_runtime_test.gd` — 26 checks
+
+| check | why it exists |
+| --- | --- |
+| grid matches the world (384×256) | the system measures the world it was built from |
+| terrain agrees on 2 035 sampled cells, 0 disagree | the grid is not a second opinion about the terrain |
+| every solid terrain cell counted (23 338) | no silent drops |
+| prop bodies block cells of their own (10 078) | if this were 0 the grid would be measuring nothing |
+| 0 sealed endpoints | the *assertion that matters*: every landmark threshold, camp, discovery and the spawn is reachable on foot |
+| the flood starts on standable ground | the origin is real ground, not a tent |
+| the player does not start inside a body | regression: a fresh character used to spawn inside the refuge tent |
+| the walk to the citadel is 405 cells | the march is a journey, not a hop |
+| bridge banks resolve, 14 → 6 cells when it opens | a shortcut that only swaps a sprite is not a shortcut |
+| closing restores a body to collision | and closing it takes the wall back |
+
+### `tests/overworld_occlusion_runtime_test.gd` — 22 checks
+
+| check | why it exists |
+| --- | --- |
+| 2 620 tall props registered, in 1 042 buckets | occluders exist and the work is bounded |
+| the landmark is 104 px tall, standable ground behind it | the scenario is physically possible before it is asserted |
+| opaque at 1.00 with the system off, 0.62 behind it | the fade happens, and only when the player is behind |
+| ≥ 0.40 remains | the destination stays readable while the Knight is visible |
+| the landmark body still blocks its cell | fading is visual: collision is unchanged |
+| 420 px away nothing fades (0), 109 of 2 620 considered | locality is real, not assumed |
+| a tree fades to 0.30 vs a landmark at 0.62 | depth is by role |
+
+### What they found
+
+Writing the traversability system immediately found two real defects that no
+existing gate covered:
+
+1. `d_crucible_cove` and `d_relay_shard` were covered by dead-tree *bodies*.
+   `author.py` validated collider props against interaction cells by their
+   **anchor tile**, but a body is 0.82 of the sprite wide and hangs from the
+   feet, so it routinely covers a neighbour. Both rewards were visible and
+   unclaimable. Fixed by testing the body footprint at scatter time and adding
+   the same rule to `validate()`; the bake now refuses to write a world where a
+   prop body seals an interaction cell.
+2. A fresh character spawned **inside the refuge tent**: `validate()` checked a
+   hard-coded `(56, 216)` while the world document spawns at `(56, 218)`. Both now
+   read one `START` constant, and the scene settles the player onto the nearest
+   free cell before the first frame if a body ever covers the spawn again.
+
+## Hybrid override pipeline
+
+`tools/overworld/overrides.py` lets a hand-painted frame win at bake time without
+editing the generator:
+
+```
+python3 tools/overworld/overrides.py --list       # what is overridden, from where
+python3 tools/overworld/overrides.py --compose    # rebuild the atlas + manifest
+python3 tools/overworld/overrides.py --report     # provenance per frame
+```
+
+`art.py` and `art_props.py` call `overrides.compose()` as their last step, so the
+atlas is always "generated, then overridden" and deleting an override PNG restores
+the generated frame. `data/overworld/art_manifest.json` records, per frame, the
+rect, source file, origin (`generated` / `hand`), license and the atlas sha256.
+`tools/overworld/source_audit.py --check` fails if a shipped pixel has no origin.
+
+## Local suite results
+
+`bash tools/overworld/local_suite.sh` — every gate the workflow runs, on this
+machine, headless:
+
+| gate | result |
+| --- | --- |
+| STATIC | `OVERWORLD_STATIC_CONTRACTS PASSED - 38 checks` |
+| GUARD | `OVERWORLD_REGRESSION_GUARD PASSED - 82 checks` |
+| KNIGHT | `KNIGHT_MINI PASSED - 4 checks` |
+| SCENE | `OVERWORLD SCENE_RUNTIME_TEST PASSED - 29 checks` |
+| MOVEMENT | `OVERWORLD MOVEMENT_RUNTIME_TEST PASSED - 7 checks` |
+| PROVISIONS | `OVERWORLD PROVISIONS_RUNTIME_TEST PASSED - 15 checks` |
+| PERSISTENCE | `OVERWORLD PERSISTENCE_RUNTIME_TEST PASSED - 26 checks` |
+| GATE | `OVERWORLD GATE_RUNTIME_TEST PASSED - 35 checks` |
+| SHORTCUT | `OVERWORLD SHORTCUT_RUNTIME_TEST PASSED - 30 checks` |
+| TRAVERSABILITY | `OVERWORLD TRAVERSABILITY_RUNTIME_TEST PASSED - 26 checks` |
+| OCCLUSION | `OVERWORLD OCCLUSION_RUNTIME_TEST PASSED - 22 checks` |
+| ROUNDTRIP | `OVERWORLD ROUNDTRIP_RUNTIME PASSED - 27 checks` |
+| ACCEPTANCE | `OWACCEPT: 64 checks, 0 failures` |
+
+413 checks, zero failures. The engine is a from-source Godot 4.7 build
+(`4.7.stable.custom_build.5b4e0cb0f`, linuxbsd, editor, no pulseaudio/alsa/dbus/
+udev, `-j2`, 50 min).
+
+**Honest limit of the local run:** this machine has no display server and no
+libGL, so the *native capture* cannot run here — it hangs waiting for a frame
+that a dummy renderer never draws, and `timeout` kills it (rc=124). The 17
+station PNGs are produced by CI under Xvfb, which is why the visual claims in
+`REVIEW.md` and the occlusion pair are backed by the offline renderer
+(`tools/overworld/evidence.py`, same atlas, same tile math, same camera framing)
+and marked as such. Logic verification is local and complete; the photographic
+verification is CI's.

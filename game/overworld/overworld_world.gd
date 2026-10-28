@@ -217,6 +217,10 @@ func _paint_props(path: String) -> int:
 			sprite.set_meta("shortcut_family", SHORTCUT_FRAME_ALIASES[frame])
 		sprite.position = pos
 		sprite.name = "P_%d_%s" % [count, frame]
+		# The authored frame, kept on the node: the occlusion system needs to know
+		# what a prop *is* (a landmark fades less than a bush), and after a
+		# shortcut swap the node name no longer describes the frame on screen.
+		sprite.set_meta("frame_name", frame)
 		if FLAT_PROPS.has(frame):
 			sprite.z_index = -1
 		props_root.add_child(sprite)
@@ -408,6 +412,16 @@ func is_solid_cell(x: int, y: int) -> bool:
 	if x < 0 or y < 0 or x >= width or y >= height:
 		return true
 	return _solid[y * width + x] != "."
+
+
+## How many cells the terrain painter blocked. The traversability grid is checked
+## against this, so the two cannot quietly disagree about the same world.
+func solid_cell_count() -> int:
+	var total := 0
+	for index in _solid.size():
+		if _solid[index] != ".":
+			total += 1
+	return total
 
 
 func is_water_cell(x: int, y: int) -> bool:

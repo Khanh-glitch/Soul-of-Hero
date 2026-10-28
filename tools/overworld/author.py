@@ -739,6 +739,50 @@ def reinstate_shortcut_bands():
         block_rect(*carve_rect(kind, tx, ty))
 
 
+def prop_body_cells(frame, x, y):
+    """Cells the runtime body of this prop covers, in tile coordinates.
+
+    Mirrors `OverworldWorld._add_prop_blocker` exactly: the body is the lower
+    42% of the sprite (minimum 8 px) and 82% of its width, hung from the feet, and
+    `_mark_body` marks every cell the rectangle touches. The bake has to use the
+    same rule, or it will pass a world the player cannot walk.
+
+    A frame that is not in the atlas, or that carries no collider, covers nothing.
+    """
+    if not frame.startswith(COLLIDER_PROP_PREFIXES):
+        return set()
+    meta = PROP_META.get(frame)
+    if meta is None:
+        return set()
+    width = float(meta.get("w", 16))
+    height = float(meta.get("h", 16))
+    body_h = max(8.0, height * 0.42)
+    body_w = max(8.0, width * 0.82)
+    left = x - body_w * 0.5
+    right = x + body_w * 0.5
+    top = y - body_h
+    bottom = y
+    x0 = math.floor(left / TILE)
+    x1 = math.floor(right / TILE)
+    y0 = math.floor(top / TILE)
+    y1 = math.floor(bottom / TILE)
+    return {(cx, cy) for cx in range(x0, x1 + 1) for cy in range(y0, y1 + 1)}
+
+
+def prop_body_occupancy():
+    """Every cell covered by a prop collider, mapped to what covers it."""
+    occupied = {}
+    for entry in props:
+        for cell in prop_body_cells(str(entry["frame"]),
+                                    float(entry["x"]), float(entry["y"])):
+            occupied.setdefault(cell, []).append(str(entry["frame"]))
+    return occupied
+
+
+## The cell the player spawns on: the plaza south of the refuge's campfire.
+START = (56, 218)
+
+
 def interaction_cells():
     """Cells a player must be able to stand on to interact with something.
 
@@ -753,13 +797,28 @@ def interaction_cells():
         cells.add((tx, ty))
     for did, (tx, ty), kind, reward in DISCOVERIES:
         cells.add((tx, ty))
-    cells.add((56, 216))
+    cells.add(START)
     return cells
 
 
 def paint_scatter():
     """Vegetation, grave furniture and ruins, kept off every walking lane."""
+    # Reserved *exactly*: every interaction cell. The guard below is precise
+    # instead of approximate — it asks whether the body this frame would build
+    # covers a reserved cell, not whether its anchor tile is close to one. A dead
+    # pine's trunk is 0.82 of its sprite wide and hangs two tiles up from its
+    # feet, so "near enough to matter" is not a fixed halo: the tree that put
+    # `d_crucible_cove` out of reach stood on the neighbouring tile, and the one
+    # that did the same to `d_relay_shard` stood two tiles south.
     reserved = interaction_cells()
+
+    def try_add(frame, x, y):
+        """Add a prop only if its runtime body would not seal an interaction cell."""
+        px, py = tile_pos(x, y)
+        if prop_body_cells(frame, px, py) & reserved:
+            return False
+        add_prop(frame, px, py)
+        return True
     lane = set()
     for x in range(W):
         for y in range(H):
@@ -784,56 +843,56 @@ def paint_scatter():
             r = h01(901, x, y)
             if g == ",":
                 if r < 0.022:
-                    add_prop("tree_dead", *tile_pos(x, y))
+                    try_add("tree_dead", x, y)
                 elif r < 0.075:
-                    add_prop("bush", *tile_pos(x, y))
+                    try_add("bush", x, y)
                 elif r < 0.095:
-                    add_prop("rock_a", *tile_pos(x, y))
+                    try_add("rock_a", x, y)
             elif g == ";":
                 if r < 0.030:
-                    add_prop("tree_pine", *tile_pos(x, y))
+                    try_add("tree_pine", x, y)
                 elif r < 0.070:
-                    add_prop("bush", *tile_pos(x, y))
+                    try_add("bush", x, y)
                 elif r < 0.085:
-                    add_prop("tree_dead", *tile_pos(x, y))
+                    try_add("tree_dead", x, y)
             elif g == "d":
                 if r < 0.030:
-                    add_prop("gravestone", *tile_pos(x, y))
+                    try_add("gravestone", x, y)
                 elif r < 0.055:
-                    add_prop("grave_cross", *tile_pos(x, y))
+                    try_add("grave_cross", x, y)
                 elif r < 0.070:
-                    add_prop("rock_a", *tile_pos(x, y))
+                    try_add("rock_a", x, y)
                 elif r < 0.078:
-                    add_prop("sarcophagus", *tile_pos(x, y))
+                    try_add("sarcophagus", x, y)
             elif g in ("g", "r"):
                 if r < 0.028:
-                    add_prop("rock_b", *tile_pos(x, y))
+                    try_add("rock_b", x, y)
                 elif r < 0.042:
-                    add_prop("rock_a", *tile_pos(x, y))
+                    try_add("rock_a", x, y)
                 elif r < 0.050:
-                    add_prop("column_broken", *tile_pos(x, y))
+                    try_add("column_broken", x, y)
                 elif r < 0.056:
-                    add_prop("wall_stub", *tile_pos(x, y))
+                    try_add("wall_stub", x, y)
             elif g == "f":
                 if r < 0.020:
-                    add_prop("column_broken", *tile_pos(x, y))
+                    try_add("column_broken", x, y)
                 elif r < 0.028:
-                    add_prop("wall_stub", *tile_pos(x, y))
+                    try_add("wall_stub", x, y)
                 elif r < 0.034:
-                    add_prop("statue", *tile_pos(x, y))
+                    try_add("statue", x, y)
             elif g == "a":
                 if r < 0.030:
-                    add_prop("rock_a", *tile_pos(x, y))
+                    try_add("rock_a", x, y)
                 elif r < 0.045:
-                    add_prop("disc_bones", *tile_pos(x, y))
+                    try_add("disc_bones", x, y)
             elif g == "b":
                 if r < 0.050:
-                    add_prop("bush", *tile_pos(x, y))
+                    try_add("bush", x, y)
                 elif r < 0.060:
-                    add_prop("tree_dead", *tile_pos(x, y))
+                    try_add("tree_dead", x, y)
             elif g == "m":
                 if r < 0.030:
-                    add_prop("tree_dead", *tile_pos(x, y))
+                    try_add("tree_dead", x, y)
 
     # Fallen masonry on the plazas. The scatter above keeps a two-tile corridor
     # clear around every lane so nothing BLOCKING can pinch a road; that rule is
@@ -865,19 +924,19 @@ def paint_scatter():
             band = 0.085 if hot(x, y, 917) else 0.016
             if g in ("f", "g", "r", "a"):
                 if r < band * 0.45:
-                    add_prop("rock_a", *tile_pos(x, y))
+                    try_add("rock_a", x, y)
                 elif r < band * 0.85:
-                    add_prop("rock_b", *tile_pos(x, y))
+                    try_add("rock_b", x, y)
                 elif g == "f" and r < band * 1.0:
-                    add_prop("barrel", *tile_pos(x, y))
+                    try_add("barrel", x, y)
             elif g == "d":
                 if r < band * 0.6:
-                    add_prop("grave_cross", *tile_pos(x, y))
+                    try_add("grave_cross", x, y)
                 elif r < band:
-                    add_prop("gravestone", *tile_pos(x, y))
+                    try_add("gravestone", x, y)
             elif g == "b":
                 if r < band:
-                    add_prop("bush", *tile_pos(x, y))
+                    try_add("bush", x, y)
 
     # lamps along the principal road, at a readable interval
     main = [(58, 228), (64, 214), (72, 200), (82, 190), (88, 184), (80, 168), (72, 154),
@@ -955,7 +1014,11 @@ def reachable(ok, start):
 
 def validate():
     errors = []
-    start = (56, 216)
+    # One source of truth: the cell the world document tells the controller to
+    # spawn on. This used to be a second hard-coded literal (56, 216) that had
+    # already drifted from the document's (56, 218) — so the bake was checking a
+    # cell nobody spawns on, and a prop body sat unnoticed on the real one.
+    start = START
     for open_shortcuts in (False, True):
         ok = walkable_grid(open_shortcuts)
         seen = reachable(ok, start)
@@ -1030,6 +1093,37 @@ def validate():
         if (tex, tey) in must_be_free:
             errors.append("blocking prop '%s' at (%d,%d) covers the %s"
                           % (frame, tex, tey, must_be_free[(tex, tey)]))
+
+    # The same question, asked of the collider the runtime actually builds rather
+    # than of the tile the prop is anchored on. A prop's body is 82% of its width
+    # and hangs from its feet, so it routinely covers a neighbour: the assertion
+    # above passed for years while a dead tree stood on a discovery cell.
+    occupied = prop_body_occupancy()
+    for cell, what in sorted(must_be_free.items()):
+        for frame in occupied.get(cell, []):
+            errors.append("prop body '%s' covers the %s at %s"
+                          % (frame, what, cell))
+
+    # Bodies are walls, so the flood has to walk around them too. This is the
+    # authoring gate for the runtime traversability system: same 4-neighbour rule,
+    # same result, but it runs at bake time, before anything ships.
+    for open_shortcuts in (False, True):
+        tag = "shortcuts open" if open_shortcuts else "shortcuts closed"
+        terrain_ok = walkable_grid(open_shortcuts)
+        body_ok = lambda x, y: terrain_ok(x, y) and (x, y) not in occupied
+        seen = reachable(body_ok, start)
+        for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+            if (tx, ty + 1) not in seen:
+                errors.append("%s threshold %s is walled off by prop bodies (%s)"
+                              % (title, (tx, ty + 1), tag))
+        for cid, name, (tx, ty), initial in CAMPS:
+            if (tx, ty) not in seen:
+                errors.append("camp %s rest cell is walled off by prop bodies (%s)"
+                              % (cid, tag))
+        for did, (tx, ty), kind, reward in DISCOVERIES:
+            if (tx, ty) not in seen:
+                errors.append("discovery %s is walled off by prop bodies (%s)"
+                              % (did, tag))
 
     # The band the runtime carves must be solid in the baked world, or the
     # "opened shortcut" would be a sprite swap over a wall that was never there.
@@ -1139,7 +1233,7 @@ def world_document():
         "camera_default": {"zoom": 2.0},
         "default_tint": [0.88, 0.85, 0.93, 1.0],
         "refuge": {"id": "refuge_start", "label": "Ashen Refuge", "pos": [56, 218]},
-        "start_position": [56, 218],
+        "start_position": [START[0], START[1]],
         # Region labels used by the HUD. The runtime assigns a position to the
         # nearest landmark and reads its region label from here, so the roster of
         # named places lives in exactly one file.

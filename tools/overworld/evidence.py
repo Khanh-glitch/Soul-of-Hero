@@ -67,7 +67,8 @@ CAMERA_ZOOM = 2  # camera_default.zoom in hollow_marches.json
 
 
 def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict,
-                   *, layers: dict | None = None, caption: str = "") -> str:
+                   *, layers: dict | None = None, caption: str = "",
+                   props: bool = True) -> str:
     """One viewport-sized frame, framed the way the in-game camera frames it.
 
     The overworld camera runs at zoom 2 on a 640x360 viewport, so a station
@@ -82,7 +83,8 @@ def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict,
     tiles_h = VIEW_H // tile_px + 2
     x0 = max(0, min(width - tiles_w, cell[0] - tiles_w // 2))
     y0 = max(0, min(height - tiles_h, cell[1] - tiles_h // 2))
-    image = preview.render(x0, y0, x0 + tiles_w, y0 + tiles_h, scale=CAMERA_ZOOM, layers=layers)
+    image = preview.render(x0, y0, x0 + tiles_w, y0 + tiles_h, scale=CAMERA_ZOOM,
+                           layers=layers, draw_props=props)
     centre_x = (cell[0] - x0) * tile_px + tile_px // 2
     centre_y = (cell[1] - y0) * tile_px + tile_px // 2
     crop_x = max(0, min(image.width - VIEW_W, centre_x - VIEW_W // 2))
@@ -93,6 +95,86 @@ def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict,
     path = os.path.join(out_dir, f"overworld_{name}.png")
     image.save(path)
     return path
+
+
+def render_occlusion_pair(out_dir: str, world: dict) -> str:
+    """The occlusion demonstration, composited the way the game composites it.
+
+    Two frames from the *same* camera: the player standing six tiles north of the
+    Crimson Gate's feet — inside its silhouette, where the wall covers them — with
+    the landmark sprite drawn in front (it is y-sorted after the player) at full
+    opacity and then at the fade depth the runtime uses for a landmark (0.62).
+
+    The player is a stand-in marker, not the Knight: this renderer has no access to
+    the character scene. The natively captured pair in CI is the real thing; this
+    exists so the behaviour can be reviewed offline, and it is labelled as such.
+    """
+    gate = next(l for l in world["landmarks"] if l["id"] == "lm_gate")
+    gx, gy = int(gate["pos"][0]), int(gate["pos"][1])
+    # Four tiles north of the gate's feet. The gate sprite is 104 px tall (52 px
+    # at 2x... it is drawn at scale 1 over the 2x crop), so its body spans from
+    # 104 px above its feet down to them: standing four tiles (64 px) north puts
+    # the player's feet inside that span, and keeps the whole building in frame.
+    standing = (gx, gy - 4)
+    frames: list[Image.Image] = []
+    for label, alpha in (("occlusion_off  landmark drawn opaque", 1.0),
+                         ("occlusion_on  landmark faded to 0.62", 0.62)):
+        path = render_station("occlusion_" + ("off" if alpha == 1.0 else "on"),
+                              standing, out_dir, world, caption=label, props=False)
+        frame = Image.open(path).convert("RGBA")
+        art_dir = os.path.join(ROOT, "assets", "environment", "overworld")
+        data_dir = DATA
+        sheet = Image.open(os.path.join(art_dir, "overworld_props.png")).convert("RGBA")
+        meta = json.load(open(os.path.join(data_dir, "overworld_props.json")))["frames"]["lm_gate"]
+        sprite = sheet.crop((meta["x"], meta["y"], meta["x"] + meta["w"], meta["y"] + meta["h"]))
+        # The crop is a 2x render: the sprite has to be magnified by the same
+        # camera zoom or the building appears at half scale against its own ground.
+        sprite = sprite.resize((meta["w"] * CAMERA_ZOOM, meta["h"] * CAMERA_ZOOM), Image.NEAREST)
+        if alpha < 1.0:
+            sprite.putalpha(sprite.getchannel("A").point(lambda value: int(value * alpha)))
+        # Re-derive the crop origin exactly as render_station did, so the sprite
+        # lands on the tile the authored world put it on.
+        width = int(world["world_bounds"]["w"])
+        height = int(world["world_bounds"]["h"])
+        tile_px = T * CAMERA_ZOOM
+        tiles_w = VIEW_W // tile_px + 2
+        tiles_h = VIEW_H // tile_px + 2
+        x0 = max(0, min(width - tiles_w, standing[0] - tiles_w // 2))
+        y0 = max(0, min(height - tiles_h, standing[1] - tiles_h // 2))
+        centre_x = (standing[0] - x0) * tile_px + tile_px // 2
+        centre_y = (standing[1] - y0) * tile_px + tile_px // 2
+        # `centre_*` is relative to the rendered patch, so the crop has to be moved
+        # into world pixels before it can be subtracted from a world coordinate.
+        crop_x = x0 * tile_px + max(0, min(tiles_w * tile_px - VIEW_W, centre_x - VIEW_W // 2))
+        crop_y = y0 * tile_px + max(0, min(tiles_h * tile_px - VIEW_H, centre_y - VIEW_H // 2))
+        # World pixels are at scale 1; the crop is cut from the 2x render, so the
+        # whole transform has to carry CAMERA_ZOOM. (Getting this wrong put both
+        # the landmark and the marker thousands of pixels off-frame.)
+        frame.alpha_composite(
+            sprite,
+            (int((gx * T + 8) * CAMERA_ZOOM - crop_x - meta["w"] / 2),
+             int((gy * T + 8) * CAMERA_ZOOM - crop_y - meta["h"] * CAMERA_ZOOM)),
+        )
+        draw = ImageDraw.Draw(frame)
+        player_x = int((standing[0] * T + 8) * CAMERA_ZOOM - crop_x)
+        player_y = int((standing[1] * T + 8) * CAMERA_ZOOM - crop_y)
+        # The Knight's footprint and silhouette, as a reading marker.
+        draw.ellipse((player_x - 7, player_y - 20, player_x + 7, player_y - 4),
+                     fill=(232, 214, 176, 255))
+        draw.rectangle((player_x - 5, player_y - 12, player_x + 5, player_y),
+                       fill=(150, 62, 58, 255))
+        print("  occlusion: landmark drawn at %s in a %dx%d frame, marker at %s"
+              % ((int((gx * T + 8) * CAMERA_ZOOM - crop_x - meta["w"] / 2),
+                  int((gy * T + 8) * CAMERA_ZOOM - crop_y - meta["h"] * CAMERA_ZOOM)),
+                 frame.width, frame.height, (player_x, player_y)))
+        frames.append(frame)
+        os.remove(path)
+    combo = Image.new("RGBA", (VIEW_W, VIEW_H * 2 + 4), (12, 10, 16, 255))
+    combo.alpha_composite(frames[0], (0, 0))
+    combo.alpha_composite(frames[1], (0, VIEW_H + 4))
+    out = os.path.join(out_dir, "overworld_occlusion_pair.png")
+    combo.convert("RGB").save(out)
+    return out
 
 
 def render_overview(out_dir: str, world: dict) -> str:
@@ -127,6 +209,7 @@ def main() -> int:
     lookup = anchors(world)
 
     written = [render_overview(args.out, world)]
+    written.append(render_occlusion_pair(args.out, world))
     for station, anchor in STATIONS:
         base = lookup.get(anchor)
         if base is None:

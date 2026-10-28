@@ -1094,6 +1094,13 @@ def main():
     light = build_light_texture()
     light.save(os.path.join(ART_DIR, "light_radial.png"))
     print("tiles: %d frames, sheet %dx%d" % (len(meta["index"]), sheet.width, sheet.height))
+    # Hand-painted overrides are applied last, on top of the freshly generated
+    # sheet, so regeneration can never lose manual work. See tools/overworld/overrides.py.
+    try:
+        import overrides as _overrides
+        _overrides.compose("tiles")
+    except Exception as error:  # pragma: no cover - the generator must not die over art
+        print("override pass skipped: %s" % error)
 
 
 if __name__ == "__main__":

@@ -129,3 +129,23 @@ at the existing `playtest-preview` environment, which has no such restriction.
    Reliquary the least.
 3. **Dungeon-interior art is untouched** — the overworld work is additive by
    design (see `REVIEW.md`).
+
+---
+
+# Mission 2 status
+
+| item | state | evidence |
+| --- | --- | --- |
+| Traversability system (prop-aware grid, BFS distances, sealed-endpoint report) | shipped | `game/overworld/overworld_traversability.gd`, 26-check runtime test |
+| Occlusion system (rect-anchored, bucketed, hysteresis, role-based depth) | shipped | `game/overworld/overworld_occlusion.gd`, 22-check runtime test |
+| Rewards sealed by prop bodies (`d_crucible_cove`, `d_relay_shard`) | **fixed** | `author.py` body-footprint guard; bake now refuses such a world |
+| Fresh character spawning inside the refuge tent | **fixed** | single `START` constant; scene settles the spawn; asserted in the test |
+| Hybrid override pipeline + manifest + audit | shipped | `tools/overworld/overrides.py`, `data/overworld/art_manifest.json`, `source_audit.py --check` clean |
+| Hand-painted L03 / L04 exteriors | shipped | `tools/overworld/manual_landmarks.py`, re-rendered stations |
+| Local gate suite | 13 gates, 413 checks, 0 failures | `docs/overworld/VALIDATION.md` |
+| Native 17-station capture | CI only (no GL here) | workflow run on this branch |
+| Browser playtest | CI only | workflow run on this branch |
+
+**Not claimed:** that the world *looks* good. That judgement is the owner's, and
+the frames it rests on are the CI artifact plus the offline renders in
+`docs/overworld/evidence/`.

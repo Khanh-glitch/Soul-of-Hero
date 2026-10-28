@@ -42,6 +42,8 @@ const CAMP_SCRIPT := preload("res://game/overworld/overworld_camp.gd")
 const DISCOVERY_SCRIPT := preload("res://game/overworld/overworld_discovery.gd")
 const HUD_SCRIPT := preload("res://game/overworld/overworld_hud.gd")
 const WORLD_SCRIPT := preload("res://game/overworld/overworld_world.gd")
+const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversability.gd")
+const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 
 const CAMERA_ZOOM := Vector2.ONE
 const WEARY_SPEED_SCALE := 0.82
@@ -55,6 +57,14 @@ var state: OverworldState
 var player: CharacterBody2D
 var camera: Camera2D
 var hud: OverworldHud
+## Runtime walkability that includes prop bodies, and the fade that keeps the
+## Knight visible behind architecture. Both are built from the live scene, not
+## from the authored document, so they describe the world the player has.
+var traversability: OverworldTraversability
+var occlusion: OverworldOcclusion
+## Endpoints the running world has sealed off. Empty is the only healthy value;
+## the build reports here instead of silently shipping a walled-in dungeon door.
+var traversability_failures: Array[Dictionary] = []
 
 var gates: Dictionary = {}       # level_id:String -> OverworldGate
 var camps: Dictionary = {}       # camp_id:String -> OverworldCamp
@@ -130,11 +140,59 @@ func _build_world() -> void:
 	build_stage = BuildStage.RESTORING_PROGRESS
 	_apply_payload_spawn()
 	_restore_progress()
+	# Both systems read the finished scene, so they are built after progress is
+	# restored: a shortcut the save had already opened must not be measured as a
+	# closed wall.
+	_build_traversability()
+	_settle_spawn_on_walkable_ground()
+	_build_occlusion()
 	_build_hud()
 	_connect_run_events()
 	_apply_hud()
 	build_stage = BuildStage.READY
 	world_ready.emit()
+
+
+func _build_traversability() -> void:
+	traversability = TRAVERSABILITY_SCRIPT.new() as OverworldTraversability
+	traversability.build(world)
+	traversability_failures = traversability.unreachable_endpoints(world_data)
+	if traversability_failures.is_empty():
+		return
+	var parts: Array[String] = []
+	for failure: Dictionary in traversability_failures:
+		parts.append("%s (%s at %s, nearest reachable %d tiles)" % [
+			str(failure.get("id", "?")), str(failure.get("kind", "?")),
+			str(failure.get("cell", "?")), int(failure.get("near", -1)),
+		])
+	push_error("Overworld: the built world seals off %d endpoint(s): %s"
+		% [traversability_failures.size(), "; ".join(parts)])
+
+
+func _settle_spawn_on_walkable_ground() -> void:
+	# The authored spawn is a *place*, not a standable cell: at the Ashen Refuge it
+	# is the middle of the cooking ground, and a tent body covers it. A fresh
+	# character therefore used to start inside a wall and be pushed out by physics
+	# on the first frame. Now the traversability grid — which is the only thing
+	# that knows about prop bodies — resolves the point before the player moves.
+	if traversability == null or player == null:
+		return
+	var cell := traversability.cell_of(player.position)
+	if traversability.is_free(cell):
+		return
+	var resolved := traversability.nearest_free_position(player.position, 12)
+	push_warning("Overworld: spawn cell %s is blocked by a prop body; the player starts at %s instead"
+		% [str(cell), str(traversability.cell_of(resolved))])
+	player.position = resolved
+	if camera != null:
+		camera.reset_smoothing()
+
+
+func _build_occlusion() -> void:
+	occlusion = OCCLUSION_SCRIPT.new() as OverworldOcclusion
+	occlusion.name = "Occlusion"
+	add_child(occlusion)
+	occlusion.configure(world, player)
 
 
 func _fail(reason: String) -> void:
@@ -372,6 +430,13 @@ func _apply_payload_spawn() -> void:
 
 
 func _nearest_walkable(origin: Vector2) -> Vector2:
+	# Prop bodies are walls too, and the terrain grid does not know about them:
+	# asking only `world.is_walkable()` is how a return point ends up inside a
+	# camp tent.
+	if traversability != null:
+		var free := traversability.nearest_free_position(origin, 20)
+		if world.is_walkable(free):
+			return free
 	for radius in range(1, 14):
 		for angle_index in range(12):
 			var angle := TAU * float(angle_index) / 12.0
@@ -398,6 +463,8 @@ func _process(delta: float) -> void:
 	if state == null or not is_instance_valid(player):
 		return
 	state.set_world_position(player.global_position)
+	if occlusion != null and is_instance_valid(occlusion):
+		occlusion.step(delta)
 	var hazard := _in_hazard(player.global_position)
 	var safe := _in_camp_radius(player.global_position)
 	state.tick(delta, hazard, safe)
@@ -622,6 +689,10 @@ func _on_state_discovery(discovery_id: StringName) -> void:
 func _on_state_shortcut_opened(shortcut_id: StringName) -> void:
 	if world != null:
 		world.set_shortcut_open(String(shortcut_id), true)
+	# The shortcut just changed the walls: re-read them so the traversability
+	# answer keeps matching the world the player is walking through.
+	if traversability != null:
+		traversability.invalidate()
 	_apply_hud()
 
 

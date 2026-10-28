@@ -20418,14 +20418,6 @@
    "lit": false
   },
   {
-   "frame": "tree_dead",
-   "x": 5016.0,
-   "y": 2536.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 5560.0,
    "y": 2536.0,
@@ -28786,14 +28778,6 @@
    "lit": false
   },
   {
-   "frame": "sarcophagus",
-   "x": 904.0,
-   "y": 3496.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "grave_cross",
    "x": 1288.0,
    "y": 3496.0,
@@ -29876,14 +29860,6 @@
   {
    "frame": "tree_dead",
    "x": 3032.0,
-   "y": 3624.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "tree_dead",
-   "x": 3192.0,
    "y": 3624.0,
    "flags": "",
    "z": 0,
