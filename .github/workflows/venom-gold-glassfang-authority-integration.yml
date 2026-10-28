@@ -1,0 +1,34 @@
+name: Glassfang native runtime authority integration
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/tests/venom_glassfang_pool_authority_integration.gd'
+      - 'prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd'
+      - 'prototypes/gold_pair/venom_source_pool_lifecycle.gd'
+      - '.github/workflows/venom-gold-glassfang-authority-integration.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  runtime-authority:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import source scripts
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-authority-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-authority-import.log; then exit 1; fi
+      - name: Assert fixed source ticks and no visual damage
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_pool_authority_integration.gd 2>&1 | tee /tmp/venom-authority.log
+          grep -F 'GLASSFANG_AUTHORITY: PASS / 253 source ticks' /tmp/venom-authority.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-authority.log; then exit 1; fi
