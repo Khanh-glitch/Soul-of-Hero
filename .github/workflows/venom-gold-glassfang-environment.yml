@@ -1,0 +1,36 @@
+name: Venom Glassfang original Ultra environmental FX source pixel parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_glassfang_source_environment.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_environment_source_oracle.gd'
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - '.github/workflows/venom-gold-glassfang-environment.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-ultra-environment-fx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot source import and strict parser validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-env-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-env-import.log; then exit 1; fi
+      - name: Verify original Splash/Flash/Ring/Embed native Ultra 24 full SHA-256 image buffers
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 125s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_environment_source_oracle.gd 2>&1 | tee /tmp/gold-env-source.log
+          grep -F 'VENOM_GLASSFANG_ENV: PASS / 24 whole original Ultra' /tmp/gold-env-source.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-env-source.log; then exit 1; fi
