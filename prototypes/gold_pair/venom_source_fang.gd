@@ -79,8 +79,8 @@ func light(layer:VenomSourcePixelLayer)->void:
     layer.glow(chain.sx[0],chain.sy[0]-z-3.0,8.0,int(P.c1),0.3,3)
     layer.glow(chain.sx[3],chain.sy[3]-z-3.0,6.0,int(P.c1),0.15,2)
 
-func render_pass(pass_name:String,t:float)->PackedByteArray:
-    var layer=LAYER.new()
+func render_pass(pass_name:String,t:float,source_density:int=1)->PackedByteArray:
+    var layer=LAYER.new(source_density)
     match pass_name:
         "shd": shadow(layer)
         "up": front(layer,t)
