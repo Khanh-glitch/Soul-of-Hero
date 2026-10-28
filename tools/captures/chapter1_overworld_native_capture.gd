@@ -37,7 +37,7 @@ const TILE := 16.0
 
 var _out_dir := "res://.artifacts/overworld/native"
 var _check_only := false
-var _sim_frames := 24
+var _sim_frames := 12
 var _app_root: Node
 var _written := 0
 var _failed: Array[String] = []
@@ -83,6 +83,7 @@ func _run() -> void:
 		return
 	print("OVERWORLD CAPTURE: world ready, %d props" % ow.world.prop_count())
 
+	_stamp("world ready")
 	await _overview(ow)
 	# Nothing below is hand-placed. Each station is a landmark (or camp) id from
 	# the authored world document, plus that landmark's own `capture_offset`,
@@ -118,6 +119,7 @@ func _run() -> void:
 
 # -- stations ------------------------------------------------------------------
 func _station(ow: Node, station: String, cell: Vector2i) -> void:
+	_stamp("station %s begin" % station)
 	var player: CharacterBody2D = ow.player
 	if player == null:
 		_failed.append(station)
@@ -130,7 +132,14 @@ func _station(ow: Node, station: String, cell: Vector2i) -> void:
 		camera.reset_smoothing()
 		camera.force_update_scroll()
 	await _settle(2)
-	_shoot(station)
+	await _shoot(station)
+	_stamp("station %s end" % station)
+
+
+func _stamp(text: String) -> void:
+	# Wall-clock progress markers: if a CI run is killed by `timeout`, the log
+	# says which station it was on instead of leaving a silent gap.
+	print("OVERWORLD CAPTURE [%6.1fs] %s" % [Time.get_ticks_msec() / 1000.0, text])
 
 
 func _overview(ow: Node) -> void:
@@ -158,7 +167,7 @@ func _overview(ow: Node) -> void:
 	world.add_child(overview)
 	overview.make_current()
 	await _settle(4)
-	_shoot("world_overview")
+	await _shoot("world_overview")
 	overview.queue_free()
 	if camera != null:
 		camera.limit_left = int(saved_limits[0])

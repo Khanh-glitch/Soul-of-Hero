@@ -206,18 +206,18 @@ jobs:
       - name: Parse-error regression guard (production scene preload + instantiate)
         run: |
           mkdir -p artifacts/ud_regress
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_regress \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_regress \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_regression_guard_test.gd >"$ARTIFACT_DIR/overworld-regression.log" 2>&1
           rc=$?; echo "regression exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-regression.log"; exit $rc
 
       - name: Knight prefab mini-smoke (isolation)
         run: |
           mkdir -p artifacts/ud_knight
-          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_knight \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=10s 120s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_knight \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_knight_mini_test.gd >"$ARTIFACT_DIR/overworld-knight.log" 2>&1
           rc=$?; echo "knight exit_code=$rc"; cat "$ARTIFACT_DIR/overworld-knight.log"; exit $rc
 
@@ -245,73 +245,90 @@ jobs:
       - name: World build, layers, props, spawn (state-asserting)
         run: |
           mkdir -p artifacts/ud_scene
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_scene \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_scene \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_scene_runtime_test.gd >"$ARTIFACT_DIR/overworld-scene.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-scene.log"
           if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-scene.log"; then
-            echo "::error::Scene log contains engine/script errors"; exit 1
+            echo "::error::Scene log contains engine/script errors"
+            # Surface the offending lines as annotations: the workflow log itself
+            # is not always retrievable from an external sandbox, but check-run
+            # annotations are.
+            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-scene.log" | head -12 | \
+              while IFS= read -r line; do
+                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+                echo "::error::${safe}"
+              done
+            exit 1
           fi
           exit $rc
 
       - name: Movement + terrain collision (state-asserting)
         run: |
           mkdir -p artifacts/ud_move
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_move \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_move \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_movement_runtime_test.gd >"$ARTIFACT_DIR/overworld-movement.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-movement.log"; exit $rc
 
       - name: "Provisions: drain, hazards, camps, fatigue (state-asserting)"
         run: |
           mkdir -p artifacts/ud_prov
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_prov \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_prov \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_provisions_runtime_test.gd >"$ARTIFACT_DIR/overworld-provisions.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-provisions.log"; exit $rc
 
       - name: Save/reload persistence (disk bytes + rebuild)
         run: |
           mkdir -p artifacts/ud_persist
-          timeout --signal=TERM --kill-after=15s 240s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_persist \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 240s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_persist \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_persistence_runtime_test.gd >"$ARTIFACT_DIR/overworld-persistence.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-persistence.log"; exit $rc
 
       - name: "Gates: L01 open, L10 sealed, clears flip state"
         run: |
           mkdir -p artifacts/ud_gates
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_gates \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_gates \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_gate_runtime_test.gd >"$ARTIFACT_DIR/overworld-gates.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-gates.log"; exit $rc
 
       - name: "Shortcuts: carve collision, swap sprite, restore terrain"
         run: |
           mkdir -p artifacts/ud_short
-          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_short \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_short \
+                  --resolution 640x480 --windowed \
                   --script res://tests/overworld_shortcut_runtime_test.gd >"$ARTIFACT_DIR/overworld-shortcut.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-shortcut.log"; exit $rc
 
       - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |
           mkdir -p artifacts/ud_trip
-          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_trip \
-                  --resolution 640x480 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 300s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_trip \
+                  --resolution 640x480 --windowed \
                   res://game/app/app_root.tscn -- --overworld-roundtrip-test \
                   >"$ARTIFACT_DIR/overworld-roundtrip.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-roundtrip.log"
           # A green exit must not mask errors printed to the log.
           if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-roundtrip.log"; then
             echo "::error::Roundtrip log contains engine/script errors"
+            # Surface the offending lines as annotations: the workflow log itself
+            # is not always retrievable from an external sandbox, but check-run
+            # annotations are.
+            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-roundtrip.log" | head -12 | \
+              while IFS= read -r line; do
+                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+                echo "::error::${safe}"
+              done
             exit 1
           fi
           exit $rc
@@ -319,15 +336,23 @@ jobs:
       - name: "Acceptance: HOME → Marches → L01 → victory → Marches → save/reload"
         run: |
           mkdir -p artifacts/ud_accept
-          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . --user-data-dir artifacts/ud_accept \
-                  --resolution 1280x720 --windowed --no-window-border \
+          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_accept \
+                  --resolution 1280x720 --windowed \
                   res://game/app/app_root.tscn -- --overworld-acceptance-test \
                   >"$ARTIFACT_DIR/overworld-acceptance.log" 2>&1
           rc=$?; cat "$ARTIFACT_DIR/overworld-acceptance.log"
           # A green exit code must not mask errors printed to the log.
           if grep -qE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-acceptance.log"; then
             echo "::error::Acceptance log contains engine/script errors"
+            # Surface the offending lines as annotations: the workflow log itself
+            # is not always retrievable from an external sandbox, but check-run
+            # annotations are.
+            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:|   at: " "$ARTIFACT_DIR/overworld-acceptance.log" | head -12 | \
+              while IFS= read -r line; do
+                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+                echo "::error::${safe}"
+              done
             exit 1
           fi
           exit $rc
@@ -387,11 +412,11 @@ jobs:
           # The capture tool is the only thing allowed to declare "blocked": it
           # exits 2 when there is no display server, 1 on a real render failure.
           set +e
-          timeout --signal=TERM --kill-after=20s 420s \
-            xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX" \
-            godot --display-driver x11 --rendering-driver opengl3 --path . \
+          timeout --signal=TERM --kill-after=20s 900s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
                   --user-data-dir artifacts/ud_capture --resolution 1280x720 \
-                  --windowed --no-window-border \
+                  --windowed \
                   res://tools/captures/chapter1_overworld_native_capture.tscn -- \
                   --out-dir=res://.artifacts/overworld/native \
             >"$ARTIFACT_DIR/overworld-capture.log" 2>&1
@@ -404,6 +429,13 @@ jobs:
           if [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; then
             exit 0
           fi
+          # 124 = killed by `timeout`: the last heartbeat says which station was
+          # running, which is the difference between "slow" and "hung".
+          tail -30 "$ARTIFACT_DIR/overworld-capture.log" | \
+            while IFS= read -r line; do
+              safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+              echo "::error::capture rc=${rc} ${safe}"
+            done
           exit "$rc"
 
       - name: Verify PNG artifacts (fail-closed)
