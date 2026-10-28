@@ -13,6 +13,9 @@ var last_bite:int=0
 var last_tick:int=0
 var total_received:int=0
 var total_expired:int=0
+var vial_destination:Vector2=Vector2.ZERO
+var vial_seen:bool=false
+var spawn_flash_emitted:bool=false
 
 func reset()->void:
     pending.clear()
@@ -21,6 +24,9 @@ func reset()->void:
     last_tick=0
     total_received=0
     total_expired=0
+    vial_destination=Vector2.ZERO
+    vial_seen=false
+    spawn_flash_emitted=false
 
 func _accept(event:Dictionary,frame:int)->void:
     var copy:Dictionary=event.duplicate(true)
@@ -44,7 +50,11 @@ func capture(source)->void:
     for index in range(last_cue,cues.size()):
         var cue:Dictionary=cues[index]
         var kind:String=String(cue.get("kind",""))
-        if kind=="splash":
+        if kind=="vial":
+            # Projectile destination is produced by original live generator.
+            vial_destination=Vector2(float(cue["x1"]),float(cue["y1"]))
+            vial_seen=true
+        elif kind=="splash":
             _accept({"kind":"splash","x":cue["x"],"y":cue["y"],
                 "radius":cue["radius"],"c1":cue["c1"],"c2":cue["c2"]},
                 int(cue.get("frame",tick)))
@@ -54,6 +64,14 @@ func capture(source)->void:
                 "edge":cue["edge"],"duration":cue["duration"]},
                 int(cue.get("frame",tick)))
     last_cue=cues.size()
+    # Original initial vial shatter has its own source flash, independent
+    # of the later ground trail flashes. Spawn from actual actor lifetime,
+    # never from a hardcoded review tick or position.
+    if vial_seen and not spawn_flash_emitted and source.motion.fang!=null:
+        _accept({"kind":"flash","x":vial_destination.x,
+            "y":vial_destination.y,"radius":9.0,
+            "duration":0.2,"color":0xFF58FAD4,"z":8.0},tick)
+        spawn_flash_emitted=true
     # Original skill uses w.hit(kind=bite), which creates source Splash,
     # Ring, Flash at contact; finisher independently emits larger blast.
     var bites:Array=source.motion.bite_cues
@@ -105,4 +123,5 @@ func snapshot()->Array:
 func stats()->Dictionary:
     return {"tick":last_tick,"pending":pending.size(),
         "received":total_received,"expired":total_expired,
-        "source_cue_cursor":last_cue,"source_bite_cursor":last_bite}
+        "source_cue_cursor":last_cue,"source_bite_cursor":last_bite,
+        "vial_shatter_flash_emitted":spawn_flash_emitted}
