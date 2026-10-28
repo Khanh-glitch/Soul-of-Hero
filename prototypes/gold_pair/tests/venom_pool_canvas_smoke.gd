@@ -81,7 +81,9 @@ func _run()->void:
         await process_frame
         await RenderingServer.frame_post_draw
         var after:Image=vp.get_texture().get_image()
-        if after.get_pixel(int(round(float(row[1]))),int(round(float(row[2]))).a>0.01:
+        var cx:int=int(round(float(row[1])))
+        var cy:int=int(round(float(row[2])))
+        if after.get_pixel(cx,cy).a>0.01:
             _fail("real Pool GPU framebuffer remains visible after expiry")
             return
         vp.queue_free()
