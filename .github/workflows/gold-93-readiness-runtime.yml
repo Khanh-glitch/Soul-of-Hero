@@ -65,77 +65,91 @@ jobs:
             echo "::error::Godot import reported script errors"
             exit 1
           fi
+
       - name: Catalog and cast-context API
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 300s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 \
-            | tee /tmp/gold93-api.log
-          if ! grep -F 'GOLD93_READINESS_API: PASS' /tmp/gold93-api.log; then
-            while IFS= read -r line; do echo "::error::[gold93-api] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-api.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-api.log
+          timeout 300s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_READINESS_API: PASS' "$LOG"; then
+            echo "::error::[gold93-api] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-api] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
           fi
+
       - name: Full native lifecycle and fail-closed coverage
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 600s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 \
-            | tee /tmp/gold93-lifecycle.log
-          if ! grep -F 'GOLD93_LIFECYCLE: PASS' /tmp/gold93-lifecycle.log; then
-            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-lifecycle.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-lifecycle.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_LIFECYCLE: PASS' "$LOG"; then
+            echo "::error::[gold93-lifecycle] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
-          fi' /tmp/gold93-lifecycle.log
+          fi
+
       - name: Port authority, once-only hits and concurrent casts
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 600s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd 2>&1 \
-            | tee /tmp/gold93-ports.log
-          if ! grep -F 'GOLD93_PORTS: PASS' /tmp/gold93-ports.log; then
-            while IFS= read -r line; do echo "::error::[gold93-ports] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-ports.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-ports.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_PORTS: PASS' "$LOG"; then
+            echo "::error::[gold93-ports] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-ports] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
-          fi' /tmp/gold93-ports.log
+          fi
+
       - name: Two independent original engine families
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 600s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd 2>&1 \
-            | tee /tmp/gold93-family.log
-          if ! grep -F 'GOLD93_FAMILY_CLOCK: PASS' /tmp/gold93-family.log; then
-            while IFS= read -r line; do echo "::error::[gold93-family] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-family.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-family.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_FAMILY_CLOCK: PASS' "$LOG"; then
+            echo "::error::[gold93-family] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-family] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
-          fi' /tmp/gold93-family.log
+          fi
+
       - name: Venomwright authored baseline oracle (21 skills)
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 600s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd 2>&1 \
-            | tee /tmp/gold93-baseline.log
-          if ! grep -F 'GOLD93_VENOM_BASELINE: PASS' /tmp/gold93-baseline.log; then
-            while IFS= read -r line; do echo "::error::[gold93-baseline] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-baseline.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-baseline.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_BASELINE: PASS' "$LOG"; then
+            echo "::error::[gold93-baseline] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-baseline] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
-          fi' /tmp/gold93-baseline.log
+          fi
+
       - name: SkillReadinessLab walks all 93 canonical ids
         shell: bash
         run: |
-          set -euo pipefail
-          timeout 600s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd 2>&1 \
-            | tee /tmp/gold93-lab.log
-          if ! grep -F 'GOLD93_LAB_PROBE: PASS' /tmp/gold93-lab.log; then
-            while IFS= read -r line; do echo "::error::[gold93-lab] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-lab.log | tail -40)
+          set -uo pipefail
+          LOG=/tmp/gold93-lab.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_LAB_PROBE: PASS' "$LOG"; then
+            echo "::error::[gold93-lab] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-lab] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
-          fi' /tmp/gold93-lab.log
+          fi
+
       - name: Honest readiness roll-up
         shell: bash
         run: |
           set -euo pipefail
           grep -E 'NATIVE_PORT_READY' /tmp/gold93-lab.log | tee /tmp/gold93-summary.txt
+
       - name: Upload native runtime evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -204,13 +218,14 @@ jobs:
       - name: Cast on the real authored Level 2 and prove zero map mutation
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
           cd "$OVERLAY"
-          timeout 900s godot --headless --path . \
-            --script res://prototypes/skill_readiness/tests/gold93_real_map_overlay_runner.gd 2>&1 \
-            | tee /tmp/gold93-overlay.log
-          if ! grep -F 'GOLD93_REAL_MAP_OVERLAY: PASS' /tmp/gold93-overlay.log; then
-            while IFS= read -r line; do echo "::error::[gold93-overlay] $line"; done < <(grep -vE '^Godot Engine v' /tmp/gold93-overlay.log | tail -40)
+          LOG=/tmp/gold93-overlay.log
+          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_real_map_overlay_runner.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_REAL_MAP_OVERLAY: PASS' "$LOG"; then
+            echo "::error::[gold93-overlay] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-overlay] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
             exit 1
           fi
       - name: Verify the overlay never edited authored production content
@@ -221,8 +236,8 @@ jobs:
           # The disposable workspace is a real git checkout of the immutable map
           # commit. Authored production content is TRACKED, so a hard gate on
           # tracked modifications/deletions is the correct check; editor import
-          # artifacts (.godot/, uid sidecars) are reported as evidence below and
-          # are never authored edits.
+          # artefacts (.godot/, uid sidecars) are reported as evidence and are
+          # never authored edits.
           if ! git diff --exit-code -- game data assets config addons project.godot; then
             echo "::error::REAL_MAP_OVERLAY_BLOCKED: authored production content was modified"
             exit 1
