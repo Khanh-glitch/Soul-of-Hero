@@ -67,11 +67,20 @@ In CI it renders, and has since the invocation was fixed. Latest green run
 | --- | --- |
 | control capture (a scene known to work) | exit 0 |
 | `Capture stations` (Xvfb + real GL) | exit 0, `OVERWORLD CAPTURE PASSED - 13 images` |
-| PNGs on disk | 13, all 1280×720, every station `blank=false` |
+| PNGs on disk | 15, all 1280×720, every station `blank=false` |
+| frame report | 123–239 colours, 17–27 % edges, 11–29 % dominant tone per station (`OVERWORLD LOOK`/`MAP` in the run's notices) |
+| new stations | `archive_approach` (L03, 199 colours, 19 % edges) and `reliquary_approach` (L04, 185 colours, 17 % edges) — the two exteriors that had no frame before |
 | `world_overview.png` | 435 737 bytes, map occupies 60%×71% of the frame |
 | `shortcut_before` / `shortcut_after` | both present, 262 003 / 262 095 bytes |
 | `Script/engine errors:` section of the log | empty |
 | `Verify PNG artifacts (fail-closed)` | passed |
+
+Every station also carries a structure report (`tools/captures/frame_report.gd`):
+colour count, edge density, dominant-tone share, luminance spread and a 32×16
+luminance map, published as numbered CI annotations because one annotation is
+truncated at ~4 KB. A station fails below 24 colours or 8 % edges, so a camera
+that renders a flat fill cannot pass as evidence. `frame_report_probe.gd` runs
+the same report over stored PNGs headlessly.
 
 The capture's log is gated by `tools/ci/gate_log.sh` like every other step, so a
 `SCRIPT ERROR` inside the capture fails the step and the `OVERWORLD CAPTURE
@@ -91,9 +100,23 @@ shortcut changes 13.7% of the frame). It proves the art and the geography are
 what `author.py` authored; it does **not** prove Godot drew them, and it is never
 described as a screenshot.
 
+## 3b. Browser playtest
+
+`.github/workflows/hollow-marches-web-playtest.yml` exports the real game to
+Web, asserts the overworld data is inside `index.pck`, injects startup
+diagnostics, and runs it in headless Chromium under Xvfb before publishing.
+Run [`40691921184`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40691921184)
+on `e205d3aa`: **both jobs green** — `WEB EXPORT PASSED`, `GODOT WEB BROWSER
+SMOKE PASSED`, then a Pages deployment. The playable link is the repository's
+Pages site: <https://khanh-glitch.github.io/Soul-of-Hero/>.
+
+The first attempt failed at the deploy step only, because the `github-pages`
+environment allowed deployments from `main` alone; the owner repointed the job
+at the existing `playtest-preview` environment, which has no such restriction.
+
 ## 4. Known gaps
 
-1. **Native frames are rendered but not reviewed by eye here.** CI produces all
+1. **Native frames are measured but not reviewed by eye here.** CI produces all
    thirteen; this sandbox cannot download the artifact (`gh run download` returns
    `EOF` at the blob host), so the art judgement rests on the offline composites
    built from the same atlas and framing. A human should look at the CI artifact

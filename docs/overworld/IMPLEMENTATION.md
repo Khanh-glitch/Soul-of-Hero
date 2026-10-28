@@ -110,6 +110,39 @@ Surfaces are grained in 2 px clusters rather than single pixels: the camera runs
 at zoom 2, which turns a per-pixel speckle into noise and a per-tile border into
 a visible lattice.
 
+## Ground variation is chosen in patches, not per tile
+
+A ground code names a family of atlas frames (`f` → `floor0…floor3`, `r` →
+`rock0…rock3`). Which member a cell gets comes from `OverworldTiles.variant_index`,
+mirrored exactly in `tools/overworld/preview.py` so the offline composite is the
+game.
+
+That choice used to be per tile, and once the four stone frames were given real
+tone differences it turned every plaza into a checkerboard: each 16 px cell was
+its own shade, and at the camera's 2× zoom the eye reads the grid, not the
+weathering. The index is now a hash of a **3×3-tile cluster**, with one tile in
+six borrowing a neighbouring cluster's tone, so a tone runs for a few tiles and
+its outline is ragged. A paved region reads as damp patches and pale replacements
+rather than as noise.
+
+`ground_flagstone` carries the rest of that work: a 4×4 moss patch worn through
+the joints, a slab that has dropped out of its course with a lit lip on the north
+and west, or a paler stone set in to repair a hole. One of the three per tile, so
+three of the four floor variants have something legible from across the screen.
+`ground_rock` gained a darker seam that runs out of the tile.
+
+## The frame report
+
+`tools/captures/frame_report.gd` turns a rendered image into text — colour count,
+edge density, dominant-tone share, luminance spread, a four-entry palette and a
+32×16 luminance map — and the capture prints it for every station. It exists
+because this project's CI cannot hand its own PNGs back: without it, "the station
+passed" only means a file of the right size exists, which is how an overview that
+was a 10× close-up of four tiles passed for three runs.
+
+`tools/captures/frame_report_probe.gd` runs the same report over PNGs on disk,
+headlessly, so the metric can be checked without a display server.
+
 ## Two scatter passes, and what the bake refuses
 
 `paint_scatter()` runs twice over the same grid, for two different reasons.

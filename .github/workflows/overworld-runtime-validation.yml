@@ -491,14 +491,9 @@ jobs:
             echo "::notice::$1%0A$(cat /tmp/notice.txt)"
           }
 
-          listing=$({
-            echo "PNG listing:"
-            ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
-            echo "native dir (res:// side):"
-            ls -la .artifacts/overworld/native/ 2>&1 || true
-          })
-          notice "evidence files" "$listing"
-
+          # The file listing rides in the final notice rather than its own: with
+          # fifteen stations the frame report needs eight notices, and GitHub
+          # keeps ten, so nothing may be spent on a listing that survives anyway.
           # The frame report is the only view anyone gets of the rendered pixels:
           # this project's CI cannot hand its PNGs back, so the numbers and the
           # luminance maps are what a reviewer actually reads.
@@ -516,6 +511,10 @@ jobs:
 
           # Last, so these survive even if GitHub drops earlier annotations.
           diagnostics=$({
+            echo "PNG listing:"
+            ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
+            echo "native dir (res:// side):"
+            ls -la .artifacts/overworld/native/ 2>&1 || true
             echo "first OVERWORLD lines:"
             grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -12 || true
             echo "capture script/engine errors:"

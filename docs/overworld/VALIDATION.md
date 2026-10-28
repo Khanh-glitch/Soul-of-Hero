@@ -115,11 +115,14 @@ xvfb-run -s "-screen 0 1280x720x24" godot --path . \
   --out-dir=res://.artifacts/overworld/native
 ```
 
-Photographs `world_overview` plus twelve stations derived from the authored
+Photographs `world_overview` plus fourteen stations derived from the authored
 world document (so the camera follows the geography if it is re-authored):
-`refuge_start`, `crypt_approach`, `ossuary_approach`, `road_terrain`,
-`camp_crossroads`, `shortcut_before`, `shortcut_after`, `crucible`, `beacon`,
-`gate`, `throne`, `region_north`. A station is a landmark id from
+`refuge_start`, `crypt_approach`, `ossuary_approach`, `archive_approach`,
+`reliquary_approach`, `road_terrain`, `camp_crossroads`, `shortcut_before`,
+`shortcut_after`, `crucible`, `beacon`, `gate`, `throne`, `region_north`, so all
+ten landmark exteriors are photographed (L03 and L04 were missing from this list
+until they were added, which is why the two plainest landmarks were also the two
+nobody had a frame of). A station is a landmark id from
 `hollow_marches.json` plus that landmark's own `capture_offset`, which
 `author.py` derives from the height of the sprite standing there — nothing is
 hand-placed in the capture script. Each frame is rejected if it is blank
@@ -150,6 +153,36 @@ Each of these produced a **green station** and a **wrong or missing PNG**:
 | `world_overview.png` missing, no failed station | `camera.clear_current()` — Godot 3 API, does not exist in Godot 4; the thrown error aborted `_overview()` mid-function and the caller carried on | making the overview camera current is what unsets the player's camera; the call is gone |
 | one stray `ERROR: Home scene loaded, but AppFlow did not open the startup profile choice` | the harness opened a route while AppRoot's boot coroutine was still running, so boot recorded `failed` | the capture waits for `boot_state == "complete"` first and prints it |
 | `world_overview.png` present, 47 KB, showing 4×2 tiles | `Camera2D.zoom` is a **magnification**; `zoom = (6144/640, 4096/360)` magnified a 67×32 px patch by ~10x instead of fitting the world | `zoom = 1/TILE` (one tile per logical pixel, 2×2 device pixels per tile), limits disabled, and the capture prints world px / view px / frame coverage and fails if the world does not fit |
+
+### The frame report: what the pixels actually contain
+
+The PNGs render on a runner and cannot be downloaded back, so "the capture
+passed" used to mean "a 1280×720 file exists". The capture now describes each
+frame in the log, and CI republishes that description as numbered annotations:
+
+```
+OVERWORLD LOOK crypt_approach colours=190 edges=24pct flat=14pct mean=0.355 std=0.071 top=505060:14,504030:12
+OVERWORLD MAP crypt_approach 05 ::::::-----=-=+++=====----::::--
+```
+
+`colours` counts distinct 4-bit-per-channel colours, `edges` is the share of
+sampled neighbours that differ in luminance by more than 0.04, `flat` is the
+share of the frame taken by its single most common colour, and the map is the
+composition at 32×16. Measured natively across the fifteen stations: **123–239
+colours, 17–27 % edges, 11–29 % flat** (the whole-world overview is the outlier
+by design — 56 % of that frame is the void around the 384×256 envelope).
+
+A station fails below **24 colours or 8 % edges**. Both sit far under the
+quietest real frame and far over a flat fill, so the gate is a floor rather than
+a taste test.
+
+Three things had to be wrong first, and each was found by using the thing:
+
+| Attempt | Problem | Fix |
+| --- | --- | --- |
+| 3 bits per channel | `rock` (92,92,108) and `stone` (100,102,120) are different materials but landed in one 36-step bucket, so a plaza read as "58 % one colour" when it was two stones plus mortar | 4 bits per channel |
+| `flat` as the quality measure | it punishes large coherent patches — exactly what makes weathered stone read as stone rather than noise | measure edge density |
+| one annotation with the whole report | GitHub truncates at ~4 KB, mid-line: six rows of one station out of thirteen, the same failure as the earlier `tail -40` diagnostic | numbered notices, two stations each |
 
 The overview is now arithmetically constrained rather than eyeballed: at
 `zoom 0.0625` a 640×360 viewport covers 640×360 tiles, so all 384×256 tiles fit
