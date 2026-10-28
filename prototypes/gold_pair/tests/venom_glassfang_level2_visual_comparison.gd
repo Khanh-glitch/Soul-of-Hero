@@ -113,7 +113,8 @@ func _capture_campaign_state(game:Node2D)->void:
     # OPTIONAL contrast must affect only existing authored Level2 terrain;
     # original Gold procedural FX buffers and Knight/enemy are never tinted.
     var contrast=READABILITY.new()
-    contrast.bind_level(level)
+    var true_world_background:=game.get_node_or_null("Background") as CanvasItem
+    contrast.bind_level(level,true_world_background)
     var previous_bites:int=0
     var sampled:Array=[]
     for frame in range(1,331):
@@ -281,7 +282,7 @@ func _capture_campaign_state(game:Node2D)->void:
             "captures":_contrast_images,
             "src_tick_results":_contrast_roi_samples,
             "sensor":"real Godot Level2 baseline ROI mean linear luminance",
-            "map_layers_only":["Backdrop","Geometry","Decor"],
+            "map_layers_only":contrast._layer_names(),
             "source_gold_visual_pixels_changed":false,
             "hero_enemy_hud_pixels_tinted":false,
             "non_authoritative_hud_or_health_state_changes":false
