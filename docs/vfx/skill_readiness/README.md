@@ -6,6 +6,65 @@
 **Date:** 2026-10-28
 **Status:** PLANNED / INITIAL INVENTORY; **0 / 93 native port-ready** at task creation. Catalog or source-only TS validation is NOT a ready skill.
 
+## Execution log 2026-10-28 (this working run)
+
+Implemented on the Arena working branch (the platform fixes the branch name; the
+canonical epic branch `feature/gold-93-skill-readiness-20261028` is an ancestor
+and both are kept in the CI trigger list).
+
+**Built and running (real code, real Godot 4.7 runtime):**
+
+- `prototypes/skill_readiness/core/` — `Gold93SkillCatalog`, `Gold93CastContext`,
+  `Gold93SkillParameters`, `Gold93Intents` (+ once-only `Bus`),
+  `Gold93Ports` (Combat / Terrain / Sound / Camera / TargetResolver + recording
+  implementations), `Gold93SkillModule`, `Gold93SkillHandle`,
+  `Gold93SkillRuntime`.
+- `prototypes/skill_readiness/families/` — `VenomFamilyRuntime`
+  (600×340 logical, native Ultra k2 1200×680, 60 Hz, zero seed stays 0) and
+  `ArcanaFamilyRuntime` (480×270 logical, 2×, own RNG with the ARCANA
+  zero-seed→1 policy, source-locked `crackScar` / `draw.ts` ground layer).
+- `prototypes/skill_readiness/skills/venomwright/v001_glassfang_hunt.gd` — the
+  complete original Glassfang Hunt #001 cast driven by the source-locked
+  factory components (`prototypes/gold_pair/**`, READ-ONLY): vial throw, Fang
+  spawn, four leap/bite/recoil/orbit cycles, retarget on dying enemy, finisher,
+  11+6 shard and 28 droplet burst, three cast-seeded 4.2 s acidic aftershock
+  pools, afterlife and cleanup.
+- `prototypes/skill_readiness/lab/` — `SkillReadinessLab` scene + script: browse
+  all 93, cast / step / run / cancel / release, free 360-degree click and
+  drag-release aim, live intent / terrain / RNG inspection, plus a headless
+  probe that walks all 93 ids in CI.
+- `prototypes/skill_readiness/integration/external_adapter_sample.gd` — host
+  adapter that consumes any of the 93 ids without recoding VFX.
+- `prototypes/skill_readiness/tests/` — five native Godot tests (catalog/API,
+  full lifecycle + fail-closed coverage, port authority + concurrency,
+  two-family clock/RNG/scar, lab 93-id probe) plus the disposable real-map
+  overlay test.
+- `.github/workflows/gold-93-readiness-runtime.yml` — path ownership, five
+  native Godot jobs and a **disposable immutable Level 2 overlay** job
+  (`f9fb8d4b7490a2579426bd5c4ee4667704d3a05e`).
+
+**Honest status after this run:**
+
+```
+0/93  NATIVE_PORT_READY        (EPIC evidence gate: video, Gold-vs-native, WebGL, 2K/4K still open)
+0/93  SOURCE_VISUAL_APPROVED   (no original Gold renderer available to compare against)
+0/93  GAMEPLAY_CONFIGURED      (intentionally — owner supplies the numbers)
+0/93  PRODUCTION_INTEGRATED    (intentionally out of scope)
+1/93  native-executable        (venomwright:001, full native cast + native tests)
+92/93 source-material blocked  (original ZIP bytes unavailable)
+```
+
+**The one genuine blocker:** neither this repository nor this execution
+environment contains the original archive bytes
+(`venomwright-combat-vfx-design (4).zip` SHA-256 `ab0dba56…`,
+`ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip` SHA-256 `8402633c…`). The registry, the
+port matrix and the 21-cast baseline table are provenance records only. Per the
+epic’s own rule, the authored generators for the remaining 92 skills were
+**not** invented to work around this; instead the complete infrastructure was
+built and each id fails closed with a precise, machine-readable blocker.
+Dropping a source-locked module at the registered path is all that is needed —
+no infrastructure change.
+
 ## The user-defined boundary
 
 **Deliver full native callable readiness for all 93 first; leave the combat design to the user later.** When the user chooses each skill's control scheme, hotkey/drag gesture, damage, range, mana, recharge, mana regen, hit timing, effect strength, target selection, synergy or unlock conditions, the game should load its existing native VFX/lifecycle module and bind a rule schema, not migrate/port Gold again. Do not invent balance numbers, combat semantics or force binding to production Sword/Archer. The library must have a disposable laboratory that can actually play each full source skill without production registration.

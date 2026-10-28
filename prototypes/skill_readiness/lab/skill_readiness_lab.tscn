@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/skill_readiness/lab/skill_readiness_lab.gd" id="1_lab"]
+
+[node name="SkillReadinessLab" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lab")
+
+[node name="Stage" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 0
+offset_right = 460.0
+offset_bottom = 320.0
+mouse_filter = 1
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="SkillSelector" type="OptionButton" parent="Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Buttons" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Cast" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Cast"
+
+[node name="Step" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Step 60"
+
+[node name="Run" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Run"
+
+[node name="Cancel" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="Release" type="Button" parent="Panel/VBox/Buttons"]
+layout_mode = 2
+text = "Release"
+
+[node name="StatusLabel" type="RichTextLabel" parent="Panel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+bbcode_enabled = true
+scroll_active = false
+
+[connection signal="pressed" from="Panel/VBox/Buttons/Cast" to="." method="cast_selected"]
+[connection signal="pressed" from="Panel/VBox/Buttons/Step" to="." method="step_ticks" binds=[60]]
+[connection signal="pressed" from="Panel/VBox/Buttons/Run" to="." method="run_to_end"]
+[connection signal="pressed" from="Panel/VBox/Buttons/Cancel" to="." method="cancel_cast"]
+[connection signal="pressed" from="Panel/VBox/Buttons/Release" to="." method="release_all"]
+[connection signal="item_selected" from="Panel/VBox/SkillSelector" to="." method="_on_skill_selected"]

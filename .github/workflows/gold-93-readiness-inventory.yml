@@ -1,7 +1,11 @@
 name: Gold 93 Native Readiness Inventory and Overworld Isolation
 on:
   push:
-    branches: [feature/gold-93-skill-readiness-20261028]
+    branches:
+      # Canonical epic branch plus the Arena working branch that carries the
+      # same isolated work (the session branch name is fixed by the platform).
+      - feature/gold-93-skill-readiness-20261028
+      - arena/4fa0fa84-soul-of-hero
     paths:
       - 'docs/vfx/skill_readiness/**'
       - 'prototypes/skill_readiness/**'

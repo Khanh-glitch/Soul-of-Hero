@@ -39,7 +39,10 @@
     "venomwright": 21,
     "arcana_iii": 72
   },
-  "readiness_definition": "Native full-cast functional source port + per skill actual GPU and original Gold visual verification. Not just registered/compiles.",
+  "readiness_definition": {
+    "native_port_ready": "Native full-cast functional source port + per skill actual GPU and original Gold visual verification. Not just registered/compiles.",
+    "native_executable": "NOT an EPIC acceptance axis. True only when a real native Godot module with a source-locked authored generator exists and a full cast runs through the native runtime; it does not imply Gold visual approval, gameplay configuration or production integration."
+  },
   "readiness_totals": {
     "native_port_ready": 0,
     "gold_visual_approved": 0,
@@ -98,7 +101,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:002",
@@ -151,7 +168,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:003",
@@ -204,7 +235,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:004",
@@ -257,7 +302,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:005",
@@ -310,7 +369,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:006",
@@ -363,7 +436,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:007",
@@ -416,7 +503,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:008",
@@ -469,7 +570,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:009",
@@ -522,7 +637,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:010",
@@ -575,7 +704,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:011",
@@ -628,7 +771,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:012",
@@ -681,7 +838,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:013",
@@ -734,7 +905,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:014",
@@ -787,7 +972,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:015",
@@ -840,7 +1039,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:016",
@@ -893,7 +1106,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:017",
@@ -946,7 +1173,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:018",
@@ -999,7 +1240,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:019",
@@ -1052,7 +1307,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:020",
@@ -1105,7 +1374,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:101",
@@ -1158,7 +1441,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:102",
@@ -1211,7 +1508,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:103",
@@ -1264,7 +1575,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:104",
@@ -1317,7 +1642,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:105",
@@ -1370,7 +1709,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:106",
@@ -1423,7 +1776,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:107",
@@ -1476,7 +1843,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:108",
@@ -1529,7 +1910,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:109",
@@ -1582,7 +1977,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:110",
@@ -1635,7 +2044,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:111",
@@ -1688,7 +2111,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:112",
@@ -1741,7 +2178,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:113",
@@ -1794,7 +2245,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:114",
@@ -1847,7 +2312,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:115",
@@ -1900,7 +2379,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:116",
@@ -1953,7 +2446,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:117",
@@ -2006,7 +2513,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:118",
@@ -2059,7 +2580,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:119",
@@ -2112,7 +2647,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:120",
@@ -2165,7 +2714,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:201",
@@ -2218,7 +2781,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:202",
@@ -2271,7 +2848,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:203",
@@ -2324,7 +2915,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:204",
@@ -2377,7 +2982,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:205",
@@ -2430,7 +3049,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:206",
@@ -2483,7 +3116,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:207",
@@ -2536,7 +3183,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:208",
@@ -2589,7 +3250,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:209",
@@ -2642,7 +3317,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:210",
@@ -2695,7 +3384,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:211",
@@ -2748,7 +3451,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:212",
@@ -2801,7 +3518,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:213",
@@ -2854,7 +3585,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:214",
@@ -2907,7 +3652,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:215",
@@ -2960,7 +3719,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:216",
@@ -3013,7 +3786,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:217",
@@ -3066,7 +3853,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:218",
@@ -3119,7 +3920,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:219",
@@ -3172,7 +3987,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:220",
@@ -3225,7 +4054,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:301",
@@ -3278,7 +4121,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:302",
@@ -3331,7 +4188,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:303",
@@ -3384,7 +4255,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:304",
@@ -3437,7 +4322,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:305",
@@ -3490,7 +4389,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:306",
@@ -3543,7 +4456,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:307",
@@ -3596,7 +4523,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:308",
@@ -3649,7 +4590,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:309",
@@ -3702,7 +4657,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:310",
@@ -3755,7 +4724,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:311",
@@ -3808,7 +4791,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "arcana_iii:312",
@@ -3861,7 +4858,21 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
-      }
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": null
     },
     {
       "key": "venomwright:001",
@@ -3876,7 +4887,7 @@
       "source_target_class": "target",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v001_glassfang_hunt.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -3895,15 +4906,15 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
-        "caster_visual": "NOT_AUDITED",
-        "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
-        "audio": "NOT_AUDITED",
-        "camera_post": "NOT_AUDITED",
-        "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "source_deps": "AUDITED_SOURCE_LOCKED",
+        "caster_visual": "AUDITED_SOURCE_LOCKED",
+        "enemy_visual": "AUDITED_SOURCE_LOCKED",
+        "ground_environment": "AUDITED_SOURCE_LOCKED",
+        "particles": "AUDITED_SOURCE_LOCKED",
+        "audio": "NOT_PRESENT_IN_ORIGINAL_SOURCE",
+        "camera_post": "AUDITED_SOURCE_LOCKED",
+        "cancel_cleanup": "AUDITED_SOURCE_LOCKED",
+        "native_gpu": "NOT_VERIFIED_NO_GPU_IN_EXECUTION_ENVIRONMENT"
       },
       "evidence": {
         "gold_original_video": null,
@@ -3914,6 +4925,31 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests"
+      },
+      "source_material_blocker": "",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:001",
+        "original_skill_id": 1,
+        "original_name": "Glassfang Hunt",
+        "source_mid_cast_tick": 150,
+        "source_fx_count": 34,
+        "source_particle_count": 77,
+        "whole_source_rgba_sha256_prefix": "e6dd375125135435"
       }
     },
     {
@@ -3948,11 +4984,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -3967,6 +5003,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:002",
+        "original_skill_id": 2,
+        "original_name": "Blooming Parasite",
+        "source_mid_cast_tick": 240,
+        "source_fx_count": 48,
+        "source_particle_count": 173,
+        "whole_source_rgba_sha256_prefix": "2d26f42aff6335a7"
       }
     },
     {
@@ -4001,11 +5059,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4020,6 +5078,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:003",
+        "original_skill_id": 3,
+        "original_name": "Leechwater Rush",
+        "source_mid_cast_tick": 180,
+        "source_fx_count": 65,
+        "source_particle_count": 22,
+        "whole_source_rgba_sha256_prefix": "ec23586f14d398eb"
       }
     },
     {
@@ -4054,11 +5134,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4073,6 +5153,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:004",
+        "original_skill_id": 4,
+        "original_name": "Porcelain Bastion",
+        "source_mid_cast_tick": 360,
+        "source_fx_count": 6,
+        "source_particle_count": 26,
+        "whole_source_rgba_sha256_prefix": "eb2bc45c44ca7281"
       }
     },
     {
@@ -4107,11 +5209,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4126,6 +5228,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:005",
+        "original_skill_id": 5,
+        "original_name": "Bellows Toad",
+        "source_mid_cast_tick": 180,
+        "source_fx_count": 40,
+        "source_particle_count": 100,
+        "whole_source_rgba_sha256_prefix": "13938c47330d288b"
       }
     },
     {
@@ -4160,11 +5284,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4179,6 +5303,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:006",
+        "original_skill_id": 6,
+        "original_name": "Graft Caravan",
+        "source_mid_cast_tick": 240,
+        "source_fx_count": 66,
+        "source_particle_count": 96,
+        "whole_source_rgba_sha256_prefix": "cb44b03562b66497"
       }
     },
     {
@@ -4213,11 +5359,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4232,6 +5378,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:007",
+        "original_skill_id": 7,
+        "original_name": "Hatchery Fall",
+        "source_mid_cast_tick": 300,
+        "source_fx_count": 68,
+        "source_particle_count": 0,
+        "whole_source_rgba_sha256_prefix": "c4435ebc198a2b0d"
       }
     },
     {
@@ -4266,11 +5434,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4285,6 +5453,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:008",
+        "original_skill_id": 8,
+        "original_name": "Brine Serpents",
+        "source_mid_cast_tick": 240,
+        "source_fx_count": 36,
+        "source_particle_count": 0,
+        "whole_source_rgba_sha256_prefix": "26c179d392b2a767"
       }
     },
     {
@@ -4319,11 +5509,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4338,6 +5528,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:009",
+        "original_skill_id": 9,
+        "original_name": "Molting Harvester",
+        "source_mid_cast_tick": 270,
+        "source_fx_count": 47,
+        "source_particle_count": 95,
+        "whole_source_rgba_sha256_prefix": "24805b0e024a8535"
       }
     },
     {
@@ -4372,11 +5584,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4391,6 +5603,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:010",
+        "original_skill_id": 10,
+        "original_name": "The Walking Crucible",
+        "source_mid_cast_tick": 450,
+        "source_fx_count": 28,
+        "source_particle_count": 9,
+        "whole_source_rgba_sha256_prefix": "42e92d9e6f9b4b82"
       }
     },
     {
@@ -4425,11 +5659,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4444,6 +5678,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:011",
+        "original_skill_id": 11,
+        "original_name": "Unsealed Catalyst",
+        "source_mid_cast_tick": 120,
+        "source_fx_count": 10,
+        "source_particle_count": 54,
+        "whole_source_rgba_sha256_prefix": "c86178cc4a4ddb1b"
       }
     },
     {
@@ -4478,11 +5734,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4497,6 +5753,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:012",
+        "original_skill_id": 12,
+        "original_name": "Verdigris Wake",
+        "source_mid_cast_tick": 240,
+        "source_fx_count": 149,
+        "source_particle_count": 245,
+        "whole_source_rgba_sha256_prefix": "4a72490dcae2b56e"
       }
     },
     {
@@ -4531,11 +5809,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4550,6 +5828,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:013",
+        "original_skill_id": 13,
+        "original_name": "Mercury Garden",
+        "source_mid_cast_tick": 270,
+        "source_fx_count": 11,
+        "source_particle_count": 65,
+        "whole_source_rgba_sha256_prefix": "16ead1f9c7a6310f"
       }
     },
     {
@@ -4584,11 +5884,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4603,6 +5903,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:014",
+        "original_skill_id": 14,
+        "original_name": "Reaction Cascade",
+        "source_mid_cast_tick": 180,
+        "source_fx_count": 1,
+        "source_particle_count": 16,
+        "whole_source_rgba_sha256_prefix": "5b43df7587e15f21"
       }
     },
     {
@@ -4637,11 +5959,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4656,6 +5978,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:015",
+        "original_skill_id": 15,
+        "original_name": "Breath of the Vat",
+        "source_mid_cast_tick": 270,
+        "source_fx_count": 8,
+        "source_particle_count": 48,
+        "whole_source_rgba_sha256_prefix": "abe07f706ca6f324"
       }
     },
     {
@@ -4690,11 +6034,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4709,6 +6053,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:016",
+        "original_skill_id": 16,
+        "original_name": "Crystal Rot",
+        "source_mid_cast_tick": 210,
+        "source_fx_count": 36,
+        "source_particle_count": 183,
+        "whole_source_rgba_sha256_prefix": "cb4ee1f5785486e5"
       }
     },
     {
@@ -4743,11 +6109,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4762,6 +6128,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:017",
+        "original_skill_id": 17,
+        "original_name": "Reverse Extraction",
+        "source_mid_cast_tick": 210,
+        "source_fx_count": 14,
+        "source_particle_count": 109,
+        "whole_source_rgba_sha256_prefix": "5cd74142b5d2e574"
       }
     },
     {
@@ -4796,11 +6184,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4815,6 +6203,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:018",
+        "original_skill_id": 18,
+        "original_name": "Bitter Rain",
+        "source_mid_cast_tick": 270,
+        "source_fx_count": 14,
+        "source_particle_count": 108,
+        "whole_source_rgba_sha256_prefix": "7d8ecaccf85f30f6"
       }
     },
     {
@@ -4849,11 +6259,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4868,6 +6278,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:019",
+        "original_skill_id": 19,
+        "original_name": "False Remedy",
+        "source_mid_cast_tick": 210,
+        "source_fx_count": 9,
+        "source_particle_count": 86,
+        "whole_source_rgba_sha256_prefix": "9d5a71a26297bfdf"
       }
     },
     {
@@ -4902,11 +6334,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4921,6 +6353,28 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:020",
+        "original_skill_id": 20,
+        "original_name": "Plague Cartography",
+        "source_mid_cast_tick": 270,
+        "source_fx_count": 17,
+        "source_particle_count": 66,
+        "whole_source_rgba_sha256_prefix": "8f7c343a63907e1a"
       }
     },
     {
@@ -4955,11 +6409,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "NOT_AUDITED",
+        "source_deps": "AUDITED_FROM_REGISTRY",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
-        "ground_environment": "NOT_AUDITED",
-        "particles": "NOT_AUDITED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
@@ -4974,7 +6428,40 @@
         "native_test_run": null,
         "webgl_test_run": null,
         "performance_2k_4k": null
+      },
+      "native_executable": false,
+      "native_executable_evidence": null,
+      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "evidence_gaps": [
+        "gold_original_video",
+        "source_numeric_oracle",
+        "native_full_cast_video",
+        "original_vs_native_comparison",
+        "real_map_overlay",
+        "native_test_run",
+        "webgl_test_run",
+        "performance_2k_4k"
+      ],
+      "source_baseline": {
+        "key": "venomwright:021",
+        "original_skill_id": 21,
+        "original_name": "The Last Distillation",
+        "source_mid_cast_tick": 420,
+        "source_fx_count": 28,
+        "source_particle_count": 98,
+        "whole_source_rgba_sha256_prefix": "9751ee5b9fd944a2"
       }
     }
-  ]
+  ],
+  "execution_totals": {
+    "native_executable": 1,
+    "catalogued_only": 92
+  },
+  "source_material_status": {
+    "archives_present_in_repository": false,
+    "archives_present_in_execution_environment": false,
+    "venomwright_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
+    "arcana_iii_sha256": "8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d",
+    "consequence": "92 of 93 authored generators cannot be source-locked until the pinned archives are supplied. No algorithm has been invented to work around this."
+  }
 }
