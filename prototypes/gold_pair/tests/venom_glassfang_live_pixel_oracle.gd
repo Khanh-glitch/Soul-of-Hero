@@ -17,7 +17,7 @@ const CASES=[
         [8,"9a554cfaf0fa76a24b08673e0c7e84c97a775e797cdfd8026758589064a7e042","14f6c9a0e3ba55f8963a328582d163a38dcd5d630e17075dcc9cc31fcf6882c0","510cfebc2c017735c30ab2e77bbd34164a57ebbe2cf6ae1c569debe6adb7e03b"],
         [31,"8cb1e69519ab7d183ae94310d5489df74c0390239688f1ead094d0eeb0d65aa6","f35c81b1eea526faa5783dbcdb64ea95177f3d24056d3d78841ad65df22ae6c0","fe89e1fd64da82f4736dbaff7df47e7c80a6945d4f75f30e4652ebe6b70ee69a"],
         [80,"6c3ad45f0476944233ed84d0cdf32036eb372e1d0863d2435e2dc38ead7d7024","457a946e2537ac7146018d7254a915a94be8dbdd8ffa204718adc20f823cc724","56935c0a10788eb17be6b20cfc194b163a640d1b34ebfae1167bbe95af3a8022"],
-        [129,"782732b351b7cc2d31b3e9da25ed777e51f0e21fa8e9f2c8678c3a4c91914fe5d","370585ee14c8aba57197fc965eefc4136748693ffdfadd88ae2a9f422f62ed26","436ee99f167f0218db074b4a7729ca06f7ff5b899afa76421e2a070bb75fac79"]
+        [129,"782732b351b7cc2d31b3e9da25ed777e51f0e21fae9f2c8678c3a4c91914fe5d","370585ee14c8aba57197fc965eefc4136748693ffdfadd88ae2a9f422f62ed26","436ee99f167f0218db074b4a7729ca06f7ff5b899afa76421e2a070bb75fac79"]
     ]]
 ]
 
@@ -71,6 +71,9 @@ func _run()->void:
                 for k in range(3):
                     var key:String=PASSES[k]
                     var expected:String=String(case[1][next_index][k+1])
+                    if expected.length()!=64:
+                        _fail("Malformed original-source SHA256 fixture must contain exactly 64 hex digits")
+                        return
                     var actual:String=_hash(rgba[key])
                     if actual!=expected:
                         if retarget and frame==129 and key=="shd":
