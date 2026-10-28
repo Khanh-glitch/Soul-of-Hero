@@ -1,0 +1,37 @@
+name: Venomwright Glassfang original acid Pool Float32 environment parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_source_sdf_oracle.gd'
+      - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
+      - 'prototypes/gold_pair/venom_source_decal.gd'
+      - '.github/workflows/venom-gold-pool-sdf.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-source-pool-mask:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import Godot and reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 140s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-pool-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-pool-import.log; then exit 1; fi
+      - name: Validate exact original TS Float32 Pool distance-field hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 110s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_sdf_oracle.gd 2>&1 | tee /tmp/venom-pool.log
+          grep -F 'VENOM_POOL_SDF: PASS / 10 exact source Float32' /tmp/venom-pool.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-pool.log; then exit 1; fi
