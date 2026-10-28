@@ -4,7 +4,7 @@ extends RefCounted
 ## Authoritative scoped inventory for ARCANA III + Venomwright readiness.
 ## Important: catalog presence MUST NOT be interpreted as a native cast.
 const MANIFEST_PATH:String="res://docs/vfx/skill_readiness/readiness_manifest.json"
-const SUPPORTED_FAMILIES:PackedStringArray=PackedStringArray(["arcana_iii","venomwright"])
+const SUPPORTED_FAMILIES=["arcana_iii","venomwright"]
 var _by_key:Dictionary={}
 var _error:String=""
 
