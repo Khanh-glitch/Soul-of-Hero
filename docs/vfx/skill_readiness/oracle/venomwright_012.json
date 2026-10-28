@@ -1,0 +1,2023 @@
+{
+ "archive_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
+ "canonical_id": "venomwright:012",
+ "cast_tick": 18,
+ "cues": [
+  {
+   "dur": 3.2,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 0.366667
+  },
+  {
+   "d": 0.15,
+   "k": "shake",
+   "m": 1.5,
+   "t": 0.483333
+  },
+  {
+   "dur": 3.2,
+   "e": 1,
+   "k": "mark",
+   "key": "corrode",
+   "t": 0.483333
+  },
+  {
+   "dur": 3.2,
+   "e": 10,
+   "k": "mark",
+   "key": "corrode",
+   "t": 0.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 1,
+   "k": "mark",
+   "key": "corrode",
+   "t": 0.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 0.666667
+  },
+  {
+   "dur": 3.2,
+   "e": 13,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.083333
+  },
+  {
+   "dur": 2.6,
+   "e": 1,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 13,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.166667
+  },
+  {
+   "dur": 3.2,
+   "e": 14,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.5
+  },
+  {
+   "dur": 3.2,
+   "e": 2,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.566667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 13,
+   "k": "mark",
+   "key": "corrode",
+   "t": 1.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 13,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.166667
+  },
+  {
+   "d": 0.1,
+   "k": "shake",
+   "m": 1,
+   "t": 2.4
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 10,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 14,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.666667
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.75
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.75,
+   "x": 355.01,
+   "y": 241.922
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.75
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.75,
+   "x": 291.011,
+   "y": 249.044
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.75
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.75,
+   "x": 243.737,
+   "y": 230.45
+  },
+  {
+   "dur": 1.1,
+   "e": 10,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.75
+  },
+  {
+   "dur": 3.2,
+   "e": 16,
+   "k": "mark",
+   "key": "corrode",
+   "t": 2.766667
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.916667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.916667,
+   "x": 268.993,
+   "y": 298.88
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.916667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.916667,
+   "x": 261.244,
+   "y": 269.936
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 2.916667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 2.916667,
+   "x": 255.884,
+   "y": 247.257
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.066667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.066667,
+   "x": 340.154,
+   "y": 201.166
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.066667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.066667,
+   "x": 316.433,
+   "y": 225.12
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.066667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.066667,
+   "x": 293.726,
+   "y": 238.532
+  },
+  {
+   "dur": 1.1,
+   "e": 16,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.066667
+  },
+  {
+   "dur": 1.1,
+   "e": 1,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.066667
+  },
+  {
+   "dur": 2.6,
+   "e": 2,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 10,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.166667
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.233333
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.233333,
+   "x": 297.49,
+   "y": 277.845
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.233333
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.233333,
+   "x": 281.34,
+   "y": 277.111
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.233333
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.233333,
+   "x": 268.907,
+   "y": 275.408
+  },
+  {
+   "dur": 3.2,
+   "e": 15,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.383333
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.4
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.4,
+   "x": 230.549,
+   "y": 293.058
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.4
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.4,
+   "x": 235.773,
+   "y": 263.639
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.4
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.4,
+   "x": 238.428,
+   "y": 240.581
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.55
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.55,
+   "x": 351.951,
+   "y": 287.248
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.55
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.55,
+   "x": 331.652,
+   "y": 273.444
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.55
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.55,
+   "x": 317.902,
+   "y": 260.133
+  },
+  {
+   "dur": 1.1,
+   "e": 9,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.55
+  },
+  {
+   "dur": 1.1,
+   "e": 1,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.566667
+  },
+  {
+   "dur": 2.6,
+   "e": 2,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 10,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.666667
+  },
+  {
+   "dur": 2.6,
+   "e": 16,
+   "k": "mark",
+   "key": "corrode",
+   "t": 3.666667
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.716667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.716667,
+   "x": 354.446,
+   "y": 205.589
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.716667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.716667,
+   "x": 344.134,
+   "y": 223.873
+  },
+  {
+   "d": 0.12,
+   "k": "shake",
+   "m": 2,
+   "t": 3.716667
+  },
+  {
+   "amp": 1.5,
+   "dur": 0.25,
+   "k": "shock",
+   "max": 26,
+   "t": 3.716667,
+   "x": 339.304,
+   "y": 239.564
+  },
+  {
+   "dur": 1.1,
+   "e": 16,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.716667
+  },
+  {
+   "dur": 1.1,
+   "e": 13,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.75
+  },
+  {
+   "dur": 1.1,
+   "e": 14,
+   "k": "mark",
+   "key": "miasma",
+   "t": 3.75
+  },
+  {
+   "dur": 1.1,
+   "e": 9,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.05
+  },
+  {
+   "dur": 1.1,
+   "e": 2,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.066667
+  },
+  {
+   "dur": 1.1,
+   "e": 1,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.066667
+  },
+  {
+   "dur": 1.1,
+   "e": 10,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.066667
+  },
+  {
+   "dur": 1.1,
+   "e": 1,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.066667
+  },
+  {
+   "dur": 2.6,
+   "e": 9,
+   "k": "mark",
+   "key": "corrode",
+   "t": 4.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 10,
+   "k": "mark",
+   "key": "corrode",
+   "t": 4.166667
+  },
+  {
+   "dur": 2.6,
+   "e": 16,
+   "k": "mark",
+   "key": "corrode",
+   "t": 4.166667
+  },
+  {
+   "dur": 1.1,
+   "e": 2,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.216667
+  },
+  {
+   "dur": 1.1,
+   "e": 16,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.216667
+  },
+  {
+   "dur": 1.1,
+   "e": 2,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.216667
+  },
+  {
+   "dur": 1.1,
+   "e": 14,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.216667
+  },
+  {
+   "dur": 1.1,
+   "e": 13,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.25
+  },
+  {
+   "dur": 1.1,
+   "e": 14,
+   "k": "mark",
+   "key": "miasma",
+   "t": 4.25
+  }
+ ],
+ "duration": 8,
+ "hits": [
+  {
+   "amt": 70,
+   "at": [
+    291.05092058209385,
+    246.43465234505916
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 90.638928006814,
+   "ky": 42.244345536125756,
+   "src": 12,
+   "stag": 0.3,
+   "t": 0.366667
+  },
+  {
+   "amt": 70,
+   "at": [
+    325.79094002319994,
+    242.61633565588272
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 96.37762881494423,
+   "ky": 26.671195398947372,
+   "src": 12,
+   "stag": 0.3,
+   "t": 0.483333
+  },
+  {
+   "amt": 70,
+   "at": [
+    348.98335756107025,
+    252.39138181865508
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 95.70898989861577,
+   "ky": 28.97911752601629,
+   "src": 12,
+   "stag": 0.3,
+   "t": 0.666667
+  },
+  {
+   "amt": 25,
+   "at": [
+    331.4470889974588,
+    244.08104243822933
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 0.666667
+  },
+  {
+   "amt": 25,
+   "at": [
+    304.61083490576004,
+    252.7545605646946
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 0.666667
+  },
+  {
+   "amt": 70,
+   "at": [
+    327.8202649961563,
+    279.25513819519256
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 85.30673357547471,
+   "ky": 52.18008438746505,
+   "src": 12,
+   "stag": 0.3,
+   "t": 1.083333
+  },
+  {
+   "amt": 25,
+   "at": [
+    332.45012871099345,
+    241.79652945143638
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 1.166667
+  },
+  {
+   "amt": 25,
+   "at": [
+    307.3675241683246,
+    254.03937864787804
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 1.166667
+  },
+  {
+   "amt": 25,
+   "at": [
+    333.7399557913352,
+    282.8760711777789
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 1.166667
+  },
+  {
+   "amt": 70,
+   "at": [
+    363.03863489178957,
+    244.7685728914155
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 97.67106276982615,
+   "ky": 21.456082993237125,
+   "src": 12,
+   "stag": 0.3,
+   "t": 1.5
+  },
+  {
+   "amt": 70,
+   "at": [
+    356.3247009516915,
+    218.4970439512656
+   ],
+   "big": false,
+   "e": 2,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 99.92923945650631,
+   "ky": 3.7612633042932573,
+   "src": 12,
+   "stag": 0.3,
+   "t": 1.566667
+  },
+  {
+   "amt": 25,
+   "at": [
+    344.1946062001396,
+    285.4265946351959
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 1.666667
+  },
+  {
+   "amt": 25,
+   "at": [
+    351.85470139981595,
+    243.90563196638277
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 2.666667
+  },
+  {
+   "amt": 25,
+   "at": [
+    361.0353885617181,
+    250.14124959743398
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 2.666667
+  },
+  {
+   "amt": 30,
+   "at": [
+    356.9233215196597,
+    240.80934043784873
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": -86.44864408705114,
+   "ky": 50.2656138479414,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.75
+  },
+  {
+   "amt": 10,
+   "at": [
+    351.73640287443664,
+    243.82527726872522
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 2.75
+  },
+  {
+   "amt": 70,
+   "at": [
+    324.8207020902722,
+    205.20910331913447
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 99.69768155578174,
+   "ky": -7.769960900927178,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.766667
+  },
+  {
+   "amt": 30,
+   "at": [
+    355.00899426206837,
+    237.83860967324696
+   ],
+   "big": false,
+   "e": 2,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": -0.02401575025313751,
+   "ky": -99.99999711621864,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.766667
+  },
+  {
+   "amt": 30,
+   "at": [
+    357.59034002403865,
+    245.40331948772078
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 59.545162893610005,
+   "ky": 80.33911610151961,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.766667
+  },
+  {
+   "amt": 30,
+   "at": [
+    301.7948847440217,
+    252.35467499963883
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 95.59712874330843,
+   "ky": 29.346021468596227,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.8
+  },
+  {
+   "amt": 30,
+   "at": [
+    277.62520764059786,
+    230.74487747047124
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": -59.03955623437888,
+   "ky": -80.71140439645204,
+   "src": 12,
+   "stag": 0.3,
+   "t": 2.916667
+  },
+  {
+   "amt": 30,
+   "at": [
+    340.5979675905525,
+    198.10895067425946
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": -14.368809917573858,
+   "ky": 98.96230242649283,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.066667
+  },
+  {
+   "amt": 10,
+   "at": [
+    339.73583899549806,
+    204.04668881984904
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.066667
+  },
+  {
+   "amt": 30,
+   "at": [
+    315.9049039074395,
+    224.46475220087154
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 62.731421917052245,
+   "ky": 77.87662489004501,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.066667
+  },
+  {
+   "amt": 10,
+   "at": [
+    321.8643889895595,
+    231.8630315654258
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.066667
+  },
+  {
+   "amt": 25,
+   "at": [
+    353.01204374319354,
+    222.3273509624597
+   ],
+   "big": false,
+   "e": 2,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 3.166667
+  },
+  {
+   "amt": 25,
+   "at": [
+    337.16611600573594,
+    251.19179886432477
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 3.166667
+  },
+  {
+   "amt": 70,
+   "at": [
+    344.3021216522553,
+    293.0198661357227
+   ],
+   "big": false,
+   "e": 15,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 84.17617542114084,
+   "ky": 53.984919111445606,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.383333
+  },
+  {
+   "amt": 10,
+   "at": [
+    321.5664131068182,
+    262.9563787683598
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.55
+  },
+  {
+   "amt": 10,
+   "at": [
+    325.6723265599728,
+    237.10630698852603
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.566667
+  },
+  {
+   "amt": 30,
+   "at": [
+    353.15924934094323,
+    293.53428360090084
+   ],
+   "big": false,
+   "e": 15,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 18.872907421273,
+   "ky": 98.20291933271669,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.566667
+  },
+  {
+   "amt": 30,
+   "at": [
+    341.90744369869833,
+    268.47994648510763
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 90.01071518459874,
+   "ky": -43.56685841275509,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.6
+  },
+  {
+   "amt": 25,
+   "at": [
+    354.59857189064377,
+    225.2270961109466
+   ],
+   "big": false,
+   "e": 2,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 3.666667
+  },
+  {
+   "amt": 25,
+   "at": [
+    340.05404127645903,
+    223.18325451055222
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 3.666667
+  },
+  {
+   "amt": 10,
+   "at": [
+    340.0277770806237,
+    223.31866170448032
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.716667
+  },
+  {
+   "amt": 10,
+   "at": [
+    352.50473719255814,
+    265.59730624905563
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.75
+  },
+  {
+   "amt": 10,
+   "at": [
+    356.52273766193593,
+    255.9435382500047
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 3.75
+  },
+  {
+   "amt": 30,
+   "at": [
+    349.9260116983793,
+    187.77614407455715
+   ],
+   "big": false,
+   "e": 4,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": -24.594618026473047,
+   "ky": -96.92834860933043,
+   "src": 12,
+   "stag": 0.3,
+   "t": 3.816667
+  },
+  {
+   "amt": 10,
+   "at": [
+    319.1687858059698,
+    265.15716418292607
+   ],
+   "big": false,
+   "e": 9,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.05
+  },
+  {
+   "amt": 10,
+   "at": [
+    355.15371798506004,
+    227.9586345233388
+   ],
+   "big": false,
+   "e": 2,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.066667
+  },
+  {
+   "amt": 10,
+   "at": [
+    323.44791172097166,
+    235.28543769177077
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.066667
+  },
+  {
+   "amt": 10,
+   "at": [
+    333.65235753101086,
+    245.81008334960868
+   ],
+   "big": false,
+   "e": 10,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.066667
+  },
+  {
+   "amt": 25,
+   "at": [
+    340.728578166823,
+    226.45847285077966
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0.1,
+   "t": 4.166667
+  },
+  {
+   "amt": 10,
+   "at": [
+    340.72657994941085,
+    226.46597389947087
+   ],
+   "big": false,
+   "e": 16,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.216667
+  },
+  {
+   "amt": 10,
+   "at": [
+    347.5019769762583,
+    253.479527016785
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.216667
+  },
+  {
+   "amt": 10,
+   "at": [
+    358.4654066768507,
+    261.2812187755546
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 12,
+   "stag": 0,
+   "t": 4.25
+  }
+ ],
+ "hz": 60,
+ "k": 2,
+ "logical": [
+  600,
+  340
+ ],
+ "name": "Verdigris Wake",
+ "native": [
+  1200,
+  680
+ ],
+ "rows": [
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "a54596b726de953a179bc02684efaaff",
+   "parts": 0,
+   "scene_sha256": "874e2561eb548c9b9e7d3cc312b964b5",
+   "tick": 1
+  },
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "a2f56529994b211c0439339e301f7d5f",
+   "parts": 0,
+   "scene_sha256": "ac79b21d2776f0460e9565b543529d68",
+   "tick": 2
+  },
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "f468e0757b68834e30d22464c8c61802",
+   "parts": 0,
+   "scene_sha256": "ef36c01d20088391e4282ab50a563766",
+   "tick": 3
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "7a80b786f3a341f99bafc1d5cbfa43d9",
+   "parts": 0,
+   "scene_sha256": "746605595a40c35c56e4603edc7680d6",
+   "tick": 4
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "43f13862bcd65c7f23f4c52563ae326a",
+   "parts": 0,
+   "scene_sha256": "54b7add9a1ee1f2fd0bbb12e144492d9",
+   "tick": 5
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "5868b42e41ab3744472dab9148781f90",
+   "parts": 0,
+   "scene_sha256": "35fa378707c03e669abe0a587649163c",
+   "tick": 6
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "c059e13a06a7768857ab0de5d5781af2",
+   "parts": 0,
+   "scene_sha256": "bb3896df53ea37364608da95096c4bb8",
+   "tick": 7
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "579c58dd92fd38ad1801f436f998e079",
+   "parts": 0,
+   "scene_sha256": "708bb6485a33e341688285cd901fc692",
+   "tick": 8
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "7106ac240c01ac9d7dd718c3abb69a2f",
+   "parts": 1,
+   "scene_sha256": "e7d3475a1ce15fe74c2a57864beb1565",
+   "tick": 9
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "969cf443db5455b0daf62bed0b2ea3a1",
+   "parts": 7,
+   "scene_sha256": "5172ef2f819669ca9dae984a7604825d",
+   "tick": 10
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "e2a2c97f8a5dc3ee1d24b40e242b856a",
+   "parts": 7,
+   "scene_sha256": "a9eb77b17780e6d7c418b1f0432693b7",
+   "tick": 11
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "cfe6afa47489aac07f5b6929ac67e6ee",
+   "parts": 7,
+   "scene_sha256": "bb52cdbed4f794a9fcbaa6109fa5347e",
+   "tick": 12
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "307f0db9a573fd6bb661810f838e667c",
+   "parts": 7,
+   "scene_sha256": "42deda1080d9590469fd29fd87eb62d4",
+   "tick": 13
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "8be317a933f905f6ffb4fdaf803d9098",
+   "parts": 7,
+   "scene_sha256": "4301b0e47ae6707063ef3b665e3e36be",
+   "tick": 14
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "626d17a9a049b929405610d317c7b9dd",
+   "parts": 7,
+   "scene_sha256": "b5983e9169de30896395acbe918c8403",
+   "tick": 15
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "9385c8f1c8a1dbb1fa74793706afe861",
+   "parts": 7,
+   "scene_sha256": "d62770268a69e9955b02562cecee40e0",
+   "tick": 16
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "a20161a3be634f2eabb109fb3de71f45",
+   "parts": 7,
+   "scene_sha256": "9c4ecabb51e9f8a0b1b826c060610552",
+   "tick": 17
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "a3ef8a53abd528e5da0ec527245dd56a",
+   "parts": 8,
+   "scene_sha256": "7b8475fc9ec404e8e9da76f67fd7501b",
+   "tick": 18
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "e23b0f0fe6344963b8c141787475fd68",
+   "parts": 8,
+   "scene_sha256": "96a751799c4e524700101adf09a9a351",
+   "tick": 19
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "f803d40e5708fdb7bf99277ad9cdf89d",
+   "parts": 8,
+   "scene_sha256": "55f4af1ee6f687dcd6e4f44395d3d1db",
+   "tick": 20
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "fc4ee5193b725ebebcbee98914108dcf",
+   "parts": 18,
+   "scene_sha256": "a8ab9e0b2638818b624bd3442df14e1f",
+   "tick": 25
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "2404bfe03789c0e4c2e750c78f0003a8",
+   "parts": 41,
+   "scene_sha256": "23ecce8a8b9bf9d63df27fde0fa250d4",
+   "tick": 30
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "f81b2f0b10f8c98f07b23e1e5e389f55",
+   "parts": 41,
+   "scene_sha256": "f089b571ec9134f0a2e85db0dbe65fbb",
+   "tick": 35
+  },
+  {
+   "enemies": 16,
+   "fx": 7,
+   "glow_sha256": "a45a54705aee573d6a384f3dc0ef1155",
+   "parts": 57,
+   "scene_sha256": "0a93895e6f11115a6be6e5e2e4485132",
+   "tick": 40
+  },
+  {
+   "enemies": 16,
+   "fx": 7,
+   "glow_sha256": "1b64483a26c1e36e576d61245f688bc7",
+   "parts": 57,
+   "scene_sha256": "6ba3b2d34c1cd599e16e81dd13082941",
+   "tick": 45
+  },
+  {
+   "enemies": 16,
+   "fx": 11,
+   "glow_sha256": "e16d312e5b33e34947ccf2a47508852b",
+   "parts": 52,
+   "scene_sha256": "03f573e37318bb530383f87db4ebf5cd",
+   "tick": 50
+  },
+  {
+   "enemies": 16,
+   "fx": 15,
+   "glow_sha256": "6cb40180cd11140aed4eb2fa21dc12c0",
+   "parts": 49,
+   "scene_sha256": "bd452c61acc1d897463998c099c17550",
+   "tick": 55
+  },
+  {
+   "enemies": 16,
+   "fx": 33,
+   "glow_sha256": "36dd680bb92750f2b00710413431ea7d",
+   "parts": 29,
+   "scene_sha256": "86b1efbfd2245e25729ea37487c9234d",
+   "tick": 60
+  },
+  {
+   "enemies": 16,
+   "fx": 37,
+   "glow_sha256": "635c5671a7c42e78763fc888daea667e",
+   "parts": 31,
+   "scene_sha256": "49be997dcc99b2abf1ab160128592118",
+   "tick": 65
+  },
+  {
+   "enemies": 16,
+   "fx": 41,
+   "glow_sha256": "e8baa1d4564c2855d9f6acecfd28a832",
+   "parts": 36,
+   "scene_sha256": "53368ad543e5728188ae222350646b3d",
+   "tick": 70
+  },
+  {
+   "enemies": 16,
+   "fx": 39,
+   "glow_sha256": "52e8b04751ea934b8e5d0d9d489aabe3",
+   "parts": 33,
+   "scene_sha256": "bb355b8e4353c15b0063a8863aa74a01",
+   "tick": 75
+  },
+  {
+   "enemies": 16,
+   "fx": 32,
+   "glow_sha256": "e7383477185705a5642e4b9ae93e4820",
+   "parts": 30,
+   "scene_sha256": "dded9dccd8572380e2ed28532ba21ec9",
+   "tick": 80
+  },
+  {
+   "enemies": 16,
+   "fx": 17,
+   "glow_sha256": "ae03c25bb29716d136451d85a1a8c0d2",
+   "parts": 26,
+   "scene_sha256": "ceca81c976d88e97853e241308c1c6ba",
+   "tick": 85
+  },
+  {
+   "enemies": 16,
+   "fx": 16,
+   "glow_sha256": "7a53b5a4a5f0fdd2ae6b07d7ca7b177e",
+   "parts": 29,
+   "scene_sha256": "da2efede033c22dd55a8961499e540bd",
+   "tick": 90
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "67b6cca5f28348736b45073c2027cb6a",
+   "parts": 31,
+   "scene_sha256": "94a579aedc9c9d049415cd5e9e4625e6",
+   "tick": 95
+  },
+  {
+   "enemies": 16,
+   "fx": 25,
+   "glow_sha256": "11a90a0630407693d346e4a825dfcfcd",
+   "parts": 31,
+   "scene_sha256": "b7fe6b1ff04986da9d61b396de012789",
+   "tick": 100
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "29b2daa6795741c4525ac695d15d2147",
+   "parts": 30,
+   "scene_sha256": "7725d210e13626c40490051bfc332c63",
+   "tick": 105
+  },
+  {
+   "enemies": 16,
+   "fx": 15,
+   "glow_sha256": "769aa13b1a038e96509aaaa7de938cb9",
+   "parts": 30,
+   "scene_sha256": "fafccd3fe7af67223db94c847e9cc59f",
+   "tick": 110
+  },
+  {
+   "enemies": 16,
+   "fx": 12,
+   "glow_sha256": "352a831464d28ada22272ae3c0a15a0d",
+   "parts": 25,
+   "scene_sha256": "cd584d48daaa27e67ea09206275088f7",
+   "tick": 115
+  },
+  {
+   "enemies": 16,
+   "fx": 15,
+   "glow_sha256": "07bd855ace690783f1e7e9b757ab37da",
+   "parts": 18,
+   "scene_sha256": "3fdb8db2e0598a2339c683e14a8418a1",
+   "tick": 120
+  },
+  {
+   "enemies": 16,
+   "fx": 20,
+   "glow_sha256": "1e3784f595f38d56b25f825506b18a80",
+   "parts": 11,
+   "scene_sha256": "7a29c167c33aa60082754a352a868754",
+   "tick": 125
+  },
+  {
+   "enemies": 16,
+   "fx": 23,
+   "glow_sha256": "0631bde85cf8e8c8b7ad34f49eb1d6d7",
+   "parts": 8,
+   "scene_sha256": "04d4ef1b8e2e6d5f0f27b9b77211dcf4",
+   "tick": 130
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "1213b3f59db525a65606803bf50dba73",
+   "parts": 6,
+   "scene_sha256": "9ebe313c130bf2e631beeb1db0e9dfd1",
+   "tick": 135
+  },
+  {
+   "enemies": 16,
+   "fx": 16,
+   "glow_sha256": "7d90acd601bff5af102444ff6fda4adf",
+   "parts": 6,
+   "scene_sha256": "a9874363621f70a8205407123e90199e",
+   "tick": 140
+  },
+  {
+   "enemies": 16,
+   "fx": 8,
+   "glow_sha256": "8860810a5df06d64eb6bf500bfe0696a",
+   "parts": 6,
+   "scene_sha256": "e9b6f1bb00a39bc42402bd0965a4958f",
+   "tick": 145
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "c44cddb8d7ebb122283d1fd778972421",
+   "parts": 6,
+   "scene_sha256": "ff3c1fd480c2f4a4abdebaa0b2b9319b",
+   "tick": 150
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "2ded67ce4ce8a1a00a35f1db19194618",
+   "parts": 6,
+   "scene_sha256": "2a9df0535fe12c0d062f7ab1c63382c9",
+   "tick": 155
+  },
+  {
+   "enemies": 16,
+   "fx": 1,
+   "glow_sha256": "fe257088b75dcd3130ad89a09d4b172a",
+   "parts": 14,
+   "scene_sha256": "9a4c94a4d3f48bc7e1a79d9d570f2f07",
+   "tick": 160
+  },
+  {
+   "enemies": 16,
+   "fx": 14,
+   "glow_sha256": "8dd32ec86319eabc604233d2f5e4193a",
+   "parts": 76,
+   "scene_sha256": "a6a5d9bb02a3a99fea10fa84c3b839b4",
+   "tick": 165
+  },
+  {
+   "enemies": 16,
+   "fx": 15,
+   "glow_sha256": "21299de2fe0dea595e90a357c2434f68",
+   "parts": 97,
+   "scene_sha256": "169b75b2a17c7210c66df98554f82f19",
+   "tick": 170
+  },
+  {
+   "enemies": 16,
+   "fx": 29,
+   "glow_sha256": "1e0859858f998794089d1aabd127a1c1",
+   "parts": 155,
+   "scene_sha256": "3fe6a01e0c6bc6e34dfbee3913c17716",
+   "tick": 175
+  },
+  {
+   "enemies": 16,
+   "fx": 27,
+   "glow_sha256": "a7ee7d92b64287b2a2e8473b34d2e6d3",
+   "parts": 155,
+   "scene_sha256": "8e60afe028eb547690b2d08a908e412a",
+   "tick": 180
+  },
+  {
+   "enemies": 16,
+   "fx": 43,
+   "glow_sha256": "4226d1820cf3160fd382dd76e7a01804",
+   "parts": 221,
+   "scene_sha256": "cae6321120571041e6490b257742c8e2",
+   "tick": 185
+  },
+  {
+   "enemies": 16,
+   "fx": 51,
+   "glow_sha256": "6645d5c0dc8cf21ccd0d336a0029e103",
+   "parts": 216,
+   "scene_sha256": "cf9d13b40c7b562cd5da286082a230eb",
+   "tick": 190
+  },
+  {
+   "enemies": 16,
+   "fx": 76,
+   "glow_sha256": "679a906c635f747375b6e3867ac56ff6",
+   "parts": 260,
+   "scene_sha256": "e5ecf5dbd38c6ac4d29f8965244293e1",
+   "tick": 195
+  },
+  {
+   "enemies": 16,
+   "fx": 80,
+   "glow_sha256": "b808fca3a8159e3f6a92f1b08beb5a3d",
+   "parts": 251,
+   "scene_sha256": "61cbb8c7331fbead9532577c2aae4165",
+   "tick": 200
+  },
+  {
+   "enemies": 16,
+   "fx": 100,
+   "glow_sha256": "b5ef473ecd58cad99ec157e8d7c43d5d",
+   "parts": 306,
+   "scene_sha256": "ca0ab9464954466ba5cf3412422852b7",
+   "tick": 205
+  },
+  {
+   "enemies": 16,
+   "fx": 101,
+   "glow_sha256": "2b5c5ca1ada184b451b391770dd59f8b",
+   "parts": 290,
+   "scene_sha256": "0ed74c44e73173891f063b0e8872e381",
+   "tick": 210
+  },
+  {
+   "enemies": 16,
+   "fx": 126,
+   "glow_sha256": "f83b6dc23b359760b7a53af834f3c8bc",
+   "parts": 331,
+   "scene_sha256": "f581031e6c2d2b3ed1ccf776cc5647a0",
+   "tick": 215
+  },
+  {
+   "enemies": 16,
+   "fx": 132,
+   "glow_sha256": "081994a4aee2c3ed9f5317164affa176",
+   "parts": 322,
+   "scene_sha256": "c986804773cb369972689cdbd8d56321",
+   "tick": 220
+  },
+  {
+   "enemies": 16,
+   "fx": 167,
+   "glow_sha256": "8342e40f9d8c059bbd0027767be938e2",
+   "parts": 355,
+   "scene_sha256": "a8231a0b7d8ec9d5d0603cffaf2373b0",
+   "tick": 225
+  },
+  {
+   "enemies": 16,
+   "fx": 169,
+   "glow_sha256": "28afd66efbf90bce07ee2753e616db1c",
+   "parts": 339,
+   "scene_sha256": "d711c6d444d78585839c0e3caf206db2",
+   "tick": 230
+  },
+  {
+   "enemies": 16,
+   "fx": 170,
+   "glow_sha256": "929f39a49624c12ad317750540708ffd",
+   "parts": 310,
+   "scene_sha256": "06a66dc5ff873ecb37d6bafffdad46ef",
+   "tick": 235
+  },
+  {
+   "enemies": 16,
+   "fx": 177,
+   "glow_sha256": "3375ef160d708de84b853d13eeab60da",
+   "parts": 265,
+   "scene_sha256": "2815ff477409db0c786fd69706aa9906",
+   "tick": 240
+  },
+  {
+   "enemies": 16,
+   "fx": 164,
+   "glow_sha256": "7a88b5a938897d324db4105ad0985551",
+   "parts": 248,
+   "scene_sha256": "1946648f12f38cbe2f943003e3985dd3",
+   "tick": 245
+  },
+  {
+   "enemies": 16,
+   "fx": 169,
+   "glow_sha256": "9694ced2c3e5ab2328b1e5a46e36b44e",
+   "parts": 227,
+   "scene_sha256": "0242c4a0892abd482d65e8ec0390e5b7",
+   "tick": 250
+  },
+  {
+   "enemies": 16,
+   "fx": 173,
+   "glow_sha256": "1cd56e76c5a0662d22a1c825f5e93a2c",
+   "parts": 200,
+   "scene_sha256": "f2ede7c331abb7e101fdcae79ab11858",
+   "tick": 255
+  },
+  {
+   "enemies": 16,
+   "fx": 168,
+   "glow_sha256": "e8aa81cf8d371cbabe8dcdfdcc35cf34",
+   "parts": 179,
+   "scene_sha256": "1460b67e053dd81f460b43a6184eff63",
+   "tick": 260
+  }
+ ],
+ "schema": "gold93/venomwright-oracle/v1",
+ "seed": 7,
+ "skill": 12,
+ "total": 220
+}

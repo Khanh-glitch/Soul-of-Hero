@@ -1,0 +1,218 @@
+{
+ "engine": "ORIGINAL TypeScript src/game/** executed headlessly in Node",
+ "generated_by": "prototypes/skill_readiness/tools/oracle/build_venomwright_oracle.py",
+ "schema": "gold93/venomwright-oracle-index/v1",
+ "skills": [
+  {
+   "canonical_id": "venomwright:001",
+   "cues": 12,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_001.json",
+   "hits": 5,
+   "name": "Glassfang Hunt",
+   "sampled_ticks": 65,
+   "skill": 1,
+   "ticks": 245
+  },
+  {
+   "canonical_id": "venomwright:002",
+   "cues": 29,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_002.json",
+   "hits": 41,
+   "name": "Blooming Parasite",
+   "sampled_ticks": 77,
+   "skill": 2,
+   "ticks": 305
+  },
+  {
+   "canonical_id": "venomwright:003",
+   "cues": 52,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_003.json",
+   "hits": 43,
+   "name": "Leechwater Rush",
+   "sampled_ticks": 63,
+   "skill": 3,
+   "ticks": 235
+  },
+  {
+   "canonical_id": "venomwright:004",
+   "cues": 12,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_004.json",
+   "hits": 7,
+   "name": "Porcelain Bastion",
+   "sampled_ticks": 96,
+   "skill": 4,
+   "ticks": 400
+  },
+  {
+   "canonical_id": "venomwright:005",
+   "cues": 40,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_005.json",
+   "hits": 44,
+   "name": "Bellows Toad",
+   "sampled_ticks": 75,
+   "skill": 5,
+   "ticks": 295
+  },
+  {
+   "canonical_id": "venomwright:006",
+   "cues": 30,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_006.json",
+   "hits": 25,
+   "name": "Graft Caravan",
+   "sampled_ticks": 93,
+   "skill": 6,
+   "ticks": 385
+  },
+  {
+   "canonical_id": "venomwright:007",
+   "cues": 5,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_007.json",
+   "hits": 30,
+   "name": "Hatchery Fall",
+   "sampled_ticks": 80,
+   "skill": 7,
+   "ticks": 320
+  },
+  {
+   "canonical_id": "venomwright:008",
+   "cues": 121,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_008.json",
+   "hits": 32,
+   "name": "Brine Serpents",
+   "sampled_ticks": 82,
+   "skill": 8,
+   "ticks": 330
+  },
+  {
+   "canonical_id": "venomwright:009",
+   "cues": 25,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_009.json",
+   "hits": 11,
+   "name": "Molting Harvester",
+   "sampled_ticks": 104,
+   "skill": 9,
+   "ticks": 440
+  },
+  {
+   "canonical_id": "venomwright:010",
+   "cues": 89,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_010.json",
+   "hits": 82,
+   "name": "The Walking Crucible",
+   "sampled_ticks": 184,
+   "skill": 10,
+   "ticks": 840
+  },
+  {
+   "canonical_id": "venomwright:011",
+   "cues": 5,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_011.json",
+   "hits": 4,
+   "name": "Unsealed Catalyst",
+   "sampled_ticks": 40,
+   "skill": 11,
+   "ticks": 120
+  },
+  {
+   "canonical_id": "venomwright:012",
+   "cues": 93,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_012.json",
+   "hits": 46,
+   "name": "Verdigris Wake",
+   "sampled_ticks": 68,
+   "skill": 12,
+   "ticks": 260
+  },
+  {
+   "canonical_id": "venomwright:013",
+   "cues": 5,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_013.json",
+   "hits": 7,
+   "name": "Mercury Garden",
+   "sampled_ticks": 80,
+   "skill": 13,
+   "ticks": 320
+  },
+  {
+   "canonical_id": "venomwright:014",
+   "cues": 36,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_014.json",
+   "hits": 33,
+   "name": "Reaction Cascade",
+   "sampled_ticks": 84,
+   "skill": 14,
+   "ticks": 340
+  },
+  {
+   "canonical_id": "venomwright:015",
+   "cues": 38,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_015.json",
+   "hits": 34,
+   "name": "Breath of the Vat",
+   "sampled_ticks": 79,
+   "skill": 15,
+   "ticks": 315
+  },
+  {
+   "canonical_id": "venomwright:016",
+   "cues": 173,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_016.json",
+   "hits": 15,
+   "name": "Crystal Rot",
+   "sampled_ticks": 99,
+   "skill": 16,
+   "ticks": 415
+  },
+  {
+   "canonical_id": "venomwright:017",
+   "cues": 45,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_017.json",
+   "hits": 44,
+   "name": "Reverse Extraction",
+   "sampled_ticks": 81,
+   "skill": 17,
+   "ticks": 325
+  },
+  {
+   "canonical_id": "venomwright:018",
+   "cues": 12,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_018.json",
+   "hits": 11,
+   "name": "Bitter Rain",
+   "sampled_ticks": 98,
+   "skill": 18,
+   "ticks": 410
+  },
+  {
+   "canonical_id": "venomwright:019",
+   "cues": 138,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_019.json",
+   "hits": 10,
+   "name": "False Remedy",
+   "sampled_ticks": 83,
+   "skill": 19,
+   "ticks": 335
+  },
+  {
+   "canonical_id": "venomwright:020",
+   "cues": 135,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_020.json",
+   "hits": 79,
+   "name": "Plague Cartography",
+   "sampled_ticks": 105,
+   "skill": 20,
+   "ticks": 445
+  },
+  {
+   "canonical_id": "venomwright:021",
+   "cues": 192,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_021.json",
+   "hits": 132,
+   "name": "The Last Distillation",
+   "sampled_ticks": 194,
+   "skill": 21,
+   "ticks": 890
+  }
+ ],
+ "source_archive_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716"
+}
