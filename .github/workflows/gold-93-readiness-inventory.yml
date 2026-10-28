@@ -1,0 +1,124 @@
+name: Gold 93 Native Readiness Inventory and Overworld Isolation
+on:
+  push:
+    branches: [feature/gold-93-skill-readiness-20261028]
+    paths:
+      - 'docs/vfx/skill_readiness/**'
+      - 'prototypes/skill_readiness/**'
+      - '.github/workflows/gold-93-readiness-*.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-native-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Fetch isolated factory branch full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Reject all overworld, source-factory and production file mutations
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=bd24daa607e65d9423c53a29f6dd94b601de0d75
+          git cat-file -e "${BASE}^{commit}"
+          git merge-base --is-ancestor "$BASE" HEAD
+          while IFS= read -r path; do
+            case "$path" in
+              docs/vfx/skill_readiness/*|prototypes/skill_readiness/*|.github/workflows/gold-93-readiness-*.yml)
+                echo "ALLOWED: $path" ;;
+              *)
+                echo "::error::UNAUTHORIZED CHANGE in overworld-safe factory: $path"
+                exit 1 ;;
+            esac
+          done < <(git diff --name-only "$BASE" HEAD)
+          git diff --exit-code "$BASE" HEAD -- game/ data/ assets/ config/ addons/ tests/ tools/ prototypes/gold_pair/ project.godot README.md
+          echo "GOLD93_PATH_ISOLATION: PASS / only owned paths modified since factory fork"
+      - name: Verify scoped inventory and evidence-gated status transitions
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts/gold93
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from collections import Counter
+          registry=json.loads(Path('docs/vfx/gold_skill_registry.json').read_text())
+          manifest=json.loads(Path('docs/vfx/skill_readiness/readiness_manifest.json').read_text())
+          scoped=[s for s in registry['skills'] if s['source'] in ('venomwright','arcana_iii')]
+          entries=manifest['entries']
+          assert len(scoped)==93 and len(entries)==93, 'must inventory exact 93'
+          source_ids={s['key'] for s in scoped}
+          ids=[s['key'] for s in entries]
+          assert len(set(ids))==93 and set(ids)==source_ids, 'no missing, duplicate or foreign IDs'
+          counts=Counter(s['family'] for s in entries)
+          assert counts=={'venomwright':21,'arcana_iii':72}, counts
+          expected_venom={f'venomwright:{x:03d}' for x in range(1,22)}
+          expected_arcana={f'arcana_iii:{x:03d}' for x in list(range(1,21))+list(range(101,121))+list(range(201,221))+list(range(301,313))}
+          assert set(ids)==expected_venom|expected_arcana
+          registry_by_id={s['key']:s for s in scoped}
+          summary=Counter()
+          for e in entries:
+              s=registry_by_id[e['key']]
+              assert e['original_name']==s['name']
+              assert e['original_skill_id']==s['source_skill_id']
+              assert e['source_variant']==s['source_variant']
+              assert e['source_archive_sha256']==s['evidence']['source_sha256']
+              assert e['source_renderer']==s['renderer_family']
+              candidate=e['family']=='arcana_iii' and 302<=e['original_skill_id']<=312
+              assert e['skill_gold_candidate_unreviewed']==candidate
+              for axis in ('native_port_ready','gold_visual_approved','gameplay_configured','production_integrated'):
+                  assert type(e[axis]) is bool
+                  summary[axis]+=int(e[axis])
+              if e['native_port_ready']:
+                  path=e['native_module_path']
+                  assert isinstance(path,str) and path.startswith('prototypes/skill_readiness/') and Path(path).is_file(), f'no runnable native module: {e["key"]}'
+                  evidence=e['evidence']
+                  for key in ('source_numeric_oracle','native_full_cast_video','original_vs_native_comparison','real_map_overlay','native_test_run','webgl_test_run','performance_2k_4k'):
+                      assert evidence.get(key), f'native readiness claim lacks {key}: {e["key"]}'
+              if e['gold_visual_approved']:
+                  assert e['native_port_ready'] and e['evidence'].get('gold_original_video'), 'fake visual Gold approval'
+              if e['production_integrated']:
+                  assert e['native_port_ready'] and e['gameplay_configured'], 'production integration without native+user config'
+              if e['gameplay_configured']:
+                  g=e['gameplay_rules']
+                  assert isinstance(g,dict) and all(v is not None for v in g.values()), 'user gameplay configuration remains incomplete'
+          for key,val in summary.items():
+              assert manifest['readiness_totals'][key]==val, f'summary drift: {key}'
+          assert manifest['immutable_source_archives']['venomwright']['sha256']=='ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716'
+          assert manifest['immutable_source_archives']['arcana_iii']['sha256']=='8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d'
+          report={'scope':93,'venomwright':21,'arcana_iii':72,'summary':dict(summary),'status':'INVENTORY_PASS_NOT_NATIVE_93_ACCEPTANCE'}
+          Path('.artifacts/gold93/inventory-check.json').write_text(json.dumps(report,indent=2)+'\n')
+          print('GOLD93_INVENTORY: PASS / 93 exactly / 21 venom + 72 arcana / native ready',summary['native_port_ready'])
+          PY
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project and new native catalog
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 160s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then exit 1; fi
+      - name: Native cast context and catalog correctness
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 | tee /tmp/gold93-native.log
+          grep -F 'GOLD93_READINESS_API: PASS / 93 distinct catalog IDs' /tmp/gold93-native.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-native.log; then exit 1; fi
+      - name: Upload machine-readable scoped inventory and Godot logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold93-readiness-inventory-contract-NOT-full-skills
+          path: |
+            .artifacts/gold93/*.json
+            /tmp/gold93-import.log
+            /tmp/gold93-native.log
+          if-no-files-found: warn
+          retention-days: 14
