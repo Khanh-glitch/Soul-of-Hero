@@ -74,11 +74,26 @@ func _run() -> void:
 	SaveService.call(&"configure_storage", save_path, true)
 	_app_root = APP_ROOT_SCENE.instantiate()
 	add_child(_app_root)
-	await get_tree().process_frame
+	# Let AppRoot finish booting before touching a route. Open the Marches while
+	# its boot coroutine is mid-flight and that coroutine sees a foreign route
+	# left over, records boot_state=failed and pushes "Home scene loaded, but
+	# AppFlow did not open the startup profile choice" - a real startup error in
+	# the evidence log, and the app is only pretending it booted. (Same guard as
+	# tools/captures/crucible_capture.gd, which learned this the hard way.)
+	var boot_state := "unknown"
+	for _attempt: int in range(360):
+		boot_state = String(_app_root.get("_boot_state"))
+		if boot_state == "complete" or boot_state == "failed":
+			break
+		await get_tree().process_frame
+	print("OVERWORLD CAPTURE boot_state=%s" % boot_state)
+	if boot_state != "complete":
+		push_error("OVERWORLD CAPTURE FAIL: app boot did not complete (%s)" % boot_state)
+		get_tree().quit(1)
+		return
 
-	# Straight to the Marches. Going via Home here fired the Home screen's own
-	# "AppFlow did not open the startup profile choice" error, and the Home ->
-	# Marches entry is the acceptance test's job, not the photographer's.
+	# Straight to the Marches. The Home -> Marches entry button is the acceptance
+	# test's job, not the photographer's.
 	AppFlow.call(&"open_overworld", {})
 	var ow := await _await_world(40.0)
 	if ow == null:
