@@ -1,0 +1,42 @@
+name: Venom Gold original all 11 particle shapes Ultra source visual parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_glassfang_source_particles.gd'
+      - 'prototypes/gold_pair/tests/venom_all11_particles_source_oracle.gd'
+      - '.github/workflows/venom-gold-all11-particles-ultra.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  all11-original-source-ultra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 22
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native source import strict parser
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-all11-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-all11-import.log; then exit 1; fi
+      - name: Compare 11 source FX particle shapes x three source ages all 1200x680 pixel buffers
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 130s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_all11_particles_source_oracle.gd 2>&1 | tee /tmp/venom-all11.log
+          grep -F 'VENOM_ALL11_PARTICLES: PASS / 11 original Gold source particle kinds' /tmp/venom-all11.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-all11.log; then exit 1; fi
+      - name: Guard source original Glassfang four-kind 6 pixel frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 100s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_particles_source_oracle.gd 2>&1 | tee /tmp/venom-original4.log
+          grep -F 'VENOM_GLASSFANG_PARTS: PASS / 6' /tmp/venom-original4.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-original4.log; then exit 1; fi
