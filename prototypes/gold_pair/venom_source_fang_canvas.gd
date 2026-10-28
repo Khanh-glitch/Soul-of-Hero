@@ -60,6 +60,16 @@ func render_source_frame(source_time:float,head_x:float,head_y:float,
     fang.open=mandible_open
     fang.scale=body_scale
     fang.update_chain()
+    return render_live_actor_frame(fang,source_time)
+
+## The motion driver already advanced source Chain at 60 Hz. Do NOT move it
+## again at render rate: doing so destroys exact source 8-segment dynamics.
+func render_live_actor_frame(source_fang:VenomSourceFang,source_time:float)->Dictionary:
+    _ensure_layers()
+    if source_fang==null:
+        release_source_actor()
+        return {}
+    fang=source_fang
     var outputs:Dictionary={}
     for key in PASSES:
         var rgba:PackedByteArray=fang.render_pass(key,source_time)
@@ -70,6 +80,7 @@ func render_source_frame(source_time:float,head_x:float,head_y:float,
         var tex:ImageTexture=textures[key]
         im.set_data(W,H,false,Image.FORMAT_RGBA8,rgba)
         tex.update(im)
+        sprites[key].visible=true
         outputs[key]=rgba
     return outputs
 
