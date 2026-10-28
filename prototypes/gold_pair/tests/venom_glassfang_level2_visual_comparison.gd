@@ -191,7 +191,9 @@ func _capture_campaign_state(game:Node2D)->void:
                 var canvas_pos:Vector2=enemy.get_global_transform_with_canvas().origin
                 var screen_center:Vector2i=Vector2i(roundi(canvas_pos.x),roundi(canvas_pos.y))
                 var roi:=Rect2i(screen_center-Vector2i(180,125),Vector2i(360,250))
-                var measured:float=contrast.sample_roi(shot,roi,5)
+                # Baseline has no source Gold FX. Never sample glow/flash
+                # from shot: doing so would make Gold itself trigger dimming.
+                var measured:float=contrast.sample_roi(baseline,roi,5)
                 var auto_strength:float=contrast.request_for_luminance(measured,true)
                 contrast.set_strength(auto_strength)
                 await get_tree().process_frame
