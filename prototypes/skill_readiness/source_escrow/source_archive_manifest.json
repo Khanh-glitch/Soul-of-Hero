@@ -1,0 +1,23 @@
+{
+  "scheme": "RFC8439_ChaCha20_256bit_key_96bit_nonce_counter_1",
+  "key_env": "GOLD93_ARCHIVE_KEY",
+  "public_repo_policy": "Encrypted ZIP escrow only; never commit plaintext source or secret key",
+  "archives": [
+    {
+      "family": "arcana_iii",
+      "encrypted_path": "ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip.chacha20",
+      "original_filename": "ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip",
+      "size": 185751,
+      "sha256": "8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d",
+      "nonce_hex": "4f59c1edab9aee89cefe33c4"
+    },
+    {
+      "family": "venomwright",
+      "encrypted_path": "venomwright-combat-vfx-design (4).zip.chacha20",
+      "original_filename": "venomwright-combat-vfx-design (4).zip",
+      "size": 489345,
+      "sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
+      "nonce_hex": "3ef94bc275040c5302b0c684"
+    }
+  ]
+}
