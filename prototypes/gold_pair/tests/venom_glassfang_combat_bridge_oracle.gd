@@ -65,8 +65,8 @@ func _initialize()->void:
     if target.health!=expected_health:
         _fail("real CombatDamage HP result differs from original cue ledger")
         return
-    if int(outcome["consumed_bite_cues"])!=5 or
-            int(outcome["consumed_world_cues"])!=runtime.cues.size():
+    if (int(outcome["consumed_bite_cues"])!=5
+            or int(outcome["consumed_world_cues"])!=runtime.cues.size()):
         _fail("bridge did not consume all real original source cues")
         return
     # Despawned targets must be rejected rather than deferred or replayed.
