@@ -4,6 +4,7 @@ on:
     branches: [feature/gold-venom-arcana-factory-20261028]
     paths:
       - 'prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.*'
+      - 'prototypes/gold_pair/venom_combat_readability.gd'
       - '.github/workflows/venom-gold-glassfang-level2-comparison.yml'
   workflow_dispatch:
 permissions:
@@ -60,6 +61,9 @@ jobs:
           test -s real-map/.artifacts/venom_level2_compare/comparison_manifest.json
           for tick in 006 015 031 063 096 147 177 220 330; do
             test -s "real-map/.artifacts/venom_level2_compare/level2_glassfang_partial_gold_tick_${tick}.png"
+          done
+          for tick in 015 147 177; do
+            test -s "real-map/.artifacts/venom_level2_compare/level2_glassfang_auto_contrast_gold_tick_${tick}.png"
           done
           if grep -E 'SCRIPT ERROR:|Parse Error:|CHAPTER 1 CAMPAIGN CAPTURE TEST FAILED|Shader compilation failed|GLASSFANG_COMPARE.*FAIL' /tmp/venom-l2-compare.log; then exit 1; fi
           git -C real-map diff --exit-code HEAD -- game/ data/ assets/ project.godot
