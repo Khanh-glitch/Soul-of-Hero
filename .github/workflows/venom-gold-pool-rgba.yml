@@ -8,6 +8,7 @@ on:
       - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
       - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
       - 'prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_source_light_oracle.gd'
       - '.github/workflows/venom-gold-pool-rgba.yml'
   workflow_dispatch:
 permissions:
@@ -36,3 +37,10 @@ jobs:
           timeout 120s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd 2>&1 | tee /tmp/pool-rgba.log
           grep -F 'VENOM_POOL_COLOR: PASS / 2 original noise tiles / 10 whole RGBA Gold hashes' /tmp/pool-rgba.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-rgba.log; then exit 1; fi
+      - name: Verify separate original Pool.lit light layer RGBA SHA256
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_light_oracle.gd 2>&1 | tee /tmp/pool-light.log
+          grep -F 'VENOM_POOL_LIGHT: PASS / 10' /tmp/pool-light.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-light.log; then exit 1; fi
