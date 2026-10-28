@@ -35,8 +35,8 @@ static func _shade_ramp(col:int,k:float)->int:
     var g:float=float((col>>8)&255)
     var b:float=float(col&255)
     var warm:bool=r>b+20.0
-    var shadow:Array[float]=[58.0,10.0,52.0] if warm else [18.0,22.0,68.0]
-    var mid:Array[float]=[minf(255.0,r*0.9+30.0),g*0.42,minf(255.0,b*0.7+55.0)] if warm else [
+    var shadow:Array=[58.0,10.0,52.0] if warm else [18.0,22.0,68.0]
+    var mid:Array=[minf(255.0,r*0.9+30.0),g*0.42,minf(255.0,b*0.7+55.0)] if warm else [
         r*0.45,g*0.72,minf(255.0,b*0.95+35.0)]
     if k<0.5:
         var t:float=k*2.0
@@ -50,7 +50,7 @@ static func _hi_ramp(col:int,k:float)->int:
     var g:float=float((col>>8)&255)
     var b:float=float(col&255)
     var warm:bool=r>=b
-    var hi:Array[float]=[255.0,248.0,215.0] if warm else [225.0,250.0,255.0]
+    var hi:Array=[255.0,248.0,215.0] if warm else [225.0,250.0,255.0]
     return _pack(lerpf(r,hi[0],k),lerpf(g,hi[1],k),lerpf(b,hi[2],k))
 
 static func _entry(layer:String,shape:String,points:PackedInt32Array,col:int,alpha:float)->String:
