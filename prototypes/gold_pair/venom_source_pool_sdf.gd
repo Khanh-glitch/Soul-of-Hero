@@ -7,8 +7,9 @@ extends RefCounted
 ## Shader/caustic shade(), pool ticks/boil and real map projection remain open.
 const RNG=preload("res://prototypes/gold_pair/gold_mulberry32_rng.gd")
 const DECAL=preload("res://prototypes/gold_pair/venom_source_decal.gd")
-const W:int=600
-const H:int=340
+var W:int=600
+var H:int=340
+var source_density:int=1
 const TAU:float=PI*2.0
 var field:PackedFloat32Array
 var blobs:Array[Dictionary]=[]
@@ -24,7 +25,10 @@ var y0:int=1000000000
 var x1:int=-1
 var y1:int=-1
 
-func _init()->void:
+func _init(density:int=1)->void:
+    source_density=density
+    W=600*density
+    H=340*density
     field=PackedFloat32Array()
     field.resize(W*H)
 
@@ -63,17 +67,20 @@ func _box(a:float,b:float,c:float,d:float)->bool:
     return true
 
 func _disc(cx:float,cy:float,r:float,goo:float)->void:
-    if r<=0.0:return
-    if not _box(cx-r-1.0,cy-r-1.0,cx+r+1.0,cy+r+1.0):return
-    var ax:int=maxi(2,int(floor(cx-r-1.0)))
-    var bx:int=mini(W-3,int(ceil(cx+r+1.0)))
-    var ay:int=maxi(2,int(floor(cy-r-1.0)))
-    var by:int=mini(H-3,int(ceil(cy+r+1.0)))
+    var gcx:float=cx*float(source_density)
+    var gcy:float=cy*float(source_density)
+    var gr:float=r*float(source_density)
+    if gr<=0.0:return
+    if not _box(gcx-gr-1.0,gcy-gr-1.0,gcx+gr+1.0,gcy+gr+1.0):return
+    var ax:int=maxi(2,int(floor(gcx-gr-1.0)))
+    var bx:int=mini(W-3,int(ceil(gcx+gr+1.0)))
+    var ay:int=maxi(2,int(floor(gcy-gr-1.0)))
+    var by:int=mini(H-3,int(ceil(gcy+gr+1.0)))
     for iy in range(ay,by+1):
         for ix in range(ax,bx+1):
-            var dx:float=float(ix)+0.5-cx
-            var dy:float=float(iy)+0.5-cy
-            var v:float=r-sqrt(dx*dx+dy*dy)+0.5
+            var dx:float=float(ix)+0.5-gcx
+            var dy:float=float(iy)+0.5-gcy
+            var v:float=gr-sqrt(dx*dx+dy*dy)+0.5
             if v<=0.0:continue
             var idx:int=iy*W+ix
             var old:float=field[idx]
