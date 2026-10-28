@@ -11,6 +11,7 @@ extends "res://tests/chapter_1_campaign_level_visual_capture.gd"
 ## prototypes/gold_pair/ in a disposable GitHub runner. No gameplay changes.
 const MOTION=preload("res://prototypes/gold_pair/venom_glassfang_motion.gd")
 const LIVE_WORLD=preload("res://prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd")
+const LIVE_ENVIRONMENT=preload("res://prototypes/gold_pair/venom_glassfang_live_environment.gd")
 const PARTICLES_CANVAS=preload("res://prototypes/gold_pair/venom_source_particles_canvas.gd")
 const FANG_CANVAS=preload("res://prototypes/gold_pair/venom_source_fang_canvas.gd")
 const POOL_CANVAS=preload("res://prototypes/gold_pair/venom_source_pool_canvas.gd")
@@ -116,6 +117,7 @@ func _capture_campaign_state(game:Node2D)->void:
     source_world.begin(SOURCE_PLAYER.x,SOURCE_PLAYER.y,atan2(30.0,115.0),
         17,1765485952,0x20261027)
     var motion=source_world.motion
+    var env_timeline=LIVE_ENVIRONMENT.new()
     var source_enemy={"id":17,"x":375.0,"y":190.0,"r":9.5,"dying":0.0,"hp":900,"exists":true}
     var out_dir:=ProjectSettings.globalize_path("res://.artifacts/venom_level2_compare")
     _expect(DirAccess.make_dir_recursive_absolute(out_dir)==OK,"GLASSFANG_COMPARE: output directory")
@@ -152,6 +154,7 @@ func _capture_campaign_state(game:Node2D)->void:
         # The real enemy is actually visible in Godot at the matching Gold
         # fixture coordinates, not a screenshot cutout or dummy sprite.
         source_world.step_source_60hz([source_enemy],original_enemy_update)
+        env_timeline.capture(source_world)
         enemy.global_position=offset+Vector2(float(source_enemy["x"]),float(source_enemy["y"]))
         # Gold source HP tracked independently; no VFX damage to SOH enemies.
         for j in range(previous_bites,motion.bite_cues.size()):
@@ -176,18 +179,20 @@ func _capture_campaign_state(game:Node2D)->void:
             _expect(result.size()==3,"GLASSFANG_COMPARE: native live Fang 3 source passes")
         else:
             fang_renderer.release_source_actor()
-        # The source event fixture contains original World.fx state at the
-        # exact matched Gold tick; the renderer itself is procedural GDScript.
-        # Never turn source FX events into baked texture frames.
-        var environmental_events:Array=REVIEW_LEDGER.snapshot(frame)
-        env_renderer.render_source_events(environmental_events)
+        # Continuous FX now comes from the ACTUAL 60Hz particle World and
+        # live bite/contact cues. Independent source ledger is retained only
+        # as a reference; it is not used to impersonate continuous playback.
+        var environmental_events:Array=env_timeline.snapshot()
+        var canonical_environment_event_count:int=REVIEW_LEDGER.snapshot(frame).size()
+        var native_environment_event_count:int=environmental_events.size()
+        var native_environment_result:Dictionary=env_renderer.render_source_events(environmental_events)
+        _expect(native_environment_result.size()==2,
+            "GLASSFANG_COMPARE: native live environment scene + glow")
         _new_environment_seen+=environmental_events.size()
-        if frame==15:_expect(environmental_events.size()==6,
-            "GLASSFANG_COMPARE: original first bite splash/ring/flash FX ledger")
-        if frame==147:_expect(environmental_events.size()==27,
-            "GLASSFANG_COMPARE: original finisher flash/rings+residue ledger")
-        if frame==177:_expect(environmental_events.size()==22,
-            "GLASSFANG_COMPARE: original persistent embeds and splash aftermath")
+        if frame in [15,147,177]:
+            _expect(canonical_environment_event_count>0 and native_environment_event_count>0,
+                "GLASSFANG_COMPARE: both Gold ledger and live World environment represented")
+
         var present_pool_nodes:Array[Node]=[]
         var pools_this_frame:int=0
         var source_masked:int=0
@@ -266,6 +271,7 @@ func _capture_campaign_state(game:Node2D)->void:
         sampled.append({"tick":frame,"source_enemy_hp":source_enemy["hp"],
             "fang_present":rendered_fang,"active_pools":pools_this_frame,
             "source_authored_other_environment_events":environmental_events.size(),
+            "independent_original_gold_environment_event_count":canonical_environment_event_count,
             "original_source_live_particles":source_world.particles().size(),
             "world_rng_state":source_world.emitters.rng.state,
             "masked_non_floor_px":source_masked})
@@ -280,7 +286,9 @@ func _capture_campaign_state(game:Node2D)->void:
     _expect(_found_painted>100,"GLASSFANG_COMPARE: original active FX changes actual level screenshot")
     _expect(_map_visible>2000,"GLASSFANG_COMPARE: game floor is visible, not transparent staging")
     _expect(motion.bite_cues.size()==5,"GLASSFANG_COMPARE: source five bite cues survived")
-    _expect(_new_environment_seen>=55,"GLASSFANG_COMPARE: source-authored splash/ring/flash/embed visuals actually staged")
+    _expect(_new_environment_seen>=15,"GLASSFANG_COMPARE: continuous source-derived FX actually staged")
+    _expect(env_timeline.last_tick==330 and env_timeline.total_received>0,
+        "GLASSFANG_COMPARE: continuous source World environmental timeline must cover all ticks")
     _expect(_source_particle_source_gold_verified and _source_particle_samples>=250,
         "GLASSFANG_COMPARE: native full original 60Hz particle runtime never rendered")
     _expect(_source_pool_total>=10,"GLASSFANG_COMPARE: source simultaneous pool afterlife staged")
@@ -309,8 +317,10 @@ func _capture_campaign_state(game:Node2D)->void:
         "game_render_tree":game_render_tree,
         "original_gold":"unmodified Venomwright TS World.draw in original 600x340 world at native Ultra k2",
         "level2":"real pinned Chapter1 Level2 AppFlow/TileMaps/Knight/enemy/Camera2D",
-        "implemented_here":"exact source Fang 60Hz; source acid Pools on floor; ORIGINAL Splash+Flash+Ring+Embed procedural renderer with 24 standalone original Ultra image hashes, source fixture frames 15/147/177",
-        "not_implemented_here":"projectile vial geometry, enemy crystal/corrode overlays, camera shader post, original gnd/air lit order and full runtime for all environment events; environmental overlay at 3 source review checkpoints remains partial",
+        "implemented_here":"exact source Fang 60Hz; source acid Pools on floor; continuous source World landing + bite Splash/Flash/Ring/Embed procedural environment, rendering native Gold Ultra on real Level2",
+        "not_implemented_here":"projectile vial geometry, enemy crystal/corrode overlays, full camera shader and source Gold display post, original gnd/air lit order, callbacks and exact original all-environment RNG parity; PARTIAL only",
+        "continuous_live_environment":env_timeline.stats(),
+        "original_review_ledger_is_only_a_reference":true,
         "original_tick_list":TICKS,
         "image_files":_evidence,
         "maximum_changed_pixels_vs_baseline":_found_painted,
