@@ -22,6 +22,8 @@ var target: Dictionary = {}
 var enemies: Array = []
 var frame: int = 0
 var bite_cues: Array[Dictionary] = []
+var new_fx_cues: Array[Dictionary] = []
+var all_fx_cues: Array[Dictionary] = []
 var phase: String = "new"
 var wait: float = 0.0
 var done: bool = false
@@ -53,8 +55,36 @@ func begin(px: float, py: float, cast_angle: float, target_id: int, original_cas
     wait=0.0
     cycle=0
     bite_cues.clear()
+    new_fx_cues.clear()
+    all_fx_cues.clear()
     phase="init"
     done=false
+
+## Original SOURCE fx events, separate from authoritative CombatDamage cues.
+## This is live skill generator state, never a baked particle position track.
+func _cue(kind:String,params:Dictionary)->void:
+    var event:Dictionary=params.duplicate(true)
+    event["kind"]=kind
+    event["frame"]=frame
+    all_fx_cues.append(event)
+    new_fx_cues.append(event)
+
+func _emit_shards(x:float,y:float,num:int,sp:float,c1:int,c2:int,c3:int,
+        opts:Dictionary={})->void:
+    var args:Dictionary=opts.duplicate(true)
+    args.merge({"x":x,"y":y,"n":num,"sp":sp,"c1":c1,"c2":c2,"c3":c3})
+    _cue("shards",args)
+
+func _emit_drops(x:float,y:float,num:int,sp:float,c1:int,c2:int,c3:int,
+        opts:Dictionary={})->void:
+    var args:Dictionary=opts.duplicate(true)
+    args.merge({"x":x,"y":y,"n":num,"sp":sp,"c1":c1,"c2":c2,"c3":c3})
+    _cue("drops",args)
+
+func _trail_fx(x:float,y:float)->void:
+    _cue("trail",{"x":x,"y":y,"radius":4.0,"life":0.9})
+    _emit_shards(x,y,3,40.0,4288723026,4285627686,4294768596,
+        {"z":3.0,"size":[2.0,3.0],"land":1})
 
 func _find_id(id: int) -> Dictionary:
     for e in enemies:
@@ -99,6 +129,7 @@ func _enter_leap(dest:Dictionary,secs:float,arc_height:float,next:String)->void:
     seq_x0=fang.x
     seq_y0=fang.y
     seq_z0=fang.z
+    _trail_fx(seq_x0,seq_y0)
     seq_x1=float(dest["x"])
     seq_y1=float(dest["y"])
     seq_arc=arc_height
@@ -113,6 +144,13 @@ func _emit_bite(pct:int,finisher:bool)->void:
         "kind":"bite","final":finisher,"contact_x":px,"contact_y":py,
         "knock":160 if finisher else 80,"stagger":0.3
     })
+    # Source w.hit(...kind='bite') emits three contact crystal shards FIRST,
+    # then the authored s1.ts bite() emits seven larger shards.
+    _emit_shards(px,py,3,60.0,4293648526,4288723026,4294768596,
+        {"z":float(target["r"])*0.7,"ang":ang,"spread":2.0,
+         "size":[2.0,3.0]})
+    _emit_shards(px,py,7,80.0,4293648526,4285627686,4294768596,
+        {"z":6.0,"ang":ang,"spread":2.8,"size":[2.0,5.0],"land":3})
 
 func _advance()->float:
     # Equivalent to one generator.next(): all non-yield phase transitions
@@ -134,12 +172,22 @@ func _advance()->float:
                 seq_x0=_lerp(hx,tx,0.55)
                 seq_y0=_lerp(hy,ty,0.55)
                 seq_ang=spawn_ang
+                _cue("vial",{"x0":hx,"y0":hy,"x1":seq_x0,
+                    "y1":seq_y0,"duration":0.08,"arc":4.0,"spin":22.0})
                 phase="spawn"
                 return 0.08
             "spawn":
                 fang=FANG.new(seq_x0,seq_y0,seq_ang)
                 fang.z=8.0
                 fang.open=1.0
+                # Gold FX after vial arrives: shards9, drops8, then trail
+                # and the first Fang leap; source world RNG order matters.
+                _emit_shards(seq_x0,seq_y0,9,80.0,
+                    4288723026,4285627686,4294768596,
+                    {"z":8.0,"size":[2.0,4.0],"land":3})
+                _emit_drops(seq_x0,seq_y0,8,60.0,
+                    4281395878,4288741358,4282871578,
+                    {"z":8.0,"glow":2.0})
                 if not target.is_empty():
                     _enter_leap(_contact(target),0.10,10.0,"bite_loop")
                 else:
@@ -154,8 +202,13 @@ func _advance()->float:
                     fang.z=_lerp(seq_z0,0.0,k)+4.0*seq_arc*k*(1.0-k)
                     fang.heading=atan2(seq_y1-seq_y0,seq_x1-seq_x0)
                     fang.open=1.0 if k>0.55 else 0.4
+                    if (seq_i-1)%3==0:
+                        _emit_shards(fang.x,fang.y,1,20.0,
+                            4288723026,4285627686,4294768596,
+                            {"z":fang.z,"size":[2.0,3.0],"land":1})
                     return F
                 fang.z=0.0
+                _trail_fx(seq_x1,seq_y1)
                 phase=next_phase
                 continue
             "bite_loop":
@@ -212,6 +265,10 @@ func _advance()->float:
                     fang.heading=theta+PI+rng.range_between(-0.1,0.1)*0.0
                     fang.open=0.3
                     fang.z=0.0
+                    if int(floor(k*12.0))%4==0:
+                        _cue("spark",{"x":fang.x,"y":fang.y,"z":2.0,
+                            "vx":0.0,"vy":0.0,"vz":10.0,"max":0.2,
+                            "c1":4284021460})
                     return F
                 _enter_leap(_contact(target),0.17,13.0,"advance_cycle")
                 continue
@@ -222,12 +279,30 @@ func _advance()->float:
             "finish":
                 if _alive(target):
                     _emit_bite(55,true)
-                # Original finale consumes 2 cast RNG draws for each of 3
-                # independent Pool offsets (angle and radius); World FX RNG
-                # is a separate stream and must not be merged.
+                _emit_shards(fang.x,fang.y,11,105.0,
+                    4288723026,4285627686,4294768596,
+                    {"z":6.0,"size":[5.0,9.0],"up":110.0,"land":2})
+                _emit_shards(fang.x,fang.y,6,70.0,
+                    4293648526,4282994200,4294967295,
+                    {"z":8.0,"size":[3.0,5.0],"up":90.0,"land":2})
+                _emit_drops(fang.x,fang.y,28,110.0,
+                    4284021460,4288741358,4281395878,
+                    {"z":8.0,"up":120.0,"glow":2.0,
+                     "size":[1.0,4.0],"max":1.6})
+                # Cast RNG, not World RNG, places three long-lived acidic
+                # aftershock pools; preserve original angle/spacing.
+                var fin_x:float=float(target["x"]) if _alive(target) else fang.x
+                var fin_y:float=float(target["y"]) if _alive(target) else fang.y
                 for j in range(3):
-                    rng.range_between(0.0,PI*2.0)
-                    rng.range_between(8.0,22.0)
+                    var an:float=rng.range_between(0.0,PI*2.0)
+                    var distance:float=rng.range_between(8.0,22.0)
+                    var px:float=fin_x+cos(an)*distance
+                    var py:float=fin_y+sin(an)*distance*0.8
+                    _cue("aftershock_pool",{"x":px,"y":py,
+                        "radius":6.5,"life":4.2,"boil":2.0,"num_blobs":3,
+                        "grow":0.3,"tick_every":0.7,
+                        "tick_amount":10,"tick_max":3,
+                        "embed_size":4+j})
                 fang=null
                 phase="end_wait"
                 return 0.6
@@ -248,6 +323,7 @@ func _advance()->float:
 
 func step_60hz(targets:Array)->void:
     frame+=1
+    new_fx_cues.clear()
     enemies=targets
     if not done:
         wait-=F
