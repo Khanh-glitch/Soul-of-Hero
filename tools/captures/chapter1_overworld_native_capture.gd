@@ -182,15 +182,41 @@ func _overview(ow: Node) -> void:
 		# method threw "Nonexistent function 'clear_current'", which aborted this
 		# whole function, skipped the overview shot and still let the capture
 		# exit 0 - the reason the missing PNG had no failure attached to it.
+	# Camera2D.zoom is a MAGNIFICATION: "Higher values are more zoomed in"
+	# (Godot 4 class reference). The camera that used to stand here had
+	# zoom = Vector2(6144/640, 4096/360) ~= (9.6, 11.4), which does not shrink
+	# 6144x4096 into the frame - it magnifies a 67x32 px (4x2 tile) patch of the
+	# crossroads by ~10x and calls it the whole Marches. The frame passed every
+	# structural check (1280x720, not blank) and showed the wrong thing, which is
+	# exactly the kind of evidence Gate E exists to reject.
+	#
+	# 1/TILE puts one tile on exactly one logical pixel: the 640x360 viewport
+	# then covers 640x360 tiles, so all 384x256 tiles fit, and because the
+	# window is 2x the base viewport each tile lands on a clean 2x2 block of
+	# device pixels. Integer scale, nearest-neighbour, no resampling blur.
+	var tiles_wide := float(ow.world.width)
+	var tiles_high := float(ow.world.height)
+	var world_px := Vector2(tiles_wide, tiles_high) * TILE
 	var overview := Camera2D.new()
 	overview.name = "OverviewCamera"
-	# 6144x4096 world into a 640x360 frame: zoom > 1 shrinks what is shown.
-	overview.zoom = Vector2(6144.0 / 640.0, 4096.0 / 360.0)
-	overview.position = Vector2(6144.0, 4096.0) * 0.5
-	overview.limit_left = 0
-	overview.limit_top = 0
-	overview.limit_right = 6144
-	overview.limit_bottom = 4096
+	overview.zoom = Vector2(1.0 / TILE, 1.0 / TILE)
+	overview.position = world_px * 0.5
+	# Limits must be off: the view is wider than the world, so the engine's
+	# clamp would shove a centred camera off the world.
+	overview.limit_left = -1000000
+	overview.limit_top = -1000000
+	overview.limit_right = 1000000
+	overview.limit_bottom = 1000000
+	var viewport_px := get_viewport().get_visible_rect().size
+	var covered := viewport_px / overview.zoom
+	print("OVERWORLD CAPTURE overview: world %.0fx%.0f tiles = %.0fx%.0f px, zoom %.4f, view covers %.0fx%.0f px (%.1f tiles), map occupies %.0f%% x %.0f%% of the frame" % [
+		tiles_wide, tiles_high, world_px.x, world_px.y, overview.zoom.x,
+		covered.x, covered.y, covered.x / TILE,
+		100.0 * world_px.x / covered.x, 100.0 * world_px.y / covered.y])
+	if world_px.x > covered.x or world_px.y > covered.y:
+		_failed.append("world_overview")
+		push_error("OVERWORLD CAPTURE: overview zoom does not fit the world (%s > %s)" % [world_px, covered])
+		return
 	world.add_child(overview)
 	overview.make_current()
 	_stamp("overview: camera current, settling")
