@@ -210,6 +210,35 @@ checks failed` (second light input accepted; hot-tuned light damage projection;
 respawn clearing stale combo state) and 20 Chapter 2 XP-queue assertions. Those
 are pre-existing defects on `main`, reproduced on `main`.
 
+## H0. Mission 2 (world art & readability) — what changed since G
+
+Three shipped pieces, all gated; the full account is
+[`MISSION_REPORT.md`](MISSION_REPORT.md).
+
+1. **Smart occlusion** (`overworld_occlusion.gd`) — props in front of the player
+   fade by role (vegetation 0.30, architecture 0.50, landmark 0.62), bucketed at
+   128 px, 2/5 px hysteresis, purely visual. The demonstration is the
+   `occlusion_off` / `occlusion_on` station pair: same camera, same tile, one flag;
+   the native run reports **2 sprites faded, gate alpha 0.62, 4.0 % of sampled
+   pixels different**.
+2. **Traversability** (`overworld_traversability.gd`) — a 0/1/2 grid read from the
+   live prop bodies plus a distance BFS. It found two real defects: two rewards
+   (`d_crucible_cove`, `d_relay_shard`) buried under tree colliders, because the
+   bake checked props by anchor tile rather than by the body they build; and a
+   fresh character spawning inside the refuge tent, because the bake validated a
+   cell that had drifted from the document's. All three are fixed and asserted.
+3. **Hybrid override pipeline** (`overrides.py`, `art_manifest.json`,
+   `source_audit.py --check`) — hand-painted frames win at bake time, deleting the
+   PNG restores the generated frame, and every pixel carries provenance.
+
+Art: L03 and L04 were repainted **after** looking at the first attempt at 5x and
+in the scene; both were worse than the generated frames. The second pass gives the
+archive coursed masonry, a recessed portal, a banner and a paved apron, and the
+reliquary four tiers with pilasters, lit ledges, a continuous stair and a burning
+monolith seam. Both were then lifted into the front-prop value band: measured
+against the plaza, delta went from -0.03 / +0.01 to **+0.068 / +0.075**.
+Before/after galleries are in `docs/overworld/evidence/overworld_gallery_*.png`.
+
 ## H. Outstanding items
 
 1. **A human should look at the native frames.** CI renders all thirteen every

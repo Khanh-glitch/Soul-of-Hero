@@ -149,3 +149,15 @@ at the existing `playtest-preview` environment, which has no such restriction.
 **Not claimed:** that the world *looks* good. That judgement is the owner's, and
 the frames it rests on are the CI artifact plus the offline renders in
 `docs/overworld/evidence/`.
+
+## Mission 2 final state (commit `5580df49`)
+
+* Overworld workflow run `40716220253`: **STATIC CONTRACTS, NATIVE RUNTIME,
+  VISUAL EVIDENCE all green** — 17 stations captured, 13 gates green, including
+  the two new ones.
+* Browser playtest run `40716220155`: **green** (export + headless-Chromium smoke
+  + publish); deployment to `playtest-preview` reports `success` for the SHA.
+* Local suite on a from-source Godot 4.7: **413 checks, 0 failures**.
+* The two repainted exteriors landed better, not just differently: native
+  `std` 0.062 → 0.074 (L03) and 0.066 → 0.076 (L04) with `flat` unchanged.
+* Full write-up, galleries and per-run numbers: `docs/overworld/MISSION_REPORT.md`.
