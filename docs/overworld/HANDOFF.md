@@ -11,8 +11,8 @@ from a green exit code.
 | Item | Value |
 | --- | --- |
 | Branch | `arena/54306b59-soul-of-hero` (only branch written to; `main` untouched) |
-| HEAD | `a9a3d1d6` (this document) on top of `c8dfd4ef59562790a05cce3023ca4b100a42bda1` |
-| Verified code state | `c8dfd4ef` — run `40686549192`, all three jobs green. The overworld workflow is path-filtered, so a docs-only push does not re-run it |
+| HEAD | tip of `arena/54306b59-soul-of-hero` (this document); the last content commit is `c8dfd4ef` |
+| Verified code state | `c8dfd4ef59562790a05cce3023ca4b100a42bda1` — run `40686549192`, all three jobs green. Everything after it is documentation, and the overworld workflow is path-filtered, so a docs-only push does not re-run it |
 | Base | `5214788933b1a827f3a177d11ff486433dfe5e8a` (`main`) |
 | Engine | Godot `4.7.stable.custom_build`, built from source in-sandbox (scons 4.11.1 + local `pkg-config` shim) |
 
