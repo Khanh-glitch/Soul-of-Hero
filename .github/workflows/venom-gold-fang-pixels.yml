@@ -37,10 +37,10 @@ jobs:
           timeout 115s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_source_pixel_oracle.gd 2>&1 | tee /tmp/venom-fang-pixels.log
           grep -F 'VENOM_FANG_PIXEL: PASS / 18' /tmp/venom-fang-pixels.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-fang-pixels.log; then exit 1; fi
-      - name: Verify source Fang RGBA three-pass native Canvas adapter
+      - name: Verify source Fang RGBA three-pass GPU texture readback under Xvfb OpenGL
         shell: bash
         run: |
           set -euo pipefail
-          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_canvas_smoke.gd 2>&1 | tee /tmp/venom-fang-canvas.log
+          timeout 130s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_fang_canvas_smoke.gd 2>&1 | tee /tmp/venom-fang-canvas.log
           grep -F 'VENOM_FANG_CANVAS: PASS' /tmp/venom-fang-canvas.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-fang-canvas.log; then exit 1; fi
