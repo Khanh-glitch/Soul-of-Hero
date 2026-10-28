@@ -246,8 +246,22 @@ func _capture_campaign_state(game:Node2D)->void:
         "GLASSFANG_COMPARE: no authored tile mutation")
     _expect(stage.is_inside_tree() and camera.is_current(),
         "GLASSFANG_COMPARE: actual Level2 Camera2D used")
+    var level_render_tree:Array=[]
+    for child in level.get_children():
+        if child is CanvasItem:
+            var item:CanvasItem=child
+            level_render_tree.append({"name":child.name,"type":child.get_class(),
+                "visible":item.visible,"z_index":item.z_index,
+                "modulate":[item.modulate.r,item.modulate.g,item.modulate.b]})
+        else:
+            level_render_tree.append({"name":child.name,"type":child.get_class()})
+    var game_render_tree:Array=[]
+    for child in game.get_children():
+        game_render_tree.append({"name":child.name,"type":child.get_class()})
     var evidence:Dictionary={
         "status":"PARTIAL SOURCE COMPONENT REVIEW, NEVER A FULL SKILL APPROVAL",
+        "level_render_tree":level_render_tree,
+        "game_render_tree":game_render_tree,
         "original_gold":"unmodified Venomwright TS World.draw in original 600x340 world at native Ultra k2",
         "level2":"real pinned Chapter1 Level2 AppFlow/TileMaps/Knight/enemy/Camera2D",
         "implemented_here":"exact source Fang 60Hz; source acid Pools on floor; ORIGINAL Splash+Flash+Ring+Embed procedural renderer with 24 standalone original Ultra image hashes, source fixture frames 15/147/177",
