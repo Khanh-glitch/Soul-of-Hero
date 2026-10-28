@@ -1,0 +1,35 @@
+name: Venom Glassfang real Gold Ultra airborne particle source parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_glassfang_source_particles.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_particles_source_oracle.gd'
+      - '.github/workflows/venom-gold-glassfang-particles.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-source-ultra-particles:
+    runs-on: ubuntu-latest
+    timeout-minutes: 19
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Source GDScript import and parser check
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-particles-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-particles-import.log; then exit 1; fi
+      - name: Verify native source four particle types exact Gold 1200x680 RGBA checksums
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 100s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_particles_source_oracle.gd 2>&1 | tee /tmp/venom-particles.log
+          grep -F 'VENOM_GLASSFANG_PARTS: PASS / 6 exact original Gold Ultra' /tmp/venom-particles.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-particles.log; then exit 1; fi
