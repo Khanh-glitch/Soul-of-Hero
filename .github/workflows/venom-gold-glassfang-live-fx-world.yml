@@ -1,0 +1,39 @@
+name: Venom Glassfang live original Gold full 330 tick World particle parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_glassfang_motion.gd'
+      - 'prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd'
+      - 'prototypes/gold_pair/venom_source_particle_emitters.gd'
+      - 'prototypes/gold_pair/venom_source_particles_world.gd'
+      - 'prototypes/gold_pair/venom_source_pool_lifecycle.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_live_fx_world_oracle.gd'
+      - '.github/workflows/venom-gold-glassfang-live-fx-world.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  original-dynamic-world:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Godot source import strict GDScript compiler
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/glassfang-world-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-world-import.log; then exit 1; fi
+      - name: Verify continuous full source World 330 ticks and nine unmodified Gold particle/RNG checkpoints
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 110s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_live_fx_world_oracle.gd 2>&1 | tee /tmp/glassfang-world.log
+          grep -F 'VENOM_GLASSFANG_LIVE_FX_WORLD: PASS / original TS 330-frame' /tmp/glassfang-world.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/glassfang-world.log; then exit 1; fi
