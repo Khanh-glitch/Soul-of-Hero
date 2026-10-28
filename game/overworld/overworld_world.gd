@@ -76,8 +76,6 @@ var _shortcut_carve: Dictionary = {}
 ## the terrain exactly rather than guessing at a replacement.
 var _carve_memory: Dictionary = {}       # shortcut id -> {Vector2i: String}
 
-static var _meta_cache: Dictionary = {}
-
 
 func build(world_data: Dictionary, layers_path: String, props_path: String,
 		props_parent: Node2D = null) -> bool:
@@ -463,6 +461,11 @@ func count_solid_cells() -> int:
 
 
 func _load_meta(path: String) -> Dictionary:
+	# Read straight from disk: these are build-time JSON documents, and Godot
+	# would otherwise import them as resources and hand back a Variant tree with
+	# the same shape. A static cache used to sit here; it was never read, and a
+	# static Dictionary is exactly the sort of thing that survives a world
+	# teardown and shows up as "resources still in use at exit".
 	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		return {}

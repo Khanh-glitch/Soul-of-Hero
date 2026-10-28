@@ -220,7 +220,12 @@ func _shoot(station: String) -> void:
 		_failed.append(station)
 		push_error("OVERWORLD CAPTURE: could not write %s (%d)" % [output, result])
 		return
-	print("OVERWORLD PNG %s" % output)
+	var bytes := 0
+	var written_file := FileAccess.open(output, FileAccess.READ)
+	if written_file != null:
+		bytes = written_file.get_length()
+		written_file.close()
+	print("OVERWORLD PNG %s (%d bytes)" % [output, bytes])
 
 
 func _is_blank(image: Image) -> bool:

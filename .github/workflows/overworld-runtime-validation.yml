@@ -465,6 +465,20 @@ jobs:
           shopt -s nullglob
           echo "PNGs in artifact dir:"
           ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
+          # The file list and the capture's own station lines are the whole
+          # diagnosis when a PNG is missing; surface them as annotations so they
+          # survive a runner whose raw log is not retrievable.
+          ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 | while IFS= read -r line; do
+            safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+            echo "::notice::png ${safe}"
+          done
+          if [ -f "$ARTIFACT_DIR/overworld-capture.log" ]; then
+            grep -E "^OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" | tail -30 | \
+              while IFS= read -r line; do
+                safe=$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r//g')
+                echo "::notice::capture-line ${safe}"
+              done
+          fi
           required=(
             "overworld_world_overview.png"
             "overworld_refuge_start.png"
