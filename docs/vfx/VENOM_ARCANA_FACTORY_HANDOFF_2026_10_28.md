@@ -4,8 +4,8 @@
 Continue from VFX prototype parent abf7bdc82267a55f50fd97506c8a45592b1fe145 on this new independent branch. The original gold is IMMUTABLE; no likeness-based substitutes, static-sheet approximations, erased enemy-body FX, or omitted environmental aftermath. Do not touch main, maps, game/, data/, assets/, or project.godot while the parallel map team works. No production integration without independent PR and gameplay/visual acceptance.
 
 The user supplied and confirmed exact original archive SHA-256:
-- Venomwright: \`venomwright-combat-vfx-design (4).zip\` SHA256 \`ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716\`; original code \`src/game/skills/index.ts\`, \`s1..s4.ts\`, \`src/game/world.ts\`, \`fx.ts\`, \`pixel.ts\`, \`engine.ts\`.
-- ARCANA III: \`ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip\` SHA256 \`8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d\`; original code \`src/skills/{eclipse,dragonbone,fan,spindle,lantern,v2-independent,v2-fusion,remixes}.ts\`, \`src/engine/{core,draw,fx,post,pixtex,sprites,util}.ts\`.
+- Venomwright: `venomwright-combat-vfx-design (4).zip` SHA256 `ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716`; original code `src/game/skills/index.ts`, `s1..s4.ts`, `src/game/world.ts`, `fx.ts`, `pixel.ts`, `engine.ts`.
+- ARCANA III: `ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip` SHA256 `8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d`; original code `src/skills/{eclipse,dragonbone,fan,spindle,lantern,v2-independent,v2-fusion,remixes}.ts`, `src/engine/{core,draw,fx,post,pixtex,sprites,util}.ts`.
 
 Both uploads passed ZIP CRC and SHA-256 comparison against preexisting registry.
 
@@ -18,7 +18,7 @@ Venomwright source uses 600×340 logical world plus adaptive CPU raster, custom 
 - Venomwright: 21/21 original TypeScript World+Fx source-only headless simulations from cast through duration+2s, seed 0x20261027, fixed 60Hz, each with timeline checkpoints, actor HP/movement, RNG and event ledger. This is not a Godot pass.
 - ARCANA: 51/51 V2 developer logic/geometry check rerun; 72/72 registration-based TypeScript source skill callbacks complete a separate 30Hz *diagnostic mock-draw* timeline, ~1.94M recorded draw calls, no nonfinite coordinates. The mock has **no real PixiJS, WebGL shaders, renderer or FPS** and is not independent visual fidelity proof.
 - Both original RNG implementations (Venomwright Rng.next, ARCANA rand) were compiled/executed directly. The native Godot port here contains 80 embedded source numerical outputs, including each family’s different zero-seed policy. Separate 320-value JSON oracle is in the user’s downloadable handoff.
-- No Gold vs Godot whole-skill frame comparisons were made, no gameplay skill registered, all 93 \`integration_approved=false\`.
+- No Gold vs Godot whole-skill frame comparisons were made, no gameplay skill registered, all 93 `integration_approved=false`.
 
 ## Mandatory per-skill procedure
 1. Verify ZIP hash, original registered ID/variant, function + transitive dependencies. Quarantine source candidates lacking visual Gold acceptance.
@@ -37,10 +37,10 @@ No task can report 21/21 or 72/72 as Godot ports based on this source-only audit
 
 ## 2026-10-28 morning ICT — validated branch progress
 
-Branch head at this checkpoint: \`0ee5b326832b7d5ea92eaef0607cbd1d24bd0658\`. Two new Venomwright components under \`prototypes/gold_pair/\`:
+Branch head at this checkpoint: `0ee5b326832b7d5ea92eaef0607cbd1d24bd0658`. Two new Venomwright components under `prototypes/gold_pair/`:
 
-- \`venom_source_decal.gd\` ports the six original source \`Decal.gnd()\` procedural ground raster variants: veins, cracks, pits, crater, crescent, scorch. Original TS oracle: 6 kinds × 4 source ages = **24/24 exact SHA-256 RGBA 600×340 frames**. Source palette, seed, point counts, source visibility/fade and glow pulse raster logic included. Commit \`4df4b810283ae61d9c135792c32d574e61cc5cb3\` initially failed due incorrect Godot API \`PackedByteArray.sha256_text()\`, not a source mismatch. Fixed to \`HashingContext.HASH_SHA256\` in commit \`bb8a1b71e8e0d8da79315a5150ff0196903e6288\`; CI \`40617696557\` SUCCESS.
-- \`venom_source_decal_canvas.gd\` stages the original source RGBA output in an isolated Godot \`Sprite2D\` + \`ImageTexture\`, nearest-filtered and non-centered at the source 600×340 logical origin, with explicit source-to-map transform and NO variable-rate \`_process\` clock. \`venom_decal_canvas_smoke.gd\` checks texture dimensions, pixel hash from the original TS oracle, explicit transform, source lifetime boundary and fixed-clock policy. Commit \`0ee5b326832b7d5ea92eaef0607cbd1d24bd0658\`; CI \`40617847435\` SUCCESS (import + 24 original hashes + native staging). Shared RNG CI \`40617847557\` also completed SUCCESS.
+- `venom_source_decal.gd` ports the six original source `Decal.gnd()` procedural ground raster variants: veins, cracks, pits, crater, crescent, scorch. Original TS oracle: 6 kinds × 4 source ages = **24/24 exact SHA-256 RGBA 600×340 frames**. Source palette, seed, point counts, source visibility/fade and glow pulse raster logic included. Commit `4df4b810283ae61d9c135792c32d574e61cc5cb3` initially failed due incorrect Godot API `PackedByteArray.sha256_text()`, not a source mismatch. Fixed to `HashingContext.HASH_SHA256` in commit `bb8a1b71e8e0d8da79315a5150ff0196903e6288`; CI `40617696557` SUCCESS.
+- `venom_source_decal_canvas.gd` stages the original source RGBA output in an isolated Godot `Sprite2D` + `ImageTexture`, nearest-filtered and non-centered at the source 600×340 logical origin, with explicit source-to-map transform and NO variable-rate `_process` clock. `venom_decal_canvas_smoke.gd` checks texture dimensions, pixel hash from the original TS oracle, explicit transform, source lifetime boundary and fixed-clock policy. Commit `0ee5b326832b7d5ea92eaef0607cbd1d24bd0658`; CI `40617847435` SUCCESS (import + 24 original hashes + native staging). Shared RNG CI `40617847557` also completed SUCCESS.
 
 **No per-skill promotion**: this is only the Decal primitive and isolated texture staging. Glassfang Hunt remains incomplete: enemy/actor animation, status, contact, particles, pools, all source runtime events and full Gold-vs-Godot skill video not yet ported. ARCANA Black Sun Coronation not yet ported. No real Level2 map adapter, real GPU capture, performance/2160p, WebGL, collision/gameplay authority or production integration is approved.
 
