@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 
 from PIL import Image
@@ -38,11 +39,27 @@ def decode(layers, name):
     return out
 
 
+VARIANT_BLOCK = 3  # tiles per coarse cell; must match OverworldTiles.VARIANT_BLOCK
+
+
 def variant_index(x, y, count):
-    """Same hash as OverworldTiles.variant_index so preview == game."""
+    """Same hash as OverworldTiles.variant_index so preview == game.
+
+    The variant is picked per BLOCK x BLOCK cluster, not per tile: a per-tile
+    choice made the atlas's four stone tones a checkerboard at 2x zoom.
+    """
     if count <= 1:
         return 0
-    return abs((x * 73856093) ^ (y * 19349663)) % count
+    bx = math.floor(x / VARIANT_BLOCK)
+    by = math.floor(y / VARIANT_BLOCK)
+    jitter = abs((x * 83492791) ^ (y * 2654435761)) % 6
+    if jitter == 0:
+        bx -= 1
+    elif jitter == 1:
+        by -= 1
+    bx += 4096
+    by += 4096
+    return abs((bx * 73856093) ^ (by * 19349663)) % count
 
 
 def frame_for(meta, code_token, layer):

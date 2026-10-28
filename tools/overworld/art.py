@@ -417,14 +417,22 @@ def ground_gravel(seed):
     return img
 
 
-def ground_rock(seed):
+def ground_rock(seed, tone=1.0):
+    base = shade(C("rock"), tone)
     img = new(T, T)
-    grain(img, 0, 0, T, T, C("rock"), C("rock_hi"), C("rock_dk"), seed=seed, amount=0.18)
+    grain(img, 0, 0, T, T, base, C("rock_hi"), C("rock_dk"), seed=seed, amount=0.18)
     # flat strata: two long horizontal seams
     y0 = 3 + int(h01(seed, 1) * 9)
-    hline(img, 0, y0, T, mix(C("rock_dk"), C("rock"), 0.35))
-    hline(img, 0, y0 + 1, T, mix(C("rock_hi"), C("rock"), 0.6))
+    hline(img, 0, y0, T, mix(C("rock_dk"), base, 0.35))
+    hline(img, 0, y0 + 1, T, mix(C("rock_hi"), base, 0.6))
     speck(img, 0, 0, T, T, C("rock_dk"), 4, seed=seed + 5)
+    if h01(seed, 9) < 0.5:
+        # a seam of darker stone running out of the tile, so a rock field has
+        # direction rather than an even grain
+        sx = int(h01(seed, 10) * (T - 4)) + 1
+        for k in range(4):
+            px(img, sx + k, 4 + k, shade(base, 0.66))
+            px(img, sx + k, 5 + k, shade(base, 0.8))
     return img
 
 
@@ -446,7 +454,7 @@ def ground_mud(seed):
     return img
 
 
-def ground_flagstone(seed, *, base=None, joint=None, worn=0.0):
+def ground_flagstone(seed, *, base=None, joint=None, worn=0.0, tone=1.0):
     """Broken masonry paving: irregular brick courses with interior joints only.
 
     Three earlier passes failed at the camera's 2x zoom for the same reason:
@@ -455,8 +463,8 @@ def ground_flagstone(seed, *, base=None, joint=None, worn=0.0):
     grid. Joints are therefore drawn only *inside* the tile, and edge bricks run
     off the tile, so courses read as continuous masonry across cells.
     """
-    base = base or C("stone")
-    joint = joint or C("stone_edge")
+    base = shade(base or C("stone"), tone)
+    joint = shade(joint or C("stone_edge"), tone)
     img = new(T, T)
     rect(img, 0, 0, T, T, shade(base, 0.94 + 0.1 * h01(seed, 3)))
     row_y = -int(h01(seed, 1) * 5)
@@ -494,6 +502,41 @@ def ground_flagstone(seed, *, base=None, joint=None, worn=0.0):
     if worn > 0:
         speck(img, 0, 0, T, T, joint, int(7 * worn), seed=seed + 4)
         speck(img, 0, 0, T, T, mix(C("grass_dk"), base, 0.55), int(6 * worn), seed=seed + 6)
+    # Weathering in BLOCKS, not speckle. A plaza is read from across the screen
+    # at 2x zoom, where four variants of one stone that differ by five percent
+    # collapse into a single flat value (measured: 46-62pct of the frame in one
+    # 16-step colour bucket, before this pass). A 4x4 patch of moss, a slab that
+    # has sunk out of the course, or a paler stone set in to repair a hole is
+    # legible at that distance, and three of them per four variants means a
+    # paved region has structure instead of a tone.
+    roll = h01(seed, 31)
+    if roll < 0.45:
+        # moss and damp in a corner of the tile, worn through the joints
+        mx = int(h01(seed, 32) * (T - 7)) + 1
+        my = int(h01(seed, 33) * (T - 7)) + 1
+        w = 3 + int(h01(seed, 34) * 4)
+        h = 3 + int(h01(seed, 35) * 3)
+        for yy in range(h):
+            span = w - (1 if yy in (0, h - 1) else 0)
+            for xx in range(span):
+                if h01(seed, 36, xx, yy) < 0.82:
+                    px(img, mx + xx, my + yy, mix(C("grass_dk"), base, 0.42))
+        px(img, mx + 1, my + 1, mix(C("grass_dk"), base, 0.22))
+    elif roll < 0.75:
+        # a slab that has dropped: dark face, lit lip on the north and west
+        sx = 2 + int(h01(seed, 37) * (T - 9))
+        sy = 2 + int(h01(seed, 38) * (T - 8))
+        rect(img, sx, sy, 5, 4, shade(base, 0.62))
+        hline(img, sx, sy, 5, shade(base, 0.88))
+        vline(img, sx, sy, 4, shade(base, 0.92))
+        px(img, sx, sy + 3, shade(joint, 0.8))
+    else:
+        # a paler stone set in to repair a hole, one course deep
+        sx = 1 + int(h01(seed, 39) * (T - 8))
+        sy = 1 + int(h01(seed, 40) * (T - 6))
+        rect(img, sx, sy, 6, 4, shade(base, 1.22))
+        hline(img, sx, sy, 6, shade(base, 1.34))
+        frame_box(img, sx, sy, 6, 4, shade(base, 0.95))
     return img
 
 
@@ -886,17 +929,17 @@ GROUND_TILES = {
     "gravel2": lambda: ground_gravel(43),
     "gravel3": lambda: ground_gravel(44),
     "rock0": lambda: ground_rock(51),
-    "rock1": lambda: ground_rock(52),
-    "rock2": lambda: ground_rock(53),
-    "rock3": lambda: ground_rock(54),
+    "rock1": lambda: ground_rock(52, 0.9),
+    "rock2": lambda: ground_rock(53, 1.08),
+    "rock3": lambda: ground_rock(54, 0.95),
     "ash0": lambda: ground_ash(61),
     "ash1": lambda: ground_ash(62),
     "mud0": lambda: ground_mud(71),
     "mud1": lambda: ground_mud(72),
     "floor0": lambda: ground_flagstone(81),
-    "floor1": lambda: ground_flagstone(82, worn=0.7),
-    "floor2": lambda: ground_flagstone(83, worn=1.0),
-    "floor3": lambda: ground_flagstone(84, worn=0.4),
+    "floor1": lambda: ground_flagstone(82, worn=0.7, tone=0.92),
+    "floor2": lambda: ground_flagstone(83, worn=1.0, tone=1.08),
+    "floor3": lambda: ground_flagstone(84, worn=0.4, tone=0.96),
     "ritual0": lambda: ground_ritual(91),
     "ritual1": lambda: ground_ritual(92),
     "soul0": lambda: ground_soul(101),

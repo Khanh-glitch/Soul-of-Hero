@@ -114,7 +114,28 @@ static func cell_for(meta: Dictionary, token: String, layer_name: String) -> Vec
 
 ## Stable per-cell variant choice for ground tiles (no RNG state, so a saved
 ## screenshot and a live frame agree).
+## Side of the coarse cell that picks a ground variant, in tiles.
+##
+## The variant used to be chosen per tile. With four tones of one stone in the
+## atlas that turned a plaza into a checkerboard: every 16 px cell was its own
+## shade, and at the camera's 2x zoom the eye reads the tile grid, not the
+## weathering. The choice is now made per BLOCK x BLOCK cluster, so a tone runs
+## for a few tiles and reads as a damp patch or a paler seam instead of noise.
+const VARIANT_BLOCK := 3
+
+
 static func variant_index(x: int, y: int, count: int) -> int:
 	if count <= 1:
 		return 0
-	return abs((x * 73856093) ^ (y * 19349663)) % count
+	var bx := int(floor(float(x) / float(VARIANT_BLOCK)))
+	var by := int(floor(float(y) / float(VARIANT_BLOCK)))
+	# Ragged patch edges: one tile in six borrows a neighbouring cluster's tone,
+	# so a weathered area has a broken outline instead of a 3-tile rectangle.
+	var jitter := absi((x * 83492791) ^ (y * 2654435761)) % 6
+	if jitter == 0:
+		bx -= 1
+	elif jitter == 1:
+		by -= 1
+	bx += 4096
+	by += 4096
+	return absi((bx * 73856093) ^ (by * 19349663)) % count

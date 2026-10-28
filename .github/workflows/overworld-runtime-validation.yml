@@ -489,6 +489,8 @@ jobs:
             ls -la .artifacts/overworld/native/ 2>&1 || true
             echo "first OVERWORLD lines:"
             grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -18 || true
+            echo "frame report (native pixels, station by station):"
+            grep -E "^OVERWORLD (LOOK|MAP) " "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -240 || true
             echo "capture script/engine errors:"
             grep -nE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -10 || true
             echo "world_overview mentions:"

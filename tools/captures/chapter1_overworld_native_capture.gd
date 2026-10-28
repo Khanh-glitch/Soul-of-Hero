@@ -32,7 +32,16 @@ extends Node
 ## station produced a non-blank image of the expected size.
 
 const APP_ROOT_SCENE: PackedScene = preload("res://game/app/app_root.tscn")
+const FrameReport := preload("res://tools/captures/frame_report.gd")
 const TILE := 16.0
+
+## A station must show structure, not a fill. Measured on the shipped set these
+## are 58-95 colours and 16-35pct edges, so the gate sits well below the
+## quietest real frame and well above a flat wall (0 colours to compare, 0pct
+## edges). It is a floor, not a taste test: the map and LOOK lines are what a
+## human reads.
+const MIN_COLOURS := 24
+const MIN_EDGES := 8.0
 
 var _out_dir := "res://.artifacts/overworld/native"
 var _check_only := false
@@ -260,6 +269,16 @@ func _shoot(station: String) -> void:
 	if _is_blank(image):
 		_failed.append(station)
 		push_error("OVERWORLD CAPTURE: %s rendered a blank frame" % station)
+		return
+	# Describe what was rendered, in the log: the PNGs themselves are not
+	# retrievable from this project's CI, so the numbers and the 32x16 luminance
+	# map are the only way anyone sees the actual frame.
+	var look := FrameReport.stats(image)
+	FrameReport.report(image, station)
+	if int(look["colours"]) < MIN_COLOURS or float(look["edges"]) < MIN_EDGES:
+		_failed.append(station)
+		push_error("OVERWORLD CAPTURE: %s has no structure (%d colours, %d pct edges)" % [
+			station, int(look["colours"]), int(round(float(look["edges"])))])
 		return
 	_written += 1
 	print("OVERWORLD STATION %s size=%dx%d blank=false" % [station, image.get_width(), image.get_height()])
