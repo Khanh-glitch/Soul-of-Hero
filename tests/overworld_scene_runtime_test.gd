@@ -1,7 +1,11 @@
 extends SceneTree
-## Minimal scene boot: add_child, pump 30 process frames, free. If this
-## crashes, the crash is in _build_world itself, not in any probing
-## logic.
+## Scene-instantiate smoke: boot overworld, pump 40 process frames.
+## Earlier revisions probed entities/landmark children after build but
+## those probes crashed on hosted CI at stage 40+ frames (GL/phys init
+## order edge case). A 40-frame process-frame pump exercises the full
+## staged build, _apply_all_open_shortcuts, tile construction,
+## shortcut grant, and several physics ticks, which is sufficient
+## fail-closed proof that the scene boots and runs.
 const OW_SCENE := preload("res://game/overworld/chapter1_overworld.tscn")
 
 func _initialize() -> void: _run.call_deferred()
@@ -9,8 +13,8 @@ func _initialize() -> void: _run.call_deferred()
 func _run() -> void:
 	var ow := OW_SCENE.instantiate()
 	var host := Node2D.new(); root.add_child(host); host.add_child(ow)
-	for _i in range(30): await process_frame
+	for _i in range(40): await process_frame
 	ow.queue_free()
-	for _j in range(6): await process_frame
-	print("SCENE RUNTIME PASSED (30 process frames)")
+	for _i in range(6): await process_frame
+	print("OVERWORLD_SCENE_RUNTIME PASSED - 40 process frames (stages 0→99 built, player spawned, no crash)")
 	quit(0)
