@@ -86,12 +86,12 @@ static func _smooth(k:float)->float:
     k=clampf(k,0.0,1.0)
     return k*k*(3.0-2.0*k)
 
-func _contact(e:Dictionary)->Vector2:
+func _contact(e:Dictionary)->Dictionary:
     var a:float=atan2(fang.y-float(e["y"]),fang.x-float(e["x"]))
     var d:float=float(e["r"])+3.0
-    return Vector2(float(e["x"])+cos(a)*d,float(e["y"])+sin(a)*d)
+    return {"x":float(e["x"])+cos(a)*d,"y":float(e["y"])+sin(a)*d}
 
-func _enter_leap(dest:Vector2,secs:float,arc_height:float,next:String)->void:
+func _enter_leap(dest:Dictionary,secs:float,arc_height:float,next:String)->void:
     phase="leap"
     next_phase=next
     seq_i=0
@@ -99,8 +99,8 @@ func _enter_leap(dest:Vector2,secs:float,arc_height:float,next:String)->void:
     seq_x0=fang.x
     seq_y0=fang.y
     seq_z0=fang.z
-    seq_x1=dest.x
-    seq_y1=dest.y
+    seq_x1=float(dest["x"])
+    seq_y1=float(dest["y"])
     seq_arc=arc_height
 
 func _emit_bite(pct:int,finisher:bool)->void:
