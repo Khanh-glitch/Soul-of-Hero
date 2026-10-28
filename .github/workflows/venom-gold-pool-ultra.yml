@@ -7,6 +7,8 @@ on:
       - 'prototypes/gold_pair/venom_source_pool_shade.gd'
       - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
       - 'prototypes/gold_pair/tests/venom_pool_ultra_source_oracle.gd'
+      - 'prototypes/gold_pair/venom_source_pool_canvas.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_ultra_canvas_smoke.gd'
       - '.github/workflows/venom-gold-pool-ultra.yml'
   workflow_dispatch:
 permissions:
@@ -42,3 +44,19 @@ jobs:
           timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd 2>&1 | tee /tmp/pool-classic.log
           grep -F 'VENOM_POOL_COLOR: PASS / 2 original noise tiles / 10' /tmp/pool-classic.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-classic.log; then exit 1; fi
+      - name: Verify real original Gold Ultra k2 with native OpenGL GPU readback and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_pool_ultra_canvas_smoke.gd 2>&1 | tee /tmp/pool-ultra-gpu.log
+          grep -F 'VENOM_POOL_ULTRA_GPU: PASS / original 1200x680' /tmp/pool-ultra-gpu.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-ultra-gpu.log; then exit 1; fi
+          test -s /tmp/venom-pool-godot-original-ultra-k2.png
+      - name: Publish actual native Ultra k2 acid Pool OpenGL screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-acid-pool-original-ultra-k2
+          path: /tmp/venom-pool-godot-original-ultra-k2.png
+          if-no-files-found: warn
+          retention-days: 7
