@@ -93,6 +93,12 @@ static func run_factory(skill_id: int):
 			return func(c): return S1.make(c)
 		2:
 			return func(c): return S1.parasite(c)
+		3:
+			return func(c): return S1.leechwater(c)
+		4:
+			return func(c): return S1.bastion(c)
+		5:
+			return func(c): return S1.toad(c)
 	return null
 
 

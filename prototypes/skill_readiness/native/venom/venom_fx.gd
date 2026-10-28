@@ -550,8 +550,11 @@ class GroundDecal extends Fx:
 	var cols: Dictionary = {}
 	var pulse: float = 1.2
 
+	# `seed` is intentionally untyped: the ORIGINAL computes `new Rng(seed * 7 + 3)`
+	# with a float `seed` (e.g. `tm * 100 + c.id`) and only truncates at the very
+	# end, inside `Rng`. Truncating earlier yields a different stream.
 	func _init(px: float, py: float, kind_: String, size_: float, life_: float,
-			seed: int, cols_: Dictionary, ang: float = 0, pulse_: float = 1.2) -> void:
+			seed_, cols_: Dictionary, ang: float = 0, pulse_: float = 1.2) -> void:
 		x = px
 		y = py
 		size = size_
@@ -559,7 +562,7 @@ class GroundDecal extends Fx:
 		cols = cols_
 		pulse = pulse_
 		glowCol = cols_["c"]
-		var r = RNG.new(seed * 7 + 3)
+		var r = RNG.new(int(float(seed_) * 7 + 3))
 		if kind_ == "veins":
 			var nv: int = 4 + int(floor(size / 14))
 			for i in range(nv):
@@ -604,7 +607,7 @@ class GroundDecal extends Fx:
 		elif kind_ == "crater":
 			var a2: float = 0.0
 			while a2 < M.TAU:
-				var rr: float = size * (0.92 + M.hash_n(int(floor(a2 * 9)) + seed) * 0.12)
+				var rr: float = size * (0.92 + M.hash_n(int(floor(a2 * 9)) + seed_) * 0.12)
 				_push(cos(a2) * rr, sin(a2) * rr * 0.85 - 1, cols_["b"])
 				_push(cos(a2) * (rr + 1.4), sin(a2) * (rr + 1.4) * 0.85 - 1,
 						cols_["c"] if a2 > 3.5 and a2 < 5.6 else cols_["b"])
@@ -937,6 +940,16 @@ class Shot extends Fx:
 			if on_land != null and on_land.is_valid():
 				on_land.call(w, self)
 
+
+	## The airborne globule's own draw pass: shadow, then the authored callback
+	## `(g, x, y - z, z, shot)`. Arity-tolerant like `Proj`'s, because the
+	## original declares only the parameters it uses (here `(g, x, y, _z, s)`).
+	func air(g, _w) -> void:
+		var L = g.s
+		L.dl = 6
+		L.ellipse(x, y, 2, 1, int(M.P["bk"]))
+		L.dl = 16
+		Proj._emit(draw_fn, [g, x, y - z, z, self])
 
 # ---------------------------------------------------------------------------
 # particle emitters (original `drops` / `shards` / `chips` / `steam` / `dust`)

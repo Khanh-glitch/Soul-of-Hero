@@ -33,14 +33,34 @@
  "schema": "gold93/venomwright-oracle-index/v1",
  "skills": [
   {
-   "canonical_id": "venomwright:002",
-   "cues": 29,
-   "file": "docs/vfx/skill_readiness/oracle/venomwright_002.json",
-   "hits": 41,
-   "name": "Blooming Parasite",
-   "sampled_ticks": 77,
-   "skill": 2,
-   "ticks": 305
+   "canonical_id": "venomwright:003",
+   "cues": 52,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_003.json",
+   "hits": 43,
+   "name": "Leechwater Rush",
+   "sampled_ticks": 63,
+   "skill": 3,
+   "ticks": 235
+  },
+  {
+   "canonical_id": "venomwright:004",
+   "cues": 12,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_004.json",
+   "hits": 7,
+   "name": "Porcelain Bastion",
+   "sampled_ticks": 96,
+   "skill": 4,
+   "ticks": 400
+  },
+  {
+   "canonical_id": "venomwright:005",
+   "cues": 40,
+   "file": "docs/vfx/skill_readiness/oracle/venomwright_005.json",
+   "hits": 44,
+   "name": "Bellows Toad",
+   "sampled_ticks": 75,
+   "skill": 5,
+   "ticks": 295
   }
  ],
  "source_archive_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716"

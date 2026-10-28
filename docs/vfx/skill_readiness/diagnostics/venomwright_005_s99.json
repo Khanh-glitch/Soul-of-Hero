@@ -1,0 +1,1681 @@
+{
+ "cast_tick": 1,
+ "cues": [
+  {
+   "d": 0.1,
+   "k": "shake",
+   "m": 1,
+   "t": 0.366667
+  },
+  {
+   "d": 0.25,
+   "k": "shake",
+   "m": 3,
+   "t": 0.666667
+  },
+  {
+   "amp": 2,
+   "dur": 0.3,
+   "k": "shock",
+   "max": 40,
+   "t": 0.666667,
+   "x": 225.031,
+   "y": 215.074
+  },
+  {
+   "dur": 3,
+   "e": 14,
+   "k": "poison",
+   "src": 5,
+   "t": 0.7,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 14,
+   "k": "mark",
+   "key": "wet",
+   "t": 0.7
+  },
+  {
+   "dur": 3,
+   "e": 1,
+   "k": "poison",
+   "src": 5,
+   "t": 0.716667,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 1,
+   "k": "mark",
+   "key": "wet",
+   "t": 0.716667
+  },
+  {
+   "dur": 3,
+   "e": 1,
+   "k": "poison",
+   "src": 5,
+   "t": 0.733333,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 1,
+   "k": "mark",
+   "key": "wet",
+   "t": 0.733333
+  },
+  {
+   "dur": 3,
+   "e": 3,
+   "k": "poison",
+   "src": 5,
+   "t": 0.833333,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 3,
+   "k": "mark",
+   "key": "wet",
+   "t": 0.833333
+  },
+  {
+   "dur": 3,
+   "e": 3,
+   "k": "poison",
+   "src": 5,
+   "t": 0.85,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 3,
+   "k": "mark",
+   "key": "wet",
+   "t": 0.85
+  },
+  {
+   "dur": 0.792,
+   "e": 3,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.016667
+  },
+  {
+   "dur": 3,
+   "e": 12,
+   "k": "poison",
+   "src": 5,
+   "t": 1.266667,
+   "total": 36
+  },
+  {
+   "dur": 2,
+   "e": 12,
+   "k": "mark",
+   "key": "wet",
+   "t": 1.266667
+  },
+  {
+   "dur": 0.792,
+   "e": 3,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.383333
+  },
+  {
+   "dur": 0.792,
+   "e": 12,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.383333
+  },
+  {
+   "dur": 0.792,
+   "e": 3,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.733333
+  },
+  {
+   "dur": 0.792,
+   "e": 11,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.733333
+  },
+  {
+   "dur": 0.792,
+   "e": 12,
+   "k": "mark",
+   "key": "miasma",
+   "t": 1.733333
+  },
+  {
+   "a": 0.3,
+   "c": 4284021460,
+   "dur": 0.14,
+   "k": "flash",
+   "t": 2.05
+  },
+  {
+   "d": 0.4,
+   "k": "shake",
+   "m": 6,
+   "t": 2.05
+  },
+  {
+   "amp": 3.5,
+   "dur": 0.45,
+   "k": "shock",
+   "max": 80,
+   "t": 2.05,
+   "x": 216.583,
+   "y": 218.134
+  },
+  {
+   "dur": 0.792,
+   "e": 11,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.1
+  },
+  {
+   "dur": 0.792,
+   "e": 12,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.1
+  },
+  {
+   "dur": 0.792,
+   "e": 15,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.1
+  },
+  {
+   "dur": 0.792,
+   "e": 3,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.466667
+  },
+  {
+   "dur": 0.792,
+   "e": 5,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.466667
+  },
+  {
+   "dur": 0.792,
+   "e": 11,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.466667
+  },
+  {
+   "dur": 0.792,
+   "e": 12,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.466667
+  },
+  {
+   "dur": 0.792,
+   "e": 15,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.466667
+  },
+  {
+   "dur": 0.792,
+   "e": 3,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.816667
+  },
+  {
+   "dur": 0.792,
+   "e": 5,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.816667
+  },
+  {
+   "dur": 0.792,
+   "e": 11,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.816667
+  },
+  {
+   "dur": 0.792,
+   "e": 12,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.816667
+  },
+  {
+   "dur": 0.792,
+   "e": 15,
+   "k": "mark",
+   "key": "miasma",
+   "t": 2.816667
+  }
+ ],
+ "duration": 6,
+ "hits": [
+  {
+   "amt": 30,
+   "at": [
+    232.51589774243251,
+    219.8040784518966
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 50.72082483288733,
+   "ky": 32.05304865799134,
+   "src": 5,
+   "stag": 0.25,
+   "t": 0.7
+  },
+  {
+   "amt": 30,
+   "at": [
+    234.43602947152363,
+    213.81593884625113
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 59.47020841013764,
+   "ky": -7.955772222405221,
+   "src": 5,
+   "stag": 0.25,
+   "t": 0.716667
+  },
+  {
+   "amt": 30,
+   "at": [
+    237.3167363123635,
+    215.4098782823935
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 59.97760255080779,
+   "ky": 1.6392657677554907,
+   "src": 5,
+   "stag": 0.25,
+   "t": 0.733333
+  },
+  {
+   "amt": 30,
+   "at": [
+    255.5565184301932,
+    224.95256024851327
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 57.08523995624592,
+   "ky": 18.47364011606333,
+   "src": 5,
+   "stag": 0.25,
+   "t": 0.833333
+  },
+  {
+   "amt": 30,
+   "at": [
+    256.2584668744479,
+    220.05041925650949
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 59.25236045560471,
+   "ky": 9.442339775664259,
+   "src": 5,
+   "stag": 0.25,
+   "t": 0.85
+  },
+  {
+   "amt": 18,
+   "at": [
+    277.46968337311233,
+    227.05435719007266
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.016667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.216667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.233333
+  },
+  {
+   "amt": 30,
+   "at": [
+    301.08031420163843,
+    248.85447042725323
+   ],
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 54.83384282848204,
+   "ky": 24.35671736218426,
+   "src": 5,
+   "stag": 0.25,
+   "t": 1.266667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.35
+  },
+  {
+   "amt": 18,
+   "at": [
+    278.8788086521204,
+    226.49781264765713
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.383333
+  },
+  {
+   "amt": 18,
+   "at": [
+    316.5582863805515,
+    252.01181873992323
+   ],
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.383333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.716667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.733333
+  },
+  {
+   "amt": 18,
+   "at": [
+    274.6576428871629,
+    224.68525838445657
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.733333
+  },
+  {
+   "amt": 18,
+   "at": [
+    333.08971831653355,
+    252.50200840367057
+   ],
+   "big": false,
+   "e": 11,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.733333
+  },
+  {
+   "amt": 18,
+   "at": [
+    316.42909927160696,
+    251.81361561496155
+   ],
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 1.733333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.783333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 1.85
+  },
+  {
+   "amt": 90,
+   "at": [
+    223.71153473737937,
+    229.91742637707364
+   ],
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "burst",
+   "kx": 82.81380435013837,
+   "ky": 136.90096350667883,
+   "src": 5,
+   "stag": 0.4,
+   "t": 2.083333
+  },
+  {
+   "amt": 18,
+   "at": [
+    327.2056900167492,
+    249.984428024151
+   ],
+   "big": false,
+   "e": 11,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.1
+  },
+  {
+   "amt": 18,
+   "at": [
+    311.78393189020665,
+    249.58908135108302
+   ],
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.1
+  },
+  {
+   "amt": 18,
+   "at": [
+    318.2180611717905,
+    201.37751388879406
+   ],
+   "big": false,
+   "e": 15,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.1
+  },
+  {
+   "amt": 90,
+   "at": [
+    242.16946325618383,
+    200.26612683464776
+   ],
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "burst",
+   "kx": 131.17919323310116,
+   "ky": -91.60796506152019,
+   "src": 5,
+   "stag": 0.4,
+   "t": 2.15
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.216667
+  },
+  {
+   "amt": 90,
+   "at": [
+    260.8838552819915,
+    221.15861046231646
+   ],
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "burst",
+   "kx": 159.62835639147676,
+   "ky": 10.898983244123581,
+   "src": 5,
+   "stag": 0.4,
+   "t": 2.216667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.233333
+  },
+  {
+   "amt": 90,
+   "at": [
+    252.7266355287657,
+    182.75641227387968
+   ],
+   "big": false,
+   "e": 4,
+   "heal": 0,
+   "killed": false,
+   "kind": "burst",
+   "kx": 114.34173287086918,
+   "ky": -111.91947160385809,
+   "src": 5,
+   "stag": 0.4,
+   "t": 2.25
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.283333
+  },
+  {
+   "amt": 90,
+   "at": [
+    211.56884341645582,
+    161.56007689446184
+   ],
+   "big": false,
+   "e": 13,
+   "heal": 0,
+   "killed": false,
+   "kind": "burst",
+   "kx": -14.126804558748283,
+   "ky": -159.3751341739323,
+   "src": 5,
+   "stag": 0.4,
+   "t": 2.3
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.35
+  },
+  {
+   "amt": 18,
+   "at": [
+    334.687947826181,
+    271.78173941113107
+   ],
+   "big": false,
+   "e": 5,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.466667
+  },
+  {
+   "amt": 18,
+   "at": [
+    321.3216617169649,
+    247.4668476446314
+   ],
+   "big": false,
+   "e": 11,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.466667
+  },
+  {
+   "amt": 18,
+   "at": [
+    311.8524075500656,
+    200.71535532151483
+   ],
+   "big": false,
+   "e": 15,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.466667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.716667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.733333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.783333
+  },
+  {
+   "amt": 18,
+   "at": [
+    329.940860276331,
+    269.1799443439063
+   ],
+   "big": false,
+   "e": 5,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.816667
+  },
+  {
+   "amt": 18,
+   "at": [
+    305.9111308364557,
+    200.0973406587209
+   ],
+   "big": false,
+   "e": 15,
+   "heal": 0,
+   "killed": false,
+   "kind": "acid",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0.12,
+   "t": 2.816667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 2.85
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.216667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.233333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.283333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.35
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 14,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.716667
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 1,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.733333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.783333
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 3,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 3.85
+  },
+  {
+   "amt": 6,
+   "at": null,
+   "big": false,
+   "e": 12,
+   "heal": 0,
+   "killed": false,
+   "kind": "poison",
+   "kx": 0,
+   "ky": 0,
+   "src": 5,
+   "stag": 0,
+   "t": 4.283333
+  }
+ ],
+ "hz": 60,
+ "k": 2,
+ "logical": [
+  600,
+  340
+ ],
+ "name": "Bellows Toad",
+ "native": [
+  1200,
+  680
+ ],
+ "protocol": {
+  "aim": "Engine.autoAim(def) -> Engine.resolve(def, cluster centroid)",
+  "buffers_hashed": [
+   "scene RGBA8 (g.s.d)",
+   "glow RGBA8 (g.l.d)"
+  ],
+  "cast_tick": 1,
+  "enemy_density": 16,
+  "enemy_placement": "formation (World.reset(seed, true))",
+  "ground_seed": 17,
+  "hash": "sha256 of the raw little-endian Uint32 buffer, truncated to 32 hex",
+  "logical_resolution": [
+   600,
+   340
+  ],
+  "native_resolution": [
+   1200,
+   680
+  ],
+  "overlays": "none (no aim reticle, no mouse cursor, no HUD text)",
+  "raster_density_k": 2,
+  "rng": "World Rng(seed) for the world stream; cast Rng = (seed*1315423911 + id*2654435761 + skill*97) >>> 0",
+  "schema": "gold93/venomwright-oracle-protocol/v1",
+  "seed": 99,
+  "world_step_hz": 60
+ },
+ "purpose": "ORIGINAL engine replay of venomwright:005 at world seed 99; a second differential reference so parity is not proven on a single world.",
+ "rows": [
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "47fda0a9f8aacaa41ba4666083fb6776",
+   "parts": 0,
+   "scene_sha256": "419c7724eec202e6219e81e99921c044",
+   "tick": 1
+  },
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "c41a005599ffe9395fbef22d94e3555f",
+   "parts": 0,
+   "scene_sha256": "a4f79f2387592e6a9a65199cc313d244",
+   "tick": 2
+  },
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "7622ed1e6865a7778dc32d390a50dfc1",
+   "parts": 0,
+   "scene_sha256": "2155197de61539a0a7872089ce2ca694",
+   "tick": 3
+  },
+  {
+   "enemies": 16,
+   "fx": 0,
+   "glow_sha256": "2c8c4082e1278479df5ab682f1563a0e",
+   "parts": 0,
+   "scene_sha256": "ddf2021355440c5cee1270a636e0f764",
+   "tick": 4
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "b26ac614c3d5592c313d681ec7064f9d",
+   "parts": 0,
+   "scene_sha256": "26a3c25ce09b3a77d6fef289f43e7428",
+   "tick": 5
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "1c9a47ecf04be3e68716b0fdfdc0f72f",
+   "parts": 0,
+   "scene_sha256": "6650fba2804aafa355a039c336e5338e",
+   "tick": 6
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "75c903b19178bce4ae37f3dce182437f",
+   "parts": 1,
+   "scene_sha256": "5b14df65737bc973e1719eeca7c2612e",
+   "tick": 7
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "72432528bb18717b92adf5c153264fd4",
+   "parts": 1,
+   "scene_sha256": "6828fdc75e7b82d774b5c6b49aeff1cb",
+   "tick": 8
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "1155a4a5812194291910b8c8bb6158c4",
+   "parts": 1,
+   "scene_sha256": "93444a3d7f0edc498a6178aa9d2f0ea1",
+   "tick": 9
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "44793e7413d55eb7d3d0bf9275010f86",
+   "parts": 2,
+   "scene_sha256": "7d0f4f63d44e4d6b5e0e5b609072d88f",
+   "tick": 10
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "489d4e47f4c1911ff80fcb724de6ee0a",
+   "parts": 2,
+   "scene_sha256": "b5ecc32699a76fa04ea0023ca3c11a36",
+   "tick": 11
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "7aeabb299d12c5c41837ab265f853fa4",
+   "parts": 12,
+   "scene_sha256": "8c179b9bc9949006550e438ef26fdfe7",
+   "tick": 12
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "8ca0b8d8c13eee19f18f5b6f560742e9",
+   "parts": 12,
+   "scene_sha256": "9d16ee1b08996222a99b961c0c3a2a64",
+   "tick": 13
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "04a62619b7d8afbb0f614b187c1c5f97",
+   "parts": 12,
+   "scene_sha256": "f21ef787fd0dc22097a1032232af852c",
+   "tick": 14
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "8c601691f06d50d585b343bb4f2e7e46",
+   "parts": 12,
+   "scene_sha256": "fb3b2476a39804c83859566df5c74eac",
+   "tick": 15
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "27826c71525daf00f5014054bf5998f8",
+   "parts": 12,
+   "scene_sha256": "49ec20083b6cb0a000b499e6a1739ae5",
+   "tick": 16
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "0c6fb8970e774b100765d4307cc13c55",
+   "parts": 12,
+   "scene_sha256": "f28f79943a8967f6bca4fef4c2aa6531",
+   "tick": 17
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "94912c8bad19a225a7119c9922df1a2d",
+   "parts": 12,
+   "scene_sha256": "33798f766cb540b9a866f10d981103a8",
+   "tick": 18
+  },
+  {
+   "enemies": 16,
+   "fx": 2,
+   "glow_sha256": "f2ea84d584e21dc763f70b8999d726f5",
+   "parts": 12,
+   "scene_sha256": "0f28414862156a5c5b9799ed1b71569f",
+   "tick": 19
+  },
+  {
+   "enemies": 16,
+   "fx": 2,
+   "glow_sha256": "90ede0ab5d694426cb70def42ccfe186",
+   "parts": 13,
+   "scene_sha256": "733fc66c90e78bdca1372a60f553494a",
+   "tick": 20
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "3e5db779bb7b0078377ff00339e42f44",
+   "parts": 26,
+   "scene_sha256": "46091c1cfc54a4900446a0f3ff3fa8a9",
+   "tick": 25
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "7615d41a239b759089812f7f7c3f81f4",
+   "parts": 36,
+   "scene_sha256": "d4e53a3aa69c2613430706b0121f4b49",
+   "tick": 30
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "84dbb6be4e470a228c797df3c2a3b638",
+   "parts": 47,
+   "scene_sha256": "b905ed2e03ad29339427e252bb05d3c3",
+   "tick": 35
+  },
+  {
+   "enemies": 16,
+   "fx": 15,
+   "glow_sha256": "2cb3399656605b186301d2ff4b00fa97",
+   "parts": 53,
+   "scene_sha256": "ffabe5858682f7cf695c3d9e3192f3be",
+   "tick": 40
+  },
+  {
+   "enemies": 16,
+   "fx": 17,
+   "glow_sha256": "7c6602fd7bb42e6b0978b2821d061dd7",
+   "parts": 94,
+   "scene_sha256": "67dbf05d8dc54a156783b48d1a7fc9df",
+   "tick": 45
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "968986b045c75c215edd40d0d6666898",
+   "parts": 98,
+   "scene_sha256": "8718e7eb3381ec400a0ebbc03ce3e4d0",
+   "tick": 50
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "a6dcac912aa3ba73cebfc9427e9bb93f",
+   "parts": 107,
+   "scene_sha256": "9889bc1c87ed985d467f5543891866b5",
+   "tick": 55
+  },
+  {
+   "enemies": 16,
+   "fx": 21,
+   "glow_sha256": "f45f618e311a08eb043781fe2da6f3bb",
+   "parts": 98,
+   "scene_sha256": "3cfa1ef65ce8078fe3f6812825a2704f",
+   "tick": 60
+  },
+  {
+   "enemies": 16,
+   "fx": 22,
+   "glow_sha256": "b0b83d46450cb1b249c4f867e39faf2d",
+   "parts": 96,
+   "scene_sha256": "a55c3dd2cc9594c0642695ecfecffe52",
+   "tick": 65
+  },
+  {
+   "enemies": 16,
+   "fx": 31,
+   "glow_sha256": "3d9c287abe6d738eafa1b0ed543f38c8",
+   "parts": 80,
+   "scene_sha256": "fd14085853f4528aec0a1afbd95d4600",
+   "tick": 70
+  },
+  {
+   "enemies": 16,
+   "fx": 45,
+   "glow_sha256": "538b2cdb39fecdc79983ef1b2790f9ea",
+   "parts": 70,
+   "scene_sha256": "1d5282248ffb4c40de06cd6b820cc45b",
+   "tick": 75
+  },
+  {
+   "enemies": 16,
+   "fx": 57,
+   "glow_sha256": "7e7c512e4372c1e1f5ef622d977fc719",
+   "parts": 77,
+   "scene_sha256": "1a0c9f28f6056818673e6120b064f356",
+   "tick": 80
+  },
+  {
+   "enemies": 16,
+   "fx": 67,
+   "glow_sha256": "2fe7547ff278066b033706cf116db550",
+   "parts": 79,
+   "scene_sha256": "00c457efe05422ba986e0a94ebef273d",
+   "tick": 85
+  },
+  {
+   "enemies": 16,
+   "fx": 66,
+   "glow_sha256": "3e87353b87d39245d1b2f7537cfe6903",
+   "parts": 72,
+   "scene_sha256": "5e1b5c63c33b3cbde05a2db65226937c",
+   "tick": 90
+  },
+  {
+   "enemies": 16,
+   "fx": 49,
+   "glow_sha256": "5b97b576fb1334aa6ef3ca155fbd5df2",
+   "parts": 78,
+   "scene_sha256": "b71023440203ecab976e61a7b3502164",
+   "tick": 95
+  },
+  {
+   "enemies": 16,
+   "fx": 52,
+   "glow_sha256": "7acd62b286cfb3cacd6cb6eca17218f4",
+   "parts": 69,
+   "scene_sha256": "87d1d734ab2cddc32f34b97dfe60e06f",
+   "tick": 100
+  },
+  {
+   "enemies": 16,
+   "fx": 46,
+   "glow_sha256": "9de17fd18bcc2e7f6cccc863b437b36b",
+   "parts": 72,
+   "scene_sha256": "01b458fed4db767d2c21164f16614f83",
+   "tick": 105
+  },
+  {
+   "enemies": 16,
+   "fx": 42,
+   "glow_sha256": "e494cf449083afbeb6c185a356157768",
+   "parts": 71,
+   "scene_sha256": "03dd6e35b9f6ab0da4cbe8e22151332f",
+   "tick": 110
+  },
+  {
+   "enemies": 16,
+   "fx": 42,
+   "glow_sha256": "579e365e303bc23a9542cd17bae8d7db",
+   "parts": 71,
+   "scene_sha256": "d4eb17405e4f60dba4bc9dbcb71c86f1",
+   "tick": 115
+  },
+  {
+   "enemies": 16,
+   "fx": 35,
+   "glow_sha256": "49fe090bdf05dd2d6d5b2d3fcebe7fbf",
+   "parts": 74,
+   "scene_sha256": "009d85782010b1d230e41a9c168d25c1",
+   "tick": 120
+  },
+  {
+   "enemies": 16,
+   "fx": 37,
+   "glow_sha256": "2739a1eadf671638f68bb08a645e9d97",
+   "parts": 141,
+   "scene_sha256": "b3a0faa4f1b93e6eb726badfd8abd36a",
+   "tick": 125
+  },
+  {
+   "enemies": 16,
+   "fx": 37,
+   "glow_sha256": "f420ec0112d3c7b3a98431db4b91a153",
+   "parts": 151,
+   "scene_sha256": "3397d27db7d526efa27367f6c95f406c",
+   "tick": 130
+  },
+  {
+   "enemies": 16,
+   "fx": 36,
+   "glow_sha256": "c564a26328d9a052ec826b7e35027a7c",
+   "parts": 166,
+   "scene_sha256": "9024acb7b18fc42d90b8dce3e5dca7c7",
+   "tick": 135
+  },
+  {
+   "enemies": 16,
+   "fx": 32,
+   "glow_sha256": "f997bc0c026997ee65524caaf512c3f7",
+   "parts": 168,
+   "scene_sha256": "2c5dfe15f44c353c743a557eb58a5034",
+   "tick": 140
+  },
+  {
+   "enemies": 16,
+   "fx": 30,
+   "glow_sha256": "e79b7d1a76933aa21cb1b7ebccc389ec",
+   "parts": 162,
+   "scene_sha256": "51d7f40e77dbc66f8b39d0fa9eeedeaf",
+   "tick": 145
+  },
+  {
+   "enemies": 16,
+   "fx": 31,
+   "glow_sha256": "96cd3fdb80c4bd3b6ef93dd77968441b",
+   "parts": 167,
+   "scene_sha256": "ee5fedac9580df3ad96bd29992c5ffbf",
+   "tick": 150
+  },
+  {
+   "enemies": 16,
+   "fx": 36,
+   "glow_sha256": "41a078b0545696f0a58d4b844ec16126",
+   "parts": 167,
+   "scene_sha256": "4393324f3514fa0ec874f2ee2d2387a0",
+   "tick": 155
+  },
+  {
+   "enemies": 16,
+   "fx": 43,
+   "glow_sha256": "97b07e3a95300b8ea46ec36261d0badc",
+   "parts": 161,
+   "scene_sha256": "a38d62a985a840538a1a2fd7888d692e",
+   "tick": 160
+  },
+  {
+   "enemies": 16,
+   "fx": 40,
+   "glow_sha256": "c5fb2ae0221b1662aa309dafcfb04090",
+   "parts": 151,
+   "scene_sha256": "e64deef58c8fce021adaf83f55547475",
+   "tick": 165
+  },
+  {
+   "enemies": 16,
+   "fx": 47,
+   "glow_sha256": "0e63d996231357c6db6cecb5a0d74544",
+   "parts": 143,
+   "scene_sha256": "804f5ed56f6f5296a53322339dcf14a4",
+   "tick": 170
+  },
+  {
+   "enemies": 16,
+   "fx": 48,
+   "glow_sha256": "7dc807f5f3614e90bfe149d0cfb622c2",
+   "parts": 137,
+   "scene_sha256": "b1b0819eb75f43608e6f618028bb2a67",
+   "tick": 175
+  },
+  {
+   "enemies": 16,
+   "fx": 46,
+   "glow_sha256": "5d935dcb6cb7057dd57c45168d3b8618",
+   "parts": 127,
+   "scene_sha256": "9ea29cfb054b7d8a2a5379e5d6bc8ae0",
+   "tick": 180
+  },
+  {
+   "enemies": 16,
+   "fx": 47,
+   "glow_sha256": "ce66f42720ece38bb9efae545b13b511",
+   "parts": 111,
+   "scene_sha256": "bedff72d063de1fea2239d51a81fb337",
+   "tick": 185
+  },
+  {
+   "enemies": 16,
+   "fx": 43,
+   "glow_sha256": "5aefb0ef323a797a89600f5751ac7e64",
+   "parts": 94,
+   "scene_sha256": "374448b50b67937938ca3e69c790a0e7",
+   "tick": 190
+  },
+  {
+   "enemies": 16,
+   "fx": 35,
+   "glow_sha256": "aab628506906a974b59d054da5d14b59",
+   "parts": 88,
+   "scene_sha256": "64828fff5b5fa57acb5b4dcba1838572",
+   "tick": 195
+  },
+  {
+   "enemies": 16,
+   "fx": 34,
+   "glow_sha256": "98e2dad80098d161d5ebc13064fb99f0",
+   "parts": 83,
+   "scene_sha256": "e8166dfab70c74c269769e2dee221259",
+   "tick": 200
+  },
+  {
+   "enemies": 16,
+   "fx": 33,
+   "glow_sha256": "bdaa2f3045b04152b1523fdbe999ccf1",
+   "parts": 74,
+   "scene_sha256": "dfd1927216f5616fbc58e091f53bba9e",
+   "tick": 205
+  },
+  {
+   "enemies": 16,
+   "fx": 26,
+   "glow_sha256": "e0bf77273e407a11e0c098c6b77191b6",
+   "parts": 60,
+   "scene_sha256": "489de5a03200d0b7d2663c4347dff55a",
+   "tick": 210
+  },
+  {
+   "enemies": 16,
+   "fx": 24,
+   "glow_sha256": "9e1c1640a08303857597781136281a42",
+   "parts": 49,
+   "scene_sha256": "85ab0705b330c1893642596e24db5a2f",
+   "tick": 215
+  },
+  {
+   "enemies": 16,
+   "fx": 17,
+   "glow_sha256": "9e1c1640a08303857597781136281a42",
+   "parts": 46,
+   "scene_sha256": "feac9634c32b954bb0d2e8c429749966",
+   "tick": 220
+  },
+  {
+   "enemies": 16,
+   "fx": 14,
+   "glow_sha256": "9e1c1640a08303857597781136281a42",
+   "parts": 43,
+   "scene_sha256": "2df4a00a7ec803e520cd80db96775095",
+   "tick": 225
+  },
+  {
+   "enemies": 16,
+   "fx": 12,
+   "glow_sha256": "29785ef548c32a8e122d2e67aeea4675",
+   "parts": 40,
+   "scene_sha256": "423091aad18b1cb93b152dbe85f76fb2",
+   "tick": 230
+  },
+  {
+   "enemies": 16,
+   "fx": 8,
+   "glow_sha256": "cad1d869dcf9ed27786f50cff018e245",
+   "parts": 20,
+   "scene_sha256": "c9a1f97e02bc3116e9ce94649a1505d0",
+   "tick": 235
+  },
+  {
+   "enemies": 16,
+   "fx": 7,
+   "glow_sha256": "cad1d869dcf9ed27786f50cff018e245",
+   "parts": 20,
+   "scene_sha256": "571cadd3a18ae2389f01b0d8c37fd601",
+   "tick": 240
+  },
+  {
+   "enemies": 16,
+   "fx": 8,
+   "glow_sha256": "7261db4c29440c183a4c606518d7474d",
+   "parts": 15,
+   "scene_sha256": "f704a5013fddb96226cec5a27d555778",
+   "tick": 245
+  },
+  {
+   "enemies": 16,
+   "fx": 6,
+   "glow_sha256": "441c282027067a0377028e9526957843",
+   "parts": 18,
+   "scene_sha256": "1e2855eb7fa7c25f522ca532389ace68",
+   "tick": 250
+  },
+  {
+   "enemies": 16,
+   "fx": 6,
+   "glow_sha256": "ffacf4aae15e3f4403d056aacdf3fa50",
+   "parts": 19,
+   "scene_sha256": "90e79ef16239fb801622a52c114e18a7",
+   "tick": 255
+  },
+  {
+   "enemies": 16,
+   "fx": 4,
+   "glow_sha256": "60093c085d4b6ad2e9a3b5dcbed69395",
+   "parts": 20,
+   "scene_sha256": "2dcc9c8b13971e066858b342925954d6",
+   "tick": 260
+  },
+  {
+   "enemies": 16,
+   "fx": 4,
+   "glow_sha256": "7d7b9cee0adffe95ea62440e64e357d4",
+   "parts": 17,
+   "scene_sha256": "063e71d4677fa3a194feda3b31d2684f",
+   "tick": 265
+  },
+  {
+   "enemies": 16,
+   "fx": 4,
+   "glow_sha256": "0bdd89111c50cb269837485f445af9e9",
+   "parts": 18,
+   "scene_sha256": "8698b5efa5880261a45d17297745d05e",
+   "tick": 270
+  },
+  {
+   "enemies": 16,
+   "fx": 4,
+   "glow_sha256": "056f9d733261a43652352053f20da32d",
+   "parts": 18,
+   "scene_sha256": "435411eccfb6a1f6575285c9818d5f91",
+   "tick": 275
+  },
+  {
+   "enemies": 16,
+   "fx": 4,
+   "glow_sha256": "245dab53f0807917090b142ecb574968",
+   "parts": 21,
+   "scene_sha256": "89e95968a80b4f28ad6e40caae72895a",
+   "tick": 280
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "c9c8e3be5dabf06e2de742564d762cc4",
+   "parts": 25,
+   "scene_sha256": "8188e1da3a8b820eef71202ee8d62a07",
+   "tick": 285
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "a8302f27a7c21a001f874bffc158dec5",
+   "parts": 25,
+   "scene_sha256": "9a2981318052ab0375e6225d37ca01a9",
+   "tick": 290
+  },
+  {
+   "enemies": 16,
+   "fx": 3,
+   "glow_sha256": "a6f8272c450a8517012407fd9e090044",
+   "parts": 23,
+   "scene_sha256": "1ad6c0c709db8a1a73053862b984fb50",
+   "tick": 295
+  }
+ ],
+ "sampled_ticks": 75,
+ "schema": "gold93/venomwright-oracle/v1",
+ "seed": 99,
+ "skill": 5,
+ "ticks": 295,
+ "total": 255
+}
