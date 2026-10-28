@@ -1,0 +1,142 @@
+name: Hollow Marches — Play in Browser
+
+on:
+  push:
+    branches:
+      - arena/54306b59-soul-of-hero
+  workflow_dispatch:
+
+concurrency:
+  group: soul-of-hero-playable-pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build-web:
+    name: Build and validate Godot Web playtest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - name: Checkout latest overworld
+        uses: actions/checkout@v4
+
+      - name: Setup Godot 4.7 and Web export templates
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: true
+
+      - name: Check engine and import assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          godot --version
+          mkdir -p build/web
+          timeout --kill-after=10s 180s godot --headless --audio-driver Dummy --editor --path . --import 2>&1 | tee web-import.log
+
+      - name: Export actual game to HTML5
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout --kill-after=10s 300s godot --headless --audio-driver Dummy --path . --export-release "Web Playtest" build/web/index.html 2>&1 | tee web-export.log
+          test -s build/web/index.html
+          test -s build/web/index.js
+          test -s build/web/index.wasm
+          test -s build/web/index.pck
+          python3 - <<'PY'
+          from pathlib import Path
+          pack=Path("build/web/index.pck")
+          assert pack.stat().st_size > 1024 * 1024, "Game export unexpectedly small"
+          paths=[b"data/overworld/hollow_marches.json", b"data/overworld/hollow_marches_layers.json"]
+          content=pack.read_bytes()
+          for expected in paths:
+              assert expected in content, f"Missing overworld resource in web pack: {expected.decode()}"
+          print("Overworld JSON and authored terrain are present in the Web export.")
+          PY
+          if grep -Eiq 'SCRIPT ERROR:|Parse Error:|ERROR:.*(Export|Template|Failed to load|Failed to save)' web-export.log; then
+            echo "::error::Godot Web export logged a fatal error."
+            exit 1
+          fi
+          printf 'Soul of Hero / Hollow Marches Web Playtest\nBranch: %s\nCommit: %s\n' "$GITHUB_REF_NAME" "$GITHUB_SHA" > build/web/BUILD_INFO.txt
+          touch build/web/.nojekyll
+          du -h build/web/* | sort -h
+          echo "WEB EXPORT PASSED: $GITHUB_SHA"
+
+      - name: Embed startup diagnostics for browser smoke
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          page=Path("build/web/index.html")
+          diagnostic=Path("tests/ci/web_startup_diagnostics.js").read_text()
+          html=page.read_text()
+          assert "<head>" in html, "Godot web template changed"
+          page.write_text(html.replace("<head>", "<head>\n<script>\n"+diagnostic+"\n</script>", 1))
+          PY
+
+      - name: Test exported game in real Chromium
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .web-smoke
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri > /dev/null
+          npm install --prefix tests/ci --no-save --no-audit --no-fund playwright-core@1.56.1 pngjs@7.0.0
+          CHROME_BIN="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_BIN"
+          python3 -m http.server 8787 --bind 127.0.0.1 --directory build/web >.web-smoke/http.log 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          export WEB_SMOKE_URL=http://127.0.0.1:8787/
+          export WEB_SMOKE_OUTPUT="$GITHUB_WORKSPACE/.web-smoke"
+          export CHROME_BIN
+          xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 timeout --signal=TERM --kill-after=10s 120s node tests/ci/web_playtest_browser_smoke.cjs 2>&1 | tee .web-smoke/browser.log
+          grep -q 'GODOT WEB BROWSER SMOKE PASSED' .web-smoke/browser.log
+
+      - name: Preserve a downloadable playtest build and diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hollow-marches-web-playtest
+          path: |
+            build/web/
+            web-import.log
+            web-export.log
+            .web-smoke/
+          include-hidden-files: true
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Package verified game for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
+
+  deploy-pages:
+    name: Publish the stable browser playtest link
+    needs: build-web
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - name: Publish verified game
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Print playable URL and source
+        run: |
+          echo "Play URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "Source branch: arena/54306b59-soul-of-hero"
+          echo "Source commit: ${{ github.sha }}"
