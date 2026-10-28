@@ -1,0 +1,35 @@
+name: Venom all 21 skills original source particle physics shared lifecycle
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_particles_world.gd'
+      - 'prototypes/gold_pair/tests/venom_source_particles_world_oracle.gd'
+      - '.github/workflows/venom-gold-particles-world-21.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-particle-world-60hz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native project source import
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold-shared-particles-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-shared-particles-import.log; then exit 1; fi
+      - name: Run original source Particles.update 240 tick numeric and environment-afterlife oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_source_particles_world_oracle.gd 2>&1 | tee /tmp/gold-shared-particles-test.log
+          grep -F 'VENOM_SOURCE_PARTICLE_WORLD: PASS / original 240-tick' /tmp/gold-shared-particles-test.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold-shared-particles-test.log; then exit 1; fi
