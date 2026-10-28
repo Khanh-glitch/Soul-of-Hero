@@ -22,12 +22,31 @@ func _initialize()->void:
     runtime.begin(260.0,160.0,atan2(30.0,115.0),17,1765485952,0x20261027)
     var enemy:Dictionary={"id":17,"x":375.0,"y":190.0,
         "r":9.5,"dying":0.0,"hp":900,"exists":true}
+    # This numeric Gold fixture reimplements the *original* World.updateEnemies
+    # elite knockback stage, which executes after cast generator.next() and
+    # before Pool.upd/world hit(contact=acid). Without it, at tick156 the
+    # enemy x differs by its live elite kx*F = 0.316924 source units.
+    var world_enemy_state:Dictionary={"kx":0.0,"ky":0.0,"last_bite":0,"stagger":0.0}
+    var update_gold_enemy=func(list:Array,bites:Array,_tick:int)->void:
+        for n in range(int(world_enemy_state["last_bite"]),bites.size()):
+            var cue:Dictionary=bites[n]
+            world_enemy_state["kx"]=float(world_enemy_state["kx"])+float(cue["knock_x"])*0.5
+            world_enemy_state["ky"]=float(world_enemy_state["ky"])+float(cue["knock_y"])*0.5
+            world_enemy_state["stagger"]=maxf(float(world_enemy_state["stagger"]),0.3*0.6)
+        world_enemy_state["last_bite"]=bites.size()
+        var e:Dictionary=list[0]
+        e["x"]=float(e["x"])+float(world_enemy_state["kx"])/60.0
+        e["y"]=float(e["y"])+float(world_enemy_state["ky"])/60.0
+        var kd:float=1.0-5.5/60.0
+        world_enemy_state["kx"]=float(world_enemy_state["kx"])*kd
+        world_enemy_state["ky"]=float(world_enemy_state["ky"])*kd
+        world_enemy_state["stagger"]=maxf(0.0,float(world_enemy_state["stagger"])-1.0/60.0)
     var bite_idx:int=0
     var verified:int=0
     for tick in range(1,331):
         enemy["x"]=375.0+8.0*sin(float(tick)*0.070)
         enemy["y"]=190.0+5.0*cos(float(tick)*0.055)
-        runtime.step_source_60hz([enemy])
+        runtime.step_source_60hz([enemy],update_gold_enemy)
         # The source fixture keeps Gold elite alive at 900HP. Original Gold
         # World.hit applies damage; native motion may emit bite cues but never
         # mutates real SOH enemy HP. Here only synthetic source HP changes.
