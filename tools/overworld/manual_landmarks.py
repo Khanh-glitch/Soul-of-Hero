@@ -47,84 +47,174 @@ ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
 OUT = os.path.join(ROOT, "assets", "environment", "overworld", "overrides", "props")
 
 
-def archive():
-    """L03 Crossfire Archive — a broken basilica with its bell tower standing.
+def footprint_shadow(img, x0=0, x1=None, alpha=96):
+    """Contact shadow that only darkens pixels the building actually covers.
 
-    The silhouette is asymmetric on purpose: tower on the left, a gable roof with
-    its right third caved in, so it is never mistaken for the gate (symmetric) or
-    the ossuary (low and wide). The door is the only warm pixel cluster, and the
-    collapse is stepped rather than a clean rectangle — a hole with straight sides
-    reads as a missing texture, a stair-stepped one reads as masonry that fell.
+    The shared `contact_shadow()` paints a strip across the whole frame, which is
+    right for a tile-sized prop and wrong for a building with air beside it: in
+    the scene it drew a black shelf along the ground to the right of the archive,
+    and the building read as floating on it.
+    """
+    width, height = img.size
+    x1 = width if x1 is None else x1
+    for x in range(max(0, x0), min(width, x1)):
+        for y in (height - 1, height - 2):
+            r, g, b, a = img.getpixel((x, y))
+            if a == 0:
+                continue
+            fade = alpha if y == height - 1 else max(0, alpha - 34)
+            px(img, x, y, mix((r, g, b, a), (10, 8, 14, 255), fade / 255.0))
+
+
+def value_lift(img, amount=0.18, tint=(255, 244, 226)):
+    """Lift the building into the front-prop value band, keeping its structure.
+
+    Measured against the plaza they stand on, both hand-painted exteriors came out
+    at delta -0.03 / +0.01 - the same value as the ground, which is exactly what
+    the art rules forbid for a destination (front props live in 0.62-0.85, ground
+    in 0.30-0.42). Mixing toward a warm light lifts the whole building while
+    keeping the relative steps between its courses, which a brightness multiply
+    would flatten.
+    """
+    width, height = img.size
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = img.getpixel((x, y))
+            if a == 0:
+                continue
+            nr = int(r + (tint[0] - r) * amount)
+            ng = int(g + (tint[1] - g) * amount)
+            nb = int(b + (tint[2] - b) * amount)
+            img.putpixel((x, y), (nr, ng, nb, a))
+
+
+def paving_apron(img):
+    """The flagstone apron the archive stands on.
+
+    Sanity-checked by value, not by eye: measured against the plaza it sits on, the
+    apron has to be within a couple of hundredths, or it reads as a plinth the
+    building floats on. It is drawn AFTER the building's value lift for that
+    reason - lifting it along with the walls turned it into a white shelf.
+    """
+    paving = C("gravel")
+    rect(img, 2, 64, 108, 8, shade(paving, 1.04))
+    for row, (y0, h) in enumerate(((64, 4), (68, 4))):
+        rect(img, 2, y0 + h - 1, 108, 1, shade(paving, 0.84))
+        offset = 0 if row == 0 else 5
+        for x in range(2 + offset, 108, 14):
+            rect(img, x, y0, 1, h - 1, shade(paving, 0.88))
+            rect(img, x + 1, y0, 13, 1, shade(paving, 1.16))
+    hline(img, 2, 64, 108, shade(paving, 1.28))
+
+
+def archive():
+    """L03 Crossfire Archive — a two-tower gatehouse with a broken centre span.
+
+    Rebuilt after looking at it at 5x: the first version had a large featureless
+    gable plate in the middle (the one thing the art rules forbid), and a shelf
+    against its broken end that read as loose sticks rather than furniture. What
+    survives is the idea - a symmetric building with an asymmetric wound - and
+    what changes is that every surface is now coursed, the centre span is a solid
+    wall of stacked books behind an arch, and the collapse is confined to one
+    tower's crown so the silhouette still reads as a gatehouse from across a
+    screen.
     """
     img = new(112, 72)
     stone = C("stone")
 
-    # --- ground: two shallow steps, wider than the building -------------------
-    rect(img, 0, 64, 112, 8, shade(stone, 0.52))
-    rect(img, 4, 60, 104, 5, shade(stone, 0.66))
-    hline(img, 4, 60, 104, shade(stone, 1.18))
+    # --- ground: two worn steps, wider than the building ---------------------
+    # The first version used a near-black plinth, which in the scene read as a
+    # shelf floating under the building instead of as the steps in front of it:
+    # the ground it stands on is a mid-value brown, so the steps have to sit in
+    # that band and carry their own coursing.
+    paving_apron(img)
 
-    # --- nave wall, then a solid gable with a collapsed right third ----------
-    rect(img, 20, 12, 74, 50, shade(stone, 0.88))
-    courses(img, 20, 12, 74, 50, shade(stone, 0.88), row_h=6, seed=7,
-            mortar=shade(stone, 0.46), light=shade(stone, 1.14), dark=shade(stone, 0.6))
-    # Filled gable: peak at x=52, eaves at y=30, drawn row by row so the mass is
-    # solid. Two planes (sunlit left, roof right) give it a ridge rather than an
-    # outline - a one-pixel roof line reads as a stray mark at 2x zoom.
-    for y in range(12, 31):
-        spread = (y - 12) * 2
-        left = 52 - spread
-        rect(img, left, y, spread, 1, shade(stone, 0.8))
-        rect(img, 52, y, spread, 1, shade(stone, 0.7))
-    rect(img, 12, 30, 80, 3, shade(stone, 0.95))         # eave beam
-    hline(img, 12, 33, 80, shade(stone, 1.2))
-    for i in range(0, 80, 8):                            # roof tiles
-        vline(img, 12 + i, 34, 3, shade(stone, 0.62))
+    # --- the two towers ------------------------------------------------------
+    # Left tower: intact, battlements, narrow lit window. Right tower: its crown
+    # has fallen in, so its top ends in stairs of masonry instead of merlons.
+    for tx, top, width in ((10, 6, 22), (80, 12, 22)):
+        rect(img, tx, top, width, 64 - top, shade(stone, 0.92))
+        courses(img, tx, top, width, 64 - top, shade(stone, 0.92), row_h=6, seed=tx,
+                mortar=shade(stone, 0.44), light=shade(stone, 1.16), dark=shade(stone, 0.62))
+        # corner quoins: two-pixel alternating blocks, the cheapest way to make a
+        # 22-pixel tower read as masonry rather than as a grey bar
+        for qy in range(top + 2, 62, 8):
+            rect(img, tx, qy, 3, 4, shade(stone, 1.2))
+            rect(img, tx + width - 3, qy + 4, 3, 4, shade(stone, 1.08))
+        # window: a tall slit with a warm sill, one per tower
+        rect(img, tx + width // 2 - 2, top + 14, 4, 12, C("void"))
+        rect(img, tx + width // 2 - 3, top + 26, 6, 2, shade(stone, 1.3))
+        px(img, tx + width // 2, top + 25, C("fire"))
 
-    # --- the collapse: one stepped tear from the ridge down to the ground ----
-    # A hole with vertical sides reads as a missing texture. This tears from the
-    # ridge at x=76 in steps of two pixels, so the standing wall ends in a
-    # staircase of masonry — which is what a collapsed bay looks like.
-    for i in range(28):
-        top = 16 + (i // 2) * 2 + int(2 * P.h01(11, i))
-        rect(img, 76 + i, 12, 1, max(2, top - 12), (0, 0, 0, 0))
-    # exposed rubble core along the broken edge
-    for i in range(6):
-        rect(img, 74 + i // 2, 20 + i * 4, 4, 4, shade(stone, 0.6))
-    rect(img, 72, 16, 5, 46, shade(stone, 0.66))
-    vline(img, 72, 16, 46, shade(stone, 1.12))
-    # fallen blocks on the step, outside the wall
-    for i in range(9):
-        rect(img, 84 + i * 3, 56 + int(3 * P.h01(12, i)), 3, 3, shade(stone, 0.68))
+    # left tower crown: merlons
+    rect(img, 8, 2, 26, 5, shade(stone, 0.8))
+    hline(img, 8, 2, 26, shade(stone, 1.3))
+    for mx in range(9, 33, 6):
+        rect(img, mx, 0, 4, 3, shade(stone, 0.86))
+        hline(img, mx, 0, 4, shade(stone, 1.34))
 
-    # --- bell tower: the tallest thing, left of the door ---------------------
-    tower(img, 12, 8, 20, 56, 1.04, seed=3)
-    rect(img, 13, 2, 18, 8, shade(stone, 0.82))          # belfry cap
-    hline(img, 13, 2, 18, shade(stone, 1.15))
-    for bx in (16, 21, 26):
-        rect(img, bx, 4, 3, 5, C("void"))                # louvres
-    rect(img, 18, 14, 8, 9, shade(stone, 0.5))           # clock recess
-    px(img, 21, 17, C("bone")); px(img, 21, 18, C("bone")); px(img, 22, 18, C("bone"))
+    # right tower crown: caved in. The break is a *profile* across the tower - the
+    # wall survives to a stepped line that falls away to the right - rather than a
+    # shape cut out of it. Cutting a notch left the tower's right edge floating in
+    # the air, disconnected from the building, which read as two buildings.
+    # Starts at x=92 so the tower's own window survives: a break that eats the
+    # window leaves a black bar at the silhouette's edge, which reads as damage to
+    # the *drawing*, not to the building.
+    for x in range(92, 103):
+        crown = 12 + ((x - 92) // 3) * 6
+        rect(img, x, 12, 1, crown - 12, (0, 0, 0, 0))
+        rect(img, x, crown, 1, 2, shade(stone, 1.26))     # lit top of the stub
+        rect(img, x, crown + 2, 1, 2, shade(stone, 0.5))  # and its shadow
+    # rubble that fell out of it, on the step below
+    for i in range(7):
+        rect(img, 92 + i * 2, 56 + int(3 * P.h01(21, i)), 3, 2, shade(stone, 0.66))
 
-    # --- door: the one warm light in the frame ------------------------------
-    door(img, 44, 40, 22, 22, glow=C("fire"))
-    rect(img, 46, 42, 18, 2, shade(stone, 1.3))         # lit lintel
-    rect(img, 46, 58, 18, 2, shade(C("fire"), 0.55))     # light spilling onto the step
-    for i in range(9):
-        px(img, 40 + i, 60 + int(2 * P.h01(13, i)), mix(C("fire"), shade(stone, 0.66), 0.55))
+    # --- centre span: an arched reading hall behind the door -----------------
+    rect(img, 32, 22, 48, 42, shade(stone, 0.84))
+    courses(img, 32, 22, 48, 42, shade(stone, 0.84), row_h=6, seed=11,
+            mortar=shade(stone, 0.42), light=shade(stone, 1.12), dark=shade(stone, 0.58))
+    # parapet along the top of the span, broken above the door
+    rect(img, 32, 20, 48, 3, shade(stone, 1.0))
+    hline(img, 32, 20, 48, shade(stone, 1.32))
+    for i in range(4):
+        rect(img, 46 + i * 6, 17, 4, 3, shade(stone, 0.9))
 
-    # --- shelves inside the broken end, and the banner above the door --------
-    for sy in (40, 50):
-        rect(img, 86, sy, 16, 2, C("wood_dk"))
-        for sx in range(87, 100, 3):
-            rect(img, sx, sy - 3, 1, 3, C("bone_dk"))
-    for i in range(2):
-        rect(img, 96, 56 + i * 4, 9, 3, C("wood"))
-        px(img, 98, 57 + i * 4, C("gold"))
-    banner(img, 26, 34, 8, 14, C("cloth"))
+    # --- the gateway: a recessed portal, a tympanum, and the door's light ----
+    # A full-height void read as a hole punched through the building. The doorway
+    # is now a recess: dark stone at the sides, a carved tympanum above the lintel
+    # and the door itself filling most of the opening, so the eye lands on the
+    # warm rectangle rather than on an absence.
+    rect(img, 42, 38, 28, 26, shade(stone, 0.42))         # recess shadow
+    rect(img, 40, 36, 32, 3, shade(stone, 1.26))          # lintel
+    hline(img, 40, 36, 32, shade(stone, 1.5))
+    rect(img, 44, 40, 24, 6, shade(stone, 1.06))          # tympanum panel
+    for i in range(4):                                    # book emblem on it
+        rect(img, 50 + i * 3, 42, 2, 2, C("bone_dk"))
+    door(img, 46, 46, 20, 18, glow=C("fire"))
+    rect(img, 47, 62, 18, 2, shade(C("fire"), 0.5))       # spill onto the step
+    for i in range(10):
+        px(img, 44 + i, 63 + int(2 * P.h01(22, i)), mix(C("fire"), shade(stone, 0.6), 0.5))
 
-    speck(img, 20, 30, 52, 32, shade(stone, 0.5), 16, seed=5)
-    contact_shadow(img)
+    # --- what the archive is for: shelves of books, seen through the arch ----
+    # Stacked as blocks with a spine colour per shelf, not as scattered sticks:
+    # at 2x a row of one-pixel spines reads as noise, a solid band of books with
+    # gaps reads as a shelf.
+    # a low shelf against the right tower's base, clear of the doorway
+    for sy in (54, 58):
+        rect(img, 74, sy, 12, 2, C("wood_dk"))
+        for bx in range(75, 85, 2):
+            tone = (C("cloth"), C("bone_dk"), C("wood"))[bx % 3]
+            rect(img, bx, sy - 2, 1, 2, tone)
+    # banner on a pole, hung from the parapet clear of the portal
+    vline(img, 64, 20, 14, C("wood_dk"))
+    banner(img, 66, 21, 8, 12, C("cloth"))
+    px(img, 69, 26, C("gold")); px(img, 70, 27, C("gold"))
+
+    value_lift(img, 0.2)
+    paving_apron(img)
+    speck(img, 20, 30, 52, 30, shade(stone, 0.5), 14, seed=5)
+    speck(img, 10, 40, 22, 20, shade(stone, 1.16), 10, seed=6)
+    footprint_shadow(img, 6, 106)
     return outline_alpha(img)
 
 
@@ -153,59 +243,85 @@ def _terrace(img, cx, top, half_width, height, tone, stone):
 
 
 def reliquary():
-    """L04 Spiral Reliquary — a mound of terraces with a soul-light in its crown.
+    """L04 Spiral Reliquary — a stepped mound with a soul-light at its crown.
 
-    Read from the top out: a lit monolith, three terraces stepping down and out,
-    then standing stones on the lowest one. Every tier is darker than the one above
-    it, and each carries a visible lit ledge, which is what makes a squat shape
-    read as a mound rather than as a wall of stripes.
+    Rewritten after seeing it in the scene: three bare slabs stacked read as a
+    wedding cake, not as a building. What makes a tier read as *built* at 2x is
+    coursing on its face, a pilaster at each end, and a ledge with visible
+    thickness - so every tier here carries all three, its face is half as tall as
+    before, and the whole mound sits five pixels lower so the crown fits under the
+    camera's top edge.
     """
     img = new(112, 80)
     stone = C("stone")
     cx = 56
 
-    # --- the mound: three terraces, widest and darkest at the bottom --------
-    for top, half, height, tone in ((56, 46, 24, 0.70), (36, 34, 20, 0.84), (20, 22, 16, 0.96)):
-        _terrace(img, cx, top, half, height, tone, stone)
-        # spiral inlay following each ledge: the relic route, read as a walk
-        for step in range(-half + 6, half - 6, 11):
-            px(img, cx + step, top + 2, C("bone_dk"))
+    # --- three tiers, each one lighter than the one below it ------------------
+    # (y_top, half_width, face_height, tone). The faces are 10-12 px: a 20 px face
+    # is a plate at this scale, and no amount of texture fixes a plate.
+    tiers = ((60, 46, 12, 0.82), (48, 38, 11, 0.94), (37, 30, 10, 1.04), (27, 22, 9, 1.14))
+    for top, half, height, tone in tiers:
+        left = cx - half
+        width = half * 2
+        # face with masonry coursing, so the slab has scale
+        rect(img, left, top, width, height, shade(stone, tone))
+        courses(img, left, top, width, height, shade(stone, tone), row_h=4, seed=top,
+                mortar=shade(stone, tone * 0.72), light=shade(stone, tone * 1.16),
+                dark=shade(stone, tone * 0.88))
+        # the ledge: 4 px of lit top surface plus its shadow on the face below
+        rect(img, left, top, width, 4, shade(stone, tone * 1.3))
+        hline(img, left, top, width, shade(stone, tone * 1.5))
+        hline(img, left, top + 3, width, shade(stone, tone * 1.1))
+        rect(img, left, top + 4, width, 1, shade(stone, tone * 0.6))
+        # pilasters: two pixels of vertical stone at each end, catching the light
+        for px_x in (left, left + width - 3):
+            rect(img, px_x, top, 3, height, shade(stone, tone * 1.1))
+            vline(img, px_x, top, height, shade(stone, tone * 1.28))
+        # a lit niche on the face, one per tier, alternating sides
+        nx = left + (7 if (top // 4) % 2 == 0 else width - 11)
+        rect(img, nx, top + 6, 4, 4, shade(stone, tone * 0.5))
+        px(img, nx + 1, top + 7, C("fire"))
 
-    # --- the stair, climbing the face of each terrace to the crown ----------
-    for top, half, height, tone in ((56, 46, 24, 0.70), (36, 34, 20, 0.84), (20, 22, 16, 0.96)):
-        rect(img, cx - 5, top + 5, 10, height - 5, shade(stone, tone * 0.86))
-        for step_y in range(top + 6, top + height, 3):
-            hline(img, cx - 5, step_y, 10, shade(stone, tone * 1.22))
-
-    # --- the crown: a squat monolith, not a floating obelisk ----------------
-    rect(img, cx - 9, 8, 18, 13, shade(stone, 1.1))
-    rect(img, cx - 7, 3, 14, 6, shade(stone, 1.18))
-    hline(img, cx - 7, 3, 14, shade(stone, 1.5))
-    vline(img, cx - 9, 8, 13, shade(stone, 1.44))
-    vline(img, cx + 8, 8, 13, shade(stone, 0.64))
-    rect(img, cx - 9, 21, 18, 4, shade(stone, 0.7))      # base step
-    # the soul-light burning in the crown
-    rect(img, cx - 1, 7, 3, 15, mix(C("soul_glow"), C("void"), 0.4))
-    rect(img, cx, 7, 1, 15, C("soul_glow"))
+    # --- the spiral stair: a wide central flight cut into every tier ----------
+    for top, half, height, tone in tiers:
+        rect(img, cx - 7, top + 4, 14, height, shade(stone, tone * 0.88))
+        for step_y in range(top + 5, top + height + 4, 2):
+            hline(img, cx - 7, step_y, 14, shade(stone, tone * 1.24))
+        vline(img, cx - 8, top + 4, height, shade(stone, tone * 0.62))
+    # the flight continues over the lowest tier's ledge, onto the plaza
     for i in range(4):
-        px(img, cx - 3 - (i % 2), 10 + i * 3, mix(C("soul_glow"), C("void"), 0.7))
-        px(img, cx + 3 + (i % 2), 11 + i * 3, mix(C("soul_glow"), C("void"), 0.78))
+        rect(img, cx - 9 - i, 72 - i, 18 + i * 2, 2, shade(stone, 0.9))
+        hline(img, cx - 9 - i, 72 - i, 18 + i * 2, shade(stone, 1.3))
 
-    # --- standing stones ringing the lowest terrace -------------------------
-    for sx, tone, height in ((10, 0.8, 18), (20, 0.74, 13), (86, 0.74, 13), (96, 0.8, 18)):
-        rect(img, sx, 66 - height, 6, height, shade(stone, tone))
-        hline(img, sx, 66 - height, 6, shade(stone, tone * 1.34))
-        px(img, sx + 2, 68 - height, C("bone_dk"))
+    # --- the crown: a monolith with the soul-light burning in its seam --------
+    rect(img, cx - 11, 15, 22, 12, shade(stone, 1.16))
+    rect(img, cx - 9, 8, 18, 8, shade(stone, 1.24))
+    rect(img, cx - 6, 3, 12, 6, shade(stone, 1.32))
+    hline(img, cx - 6, 3, 12, shade(stone, 1.6))
+    vline(img, cx - 11, 15, 12, shade(stone, 1.34))
+    vline(img, cx + 10, 15, 12, shade(stone, 0.72))
+    vline(img, cx - 9, 8, 8, shade(stone, 1.4))
+    vline(img, cx + 8, 8, 8, shade(stone, 0.76))
+    rect(img, cx - 2, 5, 4, 22, mix(C("soul_dk"), C("void"), 0.35))
+    rect(img, cx - 1, 5, 2, 22, C("soul_glow"))
+    for i in range(6):  # the light it throws
+        px(img, cx - 4 - (i % 2), 7 + i * 3, mix(C("soul_glow"), C("void"), 0.55))
+        px(img, cx + 3 + (i % 2), 8 + i * 3, mix(C("soul_glow"), C("void"), 0.65))
 
-    # --- offerings on the flights ------------------------------------------
-    for i in range(5):
-        px(img, 44 + i * 2, 72 + (i % 2), C("bone"))
-    px(img, 64, 60, C("gold"))
-    px(img, 34, 52, C("cloth"))
+    # --- offerings, and the standing stones that ring the base ---------------
+    rect(img, cx - 16, 63, 7, 5, shade(stone, 0.9))      # altar
+    hline(img, cx - 16, 63, 7, shade(stone, 1.3))
+    px(img, cx - 13, 62, C("soul_glow"))
+    for sx, tone, height in ((8, 0.86, 20), (17, 0.8, 13), (88, 0.8, 13), (97, 0.86, 20)):
+        rect(img, sx, 72 - height, 6, height, shade(stone, tone))
+        hline(img, sx, 72 - height, 6, shade(stone, tone * 1.3))
+        vline(img, sx, 72 - height, height, shade(stone, tone * 1.16))
+        px(img, sx + 3, 74 - height, C("bone_dk"))
 
-    speck(img, 4, 56, 104, 22, shade(stone, 0.42), 22, seed=9)
-    speck(img, 24, 22, 64, 12, shade(stone, 0.52), 12, seed=10)
-    contact_shadow(img)
+    value_lift(img, 0.2)
+    speck(img, 6, 58, 100, 18, shade(stone, 0.5), 18, seed=9)
+    speck(img, 26, 26, 60, 12, shade(stone, 0.6), 10, seed=10)
+    footprint_shadow(img, 8, 104)
     return outline_alpha(img)
 
 
