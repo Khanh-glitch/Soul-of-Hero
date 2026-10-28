@@ -226,6 +226,11 @@ func _shoot(station: String) -> void:
 		bytes = written_file.get_length()
 		written_file.close()
 	print("OVERWORLD PNG %s (%d bytes)" % [output, bytes])
+	# Fail closed on a write that reported OK but produced nothing: a missing
+	# PNG must be a failed station, not a silent gap in the evidence set.
+	if bytes <= 0:
+		_failed.append(station)
+		push_error("OVERWORLD CAPTURE: %s wrote zero bytes to %s" % [station, output])
 
 
 func _is_blank(image: Image) -> bool:
