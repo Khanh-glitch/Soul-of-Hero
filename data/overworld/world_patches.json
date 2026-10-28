@@ -1,0 +1,184 @@
+{
+ "schema": "hollow_marches_world_patches/v1",
+ "why": "Local, hand-authored corrections to the baked world. Applied before the bake's gates.",
+ "terrain": [
+  {
+   "id": "camp_refuge_apron",
+   "layer": "detail",
+   "set": ":",
+   "rect": [
+    52,
+    214,
+    60,
+    219
+   ],
+   "why": "flagstone clearing around the fire, so the camp reads as a place"
+  },
+  {
+   "id": "camp_crossroads_apron",
+   "layer": "detail",
+   "set": ":",
+   "rect": [
+    148,
+    186,
+    156,
+    191
+   ],
+   "why": "flagstone clearing around the fire, so the camp reads as a place"
+  },
+  {
+   "id": "camp_relay_base_apron",
+   "layer": "detail",
+   "set": ":",
+   "rect": [
+    244,
+    156,
+    252,
+    161
+   ],
+   "why": "flagstone clearing around the fire, so the camp reads as a place"
+  },
+  {
+   "id": "camp_ridge_apron",
+   "layer": "detail",
+   "set": ":",
+   "rect": [
+    204,
+    102,
+    212,
+    107
+   ],
+   "why": "flagstone clearing around the fire, so the camp reads as a place"
+  }
+ ],
+ "props": [
+  {
+   "id": "camp_refuge_no_grave_cross",
+   "op": "remove",
+   "frame": "grave_cross",
+   "within": {
+    "centre": [
+     56,
+     216
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_refuge_no_gravestone",
+   "op": "remove",
+   "frame": "gravestone",
+   "within": {
+    "centre": [
+     56,
+     216
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_crossroads_no_grave_cross",
+   "op": "remove",
+   "frame": "grave_cross",
+   "within": {
+    "centre": [
+     152,
+     188
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_crossroads_no_gravestone",
+   "op": "remove",
+   "frame": "gravestone",
+   "within": {
+    "centre": [
+     152,
+     188
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_relay_base_no_grave_cross",
+   "op": "remove",
+   "frame": "grave_cross",
+   "within": {
+    "centre": [
+     248,
+     158
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_relay_base_no_gravestone",
+   "op": "remove",
+   "frame": "gravestone",
+   "within": {
+    "centre": [
+     248,
+     158
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_ridge_no_grave_cross",
+   "op": "remove",
+   "frame": "grave_cross",
+   "within": {
+    "centre": [
+     208,
+     104
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_ridge_no_gravestone",
+   "op": "remove",
+   "frame": "gravestone",
+   "within": {
+    "centre": [
+     208,
+     104
+    ],
+    "radius": 5.5
+   },
+   "why": "a grave inside a camp clearing reads as an oversight"
+  },
+  {
+   "id": "camp_ridge_lamp",
+   "op": "add",
+   "frame": "lamp",
+   "to_frame": "lamp",
+   "to": [
+    211,
+    102
+   ],
+   "lit": true,
+   "why": "a lit mark for a camp reached after dark"
+  },
+  {
+   "id": "camp_relay_base_lamp",
+   "op": "add",
+   "frame": "lamp",
+   "to_frame": "lamp",
+   "to": [
+    251,
+    156
+   ],
+   "lit": true,
+   "why": "a lit mark for a camp reached after dark"
+  }
+ ]
+}

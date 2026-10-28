@@ -1,0 +1,149 @@
+{
+ "schema": "hollow_marches_patch_report/v1",
+ "applied": [
+  {
+   "id": "camp_refuge_apron",
+   "kind": "terrain",
+   "layer": "detail",
+   "code": ":",
+   "cells": 54
+  },
+  {
+   "id": "camp_crossroads_apron",
+   "kind": "terrain",
+   "layer": "detail",
+   "code": ":",
+   "cells": 54
+  },
+  {
+   "id": "camp_relay_base_apron",
+   "kind": "terrain",
+   "layer": "detail",
+   "code": ":",
+   "cells": 54
+  },
+  {
+   "id": "camp_ridge_apron",
+   "kind": "terrain",
+   "layer": "detail",
+   "code": ":",
+   "cells": 54
+  },
+  {
+   "id": "camp_refuge_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    56,
+    216
+   ],
+   "touched": 4
+  },
+  {
+   "id": "camp_refuge_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    56,
+    216
+   ],
+   "touched": 3
+  },
+  {
+   "id": "camp_crossroads_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    152,
+    188
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_crossroads_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    152,
+    188
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_relay_base_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    248,
+    158
+   ],
+   "touched": 3
+  },
+  {
+   "id": "camp_relay_base_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    248,
+    158
+   ],
+   "touched": 3
+  },
+  {
+   "id": "camp_ridge_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    208,
+    104
+   ],
+   "touched": 1
+  },
+  {
+   "id": "camp_ridge_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    208,
+    104
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_ridge_lamp",
+   "kind": "prop",
+   "op": "add",
+   "frame": "lamp",
+   "at": [
+    211,
+    102
+   ],
+   "touched": 1
+  },
+  {
+   "id": "camp_relay_base_lamp",
+   "kind": "prop",
+   "op": "add",
+   "frame": "lamp",
+   "at": [
+    251,
+    156
+   ],
+   "touched": 1
+  }
+ ],
+ "summary": {
+  "terrain_cells": 216,
+  "prop_edits": 16,
+  "patches": 14,
+  "hash": "1d75e67bbd8c8142488d63576aff66a2d88f0cf64361f4e3c697408e50db4d12"
+ }
+}

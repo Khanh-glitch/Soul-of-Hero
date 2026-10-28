@@ -569,15 +569,51 @@ def ground_soul(seed):
 
 
 def ground_water(seed, shallow=False):
+    """Water, with depth rather than wallpaper.
+
+    Audited from the world overview: the shallow-water bands were the most
+    obviously wrong surface in the region - one variant, so fifteen hundred cells
+    repeated the same three horizontal glints, and the result read as a striped
+    ribbon rather than as water. What is here now:
+
+      * two tones of body with a depth blotch, so the surface is not flat,
+      * ripples drawn as short *broken* arcs at varied heights, never a full-width
+        line (a line across a tile is the tile grid showing through),
+      * a lighter film at the top edge and a darker undertow at the bottom, which
+        is what makes a body of water read as having a shallow and a deep side,
+      * a per-variant seed, so four shallow variants tile without the eye finding
+        the repeat.
+    """
     img = new(T, T)
-    base = C("water") if not shallow else mix(C("water"), C("water_hi"), 0.45)
+    base = C("water") if not shallow else mix(C("water"), C("water_hi"), 0.42)
     dark = C("water_dk")
     light = C("water_hi")
-    grain(img, 0, 0, T, T, base, light, dark, seed=seed, amount=0.16)
-    for i in range(3):
-        y = int(h01(seed, i, 71) * T)
-        x = int(h01(seed, i, 72) * (T - 7))
-        hline(img, x, y, 4 + int(h01(seed, i, 73) * 3), C("water_glint") if not shallow else light)
+    glint = C("water_glint") if not shallow else mix(C("water_glint"), C("water_hi"), 0.45)
+    grain(img, 0, 0, T, T, base, light, dark, seed=seed, amount=0.13 if shallow else 0.17)
+
+    # depth: one soft blotch, two steps darker, so the body has shape
+    bx = int(h01(seed, 11, 1) * (T - 7))
+    by = int(h01(seed, 12, 1) * (T - 5))
+    rect(img, bx, by, 6, 4, mix(base, dark, 0.35))
+    rect(img, bx + 1, by, 4, 3, mix(base, dark, 0.2))
+
+    # ripples: broken arcs, not rules
+    for i in range(5):
+        y = int(h01(seed, i, 71) * (T - 2))
+        x = int(h01(seed, i, 72) * (T - 6))
+        run = 2 + int(h01(seed, i, 73) * 3)
+        hline(img, x, y, run, glint)
+        if h01(seed, i, 74) > 0.45:
+            hline(img, min(T - 1, x + run + 2), y, 1 + int(h01(seed, i, 75) * 2), glint)
+
+    # the shallow shelf: a lit film along the top, an undertow along the bottom
+    if shallow:
+        hline(img, 0, 0, T, mix(base, glint, 0.30))
+        for x in range(0, T, 2):
+            if h01(seed, x, 80) > 0.5:
+                px(img, x, 1, mix(base, glint, 0.22))
+        hline(img, 0, T - 1, T, mix(base, dark, 0.55))
+        hline(img, 0, T - 2, T, mix(base, dark, 0.25))
     return img
 
 
@@ -946,7 +982,11 @@ GROUND_TILES = {
     "soul1": lambda: ground_soul(102),
     "water0": lambda: ground_water(111),
     "water1": lambda: ground_water(112),
+    "water2": lambda: ground_water(114),
     "shallow0": lambda: ground_water(113, shallow=True),
+    "shallow1": lambda: ground_water(115, shallow=True),
+    "shallow2": lambda: ground_water(116, shallow=True),
+    "shallow3": lambda: ground_water(117, shallow=True),
     "cliff_top0": lambda: ground_cliff_top(121),
     "cliff_top1": lambda: ground_cliff_top(122),
     "bog0": lambda: ground_bog(131),
@@ -965,8 +1005,8 @@ GROUND_CODES = {
     "f": ["floor0", "floor1", "floor2", "floor3"],
     "v": ["ritual0", "ritual1"],
     "y": ["soul0", "soul1"],
-    "~": ["water0", "water1"],
-    "-": ["shallow0"],
+    "~": ["water0", "water1", "water2"],
+    "-": ["shallow0", "shallow1", "shallow2", "shallow3"],
     "c": ["cliff_top0", "cliff_top1"],
     "b": ["bog0", "bog1"],
 }

@@ -419,7 +419,7 @@
   },
   {
    "frame": "camp_fire",
-   "x": 904.0,
+   "x": 920.0,
    "y": 3496.0,
    "flags": "",
    "z": 1,
@@ -427,16 +427,16 @@
   },
   {
    "frame": "camp_bedroll",
-   "x": 952.0,
-   "y": 3480.0,
+   "x": 888.0,
+   "y": 3512.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
-   "frame": "camp_banner",
-   "x": 984.0,
-   "y": 3448.0,
+   "frame": "fence",
+   "x": 968.0,
+   "y": 3480.0,
    "flags": "",
    "z": 0,
    "lit": false
@@ -450,33 +450,41 @@
    "lit": false
   },
   {
-   "frame": "camp_trophies",
-   "x": 808.0,
-   "y": 3448.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "barrel",
-   "x": 968.0,
+   "x": 984.0,
    "y": 3512.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
-   "frame": "fence",
-   "x": 776.0,
-   "y": 3512.0,
+   "frame": "lamp",
+   "x": 792.0,
+   "y": 3480.0,
    "flags": "",
    "z": 0,
-   "lit": false
+   "lit": true
   },
   {
-   "frame": "camp_tent",
-   "x": 2392.0,
+   "frame": "signpost",
+   "x": 2408.0,
    "y": 3016.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "disc_shrine",
+   "x": 2520.0,
+   "y": 2984.0,
+   "flags": "",
+   "z": 1,
+   "lit": true
+  },
+  {
+   "frame": "column_broken",
+   "x": 2360.0,
+   "y": 2984.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -484,29 +492,21 @@
   {
    "frame": "camp_fire",
    "x": 2440.0,
-   "y": 3048.0,
+   "y": 3064.0,
    "flags": "",
    "z": 1,
    "lit": true
   },
   {
-   "frame": "camp_bedroll",
-   "x": 2488.0,
-   "y": 3032.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "camp_banner",
-   "x": 2520.0,
-   "y": 3000.0,
+   "x": 2472.0,
+   "y": 3016.0,
    "flags": "",
-   "z": 0,
+   "z": 1,
    "lit": false
   },
   {
-   "frame": "camp_crate",
+   "frame": "camp_bedroll",
    "x": 2360.0,
    "y": 3048.0,
    "flags": "",
@@ -515,46 +515,38 @@
   },
   {
    "frame": "camp_trophies",
-   "x": 2344.0,
-   "y": 3000.0,
+   "x": 2552.0,
+   "y": 3032.0,
    "flags": "",
    "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "camp_crate",
+   "x": 3944.0,
+   "y": 2520.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_crate",
+   "x": 3960.0,
+   "y": 2504.0,
+   "flags": "",
+   "z": 1,
    "lit": false
   },
   {
    "frame": "barrel",
-   "x": 2504.0,
-   "y": 3064.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "fence",
-   "x": 2312.0,
-   "y": 3064.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_tent",
-   "x": 3928.0,
-   "y": 2536.0,
+   "x": 4008.0,
+   "y": 2520.0,
    "flags": "",
    "z": 1,
    "lit": false
   },
   {
-   "frame": "camp_fire",
-   "x": 3976.0,
-   "y": 2568.0,
-   "flags": "",
-   "z": 1,
-   "lit": true
-  },
-  {
-   "frame": "camp_bedroll",
+   "frame": "barrel",
    "x": 4024.0,
    "y": 2552.0,
    "flags": "",
@@ -562,108 +554,92 @@
    "lit": false
   },
   {
+   "frame": "camp_fire",
+   "x": 3928.0,
+   "y": 2584.0,
+   "flags": "",
+   "z": 1,
+   "lit": true
+  },
+  {
    "frame": "camp_banner",
    "x": 4056.0,
-   "y": 2520.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_crate",
-   "x": 3896.0,
    "y": 2568.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_trophies",
-   "x": 3880.0,
-   "y": 2520.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "barrel",
-   "x": 4040.0,
-   "y": 2584.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "fence",
-   "x": 3848.0,
-   "y": 2584.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_tent",
-   "x": 3288.0,
-   "y": 1672.0,
    "flags": "",
    "z": 1,
    "lit": false
   },
   {
-   "frame": "camp_fire",
-   "x": 3336.0,
-   "y": 1704.0,
+   "frame": "lamp",
+   "x": 3896.0,
+   "y": 2552.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "fence",
+   "x": 3992.0,
+   "y": 2600.0,
+   "flags": "",
+   "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "brazier",
+   "x": 3368.0,
+   "y": 1656.0,
    "flags": "",
    "z": 1,
    "lit": true
   },
   {
    "frame": "camp_bedroll",
-   "x": 3384.0,
+   "x": 3304.0,
    "y": 1688.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
-   "frame": "camp_banner",
-   "x": 3416.0,
-   "y": 1656.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_crate",
-   "x": 3256.0,
+   "frame": "camp_trophies",
+   "x": 3400.0,
    "y": 1704.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
-   "frame": "camp_trophies",
-   "x": 3240.0,
-   "y": 1656.0,
+   "frame": "wall_stub",
+   "x": 3272.0,
+   "y": 1640.0,
+   "flags": "",
+   "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3304.0,
+   "y": 1624.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
    "frame": "barrel",
-   "x": 3400.0,
-   "y": 1720.0,
+   "x": 3256.0,
+   "y": 1736.0,
    "flags": "",
    "z": 0,
    "lit": false
   },
   {
-   "frame": "fence",
-   "x": 3208.0,
-   "y": 1720.0,
+   "frame": "camp_fire",
+   "x": 3336.0,
+   "y": 1736.0,
    "flags": "",
    "z": 0,
-   "lit": false
+   "lit": true
   },
   {
    "frame": "short_bridge",
@@ -13106,7 +13082,7 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
+   "frame": "wall_stub",
    "x": 3208.0,
    "y": 1688.0,
    "flags": "",
@@ -13690,7 +13666,7 @@
    "lit": false
   },
   {
-   "frame": "gravestone",
+   "frame": "rock_b",
    "x": 3336.0,
    "y": 1736.0,
    "flags": "",
@@ -20130,14 +20106,6 @@
    "lit": false
   },
   {
-   "frame": "gravestone",
-   "x": 3928.0,
-   "y": 2504.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 4232.0,
    "y": 2504.0,
@@ -20252,14 +20220,6 @@
   {
    "frame": "tree_dead",
    "x": 3832.0,
-   "y": 2520.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "gravestone",
-   "x": 3896.0,
    "y": 2520.0,
    "flags": "",
    "z": 0,
@@ -20402,14 +20362,6 @@
    "lit": false
   },
   {
-   "frame": "gravestone",
-   "x": 4056.0,
-   "y": 2536.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 4360.0,
    "y": 2536.0,
@@ -20484,14 +20436,6 @@
   {
    "frame": "tree_pine",
    "x": 3784.0,
-   "y": 2552.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
-   "x": 3896.0,
    "y": 2552.0,
    "flags": "",
    "z": 0,
@@ -20652,14 +20596,6 @@
   {
    "frame": "tree_pine",
    "x": 3624.0,
-   "y": 2568.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
-   "x": 4072.0,
    "y": 2568.0,
    "flags": "",
    "z": 0,
@@ -24922,14 +24858,6 @@
    "lit": false
   },
   {
-   "frame": "gravestone",
-   "x": 2552.0,
-   "y": 3000.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_a",
    "x": 2728.0,
    "y": 3000.0,
@@ -27844,14 +27772,6 @@
   {
    "frame": "grave_cross",
    "x": 520.0,
-   "y": 3384.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
-   "x": 888.0,
    "y": 3384.0,
    "flags": "",
    "z": 0,
@@ -41538,14 +41458,6 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
-   "x": 3416.0,
-   "y": 1656.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_b",
    "x": 3496.0,
    "y": 1656.0,
@@ -43826,14 +43738,6 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
-   "x": 3944.0,
-   "y": 2456.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "gravestone",
    "x": 792.0,
    "y": 2488.0,
@@ -44084,14 +43988,6 @@
   {
    "frame": "rock_b",
    "x": 2296.0,
-   "y": 2552.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
-   "x": 3928.0,
    "y": 2552.0,
    "flags": "",
    "z": 0,
@@ -45274,14 +45170,6 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
-   "x": 2552.0,
-   "y": 3000.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_a",
    "x": 2600.0,
    "y": 3000.0,
@@ -45362,7 +45250,7 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
+   "frame": "rock_a",
    "x": 2392.0,
    "y": 3032.0,
    "flags": "",
@@ -46434,14 +46322,6 @@
    "lit": false
   },
   {
-   "frame": "gravestone",
-   "x": 936.0,
-   "y": 3384.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "grave_cross",
    "x": 1176.0,
    "y": 3384.0,
@@ -46540,14 +46420,6 @@
   {
    "frame": "rock_a",
    "x": 760.0,
-   "y": 3400.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "gravestone",
-   "x": 888.0,
    "y": 3400.0,
    "flags": "",
    "z": 0,
@@ -46771,14 +46643,6 @@
   },
   {
    "frame": "grave_cross",
-   "x": 920.0,
-   "y": 3448.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
    "x": 1384.0,
    "y": 3448.0,
    "flags": "",
@@ -46797,14 +46661,6 @@
    "frame": "bush",
    "x": 4168.0,
    "y": 3448.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "grave_cross",
-   "x": 888.0,
-   "y": 3464.0,
    "flags": "",
    "z": 0,
    "lit": false
@@ -46930,14 +46786,6 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
-   "x": 920.0,
-   "y": 3496.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_b",
    "x": 1224.0,
    "y": 3496.0,
@@ -47037,14 +46885,6 @@
    "frame": "bush",
    "x": 5048.0,
    "y": 3528.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "gravestone",
-   "x": 936.0,
-   "y": 3544.0,
    "flags": "",
    "z": 0,
    "lit": false
@@ -49448,6 +49288,22 @@
    "flags": "",
    "z": 0,
    "lit": false
+  },
+  {
+   "frame": "lamp",
+   "x": 3384.0,
+   "y": 1640.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4024.0,
+   "y": 2504.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
   }
  ]
 }

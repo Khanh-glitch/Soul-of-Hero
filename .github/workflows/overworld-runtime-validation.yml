@@ -344,6 +344,33 @@ jobs:
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-occlusion.log" "Occlusion" "OVERWORLD OCCLUSION_RUNTIME_TEST PASSED"
           exit $rc
 
+      - name: "Occlusion (selective): bases stay, bodies fade, nothing else moves"
+        run: |
+          mkdir -p artifacts/ud_occsel
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_occsel \
+                  --resolution 640x480 --windowed \
+                  --script res://tests/overworld_occlusion_selective_test.gd >"$ARTIFACT_DIR/overworld-occlusion-selective.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-occlusion-selective.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-occlusion-selective.log" "Occlusion (selective)" "OVERWORLD OCCLUSION_SELECTIVE_TEST PASSED"
+          exit $rc
+
+      - name: "Occlusion reuse: a real Chapter 1 dungeon, unchanged"
+        run: |
+          mkdir -p artifacts/ud_occreuse
+          timeout --signal=TERM --kill-after=15s 240s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_occreuse \
+                  --resolution 640x480 --windowed \
+                  --script res://tests/overworld_occlusion_chapter1_reuse_test.gd >"$ARTIFACT_DIR/overworld-occlusion-reuse.log" 2>&1
+          rc=$?; cat "$ARTIFACT_DIR/overworld-occlusion-reuse.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-occlusion-reuse.log" "Occlusion reuse" "OVERWORLD OCCLUSION_CHAPTER1_REUSE_TEST PASSED"
+          exit $rc
+
+      - name: "World patches: deterministic, idempotent, non-destructive"
+        run: |
+          python3 tools/overworld/patches.py --empty
+          python3 tools/overworld/patches.py --check
+
       - name: "Round trip: gate → real L01 → retreat → Marches"
         run: |
           mkdir -p artifacts/ud_trip

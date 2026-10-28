@@ -31,6 +31,7 @@ import zlib
 from collections import deque
 
 ROOT = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT, "data", "overworld")
 
 W, H = 384, 256
@@ -683,19 +684,79 @@ def paint_landmarks():
                 add_prop("brazier", *tile_pos(tx + dx, ty + 6), lit=True)
 
 
+# One camp, four places. The first version of this function drew the same eight
+# props around every camp, and a native screenshot of the four side by side made
+# the problem obvious: they were the *same camp* four times, so a player had no
+# way to tell "the safe fire" from "the camp at the foot of the relay" without
+# reading the label. Each entry below is instead built from a different idea:
+#
+#   Ashen Refuge  - shelter: a lean-to against the trees, a cook fire, a drying
+#                  rack. Somewhere you would sleep.
+#   Wayfarer Stones - a crossroads: a waymarker, a shrine stone, a bench, a
+#                  covered wagon stop. Somewhere you would turn.
+#   Relay Foot   - a work camp: a supply tent, a power trunk running to the
+#                  relay, crates, a spool. Somewhere people are posted.
+#   Watch Ridge  - a lookout: a windbreak of stacked stones, a watchpost, a
+#                  signal brazier. Somewhere someone is watching.
+CAMPS = [
+    ("camp_refuge", "Ashen Refuge", (56, 216), True),
+    ("camp_crossroads", "Wayfarer Stones", (152, 188), False),
+    ("camp_relay_base", "Relay Foot", (248, 158), False),
+    ("camp_ridge", "Watch Ridge Camp", (208, 104), False),
+]
+
+
+def _camp_clearing(cid, tx, ty, rx=8, ry=5, ground_code="d"):
+    for x, y in ellipse(tx, ty, rx, ry, wobble=0.4, seed=stable_seed(cid)):
+        put(ground, x, y, ground_code)
+        put(solid, x, y, ".")
+
+
 def paint_camps():
-    for cid, name, (tx, ty), initial in CAMPS:
-        for x, y in ellipse(tx, ty, 8, 5, wobble=0.4, seed=stable_seed(cid)):
-            put(ground, x, y, "d")
-            put(solid, x, y, ".")
-        add_prop("camp_tent", *tile_pos(tx - 3, ty), z=1)
-        add_prop("camp_fire", *tile_pos(tx, ty + 2), lit=True, z=1)
-        add_prop("camp_bedroll", *tile_pos(tx + 3, ty + 1))
-        add_prop("camp_banner", *tile_pos(tx + 5, ty - 1))
-        add_prop("camp_crate", *tile_pos(tx - 5, ty + 2))
-        add_prop("camp_trophies", *tile_pos(tx - 6, ty - 1))
-        add_prop("barrel", *tile_pos(tx + 4, ty + 3))
-        add_prop("fence", *tile_pos(tx - 8, ty + 3))
+    # --- Ashen Refuge: a lean-to, a cook fire, somewhere to dry meat --------
+    cid, _name, (tx, ty), _ = CAMPS[0]
+    _camp_clearing(cid, tx, ty, 8, 5)
+    add_prop("camp_tent", *tile_pos(tx - 3, ty), z=1)
+    add_prop("camp_fire", *tile_pos(tx + 1, ty + 2), lit=True, z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 1, ty + 3))
+    add_prop("fence", *tile_pos(tx + 4, ty + 1))          # drying rack
+    add_prop("camp_crate", *tile_pos(tx - 5, ty + 2))
+    add_prop("barrel", *tile_pos(tx + 5, ty + 3))
+    add_prop("lamp", *tile_pos(tx - 7, ty + 1), lit=True)
+
+    # --- Wayfarer Stones: a crossing, not a camp ---------------------------
+    cid, _name, (tx, ty), _ = CAMPS[1]
+    _camp_clearing(cid, tx, ty, 7, 4, ground_code="g")    # trodden grass
+    add_prop("signpost", *tile_pos(tx - 2, ty), z=1)
+    add_prop("disc_shrine", *tile_pos(tx + 5, ty - 2), lit=True, z=1)
+    add_prop("column_broken", *tile_pos(tx - 5, ty - 2), z=1)
+    add_prop("camp_fire", *tile_pos(tx, ty + 3), lit=True, z=1)
+    add_prop("camp_banner", *tile_pos(tx + 2, ty), z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 5, ty + 2))
+    add_prop("camp_trophies", *tile_pos(tx + 7, ty + 1))
+
+    # --- Relay Foot: a supply depot on the path to the mast ----------------
+    cid, _name, (tx, ty), _ = CAMPS[2]
+    _camp_clearing(cid, tx, ty, 7, 5)
+    add_prop("camp_crate", *tile_pos(tx - 2, ty - 1), z=1)
+    add_prop("camp_crate", *tile_pos(tx - 1, ty - 2), z=1)   # stacked
+    add_prop("barrel", *tile_pos(tx + 2, ty - 1), z=1)
+    add_prop("barrel", *tile_pos(tx + 3, ty + 1))
+    add_prop("camp_fire", *tile_pos(tx - 3, ty + 3), lit=True, z=1)
+    add_prop("camp_banner", *tile_pos(tx + 5, ty + 2), z=1)
+    add_prop("lamp", *tile_pos(tx - 5, ty + 1), lit=True)
+    add_prop("fence", *tile_pos(tx + 1, ty + 4))
+
+    # --- Watch Ridge: a brazier and a windbreak, facing outward ------------
+    cid, _name, (tx, ty), _ = CAMPS[3]
+    _camp_clearing(cid, tx, ty, 6, 4)
+    add_prop("brazier", *tile_pos(tx + 2, ty - 1), lit=True, z=1)
+    add_prop("camp_bedroll", *tile_pos(tx - 2, ty + 1))
+    add_prop("camp_trophies", *tile_pos(tx + 4, ty + 2))
+    add_prop("wall_stub", *tile_pos(tx - 4, ty - 2))      # stone windbreak
+    add_prop("wall_stub", *tile_pos(tx - 2, ty - 3))
+    add_prop("barrel", *tile_pos(tx - 5, ty + 4))
+    add_prop("camp_fire", *tile_pos(tx, ty + 4), lit=True)
 
 
 def paint_shortcuts():
@@ -1327,6 +1388,19 @@ def main():
     paint_scatter()
     reinstate_shortcut_bands()
 
+    # Local, hand-authored overrides for the *world* (terrain cells and prop
+    # placement), applied before the gates so they are judged like any other
+    # authored content. Empty by default; see tools/overworld/patches.py.
+    import patches as patches_module
+    patch_doc = patches_module.load()
+    patch_report: list = []
+    patch_summary = patches_module.apply(patch_doc, ground, detail, solid, props,
+                                         W, H, TILE, patch_report)
+    if patch_summary["patches"]:
+        print("patches: %d declared, %d cells changed, %d prop edits"
+              % (patch_summary["patches"], patch_summary["terrain_cells"],
+                 patch_summary["prop_edits"]))
+
     errors = validate()
     if errors:
         for e in errors:
@@ -1347,6 +1421,12 @@ def main():
             "solid": {"rle": rle(sl)},
         },
     }, os.path.join(DATA_DIR, "hollow_marches_layers.json"))
+    if patch_report:
+        write_json({
+            "schema": "hollow_marches_patch_report/v1",
+            "applied": patch_report,
+            "summary": patch_summary,
+        }, os.path.join(DATA_DIR, "world_patch_report.json"))
     write_json({"schema": "hollow_marches_props/v1", "props": props},
                os.path.join(DATA_DIR, "hollow_marches_props.json"))
     write_json(world_document(), os.path.join(DATA_DIR, "hollow_marches.json"))

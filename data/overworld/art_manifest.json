@@ -43,25 +43,25 @@
     },
     "camp_banner": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/camp_banner.png",
      "rect": [
       374,
       306,
       16,
       34
      ],
-     "source": "generated"
+     "source": "override"
     },
     "camp_bedroll": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/camp_bedroll.png",
      "rect": [
       480,
       354,
       24,
       14
      ],
-     "source": "generated"
+     "source": "override"
     },
     "camp_crate": {
      "license": "original",
@@ -76,25 +76,25 @@
     },
     "camp_fire": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/camp_fire.png",
      "rect": [
       146,
       344,
       28,
       24
      ],
-     "source": "generated"
+     "source": "override"
     },
     "camp_tent": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/camp_tent.png",
      "rect": [
       326,
       304,
       46,
       36
      ],
-     "source": "generated"
+     "source": "override"
     },
     "camp_trophies": {
      "license": "original",
@@ -263,36 +263,36 @@
     },
     "lm_crucible": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/lm_crucible.png",
      "rect": [
       2,
       222,
       112,
       72
      ],
-     "source": "generated"
+     "source": "override"
     },
     "lm_crypt": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/lm_crypt.png",
      "rect": [
       116,
       230,
       96,
       64
      ],
-     "source": "generated"
+     "source": "override"
     },
     "lm_divided": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/lm_divided.png",
      "rect": [
       2,
       132,
       128,
       88
      ],
-     "source": "generated"
+     "source": "override"
     },
     "lm_gate": {
      "license": "original",
@@ -318,14 +318,14 @@
     },
     "lm_relay": {
      "license": "original",
-     "origin": "tools/overworld",
+     "origin": "assets/environment/overworld/overrides/props/lm_relay.png",
      "rect": [
       222,
       26,
       96,
       104
      ],
-     "source": "generated"
+     "source": "override"
     },
     "lm_reliquary": {
      "license": "original",
@@ -526,12 +526,12 @@
      "source": "generated"
     }
    },
-   "overridden": 2,
-   "sha256_16": "ab410a85ffc84275",
+   "overridden": 10,
+   "sha256_16": "00e49295de7e073d",
    "skipped": []
   },
   "tiles": {
-   "frames": 212,
+   "frames": 216,
    "image": "assets/environment/overworld/overworld_tiles.png",
    "index": {
     "ash0": {
@@ -560,7 +560,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      224,
+      288,
       16,
       16,
       16
@@ -571,7 +571,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      256,
+      320,
       16,
       16,
       16
@@ -582,7 +582,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      272,
+      336,
       16,
       16,
       16
@@ -593,7 +593,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      416,
+      480,
       16,
       16,
       16
@@ -604,7 +604,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      432,
+      496,
       16,
       16,
       16
@@ -615,8 +615,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      448,
-      16,
+      0,
+      32,
       16,
       16
      ],
@@ -626,8 +626,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      464,
       16,
+      32,
       16,
       16
      ],
@@ -637,795 +637,14 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      480,
-      16,
+      32,
+      32,
       16,
       16
      ],
      "source": "generated"
     },
     "bank#15": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      496,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      320,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#6": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      352,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#7": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      368,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#8": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      384,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bank#9": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      400,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      64,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      80,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#10": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      224,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#11": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      240,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#12": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      256,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#13": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      272,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#14": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#15": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      96,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      112,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      128,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      144,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#6": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      160,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#7": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      176,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#8": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      192,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "blocker#9": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      208,
-      96,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bloodstain": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      208,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bog0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      128,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "bog1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      144,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      256,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      272,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#10": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      416,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#11": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      432,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#12": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      448,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#13": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      464,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#14": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      480,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#15": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      496,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      320,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#6": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      352,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#7": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      368,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#8": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      384,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "canopy#9": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      400,
-      80,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      256,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      272,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#10": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      416,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#11": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      432,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#12": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      448,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#13": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      464,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#14": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      480,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#15": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      496,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      320,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#6": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      352,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#7": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      368,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#8": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      384,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff#9": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      400,
-      64,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff_top0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      96,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "cliff_top1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      112,
-      16,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#0": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      0,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#1": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      16,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#10": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      160,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#11": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      176,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#12": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      192,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#13": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      208,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#14": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      224,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#15": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      240,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      32,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "conduit#3": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1436,7 +655,678 @@
      ],
      "source": "generated"
     },
-    "conduit#4": {
+    "bank#2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      352,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#3": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      368,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#4": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      384,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#5": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      400,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      416,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      432,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      448,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bank#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      464,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#0": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      128,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      144,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#10": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      288,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#11": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      304,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#12": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      320,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#13": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      336,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#14": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      352,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#15": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      368,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      160,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#3": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      176,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#4": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      192,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#5": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      208,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      224,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      240,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      256,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "blocker#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      272,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bloodstain": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      272,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bog0": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      192,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "bog1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      208,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#0": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      320,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      336,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#10": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      480,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#11": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      496,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#12": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      0,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#13": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      16,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#14": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      32,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#15": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      48,
+      96,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      352,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#3": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      368,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#4": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      384,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#5": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      400,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      416,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      432,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      448,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "canopy#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      464,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#0": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      320,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      336,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#10": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      480,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#11": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      496,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#12": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      0,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#13": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      16,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#14": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      32,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#15": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      48,
+      80,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      352,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#3": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      368,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#4": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      384,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#5": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      400,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      416,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      432,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      448,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      464,
+      64,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff_top0": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      160,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "cliff_top1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      176,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#0": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1447,7 +1337,7 @@
      ],
      "source": "generated"
     },
-    "conduit#5": {
+    "conduit#1": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1458,7 +1348,73 @@
      ],
      "source": "generated"
     },
-    "conduit#6": {
+    "conduit#10": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      224,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#11": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      240,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#12": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      256,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#13": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      272,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#14": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      288,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#15": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      304,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#2": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1469,7 +1425,7 @@
      ],
      "source": "generated"
     },
-    "conduit#7": {
+    "conduit#3": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1480,7 +1436,7 @@
      ],
      "source": "generated"
     },
-    "conduit#8": {
+    "conduit#4": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1491,7 +1447,7 @@
      ],
      "source": "generated"
     },
-    "conduit#9": {
+    "conduit#5": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1502,11 +1458,55 @@
      ],
      "source": "generated"
     },
-    "crack": {
+    "conduit#6": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
       160,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      176,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      192,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "conduit#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      208,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "crack": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      224,
       16,
       16,
       16
@@ -1770,7 +1770,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      256,
+      320,
       32,
       16,
       16
@@ -1781,7 +1781,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      272,
+      336,
       32,
       16,
       16
@@ -1792,7 +1792,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      416,
+      480,
       32,
       16,
       16
@@ -1803,7 +1803,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      432,
+      496,
       32,
       16,
       16
@@ -1814,8 +1814,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      448,
-      32,
+      0,
+      48,
       16,
       16
      ],
@@ -1825,8 +1825,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      464,
-      32,
+      16,
+      48,
       16,
       16
      ],
@@ -1836,8 +1836,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      480,
       32,
+      48,
       16,
       16
      ],
@@ -1847,58 +1847,14 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      496,
-      32,
+      48,
+      48,
       16,
       16
      ],
      "source": "generated"
     },
     "moss#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "moss#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "moss#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      320,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "moss#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      32,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "moss#6": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1909,7 +1865,7 @@
      ],
      "source": "generated"
     },
-    "moss#7": {
+    "moss#3": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1920,7 +1876,7 @@
      ],
      "source": "generated"
     },
-    "moss#8": {
+    "moss#4": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -1931,11 +1887,55 @@
      ],
      "source": "generated"
     },
-    "moss#9": {
+    "moss#5": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
       400,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "moss#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      416,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "moss#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      432,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "moss#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      448,
+      32,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "moss#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      464,
       32,
       16,
       16
@@ -1968,7 +1968,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      0,
+      64,
       64,
       16,
       16
@@ -1979,7 +1979,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      16,
+      80,
       64,
       16,
       16
@@ -1990,7 +1990,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      160,
+      224,
       64,
       16,
       16
@@ -2001,7 +2001,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      176,
+      240,
       64,
       16,
       16
@@ -2012,7 +2012,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      192,
+      256,
       64,
       16,
       16
@@ -2023,7 +2023,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      208,
+      272,
       64,
       16,
       16
@@ -2034,7 +2034,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      224,
+      288,
       64,
       16,
       16
@@ -2045,7 +2045,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
+      304,
       64,
       16,
       16
@@ -2056,7 +2056,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      32,
+      96,
       64,
       16,
       16
@@ -2067,7 +2067,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      48,
+      112,
       64,
       16,
       16
@@ -2078,7 +2078,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      64,
+      128,
       64,
       16,
       16
@@ -2089,7 +2089,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      80,
+      144,
       64,
       16,
       16
@@ -2100,7 +2100,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      96,
+      160,
       64,
       16,
       16
@@ -2111,7 +2111,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      112,
+      176,
       64,
       16,
       16
@@ -2122,7 +2122,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      128,
+      192,
       64,
       16,
       16
@@ -2133,7 +2133,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      144,
+      208,
       64,
       16,
       16
@@ -2144,7 +2144,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      192,
+      256,
       16,
       16,
       16
@@ -2177,7 +2177,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      0,
+      64,
       48,
       16,
       16
@@ -2188,7 +2188,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      16,
+      80,
       48,
       16,
       16
@@ -2199,7 +2199,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      160,
+      224,
       48,
       16,
       16
@@ -2210,7 +2210,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      176,
+      240,
       48,
       16,
       16
@@ -2221,7 +2221,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      192,
+      256,
       48,
       16,
       16
@@ -2232,7 +2232,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      208,
+      272,
       48,
       16,
       16
@@ -2243,7 +2243,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      224,
+      288,
       48,
       16,
       16
@@ -2254,7 +2254,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
+      304,
       48,
       16,
       16
@@ -2265,7 +2265,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      32,
+      96,
       48,
       16,
       16
@@ -2276,7 +2276,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      48,
+      112,
       48,
       16,
       16
@@ -2287,7 +2287,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      64,
+      128,
       48,
       16,
       16
@@ -2298,7 +2298,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      80,
+      144,
       48,
       16,
       16
@@ -2309,7 +2309,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      96,
+      160,
       48,
       16,
       16
@@ -2320,7 +2320,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      112,
+      176,
       48,
       16,
       16
@@ -2331,7 +2331,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      128,
+      192,
       48,
       16,
       16
@@ -2342,7 +2342,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      144,
+      208,
       48,
       16,
       16
@@ -2353,7 +2353,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      256,
+      320,
       48,
       16,
       16
@@ -2364,7 +2364,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      272,
+      336,
       48,
       16,
       16
@@ -2375,7 +2375,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      416,
+      480,
       48,
       16,
       16
@@ -2386,7 +2386,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      432,
+      496,
       48,
       16,
       16
@@ -2397,8 +2397,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      448,
-      48,
+      0,
+      64,
       16,
       16
      ],
@@ -2408,8 +2408,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      464,
-      48,
+      16,
+      64,
       16,
       16
      ],
@@ -2419,8 +2419,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      480,
-      48,
+      32,
+      64,
       16,
       16
      ],
@@ -2430,58 +2430,14 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      496,
       48,
+      64,
       16,
       16
      ],
      "source": "generated"
     },
     "road_stone#2": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      288,
-      48,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "road_stone#3": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      304,
-      48,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "road_stone#4": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      320,
-      48,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "road_stone#5": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      48,
-      16,
-      16
-     ],
-     "source": "generated"
-    },
-    "road_stone#6": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -2492,7 +2448,7 @@
      ],
      "source": "generated"
     },
-    "road_stone#7": {
+    "road_stone#3": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -2503,7 +2459,7 @@
      ],
      "source": "generated"
     },
-    "road_stone#8": {
+    "road_stone#4": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
@@ -2514,11 +2470,55 @@
      ],
      "source": "generated"
     },
-    "road_stone#9": {
+    "road_stone#5": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
       400,
+      48,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "road_stone#6": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      416,
+      48,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "road_stone#7": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      432,
+      48,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "road_stone#8": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      448,
+      48,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "road_stone#9": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      464,
       48,
       16,
       16
@@ -2573,7 +2573,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      0,
+      64,
       96,
       16,
       16
@@ -2584,7 +2584,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      16,
+      80,
       96,
       16,
       16
@@ -2595,7 +2595,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      32,
+      96,
       96,
       16,
       16
@@ -2606,7 +2606,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      48,
+      112,
       96,
       16,
       16
@@ -2617,7 +2617,40 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      80,
+      96,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "shallow1": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      112,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "shallow2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      128,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
+    },
+    "shallow3": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      144,
       16,
       16,
       16
@@ -2650,7 +2683,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
+      304,
       16,
       16,
       16
@@ -2661,7 +2694,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      176,
+      240,
       16,
       16,
       16
@@ -2672,7 +2705,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      0,
+      64,
       80,
       16,
       16
@@ -2683,7 +2716,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      16,
+      80,
       80,
       16,
       16
@@ -2694,7 +2727,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      160,
+      224,
       80,
       16,
       16
@@ -2705,7 +2738,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      176,
+      240,
       80,
       16,
       16
@@ -2716,7 +2749,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      192,
+      256,
       80,
       16,
       16
@@ -2727,7 +2760,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      208,
+      272,
       80,
       16,
       16
@@ -2738,7 +2771,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      224,
+      288,
       80,
       16,
       16
@@ -2749,7 +2782,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
+      304,
       80,
       16,
       16
@@ -2760,7 +2793,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      32,
+      96,
       80,
       16,
       16
@@ -2771,7 +2804,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      48,
+      112,
       80,
       16,
       16
@@ -2782,7 +2815,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      64,
+      128,
       80,
       16,
       16
@@ -2793,7 +2826,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      80,
+      144,
       80,
       16,
       16
@@ -2804,7 +2837,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      96,
+      160,
       80,
       16,
       16
@@ -2815,7 +2848,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      112,
+      176,
       80,
       16,
       16
@@ -2826,7 +2859,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      128,
+      192,
       80,
       16,
       16
@@ -2837,7 +2870,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      144,
+      208,
       80,
       16,
       16
@@ -2865,10 +2898,21 @@
       16
      ],
      "source": "generated"
+    },
+    "water2": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      80,
+      16,
+      16,
+      16
+     ],
+     "source": "generated"
     }
    },
    "overridden": 0,
-   "sha256_16": "942862d1e6cd977b",
+   "sha256_16": "4e89c2b705194b91",
    "skipped": []
   }
  }

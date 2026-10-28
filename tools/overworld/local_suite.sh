@@ -39,6 +39,8 @@ run GATE    res://tests/overworld_gate_runtime_test.gd       "OVERWORLD GATE_RUN
 run SHORT   res://tests/overworld_shortcut_runtime_test.gd   "OVERWORLD SHORTCUT_RUNTIME_TEST PASSED" short
 run TRAV    res://tests/overworld_traversability_runtime_test.gd "OVERWORLD TRAVERSABILITY_RUNTIME_TEST PASSED" trav
 run OCC     res://tests/overworld_occlusion_runtime_test.gd  "OVERWORLD OCCLUSION_RUNTIME_TEST PASSED" occ
+run OCCSEL  res://tests/overworld_occlusion_selective_test.gd "OVERWORLD OCCLUSION_SELECTIVE_TEST PASSED" occsel
+run OCCREUSE res://tests/overworld_occlusion_chapter1_reuse_test.gd "OVERWORLD OCCLUSION_CHAPTER1_REUSE_TEST PASSED" occreuse
 # Round trip and acceptance boot the real app; they report their own summary lines.
 for mode in roundtrip acceptance; do
   mkdir -p "$OUT/ud_$mode"
