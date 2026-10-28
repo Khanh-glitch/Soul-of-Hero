@@ -73,6 +73,21 @@ func _run()->void:
                     var expected:String=String(case[1][next_index][k+1])
                     var actual:String=_hash(rgba[key])
                     if actual!=expected:
+                        if retarget and frame==129 and key=="shd":
+                            var original_spots:Array=[92183,92782,92784,93383,96378,96380,96382,96977,96979,96981,96983,97578,97580,97582,100581,100583,100585,100589,100591,100593,101180,101182,101184,101186,101188,101190,101192,101194,101779,101781,101783,101785,101787,101789,101791,101793,101795,102380,102382,102384,102386,102388,102390,102392,102394,102981,102983,102985,102989,102991,102993]
+                            var native_spots:Array=[]
+                            var shadow:PackedByteArray=rgba["shd"]
+                            for bi in range(600*340):
+                                if shadow[bi*4+3]>0:native_spots.append(bi)
+                            var missing:Array=[]
+                            var extra:Array=[]
+                            for bi in original_spots:
+                                if not native_spots.has(bi):missing.append(bi)
+                            for bi in native_spots:
+                                if not original_spots.has(bi):extra.append(bi)
+                            print("GOLD_SHADOW_129_DIAG: original=51 native=%d missing=%s extra=%s" % [native_spots.size(),str(missing),str(extra)])
+                            print("GOLD_SHADOW_129_CHAIN: %s" % str(motion.fang.chain.sx))
+                            print("GOLD_SHADOW_129_CHAIN_Y: %s" % str(motion.fang.chain.sy))
                         _fail("%s frame=%d pass=%s Gold=%s Native=%s" % [name,frame,key,expected,actual])
                         return
                     compared+=1
