@@ -124,11 +124,11 @@ func release_cast(_cast_id: StringName) -> int:
 		released += 1
 	if is_instance_valid(particles_canvas):
 		particles_canvas.release_source_particles()
+		particles_canvas.set("render_frame", 0)
 		# The source component guards against a render clock that moves
 		# backwards, which is correct WITHIN one cast. The surface is owned by
 		# this adapter and is reused by the next cast, so the per-cast clock
 		# must be rearmed here or every cast after the first is rejected.
-		particles_canvas.set("render_frame", 0)
 		particles_canvas.set("rendered_count", 0)
 		released += 1
 	if is_instance_valid(fang_canvas):

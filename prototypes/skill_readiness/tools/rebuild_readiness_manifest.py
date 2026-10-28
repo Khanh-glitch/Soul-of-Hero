@@ -66,6 +66,8 @@ EVIDENCE_KEYS = (
 # still missing. Recorded so no one can silently claim the gate passed.
 NATIVE_TEST_EVIDENCE = "prototypes/skill_readiness/tests"
 SOURCE_ORACLE_EVIDENCE = "prototypes/gold_pair/tests"
+PER_SKILL_HARNESS_EVIDENCE = "res://.artifacts/gold93/per_skill_harness.json"
+RENDER_SURFACE_EVIDENCE = "res://.artifacts/gold93/render_surface.json"
 
 
 def main() -> int:
@@ -100,6 +102,8 @@ def main() -> int:
             {
                 "native_test_run": NATIVE_TEST_EVIDENCE,
                 "source_numeric_oracle": SOURCE_ORACLE_EVIDENCE,
+                "per_skill_harness": PER_SKILL_HARNESS_EVIDENCE,
+                "render_surface": RENDER_SURFACE_EVIDENCE,
             }
             if native_executable
             else None
@@ -131,7 +135,11 @@ def main() -> int:
                 "audio": "NOT_PRESENT_IN_ORIGINAL_SOURCE",
                 "camera_post": "AUDITED_SOURCE_LOCKED",
                 "cancel_cleanup": "AUDITED_SOURCE_LOCKED",
-                "native_gpu": "NOT_VERIFIED_NO_GPU_IN_EXECUTION_ENVIRONMENT",
+                # The CPU source raster that feeds the GPU passes is driven and
+                # asserted every tick by the render-surface gate; the GPU
+                # composite itself needs a real display, which the headless
+                # execution environment does not have.
+                "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE",
             }
 
         # EPIC gate: every evidence key must be present before port-ready.

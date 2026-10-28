@@ -144,6 +144,19 @@ jobs:
             exit 1
           fi
 
+      - name: Both family render paths (attached surfaces, real passes)
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-render.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_render_surface_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_RENDER: PASS' "$LOG"; then
+            echo "::error::[gold93-render] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-render] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+
       - name: Per-skill independent native harness (all 93)
         shell: bash
         run: |
@@ -189,6 +202,7 @@ jobs:
             /tmp/gold93-family.log
             /tmp/gold93-baseline.log
             /tmp/gold93-lab.log
+            /tmp/gold93-render.log
             /tmp/gold93-harness.log
             /tmp/gold93-adapter.log
             /tmp/gold93-summary.txt

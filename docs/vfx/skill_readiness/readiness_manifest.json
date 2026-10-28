@@ -4914,7 +4914,7 @@
         "audio": "NOT_PRESENT_IN_ORIGINAL_SOURCE",
         "camera_post": "AUDITED_SOURCE_LOCKED",
         "cancel_cleanup": "AUDITED_SOURCE_LOCKED",
-        "native_gpu": "NOT_VERIFIED_NO_GPU_IN_EXECUTION_ENVIRONMENT"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -4929,7 +4929,9 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests"
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
       "source_material_blocker": "",
       "evidence_gaps": [
