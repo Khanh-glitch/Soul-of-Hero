@@ -12,6 +12,8 @@ extends Node
 ##   refuge_start     the refuge hollow the player wakes in
 ##   crypt_approach   the L01 approach road
 ##   ossuary_approach L02, for terrain/variance comparison
+##   archive_approach L03
+##   reliquary_approach L04
 ##   road_terrain     the military road crossing three terrain bands
 ##   camp_crossroads  a lit camp (NOT a decorative fire)
 ##   shortcut_before  the crucible bridge, closed
@@ -121,6 +123,11 @@ func _run() -> void:
 			{"station": "refuge_start", "anchor": "refuge"},
 			{"station": "crypt_approach", "anchor": "lm_crypt"},
 			{"station": "ossuary_approach", "anchor": "lm_ossuary"},
+			# L03 and L04 were the two exteriors missing from this list, which is
+			# also why they were the two nobody could argue about: they are the
+			# plainest of the ten, and no frame of them existed. Photograph them.
+			{"station": "archive_approach", "anchor": "lm_archive"},
+			{"station": "reliquary_approach", "anchor": "lm_reliquary"},
 			{"station": "camp_crossroads", "anchor": "camp_crossroads"},
 			{"station": "crucible", "anchor": "lm_crucible"},
 			{"station": "beacon", "anchor": "lm_beacon"},

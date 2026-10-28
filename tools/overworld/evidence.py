@@ -37,6 +37,8 @@ STATIONS = [
     ("refuge_start", "refuge"),
     ("crypt_approach", "lm_crypt"),
     ("ossuary_approach", "lm_ossuary"),
+    ("archive_approach", "lm_archive"),
+    ("reliquary_approach", "lm_reliquary"),
     ("camp_crossroads", "camp_crossroads"),
     ("crucible", "lm_crucible"),
     ("beacon", "lm_beacon"),
