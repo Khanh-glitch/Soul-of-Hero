@@ -4,6 +4,8 @@ on:
     branches: [feature/gold-venom-arcana-factory-20261028]
     paths:
       - 'prototypes/gold_pair/arcana_source_crack_scar.gd'
+      - 'prototypes/gold_pair/arcana_source_scar_draw_ledger.gd'
+      - 'prototypes/gold_pair/tests/arcana_crack_draw_oracle.gd'
       - 'prototypes/gold_pair/tests/arcana_crack_source_oracle.gd'
       - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
       - '.github/workflows/arcana-gold-crackscar.yml'
@@ -34,3 +36,10 @@ jobs:
           timeout 85s godot --headless --path . --script res://prototypes/gold_pair/tests/arcana_crack_source_oracle.gd 2>&1 | tee /tmp/arcana-scar.log
           grep -F 'ARCANA_SCAR_ORACLE: PASS / 12' /tmp/arcana-scar.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-scar.log; then exit 1; fi
+      - name: Verify exact full pit + fissure + rubble draw commands, RGB and alpha
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/arcana_crack_draw_oracle.gd 2>&1 | tee /tmp/arcana-full-draw.log
+          grep -F 'ARCANA_SCAR_DRAW: PASS / 12' /tmp/arcana-full-draw.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-full-draw.log; then exit 1; fi
