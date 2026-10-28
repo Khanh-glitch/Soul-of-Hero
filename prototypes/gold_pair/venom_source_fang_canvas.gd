@@ -14,6 +14,10 @@ var images:Dictionary={}
 var textures:Dictionary={}
 
 func _ready()->void:
+    _ensure_layers()
+
+func _ensure_layers()->void:
+    if sprites.size()==3: return
     for key in PASSES:
         var im:Image=Image.create(W,H,false,Image.FORMAT_RGBA8)
         var tex:ImageTexture=ImageTexture.create_from_image(im)
@@ -34,15 +38,18 @@ func _ready()->void:
     set_process(false)
 
 func begin_source_actor(source_x:float,source_y:float,angle:float)->void:
+    _ensure_layers()
     fang=FANG.new(source_x,source_y,angle)
 
 func set_source_to_map_transform(source_to_map:Transform2D)->void:
+    _ensure_layers()
     for key in PASSES:
         sprites[key].transform=source_to_map
 
 func render_source_frame(source_time:float,head_x:float,head_y:float,
         altitude:float,face_angle:float,mandible_open:float,
         body_scale:float=1.0)->Dictionary:
+    _ensure_layers()
     if fang==null or sprites.size()!=3:
         push_error("Source Fang Canvas not initialized / start a Gold cast")
         return {}
