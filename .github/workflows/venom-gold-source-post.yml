@@ -1,0 +1,48 @@
+name: Venomwright source Display post shader (Godot native smoke)
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_display_post.gdshader'
+      - 'prototypes/gold_pair/venom_source_display_post.gd'
+      - 'prototypes/gold_pair/tests/venom_source_display_post_smoke.gd'
+      - '.github/workflows/venom-gold-source-post.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-display-post-native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import and check project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-post-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-post-import.log; then exit 1; fi
+      - name: Compile source GLSL stage on real OpenGL and prove full-frame glow and feedback
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 170s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/venom_source_display_post_smoke.gd 2>&1 | tee /tmp/venom-post.log
+          grep -F 'VENOM_SOURCE_POST: PASS / original source GLSL Godot native OpenGL shader compiles' /tmp/venom-post.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:|ERROR: Shader compilation failed' /tmp/venom-post.log; then exit 1; fi
+          test -s /tmp/venom-source-post-1.png
+          test -s /tmp/venom-source-post-2.png
+      - name: Publish native source post comparison fixtures (not original Pixi-vs-Godot parity)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-source-post-native-openGL-classic-ultra
+          path: |
+            /tmp/venom-source-post-1.png
+            /tmp/venom-source-post-2.png
+          retention-days: 7
+          if-no-files-found: warn
