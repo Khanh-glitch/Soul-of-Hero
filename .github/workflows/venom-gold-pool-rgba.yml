@@ -1,0 +1,38 @@
+name: Venomwright Glassfang exact Gold acid Pool full RGBA shading parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_noise.gd'
+      - 'prototypes/gold_pair/venom_source_pool_shade.gd'
+      - 'prototypes/gold_pair/venom_source_pool_sdf.gd'
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - 'prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd'
+      - '.github/workflows/venom-gold-pool-rgba.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-pool-full-color:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import Godot project and reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/pool-rgba-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-rgba-import.log; then exit 1; fi
+      - name: Verify source nz1 nz2 and exact complete Gold Pool RGBA frames
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_pool_source_color_oracle.gd 2>&1 | tee /tmp/pool-rgba.log
+          grep -F 'VENOM_POOL_COLOR: PASS / 2 original noise tiles / 10 whole RGBA Gold hashes' /tmp/pool-rgba.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pool-rgba.log; then exit 1; fi
