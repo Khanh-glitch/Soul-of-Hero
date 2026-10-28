@@ -9,6 +9,10 @@ func _run()->void:
     canvas.begin_source_actor(270.25,150.75,0.41)
     canvas.set_source_to_map_transform(Transform2D(0.0,Vector2(18,31)))
     var outputs:Dictionary=canvas.render_source_frame(0.0,270.25,150.75,7.0,0.41,0.6,1.0)
+    # ImageTexture.update() is queued on the renderer; do not read it back
+    # synchronously from the same CPU stack in a headless test.
+    await process_frame
+    await process_frame
     if outputs.size()!=3:
         push_error("VENOM_FANG_CANVAS: missing Gold pass")
         quit(1)
