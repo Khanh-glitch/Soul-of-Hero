@@ -142,7 +142,9 @@ func _emit_bite(pct:int,finisher:bool)->void:
     bite_cues.append({
         "frame":frame,"enemy":int(target["id"]),"amount":pct,
         "kind":"bite","final":finisher,"contact_x":px,"contact_y":py,
-        "knock":160 if finisher else 80,"stagger":0.3
+        "knock":160 if finisher else 80,"stagger":0.3,
+        "knock_x":cos(ang)*(160.0 if finisher else 80.0),
+        "knock_y":sin(ang)*(160.0 if finisher else 80.0)
     })
     # Source w.hit(...kind='bite') emits three contact crystal shards FIRST,
     # then the authored s1.ts bite() emits seven larger shards.
