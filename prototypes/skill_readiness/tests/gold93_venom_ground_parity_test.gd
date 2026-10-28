@@ -37,4 +37,8 @@ func _init() -> void:
 		"expected_sha256": EXPECT,
 		"bit_exact": ok,
 	}))
+	if ok:
+		print("GOLD93_VENOM_GROUND_PARITY: PASS")
+	else:
+		print("GOLD93_VENOM_GROUND_PARITY: FAIL")
 	quit(0 if ok else 1)
