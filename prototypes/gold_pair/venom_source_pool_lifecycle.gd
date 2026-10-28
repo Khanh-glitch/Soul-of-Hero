@@ -24,6 +24,7 @@ var growth:float=0.3
 var tick_every:float=0.7
 var tick_amount:int=10
 var tick_max:int=3
+var tick_enabled:bool=true
 var tick_kind:String="acid"
 var source_skill_id:int=1
 var hits:Dictionary={}
@@ -33,7 +34,7 @@ var current_frame_events:Array[Dictionary]=[]
 func begin(source_x:float,source_y:float,radius:float,source_life:float,
         source_world_rng,boil_strength:float=2.0,source_grow:float=0.3,
         tick_interval:float=0.7,tick_damage:int=10,max_per_target:int=3,
-        source_id:int=1)->void:
+        source_id:int=1,enable_damage:bool=true)->void:
     x=source_x
     y=source_y
     rad=radius
@@ -44,6 +45,7 @@ func begin(source_x:float,source_y:float,radius:float,source_life:float,
     tick_every=tick_interval
     tick_amount=tick_damage
     tick_max=max_per_target
+    tick_enabled=enable_damage
     source_skill_id=source_id
     age=0.0
     now=0.0
@@ -100,7 +102,7 @@ func step_source_60hz(targets:Array,source_world_time:float=-1.0)->void:
         events.append(e)
         current_frame_events.append(e)
     nt-=F
-    if nt<=0.0 and gs>0.6:
+    if tick_enabled and nt<=0.0 and gs>0.6:
         nt+=tick_every
         for target in targets:
             if float(target.get("dying",0.0))>0.0:continue
