@@ -6,6 +6,8 @@ on:
       - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
       - 'prototypes/gold_pair/venom_source_fang.gd'
       - 'prototypes/gold_pair/venom_source_chain.gd'
+      - 'prototypes/gold_pair/venom_source_fang_canvas.gd'
+      - 'prototypes/gold_pair/tests/venom_fang_canvas_smoke.gd'
       - 'prototypes/gold_pair/tests/venom_fang_source_pixel_oracle.gd'
       - '.github/workflows/venom-gold-fang-pixels.yml'
   workflow_dispatch:
@@ -35,3 +37,10 @@ jobs:
           timeout 115s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_source_pixel_oracle.gd 2>&1 | tee /tmp/venom-fang-pixels.log
           grep -F 'VENOM_FANG_PIXEL: PASS / 18' /tmp/venom-fang-pixels.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-fang-pixels.log; then exit 1; fi
+      - name: Verify source Fang RGBA three-pass native Canvas adapter
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_canvas_smoke.gd 2>&1 | tee /tmp/venom-fang-canvas.log
+          grep -F 'VENOM_FANG_CANVAS: PASS' /tmp/venom-fang-canvas.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-fang-canvas.log; then exit 1; fi
