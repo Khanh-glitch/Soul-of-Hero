@@ -1,0 +1,43 @@
+name: Venomwright original Gold Ultra 2x Fang real high density pixel parity
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_source_pixel_layer.gd'
+      - 'prototypes/gold_pair/venom_source_fang.gd'
+      - 'prototypes/gold_pair/tests/venom_fang_ultra_source_pixel_oracle.gd'
+      - '.github/workflows/venom-gold-fang-ultra.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-real-ultra:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import Godot project, reject parser errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 145s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/venom-ultra-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-ultra-import.log; then exit 1; fi
+      - name: Run exact source real Ultra k2 full RGBA SHA oracle
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_ultra_source_pixel_oracle.gd 2>&1 | tee /tmp/venom-ultra.log
+          grep -F 'VENOM_FANG_ULTRA: PASS / 18 original-source complete 1200x680' /tmp/venom-ultra.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-ultra.log; then exit 1; fi
+      - name: Re-run original classic k1 image parity; no regression allowed
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_fang_source_pixel_oracle.gd 2>&1 | tee /tmp/venom-classic-regression.log
+          grep -F 'VENOM_FANG_PIXEL: PASS / 18' /tmp/venom-classic-regression.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-classic-regression.log; then exit 1; fi
