@@ -109,8 +109,10 @@ func _embed(x:float,y:float,size:float,lit:int,dark:int,edge:int,
     var sz:float=maxf(2.0,size)
     var lean:float=(_hash(x*3.0+y)-0.5)*3.0
     var h:float=sz*1.4+1.0
-    scene_layer.poly([x-1.5,y,x+lean,y-h,x+1.5,y],lit)
-    scene_layer.poly([x,y,x+lean,y-h,x+1.5,y],dark)
+    var left_face:Array[float]=[x-1.5,y,x+lean,y-h,x+1.5,y]
+    var right_face:Array[float]=[x,y,x+lean,y-h,x+1.5,y]
+    scene_layer.poly(left_face,lit)
+    scene_layer.poly(right_face,dark)
     scene_layer.dot(x+lean,y-h,edge)
     scene_layer.line(x-1.0,y,x+lean*0.8,y-h*0.8,edge)
     scene_layer.dl=16
