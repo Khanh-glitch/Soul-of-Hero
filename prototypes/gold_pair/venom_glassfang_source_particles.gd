@@ -2,7 +2,7 @@ class_name VenomGlassfangSourceParticles
 extends RefCounted
 
 ## Original Venomwright src/game/fx.ts Particles.shadows/draw/glows
-## for four FX particle types used by Glassfang: drop, shard, bubble, spark.
+## for all 11 original FX particle kinds used throughout 21 Venom skills.
 ## Every particle draws original procedural polygons each frame.
 ## Numeric positions/velocities must come from original World.step or a
 ## source-equivalent physics port. No pre-rendered frames or fake PNGs.
@@ -82,9 +82,65 @@ func _draw_particle(p:Dictionary)->void:
                 scene_layer.dot(x+0.2,y-0.6,c2)
         "shard":
             scene_layer.shard(x,y,float(p["rot"]),sz,sz*0.42,c1,c2,c3)
+        "chip":
+            var chip_size:float=maxf(1.5,sz)
+            var ca:float=cos(float(p["rot"]))
+            var sa:float=sin(float(p["rot"]))
+            var pts:Array[float]=[
+                x-ca*chip_size-sa*chip_size*0.6,
+                y-sa*chip_size+ca*chip_size*0.6,
+                x+ca*chip_size-sa*chip_size*0.6,
+                y+sa*chip_size+ca*chip_size*0.6,
+                x+ca*chip_size+sa*chip_size*0.6,
+                y+sa*chip_size-ca*chip_size*0.6,
+                x-ca*chip_size+sa*chip_size*0.6,
+                y-sa*chip_size-ca*chip_size*0.6
+            ]
+            scene_layer.poly(pts,c1)
+            scene_layer.line(pts[0],pts[1],pts[2],pts[3],c3)
+            scene_layer.dot(x,y,c2)
         "bubble":
             var wob:float=sin(age*6.0+float(p["seed"]))*0.8
             _bubble(x+wob,y,sz,c1,c2,c3)
+        "spore":
+            scene_layer.dot(x,y,c1)
+            if sz>1.0:
+                scene_layer.dot(x+0.8,y,c2)
+                scene_layer.dot(x-0.8,y,c2)
+                scene_layer.dot(x,y+0.8,c2)
+                scene_layer.dot(x,y-0.8,c2)
+        "steam":
+            var radius:float=sz*(0.5+a*0.9)
+            scene_layer.dl=maxi(1,LAYER.jsround(9.0*(1.0-a)))
+            scene_layer.disc(x,y,radius,c1)
+            scene_layer.dl=maxi(1,LAYER.jsround(7.0*(1.0-a)))
+            scene_layer.disc(x-radius*0.3,y-radius*0.35,radius*0.55,c2)
+            scene_layer.dl=16
+        "dust":
+            var radius:float=sz*(0.6+a*0.8)
+            scene_layer.dl=maxi(1,LAYER.jsround(10.0*(1.0-a)))
+            scene_layer.disc(x,y,radius,c1)
+            scene_layer.dl=maxi(1,LAYER.jsround(6.0*(1.0-a)))
+            scene_layer.disc(x-0.8,y-0.8,radius*0.6,c2)
+            scene_layer.dl=16
+        "petal":
+            var pc:float=cos(float(p["rot"]))*sz
+            var ps:float=sin(float(p["rot"]))*sz*0.6
+            var polygon:Array[float]=[
+                x-pc,y-ps,
+                x,y-ps*0.5-1.0,
+                x+pc,y+ps,
+                x,y+ps*0.5+1.0
+            ]
+            scene_layer.poly(polygon,c1)
+            scene_layer.dot(x,y,c2)
+        "ember":
+            scene_layer.dot(x,y,c1)
+            scene_layer.dot(x,y+0.8,c2)
+        "mote":
+            scene_layer.dot(x,y,c1)
+            if a<0.5:
+                scene_layer.dot(x+0.8,y,c2)
         "spark":
             scene_layer.dot(x,y,c1)
             if a<0.7:
