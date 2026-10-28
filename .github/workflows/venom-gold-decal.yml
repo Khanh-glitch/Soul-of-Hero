@@ -4,7 +4,9 @@ on:
     branches: [feature/gold-venom-arcana-factory-20261028]
     paths:
       - 'prototypes/gold_pair/venom_source_decal.gd'
+      - 'prototypes/gold_pair/venom_source_decal_canvas.gd'
       - 'prototypes/gold_pair/tests/venom_decal_source_oracle.gd'
+      - 'prototypes/gold_pair/tests/venom_decal_canvas_smoke.gd'
       - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
       - '.github/workflows/venom-gold-decal.yml'
   workflow_dispatch:
@@ -34,3 +36,10 @@ jobs:
           timeout 110s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_decal_source_oracle.gd 2>&1 | tee /tmp/venom-decal-test.log
           grep -F 'VENOM_DECAL_ORACLE: PASS / 6 variants / 24' /tmp/venom-decal-test.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-decal-test.log; then exit 1; fi
+      - name: Verify native Sprite2D/ImageTexture staging without fake pixels or variable clock
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 110s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_decal_canvas_smoke.gd 2>&1 | tee /tmp/venom-decal-canvas.log
+          grep -F 'VENOM_DECAL_CANVAS: PASS' /tmp/venom-decal-canvas.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-decal-canvas.log; then exit 1; fi
