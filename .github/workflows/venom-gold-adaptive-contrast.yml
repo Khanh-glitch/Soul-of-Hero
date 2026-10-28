@@ -1,0 +1,35 @@
+name: SOH optional source-neutral adaptive map contrast oracle
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/venom_combat_readability.gd'
+      - 'prototypes/gold_pair/tests/venom_combat_readability_oracle.gd'
+      - '.github/workflows/venom-gold-adaptive-contrast.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-neutral-map-contrast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Native import and reject GDScript parse errors
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/contrast-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/contrast-import.log; then exit 1; fi
+      - name: Bright / dark ROI auto dim, untouched actors, source-neutral 60Hz transition
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_combat_readability_oracle.gd 2>&1 | tee /tmp/contrast-oracle.log
+          grep -F 'VENOM_ADAPTIVE_CONTRAST: PASS / bright-floor sensor' /tmp/contrast-oracle.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/contrast-oracle.log; then exit 1; fi
