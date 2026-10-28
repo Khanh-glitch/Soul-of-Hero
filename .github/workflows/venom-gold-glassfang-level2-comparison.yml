@@ -6,6 +6,8 @@ on:
       - 'prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.*'
       - 'prototypes/gold_pair/venom_combat_readability.gd'
       - 'prototypes/gold_pair/venom_glassfang_live_environment.gd'
+      - 'prototypes/gold_pair/venom_glassfang_combat_bridge.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_combat_bridge_oracle.gd'
       - 'prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd'
       - 'prototypes/gold_pair/venom_source_particles_world.gd'
       - '.github/workflows/venom-gold-glassfang-level2-comparison.yml'
@@ -52,6 +54,14 @@ jobs:
           set -euo pipefail
           timeout 185s godot --headless --editor --path real-map --import --quit 2>&1 | tee /tmp/venom-l2-import.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-l2-import.log; then exit 1; fi
+      - name: Prove CombatDamage is sole authority on native source-clock hits
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 180s godot --headless --path real-map --script res://prototypes/gold_pair/tests/venom_glassfang_combat_bridge_oracle.gd 2>&1 | tee /tmp/venom-combat-bridge.log
+          grep -F 'GLASSFANG_COMBAT_BRIDGE: PASS / 330 source ticks' /tmp/venom-combat-bridge.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-combat-bridge.log; then exit 1; fi
+          git -C real-map diff --exit-code HEAD -- game/ data/ assets/ project.godot
       - name: Capture nine native 60Hz Gold-clock snapshots with actual Knight, enemy and map
         shell: bash
         run: |
