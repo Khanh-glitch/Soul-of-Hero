@@ -144,6 +144,32 @@ jobs:
             exit 1
           fi
 
+      - name: Per-skill independent native harness (all 93)
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-harness.log
+          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_per_skill_harness_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_PER_SKILL_HARNESS: PASS' "$LOG"; then
+            echo "::error::[gold93-harness] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-harness] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+
+      - name: Host adapter contract (G7 handoff)
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-adapter.log
+          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_external_adapter_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_ADAPTER: PASS' "$LOG"; then
+            echo "::error::[gold93-adapter] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[gold93-adapter] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+
       - name: Honest readiness roll-up
         shell: bash
         run: |
@@ -163,6 +189,8 @@ jobs:
             /tmp/gold93-family.log
             /tmp/gold93-baseline.log
             /tmp/gold93-lab.log
+            /tmp/gold93-harness.log
+            /tmp/gold93-adapter.log
             /tmp/gold93-summary.txt
             .artifacts/gold93/*.json
           if-no-files-found: warn

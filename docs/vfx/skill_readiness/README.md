@@ -35,13 +35,14 @@ and both are kept in the CI trigger list).
   probe that walks all 93 ids in CI.
 - `prototypes/skill_readiness/integration/external_adapter_sample.gd` — host
   adapter that consumes any of the 93 ids without recoding VFX.
-- `prototypes/skill_readiness/tests/` — five native Godot tests (catalog/API,
+- `prototypes/skill_readiness/tests/` — nine native Godot tests (catalog/API,
   full lifecycle + fail-closed coverage, port authority + concurrency,
-  two-family clock/RNG/scar, lab 93-id probe) plus the disposable real-map
-  overlay test.
-- `.github/workflows/gold-93-readiness-runtime.yml` — path ownership, five
-  native Godot jobs and a **disposable immutable Level 2 overlay** job
-  (`f9fb8d4b7490a2579426bd5c4ee4667704d3a05e`).
+  two-family clock/RNG/scar, lab 93-id probe, **per-skill independent native
+  harness for all 93**, **G7 host adapter contract**, Venomwright 21-skill
+  authored baseline oracle) plus the disposable real-map overlay test.
+- `.github/workflows/gold-93-readiness-runtime.yml` — path ownership, a native
+  Godot job with nine test steps and a **disposable immutable Level 2 overlay**
+  job (`f9fb8d4b7490a2579426bd5c4ee4667704d3a05e`).
 
 **Honest status after this run:**
 
@@ -53,6 +54,34 @@ and both are kept in the CI trigger list).
 1/93  native-executable        (venomwright:001, full native cast + native tests)
 92/93 source-material blocked  (original ZIP bytes unavailable)
 ```
+
+**Per-skill native harness (all 93, measured):** every canonical id is driven
+through its own isolated harness instance — own runtime, own family runtime, own
+stage, own caster, own port bundle — running cast → start → free 360-degree
+re-aim → drag-release path → 32 ticks at the family's original clock → cancel →
+no-further-emission check → dispose → resource release → zero-leaked-node check.
+Castable ids additionally run a full start-to-afterlife cast. Machine-readable
+evidence: `res://.artifacts/gold93/per_skill_harness.json`.
+
+Measured for `venomwright:001` in the harness: 398 source ticks, 5 authored
+bites, 145 terrain/environment operations, 4 family render surfaces attached and
+released, 0 leaked nodes, deterministic trace digest
+`311efcba6853bed121403217893213cb6d3d229cc8337605fb728227d29a924d`.
+
+**Render-path defects found and fixed by that harness** (both were live bugs in
+the Venomwright family adapter, invisible to every earlier test because none of
+them attached the render surfaces):
+
+1. `present_source_feedback()` was called with an untyped `[]` where the source
+   component declares `Array[Vector4]`; GDScript rejected it at runtime, so the
+   **entire Venomwright render pass threw on every single tick**. The adapter
+   now builds the shock array and flash from the module's emitted camera
+   intents, typed correctly.
+2. The shared particle/actor surfaces keep a monotonic per-cast clock, so a
+   second cast on one attached family runtime logged
+   `Original source particle clock moved backwards`, and `release_source_actor()`
+   asserted when the authored Fang had not spawned yet. `release_cast()` now
+   rearms the per-cast surface clock and only releases layers that exist.
 
 **The one genuine blocker:** neither this repository nor this execution
 environment contains the original archive bytes

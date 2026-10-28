@@ -28,6 +28,9 @@ var post_node = null
 var live_environment = null
 var rendered_ticks: int = 0
 var last_ink_pixels: int = 0
+## True once the source Fang layers exist, i.e. once the authored cast actually
+## spawned the predator. Guards teardown of an uninitialised source component.
+var _fang_rendered: bool = false
 
 
 func family_id() -> StringName:
@@ -121,13 +124,24 @@ func release_cast(_cast_id: StringName) -> int:
 		released += 1
 	if is_instance_valid(particles_canvas):
 		particles_canvas.release_source_particles()
+		# The source component guards against a render clock that moves
+		# backwards, which is correct WITHIN one cast. The surface is owned by
+		# this adapter and is reused by the next cast, so the per-cast clock
+		# must be rearmed here or every cast after the first is rejected.
+		particles_canvas.set("render_frame", 0)
+		particles_canvas.set("rendered_count", 0)
 		released += 1
 	if is_instance_valid(fang_canvas):
-		fang_canvas.release_source_actor()
-		released += 1
+		# Only safe once the fang layers actually exist: the source component
+		# asserts on its initialised pass dictionary.
+		if _fang_rendered:
+			fang_canvas.release_source_actor()
+			released += 1
 	if live_environment != null:
 		live_environment.reset()
 	rendered_ticks = 0
+	last_ink_pixels = 0
+	_fang_rendered = false
 	return released
 
 
@@ -162,13 +176,19 @@ func render_tick(module: Gold93SkillModule, tick: int) -> void:
 		if actor != null and actor is VenomSourceFang:
 			fang_canvas.render_live_actor_frame(actor as VenomSourceFang,
 					float(tick) / SOURCE_HZ)
-		else:
+			# The original Fang spawns after the vial throw; before that the
+			# component has no layers yet, so releasing would assert.
+			_fang_rendered = true
+		elif _fang_rendered:
 			fang_canvas.release_source_actor()
+			_fang_rendered = false
 	# 4. Original display post (scene+glow composite, shock, shake, grade).
 	if is_instance_valid(post_node):
 		var shake: Vector2 = _shake(module, tick)
-		post_node.present_source_feedback(float(tick) / SOURCE_HZ, shake, [],
-				Vector4.ZERO, Vector4(0.0, 1.0, 0.0, 1.0))
+		# `shock_world` is a TYPED Array[Vector4]; an untyped `[]` literal is
+		# rejected at runtime, which silently killed the whole render pass.
+		post_node.present_source_feedback(float(tick) / SOURCE_HZ, shake,
+				_shocks(module), _flash(module), Vector4(0.0, 1.0, 0.0, 1.0))
 	rendered_ticks += 1
 
 
@@ -176,6 +196,37 @@ func _shake(_module: Gold93SkillModule, _tick: int) -> Vector2:
 	# Original display shake is authored per skill; sources that do not shake
 	# must report zero instead of a decorative wobble.
 	return Vector2.ZERO
+
+
+## Authored screen-shock rings (original `Display.shock`), routed from the
+## module's emitted camera intents. Empty until a ported source generator
+## authors a real shock: nothing decorative is synthesised here.
+func _shocks(module: Gold93SkillModule) -> Array[Vector4]:
+	var out: Array[Vector4] = []
+	if module == null or module.bus() == null:
+		return out
+	for intent in module.bus().emitted:
+		if not intent is Dictionary:
+			continue
+		var d: Dictionary = intent
+		if StringName(d.get("kind", &"")) != Gold93Intents.KIND_CAMERA:
+			continue
+		if String(d.get("op", "")) != "shock":
+			continue
+		if out.size() >= 4:
+			break
+		var extra: Dictionary = d.get("extra", {})
+		var pos: Vector2 = d.get("source_pos", Vector2.ZERO)
+		out.append(Vector4(pos.x, pos.y,
+				float(extra.get("radius", 0.0)),
+				float(d.get("strength", 0.0))))
+	return out
+
+
+## Authored RGBA flash (original `Display.flash`). Zero until a ported source
+## generator authors one; the VFX never invents a flash of its own.
+func _flash(_module: Gold93SkillModule) -> Vector4:
+	return Vector4.ZERO
 
 
 func _count_ink(events: Array) -> int:
