@@ -1,0 +1,76 @@
+name: Gold Glassfang vs REAL Level2 visual comparison
+on:
+  push:
+    branches: [feature/gold-venom-arcana-factory-20261028]
+    paths:
+      - 'prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.*'
+      - '.github/workflows/venom-gold-glassfang-level2-comparison.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  actual-level2-image-pairs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout immutable authored Level2 map
+        uses: actions/checkout@v4
+        with:
+          ref: f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          path: real-map
+          persist-credentials: false
+      - name: Checkout VFX source-port commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          path: vfx-only
+          persist-credentials: false
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Overlay VFX only to disposable Level2 checkout
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C real-map rev-parse HEAD)" = f9fb8d4b7490a2579426bd5c4ee4667704d3a05e
+          test -f real-map/game/app/app_root.tscn
+          test -f real-map/data/levels/chapter_1_level_2.json
+          test -f real-map/tests/chapter_1_campaign_level_visual_capture.gd
+          mkdir -p real-map/prototypes/gold_pair
+          cp -a vfx-only/prototypes/gold_pair/. real-map/prototypes/gold_pair/
+          test -f real-map/prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.tscn
+          git -C real-map diff --exit-code HEAD -- game/ data/ assets/ project.godot
+      - name: Import original production Level2 and procedural source FX
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 185s godot --headless --editor --path real-map --import --quit 2>&1 | tee /tmp/venom-l2-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-l2-import.log; then exit 1; fi
+      - name: Capture nine native 60Hz Gold-clock snapshots with actual Knight, enemy and map
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p real-map/.artifacts/venom_level2_compare
+          timeout 650s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --resolution 1280x720 --path real-map res://prototypes/gold_pair/tests/venom_glassfang_level2_visual_comparison.tscn -- --level-slot=2 --capture-point=mid --expected-width=1280 --expected-height=720 2>&1 | tee /tmp/venom-l2-compare.log
+          grep -F 'CHAPTER 1 CAMPAIGN CAPTURE TEST PASSED: slot=2 point=mid' /tmp/venom-l2-compare.log
+          grep -F 'GLASSFANG_LEVEL2_VISUAL_COMPARE: PASS PARTIAL STAGE' /tmp/venom-l2-compare.log
+          test -s real-map/.artifacts/venom_level2_compare/level2_aligned_baseline.png
+          test -s real-map/.artifacts/venom_level2_compare/comparison_manifest.json
+          for tick in 006 015 031 063 096 147 177 220 330; do
+            test -s "real-map/.artifacts/venom_level2_compare/level2_glassfang_partial_gold_tick_${tick}.png"
+          done
+          if grep -E 'SCRIPT ERROR:|Parse Error:|CHAPTER 1 CAMPAIGN CAPTURE TEST FAILED|Shader compilation failed|GLASSFANG_COMPARE.*FAIL' /tmp/venom-l2-compare.log; then exit 1; fi
+          git -C real-map diff --exit-code HEAD -- game/ data/ assets/ project.godot
+      - name: Publish actual Level2 native screenshot bundle for comparisons
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold-glassfang-actual-level2-comparison-partial-stage
+          path: |
+            real-map/.artifacts/venom_level2_compare/*.png
+            real-map/.artifacts/venom_level2_compare/comparison_manifest.json
+            /tmp/venom-l2-compare.log
+          if-no-files-found: warn
+          retention-days: 14
