@@ -4,6 +4,8 @@ on:
     branches: [feature/gold-venom-arcana-factory-20261028]
     paths:
       - 'prototypes/gold_pair/tests/venom_glassfang_pool_authority_integration.gd'
+      - 'prototypes/gold_pair/tests/venom_glassfang_live_environment_oracle.gd'
+      - 'prototypes/gold_pair/venom_glassfang_live_environment.gd'
       - 'prototypes/gold_pair/venom_glassfang_full_particle_runtime.gd'
       - 'prototypes/gold_pair/venom_source_pool_lifecycle.gd'
       - '.github/workflows/venom-gold-glassfang-authority-integration.yml'
@@ -32,3 +34,9 @@ jobs:
           timeout 150s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_pool_authority_integration.gd 2>&1 | tee /tmp/venom-authority.log
           grep -F 'GLASSFANG_AUTHORITY: PASS / 253 source ticks' /tmp/venom-authority.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-authority.log; then exit 1; fi
+      - name: Assert continuous native environmental FX across full source clock
+        run: |
+          set -euo pipefail
+          timeout 180s godot --headless --path . --script res://prototypes/gold_pair/tests/venom_glassfang_live_environment_oracle.gd 2>&1 | tee /tmp/venom-live-environment.log
+          grep -F 'GLASSFANG_LIVE_ENV: PASS / 330 world ticks' /tmp/venom-live-environment.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/venom-live-environment.log; then exit 1; fi
