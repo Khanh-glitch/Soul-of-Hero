@@ -148,12 +148,16 @@ func _stamp(text: String) -> void:
 func _overview(ow: Node) -> void:
 	# One pixel per tile: the whole Marches in a single honest frame. The camera
 	# is temporarily removed from the player so no tween fights the sweep.
+	_stamp("overview begin")
 	var world: Node2D = ow.world
 	if world == null:
 		_failed.append("world_overview")
 		return
 	var player: CharacterBody2D = ow.player
-	var camera := player.get_node_or_null("Camera") as Camera2D if player != null else null
+	var camera: Camera2D = null
+	if player != null:
+		camera = player.get_node_or_null("Camera") as Camera2D
+	_stamp("overview: player camera %s" % ("found" if camera != null else "absent"))
 	var saved_limits := [0, 0, 0, 0]
 	if camera != null:
 		saved_limits = [camera.limit_left, camera.limit_top, camera.limit_right, camera.limit_bottom]
@@ -169,9 +173,11 @@ func _overview(ow: Node) -> void:
 	overview.limit_bottom = 4096
 	world.add_child(overview)
 	overview.make_current()
+	_stamp("overview: camera current, settling")
 	await _settle(4)
 	await _shoot("world_overview")
 	overview.queue_free()
+	_stamp("overview end")
 	if camera != null:
 		camera.limit_left = int(saved_limits[0])
 		camera.limit_top = int(saved_limits[1])

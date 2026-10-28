@@ -445,8 +445,21 @@ jobs:
           set -e
           echo "capture exit_code=$rc"
           cat "$ARTIFACT_DIR/overworld-capture.log"
+          # The capture is a script too: gate its log like every other step, so a
+          # runtime error inside the capture can never pass as a green run. A
+          # genuinely blocked run (rc=2, no display server) is not gated: it has
+          # no PASS line to look for and says so itself.
+          gate=0
+          if [ "$rc" -eq 0 ]; then
+            if ! bash tools/ci/gate_log.sh "$ARTIFACT_DIR/overworld-capture.log" "Capture" "OVERWORLD CAPTURE PASSED"; then
+              gate=1
+            fi
+          fi
           cp -v .artifacts/overworld/native/*.png "$ARTIFACT_DIR"/ 2>/dev/null || true
           echo "rc=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$gate" -ne 0 ]; then
+            exit "$gate"
+          fi
           if [ "$rc" -eq 0 ] || [ "$rc" -eq 2 ]; then
             exit 0
           fi
@@ -476,6 +489,8 @@ jobs:
             ls -la .artifacts/overworld/native/ 2>&1 || true
             echo "first OVERWORLD lines:"
             grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -18 || true
+            echo "capture script/engine errors:"
+            grep -nE "SCRIPT ERROR|Parse Error|^ERROR:" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -10 || true
             echo "world_overview mentions:"
             grep -c "world_overview" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null || true
             echo "capture station lines:"
