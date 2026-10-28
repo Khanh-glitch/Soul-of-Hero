@@ -161,3 +161,120 @@ the frames it rests on are the CI artifact plus the offline renders in
 * The two repainted exteriors landed better, not just differently: native
   `std` 0.062 → 0.074 (L03) and 0.066 → 0.076 (L04) with `flat` unchanged.
 * Full write-up, galleries and per-run numbers: `docs/overworld/MISSION_REPORT.md`.
+
+---
+
+# Mission re-scope — pass log (HEAD `07b08bfd`)
+
+The owner rejected the previous reduced-interpretation report and re-scoped back
+to the original world-art mission. This section records the pass that followed,
+in the same terms as everything above: commands, numbers, and what could not run.
+
+## Selective occlusion replaced whole-sprite fading
+
+`game/overworld/occlusion_fade.gdshader` keeps the bottom band of an occluder at
+`base_keep` opacity (landmark 0.24, architecture 0.30, vegetation 0.00, default
+0.22) and fades only the part above the player. Measured by the gates:
+
+| Check | Number |
+| --- | --- |
+| landmark behind the player, occlusion on | `alpha 0.62`, `base_keep 0.24`, `modulate.a 1.00` |
+| tree canopy | `base_keep 0.00` (full clearance) |
+| two overlapping occluders | `0.62 / 0.42` |
+| unregistered ally → `add_focus` → `clear_focus` | `1.00` → `< 0.9` → `1.00` |
+| collision bodies while faded | `1377`, unchanged |
+| teleport away and back | every material restored, `2620` occluders re-registered |
+
+Reuse outside the overworld was proved on the **real** Chapter 1 dungeon
+(`crypt_entrance.tscn`), not on a mock: 59 sprites, 52 tall props, 52 registered,
+prop fades to `0.42` with `base_keep 0.22`, **0** spawned collision bodies (that
+level collides with tiles), transform fingerprint `59:235822761` unchanged, and
+occlusion adds at most one node.
+
+## The world patch pipeline is wired into the bake
+
+`data/overworld/world_patches.json` is applied by `author.main()` between the
+painters and the gates, so a hand correction is validated exactly like authored
+content. Fourteen entries today: four terrain writes (a gravel hearth under each
+camp fire) and ten prop edits (graves lifted out of living camps, two lamps
+added). The ops are `add`, `remove`, `move`, `replace` with an exact position or
+a `within` zone, on any of the three terrain layers.
+
+`patches.py --check` proves determinism (same hash), idempotency (a second
+application changes nothing) and non-destructiveness (an empty document plus a
+fresh paint reproduces the unpatched world). **CI caught a real bug here**: an
+`add` whose destination already held that frame still counted an edit, so a
+correct patch failed its own idempotency check on the second run. Fixed in
+`07b08bfd`; the check now prints `patch check passed: deterministic, idempotent,
+non-destructive`.
+
+## Landmarks and camps, judged from renders
+
+Six exterior frames are now hand-painted overrides instead of generated ones:
+
+| Landmark | What was wrong | What it is now |
+| --- | --- | --- |
+| L05 Blood Crucible | grey slab with a dark red rectangle — read as a bench | coursed furnace wall, fire throat, iron fire-bowls, blood channel down the steps |
+| L06 The Relay | three grey pillars with a slack wire, no base | keeper's hut, braced iron lattice, soul lamp, guy-wires, rust streaks |
+| L01 The Crypt | stone wall with a black arch and a bright slab under it | turf barrow over a timber, iron-banded door, bracketed lantern |
+| L08 The Divided | a pale colonnade pasted against a dark block | one wall, two eras: classical portico, basalt arch, ragged shear, rubble, wedged lintel |
+| L03 Crossfire Archive | (previous pass) featureless gable plate | coursed gatehouse, stepped collapse, recessed portal |
+| L04 Spiral Reliquary | (previous pass) three bare slabs — a wedding cake | four coursed tiers with ledges, lit niches, spiral flight, crown monolith |
+
+The four camps no longer share one composition: Ashen Refuge is a shelter
+(lean-to, cook fire, drying rack, lamp), Wayfarer Stones a crossing (signpost,
+shrine, banner), Relay Foot a depot (stacked crates, barrels, banner, fence),
+Watch Ridge a lookout (brazier, windbreak, bedroll). The tent, fire, bedroll and
+banner props themselves were repainted; at 2x the old tent read as a red bucket.
+
+## Coverage
+
+`tools/overworld/gallery.py` builds two before/after sheets from one station list.
+The "before" side is rendered by checking the old revision into a temporary
+worktree and running *that* revision's renderer, so the two sides cannot come
+from the same code. Diff share of the station frame, old → new:
+
+| Station | Δ | Station | Δ |
+| --- | --- | --- | --- |
+| Ashen Refuge (spawn) | 11.4 % | L07 Beacon | 0.0 % |
+| L01 Crypt | 5.5 % | L08 The Divided | new station |
+| L02 Ossuary | 0.0 % | L09 Crimson Gate | 0.0 % |
+| L03 Archive | 8.2 % | L10 Throne | 0.0 % |
+| L04 Reliquary | 5.9 % | Camp Wayfarer Stones | 89.3 % |
+| L05 Crucible | 9.7 % | Camp Refuge / Relay / Ridge | new stations |
+| L06 Relay | new station | | |
+
+A 0.0 % row is a landmark this pass did not touch; it is reported as untouched
+rather than as improved.
+
+## Performance
+
+`tests/overworld_performance_probe.gd` measures the production scene against
+budgets and fails if they are exceeded. This container has no GPU, so the number
+is **script time**, not rasterisation:
+
+| Measure | Result | Budget |
+| --- | --- | --- |
+| frame script time, median of 90 | 6.48 ms | < 8.0 ms |
+| one occlusion `step()` | 0.381 ms | < 2.0 ms |
+| one traversability query | 0.0005 ms | < 0.5 ms |
+| node count over 30 idle frames | 9074 → 9074 | +4 |
+
+## CI, on this pass
+
+Run [`40721420072`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40721420072)
+on `701fd596`:
+
+- `STATIC CONTRACTS` — success.
+- `NATIVE RUNTIME` — **failure**, and the failure is informative: steps 17–19
+  (`Occlusion`, `Occlusion (selective)`, `Occlusion reuse`) all **succeeded**
+  under Xvfb with a real GL context, and step 20 (`World patches`) failed on the
+  idempotency bug described above. The run is the first native confirmation of
+  the selective-fade and Chapter 1 reuse work.
+- `VISUAL EVIDENCE` — success.
+
+The `07b08bfd` run re-runs all of it with the fix, plus a new performance step.
+
+Local, headless, `tools/overworld/local_suite.sh`: 16 gates. The two occlusion
+tests and the performance probe print their own summaries; everything else is
+unchanged from section 2.

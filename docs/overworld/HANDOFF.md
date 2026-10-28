@@ -277,3 +277,56 @@ exteriors a painter would start with are Crossfire Archive and Spiral Reliquary;
 audio is untouched; dungeon interiors are untouched by design.
 
 **COMPLETE — READY FOR OWNER PLAYTEST.**
+---
+
+## J. Mission re-scope — completed vs outstanding (supersedes section I)
+
+The verdict in section I was written against a narrower mission and the owner
+rejected it. This is the ledger against the **original** mission, from HEAD
+`07b08bfd` on `arena/54306b59-soul-of-hero`.
+
+### Completed
+
+| Objective | What was actually done | Evidence |
+| --- | --- | --- |
+| 3. Pipeline beyond atlas frames | `data/overworld/world_patches.json` applied by `author.main()` between painters and gates. Ops: prop `add` / `remove` / `move` / `replace` (exact cell or `within` zone) and terrain writes on `ground` / `detail` / `solid`. Rebuild is deterministic, idempotent and non-destructive; 14 entries land today | `patches.py --check` → `patch check passed: deterministic, idempotent, non-destructive`; CI step "World patches" |
+| 4. Selective occlusion | Banded shader with per-role `base_keep` (landmark 0.24, architecture 0.30, vegetation 0.0, default 0.22). Physical bases and contact shadows stay opaque; collision untouched; overlapping occluders handled; `add_focus` / `clear_focus` for allies; teleport and reload restore every material. Reusable on a real Chapter 1 dungeon, not a mock | 22 + 25 + 17 checks; CI steps 17–19 **succeeded natively** on run `40721420072` |
+| 2. Asset evaluation | 0x72 accepted for dungeon interiors (already in use) and rejected for overworld terrain (seam 14.6–24.9 vs 0.66–2.35) and props (16 px grid vs 18–46 px frames). Dark World and Classical Ruin recorded as **not evaluable**, with the catalog search that establishes it | `docs/overworld/ASSET_EVALUATION.md` |
+| 1. Camps | Four distinct compositions instead of one repeated eight times: shelter / crossing / depot / lookout, plus repainted tent, fire, bedroll and banner | gallery, camps 0.0–89.3 % diff |
+| 1. Some landmarks | Six exteriors hand-painted over generated frames: Crypt, Archive, Reliquary, Crucible, Relay, Divided | gallery diffs 5.5 / 8.2 / 5.9 / 9.7 %; both new stations |
+| 5. Coverage | One station list drives the renderer, the gallery and the native capture. Before/after sheets render the "before" side from a temporary worktree of the old revision, so both sides cannot come from the same code | `overworld_gallery_stations.png`, `overworld_gallery_landmarks.png` |
+| 5. Performance | Budgeted probe that fails the gate: 6.48 ms frame script time, 0.381 ms per occlusion step, 0.0005 ms per traversability query, flat node count | `tests/overworld_performance_probe.gd` |
+| 5. Regression | 16 local gates headless; three new CI steps (selective occlusion, Chapter 1 reuse, performance) and a log-surfacing diagnostic step | `local_suite.sh`, workflow |
+
+### Outstanding — not claimed as done
+
+1. **Four of ten landmark exteriors are still generated frames**: Beacon, Crimson
+   Gate, Castellan Throne and Ossuary. They were audited as acceptable and were
+   not rebuilt this pass. They remain in the gallery at 0.0 % diff, which is the
+   honest way to show they were not touched.
+2. **Travel regions between destinations were not reconstructed.** The camps and
+   every landmark approach were reviewed and fixed; the wide stretches of cliff
+   ground (`c`), the tiled plateau blockers and the water margins have not had a
+   dedicated pass. One defect was found and fixed (camp clearings paved with the
+   dithered `path` detail tile), which is not the same as a region pass.
+3. **Dark World and Classical Ruin tilesets cannot be evaluated**: neither is in
+   the repository or the 87-package catalog. No quality judgement is made. The
+   acceptance test they would face is written down in `ASSET_EVALUATION.md`.
+4. **Native coverage of the new stations is queued, not yet green.** The capture
+   scene now photographs Relay, Divided and all four camps, and the CI verifier
+   requires those PNGs, but the run that proves it is the one after this commit.
+5. **Native frames have not been reviewed by eye in this sandbox.** The log blob
+   host is blocked (`gh api .../logs` → `EOF`), so the art judgement above rests
+   on the offline composites, which use the shipped atlas at the camera's real
+   2x framing. A human still has to look at the CI artifact before the art is
+   called finished.
+6. **Combat, Hero systems, Gold VFX, HUD, RPG progression, narrative, rewards and
+   saves were not modified** — they remain frozen as required, and no overworld
+   change required touching them.
+
+### What would be next, in order
+
+Repaint Beacon, Gate, Throne and Ossuary to the same standard as the six that
+were done; then the travel-region pass (cliff-ground variation, plateau blockers,
+water margins); then the evaluation of the two missing tilesets, which needs the
+packs themselves.

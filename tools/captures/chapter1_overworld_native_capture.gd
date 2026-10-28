@@ -2,7 +2,7 @@ extends Node
 ## THE HOLLOW MARCHES — native visual evidence.
 ##
 ## Boots the production `app_root.tscn`, enters the Marches through `AppFlow`
-## exactly as the Home screen does, then photographs twelve stations derived
+## exactly as the Home screen does, then photographs every destination, every camp
 ## from the authored world document. Nothing is hand-placed per station: if the
 ## crypt moves in `author.py`, this camera follows it, so the evidence cannot
 ## silently drift away from the geography it claims to show.
@@ -136,9 +136,17 @@ func _run() -> void:
 			# nothing is hidden and prove nothing)
 			{"station": "camp_crossroads", "anchor": "camp_crossroads"},
 			{"station": "crucible", "anchor": "lm_crucible"},
+			{"station": "relay", "anchor": "lm_relay"},
 			{"station": "beacon", "anchor": "lm_beacon"},
+			{"station": "divided", "anchor": "lm_divided"},
 			{"station": "gate", "anchor": "lm_gate"},
 			{"station": "throne", "anchor": "lm_throne"},
+			# Every camp, not just the crossroads: the four clearings used to be
+			# the same eight props four times, and a coverage set that photographs
+			# one of them cannot show that.
+			{"station": "camp_refuge", "anchor": "camp_refuge"},
+			{"station": "camp_relay_base", "anchor": "camp_relay_base"},
+			{"station": "camp_ridge", "anchor": "camp_ridge"},
 	]:
 		await _station(ow, String(entry["station"]), _station_cell(ow, String(entry["anchor"])))
 	await _occlusion_pair(ow)
