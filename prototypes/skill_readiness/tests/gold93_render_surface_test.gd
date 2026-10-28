@@ -189,6 +189,13 @@ func _initialize() -> void:
 			"every tick must reach the ARCANA render pass")
 	_check(int(arcana.get("last_mark_commands")) > 0,
 			"the ARCANA mark layer must actually draw source crack geometry")
+	# Capture BEFORE release_cast(): it resets the counters by design.
+	var arcana_evidence: Dictionary = {
+		"note": "source-locked crackScar geometry through the real mark/glow passes; render-path fixture, not a castable skill",
+		"rendered_ticks": int(arcana.get("rendered_ticks")),
+		"mark_commands": int(arcana.get("last_mark_commands")),
+		"glow_commands": int(arcana.get("last_glow_commands")),
+	}
 	var released: int = arcana.release_cast(&"fixture:scar")
 	_check(released > 0, "ARCANA release_cast must release its surfaces")
 
@@ -217,12 +224,7 @@ func _initialize() -> void:
 				"first_cast": venom_run,
 				"second_cast_same_surfaces": second_run,
 			},
-			"arcana_iii": {
-				"rendered_ticks": int(arcana.get("rendered_ticks")),
-				"mark_commands": int(arcana.get("last_mark_commands")),
-				"glow_commands": int(arcana.get("last_glow_commands")),
-				"note": "source-locked crackScar geometry through the real mark/glow passes; render-path fixture, not a castable skill",
-			},
+			"arcana_iii": arcana_evidence,
 		}, "  ") + "\n")
 		file.close()
 
