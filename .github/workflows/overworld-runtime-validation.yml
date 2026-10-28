@@ -531,6 +531,17 @@ jobs:
             notice "native frame report ${g}/${groups}" "$body"
           done
 
+          # The occlusion demonstration's own numbers, on their own notice: the
+          # pair is the only place the fade is visible as pixels, and the claim it
+          # supports ("the Knight is not hidden") is only worth anything with the
+          # measured difference beside it. Between the pair, the two fade lines and
+          # the diff share, this is under a kilobyte.
+          occlusion_evidence=$(grep -E "^OVERWORLD (CAPTURE occlusion:|OCCLUSION )" \
+            "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -8 || true)
+          if [ -n "$occlusion_evidence" ]; then
+            notice "occlusion demonstration" "$occlusion_evidence"
+          fi
+
           # Last, so these survive even if GitHub drops earlier annotations.
           diagnostics=$({
             echo "PNG listing:"
