@@ -13,7 +13,7 @@ func _fixture(age:float)->Array:
     return [
         {"k":"drop","x":360.4,"y":180.7,"z":3.5,"vx":25.0,"vy":-15.0,"vz":80.0,
             "age":age,"max":1.8,"size":3.2,"c1":0xFF30EAA6,"c2":0xFFA0FFEE,
-            "c3":0xFF222E0A,"glow":2.0,"trail":1,"seed":1},
+            "c3":0xFF476F1A,"glow":2.0,"trail":1,"seed":1},
         {"k":"shard","x":372.2,"y":191.6,"z":4.0,"vx":-40.0,"vy":12.0,"vz":60.0,
             "age":age,"max":2.5,"size":4.7,"rot":0.5,"c1":0xFFA0B852,
             "c2":0xFF717D26,"c3":0xFFFCF7D4,"glow":0.0,"seed":2},
