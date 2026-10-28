@@ -5,6 +5,9 @@ on:
     paths:
       - 'prototypes/gold_pair/arcana_source_crack_scar.gd'
       - 'prototypes/gold_pair/arcana_source_scar_draw_ledger.gd'
+      - 'prototypes/gold_pair/arcana_source_scar_canvas.gd'
+      - 'prototypes/gold_pair/arcana_source_scar_pass.gd'
+      - 'prototypes/gold_pair/tests/arcana_scar_canvas_smoke.gd'
       - 'prototypes/gold_pair/tests/arcana_crack_draw_oracle.gd'
       - 'prototypes/gold_pair/tests/arcana_crack_source_oracle.gd'
       - 'prototypes/gold_pair/gold_mulberry32_rng.gd'
@@ -43,3 +46,19 @@ jobs:
           timeout 90s godot --headless --path . --script res://prototypes/gold_pair/tests/arcana_crack_draw_oracle.gd 2>&1 | tee /tmp/arcana-full-draw.log
           grep -F 'ARCANA_SCAR_DRAW: PASS / 12' /tmp/arcana-full-draw.log
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-full-draw.log; then exit 1; fi
+      - name: Render source-authored mark and glow in native OpenGL, verify aftermath and cleanup
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 150s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --rendering-method gl_compatibility --path . --script res://prototypes/gold_pair/tests/arcana_scar_canvas_smoke.gd 2>&1 | tee /tmp/arcana-scar-canvas.log
+          grep -F 'ARCANA_SCAR_CANVAS: PASS' /tmp/arcana-scar-canvas.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/arcana-scar-canvas.log; then exit 1; fi
+          test -s /tmp/arcana-source-scar-godot-preview.png
+      - name: Attach actual Godot-rendered ARCANA scar preview (NOT a Gold parity claim)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: arcana-scar-native-preview
+          path: /tmp/arcana-source-scar-godot-preview.png
+          if-no-files-found: warn
+          retention-days: 7
