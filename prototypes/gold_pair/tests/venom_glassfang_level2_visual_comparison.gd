@@ -12,6 +12,8 @@ extends "res://tests/chapter_1_campaign_level_visual_capture.gd"
 const MOTION=preload("res://prototypes/gold_pair/venom_glassfang_motion.gd")
 const FANG_CANVAS=preload("res://prototypes/gold_pair/venom_source_fang_canvas.gd")
 const POOL_CANVAS=preload("res://prototypes/gold_pair/venom_source_pool_canvas.gd")
+const ENV_CANVAS=preload("res://prototypes/gold_pair/venom_glassfang_environment_canvas.gd")
+const REVIEW_LEDGER=preload("res://prototypes/gold_pair/venom_glassfang_environment_review_ledger.gd")
 const TICKS=[6,15,31,63,96,147,177,220,330]
 const DENSITY=2
 const SOURCE_PLAYER=Vector2(260.0,160.0)
@@ -39,6 +41,7 @@ var _evidence:int=0
 var _map_visible:int=0
 var _masked:int=0
 var _source_pool_total:int=0
+var _new_environment_seen:int=0
 
 func _capture_campaign_state(game:Node2D)->void:
     await super._capture_campaign_state(game)
@@ -87,6 +90,12 @@ func _capture_campaign_state(game:Node2D)->void:
     var to_logical:=Transform2D(Vector2(0.5,0.0),Vector2(0.0,0.5),Vector2.ZERO)
     fang_renderer.set_source_to_map_transform(to_logical)
     fang_renderer.release_source_actor()
+    var env_renderer=ENV_CANVAS.new()
+    env_renderer.name="ProceduralOriginalGoldSplashesFlashRingsAndEmbeddedGroundResidue"
+    env_renderer.set_source_density(DENSITY)
+    stage.add_child(env_renderer)
+    env_renderer.set_source_to_map_transform(to_logical)
+    env_renderer.release_source_environment()
 
     var motion=MOTION.new()
     motion.begin(SOURCE_PLAYER.x,SOURCE_PLAYER.y,atan2(30.0,115.0),17,1765485952)
@@ -119,6 +128,18 @@ func _capture_campaign_state(game:Node2D)->void:
             _expect(result.size()==3,"GLASSFANG_COMPARE: native live Fang 3 source passes")
         else:
             fang_renderer.release_source_actor()
+        # The source event fixture contains original World.fx state at the
+        # exact matched Gold tick; the renderer itself is procedural GDScript.
+        # Never turn source FX events into baked texture frames.
+        var environmental_events:Array=REVIEW_LEDGER.snapshot(frame)
+        env_renderer.render_source_events(environmental_events)
+        _new_environment_seen+=environmental_events.size()
+        if frame==15:_expect(environmental_events.size()==6,
+            "GLASSFANG_COMPARE: original first bite splash/ring/flash FX ledger")
+        if frame==147:_expect(environmental_events.size()==27,
+            "GLASSFANG_COMPARE: original finisher flash/rings+residue ledger")
+        if frame==177:_expect(environmental_events.size()==22,
+            "GLASSFANG_COMPARE: original persistent embeds and splash aftermath")
         var present_pool_nodes:Array[Node]=[]
         var pools_this_frame:int=0
         var source_masked:int=0
@@ -162,6 +183,7 @@ func _capture_campaign_state(game:Node2D)->void:
         _masked+=source_masked
         sampled.append({"tick":frame,"source_enemy_hp":source_enemy["hp"],
             "fang_present":rendered_fang,"active_pools":pools_this_frame,
+            "source_authored_other_environment_events":environmental_events.size(),
             "masked_non_floor_px":source_masked})
         for pool in present_pool_nodes:
             pool.queue_free()
@@ -171,6 +193,7 @@ func _capture_campaign_state(game:Node2D)->void:
     _expect(_found_painted>100,"GLASSFANG_COMPARE: original active FX changes actual level screenshot")
     _expect(_map_visible>2000,"GLASSFANG_COMPARE: game floor is visible, not transparent staging")
     _expect(motion.bite_cues.size()==5,"GLASSFANG_COMPARE: source five bite cues survived")
+    _expect(_new_environment_seen>=55,"GLASSFANG_COMPARE: source-authored splash/ring/flash/embed visuals actually staged")
     _expect(_source_pool_total>=10,"GLASSFANG_COMPARE: source simultaneous pool afterlife staged")
     _expect(knight.get("health")==knight_hp and enemy.get("health")==enemy_hp,
         "GLASSFANG_COMPARE: no double damage or real game health change")
@@ -183,13 +206,14 @@ func _capture_campaign_state(game:Node2D)->void:
         "status":"PARTIAL SOURCE COMPONENT REVIEW, NEVER A FULL SKILL APPROVAL",
         "original_gold":"unmodified Venomwright TS World.draw in original 600x340 world at native Ultra k2",
         "level2":"real pinned Chapter1 Level2 AppFlow/TileMaps/Knight/enemy/Camera2D",
-        "implemented_here":"exact source Fang motion 60Hz and pixel passes; source Pool ground/glow with floor/void/wall mask",
-        "not_implemented_here":"projectile, splash, shards, rings, flash, corrode enemy, bubbles, original entire World FX layering and final original post",
+        "implemented_here":"exact source Fang 60Hz; source acid Pools on floor; ORIGINAL Splash+Flash+Ring+Embed procedural renderer with 24 standalone original Ultra image hashes, source fixture frames 15/147/177",
+        "not_implemented_here":"vial projectile, shards and drop particles, bubble sprites, corrode enemy, camera shock/flash, exact full-World simultaneous FX ordering and final GLSL post; environmental overlay at 3 source checkpoint fixtures is NOT full-skill runtime",
         "original_tick_list":TICKS,
         "image_files":_evidence,
         "maximum_changed_pixels_vs_baseline":_found_painted,
         "masked_pool_pixels":_masked,
         "source_pool_instances_at_samples":_source_pool_total,
+        "original_other_fx_events_procedurally_rendered_at_three_snapshots":_new_environment_seen,
         "actual_enemy_entity":enemy.name,
         "actual_map_backdrop_cells":floor_before,
         "actual_map_wall_cells":walls_before,
@@ -200,8 +224,8 @@ func _capture_campaign_state(game:Node2D)->void:
     if file!=null:
         file.store_string(JSON.stringify(evidence,"\t"))
         file.close()
-    print("GLASSFANG_LEVEL2_VISUAL_COMPARE: PASS PARTIAL STAGE | real Level2 screenshots=%d sourcePools=%d masked=%d changed=%d" %
-        [_evidence,_source_pool_total,_masked,_found_painted])
+    print("GLASSFANG_LEVEL2_VISUAL_COMPARE: PASS PARTIAL STAGE | real Level2 screenshots=%d sourcePools=%d environmentFX=%d masked=%d changed=%d" %
+        [_evidence,_source_pool_total,_new_environment_seen,_masked,_found_painted])
 
 func _mask_pool_to_actual_floor(pool:Node2D,stage:Node2D,level:DungeonLevel,
         definition:Array)->int:
