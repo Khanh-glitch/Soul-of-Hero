@@ -192,8 +192,11 @@ func _station(ow: Node, station: String, cell: Vector2i) -> void:
 ## a claim that the feature works.
 func _occlusion_pair(ow: Node) -> void:
 	var world: Node2D = ow.world
-	var occlusion: Node = ow.get("occlusion")
-	var traversability: Node = ow.get("traversability")
+	# Untyped on purpose: both systems are RefCounted, not Nodes, and a typed
+	# `Node` local compiles fine here but fails at runtime the first time the
+	# capture runs with a real scene — which is CI, not this machine.
+	var occlusion = ow.get("occlusion")
+	var traversability = ow.get("traversability")
 	if world == null or occlusion == null or traversability == null:
 		_failed.append("occlusion_off")
 		_failed.append("occlusion_on")
