@@ -1,6 +1,9 @@
 extends SceneTree
 const CANVAS=preload("res://prototypes/gold_pair/venom_source_fang_canvas.gd")
 func _initialize()->void:
+    call_deferred("_run")
+
+func _run()->void:
     var canvas=CANVAS.new()
     root.add_child(canvas)
     canvas.begin_source_actor(270.25,150.75,0.41)
@@ -21,8 +24,19 @@ func _initialize()->void:
             push_error("VENOM_FANG_CANVAS: wrong source-to-map projection")
             quit(1)
             return
-        if tex.get_image().get_data()!=outputs[key]:
-            push_error("VENOM_FANG_CANVAS: GPU-staged texture differs from original CPU pixels")
+        if canvas.images[key].get_data()!=outputs[key]:
+            push_error("VENOM_FANG_CANVAS: Image.set_data corrupted source RGBA before texture upload")
+            quit(1)
+            return
+        var gpu_data:PackedByteArray=tex.get_image().get_data()
+        if gpu_data!=outputs[key]:
+            var first:int=-1
+            var n:int=0
+            for bi in range(mini(gpu_data.size(),outputs[key].size())):
+                if gpu_data[bi]!=outputs[key][bi]:
+                    if first<0: first=bi
+                    n+=1
+            push_error("VENOM_FANG_CANVAS: GPU immediate readback drift pass=%s cpuBytes=%d gpuBytes=%d first=%d cpu=%d gpu=%d diffs=%d" % [key,outputs[key].size(),gpu_data.size(),first,(outputs[key][first] if first>=0 else -1),(gpu_data[first] if first>=0 else -1),n])
             quit(1)
             return
     var mat:CanvasItemMaterial=canvas.sprites["lit"].material
