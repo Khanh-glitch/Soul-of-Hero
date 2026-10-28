@@ -474,8 +474,12 @@ jobs:
             ls -la "$ARTIFACT_DIR"/overworld_*.png 2>&1 || true
             echo "native dir (res:// side):"
             ls -la .artifacts/overworld/native/ 2>&1 || true
+            echo "first OVERWORLD lines:"
+            grep -nE "OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | head -18 || true
+            echo "world_overview mentions:"
+            grep -c "world_overview" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null || true
             echo "capture station lines:"
-            grep -E "^OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | tail -40 || true
+            grep -E "^OVERWORLD" "$ARTIFACT_DIR/overworld-capture.log" 2>/dev/null | tail -6 || true
           } | sed -e 's/%/%25/g' -e 's/\r//g' | awk 'BEGIN{ORS="%0A"} {print}')
           echo "::notice::${diag}"
           required=(
