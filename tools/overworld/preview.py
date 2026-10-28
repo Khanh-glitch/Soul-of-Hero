@@ -74,9 +74,10 @@ def frame_for(meta, code_token, layer):
     return entry["frame"]
 
 
-def render(x0, y0, x1, y1, *, scale=1, draw_props=True):
+def render(x0, y0, x1, y1, *, scale=1, draw_props=True, layers=None):
     sheet, meta, props_sheet, props_meta = load_atlas()
-    layers = json.load(open(os.path.join(DATA, "hollow_marches_layers.json")))
+    if layers is None:
+        layers = json.load(open(os.path.join(DATA, "hollow_marches_layers.json")))
     ground = decode(layers, "ground")
     detail = decode(layers, "detail")
     solid = decode(layers, "solid")

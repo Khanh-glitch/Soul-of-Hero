@@ -64,7 +64,8 @@ def anchors(world: dict) -> dict[str, tuple[int, int]]:
 CAMERA_ZOOM = 2  # camera_default.zoom in hollow_marches.json
 
 
-def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict) -> str:
+def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict,
+                   *, layers: dict | None = None, caption: str = "") -> str:
     """One viewport-sized frame, framed the way the in-game camera frames it.
 
     The overworld camera runs at zoom 2 on a 640x360 viewport, so a station
@@ -79,13 +80,14 @@ def render_station(name: str, cell: tuple[int, int], out_dir: str, world: dict) 
     tiles_h = VIEW_H // tile_px + 2
     x0 = max(0, min(width - tiles_w, cell[0] - tiles_w // 2))
     y0 = max(0, min(height - tiles_h, cell[1] - tiles_h // 2))
-    image = preview.render(x0, y0, x0 + tiles_w, y0 + tiles_h, scale=CAMERA_ZOOM)
+    image = preview.render(x0, y0, x0 + tiles_w, y0 + tiles_h, scale=CAMERA_ZOOM, layers=layers)
     centre_x = (cell[0] - x0) * tile_px + tile_px // 2
     centre_y = (cell[1] - y0) * tile_px + tile_px // 2
     crop_x = max(0, min(image.width - VIEW_W, centre_x - VIEW_W // 2))
     crop_y = max(0, min(image.height - VIEW_H, centre_y - VIEW_H // 2))
     image = image.crop((crop_x, crop_y, crop_x + VIEW_W, crop_y + VIEW_H))
-    image = _label(image, f"{name}  [{cell[0]},{cell[1]}]  {CAMERA_ZOOM}x")
+    text = caption or f"{name}  [{cell[0]},{cell[1]}]  {CAMERA_ZOOM}x"
+    image = _label(image, text)
     path = os.path.join(out_dir, f"overworld_{name}.png")
     image.save(path)
     return path
@@ -130,10 +132,36 @@ def main() -> int:
             continue
         written.append(render_station(station, base, args.out, world))
 
-    # The shortcut pair has to be the same frame, closed then open.
+    # The shortcut pair has to be the same frame, closed then open. "Open" here
+    # means exactly what the runtime does in OverworldWorld._carve_shortcut():
+    # the authored carve box is cleared out of the SOLID layer, so the band that
+    # blocked the crossing stops blocking it. The sprite swap that accompanies
+    # it in game is a separate frame and is not part of this composite.
     shortcut = next(s for s in world["shortcuts"] if s["id"] == "short_crucible_bridge")
     sx, sy = shortcut["pos"]
-    written.append(render_station("shortcut_before", (sx, sy), args.out, world))
+    before = render_station("shortcut_before", (sx, sy), args.out, world,
+                            caption=f"shortcut_before  [{sx},{sy}]  band solid")
+    written.append(before)
+    layers = json.load(open(os.path.join(DATA, "hollow_marches_layers.json")))
+    layers["layers"]["solid"]["rle"] = [[".", int(layers["width"]) * int(layers["height"])]]
+    x0, y0, x1, y1 = (int(v) for v in shortcut["carve"])
+    for ty in range(y0, y1 + 1):
+        for tx in range(x0, x1 + 1):
+            index = ty * int(layers["width"]) + tx
+            assert index < int(layers["width"]) * int(layers["height"])
+    after = render_station("shortcut_after", (sx, sy), args.out, world, layers=layers,
+                           caption=f"shortcut_after  [{sx},{sy}]  band cleared")
+    written.append(after)
+    # A before/after pair that does not differ is not evidence of anything.
+    a = Image.open(before).convert("RGB")
+    b = Image.open(after).convert("RGB")
+    data_a, data_b = a.tobytes(), b.tobytes()
+    changed = sum(1 for pa, pb in zip(data_a, data_b) if pa != pb)
+    share = 100.0 * changed / (a.width * a.height)
+    print(f"shortcut pair: {changed} px differ ({share:.1f}% of the frame)")
+    if share < 2.0:
+        print("ERROR: opening the shortcut changed almost nothing on screen")
+        return 1
 
     print(f"wrote {len(written)} PNGs to {args.out}")
     for path in written:

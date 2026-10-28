@@ -110,6 +110,36 @@ Surfaces are grained in 2 px clusters rather than single pixels: the camera runs
 at zoom 2, which turns a per-pixel speckle into noise and a per-tile border into
 a visible lattice.
 
+## Two scatter passes, and what the bake refuses
+
+`paint_scatter()` runs twice over the same grid, for two different reasons.
+
+The first pass places everything that **collides** — trees, columns, statues,
+camp tents, sarcophagi, wall stubs. It keeps a two-tile corridor clear around
+every walking lane, so a road can never be pinched by a prop; the corridor is
+what left the wide flagstone plazas empty, because an approach lane runs through
+the middle of every one of them.
+
+The second pass fills that stone with **non-collider** frames only (`rock_a`,
+`rock_b`, `barrel`, `grave_cross`, `gravestone`, `bush`), so it can use a
+one-tile corridor — the lane cells and nothing else — and still cannot narrow a
+road or trap the player. Its density is clustered: a three-tile block that is
+"hot" carries a debris field, the rest stays near-empty. A uniform sprinkle of
+single rocks reads as noise at 2x; a cluster reads as something having fallen.
+
+Both passes skip `interaction_cells()` — the landmark thresholds, camp rest
+cells, discovery cells and the spawn. This is not cosmetic: `validate()` found a
+pine standing exactly on `d_ossuary_stash`, which would have held the player off
+the cell that claims it. `author.py` now asserts, before it will write anything:
+
+* every prop frame exists in the atlas (shortcut ids excepted, since the runtime
+  resolves `short_bridge` → `short_bridge_broken`),
+* no collider-bearing frame stands in a walking lane (trees, carts, sarcophagi),
+* no collider-bearing frame covers an interaction cell.
+
+The second and third rules were checked against deliberately broken worlds and
+both fire; a non-collider frame on the same cell is correctly allowed.
+
 ## Landmarks and framing
 
 A landmark's sprite is placed at its authored `(tx, ty)` with its **base** on the

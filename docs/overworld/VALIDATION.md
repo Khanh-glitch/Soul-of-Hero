@@ -30,7 +30,7 @@ Current result (engine 4.7-stable, this branch):
 
 ```
 ground: ;=19194 ,=18629 g=18107 d=11005 b=9457 r=8000 f=6270 m=2592 -=1529 ~=1260 a=1030 v=636 y=595
-solid cells 23338, detail cells 6328, props 4451
+solid cells 23338, detail cells 6328, props 6184
 baked OK
 ```
 
@@ -126,13 +126,36 @@ hand-placed in the capture script. Each frame is rejected if it is blank
 (sampled pixels identical). Exit codes: `0` wrote every station, `2` no display
 server (reported as `BLOCKED` by the tool itself), anything else is a failure.
 
-**Status in this sandbox: BLOCKED.** The capture scene exits 2 with
-`OVERWORLD CAPTURE BLOCKED - no display server`. There is no `Xvfb`, no
-`libGL` (`ldconfig -p | grep -c libGL` is 0) and no `/dev/dri` in this
-container, so a native framebuffer cannot be created here — the engine is a
-headless-capable build and `SaveService`/`DungeonLevel` tests all pass, but
-`DisplayServer` refuses to open a window. This is an environment limit, not a
-product finding; the CI job installs `xvfb` and takes the real frames.
+**Natively: PASSING in CI, BLOCKED in this sandbox.** There is no `Xvfb`, no
+`libGL` and no `/dev/dri` in this container, so the capture exits 2 here with
+`OVERWORLD CAPTURE BLOCKED - no display server`. The `VISUAL EVIDENCE` job
+installs `xvfb` + `libgl1-mesa-dri` and takes the real frames. Latest run
+[`40684317214`](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40684317214)
+(commit `979b23ca`): **13/13 PNGs, 1280x720, every station `blank=false`,
+`OVERWORLD CAPTURE PASSED - 13 images`**, `Script/engine errors:` empty.
+
+The capture is a script, so its log is gated exactly like every other step:
+`tools/ci/gate_log.sh` fails the step on `SCRIPT ERROR`/`Parse Error`/`^ERROR:`
+and requires the `OVERWORLD CAPTURE PASSED` line, with a genuinely blocked run
+(exit 2) exempt because it has no PASS line to look for. That gate is what
+turned three silently-broken capture runs into named bugs — see
+`overworld_world_overview.png` below.
+
+### Three bugs the gated capture log caught
+
+Each of these produced a **green station** and a **wrong or missing PNG**:
+
+| Symptom | Cause | Fix |
+|---|---|---|
+| `world_overview.png` missing, no failed station | `camera.clear_current()` — Godot 3 API, does not exist in Godot 4; the thrown error aborted `_overview()` mid-function and the caller carried on | making the overview camera current is what unsets the player's camera; the call is gone |
+| one stray `ERROR: Home scene loaded, but AppFlow did not open the startup profile choice` | the harness opened a route while AppRoot's boot coroutine was still running, so boot recorded `failed` | the capture waits for `boot_state == "complete"` first and prints it |
+| `world_overview.png` present, 47 KB, showing 4×2 tiles | `Camera2D.zoom` is a **magnification**; `zoom = (6144/640, 4096/360)` magnified a 67×32 px patch by ~10x instead of fitting the world | `zoom = 1/TILE` (one tile per logical pixel, 2×2 device pixels per tile), limits disabled, and the capture prints world px / view px / frame coverage and fails if the world does not fit |
+
+The overview is now arithmetically constrained rather than eyeballed: at
+`zoom 0.0625` a 640×360 viewport covers 640×360 tiles, so all 384×256 tiles fit
+and the map occupies 60%×71% of the frame (`OVERWORLD CAPTURE overview: world
+384x256 tiles = 6144x4096 px, zoom 0.0625, view covers 10240x5760 px (640.0
+tiles)`), and the PNG grew from 47 KB to 436 KB.
 
 ### Offline (supporting) evidence — not native screenshots
 
@@ -142,10 +165,16 @@ python3 tools/overworld/evidence.py
 
 `evidence.py` composites the **shipped atlas** with Pillow using the same
 per-cell variant hash as `OverworldTiles.variant_index`, at the camera's real
-2x zoom in a 640×360 frame, and writes the ten PNGs in
-`docs/overworld/evidence/` (`overworld_world_overview.png` plus eight
-stations, `overworld_shortcut_before.png`). It proves the art and the geography
+2x zoom in a 640×360 frame, and writes eleven PNGs in
+`docs/overworld/evidence/`: the whole-world overview, eight stations, and the
+`shortcut_before` / `shortcut_after` pair. It proves the art and the geography
 are what was authored; it does **not** prove that Godot drew them.
+
+`shortcut_after` applies the same rule the runtime applies
+(`OverworldWorld._carve_shortcut`): the authored carve box is cleared out of the
+SOLID layer. The script measures the pair and fails if opening the shortcut
+changes almost nothing on screen — currently **13.7% of the frame changes**,
+which is the bridge deck giving way to the water channel it was spanning.
 
 The workflow then validates each required PNG (signature, ≥320×180, ≥6 KB so a
 flat-colour frame cannot pass) via `tools/ci/validate_png.py`.

@@ -305,6 +305,18 @@ def _load_prop_meta():
 
 PROP_META = _load_prop_meta()
 
+## Prop frames that get a collision body at runtime. Kept in step with
+## OverworldWorld.SOLID_PROP_PREFIXES; `validate()` refuses to bake a world where
+## one of them stands in a walking lane or on an interaction cell.
+## Base ids the runtime resolves to real frames (OverworldWorld.SHORTCUT_FRAME_ALIASES).
+SHORTCUT_ALIAS_KEYS = ("short_bridge", "short_rubble", "short_conduit", "short_valve")
+
+COLLIDER_PROP_PREFIXES = (
+    "lm_", "short_bridge", "short_rubble", "short_conduit", "short_valve",
+    "wall_stub", "tree_dead", "tree_pine", "column", "statue",
+    "camp_tent", "cart", "sarcophagus",
+)
+
 
 # ---------------------------------------------------------------------------
 # the world document
@@ -727,8 +739,27 @@ def reinstate_shortcut_bands():
         block_rect(*carve_rect(kind, tx, ty))
 
 
+def interaction_cells():
+    """Cells a player must be able to stand on to interact with something.
+
+    A blocking prop here is not a decoration, it is a missing reward: the pine
+    that `validate()` caught standing on `d_ossuary_stash` would have held the
+    player off the cell that claims it. The scatter keeps these clear.
+    """
+    cells = set()
+    for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+        cells.add((tx, ty + 1))
+    for cid, name, (tx, ty), initial in CAMPS:
+        cells.add((tx, ty))
+    for did, (tx, ty), kind, reward in DISCOVERIES:
+        cells.add((tx, ty))
+    cells.add((56, 216))
+    return cells
+
+
 def paint_scatter():
     """Vegetation, grave furniture and ruins, kept off every walking lane."""
+    reserved = interaction_cells()
     lane = set()
     for x in range(W):
         for y in range(H):
@@ -742,6 +773,7 @@ def paint_scatter():
 
     def free(x, y):
         return (get(solid, x, y) == "." and (x, y) not in corridor
+                and (x, y) not in reserved
                 and get(ground, x, y) not in ("f", "~", "-", "v", "y"))
 
     for y in range(H):
@@ -802,6 +834,50 @@ def paint_scatter():
             elif g == "m":
                 if r < 0.030:
                     add_prop("tree_dead", *tile_pos(x, y))
+
+    # Fallen masonry on the plazas. The scatter above keeps a two-tile corridor
+    # clear around every lane so nothing BLOCKING can pinch a road; that rule is
+    # what left the wide flagstone plazas empty, because an approach lane runs
+    # through the middle of each of them. This second pass fills that stone with
+    # frames that carry no collider at all, so it can use a one-tile corridor and
+    # still cannot narrow a road, block an approach or trap the player.
+    # Only the lane cells themselves are excluded. Dilating this corridor by one
+    # tile (as the collider-bearing pass above must) swallowed most of the plaza
+    # stone, because an approach lane runs through the middle of every plaza -
+    # the first attempt here added eight hundred props and still left the
+    # crucible basin standing in an empty field. Debris on a road's edge is what
+    # a ruined road looks like; debris in the walking line would be litter, so
+    # the centre stays clean and nothing here can be walked into.
+    tight = set(lane)
+    # Density is clustered, not uniform: three-tile blocks that are "hot" carry a
+    # debris field, the rest stay near-empty. An even 5% sprinkle of single rocks
+    # reads as noise at the camera's 2x zoom; a cluster reads as something fell
+    # here. None of these frames has a collider, so the tight corridor is enough.
+    def hot(x, y, seed):
+        return h01(seed, x // 3, y // 3) < 0.5
+
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or (x, y) in tight or (x, y) in reserved:
+                continue
+            g = get(ground, x, y)
+            r = h01(913, x, y)
+            band = 0.085 if hot(x, y, 917) else 0.016
+            if g in ("f", "g", "r", "a"):
+                if r < band * 0.45:
+                    add_prop("rock_a", *tile_pos(x, y))
+                elif r < band * 0.85:
+                    add_prop("rock_b", *tile_pos(x, y))
+                elif g == "f" and r < band * 1.0:
+                    add_prop("barrel", *tile_pos(x, y))
+            elif g == "d":
+                if r < band * 0.6:
+                    add_prop("grave_cross", *tile_pos(x, y))
+                elif r < band:
+                    add_prop("gravestone", *tile_pos(x, y))
+            elif g == "b":
+                if r < band:
+                    add_prop("bush", *tile_pos(x, y))
 
     # lamps along the principal road, at a readable interval
     main = [(58, 228), (64, 214), (72, 200), (82, 190), (88, 184), (80, 168), (72, 154),
@@ -910,6 +986,50 @@ def validate():
             if hx <= tx < hx + hw and hy <= ty < hy + hh:
                 errors.append("camp %s (%d,%d) sits inside hazard %s"
                               % (cid, tx, ty, hid))
+
+    # Props: every frame must exist in the atlas, and nothing that carries a
+    # collider may stand on the cell a player must occupy. The scatter keeps a
+    # two-tile corridor clear and the plaza clutter uses non-collider frames only,
+    # but both rules live in prose above; this is the assertion that they held.
+    # COLLIDER_PROP_PREFIXES mirrors OverworldWorld.SOLID_PROP_PREFIXES.
+    for entry in props:
+        frame = str(entry["frame"])
+        if frame in PROP_META:
+            continue
+        # Shortcuts are authored by their short id and resolved to a frame at
+        # runtime (OverworldWorld.SHORTCUT_FRAME_ALIASES), so their base name is
+        # expected to be absent from the atlas.
+        if frame.startswith(tuple(SHORTCUT_ALIAS_KEYS)):
+            continue
+        errors.append("prop frame '%s' is not in the props atlas" % frame)
+    must_be_free = {}
+    for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
+        must_be_free[(tx, ty + 1)] = "landmark %s threshold" % lid
+    for cid, name, (tx, ty), initial in CAMPS:
+        must_be_free[(tx, ty)] = "camp %s rest cell" % cid
+    for did, (tx, ty), kind, reward in DISCOVERIES:
+        must_be_free[(tx, ty)] = "discovery %s" % did
+    must_be_free[start] = "refuge spawn"
+    # Trees and camp furniture may not stand on a walking lane: they are pure
+    # obstruction. Columns, statues and wall stubs are ruin *on* the paving and
+    # are deliberately placed on it (they read as a fallen colonnade), and the
+    # landmark, shortcut and tent frames are destinations, not clutter - so those
+    # are checked only against interaction cells below.
+    lane_cells = {(x, y) for x in range(W) for y in range(H)
+                  if get(detail, x, y) in ("=", "+", ":")}
+    LANE_BLOCKING = ("tree_dead", "tree_pine", "cart", "sarcophagus")
+    for entry in props:
+        frame = str(entry["frame"])
+        tex = int((float(entry["x"]) - 8) // TILE)
+        tey = int((float(entry["y"]) - 8) // TILE)
+        if frame.startswith(LANE_BLOCKING) and (tex, tey) in lane_cells:
+            errors.append("blocking prop '%s' at (%d,%d) stands in a walking lane"
+                          % (frame, tex, tey))
+        if not frame.startswith(COLLIDER_PROP_PREFIXES):
+            continue
+        if (tex, tey) in must_be_free:
+            errors.append("blocking prop '%s' at (%d,%d) covers the %s"
+                          % (frame, tex, tey, must_be_free[(tex, tey)]))
 
     # The band the runtime carves must be solid in the baked world, or the
     # "opened shortcut" would be a sprite swap over a wall that was never there.
