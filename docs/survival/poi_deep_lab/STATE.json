@@ -1,0 +1,21 @@
+{
+  "task": "SURV-POI-DEEP-001",
+  "branch": "feature/surv-s6-poi-depth-001",
+  "unit": 1,
+  "status": "UNIT_1_COMPLETE",
+  "design_status": "DESIGN_ONLY",
+  "runtime_status": "NATIVE_NOT_TESTED",
+  "selected_concept": "Whitewater Assay Works",
+  "primary_archetype": "POI-08",
+  "baseline_commit": "a818042d31afbc11f0abbf945e4b8bac92e6109b",
+  "checkpoint_commit": "Resolve with git log -1 --format=%H -- docs/survival/poi_deep_lab",
+  "source_anchors": ["POI-05", "POI-08", "POI-09", "POI-10", "DEP-03", "DEP-04", "DEP-05", "DEP-31", "JOURNEY-11", "JOURNEY-12"],
+  "last_completed_action": "Compared candidates and recorded concept, constraints and provenance in BRIEF.md.",
+  "next_atomic_action": "Only after Unit 2 assignment, draft MISSION_GRAPH.json with 8–12 semantic nodes, credential/power/exposure edge conditions, and dry partial-salvage plus prepared deep-specimen entry-to-exit journeys; flag unresolved recovery edges.",
+  "unresolved": ["Power-loss and death-bag reachability", "Noncombat authorization cost and renewability", "Native hazard and route readability", "Optional A1 placement and A3 reward mappings if adopted"],
+  "assumptions": ["Reversible local drainage/ventilation choice is proposed, not implemented", "No swimming or jumping required", "No mandatory Core or unique economy dependency"],
+  "verification": {"native": "NOT_TESTED", "web": "NOT_TESTED", "balance": "NOT_TESTED", "mission_graph": "NOT_CREATED"},
+  "docs_sync": "DOCS_SYNC_PENDING; recovery scope prioritizes isolated Git checkpoint",
+  "other_agents_blocked": false,
+  "unit_2_started": false
+}
