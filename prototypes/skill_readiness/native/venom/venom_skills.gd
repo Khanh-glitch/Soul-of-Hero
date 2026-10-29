@@ -107,3 +107,42 @@ static func run_factory(skill_id: int):
 
 static func has_generator(skill_id: int) -> bool:
 	return run_factory(skill_id) != null
+
+
+## ---------------------------------------------------------------------------
+## source-native execution probe
+## ---------------------------------------------------------------------------
+
+## Runs the ported generator for `sid` inside a real `venom_world` for a few
+## authored ticks and reports whether a cast actually executed.
+##
+## This is the "does it really run" question, asked of the SOURCE-NATIVE
+## engine rather than of the host adapter. It is deliberately separate: the
+## host adapter (`Gold93SkillModule` / `gold_pair`) and the source-native
+## pipeline (`venom_world` / `venom_engine`) are two different execution
+## domains, and `readiness_report()` must never add their counts together.
+static func probe_native(sid: int, ticks: int = 30, seed_: int = 7) -> bool:
+	if not has_generator(sid):
+		return false
+	var defs: Dictionary = defs()
+	if not defs.has(sid):
+		return false
+	var def: Dictionary = defs[sid]
+	var ENGINE = preload("res://prototypes/skill_readiness/native/venom/venom_engine.gd")
+	var WORLDG = preload("res://prototypes/skill_readiness/native/venom/venom_world.gd")
+	var w = WORLDG.new(ENGINE.WW, ENGINE.WH)
+	w.cfg["density"] = 16
+	w.reset_ids()
+	w.uid = 1
+	w.reset(seed_, true)
+	w.lab = true
+	var p = w.player
+	p.form = "venom" if String(def.get("form", "vessel")) == "venom" else "vessel"
+	p.venomT = 999.0 if String(def.get("form", "vessel")) == "venom" else 0.0
+	p.cat = 100.0
+	var r: Dictionary = ENGINE.auto_aim(w, def)
+	ENGINE.cast(w, def, r, run_factory(sid))
+	var F: float = 1.0 / 60.0
+	for _i in range(ticks):
+		w.step(F)
+	return w.time > 0.0 and w.castLog.size() > 0

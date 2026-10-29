@@ -16,12 +16,14 @@ const ENV_CANVAS = preload("res://prototypes/gold_pair/venom_glassfang_environme
 const PARTICLES_CANVAS = preload("res://prototypes/gold_pair/venom_source_particles_canvas.gd")
 const FANG_CANVAS = preload("res://prototypes/gold_pair/venom_source_fang_canvas.gd")
 const POST = preload("res://prototypes/gold_pair/venom_source_display_post.gd")
+const NATIVE_CANVAS = preload("res://prototypes/skill_readiness/families/venom_source_native_canvas.gd")
 const RNG = preload("res://prototypes/gold_pair/gold_mulberry32_rng.gd")
 
 const LOGICAL: Vector2i = Vector2i(600, 340)
 const SOURCE_HZ: float = 60.0
 
 var env_canvas = null
+var native_canvas = null
 var particles_canvas = null
 var fang_canvas = null
 var post_node = null
@@ -67,6 +69,12 @@ func build_surfaces(parent: Node) -> bool:
 	_release_nodes()
 	live_environment = load("res://prototypes/gold_pair/venom_glassfang_live_environment.gd").new()
 
+	native_canvas = (NATIVE_CANVAS as GDScript).new() as Node2D
+	native_canvas.name = "VenomSourceNative"
+	native_canvas.z_index = 1
+	parent.add_child(native_canvas)
+	owns(native_canvas)
+
 	env_canvas = (ENV_CANVAS as GDScript).new() as Node2D
 	env_canvas.name = "VenomSourceEnvironment"
 	env_canvas.set_source_density(density)
@@ -96,6 +104,8 @@ func build_surfaces(parent: Node) -> bool:
 
 
 func set_source_to_map_transform(xform: Transform2D) -> void:
+	if is_instance_valid(native_canvas):
+		native_canvas.set_source_to_map_transform(xform)
 	if is_instance_valid(env_canvas):
 		env_canvas.set_source_to_map_transform(xform)
 	if is_instance_valid(particles_canvas):
@@ -131,6 +141,9 @@ func release_cast(_cast_id: StringName) -> int:
 		# must be rearmed here or every cast after the first is rejected.
 		particles_canvas.set("rendered_count", 0)
 		released += 1
+	if is_instance_valid(native_canvas):
+		native_canvas.release()
+		released += 1
 	if is_instance_valid(fang_canvas):
 		# Only safe once the fang layers actually exist: the source component
 		# asserts on its initialised pass dictionary.
@@ -153,6 +166,20 @@ func _release_nodes() -> void:
 
 func render_tick(module: Gold93SkillModule, tick: int) -> void:
 	if not attached:
+		return
+	# Source-native modules hand over the ORIGINAL scene/glow rasters directly
+	# instead of the gold_pair component event snapshots, so they take their own
+	# composite path (scene opaque, glow additive) and never reach the
+	# Fang-specific code below, which only understands the older component set.
+	if module.has_method("source_native_frame"):
+		var nf: Dictionary = module.source_native_frame()
+		if not nf.is_empty() and is_instance_valid(native_canvas):
+			native_canvas.present(nf.get("scene"), nf.get("glow"))
+			if is_instance_valid(post_node):
+				post_node.present_source_feedback(float(tick) / SOURCE_HZ,
+						_shake(module, tick), _shocks(module), _flash(module),
+						Vector4(0.0, 1.0, 0.0, 1.0))
+			rendered_ticks += 1
 		return
 	var source = module.source_runtime() if module.has_method("source_runtime") else null
 	if source == null:

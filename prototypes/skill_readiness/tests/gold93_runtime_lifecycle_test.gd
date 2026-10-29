@@ -114,6 +114,53 @@ func _initialize() -> void:
 	handle3.run_to_completion(4096)
 	_check(handle3.trace_digest() != digest_a, "a different source seed must change the cast")
 
+	# --- 3b. every host-adapter-castable skill really casts -------------------
+	# A registered module that loads but draws nothing, emits nothing or dies
+	# on the first tick would still satisfy `can_cast()`. So each one is cast
+	# for real here: it must run, emit intents, produce non-empty rasters,
+	# replay deterministically, cancel cleanly and dispose.
+	for id in runtime.readiness_report()["host_adapter_castable"]:
+		if not String(id).begins_with("venomwright:"):
+			continue
+		var hb_ctx := _make_context(20261028, _default_actors())
+		var hb = runtime.cast(StringName(id), hb_ctx, PARAMS.diagnostic("venomwright"))
+		_check(not hb.is_blocked(), "%s must not be blocked once a module is registered" % id)
+		hb.start()
+		var hb_ticks: int = hb.run_to_completion(4096)
+		_check(hb_ticks > 1, "%s must advance more than one authored tick, got %d"
+				% [id, hb_ticks])
+		var hb_res: Dictionary = hb.result()
+		var hb_intents: Dictionary = hb_res.get("intents", {})
+		_check(int(hb_intents.get("emitted", 0)) > 0,
+				"%s must emit at least one authored intent" % id)
+		var hb_stats: Dictionary = hb.module.stats() if hb.module != null else {}
+		if hb_stats.has("frames_rendered"):
+			_check(int(hb_stats["frames_rendered"]) > 1,
+					"%s must render more than one frame" % id)
+			_check(int(hb_stats["ink_peak"]) > 0,
+					"%s rendered frames must not be blank" % id)
+			_check(bool(hb_stats.get("cast_fired", false)),
+					"%s must actually fire the authored cast" % id)
+		# Deterministic replay through the host adapter.
+		var hb_ctx2 := _make_context(20261028, _default_actors())
+		var hb2 = runtime.cast(StringName(id), hb_ctx2, PARAMS.diagnostic("venomwright"))
+		hb2.run_to_completion(4096)
+		_check(hb2.trace_digest() == hb.trace_digest(),
+				"%s must replay byte-identically through the host adapter" % id)
+		# Cancellation then disposal.
+		var hb_ctx3 := _make_context(20261028, _default_actors())
+		var hb3 = runtime.cast(StringName(id), hb_ctx3, PARAMS.diagnostic("venomwright"))
+		hb3.start()
+		hb3.tick_source(6)
+		var emitted3: int = int(hb3.result().get("intents", {}).get("emitted", 0))
+		hb3.cancel()
+		hb3.tick_source(30)
+		_check(int(hb3.result().get("intents", {}).get("emitted", 0)) == emitted3,
+				"%s must emit nothing after cancellation" % id)
+		hb3.dispose()
+		_check(hb3.status == Gold93SkillHandle.Status.DISPOSED,
+				"%s must reach DISPOSED" % id)
+
 	# --- 4. blocked ids fail closed ------------------------------------------
 	# Which ids are castable is whatever the runtime actually has a ported
 	# generator for; everything else must fail closed. Neither the ported count
@@ -161,10 +208,48 @@ func _initialize() -> void:
 			"native_port_ready can never exceed source_parity_verified")
 	_check(report["native_port_ready"].size() <= report["gold_visual_approved"].size(),
 			"native_port_ready can never exceed gold_visual_approved")
-	_check(report["source_parity_verified"].size() <= report["native_executable"].size(),
-			"source parity can only be claimed for ids that actually execute")
-	_check(report["native_executable"].size() >= 1,
+
+	# --- 6b. the five readiness axes are separate and each is enforced -------
+	#
+	# These are different claims about different things and were once mixed
+	# into one `native_executable` count, which let six source-parity-verified
+	# skills coexist with exactly one host-castable module and still pass.
+	#
+	#   source_native_executable  the ported ORIGINAL engine runs the authored
+	#                             generator. Proven by EXECUTING it here, not
+	#                             by a table lookup.
+	#   host_adapter_castable     a Gold93SkillModule drives it through the
+	#                             host-facing CastContext and emits intents.
+	#   source_parity_verified    the source-native cast was diffed tick by
+	#                             tick against the original TypeScript and
+	#                             matched (evidence in parity/index.json).
+	#   gold_visual_approved      owner acceptance. Never auto-awarded.
+	#   production_integrated     prohibited without owner approval.
+	#
+	# The invariant that broke CI: parity is measured in the SOURCE-NATIVE
+	# domain, so it may only be claimed for ids that execute there. It says
+	# nothing about the host adapter, and the host adapter says nothing about
+	# parity - the two counts must never be added or substituted.
+	var src_native: Array = report["source_native_executable"]
+	var host_cast: Array = report["host_adapter_castable"]
+	var parity_ids: Array = report["source_parity_verified"]
+	for id in parity_ids:
+		_check(src_native.has(id),
+				"source parity can only be claimed for ids that actually execute "
+				+ "in the source-native engine: %s does not" % id)
+	_check(parity_ids.size() <= src_native.size(),
+			"source_parity_verified (%d) can never exceed source_native_executable (%d)"
+			% [parity_ids.size(), src_native.size()])
+	# A host module is only honest if the source-native generator behind it
+	# really exists; otherwise the adapter would be driving nothing.
+	for id in host_cast:
+		_check(not String(id).begins_with("venomwright:") or src_native.has(id),
+				"host adapter %s is registered but no source-native generator executes "
+				+ "behind it: the module would be casting an approximation" % id)
+	_check(src_native.size() >= 1,
 			"at least one generator must be ported: a factory that ports nothing is not progress")
+	_check(host_cast.size() >= 1,
+			"at least one skill must be reachable through the host adapter")
 	_check(report["gold_visual_approved"].size() == 0, "no id may claim Gold visual approval yet")
 	_check(report["gameplay_configured"].size() == 0, "no gameplay numbers may be invented")
 	_check(report["production_integrated"].size() == 0, "production integration stays out of scope")

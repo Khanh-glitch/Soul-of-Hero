@@ -183,21 +183,6 @@ jobs:
             exit 1
           fi
 
-      - name: Native full cast matches the original engine tick-by-tick
-        shell: bash
-        run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-venom-diff.log
-          timeout 1200s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_DIFFERENTIAL: PASS' "$LOG"; then
-            echo "::error::[gold93-venom-diff] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-venom-diff] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
-          # Surface the per-skill verdicts so a regression is visible in the log
-          # even when the job as a whole is green.
-          grep -E '"canonical"|"parity"|"first_divergent_tick"' "$LOG" | tee /tmp/gold93-venom-diff-summary.txt
 
       - name: Capture the ported casts (real rendered frames)
         shell: bash
@@ -368,3 +353,74 @@ jobs:
             ${{ runner.temp }}/gold93-overlay/.artifacts/gold93/*.json
           if-no-files-found: warn
           retention-days: 14
+
+  # One shard per Venomwright skill.
+  #
+  # The differential used to run all skills sequentially inside the runtime
+  # job. Each skill replays three authored worlds (seeds 7 / 21 / 99) at the
+  # original 60 Hz and hashes both rasters on every sampled tick, so a single
+  # sequential run grows linearly with the roster and was already close to the
+  # 1200 s cap with six skills. Sharding keeps every shard small and bounded,
+  # makes a regression point at exactly one skill, and lets the whole matrix
+  # run in parallel instead of in series.
+  #
+  # `--skip-unported` is what lets the matrix be declared for the full roster
+  # up front: a shard whose generator is not ported yet reports SKIP, never
+  # PASS, so the job is green without claiming parity it did not measure.
+  venom-differential:
+    name: 'Venomwright ${{ matrix.skill }} vs original TypeScript'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: path-ownership
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project and the native readiness library
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1200s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
+            echo "::error::Godot import reported script errors"
+            exit 1
+          fi
+      - name: Tick-by-tick differential against the original engine
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-venom-diff-${{ matrix.skill }}.log
+          timeout 2400s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          if [ "$STATUS" != "0" ]; then
+            echo "::error::[venomwright-${{ matrix.skill }}] godot exited with status $STATUS"
+            while IFS= read -r line; do echo "::error::[venomwright-${{ matrix.skill }}] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+            exit 1
+          fi
+          if ! grep -qE 'GOLD93_VENOM_DIFFERENTIAL: (PASS|SKIP)' "$LOG"; then
+            echo "::error::[venomwright-${{ matrix.skill }}] no verdict recorded"
+            exit 1
+          fi
+          if grep -q 'GOLD93_VENOM_DIFFERENTIAL: FAIL' "$LOG"; then
+            echo "::error::[venomwright-${{ matrix.skill }}] differential reported FAIL"
+            exit 1
+          fi
+          # Per-tick verdicts stay visible in the log even when the shard is green.
+          grep -E '"canonical"|"parity"|"first_divergent_tick"|SKIP' "$LOG" | tail -20
+
+  # ARCANA III gets its own matrix so a Venomwright regression can never be
+  # masked by an ARCANA shard and vice versa. The two families are different
+  # engines with different clocks, different rasters and different oracles.
+  #
+  # arcana-differential:
+  #   (added once the ARCANA source-native pipeline and its own
+  #    source-authoritative oracle exist; see docs/vfx/skill_readiness.)

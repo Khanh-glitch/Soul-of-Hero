@@ -16,7 +16,40 @@ const ARCANA_FAMILY = preload("res://prototypes/skill_readiness/families/arcana_
 ## source may appear here. Adding an entry is a fidelity claim, not a TODO item.
 const MODULE_PATHS: Dictionary = {
 	"venomwright:001": "res://prototypes/skill_readiness/skills/venomwright/v001_glassfang_hunt.gd",
+	# 002-006 are cast through `VenomwrightSourceModule`, which drives the
+	# source-native `venom_world` / `venom_engine` port of the original engine
+	# instead of the older `prototypes/gold_pair` component set that 001 uses.
+	"venomwright:002": "res://prototypes/skill_readiness/skills/venomwright/v002_source_native.gd",
+	"venomwright:003": "res://prototypes/skill_readiness/skills/venomwright/v003_source_native.gd",
+	"venomwright:004": "res://prototypes/skill_readiness/skills/venomwright/v004_source_native.gd",
+	"venomwright:005": "res://prototypes/skill_readiness/skills/venomwright/v005_source_native.gd",
+	"venomwright:006": "res://prototypes/skill_readiness/skills/venomwright/v006_source_native.gd",
 }
+
+## Registry of the SOURCE-NATIVE engine: canonical id -> ORIGINAL skill id as
+## ported in `native/venom/venom_skills.gd`. This is a DIFFERENT execution
+## domain from `MODULE_PATHS`:
+##
+##   MODULE_PATHS  -> HOST_ADAPTER_CASTABLE. A `Gold93SkillModule` the host can
+##                    drive through CastContext, emitting typed intents.
+##   SOURCE_NATIVE -> SOURCE_NATIVE_EXECUTABLE. The ported original engine
+##                    (`venom_world` / `venom_engine`) runs the authored
+##                    generator. This is the domain the differential oracle
+##                    diffs against the original TypeScript.
+##
+## They are counted separately on purpose. Adding them together would let a
+## skill that is only reachable through one path masquerade as verified in the
+## other, which is exactly the discrepancy the lifecycle test caught.
+const SOURCE_NATIVE_IDS: Dictionary = {
+	"venomwright:001": 1,
+	"venomwright:002": 2,
+	"venomwright:003": 3,
+	"venomwright:004": 4,
+	"venomwright:005": 5,
+	"venomwright:006": 6,
+}
+
+const SOURCE_NATIVE_SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")
 
 ## Human-readable reason recorded for every id without a source-locked module.
 ##
@@ -78,6 +111,23 @@ func module_path_for(canonical_id: String) -> String:
 	if _overrides.has(canonical_id):
 		return String(_overrides[canonical_id])
 	return String(MODULE_PATHS.get(canonical_id, ""))
+
+
+## True when the SOURCE-NATIVE port of the original engine can actually run
+## this skill's authored generator. This EXECUTES the generator inside a real
+## `venom_world`; it is not a table lookup, so it cannot claim a generator
+## exists while the port is broken.
+func source_native_executable(canonical_id: String) -> bool:
+	if not SOURCE_NATIVE_IDS.has(canonical_id):
+		return false
+	return bool(SOURCE_NATIVE_SKILLS.probe_native(int(SOURCE_NATIVE_IDS[canonical_id])))
+
+
+## True when a host cast can be driven end to end: a registered
+## `Gold93SkillModule` loads, reports source lock, and exposes the module
+## contract. Distinct from source-native execution and from source parity.
+func host_adapter_castable(canonical_id: String) -> bool:
+	return can_cast(canonical_id)
 
 
 func blocker_for(canonical_id: String) -> String:
@@ -146,12 +196,17 @@ func cast(canonical_id: StringName, ctx, params: Gold93SkillParameters = null):
 func status_for(canonical_id: String) -> Dictionary:
 	var entry: Dictionary = catalog.skill(canonical_id)
 	var executable := can_cast(canonical_id)
+	var source_native := source_native_executable(canonical_id)
 	var parity := Gold93ParityRegistry.is_source_parity_verified(canonical_id)
 	var visual := bool(entry.get("gold_visual_approved", false))
 	var parity_status := Gold93ParityRegistry.status_for(canonical_id)
 	return {
 		"canonical_id": canonical_id,
+		## `native_executable` is retained as the HOST-ADAPTER predicate because
+		## that is what `cast()` actually needs; the new explicit name says so.
 		"native_executable": executable,
+		"host_adapter_castable": executable,
+		"source_native_executable": source_native,
 		"source_parity_verified": parity,
 		"source_parity_status": parity_status,
 		"gold_visual_approved": visual,
@@ -172,6 +227,8 @@ func readiness_report() -> Dictionary:
 	var report: Dictionary = {
 		"scope": 93,
 		"native_executable": [],
+		"host_adapter_castable": [],
+		"source_native_executable": [],
 		"source_parity_verified": [],
 		"source_parity_status": {},
 		"native_port_ready": [],
@@ -189,6 +246,10 @@ func readiness_report() -> Dictionary:
 		else:
 			report["blocked"].append(id)
 			report["blocked_reasons"][id] = st["block_reason"]
+		if bool(st["host_adapter_castable"]):
+			report["host_adapter_castable"].append(id)
+		if bool(st["source_native_executable"]):
+			report["source_native_executable"].append(id)
 		if bool(st["source_parity_verified"]):
 			report["source_parity_verified"].append(id)
 		report["source_parity_status"][id] = st["source_parity_status"]
@@ -202,6 +263,8 @@ func readiness_report() -> Dictionary:
 			report["production_integrated"].append(id)
 	report["counts"] = {
 		"native_executable": report["native_executable"].size(),
+		"host_adapter_castable": report["host_adapter_castable"].size(),
+		"source_native_executable": report["source_native_executable"].size(),
 		"source_parity_verified": report["source_parity_verified"].size(),
 		"gold_visual_approved": report["gold_visual_approved"].size(),
 		"native_port_ready": report["native_port_ready"].size(),
@@ -215,8 +278,10 @@ func readiness_report() -> Dictionary:
 func summary_line() -> String:
 	var r := readiness_report()
 	var c: Dictionary = r["counts"]
-	return ("%d/%d NATIVE_EXECUTABLE, %d/%d SOURCE_PARITY_VERIFIED, "
-		% [c["native_executable"], 93, c["source_parity_verified"], 93]) + (
+	return ("%d/%d HOST_ADAPTER_CASTABLE, %d/%d SOURCE_NATIVE_EXECUTABLE, "
+		% [c["host_adapter_castable"], 93, c["source_native_executable"], 93]) + (
+		"%d/%d SOURCE_PARITY_VERIFIED, "
+		% [c["source_parity_verified"], 93]) + (
 		"%d/%d SOURCE_VISUAL_APPROVED, %d/%d NATIVE_PORT_READY, "
 		% [c["gold_visual_approved"], 93, c["native_port_ready"], 93]) + (
 		"%d/%d GAMEPLAY_CONFIGURED, %d/%d PRODUCTION_INTEGRATED"
