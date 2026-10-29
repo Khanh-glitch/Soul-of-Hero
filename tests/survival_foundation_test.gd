@@ -228,6 +228,7 @@ func _body() -> void:
 	_expect(build != null, "the build layer is mounted in the overworld")
 	_expect(player != null, "the Knight exists")
 
+	print("[case 01] begin")  # heartbeat: a crash names the case it died in
 	# -- 01 harvest increases the inventory by exactly the node's yield ----------
 	_clear_inventory()
 	var tree_id := _first_node_of_kind("oak_tree")
@@ -248,6 +249,7 @@ func _body() -> void:
 	_expect(node_hit and _count(WOOD) > via_node,
 		"case 01: interacting through the world node also gathers")
 
+	print("[case 02] begin")  # heartbeat: a crash names the case it died in
 	# -- 02 exhausted node yields nothing; replay cannot farm it ----------------
 	var definition: Dictionary = survival.call(&"resource_definition", "oak_tree")
 	var hits := int(definition.get("hits", 3))
@@ -302,6 +304,7 @@ func _body() -> void:
 	_expect(not bool(build.build_hud_status().get("blocker_visible", true)),
 		"build modal: closing it releases the click")
 
+	print("[case 04] begin")  # heartbeat: a crash names the case it died in
 	# -- 04 build without materials is rejected with no state change ------------
 	_clear_inventory()
 	var structures_before := int((_document().get("structures", {}) as Dictionary).size())
@@ -315,6 +318,7 @@ func _body() -> void:
 		"case 04: no structure was created")
 	_expect(_count(WOOD) == 0, "case 04: nothing was deducted")
 
+	print("[case 05] begin")  # heartbeat: a crash names the case it died in
 	# -- 05 invalid placement is rejected and nothing is charged ---------------
 	_expect(_give(WOOD, 40), "case 05: test materials granted")
 	_expect(_give(IRON, 20), "case 05: test iron granted")
@@ -346,6 +350,7 @@ func _body() -> void:
 		"case 05: a distant cell is refused or reported")
 	_expect(_count(WOOD) == wood_before, "case 05: still nothing charged")
 
+	print("[case 03] begin")  # heartbeat: a crash names the case it died in
 	# -- 03 build with enough materials: entity exists, materials decrease once --
 	var build_cell := _find_buildable(ow, Vector2i(2, 2))
 	_expect(build_cell.x >= 0, "case 03: a legal build cell was found")
@@ -367,6 +372,7 @@ func _body() -> void:
 	_expect(build.entity_at(build_cell) == entity_id,
 		"case 03: the cell is now recorded as occupied")
 
+	print("[case 06] begin")  # heartbeat: a crash names the case it died in
 	# -- 06 a repeated transaction key creates no second structure --------------
 	var key := "survival.build.repeat.test"
 	var cell_a := _find_buildable(ow, Vector2i(3, 3))
@@ -385,6 +391,7 @@ func _body() -> void:
 		"case 06: no second structure was created")
 	_expect(_count(WOOD) == wood_after_once, "case 06: the replay charged nothing")
 
+	print("[case 07] begin")  # heartbeat: a crash names the case it died in
 	# -- 07 container transfer conserves items exactly --------------------------
 	var chest_cell := _find_buildable(ow, Vector2i(-2, 2))
 	build.select_piece("chest_wood")
@@ -447,6 +454,7 @@ func _body() -> void:
 		# a known state rather than depending on case 03's leftovers.
 		_expect(_count(WOOD) > 0, "case 07: the building timber came back too")
 
+	print("[case 09] begin")  # heartbeat: a crash names the case it died in
 	# -- 09 a placed wall has real collision ------------------------------------
 	build.select_piece("wall_wood")
 	var wall_cell := _find_buildable(ow, Vector2i(0, -3))
@@ -501,6 +509,7 @@ func _body() -> void:
 		_expect(not world.is_solid_cell(wall_cell.x, wall_cell.y),
 			"case 09: the terrain beneath the wall is still walkable ground")
 
+	print("[case 10] begin")  # heartbeat: a crash names the case it died in
 	# -- 10 existing overworld traversal is not regressed -----------------------
 	var gates: int = int((ow.get(&"gates") as Dictionary).size())
 	var camps: int = int((ow.get(&"camps") as Dictionary).size())
@@ -518,6 +527,7 @@ func _body() -> void:
 	_expect(gate_ids.has(&"chapter_1_level_10"),
 		"case 10: L10 is still present in the gate system")
 
+	print("[case 08] begin")  # heartbeat: a crash names the case it died in
 	# -- 08 save / reload restores everything ----------------------------------
 	var before_wood := _count(WOOD)
 	var before_structures := int((_document().get("structures", {}) as Dictionary).size())
@@ -558,6 +568,7 @@ func _body() -> void:
 		_expect(build.structure_node(wall_id) != null,
 			"case 08: the wall node is present again with its original id")
 
+	print("[case 11] begin")  # heartbeat: a crash names the case it died in
 	# -- 11 an older save without the survival namespace loads as empty --------
 	var legacy_path := "user://tests/survival_legacy_%d.json" % Time.get_ticks_usec()
 	var legacy := {
@@ -586,6 +597,7 @@ func _body() -> void:
 	_expect(bool(save.call(&"configure_storage", save_path, true)),
 		"case 11: storage restored to the main test save")
 
+	print("[case 12] begin")  # heartbeat: a crash names the case it died in
 	# -- 12 repeated reloads neither duplicate nor lose ------------------------
 	var stable_wood := _count(WOOD)
 	var stable_structures := int((_document().get("structures", {}) as Dictionary).size())

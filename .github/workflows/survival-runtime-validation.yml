@@ -277,6 +277,7 @@ jobs:
                   --resolution 960x540 --windowed \
                   --script res://tests/survival_foundation_test.gd >"$ARTIFACT_DIR/survival-foundation.log" 2>&1
           rc=$?; echo "foundation exit_code=$rc"; cat "$ARTIFACT_DIR/survival-foundation.log"
+          echo "$rc" >"$ARTIFACT_DIR/foundation-exit-code"
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-foundation.log" \
             "Foundation" "SURVIVAL FOUNDATION PASSED"
           exit $rc
@@ -303,6 +304,35 @@ jobs:
             exit 1
           fi
           exit $missing
+
+      # The raw log lives on a host this project's tooling cannot always read.
+      # The job summary comes back through the API with the run itself, so the
+      # test's own words - including where it died - are always readable.
+      - name: Publish the run's own words (always)
+        if: always()
+        run: |
+          {
+            echo "## Survival foundation run"
+            echo
+            if [ -f artifacts/survival-foundation.log ]; then
+              echo "### results"
+              echo '```'
+              grep -E "^(  (ok|FAIL) |SURVIVAL \[case |\[case |SURVIVAL FOUNDATION)"                 artifacts/survival-foundation.log | tail -80 || true
+              echo '```'
+              echo
+              echo "### last 30 lines"
+              echo '```'
+              tail -30 artifacts/survival-foundation.log || true
+              echo '```'
+            else
+              echo "no foundation log was produced"
+            fi
+            exit_code_file=artifacts/foundation-exit-code
+            if [ -f "$exit_code_file" ]; then
+              echo
+              echo "engine exit code: $(cat "$exit_code_file")"
+            fi
+          } >> "$GITHUB_STEP_SUMMARY" 2>&1 || true
 
       - name: Upload runtime evidence
         if: always()
