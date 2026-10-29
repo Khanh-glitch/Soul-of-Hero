@@ -73,5 +73,6 @@ func _body() -> void:
 	_expect(not build.entity_at_layer(origin + Vector2i.ONE, "floor").is_empty(), "demolition preserves floor underneath")
 	for pair: Array in [["workbench", 2, 1, 3], ["research", 2, 2, 2], ["garden", 2, 2, 2], ["furnace", 2, 2, 3]]:
 		var definition: Dictionary = svc.call(&"piece_definition", "station_" + String(pair[0]))
-		_expect(definition.get("footprint", []) == [pair[1], pair[2]] and int(definition.get("queue_capacity", 0)) == int(pair[3]), "station footprint and capacity match pinned A3: " + String(pair[0]))
+		var footprint: Array = definition.get("footprint", [])
+		_expect(footprint.size() == 2 and int(footprint[0]) == int(pair[1]) and int(footprint[1]) == int(pair[2]) and int(definition.get("queue_capacity", 0)) == int(pair[3]), "station footprint and capacity match pinned A3: " + String(pair[0]))
 	_body_complete = true
