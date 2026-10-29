@@ -101,8 +101,9 @@ func _run() -> void:
 	var cancelled: Dictionary = eco.enqueue("workbench_kit", "bench", "cancel.job")
 	_expect(bool(eco.cancel(cancelled.job_id, "cancel.once").ok), "cancel reserved job")
 	_expect(_count("oak_wood") == 0, "refund remains in escrow, not duplicated in bag")
-	# Fill all 30 real SaveService slots with distinct valid stack ids.
-	for i in range(30):
+	# Fill every remaining real SaveService slot with distinct valid stack ids.
+	var used_slots: int = (save.call(&"get_inventory_stacks") as Dictionary).size()
+	for i in range(30 - used_slots):
 		_give("fixture_blocker_%02d" % i, 1)
 	_expect(not bool(eco.collect(cancelled.job_id, "collect.full").ok), "full bag refuses collection")
 	_expect(bool(save.call(&"reload_save")), "reload from disk")
