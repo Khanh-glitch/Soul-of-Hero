@@ -71,4 +71,32 @@ func _body() -> void:
 	Input.action_release("move_up")
 	await physics_frame
 	_expect(hero.global_position.y < origin.y * 16, "actual Hero walks through unsealed last opening")
+	# Return on foot, then place a legitimate openable door in the same gap.
+	Input.action_press("move_down")
+	var ticks := 0
+	while hero.global_position.y < origin.y * 16 + 35 and ticks < 150:
+		await physics_frame
+		ticks += 1
+	Input.action_release("move_down")
+	await physics_frame
+	_expect(hero.global_position.y >= origin.y * 16 + 32, "actual Hero returns through the gap before fitting door")
+	build.select_piece("door_wood")
+	var paid_wood := _count(WOOD)
+	var paid_iron := _count(IRON)
+	var fitted := build.try_place(gap, "hero.exit.legitimate.door")
+	var door := build.structure_node(String(fitted.get("entity_id", "")))
+	_expect(bool(fitted.get("ok", false)) and door != null and _count(WOOD) == paid_wood - 2 and _count(IRON) == paid_iron - 1, "reachable door is allowed and paid once while Hero is inside")
+	if door != null:
+		await physics_frame
+		_expect(door.interact(hero), "actual Hero interacts with the closed door from inside")
+		await process_frame
+		await physics_frame
+		var record: Dictionary = (_survival().call(&"structures") as Dictionary).get(String(fitted.get("entity_id", "")), {})
+		_expect(bool(record.get("door_open", false)), "door opens durably")
+		Input.action_press("move_up")
+		for i in range(100):
+			await physics_frame
+		Input.action_release("move_up")
+		await physics_frame
+		_expect(hero.global_position.y < origin.y * 16, "actual Hero walks out through the opened door")
 	_body_complete = true
