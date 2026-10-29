@@ -26,20 +26,6 @@ static func merc_dark() -> Dictionary:
 	return m
 
 
-## Stable ascending sort of `Array` by a float key (JavaScript `Array.prototype.sort` is stable).
-static func _stable_sort(arr: Array, key: Callable) -> Array:
-	var out: Array = arr.duplicate()
-	for i in range(1, out.size()):
-		var cur = out[i]
-		var kc: float = float(key.call(cur))
-		var j: int = i - 1
-		while j >= 0 and float(key.call(out[j])) > kc:
-			out[j + 1] = out[j]
-			j -= 1
-		out[j + 1] = cur
-	return out
-
-
 ## `class Flower extends Fx`
 class Flower extends FX.Fx:
 	var g: float = 0.0
@@ -55,6 +41,19 @@ class Flower extends FX.Fx:
 
 	static func _lf(a: float, b: float, t: float) -> float:
 		return a + (b - a) * t
+
+	## Stable ascending sort by `Math.sin(a.a)` (JavaScript `Array.prototype.sort` is stable).
+	static func _ssort(arr: Array) -> Array:
+		var out: Array = arr.duplicate()
+		for i in range(1, out.size()):
+			var cur = out[i]
+			var kc: float = V8M.v8_sin(float(cur["a"]))
+			var j: int = i - 1
+			while j >= 0 and V8M.v8_sin(float(out[j]["a"])) > kc:
+				out[j + 1] = out[j]
+				j -= 1
+			out[j + 1] = cur
+		return out
 
 	func _init(bx_: float, by_: float, h_: float, ph_: float, start_: float) -> void:
 		bx = bx_
@@ -111,7 +110,7 @@ class Flower extends FX.Fx:
 			for k in range(n):
 				var a: float = (float(k) / float(n)) * M.TAU + (M.TAU / (2.0 * float(n)) if ri != 0 else 0.0) + ph
 				items.append({"k": k, "a": a})
-			items = _stable_sort(items, func(it): return V8M.v8_sin(float(it["a"])))
+			items = _ssort(items)
 			for it in items:
 				var k2: int = int(it["k"])
 				var a2: float = float(it["a"])
