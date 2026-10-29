@@ -4,7 +4,6 @@ on:
     paths:
       - 'prototypes/skill_readiness/pilot/**'
       - 'prototypes/skill_readiness/native/venom/**'
-      - 'prototypes/skill_readiness/pilot/**'
       - 'docs/vfx/skill_readiness/oracle/venomwright_006.json'
       - 'docs/vfx/skill_readiness/oracle/venomwright_010.json'
       - '.github/workflows/gold-93-readiness-vfx-pilot.yml'
@@ -13,8 +12,13 @@ permissions:
   contents: read
 jobs:
   pilot-headless:
+    name: pilot-headless (skill ${{ matrix.skill }})
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        skill: [6, 10]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -35,9 +39,10 @@ jobs:
       - name: Run pilot acceptance (both skills, full timeline, GOLD hash sync, cleanup)
         shell: bash
         run: |
-          OUT="$RUNNER_TEMP/venom-pilot"
+          OUT="$RUNNER_TEMP/venom-pilot-${{ matrix.skill }}"
           mkdir -p "$OUT"
           export VENOM_PILOT_OUT="$OUT"
+          export VENOM_PILOT_SKILLS="${{ matrix.skill }}"
           set +e
           timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_pilot_headless_test.gd > /tmp/pilot-run.log 2>&1
           echo $? > /tmp/pilot-run.status
@@ -59,8 +64,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: venom-pilot-frames
-          path: ${{ runner.temp }}/venom-pilot
+          name: venom-pilot-frames-${{ matrix.skill }}
+          path: ${{ runner.temp }}/venom-pilot-${{ matrix.skill }}
           if-no-files-found: warn
           retention-days: 14
   pilot-real-map:

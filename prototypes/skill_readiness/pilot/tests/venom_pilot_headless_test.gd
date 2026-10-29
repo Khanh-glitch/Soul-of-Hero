@@ -13,13 +13,25 @@ extends SceneTree
 const STAGE = preload("res://prototypes/skill_readiness/pilot/venom_pilot_stage.gd")
 
 const ORACLE_PATH := "res://docs/vfx/skill_readiness/oracle/venomwright_%03d.json"
-const TAIL_TICKS: int = 360
-const SKILLS: Array = [6, 10]
+## Aftermath length past the recorded oracle end. Long enough to observe the
+## finale decay; the cleanup gate itself stays strict (zero live fx/particles).
+const TAIL_TICKS_DEFAULT: int = 1800
+const DECAY_STEP: int = 60
+var TAIL_TICKS: int = TAIL_TICKS_DEFAULT
+var SKILLS: Array = [6, 10]
 
 var _all_ok: bool = true
 
 
 func _init() -> void:
+	var skills_env: String = OS.get_environment("VENOM_PILOT_SKILLS")
+	if not skills_env.is_empty():
+		SKILLS = []
+		for part in skills_env.split(","):
+			SKILLS.append(int(part.strip_edges()))
+	var tail_env: String = OS.get_environment("VENOM_PILOT_TAIL")
+	if not tail_env.is_empty():
+		TAIL_TICKS = int(tail_env)
 	var out_root: String = OS.get_environment("VENOM_PILOT_OUT")
 	if out_root.is_empty():
 		out_root = "user://venom_pilot"
@@ -101,6 +113,8 @@ func _run_skill(sid: int, out_root: String) -> Dictionary:
 	var ok_rows: int = 0
 	var bad_ticks: Array = []
 	var frames: Array = []
+	var decay: Array = []
+	var zero_tick: int = -1
 	var peak_fx: int = 0
 	var peak_parts: int = 0
 	var blank_frames: int = 0
@@ -110,6 +124,10 @@ func _run_skill(sid: int, out_root: String) -> Dictionary:
 		var live: Dictionary = stage.live_counts()
 		peak_fx = maxi(peak_fx, int(live["fx"]))
 		peak_parts = maxi(peak_parts, int(live["parts"]))
+		if t > oracle_end and (t - oracle_end) % DECAY_STEP == 0:
+			decay.append({"tick": t, "fx": live["fx"], "parts": live["parts"]})
+		if t > oracle_end and zero_tick < 0 and int(live["fx"]) == 0 and int(live["parts"]) == 0:
+			zero_tick = t
 		if rows.has(t):
 			if _sha(stage.scene_bytes()) == String(rows[t]["scene_sha256"]):
 				ok_rows += 1
@@ -136,6 +154,8 @@ func _run_skill(sid: int, out_root: String) -> Dictionary:
 	res["gold_row_matches"] = ok_rows
 	res["gold_row_mismatches"] = bad_ticks.size()
 	res["first_mismatch_tick"] = bad_ticks[0] if not bad_ticks.is_empty() else -1
+	res["decay"] = decay
+	res["zero_tick"] = zero_tick
 	res["peak_fx"] = peak_fx
 	res["peak_parts"] = peak_parts
 	res["end_fx"] = end_live["fx"]
@@ -154,6 +174,8 @@ func _report(sid: int, r: Dictionary) -> void:
 		print("GOLD93_VENOM_PILOT skill %03d FAIL: %s" % [sid, r["error"]])
 		return
 	var verdict: String = "PASS" if bool(r["ok"]) else "FAIL"
-	print("GOLD93_VENOM_PILOT skill %03d %s gold_rows %d/%d first_mismatch %d end_fx %d end_parts %d peak_fx %d peak_parts %d blank_frames %d" % [
+	print("GOLD93_VENOM_PILOT skill %03d %s gold_rows %d/%d first_mismatch %d end_fx %d end_parts %d zero_tick %d peak_fx %d peak_parts %d blank_frames %d" % [
 		sid, verdict, int(r["gold_row_matches"]), int(r["gold_rows"]), int(r["first_mismatch_tick"]),
-		int(r["end_fx"]), int(r["end_parts"]), int(r["peak_fx"]), int(r["peak_parts"]), int(r["blank_frames"])])
+		int(r["end_fx"]), int(r["end_parts"]), int(r["zero_tick"]), int(r["peak_fx"]), int(r["peak_parts"]), int(r["blank_frames"])])
+	for d in r["decay"]:
+		print("GOLD93_VENOM_PILOT skill %03d decay tick %d fx %d parts %d" % [sid, int(d["tick"]), int(d["fx"]), int(d["parts"])])
