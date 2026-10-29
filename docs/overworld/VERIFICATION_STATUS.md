@@ -434,3 +434,36 @@ across the water every 16 px.
 `tools/overworld/preview.py`, and `tests/overworld_static_contracts_test.gd` now
 asserts that the pool overlay is present, unmasked and carries at least four
 frames — so this cannot silently regress to a single frame.
+
+## Sixth pass — the cliff mass as rock, not as objects
+
+The buttress decal this project shipped last pass was reported as "reads as a slab
+on the wall". Chasing that produced five attempts and one clear diagnosis.
+
+| Attempt | What it was | Why it failed |
+| --- | --- | --- |
+| 1 | ledge: lit top edge, shadow underneath | drawn as an **elevation** on a surface seen from **above**. A shadow under a ledge is meaningless top-down; it read as an object lying on the field |
+| 2 | buttress: lit left flank, dark right flank | same error, bigger object |
+| 3 | rock patch: elliptical, dark ragged rim | the rim is a silhouette; top-down rock has none |
+| 4 | flat full-tile rectangle, low contrast | a straight sprite edge on a surface with no straight lines prints a 44 px rectangle |
+| 5 | soft radial alpha, overlapping, jittered | no boundary at all now, but sparse placement left isolated blobs on a flat field |
+
+The fix that works is 4 + 5 together: a full-tile patch with **alpha falling to
+nothing at its edge**, placed at **~30 % density with a half-tile jitter**, so
+neighbouring patches overlap and blend. There is no sprite boundary to see and no
+gap between features, so the mass reads as continuously mottled rock, and the only
+shapes are the clusters the placement makes.
+
+The general lesson, which now applies to three systems in this world: **top-down
+terrain must be authored as cover, not as objects.** Anything with a silhouette and
+an undercut will read as furniture standing on the ground.
+
+Verified at both scales — the native cliff frame (cell 118,13) and the whole world
+at 50 % — because the previous two passes each fixed one scale and broke the other.
+
+### Still open
+
+- The 380-tile-wide mass is now mottled but its *large-scale* form is uniform: there
+  are no ridges, valleys or buttress masses at the scale of the terrain itself. That
+  is a level-design change, not a tile change, and is out of scope for this pass.
+- Camps are unchanged.

@@ -811,76 +811,70 @@ def rock(seed=1, w=26, h=20):
     return img
 
 
-def cliff_ledge(seed=1):
-    """A shelf of broken ledge standing out of a cliff face.
+def cliff_patch(seed=1, size=44):
+    """A rectangular patch of rock at a slightly different tone, seen from above.
 
-    The cliff interior tile is deliberately featureless (see `solid_cliff` in
-    `art.py`): every feature drawn inside a 16 px tile repeats on the variant
-    lattice and prints a grid across a band hundreds of tiles wide. So all the
-    structure of a cliff face lives out here, in world space, where it can be
-    irregular. A first version was a rectangle with a lit top line and a dark
-    bottom line, and at 2x that read as a floating label rather than as stone.
+    Fifth attempt at giving the cliff mass structure inside a rendered frame. The
+    first four all failed the same way: they drew a *shape with an outline* on a
+    surface the camera sees from above. A ledge with a shadow under it, a buttress
+    with a lit flank, and a blob with a dark rim all read as objects lying on the
+    rock - furniture on a dark field - because top-down rock has no silhouette and
+    no undercut.
+
+    What it does have is *variation in tone over a region*, with no boundary of its
+    own. So this frame is a full-tile patch: it covers its own sprite completely,
+    edges included, and the only structure inside it is a little grain and a couple
+    of short fractures. Adjacent patches of the same and different tones tile into a
+    mottled mass with no visible seams - the shapes are only ever visible as the
+    edges of the *clusters* the placement makes, which is what makes it read as
+    geology rather than as sprites.
     """
-    img = new(34, 26)
-    face = mix(C("rock"), C("rock_dk"), 0.20)
-    lit = mix(C("rock"), C("rock_hi"), 0.50)
-    rect(img, 2, 11, 27, 6, face)
-    rect(img, 6, 7, 18, 4, mix(face, lit, 0.55))
-    rect(img, 11, 15, 14, 3, mix(face, C("rock_dk"), 0.35))
-    hline(img, 7, 7, 16, lit)
-    hline(img, 12, 4, 8, mix(lit, face, 0.4))
-    for i in range(5):
-        x = 2 + int(h01(seed, i, 1) * 27)
-        y = 16 + int(h01(seed, i, 2) * 3)
-        px(img, x, y, (0, 0, 0, 0))
-    for x in range(3, 30):
-        if img.getpixel((x, 17))[3]:
-            px(img, x, 17, mix(face, C("void"), 0.55))
-            px(img, x, 18, mix(face, C("void"), 0.30))
-    for i in range(6):
-        x = 3 + int(h01(seed, i, 3) * 25)
-        px(img, x, 11 + int(h01(seed, i, 4) * 5), mix(face, C("rock_dk"), 0.5))
-    return img
-
-
-def cliff_buttress(seed=1):
-    """A rock buttress standing out of a cliff face, two to three tiles tall.
-
-    The cliff mass is 380 tiles wide; a face made only of 16 px tiles reads as a
-    flat slab however good the tile is, because the eye has nothing at the scale
-    in between. This is that middle scale: a pillar lit down its left flank and
-    dropping into shadow on the right, with a stepped silhouette.
-
-    Value is the whole trick. Against the face it sits on, the body is two steps
-    lighter and the shadow side three steps darker - enough to read at 2x without
-    an outline, because an outline on a decal repeated across a wall is exactly
-    the grid this project already had to remove twice.
-    """
-    w, h = 26, 40
-    img = new(w, h)
-    face = mix(C("rock"), C("rock_dk"), 0.25)
-    lit = mix(C("rock"), C("rock_hi"), 0.55)
-    dark = mix(C("rock_dk"), C("void"), 0.25)
-    # (y, x, width): stacked slabs, each shorter than the one below
-    rows = [(2, 6, 16), (7, 3, 20), (13, 1, 22), (19, 4, 19), (26, 2, 21), (32, 5, 17)]
-    for y, x0, width in rows:
-        rect(img, x0, y, width, 6, face)
-        hline(img, x0, y, width, mix(face, lit, 0.55))
-        px(img, x0, y + 1, lit)
-        px(img, x0 + width - 1, y + 1, dark)
-        px(img, x0 + width - 1, y + 2, mix(dark, face, 0.4))
-    cx = 10 + int(h01(seed, 1) * 5)
-    for k in range(8, 30):
-        if h01(seed, k, 2) < 0.3:
-            continue
-        px(img, cx + (1 if k % 7 == 0 else 0), k, mix(face, C("void"), 0.35))
-    for i in range(5):
-        x = 4 + int(h01(seed, i, 3) * 16)
-        px(img, x, 33 + int(h01(seed, i, 4) * 4), (0, 0, 0, 0))
-    for y in range(36, h):
-        for x in range(w):
-            if img.getpixel((x, y))[3]:
-                px(img, x, y, mix(face, C("void"), 0.45))
+    img = new(size, size)
+    base = mix(C("rock"), C("rock_dk"), 0.45)
+    tone = 0.96 + 0.12 * h01(seed, 1)
+    # A *gradient* across the patch, not one flat tone. A flat-tone rectangle is
+    # visible as a rectangle however low its contrast: the edges are straight lines
+    # on a surface that has none. With the tone drifting across each sprite, the
+    # sprite boundary (which is still a straight line of pixels) sits between two
+    # neighbouring tones that happen to match, so nothing shows.
+    gx = (h01(seed, 2) - 0.5) * 0.10
+    gy = (h01(seed, 3) - 0.5) * 0.10
+    # Alpha falls off to nothing at the sprite's edge, so a patch has no boundary
+    # of its own at all: overlapping patches blend into mottled regions whose shape
+    # is set by the placement, not by the sprite. A hard-edged patch - even at low
+    # contrast - prints a 44 px rectangle on a surface that has no straight lines.
+    cx, cy = size / 2.0, size / 2.0
+    rad = size / 2.0
+    for y in range(size):
+        for x in range(size):
+            dx, dy = (x - cx) / rad, (y - cy) / rad
+            d = (dx * dx + dy * dy) ** 0.5
+            if d >= 0.98:
+                continue
+            alpha = 255 if d < 0.35 else int(255 * (1.0 - (d - 0.35) / 0.63) ** 1.4)
+            if alpha <= 6:
+                continue
+            t = tone * (1.0 + gx * (x / float(size) - 0.5) * 2.0
+                            + gy * (y / float(size) - 0.5) * 2.0)
+            r = h01(seed, x // 2, y // 2)
+            if r < 0.16:
+                col = shade(base, t * 1.07)
+            elif r < 0.32:
+                col = shade(base, t * 0.93)
+            else:
+                col = shade(base, t)
+            img.putpixel((x, y), (col[0], col[1], col[2], alpha))
+    # short fractures, interior only, at low contrast
+    for i in range(2):
+        fx = 6 + int(h01(seed, i, 31) * (size - 14))
+        fy = 6 + int(h01(seed, i, 32) * (size - 14))
+        for k in range(3 + int(h01(seed, i, 33) * 4)):
+            x, y = fx + k, fy + (k // 2 if i else -(k // 2))
+            if 2 <= x < size - 2 and 2 <= y < size - 2:
+                a = img.getpixel((x, y))[3]
+                if a > 40:
+                    c = shade(base, tone * 0.90)
+                    img.putpixel((x, y), (c[0], c[1], c[2], a))
     return img
 
 
@@ -1085,10 +1079,13 @@ PROPS = {
     "bush": bush,
     "rock_a": lambda: rock(1, 26, 20),
     "rock_b": lambda: rock(2, 34, 26),
-    "cliff_ledge_a": lambda: cliff_ledge(1),
-    "cliff_ledge_b": lambda: cliff_ledge(2),
-    "cliff_buttress_a": lambda: cliff_buttress(1),
-    "cliff_buttress_b": lambda: cliff_buttress(2),
+    # Four frames of the same idea: a rock patch seen from above. Replaces the
+    # ledge/buttress sprites, which were drawn as elevations and read as objects
+    # lying on the surface.
+    "cliff_patch_a": lambda: cliff_patch(1, 44),
+    "cliff_patch_b": lambda: cliff_patch(2, 38),
+    "cliff_patch_c": lambda: cliff_patch(3, 50),
+    "cliff_patch_d": lambda: cliff_patch(4, 34),
     "cliff_crack_a": lambda: cliff_crack(1),
     "cliff_crack_b": lambda: cliff_crack(2),
     "gravestone": lambda: gravestone("slab"),

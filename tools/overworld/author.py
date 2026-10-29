@@ -1003,16 +1003,34 @@ def paint_scatter():
             if not code or not code.startswith("#") or not buried_in_cliff(x, y):
                 continue
             r = h01(929, x, y)
-            band = 0.13 if h01(931, x // 5, y // 5) < 0.55 else 0.040
-            if r < band * 0.10:
-                try_add("cliff_buttress_a", x, y)
-            elif r < band * 0.20:
-                try_add("cliff_buttress_b", x, y)
+            # Density is what turns a scatter of blobs into one mottled surface.
+            # At ~15 % the patches were separated islands on a flat field; a rock
+            # mass read from above is *continuously* mottled, so the wet ~55 % of
+            # the mass now carries a patch on roughly a third of its cells.
+            band = 0.62 if h01(931, x // 5, y // 5) < 0.55 else 0.16
+            # Overlapping, off-centre: a patch is centred on the cell it is placed
+            # on plus a per-cell jitter of up to half a tile, so neighbours overlap
+            # and their soft edges blend. Placed dead-centre and non-overlapping,
+            # they read as a grid of tiles in a different tone.
+            jx = (h01(933, x, y) - 0.5) * 16.0
+            jy = (h01(934, x, y) - 0.5) * 16.0
+            if r < band * 0.30:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_a", props_x, props_y)
             elif r < band * 0.50:
-                try_add("cliff_ledge_a", x, y)
-            elif r < band * 0.70:
-                try_add("cliff_ledge_b", x, y)
-            elif r < band * 0.88:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_b", props_x, props_y)
+            elif r < band * 0.68:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_c", props_x, props_y)
+            elif r < band * 0.80:
+                props_x = tile_pos(x, y)[0] + jx
+                props_y = tile_pos(x, y)[1] + jy
+                add_prop("cliff_patch_d", props_x, props_y)
+            elif r < band * 0.92:
                 try_add("cliff_crack_a", x, y)
             elif r < band:
                 try_add("cliff_crack_b", x, y)
