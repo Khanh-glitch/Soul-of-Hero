@@ -28,6 +28,7 @@ jobs:
           timeout --signal=TERM --kill-after=15s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_home --resolution 960x540 --windowed --script res://tests/survival_normal_home_journey_test.gd > artifacts/home.log 2>&1
           rc=$?
           cat artifacts/home.log
+          echo "::notice::home script errors $(grep -E -A6 'SCRIPT ERROR|^ERROR:|Parse Error' artifacts/home.log | head -30 | tr '\n' '~')"
           echo "::notice::home exit=$rc $(grep -E '^HOME_|^NORMAL HOME|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/home.log | tail -12 | tr '\n' '~')"
           bash tools/ci/gate_log.sh artifacts/home.log 'Normal home' 'NORMAL HOME JOURNEY PASSED'
           gate=$?

@@ -133,9 +133,13 @@
         "Native canonical seam prerequisite https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40931599594 at ef423ad: ordinary input Hero Refuge→(368,200), collides at x369; live collider x383 and legacy nav x383 solid/x384 outside. No mounted POIs; narrow A1/CT connector decision required.",
         "Fixture-funded real Hero last-wall rejection/no receipt/retry and physical exit passed 21 at d1a35c7: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933650574; not complete anti-softlock.",
         "Real A3 ready output with full bag, repeat/reload and single successful retry passed in 116-check session at d1a35c7: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933650444; fixture-funded.",
-        "Native UI fixtures at bff1e86 captured 720/2K/4K, layout assertions passed https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933846794; only downscaled lossy review copies inspected, not 1:1 original/human."
+        "Native UI fixtures at bff1e86 captured 720/2K/4K, layout assertions passed https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933846794; only downscaled lossy review copies inspected, not 1:1 original/human.",
+        "Fixture-funded Hero exit/paid door interaction and actual escape passed 26 at 18a0a0d: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40934855391; includes fixture-controlled ten-gate protected placement and normal-input28; not comprehensive anti-softlock.",
+        "Exact native bed verbose rerun 103 passed without a shutdown warning at 89c5d7c: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40934745057; earlier 7 ObjectDB/3 resource warnings remain unexplained.",
+        "Fresh-input home continuation bf1000a https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40935490153 failed 31 checks because the current 5x5 site was illegal; did gather 40 oak and three scrap after the 28-check production journey without grants or teleport. No home or functional bed/chest claim.",
+        "Ordinary-input home continuation at e72cb1b https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40935847497 failed 35 checks: gathered 40 oak/3 scrap, walked to production-legal site (47,208), failed first wall with script error; no home claimed."
       ],
-      "next": "Inspect 78b16cb ten-gate fixture and subsequent verbose bed/whole regression; expand last-exit safety, custody and continuous B0. Canonical POI connector needs explicit A1/CT compatibility decision. Do not merge.",
+      "next": "Diagnose e72cb1b normal-input home run 40935847497: site search and Hero walking passed but first wall failed amid script error; rerun with build-mode and full error diagnostics, then continue real paid home, custody, death/return. Canonical seam decision remains with CT/A1. Do not merge; B0 NOT ACCEPTED.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
@@ -187,7 +191,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Inspect 78b16cb ten-gate fixture and subsequent verbose bed/whole regression; expand last-exit safety, custody and continuous B0. Canonical POI connector needs explicit A1/CT compatibility decision. Do not merge.",
+    "first_test": "Diagnose e72cb1b normal-input home run 40935847497: site search and Hero walking passed but first wall failed amid script error; rerun with build-mode and full error diagnostics, then continue real paid home, custody, death/return. Canonical seam decision remains with CT/A1. Do not merge; B0 NOT ACCEPTED.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },

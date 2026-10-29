@@ -169,6 +169,11 @@ func _body() -> void:
 		return
 	await _tap_action(&"build_toggle")
 	await _tap_action(&"build_slot_2")
+	print("HOME_BUILD_MODE active=%s selected=%s modal=%s paused=%s wood=%d iron=%d" % [str(build.active), build.selected_piece, str(ow.call(&"_has_gameplay_modal")), str(paused), _count(WOOD), _count(IRON)])
+	_expect(build.active and build.selected_piece == "wall_wood", "ordinary build inputs arm and select paid walls")
+	if not build.active or build.selected_piece != "wall_wood":
+		_body_complete = true
+		return
 	var origin := center - Vector2i(2, 2)
 	var valid := true
 	for y in range(5):
