@@ -55,6 +55,38 @@ func _body() -> void:
 		return
 	hero.set_physics_process(false)
 	_clear_inventory()
+	var sample_tree: SurvivalResourceNode = null
+	for value: Variant in (ow.get(&"survival_nodes") as Dictionary).values():
+		var candidate := value as SurvivalResourceNode
+		if candidate != null and candidate.resource_kind == "oak_tree":
+			sample_tree = candidate
+			break
+	_expect(sample_tree != null, "production world mounts an oak resource")
+	if sample_tree == null:
+		_body_complete = true
+		return
+	hero.global_position = sample_tree.global_position + Vector2(300, 0)
+	_expect(not sample_tree.can_interact(hero) and not sample_tree.interact(hero) and _count(WOOD) == 0, "distant direct resource interaction cannot harvest")
+	# One actual unhandled world click at a teleported node; this checks input
+	# routing and proximity but is not navigation or a fresh-save playthrough.
+	hero.global_position = sample_tree.global_position
+	var camera: Camera2D = ow.get(&"camera")
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	hero.set_physics_process(true)
+	await process_frame
+	var world_click := InputEventMouseButton.new()
+	world_click.position = root.get_final_transform() * (root.get_visible_rect().size * 0.5)
+	world_click.button_index = MOUSE_BUTTON_LEFT
+	world_click.pressed = true
+	Input.parse_input_event(world_click)
+	await physics_frame
+	await process_frame
+	world_click.pressed = false
+	Input.parse_input_event(world_click)
+	await process_frame
+	hero.set_physics_process(false)
+	_expect(_count(WOOD) == 2, "nearby mounted tree is harvested through real world pointer dispatch")
 	_expect(await _harvest_mounted(ow, hero, "oak_tree", WOOD, 8), "mounted oak nodes transact sufficient wood without material grant")
 	_expect(await _harvest_mounted(ow, hero, "scrap_pile", IRON, 2), "mounted scrap node transacts iron without material grant")
 	_expect(await _harvest_mounted(ow, hero, "reed_clump", "reed_fibre", 6), "mounted reed nodes transact fibre without material grant")

@@ -779,12 +779,10 @@ func _try_interact() -> bool:
 			continue
 		var candidate_2d := candidate as Node2D
 		var distance_squared := global_position.distance_squared_to(candidate_2d.global_position)
-		var available := candidate.has_method(&"can_interact") \
-			and bool(candidate.call(&"can_interact", self))
-		# Locked chests and already-resolved seals deliberately report unavailable,
-		# but their `interact` method owns the click to explain why. Keep a tight
-		# proximity fallback so that click never leaks into a normal attack.
-		if not available and distance_squared > WORLD_INTERACTION_FALLBACK_RADIUS * WORLD_INTERACTION_FALLBACK_RADIUS:
+		# All world interactions are local, including available nodes. Otherwise a
+		# click in empty space can harvest a distant resource or enter a far gate.
+		# Nearby locked chests and resolved seals still get a chance to explain why.
+		if distance_squared > WORLD_INTERACTION_FALLBACK_RADIUS * WORLD_INTERACTION_FALLBACK_RADIUS:
 			continue
 		candidates.append({"node": candidate_2d, "distance_squared": distance_squared})
 	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:

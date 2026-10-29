@@ -25,6 +25,7 @@ const SERVICE_PATH := "/root/SurvivalService"
 ## UI guard: the authoritative gate is the transaction key in the service, which
 ## makes a repeated action a no-op regardless of how it was triggered.
 const INTERACT_COOLDOWN := 0.18
+const REACH := 44.0
 
 var _used_marker: Polygon2D
 var _prompt: Label
@@ -111,16 +112,21 @@ func _prompt_text(ripe: bool, left: int, full: int) -> String:
 	return "[CLICK]  %s  %d/%d" % [display_name, left, full]
 
 
-func can_interact(_player: Node2D) -> bool:
+func _within_reach(player: Node2D) -> bool:
+	return player != null and is_instance_valid(player) and player.global_position.distance_to(global_position) <= REACH
+
+
+func can_interact(player: Node2D) -> bool:
 	var svc := service()
-	if svc == null:
+	if svc == null or not _within_reach(player):
 		return false
 	return bool(svc.call(&"is_node_harvestable", node_id, resource_kind))
 
 
-func interact(_player: Node2D) -> bool:
-	# An already-spent node still owns the click: it explains itself instead of
-	# letting the press fall through to an attack.
+func interact(player: Node2D) -> bool:
+	# An already-spent *nearby* node still owns the click and explains itself.
+	if not _within_reach(player):
+		return false
 	var svc := service()
 	if svc == null:
 		return true
