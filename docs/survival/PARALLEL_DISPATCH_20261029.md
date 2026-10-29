@@ -42,3 +42,14 @@ Six **fully separate, expanded** prompts were replaced on each individual agent 
 - **A8 / issue #17:** `feature/surv-a8-reuse-audit-010a:docs/survival/tasks/SURV-RSCH-010A_A8_WORK_ORDER.md`. Ongoing feature-driven repository search, exact SHAs, code vs art licensing, import fit and reuse decisions.
 
 Google Docs tab **10 · PROMPT TỪNG AGENT & REVIEW SÂU** contains the *full text* of these six work orders plus the detailed review protocol. Tab 04 remains the LIVE per-commit record. These prompt rewrites **do not launch agent sessions**. A1 is ideal for a powerful reasoning model that is used across token-reset sessions with Git checkpoints; A4 is also a difficult source-parity task. They need not rush; avoid claiming invisible background execution.
+
+
+## 2026-10-29 CAPACITY CORRECTION — SIX TOTAL AI SLOTS, NOT SIX MORE
+**SUPERSEDES prior suggestion that A1 should use the scarce fast-token-expiring premium model, and supersedes any interpretation that A9 is an additional agent.** The user has approximately 6 AI agents/models TOTAL, including **A0 already running SURV-020** and ONE scarce high-reasoning model. Six is a resource ceiling, not six sessions already running. See [SLOW_LANE_SPECIALIST_POLICY.md](SLOW_LANE_SPECIALIST_POLICY.md) for definitive allocation:
+1. A0 Integration + A2 Construction (actively running).
+2. A1 World + A5 POI planning (regular-throughput).
+3. A3 Economy + balance automation/A7 support (regular-throughput).
+4. A4 Gold/Skill Core (regular-throughput).
+5. A6 UI/UX + asset/reuse audit/A8 support (regular-throughput).
+6. S6 scarce premium model: **nonblocking optional mini-commissions in independent visual/technical art R&D**; not a mandatory World/Core/production deliverable. Former "A9" is a legacy label for **this sixth slot, not a seventh bot**.
+Issues #12, #13, #14, #15 are direct launch packets for slots 2–5. Issues #16/#17 remain valid QA/research packets **distributed to existing slots**, not extra A7/A8 bot sessions. The special slow slot has NOT been issued a prompt, branch or job yet. User said none of the new prompts were sent; A0 remains the only reported active agent. Any prompt line identifying A1 as the scarce premium slow model is outdated and replaced by this correction.
