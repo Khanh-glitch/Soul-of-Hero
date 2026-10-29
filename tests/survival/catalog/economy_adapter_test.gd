@@ -423,6 +423,12 @@ func _run() -> void:
 	_expect(bool(eco.advance("furnace", receipt, "time.partial").get("duplicate", false)), "duplicate tick event idempotent")
 	_expect(not bool(eco.advance("furnace", receipt, "time.partial.new").ok), "same clock new event id rejected")
 	_expect(not bool(_tick("furnace", 601, "time.quantum").ok), "oversized tick quantum rejected")
+	# Re-synchronize the fixture host to the last committed baseline. Rejected
+	# transactions must not leave the fixture clock ahead of the save.
+	var persisted_time: Dictionary = eco.document().get("time", {})
+	var persisted_station: Dictionary = (persisted_time.get("stations", {}) as Dictionary).get("furnace", {})
+	clock_station_ticks["furnace"] = int(persisted_station.get("active_ticks", 0))
+	clock_sequence = int(persisted_time.get("sequence", 0))
 	clock_sequence -= 1
 	_expect(not bool(eco.advance("furnace", _host_time("furnace"), "time.stale.sequence").ok), "regressed host sequence rejected")
 	clock_sequence += 1
