@@ -114,3 +114,4 @@ The work order names `feature/surv-a1-world-050a`, but this Arena session is pin
 3. Run Godot 4.7 native CI (overworld + survival validation) after adapter lands; do not claim playable from this data package alone.
 4. Sync this report to Google Docs tab 04 when the connector is reconnected (`DOCS_SYNC_PENDING`).
 5. Native tile/prop art pass and grade-limited road refinement using the strategic previews as constraints, not as final art.
+6. GitHub issue #12 direct comment returned `403 Resource not accessible by integration`; the same checkpoint was posted as a PR #20 comment. Re-post to issue #12 when permissions allow.
