@@ -45,7 +45,7 @@ func _default_actors() -> Array:
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("GOLD93_LIFECYCLE: PASS / native start->afterlife->cleanup / 92 ids fail closed / no gameplay numbers invented")
+		print("GOLD93_LIFECYCLE: PASS / native start->afterlife->cleanup / runtime-derived blocked ids fail closed / no gameplay numbers invented")
 		quit(0)
 	else:
 		print("GOLD93_LIFECYCLE: FAIL / %d problem(s)" % _failures.size())
@@ -192,9 +192,13 @@ func _initialize() -> void:
 	# really exists; otherwise the adapter would be driving nothing.
 	for id in host_cast:
 		_check(not String(id).begins_with("venomwright:") or src_native.has(id),
-				"host adapter %s is registered but no source-native generator executes "
-				+ "behind it: the module would be casting an approximation" % id)
+				("host adapter %s is registered but no source-native generator executes "
+				+ "behind it: the module would be casting an approximation") % id)
 	_check(src_native.size() >= 1,
 			"at least one generator must be ported: a factory that ports nothing is not progress")
 	_check(host_cast.size() >= 1,
 			"at least one skill must be reachable through the host adapter")
+
+	# Always terminate the SceneTree runner. Returning from _initialize() without
+	# quit() hangs headless Godot indefinitely even if all checks passed.
+	_finish()
