@@ -138,11 +138,25 @@ def chest() -> Image.Image:
     return img
 
 
+def bed() -> Image.Image:
+    """Temporary single-cell bed, drawn in-house; not production art."""
+    img = new(TILE, 18)
+    rect(img, 1, 2, 14, 13, WOOD_DK)
+    rect(img, 2, 3, 12, 10, (105, 84, 83, 255))
+    rect(img, 3, 4, 10, 3, (206, 194, 167, 255))
+    rect(img, 3, 8, 10, 5, (113, 95, 122, 255))
+    hline(img, 1, 2, 14, WOOD_HI)
+    hline(img, 1, 14, 14, WOOD)
+    rect(img, 1, 15, 14, 2, SHADOW)
+    return img
+
+
 FRAMES = {
     "foundation_wood": foundation,
     "wall_wood": wall,
     "door_wood": door,
     "chest_wood": chest,
+    "bed_wood": bed,
 }
 
 

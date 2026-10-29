@@ -217,7 +217,7 @@ jobs:
             || { echo "::error::SurvivalService is not registered as an autoload"; exit 1; }
           # The build actions are created at runtime by InputBootstrap rather than
           # declared in project.godot, so the source of truth is that file.
-          for action in build_toggle build_place build_slot_1 build_slot_2 build_slot_3 build_slot_4; do
+          for action in build_toggle build_place build_slot_1 build_slot_2 build_slot_3 build_slot_4 build_slot_5; do
             grep -q "&\"${action}\"," game/autoload/input_bootstrap.gd \
               || { echo "::error::input action ${action} is not declared by InputBootstrap"; exit 1; }
             grep -q "&\"${action}\": \[" game/autoload/input_bootstrap.gd \
@@ -298,6 +298,24 @@ jobs:
           echo "::notice::$(grep -E '\[spatial\]|\[door\]|\[frame\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Production bed and overworld respawn (native)
+        run: |
+          mkdir -p artifacts/ud_bed
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_bed \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_bed_respawn_test.gd >"$ARTIFACT_DIR/survival-bed.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-bed.log"
+          echo "::notice::bed exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-bed.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-bed.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-bed.log" "Bed" "SURVIVAL BED RESPAWN PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
@@ -412,6 +430,7 @@ jobs:
           path: |
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
+            artifacts/survival-bed.log
             artifacts/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn

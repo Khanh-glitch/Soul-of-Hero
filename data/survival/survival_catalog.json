@@ -160,6 +160,17 @@
       "interaction": "container",
       "slots": 12,
       "placeholder_frame": "chest_wood"
+    },
+    "bed_wood": {
+      "label": "Wooden Bed",
+      "cost": {
+        "oak_wood": 4,
+        "reed_fibre": 2
+      },
+      "kind": "bed",
+      "solid": true,
+      "interaction": "bed",
+      "placeholder_frame": "bed_wood"
     }
   },
   "rules": {

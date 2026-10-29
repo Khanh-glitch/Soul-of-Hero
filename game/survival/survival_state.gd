@@ -43,8 +43,11 @@ static func empty_document() -> Dictionary:
 		"resource_nodes": {},
 		"structures": {},
 		"containers": {},
+		"spawn_anchor": "",
+		"death_bags": {},
+		"pending_death": "",
 		"knowledge": {"recipes": {}},
-		"counters": {"structure": 0, "container_sweeps": 0},
+		"counters": {"structure": 0, "container_sweeps": 0, "bed_activations": 0, "deaths": 0},
 	}
 
 
@@ -110,6 +113,10 @@ static func sanitize(raw: Variant) -> Dictionary:
 				"door_revision": maxi(0, int(entry.get("door_revision", 0))),
 			}
 	document["structures"] = structures
+	# A stable structure identity, never unchecked coordinates from a save.
+	var anchor := String(source.get("spawn_anchor", ""))
+	if String((structures.get(anchor, {}) as Dictionary).get("piece", "")) == "bed_wood":
+		document["spawn_anchor"] = anchor
 
 	var containers: Dictionary = {}
 	var raw_containers: Variant = source.get("containers", {})
@@ -129,6 +136,15 @@ static func sanitize(raw: Variant) -> Dictionary:
 			containers[id] = contents
 	document["containers"] = containers
 
+	# Preserve stack records verbatim: these are physical inventory, not learned
+	# recipe knowledge. Validate structure but do not silently discard contents.
+	var raw_bags: Variant = source.get("death_bags", {})
+	if raw_bags is Dictionary:
+		document["death_bags"] = (raw_bags as Dictionary).duplicate(true)
+	var pending := String(source.get("pending_death", ""))
+	if (document["death_bags"] as Dictionary).has(pending):
+		document["pending_death"] = pending
+
 	var knowledge: Dictionary = {"recipes": {}}
 	var raw_knowledge: Variant = source.get("knowledge", {})
 	if raw_knowledge is Dictionary:
@@ -145,11 +161,13 @@ static func sanitize(raw: Variant) -> Dictionary:
 				}
 	document["knowledge"] = knowledge
 
-	var counters: Dictionary = {"structure": 0, "container_sweeps": 0}
+	var counters: Dictionary = {"structure": 0, "container_sweeps": 0, "bed_activations": 0, "deaths": 0}
 	var raw_counters: Variant = source.get("counters", {})
 	if raw_counters is Dictionary:
 		counters["structure"] = maxi(0, int((raw_counters as Dictionary).get("structure", 0)))
 		counters["container_sweeps"] = maxi(0, int((raw_counters as Dictionary).get("container_sweeps", 0)))
+		counters["bed_activations"] = maxi(0, int((raw_counters as Dictionary).get("bed_activations", 0)))
+		counters["deaths"] = maxi(0, int((raw_counters as Dictionary).get("deaths", 0)))
 	document["counters"] = counters
 	return document
 

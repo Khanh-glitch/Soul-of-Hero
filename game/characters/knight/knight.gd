@@ -2760,7 +2760,7 @@ func _die() -> void:
 	_play_animation("death", true)
 	GameEvents.player_died.emit()
 	RealtimeBridge.publish_event("player_died", get_realtime_state())
-func respawn() -> void:
+func respawn(position_override: Variant = null) -> void:
 	_cancel_axe_charge()
 	_clear_axe_throw_runtime()
 	dead = false
@@ -2780,7 +2780,9 @@ func respawn() -> void:
 	barrier = max_barrier
 	mana = max_mana
 	stamina = max_stamina
-	global_position = GameSession.checkpoint
+	# Overworld owns its validated destination. Dungeon callers pass no override
+	# and retain the existing run-local checkpoint and progression semantics.
+	global_position = position_override if position_override is Vector2 else GameSession.checkpoint
 	velocity = Vector2.ZERO
 	invulnerability_remaining = 1.0
 	soul_echo_cooldown_remaining = 0.0

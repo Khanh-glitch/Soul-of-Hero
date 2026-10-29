@@ -19,7 +19,7 @@ extends Node2D
 ##
 ## ## Input
 ##
-## The build tool is modal and explicit: `B` toggles build mode, `1`-`4` select the
+## The build tool is modal and explicit: `B` toggles build mode, `1`-`5` select the
 ## piece, left-click places, right-click or `ESC` leaves. Nothing here is wired into
 ## the Knight's combat input, so no existing control path changes meaning.
 
@@ -334,6 +334,100 @@ func entity_at_layer(cell: Vector2i, layer: String) -> String:
 	return String(slots.get(layer, ""))
 
 
+# Wake positions are evaluated against the live Hero collision shape, not just
+# the terrain grid. Returned coordinates are foot positions in world space.
+func _wake_cell_clear(cell: Vector2i, ignore_body: RID = RID()) -> bool:
+	if world == null or player == null or not is_instance_valid(player) or not is_inside_tree():
+		return false
+	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
+		return false
+	if world.is_solid_cell(cell.x, cell.y) or world.is_water_cell(cell.x, cell.y):
+		return false
+	var foot := Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1)
+	var owner := get_parent()
+	if owner != null and owner.has_method(&"_in_hazard") and bool(owner.call(&"_in_hazard", foot)):
+		return false
+	var hero := player as CharacterBody2D
+	if hero == null:
+		return false
+	var body_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if body_shape == null or body_shape.shape == null or body_shape.disabled:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = body_shape.shape
+	query.transform = Transform2D(0.0, foot + body_shape.position)
+	query.collision_mask = hero.collision_mask | 4
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	var exclusions: Array[RID] = [hero.get_rid()]
+	if ignore_body.is_valid():
+		exclusions.append(ignore_body)
+	query.exclude = exclusions
+	return get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
+
+
+func _wake_has_exit(start: Vector2i, room_id: String) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var steps := [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var cell: Vector2i = queue[cursor]
+		cursor += 1
+		for step: Vector2i in steps:
+			var next := cell + step
+			var entity := entity_at_layer(next, "object")
+			var piece := structure_node(entity) if not entity.is_empty() else null
+			if piece != null and piece.piece_id == "door_wood":
+				var body := piece.get_node_or_null("Solid") as StaticBody2D
+				if body != null and _wake_cell_clear(next, body.get_rid()) \
+						and room_topology.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or room_topology.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
+## Called both on activation and immediately before overworld respawn. Nothing
+## trusts a saved coordinate: the live owned bed and room are revalidated.
+func bed_wake_position(entity_id: String) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or not is_instance_valid(bed) or bed.is_queued_for_deletion() or bed.piece_id != "bed_wood":
+		return {"ok": false, "reason": "missing_bed"}
+	var svc := service()
+	var records: Dictionary = svc.call(&"structures") if svc != null else {}
+	if String((records.get(entity_id, {}) as Dictionary).get("piece", "")) != "bed_wood":
+		return {"ok": false, "reason": "stale_bed"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty():
+		return {"ok": false, "reason": "no_room"}
+	for offset: Vector2i in [Vector2i.DOWN, Vector2i.RIGHT, Vector2i.LEFT, Vector2i.UP]:
+		var cell := bed.cell + offset
+		if room_topology.room_at(cell) == room_id and _wake_cell_clear(cell) and _wake_has_exit(cell, room_id):
+			return {"ok": true, "position": Vector2(cell.x * TILE + 8, cell.y * TILE + TILE - 1), "room_id": room_id}
+	return {"ok": false, "reason": "no_safe_exit"}
+
+
+func activate_bed(entity_id: String, actor: Node2D) -> Dictionary:
+	var bed := structure_node(entity_id)
+	if bed == null or actor == null or not is_instance_valid(actor) or actor != player:
+		return {"ok": false, "reason": "not_owned"}
+	if actor.global_position.distance_to(bed.global_position) > SurvivalStructure.REACH:
+		return {"ok": false, "reason": "out_of_reach"}
+	var room_id: String = room_topology.room_at(bed.cell)
+	if room_id.is_empty() or room_topology.room_at(world.tile_of(actor.global_position)) != room_id:
+		return {"ok": false, "reason": "not_in_room"}
+	var svc := service()
+	if svc == null:
+		return {"ok": false, "reason": "service_unavailable"}
+	return svc.call(&"activate_bed", entity_id, func() -> bool:
+		return bool(bed_wake_position(entity_id).get("ok", false)))
+
+
 # ---------------------------------------------------------------------------
 # validation — CT-07 route safety
 # ---------------------------------------------------------------------------
@@ -379,6 +473,8 @@ func validate_cell(cell: Vector2i) -> String:
 		var reach := reach_default
 		if absi(cell.x - origin.x) > reach or absi(cell.y - origin.y) > reach:
 			return "out_of_range"
+	if selected_piece == "bed_wood" and room_topology.room_at(cell).is_empty():
+		return "bed_requires_room"
 	var layer := String(svc.call(&"occupancy_layer", selected_piece)) if svc != null else "object"
 	if not entity_at_layer(cell, layer).is_empty():
 		return "cell_occupied"
@@ -581,7 +677,7 @@ func _refresh_hud() -> void:
 		return
 	var parts: Array[String] = []
 	var svc := service()
-	var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood"]
+	var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood"]
 	for index: int in ids.size():
 		var piece_id := ids[index]
 		var marker := ">" if piece_id == selected_piece else " "

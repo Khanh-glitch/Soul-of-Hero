@@ -402,6 +402,153 @@ func place_structure(
 	return result.duplicate(true)
 
 
+## Atomically move carried stack records, not permanent knowledge or equipped
+## Hero identities, into a distinct durable overworld death bag. The pending id
+## also prevents a crash/reload from creating a second bag for the same death.
+func begin_overworld_death(position: Vector2) -> Dictionary:
+	var save := _save()
+	if save == null or not is_finite(position.x) or not is_finite(position.y):
+		return {"ok": false, "reason": "invalid_death"}
+	var before := document()
+	var pending := String(before.get("pending_death", ""))
+	if not pending.is_empty():
+		return {"ok": true, "entity_id": pending, "already_pending": true}
+	var serial := int((before.get("counters", {}) as Dictionary).get("deaths", 0)) + 1
+	var bag_id := "death_%d" % serial
+	var applied := bool(save.call(&"transact_once", "survival.death.%d" % serial,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var counters: Dictionary = doc.get("counters", {})
+			if int(counters.get("deaths", 0)) != serial - 1 or not String(doc.get("pending_death", "")).is_empty():
+				return false
+			var inventory: Dictionary = candidate.get("inventory", {})
+			var stacks: Dictionary = inventory.get("item_stacks", {})
+			var bags: Dictionary = doc.get("death_bags", {})
+			if bags.has(bag_id):
+				return false
+			bags[bag_id] = {"region": "hollow_marches", "position": [position.x, position.y], "stacks": stacks.duplicate(true)}
+			inventory["item_stacks"] = {}
+			candidate["inventory"] = inventory
+			doc["death_bags"] = bags
+			doc["pending_death"] = bag_id
+			counters["deaths"] = serial
+			doc["counters"] = counters
+			candidate["survival"] = doc
+			return true,
+		{"kind": "survival_death", "entity_id": bag_id}))
+	if applied:
+		survival_state_changed.emit()
+	return {"ok": applied, "entity_id": bag_id if applied else "", "reason": "" if applied else "commit_failed"}
+
+
+## Exactly one commit clears pending death and records the safe overworld spawn.
+## Crash before the commit leaves the Hero dead; after it the new position loads.
+func finish_overworld_death(position: Vector2) -> bool:
+	var save := _save()
+	var pending := String(document().get("pending_death", ""))
+	if save == null or pending.is_empty() or not is_finite(position.x) or not is_finite(position.y):
+		return false
+	var applied := bool(save.call(&"transact_once", "survival.respawn." + pending,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			if String(doc.get("pending_death", "")) != pending:
+				return false
+			doc["pending_death"] = ""
+			candidate["survival"] = doc
+			var overworld: Dictionary = candidate.get("overworld", {})
+			var state: Dictionary = overworld.get("hollow_marches", {})
+			state["last_position"] = [position.x, position.y]
+			overworld["hollow_marches"] = state
+			candidate["overworld"] = overworld
+			return true,
+		{"kind": "survival_respawn", "entity_id": pending}))
+	if applied:
+		survival_state_changed.emit()
+	return applied
+
+
+## Recover the entire bag or none. Stack records stay distinct (no merge and no
+## provenance replacement); a full inventory leaves the bag untouched.
+func recover_death_bag(bag_id: String) -> bool:
+	var save := _save()
+	if save == null:
+		return false
+	var applied := bool(save.call(&"transact_once", "survival.death.recover." + bag_id,
+		func(candidate: Dictionary) -> bool:
+			var doc := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var bags: Dictionary = doc.get("death_bags", {})
+			if not bags.has(bag_id) or String(doc.get("pending_death", "")) == bag_id:
+				return false
+			var bag: Dictionary = bags[bag_id]
+			var raw: Variant = bag.get("stacks", null)
+			if not raw is Dictionary:
+				return false
+			var inventory: Dictionary = candidate.get("inventory", {})
+			var stacks: Dictionary = inventory.get("item_stacks", {})
+			var entries: Dictionary = raw
+			var occupied: int = (inventory.get("hero_souls", []) as Array).size() + (inventory.get("auxiliary_equipment", []) as Array).size() + stacks.size()
+			if occupied + entries.size() > 30:
+				return false
+			for raw_key: Variant in entries.keys():
+				var key := String(raw_key)
+				if not entries[raw_key] is Dictionary:
+					return false
+				var record: Dictionary = (entries[raw_key] as Dictionary).duplicate(true)
+				var item_id := String(record.get("item_id", key))
+				if stacks.has(key):
+					key = String(save.call(&"_next_inventory_stack_key", stacks, item_id))
+				if key == item_id:
+					record.erase("item_id")
+				else:
+					record["item_id"] = item_id
+				stacks[key] = record
+			inventory["item_stacks"] = stacks
+			candidate["inventory"] = inventory
+			bags.erase(bag_id)
+			doc["death_bags"] = bags
+			candidate["survival"] = doc
+			return true,
+		{"kind": "survival_death_recovery", "entity_id": bag_id}))
+	if applied:
+		survival_state_changed.emit()
+	return applied
+
+
+## The scene supplies ownership, proximity, enclosure and safe-wake validation.
+## The transaction rechecks structure identity and its expected activation serial.
+func activate_bed(entity_id: String, validator: Callable) -> Dictionary:
+	var save := _save()
+	var doc := document()
+	var record: Dictionary = (doc.get("structures", {}) as Dictionary).get(entity_id, {})
+	if save == null or String(record.get("piece", "")) != "bed_wood":
+		return {"ok": false, "reason": "not_a_bed"}
+	if not validator.is_valid() or not bool(validator.call()):
+		return {"ok": false, "reason": "bed_not_safe"}
+	if String(doc.get("spawn_anchor", "")) == entity_id:
+		return {"ok": true, "already_active": true}
+	var counters: Dictionary = doc.get("counters", {})
+	var revision := int(counters.get("bed_activations", 0))
+	var applied := bool(save.call(&"transact_once", "survival.bed.activation.%d" % (revision + 1),
+		func(candidate: Dictionary) -> bool:
+			var current := SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var placed: Dictionary = current.get("structures", {})
+			var bed: Dictionary = placed.get(entity_id, {})
+			var next_counters: Dictionary = current.get("counters", {})
+			if String(bed.get("piece", "")) != "bed_wood" or int(next_counters.get("bed_activations", 0)) != revision:
+				return false
+			if not bool(validator.call()):
+				return false
+			current["spawn_anchor"] = entity_id
+			next_counters["bed_activations"] = revision + 1
+			current["counters"] = next_counters
+			candidate["survival"] = current
+			return true,
+		{"kind": "survival_bed_activation", "entity_id": entity_id}))
+	if applied:
+		survival_state_changed.emit()
+	return {"ok": applied, "reason": "" if applied else "commit_failed"}
+
+
 ## Toggle a door atomically. Closing requires a world-owned overlap validator;
 ## the autoload cannot determine whether a live Hero occupies the doorway.
 ## The per-door revision generates distinct action keys while an optional stable
@@ -467,6 +614,8 @@ func remove_structure(entity_id: String) -> bool:
 			if not contents.is_empty():
 				return false
 			placed.erase(entity_id)
+			if String(document_candidate.get("spawn_anchor", "")) == entity_id:
+				document_candidate["spawn_anchor"] = ""
 			document_candidate["structures"] = placed
 			containers.erase(entity_id)
 			document_candidate["containers"] = containers

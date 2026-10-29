@@ -26,6 +26,7 @@ const SERVICE_PATH := "/root/SurvivalService"
 const REACH := 44.0
 const PIECE_CHEST := "chest_wood"
 const PIECE_DOOR := "door_wood"
+const PIECE_BED := "bed_wood"
 
 var _prompt: Label
 var _last_interaction: Dictionary = {}
@@ -36,7 +37,7 @@ func _ready() -> void:
 	# remembered to put it in the group. Anything that materializes a structure —
 	# the build system now, a region loader or a save migration later — gets the
 	# same behaviour from the same place.
-	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return
 	add_to_group(GROUP)
 	if piece_id == PIECE_CHEST:
@@ -92,6 +93,9 @@ func interaction_verb() -> String:
 func refresh_prompt() -> void:
 	if _prompt == null:
 		return
+	if piece_id == PIECE_BED:
+		_prompt.text = "[CLICK] Set respawn bed"
+		return
 	if piece_id == PIECE_DOOR:
 		var svc := service()
 		if svc == null:
@@ -127,12 +131,12 @@ func capacity() -> int:
 
 
 func can_interact(player: Node2D) -> bool:
-	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
 			return false
-	return piece_id == PIECE_DOOR or interaction_verb() != "empty"
+	return piece_id in [PIECE_DOOR, PIECE_BED] or interaction_verb() != "empty"
 
 
 func _doorway_clear() -> bool:
@@ -161,7 +165,7 @@ func _doorway_clear() -> bool:
 
 
 func _process(_delta: float) -> void:
-	if piece_id != PIECE_DOOR or _prompt == null:
+	if piece_id not in [PIECE_DOOR, PIECE_BED] or _prompt == null:
 		return
 	_prompt.visible = false
 	for actor: Node in get_tree().get_nodes_in_group(&"player"):
@@ -173,7 +177,7 @@ func _process(_delta: float) -> void:
 func interact(player: Node2D) -> bool:
 	# The chest owns the click even when it has nothing to offer: an empty press
 	# that silently becomes an attack swing is how a player loses a structure.
-	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
@@ -181,6 +185,15 @@ func interact(player: Node2D) -> bool:
 	var svc := service()
 	if svc == null:
 		return false
+	if piece_id == PIECE_BED:
+		var build := get_parent().get_parent() if get_parent() != null else null
+		if build == null or not build.has_method(&"activate_bed"):
+			return false
+		_last_interaction = build.call(&"activate_bed", entity_id, player)
+		var world := build.get_parent()
+		if world != null and world.has_method(&"_say"):
+			world.call(&"_say", "Bed activated." if bool(_last_interaction.get("ok", false)) else "Bed needs a safe room and clear exit.")
+		return true
 	if piece_id == PIECE_DOOR:
 		_last_interaction = svc.call(&"toggle_door", entity_id, Callable(self, "_doorway_clear"))
 		refresh_prompt()
@@ -233,4 +246,4 @@ static func is_solid_piece(piece_id_value: String) -> bool:
 	# A single source would be better; the catalog is data that survives a save
 	# and this is a compile-time constant, so the two are asserted equal by
 	# tests/survival_build_runtime_test.gd rather than trusted.
-	return piece_id_value in ["wall_wood", "door_wood", "chest_wood"]
+	return piece_id_value in ["wall_wood", "door_wood", "chest_wood", "bed_wood"]

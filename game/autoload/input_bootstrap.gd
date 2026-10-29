@@ -31,6 +31,7 @@ const SEMANTIC_ACTIONS := [
 	&"build_slot_2",
 	&"build_slot_3",
 	&"build_slot_4",
+	&"build_slot_5",
 ]
 
 const LEGACY_ACTIONS := [
@@ -77,7 +78,7 @@ const KEYBOARD_BINDINGS := {
 	&"interact": [],
 	&"field_codex": [KEY_I, KEY_TAB],
 	&"pause": [KEY_ESCAPE],
-	# B toggles the build modal, 1-4 choose the piece, and placement is the
+	# B toggles the build modal, 1-5 choose the piece, and placement is the
 	# ordinary left click (see MOUSE_BINDINGS below) resolved by the build layer
 	# only while the modal is open.
 	&"build_toggle": [KEY_B],
@@ -85,6 +86,7 @@ const KEYBOARD_BINDINGS := {
 	&"build_slot_2": [KEY_2],
 	&"build_slot_3": [KEY_3],
 	&"build_slot_4": [KEY_4],
+	&"build_slot_5": [KEY_5],
 }
 
 const MOUSE_BINDINGS := {

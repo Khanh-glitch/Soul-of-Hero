@@ -46,6 +46,7 @@ const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversab
 const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
+const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
 
 const CAMERA_ZOOM := Vector2.ONE
@@ -70,6 +71,8 @@ var occlusion: OverworldOcclusion
 var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
+var _death_bags: Dictionary = {}
+var _death_bag_root: Node2D
 var survival_nodes: Dictionary = {}  # node_id:String -> SurvivalResourceNode
 var gates: Dictionary = {}       # level_id:String -> OverworldGate
 var camps: Dictionary = {}       # camp_id:String -> OverworldCamp
@@ -160,6 +163,11 @@ func _build_world() -> void:
 	_apply_hud()
 	build_stage = BuildStage.READY
 	world_ready.emit()
+	# A death interrupted after its save commit must resume the death screen,
+	# not grant a free life or create a second bag.
+	var survival := get_node_or_null("/root/SurvivalService")
+	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
+		player.call(&"_die")
 
 
 func _build_traversability() -> void:
@@ -231,6 +239,10 @@ func _build_survival() -> void:
 	survival_build.name = "SurvivalBuild"
 	add_child(survival_build)
 	survival_build.configure(world, player, camera, state)
+	_death_bag_root = Node2D.new()
+	_death_bag_root.name = "DeathBags"
+	add_child(_death_bag_root)
+	_sync_death_bags()
 	var svc2 := get_node_or_null("/root/SurvivalService")
 	if svc2 != null and svc2.has_signal(&"survival_state_changed"):
 		svc2.connect(&"survival_state_changed", _on_survival_state_changed)
@@ -242,6 +254,7 @@ func _on_survival_state_changed() -> void:
 	# would destroy colliders the player is standing against.
 	if survival_build != null and is_instance_valid(survival_build):
 		survival_build.reconcile_from_save()
+	_sync_death_bags()
 	# Only the node that changed needs to re-read its own state, but the signal
 	# carries no identity — a chain of harvests is short, and refreshing the plan
 	# costs one dictionary lookup per node against a document already in memory.
@@ -249,6 +262,33 @@ func _on_survival_state_changed() -> void:
 		var node: SurvivalResourceNode = survival_nodes[node_id]
 		if is_instance_valid(node):
 			node.refresh()
+
+
+func _sync_death_bags() -> void:
+	if _death_bag_root == null or not is_instance_valid(_death_bag_root):
+		return
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc == null:
+		return
+	var bags: Dictionary = (svc.call(&"document") as Dictionary).get("death_bags", {})
+	for key: Variant in _death_bags.keys():
+		if not bags.has(key):
+			var old: Node = _death_bags[key]
+			_death_bags.erase(key)
+			if is_instance_valid(old):
+				old.queue_free()
+	for key: Variant in bags.keys():
+		if _death_bags.has(key) or not bags[key] is Dictionary:
+			continue
+		var record: Dictionary = bags[key]
+		var coords: Variant = record.get("position", [])
+		if String(record.get("region", "")) != "hollow_marches" or not coords is Array or coords.size() != 2:
+			continue
+		var node := DEATH_BAG_SCRIPT.new()
+		node.entity_id = String(key)
+		node.position = Vector2(float(coords[0]), float(coords[1]))
+		_death_bag_root.add_child(node)
+		_death_bags[key] = node
 
 
 func survival_node(node_id: String) -> SurvivalResourceNode:
@@ -432,6 +472,7 @@ func _build_hud() -> void:
 	hud = HUD_SCRIPT.new() as OverworldHud
 	hud.name = "HUD"
 	add_child(hud)
+	hud.respawn_requested.connect(_respawn_overworld_hero)
 
 
 # ---------------------------------------------------------------------------
@@ -542,7 +583,8 @@ func _process(delta: float) -> void:
 		return
 	if state == null or not is_instance_valid(player):
 		return
-	state.set_world_position(player.global_position)
+	if not bool(player.get(&"dead")):
+		state.set_world_position(player.global_position)
 	if occlusion != null and is_instance_valid(occlusion):
 		occlusion.step(delta)
 	var hazard := _in_hazard(player.global_position)
@@ -593,9 +635,9 @@ func _handle_survival_input() -> void:
 		return
 	if not survival_build.active:
 		return
-	for index: int in 4:
+	for index: int in 5:
 		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
-			var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood"]
+			var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood"]
 			if index < ids.size() and survival_build.select_piece(ids[index]):
 				_say("Build: %s — %s" % [
 					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])
@@ -863,6 +905,9 @@ func _on_state_saved(ok: bool) -> void:
 
 
 func _connect_run_events() -> void:
+	var death_events := get_node_or_null("/root/GameEvents")
+	if death_events != null and not death_events.is_connected(&"player_died", _on_overworld_hero_died):
+		death_events.connect(&"player_died", _on_overworld_hero_died)
 	# A run that finishes while the overworld is still mounted (a very fast
 	# return, or a future in-place dungeon host) should still unlock its
 	# shortcut. The normal path is the AppFlow completion check at build time.
@@ -870,6 +915,105 @@ func _connect_run_events() -> void:
 	if events != null and events.has_signal(&"run_completion_ready"):
 		if not events.is_connected(&"run_completion_ready", _on_run_completion_ready):
 			events.connect(&"run_completion_ready", _on_run_completion_ready)
+
+
+func _on_overworld_hero_died() -> void:
+	# The signal is global. Only the Hero belonging to this live world is ours;
+	# a dungeon's own Hero and checkpoint remain entirely under dungeon control.
+	if not is_instance_valid(player) or not bool(player.get(&"dead")) or build_stage != BuildStage.READY:
+		return
+	if survival_build != null:
+		survival_build.set_active(false)
+	if state != null:
+		state.save_now()
+	var svc := get_node_or_null("/root/SurvivalService")
+	var recorded := false
+	if svc != null:
+		recorded = bool((svc.call(&"begin_overworld_death", player.global_position) as Dictionary).get("ok", false))
+	if hud != null:
+		hud.show_death("You fell in the Hollow Marches. Choose respawn." if recorded else "Could not save your death bag. Retry respawn to save again.")
+	get_tree().paused = true
+
+
+# Fail closed instead of reviving into a wall. The static camp graph gives an
+# ordered search center; the live Hero shape checks every candidate, and a local
+# flood rejects sealed-off spots. No random choice or world-sized per-frame scan.
+func _fallback_has_escape(start: Vector2i) -> bool:
+	var pending: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var cursor := 0
+	while cursor < pending.size() and cursor < 256:
+		var cell: Vector2i = pending[cursor]
+		cursor += 1
+		if maxi(absi(cell.x - start.x), absi(cell.y - start.y)) >= 8:
+			return true
+		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
+			var next := cell + step
+			if seen.has(next):
+				continue
+			seen[next] = true
+			if survival_build.room_topology.room_at(next).is_empty() and survival_build._wake_cell_clear(next):
+				pending.append(next)
+	return false
+
+
+func _resolve_overworld_respawn() -> Dictionary:
+	if survival_build == null or not is_instance_valid(survival_build):
+		return {"ok": false, "reason": "world_not_ready"}
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc != null:
+		var doc: Dictionary = svc.call(&"document")
+		var bed_id := String(doc.get("spawn_anchor", ""))
+		if not bed_id.is_empty():
+			var wake: Dictionary = survival_build.bed_wake_position(bed_id)
+			if bool(wake.get("ok", false)):
+				wake["source"] = "bed"
+				return wake
+	var centers: Array[Vector2] = []
+	var camp := camps.get(String(state.last_camp_id), null) as OverworldCamp if state != null else null
+	if camp != null and is_instance_valid(camp):
+		centers.append(camp.rest_position())
+	centers.append(_authored_spawn())
+	for centre: Vector2 in centers:
+		var base := world.tile_of(centre)
+		for ring in range(0, 33):
+			for dy in range(-ring, ring + 1):
+				for dx in range(-ring, ring + 1):
+					if maxi(absi(dx), absi(dy)) != ring:
+						continue
+					var cell := base + Vector2i(dx, dy)
+					if not survival_build.room_topology.room_at(cell).is_empty() or not survival_build._wake_cell_clear(cell):
+						continue
+					if _fallback_has_escape(cell):
+						return {"ok": true, "position": Vector2(cell.x * 16 + 8, cell.y * 16 + 15), "source": "camp"}
+	return {"ok": false, "reason": "no_safe_fallback"}
+
+
+func _respawn_overworld_hero() -> bool:
+	if not is_instance_valid(player) or not bool(player.get(&"dead")):
+		return false
+	var svc := get_node_or_null("/root/SurvivalService")
+	if svc == null or not bool((svc.call(&"begin_overworld_death", player.global_position) as Dictionary).get("ok", false)):
+		if hud != null:
+			hud.show_death("Could not save your death bag. Please retry.")
+		return false
+	var destination := _resolve_overworld_respawn()
+	if not bool(destination.get("ok", false)):
+		if hud != null:
+			hud.show_death("No safe respawn point is currently available.")
+		return false
+	if not bool(svc.call(&"finish_overworld_death", destination["position"])):
+		if hud != null:
+			hud.show_death("Could not save respawn. Please retry.")
+		return false
+	player.call(&"respawn", destination["position"])
+	if state != null:
+		state.set_world_position(player.global_position, true)
+	if hud != null:
+		hud.hide_death()
+	get_tree().paused = false
+	_say("Returned to your bed." if String(destination.get("source", "")) == "bed" else "Returned to a safe camp.")
+	return true
 
 
 func _on_run_completion_ready(result: Dictionary, _options: Dictionary) -> void:

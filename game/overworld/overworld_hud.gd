@@ -3,6 +3,8 @@ extends CanvasLayer
 ## Overworld HUD: where you are, what you carry, what you have found, and the
 ## one-line prompt the world is currently telling you.
 
+signal respawn_requested
+
 const PANEL_BG := Color(0.05, 0.04, 0.07, 0.72)
 const TEXT := Color(0.92, 0.88, 0.78)
 const ACCENT := Color(1.0, 0.90, 0.58)
@@ -16,6 +18,8 @@ var _counts_label: Label
 var _prompt_label: Label
 var _prompt_timer := 0.0
 var _hint_label: Label
+var _death_panel: PanelContainer
+var _death_message: Label
 
 
 func _ready() -> void:
@@ -96,6 +100,34 @@ func _build() -> void:
 	_prompt_label.add_theme_color_override("font_outline_color", Color(0.03, 0.02, 0.05))
 	_prompt_label.add_theme_constant_override("outline_size", 5)
 	root.add_child(_prompt_label)
+
+
+func show_death(message: String) -> void:
+	if _death_panel == null:
+		_death_panel = PanelContainer.new()
+		_death_panel.name = "OverworldDeath"
+		_death_panel.set_anchors_preset(Control.PRESET_CENTER)
+		_death_panel.position = Vector2(-120, -50)
+		_death_panel.custom_minimum_size = Vector2(240, 100)
+		_death_panel.process_mode = Node.PROCESS_MODE_ALWAYS
+		add_child(_death_panel)
+		var column := VBoxContainer.new()
+		_death_panel.add_child(column)
+		_death_message = _label("", 12, TEXT)
+		_death_message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		column.add_child(_death_message)
+		var button := Button.new()
+		button.name = "Respawn"
+		button.text = "Respawn"
+		button.pressed.connect(func() -> void: respawn_requested.emit())
+		column.add_child(button)
+	_death_message.text = message
+	_death_panel.show()
+
+
+func hide_death() -> void:
+	if _death_panel != null:
+		_death_panel.hide()
 
 
 func _label(text: String, size: int, colour: Color) -> Label:
