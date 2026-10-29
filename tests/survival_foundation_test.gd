@@ -250,12 +250,13 @@ func _body() -> void:
 	_expect(int(hit.get("quantity", 0)) > 0, "case 01: the yield is positive")
 	var node_view: SurvivalResourceNode = ow.call(&"survival_node", tree_id)
 	_expect(node_view != null, "case 01: the node exists in the mounted scene")
-	_expect(not node_view.last_result().is_empty(),
-		"case 01: interacting through the node reports its result")
-	var via_node := _count(WOOD)
-	var node_hit := bool(node_view.interact(player))
-	_expect(node_hit and _count(WOOD) > via_node,
-		"case 01: interacting through the world node also gathers")
+	if node_view != null:
+		var via_node := _count(WOOD)
+		var node_hit := bool(node_view.interact(player))
+		_expect(node_hit and _count(WOOD) > via_node,
+			"case 01: interacting through the world node also gathers")
+		_expect(not node_view.last_result().is_empty(),
+			"case 01: interacting through the node reports its result")
 
 	print("[case 02] begin")  # heartbeat: a crash names the case it died in
 	# -- 02 exhausted node yields nothing; replay cannot farm it ----------------
@@ -579,9 +580,13 @@ func _body() -> void:
 	print("[case 11] begin")  # heartbeat: a crash names the case it died in
 	# -- 11 an older save without the survival namespace loads as empty --------
 	var legacy_path := "user://tests/survival_legacy_%d.json" % Time.get_ticks_usec()
+	# The canonical first-stack shape: the key IS the item id and the record
+	# carries no `item_id`. Dotted keys ("oak_wood.0") are not valid identifiers,
+	# so a fixture written that way is rejected as corrupt and silently replaced
+	# with defaults - which would have made this case pass for the wrong reason.
 	var legacy := {
 		"schema_version": 4,
-		"inventory": {"item_stacks": {"oak_wood.0": {"item_id": "oak_wood", "kind": "material", "quantity": 7}}},
+		"inventory": {"item_stacks": {"oak_wood": {"kind": "material", "quantity": 7}}},
 	}
 	var write := FileAccess.open(legacy_path, FileAccess.WRITE)
 	_expect(write != null, "case 11: a legacy save file can be written")
