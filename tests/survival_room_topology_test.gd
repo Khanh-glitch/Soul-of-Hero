@@ -23,6 +23,21 @@ func _perimeter(left: int, top: int, width: int, height: int) -> Dictionary:
 	return result
 
 
+# Drive the production CharacterBody2D itself through physics, not test_move.
+# Disable its regular input handler to avoid adding uncontrolled test input.
+func _walk_hero(body: CharacterBody2D, start: Vector2, steps: int) -> float:
+	body.set_physics_process(false)
+	body.global_position = start
+	body.velocity = Vector2.ZERO
+	await physics_frame
+	for i in range(steps):
+		await physics_frame
+		body.velocity = Vector2(0, 96)
+		body.move_and_slide()
+	body.velocity = Vector2.ZERO
+	return body.global_position.y - start.y
+
+
 func _body() -> void:
 	print("[topology] bounded algorithm")
 	var model = TOPOLOGY_SCRIPT.new()
@@ -134,6 +149,9 @@ func _body() -> void:
 	var body := player as CharacterBody2D
 	var blocked := body.test_move(Transform2D(0.0, start), Vector2(0, 25))
 	_expect(not door_shape.disabled and blocked, "closed door blocks the real Hero collider")
+	var closed_distance: float = await _walk_hero(body, start, 24)
+	print("[door] closed actual travel=%.2f" % closed_distance)
+	_expect(closed_distance < 18.0, "closed door stops actual move_and_slide travel")
 	player.global_position = door_node.global_position + Vector2(8, -30)
 	_expect(door_node.interact(player), "door interaction opens")
 	await process_frame
@@ -144,6 +162,9 @@ func _body() -> void:
 	if open_blocked:
 		print("[door] blocked by %s normal=%s travel=%s" % [str(probe.get_collider()), str(probe.get_normal()), str(probe.get_travel())])
 	_expect(not open_blocked, "real Hero collider can cross open doorway")
+	var open_distance: float = await _walk_hero(body, start, 24)
+	print("[door] open actual travel=%.2f" % open_distance)
+	_expect(open_distance > 25.0, "open door permits actual move_and_slide travel")
 	_expect(build.room_topology.room_at(origin + Vector2i(1, 1)) == room_id, "opening a door retains enclosure")
 	player.global_position = door_node.global_position + Vector2(8, 8)
 	_expect(door_node.interact(player), "occupied doorway consumes the click")
