@@ -92,13 +92,6 @@ func _from_hex(s: String) -> float:
 	return b.decode_double(0)
 
 
-func _bits(v: float) -> String:
-	var b := PackedByteArray()
-	b.resize(8)
-	b.encode_double(0, v)
-	return "%08x%08x" % [b.decode_u32(4), b.decode_u32(0)]
-
-
 ## Intermediate values for one sin/cos input that fails bit-exactly.
 ## Expected (V8 / Python fdlibm): n=-876, y0=3fe4fdd47a949e23,
 ## y1=3c722adb00000000, sin=3fe384a14729faa7, cos=3fe95bbac4a77853.
