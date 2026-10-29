@@ -49,7 +49,10 @@ func _capture_roof_frame(name: String) -> void:
 	_expect(image.save_png(path) == OK, "native frame saved: " + name)
 	var crop := image.get_region(Rect2i((image.get_width() - 280) / 2, (image.get_height() - 140) / 2, 280, 140))
 	crop.save_png("res://artifacts/roof_%s_crop.png" % name)
-	print("[frame] %s" % ProjectSettings.globalize_path(path))
+	var ow := _host.get_child(0)
+	var hero := ow.get(&"player") as Node2D
+	print("[frame] %s hero=%s screen=%s" % [ProjectSettings.globalize_path(path),
+		str(hero.global_position), str(root.get_canvas_transform() * hero.global_position)])
 
 
 func _body() -> void:
@@ -205,8 +208,8 @@ func _body() -> void:
 	_expect(not adjacent_id.is_empty() and adjacent_id != room_id, "production shared wall separates rooms")
 	var roof := build.roof_layer
 	var camera: Camera2D = ow.get(&"camera") as Camera2D
-	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y - 3) * 16 + 8)
-	camera.offset = Vector2(32, 64)
+	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y - 4) * 16 + 8)
+	camera.offset = Vector2(32, 80)
 	camera.reset_smoothing()
 	await create_timer(0.65).timeout
 	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99 and float(roof.call(&"alpha_for", adjacent_id)) > 0.99,
