@@ -677,7 +677,7 @@ func _transfer(
 		into_container: bool,
 ) -> bool:
 	var normalized := item_id.strip_edges().to_lower()
-	if normalized.is_empty() or quantity < 1 or transaction_key.strip_edges().is_empty():
+	if normalized.is_empty() or normalized.begins_with("soh_i_") or quantity < 1 or transaction_key.strip_edges().is_empty():
 		return false
 	var save := _save()
 	if save == null:
@@ -784,6 +784,10 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 	var planned: Dictionary = {}
 	var projected_slots := stored.size()
 	for item_id: Variant in source.keys():
+		# Leave coupled unique instances where the A3 ownership audit supports
+		# them; ordinary materials can still be deposited in the same sweep.
+		if String(item_id).begins_with("soh_i_"):
+			continue
 		var quantity := int(source[item_id])
 		if quantity <= 0:
 			continue

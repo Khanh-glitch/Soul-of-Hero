@@ -33,6 +33,8 @@ var _last_interaction: Dictionary = {}
 
 
 func _ready() -> void:
+	# Proximity prompts must disappear even when the death modal pauses play.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	# A chest is interactable on its own terms, not because the build system
 	# remembered to put it in the group. Anything that materializes a structure —
 	# the build system now, a region loader or a save migration later — gets the

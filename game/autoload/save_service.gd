@@ -928,6 +928,10 @@ func drop_inventory_item(
 			if not raw_record is Dictionary:
 				return false
 			var record := (raw_record as Dictionary).duplicate(true)
+			# A3 tokens have coupled attribute records; plain GroundLoot does not
+			# yet provide an atomic transfer of that ownership.
+			if _inventory_stack_base_id(stack_key, record).begins_with("soh_i_"):
+				return false
 			var current_quantity := int(record.get("quantity", 0))
 			if current_quantity != quantity:
 				return false
@@ -1607,6 +1611,9 @@ func _home_transfer_item(
 			if item_kind == "item_stack":
 				var source_stacks: Dictionary = source.get(source_key, {}).duplicate(true)
 				if not source_stacks.has(item_id):
+					return false
+				var raw_stack: Variant = source_stacks[item_id]
+				if item_id.begins_with("soh_i_") or (raw_stack is Dictionary and _inventory_stack_base_id(item_id, raw_stack).begins_with("soh_i_")):
 					return false
 				var destination_stacks: Dictionary = destination.get(destination_key, {}).duplicate(true)
 				if destination_stacks.has(item_id):

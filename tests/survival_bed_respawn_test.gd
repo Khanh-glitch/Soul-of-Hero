@@ -167,6 +167,23 @@ func _body() -> void:
 	await process_frame
 	await physics_frame
 
+	# Synthetic A3-shaped token (not an A3 ownership-audit integration test).
+	# Until A3 is composed, generic creation is intentionally documented as an
+	# unresolved blocker; this fixture checks the new refusal paths only.
+	var token := "soh_i_000000000001_deadbeef"
+	_expect(bool(_save().call(&"grant_inventory_item", token, "key_item", 1, "fixture.unique.token")), "fixture creates synthetic unique token")
+	_expect(not bool(_save().call(&"drop_inventory_item", token, 1, "fixture.unique.drop")), "generic drop refuses unique token")
+	_expect(not bool(_save().call(&"home_transfer_to_storage", "item_stack", token, "fixture.unique.storage")), "home storage refuses unique token")
+	_expect(_give(WOOD, 4), "chest timber granted for unique-token guard")
+	build.select_piece("chest_wood")
+	var chest: Dictionary = build.try_place(origin + Vector2i(1, 1), "fixture.unique.chest")
+	var chest_id := String(chest.get("entity_id", ""))
+	_expect(bool(chest.get("ok", false)), "chest placed for unique-token guard")
+	_expect(not bool(svc.call(&"transfer_to_container", chest_id, token, 1, "fixture.unique.chest.transfer")), "chest direct transfer refuses unique token")
+	_expect(bool(_give(STONE, 1)), "ordinary material granted for mixed chest sweep")
+	var sweep: Dictionary = svc.call(&"deposit_all", chest_id)
+	_expect(bool(sweep.get("ok", false)) and _count(STONE) == 0 and _count(token) == 1, "mixed sweep stores ordinary item while retaining unique token")
+
 	_expect(bool(svc.call(&"learn_recipe", "bed_test_recipe", "test", "survival.test.recipe")), "learned knowledge committed")
 	_expect(_give(STONE, 3), "carried materials granted before death")
 	var old_checkpoint := Vector2(123, 456)
@@ -178,6 +195,8 @@ func _body() -> void:
 	_expect(bool(hero.get(&"dead")) and not bag_id.is_empty() and _count(STONE) == 0,
 		"actual Hero death atomically creates one bag and removes carried stack")
 	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "death never transfers permanent knowledge")
+	_expect(_count(token) == 1 and not ((doc.get("death_bags", {}) as Dictionary).get(bag_id, {}) as Dictionary).get("stacks", {}).has(token),
+		"death retains unique token instead of orphaning its coupled A3 record")
 	await _capture_frame("bed_death")
 	# Simulate process restart after death committed but before respawn.
 	paused = false
@@ -188,6 +207,7 @@ func _body() -> void:
 	hero.set_physics_process(false)
 	_expect(bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == bag_id,
 		"restart restores death and does not create a duplicate bag")
+	_expect(_count(token) == 1, "protected synthetic token survives death and reload exactly once")
 	_expect(bool(ow.call(&"_respawn_overworld_hero")), "actual Hero respawns via active bed")
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")

@@ -9,6 +9,8 @@ var _label: Label
 
 
 func _ready() -> void:
+	# Proximity prompts must disappear even when the death modal pauses play.
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	add_to_group(&"player_interactable")
 	add_to_group(&"survival_death_bag")
 	collision_layer = 0
