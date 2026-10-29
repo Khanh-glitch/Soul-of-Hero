@@ -97,9 +97,10 @@ static func overlay_variant_index(x: int, y: int, count: int) -> int:
 
 ## How many frames a multi-variant overlay carries (1 when it is single-frame).
 static func detail_variant_count(meta: Dictionary, code: String) -> int:
-	var entry: Dictionary = (meta.get("codes", {}) as Dictionary).get("detail", {}).get(code, {})
-	var names: Array = entry.get("variant_names", [])
-	return names.size()
+	var detail_table: Dictionary = (meta.get("codes", {}) as Dictionary).get("detail", {}) as Dictionary
+	var entry: Dictionary = detail_table.get(code, {}) as Dictionary
+	var variant_frames: Array = entry.get("variant_names", [])
+	return variant_frames.size()
 
 
 static func cell_for(meta: Dictionary, token: String, layer_name: String) -> Vector2i:
@@ -128,17 +129,19 @@ static func cell_for(meta: Dictionary, token: String, layer_name: String) -> Vec
 				m = m % variants
 			frame = "%s#%d" % [base, m]
 		elif entry.has("variant_names"):
-			# Multi-variant overlay: same per-cell lattice hash as ground, so a
-			# scattered overlay (the fen's pools) cannot draw one frame on every
-			# cell it covers. Empty mask means the caller did not pass a position,
-			# in which case the first frame is the safe answer.
-			var names: Array = entry.get("variant_names", [])
-			if names.is_empty():
+			# Multi-variant overlay: the mask slot carries a per-tile variant pick,
+			# so a scattered overlay (the fen's pools) cannot draw one frame on
+			# every cell it covers. An empty mask means the caller passed no
+			# position, in which case the first frame is the safe answer.
+			# (Named `variant_frames`, not `names`: GDScript is function-scoped, so
+			# reusing the ground branch's `names` is a redeclaration error.)
+			var variant_frames: Array = entry.get("variant_names", [])
+			if variant_frames.is_empty():
 				frame = base
 			elif mask.is_empty():
-				frame = String(names[0])
+				frame = String(variant_frames[0])
 			else:
-				frame = String(names[mask.hex_to_int() % names.size()])
+				frame = String(variant_frames[mask.hex_to_int() % variant_frames.size()])
 		else:
 			frame = base
 	var rect: Array = index.get(frame, [])

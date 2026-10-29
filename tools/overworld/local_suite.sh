@@ -28,6 +28,29 @@ run() { # name script expected-pattern
   fi
 }
 echo "== overworld suite (headless; CI uses Xvfb + GL) =="
+# Parse first, and without the engine. A redeclaration error in a GDScript file
+# costs a whole CI round trip to discover (the workflow's parse gate is Godot
+# itself, which is the right final authority but slow and not always available
+# here). gdparse is the same grammar, takes a second per file, and catches exactly
+# the class of mistake that has already broken one run: GDScript is
+# function-scoped, so `var names` in two branches of one function is an error.
+if command -v gdparse >/dev/null 2>&1; then
+  parse_fail=0
+  for f in game/overworld/*.gd tests/overworld_*.gd; do
+    if ! gdparse "$f" >"$OUT/parse.log" 2>&1; then
+      printf '  FAIL  %-16s %s\n' "PARSE" "$f"
+      head -4 "$OUT/parse.log"
+      parse_fail=1
+    fi
+  done
+  if [ $parse_fail -eq 0 ]; then
+    printf '  PASS  %-16s %s\n' "PARSE" "every overworld script parses"
+  else
+    fail=1
+  fi
+else
+  printf '  SKIP  %-16s gdparse not installed (pip install gdtoolkit)\n' "PARSE"
+fi
 if python3 tools/overworld/art_quality.py >"$OUT/art_quality.log" 2>&1; then
   printf '  PASS  %-16s %s\n' "ART" "$(tail -1 "$OUT/art_quality.log")"
 else
