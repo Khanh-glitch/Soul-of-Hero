@@ -158,12 +158,12 @@ func _run() -> void:
 		var atlas := JSON.parse_string(atlas_file.get_as_text()) as Dictionary
 		atlas_file.close()
 		var detail_codes: Dictionary = ((atlas.get("codes", {}) as Dictionary).get("detail", {}) as Dictionary)
-		var layers_file := FileAccess.open("res://data/overworld/hollow_marches_layers.json", FileAccess.READ)
-		if layers_file != null:
-			var layers := JSON.parse_string(layers_file.get_as_text()) as Dictionary
-			layers_file.close()
+		var atlas_layers_file := FileAccess.open("res://data/overworld/hollow_marches_layers.json", FileAccess.READ)
+		if atlas_layers_file != null:
+			var atlas_layers_doc := JSON.parse_string(atlas_layers_file.get_as_text()) as Dictionary
+			atlas_layers_file.close()
 			var used := {}
-			var layer_bag: Dictionary = layers.get("layers", {})
+			var layer_bag: Dictionary = atlas_layers_doc.get("layers", {})
 			var detail_layer: Dictionary = layer_bag.get("detail", {})
 			var detail_rle: Array = detail_layer.get("rle", [])
 			for run: Variant in detail_rle:

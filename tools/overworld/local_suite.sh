@@ -51,6 +51,16 @@ if command -v gdparse >/dev/null 2>&1; then
 else
   printf '  SKIP  %-16s gdparse not installed (pip install gdtoolkit)\n' "PARSE"
 fi
+# Duplicate locals are a *semantic* error that gdparse does not see, and the engine
+# only reports it when it loads the file - which cost four CI rounds. This is the
+# two-second local version of that check.
+if python3 tools/overworld/gd_scope_check.py >"$OUT/scope.log" 2>&1; then
+  printf '  PASS  %-16s %s\n' "SCOPE" "no local declared in an overlapping scope"
+else
+  printf '  FAIL  %-16s %s\n' "SCOPE" "duplicate local declaration"
+  cat "$OUT/scope.log"
+  fail=1
+fi
 if python3 tools/overworld/art_quality.py >"$OUT/art_quality.log" 2>&1; then
   printf '  PASS  %-16s %s\n' "ART" "$(tail -1 "$OUT/art_quality.log")"
 else
