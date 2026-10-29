@@ -311,6 +311,16 @@ func _body() -> void:
 		await physics_frame
 	_set_direction(Vector2.ZERO)
 	await physics_frame
+	# Furniture on both sides competes in the nearest-object dispatcher. Align
+	# with the door's interaction origin using movement, not a direct call.
+	for _frame in range(60):
+		var horizontal := door.global_position.x - hero.global_position.x
+		if absf(horizontal) <= 1.5:
+			break
+		_set_direction(Vector2(horizontal, 0.0))
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	await physics_frame
 	print("HOME_DOOR_APPROACH hero=%s door=%s bed=%s chest=%s" % [str(hero.global_position), str(door.global_position), str(build.structure_node(bed_id).global_position), str(chest.global_position)])
 	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
 	var opened := bool(((_survival().call(&"structures") as Dictionary).get(door_id, {}) as Dictionary).get("door_open", false))
