@@ -81,10 +81,17 @@ func _body() -> void:
 	_key(KEY_Q, false)
 	_key(KEY_B, false)
 	_joy(JOY_BUTTON_A, false)
+	# Wait for injected release events, just as for the presses above. Assert
+	# physical Input has actually seen every release before testing the gate.
+	for _frame in range(12):
+		await process_frame
+		if not Input.is_action_pressed(&"move_right") and not Input.is_action_pressed(&"attack") and not Input.is_action_pressed(&"skill") and not Input.is_action_pressed(&"soul_relay_1") and not Input.is_action_pressed(&"build_toggle") and not Input.is_action_pressed(&"dash"):
+			break
 	await physics_frame
 	await process_frame
+	print("A6_INPUT_TRACE released move=%s attack=%s dash=%s latched=%s held=%s" % [str(Input.is_action_pressed(&"move_right")), str(Input.is_action_pressed(&"attack")), str(Input.is_action_pressed(&"dash")), str(gate.get(&"_event_latches")), str(gate.get(&"_held_under_modal"))])
 	for action: StringName in [&"move_right", &"attack", &"skill", &"soul_relay_1", &"build_toggle", &"dash"]:
-		_expect(bool(hero.call(&"gameplay_input_allowed", action)), "release rearms " + String(action))
+		_expect(not Input.is_action_pressed(action) and bool(hero.call(&"gameplay_input_allowed", action)), "delivered release rearms " + String(action))
 	_key(KEY_D, true)
 	await physics_frame
 	await physics_frame
