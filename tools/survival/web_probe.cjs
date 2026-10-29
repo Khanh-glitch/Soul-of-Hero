@@ -15,7 +15,16 @@ const path = require('node:path');
   fs.mkdirSync(out, {recursive: true});
   try {
     await page.goto(process.env.WEB_SMOKE_URL, {waitUntil:'domcontentloaded', timeout:30000});
-    await page.waitForFunction(() => window.__survivalWebProbe?.ready === true, null, {timeout:90000});
+    try {
+      await page.waitForFunction(() => window.__survivalWebProbe?.ready === true, null, {timeout:90000});
+    } catch (e) {
+      const diagnostics = await page.evaluate(() => ({probe: window.__survivalWebProbe,
+        status: document.querySelector('#status')?.innerText?.slice(0, 1000),
+        canvas: [document.querySelector('canvas')?.width, document.querySelector('canvas')?.height],
+        title: document.title}));
+      console.log('SURVIVAL WEB DIAGNOSTICS:', JSON.stringify({diagnostics, errors}));
+      throw e;
+    }
     const initial = await page.evaluate(() => window.__survivalWebProbe);
     console.log('SURVIVAL WEB READY:', JSON.stringify(initial));
     if (initial.node_count < 60) throw new Error('Production survival resources missing');
@@ -41,6 +50,8 @@ const path = require('node:path');
     if (fatal.length) throw new Error('Browser errors: ' + JSON.stringify(fatal));
     console.log('SURVIVAL WEB BROWSER FIXTURE PASSED - real overworld/resources, economy GUI, held input and rearm');
   } finally {
+    console.log('SURVIVAL WEB CONSOLE:', JSON.stringify(errors.slice(-20)));
+    try { await page.screenshot({path: path.join(out, 'last-state.png'), timeout:12000}); } catch (_) {}
     fs.writeFileSync(path.join(out, 'browser-errors.json'), JSON.stringify(errors, null, 2));
     await browser.close();
   }
