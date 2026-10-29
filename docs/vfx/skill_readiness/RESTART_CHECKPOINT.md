@@ -294,7 +294,7 @@ Verified against the original TypeScript (seed 7, first_divergent_tick -1), reco
 | 018 Bitter Rain | `venom_r18.gd` | registered (`3607387`) | candidate run 40871453819, job 123439265843: cues 12/12, hits 11/11; reproduced in 40873041022 (`56ee285`). |
 | 019 False Remedy | `venom_r19.gd` | registered (`d50f4a0`) | candidate run 40872333988, job 123442298081 (`b58aa3c`): cues 138/138, hits 10/10. |
 | 020 Plague Cartography | `venom_r20.gd` | candidate only | `56ee285` run 40873041022, job 123444719431: hits 79/79 and cues 135/135 match; first raster divergence at tick 180. |
-| 021 The Last Distillation | `venom_r21.gd` | candidate only | `56ee285`: hits 132/132 and cues 192/192 match; first raster divergence at tick 5 (particle fn arity, fixed in `e10ac66`, not yet re-run). |
+| 021 The Last Distillation | `venom_r21.gd` | registered (`4eb26b6`) | candidate run 40875117169, job 123451839886 (`e10ac66`): parity true, `first_divergent_tick -1`, hits 132/132, cues 192/192. Runtime regression run 40876542573 (`4eb26b6`) pending at time of writing. |
 
 Root causes found this session (all visible in annotations):
 
@@ -314,3 +314,10 @@ Open items:
 - Registry runtime lane for 018 and 019 (`40873595693`, `40873147804`): pending at time of writing.
 - Still open from earlier: 013 tick-320 raster, 015 event-32 knockback, 016 tick-195 raster, 007 tick-90 and 008 tick-125 candidates.
 - Note: the `PASS` lines beside `SKIP skill N (generator not ported)` in the runtime lane are placeholders, not verdicts.
+
+## ARCANA III status (not started; verification method needs a decision)
+
+- Source: `ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip` decrypted to `/tmp/gold93-original-sources/` (SHA-256 `8402633c...` verified). Extracted to `/tmp/gold93-arcana/` (outside the repo). Skill files: `src/skills/{eclipse,dragonbone,fan,spindle,lantern,v2-independent,v2-fusion,remixes,index}.ts`; engine `src/engine/core.ts` (41 KB) plus `draw.ts`, `sprites.ts`, `post.ts`, `fx.ts`, `pixtex.ts`.
+- Renderer: PixiJS 8 WebGL multipass at 480x270. There is no CPU-deterministic frame, so the Venomwright raster-hash differential cannot be used as-is. Headless Godot in CI has no WebGL reference. Options are recorded in the session summary.
+- Skill 1 "Black Sun Coronation" is `ECLIPSE[0]` in `eclipse.ts` (id 1, dur 10, 4 phases). Its `setup(c: Ctx)` depends on the engine's particle, layer, and post stack.
+- No ARCANA native module, no oracle, and no parity record exists yet.
