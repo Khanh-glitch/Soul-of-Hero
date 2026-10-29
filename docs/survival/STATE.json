@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-29",
-  "phase": "SYSTEMIC_FUSION_SPEC_APPROVED_MULTI_AGENT_READY_IMPLEMENTATION_NOT_STARTED",
+  "phase": "SURV_010_MERGED_SURV_020_IN_PROGRESS",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
     "survival_system_integrated": false,
@@ -127,8 +127,8 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Implement and engine-test bounded grid topology with incomplete perimeters, nonrectangular and adjacent rooms, shared walls, demolition and reconstruction; do not mark SURV-020 verified.",
-    "parallel_start": "A1 replaces the resource plan with the continent ecology (no code change); A6 replaces the placeholder build art and the build strip; A7 re-tunes the four piece costs.",
+    "first_test": "Run native topology tests against production overworld; inspect split/merge, diagonal breach, distant structures, occupancy and reload before proceeding to doors and roofs.",
+    "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
   "blockers": [
@@ -166,7 +166,7 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected; 2026-10-29 SURV-020 work not synced to tab 04",
+    "docs_sync": "DOCS_SYNC_PENDING for this continuation; earlier coordinator sync is historical only",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -191,7 +191,8 @@
       "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
       "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
     },
-    "surv020_status": "IN_PROGRESS: storage increment passed native test; shelter not verified"
+    "surv020_status": "IN_PROGRESS: storage increment passed native test; shelter not verified",
+    "surv_020_topology": "WIP implemented, native runtime NOT YET RUN; no SURV-020 completion claimed"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,

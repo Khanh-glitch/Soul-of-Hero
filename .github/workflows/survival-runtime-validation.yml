@@ -15,7 +15,7 @@ name: Survival A0 (Foundation) Runtime Validation
 
 on:
   push:
-    branches: [arena/54306b59-soul-of-hero]
+    branches: [arena/54306b59-soul-of-hero, arena/dea2428e-soul-of-hero]
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -282,6 +282,24 @@ jobs:
             "Foundation" "SURVIVAL FOUNDATION PASSED"
           exit $rc
 
+      - name: Bounded topology and layered occupancy (native)
+        run: |
+          mkdir -p artifacts/ud_topology
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_topology \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_room_topology_test.gd >"$ARTIFACT_DIR/survival-topology.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-topology.log"
+          echo "::notice::topology exit=$rc $(tail -4 "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
       - name: Every check actually ran (anti-vacuity)
         if: always()
         run: |
@@ -356,6 +374,7 @@ jobs:
           name: survival-runtime-evidence
           path: |
             artifacts/survival-foundation.log
+            artifacts/survival-topology.log
             artifacts/godot-import.log
           if-no-files-found: warn
           retention-days: 14

@@ -28,6 +28,7 @@ signal placement_rejected(reason: String)
 signal placement_committed(entity_id: String, piece_id: String, cell: Vector2i)
 signal build_mode_changed(active: bool)
 
+const ROOM_TOPOLOGY = preload("res://game/survival/survival_room_topology.gd")
 const TILE := 16
 const BUILD_ART_PATH := "res://assets/survival/build/placeholder_build.png"
 const BUILD_ART_META := "res://data/survival/placeholder_build.json"
@@ -47,7 +48,8 @@ var _preview_frame: Sprite2D
 var _texture: Texture2D
 var _frames: Dictionary = {}
 var _placed: Dictionary = {}          # entity_id -> SurvivalStructure
-var _occupied: Dictionary = {}        # "x,y" -> entity_id
+var _occupied: Dictionary = {}        # "x,y" -> {floor/object: entity_id}
+var room_topology = ROOM_TOPOLOGY.new()
 var _last_rejection := ""
 var _ready_built := false
 var _hud_layer: CanvasLayer
@@ -169,6 +171,7 @@ func rebuild_from_save() -> void:
 			continue
 		_materialize(entity_id, String(entry.get("piece", "")),
 			Vector2i(int(raw_cell[0]), int(raw_cell[1])))
+	room_topology.rebuild(structures)
 	_ready_built = true
 
 
@@ -191,11 +194,14 @@ func reconcile_from_save() -> void:
 	if svc == null:
 		return
 	var structures: Dictionary = (svc.call(&"document") as Dictionary).get("structures", {})
+	var topology_changed := false
 	for entity_id: Variant in _placed.keys():
 		if structures.has(entity_id):
 			continue
 		var doomed: SurvivalStructure = _placed[entity_id]
-		_occupied.erase(_cell_key(doomed.cell))
+		_erase_occupancy(doomed)
+		if doomed.piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
 		_placed.erase(entity_id)
 		if is_instance_valid(doomed):
 			doomed.queue_free()
@@ -218,10 +224,16 @@ func reconcile_from_save() -> void:
 				if existing.has_method(&"refresh_prompt"):
 					existing.call(&"refresh_prompt")
 				continue
-			_occupied.erase(_cell_key(existing.cell))
+			_erase_occupancy(existing)
+			if existing.piece_id in ["wall_wood", "door_wood"]:
+				topology_changed = true
 			_placed.erase(entity_id)
 			existing.queue_free()
 		_materialize(entity_id, piece_id, cell)
+		if piece_id in ["wall_wood", "door_wood"]:
+			topology_changed = true
+	if topology_changed:
+		room_topology.rebuild(structures)
 	_ready_built = true
 
 
@@ -270,8 +282,26 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 	# the behaviour belongs to the piece rather than to this call site.
 	_structures_root.add_child(node)
 	_placed[entity_id] = node
-	_occupied[_cell_key(cell)] = entity_id
+	var key := _cell_key(cell)
+	var slots: Dictionary = _occupied.get(key, {})
+	var svc := service()
+	var layer := String(svc.call(&"occupancy_layer", piece_id)) if svc != null else "object"
+	slots[layer] = entity_id
+	_occupied[key] = slots
 	return node
+
+
+func _erase_occupancy(node: SurvivalStructure) -> void:
+	var key := _cell_key(node.cell)
+	var slots: Dictionary = _occupied.get(key, {})
+	var svc := service()
+	var layer := String(svc.call(&"occupancy_layer", node.piece_id)) if svc != null else "object"
+	if String(slots.get(layer, "")) == node.entity_id:
+		slots.erase(layer)
+	if slots.is_empty():
+		_occupied.erase(key)
+	else:
+		_occupied[key] = slots
 
 
 func _cell_key(cell: Vector2i) -> String:
@@ -287,7 +317,13 @@ func placed_count() -> int:
 
 
 func entity_at(cell: Vector2i) -> String:
-	return String(_occupied.get(_cell_key(cell), ""))
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get("object", slots.get("floor", "")))
+
+
+func entity_at_layer(cell: Vector2i, layer: String) -> String:
+	var slots: Dictionary = _occupied.get(_cell_key(cell), {})
+	return String(slots.get(layer, ""))
 
 
 # ---------------------------------------------------------------------------
@@ -335,7 +371,8 @@ func validate_cell(cell: Vector2i) -> String:
 		var reach := reach_default
 		if absi(cell.x - origin.x) > reach or absi(cell.y - origin.y) > reach:
 			return "out_of_range"
-	if not entity_at(cell).is_empty():
+	var layer := String(svc.call(&"occupancy_layer", selected_piece)) if svc != null else "object"
+	if not entity_at_layer(cell, layer).is_empty():
 		return "cell_occupied"
 	return ""
 

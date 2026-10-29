@@ -298,6 +298,12 @@ func is_node_harvestable(node_id: String, kind: String, now_unix: int = -1) -> b
 	return respawn > 0 and depleted_at > 0 and stamp >= depleted_at + respawn
 
 
+# A surface can share a cell with one physical object; other objects may not
+# overlap each other. This is derived from catalog data, so old saves need no rewrite.
+func occupancy_layer(piece_id: String) -> String:
+	return "floor" if String(piece_definition(piece_id).get("kind", "")) == "floor" else "object"
+
+
 # ---------------------------------------------------------------------------
 # construction — CT-07
 # ---------------------------------------------------------------------------
@@ -344,7 +350,8 @@ func place_structure(
 				var existing: Dictionary = placed[existing_id]
 				var existing_cell: Array = existing.get("cell", [])
 				if existing_cell.size() >= 2 \
-						and int(existing_cell[0]) == cell.x and int(existing_cell[1]) == cell.y:
+						and int(existing_cell[0]) == cell.x and int(existing_cell[1]) == cell.y \
+						and occupancy_layer(String(existing.get("piece", ""))) == occupancy_layer(piece_id):
 					result["ok"] = false
 					result["reason"] = "cell_occupied"
 					return false
