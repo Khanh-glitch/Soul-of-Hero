@@ -1,0 +1,56 @@
+{
+  "schema": "soh.economy.migration.v1",
+  "status": "PROPOSAL_REQUIRES_A0_REVIEW",
+  "principles": [
+    "SaveService remains the sole inventory and transaction authority.",
+    "Existing SURV-010 item ids are preserved exactly; no silent rename.",
+    "Legacy stack records keep SaveService first-stack/overflow shapes.",
+    "Unique equipment/Core instances are additive key_item tokens plus survival_economy.instances attributes.",
+    "Do not auto-convert legacy materials into Cores, knowledge, or technologies."
+  ],
+  "preserve_ids": [
+    "blood_crucible_blueprint", "crypt_bone_shard", "reaper_essence", "venom_spine",
+    "soul_ember", "fractured_axe_insignia", "predator_jaw", "oak_wood", "stone_chunk",
+    "iron_scrap", "reed_fibre"
+  ],
+  "stack_shapes": {
+    "first_stack": {"key": "<item_id>", "item_id_field": "omitted", "example": {"quantity": 50, "kind": "material"}},
+    "overflow_stack": {"key": "<item_id>_stack_N", "item_id_field": "explicit", "example": {"item_id": "oak_wood", "quantity": 10, "kind": "material"}}
+  },
+  "additive_namespace": {
+    "root": "survival_economy",
+    "schema": 1,
+    "created_lazily_on_first_economy_transaction": true,
+    "old_saves_without_namespace": "valid; adapter reads empty instances/jobs/technologies/commands and counter 0",
+    "survival_knowledge": "survival.knowledge.recipes remains A0-owned; A3 writes only inside the same SaveService candidate"
+  },
+  "unique_instance_mapping": {
+    "token_id": "soh_i_%012d_<md5(kind)[0:8]>",
+    "inventory_record": {"quantity": 1, "kind": "key_item"},
+    "attributes": "survival_economy.instances[token_id]",
+    "ownership": "bag XOR job/research/reconstruction escrow; never both",
+    "legacy_equipment": "No legacy unique-economy equipment exists in SURV-010; do not fabricate instances during migration."
+  },
+  "blueprint_mapping": {
+    "blood_crucible_blueprint": {
+      "action": "preserve_as_physical_blueprint",
+      "note": "Existing story/reward blueprint. A3 does not invent a Gold skill recipe for it; A0/A4 must decide any future unlock."
+    },
+    "plan_venom_core": {"action": "new_physical_blueprint", "unlocks_recipe": "craft_core_venom"},
+    "plan_frost_core": {"action": "new_physical_blueprint", "unlocks_recipe": "craft_core_frost"},
+    "plan_ember_core": {"action": "new_physical_blueprint", "unlocks_recipe": "craft_core_ember"}
+  },
+  "forbidden_automatic_conversions": [
+    "material stack -> skill_core instance",
+    "physical blueprint -> known recipe without research transaction",
+    "known recipe -> learned technology",
+    "depleted Core -> repaired charges",
+    "legacy reward item -> ancient_catalyst"
+  ],
+  "a0_required_guards": [
+    "Route unique token drop/transfer/merge through economy ownership checks or refuse generic operations on soh_i_* tokens.",
+    "Refuse station removal while unresolved jobs reference it.",
+    "Preserve unknown survival_economy namespace during SaveService sanitization/migration.",
+    "Provide verified station resolver and power/condition contract."
+  ]
+}

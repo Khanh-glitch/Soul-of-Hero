@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "recipes"
+  ],
+  "properties": {
+    "schema": {
+      "const": "soh.economy.recipes.v1"
+    },
+    "recipes": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{0,63}$"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "category",
+          "outputs",
+          "inputs",
+          "station",
+          "min_tier",
+          "duration_ticks",
+          "knowledge",
+          "fuel",
+          "required_technologies",
+          "mode_allowlist",
+          "balance_status",
+          "provenance"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "category": {
+            "enum": [
+              "manufacture",
+              "refine",
+              "core",
+              "cooking",
+              "medicine",
+              "cultivation",
+              "reconstruction"
+            ]
+          },
+          "outputs": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          },
+          "inputs": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          },
+          "station": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "min_tier": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3
+          },
+          "duration_ticks": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 86400
+          },
+          "knowledge": {
+            "enum": [
+              "starter",
+              "recipe"
+            ]
+          },
+          "fuel": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            },
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000
+            }
+          },
+          "required_technologies": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z][a-z0-9_]{0,63}$"
+            }
+          },
+          "mode_allowlist": {
+            "type": "array",
+            "items": {
+              "enum": [
+                "persistent_home"
+              ]
+            }
+          },
+          "balance_status": {
+            "const": "SOH_PROPOSAL"
+          },
+          "provenance": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^(SYS|DEP|JOURNEY|POI)-[0-9]{2}$"
+            }
+          },
+          "consumes_specimen": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          }
+        }
+      }
+    }
+  }
+}

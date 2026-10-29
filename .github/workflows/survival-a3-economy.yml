@@ -1,0 +1,91 @@
+name: Survival A3 Economy Validation
+
+on:
+  push:
+    branches: [arena/7a12b27e-soul-of-hero]
+    paths:
+      - '.github/workflows/survival-a3-economy.yml'
+      - 'data/survival/items/**'
+      - 'data/survival/recipes/**'
+      - 'game/survival/economy/**'
+      - 'tools/survival/economy/**'
+      - 'tests/survival/catalog/**'
+      - 'docs/survival/economy/**'
+  pull_request:
+    branches: [feature/survival-rpg-foundation-20261029]
+    paths:
+      - '.github/workflows/survival-a3-economy.yml'
+      - 'data/survival/items/**'
+      - 'data/survival/recipes/**'
+      - 'game/survival/economy/**'
+      - 'tools/survival/economy/**'
+      - 'tests/survival/catalog/**'
+      - 'docs/survival/economy/**'
+  workflow_dispatch:
+
+env:
+  ARTIFACT_DIR: artifacts/a3-economy
+
+jobs:
+  contracts-and-balance:
+    name: A3 CATALOG / BALANCE CONTRACTS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r tools/survival/economy/requirements.txt
+      - run: mkdir -p "$ARTIFACT_DIR"
+      - name: Schema / reference / accessibility / conservation audit
+        run: |
+          python tools/survival/economy/validate_economy.py \
+            --json "$ARTIFACT_DIR/validation_report.json" \
+            --index "$ARTIFACT_DIR/reverse_index.json"
+      - name: Adversarial catalog and balance-model tests
+        run: python -m unittest discover -s tests/survival/catalog -p 'test_*.py' -v
+      - name: Deterministic economic simulation
+        run: python tools/survival/economy/simulate_economy.py --json "$ARTIFACT_DIR/balance_report.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a3-economy-contracts
+          path: artifacts/a3-economy/
+
+  native-adapter:
+    name: A3 NATIVE SAVE ADAPTER
+    needs: contracts-and-balance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - run: mkdir -p "$ARTIFACT_DIR"
+      - name: Import project (real engine parser)
+        run: |
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path . \
+            --user-data-dir artifacts/a3-import --import >"$ARTIFACT_DIR/import.log" 2>&1
+          rc=$?
+          tail -60 "$ARTIFACT_DIR/import.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/import.log" "A3 import" || exit $rc
+          exit $rc
+      - name: Economy adapter against real SaveService
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_adapter_test.gd \
+            >"$ARTIFACT_DIR/adapter.log" 2>&1
+          rc=$?
+          set -e
+          cat "$ARTIFACT_DIR/adapter.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/adapter.log" "A3 adapter" "A3 ECONOMY ADAPTER PASSED"
+          exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a3-economy-native
+          path: artifacts/a3-economy/

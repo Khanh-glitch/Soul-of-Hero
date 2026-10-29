@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "instances",
+    "jobs",
+    "technologies",
+    "commands",
+    "counter"
+  ],
+  "properties": {
+    "schema": {
+      "const": 1
+    },
+    "instances": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "instance_id",
+          "item_id",
+          "location",
+          "condition",
+          "max_condition",
+          "uses",
+          "max_uses",
+          "revision",
+          "origin"
+        ],
+        "properties": {
+          "instance_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "item_id": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{0,63}$"
+          },
+          "location": {
+            "type": "string"
+          },
+          "condition": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "max_condition": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "uses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "max_uses": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "revision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "origin": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "jobs": {
+      "type": "object"
+    },
+    "technologies": {
+      "type": "object"
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "counter": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000
+    }
+  }
+}
