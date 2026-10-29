@@ -319,6 +319,42 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
+      - name: Bed frame bed_active review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 0
+
+      - name: Bed frame bed_active review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 1
+
+      - name: Bed frame bed_active review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_active 2
+
+      - name: Bed frame bed_death review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 0
+
+      - name: Bed frame bed_death review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 1
+
+      - name: Bed frame bed_death review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_death 2
+
+      - name: Bed frame bed_respawn review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 0
+
+      - name: Bed frame bed_respawn review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 1
+
+      - name: Bed frame bed_respawn review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py bed_respawn 2
+
       - name: Roof frame outside review bytes 1
         if: always()
         run: python3 tools/ci/emit_roof_capture.py outside 0

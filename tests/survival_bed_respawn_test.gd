@@ -15,6 +15,18 @@ func _finish() -> void:
 		quit(1)
 
 
+func _capture_frame(name: String) -> void:
+	await process_frame
+	await RenderingServer.frame_post_draw
+	var image := root.get_texture().get_image()
+	_expect(image != null and not image.is_empty(), "native frame exists: " + name)
+	if image == null or image.is_empty():
+		return
+	var path := "res://artifacts/roof_%s.png" % name
+	_expect(image.save_png(path) == OK, "native frame saved: " + name)
+	image.get_region(Rect2i((image.get_width() - 280) / 2, (image.get_height() - 140) / 2, 280, 140)).save_png("res://artifacts/roof_%s_crop.png" % name)
+
+
 func _body() -> void:
 	var ow := _host.get_child(0)
 	var build: SurvivalBuildSystem = ow.get(&"survival_build")
@@ -81,8 +93,31 @@ func _body() -> void:
 	_host.add_child(far)
 	_expect(not bool(build.activate_bed(bed_id, far).get("ok", false)), "foreign actor cannot activate")
 	far.queue_free()
-	var activation: Dictionary = build.activate_bed(bed_id, hero)
-	_expect(bool(activation.get("ok", false)), "owned reachable enclosed bed has safe exit with closed door")
+	# Exercise Godot's actual mouse event path through Knight._input,
+	# _unhandled_input and its normal physics interaction resolver.
+	hero.global_position = bed.global_position + Vector2(-7, 8)
+	var camera: Camera2D = ow.get(&"camera")
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.position = root.get_canvas_transform() * bed.global_position
+	root.warp_mouse(click.position)
+	await process_frame
+	hero.set_physics_process(true)
+	click.pressed = true
+	Input.parse_input_event(click)
+	await physics_frame
+	await physics_frame
+	click.pressed = false
+	Input.parse_input_event(click)
+	await physics_frame
+	hero.set_physics_process(false)
+	_expect(String((svc.call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id,
+		"normal mouse input activates reachable indoor bed through the Hero")
+	await create_timer(0.4).timeout
+	await _capture_frame("bed_active")
 	var repeated: Dictionary = build.activate_bed(bed_id, hero)
 	_expect(bool(repeated.get("ok", false)) and bool(repeated.get("already_active", false)), "double activation idempotent")
 	_expect(String((svc.call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id, "anchor commits bed identity")
@@ -143,6 +178,7 @@ func _body() -> void:
 	_expect(bool(hero.get(&"dead")) and not bag_id.is_empty() and _count(STONE) == 0,
 		"actual Hero death atomically creates one bag and removes carried stack")
 	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "death never transfers permanent knowledge")
+	await _capture_frame("bed_death")
 	# Simulate process restart after death committed but before respawn.
 	paused = false
 	_expect(bool(_save().call(&"reload_save")), "reload committed pending death from disk")
@@ -156,6 +192,8 @@ func _body() -> void:
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")
 	_expect(String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "respawn commit clears pending death")
+	await create_timer(0.4).timeout
+	await _capture_frame("bed_respawn")
 	var bag: Node = (ow.get(&"_death_bags") as Dictionary).get(bag_id, null)
 	_expect(bag != null, "death bag projected in live overworld")
 	if bag != null:
@@ -191,4 +229,29 @@ func _body() -> void:
 	_expect(bool(fallback.get("ok", false)) and String(fallback.get("source", "")) == "camp", "invalid bed chooses collision-safe camp fallback")
 	_expect(bool(svc.call(&"remove_structure", bed_id)), "demolish activated bed")
 	_expect(String((svc.call(&"document") as Dictionary).get("spawn_anchor", "")) == "", "bed demolition clears anchor atomically")
+	_expect(_give(STONE, 1), "material granted for fallback death")
+	hero.call(&"kill")
+	_expect(bool(ow.call(&"_respawn_overworld_hero")) and not bool(hero.get(&"dead")), "actual death after bed removal revives at safe fallback")
+	_expect(not bool(ow.call(&"_respawn_overworld_hero")), "duplicate respawn cannot create a second life")
+	var bags_before_dungeon: Dictionary = (svc.call(&"document") as Dictionary).get("death_bags", {}).duplicate(true)
+	ow.queue_free()
+	await process_frame
+	var scene := load("res://game/main.tscn") as PackedScene
+	var dungeon := scene.instantiate()
+	_host.add_child(dungeon)
+	await process_frame
+	await physics_frame
+	var dungeon_hero := get_first_node_in_group(&"player") as CharacterBody2D
+	_expect(dungeon_hero != null, "production dungeon Hero loads after overworld")
+	if dungeon_hero != null:
+		dungeon_hero.set_physics_process(false)
+		var dungeon_checkpoint := Vector2(124, 132)
+		root.get_node("GameSession").set(&"checkpoint", dungeon_checkpoint)
+		dungeon_hero.call(&"kill")
+		_expect(bool(dungeon_hero.get(&"dead")), "production dungeon Hero uses original death lifecycle")
+		_expect((svc.call(&"document") as Dictionary).get("death_bags", {}) == bags_before_dungeon,
+			"dungeon death does not create an overworld-coordinate bag")
+		dungeon_hero.call(&"respawn")
+		_expect(dungeon_hero.global_position == dungeon_checkpoint, "dungeon respawn retains its own checkpoint")
+	paused = false
 	_body_complete = true
