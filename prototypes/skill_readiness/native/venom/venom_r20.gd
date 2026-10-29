@@ -51,6 +51,7 @@ class Pulse extends FX.Fx:
 		wh = wh_
 		## TS `update_()`: this.d = this.d0.
 		d = d0
+		push_error("GOLD93_D20 pulse dir=%.0f d0=%.2f len=%.2f" % [dir, d0, float(b["len"])])  # TEMP-DIAG
 
 	func upd(w, _dt: float) -> void:
 		d += dir * 230.0 * (1.0 / 60.0)
@@ -275,6 +276,7 @@ static func _cartography_body(c, g) -> void:
 					bd = dist
 					best = {"b": b4, "d": s}
 				s += 6.0
+		push_error("GOLD93_D20 act %d q=%.2f,%.2f br=%d best=%s bd=%.2f" % [i, float(q3["x"]), float(q3["y"]), net.br.size(), str(best != null), bd])  # TEMP-DIAG
 		if best != null:
 			w.add(Pulse.new(best["b"], net, best["d"], 1.0, c, wv))
 			w.add(Pulse.new(best["b"], net, best["d"], -1.0, c, wv))

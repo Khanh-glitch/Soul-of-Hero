@@ -310,7 +310,7 @@ static func _stream_from(c, w, cx: float, gy: float, sx: float, sy: float, n: in
 		var dl: float = dly + float(i) * 0.03
 		var size_v: int = int(c.rng.range(1.0, 3.5))
 		var col1: int = _p("c3") if i % 3 == 0 else _p("c1")
-		var fn := func(q):
+		var fn := func(q, _w, _dt):
 			var u: float = M.clampf((q.age - dl) / (1.4 / sp), 0.0, 1.0)
 			var rr: float = r0 * V8M.v8_pow(1.0 - u, 1.5)
 			var an: float = a0 + u * u * 9.0 + u * 2.0
@@ -481,7 +481,7 @@ static func _distillation_body(c, g) -> void:
 		if int(floor(k * 60.0)) % 3 == 0:
 			var sx: float = cx + c.rng.range(-30.0, 30.0)
 			var sy_: float = chamber.cyc + c.rng.range(-30.0, 30.0)
-			var fn_spark := func(q):
+			var fn_spark := func(q, _w, _dt):
 				var u: float = q.age / q.max
 				q.x = lerpf(q.x, cx, u * 0.4)
 			w.parts.add({"k": "spark", "x": sx, "y": sy_, "z": 0.0, "vx": 0.0, "vy": 0.0, "vz": 0.0, "max": 0.2, "c1": _p("w"), "fn": fn_spark})
@@ -516,7 +516,7 @@ static func _distillation_body(c, g) -> void:
 	g.y(2.2)
 	# the alchemist emerges from the receding cloud, surrounded by luminous droplets
 	for i in range(16):
-		var fn_ring := func(q):
+		var fn_ring := func(q, _w, _dt):
 			var a4: float = q.age * 2.0 + float(i) * 0.4
 			var r4: float = 9.0 + V8M.v8_sin(q.age * 3.0 + float(i)) * 3.0
 			q.x = float(p.x) + V8M.v8_cos(a4) * r4
