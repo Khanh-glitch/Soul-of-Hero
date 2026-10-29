@@ -58,3 +58,35 @@ the first error-like lines and the log tail when a gate fails.
   rendered onto black and added with Godot additive blending. It is not the
   GOLD post-processing pipeline and is labelled as such in the frames.
 - Frames are native renders, not GOLD references.
+
+## Evidence (remote CI, commit `4ee6656`, run `40902430652`)
+
+Read from check-run annotations, not from the overall run conclusion.
+
+| Check | Verdict |
+| --- | --- |
+| Headless 006 | `GOLD93_VENOM_PILOT skill 006 PASS gold_rows 93/93 first_mismatch -1 end_fx 0 end_parts 0 zero_tick 724 peak_fx 80 peak_parts 187 blank_frames 0` |
+| Headless 010 | `GOLD93_VENOM_PILOT skill 010 PASS gold_rows 184/184 first_mismatch -1 end_fx 0 end_parts 0 zero_tick 1427 peak_fx 115 peak_parts 303 blank_frames 0` |
+| Demo scene smoke (006 job) | exit 0, no script or parse errors, 240 frames |
+| Real Chapter 1 Level 2 | `GOLD93_VENOM_REAL_MAP: PASS \| skills 006,010 \| shots 14/14 \| failures 0` |
+
+`zero_tick` is the first tick after the recorded oracle end at which live fx and
+particles are both zero. The headless run continues 1800 ticks past the oracle
+end, and the per-60-tick decay is printed as `decay tick N fx F parts P`.
+For 006 the effects drain from 56 fx at tick 445 to 0 at tick 724. For 010
+they drain from 65 fx at tick 900 to 0 at tick 1427.
+
+Earlier runs `40893265619` and `40894809030` were superseded. The first one
+exposed a cleanup failure for 010 under the old 360-tick tail. The
+decay measurement above is the basis for the 1800-tick aftermath.
+
+The frames (scene, glow, composite, real-map shots) are uploaded as workflow
+artifacts `venom-pilot-frames-6`, `venom-pilot-frames-10` and
+`venom-pilot-real-map-frames`. They are native renders for review. They are not
+GOLD references and do not change any acceptance state.
+
+## Known harmless engine messages
+
+Headless exit prints `ObjectDB instances were leaked` and
+`resources still in use at exit`. They appear after `GOLD93_VENOM_PILOT: PASS`
+and do not affect the verdicts.
