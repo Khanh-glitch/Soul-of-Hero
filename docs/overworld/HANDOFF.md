@@ -478,3 +478,113 @@ real gatehouse.
    large clearing is bare. Needs new furniture art.
 4. **The citadel wall behind L10 is one flat masonry field** with no buttress or
    gatehouse reading.
+
+## Sixth pass — the four gaps, and what is genuinely left
+
+The fifth pass listed four honest gaps. Three of them were art gaps with one cause
+between them, and they are closed. The fourth is a limitation of the sandbox and
+cannot be closed from here.
+
+### 1. No human has looked at the CI artifact — still true
+
+Unchanged and unfixable from inside the sandbox: job logs and artifacts are served
+from a host that returns `EOF`. Every art judgement below rests on offline renders of
+the shipped atlas at the camera's real 2x framing, which share the atlas and the
+per-cell variant hash with the runtime, plus the two CI jobs that do run the real
+engine. It is not the same as a person looking at the game, and nothing in this
+document should be read as claiming otherwise.
+
+### 2. The plateau overlay — answered at the wrong scale, then at the right one
+
+`w` (stone mottle) is still subtle, and it is still the wrong instrument: the defect
+was that a 22 000-cell mass sat at one tone, and no per-tile overlay fixes that.
+
+What fixed it was structure at the scale of the mass:
+
+- a **six-step depth ramp** on the cliff, placed by a BFS distance field from open
+  ground, with roughened band boundaries;
+- **courses and piers** at the foot of every south-facing face — a projecting lip on
+  1251 faces, a 28x54 pier every eight cells along runs of six or more;
+- **worn paving** on laid stone, pale toward the middle of a field and absent at its
+  rim, which is the same idea with the sign reversed.
+
+The lesson worth keeping: the first attempt at the ramp used two levels, which put a
+24 % alpha step on a 16 px edge and printed as a square block standing in the rock.
+Six steps of about 7 % read as a gradient.
+
+### 3. Camps sparse in the middle — closed with new art
+
+Five frames at the size their role implies, not three-tile objects in a ring:
+
+| frame | size | role |
+| --- | --- | --- |
+| `camp_pavilion` | 74x62 | the camp's command structure |
+| `camp_cookfire` | 52x40 | a cauldron in a stone hearth |
+| `camp_wagon` | 66x46 | a two-wheeled supply wagon |
+| `camp_table` | 56x30 | a trestle table with a map and benches |
+| `camp_rack` | 44x44 | a weapon rack with a hung shield |
+
+All four clearings are furnished by what the camp *is* — the crossing gets the hearth
+and the wagon and one bedroll, the depot gets the wagon and rack beside its stores,
+the watch post gets the rack and the watch bill — and all five frames are **solid**,
+so a pavilion is not something the Knight walks through.
+
+### 4. The citadel wall behind L10 — closed, and it was two different walls
+
+The recorded gap conflated two things:
+
+* the **cliff mass** behind the keep, which the depth ramp and the courses answer;
+* the **court** in front of it — 900-odd cells of one flagstone — which is not a wall
+  at all. It is now laid as a court: a darker dressed border course along the flanks,
+  a lighter processional walk running south from the keep with a landing at the steps,
+  and the only colonnade in the world on either side of it. Measured mean luminance:
+  field 88.5, border 73.3, walk 104.2.
+
+The station also frames the court now. The keep is ten tiles tall; the old offset,
+derived from sprite height so the whole building fitted under the top edge, put the
+entire court below the bottom edge. The station photographed a wall and none of the
+thing under review.
+
+### What the passes cost, and what they broke
+
+Worth recording, because it is the pattern:
+
+- Relaxing the cliff-decal enclosure test to reach **narrow** walls put 44 px patches
+  over walkable ground south of them. A player standing at a wall's foot was inside a
+  patch's rect, and the occlusion system faded masonry from 26 tiles away. Fixed by
+  putting the surface decals in `FLAT_PROPS`: a wall is not a thing standing in front
+  of you, and neither is the pattern on it.
+- The same relaxation smeared patches across the lattice of one-cell walls north of
+  the crossroads. Walls under seven enclosed neighbours now take fractures, not
+  patches.
+- The court flood was unbounded and laid dressed court stone ninety tiles away around
+  the beacon. Found by dumping ground codes and asking why a court course was there.
+- The worn-paving wash accepted gravel and dirt, where a flat pale wash reads as a
+  smear rather than as wear. Flagstone only now.
+
+Every one of those was found by rendering a station and looking at it. None was found
+by a validator, and two of them were *introduced* by a change that passed every
+validator.
+
+### Original mission, item by item — current state
+
+| # | Requirement | State |
+| --- | --- | --- |
+| 1 | Audit/materially improve all ten landmark exteriors, four camps, problematic travel regions | 10/10 exterior passes and forecourts; 10/10 have a distinct silhouette, plaza and approach furniture; the gate now has a gatehouse, L10 a court; all four camps furnished with purpose-made art; travel regions treated (roads, canopy, rock quilt, cliff, plateau, paving) |
+| 2 | Evaluate Dark World / Classical Ruin / 0x72 atlas, record accepts and rejects with licence | Complete (`ASSET_EVALUATION.md`); DW and CR remain **not evaluable** — not in the repo, not reachable |
+| 3 | Hybrid pipeline beyond atlas replacement | Complete — deterministic, idempotent, non-destructive, gated |
+| 4 | Selective occlusion, prove Chapter 1 reuse | Complete and green natively |
+| 5 | World-wide before/after native coverage, repeated correction passes, perf, regression | 15 native stations, galleries regenerate from the old revision, three correction passes this session, perf probe and regression guard green |
+
+### Still outstanding
+
+1. **No human has seen the CI artifact** (item 1 above). This is the largest remaining
+   uncertainty in the whole mission.
+2. **Large paved fields have tone but no layout.** The L10 court has hierarchy because
+   it was designed; every other plaza is a field with weathering on it. Doing the same
+   for each landmark is level design, not decoration, and was not attempted here.
+3. **`w` stone mottle is still nearly invisible.** It is now sitting under the depth
+   ramp, which supplies the cue it was missing, but the mottle itself has not been
+   re-judged against a native capture.
+4. **`MIN_OCCLUDER_HEIGHT` is 26 px**, so anything shorter than a bedroll is invisible
+   to the occlusion system by construction. It has not caused a problem yet.
