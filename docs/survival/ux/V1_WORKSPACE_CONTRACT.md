@@ -1,5 +1,7 @@
 # Expedition Workspace V1 — isolated fixture contract
 
+> Historical recovered V1 contract. Continuation now uses a **proposed** `soh.ui.snapshot.v2` / intent / response envelope and source-aligned A1/A3 field names; see `V2_VISUAL_SYSTEM.md`. V1 fixture fields and their evidence are preserved below as recovery history, not an approved owner contract.
+
 **Status: OFFLINE FIXTURE / HOLD PRODUCTION INTEGRATION.** This is an A6-owned UI proposal, not an approved A0/A3 service contract or gameplay implementation. `expedition_workspace.tscn` composes the Journal/Satchel and the five-tab Desk. A single host-supplied snapshot populates the satchel, placement, field notes and planner; the UI does not execute inventory, research, crafting, respawn or Core transactions. `tests/survival/ui/fixture_host_v1.gd` is explicitly fake and exists only to exercise the interface. Its capacity, queue, research consumption and respawn logic are not SOH rules. No new art, plugins, production wiring or A0/A3/A4 files were added.
 
 ## Mandatory input boundary

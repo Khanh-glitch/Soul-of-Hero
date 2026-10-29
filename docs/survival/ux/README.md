@@ -1,5 +1,7 @@
 # SURV-UX-010A — isolated journal checkpoint
 
+> **Continuation note:** `V2_VISUAL_SYSTEM.md` records the recovered-source V2 visual system, canonical A1/A3 read-only projections, testing boundary and unresolved A0 input gate. Its bespoke folio skin and pixel emblems supersede the older “flat/default-font” visual critique below for source state, but **do not** supersede the production hold or make prior native screenshot evidence current.
+
 **Status: WIP; HOLD INTEGRATION pending A0 review.** This is a working, deliberately isolated UI increment, **not** the complete survival experience or a replacement for the live HUD. No production scene is wired to it. Branch base `1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7`; assigned integration branch was `00461ea6327bba93c571b25520587b66bcf0dcc5` when checked with `git ls-remote`, and may have advanced. Do not overwrite the live build strip, SaveService, A4 Gold, or other agents' changes.
 
 ## What exists

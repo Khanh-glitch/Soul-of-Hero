@@ -59,7 +59,7 @@ func _run() -> void:
 	root.add_child(observer)
 	var host := HOST.new()
 	var replay_host := HOST.new()
-	var replay_payload := {"schema":"soh.ui.intent.v1", "request_id":"retry-example", "sequence":replay_host.state.sequence, "revision":replay_host.state.revision, "direction":"deposit", "container_id":"fixture-chest", "amount":1}
+	var replay_payload := {"schema":"soh.ui.intent.v2", "request_id":"retry-example", "sequence":replay_host.state.sequence, "revision":replay_host.state.revision, "direction":"deposit", "container_id":"fixture-chest", "amount":1}
 	var original: Dictionary = replay_host.dispatch("transfer", "oak_wood", replay_payload)
 	replay_host.state.sequence += 1
 	replay_host.state.revision = "fixture-rev-%d" % replay_host.state.sequence
@@ -156,11 +156,11 @@ func _run() -> void:
 	transfer.grab_focus()
 	transfer.pressed.emit()
 	check(button_with_text(ui.desk._details, "RETRY SAME REQUEST").has_focus(), "pending update moves focus to retry")
-	check(intents.size() == 1 and intents[0].payload.schema == "soh.ui.intent.v1" and not intents[0].payload.request_id.is_empty(), "versioned request includes unique intent ID")
+	check(intents.size() == 1 and intents[0].payload.schema == "soh.ui.intent.v2" and not intents[0].payload.request_id.is_empty(), "versioned request includes unique intent ID")
 	var first: Dictionary = intents[0]
 	transfer.pressed.emit()
 	check(intents.size() == 1, "double activation while pending sends one intent")
-	var wrong := {"schema":"soh.ui.response.v1", "request_id":"wrong", "status":"accepted", "snapshot":host.snapshot()}
+	var wrong := {"schema":"soh.ui.response.v2", "request_id":"wrong", "status":"accepted", "snapshot":host.snapshot()}
 	check(not ui.apply_host_response(wrong) and ui.desk._pending, "wrong response ID cannot clear pending")
 	button_with_text(ui.desk._details, "RETRY SAME REQUEST").pressed.emit()
 	check(intents.size() == 2 and intents[1] == first, "manual retry uses exactly the original intent")
@@ -208,9 +208,9 @@ func _run() -> void:
 	check(ui.journal._items.size() == 2 and ui.journal._items[1].count == 2, "denied transfer preserves displayed inventory")
 	# Research confirmation and host update.
 	host.state.recipes[0].can_research = true
-	var without_sample := {"schema":"soh.ui.intent.v1", "request_id":"missing-specimen-test", "sequence":host.state.sequence, "revision":host.state.revision}
+	var without_sample := {"schema":"soh.ui.intent.v2", "request_id":"missing-specimen-test", "sequence":host.state.sequence, "revision":host.state.revision}
 	var missing: Dictionary = host.dispatch("research", "core_formula", without_sample)
-	check(missing.status == "rejected" and not host.state.recipes[0].learned, "fixture research without specimen is atomic and rejected")
+	check(missing.status == "rejected" and not host.state.recipes[0].formula_learned, "fixture research without specimen is atomic and rejected")
 	host.state.bag.append({"id":"core_specimen", "name":"Core specimen [fixture]", "count":1})
 	host.state.sequence += 1
 	host.state.revision = "fixture-rev-%d" % host.state.sequence
@@ -227,9 +227,6 @@ func _run() -> void:
 	ui.show_desk()
 	button_with_text(ui.desk._details, "RESEARCH").pressed.emit()
 	await process_frame
-	if DisplayServer.get_name() != "headless" and "_".join(OS.get_cmdline_user_args()) == "1280":
-		await process_frame
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_research_confirmation_1280.png") == OK, "research confirmation screenshot")
 	ui.desk._confirmation.canceled.emit()
 	ui.desk._confirmation.hide()
 	check(intents.size() == before, "cancelling confirmation sends no intent")
@@ -250,13 +247,13 @@ func _run() -> void:
 	ui.desk._confirmation.hide()
 	check(intents.size() == before + 1 and intents[-1].action == "research", "confirmation emits research intent")
 	var research: Dictionary = intents[-1]
-	check(ui.apply_host_response(host.dispatch(research.action, research.id, research.payload)) and ui.desk._snapshot.recipes[0].learned and ui.desk._snapshot.cores[0].learned and ui.journal._items.size() == 2, "accepted fixture research consumes specimen and synchronizes formula state")
+	check(ui.apply_host_response(host.dispatch(research.action, research.id, research.payload)) and ui.desk._snapshot.recipes[0].formula_learned and ui.desk._snapshot.cores[0].formula_learned and ui.journal._items.size() == 2, "accepted fixture research consumes specimen and synchronizes formula state")
 	ui.desk._select("bandage")
 	button_with_text(ui.desk._details, "CRAFT").pressed.emit()
 	var crafting: Dictionary = intents[-1]
 	check(crafting.action == "craft" and ui.apply_host_response(host.dispatch(crafting.action, crafting.id, crafting.payload)) and ui.desk._snapshot.recipes[1].queue_status.contains("Queued"), "fixture craft response updates workstation queue")
 	ui.desk.select_tab(4)
-	ui.desk._select("core-instance-1")
+	ui.desk._select("soh_i_000000000011_a1c0ffee")
 	button_with_text(ui.desk._details, "REQUEST EQUIP").pressed.emit()
 	var equip_request: Dictionary = intents[-1]
 	check(equip_request.action == "equip_core" and ui.apply_host_response(host.dispatch(equip_request.action, equip_request.id, equip_request.payload)) and ui.desk._snapshot.cores[0].equipped, "Core equip shown only after fixture host acceptance")
@@ -303,35 +300,6 @@ func _run() -> void:
 	root.push_input(escape)
 	await process_frame
 	check(not ui.visible and modal == [true, false], "Escape closes aggregate modal")
-	if DisplayServer.get_name() != "headless":
-		ui.open_workspace()
-		ui.show_desk()
-		ui.desk.select_tab(2)
-		ui.desk._select("road")
-		await process_frame
-		await process_frame
-		var suffix := "_".join(OS.get_cmdline_user_args())
-		if suffix.is_empty(): suffix = "1280"
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_workspace_map_%s.png" % suffix) == OK, "V1 map screenshot")
-		ui.desk.select_tab(4)
-		ui.desk._select("core-instance-1")
-		await process_frame
-		await process_frame
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_workspace_core_%s.png" % suffix) == OK, "V1 core screenshot")
-		if suffix == "1280":
-			ui.desk.select_tab(0)
-			ui.desk._select("bandage")
-			await process_frame
-			await process_frame
-			check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_workshop_bright_1280.png") == OK, "bright fixture screenshot")
-			background.color = Color("080b15")
-			await process_frame
-			await process_frame
-			check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_workshop_dark_1280.png") == OK, "dark fixture screenshot")
-			ui.desk.select_tab(3)
-			await process_frame
-			await process_frame
-			check(root.get_texture().get_image().save_png("res://tests/survival/ui/v1_recovery_1280.png") == OK, "recovery fixture screenshot")
 	print("WORKSPACE V1: %d checks, %d failures" % [checks, failures.size()])
 	ui.queue_free()
 	observer.queue_free()

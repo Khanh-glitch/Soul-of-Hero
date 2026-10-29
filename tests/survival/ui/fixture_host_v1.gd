@@ -7,7 +7,7 @@ var signatures: Dictionary = {}
 
 func _init(research_ready := false) -> void:
 	state = DATA.snapshot()
-	state["schema"] = "soh.ui.snapshot.v1"
+	state["schema"] = "soh.ui.snapshot.v2"
 	state["sequence"] = 1
 	state["revision"] = "fixture-rev-1"
 	state["bag"] = [{"id":"oak_wood", "name":"Oak Wood [fixture]", "count":8, "kind":"material"}]
@@ -43,7 +43,7 @@ func dispatch(action: String, id: String, payload: Dictionary) -> Dictionary:
 		return replay
 	var accepted := false
 	var message := "Fixture rejected request."
-	if key.is_empty() or payload.get("schema", "") != "soh.ui.intent.v1":
+	if key.is_empty() or payload.get("schema", "") != "soh.ui.intent.v2":
 		return _response(key, false, "Fixture rejected malformed request.")
 	if int(payload.get("sequence", -1)) != int(state.sequence) or payload.get("revision", "") != state.revision:
 		var stale := _response(key, false, "Fixture rejected stale state; refresh.")
@@ -78,10 +78,10 @@ func dispatch(action: String, id: String, payload: Dictionary) -> Dictionary:
 					if int(sample.get("count", 0)) > 0:
 						sample["count"] = int(sample.count) - 1
 						if sample.count == 0: (state.bag as Array).erase(sample)
-						rec["learned"] = true
+						rec["formula_learned"] = true
 						rec["can_research"] = false
 						for core: Dictionary in state.cores:
-							if core.get("formula_id", "") == id: core["learned"] = true
+							if core.get("formula_id", "") == id: core["formula_learned"] = true
 						accepted = true
 					else: message = "Fixture specimen missing."
 				else:
@@ -90,7 +90,7 @@ func dispatch(action: String, id: String, payload: Dictionary) -> Dictionary:
 				if accepted: message = "Fixture %s accepted." % action
 		"equip_core":
 			var core := _find("cores", id)
-			if bool(core.get("can_equip", false)) and int(core.get("charges", 0)) > 0:
+			if bool(core.get("can_equip", false)) and int(core.get("uses", 0)) > 0:
 				core["equipped"] = true
 				accepted = true
 				message = "Fixture Core equipped."
@@ -114,4 +114,4 @@ func _find(key: String, id: String) -> Dictionary:
 	return {}
 
 func _response(key: String, accepted: bool, message: String) -> Dictionary:
-	return {"schema":"soh.ui.response.v1", "request_id":key, "status":"accepted" if accepted else "rejected", "message":message, "snapshot":snapshot()}
+	return {"schema":"soh.ui.response.v2", "request_id":key, "status":"accepted" if accepted else "rejected", "message":message, "snapshot":snapshot()}

@@ -8,13 +8,15 @@ signal item_selected(stack_key: String)
 signal desk_requested
 
 const ADAPTER := preload("res://game/survival/ui/survival_view_adapter.gd")
-const INK := Color("171b2c")
-const PANEL := Color("273344")
-const EDGE := Color("687b7e")
-const PAPER := Color("f4e6c8")
-const MUTED := Color("b1c6bf")
-const TEAL := Color("75d3bd")
-const CORAL := Color("ffad8f")
+const PIXEL_UI := preload("res://game/survival/ui/pixel_ui.gd")
+const PIXEL_PANEL := preload("res://game/survival/ui/pixel_panel.gd")
+const INK := Color("111923")
+const PANEL := Color("30231f")
+const EDGE := Color("b77b4e")
+const PAPER := Color("f6e8c9")
+const MUTED := Color("b8c4b2")
+const TEAL := Color("91d6ac")
+const CORAL := Color("ff9278")
 
 var show_workspace_navigation := false
 var _items: Array[Dictionary] = []
@@ -25,28 +27,40 @@ var _tab := 0
 var _content: VBoxContainer
 var _detail: VBoxContainer
 var _tabs: Array[Button] = []
+var _modal_reported := false
 var _previous_focus: Control
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_build_ui()
 	_refresh()
+	tree_exiting.connect(func(): _sync_modal_state(true))
 
 func is_modal_active() -> bool:
-	return is_visible_in_tree()
+	_sync_modal_state()
+	return _modal_reported
+
+func _process(_delta: float) -> void:
+	_sync_modal_state()
+
+func _sync_modal_state(force_closed := false) -> void:
+	var active := not force_closed and is_visible_in_tree()
+	if active == _modal_reported: return
+	_modal_reported = active
+	modal_state_changed.emit(active)
 
 func open_journal() -> void:
 	if visible: return
 	_previous_focus = get_viewport().gui_get_focus_owner()
 	visible = true
-	modal_state_changed.emit(true)
+	_sync_modal_state()
 	if not _tabs.is_empty():
 		_tabs[_tab].grab_focus()
 
 func close_journal() -> void:
 	if not visible: return
 	visible = false
-	modal_state_changed.emit(false)
+	_sync_modal_state()
 	if is_instance_valid(_previous_focus) and _previous_focus.is_visible_in_tree():
 		_previous_focus.grab_focus()
 	closed.emit()
@@ -89,22 +103,13 @@ func select_item(index: int) -> void:
 	_refresh_detail()
 
 func _style(bg: Color, border: Color, width := 1) -> StyleBoxFlat:
-	var style := StyleBoxFlat.new()
-	style.bg_color = bg
-	style.border_color = border
-	style.set_border_width_all(width)
-	style.content_margin_left = 8
-	style.content_margin_right = 8
-	style.content_margin_top = 5
-	style.content_margin_bottom = 5
-	return style
+	return PIXEL_UI.panel_style(bg, border, width)
 
 func _label(text: String, size := 10, color := PAPER) -> Label:
 	var label := Label.new()
 	label.text = text
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	label.add_theme_font_size_override("font_size", size)
-	label.add_theme_color_override("font_color", color)
+	PIXEL_UI.style_label(label, size, color, size >= 14)
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return label
 
@@ -114,13 +119,13 @@ func _button(text: String) -> Button:
 	button.clip_text = true
 	button.tooltip_text = text
 	button.focus_mode = Control.FOCUS_ALL
-	button.add_theme_font_size_override("font_size", 10)
-	button.add_theme_color_override("font_color", PAPER)
-	button.add_theme_stylebox_override("normal", _style(INK, EDGE))
-	button.add_theme_stylebox_override("hover", _style(Color("384d54"), TEAL))
-	button.add_theme_stylebox_override("pressed", _style(Color("46665e"), TEAL))
-	button.add_theme_stylebox_override("focus", _style(Color(0, 0, 0, 0), Color("ffe5a3"), 2))
+	PIXEL_UI.style_button(button)
 	return button
+
+func _panel(fill: Color, edge: Color) -> PanelContainer:
+	var panel: PanelContainer = PIXEL_PANEL.new()
+	panel.configure(fill, edge, PIXEL_UI.GOLD)
+	return panel
 
 func _build_ui() -> void:
 	var shade := ColorRect.new()
@@ -133,8 +138,7 @@ func _build_ui() -> void:
 	for side: String in ["margin_left", "margin_right"]: margin.add_theme_constant_override(side, 20)
 	for side: String in ["margin_top", "margin_bottom"]: margin.add_theme_constant_override(side, 14)
 	add_child(margin)
-	var frame := PanelContainer.new()
-	frame.add_theme_stylebox_override("panel", _style(PANEL, EDGE, 2))
+	var frame := _panel(PANEL, EDGE)
 	margin.add_child(frame)
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 5)
@@ -172,10 +176,9 @@ func _build_ui() -> void:
 	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	columns.add_theme_constant_override("separation", 8)
 	root.add_child(columns)
-	var left := PanelContainer.new()
+	var left := _panel(INK, EDGE)
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	left.size_flags_stretch_ratio = 1.25
-	left.add_theme_stylebox_override("panel", _style(INK, EDGE))
 	columns.add_child(left)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -184,9 +187,8 @@ func _build_ui() -> void:
 	_content = VBoxContainer.new()
 	_content.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(_content)
-	var right := PanelContainer.new()
+	var right := _panel(Color("261f22"), EDGE)
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	right.add_theme_stylebox_override("panel", _style(Color("202d39"), EDGE))
 	columns.add_child(right)
 	var details_scroll := ScrollContainer.new()
 	details_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -216,6 +218,9 @@ func _refresh() -> void:
 				var item := _items[i]
 				var button := _button("%s   ×%d" % [String(item.get("name", "Unknown")), int(item.get("count", 0))])
 				button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+				button.icon = PIXEL_UI.icon_texture(item)
+				button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+				button.expand_icon = false
 				button.pressed.connect(select_item.bind(i))
 				_content.add_child(button)
 		1:
@@ -248,8 +253,20 @@ func _refresh_detail() -> void:
 		_detail.add_child(_label("ITEM  /  %s" % String(item.get("kind", "item")).to_upper(), 9, TEAL))
 		_detail.add_child(_label(String(item.get("name", "Unknown")), 15))
 		_detail.add_child(_label("Quantity  ×%d" % int(item.get("count", 0)), 11))
-		if item.has("condition"): _detail.add_child(_label("Condition  %s" % item.condition, 10, CORAL))
-		if item.has("charges") and item.has("max_charges"): _detail.add_child(_label(ADAPTER.core_status(int(item.charges), int(item.max_charges)), 10, TEAL))
+		if String(item.get("kind", "")) == "core" or item.has("uses"):
+			_detail.add_child(_label("PHYSICAL SPECIMEN  /  %s" % String(item.get("instance_id", item.get("stack_key", "instance unavailable"))), 9, PIXEL_UI.GOLD))
+		if item.has("condition"):
+			var condition_text := "%s" % item.condition
+			if item.has("max_condition"): condition_text = "%s / %s" % [item.condition, item.max_condition]
+			_detail.add_child(_label("Condition  %s" % condition_text, 10, CORAL if item.condition is int and int(item.condition) < 35 else MUTED))
+		if item.has("uses") and item.has("max_uses"):
+			_detail.add_child(_label(ADAPTER.core_status(int(item.uses), int(item.max_uses)), 11, TEAL if int(item.uses) > 0 else CORAL))
+		if item.has("equipped"):
+			_detail.add_child(_label("Loadout  %s" % ("Equipped" if bool(item.equipped) else "Stored"), 10, TEAL))
+		if item.has("formula_learned"):
+			_detail.add_child(_label("Permanent formula  %s" % ("Learned" if bool(item.formula_learned) else "Not learned"), 10, TEAL if bool(item.formula_learned) else MUTED))
+		else:
+			_detail.add_child(_label("Permanent formula  Separate profile state", 9, MUTED))
 		if item.has("source_hint"): _detail.add_child(_label("Look for: %s" % item.source_hint, 10, MUTED))
 	else:
 		_detail.add_child(_label("FIELD GUIDE", 11, TEAL))

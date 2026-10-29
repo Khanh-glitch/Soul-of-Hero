@@ -63,18 +63,187 @@ static func placement(survival: Object, piece_id: String, reason: String, known_
 		message = String(PLACEMENT_REASONS.get(reason, "Placement unavailable (%s)." % reason))
 	return {"name": String(piece.get("label", piece_id)), "status": message, "costs": rows}
 
-## This is intentionally a projection of caller-supplied knowledge, not recipe ownership.
-static func recipe_status(found: bool, learned: bool) -> String:
-	if learned:
-		return "Formula learned"
-	if found:
-		return "Found; research required"
-	return "Undiscovered"
+## A3 catalogs use `knowledge: starter|recipe`; saved formula ownership is a
+## separate host projection. Never treat a physical Core instance as knowledge.
+static func recipe_status(knowledge: String, formula_learned: Variant) -> String:
+	if knowledge == "starter": return "Starter catalog"
+	if not formula_learned is bool: return "Knowledge state unavailable"
+	if formula_learned: return "Formula learned"
+	if knowledge == "recipe": return "Research required"
+	return "Knowledge unavailable"
 
-static func core_status(charges: int, maximum: int) -> String:
-	if maximum <= 0 or charges < 0 or charges > maximum:
-		return "Charges unavailable"
-	return "Depleted · 0/%d uses" % maximum if charges == 0 else "%d/%d uses remaining" % [charges, maximum]
+## Maps A3's dictionary-shaped recipe catalog into the A6-only view DTO. The
+## caller must derive `formula_learned`, visible ingredient counts, station/queue
+## state and capability decisions from their respective authorities.
+static func recipe_presentation(recipe_id: String, source: Dictionary, ingredient_state: Dictionary, formula_learned: Variant, disclosed: bool, station_status: String = "Unknown", queue_status: String = "Unknown", blocked_reason: String = "") -> Dictionary:
+	if not disclosed or recipe_id.is_empty() or String(source.get("id", "")) != recipe_id: return {}
+	var inputs: Variant = source.get("inputs", {})
+	if not inputs is Dictionary: return {}
+	var ingredients: Array[Dictionary] = []
+	var input_ids := inputs.keys()
+	input_ids.sort()
+	for raw_id: Variant in input_ids:
+		var item_id := String(raw_id)
+		var supplied: Variant = ingredient_state.get(item_id, {})
+		var view: Dictionary = supplied if supplied is Dictionary else {}
+		ingredients.append({
+			"id": item_id,
+			"name": String(view.get("name", item_id.replace("_", " ").capitalize())),
+			"have": maxi(0, int(view.get("have", 0))),
+			"need": int(inputs[raw_id]),
+			"source": String(view.get("source", "")),
+		})
+	var fuel: Variant = source.get("fuel", {})
+	if fuel is Dictionary:
+		var fuel_ids := fuel.keys()
+		fuel_ids.sort()
+		for raw_fuel_id: Variant in fuel_ids:
+			var fuel_id := String(raw_fuel_id)
+			var supplied_fuel: Variant = ingredient_state.get(fuel_id, {})
+			var fuel_view: Dictionary = supplied_fuel if supplied_fuel is Dictionary else {}
+			ingredients.append({
+				"id": fuel_id,
+				"kind": "fuel",
+				"name": String(fuel_view.get("name", fuel_id.replace("_", " ").capitalize())),
+				"have": maxi(0, int(fuel_view.get("have", 0))),
+				"need": int(fuel[raw_fuel_id]),
+				"source": String(fuel_view.get("source", "")),
+			})
+	var result := {
+		"id": recipe_id,
+		"name": String(source.get("label", recipe_id.replace("_", " ").capitalize())),
+		"revealed": true,
+		"knowledge": String(source.get("knowledge", "Unknown")),
+		"station": String(source.get("station", "Unknown")),
+		"min_tier": int(source.get("min_tier", 0)),
+		"duration_ticks": int(source.get("duration_ticks", 0)),
+		"required_technologies": _string_array(source.get("required_technologies", [])),
+		"outputs": _dict(source.get("outputs", {})).duplicate(true),
+		"ingredients": ingredients,
+		"station_status": station_status,
+		"queue_status": queue_status,
+		"can_craft": false,
+		"can_research": false,
+		"blocked_reason": blocked_reason,
+		"balance_status": String(source.get("balance_status", "Unknown")),
+	}
+	if formula_learned is bool: result["formula_learned"] = formula_learned
+	if source.has("consumes_specimen"):
+		result["consumes_specimen"] = String(source.consumes_specimen)
+		result["research_warning"] = "Consumes %s only if the A3 research owner validates the exact specimen instance and commits successfully." % String(source.consumes_specimen)
+	return result
+
+## A1 authors static POI/material/hazard/capability contracts only. These helpers
+## require an explicit A0 discovery result and never reveal records on their own.
+static func poi_presentation(record: Dictionary, discovered: bool, route_status: String = "Unknown") -> Dictionary:
+	if not discovered: return {}
+	var poi_id := String(record.get("poi_id", ""))
+	var cell: Variant = record.get("cell", null)
+	if poi_id.is_empty() or not cell is Array or cell.size() != 2: return {}
+	var position := Vector2(float(cell[0]) / 1024.0, float(cell[1]) / 768.0)
+	if position.x < 0.0 or position.x > 1.0 or position.y < 0.0 or position.y > 1.0: return {}
+	return {
+		"id": poi_id,
+		"poi_id": poi_id,
+		"name": String(record.get("name", poi_id)),
+		"revealed": true,
+		"position": position,
+		"route": route_status,
+		"hazard_id": String(record.get("hazard_id", "")),
+		"activity": String(record.get("purpose", "Unknown")),
+		"region_id": String(record.get("region_id", "Unknown")),
+		"material_keys": _string_array(record.get("material_keys", [])),
+		"required_capabilities": _string_array(record.get("required_capabilities", [])),
+		"content_readiness": String(record.get("content_readiness", "Unknown")),
+		"status": String(record.get("status", "Unknown")),
+	}
+
+static func hazard_presentation(record: Dictionary, discovered: bool, exposure_status: String = "Unknown") -> Dictionary:
+	if not discovered: return {}
+	var hazard_id := String(record.get("hazard_id", ""))
+	if hazard_id.is_empty(): return {}
+	return {
+		"id": hazard_id,
+		"hazard_id": hazard_id,
+		"name": String(record.get("clue", hazard_id)),
+		"revealed": true,
+		"kind": String(record.get("kind", "Unknown")),
+		"severity": int(record.get("severity", 0)),
+		"required_capability": String(record.get("requires", "")),
+		"region_id": String(record.get("region_id", "Unknown")),
+		"exposure_status": exposure_status,
+		"status": "AUTHORED_CONTRACT_NOT_NATIVE_INTEGRATED",
+	}
+
+static func material_source_hint(record: Dictionary, discovered: bool) -> String:
+	if not discovered: return ""
+	var key := String(record.get("material_key", ""))
+	var node_id := String(record.get("node_id", ""))
+	if key.is_empty() or node_id.is_empty(): return ""
+	var status := String(record.get("status", "Unknown"))
+	return "%s · %s · %s" % [key.replace("_", " ").capitalize(), node_id, status]
+
+static func capability_presentation(capability_id: String, record: Dictionary, owned: Variant = null, status_reason: String = "") -> Dictionary:
+	if capability_id.is_empty() or not capability_id.begins_with("cap_"): return {}
+	var result := {
+		"id": capability_id,
+		"kind": String(record.get("kind", "Unknown")),
+		"source_poi": String(record.get("source", "Unknown")),
+		"materials": _string_array(record.get("materials", [])),
+		"prerequisites": _string_array(record.get("requires", [])),
+		"status_reason": status_reason,
+		"presentation_only": true,
+	}
+	if owned is bool: result["owned"] = owned
+	return result
+
+static func _string_array(value: Variant) -> Array[String]:
+	var result: Array[String] = []
+	if value is Array:
+		for entry: Variant in value:
+			if entry is String: result.append(entry)
+	return result
+
+static func core_status(uses: int, maximum: int) -> String:
+	if maximum <= 0 or uses < 0 or uses > maximum:
+		return "Uses unavailable"
+	return "Exhausted · 0/%d uses" % maximum if uses == 0 else "%d/%d uses remaining" % [uses, maximum]
+
+## A3's physical instance vocabulary is `instance_id`, `item_id`, `uses` /
+## `max_uses`, integer condition / max_condition, location and revision. This
+## display adapter keeps that identity intact. Equipment, formula knowledge and
+## readiness must be supplied by their own owners; they are never inferred here.
+static func core_instance(instance: Dictionary, item_label: String, equipped: Variant = null, formula_learned: Variant = null, can_equip: Variant = null, readiness: String = "Not verified") -> Dictionary:
+	var instance_id := String(instance.get("instance_id", ""))
+	var item_id := String(instance.get("item_id", ""))
+	var uses := int(instance.get("uses", -1))
+	var max_uses := int(instance.get("max_uses", -1))
+	var condition := int(instance.get("condition", -1))
+	var max_condition := int(instance.get("max_condition", -1))
+	if not instance_id.begins_with("soh_i_") or item_id.is_empty(): return {}
+	if uses < 0 or max_uses < 0 or uses > max_uses or condition < 0 or max_condition <= 0 or condition > max_condition: return {}
+	var label := item_label.strip_edges()
+	if label.is_empty(): label = item_id.replace("_", " ").capitalize()
+	var result := {
+		"id": instance_id,
+		"instance_id": instance_id,
+		"item_id": item_id,
+		"name": label,
+		"kind": "core",
+		"uses": uses,
+		"max_uses": max_uses,
+		"condition": condition,
+		"max_condition": max_condition,
+		"location": String(instance.get("location", "Unknown")),
+		"revision": int(instance.get("revision", 0)),
+		"origin": String(instance.get("origin", "Unknown")),
+		"readiness": readiness,
+		"presentation_only": true,
+	}
+	if equipped is bool: result["equipped"] = equipped
+	if formula_learned is bool: result["formula_learned"] = formula_learned
+	if can_equip is bool: result["can_equip"] = can_equip
+	return result
 
 ## A0's current transfer API takes an item ID, not a SaveService stack key.
 ## Totals are authoritative read accessors; this view neither authorizes nor

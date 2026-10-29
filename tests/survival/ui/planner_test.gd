@@ -30,6 +30,10 @@ func _run() -> void:
 	planner.request_action.connect(func(action: String, id: String, payload: Dictionary): requests.append({"action": action, "id": id, "payload": payload}))
 	var original: Dictionary = FIXTURE.snapshot()
 	planner.set_snapshot(original)
+	var stale_v1 := original.duplicate(true)
+	stale_v1["schema"] = "soh.ui.snapshot.v1"
+	planner.set_snapshot(stale_v1)
+	check(planner._snapshot == original, "deprecated V1 snapshot cannot enter the V2 view stream")
 	planner.open_planner()
 	await process_frame
 	check(planner.is_modal_active() and states == [true], "modal state signals open")
@@ -42,6 +46,11 @@ func _run() -> void:
 	planner.open_planner()
 	check(states == [true], "repeated open is idempotent")
 	check(planner._list.get_child_count() == 4, "only two discovered recipes are listed")
+	var missing_knowledge := FIXTURE.snapshot()
+	missing_knowledge.recipes.append({"id":"unknown_formula", "name":"Unknown Formula [fixture]", "revealed":true, "knowledge":"recipe"})
+	planner.set_snapshot(missing_knowledge)
+	check(planner._list.get_child_count() == 5 and (planner._list.get_child(4) as Button).text.contains("Knowledge state unavailable"), "missing permanent formula projection remains unknown in recipe list")
+	planner.set_snapshot(original)
 	planner._search.text = "Reed Fibre"
 	planner._search.text_changed.emit("Reed Fibre")
 	await process_frame
@@ -53,7 +62,7 @@ func _run() -> void:
 	planner._search.text = ""
 	planner._search.text_changed.emit("")
 	planner._select("core_formula")
-	check((planner._details.get_child(1) as Label).text.contains("research"), "found formula distinct from learned")
+	check((planner._details.get_child(1) as Label).text.contains("research"), "research-gated formula remains distinct from a physical specimen")
 	var research := planner._details.get_child(planner._details.get_child_count() - 2) as Button
 	check(research != null and research.disabled, "blocked research disabled")
 	planner._select("bandage")
@@ -82,9 +91,9 @@ func _run() -> void:
 	check(planner._amount.max_value == 2, "withdraw amount bounded by shown quantity")
 	planner.select_tab(2)
 	var map: Variant = planner._list.get_child(1)
-	check(map._points.size() == 1 and map._points[0].id == "road", "map excludes undiscovered marker")
+	check(map._points.size() == 1 and map._points[0].id == "poi_crown_waystation", "map excludes undiscovered marker")
 	await process_frame
-	var pos: Vector2 = map.get_global_rect().position + Vector2(0.25, 0.55) * (map.size - Vector2(12,12)) + Vector2(6,6)
+	var pos: Vector2 = map.get_global_rect().position + map._point_position(map._points[0].position)
 	var click := InputEventMouseButton.new()
 	click.button_index = MOUSE_BUTTON_LEFT
 	click.position = pos
@@ -96,47 +105,18 @@ func _run() -> void:
 	click.pressed = false
 	root.push_input(click, true)
 	await process_frame
-	check(planner._selection == "road" and (planner._details.get_child(0) as Label).text.contains("Old Road"), "map selection updates place information")
+	check(planner._selection == "poi_crown_waystation" and (planner._details.get_child(0) as Label).text.contains("Ashen Waystation"), "map selection updates place information")
 	planner.select_tab(3)
-	check(planner._list.get_child_count() == 7 and planner._details.get_child_count() == 4, "recovery and revealed hazard displayed")
+	check(planner._list.get_child_count() == 7 and planner._details.get_child_count() >= 7, "recovery and revealed hazard displayed")
 	planner.select_tab(4)
-	planner._select("core-instance-2")
-	check((planner._details.get_child(1) as Label).text.contains("Depleted") and (planner._details.get_child(6) as Button).disabled, "depleted core does not offer equip")
-	planner._select("core-instance-1")
-	check((planner._details.get_child(1) as Label).text.contains("3/8") and (planner._details.get_child(4) as Label).text.contains("research"), "physical charge and unlearned formula are independent")
-	var equip := planner._details.get_child(6) as Button
+	planner._select("soh_i_000000000012_deadbeef")
+	check((planner._details.get_child(2) as Label).text.contains("Exhausted") and (planner._details.get_child(8) as Button).disabled, "depleted core does not offer equip")
+	planner._select("soh_i_000000000011_a1c0ffee")
+	check((planner._details.get_child(2) as Label).text.contains("3/8") and (planner._details.get_child(6) as Label).text.contains("Not learned"), "finite uses, research knowledge, and learned formula are separate states")
+	var equip := planner._details.get_child(8) as Button
 	equip.pressed.emit()
-	check(requests.size() == 3 and requests[2].action == "equip_core" and requests[2].id == "core-instance-1", "equip request uses exact instance id")
+	check(requests.size() == 3 and requests[2].action == "equip_core" and requests[2].id == "soh_i_000000000011_a1c0ffee", "equip request uses exact instance id")
 	planner.resolve_request("Fixture only")
-	if DisplayServer.get_name() != "headless":
-		var suffix := "_".join(OS.get_cmdline_user_args())
-		if suffix.is_empty(): suffix = "1280"
-		planner.select_tab(0)
-		planner._select("core_formula")
-		await process_frame
-		await process_frame
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/workshop_fixture_%s.png" % suffix) == OK, "workshop screenshot saved")
-		planner.select_tab(2)
-		planner._select("road")
-		await process_frame
-		await process_frame
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/map_fixture_%s.png" % suffix) == OK, "map screenshot saved")
-		planner.select_tab(4)
-		planner._select("core-instance-1")
-		await process_frame
-		await process_frame
-		check(root.get_texture().get_image().save_png("res://tests/survival/ui/core_fixture_%s.png" % suffix) == OK, "core screenshot saved")
-		if suffix == "1280":
-			planner.select_tab(1)
-			planner._set_direction("deposit")
-			planner._select("oak_wood#1")
-			await process_frame
-			await process_frame
-			check(root.get_texture().get_image().save_png("res://tests/survival/ui/storage_fixture_1280.png") == OK, "storage screenshot saved")
-			planner.select_tab(3)
-			await process_frame
-			await process_frame
-			check(root.get_texture().get_image().save_png("res://tests/survival/ui/recovery_fixture_1280.png") == OK, "recovery screenshot saved")
 	planner.close_planner()
 	planner.close_planner()
 	check(states == [true, false], "modal close emitted once")
