@@ -700,6 +700,12 @@ read as a dark blob on a ring of stones.
 `ART QUALITY PASSED — 19 families`, patch check deterministic / idempotent /
 non-destructive, `OVERWORLD TOPOLOGY VALIDATION PASSED`, `gd scope check passed`.
 
+CI at `628d7d44`: **STATIC CONTRACTS**, **NATIVE RUNTIME** and **VISUAL EVIDENCE**
+all green. That run is the first to exercise the new ground codes (`F`, `G`), the
+cliff-face frames and the five camp frames inside the real runtime, under Xvfb, with
+the occlusion, topology, gate and acceptance suites. The caption change on the throne
+station did not disturb the capture comparison.
+
 ### Still open
 
 - The plateau's `w` stone mottle still reads as almost nothing at native zoom. It is
