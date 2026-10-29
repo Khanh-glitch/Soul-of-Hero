@@ -309,6 +309,24 @@ jobs:
             "Foundation" "SURVIVAL FOUNDATION PASSED"
           exit $rc
 
+      - name: Actual Hero last-exit safety (native)
+        run: |
+          mkdir -p artifacts/ud_hero_exit
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_hero_exit \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_hero_exit_test.gd >"$ARTIFACT_DIR/survival-hero-exit.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-hero-exit.log"
+          echo "::notice::hero-exit exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-hero-exit.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-hero-exit.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-hero-exit.log" "Hero exit" "SURVIVAL HERO EXIT PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
       - name: Bounded topology and layered occupancy (native)
         run: |
           mkdir -p artifacts/ud_topology
@@ -599,6 +617,7 @@ jobs:
           path: |
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
+            artifacts/survival-hero-exit.log
             artifacts/survival-bed.log
             artifacts/survival-station.log
             artifacts/survival-economy-session.log

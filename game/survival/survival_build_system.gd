@@ -583,6 +583,106 @@ func _near_shortcut(cell: Vector2i, clearance: int) -> bool:
 	return false
 
 
+# Wall/door placement must not seal the actual Hero into a doorless room. This
+# is checked at commit time (including the transaction validator), not on every
+# preview frame. Examine only the connected proposed seal cluster and its bounded
+# local box; never flood the world-sized rectangle between unrelated houses.
+func _hero_exit_rejection(cell: Vector2i) -> String:
+	if selected_piece not in ["wall_wood", "door_wood"]:
+		return ""
+	var hero := player as CharacterBody2D
+	if hero == null or not is_instance_valid(hero):
+		return "hero_unavailable"
+	var hero_shape := hero.get_node_or_null("BodyShape") as CollisionShape2D
+	if hero_shape == null or hero_shape.shape == null:
+		return "hero_unavailable"
+	var projected_shape := RectangleShape2D.new()
+	projected_shape.size = Vector2(TILE - 2, TILE - 6)
+	if hero_shape.shape.collide(hero_shape.global_transform, projected_shape,
+			Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 5))):
+		return "hero_in_footprint"
+	var seals: Dictionary = {cell: {"piece": selected_piece, "cell": [cell.x, cell.y]}}
+	var queue: Array[Vector2i] = [cell]
+	var seen: Dictionary = {cell: true}
+	var cursor := 0
+	var lo := cell
+	var hi := cell
+	while cursor < queue.size():
+		if cursor >= 16384:
+			return "exit_check_limit"
+		var current := queue[cursor]
+		cursor += 1
+		lo = Vector2i(mini(lo.x, current.x), mini(lo.y, current.y))
+		hi = Vector2i(maxi(hi.x, current.x), maxi(hi.y, current.y))
+		for offset: Vector2i in ROOM_TOPOLOGY.NEIGHBOURS:
+			var next := current + offset
+			if seen.has(next):
+				continue
+			var piece := structure_node(entity_at_layer(next, "object"))
+			if piece == null or piece.piece_id not in ["wall_wood", "door_wood"]:
+				continue
+			seen[next] = true
+			seals[next] = {"piece": piece.piece_id, "cell": [next.x, next.y]}
+			queue.append(next)
+	var actor_cell := world.tile_of(hero.global_position)
+	if actor_cell.x < lo.x or actor_cell.y < lo.y or actor_cell.x > hi.x or actor_cell.y > hi.y:
+		return ""
+	lo -= Vector2i.ONE
+	hi += Vector2i.ONE
+	var width := hi.x - lo.x + 1
+	var height := hi.y - lo.y + 1
+	if width > 16384 or height > 16384 or width * height > 16384:
+		return "exit_check_limit"
+	# Include disconnected nested boundaries in the same bounded box, just as
+	# the real room model does; do not iterate every structure on the map.
+	for y in range(lo.y, hi.y + 1):
+		for x in range(lo.x, hi.x + 1):
+			var probe := Vector2i(x, y)
+			if seals.has(probe):
+				continue
+			var piece := structure_node(entity_at_layer(probe, "object"))
+			if piece != null and piece.piece_id in ["wall_wood", "door_wood"]:
+				seals[probe] = {"piece": piece.piece_id, "cell": [x, y]}
+	var predicted = ROOM_TOPOLOGY.new()
+	predicted.rebuild(seals)
+	if predicted.overflow_clusters > 0:
+		return "exit_check_limit"
+	var room_id: String = predicted.room_at(actor_cell)
+	if room_id.is_empty():
+		return ""
+	if _projected_room_has_door_exit(actor_cell, room_id, predicted, cell):
+		return ""
+	return "no_hero_exit"
+
+
+func _projected_room_has_door_exit(start: Vector2i, room_id: String, predicted,
+		projected_cell: Vector2i) -> bool:
+	var queue: Array[Vector2i] = [start]
+	var seen: Dictionary = {start: true}
+	var cursor := 0
+	while cursor < queue.size() and cursor < 16384:
+		var current := queue[cursor]
+		cursor += 1
+		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
+			var next := current + step
+			var piece := structure_node(entity_at_layer(next, "object"))
+			var is_projected_door := next == projected_cell and selected_piece == "door_wood"
+			if is_projected_door or (piece != null and piece.piece_id == "door_wood"):
+				var body: StaticBody2D = null
+				if piece != null:
+					body = piece.get_node_or_null("Solid") as StaticBody2D
+				var ignored: RID = body.get_rid() if body != null else RID()
+				if _wake_cell_clear(next, ignored) and predicted.room_at(next + step) != room_id \
+						and _wake_cell_clear(next + step):
+					return true
+			if seen.has(next) or next == projected_cell or predicted.room_at(next) != room_id:
+				continue
+			seen[next] = true
+			if _wake_cell_clear(next):
+				queue.append(next)
+	return false
+
+
 # ---------------------------------------------------------------------------
 # placement
 # ---------------------------------------------------------------------------
@@ -594,6 +694,8 @@ func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
 		# placing now would commit a structure that nothing on screen represents.
 		return {"ok": false, "reason": "not_configured"}
 	var local_reason := validate_cell(cell)
+	if local_reason.is_empty():
+		local_reason = _hero_exit_rejection(cell)
 	if not local_reason.is_empty():
 		_last_rejection = local_reason
 		placement_rejected.emit(local_reason)
@@ -606,7 +708,9 @@ func try_place(cell: Vector2i, transaction_key := "") -> Dictionary:
 		key = "%s%d,%d" % [String(svc.call(&"build_transaction_key")), cell.x, cell.y]
 	var result: Dictionary = svc.call(
 		&"place_structure", selected_piece, cell, key,
-		func() -> String: return validate_cell(cell),
+		func() -> String:
+			var reason := validate_cell(cell)
+			return _hero_exit_rejection(cell) if reason.is_empty() else reason,
 	)
 	if not bool(result.get("ok", false)):
 		_last_rejection = String(result.get("reason", "rejected"))

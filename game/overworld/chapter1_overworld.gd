@@ -740,6 +740,10 @@ func _build_rejection_message(reason: String) -> String:
 			return "Something is already there."
 		"not_configured":
 			return "The ground here is not ready yet."
+		"no_hero_exit", "exit_check_limit":
+			return "Leave yourself a clear door and exit."
+		"hero_in_footprint":
+			return "Move clear before building there."
 		"duplicate_or_failed":
 			return "The build could not be recorded."
 		_:
