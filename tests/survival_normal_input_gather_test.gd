@@ -110,6 +110,14 @@ func _click_window(position: Vector2) -> void:
 	Input.parse_input_event(click)
 	await process_frame
 
+func _owning_scroll(control: Control) -> ScrollContainer:
+	var ancestor := control.get_parent() if control != null else null
+	while ancestor != null:
+		if ancestor is ScrollContainer:
+			return ancestor as ScrollContainer
+		ancestor = ancestor.get_parent()
+	return null
+
 func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
 	for _i: int in range(60):
 		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
@@ -123,7 +131,17 @@ func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
 		wheel.pressed = false
 		Input.parse_input_event(wheel)
 		await process_frame
+	print("NORMAL_SCROLL_TRACE scroll=%s target=%s value=%d max=%.1f visible=%s target_parent=%s" % [str(scroll.get_global_rect()), str(control.get_global_rect()), scroll.scroll_vertical, scroll.get_v_scroll_bar().max_value, str(control.is_visible_in_tree()), str(control.get_parent())])
 	return scroll.get_global_rect().has_point(control.get_global_rect().get_center())
+
+func _collect_receipt_count() -> int:
+	var snapshot: Dictionary = _save().call(&"get_snapshot")
+	var receipts: Dictionary = snapshot.get("applied_transactions", {})
+	var count := 0
+	for receipt: Variant in receipts.values():
+		if receipt is Dictionary and String((receipt.get("metadata", {}) as Dictionary).get("operation", "")) == "collect":
+			count += 1
+	return count
 
 func _tap_action(action: StringName) -> void:
 	var event := InputEventAction.new()
@@ -391,18 +409,20 @@ func _body() -> void:
 		if (value as Button).text == "Collect":
 			output_button = value as Button
 			break
-	var output_scrolls := panel.find_children("*", "ScrollContainer", true, false)
-	_expect(output_button != null and not output_scrolls.is_empty(), "produced cloth exposes a GUI collection control")
-	if output_button == null or output_scrolls.is_empty():
+	var output_scroll := _owning_scroll(output_button)
+	_expect(output_button != null and output_scroll != null, "produced cloth exposes a GUI collection control inside its scroll owner")
+	if output_button == null or output_scroll == null:
 		_body_complete = true
 		return
-	var output_visible := await _scroll_to(output_scrolls[0] as ScrollContainer, output_button)
+	var output_visible := await _scroll_to(output_scroll, output_button)
 	_expect(output_visible, "ordinary wheel input reaches produced cloth")
 	if not output_visible:
 		_body_complete = true
 		return
+	var cloth_before := _count("binding_cloth")
+	var receipts_before := _collect_receipt_count()
 	await _click_window(root.get_final_transform() * (output_button.get_global_transform_with_canvas() * (output_button.size * 0.5)))
-	_expect(_count("binding_cloth") == 2, "ordinary GUI collects meaningful workbench output")
+	_expect(_count("binding_cloth") == cloth_before + 2 and _collect_receipt_count() == receipts_before + 1, "ordinary GUI collects exactly two cloth with one committed receipt")
 	await _tap_action(&"economy_toggle")
-	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty() and _count("binding_cloth") == 2, "paid workbench and produced cloth survive reload")
+	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty() and _count("binding_cloth") == cloth_before + 2 and _collect_receipt_count() == receipts_before + 1, "paid workbench, exact cloth and collection receipt survive reload")
 	_body_complete = true
