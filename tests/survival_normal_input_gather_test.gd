@@ -3,6 +3,24 @@ extends "res://tests/survival_foundation_test.gd"
 ## No fixture grants, actor teleports, direct harvest calls or mocked time. This
 ## does not yet establish the larger shelter/production/death journey.
 
+func _console() -> void:
+	_deadline_msec = Time.get_ticks_msec() + int(BUILD_TIMEOUT_MS * 4)
+	DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path("user://tests"))
+	save_path = "user://tests/survival_normal_input_%d.json" % Time.get_ticks_usec()
+	var save := root.get_node_or_null("SaveService")
+	if save != null:
+		save.call(&"configure_storage", save_path, true)
+	await _boot()
+	if _host != null:
+		await _body()
+		if not _body_complete:
+			_expect(false, "test body ran to completion")
+	_teardown()
+	# Let queued world and GUI nodes finish cleanup before engine shutdown.
+	await process_frame
+	await process_frame
+	_finish()
+
 func _finish() -> void:
 	for action: String in ["move_left", "move_right", "move_up", "move_down"]:
 		Input.action_release(action)
