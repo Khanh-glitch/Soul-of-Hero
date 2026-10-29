@@ -9,6 +9,8 @@ var port: Node
 var checks := 0
 var failures: Array[String] = []
 var lab_enabled := true
+var fixture_sequence := 0
+var fixture_ticks := {}
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -22,10 +24,24 @@ func _expect(condition: bool, label: String) -> void:
 		print("  FAIL  " + label)
 
 func _station(id: String) -> Dictionary:
-	if id != "lab" or not lab_enabled:
-		return {}
-	return {"ok": true, "station_id": "lab", "kind": "research", "tier": 1,
-		"queue_capacity": 3, "operational": true, "condition": 100, "station_revision": "fixture-r1"}
+	if id == "lab" and lab_enabled:
+		return {"ok": true, "station_id": id, "kind": "research", "tier": 1,
+			"queue_capacity": 3, "operational": true, "condition": 100, "station_revision": "fixture-r1"}
+	if id == "bench":
+		return {"ok": true, "station_id": id, "kind": "workbench", "tier": 1,
+			"queue_capacity": 3, "operational": true, "condition": 100, "station_revision": "fixture-r1"}
+	return {}
+
+# Explicit test fixture; not a production E-02 host or offline timer.
+func _fixture_time(id: String) -> Dictionary:
+	return {"contract": "soh.economy.active_tick.v1", "station_id": id,
+		"session_id": "authority-fixture", "session_index": 1, "sequence": fixture_sequence,
+		"active_ticks": int(fixture_ticks.get(id, 0)), "station_revision": "fixture-r1"}
+
+func _fixture_advance(id: String, amount: int, event_id: String) -> Dictionary:
+	fixture_sequence += 1
+	fixture_ticks[id] = int(fixture_ticks.get(id, 0)) + amount
+	return economy.call(&"advance", id, _fixture_time(id), event_id)
 
 func _mutate_token(candidate: Dictionary, id: String, mode: String) -> bool:
 	var inventory: Dictionary = candidate.get("inventory", {})
@@ -216,7 +232,42 @@ func _run() -> void:
 	_expect(bool(migrated.get("ok", false)), "actual A3 mutation migrates v1 namespace transactionally")
 	_expect(int(((save.call(&"get_snapshot") as Dictionary).get("survival_economy", {}) as Dictionary).get("schema", 0)) == 2,
 		"legacy v1 becomes v2 without losing token attributes")
+	_test_real_specimen_consumption_and_unique_output()
 	_finish()
+
+func _test_real_specimen_consumption_and_unique_output() -> void:
+	var path := "user://tests/a0_a3_consume_%d.json" % Time.get_ticks_usec()
+	_expect(bool(save.call(&"configure_storage", path, true)), "fresh profile for genuine terminal and output operations")
+	lab_enabled = true
+	fixture_sequence = 0
+	fixture_ticks = {}
+	economy.call(&"configure_time_host", _fixture_time)
+	_expect(bool(save.call(&"grant_inventory_item", "knowledge_spares", "material", 5, "consume.spares")), "grant research inputs")
+	var specimen: Dictionary = economy.call(&"grant_instance", "iron_pick", "consume.specimen", -1, 50)
+	var old_id := String(specimen.get("instance_id", ""))
+	_expect(bool(specimen.get("ok", false)), "create real specimen for research")
+	var research: Dictionary = economy.call(&"research_recipe", "iron_pick", "lab", "specimen", "consume.research", old_id)
+	_expect(bool(research.get("ok", false)), "real specimen enters research escrow")
+	var advanced := _fixture_advance("lab", 40, "consume.research.tick")
+	_expect(bool(advanced.get("ok", false)), "actual A3 research consumes specimen using fixture clock")
+	_expect(String((economy.call(&"instance", old_id) as Dictionary).get("location", "")) == "consumed_by_research",
+		"specimen has terminal identity and no physical token")
+	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "terminal specimen passes A3 ownership audit")
+	for item: Array in [["oak_wood", 2], ["iron_ingot", 2], ["binding_cloth", 1]]:
+		_expect(bool(save.call(&"grant_inventory_item", String(item[0]), "material", int(item[1]), "craft." + String(item[0]))), "grant real recipe input " + String(item[0]))
+	var job: Dictionary = economy.call(&"enqueue", "iron_pick", "bench", "craft.pick")
+	_expect(bool(job.get("ok", false)), "actual A3 queues researched unique output")
+	var complete := _fixture_advance("bench", 14, "craft.pick.tick")
+	_expect(bool(complete.get("ok", false)), "actual A3 produces escrowed unique output")
+	var job_id := String(job.get("job_id", ""))
+	var collected: Dictionary = economy.call(&"collect", job_id, "craft.pick.collect")
+	_expect(bool(collected.get("ok", false)), "actual A3 collects newly crafted unique token")
+	var owned: Array = economy.call(&"owned_instances", "iron_pick")
+	_expect(owned.size() == 1 and String(owned[0].get("instance_id", "")) != old_id, "new unique output has one distinct identity")
+	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "crafted output passes A3 ownership audit")
+	_expect(bool(save.call(&"reload_save")) and bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)),
+		"consumed specimen and new output survive reload")
+
 
 func _finish() -> void:
 	if failures.is_empty():
