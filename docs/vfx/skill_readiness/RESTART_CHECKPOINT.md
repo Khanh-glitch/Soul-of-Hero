@@ -294,7 +294,7 @@ Verified against the original TypeScript (seed 7, first_divergent_tick -1), reco
 | 018 Bitter Rain | `venom_r18.gd` | registered (`3607387`) | candidate run 40871453819, job 123439265843: cues 12/12, hits 11/11; reproduced in 40873041022 (`56ee285`). |
 | 019 False Remedy | `venom_r19.gd` | registered (`d50f4a0`) | candidate run 40872333988, job 123442298081 (`b58aa3c`): cues 138/138, hits 10/10. |
 | 020 Plague Cartography | `venom_r20.gd` | candidate only | `56ee285` run 40873041022, job 123444719431: hits 79/79 and cues 135/135 match; first raster divergence at tick 180. |
-| 021 The Last Distillation | `venom_r21.gd` | registered (`4eb26b6`) | candidate run 40875117169, job 123451839886 (`e10ac66`): parity true, `first_divergent_tick -1`, hits 132/132, cues 192/192. Runtime regression run 40876542573 (`4eb26b6`) pending at time of writing. |
+| 021 The Last Distillation | `venom_r21.gd` | registered (`4eb26b6`) | candidate run 40875117169, job 123451839886 (`e10ac66`): parity true, `first_divergent_tick -1`, hits 132/132, cues 192/192. Runtime regression run 40876542573 (`4eb26b6`): job 123463648343 `parity: true`, `first_divergent_tick -1`. Runtime PASS set in that run: 1-6, 9-12, 14, 17, 18, 19, 21; the run failed only on 13, 15, 16 (expected open items). |
 
 Root causes found this session (all visible in annotations):
 
