@@ -569,3 +569,45 @@ is 4–7 px blobs.
   larger-scale landform — probably the latter, which is level design.
 - L10's plaza is furnished now, but the citadel wall behind it is still one flat
   masonry field with no buttress or gatehouse reading.
+
+## Ninth pass — the gate, and what a red run now says
+
+All three jobs green at `2c2f3978`: STATIC CONTRACTS, VISUAL EVIDENCE and NATIVE
+RUNTIME.
+
+### The Crimson Gate had no gatehouse
+
+The selective-occlusion test failed on `there is more than one tall prop near the
+gate (0)`. The honest reading is not that the test broke. The gate's furniture was two
+braziers fourteen tiles out and two wall stubs nine tiles out — every piece outside
+the gate's own silhouette, so at native scale the Crimson Gate was a sprite standing
+alone on gravel. The only tall props that ever overlapped it were scattered boulders,
+so the test's precondition had been met *by accident*, and fixing the boulder scatter
+removed the accident.
+
+It now has two towers flanking the arch, one tile in front of the gate's foot, with
+broken stumps, braziers and wall stubs around them. Three tall props now intersect the
+gate's rect — measured, not assumed.
+
+Note for anyone placing props here: prop `y` is the sprite's **foot**, so anything at
+or above the target's foot is drawn underneath it. The first attempt put both towers
+behind the gate and they were completely invisible in the render.
+
+### Why the failure took five runs to read
+
+GitHub caps annotations at ten per step and drops the rest, and this job's raw log and
+artifacts are served from a host this sandbox cannot reach. The diagnostics step was
+emitting one annotation per line across about twenty logs, so the failing assertion was
+almost always among the dropped ones and every red run reported only shutdown noise.
+
+`tools/ci/emit_diagnostics.sh` now emits one compact annotation per log, ordered:
+assertion failures first, then script errors, then the tail of anything that printed no
+failure marker. The next run named the cause immediately.
+
+### Still open
+
+- The remaining landmark approaches have the same weakness the gate had: furniture
+  outside the sprite's silhouette, where it cannot compose with it. Reviewed two so
+  far (gate, throne); eight to go.
+- The plateau's stone mottle is nearly invisible at native zoom; it needs either more
+  contrast or large-scale landform, and the latter is level design.
