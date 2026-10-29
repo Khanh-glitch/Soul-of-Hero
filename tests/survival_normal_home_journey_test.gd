@@ -215,18 +215,87 @@ func _body() -> void:
 				_body_complete = true
 				return
 	await _tap_action(&"build_slot_3")
-	_expect(await _place_at(ow, build, origin + Vector2i(2, 0)), "ordinary pointer paid usable door")
+	var door_cell := origin + Vector2i(2, 0)
+	var door_placed := await _place_at(ow, build, door_cell)
+	_expect(door_placed, "ordinary pointer paid usable door")
+	if not door_placed:
+		_body_complete = true
+		return
+	var door_id := build.entity_at_layer(door_cell, "object")
 	var room: String = build.room_topology.room_at(center)
 	_expect(not room.is_empty(), "actual authored enclosure has a derived room and roof")
 	await _tap_action(&"build_slot_5")
 	var bed_cell := origin + Vector2i(3, 3)
-	_expect(await _place_at(ow, build, bed_cell), "ordinary pointer paid bed inside room")
+	var bed_placed := await _place_at(ow, build, bed_cell)
+	_expect(bed_placed, "ordinary pointer paid bed inside room")
+	if not bed_placed:
+		_body_complete = true
+		return
+	var bed_id := build.entity_at_layer(bed_cell, "object")
+	await _tap_action(&"build_toggle")
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	var bed_active := String((_survival().call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id
+	_expect(bed_active, "ordinary world click activates the paid safe bed")
+	if not bed_active:
+		print("HOME_BED_FAIL interaction=%s hero=%s" % [str(build.structure_node(bed_id).last_interaction()), str(hero.global_position)])
+		_body_complete = true
+		return
+	await _tap_action(&"build_toggle")
 	await _tap_action(&"build_slot_4")
 	var chest_cell := origin + Vector2i(1, 3)
-	_expect(await _place_at(ow, build, chest_cell), "ordinary pointer paid chest inside room")
+	var chest_placed := await _place_at(ow, build, chest_cell)
+	_expect(chest_placed, "ordinary pointer paid chest inside room")
+	if not chest_placed:
+		_body_complete = true
+		return
+	var chest_id := build.entity_at_layer(chest_cell, "object")
 	await _tap_action(&"build_toggle")
 	_expect(not build.active and _count(WOOD) == 0 and _count(IRON) == 0, "shelter charges exactly player-gathered material")
-	_expect(bool(_save().call(&"reload_save")) and not (build.room_topology.room_at(center)).is_empty() \
-		and not build.entity_at_layer(bed_cell, "object").is_empty() and not build.entity_at_layer(chest_cell, "object").is_empty(),
-		"door, bed and chest remain in authoritative saved shelter")
+	var near_chest: Array[Vector2i] = [center + Vector2i.LEFT]
+	var moved_chest := await _walk_path(hero, near_chest)
+	_expect(moved_chest, "ordinary movement approaches the built chest")
+	if not moved_chest:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	var chest := build.structure_node(chest_id)
+	var stored := int(chest.chest_contents().get("binding_cloth", 0)) == 2 and _count("binding_cloth") == 0
+	_expect(stored, "ordinary world click stashes the two manufactured cloth in the paid chest")
+	if not stored:
+		print("HOME_CHEST_FAIL interaction=%s hero=%s" % [str(chest.last_interaction()), str(hero.global_position)])
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	_expect(int(chest.chest_contents().get("binding_cloth", 0)) == 0 and _count("binding_cloth") == 2,
+		"ordinary second click returns exactly two cloth to the bag")
+	var saved := bool(_save().call(&"reload_save"))
+	var records: Dictionary = _survival().call(&"structures")
+	_expect(saved and String((records.get(door_id, {}) as Dictionary).get("piece", "")) == "door_wood" \
+		and String((records.get(bed_id, {}) as Dictionary).get("piece", "")) == "bed_wood" \
+		and String((records.get(chest_id, {}) as Dictionary).get("piece", "")) == "chest_wood" \
+		and String((_survival().call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id \
+		and _count("binding_cloth") == 2, "paid structures, active bed and cloth survive authoritative reload")
+	var near_door: Array[Vector2i] = [center + Vector2i.UP]
+	var moved_door := await _walk_path(hero, near_door)
+	_expect(moved_door, "ordinary movement approaches the door from within the room")
+	if not moved_door:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	var opened := bool(((_survival().call(&"structures") as Dictionary).get(door_id, {}) as Dictionary).get("door_open", false))
+	_expect(opened, "ordinary world click opens the paid door")
+	if not opened:
+		_body_complete = true
+		return
+	await physics_frame
+	await physics_frame
+	var outside: Array[Vector2i] = [center + Vector2i(0, -3)]
+	var exited := await _walk_path(hero, outside)
+	_expect(exited and nav.cell_of(hero.global_position).y < door_cell.y, "ordinary movement exits the actual home")
+	if not exited:
+		_body_complete = true
+		return
+	var returned := await _walk_path(hero, near_door)
+	_expect(returned and not (build.room_topology.room_at(nav.cell_of(hero.global_position))).is_empty(),
+		"ordinary movement returns through the door into the same home")
 	_body_complete = true
