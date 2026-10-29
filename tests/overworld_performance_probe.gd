@@ -104,6 +104,25 @@ func _body() -> void:
 		"occlusion costs less than %.0f %% of the frame it is part of (%+.0f %%)"
 		% [OCCLUSION_FRAME_SHARE * 100.0, share * 100.0])
 
+	# Diagnostics only: three alternating, bounded pairs after the original gate.
+	# Keep the original 60-frame ON/OFF assertion intact. Alternating order helps
+	# reveal drift and denominator sensitivity; these are not extra pass criteria.
+	for trial in range(3):
+		var samples := {}
+		var order := [false, true] if trial % 2 == 0 else [true, false]
+		for enabled: bool in order:
+			occlusion.enabled = enabled
+			occlusion.snap()
+			await _frames(4)
+			samples[enabled] = await _median_frame_ms(30)
+		var on_ms := float(samples[true])
+		var off_ms := float(samples[false])
+		print("PERF_DIAG trial=%d on_ms=%.4f off_ms=%.4f delta_ms=%+.4f ratio=%+.1f%%" % [
+			trial + 1, on_ms, off_ms, on_ms - off_ms, 100.0 * (on_ms - off_ms) / maxf(off_ms, 0.001)])
+	occlusion.enabled = true
+	occlusion.snap()
+	await _frames(2)
+
 	# --- 2. occlusion step, bounded by the bucket scan ----------------------
 	var per_step := _occlusion_step_ms(occlusion, 240)
 	print("  perf: occlusion step %.3f ms over 240 rounds, %d occluders in %d buckets"
