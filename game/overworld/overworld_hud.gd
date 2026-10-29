@@ -106,6 +106,7 @@ func show_death(message: String) -> void:
 	if _death_panel == null:
 		_death_panel = PanelContainer.new()
 		_death_panel.name = "OverworldDeath"
+		_death_panel.add_to_group(&"gameplay_modal")
 		_death_panel.set_anchors_preset(Control.PRESET_CENTER)
 		_death_panel.position = Vector2(-120, -50)
 		_death_panel.custom_minimum_size = Vector2(240, 100)

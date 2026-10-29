@@ -111,6 +111,29 @@ func _body() -> void:
 	await process_frame
 	await physics_frame
 	_expect(bool(hero.call(&"gameplay_input_allowed", &"attack")), "pointer release rearms attack")
+	# Existing non-A6 overlays also opt into the same A0 gate.
+	var codex_scene := load("res://game/ui/field_codex.tscn") as PackedScene
+	var codex := codex_scene.instantiate() as Control
+	overlay.add_child(codex)
+	codex.call(&"set_player", hero)
+	codex.call(&"show_codex")
+	await process_frame
+	Input.action_press(&"move_right")
+	await physics_frame
+	await process_frame
+	_expect(codex.is_in_group(&"gameplay_modal") and (hero.get(&"move_input") as Vector2).length() < 0.01, "existing field codex blocks movement without pausing world time")
+	codex.call(&"hide_codex")
+	await physics_frame
+	_expect(not bool(hero.call(&"gameplay_input_allowed", &"move_right")), "codex press remains blocked after close")
+	Input.action_release(&"move_right")
+	await physics_frame
+	codex.queue_free()
+	var hud: Node = world.get(&"hud")
+	hud.call(&"show_death", "Modal input test")
+	await process_frame
+	var death_panel := hud.find_child("OverworldDeath", true, false) as Control
+	_expect(death_panel != null and death_panel.is_in_group(&"gameplay_modal") and not bool(hero.call(&"gameplay_input_allowed", &"attack")), "existing overworld death panel participates in the gate")
+	hud.call(&"hide_death")
 	workspace.call(&"open_workspace")
 	await process_frame
 	paused = true
