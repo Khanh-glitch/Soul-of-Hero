@@ -56,6 +56,8 @@ func _body() -> void:
 	_expect(_give(WOOD, 4), "wall material granted")
 	var wall := build.try_place(origin + Vector2i.ONE, "station.test.wall.overlap")
 	_expect(not bool(wall.get("ok", false)) and _count(WOOD) == 4, "single-cell piece cannot overlap station footprint")
+	var direct_wall: Dictionary = svc.call(&"place_structure", "wall_wood", origin + Vector2i.ONE, "station.test.direct.overlap")
+	_expect(not bool(direct_wall.get("ok", false)) and _count(WOOD) == 4, "candidate transaction independently refuses overlap with non-origin cell")
 	build.select_piece("foundation_wood")
 	var floor_result := build.try_place(origin + Vector2i.ONE, "station.test.floor")
 	_expect(bool(floor_result.get("ok", false)) and build.entity_at_layer(origin + Vector2i.ONE, "floor") != "", "floor may coexist below station")
