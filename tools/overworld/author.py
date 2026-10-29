@@ -166,25 +166,41 @@ def point_in_poly(x, y, poly):
 # painting helpers
 # ---------------------------------------------------------------------------
 def blend_put(layer, x, y, code, alt=None, band=0.0, value=0.5, threshold=0.5, seed=0,
-              clump=2):
-    """Write `code`, but dither toward `alt` inside a threshold band.
+              clump=1):
+    """Write `code`, or `alt` where a field crosses a threshold.
 
-    The decision is made per *clump* of tiles, not per tile. A per-tile dither
-    between two ground materials - gravel at 101 luma against rock at 94 - is salt
-    and pepper at the camera's 2x zoom: the ground reads as a quilt of individual
-    16 px squares rather than as one surface with a second material showing
-    through. Quantising the choice to a 2x2 block means the alternate material
-    arrives in clumps a few tiles wide, which is the smallest scale at which a
-    ground mix reads as geology.
+    `value` is a smooth field (normally `patch_field`). Where it is well above the
+    threshold the cell is `alt`, well below it is `code`, and within `band` of the
+    threshold the boundary is roughened by a small noise, so the edge is ragged
+    rather than a contour line.
+
+    The previous version of this function is worth recording because it looks
+    reasonable and was wrong in a way that dominated the world map. It decided
+    with `h01(seed, x, y) > t` *inside* the band, where `t` mapped the field's
+    position in the band to 0..1 - so the middle of every band, the part that
+    should be the most decisive, became a per-tile coin flip, and every material
+    mix in the world printed as a scatter of isolated 16 px squares of the other
+    material. The forest floor was a quilt of random rectangles. A mix has to be
+    a *threshold on a field with a perturbed edge*, not a dither inside a band.
     """
     if not inside(x, y):
         return
-    if alt and band > 0 and abs(value - threshold) < band:
-        t = 0.5 + (value - threshold) / (2 * band)
-        if h01(seed, x // clump, y // clump) > t:
-            put(layer, x, y, alt)
-            return
+    if alt and value > threshold:
+        perturbed = value + (vnoise(x, y, 2.5, seed) - 0.5) * band
+        put(layer, x, y, alt if perturbed > threshold else code)
+        return
     put(layer, x, y, code)
+
+
+def patch_field(seed, x, y, scale=7.0):
+    """A smooth field for material mixes, sampled per tile.
+
+    Ground mixes in this world were fed `h01(seed, x // 2, y // 2)` - white noise
+    at two-tile resolution - so a moor with mud in it printed as a stack of
+    random rectangles. `fbm` at this scale wanders, which is what a patch of
+    different ground actually does.
+    """
+    return fbm(x, y, seed=seed, scale=scale, octaves=3)
 
 
 def road(points, half_width=2.4, kind="=", *, ground_code="d", seed=0):
@@ -483,13 +499,13 @@ def paint_landforms():
 
     # the sacred terraces climbing to the Reliquary
     for x, y in ellipse(200, 138, 34, 22, wobble=0.4, seed=240):
-        blend_put(ground, x, y, "r", "f", 0.2, h01(241, x // 2, y // 2), 0.5, seed=242)
+        blend_put(ground, x, y, "r", "f", 0.12, patch_field(241, x, y), 0.5, seed=242)
     for x, y in ellipse(199, 137, 22, 13, wobble=0.45, seed=243):
         put(ground, x, y, "f")
 
     # the ritual basin: a sunken bowl of ash with dried blood at its floor
     for x, y in ellipse(192, 194, 38, 24, wobble=0.45, seed=250):
-        blend_put(ground, x, y, "a", "v", 0.18, h01(251, x // 2, y // 2), 0.45, seed=252)
+        blend_put(ground, x, y, "a", "v", 0.11, patch_field(251, x, y), 0.45, seed=252)
     for x, y in ellipse(192, 194, 24, 14, wobble=0.5, seed=253):
         put(ground, x, y, "v")
     for x, y in ellipse(192, 194, 11, 6, wobble=0.5, seed=254):
@@ -497,39 +513,39 @@ def paint_landforms():
 
     # the relay watershed: cold wet flats braided with conduit stone
     for x, y in ellipse(288, 142, 40, 30, wobble=0.45, seed=260):
-        blend_put(ground, x, y, ";", "m", 0.2, fbm(x, y, seed=261, scale=16), 0.5, seed=262)
+        blend_put(ground, x, y, ";", "m", 0.12, patch_field(261, x, y, 16), 0.5, seed=262)
     for x, y in ellipse(292, 144, 26, 17, wobble=0.4, seed=263):
-        blend_put(ground, x, y, "y", ";", 0.2, h01(264, x // 2, y // 2), 0.5, seed=265)
+        blend_put(ground, x, y, "y", ";", 0.11, patch_field(264, x, y), 0.5, seed=265)
 
     # the watch ridge: bare wind-scoured rock above the tree line
     for x, y in ellipse(210, 84, 42, 24, wobble=0.4, seed=270):
-        blend_put(ground, x, y, "r", "g", 0.22, fbm(x, y, seed=271, scale=12), 0.5, seed=272)
+        blend_put(ground, x, y, "r", "g", 0.14, patch_field(271, x, y, 12), 0.5, seed=272)
     for x, y in ellipse(208, 82, 24, 13, wobble=0.5, seed=273):
         if h01(274, x, y) < 0.7:
             put(ground, x, y, "g")
 
     # the northern precinct: the monastery's gravel court
     for x, y in ellipse(272, 74, 28, 18, wobble=0.4, seed=280):
-        blend_put(ground, x, y, "g", "f", 0.2, h01(281, x // 2, y // 2), 0.5, seed=282)
+        blend_put(ground, x, y, "g", "f", 0.12, patch_field(281, x, y), 0.5, seed=282)
     for x, y in ellipse(272, 74, 16, 10, wobble=0.5, seed=283):
         put(ground, x, y, "f")
 
     # the pass: wind-scoured stone squeezed between mountain walls
     for x, y in ellipse(214, 44, 34, 15, wobble=0.35, seed=290):
-        blend_put(ground, x, y, "g", "r", 0.25, h01(291, x // 2, y // 2), 0.5, seed=292)
+        blend_put(ground, x, y, "g", "r", 0.14, patch_field(291, x, y), 0.5, seed=292)
     # the citadel plateau
     for x, y in ellipse(284, 38, 30, 17, wobble=0.3, seed=293):
         put(ground, x, y, "f")
 
     # the southern refuge: a defended hollow on the last dry ground
     for x, y in ellipse(58, 220, 42, 19, wobble=0.4, seed=300):
-        blend_put(ground, x, y, "d", "f", 0.22, h01(301, x // 2, y // 2), 0.5, seed=302)
+        blend_put(ground, x, y, "d", "f", 0.13, patch_field(301, x, y), 0.5, seed=302)
     for x, y in ellipse(58, 222, 23, 11, wobble=0.45, seed=303):
         put(ground, x, y, "f")
 
     # the south-east fen: dead water nobody garrisons
     for x, y in ellipse(272, 216, 56, 26, wobble=0.5, seed=310):
-        blend_put(ground, x, y, "b", "m", 0.22, fbm(x, y, seed=311, scale=13), 0.5, seed=312)
+        blend_put(ground, x, y, "b", "m", 0.13, patch_field(311, x, y, 13), 0.5, seed=312)
 
 
 def paint_water():
