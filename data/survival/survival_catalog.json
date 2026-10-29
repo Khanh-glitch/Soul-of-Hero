@@ -165,7 +165,7 @@
       "label": "Wooden Bed",
       "cost": {
         "oak_wood": 4,
-        "reed_fibre": 2
+        "iron_scrap": 1
       },
       "kind": "bed",
       "solid": true,

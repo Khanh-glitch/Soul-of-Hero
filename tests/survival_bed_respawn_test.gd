@@ -22,7 +22,7 @@ func _body() -> void:
 	var world: OverworldWorld = ow.get(&"world")
 	var svc := _survival()
 	_clear_inventory()
-	_expect(_give(WOOD, 48) and _give(IRON, 1) and _give(FIBRE, 2), "resources granted via SaveService")
+	_expect(_give(WOOD, 48) and _give(IRON, 2), "resources granted via SaveService")
 	build.select_piece("wall_wood")
 	var origin := Vector2i(-1, -1)
 	for y in range(5, world.height - 9, 4):
@@ -65,10 +65,10 @@ func _body() -> void:
 	_expect(_give(WOOD, 4), "bed timber granted")
 	build.select_piece("bed_wood")
 	var paid_before := _count(WOOD)
-	var fibre_before := _count(FIBRE)
+	var iron_before := _count(IRON)
 	var bed_result: Dictionary = build.try_place(origin + Vector2i(3, 3), "survival.test.bed.purchase")
 	var bed_id := String(bed_result.get("entity_id", ""))
-	_expect(bool(bed_result.get("ok", false)) and _count(WOOD) == paid_before - 4 and _count(FIBRE) == fibre_before - 2,
+	_expect(bool(bed_result.get("ok", false)) and _count(WOOD) == paid_before - 4 and _count(IRON) == iron_before - 1,
 		"indoor bed charged atomically")
 	var again: Dictionary = build.try_place(origin + Vector2i(4, 3), "survival.test.bed.purchase")
 	_expect(not bool(again.get("ok", false)) and _count(WOOD) == 0, "replayed bed purchase cannot duplicate or charge")
@@ -95,6 +95,7 @@ func _body() -> void:
 	_expect(String((svc.call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id,
 		"active bed survives world restart")
 	_expect(bool(build.bed_wake_position(bed_id).get("ok", false)), "closed door permits a safe wake and exit")
+	_expect(bool(svc.call(&"learn_recipe", "bed_test_recipe", "test", "survival.test.recipe")), "learned knowledge committed")
 	_expect(_give(STONE, 3), "carried materials granted before death")
 	var old_checkpoint := Vector2(123, 456)
 	root.get_node("GameSession").set(&"checkpoint", old_checkpoint)
@@ -104,6 +105,16 @@ func _body() -> void:
 	var bag_id := String(doc.get("pending_death", ""))
 	_expect(bool(hero.get(&"dead")) and not bag_id.is_empty() and _count(STONE) == 0,
 		"actual Hero death atomically creates one bag and removes carried stack")
+	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "death never transfers permanent knowledge")
+	# Simulate process restart after death committed but before respawn.
+	paused = false
+	_expect(bool(_save().call(&"reload_save")), "reload committed pending death from disk")
+	ow = await _reload_world(ow)
+	build = ow.get(&"survival_build")
+	hero = ow.get(&"player")
+	hero.set_physics_process(false)
+	_expect(bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == bag_id,
+		"restart restores death and does not create a duplicate bag")
 	_expect(bool(ow.call(&"_respawn_overworld_hero")), "actual Hero respawns via active bed")
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")
@@ -112,8 +123,20 @@ func _body() -> void:
 	_expect(bag != null, "death bag projected in live overworld")
 	if bag != null:
 		hero.global_position = (bag as Node2D).global_position
+		var fillers: Array[String] = []
+		for index in range(35):
+			var item := "bed_filler_%02d" % index
+			if not _give(item, 50):
+				break
+			fillers.append(item)
+		_expect(not fillers.is_empty() and fillers.size() < 35, "fill inventory to actual capacity")
+		_expect(bool(bag.call(&"interact", hero)) and _count(STONE) == 0 and (svc.call(&"document") as Dictionary).get("death_bags", {}).has(bag_id),
+			"full inventory refuses recovery and preserves bag")
+		if not fillers.is_empty():
+			_expect(bool(_save().call(&"consume_inventory_item", fillers[0], 50, "survival.test.bed.free_slot")), "free capacity for bag")
 		_expect(bool(bag.call(&"interact", hero)) and _count(STONE) == 3, "recover bag by real interaction without item loss")
 		_expect(not bool(svc.call(&"recover_death_bag", bag_id)), "replaying recovery cannot duplicate")
+	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "knowledge remains after bag recovery")
 	_expect(bool(svc.call(&"remove_structure", breach_id)), "demolish enclosing wall")
 	await physics_frame
 	_expect(not bool(build.bed_wake_position(bed_id).get("ok", true)), "breached room invalidates bed")

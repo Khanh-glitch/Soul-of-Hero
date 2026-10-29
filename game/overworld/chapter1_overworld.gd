@@ -942,10 +942,12 @@ func _fallback_has_escape(start: Vector2i) -> bool:
 	var pending: Array[Vector2i] = [start]
 	var seen: Dictionary = {start: true}
 	var cursor := 0
-	while cursor < pending.size() and cursor < 256:
+	while cursor < pending.size() and cursor < 2048:
 		var cell: Vector2i = pending[cursor]
 		cursor += 1
-		if maxi(absi(cell.x - start.x), absi(cell.y - start.y)) >= 8:
+		# Protected route cells cannot legally be blocked by construction. Reaching
+		# one is stronger than merely finding several cells in a dead-end pocket.
+		if survival_build._on_route_detail(cell):
 			return true
 		for step: Vector2i in [Vector2i.UP, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.DOWN]:
 			var next := cell + step
