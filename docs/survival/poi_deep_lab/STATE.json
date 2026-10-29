@@ -53,6 +53,6 @@
   "other_agents_blocked": false,
   "unit_2_started": true,
   "unit_3_started": false,
-  "last_pushed_commit": "1e67253675bba27c2b4b1901a7566e7060357d36",
-  "last_pushed_commit_scope": "Last verified remote before Unit 2 publication; resolve checkpoint_commit for this artifact, and issue #18 for final publication SHA."
+  "last_pushed_commit": "6823384a5fcbe9ce78aac90f4259bc2ac710955a",
+  "last_pushed_commit_scope": "Verified pushed Unit 2 graph commit. This metadata follow-up is identified by checkpoint_commit; final branch SHA is on issue #18."
 }
