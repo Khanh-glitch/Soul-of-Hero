@@ -116,7 +116,13 @@ class ProgressionModelContracts(unittest.TestCase):
 
     def test_unprepared_route_aborts_and_late_aliases_stay_blocked(self):
         rush = mp.run_scenario('rush_east_unprepared', inputs=self.inp)
-        self.assertTrue(any(r['outcome'] == 'abort_unprepared_hazard' for r in rush['route_choices']))
+        # A1 PR20 91a35449 gates rt_east_seam behind cap_filter. An unprepared rush
+        # must be locked out of the shortcut, not granted an invented permission or
+        # silently rerouted through an unmitigated hazard.
+        self.assertTrue(any(a['outcome'] == 'shortcut_locked' and a['route_id'] == 'rt_east_seam'
+                            and 'cap_filter' in a['missing_capabilities'] for a in rush['shortcut_attempts']))
+        self.assertFalse(any('rt_east_seam' in r.get('route_edges', []) for r in rush['route_choices']
+                             if r['session'] == 1))
         self.assertNotIn('cap_boat', self.baseline['summary']['capabilities'])
         self.assertNotIn('cap_seal_3', self.baseline['summary']['capabilities'])
         self.assertGreater(self.baseline['bottlenecks'].get('capability_material_unresolved:cap_boat', 0), 0)

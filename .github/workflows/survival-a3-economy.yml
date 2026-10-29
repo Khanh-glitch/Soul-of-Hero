@@ -58,6 +58,9 @@ jobs:
           print('### A3 product progression model (SIMULATION_ONLY)')
           print(f"Baseline: Ember discovery session {b['firsts'].get('discovery:core_ember')}, Frost {b['firsts'].get('discovery:core_frost')}, Ember manufacture {b['firsts'].get('manufacture:core_ember')}.")
           print(f"Remaining late goals: {b['remaining_late_goal_count']}; native casts executed: {b['summary']['native_casts_executed']}.")
+          t = b['time_accounting']
+          print(f"Time accounting: {t['status']}; active {t['active_modeled_seconds']}s / budget {t['scheduled_budget_seconds']}s; unused {t['unused_budget_seconds']}s; station work {t['station_work_seconds']}s (overlaps active).")
+          print(f"Scenarios: {len(r['scenarios'])}; A1 source adoption: {', '.join(b['source_adoption']['adopted'])}; rejected global aliases remain blocked.")
           PY
       - uses: actions/upload-artifact@v4
         if: always()

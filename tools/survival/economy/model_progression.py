@@ -34,6 +34,7 @@ def load_inputs():
         'loot': _load('items/loot_tables.json')['tables'],
         'pieces': json.loads((DATA / 'survival_catalog.json').read_text())['pieces'],
         'config': _load('recipes/progression_model.json'),
+        'adoption': _load('items/a1_source_adoption.v2.json'),
     }
 
 
@@ -42,11 +43,15 @@ def validate_config(inp):
     errors = []
     if cfg.get('status') != 'SOH_DESIGN_PROPOSAL_SIMULATION_ONLY_NOT_HUMAN_PLAYTEST':
         errors.append('progression model must remain explicitly simulation-only')
-    forbidden = {'frost_resin', 'venom_sac', 'peat'}
+    adoption = inp.get('adoption', {})
+    disputed = {d['material_key'] for d in adoption.get('rejected_global_aliases', [])}
+    adopted = {a['material_key'] for a in adoption.get('adopted_source_transformations', [])}
     for src in cfg['product_sources']:
         key = src.get('a1_material_key')
-        if key in forbidden and src.get('binding_status', '').startswith('CONFIRMED'):
-            errors.append(f'unapproved alias used as confirmed source: {key}')
+        if key in disputed and not src.get('adoption_ref') and not src.get('binding_status', '').startswith('SUPERSEDED'):
+            errors.append(f'disputed A1 material used without source-specific adoption: {key}')
+        if src.get('adoption_ref') and src['adoption_ref'] not in {a['transformation_id'] for a in adoption.get('adopted_source_transformations', [])}:
+            errors.append(f'unknown adoption_ref {src["adoption_ref"]}')
         if src.get('item_id') and src['item_id'] not in items:
             errors.append(f'unknown source item {src["item_id"]}')
         for iid in src.get('outputs', {}):
@@ -70,6 +75,15 @@ def validate_config(inp):
     for name, sc in cfg['scenarios'].items():
         if sc.get('minutes', 45) <= 0 or sc.get('sessions', 14) <= 0:
             errors.append(f'invalid scenario {name}')
+    route_ids = {e['route_id'] for e in cfg['route_network']['edges']}
+    for rid in cfg.get('novice_bootstrap', {}).get('safe_route_ids', []):
+        if rid not in route_ids:
+            errors.append(f'novice safe route missing from model network: {rid}')
+    if cfg.get('novice_bootstrap', {}).get('hazardous_shortcut') not in route_ids:
+        errors.append('hazardous shortcut missing from model network')
+    for a in adoption.get('adopted_source_transformations', []):
+        if a['a3_item_id'] not in items:
+            errors.append(f'adopted source item missing: {a["a3_item_id"]}')
     # Roadside loot must not contain rare Cores/catalysts.
     road = inp['loot'].get('roadside_cache', {})
     for entry in road.get('entries', []):
@@ -114,7 +128,13 @@ class ProgressionModel:
         self.sc = dict(self.cfg['scenarios'].get(scenario, {'seed': 30, 'sessions': 14, 'minutes': 45}))
         if overrides:
             self.sc.update(overrides)
-        self.rng = random.Random(int(self.sc.get('seed', 30)))
+        seed = int(self.sc.get('seed', 30))
+        self.rng = random.Random(seed)
+        # Separate streams so adding a gather/craft action does not silently reroll
+        # death or rare discovery outcomes. Scenario seed still controls all streams.
+        self.death_rng = random.Random(seed + 1000)
+        self.loot_rng = random.Random(seed + 2000)
+        self.rare_rng = random.Random(seed + 3000)
         self.items = self.inp['items']; self.recipes = self.inp['recipes']; self.techs = self.inp['techs']
         self.stations = self.inp['stations']; self.loot = self.inp['loot']; self.pieces = self.inp['pieces']
         self.assume = self.cfg['assumptions']
@@ -123,7 +143,7 @@ class ProgressionModel:
         self.hazards = self.cfg['hazards']
         self.edges = self.cfg['route_network']['edges']
         self.nodes = {n['node_id']: n for n in self.cfg['route_network']['nodes']}
-        self.home = Counter(); self.bag = Counter()
+        self.home = Counter(); self.bag = Counter(); self.equipment = {}
         self.instances = {}
         self.known = {r for r, v in self.recipes.items() if v['knowledge'] == 'starter'}
         self.tech = set(); self.caps = set()
@@ -140,6 +160,16 @@ class ProgressionModel:
         self.roadside_claims = 0; self.catalyst_attempts = 0; self.catalyst_successes = 0
         self.specimen_discoveries = []
         self.native_casts_executed = 0
+        self.adoption = self.inp.get('adoption', {})
+        self.hazard_mitigation = self.cfg.get('hazard_mitigation', {})
+        self.explicit_bootstrap_pois = set(self.cfg.get('explicit_bootstrap_pois', []))
+        self.world_actions = set()
+        self.time_ledger = Counter()
+        self.session_station_work = 0
+        self.session_active_categories = Counter()
+        self.blocked_routes = set(self.sc.get('blocked_routes', []))
+        self.pause_stations = self.sc.get('pause_stations', {})
+        self.shortcut_attempts = []
 
     # ----- inventory -----
     def _stack_limit(self, iid):
@@ -241,11 +271,26 @@ class ProgressionModel:
         return False
 
     # ----- time / stations -----
+    def _category(self, label):
+        if label.startswith('travel '): return 'travel'
+        if label.startswith('expedition ') or label.startswith('poi '): return 'exploration_interaction'
+        if label.startswith('claim '): return 'gathering'
+        if label.startswith('enqueue '): return 'crafting_handling'
+        if label.startswith('research '): return 'research_handling'
+        if label.startswith('build ') or label.startswith('install ') or label.startswith('upgrade '): return 'construction'
+        if label.startswith('active-session production wait'): return 'station_wait'
+        if label.startswith('combat '): return 'combat'
+        if label.startswith('decision '): return 'player_decision'
+        return 'other'
+
     def _spend(self, seconds, label):
         seconds = max(0, int(seconds))
         if seconds > self.time_left:
             self.bottlenecks['session_time'] += 1
             seconds = self.time_left
+        category = self._category(label)
+        self.time_ledger[category] += seconds
+        self.session_active_categories[category] += seconds
         self.time_left -= seconds
         self.clock += seconds
         by_station = defaultdict(list)
@@ -253,6 +298,9 @@ class ProgressionModel:
             if job['status'] in ('queued', 'running'):
                 by_station[job['station']].append(job)
         for station, jobs in by_station.items():
+            if self.session in self.pause_stations.get(station, []):
+                self.bottlenecks[f'station_paused:{station}'] += 1
+                continue
             jobs.sort(key=lambda j: j['seq'])
             rem = seconds
             for active in jobs:
@@ -264,12 +312,13 @@ class ProgressionModel:
                 use = min(rem, active['remaining'])
                 active['remaining'] -= use
                 rem -= use
+                self.session_station_work += use
                 if active['remaining'] <= 0:
                     active['status'] = 'ready'
         return seconds
 
     def wait_production(self):
-        pending = [j['remaining'] for j in self.jobs if j['status'] in ('queued', 'running')]
+        pending = [j['remaining'] for j in self.jobs if j['status'] in ('queued', 'running') and self.session not in self.pause_stations.get(j['station'], [])]
         if pending and self.time_left > 0:
             self._spend(min(max(pending), self.time_left), 'active-session production wait')
 
@@ -436,14 +485,54 @@ class ProgressionModel:
         return ok
 
     # ----- routes / expeditions -----
-    def _path(self, target):
+    def _resistance_coverage(self, hazard_id):
+        h = self.hazard_mitigation.get(hazard_id, {})
+        covered = []
+        fraction = 0.0
+        required_keys = set(h.get('required_resistance_keys', []))
+        for iid, rec in self.equipment.items():
+            if rec.get('condition', 0) <= 0:
+                continue
+            item = self.inp['items'].get(iid, {})
+            resist = item.get('resistances', {})
+            if hazard_id in resist or required_keys & set(resist):
+                covered.append(iid)
+                fraction = max(fraction, max([resist.get(k, 0) for k in required_keys] + [resist.get(hazard_id, 0)]) / 100.0)
+        cap = h.get('required_capability')
+        capability_ready = bool(cap and cap in self.caps)
+        if capability_ready:
+            fraction = max(fraction, float(h.get('minimum_mitigation_fraction_proposal', 0.6)))
+        return {'items': covered, 'capability': cap if capability_ready else None,
+                'mitigation_fraction_proposal': round(fraction, 3), 'ready': fraction > 0,
+                'required_resistance_keys': sorted(required_keys),
+                'status': 'A3_DESIGN_PROPOSAL_CAPABILITY_MITIGATION_NOT_NATIVE'}
+
+    def _edge_unmitigated(self, edge):
+        """Route access capability is not damage mitigation."""
+        unmitigated = Counter()
+        for h in self.hazards:
+            length = sum(_segment_rect_length(edge['polyline'][i], edge['polyline'][i + 1], h['rect']) for i in range(len(edge['polyline']) - 1))
+            if length > 0:
+                coverage = self._resistance_coverage(h['hazard_id'])
+                effective = length * (1.0 - coverage['mitigation_fraction_proposal'])
+                if effective > 0:
+                    unmitigated[h['hazard_id']] += effective
+        return unmitigated
+
+    def _path(self, target, avoid_unmitigated=True):
         start = 'node_refuge'
         if target == start:
-            return {'edges': [], 'tiles': 0.0, 'exposure': {}}
+            return {'edges': [], 'tiles': 0.0, 'exposure': {}, 'unmitigated_exposure': {}, 'route_choice': 'home'}
         adj = defaultdict(list)
         for e in self.edges:
-            if set(e['required_capabilities']) <= self.caps:
-                adj[e['from']].append(e); adj[e['to']].append(dict(e, **{'from': e['to'], 'to': e['from']}))
+            if e['route_id'] in self.blocked_routes:
+                continue
+            if not set(e['required_capabilities']) <= self.caps:
+                continue
+            unmit = self._edge_unmitigated(e)
+            if avoid_unmitigated and max(unmit.values(), default=0.0) > self.assume['hazard_exposure_abort_tiles']:
+                continue
+            adj[e['from']].append((e, unmit)); adj[e['to']].append((dict(e, **{'from': e['to'], 'to': e['from']}), unmit))
         dist = {start: 0.0}; prev = {}; pq = [(0.0, start)]
         while pq:
             d, u = heapq.heappop(pq)
@@ -451,35 +540,51 @@ class ProgressionModel:
                 break
             if d > dist.get(u, float('inf')):
                 continue
-            for e in adj[u]:
+            for e, unmit in adj[u]:
                 v = e['to']; nd = d + _polyline_tiles(e['polyline'])
                 if nd < dist.get(v, float('inf')):
                     dist[v] = nd; prev[v] = (u, e); heapq.heappush(pq, (nd, v))
         if target not in dist:
+            if avoid_unmitigated:
+                return self._path(target, avoid_unmitigated=False)
             return None
         edges = []; u = target
         while u != start:
             u, e = prev[u]; edges.append(e)
         edges.reverse()
-        exposure = Counter()
+        exposure = Counter(); unmitigated = Counter()
         for e in edges:
+            unmitigated.update(self._edge_unmitigated(e))
             for h in self.hazards:
                 length = sum(_segment_rect_length(e['polyline'][i], e['polyline'][i + 1], h['rect']) for i in range(len(e['polyline']) - 1))
                 if length > 0:
                     exposure[h['hazard_id']] += length
-        return {'edges': [e['route_id'] for e in edges], 'tiles': dist[target], 'exposure': dict(exposure)}
+        return {'edges': [e['route_id'] for e in edges], 'tiles': dist[target], 'exposure': dict(exposure),
+                'unmitigated_exposure': dict(unmitigated),
+                'route_choice': 'mitigation_aware' if avoid_unmitigated else 'unmitigated_fallback_for_abort_log'}
 
-    def _death_chance(self, risk, exposure):
+    def _death_chance(self, risk, exposure, unmitigated):
         chance = float(self.assume['base_death_chance'].get(risk, 0.05))
-        unprepared = 0.0
-        for hid, tiles in exposure.items():
-            h = next(x for x in self.hazards if x['hazard_id'] == hid)
-            if h['requires'] not in self.caps:
-                unprepared += tiles
+        # A1 uses highest-severity-per-cell; do not double-count overlapping hazards.
+        unprepared = max(unmitigated.values(), default=0.0)
         if unprepared > self.assume['hazard_exposure_abort_tiles']:
             chance += self.assume['unprepared_hazard_death_chance']
         chance *= float(self.sc.get('death_scale', 1.0))
         return min(0.95, chance), unprepared
+
+    def attempt_shortcut(self):
+        shortcut_id = self.cfg.get('novice_bootstrap', {}).get('hazardous_shortcut')
+        edge = next((e for e in self.edges if e['route_id'] == shortcut_id), None)
+        if edge is None:
+            return False
+        missing = sorted(set(edge['required_capabilities']) - self.caps)
+        if missing:
+            self.shortcut_attempts.append({'session': self.session, 'route_id': shortcut_id, 'outcome': 'shortcut_locked', 'missing_capabilities': missing})
+            self.events.append({'session': self.session, 'event': 'shortcut_locked', 'route_id': shortcut_id, 'missing_capabilities': missing,
+                                'status': 'A1_AUTHORED_CAP_FILTER_GATE'})
+            self.bottlenecks['shortcut_locked'] += 1
+            return False
+        return True
 
     def expedition(self, target, source_id=None, purpose='explore'):
         path = self._path(target)
@@ -497,25 +602,30 @@ class ProgressionModel:
             self.bottlenecks['session_time:expedition'] += 1
             return False
         risk = src.get('risk', 'medium')
-        chance, unprepared = self._death_chance(risk, path['exposure'])
+        unmitigated = path.get('unmitigated_exposure', {})
+        chance, unprepared = self._death_chance(risk, path['exposure'], unmitigated)
         force = self.sc.get('force_death') or {}
         forced = bool(force) and (
             (force.get('session') == self.session and force.get('poi_id') == target)
             or (force.get('source_id') is not None and force.get('source_id') == source_id)
         )
-        self._spend(need, 'expedition ' + target)
+        travel_spent = self._spend(travel, 'travel ' + target)
+        interact_spent = self._spend(interact, 'expedition ' + target)
         aborted = unprepared > self.assume['hazard_exposure_abort_tiles'] and not forced
-        died = forced or self.rng.random() < chance
+        died = forced or self.death_rng.random() < chance
         log = {'session': self.session, 'target': target, 'source_id': source_id, 'purpose': purpose,
-               'route_edges': path['edges'], 'round_trip_tiles': round(tiles, 2),
-               'travel_seconds': int(travel), 'hazard_exposure_tiles': {k: round(v, 2) for k, v in path['exposure'].items()},
-               'unprepared_exposure_tiles': round(unprepared, 2), 'death_chance': round(chance, 4),
+               'route_edges': path['edges'], 'route_choice': path.get('route_choice'), 'round_trip_tiles': round(tiles, 2),
+               'travel_seconds': travel_spent, 'exploration_interaction_seconds': interact_spent,
+               'hazard_exposure_tiles': {k: round(v, 2) for k, v in path['exposure'].items()},
+               'unmitigated_exposure_tiles': {k: round(v, 2) for k, v in unmitigated.items()},
+               'death_chance': round(chance, 4),
                'outcome': 'death' if died else ('abort_unprepared_hazard' if aborted else 'success')}
         self.route_log.append(log)
         if aborted:
             self.bottlenecks[f'hazard_abort:{target}'] += 1
             self.events.append({'session': self.session, 'event': 'hazard_abort', 'target': target,
-                                'unprepared_exposure_tiles': round(unprepared, 2),
+                                'unmitigated_exposure_tiles': {k: round(v, 2) for k, v in unmitigated.items()},
+                                'resistance_coverage': {h: self._resistance_coverage(h) for h in path['exposure']},
                                 'status': 'SOH_PROPOSAL_ROUTE_RETREAT_NOT_NATIVE_DAMAGE'})
             return False
         if died:
@@ -530,7 +640,7 @@ class ProgressionModel:
                                 'knowledge_retained': True, 'home_retained': True,
                                 'native_death_system': 'NOT_INTEGRATED_A0_PENDING'})
             return False
-        if target in self.cap_pois:
+        if target in self.cap_pois and target not in self.explicit_bootstrap_pois:
             p = self.cap_pois[target]
             if set(p['required_capabilities']) <= self.caps:
                 for cap in p['grants_capabilities']:
@@ -550,6 +660,36 @@ class ProgressionModel:
                                         'poi_id': target, 'status': 'A1_AUTHORED_FIRST_VISIT_GRANT_NOT_NATIVE'})
         if source_id:
             self._claim_source(source_id, target)
+        return True
+
+    def novice_action(self, action_id):
+        actions = self.cfg.get('novice_bootstrap', {}).get('a3_world_action_proposals', {})
+        a = actions.get(action_id)
+        if a is None or action_id in self.world_actions:
+            return False
+        if not set(a.get('requires_capabilities', [])) <= self.caps:
+            self.bottlenecks[f'novice_capability:{action_id}'] += 1
+            return False
+        costs = a.get('cost_a3_items', {})
+        if any(self.total(i) < n for i, n in costs.items()):
+            self.bottlenecks[f'novice_input:{action_id}'] += 1
+            return False
+        ok = self.expedition(a['poi_id'], purpose='novice_action:' + action_id)
+        if not ok:
+            return False
+        if costs and not self._pay(costs):
+            return False
+        for iid, qty in a.get('reward_proposal', {}).items():
+            self._add_item(iid, qty, reason='a1_novice_action_proposal:' + action_id)
+        for cap in a.get('grants', []):
+            if cap not in self.caps:
+                self.caps.add(cap)
+                self._first('capability:' + cap)
+        self.world_actions.add(action_id)
+        self.events.append({'session': self.session, 'event': 'novice_world_action', 'action_id': action_id,
+                            'poi_id': a['poi_id'], 'costs': costs, 'rewards': a.get('reward_proposal', {}),
+                            'grants_capabilities': a.get('grants', []),
+                            'status': 'A1_AUTHORED_ACTION_A3_COST_PROPOSAL_NOT_NATIVE'})
         return True
 
     def _expected_loot(self, table_id):
@@ -583,12 +723,12 @@ class ProgressionModel:
             table = self.loot[src['loot_table']]
             total = sum(e['weight'] for e in table['entries'])
             for _ in range(table['rolls']):
-                roll = self.rng.random() * total
+                roll = self.loot_rng.random() * total
                 acc = 0
                 for e in table['entries']:
                     acc += e['weight']
                     if roll <= acc:
-                        qty = self.rng.randint(e['quantity'][0], e['quantity'][1])
+                        qty = self.loot_rng.randint(e['quantity'][0], e['quantity'][1])
                         qty = max(0, int(round(qty * scale)))
                         self._add_item(e['item_id'], qty, 'bag', sid)
                         break
@@ -598,7 +738,7 @@ class ProgressionModel:
             chance = base_chance * float(self.sc.get('rare_chance_scale', 1.0)) if base_chance < 1.0 or sid == 'catalyst_vault' else 1.0
             if sid == 'catalyst_vault':
                 self.catalyst_attempts += 1
-            if self.rng.random() > chance:
+            if self.rare_rng.random() > chance:
                 self.events.append({'session': self.session, 'event': 'rare_roll_failed', 'source_id': sid, 'poi_id': poi_id,
                                     'chance': chance, 'status': 'SOH_PROPOSAL_NOT_ORIGINAL_DROP_RATE'})
                 if src.get('one_time'):
@@ -607,7 +747,7 @@ class ProgressionModel:
                 return False
             outputs = src.get('outputs') or {src['item_id']: src.get('yield_per_claim', 1)}
             for iid, qty in outputs.items():
-                qty = max(1, int(round(qty * scale))) if self.items[iid]['storage'] != 'instance' else 1
+                qty = max(0, int(round(qty * scale))) if self.items[iid]['storage'] != 'instance' else 1
                 added = self._add_item(iid, qty, 'bag', sid)
                 if added and self.items[iid]['kind'] == 'skill_core':
                     self.specimen_discoveries.append({'session': self.session, 'item_id': iid, 'source_id': sid, 'poi_id': poi_id})
@@ -705,6 +845,15 @@ class ProgressionModel:
 
     def apply_core_policy(self):
         policy = self.sc.get('core_policy', 'store_until_ready_then_sacrifice_ember')
+        if policy == 'targeted_after_loss':
+            lost_ids = {r['item_id'] for r in self.lost_instances if r.get('location') == 'lost_on_death' and r.get('item_id', '').startswith('core_')}
+            for iid in sorted(lost_ids):
+                rid = 'craft_' + iid
+                if rid not in self.known and self.total('knowledge_spares') >= 6 and self.total('research_notes') >= 2:
+                    self.decisions.append({'session': self.session, 'decision': 'TARGETED_RESEARCH_AFTER_LOSS', 'item_id': iid,
+                                           'cost': {'knowledge_spares': 6, 'research_notes': 2},
+                                           'status': 'A3_DESIGN_PROPOSAL_NO_FREE_REPLACEMENT'})
+                    self.research_recipe(rid, 'targeted')
         for rec in self._specimens():
             iid = rec['item_id']; token = rec['instance_id']
             rid = 'craft_' + iid
@@ -719,6 +868,15 @@ class ProgressionModel:
             elif policy == 'sacrifice_first_specimen':
                 if rid not in self.known and self.total('knowledge_spares') >= 5:
                     self.research_recipe(rid, 'specimen', token)
+            elif policy == 'targeted_after_loss':
+                lost = any(r.get('item_id') == iid and r.get('location') == 'lost_on_death' for r in self.lost_instances)
+                if lost and rid not in self.known and self.total('knowledge_spares') >= 6 and self.total('research_notes') >= 2:
+                    self.decisions.append({'session': self.session, 'decision': 'TARGETED_RESEARCH_AFTER_LOSS', 'item_id': iid,
+                                           'cost': {'knowledge_spares': 6, 'research_notes': 2},
+                                           'status': 'A3_DESIGN_PROPOSAL_NO_FREE_REPLACEMENT'})
+                    self.research_recipe(rid, 'targeted')
+                else:
+                    rec['disposition'] = 'stored'; rec['location'] = 'home'
             else:
                 ready = ('advanced_workbench' in self.installed and 'tech_core_binding' in self.tech and self.total('ancient_catalyst') >= 1)
                 if iid == 'core_ember' and ready and rid not in self.known and self.total('knowledge_spares') >= 5:
@@ -732,10 +890,25 @@ class ProgressionModel:
     # ----- agenda -----
     def _session_agenda(self):
         self.collect_jobs(); self._transfer_home(); self.install_stations()
-        rush = self.sc.get('route_policy') == 'rush_east_unprepared'
-        if rush and 'cap_seal_1' not in self.caps:
-            self.expedition('poi_crown_waystation', 'a1_crown_salvage', 'rush_unprepared')
-        # Fresh-player bootstrap: pay the real A0 shelter cost before station access.
+        if self.sc.get('route_policy') == 'rush_east_unprepared' and 'cap_filter' not in self.caps:
+            self.attempt_shortcut()
+        # Reconciled A1 authored first hour: safe approach -> waystation locker/ledger -> relay hand-crank ->
+        # Refuge resupply -> Orchard Apothecary filter lesson. No free bootstrap grant, no unmitigated shortcut.
+        if 'cap_salvage' not in self.caps:
+            self.gather_until('oak_wood', 2, 'live_oak_wood', 4)
+            self.gather_until('iron_scrap', 2, 'live_iron_scrap', 4)
+            self.novice_action('waystation_locker')
+            self.novice_action('waystation_ledger')
+            self.gather('a1_crown_salvage', 1)
+        if 'cap_salvage' in self.caps and 'cap_power_1' not in self.caps:
+            self.gather_until('oak_wood', 1, 'live_oak_wood', 4)
+            self.gather_until('iron_scrap', 2, 'live_iron_scrap', 4)
+            self.novice_action('relay_hand_crank')
+        if 'cap_power_1' in self.caps and 'cap_filter' not in self.caps:
+            self.gather_until('reed_fibre', 1, 'live_reed_fibre', 4)
+            self.gather_until('moonleaf', 1, 'a1_amber_herb', 2)
+            self.novice_action('apothecary_filter_lesson')
+        # Fresh-player shelter still pays the real A0 shelter cost before station access.
         if not self.home_built:
             self.gather_until('oak_wood', 36, 'live_oak_wood', 8)
             self.gather_until('iron_scrap', 2, 'live_iron_scrap', 8)
@@ -744,9 +917,8 @@ class ProgressionModel:
         if self.crafted['stone_pick'] < 1:
             self.craft_collect('stone_pick')
         self.gather_until('oak_wood', 70, 'live_oak_wood', 8)
-        self.gather_until('iron_scrap', 36, 'live_iron_scrap', 8)
+        self.gather_until('iron_scrap', 60, 'live_iron_scrap', 10)
         self.gather_until('reed_fibre', 18, 'live_reed_fibre', 6)
-        self.gather('early_roadside_salvage', 2)
         if self.crafted['furnace_kit'] < 1:
             self.craft_collect('furnace_kit')
         if self.crafted['workbench_kit'] < 1:
@@ -759,21 +931,14 @@ class ProgressionModel:
             self.craft_collect('research_kit')
         self.install_stations()
         if 'research' in self.installed:
-            self.craft_need('make_spares', 24, 2)
+            self.craft_need('make_spares', 52, 2)
             self.craft_need('weave_cloth', 6, 2)
         self.install_stations()
-        # Safe southern filter bootstrap before exposed crown buffer.
-        if 'cap_salvage' in self.caps and 'cap_filter' not in self.caps:
-            self.expedition('poi_amberwood_apothecary', purpose='filter_bootstrap')
-        if 'cap_filter' in self.caps and 'cap_seal_1' not in self.caps:
-            self.expedition('poi_crown_waystation', 'a1_crown_salvage', 'seal1')
-        if 'cap_seal_1' in self.caps and 'cap_power_1' not in self.caps:
-            self.expedition('poi_crown_relay_shed', purpose='power_bootstrap')
         if 'cap_seal_1' in self.caps and 'specimen_ember' not in self.claimed_once:
             self.gather('specimen_ember', 1)
         if 'legacy_chapter1_rewards' not in self.claimed_once and 'cap_seal_1' in self.caps:
             self.gather('legacy_chapter1_rewards', 1)
-        if 'cap_power_1' in self.caps and 'cap_seal_2' not in self.caps:
+        if 'cap_filter' in self.caps and 'cap_seal_2' not in self.caps:
             self.gather_until('sulfur', 2, 'a1_ember_sulfur', 1)
             self.expedition('poi_ember_old_forge', purpose='seal2')
         if 'cap_seal_2' in self.caps and 'catalyst_vault' not in self.claimed_once:
@@ -787,8 +952,8 @@ class ProgressionModel:
         # Knowledge spine and Core manufacture.
         self.wait_production(); self.collect_jobs()
         if 'research' in self.installed:
-            self.craft_need('make_spares', 24, 3)
-            self.craft_need('make_notes', 7, 3)
+            self.craft_need('make_spares', 52, 3)
+            self.craft_need('make_notes', 9, 3)
             self.research_tech('tech_smelting')
             self.wait_production(); self.collect_jobs()
             self.research_tech('tech_precision')
@@ -830,6 +995,8 @@ class ProgressionModel:
             self.session = session
             self.time_left = minutes * 60
             self.claims_this_session = Counter()
+            self.session_station_work = 0
+            self.session_active_categories = Counter()
             start_jobs = {j['seq']: j['remaining'] for j in self.jobs}
             self._session_agenda()
             # No offline catch-up: remaining job time persists only as active-session debt.
@@ -844,8 +1011,14 @@ class ProgressionModel:
         cores = [{'token': r['instance_id'], 'item_id': r['item_id'], 'location': r['location'],
                   'uses': r['uses'], 'disposition': r['disposition'], 'origin': r['origin']}
                  for r in self.instances.values() if r['item_id'].startswith('core_')]
+        budget = int(self.sc.get('minutes', 45) * 60)
+        active = budget - self.time_left
+        categories = dict(self.session_active_categories)
         return {
-            'session': self.session, 'active_seconds_used': int(self.sc.get('minutes', 45) * 60 - self.time_left),
+            'session': self.session, 'scheduled_budget_seconds': budget, 'active_modeled_seconds': active,
+            'active_seconds_used': active, 'station_work_seconds': int(self.session_station_work),
+            'unused_budget_seconds': budget - active, 'active_time_categories': categories,
+            'sparse_scenario_model': bool(self.cfg.get('time_accounting', {}).get('sparse_scenario_model', True)),
             'home_inventory': {i: n for i, n in sorted(self.home.items()) if n},
             'bag_inventory': {i: n for i, n in sorted(self.bag.items()) if n},
             'bag_slots_used': self.bag_slots(), 'home_slots_used': self.home_slots(), 'home_capacity': self.home_capacity(),
@@ -854,6 +1027,37 @@ class ProgressionModel:
             'pending_jobs': [{'target': j['target'], 'station': j['station'], 'remaining': j['remaining'], 'status': j['status']} for j in self.jobs],
             'bottlenecks_this_run': dict(self.bottlenecks.most_common(12)),
             'deaths': self.deaths, 'specimen_discoveries': len(self.specimen_discoveries),
+        }
+
+    def _decision_analysis(self):
+        return {
+            'status': 'A3_DESIGN_PROPOSAL_NATIVE_CASTS_ZERO',
+            'physical_core_vs_permanent_recipe': 'Core specimen is a finite physical instance; recipe knowledge is permanent. Research consumes the specimen; manufacture creates a new finite Core.',
+            'alternatives': {
+                'USE': {'gain': 'Potential field effect if A4 Gold skill is verified.', 'risk': 'Finite uses may be spent without permanent recipe knowledge.',
+                        'permanent_loss': 'No recipe knowledge gained by casting alone.', 'missing_evidence': ['A4 Gold skill verification', 'cast cost/uses/effect', 'encounter risk reduction', 'counterfactual sacrifice value']},
+                'STORE': {'gain': 'Preserves optionality and physical instance.', 'risk': 'Opportunity cost: delayed manufacture/knowledge; storage/death risk if carried.',
+                          'permanent_loss': 'None while stored safely.', 'missing_evidence': ['storage safety', 'later encounter utility', 'player preference']},
+                'SACRIFICE': {'gain': 'Permanent recipe knowledge and future manufacture path.', 'risk': 'Destroys the physical specimen; requires spares/station/catalyst/reagents to regain a Core.',
+                              'permanent_loss': 'The specific specimen instance is consumed.', 'missing_evidence': ['manufacture cost vs field utility', 'catalyst availability', 'time-to-replacement']},
+            },
+            'fair_use_vs_sacrifice_comparison': {
+                'not_yet_fair': True,
+                'required': ['same starting Core instance and session', 'A4-verified USE effect, uses, condition and risk delta', 'SACRIFICE confirmation warning and atomic consume',
+                             'manufacture recipe cost and catalyst/reagent availability', 'time to replacement under active-session queue', 'encounter outcomes with and without USE',
+                             'human valuation of permanent knowledge vs finite utility'],
+                'native_casts_executed': self.native_casts_executed,
+            },
+            'adversity': {
+                'early_loss': 'Bag items and bag-carried instances are lost on death; knowledge/home retained. No invisible protection.',
+                'targeted_fallback': 'After a lost specimen, targeted research may buy the recipe for 6 spares + 2 notes; it does not restore the physical Core.',
+                'blocked_routes': 'Route edges require A1 capabilities; safe approach has zero exposure; east shortcut requires cap_filter. Blocked routes force longer paths or stall.',
+                'missing_reagents': 'frost_resin/venom_sac/peat and tide/pressure resistance remain explicit gaps; no silent aliases.',
+                'limited_playtime': 'Active-session time only; no offline catch-up; unused budget is not engagement.',
+                'queue_uncertainty': 'Paused/interrupted station work persists as remaining active time; no free completion or duplicate grant.',
+            },
+            'decision_records': self.decisions,
+            'native_casts_executed': self.native_casts_executed,
         }
 
     def report(self):
@@ -871,6 +1075,29 @@ class ProgressionModel:
                               'capabilities_owned': sorted(req & self.caps),
                               'missing_or_unresolved_materials': missing_mat,
                               'status': status})
+        time_ledger = dict(self.time_ledger)
+        budget = int(self.sc.get('sessions', 14) * self.sc.get('minutes', 45) * 60)
+        active = sum(s['active_modeled_seconds'] for s in self.session_reports)
+        time_accounting = {
+            'status': 'SPARSE_SCENARIO_MODEL' if self.cfg.get('time_accounting', {}).get('sparse_scenario_model', True) else 'MODELED',
+            'scheduled_budget_seconds': budget, 'active_modeled_seconds': active,
+            'unused_budget_seconds': budget - active, 'station_work_seconds': sum(s['station_work_seconds'] for s in self.session_reports),
+            'active_time_categories': time_ledger,
+            'combat_seconds_modeled': time_ledger.get('combat', 0),
+            'player_decision_seconds_modeled': time_ledger.get('player_decision', 0),
+            'station_work_overlaps_player_actions': True,
+            'unmodeled_time': self.cfg.get('time_accounting', {}).get('unmodeled_time', []),
+            'note': 'Scheduled budget is not engagement. Station work may overlap travel/gather/craft handling; unused time is not padded.',
+            'required_native_and_human_evidence': [
+                'A0 station queue + authoritative active-time receipts',
+                'A0/A1 native combat encounter durations and damage/retreat recovery',
+                'A1 authored POI traversal/puzzle/interaction timings',
+                'A3/A0 native gather node cooldown and yield observation',
+                'A6 human read/plan/decide time and inventory-management friction',
+                'human 45-minute session observation for fun, fatigue, and voluntary continuation',
+            ],
+        }
+        decision_analysis = self._decision_analysis()
         invariants = {
             'no_negative_inventory': all(n >= 0 for n in self.home.values()) and all(n >= 0 for n in self.bag.values()),
             'bag_capacity_respected': all(s['bag_slots_used'] <= int(self.assume['bag_slots']) for s in self.session_reports),
@@ -917,6 +1144,15 @@ class ProgressionModel:
             'route_choices': self.route_log,
             'bottlenecks': dict(self.bottlenecks.most_common()),
             'per_session': self.session_reports,
+            'time_accounting': time_accounting,
+            'decision_analysis': decision_analysis,
+            'novice_bootstrap_events': [e for e in self.events if e['event'] == 'novice_world_action'],
+            'shortcut_attempts': self.shortcut_attempts,
+            'source_adoption': {'contract': 'data/survival/items/a1_source_adoption.v2.json',
+                                'adopted': [a['transformation_id'] for a in self.adoption.get('adopted_source_transformations', [])],
+                                'rejected_global_aliases': [a['material_key'] for a in self.adoption.get('rejected_global_aliases', [])],
+                                'proposed_not_catalogged': [a['proposed_item_id'] for a in self.adoption.get('proposed_catalog_additions', [])],
+                                'missing_items': self.adoption.get('missing_items', [])},
             'late_goals': remaining,
             'remaining_late_goal_count': sum(1 for g in remaining if g['status'] == 'REMAINING_GOAL'),
             'unresolved': {
@@ -951,7 +1187,10 @@ def run_all(names=None, inputs=None):
                            'first_frost_discovery': r['firsts'].get('discovery:core_frost'),
                            'first_ember_manufacture': r['firsts'].get('manufacture:core_ember'),
                            'catalyst_successes': s['catalyst_successes'], 'deaths': s['deaths'],
-                           'remaining_late_goals': r['remaining_late_goal_count']})
+                           'remaining_late_goals': r['remaining_late_goal_count'],
+                           'time_accounting_status': r['time_accounting']['status'],
+                           'active_modeled_seconds': r['time_accounting']['active_modeled_seconds'],
+                           'unused_budget_seconds': r['time_accounting']['unused_budget_seconds']})
     return {
         'schema': 'soh.economy.progression_audit.v1',
         'status': 'SIMULATION_ONLY_SOH_DESIGN_PROPOSAL',

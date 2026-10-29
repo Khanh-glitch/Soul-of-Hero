@@ -1,0 +1,66 @@
+{
+  "schema": "soh.economy.a6_read_only.v2",
+  "status": "A3_CONTRACT_PROPOSAL_NOT_UI_INTEGRATED",
+  "owner_producer": "A3 EconomyService read-only snapshots",
+  "owner_consumer": "A6 UI / HUD / menus",
+  "authority_rule": "UI flags, previews, and cached snapshots NEVER authorize inventory, research, cast, craft, or station transactions. Only A0 SaveService + A3 EconomyService commit APIs may mutate state.",
+  "snapshot_envelope": {
+    "fields": ["contract", "revision", "source_sha256", "session_id", "generated_at_active_ticks", "read_only=true"],
+    "invariant": "Every mutation request must carry expected_revision; A3/A0 revalidate at commit. Stale UI is rejected, not trusted."
+  },
+  "views": {
+    "inventory_view": {
+      "fields": ["item_id", "quantity", "location", "instance_id?", "uses_remaining?", "condition?", "provenance_label"],
+      "rule": "Read-only totals from SaveService; unique Cores show instance identity and finite uses."
+    },
+    "craftability_view": {
+      "fields": ["recipe_id", "craftable_now", "missing_inputs", "station_required", "station_operational", "technology_missing", "knowledge_locked", "queue_full"],
+      "rule": "craftable_now is a preview flag, not a transaction grant. Commit rechecks inputs/station/queue."
+    },
+    "rejection_view": {
+      "fields": ["operation", "rejection_code", "human_message_key", "missing_inputs?", "expected_revision?", "retryable"],
+      "rule": "A3/A0 produce rejection codes; A6 localizes. UI must not invent success or silently retry consumptive ops."
+    },
+    "provenance_view": {
+      "labels": ["CONFIRMED_SOURCE", "A1_AUTHORED_PROPOSAL", "A3_DESIGN_PROPOSAL", "NATIVE_TESTED", "HUMAN_PLAYTEST_REQUIRED", "BLOCKED_PENDING_A4", "MISSING_A1_A3_ITEM"],
+      "rule": "Every material/Core/recipe surfaced to the player carries a provenance label in developer/QA mode; production UI may simplify but must not claim native/human approval."
+    },
+    "unlock_view": {
+      "fields": ["known_recipes", "known_technologies", "capabilities", "skill_readiness", "blocked_pending_a4"],
+      "rule": "Permanent knowledge is distinct from physical Core availability. Readiness zeros are not Gold parity."
+    },
+    "core_decision_view": {
+      "fields": ["instance_id", "item_id", "uses_remaining", "condition", "alternatives=[USE,STORE,RESEARCH]", "sacrifice_warning", "permanent_recipe_unlock", "replacement_cost", "native_casts_executed=0"],
+      "sacrifice_warning": {
+        "must_show": ["physical specimen will be consumed", "recipe knowledge is permanent", "replacement requires catalyst/reagents/station/time", "irreversible confirmation required"],
+        "rule": "A6 sends explicit user confirmation event to A3/A0; it never sets a consumed flag locally."
+      }
+    },
+    "station_queue_view": {
+      "fields": ["station_id", "station_revision", "operational", "queue_capacity", "jobs=[job_id,target,remaining_ticks,status]", "active_time_receipt_summary"],
+      "rule": "Remaining time is active-session debt, not wall-clock ETA. Paused/removed stations show recovery actions, not free completion."
+    },
+    "time_accounting_view": {
+      "fields": ["scheduled_budget_seconds", "active_modeled_seconds", "station_work_seconds", "unused_budget_seconds", "categories", "sparse_scenario_model"],
+      "rule": "Unused budget is labeled unused, not engagement. Combat/decision time may be unmodeled; UI must not pad or claim 45-minute engagement."
+    }
+  },
+  "mutation_request_rule": {
+    "allowed": "A6 may send user intent {operation, event_id, expected_revision, instance_id?, recipe_id?, station_id?} to A3/A0 commit API.",
+    "forbidden": ["setting inventory quantities", "marking research consumed", "granting capabilities", "advancing station time", "authorizing casts from UI readiness flags"],
+    "rejection_codes": ["STALE_REVISION", "CONFIRMATION_REQUIRED", "UI_NOT_AUTHORIZED", "BLOCKED_PENDING_A4"]
+  },
+  "native_evidence_required_from_A6": [
+    "Read-only snapshot rendering with stale-revision rejection.",
+    "Sacrifice warning + explicit confirmation flow wired to A3/A0 atomic commit.",
+    "Provenance labels visible in QA mode.",
+    "No UI path mutates SaveService inventory or station time directly.",
+    "Human playtest observes decision clarity, not simulated engagement."
+  ],
+  "current_evidence": {
+    "a3_model": "SIMULATION_ONLY_SOH_DESIGN_PROPOSAL",
+    "native_casts_executed": 0,
+    "ui_integration": "NOT_INTEGRATED",
+    "human_playtest": "NOT_HUMAN_PLAYTESTED"
+  }
+}

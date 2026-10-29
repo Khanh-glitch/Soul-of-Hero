@@ -59,7 +59,7 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 | Schema/reference/accessibility/cycle audit | PASS (catalog contract feasibility) | `validation_report.json` |
 | Python adversarial/balance tests | PASS | `tests/survival/catalog/test_economy_contracts.py` |
 | Deterministic balance model | PASS for conservation invariants; **not** a playtest | `balance_report.json` |
-| Product progression/scarcity model | SIMULATION_ONLY SOH proposal; 21 Python tests locally; **not** human balance approval | `progression_report.json`, `PRODUCT_PROGRESSION_AUDIT.md` |
+| Product progression/scarcity model V2 | SIMULATION_ONLY SOH proposal; 30 Python tests locally; sparse time audit; **not** human balance approval | `progression_report.json`, `PRODUCT_PROGRESSION_AUDIT.md`, `OWNER_HANDOFFS_V2.md` |
 | Native SaveService adapter | PASS (CI) | Godot 4.7 run [40868045642](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868045642), PR run [40868053966](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868053966) |
 | A0 station/power/unique-token guard integration | PENDING | `migration_map.json` |
 | A1 source/POI/risk integration | PENDING | `sources.json` proposed entries |
@@ -72,7 +72,8 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 2. Station resolver is injected; production placement/power/condition/removal guards are A0-owned.
 3. Balance model currently shows knowledge-spare pressure can delay Core manufacture under baseline yields; this is a tuning finding, not a fun claim.
 4. Google Docs tab 04 was synced for hardening; product-model sync is recorded in the tab after this increment.
-5. Product model still depends on provisional A1 POI/source bindings and unapproved aliases; Frost/Venom manufacture and late boat/seal-3 goals remain blocked.
+5. Product model V2 reconciles A1 PR #20 source-specific adoptions, but specimen/catalyst POI bindings and 8 proposed catalog additions remain pending; Frost/Venom manufacture and late boat/seal-3 goals remain blocked.
+6. The 14×45-minute journey is a **sparse scenario model**, not proven engagement; combat/decision time and native station/human pacing are unmodeled. A0/A6 V2 producer/consumer contracts are proposals, not integrated UI/SaveService behavior.
 
 ## CI evidence
 

@@ -42,5 +42,14 @@ See `HARDENING_STATUS.md`: E-01/E-02/E-03/E-04 PARTIAL with explicit A0/A4/A1 ga
 6. Design/playtest: measure knowledge-spare pressure, Core manufacture pacing, and exploration catalyst demand in the integrated world before any gameplay PASS.
 7. A1/Control Tower: review provisional product-model POI/source bindings (`early_roadside_salvage`, specimen vaults, catalyst vault) and keep frost_resin/venom_sac/peat unapproved until explicit source/sink decisions.
 
+## Product model V2 (A1 source reconciliation / sparse time / owner handoffs)
+- A1 refreshed to PR #20 head `91a3544983ff2712e66fd77997df24f59efb3a44`; adoption contract `data/survival/items/a1_source_adoption.v2.json` adopts only `src_crown_reed→reed_fibre` and `src_amber_herb→moonleaf`; 8 global aliases remain rejected; 8 proposed additions and 12 missing items stay explicit.
+- First hour reconciled to A1: Refuge → Ashen Waystation → Crown Relay Shed → Refuge → Orchard Apothecary; safe approach zero exposure; east shortcut requires `cap_filter`; unprepared rush is `shortcut_locked`.
+- 14×45-minute claim audited as **SPARSE_SCENARIO_MODEL**: active 23,323 s / budget 37,800 s; unused 14,477 s; station work 1,002 s overlaps; combat/decision time unmodeled. No padding.
+- 15 scenarios incl. early loss + targeted fallback, blocked safe route, catalyst drought, queue interruption. Native casts remain 0.
+- Owner contracts: `A0_ECONOMY_PRODUCER_CONTRACT.v2.json`, `A6_ECONOMY_READ_ONLY_CONTRACT.v2.json`, `OWNER_HANDOFFS_V2.md`. UI flags never authorize transactions.
+- Python **30 tests PASS** (10 preserved + 11 V1 + 9 V2); one V1 assertion updated to A1 shortcut-lock truth. Native adapter unchanged **362 checks / 20 cases**. Immutable conservation fixture unchanged.
+- V2 code SHA / CI recorded in PR #19 after push; prior checkpoint `08711ea7` CI-green.
+
 ## Explicit non-claims
 - No Gold VFX/effect changes, no production overworld edits, no SaveService edits, no human playtest PASS, no offline production.

@@ -1,0 +1,90 @@
+{
+  "schema": "soh.economy.a0_producer.v2",
+  "status": "A3_CONTRACT_REQUEST_NOT_NATIVE_INTEGRATED",
+  "owner_producer": "A0 SaveService + station/active-time host",
+  "owner_consumer": "A3 EconomyService",
+  "source_refs": {
+    "a3_branch": "arena/7a12b27e-soul-of-hero",
+    "a3_prior_checkpoint": "08711ea7fdf887f8cb0b4df2c352220d9dbc4a78",
+    "a1_pr20_head": "91a3544983ff2712e66fd77997df24f59efb3a44",
+    "related_contracts": [
+      "A0_SAVE_SERVICE_GUARD_CONTRACT.md",
+      "A0_ACTIVE_TICK_HOST_CONTRACT.md",
+      "A4_SKILL_ATTESTATION_CONTRACT.md"
+    ]
+  },
+  "principles": [
+    "SaveService remains the sole authoritative inventory/transaction system.",
+    "A3 never introduces a second save authority or grants items from UI flags.",
+    "Physical Core instances and permanent recipe knowledge are distinct records.",
+    "All consumptive operations are atomic, idempotent, and fail closed on ownership mismatch.",
+    "Station progress requires authoritative active-session time, not wall-clock or offline catch-up."
+  ],
+  "physical_core_vs_permanent_recipe": {
+    "physical_instance": {
+      "record": "survival_economy.instances[instance_id]",
+      "token": "inventory.item_stacks soh_i_<counter12>_<hash8>, kind=key_item, quantity=1",
+      "required_fields": ["instance_id", "item_id", "origin", "location", "uses_remaining", "max_uses", "condition", "found_session", "disposition"],
+      "invariant": "Exactly one physical token XOR escrow/terminal attribute record; never quantity>1; never orphan token/record.",
+      "terminal_locations": ["consumed_by_research", "lost_on_death", "dismantled", "reconstructed"]
+    },
+    "permanent_knowledge": {
+      "record": "survival_economy.known_recipes[] / known_technologies[]",
+      "invariant": "Research unlock persists after the specimen is consumed; death does not remove knowledge.",
+      "manufacture": "Creates a NEW finite physical instance; it does not restore the consumed specimen."
+    },
+    "rejection_codes": ["OWNERSHIP_MISMATCH", "DUPLICATE_TOKEN", "ORPHAN_RECORD", "ORPHAN_TOKEN", "QUANTITY_NOT_ONE", "WRONG_KIND"]
+  },
+  "uses_condition_equipment_readiness": {
+    "uses_remaining": "A0 persists; A3 decrements only inside commit_cast after A4 attestation.",
+    "condition": "A0 persists 0..100; A3 wear/repair transactions are atomic; condition<=0 blocks equip/use.",
+    "equipment": "A0 owns slot assignment; A3 validates slot/resistance/condition read-only before effect.",
+    "skill_readiness": "A4 Gold attestation required; production Cores remain BLOCKED_PENDING_A4. A synthetic ready dict is not parity.",
+    "rejection_codes": ["USES_EXHAUSTED", "CONDITION_ZERO", "SLOT_MISMATCH", "BLOCKED_PENDING_A4", "ATTESTATION_MISMATCH"]
+  },
+  "station_queue_and_authoritative_active_time": {
+    "queue": {
+      "producer_fields": ["station_id", "kind", "tier", "queue_capacity", "operational", "condition", "station_revision"],
+      "invariant": "A3 escrow remains recoverable after station removal/power loss/reload/full inventory; cancel/collect refunds inputs/specimens, reserved fuel is burned.",
+      "fairness": "Accepted active deltas apply in stable job-id order; idle time after completion is not banked."
+    },
+    "time_receipt": {
+      "contract": "soh.economy.active_tick.v1",
+      "fields": ["contract", "station_id", "session_id", "session_index", "sequence", "active_ticks", "station_revision"],
+      "max_tick_quantum": 600,
+      "max_time_stations": 256,
+      "invariant": "No offline catch-up; new session_index rebaselines; revision change pauses old jobs; disabled time is consumed not banked."
+    },
+    "rejection_codes": ["TIME_HOST_MISSING", "TIME_RECEIPT_MISMATCH", "TIME_QUANTUM_EXCEEDED", "STATION_REVISION_CHANGED", "QUEUE_FULL", "STATION_NOT_OPERATIONAL"]
+  },
+  "research_sacrifice_warning_and_atomic_confirmation": {
+    "warning_payload_producer": "A3 EconomyService.research_preview(instance_id, method)",
+    "warning_fields": ["instance_id", "item_id", "method", "permanent_recipe_unlock", "physical_specimen_consumed", "replacement_requires", "knowledge_spares_cost", "research_notes_cost", "station_id", "duration_ticks", "irreversible=true"],
+    "confirmation": {
+      "consumer": "A6 UI presents warning; user intent is sent to A0/A3 transaction API as event_id + expected_revision.",
+      "invariant": "UI flags never authorize consumption. A3 revalidates ownership/revision/costs at commit.",
+      "atomicity": "transact_once consumes specimen + spares/notes and enqueues research escrow in one SaveService transaction; replay is idempotent.",
+      "failure": "Any mismatch rejects with no partial consume; escrow recoverable via cancel/collect."
+    },
+    "rejection_codes": ["CONFIRMATION_REQUIRED", "EXPECTED_REVISION_MISMATCH", "SPECIMEN_MISSING", "RESEARCH_INPUT_MISSING", "REPLAY_CONFLICT"]
+  },
+  "inventory_transaction_authority": {
+    "api": "SaveService.transact_once / add_items_to_candidate / remove_items_from_candidate / home_transfer",
+    "idempotency_key": "soh.a3.<op>.<sha256(event_id)>",
+    "invariant": "Generic drop/transfer/merge/equip/container/reward paths must guard soh_i_* tokens or atomically couple attribute records.",
+    "rejection_codes": ["TRANSACTION_REPLAYED", "TRANSACTION_CONFLICT", "INVENTORY_FULL", "HOME_CAPACITY_EXCEEDED"]
+  },
+  "native_evidence_required_from_A0": [
+    "Positive guard tests for generic drop/transfer/merge/equip/container/reward paths.",
+    "Reload/replay preserves one physical Core and attributes.",
+    "Station removal/power/revision lifecycle exposes escrow recovery.",
+    "Authoritative active-time host integration with no offline catch-up.",
+    "Atomic research sacrifice confirmation with no partial consume.",
+    "Independent native review on merged A0+A3 branch."
+  ],
+  "current_evidence": {
+    "a3_native_adapter": "362 checks / 20 cases PASS (fixture host, not production world).",
+    "production_integration": "WORLD_NOT_INTEGRATED_A0_A1_A4_PENDING",
+    "human_playtest": "NOT_HUMAN_PLAYTESTED"
+  }
+}
