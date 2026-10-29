@@ -1,6 +1,6 @@
 # Validation Evidence — SURV-050A (review corrections)
 
-Status: authored-data validation passed locally. Product-correction checkpoint adds novice hazard bootstrap, A1/A3 material decisions and truthful POI readiness. Previous isolated Godot 4.7 reader CI passed at `ea64df75`/`da93be3c`; product-correction CI status is recorded after push. Native continent gameplay validation remains **NOT_TESTED**.
+Status: authored-data validation passed locally. Product-correction checkpoint adds novice hazard bootstrap, A1/A3 material decisions and truthful POI readiness. Previous isolated Godot 4.7 reader CI passed at `ea64df75`/`da93be3c`; product-correction CI passed at `b9c81fdb` (push run 40889886618, PR run 40889899260). Native continent gameplay validation remains **NOT_TESTED**.
 
 ## Commands
 
@@ -72,7 +72,7 @@ Novice access increased from 38 to 39 because sheltered capability-source POIs a
 
 - Local Godot binary: unavailable. Release asset download failed (`release-assets.githubusercontent.com` SSL). PyPI does not provide a Godot engine binary (`godot` is an unrelated DOT-language package).
 - A1-owned CI fixture: `tests/survival/world/godot/` + `.github/workflows/survival-world-reader.yml`.
-- CI run: `SURV-050A World Reader` push run **40872678698** @ `ea64df75d251a5e7dee08dd919a78667250b772c` — **success**. Python authoring/schemas/pacing/pytest/determinism job success; Godot 4.7 isolated reader import/test/anti-vacuity/artifact-upload steps success. See `ci_evidence.json`.
+- CI run: `SURV-050A World Reader` push run **40872678698** @ `ea64df75d251a5e7dee08dd919a78667250b772c` — **success**. Product-correction push run **40889886618** @ `b9c81fdb38325276b05f8d98a571bc787c54ccfe` and PR run **40889899260** — **success**. Python authoring/schemas/pacing/pytest/determinism job success; Godot 4.7 isolated reader import/test/anti-vacuity/artifact-upload steps success, including product-consumption checks. See `ci_evidence.json`.
 - Raw CI log/artifact ZIP retrieval was blocked by sandbox egress (`results-receiver` / Azure blob EOF); GitHub job/step conclusions are authoritative. The anti-vacuity gate requires the PASS phrase and ≥50 assertions.
 - The fixture is read-only and isolated. It does not boot the production overworld, SaveService, or A0 paid-construction transaction. The A0 delegate is a contract stub; native paid-home integration is a separate A0 gate.
 

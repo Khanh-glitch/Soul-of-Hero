@@ -1,6 +1,7 @@
 # SURV-050A Living-World Product Corrections
 
 Status: `AUTHORED_PRODUCT_CONTRACTS_NOT_NATIVE_PLAYABLE`  
+Scoped CI: push run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618 and PR run https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889899260 at `b9c81fdb` — success.  
 Branch: `arena/e385312a-soul-of-hero` · PR #20 · starting HEAD `da93be3c`
 
 This checkpoint answers the independent product review without regenerating the continent, inflating POI counts, editing the production overworld, or claiming 108 implemented encounters.
@@ -66,3 +67,14 @@ The exemplars are deliberately early roadside/power sites, not S6 premium deep-P
 - Ten Chapter 1 entrances, stable IDs, 192-chunk frame, baseline/source locks and W-01 `build_permission=2` delegation are preserved.
 - No production overworld controller, SaveService, A0 construction, A3 catalog, A4 Gold/VFX, A6 UX or root `project.godot` edits.
 - `native_playable=false`. Full living-world product acceptance still requires independent review and native A0/A3/A6 integration gates.
+
+
+## Verification at product-correction checkpoint
+
+- Compiler: `ok=true`; plan SHA `fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4`.
+- Validator: 0 errors; 15 schemas PASS.
+- Pytest: 56 passed.
+- Determinism: 221 artifacts, tree SHA `29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f`.
+- Pacing: 11 journeys; first-hour safe preparation/retreat has zero authored hazard exposure; hazardous shortcut remains exposed and filter-gated.
+- Isolated Godot 4.7 reader: CI success, including readable hazard/bootstrap/material/POI product contracts and truthful readiness counts.
+- Previews: 9 PNGs; `novice_bootstrap_detail.png`, routes and starter detail inspected.

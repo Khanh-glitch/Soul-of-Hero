@@ -121,5 +121,31 @@
     }
   ],
   "limitation": "Raw CI logs/artifact ZIP retrieval blocked by sandbox egress (results-receiver / Azure blob EOF). GitHub job/step conclusions and anti-vacuity gate success are authoritative; fixture requires >=50 assertions and PASS phrase.",
-  "scope": "Isolated read-only authored-data consumer only. Not native continent/SaveService/paid-home integration."
+  "scope": "Isolated read-only authored-data consumer only. Not native continent/SaveService/paid-home integration.",
+  "product_correction_checkpoint": {
+    "code_head": "b9c81fdb38325276b05f8d98a571bc787c54ccfe",
+    "push_run": {
+      "id": 40889886618,
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618"
+    },
+    "pr_run": {
+      "id": 40889899260,
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889899260"
+    },
+    "jobs": [
+      {
+        "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+        "conclusion": "success",
+        "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618/job/123503482520"
+      },
+      {
+        "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
+        "conclusion": "success",
+        "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618/job/123504555562"
+      }
+    ],
+    "scope": "A1 authored-data + isolated Godot 4.7 reader/product-contract consumption. Not native continent gameplay."
+  }
 }
