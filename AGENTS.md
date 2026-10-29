@@ -56,3 +56,7 @@ At every agent handoff, agent start, PR review, independent native test or merge
 
 ## First action in any new ChatGPT conversation or agent/coordinator takeover
 **Open and execute `docs/survival/NEW_CHAT_BOOTSTRAP.md` BEFORE making new project status assertions, approving or dispatching a task.** It requires primary Atlas re-reading, live Git PR/CI/test code inspection, six actual AI owners, cross-system contract map, contradiction detection and **actionable next operational prompts**. Then refresh `docs/survival/CONTROL_TOWER_CURRENT.md` and Google Docs tabs 04/12 with evidence. Neither ChatGPT memory nor a stale timestamped summary is a reliable substitute for these durable sources. Never mark a worker active or a gameplay feature verified simply because a documentation branch/issue exists.
+
+
+## Every Soul of Hero coordinator reply MUST end in an immediately usable handoff
+User mandate (2026-10-29): at the end of **every substantive project-coordination response**, include one concise, copyable **Handoff** prompt for the same agent to resume or a new coordinator chat to take over if the session drops. Include the latest decision, evidence/uncertainty, precise next atomic work, agent ownership/dependencies, and Git live recovery links. This is **in addition to** (not a substitute for) source-to-code reviews and durable Git/Google Docs updates. Rules and template: `docs/survival/EVERY_REPLY_HANDOFF_PROTOCOL.md`. Never rely on chat internal memory, never invent progress, and never drown the user in a repeated full project history for each handoff.
