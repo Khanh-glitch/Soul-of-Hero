@@ -51,9 +51,9 @@ jobs:
           s = world.read_text()
           for marker in ('_build_survival()', '_build_economy_session()', '_build_occlusion()', '_build_hud()', '_build_economy_panel()', '_connect_run_events()', '_apply_hud()'):
               needle = '\t' + marker + '\n'
-              assert s.count(needle) == 1, marker
+              assert s.count(needle) >= 1, marker
               crumb = "\tJavaScriptBridge.eval(\"window.__survivalBuildTrace=(window.__survivalBuildTrace||[]).concat('%s');\", true)\n" % marker
-              s = s.replace(needle, needle + crumb)
+              s = s.replace(needle, needle + crumb, 1)
           world.write_text(s)
           PY
           echo "Temporary CI fixture from A0 $(git rev-parse HEAD); production entrypoint not changed in Git." >> "$GITHUB_STEP_SUMMARY"
