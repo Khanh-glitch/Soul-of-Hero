@@ -249,6 +249,8 @@ func _run() -> void:
 	view._journey_tabs[1].grab_focus()
 	var accept := InputEventJoypadButton.new()
 	accept.button_index = JOY_BUTTON_A
+	if not InputMap.action_has_event(&"ui_accept", accept):
+		InputMap.action_add_event(&"ui_accept", accept)
 	accept.pressed = true
 	root.push_input(accept, true)
 	await process_frame

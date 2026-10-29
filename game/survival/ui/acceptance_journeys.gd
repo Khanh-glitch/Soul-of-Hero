@@ -162,6 +162,8 @@ func select_core_choice(choice: String) -> void:
 		return
 	_core_choice = choice
 	_sacrifice_preview_confirmed = false
+	if _journey == 1 and choice == "research":
+		_step = 2
 	_render()
 
 

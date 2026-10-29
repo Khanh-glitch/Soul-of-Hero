@@ -112,7 +112,10 @@ func _run() -> void:
 	planner._select("soh_i_000000000012_deadbeef")
 	check((planner._details.get_child(2) as Label).text.contains("Exhausted") and (planner._details.get_child(8) as Button).disabled, "depleted core does not offer equip")
 	planner._select("soh_i_000000000011_a1c0ffee")
-	check((planner._details.get_child(2) as Label).text.contains("3/8") and (planner._details.get_child(6) as Label).text.contains("Not learned"), "finite uses, research knowledge, and learned formula are separate states")
+	var ember_uses_text := (planner._details.get_child(2) as Label).text
+	var ember_formula_text := (planner._details.get_child(6) as Label).text
+	check(ember_uses_text.contains("3/8"), "physical Ember uses remain finite: %s" % ember_uses_text)
+	check(ember_formula_text.contains("Not learned"), "physical Ember instance does not imply learned formula: %s" % ember_formula_text)
 	var equip := planner._details.get_child(8) as Button
 	equip.pressed.emit()
 	check(requests.size() == 3 and requests[2].action == "equip_core" and requests[2].id == "soh_i_000000000011_a1c0ffee", "equip request uses exact instance id")
