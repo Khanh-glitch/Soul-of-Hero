@@ -26,6 +26,23 @@ static func mk_branch(pts: Array, w: float, start: float, speed: float, seed_: f
 			"start": start, "speed": speed, "drawn": 0.0, "seed": seed_, "wm": 1.0}
 
 
+## `wavyPath(x, y, ang, len, wob, step = 7, seed = 1, curve = 0)` from lib.ts 141-147.
+static func wavy_path(x: float, y: float, ang: float, length: float, wob: float,
+		step: float = 7.0, seed_: float = 1.0, curve: float = 0.0) -> Array:
+	var pts: Array = [{"x": x, "y": y}]
+	var a: float = ang
+	var px: float = x
+	var py: float = y
+	var d: float = step
+	while d <= length:
+		a += curve * step + (M.hash_n(floor(d / step) * 3.0 + seed_ * 17.0) - 0.5) * wob
+		px += V8M.v8_cos(a) * step
+		py += V8M.v8_sin(a) * step * 0.95
+		pts.append({"x": px, "y": py})
+		d += step
+	return pts
+
+
 ## `class FlowNet extends Fx`
 class FlowNet extends FX.Fx:
 	var br: Array = []
