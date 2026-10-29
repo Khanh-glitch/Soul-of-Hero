@@ -317,7 +317,7 @@ func _body() -> void:
 		var horizontal := door.global_position.x - hero.global_position.x
 		if absf(horizontal) <= 1.5:
 			break
-		_set_direction(Vector2(horizontal, 0.0))
+		_set_direction(Vector2(signf(horizontal) * 16.0, 0.0))
 		await physics_frame
 	_set_direction(Vector2.ZERO)
 	await physics_frame
