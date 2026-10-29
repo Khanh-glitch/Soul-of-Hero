@@ -107,15 +107,24 @@ jobs:
           # offending line. This covers every runtime file, not just one scene.
           status=0
           : >"$ARTIFACT_DIR/parse-gate.log"
-          for f in game/overworld/*.gd; do
+          # Test scripts are included. They are not loaded by the game, so nothing
+          # else in this workflow compiles them until the step that runs them - by
+          # which point a compile error is indistinguishable from a failed
+          # assertion and the reason is buried in a log. Cheap to check here, where
+          # the failure names the file.
+          for f in game/overworld/*.gd tests/overworld_*.gd; do
             mkdir -p artifacts/ud_parse
+            : >"$ARTIFACT_DIR/parse-one.log"
             if ! timeout --signal=TERM --kill-after=10s 60s \
                 godot --headless --path . --user-data-dir artifacts/ud_parse \
-                      --check-only --script "res://$f" >>"$ARTIFACT_DIR/parse-gate.log" 2>&1; then
+                      --check-only --script "res://$f" >"$ARTIFACT_DIR/parse-one.log" 2>&1; then
               echo "::error::parse gate failed for $f"
-              tail -20 "$ARTIFACT_DIR/parse-gate.log"
+              grep -nE "SCRIPT ERROR|Parse Error|ERROR" "$ARTIFACT_DIR/parse-one.log" | head -5 \
+                | while IFS= read -r line; do echo "::error::$f :: $line"; done
+              tail -10 "$ARTIFACT_DIR/parse-one.log"
               status=1
             fi
+            cat "$ARTIFACT_DIR/parse-one.log" >>"$ARTIFACT_DIR/parse-gate.log"
           done
           cat "$ARTIFACT_DIR/parse-gate.log"
           exit $status
@@ -126,6 +135,11 @@ jobs:
           timeout --signal=TERM --kill-after=10s 90s godot --headless --path . --user-data-dir artifacts/ud_static --script res://tests/overworld_static_contracts_test.gd >"$ARTIFACT_DIR/overworld-static.log" 2>&1
           rc=$?
           cat "$ARTIFACT_DIR/overworld-static.log"
+          # The log is only reachable through a host this project's tooling cannot
+          # always read, so anything that names a script error is re-emitted as an
+          # annotation, which comes back through the API.
+          grep -nE "SCRIPT ERROR|Parse Error|OW_STATIC_FAIL" "$ARTIFACT_DIR/overworld-static.log" \
+            | head -20 | while IFS= read -r line; do echo "::error::$line"; done
           exit $rc
 
       - name: Regression guard — known-broken parse fixture MUST fail (mandatory)

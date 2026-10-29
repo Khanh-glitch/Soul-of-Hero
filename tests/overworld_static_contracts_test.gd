@@ -163,19 +163,30 @@ func _run() -> void:
 			var layers := JSON.parse_string(layers_file.get_as_text()) as Dictionary
 			layers_file.close()
 			var used := {}
-			for run in (layers.get("layers", {}) as Dictionary).get("detail", {}).get("rle", []):
-				var run_code := String(run[0]).substr(0, 1)
+			var layer_bag: Dictionary = layers.get("layers", {})
+			var detail_layer: Dictionary = layer_bag.get("detail", {})
+			var detail_rle: Array = detail_layer.get("rle", [])
+			for run: Variant in detail_rle:
+				if not (run is Array):
+					continue
+				var run_cells: Array = run
+				if run_cells.is_empty():
+					continue
+				var run_token := String(run_cells[0])
+				if run_token.is_empty():
+					continue
+				var run_code := run_token.substr(0, 1)
 				# "." is the layer's "nothing here" marker, not an atlas code: the
 				# renderer skips it before it ever looks a frame up. It accounts for
-				# the great majority of detail-layer cells, so counting it as an
-				# overlay would assert against a frame that must not exist.
+				# most detail-layer cells, so counting it as an overlay would assert
+				# against a frame that must not exist.
 				if run_code == ".":
 					continue
 				used[run_code] = true
 			for code in used.keys():
 				_expect(detail_codes.has(code), "detail code '%s' is in the atlas" % code)
 			_expect(detail_codes.has("p"), "the pool overlay is in the atlas")
-			var pool: Dictionary = detail_codes.get("p", {}) as Dictionary
+			var pool: Dictionary = detail_codes.get("p", {})
 			var pool_frames: Array = pool.get("variant_names", [])
 			_expect(pool_frames.size() >= 4,
 				"the pool overlay carries at least 4 frames (has %d)" % pool_frames.size())
