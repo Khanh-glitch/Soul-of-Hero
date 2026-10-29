@@ -1,6 +1,8 @@
 extends "res://tests/survival_foundation_test.gd"
 ## Actual mounted overworld, production A0 clock/port and byte-pinned A3 service.
-## Resources are fixture grants; this is not a human or fresh-input journey.
+## Starting materials are collected from mounted nodes by test-driven interaction
+## with a teleported, physics-disabled Hero and cleared inventory. Later fault
+## cases use fixture grants. This is NOT a normal-input fresh-save journey.
 
 func _finish() -> void:
 	paused = false
@@ -22,6 +24,24 @@ func _wait_job(host: Node, id: String, status: String, seconds: float) -> bool:
 		await process_frame
 	return false
 
+# Test drives actual spawned resource nodes and transaction service, not player
+# navigation or pointer dispatch. Inventory was explicitly cleared by harness.
+func _harvest_mounted(ow: Node, hero: Node2D, kind: String, item: String, target: int) -> bool:
+	var nodes: Dictionary = ow.get(&"survival_nodes")
+	for value: Variant in nodes.values():
+		var node := value as SurvivalResourceNode
+		if node == null or node.resource_kind != kind:
+			continue
+		hero.global_position = node.global_position
+		while _count(item) < target and node.can_interact(hero):
+			node.interact(hero)
+			if not bool(node.last_result().get("ok", false)):
+				return false
+			await create_timer(0.25).timeout
+		if _count(item) >= target:
+			return true
+	return false
+
 func _body() -> void:
 	var ow := _host.get_child(0)
 	var host: Node = ow.get(&"economy_session")
@@ -35,9 +55,11 @@ func _body() -> void:
 		return
 	hero.set_physics_process(false)
 	_clear_inventory()
-	_expect(_give(WOOD, 8) and _give(IRON, 2) and _give("reed_fibre", 6), "fixture materials in real shared inventory")
+	_expect(await _harvest_mounted(ow, hero, "oak_tree", WOOD, 8), "mounted oak nodes transact sufficient wood without material grant")
+	_expect(await _harvest_mounted(ow, hero, "scrap_pile", IRON, 2), "mounted scrap node transacts iron without material grant")
+	_expect(await _harvest_mounted(ow, hero, "reed_clump", "reed_fibre", 6), "mounted reed nodes transact fibre without material grant")
 	# Open the actual A0 production panel through its normal action and click a
-	# visible recipe button; the materials themselves remain fixture grants.
+	# visible recipe button; resource interactions above are test-driven.
 	var toggle_event := InputEventAction.new()
 	toggle_event.action = &"economy_toggle"
 	toggle_event.pressed = true
