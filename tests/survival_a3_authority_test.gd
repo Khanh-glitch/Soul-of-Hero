@@ -2,6 +2,7 @@ extends SceneTree
 ## Real SaveService + immutable A3 86dc2195 adapter with a narrowly scoped A0
 ## shim. Station is an explicit fixture; these tests do not certify E-02.
 const PinnedEconomy = preload("res://tests/fixtures/a3_86dc2195/adapter/a0_authorized_economy.gd")
+const Guard = preload("res://game/survival/economy/unique_ownership_guard.gd")
 var save: Node
 var economy: RefCounted
 var port: Node
@@ -58,6 +59,14 @@ func _run() -> void:
 	if port == null:
 		return _finish()
 	_expect(bool(economy.call(&"configure", port, _station)), "actual A3 catalog and service configured")
+	var instance_ids: Array[String] = []
+	for item_id: Variant in economy.catalog.get("items", {}):
+		if String(economy.catalog["items"][item_id].get("storage", "")) == "instance":
+			instance_ids.append(String(item_id))
+	instance_ids.sort()
+	var approved: Array = Guard.APPROVED_INSTANCE_ITEMS.duplicate()
+	approved.sort()
+	_expect(instance_ids == approved, "A0 guard identity list exactly matches pinned A3 instance catalog")
 	var created: Dictionary = economy.call(&"grant_instance", "iron_pick", "actual.grant", -1, 70)
 	var id := String(created.get("instance_id", ""))
 	_expect(bool(created.get("ok", false)) and not id.is_empty(), "trusted A3 creates one token plus record")
@@ -162,12 +171,14 @@ func _run() -> void:
 	# External corruption is deliberately written to disk, not through a trusted
 	# API. A bad primary must not be replaced with a backup or new defaults.
 	var safe: Dictionary = save.call(&"get_snapshot")
-	for mode: String in ["quantity", "kind", "orphan", "duplicate", "schema", "attributes"]:
+	for mode: String in ["quantity", "kind", "orphan", "duplicate", "schema", "attributes", "unknown_item"]:
 		var corrupt := safe.duplicate(true)
 		if mode == "schema":
 			corrupt["survival_economy"]["schema"] = 999
 		elif mode == "attributes":
 			corrupt["survival_economy"]["instances"][id]["condition"] = 101
+		elif mode == "unknown_item":
+			corrupt["survival_economy"]["instances"][id]["item_id"] = "not_an_a3_instance"
 		else:
 			_mutate_token(corrupt, id, mode)
 		var bytes := JSON.stringify(corrupt, "\t") + "\n"

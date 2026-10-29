@@ -3,6 +3,12 @@ extends RefCounted
 ## checks physical-token conservation and prevents generic mutation of it.
 
 const PREFIX := "soh_i_"
+# Frozen from A3 catalog 86dc2195, instance-storage rows only. New catalog
+# revisions require an A0/A3 review and a matching update to this guard.
+const APPROVED_INSTANCE_ITEMS := [
+	"core_venom", "core_frost", "core_ember", "toxin_mask", "frost_cloak",
+	"stone_pick", "iron_pick", "salvage_hammer",
+]
 
 static func _is_token(value: Variant) -> bool:
 	return (value is String or value is StringName) and String(value).strip_edges().to_lower().begins_with(PREFIX)
@@ -114,6 +120,8 @@ static func inspect(document: Dictionary) -> String:
 		for field: String in ["item_id", "location", "origin"]:
 			if not record.get(field, null) is String or String(record[field]).is_empty():
 				return "invalid_instance_field:" + field
+		if String(record["item_id"]) not in APPROVED_INSTANCE_ITEMS:
+			return "unknown_instance_item"
 		for field: String in ["condition", "max_condition", "uses", "max_uses"]:
 			if not _is_uint(record.get(field, null), 100):
 				return "invalid_instance_field:" + field
