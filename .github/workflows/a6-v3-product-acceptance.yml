@@ -106,7 +106,7 @@ jobs:
           python3 - <<'PY'
           import subprocess
           allowed = ("game/survival/ui/", "tests/survival/ui/", "docs/survival/ux/", "docs/survival/SOURCE_COVERAGE_TRACE.json", "docs/survival/source_archive/", ".a6-contract-inputs/")
-          paths = subprocess.check_output(["git", "-C", "a0-source", "status", "--porcelain"], text=True).splitlines()
+          paths = subprocess.check_output(["git", "-C", "a0-source", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
           unexpected = [line for line in paths if not line[3:].startswith(allowed)]
           if unexpected:
               raise SystemExit("Temporary composition modified a non-A6 path:\n" + "\n".join(unexpected))
