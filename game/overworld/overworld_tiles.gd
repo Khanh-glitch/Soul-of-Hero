@@ -91,7 +91,11 @@ static func _carries_collision(frame_name: String) -> bool:
 static func overlay_variant_index(x: int, y: int, count: int) -> int:
 	if count <= 1:
 		return 0
-	var mixed := abs((x * 92837111) ^ (y * 689287499) ^ 0x51ED270B)
+	# `absi`, not `abs`: `abs` is the generic Variant overload, so `:=` cannot
+	# infer a type from it and Godot rejects the file (gdparse does not, which is
+	# why this had to be found in CI once). The neighbouring `variant_index` already
+	# uses `absi` for the same reason.
+	var mixed := absi((x * 92837111) ^ (y * 689287499) ^ 0x51ED270B)
 	return mixed % count
 
 
