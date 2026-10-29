@@ -779,6 +779,11 @@ which is in the native capture list and had never been reviewed.
   smear. The first version put 3368 cells of wash over `f`, `d` *and* `g`, which
   flattened the gravel crossing at the crossroads into a grey blob. Restricted to laid
   stone: 669 cells, and the flagstone plazas keep the effect.
+* **A field needs to be deep to have a centre.** At a threshold of three cells the
+  wash landed on the small flagstone patches inside the refuge camp and read as pale
+  slabs lying on the dirt — spilled paint, not worn stone. The threshold is now 4.5
+  cells, which leaves the big plazas (crypt, beacon, citadel) and nothing else: 243
+  cells in the whole world. The pebble trim, at 4051 cells, does the rest of the work.
 
 ### Still open
 

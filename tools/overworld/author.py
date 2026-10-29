@@ -1976,8 +1976,10 @@ def paint_paved_wear():
     the cliff ramp, inverted: the cliff darkens inward because light does not reach
     into it, a floor pales inward because it is worn.
 
-    Only fields deep enough to have a centre are touched - a three-cell apron in front
-    of a door does not want a gradient on it.
+    Only fields deep enough to have a centre are touched. A three-cell apron in front
+    of a door does not want a gradient on it, and neither does a camp: the first
+    version's threshold of three cells put pale slabs into the dirt around the refuge
+    fire, which read as spilled paint rather than as worn stone.
     """
     from collections import deque
     # Flagstone only. Gravel and dirt are *already* textured by their own tiles, and a
@@ -2024,7 +2026,7 @@ def paint_paved_wear():
         if dd >= 8.0:
             put(detail, x, y, "8")
             painted += 1
-        elif dd >= 3.0:
+        elif dd >= 4.5:
             put(detail, x, y, "7")
             painted += 1
         elif dd < 1.2 and (get(ground, x, y) or ".") == "f":
