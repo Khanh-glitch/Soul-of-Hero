@@ -471,7 +471,7 @@ jobs:
             tail -3 "$MEM" | while IFS= read -r l; do echo "::notice::[venomwright-${{ matrix.skill }}] mem $l"; done
           fi
           if [ -f "$LOG" ]; then
-            tail -25 "$LOG" | sed -e 's/%/%25/g' | while IFS= read -r l; do echo "::notice::[venomwright-${{ matrix.skill }}] log $l"; done
+            grep -E 'trace tick|    fx |    en |    pt |^  "|GOLD93|^  FAIL' "$LOG" | cut -c1-220 | tail -70 | sed -e 's/%/%25/g' | while IFS= read -r l; do echo "::notice::[venomwright-${{ matrix.skill }}] log $l"; done
           fi
 
   # ARCANA III gets its own matrix so a Venomwright regression can never be
