@@ -1,0 +1,62 @@
+{
+  "$id": "soh://world/vertical_slice_manifest.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "files": {
+      "additionalProperties": {
+        "required": [
+          "sha256",
+          "schema"
+        ],
+        "type": "object"
+      },
+      "minProperties": 4,
+      "type": "object"
+    },
+    "integration_status": {
+      "const": "NATIVE_READY_CONTRACT_NOT_MOUNTED"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "owners": {
+      "type": "object"
+    },
+    "poi_ids": {
+      "items": {
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "research_firewall": {
+      "type": "object"
+    },
+    "schema": {
+      "const": "soh.world.vertical_slice_manifest.v1"
+    },
+    "slice_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "world_plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "slice_id",
+    "native_playable",
+    "integration_status",
+    "world_plan_sha256",
+    "poi_ids",
+    "files",
+    "owners",
+    "research_firewall"
+  ],
+  "title": "vertical_slice_manifest",
+  "type": "object"
+}

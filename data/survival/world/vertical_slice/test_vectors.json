@@ -1,0 +1,557 @@
+{
+  "fixture_scope": "ISOLATED_CONTRACT_REDUCER_ONLY; no Hero movement, combat, damage, production SaveService or scene-tree persistence is claimed",
+  "native_playable": false,
+  "schema": "soh.world.slice_test_vectors.v1",
+  "vectors": [
+    {
+      "assertions": [
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_power_1",
+        "iron_scrap>=1",
+        "knowledge_spares>=2",
+        "oak_wood>=1",
+        "bus_powered",
+        "hero_return_cell=[392,200]"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "seal_ledger",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            410,
+            202
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "cache_restock",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            406,
+            202
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "gather_deadfall",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            398,
+            201
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "action_id": "hand_crank_bypass",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            442,
+            234
+          ],
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "retreat",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "event": "return",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        }
+      ],
+      "title": "Novice first-hour both POIs and return",
+      "vector_id": "VS-01"
+    },
+    {
+      "assertions": [
+        "shortcut_not_required",
+        "safe_approach_zero_hazard"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "capabilities": [],
+          "event": "check_route",
+          "expect": "BLOCKED",
+          "reason": "MISSING_CAPABILITY:cap_filter",
+          "route_id": "rt_east_seam"
+        },
+        {
+          "capabilities": [],
+          "event": "check_route",
+          "expect": "SUCCESS",
+          "route_id": "rt_crown_safe_approach"
+        }
+      ],
+      "title": "Filter-gated shortcut blocked unprepared",
+      "vector_id": "VS-02"
+    },
+    {
+      "assertions": [
+        "obstacles_do_not_block_required_nav",
+        "entrance_clearance_3x3",
+        "retreat_zero_hazard"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "event": "validate_geometry",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "validate_geometry",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "capabilities": [],
+          "event": "check_route",
+          "expect": "SUCCESS",
+          "route_id": "retreat_waystation_safe"
+        },
+        {
+          "capabilities": [],
+          "event": "check_route",
+          "expect": "SUCCESS",
+          "route_id": "retreat_relay_safe"
+        }
+      ],
+      "title": "No permanently blocked required route",
+      "vector_id": "VS-03"
+    },
+    {
+      "assertions": [
+        "cap_salvage_granted_once",
+        "receipt_survives_reload",
+        "no_duplicate_reward"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "reload",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "ALREADY_APPLIED",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "retreat",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "return",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "ALREADY_APPLIED",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        }
+      ],
+      "title": "No duplicated one-time reward after reload/re-entry",
+      "vector_id": "VS-04"
+    },
+    {
+      "assertions": [
+        "poi_ids_stable",
+        "route_ids_stable",
+        "transaction_keys_stable",
+        "world_plan_sha256_pinned"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "event": "validate_identity",
+          "expect": "SUCCESS"
+        }
+      ],
+      "title": "Stable route/POI identity across compilation",
+      "vector_id": "VS-05"
+    },
+    {
+      "assertions": [
+        "dynamic_spawns_empty",
+        "spawn_forbidden_includes_doorway_and_hero"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "cell": [
+            392,
+            200
+          ],
+          "event": "spawn_check",
+          "expect": "REJECTED",
+          "hero_cell": [
+            392,
+            200
+          ],
+          "poi_id": "poi_crown_waystation",
+          "reason": "SPAWN_ON_HERO"
+        },
+        {
+          "cell": [
+            403,
+            200
+          ],
+          "event": "spawn_check",
+          "expect": "REJECTED",
+          "hero_cell": [
+            392,
+            200
+          ],
+          "poi_id": "poi_crown_waystation",
+          "reason": "SPAWN_BLOCKED_REQUIRED_DOORWAY"
+        },
+        {
+          "cell": [
+            434,
+            232
+          ],
+          "event": "spawn_check",
+          "expect": "REJECTED",
+          "hero_cell": [
+            392,
+            200
+          ],
+          "poi_id": "poi_crown_relay_shed",
+          "reason": "SPAWN_BLOCKED_REQUIRED_DOORWAY"
+        },
+        {
+          "cell": [
+            440,
+            236
+          ],
+          "event": "spawn_check",
+          "expect": "REJECTED",
+          "hero_cell": [
+            440,
+            236
+          ],
+          "poi_id": "poi_crown_relay_shed",
+          "reason": "SPAWN_ON_HERO"
+        }
+      ],
+      "title": "No dynamic spawn on Hero or blocking a required doorway",
+      "vector_id": "VS-06"
+    },
+    {
+      "assertions": [
+        "failed_action_no_consumption",
+        "deferred_upgrade_no_consumption",
+        "no_entitlement_on_failure"
+      ],
+      "required": true,
+      "steps": [
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "event": "set_inventory",
+          "expect": "SUCCESS",
+          "inventory": {
+            "iron_scrap": 2,
+            "oak_wood": 0
+          }
+        },
+        {
+          "capabilities": [
+            "cap_salvage"
+          ],
+          "event": "set_capabilities",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "hand_crank_bypass",
+          "event": "request_action",
+          "expect": "REJECTED",
+          "hero_cell": [
+            442,
+            234
+          ],
+          "poi_id": "poi_crown_relay_shed",
+          "reason": "MISSING_ITEM:oak_wood"
+        },
+        {
+          "event": "assert_inventory",
+          "expect": "SUCCESS",
+          "inventory": {
+            "iron_scrap": 2,
+            "oak_wood": 0
+          }
+        },
+        {
+          "action_id": "copper_upgrade",
+          "event": "request_action",
+          "expect": "REJECTED",
+          "hero_cell": [
+            443,
+            238
+          ],
+          "poi_id": "poi_crown_relay_shed",
+          "reason": "DEFERRED:ITEM_NOT_IN_A3_CATALOG:copper"
+        },
+        {
+          "event": "assert_inventory",
+          "expect": "SUCCESS",
+          "inventory": {
+            "iron_scrap": 2,
+            "oak_wood": 0
+          }
+        }
+      ],
+      "title": "Failed action consumes no key/material/entitlement",
+      "vector_id": "VS-07"
+    },
+    {
+      "assertions": [
+        "pending_not_durable",
+        "committed_state_durable"
+      ],
+      "required": false,
+      "steps": [
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "interrupt",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "reload",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "assert_flag",
+          "expect": "SUCCESS",
+          "flag": "locker_opened",
+          "poi_id": "poi_crown_waystation",
+          "value": false
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "reload",
+          "expect": "SUCCESS"
+        },
+        {
+          "event": "assert_flag",
+          "expect": "SUCCESS",
+          "flag": "locker_opened",
+          "poi_id": "poi_crown_waystation",
+          "value": true
+        }
+      ],
+      "title": "Interrupted operation and reload during/after transition",
+      "vector_id": "VS-08"
+    },
+    {
+      "assertions": [
+        "cooldown_blocks_early_claim",
+        "new_claim_index_after_cooldown",
+        "active_tick_only"
+      ],
+      "required": false,
+      "steps": [
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "action_id": "pry_locker",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            408,
+            199
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "cache_restock",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            406,
+            202
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "cache_restock",
+          "event": "request_action",
+          "expect": "COOLDOWN",
+          "hero_cell": [
+            406,
+            202
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "active_tick": 1800,
+          "event": "advance_tick",
+          "expect": "SUCCESS"
+        },
+        {
+          "action_id": "cache_restock",
+          "event": "request_action",
+          "expect": "SUCCESS",
+          "hero_cell": [
+            406,
+            202
+          ],
+          "poi_id": "poi_crown_waystation"
+        },
+        {
+          "event": "commit",
+          "expect": "SUCCESS"
+        }
+      ],
+      "title": "Renewable cache cooldown and duplicate claim index",
+      "vector_id": "VS-09"
+    },
+    {
+      "assertions": [
+        "hidden_leaks_no_private_metadata",
+        "discovered_exposes_clues_only"
+      ],
+      "required": false,
+      "steps": [
+        {
+          "event": "project_a6",
+          "expect_visibility": "HIDDEN",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "event": "discover",
+          "expect": "SUCCESS",
+          "poi_id": "poi_crown_relay_shed"
+        },
+        {
+          "event": "project_a6",
+          "expect_visibility": "DISCOVERED",
+          "poi_id": "poi_crown_relay_shed"
+        }
+      ],
+      "title": "A6 discovered-only projection",
+      "vector_id": "VS-10"
+    }
+  ]
+}

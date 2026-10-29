@@ -85,3 +85,12 @@ Novice access increased from 38 to 39 because sheltered capability-source POIs a
 - Early buffer route intersects legacy crown heat/rot hazard rects; A6 must clue these and A0/A3 must decide early mitigation/alternates. This is an authored tuning gate, not a native damage claim.
 
 Native playable integration remains `false`.
+
+## Vertical-slice contract validation
+
+- `compile_slice.py` emits `data/survival/world/vertical_slice/` from the existing plan/specs without regenerating the continent.
+- `validate_slice.py` checks 5 slice documents against 4 new schemas, pinned world identity, chunk-backed required nav, obstacle/doorway clearance, spawn policy, exact A3 IDs, reward ownership, research firewall and all 7 required adversarial vectors. Local result: 0 errors, 10 vectors.
+- `pytest tests/survival/world`: **74 passed** (56 prior + 18 slice tests), including executable Python reference vectors and negative obstacle/failed-action/duplicate/reload/hidden-projection cases.
+- `check_determinism.py` now double-compiles plan + slice: **230 artifacts**, tree SHA `429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123`.
+- CI runs the isolated Godot 4.7 slice reader/reducer (`slice_test.gd`) with PASS phrase `SURVIVAL SLICE CONTRACT PASSED` and an anti-vacuity gate of ≥120 assertions. Local sandbox has no Godot; CI job/step conclusions are authoritative.
+- The slice fixture does not claim Hero movement, combat, damage, production SaveService persistence, A3 EconomyService integration or A6 UI mounting.

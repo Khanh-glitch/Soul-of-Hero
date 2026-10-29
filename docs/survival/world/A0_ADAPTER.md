@@ -134,3 +134,18 @@ A0 must run Godot 4.7 native validation after adapter implementation:
 - Native camera/zoom and Knight movement at 96 px/s traversed in engine, not only Python flood.
 
 A1 local environment could not download Godot 4.7 (`release-assets.githubusercontent.com` SSL failure). An A1-owned isolated reader workflow (`.github/workflows/survival-world-reader.yml`) now runs the chunk/RLE/build-contract fixture under Godot 4.7 in CI; see `VALIDATION.md` for the exact run status. This proves authored-data consumption only. Native continent integration, paid-home placement, SaveService round-trip, camera/Knight traversal and production collision reconciliation remain separate A0 gates. Therefore this package is review-ready as an authored plan, not native playable integration.
+
+## 6.2 Native-ready two-POI vertical slice
+
+`data/survival/world/vertical_slice/` is the implementation-ready handoff for
+`poi_crown_waystation` and `poi_crown_relay_shed`. A0 mounting checklist:
+
+1. Read `vertical_slice/manifest.json`, verify `world_plan_sha256` and file hashes.
+2. Load the two `*.slice.json` contracts and the referenced chunks; verify required nav cells are `walk=1`, `hazard=0`.
+3. Mount static obstacles as collision bodies, but never on required nav, entrance clearance or stand cells. Slice v1 declares no dynamic spawns; future spawns must reject Hero/doorway/required-nav/occupied cells.
+4. Delegate legacy `build_permission=0` cells to the A0 build validator; `build=0` is not a prohibition.
+5. Add the proposed additive `world_slice` save namespace/sanitizer/migration. Use `SaveService.transact_once` for one-shot entitlements and renewable claims; apply item consumption/grants, capabilities, POI flags, cooldowns and receipt in one candidate document.
+6. Use exact A3 IDs `iron_scrap`, `oak_wood`, `knowledge_spares` and sources `road_scrap`, `road_supplies`, `live_oak_wood`; do not approve disputed aliases for compatibility.
+7. Project A6 clues/status only after discovery; failed actions consume nothing; pending operations are not durable; committed receipts survive reload/death/return.
+
+Isolated fixtures: `tests/survival/world/godot/slice_reader.gd`, `slice_state_machine.gd`, `slice_test.gd`. They prove contract consumption only, not production scene/SaveService/A3/A6 integration.

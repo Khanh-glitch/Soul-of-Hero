@@ -78,3 +78,8 @@ The exemplars are deliberately early roadside/power sites, not S6 premium deep-P
 - Pacing: 11 journeys; first-hour safe preparation/retreat has zero authored hazard exposure; hazardous shortcut remains exposed and filter-gated.
 - Isolated Godot 4.7 reader: CI success, including readable hazard/bootstrap/material/POI product contracts and truthful readiness counts.
 - Previews: 9 PNGs; `novice_bootstrap_detail.png`, routes and starter detail inspected.
+
+
+## Native-ready follow-up
+
+The two early POI specs now have an implementation-ready A0 handoff in `VERTICAL_SLICE_HANDOFF.md` and `data/survival/world/vertical_slice/`. This does not change the accepted product-correction milestone or claim native playability.

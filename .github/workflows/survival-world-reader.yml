@@ -46,10 +46,16 @@ jobs:
           mkdir -p "$ARTIFACT_DIR"
           python tools/survival/worldgen/make_schemas.py
           python tools/survival/worldgen/compile_plan.py | tee "$ARTIFACT_DIR/compile.json"
+      - name: Compile native-ready two-POI vertical slice contracts
+        run: python tools/survival/worldgen/compile_slice.py | tee "$ARTIFACT_DIR/slice_compile.json"
+      - name: Render vertical-slice inspection diagram
+        run: python tools/survival/worldgen/preview_slice.py | tee "$ARTIFACT_DIR/slice_preview.json"
       - name: Pacing / scale audit (estimates, not playtime)
         run: python tools/survival/worldgen/analyze_pacing.py | tee "$ARTIFACT_DIR/pacing.json"
       - name: Validate world + schemas
         run: python tools/survival/worldgen/validate_world.py | tee "$ARTIFACT_DIR/validation.json"
+      - name: Validate vertical-slice handoff
+        run: python tools/survival/worldgen/validate_slice.py | tee "$ARTIFACT_DIR/slice_validation.json"
       - name: Negative / acceptance tests
         run: python -m pytest tests/survival/world -q | tee "$ARTIFACT_DIR/pytest.txt"
       - name: Double-compile determinism
@@ -64,7 +70,7 @@ jobs:
           retention-days: 14
 
   godot-reader:
-    name: A1 GODOT 4.7 ISOLATED CHUNK READER
+    name: A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER
     needs: python-authoring
     runs-on: ubuntu-latest
     steps:
@@ -107,6 +113,29 @@ jobs:
           echo "A1 reader assertions reported: ${checks}"
           [ "${checks:-0}" -ge 50 ] || { echo "::error::A1 reader ran fewer than 50 assertions"; exit 1; }
           grep -q 'SURVIVAL WORLD READER PASSED' "$log" || { echo "::error::A1 reader did not reach PASS summary"; exit 1; }
+      - name: Run isolated vertical-slice contract vectors
+        run: |
+          mkdir -p artifacts/ud_a1_slice
+          timeout --signal=TERM --kill-after=15s 300s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_slice \
+            --script res://slice_test.gd -- --world-root="$GITHUB_WORKSPACE/data/survival/world" \
+            >"$ARTIFACT_DIR/godot-slice.log" 2>&1
+          rc=$?
+          echo "slice exit_code=$rc"
+          cat "$ARTIFACT_DIR/godot-slice.log"
+          echo "$rc" >"$ARTIFACT_DIR/slice-exit-code"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/godot-slice.log" \
+            "A1WorldSlice" "SURVIVAL SLICE CONTRACT PASSED"
+          exit $rc
+      - name: Slice anti-vacuity gate
+        if: always()
+        run: |
+          log="$ARTIFACT_DIR/godot-slice.log"
+          [ -f "$log" ] || { echo "::error::no A1 slice log"; exit 1; }
+          checks=$(grep -cE '^  (ok|FAIL) ' "$log" || true)
+          echo "A1 slice assertions reported: ${checks}"
+          [ "${checks:-0}" -ge 120 ] || { echo "::error::A1 slice ran fewer than 120 assertions"; exit 1; }
+          grep -q 'SURVIVAL SLICE CONTRACT PASSED' "$log" || { echo "::error::A1 slice did not reach PASS summary"; exit 1; }
       - name: Upload Godot reader evidence
         if: always()
         uses: actions/upload-artifact@v4

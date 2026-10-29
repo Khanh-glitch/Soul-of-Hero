@@ -1,0 +1,390 @@
+{
+  "a0": {
+    "action_contract": {
+      "atomicity": "Use SaveService.transact_once for one-shot entitlements and renewable claims; failed guards consume no key/material/entitlement; pending operations are not durable",
+      "request_fields": [
+        "request_id",
+        "poi_id",
+        "action_id",
+        "hero_cell",
+        "active_tick",
+        "session_id"
+      ],
+      "request_schema": "soh.world.slice.action_request.v1",
+      "result_fields": [
+        "result",
+        "reason",
+        "transaction_key",
+        "state_patch",
+        "consumed_items",
+        "granted_capabilities",
+        "granted_items"
+      ],
+      "result_schema": "soh.world.slice.action_result.v1"
+    },
+    "activation_contract": {
+      "dynamic_spawn_policy": "NO_DYNAMIC_SPAWNS_IN_SLICE_V1; any future spawn must reject hero_cell, entrance clearance, required_nav_cells and occupied cells",
+      "request_fields": [
+        "poi_id",
+        "hero_cell",
+        "capabilities",
+        "active_tick",
+        "session_id"
+      ],
+      "request_schema": "soh.world.slice.activate.v1",
+      "response_fields": [
+        "poi_id",
+        "discovered",
+        "spawn_plan",
+        "interactables",
+        "blocked_reasons",
+        "map_status"
+      ]
+    },
+    "owner": "A0",
+    "payload_examples": {
+      "action_rejected": {
+        "consumed_items": {},
+        "granted_capabilities": [],
+        "granted_items": {},
+        "reason": "MISSING_ITEM:oak_wood",
+        "result": "REJECTED",
+        "schema": "soh.world.slice.action_result.v1",
+        "state_patch": {},
+        "transaction_key": ""
+      },
+      "action_request": {
+        "action_id": "hand_crank_bypass",
+        "active_tick": 600,
+        "hero_cell": [
+          442,
+          234
+        ],
+        "poi_id": "poi_crown_relay_shed",
+        "request_id": "req-0001",
+        "schema": "soh.world.slice.action_request.v1",
+        "session_id": "slice-session-1"
+      },
+      "action_success": {
+        "consumed_items": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "granted_capabilities": [
+          "cap_power_1"
+        ],
+        "granted_items": {},
+        "reason": "",
+        "result": "SUCCESS",
+        "schema": "soh.world.slice.action_result.v1",
+        "state_patch": {
+          "breaker_tripped": false,
+          "bus_powered": true,
+          "bypass_installed": true
+        },
+        "transaction_key": "a1slice:poi_crown_relay_shed:hand_crank_bypass:1"
+      },
+      "activate_request": {
+        "active_tick": 0,
+        "capabilities": [],
+        "hero_cell": [
+          403,
+          200
+        ],
+        "poi_id": "poi_crown_waystation",
+        "schema": "soh.world.slice.activate.v1",
+        "session_id": "slice-session-1"
+      },
+      "activate_response": {
+        "blocked_reasons": [],
+        "discovered": true,
+        "interactables": [
+          "node_waystation_locker",
+          "node_waystation_ledger",
+          "node_waystation_cache",
+          "node_waystation_approach_deadfall"
+        ],
+        "map_status": "DISCOVERED",
+        "poi_id": "poi_crown_waystation",
+        "schema": "soh.world.slice.activate.v1",
+        "spawn_plan": {
+          "dynamic_spawns": 0,
+          "static_obstacles": 4
+        }
+      },
+      "save_state_example": {
+        "pois": {
+          "poi_crown_relay_shed": {
+            "breaker_tripped": false,
+            "bus_powered": true,
+            "bypass_installed": true,
+            "copper_upgraded": false,
+            "discovered": true,
+            "last_transaction_key": "a1slice:poi_crown_relay_shed:hand_crank_bypass:1",
+            "reward_receipts": {
+              "a1slice:poi_crown_relay_shed:hand_crank_bypass:1": "rr_relay_power_bypass"
+            }
+          },
+          "poi_crown_waystation": {
+            "cache_claim_count": 1,
+            "cache_next_ready_active_tick": 1800,
+            "deadfall_claim_count": 1,
+            "deadfall_next_ready_active_tick": 300,
+            "discovered": true,
+            "last_transaction_key": "a1slice:poi_crown_waystation:cache_restock:1",
+            "ledger_sealed": true,
+            "locker_opened": true,
+            "reward_receipts": {
+              "a1slice:poi_crown_waystation:pry_locker:1": "rr_waystation_salvage_tool"
+            }
+          }
+        },
+        "schema": "soh.world.slice_state.v1"
+      }
+    },
+    "proposed_save_namespace": {
+      "migration_owner": "A0",
+      "note": "Top-level additive namespace; A0 must add sanitizer/migration before production use. Current SaveService preserves unknown top-level keys, but A1 does not edit A0 files.",
+      "path": [
+        "world_slice"
+      ],
+      "schema": "soh.world.slice_state.v1"
+    },
+    "reader_contract": {
+      "build_permission": "delegate every legacy build=0 cell to A0 SurvivalBuildSystem validator; build=0 is not a prohibition",
+      "collision_layers": {
+        "hero": 2,
+        "interaction_area_mask": 2,
+        "static_obstacle": 1
+      },
+      "hero_body_px": [
+        12,
+        16
+      ],
+      "hero_offset_px": [
+        0,
+        -8
+      ],
+      "inputs": [
+        "vertical_slice/manifest.json",
+        "vertical_slice/<poi_id>.slice.json",
+        "chunks/<chunk_id>.json",
+        "world_plan.v1.json"
+      ],
+      "must_validate": [
+        "schema",
+        "world_plan_sha256",
+        "chunk seam hash",
+        "required_nav_cells walk=1 hazard=0",
+        "static_obstacles do not intersect required_nav_cells or entrance clearance",
+        "spawn_forbidden_cells include Hero spawn, doorway clearance and required nav"
+      ]
+    },
+    "save_service_ref": "origin/arena/dea2428e-soul-of-hero@b3722585:game/survival/save_service.gd",
+    "save_service_sha256": "5748dc9f2fdaf58ca254cd8111ed4132d45409dd6934f6699f878037747a73d0",
+    "survival_state_sha256": "9899b0733905e3a06d49464ee443a33f4d02659b2f8ef13276836e60cf803233"
+  },
+  "a3": {
+    "alias_decisions": {
+      "a1_crown_salvage": "SPLIT; safe Waystation cache requires cap_salvage only; cap_filter belongs to the optional eastern-seam shortcut, not the first-hour cache",
+      "catalyst_vault": "DEFER_OUTSIDE_TWO_POI_SLICE",
+      "early_roadside_salvage": "REJECT_AS_SEPARATE_POI; safe bootstrap is the Waystation approach/cache, not a new roadside POI",
+      "hardwood_to_oak_wood": "REJECT_ALIAS; oak_wood is the exact catalog item, hardwood is not approved",
+      "specimen_ember": "DEFER_OUTSIDE_TWO_POI_SLICE",
+      "specimen_frost": "DEFER_OUTSIDE_TWO_POI_SLICE",
+      "specimen_venom": "DEFER_OUTSIDE_TWO_POI_SLICE"
+    },
+    "atomic_reward_ownership": "A0 SaveService transaction is the sole commit boundary; A3 provides item/source catalog and candidate-document helpers but must not write a side journal or grant rewards outside the A0 mutator",
+    "exact_item_ids": [
+      "iron_scrap",
+      "oak_wood",
+      "knowledge_spares"
+    ],
+    "exact_source_ids": [
+      "road_scrap",
+      "road_supplies",
+      "live_oak_wood",
+      "live_iron_scrap"
+    ],
+    "items_sha256": "0dd502bb439a11657c10074e51a55d144ae6b9eb622afa55967207380ba85a2d",
+    "model_ref": "origin/arena/7a12b27e-soul-of-hero@08711ea7",
+    "one_time_reward_rights": [
+      {
+        "action_id": "pry_locker",
+        "grants_capabilities": [
+          "cap_salvage"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_waystation",
+        "reward_right_id": "rr_waystation_salvage_tool",
+        "transaction_key": "a1slice:poi_crown_waystation:pry_locker:1"
+      },
+      {
+        "action_id": "seal_ledger",
+        "grants_capabilities": [
+          "cap_seal_1"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_waystation",
+        "reward_right_id": "rr_waystation_seal_ledger",
+        "transaction_key": "a1slice:poi_crown_waystation:seal_ledger:1"
+      },
+      {
+        "action_id": "hand_crank_bypass",
+        "consumes_items": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "grants_capabilities": [
+          "cap_power_1"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_relay_shed",
+        "reward_right_id": "rr_relay_power_bypass",
+        "transaction_key": "a1slice:poi_crown_relay_shed:hand_crank_bypass:1"
+      }
+    ],
+    "owner": "A3",
+    "payload_examples": {
+      "reward_grant_duplicate": {
+        "granted_items": {},
+        "receipt": "rr_waystation_cache_claim",
+        "result": "ALREADY_APPLIED",
+        "schema": "soh.world.slice.reward_grant.v1",
+        "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+      },
+      "reward_grant_request": {
+        "active_tick": 600,
+        "poi_id": "poi_crown_waystation",
+        "reward_right_id": "rr_waystation_cache_claim",
+        "schema": "soh.world.slice.reward_grant.v1",
+        "session_id": "slice-session-1",
+        "source_bindings": [
+          {
+            "item_id": "iron_scrap",
+            "quantity": 3,
+            "source_id": "road_scrap"
+          },
+          {
+            "item_id": "knowledge_spares",
+            "quantity": 2,
+            "source_id": "road_supplies"
+          }
+        ],
+        "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+      },
+      "reward_grant_success": {
+        "granted_items": {
+          "iron_scrap": 3,
+          "knowledge_spares": 2
+        },
+        "receipt": "rr_waystation_cache_claim",
+        "result": "SUCCESS",
+        "schema": "soh.world.slice.reward_grant.v1",
+        "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+      }
+    },
+    "progression_model_sha256": "cfcfa6ee202158e56c1620a229f0919e6ba0e456b03cb21ed1625f439eba994f",
+    "source_bindings": [
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "iron_scrap",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_scrap",
+        "yield_per_claim": 3
+      },
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "knowledge_spares",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_supplies",
+        "yield_per_claim": 2
+      },
+      {
+        "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
+        "cooldown_active_seconds": 300,
+        "item_id": "oak_wood",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_approach_deadfall",
+        "source_id": "live_oak_wood",
+        "yield_per_claim": 2
+      }
+    ],
+    "sources_sha256": "7c2cddcdbdb8f2dbb96564abf91fed7ff598a1c750d052302bef685bd112a602"
+  },
+  "a6": {
+    "contract_ref": "origin/recovery/a6-source-only-20261029@bb71bd05:docs/survival/ux/V1_WORKSPACE_CONTRACT.md",
+    "contract_sha256": "49b43b75714459e86d474d96d6d1ea985e343eb692c47fee3703e2a439a1fc37",
+    "owner": "A6",
+    "payload_examples": {
+      "discovered_missing_prereq": {
+        "clues": [
+          "The hand-crank bypass needs a salvage tool, two iron scrap and one oak wood."
+        ],
+        "hazard_telegraphs": [
+          {
+            "clue": "Heat shimmer and ash drift mark the eastern seam; a filter is required.",
+            "hazard_id": "hz_crown_heat",
+            "required_capability": "cap_filter"
+          }
+        ],
+        "map_status": "MISSING_PREREQUISITE",
+        "missing_prerequisite_reasons": [
+          "MISSING_ITEM:oak_wood"
+        ],
+        "poi_id": "poi_crown_relay_shed",
+        "schema": "soh.world.slice.a6_projection.v1",
+        "visibility": "DISCOVERED"
+      },
+      "hidden": {
+        "clues": [],
+        "hazard_telegraphs": [],
+        "map_status": "HIDDEN",
+        "missing_prerequisite_reasons": [],
+        "poi_id": "poi_crown_relay_shed",
+        "schema": "soh.world.slice.a6_projection.v1",
+        "visibility": "HIDDEN"
+      },
+      "powered": {
+        "clues": [
+          "The relay bus hums; the breaker can be reset."
+        ],
+        "hazard_telegraphs": [],
+        "map_status": "POWERED",
+        "missing_prerequisite_reasons": [],
+        "poi_id": "poi_crown_relay_shed",
+        "schema": "soh.world.slice.a6_projection.v1",
+        "visibility": "DISCOVERED"
+      }
+    },
+    "projection_schema": "soh.world.slice.a6_projection.v1",
+    "rules": [
+      "Undiscovered POIs expose no private action, reward, prerequisite or map metadata",
+      "Discovered POIs expose clues, map status and missing-prerequisite reasons only after A0 activation",
+      "Hazard telegraphs are environmental clues, not arbitrary level barriers",
+      "A6 sends intents; A0 remains authoritative for action commits and save mutation"
+    ]
+  },
+  "native_playable": false,
+  "research_firewall": {
+    "existing_seams_documented_only": [
+      "poi_crown_relay_shed bus_powered flag is a future CT-08 power-bus seam; no Core-world mechanic is implemented here",
+      "hz_crown_heat / hz_crown_rot remain static authored hazard rects; no dynamic weather is implemented here",
+      "rt_crown_buffer and trunk roads remain 2-tile authored roads; no physical cart or road-width change is implemented here"
+    ],
+    "prototype_p1_core_world_interactions": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "prototype_p2_dynamic_weather": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "prototype_p3_physical_cart": "RESEARCH_ONLY_NOT_IMPLEMENTED",
+    "typescript_imported": false,
+    "world_regenerated": false
+  },
+  "schema": "soh.world.slice_handoff.v1",
+  "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+}

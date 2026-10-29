@@ -113,6 +113,37 @@ SCHEMAS = {
     "layer_semantics":{"type":"object"}, "sample_cells":{"type":"object"}, "legacy_delegate_contract":{"type":"object"},
     "native_playable":{"const":False}},
     ["schema","world_id","plan_sha256","frame","legacy_inset","chunk_size","required_layers","layer_semantics","sample_cells","legacy_delegate_contract","native_playable"]),
+"vertical_slice_manifest": s("vertical_slice_manifest", "object", {
+    "schema":{"const":"soh.world.vertical_slice_manifest.v1"}, "slice_id":ID, "native_playable":{"const":False},
+    "integration_status":{"const":"NATIVE_READY_CONTRACT_NOT_MOUNTED"}, "world_plan_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "poi_ids":{"type":"array","minItems":2,"maxItems":2,"items":ID},
+    "files":{"type":"object","minProperties":4,"additionalProperties":{"type":"object","required":["sha256","schema"]}},
+    "owners":{"type":"object"}, "research_firewall":{"type":"object"}},
+    ["schema","slice_id","native_playable","integration_status","world_plan_sha256","poi_ids","files","owners","research_firewall"]),
+"poi_slice": s("poi_slice", "object", {
+    "schema":{"const":"soh.world.poi_slice.v1"}, "poi_id":ID, "name":{"type":"string"}, "native_playable":{"const":False},
+    "integration_status":{"const":"NATIVE_READY_CONTRACT_NOT_MOUNTED"}, "world_plan_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "source_spec_ref":{"type":"string"}, "source_spec_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "chunk_ids":{"type":"array","minItems":1,"items":{"type":"string","pattern":"^chunk:[0-9]+:[0-9]+$"}},
+    "immutable_geography":{"type":"object","required":["anchor_cell","footprint_rect","tile_px","hero_body_px","entrances","approach_path","retreat_path","required_nav_cells","static_obstacles","dynamic_spawns","spawn_forbidden_cells","hero_spawn_cell","hero_return_cell","build_permission_delegation"]},
+    "interaction_nodes":{"type":"array","minItems":1},
+    "actions":{"type":"array","minItems":2,"items":{"type":"object","required":["action_id","trigger_node_id","stand_cells","enabled","one_time","requires_capabilities","consumes_items","grants_capabilities","reward_items","reward_right_id","state_writes","transaction_key_template","cooldown_active_seconds","missing_prerequisite_reasons"]}},
+    "initial_persistent_state":{"type":"object","required":["discovered","reward_receipts","last_transaction_key"]},
+    "persistence":{"type":"object","required":["owner","save_namespace","save_path","state_schema","transaction_key_prefix","atomic_commit","reward_atomicity","reload_policy","death_policy"],"properties":{"owner":{"const":"A0"}}},
+    "a6_projection":{"type":"object","required":["hidden_until_discovered","map_status_values","discovered_clues","hazard_telegraphs","missing_prerequisite_reasons"]},
+    "test_vector_refs":{"type":"array","minItems":1,"items":{"type":"string"}}},
+    ["schema","poi_id","name","native_playable","integration_status","world_plan_sha256","source_spec_ref","source_spec_sha256","chunk_ids","immutable_geography","interaction_nodes","actions","initial_persistent_state","persistence","a6_projection","test_vector_refs"]),
+"slice_test_vectors": s("slice_test_vectors", "object", {
+    "schema":{"const":"soh.world.slice_test_vectors.v1"}, "native_playable":{"const":False}, "fixture_scope":{"type":"string"},
+    "vectors":{"type":"array","minItems":7,"items":{"type":"object","required":["vector_id","title","required","steps","assertions"],"properties":{"vector_id":{"type":"string","pattern":"^VS-[0-9]{2}$"},"steps":{"type":"array","minItems":1},"assertions":{"type":"array","minItems":1}}}}},
+    ["schema","native_playable","fixture_scope","vectors"]),
+"slice_handoff": s("slice_handoff", "object", {
+    "schema":{"const":"soh.world.slice_handoff.v1"}, "native_playable":{"const":False}, "world_plan_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "research_firewall":{"type":"object","required":["prototype_p1_core_world_interactions","prototype_p2_dynamic_weather","prototype_p3_physical_cart","typescript_imported","world_regenerated"]},
+    "a0":{"type":"object","required":["owner","save_service_ref","proposed_save_namespace","reader_contract","activation_contract","action_contract","payload_examples"],"properties":{"owner":{"const":"A0"}}},
+    "a3":{"type":"object","required":["owner","model_ref","exact_item_ids","exact_source_ids","source_bindings","one_time_reward_rights","alias_decisions","atomic_reward_ownership","payload_examples"],"properties":{"owner":{"const":"A3"}}},
+    "a6":{"type":"object","required":["owner","contract_ref","projection_schema","rules","payload_examples"],"properties":{"owner":{"const":"A6"}}}},
+    ["schema","native_playable","world_plan_sha256","research_firewall","a0","a3","a6"]),
 }
 
 if __name__ == "__main__":

@@ -27,6 +27,7 @@ This directory contains the review package for the complete authored continent. 
 - `data/survival/world/novice_bootstrap_contract.json` / `hazard_damage_contract.json` — first-hour safe preparation and native-compatible A0/A3 damage/mitigation proposal.
 - `data/survival/world/a1_a3_material_decisions.json` — explicit A1 decisions for PR #19 aliases and 12 missing items.
 - `data/survival/world/poi_authoring/*.v1.json` — two early interaction specs; 106 other new POIs remain `WORLD_SITE_CONTRACT_ONLY`.
+- `data/survival/world/vertical_slice/` — native-ready two-POI handoff for Ashen Waystation + Crown Relay Shed: exact cell contracts, A0/A3/A6 payloads, 10 adversarial vectors; `native_playable=false`.
 - `data/survival/world/poi_route_graph.json` — POI/route/capability graph for A3/A5/A6.
 - `data/survival/world/material_source_contracts.json` — material source/consumer contracts for A3.
 - `data/survival/world/baseline_lock.json` — read-only production baseline hashes and entrance oracle.
@@ -40,8 +41,11 @@ python3 -m venv .venv
 .venv/bin/pip install -r tools/survival/worldgen/requirements.txt
 python3 tools/survival/worldgen/make_schemas.py
 python3 tools/survival/worldgen/compile_plan.py
+python3 tools/survival/worldgen/compile_slice.py
+python3 tools/survival/worldgen/preview_slice.py
 python3 tools/survival/worldgen/analyze_pacing.py
 .venv/bin/python tools/survival/worldgen/validate_world.py
+.venv/bin/python tools/survival/worldgen/validate_slice.py
 .venv/bin/python -m pytest tests/survival/world -q
 python3 tools/survival/worldgen/check_determinism.py
 .venv/bin/python tools/survival/worldgen/preview.py
@@ -52,3 +56,7 @@ Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20 (to integration)
 Google Docs tab 04 sync: **DONE** — appended review-correction checkpoint and verified readback marker `A1_SURV050A_REVIEW_CORRECTIONS_ea64df75` in tab `t.h4haqfdoyzzn`. Control-tower tab 12 left to coordinator.
 
 Isolated Godot 4.7 reader fixture: `tests/survival/world/godot/`; CI: `.github/workflows/survival-world-reader.yml`. This is authored-data consumption proof only, not native continent integration.
+
+## Native-ready two-POI vertical slice
+
+See `VERTICAL_SLICE_HANDOFF.md`. The slice makes only `poi_crown_waystation` and `poi_crown_relay_shed` implementation-ready for A0 native integration. It adds exact footprints, required nav, obstacles, entrances, retreat paths, action/state transitions, A0 save/transaction identities, exact A3 item/source IDs, discovered-only A6 projections and 10 executable adversarial vectors. It does not regenerate the world, add POIs, import prototype TypeScript, implement P1–P3 research mechanics, or claim native playability.

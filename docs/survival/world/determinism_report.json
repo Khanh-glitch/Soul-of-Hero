@@ -1,5 +1,9 @@
-{"ok": true, "tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f", "artifacts": 221}
-terial_decisions.json",
+{
+  "artifact_count": 230,
+  "artifacts": [
+    {
+      "bytes": 9443,
+      "path": "data/survival/world/a1_a3_material_decisions.json",
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
     },
     {
@@ -1078,6 +1082,11 @@ terial_decisions.json",
       "sha256": "d087df9c994861c66fd6a343e7051f9ebf7b258aee49fc2aa3c4a4d115dc413f"
     },
     {
+      "bytes": 3283,
+      "path": "data/survival/world/schemas/poi_slice.schema.json",
+      "sha256": "5b7a555cef55315843f5d03b857469766e6a26b480165389b08a7af85c8f774d"
+    },
+    {
       "bytes": 1190,
       "path": "data/survival/world/schemas/reader_contract.schema.json",
       "sha256": "914f5530db7416274d64e98f54cf49a453493e9933ec56638f93c9c6e916985b"
@@ -1098,13 +1107,53 @@ terial_decisions.json",
       "sha256": "63aaef9d44fc834fbe961b60720e7cfa7ad244c42360db82e439d2e24131edae"
     },
     {
+      "bytes": 1813,
+      "path": "data/survival/world/schemas/slice_handoff.schema.json",
+      "sha256": "f2b098883ca7339f3baa156219ea73236918cb7b19da26a805427033a5812ab1"
+    },
+    {
+      "bytes": 1042,
+      "path": "data/survival/world/schemas/slice_test_vectors.schema.json",
+      "sha256": "d739c84ae4744aa7a0d9744b98c977d869430012501065501e9b3597d1cdc336"
+    },
+    {
+      "bytes": 1244,
+      "path": "data/survival/world/schemas/vertical_slice_manifest.schema.json",
+      "sha256": "ee1214fcf6205fdbadbb5a9c487aa1c4cf905733893541f45b8d275bc070dad5"
+    },
+    {
+      "bytes": 13904,
+      "path": "data/survival/world/vertical_slice/handoff_contracts.json",
+      "sha256": "263311faa7f5870ebccb6aaf5bb61e12dd9ad89ee2e86709e3223b05721e30c1"
+    },
+    {
+      "bytes": 1945,
+      "path": "data/survival/world/vertical_slice/manifest.json",
+      "sha256": "0423c6971ed92d28b43b9b543de6b5da437076b9e7d029703627f34dc7410fed"
+    },
+    {
+      "bytes": 23641,
+      "path": "data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json",
+      "sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad"
+    },
+    {
+      "bytes": 17529,
+      "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+      "sha256": "8c8ca05c7384b0bc4766b68666fcb48d2094a829d178b87b36c9088b03c6ef0c"
+    },
+    {
+      "bytes": 13447,
+      "path": "data/survival/world/vertical_slice/test_vectors.json",
+      "sha256": "af197405dd70be3d5a5e1efcd6d662fabdc1c5682cecfc9544933b70d78379a1"
+    },
+    {
       "bytes": 443152,
       "path": "data/survival/world/world_plan.v1.json",
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f",
-  "compile_2_tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f",
+  "compile_1_tree_sha256": "429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123",
+  "compile_2_tree_sha256": "429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

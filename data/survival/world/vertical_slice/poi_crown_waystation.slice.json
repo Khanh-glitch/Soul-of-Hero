@@ -1,0 +1,1111 @@
+{
+  "a6_projection": {
+    "discovered_clues": [
+      "A pry-marked locker still holds a salvage tool.",
+      "The ledger desk can record a basic seal once the locker is opened.",
+      "The cache restocks only while the session is active."
+    ],
+    "hazard_telegraphs": [],
+    "hidden_until_discovered": true,
+    "map_status_values": [
+      "HIDDEN",
+      "DISCOVERED",
+      "CACHE_READY",
+      "CACHE_COOLDOWN",
+      "COMPLETED"
+    ],
+    "missing_prerequisite_reasons": [
+      "MISSING_CAPABILITY:cap_salvage",
+      "COOLDOWN",
+      "ALREADY_APPLIED"
+    ]
+  },
+  "actions": [
+    {
+      "action_id": "pry_locker",
+      "consumes_items": [],
+      "cooldown_active_seconds": 0,
+      "enabled": true,
+      "grants_capabilities": [
+        "cap_salvage"
+      ],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "ALREADY_APPLIED"
+      ],
+      "one_time": true,
+      "requires_capabilities": [],
+      "reward_items": [],
+      "reward_right_id": "rr_waystation_salvage_tool",
+      "stand_cells": [
+        [
+          408,
+          199
+        ]
+      ],
+      "state_writes": {
+        "locker_opened": true
+      },
+      "transaction_key_template": "a1slice:poi_crown_waystation:pry_locker:1",
+      "trigger_node_id": "node_waystation_locker"
+    },
+    {
+      "action_id": "seal_ledger",
+      "consumes_items": [],
+      "cooldown_active_seconds": 0,
+      "enabled": true,
+      "grants_capabilities": [
+        "cap_seal_1"
+      ],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "MISSING_CAPABILITY:cap_salvage",
+        "ALREADY_APPLIED"
+      ],
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_items": [],
+      "reward_right_id": "rr_waystation_seal_ledger",
+      "stand_cells": [
+        [
+          410,
+          202
+        ]
+      ],
+      "state_writes": {
+        "ledger_sealed": true
+      },
+      "transaction_key_template": "a1slice:poi_crown_waystation:seal_ledger:1",
+      "trigger_node_id": "node_waystation_ledger"
+    },
+    {
+      "action_id": "cache_restock",
+      "claim_index_field": "cache_claim_count",
+      "consumes_items": [],
+      "cooldown_active_seconds": 1800,
+      "enabled": true,
+      "grants_capabilities": [],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "MISSING_CAPABILITY:cap_salvage",
+        "COOLDOWN",
+        "ALREADY_APPLIED"
+      ],
+      "next_ready_field": "cache_next_ready_active_tick",
+      "one_time": false,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_items": [
+        {
+          "item_id": "iron_scrap",
+          "provenance": [
+            "SYS-03",
+            "SYS-04",
+            "A1_SLICE_WAYSTATION_CACHE"
+          ],
+          "quantity": 3,
+          "source_id": "road_scrap"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "provenance": [
+            "SYS-03",
+            "SYS-04",
+            "A1_SLICE_WAYSTATION_CACHE"
+          ],
+          "quantity": 2,
+          "source_id": "road_supplies"
+        }
+      ],
+      "reward_right_id": "rr_waystation_cache_claim",
+      "stand_cells": [
+        [
+          406,
+          202
+        ]
+      ],
+      "state_writes": {
+        "cache_claim_count_delta": 1,
+        "cache_next_ready_active_tick_delta": 1800
+      },
+      "transaction_key_template": "a1slice:poi_crown_waystation:cache_restock:{claim_index}",
+      "trigger_node_id": "node_waystation_cache"
+    },
+    {
+      "action_id": "gather_deadfall",
+      "claim_index_field": "deadfall_claim_count",
+      "consumes_items": [],
+      "cooldown_active_seconds": 300,
+      "enabled": true,
+      "grants_capabilities": [],
+      "interaction_radius_px": 24,
+      "missing_prerequisite_reasons": [
+        "NOT_DISCOVERED",
+        "OUT_OF_RANGE",
+        "COOLDOWN",
+        "ALREADY_APPLIED"
+      ],
+      "next_ready_field": "deadfall_next_ready_active_tick",
+      "one_time": false,
+      "requires_capabilities": [],
+      "reward_items": [
+        {
+          "item_id": "oak_wood",
+          "provenance": [
+            "SYS-03",
+            "SYS-04",
+            "A1_SLICE_APPROACH_DEADFALL"
+          ],
+          "quantity": 2,
+          "source_id": "live_oak_wood"
+        }
+      ],
+      "reward_right_id": "rr_waystation_deadfall_claim",
+      "stand_cells": [
+        [
+          398,
+          201
+        ]
+      ],
+      "state_writes": {
+        "deadfall_claim_count_delta": 1,
+        "deadfall_next_ready_active_tick_delta": 300
+      },
+      "transaction_key_template": "a1slice:poi_crown_waystation:gather_deadfall:{claim_index}",
+      "trigger_node_id": "node_waystation_approach_deadfall"
+    }
+  ],
+  "chunk_ids": [
+    "chunk:6:3"
+  ],
+  "immutable_geography": {
+    "anchor_cell": [
+      408,
+      200
+    ],
+    "approach_path": {
+      "cells": [
+        [
+          392,
+          200
+        ],
+        [
+          393,
+          200
+        ],
+        [
+          394,
+          200
+        ],
+        [
+          395,
+          200
+        ],
+        [
+          396,
+          200
+        ],
+        [
+          397,
+          200
+        ],
+        [
+          398,
+          200
+        ],
+        [
+          399,
+          200
+        ],
+        [
+          400,
+          200
+        ],
+        [
+          401,
+          200
+        ],
+        [
+          402,
+          200
+        ],
+        [
+          403,
+          200
+        ],
+        [
+          404,
+          200
+        ],
+        [
+          405,
+          200
+        ],
+        [
+          406,
+          200
+        ],
+        [
+          407,
+          200
+        ],
+        [
+          408,
+          200
+        ]
+      ],
+      "hazard_exposure_tiles": 0,
+      "polyline": [
+        [
+          392,
+          200
+        ],
+        [
+          408,
+          200
+        ]
+      ],
+      "route_id": "sp_poi_crown_waystation"
+    },
+    "build_permission_delegation": "A0_SURVIVAL_BUILD_VALIDATOR",
+    "dynamic_spawns": [],
+    "entrances": [
+      {
+        "cell": [
+          403,
+          200
+        ],
+        "clearance_cells": [
+          [
+            402,
+            199
+          ],
+          [
+            403,
+            199
+          ],
+          [
+            404,
+            199
+          ],
+          [
+            402,
+            200
+          ],
+          [
+            403,
+            200
+          ],
+          [
+            404,
+            200
+          ],
+          [
+            402,
+            201
+          ],
+          [
+            403,
+            201
+          ],
+          [
+            404,
+            201
+          ]
+        ],
+        "entrance_id": "ent_waystation_west",
+        "required": true
+      }
+    ],
+    "footprint_rect": [
+      403,
+      195,
+      11,
+      11
+    ],
+    "hazard_rect_ids": [],
+    "hero_body_px": [
+      12,
+      16
+    ],
+    "hero_offset_px": [
+      0,
+      -8
+    ],
+    "hero_return_cell": [
+      392,
+      200
+    ],
+    "hero_spawn_cell": [
+      392,
+      200
+    ],
+    "required_nav_cells": [
+      [
+        392,
+        200
+      ],
+      [
+        393,
+        200
+      ],
+      [
+        394,
+        200
+      ],
+      [
+        395,
+        200
+      ],
+      [
+        396,
+        200
+      ],
+      [
+        397,
+        200
+      ],
+      [
+        398,
+        200
+      ],
+      [
+        399,
+        200
+      ],
+      [
+        400,
+        200
+      ],
+      [
+        401,
+        200
+      ],
+      [
+        402,
+        200
+      ],
+      [
+        403,
+        200
+      ],
+      [
+        404,
+        200
+      ],
+      [
+        405,
+        200
+      ],
+      [
+        406,
+        200
+      ],
+      [
+        407,
+        200
+      ],
+      [
+        408,
+        200
+      ],
+      [
+        408,
+        201
+      ],
+      [
+        408,
+        202
+      ],
+      [
+        408,
+        203
+      ],
+      [
+        408,
+        204
+      ],
+      [
+        408,
+        205
+      ],
+      [
+        408,
+        206
+      ],
+      [
+        407,
+        206
+      ],
+      [
+        406,
+        206
+      ],
+      [
+        405,
+        206
+      ],
+      [
+        404,
+        206
+      ],
+      [
+        403,
+        206
+      ],
+      [
+        402,
+        206
+      ],
+      [
+        401,
+        206
+      ],
+      [
+        400,
+        206
+      ],
+      [
+        399,
+        206
+      ],
+      [
+        398,
+        206
+      ],
+      [
+        397,
+        206
+      ],
+      [
+        396,
+        206
+      ],
+      [
+        395,
+        206
+      ],
+      [
+        394,
+        206
+      ],
+      [
+        393,
+        206
+      ],
+      [
+        392,
+        206
+      ],
+      [
+        392,
+        205
+      ],
+      [
+        392,
+        204
+      ],
+      [
+        392,
+        203
+      ],
+      [
+        392,
+        202
+      ],
+      [
+        392,
+        201
+      ],
+      [
+        402,
+        199
+      ],
+      [
+        403,
+        199
+      ],
+      [
+        404,
+        199
+      ],
+      [
+        402,
+        201
+      ],
+      [
+        403,
+        201
+      ],
+      [
+        404,
+        201
+      ],
+      [
+        408,
+        199
+      ],
+      [
+        410,
+        202
+      ],
+      [
+        406,
+        202
+      ],
+      [
+        398,
+        201
+      ]
+    ],
+    "retreat_path": {
+      "cells": [
+        [
+          408,
+          200
+        ],
+        [
+          408,
+          201
+        ],
+        [
+          408,
+          202
+        ],
+        [
+          408,
+          203
+        ],
+        [
+          408,
+          204
+        ],
+        [
+          408,
+          205
+        ],
+        [
+          408,
+          206
+        ],
+        [
+          407,
+          206
+        ],
+        [
+          406,
+          206
+        ],
+        [
+          405,
+          206
+        ],
+        [
+          404,
+          206
+        ],
+        [
+          403,
+          206
+        ],
+        [
+          402,
+          206
+        ],
+        [
+          401,
+          206
+        ],
+        [
+          400,
+          206
+        ],
+        [
+          399,
+          206
+        ],
+        [
+          398,
+          206
+        ],
+        [
+          397,
+          206
+        ],
+        [
+          396,
+          206
+        ],
+        [
+          395,
+          206
+        ],
+        [
+          394,
+          206
+        ],
+        [
+          393,
+          206
+        ],
+        [
+          392,
+          206
+        ],
+        [
+          392,
+          205
+        ],
+        [
+          392,
+          204
+        ],
+        [
+          392,
+          203
+        ],
+        [
+          392,
+          202
+        ],
+        [
+          392,
+          201
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "hazard_exposure_tiles": 0,
+      "polyline": [
+        [
+          408,
+          200
+        ],
+        [
+          408,
+          206
+        ],
+        [
+          392,
+          206
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "route_id": "retreat_waystation_safe"
+    },
+    "spawn_forbidden_cells": [
+      [
+        392,
+        200
+      ],
+      [
+        393,
+        200
+      ],
+      [
+        394,
+        200
+      ],
+      [
+        395,
+        200
+      ],
+      [
+        396,
+        200
+      ],
+      [
+        397,
+        200
+      ],
+      [
+        398,
+        200
+      ],
+      [
+        399,
+        200
+      ],
+      [
+        400,
+        200
+      ],
+      [
+        401,
+        200
+      ],
+      [
+        402,
+        200
+      ],
+      [
+        403,
+        200
+      ],
+      [
+        404,
+        200
+      ],
+      [
+        405,
+        200
+      ],
+      [
+        406,
+        200
+      ],
+      [
+        407,
+        200
+      ],
+      [
+        408,
+        200
+      ],
+      [
+        408,
+        201
+      ],
+      [
+        408,
+        202
+      ],
+      [
+        408,
+        203
+      ],
+      [
+        408,
+        204
+      ],
+      [
+        408,
+        205
+      ],
+      [
+        408,
+        206
+      ],
+      [
+        407,
+        206
+      ],
+      [
+        406,
+        206
+      ],
+      [
+        405,
+        206
+      ],
+      [
+        404,
+        206
+      ],
+      [
+        403,
+        206
+      ],
+      [
+        402,
+        206
+      ],
+      [
+        401,
+        206
+      ],
+      [
+        400,
+        206
+      ],
+      [
+        399,
+        206
+      ],
+      [
+        398,
+        206
+      ],
+      [
+        397,
+        206
+      ],
+      [
+        396,
+        206
+      ],
+      [
+        395,
+        206
+      ],
+      [
+        394,
+        206
+      ],
+      [
+        393,
+        206
+      ],
+      [
+        392,
+        206
+      ],
+      [
+        392,
+        205
+      ],
+      [
+        392,
+        204
+      ],
+      [
+        392,
+        203
+      ],
+      [
+        392,
+        202
+      ],
+      [
+        392,
+        201
+      ],
+      [
+        402,
+        199
+      ],
+      [
+        403,
+        199
+      ],
+      [
+        404,
+        199
+      ],
+      [
+        402,
+        201
+      ],
+      [
+        403,
+        201
+      ],
+      [
+        404,
+        201
+      ],
+      [
+        408,
+        199
+      ],
+      [
+        410,
+        202
+      ],
+      [
+        406,
+        202
+      ],
+      [
+        398,
+        201
+      ],
+      [
+        407,
+        199
+      ],
+      [
+        409,
+        199
+      ],
+      [
+        409,
+        200
+      ],
+      [
+        407,
+        201
+      ],
+      [
+        409,
+        201
+      ]
+    ],
+    "static_obstacles": [
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            408,
+            198
+          ],
+          [
+            409,
+            198
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_waystation_locker_bank"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            411,
+            202
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_waystation_ledger_desk"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            406,
+            203
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_waystation_cache_crate"
+      },
+      {
+        "blocks_nav": true,
+        "cells": [
+          [
+            398,
+            202
+          ]
+        ],
+        "kind": "static_body",
+        "obstacle_id": "obs_waystation_deadfall"
+      }
+    ],
+    "tile_px": 16
+  },
+  "initial_persistent_state": {
+    "cache_claim_count": 0,
+    "cache_next_ready_active_tick": 0,
+    "deadfall_claim_count": 0,
+    "deadfall_next_ready_active_tick": 0,
+    "discovered": false,
+    "last_transaction_key": "",
+    "ledger_sealed": false,
+    "locker_opened": false,
+    "reward_receipts": {}
+  },
+  "integration_status": "NATIVE_READY_CONTRACT_NOT_MOUNTED",
+  "interaction_nodes": [
+    {
+      "action_ids": [
+        "pry_locker"
+      ],
+      "area_trigger": true,
+      "cell": [
+        408,
+        198
+      ],
+      "node_id": "node_waystation_locker",
+      "stand_cells": [
+        [
+          408,
+          199
+        ]
+      ]
+    },
+    {
+      "action_ids": [
+        "seal_ledger"
+      ],
+      "area_trigger": true,
+      "cell": [
+        411,
+        202
+      ],
+      "node_id": "node_waystation_ledger",
+      "stand_cells": [
+        [
+          410,
+          202
+        ]
+      ]
+    },
+    {
+      "action_ids": [
+        "cache_restock"
+      ],
+      "area_trigger": true,
+      "cell": [
+        406,
+        203
+      ],
+      "node_id": "node_waystation_cache",
+      "stand_cells": [
+        [
+          406,
+          202
+        ]
+      ]
+    },
+    {
+      "action_ids": [
+        "gather_deadfall"
+      ],
+      "area_trigger": true,
+      "cell": [
+        398,
+        202
+      ],
+      "node_id": "node_waystation_approach_deadfall",
+      "stand_cells": [
+        [
+          398,
+          201
+        ]
+      ]
+    }
+  ],
+  "name": "Ashen Waystation",
+  "native_playable": false,
+  "persistence": {
+    "atomic_commit": "SaveService.transact_once",
+    "death_policy": "Death/respawn does not reset POI flags, receipts, cooldowns or reward rights",
+    "owner": "A0",
+    "reload_policy": "Durable state and journal survive reload; in-memory pending operations are discarded",
+    "reward_atomicity": "A0 mutator must apply A3 item grants, capability grants, POI state writes and receipt in ONE candidate document",
+    "save_namespace": "world_slice",
+    "save_path": [
+      "world_slice",
+      "pois",
+      "poi_crown_waystation"
+    ],
+    "state_schema": "soh.world.slice_state.v1",
+    "transaction_key_prefix": "a1slice:poi_crown_waystation:"
+  },
+  "poi_id": "poi_crown_waystation",
+  "schema": "soh.world.poi_slice.v1",
+  "source_spec_ref": "poi_authoring/poi_crown_waystation.v1.json",
+  "source_spec_sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+  "test_vector_refs": [
+    "VS-01",
+    "VS-04",
+    "VS-05",
+    "VS-06",
+    "VS-07"
+  ],
+  "world_plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
+}

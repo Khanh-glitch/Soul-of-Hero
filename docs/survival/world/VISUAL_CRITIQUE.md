@@ -66,3 +66,11 @@ Acceptance position unchanged: authored world only. Native tile/prop art, camera
 - `previews/novice_bootstrap_detail.png` was opened and inspected: the green safe approach skirts the south side of the preserved legacy inset and reaches the east buffer without entering the orange `hz_crown_heat` or green `hz_crown_rot` rects. The red `rt_east_seam` shortcut still crosses both rects and is labeled filter-gated. The green south route reaches Orchard Apothecary. This is an authored contract render, not a native screenshot.
 - `previews/continent_routes.png` and `previews/starter_quarter_detail.png` were regenerated after adding the safe approach. The ten Chapter 1 entrances and two seam carves remain visible; the new safe route is a long southern rim path, not a rewritten Chapter 1.
 - Visual limitation: the safe route is deliberately longer and schematic. Native pathfinding, prop collision, hazard telegraph props and damage feedback remain A0/A3/A6 integration gates.
+
+## Vertical-slice pixel inspection (2026-10-29)
+
+- `previews/vertical_slice_detail.png` was opened and inspected. Blue cells are required navigation, green cells are entrance clearance, red cells are static obstacles, yellow cells are interaction stand cells, white marks are anchors, and pale rectangles are POI footprints.
+- Waystation: the west entrance clearance connects the safe spur to the locker/ledger/cache stand cells. The deadfall stand sits on the approach outside the footprint. Red obstacle cells do not intersect blue required nav or green doorway clearance.
+- Relay: the northwest entrance clearance connects the salvage-gated spur to the hand-crank and breaker stands. The cable spool was moved off the retreat line after the compiler rejected an obstacle/nav intersection. The deferred copper panel is visible but disabled.
+- No hazard-colored cells appear inside either slice footprint or required retreat path. The eastern-seam hazard shortcut remains outside the required slice route.
+- This is a static contract diagram, not a native screenshot. Native prop collision, camera, activation UX and SaveService round-trip remain A0 gates.

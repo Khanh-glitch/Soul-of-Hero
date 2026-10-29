@@ -135,3 +135,7 @@ The work order names `feature/surv-a1-world-050a`, but this Arena session is pin
 4. Google Docs tab 04 sync complete and readback verified; coordinator may mirror the checkpoint into control-tower tab 12.
 5. Native tile/prop art pass and grade-limited road refinement using the strategic previews as constraints, not as final art.
 6. GitHub issue #12 direct comment returned `403 Resource not accessible by integration`; the same checkpoint was posted as a PR #20 comment. Re-post to issue #12 when permissions allow.
+
+## Addendum — native-ready two-POI vertical slice
+
+The authored continent is unchanged. A follow-up handoff makes only Ashen Waystation and Crown Relay Shed implementation-ready for A0 native integration: exact cell geometry, action/state transitions, A0 save/transaction identities, exact A3 item/source IDs, discovered-only A6 projections, 10 executable adversarial vectors, 4 new schemas (19 total), 74 passing pytest cases, 230 deterministic artifacts, and an isolated Godot 4.7 slice reader/reducer CI gate. See `VERTICAL_SLICE_HANDOFF.md`. `native_playable` remains false; P1–P3 prototype mechanics remain research-only.
