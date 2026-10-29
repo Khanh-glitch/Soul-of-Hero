@@ -2,7 +2,7 @@ name: Overworld (Hollow Marches) Runtime Validation
 
 on:
   push:
-    branches: [arena/54306b59-soul-of-hero]
+    branches: [arena/54306b59-soul-of-hero, arena/dea2428e-soul-of-hero]
     paths-ignore:
       - 'docs/**'
       - 'README.md'

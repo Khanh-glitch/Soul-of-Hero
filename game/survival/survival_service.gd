@@ -423,11 +423,25 @@ func begin_overworld_death(position: Vector2) -> Dictionary:
 				return false
 			var inventory: Dictionary = candidate.get("inventory", {})
 			var stacks: Dictionary = inventory.get("item_stacks", {})
+			var dropped: Dictionary = {}
+			var retained: Dictionary = {}
+			for raw_key: Variant in stacks.keys():
+				if not stacks[raw_key] is Dictionary:
+					return false
+				var record: Dictionary = stacks[raw_key]
+				var base_id := String(record.get("item_id", raw_key))
+				# A3 instances have a coupled attribute record. Until death-bag
+				# ownership is supported by its audit, keep the token in the bag;
+				# moving it alone would create a broken/orphaned unique item.
+				if base_id.begins_with("soh_i_"):
+					retained[raw_key] = record.duplicate(true)
+				else:
+					dropped[raw_key] = record.duplicate(true)
 			var bags: Dictionary = doc.get("death_bags", {})
 			if bags.has(bag_id):
 				return false
-			bags[bag_id] = {"region": "hollow_marches", "position": [position.x, position.y], "stacks": stacks.duplicate(true)}
-			inventory["item_stacks"] = {}
+			bags[bag_id] = {"region": "hollow_marches", "position": [position.x, position.y], "stacks": dropped}
+			inventory["item_stacks"] = retained
 			candidate["inventory"] = inventory
 			doc["death_bags"] = bags
 			doc["pending_death"] = bag_id

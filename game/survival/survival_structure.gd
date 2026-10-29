@@ -40,6 +40,8 @@ func _ready() -> void:
 	if piece_id not in [PIECE_CHEST, PIECE_DOOR, PIECE_BED]:
 		return
 	add_to_group(GROUP)
+	if piece_id == PIECE_BED:
+		add_to_group(&"survival_bed")
 	if piece_id == PIECE_CHEST:
 		set_meta("container_entity", entity_id)
 	_build_prompt()
@@ -50,7 +52,7 @@ func _build_prompt() -> void:
 	_prompt = Label.new()
 	_prompt.name = "Prompt"
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_prompt.position = Vector2(-70, -6)
+	_prompt.position = Vector2(-70, -26) if piece_id == PIECE_BED else Vector2(-70, -6)
 	_prompt.size = Vector2(140, 14)
 	_prompt.add_theme_font_size_override("font_size", 9)
 	_prompt.add_theme_color_override("font_color", Color(0.94, 0.9, 0.74))
@@ -169,9 +171,19 @@ func _process(_delta: float) -> void:
 		return
 	_prompt.visible = false
 	for actor: Node in get_tree().get_nodes_in_group(&"player"):
-		if actor is Node2D and (actor as Node2D).global_position.distance_to(global_position) <= REACH:
-			_prompt.visible = true
-			break
+		if not actor is Node2D or bool(actor.get(&"dead")):
+			continue
+		var distance := (actor as Node2D).global_position.distance_to(global_position)
+		if distance > REACH:
+			continue
+		var nearer_bag := false
+		if piece_id == PIECE_BED:
+			for candidate: Node in get_tree().get_nodes_in_group(&"player_interactable"):
+				if candidate.is_in_group(&"survival_death_bag") and candidate is Node2D and (candidate as Node2D).global_position.distance_to((actor as Node2D).global_position) < distance:
+					nearer_bag = true
+					break
+		_prompt.visible = not nearer_bag
+		break
 
 
 func interact(player: Node2D) -> bool:

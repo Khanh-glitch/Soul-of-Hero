@@ -10,6 +10,7 @@ var _label: Label
 
 func _ready() -> void:
 	add_to_group(&"player_interactable")
+	add_to_group(&"survival_death_bag")
 	collision_layer = 0
 	collision_mask = 0
 	monitoring = false
@@ -38,9 +39,20 @@ func _process(_delta: float) -> void:
 		return
 	_label.visible = false
 	for node: Node in get_tree().get_nodes_in_group(&"player"):
-		if node is Node2D and (node as Node2D).global_position.distance_to(global_position) <= REACH:
-			_label.visible = true
-			break
+		if not node is Node2D or bool(node.get(&"dead")):
+			continue
+		var actor := node as Node2D
+		var distance := actor.global_position.distance_to(global_position)
+		if distance > REACH:
+			continue
+		var nearer_bed := false
+		for candidate: Node in get_tree().get_nodes_in_group(&"player_interactable"):
+			if candidate is SurvivalStructure and (candidate as SurvivalStructure).piece_id == "bed_wood" \
+					and (candidate as Node2D).global_position.distance_to(actor.global_position) < distance:
+				nearer_bed = true
+				break
+		_label.visible = not nearer_bed
+		break
 
 
 func can_interact(actor: Node2D) -> bool:
