@@ -243,8 +243,31 @@ func _body() -> void:
 	var weave_id := String(weave.get("job_id", ""))
 	_expect(bool(weave.get("ok", false)) and _count("reed_fibre") == 3, "real placed workbench reserves fibre in actual A3 queue")
 	_expect(await _wait_job(host, weave_id, "ready", 30.0), "active gameplay clock completes actual workbench queue")
+	# Adversary: the finished A3 job owns its output while every bag slot is
+	# full. This is fixture-funded and does not claim a normal-input B0 journey.
+	var capacity_fillers: Array[String] = []
+	for index in range(35):
+		var item := "output_capacity_%02d" % index
+		if not _give(item, 50):
+			break
+		capacity_fillers.append(item)
+	var capacity: Dictionary = _save().call(&"get_inventory_capacity_snapshot")
+	_expect(not capacity_fillers.is_empty() and int(capacity.get("bag_used", -1)) == int(capacity.get("bag_capacity", -2)), "finished output adversary fills every real bag slot")
+	var before_full_output: Dictionary = _save().call(&"get_snapshot")
+	var job_before_full: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {}).duplicate(true)
+	var refused_output: Dictionary = host.call(&"collect", weave_id)
+	_expect(not bool(refused_output.get("ok", true)) and String(refused_output.get("reason", "")) == "inventory_full" and _count("binding_cloth") == 0, "full bag refuses finished A3 output without false success")
+	_expect((_save().call(&"get_snapshot") as Dictionary) == before_full_output and (host.call(&"jobs") as Dictionary).get(weave_id, {}) == job_before_full, "failed collect retains exact output custody and makes no receipt")
+	var refused_again: Dictionary = host.call(&"collect", weave_id)
+	_expect(not bool(refused_again.get("ok", true)) and (_save().call(&"get_snapshot") as Dictionary) == before_full_output, "repeated full collect is a no-op")
+	_expect(bool(_save().call(&"reload_save")) and (host.call(&"jobs") as Dictionary).get(weave_id, {}) == job_before_full and _count("binding_cloth") == 0, "full output custody persists after reload")
+	if not capacity_fillers.is_empty():
+		_expect(bool(_save().call(&"consume_inventory_item", capacity_fillers[0], 50, "fixture.output.free")), "free one real bag slot for output retry")
 	var output: Dictionary = host.call(&"collect", weave_id)
 	_expect(bool(output.get("ok", false)) and _count("binding_cloth") == 2, "real workbench produces and collects useful crafting material")
+	for index in range(1, capacity_fillers.size()):
+		_expect(bool(_save().call(&"consume_inventory_item", capacity_fillers[index], 50, "fixture.output.cleanup.%02d" % index)), "cleanup output-capacity fixture %d" % index)
+	_expect(not bool((host.call(&"collect", weave_id) as Dictionary).get("ok", true)) and _count("binding_cloth") == 2, "successful output retry cannot be collected twice")
 	var cancel_start: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
 	var cancel_id := String(cancel_start.get("job_id", ""))
 	_expect(bool(cancel_start.get("ok", false)) and _count("reed_fibre") == 0, "second job reserves remaining inputs")

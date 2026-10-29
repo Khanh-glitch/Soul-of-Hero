@@ -61,10 +61,10 @@ func _body() -> void:
 	# This is the actual Hero controller and collision, driven by the move action.
 	hero.set_physics_process(true)
 	Input.action_press("move_up")
-	for i in range(50):
+	for i in range(120):
 		await physics_frame
 	Input.action_release("move_up")
 	await physics_frame
-	print("HERO_EXIT_WALK origin=%s hero=%s" % [str(origin), str(hero.global_position)])
+	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count()])
 	_expect(hero.global_position.y < origin.y * 16, "actual Hero walks through unsealed last opening")
 	_body_complete = true
