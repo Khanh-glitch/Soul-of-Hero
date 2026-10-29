@@ -56,6 +56,11 @@ class Harvester extends FX.Fx:
 	var moving: bool = false
 	var flash: float = 0.0
 
+	## Inner classes cannot call the outer script's static helpers, so each
+	## inner class carries its own copy.
+	static func _lf(a: float, b: float, t: float) -> float:
+		return a + (b - a) * t
+
 	func _init(px: float, py: float, hd_: float) -> void:
 		x = px
 		y = py
@@ -159,8 +164,8 @@ class Harvester extends FX.Fx:
 					int(M.P["w"]))
 			for k in range(1, 7):
 				var kt: float = float(k) / 7.0
-				L.px(M.js_round(_lerp(A["ex"], A["tx"], kt) - V8M.v8_sin(A["bang"]) * 2.0),
-						M.js_round(_lerp(A["ey"], A["ty"], kt) + V8M.v8_cos(A["bang"]) * 2.0),
+				L.px(M.js_round(_lf(A["ex"], A["tx"], kt) - V8M.v8_sin(A["bang"]) * 2.0),
+						M.js_round(_lf(A["ey"], A["ty"], kt) + V8M.v8_cos(A["bang"]) * 2.0),
 						int(M.P["k0"]))
 		var hdp: Array = at.call(10.0, 0.0, 4.0)
 		var hdx: float = hdp[0]
