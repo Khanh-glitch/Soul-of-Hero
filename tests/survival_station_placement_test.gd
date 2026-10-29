@@ -64,7 +64,7 @@ func _body() -> void:
 	_expect(bool(_save().call(&"reload_save")), "reload durable station and floor")
 	ow = await _reload_world(ow)
 	build = ow.get(&"survival_build")
-	_expect(build.entity_at_layer(origin + Vector2i.ONE, "object") == id and (svc.call(&"resolve_station", id) as Dictionary).get("station_revision", "") == "placed:" + id, "reload preserves footprint identity and station revision")
+	_expect(build.entity_at_layer(origin + Vector2i.ONE, "object") == id and (svc.call(&"resolve_station", id) as Dictionary).get("station_revision", "") == station.get("station_revision", ""), "reload preserves footprint identity and station revision")
 	_expect(bool(svc.call(&"remove_structure", id)), "demolish station through authoritative transaction")
 	await process_frame
 	_expect((svc.call(&"resolve_station", id) as Dictionary).is_empty(), "removed station is not resolvable")

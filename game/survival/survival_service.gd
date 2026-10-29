@@ -324,13 +324,16 @@ func resolve_station(station_id: String) -> Dictionary:
 	var definition := piece_definition(String(entry.get("piece", "")))
 	if String(definition.get("kind", "")) != "station":
 		return {}
+	var origin_key := String(entry.get("origin_key", ""))
+	if origin_key.is_empty():
+		return {} # A station without its placement receipt has no safe revision.
 	var condition := int(entry.get("station_condition", 100))
 	return {"ok": true, "station_id": station_id,
 		"kind": String(definition.get("station_kind", "")),
 		"tier": int(definition.get("station_tier", 1)),
 		"queue_capacity": int(definition.get("queue_capacity", 1)),
 		"operational": bool(entry.get("station_enabled", true)) and condition > 0,
-		"condition": condition, "station_revision": "placed:" + station_id}
+		"condition": condition, "station_revision": "placed:" + station_id + ":" + origin_key.sha256_text()}
 
 
 # ---------------------------------------------------------------------------
