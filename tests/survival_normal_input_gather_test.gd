@@ -92,6 +92,16 @@ func _click_window(position: Vector2) -> void:
 	Input.parse_input_event(click)
 	await process_frame
 
+func _tap_action(action: StringName) -> void:
+	var event := InputEventAction.new()
+	event.action = action
+	event.pressed = true
+	Input.parse_input_event(event)
+	await process_frame
+	event.pressed = false
+	Input.parse_input_event(event)
+	await process_frame
+
 func _body() -> void:
 	var ow := _host.get_child(0)
 	var hero: CharacterBody2D = ow.get(&"player")
@@ -228,7 +238,72 @@ func _body() -> void:
 		await process_frame
 		job = (host.call(&"jobs") as Dictionary).get(job_id, {})
 	_expect(String(job.get("status", "")) == "ready", "active ordinary gameplay completes the starter kit queue")
-	# This segment stops at completed escrow; GUI collection and placement are
-	# separate next steps. Reload proves the reserved result persists.
-	_expect(bool(_save().call(&"reload_save")) and String(((host.call(&"jobs") as Dictionary).get(job_id, {}) as Dictionary).get("status", "")) == "ready", "completed starter kit escrow survives reload")
+	if String(job.get("status", "")) != "ready":
+		_body_complete = true
+		return
+	await _tap_action(&"economy_toggle")
+	var collect_button: Button = null
+	for value: Node in panel.find_children("*", "Button", true, false):
+		if (value as Button).text == "Collect":
+			collect_button = value as Button
+			break
+	var scrolls := panel.find_children("*", "ScrollContainer", true, false)
+	_expect(collect_button != null and not scrolls.is_empty(), "completed escrow exposes a GUI collect control")
+	if collect_button == null or scrolls.is_empty():
+		_body_complete = true
+		return
+	var scroll := scrolls[0] as ScrollContainer
+	for _i: int in range(40):
+		if scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()):
+			break
+		var wheel := InputEventMouseButton.new()
+		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
+		wheel.button_index = MOUSE_BUTTON_WHEEL_DOWN
+		wheel.pressed = true
+		Input.parse_input_event(wheel)
+		await process_frame
+		wheel.pressed = false
+		Input.parse_input_event(wheel)
+		await process_frame
+	_expect(scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()), "ordinary wheel input reaches the collect control")
+	if not scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()):
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (collect_button.get_global_transform_with_canvas() * (collect_button.size * 0.5)))
+	_expect(_count("workbench_kit") == 1, "ordinary GUI pointer collects the manufactured kit")
+	await _tap_action(&"economy_toggle")
+	await _tap_action(&"build_toggle")
+	await _tap_action(&"build_slot_7")
+	var build: SurvivalBuildSystem = ow.get(&"survival_build")
+	_expect(build.active and build.selected_piece == "station_workbench", "ordinary build inputs select the workbench")
+	if not build.active or build.selected_piece != "station_workbench":
+		_body_complete = true
+		return
+	var centre := navigation.cell_of(hero.global_position)
+	var placement := Vector2i(-1, -1)
+	for dy: int in range(-3, 4):
+		if placement.x >= 0:
+			break
+		for dx: int in range(-3, 4):
+			var candidate := centre + Vector2i(dx, dy)
+			if build.validate_cell(candidate).is_empty():
+				placement = candidate
+				break
+	_expect(placement.x >= 0, "reachable ground supports the paid station footprint")
+	if placement.x < 0:
+		_body_complete = true
+		return
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	var world_point := Vector2(placement.x * 16 + 8, placement.y * 16 + 8)
+	var window_point := root.get_final_transform() * (camera.get_canvas_transform() * world_point)
+	await _click_window(window_point)
+	var structures: Dictionary = _survival().call(&"structures")
+	var station_id := ""
+	for key: Variant in structures.keys():
+		if String((structures[key] as Dictionary).get("piece", "")) == "station_workbench":
+			station_id = String(key)
+	_expect(not station_id.is_empty() and _count("workbench_kit") == 0, "ordinary placement input pays for the physical workbench")
+	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty(), "paid workbench survives reload")
 	_body_complete = true
