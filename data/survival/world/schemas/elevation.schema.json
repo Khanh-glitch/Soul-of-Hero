@@ -1,0 +1,34 @@
+{
+  "$id": "soh://world/elevation.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "band_size_m": {
+      "const": 50,
+      "type": "integer"
+    },
+    "chunk_id": {
+      "type": "string"
+    },
+    "elevation_band_rle": {
+      "items": {
+        "items": {
+          "type": "integer"
+        },
+        "maxItems": 2,
+        "minItems": 2,
+        "type": "array"
+      },
+      "type": "array"
+    },
+    "legacy_elevation": {
+      "const": "UNKNOWN_NOT_FABRICATED"
+    }
+  },
+  "required": [
+    "chunk_id",
+    "elevation_band_rle",
+    "band_size_m"
+  ],
+  "title": "elevation",
+  "type": "object"
+}

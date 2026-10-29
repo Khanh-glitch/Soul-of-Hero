@@ -1,0 +1,88 @@
+{
+  "$id": "soh://world/poi.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "access_stages": {
+      "items": {
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "archetype": {
+      "type": "string"
+    },
+    "band": {
+      "enum": [
+        "early",
+        "mid",
+        "late"
+      ]
+    },
+    "cell": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "footprint_radius_tiles": {
+      "minimum": 1,
+      "type": "integer"
+    },
+    "grants_capabilities": {
+      "items": {
+        "pattern": "^cap_[a-z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "material_keys": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "name": {
+      "type": "string"
+    },
+    "poi_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "preserved_legacy": {
+      "type": "boolean"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "region_id": {
+      "minLength": 1,
+      "type": "string"
+    },
+    "required_capabilities": {
+      "items": {
+        "pattern": "^cap_[a-z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "poi_id",
+    "region_id",
+    "name",
+    "archetype",
+    "cell",
+    "band",
+    "purpose",
+    "required_capabilities",
+    "access_stages",
+    "preserved_legacy"
+  ],
+  "title": "poi",
+  "type": "object"
+}

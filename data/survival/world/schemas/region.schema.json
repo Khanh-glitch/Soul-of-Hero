@@ -1,0 +1,84 @@
+{
+  "$id": "soh://world/region.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "allowed_biomes": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "band": {
+      "enum": [
+        "early",
+        "mid",
+        "late"
+      ]
+    },
+    "base_elevation_m": {
+      "type": "number"
+    },
+    "climate": {
+      "type": "string"
+    },
+    "contains_legacy_inset": {
+      "type": "boolean"
+    },
+    "entry_capabilities": {
+      "items": {
+        "pattern": "^cap_[a-z0-9_]+$",
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "geology": {
+      "type": "string"
+    },
+    "identity": {
+      "type": "string"
+    },
+    "material_keys": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "name": {
+      "type": "string"
+    },
+    "rect": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 4,
+      "minItems": 4,
+      "type": "array"
+    },
+    "region_id": {
+      "pattern": "^r_[a-z0-9_]+$",
+      "type": "string"
+    },
+    "revisit_hook": {
+      "type": "string"
+    },
+    "soils": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "region_id",
+    "name",
+    "rect",
+    "band",
+    "allowed_biomes",
+    "material_keys",
+    "identity",
+    "revisit_hook",
+    "entry_capabilities"
+  ],
+  "title": "region",
+  "type": "object"
+}

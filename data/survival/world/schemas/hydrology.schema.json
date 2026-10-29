@@ -1,0 +1,79 @@
+{
+  "$id": "soh://world/hydrology.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "lakes": {
+      "items": {
+        "properties": {
+          "center": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "lake_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "water_level_m": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "lake_id",
+          "center",
+          "water_level_m"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "rivers": {
+      "items": {
+        "properties": {
+          "outlet": {
+            "type": "string"
+          },
+          "river_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "vertices": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "maxItems": 3,
+              "minItems": 3,
+              "type": "array"
+            },
+            "type": "array"
+          },
+          "width_tiles": {
+            "minimum": 1,
+            "type": "number"
+          }
+        },
+        "required": [
+          "river_id",
+          "vertices",
+          "outlet",
+          "width_tiles"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "subsurface_hydrology": {
+      "type": "array"
+    }
+  },
+  "required": [
+    "rivers",
+    "lakes"
+  ],
+  "title": "hydrology",
+  "type": "object"
+}

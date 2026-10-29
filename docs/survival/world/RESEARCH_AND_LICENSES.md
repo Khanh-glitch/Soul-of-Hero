@@ -1,0 +1,43 @@
+# Research, Source Coverage, and License Decisions — SURV-050A
+
+## Required internal reading completed
+
+- `AGENTS.md` and the complete assigned `SURV-050A_A1_WORK_ORDER.md` (from the assigned A1 ref; the active integration checkout lacked the task file).
+- `docs/survival/NEW_CHAT_BOOTSTRAP.md`, `CONTROL_TOWER_CURRENT.md`, `SYSTEM_FUSION_BLUEPRINT.md`, `DECISIONS.md`, `MULTI_AGENT_EXECUTION.md`, `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`, contracts/acceptance/reconciliation/economy/replay/STATE/WORKLOG/change-protocol/sources/research-log/Docs-audit documents.
+- Original Atlas: `docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md`, read in full (1,355 lines). SHA-256 `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`.
+- `docs/survival/SOURCE_COVERAGE_TRACE.json`: 108 entries (44 SYS + 21 POI + 31 DEP + 12 JOURNEY), 40 unknowns marked `FACT_UNVERIFIED_NOT_DESIGN_STALL`, 28 refs. SHA-256 `602735e9d2be20d88b7a49007e6e7cdc78832744b554962c96ec5ad74e4bfd37`.
+
+## Actual SOH runtime seams inspected
+
+- `game/overworld/chapter1_overworld.gd`, `overworld_world.gd`, `overworld_traversability.gd`, `overworld_state.gd`, `overworld_tiles.gd`; Knight `move_speed = 96.0`.
+- Production data: `data/overworld/hollow_marches.json`, `_layers.json`, `_props.json` (13,299 props), tile/prop registries, landmark registry, patches.
+- World truth: 384×256 tiles, TILE 16, spawn `[56,218]`, camera zoom `Vector2.ONE` (JSON zoom 2.0 is stale), viewport 640×360 ≈ 40×22.5 tiles.
+- Collision oracle: solid RLE OR lower-body prop rects (`w*0.82`, `h*0.42`), 4-neighbour flood. Fresh-save reachable cells: 62,201. All ten dungeon thresholds reachable with shortcuts closed.
+- A0 seams read-only: `survival_service.gd`, `survival_build_system.gd`, `survival_state.gd`, `survival_catalog.json`, `hollow_marches_resources.json`. Build validator rejects outside/solid/water/protected/on-route/near-shortcut/out-of-range/occupied.
+- Existing visual evidence inspected: `docs/overworld/evidence/overworld_world_overview.png` and station/shortcut evidence.
+
+## External candidates inspected and pinned
+
+| Candidate | Pinned commit | License finding | Decision |
+|---|---|---|---|
+| Azgaar/Fantasy-Map-Generator | `d279257a727c76dc310dc5859c4c797ca69db1dc` | GitHub field `NOASSERTION`, but actual `LICENSE` read: MIT ©2017–2024 Max Haniyeu; explicitly permits derivative maps/images. | Reference/adapt algorithmic ideas only (river/biome causality). No JS dependency imported. |
+| m-w-marker/heightmap-level-generator | `43a525473f6ad070df4c46f34f701587a6059600` | MIT ©2026 Michael Marker. Deps: three/lil-gui/vite/WebGPU. | Reference Priority-Flood (Barnes 2014), flow accumulation, lakes, meander, grade-limited roads. 3D/GPU stack rejected for SOH. |
+| Poissecaille/Eden | `7df234b0f9a78df3efcb181c3197b70c78b807f7` | No license file anywhere in tree. | Reject code reuse. Conceptual reference only for Godot 4 elevation/moisture biomes. |
+| Herbak/proc-gen-maps | `dd51d3594410d05e5a30f4bf07abcbfaf03c2c82` | No license file. | Reject code reuse. Conceptual reference only for D8 priority-flood/flow/lake. |
+| gdquest-demos/godot-procedural-generation | `19c98cee16ed18e642b3ce178f4c649d56b334b2` | Dual: source MIT ©2020 GDQuest; art/audio CC-By 4.0 attributing “GDQuest and contributors (https://www.gdquest.com/)”. | Safe to adapt code patterns with MIT notice; persistent sector modification pattern inspected. No art imported. |
+| LehiSmart/IsometricWorldGen | unpinned | Search-only candidate. | Not used; WFC/isometric fit concerns. |
+| Godot 4.7-stable Linux build | release tag `4.7-stable` | Engine build, not world content. | Download blocked by asset-host SSL; no native binary obtained. CI uses Godot 4.7.0. |
+
+Pinned metadata/source/license files were fetched into `.arena/research/` during the session (local scratch, not committed). The committed deliverable contains no third-party code or art. The A1 compiler uses authored data literals, deterministic value-noise roughness, and original Python; it does not copy unlicensed Eden/Herbak code.
+
+## Design consequences taken from research
+
+- Causal chain first: geology/elevation/drainage → biome/moisture → material sources → gathering routes → refining/crafting → protective gear/credentials → exploration access → POIs → materials/recipes/Skill Cores.
+- Hydrology: descending authored river control points with deterministic meander, lake outlets, terminal salt pan, and a dye-traced subsurface karst conduit. Priority-Flood/accumulation were studied as references; the committed plan uses authored drainage contracts rather than importing a GPU hydrology stack.
+- Roads: trunk network with cycles and alternates; grade-limited routing studied as a reference. Native A0 pass should still verify slope/collision before playable claims.
+- Persistence: static world truth is immutable; dynamic mutations are keyed by stable IDs. GDQuest persistent-sector pattern informed the separation, but no GDQuest art is used.
+- Danger: environmental clues + preparation capabilities, not arbitrary level walls. Late core vaults require late-earned capabilities (`cap_seal_3`, `cap_deepward`, `cap_tide_ward`) so midgame preparation cannot bypass all late content.
+
+## License compliance statement
+
+No third-party source code, textures, audio, or generated art from the researched repositories is committed in this milestone. If A0/A5 later adapt MIT code, preserve the MIT notice. If any GDQuest art is ever imported, add CC-By 4.0 attribution to “GDQuest and contributors (https://www.gdquest.com/)”. Eden and Herbak remain reference-only because no license was found.

@@ -1,0 +1,4778 @@
+{
+  "capabilities": {
+    "cap_boat": {
+      "kind": "vehicle",
+      "materials": [
+        "hardwood",
+        "rubber_sap",
+        "fibre"
+      ],
+      "requires": [
+        "cap_power_1"
+      ],
+      "source": "poi_saffron_drydock"
+    },
+    "cap_climb": {
+      "kind": "equipment",
+      "materials": [
+        "iron",
+        "fibre"
+      ],
+      "requires": [
+        "cap_power_1"
+      ],
+      "source": "poi_ember_piton_works"
+    },
+    "cap_deepward": {
+      "kind": "equipment",
+      "materials": [
+        "glacial_iron",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      "requires": [
+        "cap_thermal",
+        "cap_filter",
+        "cap_climb"
+      ],
+      "source": "poi_verdant_root_lift"
+    },
+    "cap_filter": {
+      "kind": "equipment",
+      "materials": [
+        "rare_herb",
+        "fibre",
+        "venom_sac"
+      ],
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_amberwood_apothecary"
+    },
+    "cap_power_1": {
+      "kind": "world_repair",
+      "note": "fuel + copper wire restores a local circuit",
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_crown_relay_shed"
+    },
+    "cap_salvage": {
+      "kind": "knowledge",
+      "note": "road salvage -> spares -> basic research",
+      "requires": [],
+      "source": "poi_crown_waystation"
+    },
+    "cap_seal_1": {
+      "kind": "credential",
+      "note": "first green-seal grammar",
+      "requires": [
+        "cap_salvage"
+      ],
+      "source": "poi_crown_waystation"
+    },
+    "cap_seal_2": {
+      "kind": "credential",
+      "materials": [
+        "copper",
+        "sulfur"
+      ],
+      "requires": [
+        "cap_seal_1",
+        "cap_power_1"
+      ],
+      "source": "poi_ember_old_forge"
+    },
+    "cap_seal_3": {
+      "kind": "credential",
+      "materials": [
+        "abyssal_pearl",
+        "pearl"
+      ],
+      "requires": [
+        "cap_seal_2",
+        "cap_boat"
+      ],
+      "source": "poi_pearl_customs"
+    },
+    "cap_stormward": {
+      "kind": "equipment",
+      "materials": [
+        "storm_glass",
+        "copper"
+      ],
+      "requires": [
+        "cap_seal_2"
+      ],
+      "source": "poi_glasswind_signal"
+    },
+    "cap_thermal": {
+      "kind": "equipment",
+      "materials": [
+        "glacial_iron",
+        "frost_resin"
+      ],
+      "requires": [
+        "cap_seal_1"
+      ],
+      "source": "poi_frost_wardhouse"
+    },
+    "cap_tide_ward": {
+      "kind": "equipment",
+      "materials": [
+        "pearl",
+        "hardwood",
+        "rubber_sap"
+      ],
+      "requires": [
+        "cap_boat",
+        "cap_filter"
+      ],
+      "source": "poi_pearl_stilt_village"
+    }
+  },
+  "coast": [
+    [
+      0,
+      0
+    ],
+    [
+      820,
+      0
+    ],
+    [
+      900,
+      18
+    ],
+    [
+      968,
+      54
+    ],
+    [
+      990,
+      114
+    ],
+    [
+      976,
+      176
+    ],
+    [
+      992,
+      238
+    ],
+    [
+      974,
+      300
+    ],
+    [
+      990,
+      362
+    ],
+    [
+      972,
+      424
+    ],
+    [
+      986,
+      486
+    ],
+    [
+      968,
+      548
+    ],
+    [
+      980,
+      610
+    ],
+    [
+      962,
+      668
+    ],
+    [
+      920,
+      704
+    ],
+    [
+      860,
+      724
+    ],
+    [
+      790,
+      712
+    ],
+    [
+      710,
+      728
+    ],
+    [
+      630,
+      714
+    ],
+    [
+      550,
+      730
+    ],
+    [
+      470,
+      716
+    ],
+    [
+      390,
+      734
+    ],
+    [
+      310,
+      720
+    ],
+    [
+      230,
+      738
+    ],
+    [
+      150,
+      724
+    ],
+    [
+      70,
+      742
+    ],
+    [
+      0,
+      734
+    ]
+  ],
+  "hazards": [
+    [
+      "hz_crown_heat",
+      "r_ashen_crown",
+      "heat",
+      [
+        160,
+        184,
+        64,
+        40
+      ],
+      "legacy crucible basin",
+      "cap_filter",
+      2
+    ],
+    [
+      "hz_crown_rot",
+      "r_ashen_crown",
+      "poison",
+      [
+        232,
+        196,
+        104,
+        48
+      ],
+      "legacy fen rot",
+      "cap_filter",
+      2
+    ],
+    [
+      "hz_crown_cold",
+      "r_ashen_crown",
+      "cold",
+      [
+        246,
+        122,
+        62,
+        34
+      ],
+      "legacy conduit bleed",
+      "cap_thermal",
+      2
+    ],
+    [
+      "hz_frost_ridge",
+      "r_frost_crown",
+      "cold",
+      [
+        560,
+        40,
+        150,
+        120
+      ],
+      "exposed arête whiteout",
+      "cap_thermal",
+      3
+    ],
+    [
+      "hz_ember_gas",
+      "r_ember_steppe",
+      "acid_gas",
+      [
+        560,
+        300,
+        120,
+        90
+      ],
+      "fumarole field, dead vegetation and yellow crust",
+      "cap_filter",
+      3
+    ],
+    [
+      "hz_saffron_heat",
+      "r_saffron_coast",
+      "heat",
+      [
+        800,
+        280,
+        120,
+        80
+      ],
+      "dry wadi, no shade, salt crust",
+      "cap_thermal",
+      2
+    ],
+    [
+      "hz_verdant_spore",
+      "r_verdant_fold",
+      "poison",
+      [
+        540,
+        540,
+        150,
+        120
+      ],
+      "spore hollow, discoloured leaves",
+      "cap_filter",
+      3
+    ],
+    [
+      "hz_pearl_tide",
+      "r_pearl_mangroves",
+      "tide",
+      [
+        790,
+        540,
+        160,
+        150
+      ],
+      "tidal channels, barnacle lines, drift wrack",
+      "cap_boat",
+      3
+    ],
+    [
+      "hz_ashwater_miasma",
+      "r_ashwater_fen",
+      "poison",
+      [
+        270,
+        600,
+        180,
+        120
+      ],
+      "gas bubbles, bleached reeds, still water",
+      "cap_filter",
+      4
+    ],
+    [
+      "hz_sunken_pressure",
+      "r_sunken_orchard",
+      "pressure",
+      [
+        60,
+        620,
+        120,
+        100
+      ],
+      "cenote depth, cold water, no surface exit",
+      "cap_deepward",
+      4
+    ]
+  ],
+  "hubs": {
+    "node_amber_north": [
+      80,
+      400
+    ],
+    "node_amber_south": [
+      170,
+      540
+    ],
+    "node_ashwater": [
+      340,
+      620
+    ],
+    "node_crown_east": [
+      392,
+      200
+    ],
+    "node_crown_south": [
+      300,
+      330
+    ],
+    "node_ember": [
+      580,
+      320
+    ],
+    "node_frost": [
+      560,
+      180
+    ],
+    "node_glasswind": [
+      800,
+      100
+    ],
+    "node_mere_south": [
+      380,
+      600
+    ],
+    "node_mirrormere": [
+      360,
+      430
+    ],
+    "node_pearl": [
+      800,
+      560
+    ],
+    "node_refuge": [
+      56,
+      218
+    ],
+    "node_saffron": [
+      900,
+      420
+    ],
+    "node_sunken": [
+      120,
+      640
+    ],
+    "node_verdant": [
+      560,
+      560
+    ]
+  },
+  "lakes": [
+    [
+      "lake_mirrormere",
+      "r_mirrormere",
+      [
+        360,
+        470
+      ],
+      70,
+      45,
+      120,
+      "fault-dammed; outflow riv_mirrormere_out"
+    ],
+    [
+      "lake_frost_tarn",
+      "r_frost_crown",
+      [
+        620,
+        110
+      ],
+      22,
+      14,
+      900,
+      "cirque tarn; overflow feeds riv_frost_trib"
+    ],
+    [
+      "lake_salt_pan",
+      "r_saffron_coast",
+      [
+        880,
+        360
+      ],
+      35,
+      22,
+      80,
+      "terminal evaporite pan; no surface outlet"
+    ]
+  ],
+  "materials": {
+    "abyssal_pearl": [
+      "ecological",
+      "tide-locked deep grotto mollusc",
+      "pressure polishing",
+      "tier-3 seal; abyssal core",
+      "tide-gated bed"
+    ],
+    "aether_crystal": [
+      "geological",
+      "hydrothermal vug in fractured limestone/granite",
+      "resonance cutting",
+      "core blanks; power nodes",
+      "finite vug"
+    ],
+    "basalt": [
+      "geological",
+      "cooled lava flow",
+      "kiln block",
+      "heat-proof construction",
+      "finite flow"
+    ],
+    "bog_iron": [
+      "geological",
+      "redox precipitation at peat margin",
+      "bloom furnace",
+      "filter frame; late tools",
+      "slow redox renewal"
+    ],
+    "clay": [
+      "geological",
+      "lacustrine silt lens",
+      "kiln brick",
+      "furnace lining; pottery",
+      "finite lens"
+    ],
+    "copper": [
+      "geological",
+      "basalt-hosted vein and wadi placer",
+      "smelt -> ingot",
+      "wire; power circuits; trade",
+      "finite vein"
+    ],
+    "fibre": [
+      "ecological",
+      "reed/oasis/forest understorey",
+      "retting and rope walk",
+      "cloth; rope; filter mesh",
+      "seasonal regrowth"
+    ],
+    "frost_resin": [
+      "ecological",
+      "boreal conifer cold stress exudate",
+      "alembic distillate",
+      "thermal ward; cold-seal core",
+      "tapped stand cooldown"
+    ],
+    "glacial_iron": [
+      "geological",
+      "magnetite skarn at granite contact",
+      "cold-crucible bloom",
+      "thermal ward; deep pressure frame",
+      "thaw-season vein"
+    ],
+    "hardwood": [
+      "ecological",
+      "monsoon canopy emergent trees",
+      "seasoned plank",
+      "boat hull; boardwalk; advanced frames",
+      "slow grove"
+    ],
+    "honey": [
+      "ecological",
+      "orchard and oasis pollinator hive",
+      "comb press",
+      "food; fermentation; trade",
+      "hive cooldown"
+    ],
+    "iron": [
+      "geological",
+      "weathered tuff and lateritic seam",
+      "bloom furnace",
+      "fasteners; tools; ward frames",
+      "finite vein"
+    ],
+    "limestone": [
+      "geological",
+      "karst tower and terrace",
+      "lime kiln",
+      "mortar; filter; grafting bed",
+      "finite quarry"
+    ],
+    "obsidian": [
+      "geological",
+      "rapid-cooled lava seam",
+      "knapping / anneal",
+      "precision cores; blades",
+      "fumarole-cycle exposure"
+    ],
+    "pearl": [
+      "ecological",
+      "freshwater/tidal mollusc bed",
+      "nacre polishing",
+      "seal inlay; trade; lens",
+      "bed cooldown"
+    ],
+    "peat": [
+      "ecological",
+      "waterlogged acid bog accumulation",
+      "drying / charcoal",
+      "fuel; filter carbon",
+      "very slow cut"
+    ],
+    "rare_herb": [
+      "ecological",
+      "niche understorey and orchard remnant",
+      "drying / essence",
+      "potions; filter; grafting",
+      "plot or wild patch"
+    ],
+    "reed_fibre": [
+      "ecological",
+      "lake-margin reed bed",
+      "retting",
+      "cloth; rope; thatch",
+      "seasonal bed"
+    ],
+    "rubber_sap": [
+      "ecological",
+      "tropical liana and sap tree",
+      "latex cure",
+      "seals; boat; insulation",
+      "tapped grove"
+    ],
+    "salt": [
+      "geological",
+      "evaporite pan and sea spray",
+      "pan raking / boiling",
+      "food preservation; flux; trade",
+      "dry-wind renewal"
+    ],
+    "salvage": [
+      "anthropic",
+      "road barrels and abandoned supply caches",
+      "recycler -> spares",
+      "research; station upgrades",
+      "road cache restock"
+    ],
+    "silica_sand": [
+      "geological",
+      "wave-sorted cliff sand",
+      "glass furnace",
+      "storm glass; lenses",
+      "tidal placer"
+    ],
+    "stone": [
+      "geological",
+      "moraine and caldera tuff outcrop",
+      "cut block",
+      "foundations; mill repair",
+      "finite outcrop, slow renewal"
+    ],
+    "storm_glass": [
+      "geological",
+      "fulgurite where lightning strikes silica",
+      "storm-ward anneal",
+      "signal tower; storm core",
+      "storm-event placer"
+    ],
+    "sulfur": [
+      "geological",
+      "fumarole sublimation",
+      "sublimation trap",
+      "acid resist; flux; core catalyst",
+      "fumarole cycle"
+    ],
+    "timber": [
+      "ecological",
+      "mixed/boreal forest canopy",
+      "sawmill plank",
+      "construction; tool hafts; fuel",
+      "regrowing stand"
+    ],
+    "venom_sac": [
+      "ecological",
+      "wetland predator and mangrove fauna",
+      "venom alembic",
+      "filter gear; venom core family",
+      "fauna respawn"
+    ]
+  },
+  "pois": [
+    [
+      "poi_crown_waystation",
+      "r_ashen_crown",
+      "Ashen Waystation",
+      "roadside_station",
+      [
+        408,
+        200
+      ],
+      "early",
+      "Teach salvage->spares->seal grammar at the new east postern.",
+      [
+        "salvage",
+        "iron"
+      ],
+      [],
+      [
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_crown_relay_shed",
+      "r_ashen_crown",
+      "Crown Relay Shed",
+      "power_substation",
+      [
+        440,
+        236
+      ],
+      "early",
+      "A dead copper circuit; restoring it teaches fuel+switch+door.",
+      [
+        "copper",
+        "salvage"
+      ],
+      [
+        "cap_salvage"
+      ],
+      [
+        "cap_power_1"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_crown_quarry",
+      "r_ashen_crown",
+      "Tuff Quarry Camp",
+      "quarry",
+      [
+        420,
+        300
+      ],
+      "early",
+      "Readable stone and iron source beside the buffer road.",
+      [
+        "stone",
+        "iron"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_orchard_gate",
+      "r_ashen_crown",
+      "Orchard Gate Ruin",
+      "abandoned_gatehouse",
+      [
+        300,
+        330
+      ],
+      "early",
+      "Southern postern clue pointing to Amberwood without a level wall.",
+      [
+        "timber",
+        "salvage"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_ferry_pile",
+      "r_ashen_crown",
+      "Crown Ferry Pile",
+      "river_crossing",
+      [
+        260,
+        300
+      ],
+      "early",
+      "First ford and ferry survey; the river is a route, not a wall.",
+      [
+        "reed_fibre",
+        "clay"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_barrow_field",
+      "r_ashen_crown",
+      "Buffer Barrow Field",
+      "burial_field",
+      [
+        470,
+        150
+      ],
+      "early",
+      "Low-risk barrows with a damaged core specimen and seal clue.",
+      [
+        "salvage",
+        "stone"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      "ember"
+    ],
+    [
+      "poi_frost_wardhouse",
+      "r_frost_crown",
+      "Wardhouse of Rime",
+      "outpost_forge",
+      [
+        560,
+        180
+      ],
+      "mid",
+      "Thermal ward recipe from glacial iron and frost resin.",
+      [
+        "glacial_iron",
+        "frost_resin"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [
+        "cap_thermal"
+      ],
+      "hz_frost_ridge",
+      null
+    ],
+    [
+      "poi_frost_ice_cave",
+      "r_frost_crown",
+      "Blue Ice Cave",
+      "hidden_cave",
+      [
+        660,
+        80
+      ],
+      "mid",
+      "Thaw-season core specimen behind a cold exposure test.",
+      [
+        "aether_crystal",
+        "glacial_iron"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      "hz_frost_ridge",
+      "frost"
+    ],
+    [
+      "poi_frost_observatory",
+      "r_frost_crown",
+      "High Meridian Observatory",
+      "research_ruin",
+      [
+        720,
+        180
+      ],
+      "mid",
+      "Power a lens array to reveal a late sea route.",
+      [
+        "aether_crystal",
+        "storm_glass"
+      ],
+      [
+        "cap_thermal",
+        "cap_power_1"
+      ],
+      [],
+      "hz_frost_ridge",
+      "storm"
+    ],
+    [
+      "poi_frost_goat_pass",
+      "r_frost_crown",
+      "Goatbreaker Pass",
+      "mountain_pass",
+      [
+        540,
+        120
+      ],
+      "mid",
+      "Alternate climb route bypassing the whiteout ridge.",
+      [
+        "stone",
+        "frost_resin"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_miners_hut",
+      "r_frost_crown",
+      "Miners' Last Hut",
+      "abandoned_camp",
+      [
+        600,
+        220
+      ],
+      "mid",
+      "Non-boss salvage and a thermal-ward sample.",
+      [
+        "salvage",
+        "glacial_iron"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      "hz_frost_ridge",
+      null
+    ],
+    [
+      "poi_frost_tarn_shrine",
+      "r_frost_crown",
+      "Tarn Shrine",
+      "shrine",
+      [
+        620,
+        130
+      ],
+      "mid",
+      "A quiet clue site tying the tarn overflow to the southern river.",
+      [
+        "frost_resin",
+        "pearl"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glasswind_light",
+      "r_glasswind_coast",
+      "Glasswind Light",
+      "lighthouse",
+      [
+        930,
+        120
+      ],
+      "mid",
+      "Storm-warded signal reveals wrecks and a coastal shortcut.",
+      [
+        "storm_glass",
+        "silica_sand"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [
+        "cap_stormward"
+      ],
+      null,
+      "storm"
+    ],
+    [
+      "poi_glasswind_signal",
+      "r_glasswind_coast",
+      "Fulgurite Signal Tower",
+      "power_substation",
+      [
+        860,
+        60
+      ],
+      "mid",
+      "Anneal storm glass into a storm ward; restores the tower circuit.",
+      [
+        "storm_glass",
+        "copper"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [
+        "cap_stormward"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_glasswind_wreck",
+      "r_glasswind_coast",
+      "Tidebreak Wreck",
+      "shipwreck",
+      [
+        960,
+        200
+      ],
+      "mid",
+      "Tide-gated cargo and a boat blueprint fragment.",
+      [
+        "salvage",
+        "iron",
+        "pearl"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glasswind_smuggler",
+      "r_glasswind_coast",
+      "Smuggler Stair",
+      "hidden_cave",
+      [
+        820,
+        180
+      ],
+      "mid",
+      "Alternate cliff stair avoids the exposed coast road.",
+      [
+        "salvage",
+        "silica_sand"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glasswind_gullery",
+      "r_glasswind_coast",
+      "Gullery Middens",
+      "ecological_site",
+      [
+        900,
+        40
+      ],
+      "mid",
+      "Shell and silica placer with a storm-core clue.",
+      [
+        "silica_sand",
+        "salt"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glasswind_watch",
+      "r_glasswind_coast",
+      "Watchman's Terrace",
+      "outpost",
+      [
+        800,
+        100
+      ],
+      "mid",
+      "Safe return point between frost and coast.",
+      [
+        "timber",
+        "stone"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_old_forge",
+      "r_ember_steppe",
+      "The Old Forge",
+      "abandoned_factory",
+      [
+        580,
+        320
+      ],
+      "mid",
+      "Tier-2 seal forging; sulfur and copper share a furnace.",
+      [
+        "copper",
+        "sulfur",
+        "salvage"
+      ],
+      [
+        "cap_seal_1",
+        "cap_power_1"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      "hz_ember_gas",
+      null
+    ],
+    [
+      "poi_ember_piton_works",
+      "r_ember_steppe",
+      "Piton Works",
+      "workshop",
+      [
+        540,
+        280
+      ],
+      "mid",
+      "Rope and pitons open climb alternates.",
+      [
+        "iron",
+        "fibre"
+      ],
+      [
+        "cap_power_1"
+      ],
+      [
+        "cap_climb"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_ember_convict_mine",
+      "r_ember_steppe",
+      "Convict Mine",
+      "mine",
+      [
+        640,
+        380
+      ],
+      "mid",
+      "Acid-gas mine with obsidian and a sealed vault.",
+      [
+        "obsidian",
+        "copper",
+        "sulfur"
+      ],
+      [
+        "cap_seal_2",
+        "cap_filter"
+      ],
+      [],
+      "hz_ember_gas",
+      "acid"
+    ],
+    [
+      "poi_ember_cinder_camp",
+      "r_ember_steppe",
+      "Cinder Convict Camp",
+      "bandit_camp",
+      [
+        700,
+        300
+      ],
+      "mid",
+      "Enemy-held camp; alternate rear approach avoids the gate.",
+      [
+        "salvage",
+        "sulfur"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_fumarole",
+      "r_ember_steppe",
+      "Singing Fumaroles",
+      "geothermal_site",
+      [
+        600,
+        420
+      ],
+      "mid",
+      "Cycle-based sulfur and obsidian exposure.",
+      [
+        "sulfur",
+        "obsidian"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      "hz_ember_gas",
+      null
+    ],
+    [
+      "poi_ember_basalt_gate",
+      "r_ember_steppe",
+      "Basalt Gate",
+      "fortified_pass",
+      [
+        520,
+        400
+      ],
+      "mid",
+      "Natural bottleneck with a climb bypass.",
+      [
+        "basalt",
+        "stone"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_caravan_serai",
+      "r_ember_steppe",
+      "Ash Caravanserai",
+      "trading_post",
+      [
+        660,
+        460
+      ],
+      "mid",
+      "Trade hinge between steppe, coast and lake.",
+      [
+        "salt",
+        "copper",
+        "salvage"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_drydock",
+      "r_saffron_coast",
+      "Saffron Drydock",
+      "harbor",
+      [
+        900,
+        420
+      ],
+      "mid",
+      "Boat hull and tar; opens lake and delta logistics.",
+      [
+        "hardwood",
+        "rubber_sap",
+        "salvage"
+      ],
+      [
+        "cap_power_1"
+      ],
+      [
+        "cap_boat"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_salt_pan",
+      "r_saffron_coast",
+      "White Pan Rakes",
+      "evaporite_works",
+      [
+        880,
+        360
+      ],
+      "mid",
+      "Dry-wind salt harvest and a heat exposure test.",
+      [
+        "salt",
+        "copper"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      "hz_saffron_heat",
+      null
+    ],
+    [
+      "poi_saffron_caravan",
+      "r_saffron_coast",
+      "Saffron Caravanserai",
+      "trading_post",
+      [
+        800,
+        300
+      ],
+      "mid",
+      "Water, trade and a seal-2 clue.",
+      [
+        "salt",
+        "fibre",
+        "salvage"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_wadi_well",
+      "r_saffron_coast",
+      "Wadi Well",
+      "oasis",
+      [
+        780,
+        340
+      ],
+      "mid",
+      "The only reliable water on the dry crossing.",
+      [
+        "fibre",
+        "rare_herb"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_coral_tomb",
+      "r_saffron_coast",
+      "Coral Tomb",
+      "burial_field",
+      [
+        940,
+        300
+      ],
+      "mid",
+      "Pearl inlay and a tier-2 seal clue.",
+      [
+        "pearl",
+        "limestone"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_customs",
+      "r_saffron_coast",
+      "Old Customs House",
+      "warehouse",
+      [
+        920,
+        460
+      ],
+      "mid",
+      "Cargo manifests point to the drowned Pearl customs house.",
+      [
+        "salvage",
+        "pearl"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_root_lift",
+      "r_verdant_fold",
+      "Root Lift Terrace",
+      "puzzle_ruin",
+      [
+        560,
+        560
+      ],
+      "late",
+      "Living-wood elevator; combines thermal, filter and climb prep.",
+      [
+        "hardwood",
+        "rubber_sap",
+        "aether_crystal"
+      ],
+      [
+        "cap_thermal",
+        "cap_filter",
+        "cap_climb"
+      ],
+      [
+        "cap_deepward"
+      ],
+      "hz_verdant_spore",
+      null
+    ],
+    [
+      "poi_verdant_canopy_temple",
+      "r_verdant_fold",
+      "Canopy Temple",
+      "temple",
+      [
+        640,
+        600
+      ],
+      "late",
+      "Vertical temple with a venom-core specimen.",
+      [
+        "venom_sac",
+        "aether_crystal"
+      ],
+      [
+        "cap_seal_3",
+        "cap_climb"
+      ],
+      [],
+      "hz_verdant_spore",
+      "venom"
+    ],
+    [
+      "poi_verdant_spore_hollow",
+      "r_verdant_fold",
+      "Spore Hollow",
+      "ecological_site",
+      [
+        600,
+        660
+      ],
+      "late",
+      "Filter test; rare herb and venom sacs.",
+      [
+        "rare_herb",
+        "venom_sac"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      "hz_verdant_spore",
+      null
+    ],
+    [
+      "poi_verdant_terraces",
+      "r_verdant_fold",
+      "Terraced Orchard Ruin",
+      "abandoned_settlement",
+      [
+        700,
+        540
+      ],
+      "late",
+      "Grafting puzzle revalues Amberwood cuttings.",
+      [
+        "hardwood",
+        "rare_herb",
+        "honey"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_hunter_camp",
+      "r_verdant_fold",
+      "Hunter's Blind",
+      "outpost",
+      [
+        540,
+        640
+      ],
+      "late",
+      "Safe return point before the cenote and fen.",
+      [
+        "timber",
+        "venom_sac"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_river_gate",
+      "r_verdant_fold",
+      "River Gate Sluice",
+      "power_substation",
+      [
+        660,
+        700
+      ],
+      "late",
+      "Sluice lowers a channel to reveal a drowned vault.",
+      [
+        "copper",
+        "aether_crystal"
+      ],
+      [
+        "cap_power_1",
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_customs",
+      "r_pearl_mangroves",
+      "Drowned Customs House",
+      "layered_vault",
+      [
+        840,
+        600
+      ],
+      "late",
+      "Tier-3 seal from abyssal pearl; boat-dependent layered vault.",
+      [
+        "abyssal_pearl",
+        "pearl",
+        "salvage"
+      ],
+      [
+        "cap_seal_2",
+        "cap_boat",
+        "cap_tide_ward"
+      ],
+      [
+        "cap_seal_3"
+      ],
+      "hz_pearl_tide",
+      "abyss"
+    ],
+    [
+      "poi_pearl_stilt_village",
+      "r_pearl_mangroves",
+      "Stilt Village",
+      "settlement",
+      [
+        800,
+        560
+      ],
+      "late",
+      "NPC trade and a floating outpost site; tide-ward recipe.",
+      [
+        "pearl",
+        "hardwood",
+        "salt"
+      ],
+      [
+        "cap_boat"
+      ],
+      [
+        "cap_tide_ward"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_grotto",
+      "r_pearl_mangroves",
+      "Tide-Locked Grotto",
+      "hidden_cave",
+      [
+        900,
+        660
+      ],
+      "late",
+      "Abyssal pearls only at low tide; deepward alternative.",
+      [
+        "abyssal_pearl",
+        "pearl"
+      ],
+      [
+        "cap_boat",
+        "cap_tide_ward"
+      ],
+      [],
+      "hz_pearl_tide",
+      "abyss"
+    ],
+    [
+      "poi_pearl_smuggler",
+      "r_pearl_mangroves",
+      "Mangrove Smuggler Dock",
+      "bandit_camp",
+      [
+        940,
+        540
+      ],
+      "late",
+      "Enemy dock with a rear channel alternate.",
+      [
+        "salvage",
+        "pearl"
+      ],
+      [
+        "cap_boat",
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_beacon",
+      "r_pearl_mangroves",
+      "Driftwood Beacon",
+      "outpost",
+      [
+        860,
+        700
+      ],
+      "late",
+      "Return point and tide clue for the grotto.",
+      [
+        "timber",
+        "salt"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_nursery",
+      "r_pearl_mangroves",
+      "Pearl Nursery",
+      "ecological_site",
+      [
+        780,
+        660
+      ],
+      "late",
+      "Mollusc bed with a sustainable harvest cooldown.",
+      [
+        "pearl",
+        "abyssal_pearl"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amberwood_mill",
+      "r_amberwood",
+      "Amberwood Mill",
+      "watermill",
+      [
+        120,
+        440
+      ],
+      "early",
+      "Repair the mill to unlock planks and a non-dungeon loop.",
+      [
+        "timber",
+        "stone",
+        "iron"
+      ],
+      [
+        "cap_salvage"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amberwood_apothecary",
+      "r_amberwood",
+      "Orchard Apothecary",
+      "workshop",
+      [
+        80,
+        480
+      ],
+      "early",
+      "Filter gear recipe from herb, fibre and a venom sample.",
+      [
+        "rare_herb",
+        "fibre",
+        "honey"
+      ],
+      [
+        "cap_salvage"
+      ],
+      [
+        "cap_filter"
+      ],
+      null,
+      null
+    ],
+    [
+      "poi_amberwood_orchard",
+      "r_amberwood",
+      "Old Orchard Terraces",
+      "farm_ruin",
+      [
+        180,
+        420
+      ],
+      "early",
+      "Grafting and fermentation; stored fruit revalues later.",
+      [
+        "timber",
+        "honey",
+        "rare_herb"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amberwood_barrow",
+      "r_amberwood",
+      "Amber Barrow",
+      "burial_field",
+      [
+        60,
+        540
+      ],
+      "early",
+      "Low-risk core fragment and a seal clue.",
+      [
+        "salvage",
+        "stone"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      "ember"
+    ],
+    [
+      "poi_amberwood_ferry",
+      "r_amberwood",
+      "Amber Ferry",
+      "river_crossing",
+      [
+        170,
+        540
+      ],
+      "early",
+      "Ford and future ferry; alternate to the mill road.",
+      [
+        "reed_fibre",
+        "clay"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amberwood_watch",
+      "r_amberwood",
+      "Amber Watch",
+      "outpost",
+      [
+        200,
+        500
+      ],
+      "early",
+      "First new outpost site with a real return-time saving.",
+      [
+        "timber",
+        "stone"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mirrormere_piles",
+      "r_mirrormere",
+      "Fishers' Piles",
+      "settlement",
+      [
+        300,
+        420
+      ],
+      "early",
+      "Lake settlement and reed/clay sources.",
+      [
+        "reed_fibre",
+        "clay",
+        "pearl"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mirrormere_causeway",
+      "r_mirrormere",
+      "Drowned Causeway",
+      "ruin_crossing",
+      [
+        360,
+        500
+      ],
+      "mid",
+      "Sluice puzzle reveals a vault when the lake is lowered.",
+      [
+        "stone",
+        "pearl",
+        "salvage"
+      ],
+      [
+        "cap_power_1"
+      ],
+      [],
+      null,
+      "tide"
+    ],
+    [
+      "poi_mirrormere_observatory",
+      "r_mirrormere",
+      "Lake Observatory",
+      "research_ruin",
+      [
+        420,
+        440
+      ],
+      "mid",
+      "Lens array ties frost observatory to a late route.",
+      [
+        "aether_crystal",
+        "clay"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      "storm"
+    ],
+    [
+      "poi_mirrormere_reed_holt",
+      "r_mirrormere",
+      "Reed Holt",
+      "ecological_site",
+      [
+        320,
+        540
+      ],
+      "early",
+      "Sustainable reed and herb bed.",
+      [
+        "reed_fibre",
+        "rare_herb"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mirrormere_ferry",
+      "r_mirrormere",
+      "Mirror Ferry",
+      "river_crossing",
+      [
+        400,
+        480
+      ],
+      "mid",
+      "Boat shortcut across the lake once the drydock is restored.",
+      [
+        "hardwood",
+        "fibre"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mirrormere_smuggler",
+      "r_mirrormere",
+      "Smuggler's Pile",
+      "hidden_cave",
+      [
+        440,
+        520
+      ],
+      "mid",
+      "Non-boss salvage alternate beneath the causeway.",
+      [
+        "salvage",
+        "pearl"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_sunken_cenote",
+      "r_sunken_orchard",
+      "Great Cenote",
+      "hidden_cave",
+      [
+        120,
+        640
+      ],
+      "late",
+      "Dive to the karst conduit; deepward pressure test.",
+      [
+        "aether_crystal",
+        "limestone"
+      ],
+      [
+        "cap_deepward"
+      ],
+      [],
+      "hz_sunken_pressure",
+      "abyss"
+    ],
+    [
+      "poi_sunken_graft",
+      "r_sunken_orchard",
+      "Grafting Court",
+      "puzzle_ruin",
+      [
+        60,
+        600
+      ],
+      "late",
+      "Orchard grafting puzzle revalues Amberwood cuttings.",
+      [
+        "hardwood",
+        "rare_herb"
+      ],
+      [
+        "cap_seal_2"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_sunken_tower",
+      "r_sunken_orchard",
+      "Tower Karst Shrine",
+      "shrine",
+      [
+        180,
+        660
+      ],
+      "late",
+      "Climb alternate with a core specimen.",
+      [
+        "limestone",
+        "aether_crystal"
+      ],
+      [
+        "cap_deepward"
+      ],
+      [],
+      null,
+      "frost"
+    ],
+    [
+      "poi_sunken_subspring",
+      "r_sunken_orchard",
+      "Submarine Spring",
+      "ecological_site",
+      [
+        100,
+        700
+      ],
+      "late",
+      "Cold upwelling and a deepward clue.",
+      [
+        "pearl",
+        "limestone"
+      ],
+      [
+        "cap_deepward"
+      ],
+      [],
+      "hz_sunken_pressure",
+      null
+    ],
+    [
+      "poi_sunken_watch",
+      "r_sunken_orchard",
+      "Orchard Watch",
+      "outpost",
+      [
+        200,
+        600
+      ],
+      "late",
+      "Return point before the cenote.",
+      [
+        "timber",
+        "stone"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_sunken_wreck",
+      "r_sunken_orchard",
+      "Orchard Wreck",
+      "shipwreck",
+      [
+        40,
+        700
+      ],
+      "late",
+      "Coastal cargo and a boat alternate.",
+      [
+        "salvage",
+        "hardwood"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_pump",
+      "r_ashwater_fen",
+      "Buried Pump Station",
+      "power_substation",
+      [
+        340,
+        620
+      ],
+      "late",
+      "Restore pumps to change safe fen channels.",
+      [
+        "copper",
+        "bog_iron",
+        "salvage"
+      ],
+      [
+        "cap_power_1",
+        "cap_seal_2",
+        "cap_filter"
+      ],
+      [],
+      "hz_ashwater_miasma",
+      null
+    ],
+    [
+      "poi_ashwater_shrine",
+      "r_ashwater_fen",
+      "Stilt Shrine",
+      "shrine",
+      [
+        300,
+        660
+      ],
+      "late",
+      "Filter test and a bog-core specimen.",
+      [
+        "venom_sac",
+        "aether_crystal"
+      ],
+      [
+        "cap_filter",
+        "cap_seal_3"
+      ],
+      [],
+      "hz_ashwater_miasma",
+      "venom"
+    ],
+    [
+      "poi_ashwater_boardwalk",
+      "r_ashwater_fen",
+      "Boardwalk Remnant",
+      "route_works",
+      [
+        380,
+        600
+      ],
+      "late",
+      "Repair boardwalks to shorten the safe return leg.",
+      [
+        "hardwood",
+        "bog_iron"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_resurgence",
+      "r_ashwater_fen",
+      "Karst Resurgence",
+      "ecological_site",
+      [
+        300,
+        640
+      ],
+      "late",
+      "Dye-traceable outlet of the Sunken Orchard conduit.",
+      [
+        "bog_iron",
+        "rare_herb"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_bog_camp",
+      "r_ashwater_fen",
+      "Bog Smuggler Camp",
+      "bandit_camp",
+      [
+        420,
+        660
+      ],
+      "late",
+      "Enemy camp with a boardwalk rear approach.",
+      [
+        "salvage",
+        "venom_sac"
+      ],
+      [
+        "cap_seal_2",
+        "cap_filter"
+      ],
+      [],
+      "hz_ashwater_miasma",
+      null
+    ],
+    [
+      "poi_ashwater_watch",
+      "r_ashwater_fen",
+      "Fen Watch",
+      "outpost",
+      [
+        440,
+        600
+      ],
+      "late",
+      "Return point and pump logistics.",
+      [
+        "timber",
+        "peat"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_north_watch",
+      "r_ashen_crown",
+      "North Rim Watch",
+      "outpost",
+      [
+        420,
+        60
+      ],
+      "early",
+      "Watch the caldera rim and the frost pass clue.",
+      [
+        "stone",
+        "salvage"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_rim_shrine",
+      "r_ashen_crown",
+      "Rim Shrine",
+      "shrine",
+      [
+        470,
+        100
+      ],
+      "early",
+      "Quiet clue site tying the Crown rim to the Frostcrown arête.",
+      [
+        "stone",
+        "fibre"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_old_signal",
+      "r_ashen_crown",
+      "Old Rim Signal",
+      "power_substation",
+      [
+        400,
+        20
+      ],
+      "early",
+      "A dead signal lamp; early power grammar without a dungeon.",
+      [
+        "copper",
+        "salvage"
+      ],
+      [
+        "cap_salvage"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_tuff_terrace",
+      "r_ashen_crown",
+      "Tuff Terrace",
+      "quarry",
+      [
+        480,
+        40
+      ],
+      "early",
+      "Readable stone source on the buffer rim.",
+      [
+        "stone",
+        "iron"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_herder_camp",
+      "r_ashen_crown",
+      "Herder's Camp",
+      "abandoned_camp",
+      [
+        440,
+        140
+      ],
+      "early",
+      "Non-boss salvage and a thermal-ward hint.",
+      [
+        "salvage",
+        "fibre"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_north_gate",
+      "r_frost_crown",
+      "North Gate",
+      "fortified_pass",
+      [
+        540,
+        40
+      ],
+      "mid",
+      "Alternate pass into Frostcrown; climb bypasses the whiteout.",
+      [
+        "stone",
+        "glacial_iron"
+      ],
+      [
+        "cap_climb"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_rime_cairn",
+      "r_frost_crown",
+      "Rime Cairn",
+      "shrine",
+      [
+        600,
+        20
+      ],
+      "mid",
+      "Avalanche clue and frost-resin sample.",
+      [
+        "frost_resin",
+        "stone"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_glacier_mill",
+      "r_frost_crown",
+      "Glacier Mill",
+      "watermill",
+      [
+        680,
+        30
+      ],
+      "mid",
+      "Meltwater mill; power puzzle and cold exposure.",
+      [
+        "glacial_iron",
+        "timber"
+      ],
+      [
+        "cap_thermal",
+        "cap_power_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_avalanche_hut",
+      "r_frost_crown",
+      "Avalanche Hut",
+      "abandoned_camp",
+      [
+        740,
+        60
+      ],
+      "mid",
+      "Shelter clue and a damaged core specimen.",
+      [
+        "salvage",
+        "frost_resin"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      "frost"
+    ],
+    [
+      "poi_glass_north_cliff",
+      "r_glasswind_coast",
+      "North Cliff Watch",
+      "outpost",
+      [
+        780,
+        30
+      ],
+      "mid",
+      "Coastal return point and storm-glass clue.",
+      [
+        "silica_sand",
+        "stone"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glass_aukery",
+      "r_glasswind_coast",
+      "Aukery Middens",
+      "ecological_site",
+      [
+        840,
+        20
+      ],
+      "mid",
+      "Shell and silica placer; non-boss coastal loop.",
+      [
+        "silica_sand",
+        "salt"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_east_watch",
+      "r_ember_steppe",
+      "East Ember Watch",
+      "outpost",
+      [
+        740,
+        420
+      ],
+      "mid",
+      "Return point between the steppe and the coast road.",
+      [
+        "basalt",
+        "salvage"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_ash_quarry",
+      "r_ember_steppe",
+      "Ash Quarry",
+      "quarry",
+      [
+        750,
+        480
+      ],
+      "mid",
+      "Basalt and sulfur source beside the caravan road.",
+      [
+        "basalt",
+        "sulfur"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_south_pan",
+      "r_saffron_coast",
+      "South Pan Rakes",
+      "evaporite_works",
+      [
+        780,
+        460
+      ],
+      "mid",
+      "Secondary salt harvest and heat exposure.",
+      [
+        "salt",
+        "copper"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_south_watch",
+      "r_saffron_coast",
+      "South Coast Watch",
+      "outpost",
+      [
+        840,
+        480
+      ],
+      "mid",
+      "Return point before the delta crossing.",
+      [
+        "timber",
+        "salt"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amber_west_holt",
+      "r_amberwood",
+      "West Holt",
+      "ecological_site",
+      [
+        30,
+        440
+      ],
+      "early",
+      "Timber and herb patch on the western march.",
+      [
+        "timber",
+        "rare_herb"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amber_west_barrow",
+      "r_amberwood",
+      "West Barrow",
+      "burial_field",
+      [
+        20,
+        500
+      ],
+      "early",
+      "Low-risk barrow with a seal clue.",
+      [
+        "salvage",
+        "stone"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mere_east_pile",
+      "r_mirrormere",
+      "East Fishers' Pile",
+      "settlement",
+      [
+        490,
+        470
+      ],
+      "early",
+      "Lake-margin reed and clay source.",
+      [
+        "reed_fibre",
+        "clay"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_south_gate",
+      "r_verdant_fold",
+      "South Fold Gate",
+      "fortified_pass",
+      [
+        540,
+        710
+      ],
+      "late",
+      "Natural bottleneck with a climb bypass.",
+      [
+        "limestone",
+        "hardwood"
+      ],
+      [
+        "cap_climb",
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_south_shrine",
+      "r_verdant_fold",
+      "South Shrine",
+      "shrine",
+      [
+        600,
+        720
+      ],
+      "late",
+      "Quiet clue site before the delta.",
+      [
+        "rare_herb",
+        "aether_crystal"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_east_beacon",
+      "r_pearl_mangroves",
+      "East Beacon",
+      "outpost",
+      [
+        950,
+        620
+      ],
+      "late",
+      "Tide clue and return point on the outer delta.",
+      [
+        "timber",
+        "salt"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_east_nursery",
+      "r_pearl_mangroves",
+      "East Nursery",
+      "ecological_site",
+      [
+        950,
+        680
+      ],
+      "late",
+      "Sustainable pearl bed on the tidal edge.",
+      [
+        "pearl",
+        "salt"
+      ],
+      [
+        "cap_boat",
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_sunken_south_spring",
+      "r_sunken_orchard",
+      "South Spring",
+      "ecological_site",
+      [
+        230,
+        720
+      ],
+      "late",
+      "Submarine spring clue and limestone source.",
+      [
+        "limestone",
+        "pearl"
+      ],
+      [
+        "cap_deepward"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_south_pump",
+      "r_ashwater_fen",
+      "South Pump",
+      "power_substation",
+      [
+        480,
+        700
+      ],
+      "late",
+      "Secondary pump changes the southern fen channel.",
+      [
+        "copper",
+        "bog_iron"
+      ],
+      [
+        "cap_power_1",
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_south_shrine",
+      "r_ashwater_fen",
+      "South Fen Shrine",
+      "shrine",
+      [
+        300,
+        720
+      ],
+      "late",
+      "Filter test and a bog-core clue.",
+      [
+        "venom_sac",
+        "peat"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_west_boardwalk",
+      "r_ashwater_fen",
+      "West Boardwalk",
+      "route_works",
+      [
+        270,
+        700
+      ],
+      "late",
+      "Repair the western boardwalk to shorten the safe return.",
+      [
+        "hardwood",
+        "bog_iron"
+      ],
+      [
+        "cap_climb",
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_south_mill",
+      "r_ashen_crown",
+      "South Crown Mill",
+      "watermill",
+      [
+        120,
+        300
+      ],
+      "early",
+      "A buffer watermill; non-dungeon plank and salvage loop.",
+      [
+        "timber",
+        "stone",
+        "salvage"
+      ],
+      [
+        "cap_salvage"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_south_barrow",
+      "r_ashen_crown",
+      "South Barrow",
+      "burial_field",
+      [
+        60,
+        340
+      ],
+      "early",
+      "Low-risk barrow and a seal clue before Amberwood.",
+      [
+        "salvage",
+        "stone"
+      ],
+      [
+        "cap_seal_1"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_south_watch",
+      "r_ashen_crown",
+      "South Watch",
+      "outpost",
+      [
+        180,
+        340
+      ],
+      "early",
+      "Return point between the Crown, Amberwood and Mirrormere.",
+      [
+        "timber",
+        "stone"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_south_quarry",
+      "r_ashen_crown",
+      "South Quarry",
+      "quarry",
+      [
+        30,
+        280
+      ],
+      "early",
+      "Readable stone source on the south rim stair.",
+      [
+        "stone",
+        "iron"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_crown_south_orchard",
+      "r_ashen_crown",
+      "South Orchard Ruin",
+      "farm_ruin",
+      [
+        140,
+        360
+      ],
+      "early",
+      "Orchard remnant tying the Crown buffer to Amberwood grafting.",
+      [
+        "timber",
+        "honey",
+        "rare_herb"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_glass_tide_watch",
+      "r_glasswind_coast",
+      "Tide Watch",
+      "outpost",
+      [
+        880,
+        240
+      ],
+      "mid",
+      "Coastal return point between the cliff and the harbor.",
+      [
+        "silica_sand",
+        "salt"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_saffron_tide_watch",
+      "r_saffron_coast",
+      "Outer Tide Watch",
+      "outpost",
+      [
+        975,
+        380
+      ],
+      "mid",
+      "Outer-coast watch and salt clue.",
+      [
+        "salt",
+        "stone"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_verdant_east_blind",
+      "r_verdant_fold",
+      "East Hunter Blind",
+      "outpost",
+      [
+        720,
+        640
+      ],
+      "late",
+      "Return point before the delta eastern channel.",
+      [
+        "hardwood",
+        "venom_sac"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_frost_south_watch",
+      "r_frost_crown",
+      "South Frost Watch",
+      "outpost",
+      [
+        750,
+        240
+      ],
+      "mid",
+      "Boundary watch between Frostcrown and Glasswind.",
+      [
+        "stone",
+        "frost_resin"
+      ],
+      [
+        "cap_thermal"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ember_south_watch",
+      "r_ember_steppe",
+      "South Ember Watch",
+      "outpost",
+      [
+        580,
+        490
+      ],
+      "mid",
+      "Return point before the Verdant Fold.",
+      [
+        "basalt",
+        "salvage"
+      ],
+      [
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_ashwater_south_boardwalk",
+      "r_ashwater_fen",
+      "South Boardwalk",
+      "route_works",
+      [
+        400,
+        720
+      ],
+      "late",
+      "Repair the southern boardwalk alternate.",
+      [
+        "hardwood",
+        "bog_iron"
+      ],
+      [
+        "cap_climb",
+        "cap_filter"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_amber_edge_watch",
+      "r_amberwood",
+      "Edge Watch",
+      "outpost",
+      [
+        240,
+        400
+      ],
+      "early",
+      "Boundary watch between Amberwood and Mirrormere.",
+      [
+        "timber",
+        "stone"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_mere_south_pile",
+      "r_mirrormere",
+      "South Fishers' Pile",
+      "settlement",
+      [
+        280,
+        555
+      ],
+      "early",
+      "Southern lake reed and clay source.",
+      [
+        "reed_fibre",
+        "clay"
+      ],
+      [],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_sunken_west_spring",
+      "r_sunken_orchard",
+      "West Spring",
+      "ecological_site",
+      [
+        20,
+        640
+      ],
+      "late",
+      "Western karst spring and limestone source.",
+      [
+        "limestone",
+        "pearl"
+      ],
+      [
+        "cap_deepward"
+      ],
+      [],
+      null,
+      null
+    ],
+    [
+      "poi_pearl_north_beacon",
+      "r_pearl_mangroves",
+      "North Beacon",
+      "outpost",
+      [
+        870,
+        540
+      ],
+      "late",
+      "Northern delta tide clue and return point.",
+      [
+        "timber",
+        "salt"
+      ],
+      [
+        "cap_boat"
+      ],
+      [],
+      null,
+      null
+    ]
+  ],
+  "regions": [
+    [
+      "r_ashen_crown",
+      "The Ashen Crown",
+      [
+        0,
+        0,
+        512,
+        384
+      ],
+      "early",
+      420,
+      "temperate rain-shadow",
+      "Ancient caldera rim and funerary plateau; legacy Marches inset preserved.",
+      "well-drained ash loam over tuff",
+      [
+        "temperate_mixed",
+        "moorland",
+        "riverine",
+        "ruin_field",
+        "freshwater_marsh",
+        "peat_bog",
+        "volcanic_steppe",
+        "lake"
+      ],
+      [
+        "timber",
+        "stone",
+        "iron",
+        "fibre",
+        "salvage"
+      ],
+      "Ten existing dungeon doors remain in the legacy inset. New buffer roads teach salvage, fording and outpost return without moving a single entrance.",
+      "Re-open the four legacy shortcuts; learn seal/power grammar at the buffer waystation before leaving the quarter."
+    ],
+    [
+      "r_frost_crown",
+      "Frostcrown Reach",
+      [
+        512,
+        0,
+        256,
+        256
+      ],
+      "mid",
+      1250,
+      "alpine cold",
+      "Glacial cirques, arêtes and a hanging valley draining south-west.",
+      "thin cryoturbated till over granite",
+      [
+        "alpine_snow",
+        "boreal_forest",
+        "frost_steppe",
+        "riverine"
+      ],
+      [
+        "glacial_iron",
+        "frost_resin",
+        "stone",
+        "timber",
+        "aether_crystal"
+      ],
+      "Snowline is an equipment test, not a level wall. The pass is visible from the Crown but the exposed ridge punishes unprepared travellers.",
+      "Thaw-season veins, ice-cave cores and a high observatory that only powers after a thermal ward."
+    ],
+    [
+      "r_glasswind_coast",
+      "Glasswind Coast",
+      [
+        768,
+        0,
+        256,
+        256
+      ],
+      "mid",
+      480,
+      "cool maritime, windward",
+      "Wave-cut terraces and silica cliffs; a short fast river falls to the east coast.",
+      "sandy podzol and shell middens",
+      [
+        "boreal_forest",
+        "coastal_scrub",
+        "riverine",
+        "ocean"
+      ],
+      [
+        "silica_sand",
+        "iron",
+        "timber",
+        "salt",
+        "storm_glass"
+      ],
+      "Lighthouses and wreck stairs reward coastal navigation. Storm glass forms where lightning meets silica sand.",
+      "Tide-gated wrecks and a storm-warded signal tower; revisit after cap_stormward."
+    ],
+    [
+      "r_ember_steppe",
+      "Embersteppe",
+      [
+        512,
+        256,
+        256,
+        256
+      ],
+      "mid",
+      620,
+      "dry volcanic rain-shadow",
+      "Basalt flows, cinder cones and sulfur fumaroles east of the Crown escarpment.",
+      "thin andosol, ash badlands",
+      [
+        "volcanic_steppe",
+        "ash_badland",
+        "riverine",
+        "oasis"
+      ],
+      [
+        "sulfur",
+        "copper",
+        "basalt",
+        "obsidian",
+        "salvage"
+      ],
+      "Foundries and convict mines explain the industrial ruins. Heat and acid gas create preparation choices distinct from cold.",
+      "Fumarole cycles open obsidian seams; restore the old forge to refine higher cores."
+    ],
+    [
+      "r_saffron_coast",
+      "Saffron Coast",
+      [
+        768,
+        256,
+        256,
+        256
+      ],
+      "mid",
+      140,
+      "semi-arid trade coast",
+      "Raised coral benches, a terminal salt pan and a wadi joining the Glasswind river.",
+      "calcareous sand and evaporite crust",
+      [
+        "arid_coast",
+        "salt_flat",
+        "oasis",
+        "riverine",
+        "ocean"
+      ],
+      [
+        "salt",
+        "copper",
+        "fibre",
+        "pearl",
+        "salvage"
+      ],
+      "Caravanserais and a tidal harbor make this the trade hinge. Water, not monsters, is the first logistics tax.",
+      "Caravan contracts, salt-pan harvesting after dry wind, and a harbor drydock for boats."
+    ],
+    [
+      "r_verdant_fold",
+      "The Verdant Fold",
+      [
+        512,
+        512,
+        256,
+        256
+      ],
+      "late",
+      280,
+      "tropical monsoon",
+      "Folded limestone ridges and steep rainforest valleys; orographic rain feeds the south river.",
+      "deep ferralitic clay and leaf litter",
+      [
+        "tropical_forest",
+        "karst_orchard",
+        "riverine",
+        "freshwater_marsh"
+      ],
+      [
+        "hardwood",
+        "venom_sac",
+        "rubber_sap",
+        "aether_crystal",
+        "rare_herb"
+      ],
+      "Dense canopy hides terraced ruins. Poison and verticality reward filter gear and climbing, not raw damage.",
+      "Canopy temples, venom-core specimens and a root elevator opened by a living-wood puzzle."
+    ],
+    [
+      "r_pearl_mangroves",
+      "Pearl Mangroves",
+      [
+        768,
+        512,
+        256,
+        256
+      ],
+      "late",
+      20,
+      "tropical deltaic",
+      "Distributary channels, tidal flats and mangrove peat at the Glasswind mouth.",
+      "saline peat and shell hash",
+      [
+        "mangrove",
+        "tidal_flat",
+        "ocean",
+        "freshwater_marsh"
+      ],
+      [
+        "pearl",
+        "salt",
+        "hardwood",
+        "venom_sac",
+        "abyssal_pearl"
+      ],
+      "Stilt villages and drowned customs houses form a boat-dependent maze. Tide changes which channels are safe.",
+      "Abyssal pearls in tide-locked grottoes; a floating outpost earns its keep by shortening the return leg."
+    ],
+    [
+      "r_amberwood",
+      "Amberwood March",
+      [
+        0,
+        384,
+        256,
+        192
+      ],
+      "early",
+      240,
+      "temperate broadleaf",
+      "Old moraine hills south of the caldera; a gentle stream reaches the south coast.",
+      "brown forest earth and orchard terraces",
+      [
+        "temperate_mixed",
+        "orchard",
+        "riverine",
+        "moorland"
+      ],
+      [
+        "timber",
+        "fibre",
+        "rare_herb",
+        "stone",
+        "honey"
+      ],
+      "The first genuinely new farming and timber belt. Abandoned orchards and a watermill give non-dungeon progression.",
+      "Mill repair unlocks a plank route; old stored fruit becomes valuable after a fermentation recipe."
+    ],
+    [
+      "r_mirrormere",
+      "Mirrormere Basin",
+      [
+        256,
+        384,
+        256,
+        192
+      ],
+      "early",
+      150,
+      "lake-moderated temperate",
+      "A fault-dammed lake receives the Crown river and the Frostcrown tributary.",
+      "lacustrine silt and reed peat",
+      [
+        "freshwater_marsh",
+        "riverine",
+        "temperate_mixed",
+        "lake"
+      ],
+      [
+        "reed_fibre",
+        "clay",
+        "pearl",
+        "rare_herb",
+        "salvage"
+      ],
+      "Fishers' piles, a drowned causeway and a lake observatory. The lake is a transport hub once a hull is built.",
+      "Drowned vault revealed by lowering a sluice; freshwater pearls and a ferry shortcut."
+    ],
+    [
+      "r_sunken_orchard",
+      "Sunken Orchard",
+      [
+        0,
+        576,
+        256,
+        192
+      ],
+      "late",
+      90,
+      "tropical karst coast",
+      "Tower karst, sinkholes and a submarine spring; surface water disappears underground.",
+      "thin rendzina over limestone",
+      [
+        "karst_orchard",
+        "tropical_forest",
+        "coastal_scrub",
+        "ocean"
+      ],
+      [
+        "hardwood",
+        "rare_herb",
+        "limestone",
+        "aether_crystal",
+        "salvage"
+      ],
+      "Ruined orchard terraces collapse into cenotes. A visible sinkhole hints at the Ashwater resurgence long before it is usable.",
+      "Cenote diving after cap_deepward; a grafting puzzle revalues Amberwood cuttings."
+    ],
+    [
+      "r_ashwater_fen",
+      "Ashwater Fen",
+      [
+        256,
+        576,
+        256,
+        192
+      ],
+      "late",
+      45,
+      "humid subtropical peatland",
+      "Peat basin fed by the Mirrormere outlet and a karst resurgence; slow drainage to the south coast.",
+      "acid peat and toxic ash lenses",
+      [
+        "peat_bog",
+        "freshwater_marsh",
+        "riverine",
+        "ruin_field"
+      ],
+      [
+        "venom_sac",
+        "peat",
+        "rare_herb",
+        "bog_iron",
+        "aether_crystal"
+      ],
+      "A poisoned wetland with stilt shrines and a buried pump station. Filter gear and boardwalks matter more than armour.",
+      "Pump restoration changes safe channels; a bog-core specimen and a late-game purification loop."
+    ]
+  ],
+  "resource_sites": [
+    [
+      "src_crown_tuff",
+      "r_ashen_crown",
+      "stone",
+      [
+        430,
+        280
+      ],
+      6,
+      "quarry face beside buffer road",
+      "ruin_field"
+    ],
+    [
+      "src_crown_iron",
+      "r_ashen_crown",
+      "iron",
+      [
+        450,
+        260
+      ],
+      5,
+      "weathered tuff seam",
+      "moorland"
+    ],
+    [
+      "src_crown_reed",
+      "r_ashen_crown",
+      "fibre",
+      [
+        270,
+        310
+      ],
+      6,
+      "river-margin reed bed",
+      "riverine"
+    ],
+    [
+      "src_crown_salvage",
+      "r_ashen_crown",
+      "salvage",
+      [
+        400,
+        220
+      ],
+      6,
+      "postern road barrels",
+      "ruin_field"
+    ],
+    [
+      "src_frost_skarn",
+      "r_frost_crown",
+      "glacial_iron",
+      [
+        600,
+        160
+      ],
+      6,
+      "granite contact skarn",
+      "alpine_snow"
+    ],
+    [
+      "src_frost_resin",
+      "r_frost_crown",
+      "frost_resin",
+      [
+        560,
+        220
+      ],
+      6,
+      "cold-stressed conifer stand",
+      "boreal_forest"
+    ],
+    [
+      "src_frost_vug",
+      "r_frost_crown",
+      "aether_crystal",
+      [
+        680,
+        120
+      ],
+      4,
+      "hydrothermal vug",
+      "alpine_snow"
+    ],
+    [
+      "src_glass_silica",
+      "r_glasswind_coast",
+      "silica_sand",
+      [
+        920,
+        80
+      ],
+      6,
+      "wave-sorted cliff placer",
+      "coastal_scrub"
+    ],
+    [
+      "src_glass_storm",
+      "r_glasswind_coast",
+      "storm_glass",
+      [
+        880,
+        40
+      ],
+      4,
+      "fulgurite field",
+      "coastal_scrub"
+    ],
+    [
+      "src_glass_timber",
+      "r_glasswind_coast",
+      "timber",
+      [
+        820,
+        140
+      ],
+      6,
+      "windward conifer stand",
+      "boreal_forest"
+    ],
+    [
+      "src_ember_sulfur",
+      "r_ember_steppe",
+      "sulfur",
+      [
+        610,
+        380
+      ],
+      6,
+      "fumarole sublimation",
+      "volcanic_steppe"
+    ],
+    [
+      "src_ember_copper",
+      "r_ember_steppe",
+      "copper",
+      [
+        650,
+        340
+      ],
+      6,
+      "basalt-hosted vein",
+      "volcanic_steppe"
+    ],
+    [
+      "src_ember_obsidian",
+      "r_ember_steppe",
+      "obsidian",
+      [
+        620,
+        440
+      ],
+      4,
+      "rapid-cooled flow",
+      "ash_badland"
+    ],
+    [
+      "src_saffron_salt",
+      "r_saffron_coast",
+      "salt",
+      [
+        880,
+        340
+      ],
+      6,
+      "evaporite pan crust",
+      "salt_flat"
+    ],
+    [
+      "src_saffron_copper",
+      "r_saffron_coast",
+      "copper",
+      [
+        800,
+        320
+      ],
+      5,
+      "wadi placer",
+      "arid_coast"
+    ],
+    [
+      "src_saffron_fibre",
+      "r_saffron_coast",
+      "fibre",
+      [
+        780,
+        340
+      ],
+      5,
+      "wadi well oasis",
+      "oasis"
+    ],
+    [
+      "src_verdant_hardwood",
+      "r_verdant_fold",
+      "hardwood",
+      [
+        600,
+        580
+      ],
+      6,
+      "monsoon emergent grove",
+      "tropical_forest"
+    ],
+    [
+      "src_verdant_venom",
+      "r_verdant_fold",
+      "venom_sac",
+      [
+        620,
+        640
+      ],
+      5,
+      "spore-hollow fauna",
+      "tropical_forest"
+    ],
+    [
+      "src_verdant_sap",
+      "r_verdant_fold",
+      "rubber_sap",
+      [
+        560,
+        620
+      ],
+      5,
+      "liana belt",
+      "tropical_forest"
+    ],
+    [
+      "src_pearl_bed",
+      "r_pearl_mangroves",
+      "pearl",
+      [
+        820,
+        620
+      ],
+      6,
+      "mollusc nursery",
+      "mangrove"
+    ],
+    [
+      "src_pearl_abyss",
+      "r_pearl_mangroves",
+      "abyssal_pearl",
+      [
+        900,
+        680
+      ],
+      3,
+      "tide-locked grotto bed",
+      "tidal_flat"
+    ],
+    [
+      "src_amber_timber",
+      "r_amberwood",
+      "timber",
+      [
+        140,
+        460
+      ],
+      7,
+      "old moraine oak stand",
+      "temperate_mixed"
+    ],
+    [
+      "src_amber_herb",
+      "r_amberwood",
+      "rare_herb",
+      [
+        100,
+        500
+      ],
+      6,
+      "orchard understorey",
+      "orchard"
+    ],
+    [
+      "src_amber_honey",
+      "r_amberwood",
+      "honey",
+      [
+        180,
+        440
+      ],
+      4,
+      "orchard pollinator hives",
+      "orchard"
+    ],
+    [
+      "src_mere_reed",
+      "r_mirrormere",
+      "reed_fibre",
+      [
+        320,
+        520
+      ],
+      7,
+      "lake-margin reed bed",
+      "freshwater_marsh"
+    ],
+    [
+      "src_mere_clay",
+      "r_mirrormere",
+      "clay",
+      [
+        380,
+        500
+      ],
+      6,
+      "lacustrine silt lens",
+      "riverine"
+    ],
+    [
+      "src_mere_pearl",
+      "r_mirrormere",
+      "pearl",
+      [
+        310,
+        435
+      ],
+      4,
+      "freshwater mollusc bed",
+      "lake"
+    ],
+    [
+      "src_sunken_lime",
+      "r_sunken_orchard",
+      "limestone",
+      [
+        160,
+        620
+      ],
+      6,
+      "tower karst quarry",
+      "karst_orchard"
+    ],
+    [
+      "src_sunken_herb",
+      "r_sunken_orchard",
+      "rare_herb",
+      [
+        80,
+        620
+      ],
+      5,
+      "cenote rim understorey",
+      "karst_orchard"
+    ],
+    [
+      "src_fen_peat",
+      "r_ashwater_fen",
+      "peat",
+      [
+        360,
+        660
+      ],
+      6,
+      "acid peat accumulation",
+      "peat_bog"
+    ],
+    [
+      "src_fen_bogiron",
+      "r_ashwater_fen",
+      "bog_iron",
+      [
+        320,
+        620
+      ],
+      5,
+      "redox margin precipitation",
+      "peat_bog"
+    ],
+    [
+      "src_fen_venom",
+      "r_ashwater_fen",
+      "venom_sac",
+      [
+        400,
+        640
+      ],
+      5,
+      "fen predator habitat",
+      "freshwater_marsh"
+    ],
+    [
+      "src_ember_basalt",
+      "r_ember_steppe",
+      "basalt",
+      [
+        700,
+        400
+      ],
+      6,
+      "cooled lava flow beside the caravan road",
+      "volcanic_steppe"
+    ]
+  ],
+  "rivers": [
+    [
+      "riv_crown_lower",
+      [
+        "r_ashen_crown",
+        "r_mirrormere",
+        "r_ashwater_fen"
+      ],
+      4,
+      [
+        [
+          220,
+          256,
+          240
+        ],
+        [
+          260,
+          300,
+          210
+        ],
+        [
+          330,
+          360,
+          170
+        ],
+        [
+          360,
+          425,
+          130
+        ],
+        [
+          360,
+          470,
+          120
+        ]
+      ],
+      "lake:lake_mirrormere"
+    ],
+    [
+      "riv_mirrormere_out",
+      [
+        "r_mirrormere",
+        "r_ashwater_fen"
+      ],
+      5,
+      [
+        [
+          360,
+          515,
+          118
+        ],
+        [
+          340,
+          570,
+          90
+        ],
+        [
+          320,
+          640,
+          55
+        ],
+        [
+          310,
+          724,
+          0
+        ]
+      ],
+      "sea:south"
+    ],
+    [
+      "riv_frost_trib",
+      [
+        "r_frost_crown",
+        "r_ember_steppe",
+        "r_mirrormere"
+      ],
+      3,
+      [
+        [
+          640,
+          30,
+          1500
+        ],
+        [
+          620,
+          90,
+          1250
+        ],
+        [
+          600,
+          150,
+          1000
+        ],
+        [
+          580,
+          210,
+          780
+        ],
+        [
+          560,
+          270,
+          560
+        ],
+        [
+          520,
+          330,
+          380
+        ],
+        [
+          470,
+          390,
+          240
+        ],
+        [
+          420,
+          440,
+          160
+        ],
+        [
+          390,
+          470,
+          120
+        ]
+      ],
+      "lake:lake_mirrormere"
+    ],
+    [
+      "riv_glasswind",
+      [
+        "r_glasswind_coast",
+        "r_saffron_coast",
+        "r_pearl_mangroves"
+      ],
+      4,
+      [
+        [
+          880,
+          40,
+          1200
+        ],
+        [
+          860,
+          100,
+          900
+        ],
+        [
+          840,
+          160,
+          650
+        ],
+        [
+          820,
+          220,
+          420
+        ],
+        [
+          830,
+          280,
+          260
+        ],
+        [
+          850,
+          340,
+          140
+        ],
+        [
+          870,
+          400,
+          80
+        ],
+        [
+          890,
+          460,
+          40
+        ],
+        [
+          910,
+          520,
+          20
+        ],
+        [
+          930,
+          580,
+          10
+        ],
+        [
+          950,
+          650,
+          4
+        ],
+        [
+          970,
+          720,
+          0
+        ]
+      ],
+      "sea:east"
+    ],
+    [
+      "riv_saffron_wadi",
+      [
+        "r_saffron_coast"
+      ],
+      2,
+      [
+        [
+          760,
+          300,
+          220
+        ],
+        [
+          800,
+          330,
+          170
+        ],
+        [
+          830,
+          340,
+          140
+        ]
+      ],
+      "river:riv_glasswind"
+    ],
+    [
+      "riv_amberwood",
+      [
+        "r_amberwood",
+        "r_sunken_orchard"
+      ],
+      3,
+      [
+        [
+          80,
+          400,
+          260
+        ],
+        [
+          120,
+          440,
+          210
+        ],
+        [
+          150,
+          490,
+          160
+        ],
+        [
+          170,
+          540,
+          110
+        ],
+        [
+          180,
+          600,
+          60
+        ],
+        [
+          170,
+          660,
+          25
+        ],
+        [
+          160,
+          724,
+          0
+        ]
+      ],
+      "sea:south"
+    ],
+    [
+      "riv_verdant",
+      [
+        "r_verdant_fold"
+      ],
+      4,
+      [
+        [
+          640,
+          480,
+          320
+        ],
+        [
+          620,
+          540,
+          220
+        ],
+        [
+          640,
+          600,
+          130
+        ],
+        [
+          670,
+          660,
+          60
+        ],
+        [
+          700,
+          724,
+          0
+        ]
+      ],
+      "sea:south"
+    ],
+    [
+      "riv_pearl_west",
+      [
+        "r_pearl_mangroves"
+      ],
+      3,
+      [
+        [
+          900,
+          520,
+          18
+        ],
+        [
+          860,
+          580,
+          10
+        ],
+        [
+          840,
+          640,
+          5
+        ],
+        [
+          830,
+          724,
+          0
+        ]
+      ],
+      "sea:south"
+    ],
+    [
+      "riv_pearl_east",
+      [
+        "r_pearl_mangroves"
+      ],
+      3,
+      [
+        [
+          930,
+          580,
+          8
+        ],
+        [
+          970,
+          640,
+          3
+        ],
+        [
+          990,
+          700,
+          0
+        ]
+      ],
+      "sea:east"
+    ]
+  ],
+  "seams": [
+    {
+      "carve": [
+        368,
+        198,
+        392,
+        202
+      ],
+      "from": [
+        368,
+        200
+      ],
+      "id": "seam_east_crown",
+      "note": "east rim postern into Ashen buffer",
+      "requires": [],
+      "to": [
+        392,
+        200
+      ]
+    },
+    {
+      "carve": [
+        51,
+        240,
+        55,
+        264
+      ],
+      "from": [
+        53,
+        240
+      ],
+      "id": "seam_south_amber",
+      "note": "south rim stair into Amberwood",
+      "requires": [],
+      "to": [
+        53,
+        264
+      ]
+    }
+  ],
+  "trunk": [
+    [
+      "rt_east_seam",
+      "node_refuge",
+      "node_crown_east",
+      [
+        [
+          56,
+          218
+        ],
+        [
+          200,
+          210
+        ],
+        [
+          368,
+          200
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "foot",
+      [],
+      "low"
+    ],
+    [
+      "rt_south_seam",
+      "node_refuge",
+      "node_amber_north",
+      [
+        [
+          56,
+          218
+        ],
+        [
+          53,
+          240
+        ],
+        [
+          53,
+          264
+        ],
+        [
+          80,
+          400
+        ]
+      ],
+      "foot",
+      [],
+      "low"
+    ],
+    [
+      "rt_crown_buffer",
+      "node_crown_east",
+      "node_crown_south",
+      [
+        [
+          392,
+          200
+        ],
+        [
+          440,
+          236
+        ],
+        [
+          420,
+          300
+        ],
+        [
+          300,
+          330
+        ]
+      ],
+      "foot",
+      [],
+      "low"
+    ],
+    [
+      "rt_crown_mere",
+      "node_crown_south",
+      "node_mirrormere",
+      [
+        [
+          300,
+          330
+        ],
+        [
+          260,
+          300
+        ],
+        [
+          330,
+          360
+        ],
+        [
+          360,
+          430
+        ]
+      ],
+      "foot",
+      [],
+      "low"
+    ],
+    [
+      "rt_amber_mere",
+      "node_amber_north",
+      "node_mirrormere",
+      [
+        [
+          80,
+          400
+        ],
+        [
+          120,
+          440
+        ],
+        [
+          200,
+          500
+        ],
+        [
+          300,
+          420
+        ],
+        [
+          360,
+          430
+        ]
+      ],
+      "foot",
+      [],
+      "low"
+    ],
+    [
+      "rt_crown_frost",
+      "node_crown_east",
+      "node_frost",
+      [
+        [
+          392,
+          200
+        ],
+        [
+          470,
+          180
+        ],
+        [
+          540,
+          120
+        ],
+        [
+          560,
+          180
+        ]
+      ],
+      "pass",
+      [
+        "cap_climb"
+      ],
+      "mid"
+    ],
+    [
+      "rt_frost_coast",
+      "node_frost",
+      "node_glasswind",
+      [
+        [
+          560,
+          180
+        ],
+        [
+          660,
+          80
+        ],
+        [
+          720,
+          180
+        ],
+        [
+          800,
+          100
+        ]
+      ],
+      "foot",
+      [
+        "cap_thermal"
+      ],
+      "mid"
+    ],
+    [
+      "rt_frost_ember",
+      "node_frost",
+      "node_ember",
+      [
+        [
+          560,
+          180
+        ],
+        [
+          580,
+          210
+        ],
+        [
+          560,
+          270
+        ],
+        [
+          580,
+          320
+        ]
+      ],
+      "foot",
+      [
+        "cap_thermal"
+      ],
+      "mid"
+    ],
+    [
+      "rt_ember_mere",
+      "node_ember",
+      "node_mirrormere",
+      [
+        [
+          580,
+          320
+        ],
+        [
+          520,
+          330
+        ],
+        [
+          470,
+          390
+        ],
+        [
+          420,
+          440
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "mid"
+    ],
+    [
+      "rt_ember_coast",
+      "node_ember",
+      "node_saffron",
+      [
+        [
+          580,
+          320
+        ],
+        [
+          660,
+          460
+        ],
+        [
+          800,
+          300
+        ]
+      ],
+      "foot",
+      [
+        "cap_seal_1"
+      ],
+      "mid"
+    ],
+    [
+      "rt_coast_harbor",
+      "node_glasswind",
+      "node_saffron",
+      [
+        [
+          800,
+          100
+        ],
+        [
+          860,
+          160
+        ],
+        [
+          900,
+          300
+        ],
+        [
+          900,
+          420
+        ]
+      ],
+      "foot",
+      [
+        "cap_stormward"
+      ],
+      "mid"
+    ],
+    [
+      "rt_saffron_pearl",
+      "node_saffron",
+      "node_pearl",
+      [
+        [
+          900,
+          420
+        ],
+        [
+          920,
+          460
+        ],
+        [
+          860,
+          540
+        ],
+        [
+          800,
+          560
+        ]
+      ],
+      "boat",
+      [
+        "cap_boat"
+      ],
+      "late"
+    ],
+    [
+      "rt_ember_verdant",
+      "node_ember",
+      "node_verdant",
+      [
+        [
+          580,
+          320
+        ],
+        [
+          600,
+          420
+        ],
+        [
+          640,
+          480
+        ],
+        [
+          560,
+          560
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "late"
+    ],
+    [
+      "rt_verdant_pearl",
+      "node_verdant",
+      "node_pearl",
+      [
+        [
+          560,
+          560
+        ],
+        [
+          640,
+          600
+        ],
+        [
+          700,
+          660
+        ],
+        [
+          800,
+          560
+        ]
+      ],
+      "foot",
+      [
+        "cap_seal_2",
+        "cap_filter"
+      ],
+      "late"
+    ],
+    [
+      "rt_mere_fen",
+      "node_mirrormere",
+      "node_ashwater",
+      [
+        [
+          360,
+          430
+        ],
+        [
+          360,
+          515
+        ],
+        [
+          340,
+          570
+        ],
+        [
+          340,
+          620
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "late"
+    ],
+    [
+      "rt_amber_sunken",
+      "node_amber_north",
+      "node_sunken",
+      [
+        [
+          80,
+          400
+        ],
+        [
+          60,
+          480
+        ],
+        [
+          60,
+          600
+        ],
+        [
+          120,
+          640
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "late"
+    ],
+    [
+      "rt_sunken_fen",
+      "node_sunken",
+      "node_ashwater",
+      [
+        [
+          120,
+          640
+        ],
+        [
+          200,
+          660
+        ],
+        [
+          300,
+          640
+        ]
+      ],
+      "foot",
+      [
+        "cap_deepward"
+      ],
+      "late"
+    ],
+    [
+      "rt_amber_loop",
+      "node_amber_north",
+      "node_amber_south",
+      [
+        [
+          80,
+          400
+        ],
+        [
+          180,
+          420
+        ],
+        [
+          200,
+          500
+        ],
+        [
+          170,
+          540
+        ]
+      ],
+      "foot",
+      [],
+      "early"
+    ],
+    [
+      "rt_mere_loop",
+      "node_mirrormere",
+      "node_mere_south",
+      [
+        [
+          360,
+          430
+        ],
+        [
+          420,
+          440
+        ],
+        [
+          440,
+          520
+        ],
+        [
+          380,
+          600
+        ]
+      ],
+      "foot",
+      [
+        "cap_boat"
+      ],
+      "mid"
+    ],
+    [
+      "rt_amber_sunken_south",
+      "node_amber_south",
+      "node_sunken",
+      [
+        [
+          170,
+          540
+        ],
+        [
+          180,
+          600
+        ],
+        [
+          60,
+          600
+        ],
+        [
+          120,
+          640
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "late"
+    ],
+    [
+      "rt_mere_fen_south",
+      "node_mere_south",
+      "node_ashwater",
+      [
+        [
+          380,
+          600
+        ],
+        [
+          340,
+          620
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "late"
+    ]
+  ]
+}

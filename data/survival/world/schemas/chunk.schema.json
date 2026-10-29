@@ -1,0 +1,49 @@
+{
+  "$id": "soh://world/chunk.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "chunk_id": {
+      "pattern": "^chunk:[0-9]+:[0-9]+$",
+      "type": "string"
+    },
+    "layers": {
+      "type": "object"
+    },
+    "legend": {
+      "type": "object"
+    },
+    "origin": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "schema": {
+      "const": "soh.world.chunk.v1"
+    },
+    "size": {
+      "items": {
+        "type": "integer"
+      },
+      "maxItems": 2,
+      "minItems": 2,
+      "type": "array"
+    },
+    "tile_px": {
+      "const": 16
+    }
+  },
+  "required": [
+    "schema",
+    "chunk_id",
+    "origin",
+    "size",
+    "tile_px",
+    "layers",
+    "legend"
+  ],
+  "title": "chunk",
+  "type": "object"
+}

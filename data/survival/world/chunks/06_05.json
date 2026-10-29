@@ -1,0 +1,228 @@
+{
+  "chunk_id": "chunk:6:5",
+  "layers": {
+    "biome": [
+      [
+        19,
+        4096
+      ]
+    ],
+    "build": [
+      [
+        1,
+        4096
+      ]
+    ],
+    "elevation_band": [
+      [
+        8,
+        2190
+      ],
+      [
+        7,
+        17
+      ],
+      [
+        8,
+        3
+      ],
+      [
+        7,
+        9
+      ],
+      [
+        8,
+        21
+      ],
+      [
+        7,
+        5
+      ],
+      [
+        8,
+        6
+      ],
+      [
+        7,
+        49
+      ],
+      [
+        8,
+        4
+      ],
+      [
+        7,
+        591
+      ],
+      [
+        6,
+        4
+      ],
+      [
+        7,
+        56
+      ],
+      [
+        6,
+        38
+      ],
+      [
+        7,
+        14
+      ],
+      [
+        6,
+        615
+      ],
+      [
+        5,
+        5
+      ],
+      [
+        6,
+        10
+      ],
+      [
+        5,
+        9
+      ],
+      [
+        6,
+        2
+      ],
+      [
+        5,
+        22
+      ],
+      [
+        6,
+        6
+      ],
+      [
+        5,
+        420
+      ]
+    ],
+    "hazard": [
+      [
+        0,
+        4096
+      ]
+    ],
+    "preserved": [
+      [
+        0,
+        4096
+      ]
+    ],
+    "region": [
+      [
+        1,
+        4096
+      ]
+    ],
+    "road": [
+      [
+        0,
+        4096
+      ]
+    ],
+    "surface": [
+      [
+        1,
+        4096
+      ]
+    ],
+    "walk": [
+      [
+        1,
+        4096
+      ]
+    ]
+  },
+  "legend": {
+    "biome": [
+      "alpine_snow",
+      "arid_coast",
+      "ash_badland",
+      "boreal_forest",
+      "coastal_scrub",
+      "freshwater_marsh",
+      "frost_steppe",
+      "karst_orchard",
+      "lake",
+      "mangrove",
+      "moorland",
+      "oasis",
+      "ocean",
+      "orchard",
+      "peat_bog",
+      "riverine",
+      "ruin_field",
+      "salt_flat",
+      "temperate_mixed",
+      "tidal_flat",
+      "tropical_forest",
+      "volcanic_steppe"
+    ],
+    "hazard": [
+      "hz_crown_heat",
+      "hz_crown_rot",
+      "hz_crown_cold",
+      "hz_frost_ridge",
+      "hz_ember_gas",
+      "hz_saffron_heat",
+      "hz_verdant_spore",
+      "hz_pearl_tide",
+      "hz_ashwater_miasma",
+      "hz_sunken_pressure"
+    ],
+    "region": [
+      "r_ashen_crown",
+      "r_frost_crown",
+      "r_glasswind_coast",
+      "r_ember_steppe",
+      "r_saffron_coast",
+      "r_verdant_fold",
+      "r_pearl_mangroves",
+      "r_amberwood",
+      "r_mirrormere",
+      "r_sunken_orchard",
+      "r_ashwater_fen"
+    ],
+    "surface": [
+      "grass",
+      "moor",
+      "gravel",
+      "floor",
+      "snow",
+      "forest",
+      "tundra",
+      "sand",
+      "water",
+      "ash",
+      "badland",
+      "salt",
+      "jungle",
+      "karst",
+      "marsh",
+      "mangrove",
+      "mud",
+      "orchard",
+      "bog",
+      "road",
+      "bridge",
+      "legacy"
+    ]
+  },
+  "origin": [
+    384,
+    320
+  ],
+  "schema": "soh.world.chunk.v1",
+  "size": [
+    64,
+    64
+  ],
+  "tile_px": 16
+}

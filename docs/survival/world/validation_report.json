@@ -1,0 +1,27 @@
+{
+  "ok": true,
+  "errors": [],
+  "warnings": [],
+  "checks": {
+    "regions": 11,
+    "pois": 118,
+    "new_pois": 108,
+    "resource_nodes": 178,
+    "routes": 129,
+    "chunks": 192,
+    "long_run_goals": 5
+  },
+  "schema": {
+    "available": true,
+    "results": {
+      "masterplan": "PASS",
+      "identity": "PASS",
+      "hydrology": "PASS",
+      "region": "PASS",
+      "biome": "PASS",
+      "poi": "PASS",
+      "resource": "PASS",
+      "route": "PASS"
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$id": "soh://world/biome.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "buildable": {
+      "type": "boolean"
+    },
+    "color": {
+      "items": {
+        "maximum": 255,
+        "minimum": 0,
+        "type": "integer"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "resources": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "surface": {
+      "type": "string"
+    },
+    "walkable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "surface",
+    "walkable",
+    "buildable",
+    "color",
+    "resources"
+  ],
+  "title": "biome",
+  "type": "object"
+}
