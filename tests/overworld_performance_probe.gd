@@ -39,10 +39,23 @@ func _test_name() -> String:
 ## Median frame script time over `count` frames.
 func _median_frame_ms(count: int) -> float:
 	var samples: Array[float] = []
+	var started := Time.get_ticks_usec()
+	var transitions := 0
+	var last := -1.0
 	for i in range(count):
 		await _frames(1)
-		samples.append(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
+		var value := Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0
+		if last >= 0.0 and not is_equal_approx(value, last):
+			transitions += 1
+		last = value
+		samples.append(value)
 	samples.sort()
+	# Diagnostic only: the existing 60-frame median and +45% gate are unchanged.
+	# TIME_PROCESS updates about once per second, so report how much of that
+	# window was actually observed and how many changes it contained.
+	print("PERF_MONITOR_WINDOW frames=%d duration_ms=%.1f changes=%d min=%.3f median=%.3f max=%.3f" % [
+		count, float(Time.get_ticks_usec() - started) / 1000.0, transitions,
+		samples[0], samples[samples.size() / 2], samples[-1]])
 	return samples[samples.size() / 2]
 
 
