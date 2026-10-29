@@ -173,7 +173,7 @@ static func _remedy_body(c, g) -> void:
 				w.poison(tgt, c.d(120.0), 3.0, c.id, c.def["id"])
 		if w.time - T0 > 0.55 and not moved:
 			moved = true
-			var a: float = c.ang + M.PI
+			var a: float = c.ang + PI
 			w.glide([{"x": p.x + V8M.v8_cos(a) * 40.0, "y": p.y + V8M.v8_sin(a) * 40.0}], 0.35)
 		if w.time - T0 > 1.0 and not thrown:
 			thrown = true
