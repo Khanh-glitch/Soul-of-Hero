@@ -260,7 +260,7 @@ jobs:
           export SOUL_OF_HERO_SAVE_PATH="user://a6_a0_modal_probe_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
           export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
           set +e
-          timeout --signal=TERM --kill-after=10s 240s godot --headless --path a0-source --script res://tests/survival/ui/a0_modal_gameplay_input_regression.gd 2>&1 | tee a0-source/.artifacts/a6-ci/a0-modal-input-probe.log
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --path a0-source res://tests/survival/ui/a0_modal_gameplay_input_regression.tscn 2>&1 | tee a0-source/.artifacts/a6-ci/a0-modal-input-probe.log
           result=${PIPESTATUS[0]}
           set -e
           if [[ $result -eq 2 ]] && grep -q 'A0_MODAL_INPUT_GATE_LEAK:' a0-source/.artifacts/a6-ci/a0-modal-input-probe.log; then

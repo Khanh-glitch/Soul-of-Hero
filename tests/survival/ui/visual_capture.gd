@@ -13,7 +13,10 @@ func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	_workspace = WORKSPACE.instantiate()
 	add_child(_workspace)
-	if not _workspace.apply_snapshot(FIXTURE.snapshot()):
+	# Visual captures consume the same explicitly unversioned fixture used by
+	# planner_test.gd; it is not an owner-certified V2 snapshot.
+	_workspace.desk.set_snapshot(FIXTURE.snapshot())
+	if _workspace.desk._snapshot.is_empty():
 		_failures += 1
 		push_error("A6 visual fixture snapshot failed to apply")
 		get_tree().quit(1)

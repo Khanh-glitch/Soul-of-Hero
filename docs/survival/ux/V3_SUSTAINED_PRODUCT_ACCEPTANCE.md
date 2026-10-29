@@ -109,7 +109,7 @@ At the pinned A0 source, `chapter1_overworld.gd` checks visible `gameplay_modal`
 A6-owned executable regression: `tests/survival/ui/a0_modal_gameplay_input_regression.gd`. Run it against the pinned A0 composition:
 
 ```sh
-godot --headless --path . --script res://tests/survival/ui/a0_modal_gameplay_input_regression.gd
+godot --headless --path . res://tests/survival/ui/a0_modal_gameplay_input_regression.tscn
 ```
 
 The script instantiates the real Chapter 1 overworld and Knight; checks nested modal discovery, hidden-parent clearing, visibility restoration and tree-exit cleanup against A0's modal registry; then holds movement, light attack, skill and build-toggle together across physics frames, sends a real pointer click at the modal, and checks held movement across close/release. The pinned A0 result is expected to report `A0_MODAL_INPUT_GATE_LEAK` (movement/combat leaks) and nonzero status; the A6 workflow recognizes and records this expected blocker rather than masking it as a passing safety test. A lifecycle/setup error is not an accepted expected failure. A probe setup/parse error is not an accepted expected failure.
