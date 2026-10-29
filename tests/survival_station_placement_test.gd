@@ -71,6 +71,15 @@ func _body() -> void:
 	for offset: Vector2i in [Vector2i.ZERO, Vector2i.RIGHT, Vector2i.DOWN, Vector2i.ONE]:
 		_expect(build.entity_at_layer(origin + offset, "object").is_empty(), "demolition clears footprint cell %s" % str(offset))
 	_expect(not build.entity_at_layer(origin + Vector2i.ONE, "floor").is_empty(), "demolition preserves floor underneath")
+	hero = ow.get(&"player")
+	hero.set_physics_process(false)
+	hero.global_position = Vector2(origin.x * 16 + 8, origin.y * 16 + 8)
+	build.select_piece("station_furnace")
+	var replacement := build.try_place(origin, "station.test.replacement")
+	var new_id := String(replacement.get("entity_id", ""))
+	var replacement_station: Dictionary = svc.call(&"resolve_station", new_id)
+	_expect(bool(replacement.get("ok", false)) and new_id != id and not new_id.is_empty(), "replacement pays remaining kit and gets fresh durable identity")
+	_expect(String(replacement_station.get("station_revision", "")) != String(station.get("station_revision", "")) and _count("furnace_kit") == 0, "replacement changes station revision without free kit")
 	for pair: Array in [["workbench", 2, 1, 3], ["research", 2, 2, 2], ["garden", 2, 2, 2], ["furnace", 2, 2, 3]]:
 		var definition: Dictionary = svc.call(&"piece_definition", "station_" + String(pair[0]))
 		var footprint: Array = definition.get("footprint", [])

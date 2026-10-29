@@ -348,6 +348,7 @@ func _body() -> void:
 	print("GUI_POINTER_TRACE events=%s dead=%s pending=%s" % [str(gui_trace), str(hero.get(&"dead")), str((svc.call(&"document") as Dictionary).get("pending_death", ""))])
 	_expect(gui_trace.size() == 2 and gui_trace[0].begins_with("press") and gui_trace[1].begins_with("release"), "visible button receives GUI pointer press and release")
 	_expect(not bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "direct GUI pointer release respawns second death independently")
+	_expect(not bool(hero.get(&"_pending_gameplay_lmb")), "paused GUI pointer does not become a world interaction or attack")
 	_expect(bool(_save().call(&"reload_save")), "reload after second respawn")
 	_expect((svc.call(&"document") as Dictionary).get("death_bags", {}).has(second_bag), "unrecovered bag persists after restart boundary")
 
