@@ -25,10 +25,10 @@ jobs:
         shell: bash
         run: |
           set +e
-          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_output --resolution 960x540 --windowed --script res://tests/survival_economy_session_test.gd > artifacts/output.log 2>&1
+          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_output --resolution 960x540 --windowed --script res://tests/survival_economy_session_test.gd -- --survival-save-fault-test > artifacts/output.log 2>&1
           rc=$?
           cat artifacts/output.log
-          echo "::notice::output exit=$rc $(grep -E 'finished output adversary|full bag refuses|failed collect retains|repeated full collect|full output custody|free one real bag slot|successful output retry|SURVIVAL ECONOMY SESSION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/output.log | tr '\n' '~')"
+          echo "::notice::output exit=$rc $(grep -E 'OUTPUT_RELOAD_TRACE|finished output adversary|full bag refuses|failed collect retains|repeated full collect|full output custody|free one real bag slot|successful output retry|SURVIVAL ECONOMY SESSION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/output.log | tr '\n' '~')"
           bash tools/ci/gate_log.sh artifacts/output.log 'Output capacity' 'SURVIVAL ECONOMY SESSION PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]

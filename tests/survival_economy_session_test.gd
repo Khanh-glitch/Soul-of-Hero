@@ -260,7 +260,13 @@ func _body() -> void:
 	_expect((_save().call(&"get_snapshot") as Dictionary) == before_full_output and (host.call(&"jobs") as Dictionary).get(weave_id, {}) == job_before_full, "failed collect retains exact output custody and makes no receipt")
 	var refused_again: Dictionary = host.call(&"collect", weave_id)
 	_expect(not bool(refused_again.get("ok", true)) and (_save().call(&"get_snapshot") as Dictionary) == before_full_output, "repeated full collect is a no-op")
-	_expect(bool(_save().call(&"reload_save")) and (host.call(&"jobs") as Dictionary).get(weave_id, {}) == job_before_full and _count("binding_cloth") == 0, "full output custody persists after reload")
+	var output_reloaded := bool(_save().call(&"reload_save"))
+	var reloaded_job: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	print("OUTPUT_RELOAD_TRACE loaded=%s before=%s after=%s carried=%d" % [str(output_reloaded), JSON.stringify(job_before_full), JSON.stringify(reloaded_job), _count("binding_cloth")])
+	_expect(output_reloaded and String(reloaded_job.get("status", "")) == "ready" \
+		and int((reloaded_job.get("outputs", {}) as Dictionary).get("binding_cloth", 0)) == 2 \
+		and (reloaded_job.get("outputs", {}) as Dictionary).size() == 1 and _count("binding_cloth") == 0,
+		"full output custody persists after reload")
 	if not capacity_fillers.is_empty():
 		_expect(bool(_save().call(&"consume_inventory_item", capacity_fillers[0], 50, "fixture.output.free")), "free one real bag slot for output retry")
 	var output: Dictionary = host.call(&"collect", weave_id)
