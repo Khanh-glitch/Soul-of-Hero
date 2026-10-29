@@ -46,6 +46,75 @@ func _place_at(ow: Node, build: SurvivalBuildSystem, cell: Vector2i) -> bool:
 		print("HOME_PLACE_FAIL cell=%s preview=%s reason=%s mouse=%s" % [str(cell), str(build.preview_cell()), build.last_rejection(), str(root.get_mouse_position())])
 	return result
 
+# Search a bounded 40-cell radius with production spatial rules, without moving
+# the Hero. This is planning only: every paid click still runs full validation.
+func _site_clear(build: SurvivalBuildSystem, center: Vector2i) -> bool:
+	var world := build.world
+	for dy in range(-2, 3):
+		for dx in range(-2, 3):
+			var cell := center + Vector2i(dx, dy)
+			if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height \
+					or world.is_solid_cell(cell.x, cell.y) or world.is_water_cell(cell.x, cell.y) \
+					or build._near_authored_place(cell, 5) or build._on_route_detail(cell) \
+					or build._near_shortcut(cell, 4) or not build.entity_at_layer(cell, "object").is_empty() \
+					or build._world_blocker_in_cell(cell):
+				return false
+	return true
+
+func _shape_clear(cell: Vector2i, nav: OverworldTraversability, hero: CharacterBody2D, cache: Dictionary) -> bool:
+	if cache.has(cell):
+		return bool(cache[cell])
+	if not nav.in_bounds(cell) or not nav.is_free(cell):
+		cache[cell] = false
+		return false
+	var shape := hero.get_node("BodyShape") as CollisionShape2D
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = shape.shape
+	query.transform = Transform2D(0.0, Vector2(cell.x * 16 + 8, cell.y * 16 + 15) + shape.position)
+	query.collision_mask = hero.collision_mask
+	query.exclude = [hero.get_rid()]
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	var clear := hero.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
+	cache[cell] = clear
+	return clear
+
+func _route(start: Vector2i, goal: Vector2i, nav: OverworldTraversability, hero: CharacterBody2D) -> Array[Vector2i]:
+	var queue: Array[Vector2i] = [start]
+	var previous: Dictionary = {start: start}
+	var cache: Dictionary = {}
+	var cursor := 0
+	while cursor < queue.size() and not previous.has(goal):
+		var cell := queue[cursor]
+		cursor += 1
+		for step: Vector2i in [Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT]:
+			var next := cell + step
+			if previous.has(next) or not _shape_clear(next, nav, hero, cache):
+				continue
+			previous[next] = cell
+			queue.append(next)
+	var path: Array[Vector2i] = []
+	if not previous.has(goal):
+		return path
+	while goal != start:
+		path.push_front(goal)
+		goal = previous[goal]
+	return path
+
+func _walk_path(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
+	for cell: Vector2i in path:
+		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
+		var deadline := Time.get_ticks_msec() + 3500
+		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline and not bool(hero.get(&"dead")):
+			_set_direction(point - hero.global_position)
+			await physics_frame
+		if hero.global_position.distance_to(point) > 4.5:
+			_set_direction(Vector2.ZERO)
+			print("HOME_ROUTE_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
+			return false
+	_set_direction(Vector2.ZERO)
+	return true
+
 func _body() -> void:
 	await super._body()
 	if not failures.is_empty() or _count("binding_cloth") != 2:
@@ -64,9 +133,42 @@ func _body() -> void:
 	if _count(IRON) < 3:
 		_body_complete = true
 		return
+	# Choose a nearby legal site, then actually walk there; the test never moves
+	# the Hero by assignment or builds from beyond the normal six-cell reach.
+	var start := nav.cell_of(hero.global_position)
+	var distances := nav.reachable_from(start)
+	var center := Vector2i(-1, -1)
+	for radius in range(0, 41):
+		if center.x >= 0:
+			break
+		for dy in range(-radius, radius + 1):
+			if center.x >= 0:
+				break
+			for dx in range(-radius, radius + 1):
+				if maxi(absi(dx), absi(dy)) != radius:
+					continue
+				var candidate := start + Vector2i(dx, dy)
+				if not nav.in_bounds(candidate) or distances[candidate.y * nav.width + candidate.x] < 0:
+					continue
+				if _site_clear(build, candidate):
+					center = candidate
+					break
+	_expect(center.x >= 0, "bounded search finds a reachable prospective shelter site")
+	if center.x < 0:
+		_body_complete = true
+		return
+	var path := _route(start, center, nav, hero)
+	_expect(center == start or not path.is_empty(), "live Hero-shape route leads to proposed shelter")
+	if center != start and path.is_empty():
+		_body_complete = true
+		return
+	var walked := await _walk_path(hero, path)
+	_expect(walked and nav.cell_of(hero.global_position) == center, "ordinary movement reaches chosen shelter site")
+	if not walked:
+		_body_complete = true
+		return
 	await _tap_action(&"build_toggle")
 	await _tap_action(&"build_slot_2")
-	var center := nav.cell_of(hero.global_position)
 	var origin := center - Vector2i(2, 2)
 	var valid := true
 	for y in range(5):
