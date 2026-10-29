@@ -133,24 +133,14 @@ def main() -> int:
             entry["coverage"]["ground_environment"] = "BASELINE_RECORDED"
 
         if native_executable:
-            # Honest per-area coverage for the one module that really runs.
-            # Anything that still needs a GPU or the original Gold renderer stays
-            # explicitly unverified instead of being quietly assumed.
-            entry["coverage"] = {
-                "source_deps": "AUDITED_SOURCE_LOCKED",
-                "caster_visual": "AUDITED_SOURCE_LOCKED",
-                "enemy_visual": "AUDITED_SOURCE_LOCKED",
-                "ground_environment": "AUDITED_SOURCE_LOCKED",
-                "particles": "AUDITED_SOURCE_LOCKED",
-                "audio": "NOT_PRESENT_IN_ORIGINAL_SOURCE",
-                "camera_post": "AUDITED_SOURCE_LOCKED",
-                "cancel_cleanup": "AUDITED_SOURCE_LOCKED",
-                # The CPU source raster that feeds the GPU passes is driven and
-                # asserted every tick by the render-surface gate; the GPU
-                # composite itself needs a real display, which the headless
-                # execution environment does not have.
-                "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE",
-            }
+            # Only claims the CI gates actually back. The generator is the ported
+            # original (has_source_locked_generator, host-adapter gate). The other
+            # areas keep their existing labels (NOT_AUDITED or BASELINE_RECORDED)
+            # until an audit or a differential covers them. The CPU source raster is
+            # driven and asserted each tick by the render-surface gate; the GPU
+            # composite needs a real display, which the headless environment lacks.
+            entry["coverage"]["source_deps"] = "SOURCE_LOCKED_GENERATOR"
+            entry["coverage"]["native_gpu"] = "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
 
         # EPIC gate: every evidence key must be present before port-ready.
         missing = [k for k in EVIDENCE_KEYS if not entry.get("evidence", {}).get(k)]

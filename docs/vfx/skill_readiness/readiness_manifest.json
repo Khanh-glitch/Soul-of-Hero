@@ -4906,11 +4906,11 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_SOURCE_LOCKED",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "AUDITED_SOURCE_LOCKED",
         "enemy_visual": "AUDITED_SOURCE_LOCKED",
-        "ground_environment": "AUDITED_SOURCE_LOCKED",
-        "particles": "AUDITED_SOURCE_LOCKED",
+        "ground_environment": "BASELINE_RECORDED",
+        "particles": "BASELINE_RECORDED",
         "audio": "NOT_PRESENT_IN_ORIGINAL_SOURCE",
         "camera_post": "AUDITED_SOURCE_LOCKED",
         "cancel_cleanup": "AUDITED_SOURCE_LOCKED",
@@ -4967,7 +4967,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v002_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -4986,7 +4986,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -4994,7 +4994,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5006,9 +5006,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5042,7 +5047,7 @@
       "source_target_class": "cone",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v003_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5061,7 +5066,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5069,7 +5074,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5081,9 +5086,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5117,7 +5127,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v004_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5136,7 +5146,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5144,7 +5154,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5156,9 +5166,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5192,7 +5207,7 @@
       "source_target_class": "cone",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v005_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5211,7 +5226,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5219,7 +5234,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5231,9 +5246,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5267,7 +5287,7 @@
       "source_target_class": "path",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v006_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5286,7 +5306,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5294,7 +5314,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5306,9 +5326,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5492,7 +5517,7 @@
       "source_target_class": "dir",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v009_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5511,7 +5536,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5519,7 +5544,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5531,9 +5556,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5567,7 +5597,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v010_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5586,7 +5616,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5594,7 +5624,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5606,9 +5636,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5642,7 +5677,7 @@
       "source_target_class": "self",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v011_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5661,7 +5696,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5669,7 +5704,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5681,9 +5716,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5717,7 +5757,7 @@
       "source_target_class": "path",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v012_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5736,7 +5776,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5744,7 +5784,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5756,9 +5796,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -5867,7 +5912,7 @@
       "source_target_class": "target",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v014_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -5886,7 +5931,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -5894,7 +5939,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -5906,9 +5951,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6092,7 +6142,7 @@
       "source_target_class": "dir",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v017_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -6111,7 +6161,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -6119,7 +6169,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -6131,9 +6181,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6167,7 +6222,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v018_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -6186,7 +6241,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -6194,7 +6249,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -6206,9 +6261,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6242,7 +6302,7 @@
       "source_target_class": "target",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v019_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -6261,7 +6321,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -6269,7 +6329,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -6281,9 +6341,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6392,7 +6457,7 @@
       "source_target_class": "ground",
       "skill_gold_candidate_unreviewed": false,
       "native_status": "NOT_PORT_READY",
-      "native_module_path": null,
+      "native_module_path": "prototypes/skill_readiness/skills/venomwright/v021_source_native.gd",
       "native_port_ready": false,
       "gold_visual_approved": false,
       "gameplay_configured": false,
@@ -6411,7 +6476,7 @@
         "unlock_rules": null
       },
       "coverage": {
-        "source_deps": "AUDITED_FROM_REGISTRY",
+        "source_deps": "SOURCE_LOCKED_GENERATOR",
         "caster_visual": "NOT_AUDITED",
         "enemy_visual": "NOT_AUDITED",
         "ground_environment": "BASELINE_RECORDED",
@@ -6419,7 +6484,7 @@
         "audio": "NOT_AUDITED",
         "camera_post": "NOT_AUDITED",
         "cancel_cleanup": "NOT_AUDITED",
-        "native_gpu": "NOT_AUDITED"
+        "native_gpu": "CPU_SOURCE_RASTER_VERIFIED_HEADLESS_GPU_COMPOSITE_UNAVAILABLE"
       },
       "evidence": {
         "gold_original_video": null,
@@ -6431,9 +6496,14 @@
         "webgl_test_run": null,
         "performance_2k_4k": null
       },
-      "native_executable": false,
-      "native_executable_evidence": null,
-      "source_material_blocker": "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in neither this repository nor the execution environment (venomwright SHA-256 ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716, ARCANA III SHA-256 8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d), so this skill's authored generator cannot be source-locked. The readiness API, both family runtimes, the ports, the lifecycle, the lab and the CI gates are complete; dropping a module at the registered path is enough, no infrastructure change is required.",
+      "native_executable": true,
+      "native_executable_evidence": {
+        "native_test_run": "prototypes/skill_readiness/tests",
+        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
+        "render_surface": "res://.artifacts/gold93/render_surface.json"
+      },
+      "source_material_blocker": "",
       "evidence_gaps": [
         "gold_original_video",
         "source_numeric_oracle",
@@ -6456,14 +6526,14 @@
     }
   ],
   "execution_totals": {
-    "native_executable": 1,
-    "catalogued_only": 92
+    "native_executable": 15,
+    "catalogued_only": 78
   },
   "source_material_status": {
     "archives_present_in_repository": false,
     "archives_present_in_execution_environment": false,
     "venomwright_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
     "arcana_iii_sha256": "8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d",
-    "consequence": "92 of 93 authored generators cannot be source-locked until the pinned archives are supplied. No algorithm has been invented to work around this."
+    "consequence": "72 ARCANA III generators stay blocked until the pinned ARCANA archive is restored; no approximation is invented. 6 Venomwright skills (007, 008, 013, 015, 016, 020) have no host module because their source parity is unresolved. Every other registered id is backed by a host module that drives the original ported generator."
   }
 }
