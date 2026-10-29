@@ -109,9 +109,10 @@
         "First partial fresh-save normal-input movement, scrap click and reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832863 at c8ab791, 4 checks; no fixture inventory or actor teleport; not full journey or A1 provenance approval.",
         "Overworld gate failed again +104% with direct timing evidence: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912937999 at f759924; PERF_VARIABILITY_UNEXPLAINED.",
         "Fresh-save input scrap and oak → GUI hand queue → active kit escrow → reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40914953517 at b797b9b, 11 checks, no fixture grants/teleport; not collected station or full journey.",
-        "Additional unchanged perf failure +47%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832746 at c8ab791; PERF_VARIABILITY_UNEXPLAINED."
+        "Additional unchanged perf failure +47%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832746 at c8ab791; PERF_VARIABILITY_UNEXPLAINED.",
+        "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020."
       ],
-      "next": "Inspect pending 40915975159 normal-input kit collection/bench placement, fix failures, continue production/shelter/threat/recovery/reload journey and counterfactual, A1/A3 provenance, native resolution/Web and cross-agent gates. Do not merge.",
+      "next": "Inspect 40918666020 NORMAL_BUILD_TRACE and repair real-input bench placement as necessary; then production, shelter, threat, respawn/bag/reload, provenance, native resolution/Web and cross-agent gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
