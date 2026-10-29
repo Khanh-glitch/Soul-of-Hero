@@ -1,0 +1,2862 @@
+{
+  "schema": "soh.source_coverage.v1",
+  "source_hash_sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+  "source_lines": 1355,
+  "mechanism_entries": [
+    {
+      "id": "SYS-02",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Bản đồ thế giới và tính liên tục",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 38,
+        "end_line": 51,
+        "refs": [
+          "S02",
+          "S10"
+        ]
+      },
+      "facts": "Trang giới thiệu chính thức mô tả một đảo sinh tồn nhiều dạng địa hình; Dawn Land được giới thiệu năm 2021 là bản đồ thứ ba với kích thước 7.000×7.000 m, tăng thêm 8 POI mới. Không thể suy ra mọi bản đồ cùng kích thước. [S02][S10]",
+      "action": "Đi đường, định hướng theo địa hình, đánh dấu cứ điểm, trở về căn cứ, mở rộng tầm đi khám phá.",
+      "relationship": "Địa hình quyết định tuyến đường, time-to-return, mật độ nguy hiểm và nơi thuận tiện đặt nhà.",
+      "risk": "Map có thể đẹp mà chơi vô nghĩa nếu POI không liên hệ tới vật liệu; tránh ép mọi hoạt động về dungeon.",
+      "soh_translation": "SOH cần mỗi ô/biome có supply–demand và đường di chuyển thực, không chỉ phân màu cảnh quan.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-03",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Biome và nguyên liệu không đồng đều",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 52,
+        "end_line": 65,
+        "refs": [
+          "S02",
+          "S24"
+        ]
+      },
+      "facts": "Nguồn chính thức liệt kê bãi biển, hoang mạc, rừng nhiệt đới, đồi núi, tuyết và đảo. Ghi chép người chơi giai đoạn 2019 nói sa mạc thuận lợi sulfur, tuyết thuận lợi iron, rừng thuận lợi quả và nấm; đây là kinh nghiệm cũ. [S02][S24]",
+      "action": "Di chuyển tới biome, thu thập, chống nóng/lạnh hoặc phóng xạ tại POI, tối ưu hành trình.",
+      "relationship": "Quặng lệch vùng tạo nhu cầu vận chuyển, làm giá trị tiền đồn và phương tiện tăng lên.",
+      "risk": "Nếu mọi vùng sinh mọi thứ ngang nhau thì bản đồ chỉ đổi texture; nếu lệch tuyệt đối thì có thể gây softlock.",
+      "soh_translation": "SOH: gỗ/xơ sợi phổ biến, dược độc ở đầm lầy, khoáng lạnh ở tuyết, linh thạch biến dị ở vùng cấm; mọi item phải gắn ít nhất một nguồn hợp lý.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-04",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Đường đi và thùng phế liệu",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 66,
+        "end_line": 79,
+        "refs": [
+          "S04",
+          "S05"
+        ]
+      },
+      "facts": "FAQ chính thức 2019 nêu blueprint xuất hiện ở thùng dầu ven đường; các hướng dẫn mô tả cụm hòm/thùng có linh kiện, vật liệu và đôi khi vũ khí. [S04][S05]",
+      "action": "Tìm tuyến đường, phá/thám hòm, nhặt linh kiện, cất vào túi, cân nhắc về kho.",
+      "relationship": "Thùng cấp thấp vẫn có chức năng tiến triển tri thức vì Spares có thể dùng cho nghiên cứu.",
+      "risk": "Nếu chỉ rơi rác không có nghĩa thì farm không hấp dẫn; nếu luôn rơi đồ tốt thì POI cao cấp mất giá.",
+      "soh_translation": "SOH nên có phế tích dọc đường cho mảnh tri thức và vật liệu lõi, đồng thời giữ hộp/rương cấp cao ở địa điểm nguy hiểm.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-05",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "POI là đồ thị mục tiêu nhiều tầng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 80,
+        "end_line": 93,
+        "refs": [
+          "S07",
+          "S21"
+        ]
+      },
+      "facts": "Nguồn chính thức 2019 xác định phòng xanh lá, xanh dương, tím tại các POI và chuỗi thu thập thẻ; 2025 cải tiến giao diện map khi chọn POI để thấy quái, thiết bị, thùng và phòng thẻ. [S07][S21]",
+      "action": "Đến POI, phân tích lối vào, kiểm tra thẻ, bật điện, xử lý địch, mở phòng, rút lui.",
+      "relationship": "POI có thể ghé lại nhiều lần khi kiến thức hoặc cấp bảo hộ đổi, không cần một dấu tick hoàn thành.",
+      "risk": "Không đồng nhất các POI vì phân bố phòng thẻ đã từng được xáo ngẫu nhiên sau phiên bản 2020.",
+      "soh_translation": "SOH: di tích nhiều lớp, cửa phù, điện cổ, thùng cổ vật, boss, đường bí mật, hệ thống cảnh báo.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-06",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Khu nguy hiểm và phân tầng điều kiện",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 94,
+        "end_line": 107,
+        "refs": [
+          "S08",
+          "S09"
+        ]
+      },
+      "facts": "Patch 2019 từng thêm phòng tím có phóng xạ cấp 2 mà mặt nạ thường không chống được; patch 2020 sau đó gỡ phóng xạ cao cấp khỏi phòng thẻ của trận. Điều này chứng minh hazard không phải quy tắc bất biến. [S08][S09]",
+      "action": "Vào vùng nguy hiểm, quan sát debuff, chuẩn bị mặt nạ/giáp, kiểm soát thời gian ở lại.",
+      "relationship": "Hazard tạo lối tiến triển phi chiến đấu: cần hiểu bảo hộ trước khi tận dụng chìa khóa.",
+      "risk": "Không biến hazard thành chốt level tuyệt đối, nhưng cũng tránh vật phẩm chống độc vô tác dụng.",
+      "soh_translation": "SOH: độc khí, rét sâu, lời nguyền, ăn mòn; kháng có chỉ số và nguồn vật liệu rõ ràng, có đường rút an toàn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-07",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Thay đổi thiết kế map theo mùa và bản vá",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 108,
+        "end_line": 121,
+        "refs": [
+          "S08"
+        ]
+      },
+      "facts": "Năm 2019 sân bay được thiết kế lại tăng diện tích 4–5 lần, nhà máy điện thêm bốn cửa đường ống ngầm với năm khu vực; các bản vá sau thêm POI, khu vực nước và trải nghiệm phụ. [S08]",
+      "action": "Khám phá lại địa điểm quen sau cập nhật, tận dụng tầng thẳng đứng và không gian kín.",
+      "relationship": "Một POI có thể là lộ trình ngắn nhiều rủi ro hoặc lộ trình dài nhiều loot.",
+      "risk": "Các thông số là ảnh chụp ở năm 2019; không áp đặt lên map Dawn Land hoặc bản 2026.",
+      "soh_translation": "SOH: lưu world version và POI schema để cập nhật map mà không làm hỏng căn cứ người chơi.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-08",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Cứ điểm có thẻ: thứ tự nguồn–khóa–phòng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 122,
+        "end_line": 135,
+        "refs": [
+          "S07"
+        ]
+      },
+      "facts": "Hướng dẫn chính thức 2019: xanh lá thường từ quán xăng/siêu thị/địa điểm có tên; xanh dương trong phòng xanh lá; tím trong phòng xanh dương. Chỉ một số POI chứa phòng mỗi loại. [S07]",
+      "action": "Tìm thẻ, mang thẻ, khôi phục điện, mở phòng, nhặt thẻ cấp kế tiếp và đạn/thiết bị.",
+      "relationship": "Đây là chuỗi tự mở rộng mục tiêu: loot một thẻ có thể tạo lý do đi tới một POI khác cách xa.",
+      "risk": "Phải tính số lượt thẻ; thao tác mất phí nên người chơi cần cảnh báo nếu điện chưa cấp.",
+      "soh_translation": "SOH: chìa khóa hạng I/II/III, ấn phù, mạch dẫn năng lượng; một di tích sớm có thể gợi mở vùng muộn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-09",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "POI quân sự, sinh hóa, sân bay, cảng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 136,
+        "end_line": 149,
+        "refs": [
+          "S07",
+          "S08",
+          "S17"
+        ]
+      },
+      "facts": "Các nguồn 2019–2023 ghi quân sự có phòng các cấp và lính bất tử; lab có EG Mutant; sân bay có tank/Avenger tùy patch; cảng có thùng trên container và địch đặc biệt. [S07][S08][S17]",
+      "action": "Chọn vũ khí/đạn, nhìn vị trí bắn, đánh boss hoặc lẩn tránh, ưu tiên phòng loot phù hợp năng lực.",
+      "relationship": "Boss không chỉ chặn đường mà đôi khi là nguồn vật phẩm/linh kiện độc quyền.",
+      "risk": "Vị trí Boss và timer cực kỳ nhạy bản vá; cần kiểm chứng theo server.",
+      "soh_translation": "SOH: tiền đồn quân địch, phòng nghiên cứu cổ, cảng sông, pháo đài bị chiếm, mỏ cổ bị phong ấn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-10",
+      "type": "SUBSYSTEM",
+      "category": "WORLD",
+      "title": "Khu vực đặc biệt có thời hạn riêng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 150,
+        "end_line": 163,
+        "refs": [
+          "S21"
+        ]
+      },
+      "facts": "2025 bổ sung vùng tài nguyên cao cấp trên Uninhabited Island; lượt khám phá khu mới kéo dài 24 phút, tối đa 3 người, quái thường có cơ hội 1/3 nâng thành elite. [S21]",
+      "action": "Vào qua cơ chế riêng, chia vai, xử lý Boss, quyết định ở lại loot hay rút.",
+      "relationship": "Đặt trần thời gian làm túi đồ, đạn, chữa trị và năng lực di chuyển trở thành biến chiến thuật.",
+      "risk": "Một vùng timed-instance khác với map mở liên tục, không thể coi 24 phút là giới hạn của mọi chuyến đi.",
+      "soh_translation": "SOH: hầm ngầm sụp đổ định kỳ hoặc cuộc thám hiểm có thời hạn; nên là nhánh phụ, không áp cho mọi biome.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-11",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Cơ chế vật phẩm–công thức–vật liệu",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 164,
+        "end_line": 177,
+        "refs": [
+          "S04"
+        ]
+      },
+      "facts": "FAQ chính thức mô tả blueprint dùng để mở chế tạo; học xong, chỉ khi đủ vật liệu mới sản xuất. Bản vẽ chưa học trong túi có thể rơi khi chết; kiến thức đã học không mất do chết trong trận. [S04]",
+      "action": "Nhặt vật phẩm, nhặt blueprint, nghiên cứu, học, kiểm tra station tier, chế tạo.",
+      "relationship": "Trạng thái biết cách làm và đang cầm vật phẩm tách biệt; đó là nền của kinh tế nghiên cứu.",
+      "risk": "Không đánh đồng trang bị được nhặt với quyền sản xuất không giới hạn.",
+      "soh_translation": "SOH: Skill Core dùng giới hạn; bí kíp riêng; lần đầu nhặt Core tạo ba lựa chọn dùng, cất, giải mã.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-12",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Spares: đơn vị tiền tri thức và linh kiện",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 178,
+        "end_line": 191,
+        "refs": [
+          "S04",
+          "S18"
+        ]
+      },
+      "facts": "Spares/零件 được nhận qua loot và xử lý phế liệu, tiêu cho nghiên cứu, nâng bàn và một số hoạt động kinh tế khác. Bản 2023 một số mode hỗ trợ chọn Plan mong muốn bằng Spares. [S04][S18]",
+      "action": "Thu gom, phân giải, dự trữ, tiêu vào công thức hoặc cải tạo năng lực sản xuất.",
+      "relationship": "Cùng một currency kéo nghiên cứu và phát triển cơ sở vật chất vào một bài toán opportunity cost.",
+      "risk": "Nếu các nguồn Spares chỉ ở Boss khó, người chơi solo dễ mắc kẹt; nếu vô hạn không rủi ro, nghiên cứu mất ý nghĩa.",
+      "soh_translation": "SOH: Mảnh Tri Thức lấy từ phế tích, không đồng nhất với quặng; có chỗ dùng để học Core và cải thiện xưởng.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-13",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "R&D Bench qua ba đời cơ chế",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 192,
+        "end_line": 205,
+        "refs": [
+          "S10",
+          "S18"
+        ]
+      },
+      "facts": "Cơ chế cũ có nghiên cứu ngẫu nhiên theo cấp bàn; Civilization 2021 có giai đoạn nhận Plan chỉ định khi nâng workbench, loại bỏ random kiểu cũ; năm 2023 một số mode có nghiên cứu mục tiêu chọn trực tiếp. [S10][S18]",
+      "action": "Chọn bàn/công thức, trả tài nguyên, hoàn thành unlock; khác reverse engineering.",
+      "relationship": "Kiểm soát ngẫu nhiên quyết định người chơi có cảm thấy bị chặn không công bằng hay không.",
+      "risk": "Không mô tả đây là một cơ chế duy nhất hoạt động giống nhau trong mọi mode.",
+      "soh_translation": "SOH: có đường học định hướng; random làm phần thưởng phụ, không là cánh cửa độc quyền tiến trình chính.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-14",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Drawing Table: phân tích vật phẩm mẫu",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 206,
+        "end_line": 219,
+        "refs": [
+          "S04",
+          "S17"
+        ]
+      },
+      "facts": "Hệ thống này chuyển vật phẩm hiện hữu thành tri thức chế tạo: người chơi phải cầm được item mẫu, tiêu hao vật phẩm và Spares, sau đó thu công thức nếu được hỗ trợ. [S04][S17]",
+      "action": "Nhặt súng/giáp, quyết định giữ lại hay hy sinh mẫu, tới bàn vẽ, nhận Blueprint.",
+      "relationship": "Vật phẩm tốt có hai giá trị xung đột: sức mạnh hiện tại và quyền sản xuất về sau.",
+      "risk": "Rủi ro máy: không thể vừa tiêu item vừa trả item do lỗi mạng/save.",
+      "soh_translation": "SOH: lõi kỹ năng sắp cạn có thể dùng ngay hoặc giải mã để có công thức, giữ tính có giá của quyết định.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-15",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Dây chuyền vật tư nhiều tầng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 220,
+        "end_line": 233,
+        "refs": [
+          "S25"
+        ]
+      },
+      "facts": "Trong bảng lịch sử, Gunpowder cần Charcoal+Sulfur Powder; Explosive lại sử dụng Gunpowder+Fuel+Iron; Rocket Ammo có thể tiêu Explosive+Pipes. Đây là dạng recipe graph có tầng. [S25]",
+      "action": "Thu thập, đốt nhiên liệu, tinh luyện, tổng hợp thành phần trung gian, chế tạo thành phẩm.",
+      "relationship": "Giá của một viên rocket phụ thuộc tổng các cạnh trước nó và thời gian chế biến.",
+      "risk": "Ghi chi phí nguyên liệu theo trạng thái thô hay tinh luyện, không đếm trùng cùng vật liệu hai lần.",
+      "soh_translation": "SOH: quặng thô → thỏi → phôi Core → Core; dược liệu → tinh chất → bảo hộ; mảnh cổ → bí kíp.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-16",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Vật phẩm trùng công thức và cạnh tranh đầu vào",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 234,
+        "end_line": 247,
+        "refs": [
+          "S25"
+        ]
+      },
+      "facts": "Bảng đạn cũ ghi 5.56 và 7.62 dùng lượng Iron Bars và Gunpowder giống nhau nhưng hai blueprint khác; các súng trường dùng chung Pipes/Springs/Refined Iron. [S25]",
+      "action": "Dành nguyên liệu cho nhiều nhánh, chọn chiến thuật sử dụng loại đạn hoặc trang bị.",
+      "relationship": "Cùng một tồn kho linh kiện có nhiều đầu ra cạnh tranh giúp quyết định craft có trọng lượng.",
+      "risk": "Nếu mọi thứ dùng nguyên liệu hoàn toàn độc lập, kho mất bài toán phân bổ.",
+      "soh_translation": "SOH: nhiều Core hệ lửa/nước/độc cần chung phôi, tinh thể nạp năng lượng nhưng có vật liệu chủng riêng.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-17",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Recipe Scope, rare recipe, quyền sở hữu",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 248,
+        "end_line": 261,
+        "refs": [
+          "S04",
+          "S09",
+          "S20"
+        ]
+      },
+      "facts": "Các mode khác nhau phân biệt công thức chiến đấu tạm thời, công thức quý giữ qua reset, công thức riêng Operation Base và công thức mở theo đội. [S04][S09][S20]",
+      "action": "Học, kiểm tra quyền trên cá nhân/đội, vào server mới, dùng recipes trong mode cho phép.",
+      "relationship": "Hợp đồng sở hữu recipe ảnh hưởng kinh tế, hợp tác, khan hiếm và tự do chơi solo.",
+      "risk": "Không được mô tả công thức hiếm là vĩnh viễn trong mọi mode nếu không có nguồn.",
+      "soh_translation": "SOH: kiến thức vĩnh viễn của tài khoản/hero, giấy phép xây theo công trình hoặc buff tạm phải tách namespace.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-18",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Workshop và meta-progress khác R&D",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 262,
+        "end_line": 275,
+        "refs": [
+          "S19"
+        ]
+      },
+      "facts": "Bản 2024 có Workshop Chest + Key, nhận Patterns và Workshop Credits, tổng hợp Blueprint ở sảnh. Một phần là công thức; phần khác là skin/vật sưu tập. [S19]",
+      "action": "Mở hòm, có pattern, đổi/ghép blueprint, sử dụng trong ngữ cảnh cho phép.",
+      "relationship": "Meta collection tạo mục tiêu dài hạn bên ngoài mỗi chu kỳ survival.",
+      "risk": "Không gọi skin vũ khí là recipe vũ khí mới; phải phân biệt aesthetic và capability.",
+      "soh_translation": "SOH: thư viện bí kíp, bản thảo tri thức hiếm và thành tựu sưu tầm; tách khỏi RNG tiến triển bắt buộc.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-19",
+      "type": "SUBSYSTEM",
+      "category": "RECIPE_ECONOMY",
+      "title": "Crafting cấp bàn, thời gian và độ bền",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 276,
+        "end_line": 289,
+        "refs": [
+          "S04",
+          "S25"
+        ]
+      },
+      "facts": "Giới hạn công thức có thể nằm ở cấp bàn và trạng thái học; đồ sử dụng có durability, repair bằng tài nguyên tại công cụ phù hợp. FAQ 2019 xác nhận vật phẩm đã cạn độ bền có thể sửa. [S04][S25]",
+      "action": "Lắp bàn, nâng cấp, làm item, sử dụng, đánh rơi, sửa chữa, tái sử dụng linh kiện.",
+      "relationship": "Sửa chữa giảm áp lực thay hoàn toàn item nhưng vẫn là resource sink; một đồ nhặt hỏng có thể là mẫu nghiên cứu.",
+      "risk": "Không nhầm repairing thành crafting lại; cần xác định vật liệu sửa có ngang giá vật liệu chế tạo không.",
+      "soh_translation": "SOH: Core có số lần dùng/độ ổn định; sửa Core hiếm khác tạo Core mới, không tự cấp bí kíp.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-20",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Xây tự do: foundation, wall, door, floor, roof",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 290,
+        "end_line": 303,
+        "refs": [
+          "S01",
+          "S13"
+        ]
+      },
+      "facts": "Trang chính thức nêu tự do xây căn cứ; thông báo bổ sung nền cong, tường cong, mái cong, ban công và cửa; nhiều cấu kiện có các cấp vật liệu khác nhau. [S01][S13]",
+      "action": "Đặt nền, nối module, dựng tường, tạo cửa sổ, đặt mái, nâng chất liệu, sửa hoặc tháo.",
+      "relationship": "Hình học nhà tạo đường đi, điểm núp, góc bắn, kho kín và khoảng xây được phép.",
+      "risk": "Ảnh building chưa đủ để xác nhận cách tính stable/beam nội bộ; một số hướng dẫn cho biết thiếu nâng đỡ có thể sập.",
+      "soh_translation": "SOH top-down phải có collision, auto-roof, kiểm tra hợp lệ của tường/door và chuyển phòng thực.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-21",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Territory Cabinet: quyền, giới hạn, upkeep, badge",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 304,
+        "end_line": 317,
+        "refs": [
+          "S04",
+          "S09",
+          "S14",
+          "S20"
+        ]
+      },
+      "facts": "Territory Cabinet quản trị xây dựng, quyền/guest, một số giới hạn thiết bị, bảo dưỡng; cuối trận có chế độ tính điểm huy hiệu đặt trong tủ. Các mode đặc biệt thay luật này. [S04][S09][S14][S20]",
+      "action": "Đặt tủ trên nền, cấp quyền, nạp vật tư, mở chức năng nâng cấp, bảo vệ trước raid.",
+      "relationship": "Tủ là single point of failure: bị phá có thể mất kiểm soát và tiền sửa; bảo vệ vị trí tủ quan trọng hơn trang trí.",
+      "risk": "Không lấy thông số hạn mức tủ của Zombies Tide Trial áp sang mode sinh tồn thường.",
+      "soh_translation": "SOH: “trái tim lãnh địa” quản quyền đặt công trình, mở rộng footprint, giường, kho; bản offline không cần clone raid tàn bạo.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-22",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Kết cấu bảo vệ: lớp, phòng rỗng và lõi nhà",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 318,
+        "end_line": 331,
+        "refs": [
+          "S15",
+          "S16"
+        ]
+      },
+      "facts": "Hướng dẫn chiến thuật 2019 đề nghị chia kho thành nhiều phòng, dựng shell/anti-raid layer và giữ tủ sâu trong lõi; vật liệu tường và số cửa tăng chi phí raid. [S15][S16]",
+      "action": "Đi cửa nhiều lớp, giấu kho, bố trí hộp ở phòng khác nhau, xây bẫy và tuyến fallback.",
+      "relationship": "An ninh là bài toán tuyến ít phí nhất từ kẻ đột nhập tới kho; không chỉ tổng HP tất cả tường.",
+      "risk": "Nếu không có PvP, tránh buộc người chơi tối ưu honeycomb vô nghĩa.",
+      "soh_translation": "SOH: đường tiến quân quái, vùng kho dễ bị loot, cửa khóa, tháp bảo vệ; ra quyết định “kho phân tán hay tập trung”.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-23",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Giới hạn footprint và thiết bị",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 332,
+        "end_line": 345,
+        "refs": [
+          "S14"
+        ]
+      },
+      "facts": "Patch tháng 7/2023 liệt kê độ dài nối nền, bán kính công trình và quota cho storage/electricity/smelting/defense; nguyên nhân chính thức là chống giật/đơ/crash. [S14]",
+      "action": "Thiết kế theo phạm vi được phép, tối ưu layout, thêm tầng hoặc thiết bị thay thế khi chạm quota.",
+      "relationship": "Giới hạn không chỉ cân bằng chống nhà vô hạn mà còn là quyết định kỹ thuật về hiệu năng.",
+      "risk": "Không lấy những quota này làm thông số mặc định của mọi server hoặc thời đại.",
+      "soh_translation": "SOH: dùng ngân sách collision/nav/animation per chunk; quota nên phản ánh giới hạn hiệu năng đo được.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-24",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Điện, mạch và bẫy",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 346,
+        "end_line": 359,
+        "refs": [
+          "S16"
+        ]
+      },
+      "facts": "Hướng dẫn người chơi 2019 nêu generator chạy fuel, switch, pressure switch, infrared switch, electric door và đèn; hệ thống nối nguồn→công tắc→thiết bị. [S16]",
+      "action": "Đặt máy phát, nạp nhiên liệu, nối mạch, thử công tắc, sửa đường dây, đặt cửa điện.",
+      "relationship": "Điện tạo nhiều chế độ dùng khác nhau trên cùng công trình: đèn, ra vào, phòng thủ, đánh lừa kẻ xâm nhập.",
+      "risk": "Mạch cần trạng thái persistent; phải tránh việc cửa vẫn chạy khi nguồn trống.",
+      "soh_translation": "SOH: nguyên thạch nạp năng lượng→ấn phù điều khiển→cổng/đèn/bẫy; UI phải cho biết mạch nào thiếu nguồn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-25",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Công trình sản xuất tại nhà",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 360,
+        "end_line": 373,
+        "refs": [
+          "S04",
+          "S09",
+          "S14"
+        ]
+      },
+      "facts": "Lò nung, lò lớn, lọc dầu, workbench, drawing/research station, kho và khu nấu ăn kết thành workflow tại nhà; không phải nội thất thuần túy. [S04][S09][S14]",
+      "action": "Sắp đặt theo công đoạn, dự trữ, cấp nhiên liệu, chờ sản xuất, chuyển thành phẩm sang kho.",
+      "relationship": "Một ngôi nhà nhỏ có thể trở thành dây chuyền công nghiệp khi người chơi giảm quãng thao tác giữa các bàn.",
+      "risk": "Không tự suy luận có transport belt tự động nếu không nguồn.",
+      "soh_translation": "SOH: lò luyện → xưởng cơ khí → phòng giải mã Core; hòm liên thông có thể là tiện ích mới riêng SOH.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-26",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Blueprint căn cứ khác blueprint chế tạo",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 374,
+        "end_line": 387,
+        "refs": [
+          "S12"
+        ]
+      },
+      "facts": "2021 công bố hệ lưu bản vẽ nhà thông qua tủ lãnh thổ, chọn lưu cấp gỗ hoặc giữ vật liệu, rồi đặt lại trong trận/căn cứ; có share mật mã. [S12]",
+      "action": "Lưu, chọn phạm vi vật liệu, chia sẻ, nhập mật mã, đặt ghost blueprint với chi phí.",
+      "relationship": "Tái sử dụng kiến trúc rút ngắn thao tác nhưng vẫn yêu cầu kiểm tra terrain, vật tư và quota.",
+      "risk": "Không trộn hai nghĩa blueprint làm người dùng hiểu rằng nhà được “học công thức”.",
+      "soh_translation": "SOH: bản thiết kế nhà là spatial layout; bí kíp Core là Recipe Knowledge; dùng hai loại dữ liệu riêng.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-27",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Heat / comfort tại căn cứ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 388,
+        "end_line": 401,
+        "refs": [
+          "S11"
+        ]
+      },
+      "facts": "Patch 2020 nêu lửa trại, lò, giường, thảm, lọc dầu, máy phát tạo heat; mức tích lũy tối đa 40, có hồi HP/hunger nhẹ và yêu cầu tủ lãnh thổ. [S11]",
+      "action": "Đặt nguồn nhiệt và vật dụng gần không gian dùng; chọn điểm hồi phục thuận tiện.",
+      "relationship": "Trang bị sinh tồn có thể đồng thời phục vụ sản xuất và hồi phục, làm căn cứ đáng sống hơn.",
+      "risk": "Không thể suy ra khoảng cách heat hoặc công thức stacking nếu chưa có nguồn.",
+      "soh_translation": "SOH: giữ hệ “ấm áp và an toàn” khi trú nhà; có thể giảm tiêu hao thuốc và tăng hồi phục, nhưng cần playtest.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-28",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Operation Base: căn cứ cá nhân không reset",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 402,
+        "end_line": 415,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "Cập nhật 27/8/2020 thêm Operation Base cá nhân riêng, tối đa 10 người xây khi được ủy quyền, không raid, không reset; công trình về 0 durability chỉ ngưng hoạt động chứ không làm mất đồ trong kho. [S09]",
+      "action": "Về căn cứ, xây, nâng công trình có timer, trao đổi, đưa vật tư qua trạm vận chuyển.",
+      "relationship": "Giải quyết mong muốn sở hữu nhà lâu dài trái với nhịp đấu PvP wipe.",
+      "risk": "Cơ sở này là hệ riêng, không được nhầm với người chơi đặt nhà tự do trong thế giới chiến đấu.",
+      "soh_translation": "SOH offline nên chọn persistence căn cứ dài hạn và lấy các mạo hiểm làm nguồn nguy hiểm thay cho wipe.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-29",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Liên thông Base–Battle giới hạn",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 416,
+        "end_line": 429,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "Hệ vận chuyển 2020 cho phép gửi đồ hai chiều có điều kiện: Base→battle giới hạn lần/ngày; ngày đầu battle chỉ loại thấp, từ ngày hai rộng hơn; battle→Base chỉ một số vật tư được whitelist. [S09]",
+      "action": "Chọn trận, chọn hàng hợp lệ, trả chi phí/nếu có, nhận tại hệ thống hộp thư hoặc trạm chuyển.",
+      "relationship": "Whitelist và quota chặn việc căn cứ vĩnh viễn phá hỏng nhịp khởi đầu server mới.",
+      "risk": "Không tự suy luận đồ boss hay mọi Core đều chuyển tự do.",
+      "soh_translation": "SOH: mạng tiền đồn và nhà chính vận chuyển theo tuyến; giới hạn bằng phạm vi đường, năng lực vận tải và nguy hiểm đường đi.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-30",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Farming & food ở Operation Base",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 430,
+        "end_line": 443,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "Cập nhật 2020 ghi thêm hàng chục loại cây có thời gian chín khác nhau, hàng chục món ăn, bảng thưởng và kho; farming phục vụ cả kinh tế vật chất lẫn nhiệm vụ dài hạn. [S09]",
+      "action": "Trồng, chờ tăng trưởng, thu hoạch, nấu, giao thưởng, tích trữ đồ hồi phục.",
+      "relationship": "Sản xuất tái tạo giảm grind cơ bản nhưng không thay hết vật liệu hiếm lấy từ POI.",
+      "risk": "Không khẳng định hệ tưới tự động hoặc cấp farm nếu nguồn không xác nhận.",
+      "soh_translation": "SOH: vườn thảo dược và ruộng lương thực làm nguồn ổn định; essence từ elite vẫn phải đi thám hiểm.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-31",
+      "type": "SUBSYSTEM",
+      "category": "CONSTRUCTION_BASE",
+      "title": "Bounty Board, chợ, exchange và currency",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 444,
+        "end_line": 457,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "Operation Base có nhiệm vụ săn/thu thập/giải trí, giao dịch với Trade Coupons, có điều kiện giới hạn shop và phí giao dịch. [S09]",
+      "action": "Làm nhiệm vụ, lấy tài nguyên, đăng bán, nhận doanh thu, mua vật liệu thiếu.",
+      "relationship": "Chợ là cơ chế chuyển tài nguyên thừa của người này thành nguyên liệu khan của người khác.",
+      "risk": "Không đưa giao dịch tiền thật hoặc monetization gốc làm feature mặc định cho game offline.",
+      "soh_translation": "SOH: NPC thương nhân có nhu cầu/xả kho, mua bán vật tư thiết yếu, phí vận chuyển làm sink tiền.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-32",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "HP, hunger, dehydration, death và trạng thái đang nằm",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 458,
+        "end_line": 471,
+        "refs": [
+          "S01",
+          "S04"
+        ]
+      },
+      "facts": "FAQ và app chính thức ghi HP/hunger, uống nước, nhiễm bệnh/quái; người chơi ở trạng thái nguy kịch trước chết và mất đồ mang theo. Có vật phẩm hỗ trợ tự cứu trong một số phiên bản. [S01][S04]",
+      "action": "Ăn, uống, chữa trị, chạy trốn, mang đồ, chọn nơi logout, tìm lại túi khi chết.",
+      "relationship": "Survival pressure ảnh hưởng tần suất quay về nhà và vật tư bắt buộc cho chuyến đi dài.",
+      "risk": "Nếu mất toàn bộ đồ do một lỗi AI/collision, rủi ro thiếu công bằng.",
+      "soh_translation": "SOH: giữ đói/khát nhẹ hoặc provisions, túi rơi có khả năng thu hồi; áp Hardcore nếu muốn full loot.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-33",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Hồi sinh, giường, túi ngủ và bản đồ chết",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 472,
+        "end_line": 485,
+        "refs": [
+          "S04",
+          "S24"
+        ]
+      },
+      "facts": "Hướng dẫn lịch sử có hồi sinh ngẫu nhiên hoặc ở điểm đã thiết lập, đồng thời death marker hỗ trợ quay lại nhặt đồ. [S04][S24]",
+      "action": "Đặt túi ngủ ở khu nguy hiểm hay giường trong nhà, chết, chọn hồi sinh, di chuyển nhận lại túi.",
+      "relationship": "Giường kết nối gameplay căn cứ với phạm vi khám phá; nơi xa không còn là lượt đi một chiều.",
+      "risk": "Không tự động cứu đồ mà không có nguồn/reward; rủi ro phải cảm nhận nhưng có hướng phục hồi.",
+      "soh_translation": "SOH: Soul Anchor ở nhà, beacon dã chiến, death bag theo phiên và vị trí; cứu đồ là side objective.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-34",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Durability, repair, chế độ cầm đồ đã dùng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 486,
+        "end_line": 499,
+        "refs": [
+          "S04"
+        ]
+      },
+      "facts": "FAQ 2019 xác nhận vật phẩm hỏng có thể sửa tại bàn bằng vật liệu; nhiều món nhặt có độ bền không còn nguyên. [S04]",
+      "action": "Nhặt đồ, quan sát độ bền, dùng, đưa về bàn sửa hoặc thay bằng craft mới.",
+      "relationship": "Durability tạo kinh tế tái sản xuất mà không cần giới hạn tuyệt đối số lượng item trong map.",
+      "risk": "Nếu người chơi đã học recipe mà vật liệu repair rẻ vô hạn, vòng lặp loot mới có thể giảm sức hút.",
+      "soh_translation": "SOH: Skill Core giới hạn charges; repair không nên miễn phí; đồ mẫu có tính xung đột dùng vs nghiên cứu.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-35",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "PvP, raid và hợp tác",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 500,
+        "end_line": 513,
+        "refs": [
+          "S01",
+          "S05"
+        ]
+      },
+      "facts": "Ứng dụng chính thức nhấn mạnh PvP, cướp nhà, lựa chọn solo/đồng đội, clan. Server theo vòng khiến việc xây và raid có trọng lượng chiến lược. [S01][S05]",
+      "action": "Tập hợp đội, phân chia vai, xây nhà, farm, đánh cướp, bảo vệ kho, tranh POI.",
+      "relationship": "Mỗi người khác là nguồn bất định: thay đổi rủi ro trên đường, giá hàng, xung đột vị trí xây.",
+      "risk": "SOH offline không có người thật không thể bảo tồn nguyên xi kinh tế cướp bóc PvP.",
+      "soh_translation": "SOH: thay chức năng bằng phe NPC, quân tuần, raid có điều kiện, chứ không sinh vô hạn kẻ thù giả người.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-36",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Boss, AI địch và áp lực căn cứ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 514,
+        "end_line": 527,
+        "refs": [
+          "S08",
+          "S09",
+          "S20"
+        ]
+      },
+      "facts": "Patch lịch sử liệt kê EG Mutant, Avenger, lính bất tử, tank; 2020 Operation Base hỗ trợ triệu hồi zombie siege; 2026 Zombies Tide Trial chuyển cấp tủ thành mục tiêu chính. [S08][S09][S20]",
+      "action": "Chuẩn bị giáp, vũ khí, đạn, turret, chọn độ khó, bảo vệ mục tiêu công trình.",
+      "relationship": "Một cuộc thủ thành biến “xây nhà” thành combat: lối đi và loại tường phải được kiểm chứng bằng trận.",
+      "risk": "Không gán chỉ số giáp/HP của boss từ các hướng dẫn không rõ phiên bản.",
+      "soh_translation": "SOH: thủ thành theo sự kiện chủ động với 5 tier có điều kiện, cân nhắc cảnh báo trước khi xảy ra.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-37",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Quy tắc target và phòng thủ trong Zombies Tide Trial 2026",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 528,
+        "end_line": 541,
+        "refs": [
+          "S23"
+        ]
+      },
+      "facts": "Thông báo tháng 7/2026 ghi quái siege ưu tiên công trình của tủ chủ thể triệu hồi; quái có kiểm tra xuyên tường; công trình có trạng thái hư để sửa. [S23]",
+      "action": "Kích hoạt siege, target thuộc căn cứ, phòng thủ, sửa chữa, đổi Core dư thành mảnh.",
+      "relationship": "AI cần hiểu chủ sở hữu công trình, collision thực và đường tiếp cận, không đi xuyên tường hoặc nhầm căn cứ.",
+      "risk": "Không áp luật này cho mọi NPC trong mọi mode.",
+      "soh_translation": "SOH: đội quái đánh vào Gate/Heart/ kho với target score rõ, có đường phá tường khi bị chặn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-38",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Vũ khí, đạn, chống giáp, status",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 542,
+        "end_line": 555,
+        "refs": [
+          "S19",
+          "S22"
+        ]
+      },
+      "facts": "Game có gun classes, ammunition families và armor; bản 2026 thêm Molotov, Flamethrower và slow bullet 3 giây có kháng khoảng 5 giây; armor energy/titanium miễn tác động slow tại bộ phận trúng. [S19][S22]",
+      "action": "Chọn caliber, lấy supply, bắn/đổi đạn, đối phó giáp, chọn mục tiêu và khoảng cách.",
+      "relationship": "Đạn là sink tài nguyên liên tục; lớp status tạo lựa chọn khác raw damage.",
+      "risk": "Các con số chỉ áp theo patch; không suy luận DPS trực tiếp từ 64 viên/băng.",
+      "soh_translation": "SOH: Skill Core có năng lượng/nhiệm vụ và yếu tố kháng hiệu ứng; không biến mọi skill thành projectile giống súng.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-39",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Vật nuôi, thú cưỡi, nuôi dưỡng và biến dị",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 556,
+        "end_line": 569,
+        "refs": [
+          "S13",
+          "S23"
+        ]
+      },
+      "facts": "2023 hệ thú có capture, whistle, trưởng thành nhiều giai đoạn, fusion/evolution gene; 2026 bổ sung thú zombie cưỡi và chức năng có buff khai thác. [S13][S23]",
+      "action": "Thuần hóa, nuôi, tiến hóa, cưỡi, truyền pet tới một số battle, sử dụng đặc tính chiến đấu/khai thác.",
+      "relationship": "Pet không đơn thuần cosmetic: giảm thời gian di chuyển, tăng yield, bổ sung công cụ combat.",
+      "risk": "Không lẫn pet cosmetic (2026 nói skin là thuần thẩm mỹ) với pet capability.",
+      "soh_translation": "SOH: linh thú vận chuyển và đào mỏ/kiếm tài nguyên, skill phụ trợ; giữ separate progression khỏi Hero.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-40",
+      "type": "SUBSYSTEM",
+      "category": "SURVIVAL_COMBAT",
+      "title": "Phương tiện mặt đất, biển, không",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 570,
+        "end_line": 583,
+        "refs": [
+          "S09",
+          "S13",
+          "S14"
+        ]
+      },
+      "facts": "Các bản vá đưa ô tô lắp ráp, tàu ven bờ, trực thăng, glider, drone và nhiều loại khác; có cơ chế nhiên liệu, hỏng, bị tấn công; một số không thể copy công thức. [S09][S13][S14]",
+      "action": "Tìm hoặc lắp phương tiện, đổ nhiên liệu, chở hàng, đi đường mới, bảo vệ phương tiện khi loot.",
+      "relationship": "Phương tiện là nâng cấp kinh tế hậu cần: thay đổi quan hệ giữa nhà, tiền đồn và POI xa.",
+      "risk": "Một số mode hoài cổ 2023 loại trực thăng/tank và glider; không thể khẳng định luôn dùng mọi vehicle.",
+      "soh_translation": "SOH: thú cưỡi, xe hàng, thuyền, cổng dịch chuyển hạn chế; tính chi phí tải/độ an toàn.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-41",
+      "type": "SUBSYSTEM",
+      "category": "META_PROGRESSION",
+      "title": "Mode theo chu kỳ và endgame reset",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 584,
+        "end_line": 597,
+        "refs": [
+          "S02",
+          "S06"
+        ]
+      },
+      "facts": "Mô tả chính thức gốc nêu chiến đấu 15 ngày và tranh Restart Badge; hướng dẫn 2019 ghi Standard 15 ngày, Intense 7 ngày và nhiều luật khác. [S02][S06]",
+      "action": "Chọn trận, phát triển, cướp/tìm huy hiệu, bảo vệ tủ, chịu đợt endgame, nhận kết toán.",
+      "relationship": "Thời gian hữu hạn làm opportunity cost tăng: xây nhà tối ưu tốc độ vs xây nhà thẩm mỹ.",
+      "risk": "Không gọi game là “đều reset 15 ngày”; 2026 có chu kỳ riêng và căn cứ không reset.",
+      "soh_translation": "SOH: đích dài hạn là khám phá/chiếm cứ điểm, không nhất thiết copy wipe; có thể có mùa/phân đoạn đảo.",
+      "acceptance_seed": "",
+      "decision": "GATE_REQUIRED",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-42",
+      "type": "SUBSYSTEM",
+      "category": "META_PROGRESSION",
+      "title": "Civilization mode: giai đoạn công nghệ toàn server",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 598,
+        "end_line": 611,
+        "refs": [
+          "S10"
+        ]
+      },
+      "facts": "2021 Civilization mode tăng Civilization Value khi nâng workbench, học recipe và thời gian; qua giai đoạn mới xuất hiện loại tài nguyên và công thức mới; tường bị giới hạn theo giai đoạn. [S10]",
+      "action": "Thu vật tư, nâng bàn, học recipe, đạt milestone cộng đồng, mở mỏ và vật liệu mới.",
+      "relationship": "Tạo cảm giác tiến hóa xã hội thay vì cá nhân cày điểm level, đồng bộ nền kinh tế trận.",
+      "risk": "Một server có nhiều faction vẫn chia mốc mở công nghệ; không suy luận mọi công thức bắt buộc ở giai đoạn.",
+      "soh_translation": "SOH: thời đại di tích khai mở khi world progression đạt ngưỡng; song giữ quyền khám phá sớm nếu chuẩn bị tốt.",
+      "acceptance_seed": "",
+      "decision": "GATE_REQUIRED",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-43",
+      "type": "SUBSYSTEM",
+      "category": "META_PROGRESSION",
+      "title": "Chế độ 2026 tranh 49 mảnh đất",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 612,
+        "end_line": 625,
+        "refs": [
+          "S22"
+        ]
+      },
+      "facts": "2026 “Ace Overlord” chạy 7 ngày, 2× khai thác và 2× linh kiện; team khởi điểm 16, có 4 đất; chiếm qua điều khiển và tiến trình đếm ngược, chiến thắng khi có nhiều đất nhất hoặc lấy đủ 49. [S22]",
+      "action": "Cướp huy hiệu khu, vận hành capture node, giữ đất, mở rộng đội, phối hợp bảo vệ.",
+      "relationship": "Land control là một hệ logic quyền sở hữu hoàn toàn khác “đặt nhà ở đâu cũng được”.",
+      "risk": "Không nhầm chinh phục lãnh thổ với POI nhiều tầng hay outpost khai thác cá nhân.",
+      "soh_translation": "SOH: tiền đồn chiếm đóng và tuyến hỗ trợ có thể lấy cảm hứng nhưng cần chiến lược PvE cụ thể.",
+      "acceptance_seed": "",
+      "decision": "GATE_REQUIRED",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-44",
+      "type": "SUBSYSTEM",
+      "category": "META_PROGRESSION",
+      "title": "Đồ hiếm và game economy ngoài trận",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 626,
+        "end_line": 639,
+        "refs": [
+          "S09",
+          "S19"
+        ]
+      },
+      "facts": "Đồ skin, rare recipe, Workshop, trade coupon, cosmetics và vật phẩm vĩnh viễn tạo vòng tồn tại sau wipe; tiền tệ thật và shop gắn mô hình kinh doanh. [S09][S19]",
+      "action": "Làm daily, mở hòm, chọn pattern, trao đổi, sưu tầm ngoại hình hoặc công thức hiếm.",
+      "relationship": "Một người chơi có thể thua trận nhưng vẫn tích lũy thứ dài hạn; đó là trục giữ người chơi.",
+      "risk": "Cẩn trọng: loot box monetization không phải hệ thức gameplay cần clone.",
+      "soh_translation": "SOH: codex, achievement, rare Core recipes, trang trí nhà có thưởng khám phá; không cần random monetization.",
+      "acceptance_seed": "",
+      "decision": "GATE_REQUIRED",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "SYS-45",
+      "type": "SUBSYSTEM",
+      "category": "META_PROGRESSION",
+      "title": "Thông tin map/UX trong bản 2025–2026",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 640,
+        "end_line": 653,
+        "refs": [
+          "S21",
+          "S19"
+        ]
+      },
+      "facts": "Bản vá 2025 thêm POI selection với thông tin quái, thiết bị, rương và phòng thẻ; 2026 thêm tìm kiếm công thức ở chế tạo và hồ sơ. [S21][S19]",
+      "action": "Mở map, đánh dấu địa điểm, kiểm tra danh sách vật phẩm, tìm recipe theo tên.",
+      "relationship": "Bản đồ không chỉ điều hướng; là planning tool để định tuyến cuộc expedition.",
+      "risk": "Cần thể hiện nguồn chưa biết khác nguồn đã biết, tránh spoiler toàn bộ map từ đầu.",
+      "soh_translation": "SOH: bản đồ nhật ký khám phá hiển thị nhu cầu loại nguyên liệu, track những nơi đã mở và gợi ý nguồn.",
+      "acceptance_seed": "",
+      "decision": "GATE_REQUIRED",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-01",
+      "type": "POI",
+      "category": "POI",
+      "title": "Gas Station / Trạm xăng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 660,
+        "end_line": 669,
+        "refs": [
+          "S07",
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Đặt trạm tiếp tế bên lộ để khám phá di tích sớm; nguồn nhiên liệu/điện khác gỗ đá. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-02",
+      "type": "POI",
+      "category": "POI",
+      "title": "Supermarket / Siêu thị",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 670,
+        "end_line": 679,
+        "refs": [
+          "S07"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Kho hàng bỏ hoang cung cấp vật liệu vải/đồ ăn/điều hướng, không nhất thiết có boss. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-03",
+      "type": "POI",
+      "category": "POI",
+      "title": "Warehouse / Nhà kho",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 680,
+        "end_line": 689,
+        "refs": [
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Kho phế tích với linh kiện chế tác và manh mối tuyến vận tải. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-04",
+      "type": "POI",
+      "category": "POI",
+      "title": "Abandoned Factory / Nhà máy bỏ hoang",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 690,
+        "end_line": 699,
+        "refs": [
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Nhà máy rèn cổ có mẫu lõi, lò và hòm vật tư cấp 1. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-05",
+      "type": "POI",
+      "category": "POI",
+      "title": "Abandoned Institute / Viện nghiên cứu bỏ hoang",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 700,
+        "end_line": 709,
+        "refs": [
+          "S07",
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Thư viện nghiên cứu đặt khởi đầu chuỗi bí kíp cao cấp. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-06",
+      "type": "POI",
+      "category": "POI",
+      "title": "Harbor / Cảng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 710,
+        "end_line": 719,
+        "refs": [
+          "S07",
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Cảng cổ/nước sâu làm hub tài nguyên, mạch khóa và thuyền. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-07",
+      "type": "POI",
+      "category": "POI",
+      "title": "Airport / Sân bay",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 720,
+        "end_line": 729,
+        "refs": [
+          "S08",
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Pháo đài khí cầu với chiến đấu ngoài sân và hầm khóa sâu. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-08",
+      "type": "POI",
+      "category": "POI",
+      "title": "Nuclear Plant / Nhà máy điện hạt nhân",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 730,
+        "end_line": 739,
+        "refs": [
+          "S08"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Lõi linh năng bị ô nhiễm; cần giáp kháng và khởi động mạng cổ. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-09",
+      "type": "POI",
+      "category": "POI",
+      "title": "Bunker / Hầm trú ẩn",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 740,
+        "end_line": 749,
+        "refs": [
+          "S07",
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Bunker dưới núi tuyết/đồi cát, vật liệu kháng môi trường và đồ hiếm. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-10",
+      "type": "POI",
+      "category": "POI",
+      "title": "Biochemical Laboratory / Phòng thí nghiệm sinh hóa",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 750,
+        "end_line": 759,
+        "refs": [
+          "S07",
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Thí nghiệm Soul Core hỏng, elite độc, kho tri thức có cơ chế power. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-11",
+      "type": "POI",
+      "category": "POI",
+      "title": "Bandit Camp / Trại cướp",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 760,
+        "end_line": 769,
+        "refs": [
+          "S07"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Trại lính đánh thuê giữ ấn phù bậc III hoặc vật liệu quý. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-12",
+      "type": "POI",
+      "category": "POI",
+      "title": "Military Base / Căn cứ quân sự",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 770,
+        "end_line": 779,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Thành lũy địch với phòng hạng 1/2/3 và Boss canh kho. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-13",
+      "type": "POI",
+      "category": "POI",
+      "title": "Trading Zone / Khu thương mại",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 780,
+        "end_line": 789,
+        "refs": [
+          "S06",
+          "S07"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Chợ thương hội và thư viện trao đổi với quota, giá vận tải. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-14",
+      "type": "POI",
+      "category": "POI",
+      "title": "Roadside Crate / Thùng lộ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 790,
+        "end_line": 799,
+        "refs": [
+          "S04",
+          "S05"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Thùng cổ ven đường cung cấp mảnh tri thức và phụ kiện cơ bản. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-15",
+      "type": "POI",
+      "category": "POI",
+      "title": "Hidden Cave / Hang thú",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 800,
+        "end_line": 809,
+        "refs": [
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Hang rễ cây cho thảo dược, tinh thể, lối tắt và rương bất ngờ. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-16",
+      "type": "POI",
+      "category": "POI",
+      "title": "Supply Drop / Airdrop",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 810,
+        "end_line": 819,
+        "refs": [
+          "S01",
+          "S05"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Mưa sao băng/đoàn vận tải rơi, là world event có tín hiệu cho phép chuẩn bị. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-17",
+      "type": "POI",
+      "category": "POI",
+      "title": "Boss Arena / Trạm Boss",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 820,
+        "end_line": 829,
+        "refs": [
+          "S07",
+          "S08",
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "World boss có loot vật liệu duy nhất nhưng không là đường thăng tiến bắt buộc duy nhất. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-18",
+      "type": "POI",
+      "category": "POI",
+      "title": "Water Outpost / Trạm nổi",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 830,
+        "end_line": 839,
+        "refs": [
+          "S13"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Trạm nổi cần loại thuyền phù hợp, thêm loot chuyên biệt nghề cá. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-19",
+      "type": "POI",
+      "category": "POI",
+      "title": "High Resource Island / Đảo tài nguyên",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 840,
+        "end_line": 849,
+        "refs": [
+          "S21"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Hầm cổ mở cổng giới hạn; mục tiêu chính là mang loot về kịp. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-20",
+      "type": "POI",
+      "category": "POI",
+      "title": "Dawn Land / Bình Minh",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 850,
+        "end_line": 859,
+        "refs": [
+          "S10"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Overworld chia vùng liên tục theo chức năng: nơi xây, đường di chuyển, khu hazard, di tích. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "POI-21",
+      "type": "POI",
+      "category": "POI",
+      "title": "Operation Base / Căn cứ hành động",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 860,
+        "end_line": 869,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "Căn cứ chính Soul of Heroes lưu vĩnh viễn, sở hữu nhà có nội thất/queue thực. Cần đặt đường trở về, vùng đặt tiền đồn hoặc không đặt được, loại hiểm họa, số loại khóa, và chu kỳ tái tạo loot riêng trong asset data, không chỉ mô tả bằng lore.",
+      "acceptance_seed": "",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-01",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Đường phế liệu → Spares → bàn nghiên cứu → súng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 874,
+        "end_line": 879,
+        "refs": [
+          "S04",
+          "S18"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Thùng ven đường cung cấp dòng đầu vào lặp được cho nghiên cứu, trong khi đồ cao cấp vẫn cần recipe và nguyên liệu gia công. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S04][S18]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: người chơi farm đường một buổi, mở được ít nhất một nhánh cải tiến nhưng vẫn cần thám hiểm để hoàn thành. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-02",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Vũ khí nhặt được → dùng ngay HOẶC reverse engineering",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 880,
+        "end_line": 885,
+        "refs": [
+          "S04"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Một vật phẩm có độ bền được trao hai giá trị; nếu đem nghiên cứu thì thiếu sức mạnh ngay, nếu dùng hết có thể mất mẫu vật. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S04]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: cho người chơi một món hiếm còn 20% độ bền, đo tỷ lệ chọn giữ/dùng/học. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-03",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Key xanh lá → POI xanh lá → key xanh dương → POI xanh dương → key tím",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 886,
+        "end_line": 891,
+        "refs": [
+          "S07"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Chuỗi thẻ là tiến trình tri thức và địa lý; mỗi lần thành công mở địa điểm mới chứ không chỉ một hòm lớn hơn. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S07]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: map có tối thiểu một tuyến hợp lệ, không khóa vòng tròn deadlock. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-04",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Thẻ đúng → thiếu nguồn điện → không mở phòng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 892,
+        "end_line": 897,
+        "refs": [
+          "S07",
+          "S16"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Hai lớp điều kiện độc lập: credential và power; đi nhầm thứ tự có thể lãng phí lượt thẻ ở cơ chế cũ. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S07][S16]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: UI nói rõ thiếu nguồn và không làm tiêu hao thẻ vô cớ trong SOH. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-05",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Hazard → đồ chống chịu → quyền tiếp cận POI",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 898,
+        "end_line": 903,
+        "refs": [
+          "S08"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Không đủ bảo hộ có thể vẫn chạm được cổng nhưng phải bỏ cuộc; cơ chế này tạo mục tiêu về vật liệu kháng môi trường. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S08]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: có ít nhất hai chiến lược chuẩn bị: đồ chống chịu và đường di chuyển ngắn. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-06",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Biome khoáng → phôi → vật liệu quân sự → raiding",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 904,
+        "end_line": 909,
+        "refs": [
+          "S24",
+          "S25"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Mỏ quặng tạo đầu vào gián tiếp của thuốc nổ/đạn/tường; một đợt đi mỏ phục vụ nhiều nhánh sản xuất. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S24][S25]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: tài nguyên hiếm có ít nhất hai sink khác biệt, không là một chìa khóa độc dụng. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-07",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Nhà → kho → chuyến thám hiểm dài hơn",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 910,
+        "end_line": 915,
+        "refs": [
+          "S01"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Có kho giúp giảm giá trị của vật phẩm mang theo; sau khi về nhà người chơi được giải phóng slot và sẵn sàng đi xa. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S01]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: sức chứa thực và khoảng về nhà ảnh hưởng quyết định route. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-08",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Tủ lãnh thổ → quyền xây → phân lớp bảo vệ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 916,
+        "end_line": 921,
+        "refs": [
+          "S09",
+          "S20"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Vị trí tủ quyết định quyền sửa/xây và giới hạn; kẻ thù đánh tủ là đánh vào năng lực duy trì căn cứ. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S09][S20]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: phá/hỏng tủ tác động đúng các công trình thuộc phạm vi, không tác động nhầm lân cận. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-09",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Nhiên liệu → điện → cửa/bẫy → chi phí phòng thủ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 922,
+        "end_line": 927,
+        "refs": [
+          "S16"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Dòng nhiên liệu phải trả liên tục để vận hành thiết bị; khi cạn, công trình thay đổi khả năng chống xâm nhập. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S16]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: save/load sau khi generator tắt phải khôi phục đúng trạng thái thiết bị. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-10",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Chiến thuật chọn vị trí nhà → tần suất lượt farm",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 928,
+        "end_line": 933,
+        "refs": [
+          "S17"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Càng gần POI càng giảm quãng di chuyển nhưng tăng rủi ro bị người khác tìm thấy hoặc cướp đường. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S17]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: ít nhất hai khu đất tạo trade-off khác nhau, không tồn tại vị trí toàn lợi. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-11",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Nâng bàn → mở nhánh recipe → đổi giá trị loot cũ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 934,
+        "end_line": 939,
+        "refs": [
+          "S10",
+          "S18"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Vật phẩm từng là rác có thể trở nên hữu dụng khi mở công thức dùng nó; progression tạo revaluation kho đồ. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S10][S18]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: hệ recipe graph cho thấy tối thiểu một vật liệu tái định giá ở mỗi tier. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-12",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Căn cứ dài hạn → logistics giới hạn → trận reset",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 940,
+        "end_line": 945,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Operation Base giữ tiến triển lâu dài nhưng hạn chế gửi đồ để không xóa khó khăn của trận mới. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S09]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: whitelist và quota không cho gửi trái phép đồ cao cấp vào ngày 1. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-13",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Civilization Value → era mới → tài nguyên mới",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 946,
+        "end_line": 951,
+        "refs": [
+          "S10"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Tốc độ tiến trình của từng cá nhân kết nối với nhịp mở công nghệ tập thể; cơ sở vật chất và world phase thay đổi cùng nhau. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S10]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: world stage update không reset recipe player đã học theo luật mode. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-14",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Huy hiệu endgame → đặt vào tủ → công trình có mục tiêu bảo vệ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 952,
+        "end_line": 957,
+        "refs": [
+          "S06"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Từ sống sót thuần túy chuyển thành chiến lược bảo vệ một mục tiêu tọa độ cụ thể khi gần kết thúc trận. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S06]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: sự kiện công bố vị trí/mốc có thời gian hợp lý và hành vi rõ. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-15",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Vườn → giảm chi phí chuẩn bị → nhiều chuyến đi hơn",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 958,
+        "end_line": 963,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Farm tại nhà thay phần hoạt động thu gom thường lệ; player có thời gian dành cho thám hiểm mạo hiểm hơn. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S09]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: sau 5 chu kỳ trồng, thời gian prep giảm mà nhu cầu farm loot quý không về 0. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-16",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Xe/thú cưỡi → tải hàng → bán kính hoạt động tăng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 964,
+        "end_line": 969,
+        "refs": [
+          "S13",
+          "S23"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Nâng mobility cải thiện giá trị kinh tế của POI xa, không chỉ tăng tốc độ để combat. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S13][S23]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: route xa được rút số lượt qua lại hoặc số item bỏ lại. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-17",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Boss → vật liệu độc quyền → công thức cao",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 970,
+        "end_line": 975,
+        "refs": [
+          "S08",
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Một nguồn duy nhất tăng giá trị boss nhưng cũng tạo cổng nội dung; nên cung cấp đích rõ, không bắt đánh vô hạn. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S08][S09]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: mỗi vật liệu độc quyền có lý do, nguồn hiển thị và phương án lấy lại khi thất bại. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-18",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Death marker → cất đồ hiếm → chạy xác",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 976,
+        "end_line": 981,
+        "refs": [
+          "S04"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Cái chết tạo nhiệm vụ phụ có rủi ro cao hơn vì người chơi có thể quay lại mà thiếu trang bị. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S04]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: túi rơi không bị nhân đôi, vị trí tồn tại qua save/load. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-19",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Lò luyện → sản xuất theo thời gian → tối ưu layout nhà",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 982,
+        "end_line": 987,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Nhiều bàn sản xuất có thể khiến nhiệm vụ trở thành tối ưu lịch đặt hàng, kho, nhiên liệu và khoảng di chuyển. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S09]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: queue không sinh item miễn phí khi tắt game giữa thao tác. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-20",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Xây nhiều thiết bị → quota → tối ưu công trình",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 988,
+        "end_line": 993,
+        "refs": [
+          "S14"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Quota tách theo loại phản ánh mức tải game; người chơi phải suy nghĩ chức năng mỗi ô xây dựng. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S14]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: UI từ chối đúng loại vượt giới hạn và không xóa công trình đã tạo. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-21",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Tháp tự động → điện/đạn → bảo vệ kho",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 994,
+        "end_line": 999,
+        "refs": [
+          "S14"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Turret cho phép base mạnh hơn mà không biến nó thành miễn nhiễm; cần đạn/nguồn và vị trí góc bắn. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S14]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: tháp không bắn xuyên tường, không nhắm thành viên được cấp quyền. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-22",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Hòm phân tán → nhiều điểm đột kích → chi phí raid tăng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1000,
+        "end_line": 1005,
+        "refs": [
+          "S15"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Phân mảnh tài sản làm kẻ cướp thiếu chắc chắn sau khi xuyên một bức tường; nhưng tăng thao tác người xây. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S15]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: số tuyến tới mỗi kho có cách biệt về chi phí và rủi ro. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-23",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Mở map POI metadata → lên kế hoạch expedition",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1006,
+        "end_line": 1011,
+        "refs": [
+          "S21"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Khi người chơi thấy loại quái/thùng/cửa, route planning biến thành lựa chọn có thông tin thay vì mò mẫm ngẫu nhiên. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S21]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: UI chỉ tiết lộ metadata đã khám phá và không phá bất ngờ nội dung. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-24",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Workshop pattern → meta recipe → vòng sống sau reset",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1012,
+        "end_line": 1017,
+        "refs": [
+          "S19"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Một mục tiêu sưu tầm ở sảnh tồn tại bên cạnh vòng battlefield, giữ giá trị của phần thưởng khi trận kết thúc. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S19]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: recipe sở hữu meta không vô tình biến thành item free trong battle. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-25",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Pet harvesting buff → năng suất mỏ → công thức cấp cao",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1018,
+        "end_line": 1023,
+        "refs": [
+          "S23"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Tăng năng suất khai thác trực tiếp ảnh hưởng chiến lược nâng thú và lựa chọn tuyến mỏ. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S23]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: buff không nhân bất thường với vật liệu quý, định nghĩa yield rõ. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-26",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Molotov → tường gỗ → lựa chọn nâng cấp nhà",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1024,
+        "end_line": 1029,
+        "refs": [
+          "S19"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Vũ khí cháy gây thêm damage lên công trình gỗ theo patch 2026, thúc đẩy việc đầu tư vật liệu tường. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S19]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: bảng hiệu quả chống cháy hiển thị và chống exploit chồng lửa. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-27",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Cầu thang/mái cong → đường đi 3D → góc nhìn top-down",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1030,
+        "end_line": 1035,
+        "refs": [
+          "S13"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Các cấu kiện cong và mái tạo liên thông topo nhưng cũng gây vấn đề occlusion/collision trong bản chuyển 2D. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S13]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: nhân vật đi vào phòng thì mái phòng đó mờ, camera không che cửa. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-28",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Đội mở recipe → quyền sử dụng tạm → thay đổi thành viên",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1036,
+        "end_line": 1041,
+        "refs": [
+          "S20"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Trong Zombies Tide Trial thành viên mới dùng chung công thức, nhưng rời team mất quyền, không mất kiến thức cá nhân có từ trước. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S20]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: khi rời team, chỉ revoke quyền group-granted, không khóa recipe cá nhân. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-29",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Thu hoạch thời vụ → thời gian hàng chờ → đi loot trong lúc chờ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1042,
+        "end_line": 1047,
+        "refs": [
+          "S09"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Trồng trọt và nghiên cứu làm player có việc chờ, tạo lý do luân phiên nhiệm vụ quanh căn cứ. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S09]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: hành động dài không yêu cầu đứng bất động nếu không có quy định. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-30",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Chiếm đất → quyền đội → buff damage → mở rộng quyền chiếm",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1048,
+        "end_line": 1053,
+        "refs": [
+          "S22"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Mode 2026 tạo feedback dương khi nhiều đất đem bonus, đồng thời định thắng bại theo số đất và khung giờ thao tác. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S22]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: không cho capture ngoài 18–22h; buff áp theo milestone đúng mode. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "DEP-31",
+      "type": "DEPENDENCY",
+      "category": "DEPENDENCY",
+      "title": "Giết Boss để lấy thẻ → mở phòng → kiếm mẫu → nghiên cứu",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1054,
+        "end_line": 1059,
+        "refs": [
+          "S07"
+        ]
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "Chồng tuyến combat, access, tech vào một mission nhưng vẫn cho lộ trình khác để tránh linear. **Vị trí trong mạng hệ thống:** map cung cấp điều kiện, inventory mang chi phí, base làm nơi lưu trữ/chế biến, recipe biến loot thành khả năng, và expedition tái đầu tư phần thưởng. [I] [S07]",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Test: đồ nghiên cứu và phần thưởng phòng có identity khác đồ boss. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-01",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Buổi đầu tay trắng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1064,
+        "end_line": 1073,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Không khóa người chơi trong tutorial tuyến tính; sau khi tạo nhà, không bắt vào dungeon ngay.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-02",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Thùng đồ và bất ngờ về tri thức",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1074,
+        "end_line": 1083,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Không gắn sở hữu item với quyền chế tạo; những lựa chọn cần được UI giải thích chính xác.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-03",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Mở phòng xanh lá đầu tiên",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1084,
+        "end_line": 1093,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Kiểm thử softlock: luôn còn con đường tạo/kiếm nguồn phù hợp nếu người chơi tiêu hao nhầm thẻ.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-04",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Lần thử thất bại tại vùng độc",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1094,
+        "end_line": 1103,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Không tự động nâng level để triệt tiêu độc; kiến thức và sự chuẩn bị được thưởng.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-05",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Thiết kế lại căn nhà theo vòng sản xuất",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1104,
+        "end_line": 1113,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Collision, ownership và save phải đúng; không chỉ thay texture căn nhà.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-06",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Chuyến đi xa có tiền đồn",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1114,
+        "end_line": 1123,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Tiền đồn phải có chức năng sử dụng thật, trạng thái riêng và mối quan hệ với căn cứ chính.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-07",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Một chuyến loot lời nhưng không hiệu quả",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1124,
+        "end_line": 1133,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Thử nghiệm đo net gain, không dùng giá trị hiếm đơn thuần để chấm nhiệm vụ.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-08",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Công thức đồ mới làm thay đổi giá trị kho cũ",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1134,
+        "end_line": 1143,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Cần search recipe, ingredient reverse lookup và bộ lọc kho; không bắt nhớ mọi công thức.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-09",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Bảo vệ căn cứ khỏi một đợt tấn công có báo trước",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1144,
+        "end_line": 1153,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Hãy đo số lần AI stuck, exploit góc, damage hợp lệ và khả năng khôi phục sau save/load.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-10",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Hệ công thức chia sẻ không đồng nghĩa công thức cá nhân",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1154,
+        "end_line": 1163,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Cơ chế này chỉ có ý nghĩa nếu SOH có team/settlement; với game solo không cần ép cho đủ danh mục.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-11",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Boss cho loot hơn một chức năng",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1164,
+        "end_line": 1173,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Không đặt tất cả phần thưởng rare độc quyền sau boss: bảo tồn đường khám phá/puzzle/rủi ro phi chiến đấu.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    },
+    {
+      "id": "JOURNEY-12",
+      "type": "JOURNEY",
+      "category": "JOURNEY",
+      "title": "Giai đoạn cuối nhiều phương án chơi",
+      "source": {
+        "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "start_line": 1174,
+        "end_line": 1183,
+        "refs": []
+      },
+      "facts": "",
+      "action": "",
+      "relationship": "",
+      "risk": "",
+      "soh_translation": "",
+      "acceptance_seed": "Kiểm thử ít nhất 3 buổi chơi liên tiếp không vào dungeon mà vẫn tiến triển thật, rồi vào dungeon với sự chuẩn bị đã tích lũy.",
+      "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
+      "implementation": "NOT_STARTED",
+      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+    }
+  ],
+  "unknown_original_facts": [
+    {
+      "id": "UNKNOWN-01",
+      "question": "Bản quốc tế 2.45.0 có đồng nhất đúng recipe list với bản Trung Quốc tháng 9/2026 không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-02",
+      "question": "Mỗi mode áp những weapon/boss nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-03",
+      "question": "Map seed có thay POI positions theo lần mở trận không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-04",
+      "question": "Có bao nhiêu map đang hoạt động và mỗi map diện tích ra sao?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-05",
+      "question": "Có bao nhiêu tầng phòng thẻ theo map cụ thể?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-06",
+      "question": "Mỗi thẻ có durability/charge bao nhiêu?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-07",
+      "question": "Phòng tím còn hazard ở mode nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-08",
+      "question": "Loại khẩu trang nào kháng hazard cụ thể?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-09",
+      "question": "Respawn của thùng ven đường theo loại là bao lâu?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-10",
+      "question": "Một người có thể cất được bao nhiêu blueprint chưa học?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-11",
+      "question": "Mỗi recipe học qua Drawing Table tiêu mẫu theo quy tắc nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-12",
+      "question": "Những item nào không thể copy?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-13",
+      "question": "Chi phí Spares theo từng recipe và mode?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-14",
+      "question": "Mỗi workbench unlock bao nhiêu recipe?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-15",
+      "question": "Recipe trung cấp có share trong party ngoài Operation Base không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-16",
+      "question": "Rare Recipe có mất nếu đổi mode?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-17",
+      "question": "Workshop Pattern có thể đổi hoặc recycle không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-18",
+      "question": "Có bao nhiêu nhóm item trong giao diện Craft 2026?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-19",
+      "question": "Lò từng loại tiêu nhiên liệu theo giây thế nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-20",
+      "question": "Thời gian nấu nguyên liệu có chạy khi logout không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-21",
+      "question": "Tủ lãnh thổ tiêu upkeep theo công thức nào ở mode hiện hành?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-22",
+      "question": "Kiểu xây nào còn chịu ổn định kết cấu?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-23",
+      "question": "Cấp vật liệu tường và HP tương đối mới nhất?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-24",
+      "question": "Có thể xây nhà trong vùng quanh POI hoặc safe zone không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-25",
+      "question": "Radius quyền tủ từng mode cụ thể?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-26",
+      "question": "Blueprint nhà đặt lại có tính vật tư đặc biệt thế nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-27",
+      "question": "Mỗi server cho tối đa bao nhiêu bản blueprint được lưu?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-28",
+      "question": "Các giới hạn 2023 đã được nới năm 2026 chưa?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-29",
+      "question": "Có thể đặt bao nhiêu giường và spawn selection ưu tiên gì?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-30",
+      "question": "Loot của người chết tồn tại bao lâu?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-31",
+      "question": "AI boss có leash hoặc reset encounter không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-32",
+      "question": "Cửa phòng thẻ bị người khác mở có thể vào chung không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-33",
+      "question": "Vending machine có tax/stock mới nhất?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-34",
+      "question": "Vùng high resource của đảo có mặt ở quốc tế không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-35",
+      "question": "Thời gian thăm dò 24 phút áp những vùng nào?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-36",
+      "question": "Pet/buff auto-gather hoạt động khi chủ không trực tuyến không?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-37",
+      "question": "Có bao nhiêu phương tiện được craft, tìm hoặc chỉ mua?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-38",
+      "question": "Raid protection nào theo giờ/ngày?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-39",
+      "question": "Những reward gì qua wipe là item, recipe hoặc cosmetic?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    },
+    {
+      "id": "UNKNOWN-40",
+      "question": "Mối liên hệ chính xác giữa huy hiệu, tủ và quyền kết toán ở từng mode?",
+      "status": "FACT_UNVERIFIED_NOT_DESIGN_STALL"
+    }
+  ],
+  "historical_sources": [
+    {
+      "id": "S01",
+      "line": 1293,
+      "citation": "- **[S01] [B] Quốc tế Google Play** — Identity, survival, building, maintenance, PvP and official product description. URL: https://play.google.com/store/apps/details?id=com.herogame.gplay.lastdayrulessurvival"
+    },
+    {
+      "id": "S02",
+      "line": 1295,
+      "citation": "- **[S02] [A] Trang chủ trò chơi Trung Quốc** — Mục tiêu 15 ngày, sáu dạng địa hình, văn cảnh cốt truyện. URL: https://hero.yingxiong.com/"
+    },
+    {
+      "id": "S03",
+      "line": 1297,
+      "citation": "- **[S03] [B] Website quốc tế** — Định vị game và ba trụ gameplay cơ bản. URL: https://lios.herogame.com/"
+    },
+    {
+      "id": "S04",
+      "line": 1299,
+      "citation": "- **[S04] [A] FAQ phát hành 2019-07-30** — Blueprint, death, item drop, survival, repair, character. URL: https://hero.yingxiong.com/info/2019/0730/6973.html"
+    },
+    {
+      "id": "S05",
+      "line": 1301,
+      "citation": "- **[S05] [A] Bài giới thiệu chính thức 2019-07-31** — Free-form building, survival loop and raid. URL: https://hero.yingxiong.com/info/2019/0731/6999.html"
+    },
+    {
+      "id": "S06",
+      "line": 1303,
+      "citation": "- **[S06] [A] Hướng dẫn modes chính thức tại Xiaomi 2019-08-07** — 15/7 day, badge endgame and battle wipe. URL: https://game.xiaomi.com/viewpoint/1103968488_1565170379066_13"
+    },
+    {
+      "id": "S07",
+      "line": 1305,
+      "citation": "- **[S07] [A] Hướng dẫn thẻ/phòng/POI chính thức 2019-08-07** — Green-blue-purple, power switches, Boss and POIs. URL: https://hero.yingxiong.com/info/2019/0807/7028.html"
+    },
+    {
+      "id": "S08",
+      "line": 1307,
+      "citation": "- **[S08] [A] Bản vá tái thiết map 2019-10-31** — Airport 4–5×, nuclear tunnels, talent and radiation. URL: https://hero.yingxiong.com/info/2019/1031/8033.html"
+    },
+    {
+      "id": "S09",
+      "line": 1309,
+      "citation": "- **[S09] [A] Operation Base và Zombie Siege 2020-08-26** — Persistent base, logistics, workshop, farm, trading, siege and amounts. URL: https://hero.yingxiong.com/info/2020/0826/10634.html"
+    },
+    {
+      "id": "S10",
+      "line": 1311,
+      "citation": "- **[S10] [A] Dawn Land, Civilization mode 2021-06-29** — 7000×7000 m, eight POIs, eras, recipe unlocks, energy system. URL: https://hero.yingxiong.com/info/2021/0629/11237.html"
+    },
+    {
+      "id": "S11",
+      "line": 1313,
+      "citation": "- **[S11] [A] Card-room randomization, heat, vehicle 2020-01-08** — Random card room, heat maximum, military base, helicopter. URL: https://hero.yingxiong.com/info/2020/0108/8968.html"
+    },
+    {
+      "id": "S12",
+      "line": 1315,
+      "citation": "- **[S12] [A] Building Blueprint announcement 2021-09-28** — Building save/place cooldown, sharing and cost. URL: https://www.taptap.cn/moment/191987463328106018"
+    },
+    {
+      "id": "S13",
+      "line": 1317,
+      "citation": "- **[S13] [A] Pets, curved building and environment 2023-01-04** — Pet genes, curved geometry, corrosion mask mechanics. URL: https://hero.yingxiong.com/info/2023/0104/13178.html"
+    },
+    {
+      "id": "S14",
+      "line": 1319,
+      "citation": "- **[S14] [A] Building limits 2023-07-26** — 40m and 28m, category device quota, vehicles. URL: https://hero.yingxiong.com/info/2023/0726/13493.html"
+    },
+    {
+      "id": "S15",
+      "line": 1321,
+      "citation": "- **[S15] [C] Building strategy 2019 via Xiaomi** — Structural support, walls, anti-raid and route defense. URL: https://game.xiaomi.com/viewpoint/1103968488_1569395213751_13"
+    },
+    {
+      "id": "S16",
+      "line": 1323,
+      "citation": "- **[S16] [C] TapTap player electric circuitry/building 2019** — Switch, generator, traps, structural tactics. URL: https://www.taptap.cn/moment/15218919606324324"
+    },
+    {
+      "id": "S17",
+      "line": 1325,
+      "citation": "- **[S17] [C] TapTap 2023-05-30 starter POI guide** — POIs, card rooms, solo/multi base placements, cooldown anecdotes. URL: https://www.taptap.cn/moment/181472487316390022"
+    },
+    {
+      "id": "S18",
+      "line": 1327,
+      "citation": "- **[S18] [A] R&D selection 2023-03-01** — Selected recipe research, scoped to particular battle modes. URL: https://hero.yingxiong.com/info/2023/0301/13285.html"
+    },
+    {
+      "id": "S19",
+      "line": 1329,
+      "citation": "- **[S19] [A] Workshop + PVE 2024-07-03 and 2026 July** — Workshop Patterns, Credits, keys, PvE mode. URL: https://hero.yingxiong.com/info/2024/0703/13889.html"
+    },
+    {
+      "id": "S20",
+      "line": 1331,
+      "citation": "- **[S20] [A] Zombies Tide Trial 2026-04-28** — Territory cabinet upgrade, recipe share, PvE wave. URL: https://hero.yingxiong.com/info/2026/0428/14668.html"
+    },
+    {
+      "id": "S21",
+      "line": 1333,
+      "citation": "- **[S21] [A] Map POI UI and Uninhabited Island 2025-07-29** — Map UI, 24-minute instance, elite chance and Bizon. URL: https://hero.yingxiong.com/info/2025/0729/14292.html"
+    },
+    {
+      "id": "S22",
+      "line": 1335,
+      "citation": "- **[S22] [A] Ace Overlord mode 2026-01-28** — 49 plots, 7 days, capture timer, damage buffs, slow bullets. URL: https://hero.yingxiong.com/info/2026/0128/14574.html"
+    },
+    {
+      "id": "S23",
+      "line": 1337,
+      "citation": "- **[S23] [A] Zombie Trial update 2026-07-29** — Targeting rules, core salvage, repair, current cabinet spacing. URL: https://hero.yingxiong.com/m/info/2026/0729/14902.html"
+    },
+    {
+      "id": "S24",
+      "line": 1339,
+      "citation": "- **[S24] [C] Player ecology notes 2019-05-25** — Biome resource distribution and tactical caveats. URL: https://www.taptap.cn/moment/15218919606324324"
+    },
+    {
+      "id": "S25",
+      "line": 1341,
+      "citation": "- **[S25] [C] Historic 2019 crafting/recipe guides** — Ammo examples; compare other 2019 craft guides; NOT 2026. URL: https://www.9game.cn/daihaoyingxiong/3254982.html"
+    },
+    {
+      "id": "S26",
+      "line": 1343,
+      "citation": "- **[S26] [A] July 2026 international-aligned patch** — Classic mode coexistence; new researchable weapons; search UI. URL: https://hero.yingxiong.com/info/2026/0701/14825.html"
+    },
+    {
+      "id": "S27",
+      "line": 1345,
+      "citation": "- **[S27] [A] September 2026 recent official event info** — Current blueprint/event/store content; not core gameplay truth. URL: https://hero.yingxiong.com/info/2026/0909/15002.html"
+    },
+    {
+      "id": "S28",
+      "line": 1347,
+      "citation": "- **[S28] [B] App version release history** — Version number international 2.43 July, 2.44 July, 2.45 September 2026. URL: https://apptopia.com/ios/app/1463021419/about"
+    }
+  ],
+  "completeness": "All atlas named subsystem/POI/dependency/journey headings indexed. Implementation not started. Recorded examples are not confirmed universal 2019 facts."
+}
