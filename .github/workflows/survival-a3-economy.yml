@@ -48,6 +48,17 @@ jobs:
         run: python tools/survival/economy/simulate_economy.py --json "$ARTIFACT_DIR/balance_report.json"
       - name: Save-growth serialization model
         run: python tools/survival/economy/measure_save_growth.py --json "$ARTIFACT_DIR/save_growth_report.json"
+      - name: Product-facing progression/scarcity model (separate from conservation fixture)
+        run: |
+          python tools/survival/economy/model_progression.py --json "$ARTIFACT_DIR/progression_report.json"
+          python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json, os
+          r = json.load(open(os.environ['ARTIFACT_DIR'] + '/progression_report.json'))
+          b = r['baseline']
+          print('### A3 product progression model (SIMULATION_ONLY)')
+          print(f"Baseline: Ember discovery session {b['firsts'].get('discovery:core_ember')}, Frost {b['firsts'].get('discovery:core_frost')}, Ember manufacture {b['firsts'].get('manufacture:core_ember')}.")
+          print(f"Remaining late goals: {b['remaining_late_goal_count']}; native casts executed: {b['summary']['native_casts_executed']}.")
+          PY
       - uses: actions/upload-artifact@v4
         if: always()
         with:

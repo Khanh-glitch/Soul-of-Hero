@@ -1,12 +1,13 @@
 # SURV-030A — A3 Economy Architect
 
-Status: **sustained adversarial hardening authored; catalog/balance contracts and native SaveService adapter CI pass (362 checks / 20 cases); production integration and gameplay-design PASS NOT claimed.** See `HARDENING_STATUS.md`.
+Status: **hardening fixture accepted in scope (362 native checks / 20 cases); separate product-facing progression model authored as SIMULATION_ONLY SOH proposal; production integration and gameplay-design PASS NOT claimed.** See `HARDENING_STATUS.md` and `PRODUCT_PROGRESSION_AUDIT.md`.
 
 ## What this slice owns
 
 - Machine-readable economy catalogs: `data/survival/items/{items,sources,loot_tables,migration_map,a1_material_mapping}.json`, `data/survival/recipes/{recipes,stations,research}.json` and JSON Schemas.
 - Isolated runtime adapter: `game/survival/economy/economy_service.gd` (RefCounted, **not** an autoload, **not** a second save authority).
-- Validation/simulation/growth: `tools/survival/economy/{validate_economy,simulate_economy,measure_save_growth}.py`.
+- Validation/simulation/growth: `tools/survival/economy/{validate_economy,simulate_economy,measure_save_growth,model_progression}.py`.
+- Product progression audit: `PRODUCT_PROGRESSION_AUDIT.md`, `progression_report.json`, `data/survival/recipes/progression_model.json`. The older `balance_report.json` remains a technical conservation fixture, not a realistic playtest.
 - Safety contracts: `A0_SAVE_SERVICE_GUARD_CONTRACT.md`, `A0_ACTIVE_TICK_HOST_CONTRACT.md`, `A4_SKILL_ATTESTATION_CONTRACT.md`, `SAVE_GROWTH_AND_RETENTION.md`, `HARDENING_STATUS.md`.
 - Tests: `tests/survival/catalog/` (Python contract/balance tests + Godot adapter test against the real SaveService).
 - CI: `.github/workflows/survival-a3-economy.yml`.
@@ -46,6 +47,7 @@ python -m pip install -r tools/survival/economy/requirements.txt
 python tools/survival/economy/validate_economy.py --json docs/survival/economy/validation_report.json --index docs/survival/economy/reverse_index.json
 python -m unittest discover -s tests/survival/catalog -p 'test_*.py' -v
 python tools/survival/economy/simulate_economy.py --json docs/survival/economy/balance_report.json
+python tools/survival/economy/model_progression.py --json docs/survival/economy/progression_report.json
 # Native adapter (requires Godot 4.7):
 godot --headless --path . --script res://tests/survival/catalog/economy_adapter_test.gd
 ```
@@ -57,6 +59,7 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 | Schema/reference/accessibility/cycle audit | PASS (catalog contract feasibility) | `validation_report.json` |
 | Python adversarial/balance tests | PASS | `tests/survival/catalog/test_economy_contracts.py` |
 | Deterministic balance model | PASS for conservation invariants; **not** a playtest | `balance_report.json` |
+| Product progression/scarcity model | SIMULATION_ONLY SOH proposal; 21 Python tests locally; **not** human balance approval | `progression_report.json`, `PRODUCT_PROGRESSION_AUDIT.md` |
 | Native SaveService adapter | PASS (CI) | Godot 4.7 run [40868045642](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868045642), PR run [40868053966](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868053966) |
 | A0 station/power/unique-token guard integration | PENDING | `migration_map.json` |
 | A1 source/POI/risk integration | PENDING | `sources.json` proposed entries |
@@ -68,7 +71,8 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 1. Generic SaveService drop/transfer/merge can violate unique-token invariants unless A0 routes or refuses `soh_i_*` tokens.
 2. Station resolver is injected; production placement/power/condition/removal guards are A0-owned.
 3. Balance model currently shows knowledge-spare pressure can delay Core manufacture under baseline yields; this is a tuning finding, not a fun claim.
-4. Google Docs tab 04 sync is `DOCS_SYNC_PENDING` (connector disconnected).
+4. Google Docs tab 04 was synced for hardening; product-model sync is recorded in the tab after this increment.
+5. Product model still depends on provisional A1 POI/source bindings and unapproved aliases; Frost/Venom manufacture and late boat/seal-3 goals remain blocked.
 
 ## CI evidence
 

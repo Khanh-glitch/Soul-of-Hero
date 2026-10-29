@@ -29,3 +29,7 @@ PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/19 — **OPEN, NOT APPROVE
 ## NEXT_ATOMIC_ACTION
 
 Independent reviewer/coordinator: audit PR #19 at the final head against E-01…E-05 and the new native negatives; then route `A0_SAVE_SERVICE_GUARD_CONTRACT.md` + `A0_ACTIVE_TICK_HOST_CONTRACT.md` to A0 as the next integration implementation task. Do not merge PR #19 solely because CI is green.
+
+## Post-hardening product-model increment
+
+The accepted hardening fixture above is unchanged. A separate product-facing progression/scarcity model was added in `PRODUCT_PROGRESSION_AUDIT.md` / `progression_report.json`. It is SIMULATION_ONLY, does not execute Gold casts, does not approve A1 aliases, and does not convert the old 156-specimen conservation baseline into a playtest claim. PR #19 remains OPEN / NOT APPROVED FOR MERGE.

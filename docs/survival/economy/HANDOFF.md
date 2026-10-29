@@ -12,14 +12,16 @@
 - Validation/simulation: `tools/survival/economy/`
 - Tests: `tests/survival/catalog/`
 - CI: `.github/workflows/survival-a3-economy.yml`
-- Reports: `docs/survival/economy/{validation_report,balance_report,reverse_index}.json`
+- Reports: `docs/survival/economy/{validation_report,balance_report,reverse_index,save_growth_report,progression_report}.json`
+- Product progression model: `tools/survival/economy/model_progression.py`, `data/survival/recipes/progression_model.json`, `docs/survival/economy/PRODUCT_PROGRESSION_AUDIT.md`
 - A1 mapping: `data/survival/items/a1_material_mapping.json`, `docs/survival/economy/A1_MATERIAL_MAPPING.md` (27 contracts: 7 existing, 8 proposed aliases, 12 explicit missing)
 
 ## Evidence
 - Catalog audit: PASS (56 items, 36 recipes, 5 technologies, 36 sources, 7 stations; all contract-reachable; no production cycles).
 - Python adversarial/balance/mapping/schema/growth tests: 10/10 PASS locally at hardening authoring time.
 - Native Godot 4.7 SaveService adapter: hardening suite PASS at 17e0358b, 362 checks / 20 cases; push run 40878087266 and PR-side run 40878096753 both SUCCESS.
-- Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED.
+- Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED. The 156-specimen baseline is preserved as a technical fixture.
+- Product progression model: separate SIMULATION_ONLY SOH proposal; baseline Ember discovery session 3, Frost session 5, Ember sacrifice session 8, manufacture session 9; 5 late goals remain; 21 Python tests locally PASS before final CI.
 - Save-growth serialization model: schema-2 compaction saves ~409 KB in the 14-session model and ~14.6 MB at 100k receipts versus legacy duplicate commands; A0 receipt/terminal-instance retention still pending.
 
 ## Hardening status
@@ -38,6 +40,7 @@ See `HARDENING_STATUS.md`: E-01/E-02/E-03/E-04 PARTIAL with explicit A0/A4/A1 ga
 4. A6: consume read-only catalogs after A0/A1 contract freeze.
 5. Independent reviewer: audit transaction atomicity, unique ownership, salvage/reconstruction conservation, and replay binding.
 6. Design/playtest: measure knowledge-spare pressure, Core manufacture pacing, and exploration catalyst demand in the integrated world before any gameplay PASS.
+7. A1/Control Tower: review provisional product-model POI/source bindings (`early_roadside_salvage`, specimen vaults, catalyst vault) and keep frost_resin/venom_sac/peat unapproved until explicit source/sink decisions.
 
 ## Explicit non-claims
 - No Gold VFX/effect changes, no production overworld edits, no SaveService edits, no human playtest PASS, no offline production.
