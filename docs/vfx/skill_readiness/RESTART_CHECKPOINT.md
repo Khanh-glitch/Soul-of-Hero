@@ -2,37 +2,68 @@
 
 Written 2026-10-29. Branch `arena/4fa0fa84-soul-of-hero`, HEAD `9f5ec19`.
 
-## Status: NOT GREEN. One CI job is red.
+## Status: GREEN. Runtime CI 40811768711, all 24 jobs success.
 
-Runtime workflow run **40805377227** — https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40805377227
+https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40811768711
 
-| job | conclusion |
-|---|---|
-| Reject any production or source-factory mutation | success |
-| Disposable immutable Level 2 overlay | success |
-| Venomwright 1..21 vs original TypeScript (21 shards) | success (all 21) |
-| **Native Godot 4.7 runtime contract** | **failure** |
+HEAD `36752dc`. Source-native 6/93, source-parity-verified 6/93,
+host-adapter-castable 6/93, gold_visual_approved 0/93,
+production-integrated 0/93.
 
-Inventory workflow `40798541206`: success.
+### The red job is fixed, and it was never slow
 
-The single red job fails at step **"Full native lifecycle and fail-closed coverage"**
-with **exit code 124 (timeout)**. Nothing else in that job reports a failure — the
-12 downstream steps are skipped, not failed.
+Six runs died with exit code 124 (timeout). It was not a timeout on heavy
+work: the step runs in 1.2 s. A `--script` SceneTree does not exit on a
+script error, so the test ERRORED and then HUNG until `timeout` killed it.
 
-## Why this is unresolved
+Two defects behind the error:
+1. The lifecycle test lost its `_finish()` call. A splice applied an index
+   computed against one file to a different file, truncating the tail that
+   calls `quit()`.
+2. GDScript binds `%` tighter than `+`, so `"...%s..." + "...no placeholder"
+   % id` formats only the second literal and errors.
 
-The GitHub Actions **log and artifact download are unreachable from this sandbox**
-(`gh run view --log` → `EOF`; artifact zip → `SSL_ERROR_SYSCALL` against
-`productionresultssa11.blob.core.windows.net`, which is outside the network
-allowlist). The only reachable signals are:
+With the step running, three more defects surfaced that CI had never reached
+because they sit after the failing step:
+3. `venom_source_native_canvas.gd` assigned to `Image.data` (read-only in
+   Godot 4). Now `set_data()`, as the gold_pair canvases do.
+4. Two tests hardcoded "exactly 1 native / 92 fail-closed". Both derive the
+   split now.
+5. The harness asserted `emitted > 0` on a 32-tick window that ends before
+   several casts make contact. Moved to the full cast.
 
-- `gh api repos/Khanh-glitch/Soul-of-Hero/actions/jobs/<job_id>` → per-step status
-- `gh api repos/Khanh-glitch/Soul-of-Hero/check-runs/<job_id>/annotations` → the
-  `::error::` annotation, which is how "exit code 124" was obtained.
+### How to reproduce locally (this is what unblocked everything)
 
-So the failure *mode* is known (timeout) but the failure *site* inside
-`tests/gold93_runtime_lifecycle_test.gd` is not. Get the log from the GitHub UI
-first — one look at the log tail settles this.
+A trimmed Godot 4.7 build survived at
+`/home/user/tools_build/godot/bin/godot.linuxbsd.editor.x86_64`.
+Probe project: copy `prototypes/ game/ data/ docs/` into `/home/user/godotprobe`
+plus a minimal `project.godot`, then `--headless --editor --import --quit`,
+then `--headless --path . --script res://prototypes/skill_readiness/tests/<t>.gd`.
+Do NOT run Godot against the repo itself; the import writes `.uid` sidecars.
+
+If the binary is gone, rebuild trimmed (~40 `module_*_enabled=no` flags,
+`use_static_cpp=yes`, `-j2`) - a full editor build does not finish here.
+
+### Next genuinely unimplemented skill: Venomwright 007 Hatchery Fall
+
+Ported in `native/venom/venom_s3.gd`, NOT registered. Measured divergence
+against oracle `venomwright_007.json`, seed 7: raster matches for 89 ticks
+then diverges at tick 90; hit 22 knockback original `ky=-3.414105` vs port
+`ky=-3.414103`; hit counts 30/30 and cue counts 5/5 agree.
+
+`Math.hypot` was the leading suspect - the original measures every distance
+with it and the port used `sqrt(x*x + y*y)`. `M.hypot()` is now ported
+faithfully and applied throughout `venom_s3.gd`. It did NOT close the gap.
+
+Next thing to actually try: dump the native and original enemy/hatchling
+state at ticks 85-90 and diff them. The boids block (original `s2.ts:242-247`)
+was compared line by line against the port and matches, so look one level up
+- at the hatchling spawn/release and the `Cocoon` rupture pulse that fires
+around then - rather than at the flocking maths again.
+
+`v007_source_native.gd` exists but is not in `MODULE_PATHS` or
+`SOURCE_NATIVE_IDS`, and `venom_skills.gd` has no case 7. Registering it
+before the divergence is closed turns the skill-7 shard red.
 
 ## What was already tried (do not repeat)
 
