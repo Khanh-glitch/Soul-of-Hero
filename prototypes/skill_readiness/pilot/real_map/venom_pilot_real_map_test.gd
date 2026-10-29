@@ -70,7 +70,10 @@ func _capture_campaign_state(game: Node2D) -> void:
 	var ids: String = ""
 	for sid in skills_done:
 		ids += ("" if ids.is_empty() else ",") + ("%03d" % int(sid))
-	print("GOLD93_VENOM_REAL_MAP: %s | skills %s | real AppFlow Level2 | shots %d/%d | failures %d" % [
+	# The label is part of the verdict on purpose: this is a PRESENTATION overlay
+	# of native VFX on the real map. It is not native enemy integration, not a
+	# gameplay-damage integration and not a GOLD renderer comparison.
+	print("GOLD93_VENOM_REAL_MAP: %s | skills %s | real AppFlow Level2 | presentation overlay, not enemy integration | shots %d/%d | failures %d" % [
 		verdict, ids, total_shots, expected_shots, _real_map_failures])
 
 
@@ -123,6 +126,7 @@ func _run_skill(game: Node2D, knight: CharacterBody2D, level: DungeonLevel, fold
 
 	_verify(peak_fx > 0, "native effects were live on the real map (skill %03d)" % sid)
 	print("GOLD93_VENOM_REAL_MAP skill %03d | shots %d | peak_fx %d | live_fx_end %d" % [sid, shots_saved, peak_fx, int(stage.live_counts()["fx"])])
+	stage.dispose()
 	root.queue_free()
 	await get_tree().process_frame
 	return {"shots": shots_saved, "expected": shots.size()}

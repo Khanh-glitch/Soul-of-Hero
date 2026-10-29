@@ -11,7 +11,9 @@ extends RefCounted
 ## Nothing in this file redraws or fakes an effect: every pixel comes from the
 ## skill generator and the world's own `draw()` through the native `Layer`s.
 
-const WORLD = preload("res://prototypes/skill_readiness/native/venom/venom_world.gd")
+## Records the authored hit and cue events (observation only; same recorder
+## the original-source differential uses).
+const RECORDER = preload("res://prototypes/skill_readiness/pilot/venom_pilot_recording_world.gd")
 const ENGINE = preload("res://prototypes/skill_readiness/native/venom/venom_engine.gd")
 const SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")
 
@@ -41,7 +43,7 @@ func start(sid: int, as_overlay: bool = false) -> bool:
 	skill_id = sid
 	overlay = as_overlay
 	def = SKILLS.defs()[sid]
-	world = WORLD.new(ENGINE.WW, ENGINE.WH)
+	world = RECORDER.new(ENGINE.WW, ENGINE.WH)
 	world.cfg["density"] = DENSITY
 	world.reset_ids()
 	world.uid = 1
@@ -133,3 +135,37 @@ func _render() -> void:
 	layers["l"].reset()
 	layers["t"] = world.time
 	world.draw(layers)
+
+
+## Authored events recorded so far (copies; the live world keeps recording).
+## The headless gate snapshots these at the oracle end tick, before the
+## aftermath, exactly as the differential snapshots before teardown.
+func authored_hits() -> Array:
+	if world == null:
+		return []
+	return world.hits.duplicate(true)
+
+
+func authored_cues() -> Array:
+	if world == null:
+		return []
+	return world.cues.duplicate(true)
+
+
+## True when the native effects have actually finished: the authored timeline
+## reached `min_tick`, the cast generator and every nested task have ended, and
+## no effect or particle remains. The demo stops here, not at a fixed tick.
+func lifecycle_complete(min_tick: int) -> bool:
+	if world == null or not cast_started:
+		return false
+	if tick < min_tick:
+		return false
+	return world.tasks.is_empty() and world.fx.size() == 0 and world.parts.list.size() == 0
+
+
+## Ends every thread-backed generator of this stage. A generator parked in
+## `y()` keeps its thread alive, so a finished pilot run must drain before exit.
+func dispose() -> void:
+	if world != null:
+		world.drain_all()
+	world = null

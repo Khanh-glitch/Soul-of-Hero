@@ -11,10 +11,15 @@ extends Control
 ## Run:  godot --path . res://prototypes/skill_readiness/pilot/venom_pilot_demo.tscn
 
 const STAGE = preload("res://prototypes/skill_readiness/pilot/venom_pilot_stage.gd")
+const EVENTS = preload("res://prototypes/skill_readiness/pilot/venom_pilot_events.gd")
 
 const ORACLE_PATH := "res://docs/vfx/skill_readiness/oracle/venomwright_%03d.json"
-## Aftermath shown after the oracle's last tick, so cleanup is visible.
-const TAIL_TICKS: int = 360
+## The demo does NOT stop at a fixed tail after the recorded oracle end. It
+## runs the native timeline until the effects have actually finished (the cast
+## generator and its tasks have ended and no fx or particle remains). This
+## limit exists only so a broken cast cannot run forever. It is far beyond the
+## real finish: 006 completes near tick 724 and 010 near tick 1427.
+const SAFETY_LIMIT_TICKS: int = 3600
 const SPEEDS: Array = [0.25, 0.5, 1.0, 2.0]
 const NAMES: Dictionary = {6: "Graft Caravan", 10: "The Walking Crucible"}
 
@@ -38,6 +43,10 @@ var match_ok: int = 0
 var match_bad: int = 0
 var last_match: String = "-"
 var first_bad_tick: int = -1
+var glow_ok: int = 0
+var glow_bad: int = 0
+var events_checked: bool = false
+var events_text: String = "-"
 
 var _skill_pick: OptionButton
 var _speed_pick: OptionButton
@@ -130,7 +139,7 @@ func _toggle_play() -> void:
 
 
 func _step_once() -> void:
-	if stage == null:
+	if stage == null or _stop_reason() != "":
 		return
 	playing = false
 	_play_btn.text = "Play"
@@ -140,6 +149,8 @@ func _step_once() -> void:
 
 func _restart() -> void:
 	active_sid = _skill_pick.get_selected_id()
+	if stage != null:
+		stage.dispose()
 	stage = STAGE.new()
 	if not stage.start(active_sid):
 		_status.text = "Skill %d is not a pilot skill." % active_sid
@@ -154,9 +165,20 @@ func _restart() -> void:
 	last_match = "-"
 	first_bad_tick = -1
 	acc = 0.0
+	glow_ok = 0
+	glow_bad = 0
+	events_checked = false
+	events_text = "-"
 	playing = true
 	_play_btn.text = "Pause"
 	_refresh()
+
+
+func _exit_tree() -> void:
+	# Drain generator threads so the process exits cleanly.
+	if stage != null:
+		stage.dispose()
+		stage = null
 
 
 func _load_oracle(sid: int) -> Dictionary:
@@ -168,10 +190,6 @@ func _load_oracle(sid: int) -> Dictionary:
 	return parsed if parsed is Dictionary else {}
 
 
-func _end_tick() -> int:
-	return int(oracle.get("ticks", 0)) + TAIL_TICKS
-
-
 func _process(delta: float) -> void:
 	if stage == null or not playing:
 		return
@@ -180,24 +198,50 @@ func _process(delta: float) -> void:
 	if n <= 0:
 		return
 	acc -= float(n) * STAGE.F
-	n = mini(mini(n, 12), _end_tick() - stage.tick)
+	n = mini(mini(n, 12), SAFETY_LIMIT_TICKS - stage.tick)
 	for _i in range(n):
 		_advance(1)
-	if stage.tick >= _end_tick():
+		if _stop_reason() != "":
+			break
+	if _stop_reason() != "":
 		playing = false
 		_play_btn.text = "Play"
 	_refresh()
 
 
-## One original tick: advance, then check the GOLD raster hash on sampled ticks.
+## Why the demo should stop, or "" while the native effects are still running.
+func _stop_reason() -> String:
+	if stage == null:
+		return ""
+	if stage.lifecycle_complete(int(oracle.get("ticks", 0))):
+		return "lifecycle complete"
+	if stage.tick >= SAFETY_LIMIT_TICKS:
+		return "safety limit reached"
+	return ""
+
+
+## One original tick: advance, then check the GOLD raster hashes on sampled ticks
+## (scene AND glow) and, at the oracle end tick, the authored hit and cue events.
 func _advance(count: int) -> void:
 	for _i in range(count):
 		stage.advance(1)
 		var t: int = stage.tick
+		if t == int(oracle.get("ticks", 0)) and not events_checked:
+			events_checked = true
+			var hit_res: Array = EVENTS.compare(oracle.get("hits", []), stage.authored_hits())
+			var cue_res: Array = EVENTS.compare(oracle.get("cues", []), stage.authored_cues())
+			events_text = "hits %s  cues %s" % [
+				"MATCH" if bool(hit_res[0]) else "MISMATCH",
+				"MATCH" if bool(cue_res[0]) else "MISMATCH"]
 		if oracle_rows.has(t):
-			var want: String = String(oracle_rows[t]["scene_sha256"])
-			var got: String = _sha(stage.scene_bytes())
-			if got == want:
+			var row: Dictionary = oracle_rows[t]
+			var scene_ok: bool = _sha(stage.scene_bytes()) == String(row["scene_sha256"])
+			var glow_match: bool = _sha(stage.glow_bytes()) == String(row.get("glow_sha256", ""))
+			if glow_match:
+				glow_ok += 1
+			else:
+				glow_bad += 1
+			if scene_ok:
 				match_ok += 1
 				last_match = "MATCH t%d" % t
 			else:
@@ -227,23 +271,29 @@ func _refresh_status() -> void:
 	var c: Dictionary = stage.live_counts()
 	var phase: String = "casting"
 	var oracle_end: int = int(oracle.get("ticks", 0))
-	if stage.tick >= _end_tick():
-		phase = "finished (aftermath checked)"
+	var reason: String = _stop_reason()
+	if reason == "lifecycle complete":
+		phase = "finished: native effects ended"
+	elif reason == "safety limit reached":
+		phase = "STOPPED at safety limit (effects still live)"
 	elif stage.tick > oracle_end:
-		phase = "aftermath"
+		phase = "aftermath (native)"
 	elif not stage.cast_started:
 		phase = "pre-cast"
 	var lines: Array = []
 	lines.append("%03d %s" % [active_sid, NAMES.get(active_sid, "")])
+	lines.append("PRESENTATION PILOT: overlay of native VFX, not enemy integration")
 	lines.append("phase: %s" % phase)
-	lines.append("tick %d / %d   t=%.2fs" % [int(c.get("tick", 0)), _end_tick(), float(c.get("time", 0.0))])
+	lines.append("tick %d   t=%.2fs   recorded oracle ends at %d" % [int(c.get("tick", 0)), float(c.get("time", 0.0)), oracle_end])
 	lines.append("live fx %d   parts %d   enemies %d" % [int(c.get("fx", 0)), int(c.get("parts", 0)), int(c.get("enemies", 0))])
 	lines.append("")
-	lines.append("GOLD raster hash (recorded oracle, %d sampled ticks)" % oracle_rows.size())
-	lines.append("  matches %d   mismatches %d" % [match_ok, match_bad])
+	lines.append("recorded GOLD hashes (oracle, %d sampled ticks)" % oracle_rows.size())
+	lines.append("  scene matches %d   mismatches %d" % [match_ok, match_bad])
+	lines.append("  glow  matches %d   mismatches %d" % [glow_ok, glow_bad])
 	lines.append("  last check: %s" % last_match)
 	if first_bad_tick >= 0:
 		lines.append("  first mismatch tick: %d" % first_bad_tick)
+	lines.append("recorded events at oracle end: %s" % events_text)
 	_status.text = "\n".join(lines)
 
 
