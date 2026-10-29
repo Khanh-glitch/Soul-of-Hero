@@ -377,6 +377,7 @@ jobs:
           rc=$?
           cat "$ARTIFACT_DIR/survival-economy-session.log"
           echo "::notice::economy-session exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-economy-session.log" | tr '\n' '~')"
+          grep '^ECONOMY_GUI_TRACE ' "$ARTIFACT_DIR/survival-economy-session.log" | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-economy-session.log" | head -12 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-economy-session.log" "Economy session" "SURVIVAL ECONOMY SESSION PASSED"
           gate=$?

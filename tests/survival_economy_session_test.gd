@@ -42,13 +42,18 @@ func _body() -> void:
 	toggle_event.action = &"economy_toggle"
 	toggle_event.pressed = true
 	Input.parse_input_event(toggle_event)
+	await process_frame
 	toggle_event.pressed = false
 	Input.parse_input_event(toggle_event)
 	await process_frame
 	await process_frame
 	var panel: Node = ow.get(&"economy_panel")
 	var button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	print("ECONOMY_GUI_TRACE action=%s panel=%s visible=%s button=%s" % [str(InputMap.has_action(&"economy_toggle")), str(panel != null), str((panel.get_node_or_null("EconomyOverlay") as Control).visible if panel != null else false), str(button != null)])
 	_expect(button != null and button.is_visible_in_tree(), "normal economy input exposes hand-kit button")
+	if button == null or not button.is_visible_in_tree():
+		_body_complete = true
+		return
 	if button != null:
 		var click_position := root.get_final_transform() * (button.get_global_transform_with_canvas() * (button.size * 0.5))
 		var motion := InputEventMouseMotion.new()
