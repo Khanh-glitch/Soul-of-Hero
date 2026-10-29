@@ -509,6 +509,10 @@ func recover_death_bag(bag_id: String) -> bool:
 					return false
 				var record: Dictionary = (entries[raw_key] as Dictionary).duplicate(true)
 				var item_id := String(record.get("item_id", key))
+				# No A3 instance location exists for death bags yet. Never recover
+				# an injected/stale token as an uncoupled duplicate.
+				if item_id.strip_edges().to_lower().begins_with("soh_i_") or key.strip_edges().to_lower().begins_with("soh_i_"):
+					return false
 				if stacks.has(key):
 					key = String(save.call(&"_next_inventory_stack_key", stacks, item_id))
 				if key == item_id:

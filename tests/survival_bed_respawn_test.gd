@@ -247,6 +247,16 @@ func _body() -> void:
 		_expect(bool(bag.call(&"interact", hero)) and _count(STONE) == 3, "recover bag by real interaction without item loss")
 		_expect(not bool(svc.call(&"recover_death_bag", bag_id)), "replaying recovery cannot duplicate")
 	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "knowledge remains after bag recovery")
+	var inject_bag := func(candidate: Dictionary) -> bool:
+		var survival: Dictionary = candidate.get("survival", {})
+		var bags: Dictionary = survival.get("death_bags", {})
+		bags["synthetic_bad_bag"] = {"region": "hollow_marches", "position": [0, 0], "stacks": {token: {"kind": "key_item", "quantity": 1}}}
+		survival["death_bags"] = bags
+		candidate["survival"] = survival
+		return true
+	_expect(bool(_save().call(&"transact_once", "fixture.corrupt.bag", inject_bag)), "fixture injects a malformed duplicate token in a bag")
+	_expect(not bool(svc.call(&"recover_death_bag", "synthetic_bad_bag")) and _count(token) == 1,
+		"malformed unique-token bag is preserved and refused, not duplicated")
 	var first_bag_count: int = ((svc.call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).size()
 	hero.call(&"kill")
 	var second_doc: Dictionary = svc.call(&"document")
