@@ -1921,6 +1921,68 @@ def paint_court():
     return bordered + walked
 
 
+def paint_paved_wear():
+    """Lighten the middle of every large paved field, by distance from its edge.
+
+    Flagstone, dirt and gravel fields run to several hundred cells in places and one
+    tone across all of it is what makes a landmark's surroundings read as a repeating
+    texture instead of as ground somebody walks on. Sourced from the same BFS idea as
+    the cliff ramp, inverted: the cliff darkens inward because light does not reach
+    into it, a floor pales inward because it is worn.
+
+    Only fields deep enough to have a centre are touched - a three-cell apron in front
+    of a door does not want a gradient on it.
+    """
+    from collections import deque
+    paved_codes = "fdg"
+
+    def walkable_paved(x, y):
+        return ((get(solid, x, y) or "") == "."
+                and (get(ground, x, y) or ".") in paved_codes)
+
+    dist = {}
+    queue = deque()
+    for y in range(H):
+        for x in range(W):
+            if not walkable_paved(x, y):
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if not walkable_paved(x + dx, y + dy):
+                    dist[(x, y)] = 0
+                    queue.append((x, y))
+                    break
+    while queue:
+        x, y = queue.popleft()
+        d = dist[(x, y)]
+        if d >= 12:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if (nx, ny) in dist or not walkable_paved(nx, ny):
+                continue
+            dist[(nx, ny)] = d + 1
+            queue.append((nx, ny))
+
+    painted = 0
+    edges_trimmed = 0
+    for (x, y), d in dist.items():
+        if get(detail, x, y) != ".":
+            continue
+        # Dirt and moss collect in the seams near an edge; the middle is worn pale.
+        wobble = (vnoise(x, y, 2.4, 383) - 0.5) * 2.0
+        dd = d + wobble
+        if dd >= 8.0:
+            put(detail, x, y, "8")
+            painted += 1
+        elif dd >= 3.0:
+            put(detail, x, y, "7")
+            painted += 1
+        elif dd < 1.2 and (get(ground, x, y) or ".") == "f":
+            put(detail, x, y, "o")
+            edges_trimmed += 1
+    return painted, edges_trimmed
+
+
 def paint_kerbs():
     """A dressed-stone kerb round every paved surface.
 
@@ -2140,11 +2202,13 @@ def main():
     cliff_depth = paint_cliff_depth()
     cliff_ledges, cliff_piers = paint_cliff_face()
     court = paint_court()
+    wear, trimmed = paint_paved_wear()
     kerbs = paint_kerbs()
     print("softened %d road cells in camps, feathered %d cells" % (softened, feathered))
     print("stone mottle %d cells, cliff depth %d, facedges %d, piers %d"
           % (mottle, cliff_depth, cliff_ledges, cliff_piers))
     print("court: %d border + axial cells" % court)
+    print("paved wear %d cells, %d pebble-trimmed edges" % (wear, trimmed))
     print("pools %d cells, kerbs %d cells" % (pools, kerbs))
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop

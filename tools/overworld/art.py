@@ -1091,6 +1091,26 @@ def detail_cliff_depth(seed, strength):
     return img
 
 
+def detail_worn_stone(seed, strength):
+    """A pale wash marking stone that has been walked on.
+
+    The world's paved fields run for hundreds of cells of the same flagstone, and
+    that is what makes them read as texture rather than as places - the same defect
+    the cliff mass had. A cliff is answered by darkening with depth; a *floor* is the
+    other way round: a courtyard is trodden pale in the middle and collects dirt and
+    moss at its edges. So the same distance field that darkens the cliff mass
+    lightens the paving, and the two agree about where the centre of a thing is.
+    """
+    img = new(T, T)
+    base = mix(C("stone_hi"), C("bone"), 0.35)
+    for y in range(T):
+        for x in range(T):
+            n = h01(seed, x // 4, y // 4) - 0.5
+            a = int(max(0, min(255, 255 * strength * (0.86 + 0.28 * n))))
+            img.putpixel((x, y), (base[0], base[1], base[2], a))
+    return img
+
+
 def detail_stone(seed):
     """Weathered stone mottle, for the great rock and gravel plateaus.
 
@@ -1571,6 +1591,9 @@ DETAIL_BASE = {
     "4": ("cliff_shade4", lambda: detail_cliff_depth(219, 0.31)),
     "5": ("cliff_shade5", lambda: detail_cliff_depth(220, 0.38)),
     "6": ("cliff_shade6", lambda: detail_cliff_depth(221, 0.45)),
+    # Trodden paving: a pale wash by distance from the field edge.
+    "7": ("worn_stone1", lambda: detail_worn_stone(224, 0.12)),
+    "8": ("worn_stone2", lambda: detail_worn_stone(225, 0.22)),
     "^": ("soulspark", lambda: detail_soulspark(209)),
 }
 
