@@ -34,7 +34,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        skill: [7, 8, 18, 19, 20]
+        skill: [7, 8, 18, 19, 20, 21]
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2

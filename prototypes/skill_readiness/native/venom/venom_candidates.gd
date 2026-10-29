@@ -17,6 +17,7 @@ const R17 = preload("res://prototypes/skill_readiness/native/venom/venom_r17.gd"
 const R18 = preload("res://prototypes/skill_readiness/native/venom/venom_r18.gd")
 const R19 = preload("res://prototypes/skill_readiness/native/venom/venom_r19.gd")
 const R20 = preload("res://prototypes/skill_readiness/native/venom/venom_r20.gd")
+const R21 = preload("res://prototypes/skill_readiness/native/venom/venom_r21.gd")
 
 
 static func has_generator(skill_id: int) -> bool:
@@ -37,4 +38,6 @@ static func run_factory(skill_id: int):
 			return func(c): return R19.remedy(c)
 		20:
 			return func(c): return R20.cartography(c)
+		21:
+			return func(c): return R21.distillation(c)
 	return null
