@@ -51,6 +51,8 @@ var _cue_cursor: int = 0
 var _started: bool = false
 var _cast_fired: bool = false
 var _frames: int = 0
+var _damage_intents: int = 0
+var _status_intents: int = 0
 var _ink_peak: int = 0
 var _last_ink: int = 0
 var _host_targets: Array = []
@@ -189,6 +191,8 @@ func begin(cast_id: StringName, bus, params: Gold93SkillParameters) -> void:
 	_cast_obj = null
 	_hit_cursor = 0
 	_cue_cursor = 0
+	_damage_intents = 0
+	_status_intents = 0
 	_started = false
 	_cast_fired = false
 	_frames = 0
@@ -372,11 +376,13 @@ func _drain_hits() -> void:
 					contact, _source_to_world(),
 					StringName("venomwright_%s" % String(h.get("kind", "impact"))),
 					{"killed": bool(h.get("killed", false))}))
+		_damage_intents += 1
 		if float(h.get("stag", 0.0)) > 0.0:
 			emit(Gold93Intents.status(cast_id(), _source_tick, next_cursor(),
 						_target_key(int(h.get("e", -1))), &"stagger",
 						float(h.get("stag", 0.0)), 0.0,
 						{"source_cue": String(h.get("kind", ""))}))
+			_status_intents += 1
 	_hit_cursor = hits.size()
 
 
@@ -392,12 +398,14 @@ func _drain_cues() -> void:
 							_target_key(int(c.get("e", -1))),
 							StringName(String(c.get("key", ""))),
 							float(c.get("dur", 0.0)), 1.0, {"source_cue": "mark"}))
+				_status_intents += 1
 			"poison":
 				emit(Gold93Intents.status(cast_id(), _source_tick, next_cursor(),
 							_target_key(int(c.get("e", -1))), &"poison",
 							float(c.get("dur", 0.0)),
 							float(c.get("total", 0.0)),
 							{"source_cue": "poison"}))
+				_status_intents += 1
 			_:
 				pass
 	_cue_cursor = cues.size()
@@ -490,6 +498,8 @@ func stats() -> Dictionary:
 	var s: Dictionary = super.stats()
 	s["cast_fired"] = _cast_fired
 	s["frames_rendered"] = _frames
+	s["damage_intents"] = _damage_intents
+	s["status_intents"] = _status_intents
 	s["ink_peak"] = _ink_peak
 	s["skill_id"] = original_skill_id
 	return s

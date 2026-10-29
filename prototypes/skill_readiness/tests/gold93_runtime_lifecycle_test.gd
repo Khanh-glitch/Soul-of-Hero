@@ -119,6 +119,7 @@ func _initialize() -> void:
 	# on the first tick would still satisfy `can_cast()`. So each one is cast
 	# for real here: it must run, emit intents, produce non-empty rasters,
 	# replay deterministically, cancel cleanly and dispose.
+	var hb_emitted: int = 0
 	for id in runtime.readiness_report()["host_adapter_castable"]:
 		if not String(id).begins_with("venomwright:"):
 			continue
@@ -131,9 +132,22 @@ func _initialize() -> void:
 				% [id, hb_ticks])
 		var hb_res: Dictionary = hb.result()
 		var hb_intents: Dictionary = hb_res.get("intents", {})
-		_check(int(hb_intents.get("emitted", 0)) > 0,
-				"%s must emit at least one authored intent" % id)
 		var hb_stats: Dictionary = hb.module.stats() if hb.module != null else {}
+		# The adapter's real invariant is FAITHFUL TRANSMISSION, not "the cast
+		# happened to touch something": every authored hit and every status cue
+		# the source recorded must come out as exactly one typed intent - no
+		# drops, no duplicates. Requiring `emitted > 0` instead would be
+		# asserting the target layout rather than the adapter, and would fail
+		# whenever a lab fixture simply misses.
+		_check(int(hb_intents.get("emitted", 0))
+						== int(hb_stats.get("damage_intents", 0))
+						+ int(hb_stats.get("status_intents", 0)),
+				"%s must emit exactly one intent per authored event: %d emitted "
+				% [id, int(hb_intents.get("emitted", 0))]
+				+ "vs %d damage + %d status"
+				% [int(hb_stats.get("damage_intents", 0)),
+						int(hb_stats.get("status_intents", 0))])
+		hb_emitted += int(hb_intents.get("emitted", 0))
 		if hb_stats.has("frames_rendered"):
 			_check(int(hb_stats["frames_rendered"]) > 1,
 					"%s must render more than one frame" % id)
@@ -246,6 +260,10 @@ func _initialize() -> void:
 		_check(not String(id).begins_with("venomwright:") or src_native.has(id),
 				"host adapter %s is registered but no source-native generator executes "
 				+ "behind it: the module would be casting an approximation" % id)
+	# An adapter that transmitted nothing at all across every cast would still
+	# satisfy the per-skill 1:1 check, so the aggregate is asserted too.
+	_check(hb_emitted > 0,
+			"the host adapter must actually transmit authored events, got 0 intents")
 	_check(src_native.size() >= 1,
 			"at least one generator must be ported: a factory that ports nothing is not progress")
 	_check(host_cast.size() >= 1,
