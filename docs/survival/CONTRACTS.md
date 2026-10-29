@@ -68,6 +68,11 @@ adds no second inventory, no second save file and no second world.
 | CT-07 (reload restores exactly) | The scene is a projection of the document: `rebuild_from_save` on world build, `reconcile_from_save` on every state signal (add/remove/refresh only), and the chest's prompt is re-derived. Nothing else may add a structure node. | `SurvivalBuildSystem`, `SurvivalStructure` | cases 08, 12 |
 | CT-08 (recipe knowledge is permanent) | `learn_recipe` writes to `survival.knowledge.recipes` under its own transaction key; learning is idempotent and never grants items. | `SurvivalService.learn_recipe` | data-contract gate (no runtime case yet) |
 
+**Verified run:** [40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213) —
+`SURVIVAL FOUNDATION PASSED - 125 checks` on Godot 4.7 under Xvfb, all twelve cases,
+engine exit 0. That run is the evidence for every row above; the rows are not a
+design intent.
+
 ### Deliberately not claimed
 
 * **Roofed rooms, beds, respawn, farming, smelting, research stations, Skill Cores**

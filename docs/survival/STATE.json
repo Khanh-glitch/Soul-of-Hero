@@ -58,20 +58,16 @@
     {
       "id": "SURV-010",
       "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
-      "status": "in_progress",
+      "status": "verified",
       "evidence": [
-        "game/survival/survival_state.gd",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 — Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
+        "tests/survival_foundation_test.gd",
         "game/survival/survival_service.gd",
         "game/survival/survival_build_system.gd",
-        "game/survival/survival_resource_node.gd",
-        "game/survival/survival_structure.gd",
-        "data/survival/survival_catalog.json",
         "data/survival/hollow_marches_resources.json",
-        "tests/survival_foundation_test.gd",
-        ".github/workflows/survival-runtime-validation.yml",
-        "docs/survival/CONTRACTS.md implementation status table"
+        "docs/survival/WORKLOG.md (verified entry)"
       ],
-      "next": "Awaiting first green survival-runtime-validation run: parse gate, data contracts and the twelve-case native foundation test. Only that result may set code_claims.survival_system_integrated."
+      "next": "A0 slice verified on a real engine. NOT claimed: a human playthrough, balance, roofed rooms, beds, respawn, crafting or Skill Cores. Next is SURV-020 on the same contracts."
     },
     {
       "id": "SURV-020",
@@ -110,18 +106,17 @@
     }
   ],
   "next_action": {
-    "task_id": "SURV-010",
-    "owner": "A0",
+    "task_id": "SURV-020",
+    "owner": "A0+A2",
     "entrypoints": [
-      "game/survival/survival_service.gd",
       "game/survival/survival_build_system.gd",
-      "tests/survival_foundation_test.gd",
-      ".github/workflows/survival-runtime-validation.yml",
-      "docs/survival/CONTRACTS.md"
+      "game/survival/survival_service.gd",
+      "docs/survival/CONTRACTS.md",
+      "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Run survival-runtime-validation on the committed SHA; fix every failure it reports before claiming any part of the loop.",
-    "then": "SURV-020 roofed room + bed + respawn on top of the same contract set; A1 replaces the resource plan with the continent ecology without code changes.",
-    "design_gate": "A green native run of the twelve cases is required before STATE.json code_claims may change."
+    "first_test": "Enclosed wall room with a door -> roof fades when the player is inside and not otherwise; bed sets respawn; all of it survives reload through the same document.",
+    "parallel_start": "A1 replaces the resource plan with the continent ecology (no code change); A6 replaces the placeholder build art and the build strip; A7 re-tunes the four piece costs.",
+    "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
   "blockers": [
     {
@@ -164,14 +159,18 @@
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
     "google_docs_tab_06": "written+readback: original full uploaded research text, Git remains exact-bytes source",
     "google_docs_tab_07": "written+readback: 4 full design documents",
-    "runtime_implementation": "A0_SLICE_WRITTEN_NOT_YET_CI_VERIFIED",
+    "runtime_implementation": "A0_SLICE_VERIFIED_NATIVE_125_CHECKS",
     "a0_foundation": {
       "code": "game/survival/{survival_state,survival_service,survival_build_system,survival_resource_node,survival_structure}.gd; SurvivalService autoload in project.godot line 24",
       "data": "data/survival/survival_catalog.json; data/survival/hollow_marches_resources.json (91 nodes, 5 kinds)",
       "test": "tests/survival_foundation_test.gd (12 named cases, boots the production overworld scene)",
       "ci": ".github/workflows/survival-runtime-validation.yml (static contracts + native Xvfb runtime)",
-      "status": "written; no green run recorded yet; no native or Web playtest of the survival loop has happened"
-    }
+      "status": "verified_natively",
+      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213",
+      "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
+      "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
+    },
+    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
