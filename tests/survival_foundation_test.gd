@@ -553,6 +553,29 @@ func _body() -> void:
 		"case 10: L01 is still present in the gate system")
 	_expect(gate_ids.has(&"chapter_1_level_10"),
 		"case 10: L10 is still present in the gate system")
+	# Explicit per-entrance adversary: fixture repositions the real Hero (not an
+	# ordinary-input journey). A placement attempt at each authored threshold
+	# must be refused before payment/receipt, even though the gate remains live.
+	var original_position := player.global_position
+	var before_gate_builds: Dictionary = _save().call(&"get_snapshot")
+	build.select_piece("wall_wood")
+	var checked_gates := 0
+	for raw_landmark: Variant in world.data.get("landmarks", []):
+		if not raw_landmark is Dictionary:
+			continue
+		var landmark: Dictionary = raw_landmark
+		var threshold: Array = landmark.get("threshold", [])
+		if threshold.size() != 2:
+			continue
+		var cell := Vector2i(int(threshold[0]), int(threshold[1]))
+		player.global_position = Vector2(cell.x * 16 + 8, cell.y * 16 + 8)
+		var rejected: Dictionary = build.try_place(cell, "fixture.protected.gate.%d" % checked_gates)
+		_expect(not bool(rejected.get("ok", true)) and String(rejected.get("reason", "")) == "protected_place",
+			"case 10: authored gate %s refuses wall at threshold" % String(landmark.get("id", "?")))
+		checked_gates += 1
+	player.global_position = original_position
+	_expect(checked_gates == 10 and (_save().call(&"get_snapshot") as Dictionary) == before_gate_builds,
+		"case 10: all ten refusals leave save, inventory and receipts unchanged")
 
 	print("[case 08] begin")  # heartbeat: a crash names the case it died in
 	# -- 08 save / reload restores everything ----------------------------------
