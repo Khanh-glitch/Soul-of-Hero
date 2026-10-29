@@ -457,6 +457,23 @@ jobs:
           # Per-tick verdicts stay visible in the log even when the shard is green.
           python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level notice --title "venomwright-${{ matrix.skill }} verdict" --log "$LOG" --tail 0 --pattern 'GOLD93_VENOM_DIFFERENTIAL|"canonical"|"parity"|first_divergent_tick|SKIP'
 
+      - name: Venomwright differential diagnostics (always)
+        if: always()
+        shell: bash
+        run: |
+          # Runs even when the differential step died. Surfaces the Godot log
+          # tail and the watchdog samples as notices, because a step killed by
+          # the runner leaves no annotations behind.
+          LOG=/tmp/gold93-venom-diff-${{ matrix.skill }}.log
+          MEM=/tmp/gold93-venom-mem-${{ matrix.skill }}.log
+          echo "::notice::[venomwright-${{ matrix.skill }}] log exists=$( [ -f "$LOG" ] && echo yes || echo no ) bytes=$(stat -c %s "$LOG" 2>/dev/null || echo 0)"
+          if [ -f "$MEM" ]; then
+            tail -3 "$MEM" | while IFS= read -r l; do echo "::notice::[venomwright-${{ matrix.skill }}] mem $l"; done
+          fi
+          if [ -f "$LOG" ]; then
+            tail -25 "$LOG" | sed -e 's/%/%25/g' | while IFS= read -r l; do echo "::notice::[venomwright-${{ matrix.skill }}] log $l"; done
+          fi
+
   # ARCANA III gets its own matrix so a Venomwright regression can never be
   # masked by an ARCANA shard and vice versa. The two families are different
   # engines with different clocks, different rasters and different oracles.
