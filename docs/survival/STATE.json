@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-29",
-  "phase": "SYSTEMIC_FUSION_SPEC_APPROVED_MULTI_AGENT_READY_IMPLEMENTATION_NOT_STARTED",
+  "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
     "survival_system_integrated": false,
@@ -72,9 +72,22 @@
     {
       "id": "SURV-020",
       "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
-      "status": "not_started",
-      "evidence": [],
-      "next": "Extend validated 2D placement after SURV-010"
+      "status": "in_progress",
+      "evidence": [
+        "USER_REPORTED: agent started working on SURV-020; no SURV-020 code commit or runtime test verified at this checkpoint",
+        "docs/survival/tasks/SURV-020_WORK_ORDER.md"
+      ],
+      "next": "A0+A2 to deliver real Godot-native enclosed room/per-room roof fade/bed respawn/reload proof; update evidence only after pushed code and CI",
+      "assignment": {
+        "status": "USER_REPORTED_ACTIVE_NOT_CODE_VERIFIED",
+        "task_id": "SURV-020",
+        "owner": "A0+A2",
+        "assigned_date": "2026-10-29",
+        "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
+        "branch": "NOT_YET_VERIFIED",
+        "review": "NEXT_REQUIRES_ACTUAL_COMMIT_AND_NATIVE_TEST",
+        "user_reported": "Agent is working now; do not assume actual worktree/branch visibility"
+      }
     },
     {
       "id": "SURV-030",
@@ -111,12 +124,12 @@
     "entrypoints": [
       "game/survival/survival_build_system.gd",
       "game/survival/survival_service.gd",
-      "docs/survival/CONTRACTS.md",
-      "tests/survival_foundation_test.gd"
+      "game/survival/survival_structure.gd",
+      "docs/survival/tasks/SURV-020_WORK_ORDER.md"
     ],
-    "first_test": "Enclosed wall room with a door -> roof fades when the player is inside and not otherwise; bed sets respawn; all of it survives reload through the same document.",
-    "parallel_start": "A1 replaces the resource plan with the continent ecology (no code change); A6 replaces the placeholder build art and the build strip; A7 re-tunes the four piece costs.",
-    "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
+    "first_test": "Build enclosed two-room house, enter door, fade only occupied room's roof, activate bed, die/respawn, reload; preserve SURV-010 125 checks",
+    "parallel_start": "Other agents only on owned branches; no overwrite of in-flight A0/A2 work",
+    "design_gate": "Full Godot 4.7 native visual/physics/respawn evidence and regression CI required; user-reported working != Verified"
   },
   "blockers": [
     {
@@ -153,7 +166,7 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "verified_google_tabs_03_04_05_readback_2026_10_29; atlas_git_bb86778666012081cdf411b6d791b8798c374281",
+    "docs_sync": "Docs tab 04 needs follow-through for SURV-020 assignment; readback in this turn pending",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -170,7 +183,14 @@
       "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
       "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
     },
-    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it"
+    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it",
+    "pr10": {
+      "state": "MERGED",
+      "merge_commit": "2709b9f6bd0d1cc7a5b242e617184ddab0431470",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
+      "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
+    },
+    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
