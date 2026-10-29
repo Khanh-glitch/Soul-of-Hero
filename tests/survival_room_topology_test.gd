@@ -264,6 +264,47 @@ func _body() -> void:
 	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
 		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
 		"two chests hold independent contents")
+	# A modal cannot stop Input's polled state simply by accepting GUI events.
+	# Exercise the actual production polling seam with a visible modal root.
+	var modal := Control.new()
+	modal.add_to_group(&"gameplay_modal")
+	ow.add_child(modal)
+	var modal_cell := origin + Vector2i(5, 2)
+	player.global_position = Vector2((origin.x + 4) * 16 + 8, (origin.y + 2) * 16 + 8)
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	var target_world := Vector2(modal_cell * 16) + Vector2(8, 8)
+	root.warp_mouse(root.get_canvas_transform() * target_world)
+	await process_frame
+	build.select_piece("foundation_wood")
+	build.set_active(true)
+	_expect(build.preview_cell() == modal_cell, "modal test targets a real legal preview cell")
+	ow.set_process(false)
+	var modal_count := int(service.call(&"structure_count"))
+	var modal_wood := _count(WOOD)
+	Input.action_press(&"build_place")
+	ow.call(&"_handle_survival_input")
+	_expect(int(service.call(&"structure_count")) == modal_count and _count(WOOD) == modal_wood,
+		"visible modal suppresses polled placement and payment")
+	Input.action_release(&"build_place")
+	await process_frame
+	var cancel := InputEventAction.new()
+	cancel.action = &"ui_cancel"
+	cancel.pressed = true
+	ow.call(&"_unhandled_input", cancel)
+	_expect(build.active and ow.is_inside_tree(), "modal owns cancel without closing build or retreating")
+	modal.hide()
+	Input.action_press(&"build_place")
+	ow.call(&"_handle_survival_input")
+	_expect(int(service.call(&"structure_count")) == modal_count + 1 and _count(WOOD) == modal_wood - 2,
+		"after modal closes one polled placement charges exactly once")
+	Input.action_release(&"build_place")
+	await process_frame
+	ow.call(&"_unhandled_input", cancel)
+	_expect(not build.active and ow.is_inside_tree(), "cancel closes build without also retreating")
+	modal.queue_free()
+	ow.set_process(true)
 	_expect(build.structure_node(wall_to_remove).get_node_or_null("Solid") != null, "real wall collider exists")
 	_expect(bool(_save().call(&"reload_save")), "disk save reloaded")
 	ow = await _reload_world(ow)

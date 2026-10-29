@@ -551,15 +551,40 @@ func _process(delta: float) -> void:
 	_apply_fatigue()
 	_apply_hud()
 	_handle_survival_input()
-	if Input.is_action_just_pressed(&"pause") or Input.is_action_just_pressed(&"ui_cancel"):
+
+
+# Cancellation follows Godot's event dispatch instead of polling Input. A modal
+# that consumes Escape cannot also cause a retreat, and one Escape closes build
+# mode rather than both closing it and returning to the Sanctum.
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_echo() or not (event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel")):
+		return
+	if build_stage != BuildStage.READY:
+		return
+	if _has_gameplay_modal():
+		get_viewport().set_input_as_handled()
+		return
+	if survival_build != null and is_instance_valid(survival_build) and survival_build.active:
+		survival_build.set_active(false)
+	else:
 		_retreat_to_home()
+	get_viewport().set_input_as_handled()
+
+
+# A6 modal roots must join this group while visible; merely consuming mouse GUI
+# events is insufficient because build placement is polled from Input.
+func _has_gameplay_modal() -> bool:
+	for node: Node in get_tree().get_nodes_in_group(&"gameplay_modal"):
+		if node is CanvasItem and (node as CanvasItem).is_visible_in_tree():
+			return true
+	return false
 
 
 ## Build-mode input. Deliberately a small, self-contained block: survival does not
 ## touch the Knight's combat bindings, and the modal build tool is enterable and
 ## leavable with one key so an accidental press cannot trap the player.
 func _handle_survival_input() -> void:
-	if survival_build == null or not is_instance_valid(survival_build):
+	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():
 		return
 	if Input.is_action_just_pressed(&"build_toggle"):
 		survival_build.set_active(not survival_build.active)
@@ -567,9 +592,6 @@ func _handle_survival_input() -> void:
 			if survival_build.active else "Build closed")
 		return
 	if not survival_build.active:
-		return
-	if Input.is_action_just_pressed(&"ui_cancel"):
-		survival_build.set_active(false)
 		return
 	for index: int in 4:
 		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
@@ -579,6 +601,9 @@ func _handle_survival_input() -> void:
 					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])
 				return
 	if Input.is_action_just_pressed(&"build_place"):
+		var hovered := get_viewport().gui_get_hovered_control()
+		if hovered != null and hovered.is_visible_in_tree() and hovered.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+			return
 		var result := survival_build.try_place(survival_build.preview_cell())
 		if bool(result.get("ok", false)):
 			_say("Built %s." % survival_build.selected_piece.replace("_", " "))
