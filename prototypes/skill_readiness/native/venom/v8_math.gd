@@ -25,13 +25,13 @@ extends RefCounted
 ## large-argument reduction). None of the skill code reaches that range; the
 ## fallback below uses libm and is therefore not claimed exact there.
 
-const _INVPIO2 := 6.36619772367581382433e-01
-const _PIO2_1 := 1.57079632673412561417e+00
-const _PIO2_1T := 6.07710050650619224932e-11
-const _PIO2_2 := 6.07710050630396597660e-11
-const _PIO2_2T := 2.02226624879595063154e-21
-const _PIO2_3 := 2.02226624871116645580e-21
-const _PIO2_3T := 8.47842766036889956997e-32
+static var _INVPIO2: float = _w2f(0x3FE45F30, 0x6DC9C883)
+static var _PIO2_1: float = _w2f(0x3FF921FB, 0x54400000)
+static var _PIO2_1T: float = _w2f(0x3DD0B461, 0x1A626331)
+static var _PIO2_2: float = _w2f(0x3DD0B461, 0x1A600000)
+static var _PIO2_2T: float = _w2f(0x3BA3198A, 0x2E037073)
+static var _PIO2_3: float = _w2f(0x3BA3198A, 0x2E000000)
+static var _PIO2_3T: float = _w2f(0x397B839A, 0x252049C1)
 
 const _NPIO2_HW: Array = [
 	0x3FF921FB, 0x400921FB, 0x4012D97C, 0x401921FB, 0x401F6A7A, 0x4022D97C,
@@ -42,97 +42,95 @@ const _NPIO2_HW: Array = [
 	0x404858EB, 0x404921FB,
 ]
 
-const _S1 := -1.66666666666666324348e-01
-const _S2 := 8.33333333332248946124e-03
-const _S3 := -1.98412698298579493134e-04
-const _S4 := 2.75573137070700676789e-06
-const _S5 := -2.50507602534068634195e-08
-const _S6 := 1.58969099521155010221e-10
-const _C1 := 4.16666666666666019037e-02
-const _C2 := -1.38888888888741095749e-03
-const _C3 := 2.48015872894767294178e-05
-const _C4 := -2.75573143513906633035e-07
-const _C5 := 2.08757232129817482790e-09
-const _C6 := -1.13596475577881948265e-11
+# Exact constants for literals that the naive decimal parser rounds wrongly.
+static var _HUGE: float = _w2f(0x7E37E43C, 0x8800759C)
+static var _ONE_THIRD_A: float = _w2f(0x3FD55555, 0x55555555)
+static var _ONE_THIRD_B: float = _w2f(0x3FD55555, 0x55555555)
 
-const _ATANHI: Array = [4.63647609000806093515e-01, 7.85398163397448278999e-01,
-		9.82793723247329054082e-01, 1.57079632679489655800e+00]
-const _ATANLO: Array = [2.26987774529616870924e-17, 3.06161699786838301793e-17,
-		1.39033110312309984516e-17, 6.12323399573676603587e-17]
-const _AT: Array = [3.33333333333329318027e-01, -1.99999999998764832476e-01,
-		1.42857142725034663711e-01, -1.11111104054623557880e-01,
-		9.09088713343650656196e-02, -7.69187620504482999495e-02,
-		6.66107313738753120669e-02, -5.83357013379057348645e-02,
-		4.97687799461593236017e-02, -3.65315727442169155270e-02,
-		1.62858201153657823623e-02]
+static var _S1: float = _w2f(0xBFC55555, 0x55555549)
+static var _S2: float = _w2f(0x3F811111, 0x1110F8A6)
+static var _S3: float = _w2f(0xBF2A01A0, 0x19C161D5)
+static var _S4: float = _w2f(0x3EC71DE3, 0x57B1FE7D)
+static var _S5: float = _w2f(0xBE5AE5E6, 0x8A2B9CEB)
+static var _S6: float = _w2f(0x3DE5D93A, 0x5ACFD57C)
+static var _C1: float = _w2f(0x3FA55555, 0x5555554C)
+static var _C2: float = _w2f(0xBF56C16C, 0x16C15177)
+static var _C3: float = _w2f(0x3EFA01A0, 0x19CB1590)
+static var _C4: float = _w2f(0xBE927E4F, 0x809C52AD)
+static var _C5: float = _w2f(0x3E21EE9E, 0xBDB4B1C4)
+static var _C6: float = _w2f(0xBDA8FAE9, 0xBE8838D4)
 
-const _TINY := 1.0e-300
-const _PI_O_4 := 7.8539816339744827900e-01
-const _PI_O_2 := 1.5707963267948965580e+00
-const _PI := 3.1415926535897931160e+00
-const _PI_LO := 1.2246467991473531772e-16
+static var _ATANHI: Array = [_w2f(0x3FDDAC67, 0x0561BB4F), _w2f(0x3FE921FB, 0x54442D18), _w2f(0x3FEF730B, 0xD281F69B), _w2f(0x3FF921FB, 0x54442D18)]
+static var _ATANLO: Array = [_w2f(0x3C7A2B7F, 0x222F65E2), _w2f(0x3C81A626, 0x33145C07), _w2f(0x3C700788, 0x7AF0CBBD), _w2f(0x3C91A626, 0x33145C07)]
+static var _AT: Array = [_w2f(0x3FD55555, 0x5555550D), _w2f(0xBFC99999, 0x9998EBC4), _w2f(0x3FC24924, 0x920083FF), _w2f(0xBFBC71C6, 0xFE231671), _w2f(0x3FB745CD, 0xC54C206E), _w2f(0xBFB3B0F2, 0xAF749A6D), _w2f(0x3FB10D66, 0xA0D03D51), _w2f(0xBFADDE2D, 0x52DEFD9A), _w2f(0x3FA97B4B, 0x24760DEB), _w2f(0xBFA2B444, 0x2C6A6C2F), _w2f(0x3F90AD3A, 0xE322DA11)]
 
-const _PIO2_HI := 1.57079632679489655800e+00
-const _PIO2_LO := 6.12323399573676603587e-17
-const _PIO4_HI := 7.85398163397448278999e-01
-const _PS0 := 1.66666666666666657415e-01
-const _PS1 := -3.25565818622400915405e-01
-const _PS2 := 2.01212532134862925881e-01
-const _PS3 := -4.00555345006794114027e-02
-const _PS4 := 7.91534994289814532176e-04
-const _PS5 := 3.47933107596021167570e-05
-const _QS1 := -2.40339491173441421878e+00
-const _QS2 := 2.02094576023350569471e+00
-const _QS3 := -6.88283971605453293030e-01
-const _QS4 := 7.70381505559019352791e-02
+static var _TINY: float = _w2f(0x01A56E1F, 0xC2F8F359)
+static var _PI_O_4: float = _w2f(0x3FE921FB, 0x54442D18)
+static var _PI_O_2: float = _w2f(0x3FF921FB, 0x54442D18)
+static var _PI: float = _w2f(0x400921FB, 0x54442D18)
+static var _PI_LO: float = _w2f(0x3CA1A626, 0x33145C07)
 
-const _O_THRESHOLD := 7.09782712893383973096e+02
-const _U_THRESHOLD := -7.45133219101941108420e+02
-const _TWOM1000 := 9.33263618503218878990e-302
-const _LN2HI: Array = [6.93147180369123816490e-01, -6.93147180369123816490e-01]
-const _LN2LO: Array = [1.90821492927058770002e-10, -1.90821492927058770002e-10]
-const _INVLN2 := 1.44269504088896338700e+00
-const _EP1 := 1.66666666666666019037e-01
-const _EP2 := -2.77777777770155933842e-03
-const _EP3 := 6.61375632143793436117e-05
-const _EP4 := -1.65339022054652515390e-06
-const _EP5 := 4.13813679705723846039e-08
+static var _PIO2_HI: float = _w2f(0x3FF921FB, 0x54442D18)
+static var _PIO2_LO: float = _w2f(0x3C91A626, 0x33145C07)
+static var _PIO4_HI: float = _w2f(0x3FE921FB, 0x54442D18)
+static var _PS0: float = _w2f(0x3FC55555, 0x55555555)
+static var _PS1: float = _w2f(0xBFD4D612, 0x03EB6F7D)
+static var _PS2: float = _w2f(0x3FC9C155, 0x0E884455)
+static var _PS3: float = _w2f(0xBFA48228, 0xB5688F3B)
+static var _PS4: float = _w2f(0x3F49EFE0, 0x7501B288)
+static var _PS5: float = _w2f(0x3F023DE1, 0x0DFDF709)
+static var _QS1: float = _w2f(0xC0033A27, 0x1C8A2D4B)
+static var _QS2: float = _w2f(0x40002AE5, 0x9C598AC8)
+static var _QS3: float = _w2f(0xBFE6066C, 0x1B8D0159)
+static var _QS4: float = _w2f(0x3FB3B8C5, 0xB12E9282)
 
-const _LG1 := 6.666666666666735130e-01
-const _LG2 := 3.999999999940941908e-01
-const _LG3 := 2.857142874366239149e-01
-const _LG4 := 2.222219843214978396e-01
-const _LG5 := 1.818357216161805012e-01
-const _LG6 := 1.531383769920937332e-01
-const _LG7 := 1.479819860511658591e-01
-const _LN2_HI := 6.93147180369123816490e-01
-const _LN2_LO := 1.90821492927058770002e-10
-const _TWO54 := 1.80143985094819840000e+16
+static var _O_THRESHOLD: float = _w2f(0x40862E42, 0xFEFA39EF)
+static var _U_THRESHOLD: float = _w2f(0xC0874910, 0xD52D3051)
+static var _TWOM1000: float = _w2f(0x01700000, 0x00000000)
+static var _LN2HI: Array = [_w2f(0x3FE62E42, 0xFEE00000), _w2f(0xBFE62E42, 0xFEE00000)]
+static var _LN2LO: Array = [_w2f(0x3DEA39EF, 0x35793C76), _w2f(0xBDEA39EF, 0x35793C76)]
+static var _INVLN2: float = _w2f(0x3FF71547, 0x652B82FE)
+static var _EP1: float = _w2f(0x3FC55555, 0x5555553E)
+static var _EP2: float = _w2f(0xBF66C16C, 0x16BEBD93)
+static var _EP3: float = _w2f(0x3F11566A, 0xAF25DE2C)
+static var _EP4: float = _w2f(0xBEBBBD41, 0xC5D26BF1)
+static var _EP5: float = _w2f(0x3E663769, 0x72BEA4D0)
 
-const _BP: Array = [1.0, 1.5]
-const _DP_H: Array = [0.0, 5.84962487220764160156e-01]
-const _DP_L: Array = [0.0, 1.35003920212974897128e-08]
-const _PL1 := 5.99999999999994648725e-01
-const _PL2 := 4.28571428578550184252e-01
-const _PL3 := 3.33333329818377432918e-01
-const _PL4 := 2.72728123808534006489e-01
-const _PL5 := 2.30660745775561754067e-01
-const _PL6 := 2.06975017800338417784e-01
-const _PP1 := 1.66666666666666019037e-01
-const _PP2 := -2.77777777770155933842e-03
-const _PP3 := 6.61375632143793436117e-05
-const _PP4 := -1.65339022054652515390e-06
-const _PP5 := 4.13813679705723846039e-08
-const _PLG2 := 6.93147180559945286227e-01
-const _LG2_H := 6.93147182464599609375e-01
-const _LG2_L := -1.90465429995776804525e-09
-const _OVT := 8.0085662595372944372e-0017
-const _CP := 9.61796693925975554329e-01
-const _CP_H := 9.61796700954437255859e-01
-const _CP_L := -7.02846165095275826516e-09
-const _IVLN2 := 1.44269504088896338700e+00
-const _IVLN2_H := 1.44269502162933349609e+00
-const _IVLN2_L := 1.92596299112661746887e-08
+static var _LG1: float = _w2f(0x3FE55555, 0x55555593)
+static var _LG2: float = _w2f(0x3FD99999, 0x9997FA04)
+static var _LG3: float = _w2f(0x3FD24924, 0x94229359)
+static var _LG4: float = _w2f(0x3FCC71C5, 0x1D8E78AF)
+static var _LG5: float = _w2f(0x3FC74664, 0x96CB03DE)
+static var _LG6: float = _w2f(0x3FC39A09, 0xD078C69F)
+static var _LG7: float = _w2f(0x3FC2F112, 0xDF3E5244)
+static var _LN2_HI: float = _w2f(0x3FE62E42, 0xFEE00000)
+static var _LN2_LO: float = _w2f(0x3DEA39EF, 0x35793C76)
+static var _TWO54: float = _w2f(0x43500000, 0x00000000)
+
+static var _BP: Array = [_w2f(0x3FF00000, 0x00000000), _w2f(0x3FF80000, 0x00000000)]
+static var _DP_H: Array = [_w2f(0x00000000, 0x00000000), _w2f(0x3FE2B803, 0x40000000)]
+static var _DP_L: Array = [_w2f(0x00000000, 0x00000000), _w2f(0x3E4CFDEB, 0x43CFD006)]
+static var _PL1: float = _w2f(0x3FE33333, 0x33333303)
+static var _PL2: float = _w2f(0x3FDB6DB6, 0xDB6FABFF)
+static var _PL3: float = _w2f(0x3FD55555, 0x518F264D)
+static var _PL4: float = _w2f(0x3FD17460, 0xA91D4101)
+static var _PL5: float = _w2f(0x3FCD864A, 0x93C9DB65)
+static var _PL6: float = _w2f(0x3FCA7E28, 0x4A454EEF)
+static var _PP1: float = _w2f(0x3FC55555, 0x5555553E)
+static var _PP2: float = _w2f(0xBF66C16C, 0x16BEBD93)
+static var _PP3: float = _w2f(0x3F11566A, 0xAF25DE2C)
+static var _PP4: float = _w2f(0xBEBBBD41, 0xC5D26BF1)
+static var _PP5: float = _w2f(0x3E663769, 0x72BEA4D0)
+static var _PLG2: float = _w2f(0x3FE62E42, 0xFEFA39EF)
+static var _LG2_H: float = _w2f(0x3FE62E43, 0x00000000)
+static var _LG2_L: float = _w2f(0xBE205C61, 0x0CA86C39)
+static var _OVT: float = _w2f(0x3C971547, 0x652B82FE)
+static var _CP: float = _w2f(0x3FEEC709, 0xDC3A03FD)
+static var _CP_H: float = _w2f(0x3FEEC709, 0xE0000000)
+static var _CP_L: float = _w2f(0xBE3E2FE0, 0x145B01F5)
+static var _IVLN2: float = _w2f(0x3FF71547, 0x652B82FE)
+static var _IVLN2_H: float = _w2f(0x3FF71547, 0x60000000)
+static var _IVLN2_L: float = _w2f(0x3E54AE0B, 0xF85DDF44)
 
 # ---------------------------------------------------------------------------
 # IEEE word access (little-endian, matches __HI / __LO in fdlibm)
@@ -480,7 +478,7 @@ static func v8_exp(x: float) -> float:
 			lo = t * _LN2LO[0]
 		x = hi - lo
 	elif hx < 0x3E300000:
-		if 1.0e300 + x > 1.0:
+		if _HUGE + x > 1.0:
 			return 1.0 + x
 	var tt: float = x * x
 	var c: float = x - tt * (_EP1 + tt * (_EP2 + tt * (_EP3 + tt * (_EP4 + tt * _EP5))))
@@ -518,7 +516,7 @@ static func v8_log(x: float) -> float:
 				return 0.0
 			var dk0: float = float(k)
 			return dk0 * _LN2_HI + dk0 * _LN2_LO
-		var r0: float = f * f * (0.5 - 0.33333333333333333 * f)
+		var r0: float = f * f * (0.5 - _ONE_THIRD_A * f)
 		if k == 0:
 			return f - r0
 		var dk1: float = float(k)
@@ -640,7 +638,7 @@ static func v8_pow(x: float, y: float) -> float:
 		if ix > 0x3FF00000:
 			return sgn * (INF if hy > 0 else _TINY * _TINY)
 		var t: float = ax - 1.0
-		var w: float = (t * t) * (0.5 - t * (0.3333333333333333333333 - t * 0.25))
+		var w: float = (t * t) * (0.5 - t * (_ONE_THIRD_B - t * 0.25))
 		var u: float = _IVLN2_H * t
 		var v: float = t * _IVLN2_L - w * _IVLN2
 		t1 = _set_lo(u + v, 0)

@@ -103,5 +103,5 @@ func _diag() -> void:
 		print("DIAG rem n=", r[0], " y0=", _bits(r[1]), " y1=", _bits(r[2]))
 		print("DIAG k_sin=", _bits(V8._k_sin(r[1], r[2], 1)), " k_cos=", _bits(V8._k_cos(r[1], r[2])))
 	print("DIAG sin=", _bits(V8.v8_sin(x)), " cos=", _bits(V8.v8_cos(x)))
-	var q: float = absf(x) * 6.36619772367581382433e-01 + 0.5
+	var q: float = absf(x) * V8._INVPIO2 + 0.5
 	print("DIAG q=", _bits(q), " n=", int(floor(q)))
