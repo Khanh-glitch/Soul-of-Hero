@@ -24,7 +24,10 @@ ANNOTATE="$HERE/annotate_log.py"
 LOG="/tmp/gold93-${LABEL}.log"
 
 set +e
-timeout "${SECS}s" godot --headless --path . --script "$SCRIPT" "$@" > "$LOG" 2>&1
+# `-k` escalates to SIGKILL: a Godot process that ignores SIGTERM (for example
+# one blocked on a parked generator thread at exit) must still end here, or the
+# gate never reports its phase tail and the whole job waits for its job timeout.
+timeout -k 30 "${SECS}s" godot --headless --path . --script "$SCRIPT" "$@" > "$LOG" 2>&1
 STATUS=$?
 set -e
 
