@@ -14,6 +14,7 @@ extends RefCounted
 const S3 = preload("res://prototypes/skill_readiness/native/venom/venom_s3.gd")
 const S4 = preload("res://prototypes/skill_readiness/native/venom/venom_s4.gd")
 const R17 = preload("res://prototypes/skill_readiness/native/venom/venom_r17.gd")
+const R18 = preload("res://prototypes/skill_readiness/native/venom/venom_r18.gd")
 
 
 static func has_generator(skill_id: int) -> bool:
@@ -28,4 +29,6 @@ static func run_factory(skill_id: int):
 			return func(c): return S4.serpents(c)
 		17:
 			return func(c): return R17.extraction(c)
+		18:
+			return func(c): return R18.rain(c)
 	return null
