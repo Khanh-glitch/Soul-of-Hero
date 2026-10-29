@@ -1266,8 +1266,8 @@ def solid_cliff(mask_bits, seed=0):
     Any feature inside this tile repeats on the 3-tile variant lattice, and across
     a 380-tile band that is a grid. So the interior is a quiet bed with a
     per-variant tone step and a whisper of grit, and all the structure of a cliff
-    face comes from decals placed in world space (`cliff_ledge_*`,
-    `cliff_crack_*`, `cliff_buttress_*` in `art_props.py`), which can be
+    face comes from decals placed in world space (`cliff_ledge_a/b`,
+    `cliff_crack_*`, `cliff_pilaster` in `art_props.py`), which can be
     irregular because they are not tiled.
 
     The edge variants are a different case: they are seen in short runs along a

@@ -1234,17 +1234,36 @@ def paint_scatter():
     # cliff so nothing floats over a rim or overhangs a road. None of these frames
     # carries a collider, so they cannot make the mass walkable.
     def buried_in_cliff(x, y):
+        """How enclosed a cliff cell is: 8 = interior, 0 = bare rim.
+
+        This used to be a yes/no test - a cell counted only if all eight neighbours
+        were cliff - which kept decals off every rim and, as a side effect, off every
+        *narrow* run. Most of the world's masonry is narrow runs: the walls between
+        roads, and the bands around the beacon and the crypt. Those were left with
+        the bare tile and read as a repeating brick pattern across half a screen,
+        which is the defect the decals were built to answer.
+
+        Returning a count instead lets the caller thin the density toward the rim
+        instead of stopping dead at it: an interior cell takes the full band, a cell
+        with one exposed side takes a third of it, a bare rim takes none.
+        """
+        n = 0
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
+                if dx == 0 and dy == 0:
+                    continue
                 code = get(solid, x + dx, y + dy)
-                if not code or not code.startswith("#"):
-                    return False
-        return True
+                if code and code.startswith("#"):
+                    n += 1
+        return n
 
     for y in range(1, H - 1):
         for x in range(1, W - 1):
             code = get(solid, x, y)
-            if not code or not code.startswith("#") or not buried_in_cliff(x, y):
+            if not code or not code.startswith("#"):
+                continue
+            depth = buried_in_cliff(x, y)
+            if depth < 4:
                 continue
             r = h01(929, x, y)
             # Density is what turns a scatter of blobs into one mottled surface.
@@ -1252,6 +1271,9 @@ def paint_scatter():
             # mass read from above is *continuously* mottled, so the wet ~55 % of
             # the mass now carries a patch on roughly a third of its cells.
             band = 0.62 if h01(931, x // 5, y // 5) < 0.55 else 0.16
+            # Thin the band toward the rim so a wall keeps a readable edge: full
+            # strength at 8 enclosed neighbours, a third at 4.
+            band *= 0.34 + 0.083 * depth
             # Overlapping, off-centre: a patch is centred on the cell it is placed
             # on plus a per-cell jitter of up to half a tile, so neighbours overlap
             # and their soft edges blend. Placed dead-centre and non-overlapping,
@@ -1856,7 +1878,17 @@ def paint_court():
     # LANDMARKS rows are (id, level, name, region, pos, frame, kind, title).
     tx, ty = throne[4]
 
+    # The courtyard is a *place*, not a material: the flood has to be confined to
+    # the ground actually in front of the keep. Left unbounded it ran the length of
+    # the connected paving - which reaches ninety tiles east to the beacon - and
+    # scattered dressed court stone across half the map. Found by dumping the ground
+    # codes around the beacon and wondering why a court course was there.
+    cx0, cx1 = tx - 34, tx + 34
+    cy0, cy1 = ty - 14, ty + 36
+
     def paved(x, y):
+        if not (cx0 <= x <= cx1 and cy0 <= y <= cy1):
+            return False
         cell = get(ground, x, y) or "."
         return cell in "fd"
 
