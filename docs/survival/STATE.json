@@ -76,9 +76,10 @@
       "evidence": [
         "Storage-safety increment only: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485 at 77c639331d8d4b0c472e86e7538275e6778aa697 — Godot 4.7 Xvfb, SURVIVAL FOUNDATION PASSED - 132 checks, engine exit 0",
         "docs/survival/tasks/SURV-020_WORK_ORDER.md",
-        "Native topology increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794 at 4afe3d94cea92be9cc2355f3fb8362ab358907f4; foundation 132 and topology 50 checks; not full acceptance"
+        "Native topology increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794 at 4afe3d94cea92be9cc2355f3fb8362ab358907f4; foundation 132 and topology 50 checks; not full acceptance",
+        "Native door increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097 at 30cb746e4f1881c86abefc6cdd229ee0c2ef6011; foundation 132 and topology/door 62 checks; not full acceptance"
       ],
-      "next": "Implement persistent physical door state and safe player interaction, with collision/raycast and reload tests; then per-room roof rendering and bed/respawn.",
+      "next": "Implement per-room roof rendering and doorway transition/hysteresis in the production overworld; capture and inspect native outside, inside and adjacent-room frames; then bed/death/respawn.",
       "assignment": {
         "status": "CODE_IN_PROGRESS_STORAGE_INCREMENT_NATIVE_TESTED",
         "task_id": "SURV-020",
@@ -128,7 +129,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Implement door open/closed physics via deferred CollisionShape2D updates; reject closure on overlapping actor; test actual production-world traversal, reload and unchanged room topology. Then build independent per-room roofs.",
+    "first_test": "Implement per-room roof overlays and bounded room-transition hysteresis; test the production Hero entering/exiting adjacent rooms with unrelated roof unaffected and capture actual outside/inside/multi-room Xvfb frames.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -167,7 +168,7 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected for 4afe3d94 topology checkpoint",
+    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected for 30cb746e door checkpoint",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -199,6 +200,13 @@
       "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794",
       "result": "Godot 4.7 Xvfb: foundation 132, topology 50 checks, exit 0; far buildings 66 flood cells, local breach 34; no native roof screenshots",
       "limitations": "door physical open/close, navigation, per-room roof, bed, respawn and full playable scenario not implemented; large components fail closed; cache indexes structure set per topology change; full sweep logical request replay remains unproven"
+    },
+    "surv_020_door": {
+      "status": "PARTIAL_NATIVE_PASS_NOT_COMPLETE",
+      "commit": "30cb746e4f1881c86abefc6cdd229ee0c2ef6011",
+      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097",
+      "result": "Godot 4.7 Xvfb foundation 132 and topology/door/storage 62 checks; collision tested with Hero CharacterBody2D.test_move, not input-driven walk",
+      "limitations": "roof, bed, respawn, non-player actor clearance, dynamic navigation, screenshots, Web shelter and full scenario unverified"
     }
   },
   "design_authority": {
