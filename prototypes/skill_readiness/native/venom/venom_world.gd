@@ -296,6 +296,15 @@ func _end_task(t: Dictionary) -> void:
 		g.dispose()
 
 
+## Drain every still-suspended generator at the end of a run. A body parked in
+## `y()` keeps its thread blocked; leaving it there at process exit crashes
+## the engine (silent native abort), so harnesses must call this when done.
+func drain_all() -> void:
+	for t in tasks:
+		_end_task(t)
+	tasks.clear()
+
+
 ## Drain every running generator before the world's state is cleared, so no
 ## suspended body can write into a half-reset world.
 func _end_all_tasks() -> void:

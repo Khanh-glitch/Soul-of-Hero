@@ -408,6 +408,9 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			if _verbose and which == "":
 				print("  tick %4d OK  scene=%s" % [n, got["scene_sha256"]])
 
+	# Suspended generator threads must be drained before the process exits.
+	w.drain_all()
+
 	if not casted:
 		_fail("skill %d: cast never fired (cast_tick=%d, ticks=%d)"
 				% [sid, cast_tick, ticks])
