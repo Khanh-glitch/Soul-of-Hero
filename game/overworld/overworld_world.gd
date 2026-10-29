@@ -66,6 +66,10 @@ const SOLID_PROP_PREFIXES := [
 	"lm_", "short_bridge", "short_rubble", "short_conduit", "short_valve",
 	"wall_stub", "tree_dead", "tree_pine", "column", "statue", "camp_tent",
 	"cart", "sarcophagus",
+	# Camp furniture is solid for the same reason a tent is: a pavilion you can walk
+	# through is not a pavilion. Added with the frames, not after; every one of them
+	# is placed off the approach lane and the bake refuses any that is not.
+	"camp_pavilion", "camp_wagon", "camp_rack", "camp_cookfire", "camp_table",
 ]
 
 var width: int = 0

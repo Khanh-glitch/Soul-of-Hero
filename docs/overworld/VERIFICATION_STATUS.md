@@ -718,3 +718,57 @@ station did not disturb the capture comparison.
 - No human has seen any of this as a native Godot screenshot. Everything above is
   judged from offline renders of the shipped atlas, which share the atlas and the
   per-cell variant hash with the runtime but are not the runtime.
+
+## Eleventh pass — weathering, and a wall that was not a wall
+
+### The court flood leaked
+
+`paint_court()` floods flagstone from the keep's foot and lays a border course and a
+processional walk. The flood was unbounded, and the paving connected to the keep runs
+ninety tiles east: dressed court stone was appearing around the beacon and a third of
+the way across the map. Found by dumping the ground codes around the beacon and asking
+why a court course was there. The flood is confined to the ground in front of the keep;
+1179 cells became 510.
+
+### The narrow walls had no weathering
+
+Cliff decals were restricted to cells with all eight neighbours solid — which is exactly
+the deep interior, and most of the world's masonry is not deep. The walls between roads,
+and the bands around the beacon and the crypt, are two and three cells thick, so they
+carried the bare tile and read as one repeating brick pattern across half a screen. That
+is the defect the decals exist to answer; they were never reaching it.
+
+The test now returns *how* enclosed a cell is and thins the decal band toward the rim
+instead of stopping dead: full strength at eight enclosed neighbours, a third at four,
+nothing on a bare rim. +1036 weathering decals, every wall keeps a readable edge.
+
+### …which broke the occlusion suite, correctly
+
+NATIVE RUNTIME went red on `nothing is faded from 420 px away (1)`. The cause was real.
+A 44x44 patch centred on a wall cell necessarily overhangs the walkable ground just
+south of it, so a player standing at the foot of such a wall was inside a patch's rect
+and the occlusion system faded a piece of masonry they were nowhere near.
+
+The decals are *surface* — weathered rock, and a projecting lip at the foot of a wall —
+so they now sit in `FLAT_PROPS` with the camp bedroll: drawn under the player, never
+occluders. A wall is not a thing standing in front of you, and neither is the pattern
+on it. Green again at `d4b4d16d`.
+
+The pass also moved `cliff_pilaster`'s foot from two tiles south of the face to one,
+which is where it looked like it was standing but was not where it sorted.
+
+### Camp furniture is solid
+
+The five new camp frames were decoration only, which made a pavilion you could walk
+through. They are now in `SOLID_PROP_PREFIXES` with the tents and carts; all four
+clearings still pass the bake's reachability gate and the topology validator, so no
+piece of furniture is standing in an approach lane.
+
+### Still open
+
+- The large paved fields still read as fields. The worn washes and the pebble trim give
+  them tonal variation at the right scale, but they have no *layout* the way the L10
+  court now does, and doing that for every plaza is level design, not decoration.
+- `MIN_OCCLUDER_HEIGHT` is 26 px, so anything shorter than a bedroll is invisible to the
+  occlusion system by construction. That has never been a problem yet; it is the kind of
+  thing that becomes one.
