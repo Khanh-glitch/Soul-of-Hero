@@ -27,6 +27,25 @@ func _tap_action(action: StringName) -> void:
 	await physics_frame
 	await process_frame
 
+func _click_window(position: Vector2) -> void:
+	var motion := InputEventMouseMotion.new()
+	motion.position = position
+	Input.parse_input_event(motion)
+	var press := InputEventMouseButton.new()
+	press.position = position
+	press.button_index = MOUSE_BUTTON_LEFT
+	press.pressed = true
+	Input.parse_input_event(press)
+	await physics_frame
+	await process_frame
+	var release := InputEventMouseButton.new()
+	release.position = position
+	release.button_index = MOUSE_BUTTON_LEFT
+	release.pressed = false
+	Input.parse_input_event(release)
+	await physics_frame
+	await process_frame
+
 func _gather_until(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability, kind: String, item: String, quantity: int) -> bool:
 	var camera := ow.get(&"camera") as Camera2D
 	for attempt in range(80):
@@ -281,10 +300,23 @@ func _body() -> void:
 	if not moved_door:
 		_body_complete = true
 		return
+	# Interaction chooses the nearest object, not the clicked screen position.
+	# From the cell centre the bed can be nearer than the door's top-left origin;
+	# physically approach the door, without walking into its closed collider.
+	var door := build.structure_node(door_id)
+	for _frame in range(60):
+		if hero.global_position.y <= door.global_position.y + 22.0:
+			break
+		_set_direction(Vector2.UP * 16.0)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	await physics_frame
+	print("HOME_DOOR_APPROACH hero=%s door=%s bed=%s chest=%s" % [str(hero.global_position), str(door.global_position), str(build.structure_node(bed_id).global_position), str(chest.global_position)])
 	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
 	var opened := bool(((_survival().call(&"structures") as Dictionary).get(door_id, {}) as Dictionary).get("door_open", false))
 	_expect(opened, "ordinary world click opens the paid door")
 	if not opened:
+		print("HOME_DOOR_FAIL door=%s bed=%s chest=%s" % [str(door.last_interaction()), str(build.structure_node(bed_id).last_interaction()), str(chest.last_interaction())])
 		_body_complete = true
 		return
 	await physics_frame
