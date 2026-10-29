@@ -63,8 +63,12 @@ func _body() -> void:
 	Input.action_press("move_up")
 	for i in range(120):
 		await physics_frame
+	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d north_solid=%s gap=%s" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count(), str(world.is_solid_cell(gap.x, gap.y - 1)), str(build.entity_at_layer(gap, "object"))])
+	for index in range(hero.get_slide_collision_count()):
+		var hit := hero.get_slide_collision(index)
+		var collider := hit.get_collider()
+		print("HERO_EXIT_COLLISION collider=%s path=%s point=%s normal=%s" % [str(collider), str((collider as Node).get_path() if collider is Node else "non-node"), str(hit.get_position()), str(hit.get_normal())])
 	Input.action_release("move_up")
 	await physics_frame
-	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count()])
 	_expect(hero.global_position.y < origin.y * 16, "actual Hero walks through unsealed last opening")
 	_body_complete = true
