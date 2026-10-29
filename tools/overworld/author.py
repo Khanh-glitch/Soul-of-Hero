@@ -670,6 +670,51 @@ def prop_height_tiles(frame):
     return max(1, int(round(float(meta.get("h", 64)) / TILE)))
 
 
+def _forecourt(lid, tx, ty, kind, seed):
+    """Furniture in the near foreground of a landmark's approach.
+
+    Reviewed all ten landmark frames at native 2x and found the same fault in each:
+    the building, the approach and the plaza were all *ahead* of the player - north of
+    them, in screen terms - and nothing was ever in front. A 26-tile-wide plaza with
+    the player standing at its south edge is a full screen of paving with the
+    destination far away at the top, so every landmark read as a wall seen from a
+    distance rather than a place arrived at.
+
+    The forecourt is placed south of the approach, on the line the player walks in on,
+    offset left and right so it frames the route rather than blocking it. What it
+    holds depends on the kind of place: a colonnade for a temple, grave furniture for
+    a necropolis, broken masonry for a ruin.
+    """
+    bench_xs = (-7, 7)
+    if kind in ("sacred", "schism", "throne", "ritual"):
+        for dx in (-9, -7, 7, 9):
+            add_prop("column" if abs(dx) == 9 else "column_broken",
+                     *tile_pos(tx + dx, ty + 8), z=1)
+        for dx in (-4, 4):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 10), lit=True)
+    elif kind in ("undead", "bone"):
+        for dx in (-11, -9, -5, 5, 9, 11):
+            add_prop("gravestone" if dx % 4 else "grave_cross",
+                     *tile_pos(tx + dx, ty + 9))
+        # Kept out of the middle: the sarcophagus sits beside the route, not on it.
+        add_prop("sarcophagus", *tile_pos(tx - 12, ty + 11), z=1)
+    elif kind == "military":
+        for dx in (-9, 9):
+            add_prop("wall_stub", *tile_pos(tx + dx, ty + 9), z=1)
+            add_prop("brazier", *tile_pos(tx + dx, ty + 12), lit=True)
+    elif kind == "fire":
+        for dx in (-8, 8):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 9), lit=True)
+        add_prop("cart", *tile_pos(tx + 6, ty + 12), z=1)
+    else:
+        for dx in (-8, 8):
+            add_prop("column_broken", *tile_pos(tx + dx, ty + 9), z=1)
+    # A low marker at each side of the mouth of the approach: two dots the eye can
+    # use to judge the walk, which a bare plaza does not give it.
+    for dx in bench_xs:
+        add_prop("lamp", *tile_pos(tx + dx, ty + 12), lit=True)
+
+
 def paint_landmarks():
     for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS:
         plaza(tx, ty + 3, 13, seed=stable_seed(lid))
@@ -681,6 +726,7 @@ def paint_landmarks():
         # while standing on its own threshold.
         approach([(tx, ty + 2), (tx, ty - 1)], 2.4)
         add_prop(visual, *tile_pos(tx, ty), lit=kind in ("fire", "ritual", "soul"))
+        _forecourt(lid, tx, ty, kind, stable_seed(lid + "_forecourt"))
         # each approach gets its own furniture so the silhouette has context
         if kind == "undead":
             for dx in (-9, 9):
