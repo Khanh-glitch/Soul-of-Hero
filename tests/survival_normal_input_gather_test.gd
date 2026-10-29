@@ -92,6 +92,21 @@ func _click_window(position: Vector2) -> void:
 	Input.parse_input_event(click)
 	await process_frame
 
+func _scroll_to(scroll: ScrollContainer, control: Control) -> bool:
+	for _i: int in range(60):
+		if scroll.get_global_rect().has_point(control.get_global_rect().get_center()):
+			return true
+		var wheel := InputEventMouseButton.new()
+		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
+		wheel.button_index = MOUSE_BUTTON_WHEEL_UP if control.get_global_rect().get_center().y < scroll.get_global_rect().position.y else MOUSE_BUTTON_WHEEL_DOWN
+		wheel.pressed = true
+		Input.parse_input_event(wheel)
+		await process_frame
+		wheel.pressed = false
+		Input.parse_input_event(wheel)
+		await process_frame
+	return scroll.get_global_rect().has_point(control.get_global_rect().get_center())
+
 func _tap_action(action: StringName) -> void:
 	var event := InputEventAction.new()
 	event.action = action
@@ -196,6 +211,22 @@ func _body() -> void:
 			await create_timer(0.3).timeout
 		await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
 	_expect(_count(WOOD) == wood_before + 6, "ordinary world clicks collect starter wood")
+	var fibre_before := _count("reed_fibre")
+	for group_index: int in range(2):
+		var reed := await _walk_to_kind(ow, hero, navigation, "reed_clump")
+		_expect(reed != null and not bool(hero.get(&"dead")), "ordinary movement reaches a harvestable reed node")
+		if reed == null:
+			_body_complete = true
+			return
+		camera.reset_smoothing()
+		camera.force_update_scroll()
+		await process_frame
+		var hits := 2 if group_index == 0 else 1
+		for swing: int in range(hits):
+			if swing > 0:
+				await create_timer(0.3).timeout
+			await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	_expect(_count("reed_fibre") == fibre_before + 3, "ordinary world clicks collect the workbench's reed inputs")
 	var toggle := InputEventAction.new()
 	toggle.action = &"economy_toggle"
 	toggle.pressed = true
@@ -253,20 +284,9 @@ func _body() -> void:
 		_body_complete = true
 		return
 	var scroll := scrolls[0] as ScrollContainer
-	for _i: int in range(40):
-		if scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()):
-			break
-		var wheel := InputEventMouseButton.new()
-		wheel.position = root.get_final_transform() * (scroll.get_global_transform_with_canvas() * (scroll.size * 0.5))
-		wheel.button_index = MOUSE_BUTTON_WHEEL_DOWN
-		wheel.pressed = true
-		Input.parse_input_event(wheel)
-		await process_frame
-		wheel.pressed = false
-		Input.parse_input_event(wheel)
-		await process_frame
-	_expect(scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()), "ordinary wheel input reaches the collect control")
-	if not scroll.get_global_rect().has_point(collect_button.get_global_rect().get_center()):
+	var collect_visible := await _scroll_to(scroll, collect_button)
+	_expect(collect_visible, "ordinary wheel input reaches the collect control")
+	if not collect_visible:
 		_body_complete = true
 		return
 	await _click_window(root.get_final_transform() * (collect_button.get_global_transform_with_canvas() * (collect_button.size * 0.5)))
@@ -311,5 +331,60 @@ func _body() -> void:
 		if String((structures[key] as Dictionary).get("piece", "")) == "station_workbench":
 			station_id = String(key)
 	_expect(not station_id.is_empty() and _count("workbench_kit") == 0, "ordinary placement input pays for the physical workbench")
-	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty(), "paid workbench survives reload")
+	if station_id.is_empty():
+		_body_complete = true
+		return
+	await _tap_action(&"economy_toggle")
+	var weave_button := panel.find_child("Recipe_weave_cloth_%s" % station_id, true, false) as Button
+	var weave_scrolls := panel.find_children("*", "ScrollContainer", true, false)
+	_expect(weave_button != null and not weave_scrolls.is_empty(), "nearby paid bench exposes its real weave recipe")
+	if weave_button == null or weave_scrolls.is_empty():
+		_body_complete = true
+		return
+	var weave_scroll := weave_scrolls[0] as ScrollContainer
+	var weave_visible := await _scroll_to(weave_scroll, weave_button)
+	_expect(weave_visible, "ordinary wheel input reaches the workbench recipe")
+	if not weave_visible:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (weave_button.get_global_transform_with_canvas() * (weave_button.size * 0.5)))
+	var weave_id := ""
+	for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+		var candidate_job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
+		if String(candidate_job.get("target", "")) == "weave_cloth":
+			weave_id = String(key)
+	_expect(not weave_id.is_empty() and _count("reed_fibre") == fibre_before, "workbench GUI reserves player-gathered reeds")
+	if weave_id.is_empty():
+		_body_complete = true
+		return
+	await _tap_action(&"economy_toggle")
+	var weave_deadline := Time.get_ticks_msec() + 30000
+	var weave_job: Dictionary = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	while Time.get_ticks_msec() < weave_deadline and String(weave_job.get("status", "")) != "ready":
+		await process_frame
+		weave_job = (host.call(&"jobs") as Dictionary).get(weave_id, {})
+	_expect(String(weave_job.get("status", "")) == "ready", "active ordinary gameplay completes workbench production")
+	if String(weave_job.get("status", "")) != "ready":
+		_body_complete = true
+		return
+	await _tap_action(&"economy_toggle")
+	var output_button: Button = null
+	for value: Node in panel.find_children("*", "Button", true, false):
+		if (value as Button).text == "Collect":
+			output_button = value as Button
+			break
+	var output_scrolls := panel.find_children("*", "ScrollContainer", true, false)
+	_expect(output_button != null and not output_scrolls.is_empty(), "produced cloth exposes a GUI collection control")
+	if output_button == null or output_scrolls.is_empty():
+		_body_complete = true
+		return
+	var output_visible := await _scroll_to(output_scrolls[0] as ScrollContainer, output_button)
+	_expect(output_visible, "ordinary wheel input reaches produced cloth")
+	if not output_visible:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (output_button.get_global_transform_with_canvas() * (output_button.size * 0.5)))
+	_expect(_count("binding_cloth") == 2, "ordinary GUI collects meaningful workbench output")
+	await _tap_action(&"economy_toggle")
+	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty() and _count("binding_cloth") == 2, "paid workbench and produced cloth survive reload")
 	_body_complete = true
