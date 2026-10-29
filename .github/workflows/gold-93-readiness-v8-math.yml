@@ -49,7 +49,7 @@ jobs:
           LOG=/tmp/gold93-v8-math.log
           timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_v8_math_test.gd 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
-          PAT='GOLD93_V8_MATH|mismatch|SCRIPT ERROR|Parse Error|Compile Error|ERROR:'
+          PAT='DIAG|GOLD93_V8_MATH|mismatch|SCRIPT ERROR|Parse Error|Compile Error|ERROR:'
           if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_V8_MATH: PASS' "$LOG"; then
             python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level error --title "v8-math exit=$STATUS" --log "$LOG" --tail 60 --pattern "$PAT"
             exit 1

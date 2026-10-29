@@ -16,6 +16,7 @@ const MAX_PRINTED := 3
 
 
 func _init() -> void:
+	_diag()
 	var text := FileAccess.get_file_as_string(VECTORS)
 	if text == "":
 		print("GOLD93_V8_MATH: FAIL / vectors missing")
@@ -89,3 +90,25 @@ func _from_hex(s: String) -> float:
 	b.encode_u32(4, s.substr(0, 8).hex_to_int())
 	b.encode_u32(0, s.substr(8, 8).hex_to_int())
 	return b.decode_double(0)
+
+
+func _bits(v: float) -> String:
+	var b := PackedByteArray()
+	b.resize(8)
+	b.encode_double(0, v)
+	return "%08x%08x" % [b.decode_u32(4), b.decode_u32(0)]
+
+
+## Intermediate values for one sin/cos input that fails bit-exactly.
+## Expected (V8 / Python fdlibm): n=-876, y0=3fe4fdd47a949e23,
+## y1=3c722adb00000000, sin=3fe384a14729faa7, cos=3fe95bbac4a77853.
+func _diag() -> void:
+	var x := _from_hex("c0957d7246870000")
+	print("DIAG x=", _bits(x), " hi=", "%08x" % V8._hi(x), " s32=", V8._s32(V8._hi(x)))
+	var r: Array = V8._rem_pio2(x)
+	if r.size() == 3:
+		print("DIAG rem n=", r[0], " y0=", _bits(r[1]), " y1=", _bits(r[2]))
+		print("DIAG k_sin=", _bits(V8._k_sin(r[1], r[2], 1)), " k_cos=", _bits(V8._k_cos(r[1], r[2])))
+	print("DIAG sin=", _bits(V8.v8_sin(x)), " cos=", _bits(V8.v8_cos(x)))
+	var q: float = absf(x) * 6.36619772367581382433e-01 + 0.5
+	print("DIAG q=", _bits(q), " n=", int(floor(q)))
