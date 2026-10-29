@@ -606,12 +606,27 @@ func _title_for_level(level_id: StringName) -> String:
 # ---------------------------------------------------------------------------
 # per-frame
 # ---------------------------------------------------------------------------
+# Opt-in bounded debug probe; samples this node's process chain only, not GPU,
+# other nodes, or complete frame time. Disabled in ordinary gameplay.
+var _perf_trace_enabled := false
+var _perf_trace_usec: Array[int] = []
+
+func _begin_perf_trace() -> void:
+	if OS.is_debug_build():
+		_perf_trace_usec.clear()
+		_perf_trace_enabled = true
+
+func _end_perf_trace() -> Array[int]:
+	_perf_trace_enabled = false
+	return _perf_trace_usec.duplicate()
+
 func _process(delta: float) -> void:
 	_frame_count += 1
 	if build_stage != BuildStage.READY:
 		return
 	if state == null or not is_instance_valid(player):
 		return
+	var perf_start := Time.get_ticks_usec() if _perf_trace_enabled else 0
 	if not bool(player.get(&"dead")):
 		state.set_world_position(player.global_position)
 	if occlusion != null and is_instance_valid(occlusion):
@@ -622,6 +637,8 @@ func _process(delta: float) -> void:
 	_apply_fatigue()
 	_apply_hud()
 	_handle_survival_input()
+	if _perf_trace_enabled and _perf_trace_usec.size() < 240:
+		_perf_trace_usec.append(Time.get_ticks_usec() - perf_start)
 
 
 # Cancellation follows Godot's event dispatch instead of polling Input. A modal

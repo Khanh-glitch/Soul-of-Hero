@@ -104,21 +104,28 @@ func _body() -> void:
 		"occlusion costs less than %.0f %% of the frame it is part of (%+.0f %%)"
 		% [OCCLUSION_FRAME_SHARE * 100.0, share * 100.0])
 
-	# Diagnostics only: three alternating, bounded pairs after the original gate.
-	# Keep the original 60-frame ON/OFF assertion intact. Alternating order helps
-	# reveal drift and denominator sensitivity; these are not extra pass criteria.
+	# Godot 4.7 TIME_PROCESS is a once-per-second maximum, not a live
+	# per-frame sample (main/main.cpp). Preserve the original gate but diagnose
+	# the overworld's own process chain separately with bounded per-frame timers.
 	for trial in range(3):
 		var samples := {}
 		var order := [false, true] if trial % 2 == 0 else [true, false]
 		for enabled: bool in order:
 			occlusion.enabled = enabled
 			occlusion.snap()
-			await _frames(4)
-			samples[enabled] = await _median_frame_ms(30)
-		var on_ms := float(samples[true])
-		var off_ms := float(samples[false])
-		print("PERF_DIAG trial=%d on_ms=%.4f off_ms=%.4f delta_ms=%+.4f ratio=%+.1f%%" % [
-			trial + 1, on_ms, off_ms, on_ms - off_ms, 100.0 * (on_ms - off_ms) / maxf(off_ms, 0.001)])
+			await _frames(6)
+			ow.call(&"_begin_perf_trace")
+			await _frames(60)
+			var values: Array = ow.call(&"_end_perf_trace")
+			values.sort()
+			if values.is_empty():
+				_expect(false, "overworld process trace produced samples")
+				return
+			samples[enabled] = [float(values[values.size() / 2]) / 1000.0, float(values[int(values.size() * 0.9)]) / 1000.0, values.size()]
+		var on: Array = samples[true]
+		var off: Array = samples[false]
+		print("PERF_DIAG trial=%d ow_on_p50=%.4f ow_off_p50=%.4f delta_ms=%+.4f on_p90=%.4f off_p90=%.4f samples=%d/%d" % [
+			trial + 1, on[0], off[0], on[0] - off[0], on[1], off[1], on[2], off[2]])
 	occlusion.enabled = true
 	occlusion.snap()
 	await _frames(2)
