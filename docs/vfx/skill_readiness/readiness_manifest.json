@@ -4929,7 +4929,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_001.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5009,7 +5009,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_002.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5089,7 +5089,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_003.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5169,7 +5169,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_004.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5249,7 +5249,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_005.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5329,7 +5329,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_006.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5559,7 +5559,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_009.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5639,7 +5639,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_010.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5719,7 +5719,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_011.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5799,7 +5799,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_012.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -5954,7 +5954,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_014.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -6184,7 +6184,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_017.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -6264,7 +6264,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_018.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -6344,7 +6344,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_019.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },
@@ -6499,7 +6499,7 @@
       "native_executable": true,
       "native_executable_evidence": {
         "native_test_run": "prototypes/skill_readiness/tests",
-        "source_numeric_oracle": "prototypes/gold_pair/tests",
+        "source_numeric_oracle": "docs/vfx/skill_readiness/oracle/venomwright_021.json",
         "per_skill_harness": "res://.artifacts/gold93/per_skill_harness.json",
         "render_surface": "res://.artifacts/gold93/render_surface.json"
       },

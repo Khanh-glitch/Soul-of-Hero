@@ -345,4 +345,4 @@ Open, not started this session:
 - 020 tick-180 raster: still blocked on the original TypeScript and archive key. See `VENOMWRIGHT_020_TICK180_BLOCKER.md`.
 - 013, 015, 016 and 007, 008 differentials: unchanged.
 - ARCANA III: still blocked on the original archive.
-- Manifest `source_numeric_oracle` evidence pointer is a generic constant in the rebuild script. It points at `prototypes/gold_pair/tests` for every host-castable entry, which is not the per-skill oracle. Correct it before using the manifest as audit evidence.
+- Manifest evidence pointers: `source_numeric_oracle` is now the per-skill `docs/vfx/skill_readiness/oracle/venomwright_NNN.json` for each host-castable entry (all 15 files exist). The earlier generic `prototypes/gold_pair/tests` pointer is removed. `per_skill_harness` and `render_surface` point at CI artifacts under `.artifacts/`, which are not committed.

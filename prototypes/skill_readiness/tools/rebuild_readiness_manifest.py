@@ -75,7 +75,8 @@ EVIDENCE_KEYS = (
 # What is genuinely on hand for the source-locked module today, and what is
 # still missing. Recorded so no one can silently claim the gate passed.
 NATIVE_TEST_EVIDENCE = "prototypes/skill_readiness/tests"
-SOURCE_ORACLE_EVIDENCE = "prototypes/gold_pair/tests"
+# Per-skill oracle for Venomwright, read from the recorded original-engine JSON.
+SOURCE_ORACLE_DIR = "docs/vfx/skill_readiness/oracle"
 PER_SKILL_HARNESS_EVIDENCE = "res://.artifacts/gold93/per_skill_harness.json"
 RENDER_SURFACE_EVIDENCE = "res://.artifacts/gold93/render_surface.json"
 
@@ -111,7 +112,7 @@ def main() -> int:
         entry["native_executable_evidence"] = (
             {
                 "native_test_run": NATIVE_TEST_EVIDENCE,
-                "source_numeric_oracle": SOURCE_ORACLE_EVIDENCE,
+                "source_numeric_oracle": f"{SOURCE_ORACLE_DIR}/venomwright_{int(reg['source_skill_id']):03d}.json",
                 "per_skill_harness": PER_SKILL_HARNESS_EVIDENCE,
                 "render_surface": RENDER_SURFACE_EVIDENCE,
             }
