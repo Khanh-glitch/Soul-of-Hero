@@ -118,6 +118,10 @@ func _run() -> void:
 	_expect(bool(wear.get("ok", false)), "genuine A3 wear commits")
 	_expect(bool(callback_result["called"]) and not bool(callback_result["accepted"]), "save signal re-entry cannot inherit A3 authorization")
 	_expect(int((economy.call(&"instance", id) as Dictionary).get("condition", 0)) == 69, "re-entry cannot rewrite A3 attributes")
+	var core: Dictionary = economy.call(&"grant_instance", "core_venom", "fixture.core.blocked", 2, 100)
+	_expect(bool(core.get("ok", false)), "A3 can create genuine physical Core without granting Gold readiness")
+	var blocked_cast: Dictionary = economy.call(&"commit_cast", String(core.get("instance_id", "")), "fixture.unattested.cast", 0)
+	_expect(not bool(blocked_cast.get("ok", false)), "production Core remains BLOCKED_PENDING_A4")
 	_expect(bool(save.call(&"grant_inventory_item", "knowledge_spares", "material", 5, "fixture.spares")), "ordinary inventory grant unaffected")
 	var research: Dictionary = economy.call(&"research_recipe", "iron_pick", "lab", "specimen", "specimen.research", id)
 	_expect(bool(research.get("ok", false)), "genuine A3 moves specimen into research escrow")
@@ -137,6 +141,10 @@ func _run() -> void:
 			break
 		filled.append(key)
 	_expect(not filled.is_empty() and filled.size() < 35, "inventory filled to real capacity")
+	var full_snapshot: Dictionary = save.call(&"get_snapshot")
+	var no_space: Dictionary = economy.call(&"grant_instance", "iron_pick", "actual.grant.full")
+	_expect(not bool(no_space.get("ok", false)) and (save.call(&"get_snapshot") as Dictionary) == full_snapshot,
+		"full inventory refuses real A3 unique creation without spending identity or receipt")
 	_expect(not bool((economy.call(&"collect", job_id, "collect.full") as Dictionary).get("ok", false)), "full inventory refuses escrow recovery")
 	_expect(bool(save.call(&"reload_save")), "reload preserves escrow and receipt")
 	_expect(not bool((economy.call(&"collect", job_id, "collect.full.reload") as Dictionary).get("ok", false)), "full inventory still refuses after reload")
@@ -154,10 +162,12 @@ func _run() -> void:
 	# External corruption is deliberately written to disk, not through a trusted
 	# API. A bad primary must not be replaced with a backup or new defaults.
 	var safe: Dictionary = save.call(&"get_snapshot")
-	for mode: String in ["quantity", "kind", "orphan", "duplicate", "schema"]:
+	for mode: String in ["quantity", "kind", "orphan", "duplicate", "schema", "attributes"]:
 		var corrupt := safe.duplicate(true)
 		if mode == "schema":
 			corrupt["survival_economy"]["schema"] = 999
+		elif mode == "attributes":
+			corrupt["survival_economy"]["instances"][id]["condition"] = 101
 		else:
 			_mutate_token(corrupt, id, mode)
 		var bytes := JSON.stringify(corrupt, "\t") + "\n"
@@ -182,6 +192,18 @@ func _run() -> void:
 		repair.close()
 		_expect(bool(save.call(&"reload_save")), "explicitly restored file reloads: " + mode)
 		_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "restored pair remains auditable: " + mode)
+	var legacy := safe.duplicate(true)
+	legacy["survival_economy"]["schema"] = 1
+	legacy["survival_economy"].erase("time")
+	var legacy_file := FileAccess.open(path, FileAccess.WRITE)
+	legacy_file.store_string(JSON.stringify(legacy, "\t") + "\n")
+	legacy_file.close()
+	_expect(bool(save.call(&"reload_save")), "valid v1 economy namespace loads")
+	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "v1 token pair remains auditable")
+	var migrated: Dictionary = economy.call(&"wear", id, 1, "legacy.v1.migrate")
+	_expect(bool(migrated.get("ok", false)), "actual A3 mutation migrates v1 namespace transactionally")
+	_expect(int(((save.call(&"get_snapshot") as Dictionary).get("survival_economy", {}) as Dictionary).get("schema", 0)) == 2,
+		"legacy v1 becomes v2 without losing token attributes")
 	_finish()
 
 func _finish() -> void:
