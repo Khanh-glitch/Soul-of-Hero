@@ -45,6 +45,6 @@ python3 tools/survival/worldgen/check_determinism.py
 
 Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20 (to integration). Issue: #12.
 
-Google Docs tab 04 sync: `DOCS_SYNC_PENDING` (connector enabled; targeted tab read/write still being completed at this checkpoint).
+Google Docs tab 04 sync: **DONE** — appended review-correction checkpoint and verified readback marker `A1_SURV050A_REVIEW_CORRECTIONS_ea64df75` in tab `t.h4haqfdoyzzn`. Control-tower tab 12 left to coordinator.
 
 Isolated Godot 4.7 reader fixture: `tests/survival/world/godot/`; CI: `.github/workflows/survival-world-reader.yml`. This is authored-data consumption proof only, not native continent integration.

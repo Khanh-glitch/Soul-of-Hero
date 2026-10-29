@@ -37,7 +37,7 @@ It is review-ready as an authored world plan. It is **not** native playable inte
 | Coordinate A0/A3/A4/A6; S6 optional | cross-agent contract table; S6 nonblocking |
 | Research/licenses recorded | `RESEARCH_AND_LICENSES.md`; no unlicensed code/art committed |
 | Commit/push/PR when review-ready | active branch checkpoint + PR to integration; issue #12 comment |
-| Google Docs tab 04 | `DOCS_SYNC_PENDING` (connector enabled; targeted sync in progress) |
+| Google Docs tab 04 | **DONE** — readback marker `A1_SURV050A_REVIEW_CORRECTIONS_ea64df75` verified in tab `t.h4haqfdoyzzn` |
 | Legacy build delegation (W-01) | `build_permission=2`, A0 delegate contract, legal-home negative regression, isolated Godot reader fixture |
 | Realistic scale/pacing (W-02) | `PACING_ANALYSIS.md`: 10 concrete journeys, hazard exposure, outpost logistics, alternate detours; playtime NOT_TESTED |
 
@@ -94,7 +94,7 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 - Double-compile determinism: identical 212-artifact tree hash `36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3`.
 - Masterplan SHA-256: `008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d`.
 - Pacing audit: 10 journeys resolve; travel/preparation/logistics estimates only; playtime NOT_TESTED.
-- Isolated Godot 4.7 reader CI: pending exact run at correction checkpoint; local Godot unavailable.
+- Isolated Godot 4.7 reader CI: push run 40872678698 @ ea64df75 success; local Godot unavailable.
 - Empty-space ratio 1.15%; max anchor distance 80.99 tiles; all 108 new POIs physically reachable in the proposed walk layer.
 - Native Godot 4.7 not run; CI not triggered by A1. See `VALIDATION.md`.
 
@@ -106,7 +106,7 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 - A4 Gold/VFX untouched; no dependency.
 - S6 optional POI is nonblocking; the continent is complete without it.
 - Godot 4.7 binary download blocked by asset-host SSL; local native validation remains NOT_TESTED. A1-owned isolated reader CI added; exact run status recorded in `VALIDATION.md`.
-- Google Docs connector enabled; targeted tab 04 read/write still being completed: `DOCS_SYNC_PENDING`.
+- Google Docs tab 04 sync completed and readback verified; control-tower tab 12 left to coordinator.
 - Early buffer trunk intersects legacy crown heat/rot hazard rects; A6 clues and A0/A3 early mitigation/alternate tuning remain open authored integration gates.
 
 ## Review corrections after PR #20
@@ -128,6 +128,6 @@ The work order names `feature/surv-a1-world-050a`, but this Arena session is pin
 1. A0 review `A0_ADAPTER.md` §4.1 build delegation, implement native chunk adapter and seam carves behind baseline-lock verification; run native paid-home/topology tests separately.
 2. A3 map material contracts to items/recipes; A6 map hazard/capability clues to UX.
 3. Review the A1 isolated Godot 4.7 reader CI run; then run native overworld + survival validation after the A0 adapter lands. Do not claim playable from this data package alone.
-4. Complete Google Docs tab 04 sync and verify readback (`DOCS_SYNC_PENDING` until confirmed).
+4. Google Docs tab 04 sync complete and readback verified; coordinator may mirror the checkpoint into control-tower tab 12.
 5. Native tile/prop art pass and grade-limited road refinement using the strategic previews as constraints, not as final art.
 6. GitHub issue #12 direct comment returned `403 Resource not accessible by integration`; the same checkpoint was posted as a PR #20 comment. Re-post to issue #12 when permissions allow.

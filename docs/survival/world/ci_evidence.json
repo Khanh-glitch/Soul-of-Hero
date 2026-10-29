@@ -1,0 +1,125 @@
+{
+  "workflow": "SURV-050A World Reader",
+  "run_id": 40872678698,
+  "head_sha": "ea64df75d251a5e7dee08dd919a78667250b772c",
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698",
+  "event": "push",
+  "jobs": [
+    {
+      "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123443486388",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install authoring dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile authored world",
+          "conclusion": "success"
+        },
+        {
+          "name": "Pacing / scale audit (estimates, not playtime)",
+          "conclusion": "success"
+        },
+        {
+          "name": "Validate world + schemas",
+          "conclusion": "success"
+        },
+        {
+          "name": "Negative / acceptance tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Double-compile determinism",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload Python evidence",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123444090242",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run chickensoft-games/setup-godot@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Import isolated reader fixture only",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run read-only chunk/RLE/build-contract tests",
+          "conclusion": "success"
+        },
+        {
+          "name": "Anti-vacuity gate",
+          "conclusion": "success"
+        },
+        {
+          "name": "Upload Godot reader evidence",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "a1-world-python-evidence",
+      "size_in_bytes": 1505
+    },
+    {
+      "name": "a1-world-godot-reader-evidence",
+      "size_in_bytes": 1805
+    }
+  ],
+  "limitation": "Raw CI logs/artifact ZIP retrieval blocked by sandbox egress (results-receiver / Azure blob EOF). GitHub job/step conclusions and anti-vacuity gate success are authoritative; fixture requires >=50 assertions and PASS phrase.",
+  "scope": "Isolated read-only authored-data consumer only. Not native continent/SaveService/paid-home integration."
+}

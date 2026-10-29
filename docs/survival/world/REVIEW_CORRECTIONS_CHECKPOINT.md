@@ -33,7 +33,7 @@ Starting HEAD: `8c62061b887ce1f017a3509ae9f4f160c762938d`
 
 - Isolated Godot 4.7 fixture: `tests/survival/world/godot/` (no autoloads, no production scene, no SaveService).
 - A1-owned workflow: `.github/workflows/survival-world-reader.yml`.
-- Local Godot unavailable; release asset SSL blocked; PyPI has no engine binary. CI run status is recorded in `VALIDATION.md` after push.
+- Local Godot unavailable; release asset SSL blocked; PyPI has no engine binary. CI push run **40872678698** @ `ea64df75` **success** (Python + Godot 4.7 isolated reader, anti-vacuity gate passed). See `ci_evidence.json`.
 - A3: `material_source_contracts.json` with `a0_item_hints` (hints only; A3 owns final items/yields/recipes/prices).
 - A6: `hazard_capability_contracts.json` with stable labels, rects, severity, required preparation and clue policy.
 
@@ -51,4 +51,4 @@ Request independent acceptance of the **A1 AUTHORED WORLD milestone only**. Nati
 
 ## Docs sync
 
-Google Docs connector is enabled. Targeted tab 04 read/write is still being completed at this checkpoint: `DOCS_SYNC_PENDING` until readback is verified.
+Google Docs tab 04 sync **DONE**: appended checkpoint and verified readback marker `A1_SURV050A_REVIEW_CORRECTIONS_ea64df75` in tab `t.h4haqfdoyzzn`. Control-tower tab 12 left to coordinator.

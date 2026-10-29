@@ -1,6 +1,6 @@
 # Validation Evidence — SURV-050A (review corrections)
 
-Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI is **pending run** at the correction checkpoint. Native continent gameplay validation remains **NOT_TESTED**.
+Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI **passed** at correction head `ea64df75`. Native continent gameplay validation remains **NOT_TESTED**.
 
 ## Commands
 
@@ -68,7 +68,8 @@ Novice access increased from 38 to 39 because sheltered capability-source POIs a
 
 - Local Godot binary: unavailable. Release asset download failed (`release-assets.githubusercontent.com` SSL). PyPI does not provide a Godot engine binary (`godot` is an unrelated DOT-language package).
 - A1-owned CI fixture: `tests/survival/world/godot/` + `.github/workflows/survival-world-reader.yml`.
-- CI run status at this checkpoint: **PENDING** (will be updated with exact run URL/SHA after push).
+- CI run: `SURV-050A World Reader` push run **40872678698** @ `ea64df75d251a5e7dee08dd919a78667250b772c` — **success**. Python authoring/schemas/pacing/pytest/determinism job success; Godot 4.7 isolated reader import/test/anti-vacuity/artifact-upload steps success. See `ci_evidence.json`.
+- Raw CI log/artifact ZIP retrieval was blocked by sandbox egress (`results-receiver` / Azure blob EOF); GitHub job/step conclusions are authoritative. The anti-vacuity gate requires the PASS phrase and ≥50 assertions.
 - The fixture is read-only and isolated. It does not boot the production overworld, SaveService, or A0 paid-construction transaction. The A0 delegate is a contract stub; native paid-home integration is a separate A0 gate.
 
 ## What this does not prove
