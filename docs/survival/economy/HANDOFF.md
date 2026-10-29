@@ -2,7 +2,7 @@
 
 - Issue: #13
 - PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/19
-- Head: `arena/7a12b27e-soul-of-hero` @ `23d9cca8` (Arena-fixed session branch; requested task ref `feature/surv-a3-economy-030a` is represented by the PR head)
+- Head: `arena/7a12b27e-soul-of-hero` @ `5536d872` (Arena-fixed session branch; requested task ref `feature/surv-a3-economy-030a` is represented by the PR head)
 - Base: `feature/survival-rpg-foundation-20261029`
 - Google Docs tab 04: `DOCS_SYNC_PENDING` (connector disconnected)
 
@@ -18,7 +18,7 @@
 ## Evidence
 - Catalog audit: PASS (56 items, 36 recipes, 5 technologies, 36 sources, 7 stations; all contract-reachable; no production cycles).
 - Python adversarial/balance/mapping tests: 7/7 PASS.
-- Native Godot 4.7 SaveService adapter: PASS in CI runs 40868045642 / 40868053966.
+- Native Godot 4.7 SaveService adapter: PASS in CI runs 40868045642 / 40868053966 / 40868991917 (latest mapping head).
 - Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED.
 
 ## Next owner actions

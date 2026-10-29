@@ -71,6 +71,6 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 
 ## CI evidence
 
-- Push run `40868045642`: `A3 CATALOG / BALANCE CONTRACTS` and `A3 NATIVE SAVE ADAPTER` both succeeded at `23d9cca8`.
+- Push run `40868991917`: `A3 CATALOG / BALANCE CONTRACTS` and `A3 NATIVE SAVE ADAPTER` both succeeded at `5536d872` (earlier green runs: 40868045642 / 40868053966).
 - PR #19 run `40868053966`: A3 jobs succeeded. The unrelated `Original main baseline comparison` job in the repository-wide Godot workflow failed; it is not an A3 gate and does not alter the A3 adapter result.
 - Native suite exercises the real SaveService autoload: fuel-gated smelting, station/knowledge/event identity, cancellation/full-bag/reload, specimen/blueprint/targeted research, technology prerequisites, A4-gated finite cast debit, repair/reconstruction identity, lossy salvage, legacy stack shapes, cultivation seed neutrality, and paused-job resume.
