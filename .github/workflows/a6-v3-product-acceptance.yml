@@ -236,6 +236,7 @@ jobs:
           set -uo pipefail
           export SOUL_OF_HERO_SAVE_PATH="user://a6_a0_bed_respawn_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
           export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
+          mkdir -p a0-source/artifacts
           set +e
           timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --path a0-source --windowed --resolution 1280x720 --script res://tests/survival_bed_respawn_test.gd 2>&1 | tee a0-source/.artifacts/a6-ci/a0-bed-respawn.log
           result=${PIPESTATUS[0]}
@@ -252,6 +253,7 @@ jobs:
           exit "$result"
 
       - name: Execute A0 combined modal/gameplay input regression (record current blocker)
+        if: always()
         shell: bash
         run: |
           set -uo pipefail
@@ -278,9 +280,11 @@ jobs:
           PY
 
       - name: Install image inspection helpers
+        if: always()
         run: sudo apt-get install -y imagemagick
 
       - name: Capture bounded UI frames at 720p, 2K and 4K
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -299,9 +303,16 @@ jobs:
           import subprocess
           root = Path(".artifacts/a6-ui")
           pngs = sorted(root.glob("*.png"))
-          if len(pngs) > 12:
-              raise SystemExit(f"capture bound exceeded: {len(pngs)} PNGs")
-          total = sum(p.stat().st_size for p in pngs)
+          owner_candidates = [
+              Path("artifacts/roof_bed_active.png"),
+              Path("artifacts/roof_bed_death.png"),
+              Path("artifacts/roof_bed_respawn.png"),
+          ]
+          owner_pngs = [path for path in owner_candidates if path.is_file()]
+          all_frames = pngs + owner_pngs
+          if len(all_frames) > 12:
+              raise SystemExit(f"capture bound exceeded: {len(all_frames)} selected PNGs")
+          total = sum(p.stat().st_size for p in all_frames)
           if total > 80 * 1024 * 1024:
               raise SystemExit(f"capture byte bound exceeded: {total}")
           expected = {
@@ -312,20 +323,29 @@ jobs:
           actual = {p.name for p in pngs}
           if actual != expected:
               raise SystemExit(f"capture set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}")
-          for image in pngs:
+          for image in all_frames:
               dimensions = subprocess.check_output(["identify", "-format", "%wx%h", str(image)], text=True)
-              print(f"{image.name}: {dimensions}, {image.stat().st_size} bytes")
-          print(f"bounded PNG total: {total} bytes across {len(pngs)} frames")
+              print(f"{image}: {dimensions}, {image.stat().st_size} bytes")
+          print(f"bounded PNG total: {total} bytes across {len(all_frames)} representative frames")
           PY
           echo "### Bounded visual evidence" >> "$GITHUB_STEP_SUMMARY"
           identify -format '- %f — %wx%h — %b\n' .artifacts/a6-ui/*.png >> "$GITHUB_STEP_SUMMARY"
+          for image in artifacts/roof_bed_active.png artifacts/roof_bed_death.png artifacts/roof_bed_respawn.png; do
+            if [[ -f "$image" ]]; then identify -format '- %f — %wx%h — %b\n' "$image" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
 
 
           python3 - <<'PY'
           from pathlib import Path
           import subprocess
           import tempfile
-          for png in sorted(Path(".artifacts/a6-ui").glob("*.png")):
+          frames = sorted(Path(".artifacts/a6-ui").glob("*.png"))
+          frames.extend(path for path in [
+              Path("artifacts/roof_bed_active.png"),
+              Path("artifacts/roof_bed_death.png"),
+              Path("artifacts/roof_bed_respawn.png"),
+          ] if path.is_file())
+          for png in frames:
               with tempfile.NamedTemporaryFile(suffix=".jpg") as thumb:
                   subprocess.run(["convert", str(png), "-resize", "480x270!", "-strip", "-sampling-factor", "4:2:0", "-quality", "30", thumb.name], check=True)
                   encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
@@ -344,6 +364,9 @@ jobs:
           name: a6-v3-native-acceptance
           path: |
             a0-source/.artifacts/a6-ui/*.png
+            a0-source/artifacts/roof_bed_active.png
+            a0-source/artifacts/roof_bed_death.png
+            a0-source/artifacts/roof_bed_respawn.png
             a0-source/.artifacts/a6-ci/*.log
             a0-source/a6-editor-import.log
             a0-source/a6-source-trace-audit.log
