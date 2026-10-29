@@ -13,7 +13,8 @@ import argparse
 import re
 import sys
 
-MAX_CHARS = 60000
+CHUNK = 3000
+MAX_CHUNKS = 12
 
 
 def escape(s: str) -> str:
@@ -40,12 +41,21 @@ def main() -> int:
         if any(p.search(line) for p in pats):
             keep.append(line)
     tail = [l for l in lines[-args.tail:] if not l.startswith("Godot Engine v")]
-    body = "\n".join(
-        ["== matched =="] + keep[-200:] + ["== tail =="] + tail
-    )
-    if len(body) > MAX_CHARS:
-        body = body[-MAX_CHARS:]
-    print(f"::{args.level} title={escape(args.title)}::{escape(body)}")
+    items = ["== matched =="] + keep[-200:] + ["== tail =="] + tail
+    items = [it[:400] for it in items]
+    # Annotation messages above a few KB are silently dropped by the platform,
+    # so the evidence is split into several small annotations.
+    chunks, cur = [], ""
+    for it in items:
+        if len(cur) + len(it) + 1 > CHUNK:
+            chunks.append(cur)
+            cur = ""
+        cur += it + "\n"
+    if cur:
+        chunks.append(cur)
+    for idx, body in enumerate(chunks[:MAX_CHUNKS]):
+        title = args.title if idx == 0 else f"{args.title} ({idx + 1}/{len(chunks)})"
+        print(f"::{args.level} title={escape(title)}::{escape(body)}")
     return 0
 
 
