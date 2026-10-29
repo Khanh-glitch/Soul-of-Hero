@@ -7,7 +7,7 @@
   "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
-  "updated_date": "2026-10-29",
+  "updated_date": "2026-10-30",
   "phase": "SURV_010_MERGED_SURV_020_IN_PROGRESS",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
@@ -111,9 +111,11 @@
         "Fresh-save input scrap and oak → GUI hand queue → active kit escrow → reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40914953517 at b797b9b, 11 checks, no fixture grants/teleport; not collected station or full journey.",
         "Additional unchanged perf failure +47%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832746 at c8ab791; PERF_VARIABILITY_UNEXPLAINED.",
         "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020.",
-        "Fresh-save automated input gathers scrap/oak, manufactures and GUI-collects kit, pays and reloads physical bench: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40918666020 at 394d1ca, 17 partial journey checks; shutdown leak/resource warnings, source approval and full journey open."
+        "Fresh-save automated input gathers scrap/oak, manufactures and GUI-collects kit, pays and reloads physical bench: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40918666020 at 394d1ca, 17 partial journey checks; shutdown leak/resource warnings, source approval and full journey open.",
+        "Normal-input cloth 1/25 failure with horizontal overflow traced: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923336131 at 366184f; c6c135a layout fix and exact receipt assertions native pending.",
+        "Pinned A6 composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923995445 at 1643118; original modal probe and isolated A6 tests pass, actual workspace six held-input assertions fail, bed 103 checks pass but step log gate fails ALSA; 071fcd9 fixes driver and traces event delivery, pending."
       ],
-      "next": "Inspect native run for 815a9fd fresh-input reed → placed bench → cloth; fix failures and shutdown warnings, then continue shelter/threat/respawn/bag/reload and counterfactual, A1/A3 provenance, native resolution/Web, cross-agent gates. Do not merge.",
+      "next": "Inspect 071fcd9 A6 native event trace and bed, fix held semantics; inspect c6c135a cloth/receipt/reload native and d8d13bb full-capacity fixture; continue anti-softlock, canonical A1 temporary composition and complete continuous journey, resolution/Web/performance and owner gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
@@ -165,7 +167,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Investigate performance failure 40900172653 despite green 40900885519; implement/test actual A0 active-session host with A3 and placed stations.",
+    "first_test": "Inspect 071fcd9 A6 native event trace and bed, fix held semantics; inspect c6c135a cloth/receipt/reload native and d8d13bb full-capacity fixture; continue anti-softlock, canonical A1 temporary composition and complete continuous journey, resolution/Web/performance and owner gates. Do not merge.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -204,7 +206,7 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected for 30cb746e door checkpoint",
+    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected on 2026-10-30",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
