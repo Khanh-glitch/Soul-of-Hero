@@ -79,12 +79,19 @@ jobs:
             exit 1
           fi
 
+      # 1500s, up from 600s. This step genuinely does more work now that six
+      # real engines are constructed and probed instead of one: every
+      # `readiness_report()` walks all 93 ids, and each source-native id is a
+      # full world instantiation plus a live cast probe. Raising the budget is
+      # the correct response to real added work; the job cap (40 min) still
+      # bounds the whole thing, and every other step keeps its own limit.
       - name: Full native lifecycle and fail-closed coverage
         shell: bash
+        timeout-minutes: 30
         run: |
           set -uo pipefail
           LOG=/tmp/gold93-lifecycle.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
+          timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
           if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_LIFECYCLE: PASS' "$LOG"; then
             echo "::error::[gold93-lifecycle] godot exited with status $STATUS"
