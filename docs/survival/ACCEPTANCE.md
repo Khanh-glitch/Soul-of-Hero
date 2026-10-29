@@ -50,3 +50,7 @@ The user experienced roughly 14 days of Last Day Rules and had only a handful of
 - [ ] `ATLAS-IMPL-08`: Asset reuse and GitHub imports have explicit source SHA and permit code/art independently; Web compatibility tested for dependencies.
 - [ ] `ATLAS-IMPL-09`: Parallel agents used as warranted with one owned path each; every merge includes parent SHA, tests, ownership compatibility and fail list; no unrelated branch overwritten.
 **Documentation CI PASS only checks research integrity/coverage. The above are NOT RUN until real Godot gameplay is implemented.**
+
+### SURV-020 topology checkpoint — partial, not product acceptance
+
+Godot 4.7 Xvfb [run 40862246794](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794) at `4afe3d94cea92be9cc2355f3fb8362ab358907f4`: 132 existing foundation and 50 topology/storage checks. Bounded independent rooms, diagonal gap, split/merge, distant houses, local caching, production-world paid placements, floor/chest co-occupancy, two independent chests, full bag refusal, keyed transfer replay, disk reload and wall deletion were exercised. The native run does not demonstrate walking through doors, render a roof, activate a bed, respawn, use a browser, or complete the playable sequence; all relevant acceptance boxes above remain unchecked.
