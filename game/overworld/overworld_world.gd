@@ -185,7 +185,11 @@ func _paint_grid(layer: TileMapLayer, cells: PackedStringArray, layer_name: Stri
 				cell = OverworldTiles.cell_for(tiles_meta, token, layer_name)
 			if cell.x < 0:
 				continue
-			layer.set_cell(Vector2i(x, y), OverworldTiles.GROUND_SOURCE, cell)
+			# Ground gets a per-tile mirror so a block of one variant does not
+			# print its own detail nine times; overlays stay unmirrored because
+			# their edges are directional and must line up with their neighbours.
+			var alt := OverworldTiles.flip_id(x, y) if layer_name == "ground" else 0
+			layer.set_cell(Vector2i(x, y), OverworldTiles.GROUND_SOURCE, cell, alt)
 			painted += 1
 	return painted
 

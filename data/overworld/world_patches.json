@@ -5,50 +5,50 @@
   {
    "id": "camp_refuge_hearth",
    "layer": "ground",
-   "set": ",",
+   "set": "g",
    "rect": [
     54,
     217,
     58,
     219
    ],
-   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
+   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
   },
   {
    "id": "camp_crossroads_hearth",
    "layer": "ground",
-   "set": ",",
+   "set": "g",
    "rect": [
     150,
     189,
     154,
     191
    ],
-   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
+   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
   },
   {
    "id": "camp_relay_base_hearth",
    "layer": "ground",
-   "set": ",",
+   "set": "g",
    "rect": [
     246,
     159,
     250,
     161
    ],
-   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
+   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
   },
   {
    "id": "camp_ridge_hearth",
    "layer": "ground",
-   "set": ",",
+   "set": "g",
    "rect": [
     206,
     105,
     210,
     107
    ],
-   "why": "gravel hearth under the camp fire; the dirt apron read as noise"
+   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
   }
  ],
  "props": [

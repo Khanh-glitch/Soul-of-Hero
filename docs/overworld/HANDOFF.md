@@ -300,15 +300,25 @@ rejected it. This is the ledger against the **original** mission, from HEAD
 
 ### Outstanding — not claimed as done
 
-1. **Four of ten landmark exteriors are still generated frames**: Beacon, Crimson
-   Gate, Castellan Throne and Ossuary. They were audited as acceptable and were
-   not rebuilt this pass. They remain in the gallery at 0.0 % diff, which is the
-   honest way to show they were not touched.
-2. **Travel regions between destinations were not reconstructed.** The camps and
-   every landmark approach were reviewed and fixed; the wide stretches of cliff
-   ground (`c`), the tiled plateau blockers and the water margins have not had a
-   dedicated pass. One defect was found and fixed (camp clearings paved with the
-   dithered `path` detail tile), which is not the same as a region pass.
+1. **Landmark exteriors — closed.** All ten are hand-painted overrides as of this
+   pass: Crypt, Ossuary, Archive, Reliquary, Crucible, Relay, Beacon, Divided,
+   Crimson Gate, Castellan Throne. Gallery diffs against the last main-branch
+   render: 17.6 % to 30.5 % of the station frame changed, and the two stations
+   that did not exist before (Relay, Divided) are rendered for the first time.
+   What remains judgement rather than work: a human has to look at the CI
+   artifact, because this sandbox cannot read job logs.
+2. **Travel regions — one measured defect fixed, the rest still open.** The
+   surfaces a player spends the most time on were measured, not eyeballed: the
+   road, path and plain-dirt tiles scored 12.0-13.6 % "static" (adjacent-pixel
+   luma jumps) against 0.7-2.6 % for the ground beneath them, because the verge
+   was drawn with a seeded dither and the path was a 42 % per-pixel coin flip.
+   Both were rewritten as solid bands with a one-pixel wobbled silhouette and a
+   worn rut: the road tiles now measure 4.3-8.1 % and the world-wide frame
+   average fell to 3.9-5.5 %. The 3-tile lattice caused by picking the ground
+   variant per 3x3 block was addressed with per-tile mirroring
+   (`OverworldTiles.flip_id`), which decorrelates the detail without turning the
+   four stone tones back into a checkerboard. Still open: the water margins and
+   the plateau blockers have not had a dedicated region pass.
 3. **Dark World and Classical Ruin tilesets cannot be evaluated**: neither is in
    the repository or the 87-package catalog. No quality judgement is made. The
    acceptance test they would face is written down in `ASSET_EVALUATION.md`.
@@ -326,7 +336,6 @@ rejected it. This is the ledger against the **original** mission, from HEAD
 
 ### What would be next, in order
 
-Repaint Beacon, Gate, Throne and Ossuary to the same standard as the six that
-were done; then the travel-region pass (cliff-ground variation, plateau blockers,
-water margins); then the evaluation of the two missing tilesets, which needs the
-packs themselves.
+The travel-region pass (water margins, plateau blockers); then the evaluation of
+the two missing tilesets, which needs the packs themselves; then a human look at
+the CI artifact.

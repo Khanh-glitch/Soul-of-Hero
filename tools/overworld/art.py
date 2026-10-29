@@ -383,8 +383,27 @@ def ground_dirt(seed, tone=1.0):
     base = shade(C("dirt"), tone)
     light = shade(C("dirt_hi"), tone)
     dark = shade(C("dirt_dk"), tone)
-    grain(img, 0, 0, T, T, base, light, dark, seed=seed, amount=0.16)
-    speck(img, 0, 0, T, T, shade(dark, 0.88), 6, seed=seed + 3)
+    # 16 % grain in 2 px blocks was measured at 12.7 % "static" (adjacent-pixel
+    # luma jumps) on a native-framed render, and that is what a packed-earth
+    # apron looked like at 2x: television snow. Half the grain, softened, plus
+    # one feature at a *larger* scale per tile, puts two spatial frequencies in
+    # the surface instead of one.
+    grain(img, 0, 0, T, T, base, light, dark, seed=seed, amount=0.09, soften=0.42)
+    speck(img, 0, 0, T, T, shade(dark, 0.9), 3, seed=seed + 3)
+    roll_b = h01(seed, 21)
+    if roll_b < 0.30:
+        # a patch of damp earth, darker and wider than the grain
+        dx = int(h01(seed, 22) * (T - 9)) + 1
+        dy = int(h01(seed, 23) * (T - 7)) + 1
+        for i in range(4):
+            rect(img, dx + i, dy + i // 2, 8 - i, 1, shade(dark, 0.94))
+    elif roll_b < 0.55:
+        # a scatter of small stones pressed into the surface
+        for i in range(4):
+            gx = int(h01(seed, i, 24) * (T - 4)) + 1
+            gy = int(h01(seed, i, 25) * (T - 4)) + 1
+            rect(img, gx, gy, 2, 2, mix(C("gravel"), base, 0.35))
+            px(img, gx, gy, C("gravel_hi"))
     px(img, int(h01(seed, 10) * T), int(h01(seed, 11) * T), C("gravel"))
     roll = h01(seed, 12)
     fx = int(h01(seed, 13) * (T - 7)) + 2
@@ -406,14 +425,45 @@ def ground_dirt(seed, tone=1.0):
 
 
 def ground_gravel(seed):
+    """Plains gravel.
+
+    Measured against a render of the plateau: at the camera's 2x zoom the old
+    18 % grain in 2 px blocks turned a wide field into television static, because
+    every tile carried the same energy at the same scale. Three changes follow
+    from that measurement - grain down to 10 %, softened, and every second tile
+    carries one *broad* feature (a slab, a drift, a worn patch) so the shallow
+    scale is not the only scale in the frame.
+    """
     img = new(T, T)
-    grain(img, 0, 0, T, T, C("gravel"), C("gravel_hi"), C("gravel_dk"), seed=seed, amount=0.18)
-    for i in range(5):
-        gx = int(h01(seed, i, 31) * (T - 3)) + 1
-        gy = int(h01(seed, i, 32) * (T - 3)) + 1
-        s = 1 + int(h01(seed, i, 33) * 2)
-        rect(img, gx, gy, s, max(1, s - 1), C("gravel_hi"))
-        px(img, gx, gy + s - 1, C("gravel_dk"))
+    grain(img, 0, 0, T, T, C("gravel"), C("gravel_hi"), C("gravel_dk"),
+          seed=seed, amount=0.10, soften=0.4)
+    roll = h01(seed, 7)
+    if roll < 0.34:
+        # A cracked slab. The first version was a 10x7 rectangle of pale stone
+        # with a hard lit top edge, and at 2x it read as a literal tile: a field
+        # of them printed a brick lattice, worse than the noise it replaced. This
+        # one is irregular, low-contrast, and never touches a tile edge.
+        sx = int(h01(seed, 8) * (T - 11)) + 2
+        sy = int(h01(seed, 9) * (T - 9)) + 2
+        slab = mix(C("gravel_hi"), C("gravel"), 0.72)
+        rect(img, sx, sy, 8, 5, slab)
+        rect(img, sx + 1, sy + 4, 6, 1, mix(C("gravel_dk"), C("gravel"), 0.6))
+        px(img, sx, sy, mix(C("gravel_hi"), C("gravel"), 0.3))
+        px(img, sx + 5, sy + 2, C("gravel_dk"))
+    elif roll < 0.62:
+        # a drift of finer stone collected in a hollow
+        dx = int(h01(seed, 10) * (T - 8)) + 1
+        dy = int(h01(seed, 11) * (T - 5)) + 2
+        for i in range(7):
+            w = 7 - i
+            hline(img, dx + i // 2, dy + i, w, mix(C("gravel_dk"), C("gravel"), 0.55))
+    else:
+        for i in range(4):
+            gx = int(h01(seed, i, 31) * (T - 3)) + 1
+            gy = int(h01(seed, i, 32) * (T - 3)) + 1
+            s = 1 + int(h01(seed, i, 33) * 2)
+            rect(img, gx, gy, s, max(1, s - 1), C("gravel_hi"))
+            px(img, gx, gy + s - 1, C("gravel_dk"))
     return img
 
 
@@ -618,9 +668,28 @@ def ground_water(seed, shallow=False):
 
 
 def ground_cliff_top(seed):
+    """The broken plateau surface.
+
+    The cliff tops are the largest uninterrupted ground area in the world, so
+    they are where repeated tiling is most obvious. Grain is halved, each variant
+    gets one horizontal bedding seam (they are sedimentary, and a seam gives the
+    surface a direction), and one in two carries a crack.
+    """
+    base = mix(C("rock"), C("gravel"), 0.4)
     img = new(T, T)
-    grain(img, 0, 0, T, T, mix(C("rock"), C("gravel"), 0.4), C("rock_hi"), C("rock_dk"), seed=seed, amount=0.18)
-    for i in range(4):
+    grain(img, 0, 0, T, T, base, C("rock_hi"), C("rock_dk"),
+          seed=seed, amount=0.09, soften=0.4)
+    # bedding: a seam that runs the full width, so the surface has a grain
+    sy = 3 + int(h01(seed, 5) * 10)
+    hline(img, 0, sy, T, shade(base, 0.78))
+    hline(img, 0, sy + 1, T, shade(base, 1.14))
+    if h01(seed, 6) < 0.5:
+        # a crack running out of the tile, with a lit lip on one side
+        cx = int(h01(seed, 7) * (T - 6)) + 2
+        for k in range(5):
+            px(img, cx + k, 4 + k + (k % 2), shade(base, 0.6))
+            px(img, cx + k + 1, 4 + k + (k % 2), shade(base, 1.1))
+    for i in range(3):
         x = int(h01(seed, i, 81) * (T - 4)) + 2
         y = int(h01(seed, i, 82) * (T - 3)) + 1
         hline(img, x, y, 2 + int(h01(seed, i, 83) * 3), C("rock_dk"))
@@ -646,8 +715,12 @@ def detail_road(seed, stone=False):
     if stone:
         base = C("stone")
         rect(img, 0, 0, res, res, shade(base, 0.95))
+        # Measured: this road tile scored 13.6 % "static" (adjacent-pixel luma
+        # jumps > 18) against 0.7-3 % for the ground under it, and roads are the
+        # most-travelled surface in the world. Same defect the dirt apron had:
+        # one spatial frequency, at full contrast, everywhere.
         grain(img, 0, 0, res, res, shade(base, 0.95), shade(base, 1.1), shade(base, 0.8),
-              seed=seed, amount=0.18)
+              seed=seed, amount=0.08, soften=0.4)
         # Worn paving, not a ladder: a transverse joint only on some tiles, and
         # never the full width, so the road surface does not repeat every 16 px.
         if h01(seed, 5) < 0.55:
@@ -659,16 +732,23 @@ def detail_road(seed, stone=False):
             gx = int(h01(seed, i, 8) * (res - 3)) + 1
             gy = int(h01(seed, i, 9) * (res - 2)) + 1
             rect(img, gx, gy, 2, 1, C("gravel_hi"))
-        speck(img, 0, 0, res, res, C("gravel_hi"), 5, seed=seed + 1)
-        speck(img, 0, 0, res, res, C("stone_edge"), 3, seed=seed + 2)
+        speck(img, 0, 0, res, res, mix(C("gravel_hi"), base, 0.5), 4, seed=seed + 1)
+        speck(img, 0, 0, res, res, mix(C("stone_edge"), base, 0.4), 3, seed=seed + 2)
     else:
         base = mix(C("dirt"), C("gravel"), 0.55)
-        grain(img, 0, 0, res, res, base, C("dirt_hi"), C("dirt_dk"), seed=seed, amount=0.18)
-        speck(img, 0, 0, res, res, C("gravel"), 7, seed=seed + 3)
+        grain(img, 0, 0, res, res, base, C("dirt_hi"), C("dirt_dk"),
+              seed=seed, amount=0.075, soften=0.4)
+        speck(img, 0, 0, res, res, mix(C("gravel"), base, 0.45), 4, seed=seed + 3)
+        # one worn rut per tile, wider than a grain cell, so the road has a
+        # scale larger than its own noise
+        ry = int(h01(seed, 13) * (res - 5)) + 2
+        for i in range(9):
+            rect(img, 2 + i, ry + (i % 2), 2, 1, mix(C("dirt_dk"), base, 0.45))
+        hline(img, 3, ry + 2, 8, mix(C("dirt_hi"), base, 0.5))
         for i in range(2):
             x = int(h01(seed, i, 101) * (res - 3)) + 1
             y = int(h01(seed, i, 102) * (res - 2)) + 1
-            hline(img, x, y, 2, C("dirt_dk"))
+            hline(img, x, y, 2, mix(C("dirt_dk"), base, 0.6))
     return img
 
 
@@ -676,43 +756,64 @@ def detail_road_edge(base_img, mask_bits, *, fringe_colour):
     """Fade a road tile into the ground on the sides that are not road.
 
     The baker's road mask is per *tile*, so a hard cut at the tile border turns
-    every bend into a 16 px staircase. The edge is therefore eroded in a 3 px
-    band with a seeded noise pattern, and the outermost row is scattered rather
-    than removed, so the boundary reads as a worn verge instead of a cut block.
+    every bend into a 16 px staircase, and the verge has to be drawn.
+
+    Two earlier versions of this function are worth recording, because both
+    looked reasonable in code and measured badly on screen:
+
+    1. A 3 px band eroded with a seeded *dither* (skip 30-85 % of pixels) in a
+       fringe colour much darker than the road, plus a final row scattered to
+       full transparency. At the camera's 2x zoom that is a checkered dark ring
+       on every tile, and on a single-tile-wide path — which is what the guard
+       rails in this world are — it is the dominant feature of the surface. It
+       measured 13.2 % adjacent-pixel luma jumps, against 0.7-2.6 % for the
+       ground beneath it.
+    2. A solid 2 px fringe. No noise, but the edge became a hard line, which is
+       the staircase it was supposed to hide.
+
+    What it does now: the verge is a *solid* two-pixel band in a tone between
+    the road and the ground, its outer boundary wanders by one pixel under a
+    seeded noise, and the two rows blend toward the ground in fixed steps. The
+    silhouette is broken (no staircase) and the values are smooth (no static).
     """
     img = base_img.copy()
     n, e, s, w = opened_mask(mask_bits)
     sides = {"n": (n, 0), "s": (s, 1), "w": (w, 2), "e": (e, 3)}
-    band = 3
+    # verge tone: the road pulled 55 % toward the ground it sits on
+    verge = mix(fringe_colour, C("dirt_dk"), 0.3)
+    inner = mix(verge, fringe_colour, 0.45)
+
+    def wobble(x, y, side_index):
+        # 1 px of licensed irregularity so the edge is not a ruler line
+        return 1 if h01(x, y, mask_bits, side_index) > 0.55 else 0
+
     for side, (present, k) in sides.items():
         if not present:
             continue
-        for d in range(band):
-            depth = (band - d) / float(band)
-            for i in range(16):
+        for i in range(16):
+            if side in ("n", "s"):
+                base_y = i
+            else:
+                base_y = i
+            for d in range(2):
                 if side in ("n", "s"):
-                    x, y = i, d if side == "n" else 15 - d
+                    y = d if side == "n" else 15 - d
+                    x = i
                 else:
-                    x, y = d if side == "w" else 15 - d, i
-                if d < band - 1:
-                    # inner band: thin the road out with dithered alpha
-                    if h01(x, y, mask_bits, 7) > 0.30 + 0.55 * (1.0 - depth):
-                        continue
-                    px(img, x, y, mix(fringe_colour, (0, 0, 0, 255), 0.25)[:3] + (180,))
+                    x = d if side == "w" else 15 - d
+                    y = i
+                # where the band actually reaches, wobbled outward by a pixel
+                reach = 2 + wobble(x, y, k)
+                if d >= reach - 1:
+                    continue
+                if d == 0:
+                    # outer row: the road stops here, mostly
+                    img.putpixel((x, y), verge[:3] + (200,))
                 else:
-                    # outer band: replace with verge stones and grass tufts
-                    if h01(x, y, mask_bits, 8) < 0.55:
-                        img.putpixel((x, y), (0, 0, 0, 0))
-                    elif h01(x, y, mask_bits, 9) < 0.3:
-                        px(img, x, y, C("gravel"))
-                    elif h01(x, y, mask_bits, 10) < 0.16:
-                        px(img, x, y, mix(C("grass_dk"), fringe_colour, 0.4))
-    # clean the corners so diagonals don't leave single-pixel spikes
-    for corner, (bit_a, bit_b) in (
-            ((0, 0), (1, 8)), ((15, 0), (1, 2)), ((0, 15), (4, 8)), ((15, 15), (4, 2))):
-        if (mask_bits & bit_a) and (mask_bits & bit_b):
-            img.putpixel(corner, (0, 0, 0, 0))
+                    img.putpixel((x, y), inner[:3] + (232,))
     return img
+
+
 def detail_bank(mask_bits):
     """Shoreline: a dark silt band where water meets land."""
     img = new(T, T)
@@ -737,13 +838,40 @@ def detail_bank(mask_bits):
 
 
 def detail_path(seed):
+    """A trodden path: a dusty wash with a few stones in it.
+
+    This used to be a per-pixel 42 % coin flip between two tones, which is a
+    dither, and at the camera's 2x zoom a dither is television static. Measured
+    on a native-framed render it scored 13.2 % adjacent-pixel luma jumps against
+    0.7-3 % for the ground it lies on, and it is the overlay on every footpath
+    and every camp clearing in the world. It is now a low-contrast wash plus a
+    handful of hand-placed features, so a path reads as *worn ground* rather than
+    as a different material with noise on it.
+    """
     img = new(T, T)
-    for x in range(16):
-        for y in range(16):
-            if h01(seed, x, y) < 0.42:
-                px(img, x, y, mix(C("dirt"), C("gravel"), 0.35))
-            elif h01(seed, x, y, 2) < 0.12:
-                px(img, x, y, C("dirt_hi"))
+    wash = mix(C("dirt"), C("gravel"), 0.32)
+    # the wash itself: solid, slightly lighter than the ground, so a path is a
+    # change of tone and not a change of texture
+    for y in range(16):
+        for x in range(16):
+            if h01(seed, x, y, 7) < 0.72:
+                px(img, x, y, wash)
+    # dust drift along the direction of travel
+    for i in range(7):
+        y = int(h01(seed, i, 3) * 14) + 1
+        x = int(h01(seed, i, 4) * 8) + 1
+        hline(img, x, y, 4 + int(h01(seed, i, 5) * 4), mix(wash, C("dirt_hi"), 0.35))
+    # three stones pressed into the surface, at a readable size
+    for i in range(3):
+        x = int(h01(seed, i, 11) * 12) + 2
+        y = int(h01(seed, i, 12) * 12) + 2
+        rect(img, x, y, 2, 2, mix(C("gravel"), wash, 0.4))
+        px(img, x, y, mix(C("gravel_hi"), wash, 0.3))
+    # and one darker scuff, for the direction a foot makes
+    sx = int(h01(seed, 21) * 10) + 3
+    sy = int(h01(seed, 22) * 10) + 3
+    px(img, sx, sy, mix(C("dirt_dk"), wash, 0.5))
+    px(img, sx + 1, sy + 1, mix(C("dirt_dk"), wash, 0.5))
     return img
 
 
@@ -964,6 +1092,8 @@ GROUND_TILES = {
     "gravel1": lambda: ground_gravel(42),
     "gravel2": lambda: ground_gravel(43),
     "gravel3": lambda: ground_gravel(44),
+    "gravel4": lambda: ground_gravel(45),
+    "gravel5": lambda: ground_gravel(46),
     "rock0": lambda: ground_rock(51),
     "rock1": lambda: ground_rock(52, 0.9),
     "rock2": lambda: ground_rock(53, 1.08),
@@ -989,6 +1119,8 @@ GROUND_TILES = {
     "shallow3": lambda: ground_water(117, shallow=True),
     "cliff_top0": lambda: ground_cliff_top(121),
     "cliff_top1": lambda: ground_cliff_top(122),
+    "cliff_top2": lambda: ground_cliff_top(123),
+    "cliff_top3": lambda: ground_cliff_top(124),
     "bog0": lambda: ground_bog(131),
     "bog1": lambda: ground_bog(132),
 }
@@ -998,7 +1130,7 @@ GROUND_CODES = {
     ",": ["grass0", "grass1", "grass2", "grass3", "grass4", "grass5"],
     ";": ["moor0", "moor1", "moor2", "moor3"],
     "d": ["dirt0", "dirt1", "dirt2", "dirt3", "dirt4"],
-    "g": ["gravel0", "gravel1", "gravel2", "gravel3"],
+    "g": ["gravel0", "gravel1", "gravel2", "gravel3", "gravel4", "gravel5"],
     "r": ["rock0", "rock1", "rock2", "rock3"],
     "a": ["ash0", "ash1"],
     "m": ["mud0", "mud1"],
@@ -1007,7 +1139,7 @@ GROUND_CODES = {
     "y": ["soul0", "soul1"],
     "~": ["water0", "water1", "water2"],
     "-": ["shallow0", "shallow1", "shallow2", "shallow3"],
-    "c": ["cliff_top0", "cliff_top1"],
+    "c": ["cliff_top0", "cliff_top1", "cliff_top2", "cliff_top3"],
     "b": ["bog0", "bog1"],
 }
 

@@ -904,13 +904,467 @@ def camp_banner():
     return outline_alpha(img)
 
 
+def ossuary():
+    """L02 The Ossuary — bone courses, not another grey wall with a hole in it.
+
+    The generated frame was a grey facade with a black arch and two grids of
+    small niches: correct, and indistinguishable from the gate and the throne at
+    a glance. The ossuary gets its own material: sandstone quarried pale, banded
+    with stacked femurs, and a portal framed in jawbones.
+    """
+    img = new(96, 72)
+    sand = mix(C("stone"), C("bone"), 0.34)
+    bone = C("bone_dk")
+
+    # --- plinth, two courses of pale stone -----------------------------------
+    rect(img, 2, 64, 92, 8, shade(sand, 0.86))
+    courses(img, 2, 64, 92, 8, shade(sand, 0.86), row_h=4, seed=71,
+            mortar=shade(sand, 0.6), light=shade(sand, 1.16), dark=shade(sand, 0.7))
+
+    # --- facade -------------------------------------------------------------
+    body = shade(sand, 0.94)
+    rect(img, 8, 14, 80, 52, body)
+    courses(img, 8, 14, 80, 52, body, row_h=6, seed=12,
+            mortar=shade(sand, 0.66), light=shade(sand, 1.14), dark=shade(sand, 0.78))
+    # cornice: a pale cap with merlon stubs
+    rect(img, 6, 11, 84, 4, shade(sand, 1.06))
+    hline(img, 6, 11, 84, shade(sand, 1.3))
+    hline(img, 6, 14, 84, shade(sand, 0.72))
+    for i in range(0, 84, 12):
+        rect(img, 8 + i, 8, 7, 4, shade(sand, 0.98))
+        hline(img, 8 + i, 8, 7, shade(sand, 1.26))
+
+    # --- bone banding: two courses of stacked femurs ------------------------
+    for row_y in (20, 26):
+        for i in range(14):
+            bx = 10 + i * 5
+            rect(img, bx, row_y, 4, 3, shade(bone, 0.94 + 0.05 * (i % 3)))
+            px(img, bx, row_y, C("bone"))
+            px(img, bx + 3, row_y + 2, shade(bone, 0.7))
+    for i in range(10):  # loose ones at the base
+        bx = 10 + i * 8 + (i % 3)
+        rect(img, bx, 62, 5, 2, shade(bone, 0.9))
+        px(img, bx, 62, C("bone"))
+
+    # --- the portal: jawbone jambs, a deep recess, warm light inside -------
+    rect(img, 34, 34, 28, 30, shade(sand, 0.5))
+    arch(img, 36, 36, 24, 28, C("void"))
+    # the interior is not a hole: a floor, a bier, and skulls on it
+    rect(img, 38, 56, 20, 8, shade(sand, 0.34))
+    rect(img, 42, 52, 12, 3, shade(C("wood"), 0.6))
+    for i in range(4):
+        rect(img, 42 + i * 3, 51, 2, 1, C("bone"))
+    for i in range(3):
+        px(img, 45 + i * 3, 50, C("bone"))
+        px(img, 45 + i * 3, 49, shade(C("bone_dk"), 1.1))
+    rect(img, 40, 58, 16, 2, mix(C("gold"), C("void"), 0.55))
+    # jawbone jambs: two columns of teeth
+    for side_x in (32, 60):
+        rect(img, side_x, 38, 4, 26, shade(bone, 0.86))
+        for t in range(0, 26, 3):
+            px(img, side_x + (0 if side_x == 32 else 3), 38 + t, C("bone"))
+        rect(img, side_x, 62, 4, 2, shade(bone, 0.66))
+    # lintel of stacked long bones
+    for i in range(12):
+        rect(img, 34 + i * 2, 32, 2, 3, shade(bone, 0.9 + 0.06 * (i % 3)))
+        px(img, 34 + i * 2, 32, C("bone"))
+
+    # --- niches: four rows of small dark cells with a skull in each --------
+    for nx in (14, 70):
+        for row in range(4):
+            ny = 36 + row * 7
+            rect(img, nx, ny, 12, 6, shade(sand, 0.58))
+            rect(img, nx + 1, ny + 1, 10, 4, C("void"))
+            px(img, nx + 3 + (row % 2), ny + 2, C("bone"))
+            px(img, nx + 6, ny + 3, shade(C("bone_dk"), 0.8))
+            hline(img, nx, ny + 5, 12, shade(sand, 0.8))
+
+    # --- two braziers on the plinth, so the entrance has a hearth ----------
+    for bx in (14, 78):
+        rect(img, bx, 60, 5, 4, shade(C("iron_dk"), 0.9))
+        rect(img, bx - 1, 58, 7, 2, C("iron"))
+        px(img, bx + 2, 57, C("fire"))
+        px(img, bx + 2, 56, C("fire_hi"))
+
+    footprint_shadow(img, 4, 92)
+    return outline_alpha(img)
+
+
+def beacon():
+    """L07 The Beacon — a sea-worn tower with a real fire at the top.
+
+    The generated frame was a squat tower with a red box on top; the "fire" read
+    as a lit window. This one is taller and thinner, so it is recognisable from
+    across a screen: salt-bleached stone, a keeper's door at the base, a timber
+    ladder up the lee side (flat rungs against the wall, not pegs sticking out),
+    and an iron fire-basket whose flame is wider than the tower's gallery.
+    """
+    img = new(64, 120)
+    pale = mix(C("stone"), C("bone"), 0.16)
+    timber = shade(C("wood"), 0.98)
+
+    # --- the tower: tapered, coursed, lit on the left, shadowed on the right -
+    for y in range(20, 112):
+        t = (y - 20) / 92.0
+        half = 11 + int(7 * t)
+        rect(img, 32 - half, y, half * 2, 1, shade(pale, 1.0 - 0.05 * t))
+        px(img, 32 - half, y, shade(pale, 1.24))
+        px(img, 32 + half - 1, y, shade(pale, 0.72))
+    # course lines, drawn tapered so they follow the wall instead of overhanging
+    for cy in range(26, 112, 6):
+        t = (cy - 20) / 92.0
+        half = 11 + int(7 * t)
+        hline(img, 32 - half, cy, half * 2, shade(pale, 0.74))
+        hline(img, 32 - half, cy + 1, half * 2, shade(pale, 1.12))
+        for vx in range(32 - half + (cy % 12), 32 + half, 11):
+            vline(img, vx, cy, 5, shade(pale, 0.84))
+    # salt streaks down the windward face
+    for i in range(8):
+        sx = 23 + i * 2
+        for y in range(30 + (i % 5), 58 + (i % 7) * 4, 2):
+            px(img, sx, y, shade(pale, 0.86))
+    # a mossy tide line at the base
+    for i in range(18):
+        px(img, 19 + i * 2, 106 - (i % 3), shade(C("grass_dk"), 0.9))
+
+    # --- gallery, basket and fire ------------------------------------------
+    t = (20 - 20) / 92.0
+    rect(img, 16, 16, 32, 5, shade(pale, 1.08))          # corbelled gallery
+    hline(img, 16, 16, 32, shade(pale, 1.34))
+    hline(img, 16, 20, 32, shade(pale, 0.66))
+    for i in range(0, 32, 4):
+        rect(img, 16 + i, 21, 2, 2, shade(pale, 0.92))
+    # iron basket: a wide cage with visible bars, sitting on the gallery
+    rect(img, 20, 5, 24, 11, C("iron_dk"))
+    for x in range(21, 44, 3):
+        vline(img, x, 5, 11, C("iron"))
+    hline(img, 20, 5, 24, C("iron_hi"))
+    hline(img, 20, 12, 24, C("iron"))
+    # coal bed then flame: bright core, two shorter side tongues, all inside
+    rect(img, 22, 10, 20, 4, mix(C("blood_dk"), C("void"), 0.3))
+    for i in range(20):
+        px(img, 22 + i, 10 + (i % 3), C("fire") if i % 3 else C("fire_hi"))
+    for i in range(9):
+        w = max(1, 10 - i)
+        rect(img, 32 - w // 2, 9 - i, w, 1, C("fire_hi") if i > 5 else C("fire"))
+    for i in range(6):
+        rect(img, 26 - i // 3, 9 - i, 2, 1, C("fire") if i < 4 else mix(C("fire"), C("blood_hi"), 0.4))
+        rect(img, 36 + i // 3, 9 - i, 2, 1, C("fire") if i < 4 else mix(C("fire"), C("blood_hi"), 0.4))
+    px(img, 32, 1, C("fire_hi"))
+    px(img, 31, 2, C("gold"))
+    # the fire's light on the gallery below it
+    for gx in range(18, 46, 2):
+        px(img, gx, 16, mix(C("gold"), pale, 0.55))
+
+    # --- keeper's door, a lit window, and the lee-side ladder --------------
+    arch(img, 26, 88, 12, 6, shade(pale, 0.5))
+    rect(img, 27, 92, 10, 18, shade(C("wood"), 0.58))
+    rect(img, 28, 93, 8, 16, shade(C("wood"), 0.84))
+    for y in range(95, 108, 4):
+        hline(img, 28, y, 8, C("iron_dk"))
+    px(img, 35, 101, C("gold"))
+    rect(img, 29, 54, 5, 8, shade(pale, 0.44))
+    px(img, 31, 58, C("fire"))
+    hline(img, 28, 62, 7, shade(pale, 1.22))
+    # ladder: two stringers flat against the wall, rungs between them
+    for ly in range(66, 92, 4):
+        t = (ly - 20) / 92.0
+        half = 11 + int(7 * t)
+        vline(img, 32 + half - 7, ly, 4, timber)
+        vline(img, 32 + half - 4, ly, 4, timber)
+        hline(img, 32 + half - 7, ly + 3, 4, shade(timber, 1.22))
+        px(img, 32 + half - 8, ly + 1, shade(timber, 0.6))
+
+    # --- one banner, weathered, hung on the tower face ---------------------
+    rect(img, 21, 34, 4, 24, C("cloth"))
+    vline(img, 21, 34, 24, shade(C("cloth"), 1.3))
+    vline(img, 24, 34, 24, shade(C("cloth"), 0.6))
+    for i in range(4):
+        px(img, 24, 56 - i, (0, 0, 0, 0))
+    px(img, 22, 38, C("gold"))
+
+    # --- the rock it stands on, drawn last so it overlaps the tower's foot -
+    rect(img, 6, 112, 52, 8, shade(C("rock"), 0.8))
+    for i in range(7):
+        rect(img, 8 + i * 7, 110 + (i % 2), 8, 3, shade(C("rock"), 0.92 + 0.05 * (i % 3)))
+        hline(img, 8 + i * 7, 110 + (i % 2), 8, shade(C("rock"), 1.14))
+
+    footprint_shadow(img, 10, 56)
+    return outline_alpha(img)
+
+
+def gate():
+    """L09 The Crimson Gate — a working gatehouse, with a gate you can read.
+
+    The generated frame had two towers, a black arch and a grid of red bars: the
+    bars were the same colour as the banners, so the opening read as a red
+    curtain rather than as iron. This is built as a gatehouse that is *in use*:
+    a raised portcullis with its chains and windlass visible above the arch, a
+    road worn through the threshold, braziers either side, and the Crimson
+    banners kept to the towers where they belong.
+    """
+    img = new(132, 104)
+    stone = C("stone")
+
+    # --- road through the gate, drawn first so the walls sit on it ----------
+    rect(img, 44, 96, 44, 8, shade(C("dirt"), 0.9))
+    for y in range(96, 104):
+        for x in range(44, 88):
+            if P.h01(x, y) > 0.72:
+                px(img, x, y, shade(C("dirt"), 1.04))
+
+    # --- curtain wall between the towers -----------------------------------
+    body = shade(stone, 0.86)
+    rect(img, 28, 44, 76, 52, body)
+    courses(img, 28, 44, 76, 52, body, row_h=6, seed=44,
+            mortar=shade(stone, 0.48), light=shade(stone, 1.12), dark=shade(stone, 0.62))
+    # wall walk: a darker parapet with merlons along the top
+    rect(img, 26, 40, 80, 6, shade(stone, 0.74))
+    hline(img, 26, 40, 80, shade(stone, 1.06))
+    for mx in range(28, 104, 8):
+        rect(img, mx, 35, 5, 5, shade(stone, 0.92))
+        hline(img, mx, 35, 5, shade(stone, 1.26))
+        px(img, mx + 4, 39, shade(stone, 0.6))
+
+    # --- the two drum towers ----------------------------------------------
+    for tx, top in ((0, 20), (102, 26)):
+        rect(img, tx, top, 30, 76, shade(stone, 0.94))
+        courses(img, tx, top, 30, 76, shade(stone, 0.94), row_h=6, seed=tx + 7,
+                mortar=shade(stone, 0.46), light=shade(stone, 1.16), dark=shade(stone, 0.6))
+        # quoins on the outer edge
+        for qy in range(top + 2, 94, 8):
+            rect(img, tx, qy, 3, 4, shade(stone, 1.22))
+            rect(img, tx + 27, qy + 4, 3, 4, shade(stone, 1.02))
+        # corbelled crown with merlons
+        rect(img, tx - 2, top - 6, 34, 7, shade(stone, 0.8))
+        hline(img, tx - 2, top - 6, 34, shade(stone, 1.3))
+        for mx in range(tx - 1, tx + 31, 6):
+            rect(img, mx, top - 11, 4, 5, shade(stone, 0.9))
+            hline(img, mx, top - 11, 4, shade(stone, 1.34))
+        # arrow loops: tall narrow slits, two per tower
+        for ax in (tx + 9, tx + 19):
+            rect(img, ax, top + 16, 2, 12, C("void"))
+            px(img, ax, top + 28, shade(stone, 1.24))
+        # banner hung from the crown, cinched at the middle
+        rect(img, tx + 12, top + 2, 6, 26, shade(C("cloth"), 0.94))
+        vline(img, tx + 12, top + 2, 26, shade(C("cloth"), 1.26))
+        vline(img, tx + 17, top + 2, 26, shade(C("cloth"), 0.62))
+        hline(img, tx + 12, top + 15, 6, C("gold"))
+        for i in range(3):                       # swallowtail
+            px(img, tx + 13 + i, top + 27, (0, 0, 0, 0))
+            px(img, tx + 16 - i, top + 26, (0, 0, 0, 0))
+
+    # --- the gate: a deep arch, a raised portcullis, chains and windlass ---
+    arch(img, 46, 52, 40, 52, C("void"))
+    # the tunnel's inside walls, so it is a passage and not a hole
+    rect(img, 48, 66, 36, 38, shade(stone, 0.32))
+    for y in range(66, 100, 6):
+        hline(img, 48, y, 36, shade(stone, 0.24))
+    # Portcullis, half raised. Every bar is clipped to the arch's own opening:
+    # drawn as a rectangle it stuck out past the curve into the wall, which read
+    # as a grid hanging on the outside of the gate.
+    arch_r = 20
+    arch_cy = 52 + arch_r
+    for bx in range(50, 84, 4):
+        for yy in range(54, 79):
+            if yy < arch_cy:
+                dy = arch_cy - yy
+                half = int((arch_r * arch_r - dy * dy) ** 0.5)
+                if not (66 - half <= bx < 66 + half):
+                    continue
+            px(img, bx, yy, C("iron") if bx % 8 else C("iron_hi"))
+    for by in range(58, 80, 6):
+        for yy in (by, by + 1):
+            if yy < arch_cy:
+                dy = arch_cy - yy
+                half = int((arch_r * arch_r - dy * dy) ** 0.5)
+                hline(img, 66 - half + 1, yy, half * 2 - 2, C("iron_dk") if yy == by else C("iron"))
+            else:
+                hline(img, 48, yy, 36, C("iron_dk") if yy == by else C("iron"))
+    # spikes on the bottom rail: the thing that says "portcullis"
+    for bx in range(50, 84, 4):
+        px(img, bx, 79, C("iron_hi"))
+        px(img, bx, 80, C("iron_dk"))
+    # chains up to the windlass, and the windlass itself above the arch
+    for cx in (54, 82):
+        for i in range(9):
+            px(img, cx + (i % 2), 46 - i, C("iron") if i % 2 else C("iron_hi"))
+    # windlass, bolted into a recess above the arch instead of floating on the
+    # battlements
+    rect(img, 54, 30, 28, 10, shade(stone, 0.34))
+    rect(img, 56, 32, 24, 6, shade(C("wood"), 0.72))
+    hline(img, 56, 32, 24, shade(C("wood"), 1.1))
+    for wx in range(58, 80, 4):
+        vline(img, wx, 32, 6, shade(C("wood"), 0.5))
+    for bx in (56, 79):
+        rect(img, bx, 30, 1, 10, C("iron_dk"))
+    px(img, 68, 35, C("gold"))
+    rect(img, 53, 30, 30, 1, shade(stone, 1.16))
+    # voussoirs round the arch, and a keystone
+    for i in range(11):
+        ang = math.pi * (i / 10.0)
+        vx = int(66 + 20 * math.cos(ang))
+        vy = int(70 - 20 * math.sin(ang))
+        rect(img, vx - 2, vy - 2, 5, 4, shade(stone, 1.02))
+        hline(img, vx - 2, vy - 2, 5, shade(stone, 1.28))
+    rect(img, 63, 48, 6, 5, shade(stone, 1.14))
+    hline(img, 63, 48, 6, shade(stone, 1.4))
+
+    # --- braziers flanking the gate, and the banner over the arch ---------
+    # Fire stands flanking the road, on the ground in front of the wall: mounted
+    # on the wall they read as brackets, which is not where a guard's fire goes.
+    # The only warm light at this landmark, and it belongs inside the gate: two
+    # fires on the threshold of the passage, in front of the raised portcullis.
+    # Mounted on the outer wall they read as glowing boxes sunk into the stone,
+    # which is what three earlier passes produced.
+    for bx in (50, 78):
+        rect(img, bx - 4, 98, 12, 6, shade(stone, 0.5))      # threshold slab
+        hline(img, bx - 4, 98, 12, shade(stone, 0.72))
+        rect(img, bx + 1, 90, 2, 8, C("iron_dk"))
+        vline(img, bx + 1, 90, 8, shade(C("iron_dk"), 0.8))
+        rect(img, bx - 4, 86, 11, 5, C("iron_dk"))
+        hline(img, bx - 4, 86, 11, C("iron_hi"))
+        hline(img, bx - 4, 90, 11, C("iron"))
+        for fx in range(9):
+            px(img, bx - 3 + fx, 89 - (fx % 3), C("fire_hi") if fx % 3 else C("fire"))
+        for fx in (1, 4, 7):
+            px(img, bx - 3 + fx, 84, C("fire"))
+            px(img, bx - 3 + fx, 83, C("fire_hi"))
+        px(img, bx + 1, 82, C("gold"))
+        hline(img, bx - 5, 96, 13, mix(C("gold"), shade(stone, 0.5), 0.4))
+
+    banner(img, 62, 24, 8, 14, C("cloth"))
+
+    footprint_shadow(img, 2, 130)
+    return outline_alpha(img)
+
+
+def throne():
+    """L10 The Castellan's Throne — a hall you can see into, not a wide facade.
+
+    The generated frame was three towers and a green door, symmetric and closed:
+    it read as a castle icon, and the level it belongs to is a *throne room*. The
+    rebuild keeps the fortification but opens the centre into a lit hall, so the
+    destination of the whole chapter is a place with a seat in it.
+    """
+    img = new(152, 128)
+    stone = C("stone")
+
+    # --- plinth and the four steps up to the hall -------------------------
+    rect(img, 4, 116, 144, 12, shade(stone, 0.78))
+    courses(img, 4, 116, 144, 12, shade(stone, 0.78), row_h=4, seed=61,
+            mortar=shade(stone, 0.44), light=shade(stone, 1.1), dark=shade(stone, 0.56))
+    for i in range(5):
+        rect(img, 46 + i * 3, 114 - i * 3, 60 - i * 6, 3, shade(stone, 0.9 + i * 0.03))
+        hline(img, 46 + i * 3, 114 - i * 3, 60 - i * 6, shade(stone, 1.16))
+
+    # --- curtain wall, with the hall opened through its middle ------------
+    body = shade(stone, 0.84)
+    rect(img, 22, 46, 108, 70, body)
+    courses(img, 22, 46, 108, 70, body, row_h=7, seed=23,
+            mortar=shade(stone, 0.46), light=shade(stone, 1.12), dark=shade(stone, 0.6))
+    # battlements across the top
+    rect(img, 20, 42, 112, 6, shade(stone, 0.72))
+    hline(img, 20, 42, 112, shade(stone, 1.04))
+    for mx in range(22, 130, 9):
+        rect(img, mx, 36, 6, 6, shade(stone, 0.92))
+        hline(img, mx, 36, 6, shade(stone, 1.3))
+        px(img, mx + 5, 41, shade(stone, 0.58))
+
+    # --- the two outer towers ---------------------------------------------
+    for tx in (2, 122):
+        rect(img, tx, 24, 28, 92, shade(stone, 0.96))
+        courses(img, tx, 24, 28, 92, shade(stone, 0.96), row_h=7, seed=tx + 3,
+                mortar=shade(stone, 0.48), light=shade(stone, 1.16), dark=shade(stone, 0.62))
+        rect(img, tx - 2, 18, 32, 8, shade(stone, 0.82))
+        hline(img, tx - 2, 18, 32, shade(stone, 1.3))
+        for mx in range(tx - 1, tx + 29, 6):
+            rect(img, mx, 12, 4, 6, shade(stone, 0.9))
+            hline(img, mx, 12, 4, shade(stone, 1.34))
+        # a tall slit window and a red banner
+        rect(img, tx + 12, 40, 3, 16, C("void"))
+        px(img, tx + 13, 56, shade(stone, 1.22))
+        rect(img, tx + 6, 26, 6, 28, shade(C("cloth"), 0.92))
+        vline(img, tx + 6, 26, 28, shade(C("cloth"), 1.26))
+        hline(img, tx + 6, 40, 6, C("gold"))
+        for i in range(3):
+            px(img, tx + 7 + i, 54 - i, (0, 0, 0, 0))
+
+    # --- the hall: a lit interior with a dais and the seat ----------------
+    # The hall is one dark mass with a *warm floor* and a *warm dais*; an inner
+    # arch was tried and read as a second doorway inside the first one, and
+    # vertical light shafts read as gold bars. Light is a gradient, not furniture.
+    rect(img, 40, 54, 72, 62, shade(stone, 0.26))
+    rect(img, 40, 54, 72, 3, shade(stone, 0.4))
+    # floor: lit toward the dais, dark at the threshold
+    for i in range(14):
+        y = 100 + i
+        t = i / 13.0
+        hline(img, 44, y, 64, mix(shade(stone, 0.6), shade(stone, 0.3), t))
+    for i in range(6):                       # flagstone joints on the floor
+        hline(img, 44, 101 + i * 2, 64, shade(stone, 0.42))
+    # the dais: three steps, then the seat itself
+    for i in range(3):
+        rect(img, 58 + i * 3, 98 - i * 4, 36 - i * 6, 4, shade(stone, 0.66 + i * 0.06))
+        hline(img, 58 + i * 3, 98 - i * 4, 36 - i * 6, shade(stone, 0.94))
+    rect(img, 68, 82, 16, 12, shade(stone, 0.84))          # throne block
+    rect(img, 69, 83, 14, 4, shade(C("cloth"), 0.92))      # its cushion
+    rect(img, 70, 68, 12, 15, shade(stone, 0.94))          # high back
+    rect(img, 71, 69, 10, 13, shade(C("cloth"), 0.74))
+    vline(img, 76, 69, 13, C("gold"))
+    hline(img, 71, 71, 10, C("gold"))
+    px(img, 76, 74, C("gold_hi"))
+    px(img, 76, 78, C("gold_hi"))
+    # A pool of light on the floor in front of the dais, not a wash up the wall:
+    # the wall wash came out as a solid yellow shell.
+    for i in range(7):
+        w = 34 - i * 4
+        hline(img, 76 - w // 2, 100 - i, w, mix(C("gold"), shade(stone, 0.44), 0.16 + 0.03 * i))
+    for i in range(3):
+        hline(img, 74, 97 + i, 4, mix(C("gold"), shade(stone, 0.5), 0.3))
+    # a red runner down the steps and out over the threshold
+    rect(img, 72, 100, 8, 20, shade(C("cloth"), 0.8))
+    vline(img, 72, 100, 20, shade(C("cloth"), 1.1))
+    vline(img, 79, 100, 20, shade(C("cloth"), 0.58))
+    for y in range(104, 120, 4):
+        hline(img, 72, y, 8, C("gold"))
+
+    # --- two braziers on the steps, and the keystone over the arch --------
+    for bx in (40, 108):
+        rect(img, bx - 4, 110, 13, 8, shade(stone, 0.62))
+        hline(img, bx - 4, 110, 13, shade(stone, 0.9))
+        hline(img, bx - 4, 117, 13, shade(stone, 0.5))
+        rect(img, bx + 1, 102, 3, 8, C("iron_dk"))
+        vline(img, bx + 2, 102, 8, C("iron"))
+        rect(img, bx - 4, 98, 13, 5, C("iron_dk"))
+        hline(img, bx - 4, 98, 13, C("iron_hi"))
+        for fx in range(10):
+            px(img, bx - 3 + fx, 101 - (fx % 3), C("fire_hi") if fx % 3 else C("fire"))
+        for fx in (2, 5, 8):
+            px(img, bx - 3 + fx, 96, C("fire"))
+            px(img, bx - 3 + fx, 95, C("fire_hi"))
+    for i in range(12):
+        ang = math.pi * (i / 11.0)
+        vx = int(76 + 22 * math.cos(ang))
+        vy = int(96 - 24 * math.sin(ang))
+        rect(img, vx - 2, vy - 2, 5, 4, shade(stone, 1.04))
+        hline(img, vx - 2, vy - 2, 5, shade(stone, 1.3))
+    rect(img, 73, 50, 7, 6, shade(stone, 1.16))
+    hline(img, 73, 50, 7, shade(stone, 1.42))
+
+    footprint_shadow(img, 4, 148)
+    return outline_alpha(img)
+
+
 def main() -> int:
     os.makedirs(OUT, exist_ok=True)
     for name, painter in (("lm_archive", archive), ("lm_reliquary", reliquary),
                           ("lm_crucible", crucible), ("lm_relay", relay),
                           ("lm_crypt", crypt), ("lm_divided", divided),
                           ("camp_tent", camp_tent), ("camp_fire", camp_fire),
-                          ("camp_bedroll", camp_bedroll), ("camp_banner", camp_banner)):
+                          ("camp_bedroll", camp_bedroll), ("camp_banner", camp_banner),
+                          ("lm_ossuary", ossuary), ("lm_beacon", beacon),
+                          ("lm_gate", gate), ("lm_throne", throne)):
         image = painter()
         path = os.path.join(OUT, "%s.png" % name)
         image.save(path)

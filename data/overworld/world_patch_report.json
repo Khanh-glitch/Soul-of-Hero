@@ -5,28 +5,28 @@
    "id": "camp_refuge_hearth",
    "kind": "terrain",
    "layer": "ground",
-   "code": ",",
+   "code": "g",
    "cells": 15
   },
   {
    "id": "camp_crossroads_hearth",
    "kind": "terrain",
    "layer": "ground",
-   "code": ",",
+   "code": "g",
    "cells": 15
   },
   {
    "id": "camp_relay_base_hearth",
    "kind": "terrain",
    "layer": "ground",
-   "code": ",",
+   "code": "g",
    "cells": 15
   },
   {
    "id": "camp_ridge_hearth",
    "kind": "terrain",
    "layer": "ground",
-   "code": ",",
+   "code": "g",
    "cells": 15
   },
   {
@@ -141,9 +141,9 @@
   }
  ],
  "summary": {
-  "terrain_cells": 60,
+  "terrain_cells": 51,
   "prop_edits": 16,
   "patches": 14,
-  "hash": "9639e0a6c583514b0b47a3e21f91613189cdc1b1487bb014cca0ad1ea8e6102d"
+  "hash": "48264ecb87070f1c093b72aea4fbf18dec3cce1438783c43eeea6641be71cff2"
  }
 }

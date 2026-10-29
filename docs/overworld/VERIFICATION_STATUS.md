@@ -278,3 +278,50 @@ The `07b08bfd` run re-runs all of it with the fix, plus a new performance step.
 Local, headless, `tools/overworld/local_suite.sh`: 16 gates. The two occlusion
 tests and the performance probe print their own summaries; everything else is
 unchanged from section 2.
+
+## Second pass — the ground itself (HEAD after `14d3d144`)
+
+The owner's instruction was not to stop after a pilot, so the surfaces were
+measured rather than looked at. "Static" below is the share of horizontally
+adjacent pixel pairs that differ by more than 18 luma at the camera's real 2x
+framing — the thing that makes a surface read as television snow.
+
+| Surface | Before | After | What was wrong |
+| --- | --- | --- | --- |
+| `path` overlay | 13.2 % | 6.3–8.1 % | a 42 % per-pixel coin flip between two tones, i.e. a dither by construction |
+| `road_dirt` | 12.0 % (8.5 on some tiles) | 4.3–7.7 % | 18 % grain at full contrast, plus a dithered dark verge ring |
+| `road_stone` | 13.6 % | 10.2 % | same grain, plus the ditch |
+| dirt ground | 12.7 % of the whole apron | 3.9 % frame average | 16 % grain in 2 px blocks, one spatial frequency |
+| gravel / cliff top | 10.1 / 10.3 % | 9.5 / 9.8 % | same, softer |
+
+The single largest defect found was not in the ground at all: it was
+`detail_road_edge()`, which eroded every road tile's border with a seeded dither
+in a fringe colour much darker than the road. On a one-tile-wide path — which is
+what every guard rail and footpath in this world is — that ring was the dominant
+feature of the surface. It is now a solid two-pixel verge in a tone between the
+road and the ground, with a one-pixel wobbled silhouette and two blend steps.
+
+A second, structural defect: the ground variant is chosen per 3x3 block (a
+per-tile choice turned the four stone tones into a checkerboard), which meant the
+same 16 px tile was drawn nine times in a row and printed a 3-tile lattice across
+open ground. `OverworldTiles.flip_id()` now returns a per-tile alternative-tile
+mirror (`TRANSFORM_FLIP_H` / `_V` / both), so the tone stays coherent per block
+while the detail inside it decorrelates. `tools/overworld/preview.py` applies the
+same mirror, so the offline renders and the game still agree pixel for pixel.
+
+## The performance gate was wrong and is now fixed
+
+`tests/overworld_performance_probe.gd` asserted an absolute budget ("median frame
+script time < 8 ms"). It passed locally at 6.48 ms and **failed CI** on a shared
+two-core runner under software GL. An absolute millisecond budget measures the
+machine, not the design, so the gate now asserts what the design claims:
+
+| Claim | Assertion | Local result |
+| --- | --- | --- |
+| occlusion is a small share of the frame | overhead ≤ 45 % of the frame it sits in | measured and printed both ways |
+| an empty neighbourhood costs no more than a busy one | isolated step ≤ busy step | bucket scan is bounded, not O(world) |
+| a cell query is trivial next to a fade step | query ≤ step / 5 | 0.0005 ms vs 0.381 ms |
+| idle frames allocate nothing | node count +≤4 over 30 frames | 9074 → 9074 |
+
+The raw numbers are printed on every run, so a human can see the machine the
+gate ran on instead of trusting a threshold.

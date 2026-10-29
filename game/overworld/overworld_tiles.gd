@@ -63,7 +63,9 @@ static func build(texture: Texture2D, meta: Dictionary) -> TileSet:
 		if tile_data == null:
 			continue
 		# Every non-ground frame is either an overlay (no collision) or an
-		# obstacle/blocker (full-tile collision).
+		# obstacle/blocker (full-tile collision). The mirrored variants below
+		# reuse this same tile data, so they inherit the collision polygon; the
+		# polygon is a full symmetric square, so mirroring is a no-op for physics.
 		if _carries_collision(frame_name):
 			tile_data.set_collision_polygons_count(PHYSICS_LAYER, 1)
 			tile_data.set_collision_polygon_points(PHYSICS_LAYER, 0, full)
@@ -139,3 +141,27 @@ static func variant_index(x: int, y: int, count: int) -> int:
 	bx += 4096
 	by += 4096
 	return absi((bx * 73856093) ^ (by * 19349663)) % count
+
+
+## The `alternative_tile` argument for the ground cell at (x, y).
+##
+## The ground variant is picked per 3x3 block (a per-tile pick turned the four
+## stone tones into a checkerboard), which meant the same 16 px tile was drawn
+## *nine times in a row* and every feature pixel inside it printed a 3-tile
+## lattice. Godot 4 mirrors a tile for free through the alternative-tile bits, so
+## each cell is mirrored on a per-tile hash: the tone stays coherent across a
+## block while the detail decorrelates inside it.
+##
+## Deliberately *not* the same hash as `variant_index`, so a block's nine tiles
+## do not share a mirror pattern either.
+static func flip_id(x: int, y: int) -> int:
+	var mixed := absi((x * 374761393) ^ (y * 668265263) ^ 0x9E3779B9)
+	match mixed % 4:
+		1:
+			return TileSetAtlasSource.TRANSFORM_FLIP_H
+		2:
+			return TileSetAtlasSource.TRANSFORM_FLIP_V
+		3:
+			return TileSetAtlasSource.TRANSFORM_FLIP_H | TileSetAtlasSource.TRANSFORM_FLIP_V
+		_:
+			return 0

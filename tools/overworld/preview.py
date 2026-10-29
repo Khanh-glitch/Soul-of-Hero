@@ -42,6 +42,26 @@ def decode(layers, name):
 VARIANT_BLOCK = 3  # tiles per coarse cell; must match OverworldTiles.VARIANT_BLOCK
 
 
+def flip_id(x, y):
+    """Same hash as OverworldTiles.flip_id: 0 none, 1 mirror-x, 2 mirror-y, 3 both."""
+    mixed = abs(((x * 374761393) ^ (y * 668265263) ^ 0x9E3779B9))
+    return mixed % 4
+
+
+TRANSPOSE = {0: None, 1: Image.FLIP_LEFT_RIGHT, 2: Image.FLIP_TOP_BOTTOM,
+             3: Image.FLIP_LEFT_RIGHT}
+
+
+def apply_flip(crop, flip):
+    """Mirror a tile exactly the way the TileSet's flipped alternatives do."""
+    if flip == 0:
+        return crop
+    out = crop.transpose(Image.FLIP_LEFT_RIGHT) if flip & 1 else crop
+    if flip & 2:
+        out = out.transpose(Image.FLIP_TOP_BOTTOM)
+    return out
+
+
 def variant_index(x, y, count):
     """Same hash as OverworldTiles.variant_index so preview == game.
 
@@ -103,11 +123,13 @@ def render(x0, y0, x1, y1, *, scale=1, draw_props=True, layers=None):
 
     img = Image.new("RGBA", ((x1 - x0) * T, (y1 - y0) * T), (18, 15, 24, 255))
 
-    def blit(sheet_img, frame, px, py):
+    def blit(sheet_img, frame, px, py, flip=0):
         rect = index.get(frame) if sheet_img is sheet else None
         if rect is None:
             return
         crop = sheet_img.crop((rect[0], rect[1], rect[0] + rect[2], rect[1] + rect[3]))
+        if flip:
+            crop = apply_flip(crop, flip)
         img.alpha_composite(crop, (px, py))
 
     for y in range(y0, y1):
@@ -121,7 +143,7 @@ def render(x0, y0, x1, y1, *, scale=1, draw_props=True, layers=None):
                 pick = names[variant_index(x, y, len(names))]
             else:
                 pick = names
-            blit(sheet, pick, (x - x0) * T, (y - y0) * T)
+            blit(sheet, pick, (x - x0) * T, (y - y0) * T, flip=flip_id(x, y))
             d = detail[i]
             if d != ".":
                 f = frame_for(meta, d, "detail")
