@@ -122,7 +122,11 @@ func _body() -> void:
 	_expect(not room_id.is_empty(), "closed production room derived from placed pieces")
 	var door_id := String(door.get("entity_id", ""))
 	var door_node := build.structure_node(door_id)
-	var door_shape := door_node.get_node("Solid/CollisionShape2D") as CollisionShape2D
+	var door_shape := door_node.get_node_or_null("Solid/CollisionShape2D") as CollisionShape2D
+	_expect(door_shape != null, "door exposes its named collision shape")
+	if door_shape == null:
+		_body_complete = true
+		return
 	await physics_frame
 	var start := door_node.global_position + Vector2(8, -12)
 	var body := player as CharacterBody2D

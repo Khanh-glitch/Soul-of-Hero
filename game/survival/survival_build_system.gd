@@ -272,6 +272,7 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 		# two pixels are its shadow, and the player must be able to stand against
 		# the wall without being pushed off the floor in front of it.
 		var shape := CollisionShape2D.new()
+		shape.name = "CollisionShape2D"
 		var rect := RectangleShape2D.new()
 		rect.size = Vector2(TILE - 2, TILE - 6)
 		shape.shape = rect
