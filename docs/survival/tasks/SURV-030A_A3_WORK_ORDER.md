@@ -1,3 +1,5 @@
+**LATEST STAFFING / 2026-10-29:** Six models TOTAL; A0 construction and pre-existing Gold/VFX import agent A4 are already active. Your A3 assignment owns economic/material integration and future physical Skill Core item/recipe/charges/knowledge contracts, not effect rendering/porting. In particular, define how the one authoritative inventory stores a Core and its separate learned recipe without importing or modifying Gold VFX. Treat existing Gold A4 as a read-only producer of verified skill IDs/APIs; collaborate later via A0 contract gate. Absorb numerical economy/QA automation previously labeled A7 (that is a workstream, not a new bot). Do not block on scarce S6 optional POI exemplar. READY, not launched.
+
 # A3 — ECONOMY, CRAFTING & RESEARCH ENGINEER
 ## SURV-030A — GitHub Issue #13
 You are responsible for making Soul of Hero's resource, research, fabrication and equipment economy coherent and executable. Your specific branch is `feature/surv-a3-economy-030a`.
