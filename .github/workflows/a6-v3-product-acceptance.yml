@@ -268,6 +268,14 @@ jobs:
           elif [[ $result -eq 0 ]] && grep -q 'A0_MODAL_INPUT_GATE_PASS:' a0-source/.artifacts/a6-ci/a0-modal-input-probe.log; then
             echo "A0_GATE_NATIVE_PROBE_PASS: pinned A0 head suppressed simultaneous gameplay inputs under modal." | tee -a "$GITHUB_STEP_SUMMARY"
           else
+            A0_PROBE_EXIT="$result" A0_PROBE_LOG=a0-source/.artifacts/a6-ci/a0-modal-input-probe.log python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["A0_PROBE_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("FAIL", "SCRIPT ERROR", "ERROR", "Parse Error", "A0_MODAL"))]
+          summary = " | ".join((relevant or lines[-12:])[-16:]) or "no console output"
+          print(f"::error file=tests/survival/ui/a0_modal_gameplay_input_regression.gd,line=1,title=A0 modal probe exit {os.environ['A0_PROBE_EXIT']}::{summary[:5000]}")
+          PY
             echo "A0 modal input probe did not produce a recognized pass/blocker result (exit $result)." >&2
             exit 1
           fi
@@ -296,7 +304,17 @@ jobs:
             timeout --signal=TERM --kill-after=10s 180s xvfb-run -a -s "-screen 0 3840x2160x24" godot --path . --windowed --resolution "$resolution" res://tests/survival/ui/visual_capture.tscn -- "$tag" 2>&1 | tee ".artifacts/a6-ci/capture-${tag}.log"
             result=${PIPESTATUS[0]}
             set -e
-            if [[ $result -ne 0 ]]; then exit "$result"; fi
+            if [[ $result -ne 0 ]]; then
+              CAPTURE_TAG="$tag" CAPTURE_EXIT="$result" CAPTURE_LOG=".artifacts/a6-ci/capture-${tag}.log" python3 - <<'PY'
+          import os
+          from pathlib import Path
+          lines = [line.strip() for line in Path(os.environ["CAPTURE_LOG"]).read_text(errors="replace").splitlines() if line.strip()]
+          relevant = [line for line in lines if any(key in line for key in ("ERROR", "SCRIPT ERROR", "Parse Error", "CAPTURE", "VISUAL"))]
+          summary = " | ".join((relevant or lines[-12:])[-16:]) or "no console output"
+          print(f"::error file=tests/survival/ui/visual_capture.gd,line=1,title=Capture_{os.environ['CAPTURE_TAG']}_exit_{os.environ['CAPTURE_EXIT']}::{summary[:5000]}")
+          PY
+              exit "$result"
+            fi
           done
           python3 - <<'PY'
           from pathlib import Path
