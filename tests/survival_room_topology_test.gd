@@ -137,7 +137,11 @@ func _body() -> void:
 	await process_frame
 	await physics_frame
 	_expect(door_shape.disabled, "open door disables collision")
-	_expect(not body.test_move(Transform2D(0.0, start), Vector2(0, 25)), "real Hero collider can cross open doorway")
+	var probe := KinematicCollision2D.new()
+	var open_blocked := body.test_move(Transform2D(0.0, start), Vector2(0, 25), probe)
+	if open_blocked:
+		print("[door] blocked by %s normal=%s travel=%s" % [str(probe.get_collider()), str(probe.get_normal()), str(probe.get_travel())])
+	_expect(not open_blocked, "real Hero collider can cross open doorway")
 	_expect(build.room_topology.room_at(origin + Vector2i(1, 1)) == room_id, "opening a door retains enclosure")
 	player.global_position = door_node.global_position + Vector2(8, 8)
 	_expect(door_node.interact(player), "occupied doorway consumes the click")
