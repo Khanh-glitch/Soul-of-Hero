@@ -283,3 +283,30 @@ ARCANA 001-072 are not started.
   during `ENGINE.cast` (`venom_engine.gd:187`). Options: print from the test harness at the cast point
   (`gold93_venom_differential_test.gd:377-380`), or trace what `factory.call(c)` returns. Do not change
   generator logic before this is known.
+
+## 017-021 status (branch arena/c7b0c4e8-soul-of-hero, 2026-10-29)
+
+Verified against the original TypeScript (seed 7, first_divergent_tick -1), recorded in `docs/vfx/skill_readiness/parity/index.json`:
+
+| Skill | Port | Registry | Evidence |
+|---|---|---|---|
+| 017 Reverse Extraction | `venom_r17.gd` | registered (`01d1780`) | run 40870350179, job 123435508257: cues 45/45, hits 44/44. Main-lane regression run 40871453817 (`e52001c`): 017 success. |
+| 018 Bitter Rain | `venom_r18.gd` | registered (`3607387`) | candidate run 40871453819, job 123439265843: cues 12/12, hits 11/11; reproduced in 40873041022 (`56ee285`). |
+| 019 False Remedy | `venom_r19.gd` | registered (`d50f4a0`) | candidate run 40872333988, job 123442298081 (`b58aa3c`): cues 138/138, hits 10/10. |
+| 020 Plague Cartography | `venom_r20.gd` | candidate only | `56ee285` run 40873041022, job 123444719431: hits 79/79 and cues 135/135 match; first raster divergence at tick 180. |
+| 021 The Last Distillation | `venom_r21.gd` | candidate only | `56ee285`: hits 132/132 and cues 192/192 match; first raster divergence at tick 5 (particle fn arity, fixed in `e10ac66`, not yet re-run). |
+
+Root causes found this session (all visible in annotations):
+
+- The runtime path guard rejected `docs/vfx/acceptance/ACCEPTANCE_STATES.md`. The guard allows only `docs/vfx/skill_readiness/**`, `prototypes/skill_readiness/**`, and `.github/workflows/gold-93-readiness-*.yml`. The file moved to `docs/vfx/skill_readiness/ACCEPTANCE_STATES.md` (`e52001c`).
+- `M.PI` does not exist in `venom_math.gd`. The GDScript constant is `PI`. Two ports hit this (017, 019). gdparse does not catch it.
+- Inner classes cannot call the outer script's static helpers. `Pulse` (020) and `Column`/`Chamber` (021) each need their own `_p`. The parse error broke the whole candidate file, which surfaced as `Invalid call ... 'is_valid' in base 'Nil'` at `venom_world.gd:603`. That message means a nil generator; it is a consequence, not the cause.
+- Particle `fn` callbacks run as `p.fn.call(p, w, dt)`, so they need three arguments.
+
+Open items:
+
+- 020 tick-180 raster divergence. Hits and cues match. TEMP-DIAG `push_error("GOLD93_D20 ...")` lines in `venom_r20.gd` log every reservoir activation and Pulse creation. Remove them after diagnosis.
+- 021: re-run after `e10ac66` to read the next divergence.
+- Registry runtime lane for 018 and 019 (`40873595693`, `40873147804`): pending at time of writing.
+- Still open from earlier: 013 tick-320 raster, 015 event-32 knockback, 016 tick-195 raster, 007 tick-90 and 008 tick-125 candidates.
+- Note: the `PASS` lines beside `SKIP skill N (generator not ported)` in the runtime lane are placeholders, not verdicts.
