@@ -113,7 +113,9 @@
         "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020.",
         "Fresh-save automated input gathers scrap/oak, manufactures and GUI-collects kit, pays and reloads physical bench: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40918666020 at 394d1ca, 17 partial journey checks; shutdown leak/resource warnings, source approval and full journey open.",
         "Normal-input cloth 1/25 failure with horizontal overflow traced: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923336131 at 366184f; c6c135a layout fix and exact receipt assertions native pending.",
-        "Pinned A6 composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923995445 at 1643118; original modal probe and isolated A6 tests pass, actual workspace six held-input assertions fail, bed 103 checks pass but step log gate fails ALSA; 071fcd9 fixes driver and traces event delivery, pending."
+        "Pinned A6 composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923995445 at 1643118; original modal probe and isolated A6 tests pass, actual workspace six held-input assertions fail, bed 103 checks pass but step log gate fails ALSA; 071fcd9 fixes driver and traces event delivery, pending.",
+        "A1 two-POI out-of-bounds and owner seam: docs/survival/handoffs/A0_A1_TWO_POI_NATIVE_GEOGRAPHY_BLOCKER_20261030.md; exact canonical slices are not mounted/playable.",
+        "A6 workspace test intermittent: run 40924148636 at d8d13bb 25/25 vs run 40924373575 at c6c135a 7/25 failures; both bed 103/103 but strict step fails ALSA."
       ],
       "next": "Inspect 071fcd9 A6 native event trace and bed, fix held semantics; inspect c6c135a cloth/receipt/reload native and d8d13bb full-capacity fixture; continue anti-softlock, canonical A1 temporary composition and complete continuous journey, resolution/Web/performance and owner gates. Do not merge.",
       "assignment": {
