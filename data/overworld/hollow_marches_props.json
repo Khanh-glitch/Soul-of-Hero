@@ -338,35 +338,67 @@
    "lit": false
   },
   {
-   "frame": "brazier",
-   "x": 3112.0,
+   "frame": "column",
+   "x": 3272.0,
+   "y": 664.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column",
+   "x": 3400.0,
+   "y": 664.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column_broken",
+   "x": 3240.0,
    "y": 696.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column_broken",
+   "x": 3432.0,
+   "y": 696.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "brazier",
+   "x": 3208.0,
+   "y": 680.0,
    "flags": "",
    "z": 0,
    "lit": true
   },
   {
    "frame": "brazier",
-   "x": 3560.0,
-   "y": 696.0,
+   "x": 3464.0,
+   "y": 680.0,
    "flags": "",
    "z": 0,
    "lit": true
   },
   {
    "frame": "wall_stub",
-   "x": 3192.0,
+   "x": 3160.0,
    "y": 712.0,
    "flags": "",
-   "z": 0,
+   "z": 1,
    "lit": false
   },
   {
    "frame": "wall_stub",
-   "x": 3480.0,
+   "x": 3512.0,
    "y": 712.0,
    "flags": "",
-   "z": 0,
+   "z": 1,
    "lit": false
   },
   {

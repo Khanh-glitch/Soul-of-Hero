@@ -719,10 +719,31 @@ def paint_landmarks():
                 add_prop("column", *tile_pos(tx + dx, ty + 2))
             add_prop("disc_lore", *tile_pos(tx - 6, ty + 5))
         elif kind == "military":
-            for dx in (-14, 14):
-                add_prop("brazier", *tile_pos(tx + dx, ty + 3), lit=True)
-            for dx in (-9, 9):
-                add_prop("wall_stub", *tile_pos(tx + dx, ty + 4))
+            # A gate needs a gatehouse. The furniture here was two braziers
+            # fourteen tiles out and two wall stubs nine tiles out - all of it
+            # outside the gate's own silhouette, so at native scale the Crimson Gate
+            # was a sprite standing alone on gravel. The only tall props that ever
+            # overlapped it were scattered boulders, which is why the occlusion test
+            # used to find a pair here and stopped finding one when the boulder
+            # scatter was fixed: the collision was real, the gatehouse was not.
+            # Prop `y` is the sprite's foot, so anything at ty or above is *behind*
+            # the gate and hidden by it. The gatehouse therefore stands in front, on
+            # the approach: columns just off the processional line, broken stumps
+            # outside them, braziers at the threshold, and the wall stubs at the
+            # mouth of the plaza.
+            # The two towers flank the arch itself, one tile in front of the gate's
+            # foot, so their silhouettes overlap the gate's rather than standing in
+            # a row across the plaza below it. That overlap is what a gatehouse is:
+            # two masses the eye reads as the gate's own, and the only place a
+            # player can stand with masonry between them and the camera.
+            for dx in (-4, 4):
+                add_prop("column", *tile_pos(tx + dx, ty + 1), z=1)
+            for dx in (-6, 6):
+                add_prop("column_broken", *tile_pos(tx + dx, ty + 3), z=1)
+            for dx in (-8, 8):
+                add_prop("brazier", *tile_pos(tx + dx, ty + 2), lit=True)
+            for dx in (-11, 11):
+                add_prop("wall_stub", *tile_pos(tx + dx, ty + 4), z=1)
         elif kind == "throne":
             # The final approach. It was two statues fifteen tiles out and two
             # braziers ten tiles out - every one of them outside the camera frame at
