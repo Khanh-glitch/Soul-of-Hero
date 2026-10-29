@@ -193,6 +193,12 @@ func _expect(cond: bool, msg: String) -> void:
 	if not cond:
 		failures.append(msg)
 		push_error("OW_STATIC_FAIL: " + msg)
+		# Also emit a GitHub workflow command. The step's own log is only reachable
+		# through a host this project's tooling cannot always read, but annotations
+		# come back through the API - so a failure names itself where it can be seen
+		# instead of only inside a log file. Harmless outside Actions: it is a line of
+		# stdout that looks like a command.
+		print("::error title=overworld static contract::" + msg)
 
 
 func _decode_rle(rle: Array) -> PackedStringArray:
