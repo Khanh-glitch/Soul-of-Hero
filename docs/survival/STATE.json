@@ -144,9 +144,10 @@
         "44d4b60 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910016 failed 1/66: actual clicked in-reach door succeeded despite nearer bed, clicked far door stayed closed, bed/chest/saved custody passed; exit-cell assertion failed, physical full exit unproven.",
         "Fresh ordinary-input home 7d1da20 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40938272060 passed 66: paid room/door/bed/chest, bed activation, chest cloth deposit/withdraw, authoritative records/anchor/cloth reload, pointed-door reach and actual physical exit (47,205)/return. Automated, not human; reconstructed scene and full B0 remain open.",
         "Shared Knight pointed-door regression at 44d4b60: native https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910011, A6 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909942, overworld +8% https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909927 and limited Web https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910118 passed; general Original main baseline comparison https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909940 failed. PR21 draft mergeStateStatus DIRTY.",
-        "Fresh ordinary-input home + separate oak expedition/return f66f72f https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40938668918 passed 75: actual home/door/bed/chest, harvest two oak, return, stash oak plus crafted two cloth, reload exact chest custody. Reconstructed-scene and genuine threat/death unproven; no human/B0 claim."
+        "Fresh ordinary-input home + separate oak expedition/return f66f72f https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40938668918 passed 75: actual home/door/bed/chest, harvest two oak, return, stash oak plus crafted two cloth, reload exact chest custody. Reconstructed-scene and genuine threat/death unproven; no human/B0 claim.",
+        "Fresh journey and scene reconstruction 0914edf https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40939080582 passed 81: paid home, activated bed, chest cloth/oak source return, fresh production world reconstructs same room/structures/anchor/chest, real input recovers both stacks and reload preserves exactly bag custody. Automated not human, genuine threat/death and canonical POIs remain open."
       ],
-      "next": "Inspect actual saved-world reconstruction and ordinary chest recovery continuation after f66f72f 40938668918 passed 75 fresh-input home/source round-trip and chest-side reload custody. Then investigate genuine overworld threat/death and broader safety; canonical seam requires CT/A1 decision; B0 NOT ACCEPTED, never merge.",
+      "next": "Run/inspect native bounded enclosed-room chest/bed last-exit guard and fixture Hero escape, alongside fresh home journey and previous full suites. 0914edf 81-check source-to-home journey passed fresh world reconstruction. Genuine overworld threat/death needs owner-compatible design; canonical seam CT/A1 decision remains. B0 NOT ACCEPTED; never merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
@@ -198,7 +199,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Inspect actual saved-world reconstruction and ordinary chest recovery continuation after f66f72f 40938668918 passed 75 fresh-input home/source round-trip and chest-side reload custody. Then investigate genuine overworld threat/death and broader safety; canonical seam requires CT/A1 decision; B0 NOT ACCEPTED, never merge.",
+    "first_test": "Run/inspect native bounded enclosed-room chest/bed last-exit guard and fixture Hero escape, alongside fresh home journey and previous full suites. 0914edf 81-check source-to-home journey passed fresh world reconstruction. Genuine overworld threat/death needs owner-compatible design; canonical seam CT/A1 decision remains. B0 NOT ACCEPTED; never merge.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },

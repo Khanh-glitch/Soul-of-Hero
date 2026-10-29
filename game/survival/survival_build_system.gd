@@ -588,7 +588,7 @@ func _near_shortcut(cell: Vector2i, clearance: int) -> bool:
 # preview frame. Examine only the connected proposed seal cluster and its bounded
 # local box; never flood the world-sized rectangle between unrelated houses.
 func _hero_exit_rejection(cell: Vector2i) -> String:
-	if selected_piece not in ["wall_wood", "door_wood"]:
+	if selected_piece not in ["wall_wood", "door_wood", "chest_wood", "bed_wood"]:
 		return ""
 	var hero := player as CharacterBody2D
 	if hero == null or not is_instance_valid(hero):
@@ -601,6 +601,17 @@ func _hero_exit_rejection(cell: Vector2i) -> String:
 	if hero_shape.shape.collide(hero_shape.global_transform, projected_shape,
 			Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 5))):
 		return "hero_in_footprint"
+	if selected_piece in ["chest_wood", "bed_wood"]:
+		# Existing enclosed rooms already have a bounded topology. Treat this
+		# proposed one-cell object as blocked during the same live-shape exit
+		# search, including the door's outside cell. This does not purport to
+		# cover terrain-only enclosures, multi-cell stations or every trap.
+		var actor_cell := world.tile_of(hero.global_position)
+		var room_id: String = room_topology.room_at(actor_cell)
+		if not room_id.is_empty() and room_topology.room_at(cell) == room_id \
+				and not _projected_room_has_door_exit(actor_cell, room_id, room_topology, cell):
+			return "no_hero_exit"
+		return ""
 	var seals: Dictionary = {cell: {"piece": selected_piece, "cell": [cell.x, cell.y]}}
 	var queue: Array[Vector2i] = [cell]
 	var seen: Dictionary = {cell: true}

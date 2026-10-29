@@ -99,4 +99,33 @@ func _body() -> void:
 		Input.action_release("move_up")
 		await physics_frame
 		_expect(hero.global_position.y < origin.y * 16, "actual Hero walks out through the opened door")
+		# Fixture positions the real Hero back inside and funds three chests.
+		# Two are allowed beside the doorway; the third would seal its only
+		# interior approach and must not consume items or create a receipt.
+		hero.set_physics_process(false)
+		hero.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 3) * 16 + 15)
+		_expect(_give(WOOD, 12) and _give(IRON, 3), "fixture funds the furniture exit adversary")
+		build.select_piece("chest_wood")
+		var left := build.try_place(origin + Vector2i(1, 1))
+		await physics_frame
+		var right := build.try_place(origin + Vector2i(3, 1))
+		await physics_frame
+		_expect(bool(left.get("ok", false)) and bool(right.get("ok", false)), "paid side furniture leaves the sole door approach open")
+		var snapshot: Dictionary = _save().call(&"get_snapshot")
+		var wood_before := _count(WOOD)
+		var iron_before := _count(IRON)
+		var blocked := build.try_place(origin + Vector2i(2, 1), "hero.exit.furniture")
+		_expect(not bool(blocked.get("ok", true)) and blocked.get("reason", "") == "no_hero_exit", "last chest that would block the Hero's sole exit is rejected")
+		_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before \
+			and snapshot == (_save().call(&"get_snapshot") as Dictionary) \
+			and build.entity_at_layer(origin + Vector2i(2, 1), "object").is_empty(), "rejected chest changes no inventory, receipt, save or occupancy")
+		var repeated := build.try_place(origin + Vector2i(2, 1), "hero.exit.furniture")
+		_expect(not bool(repeated.get("ok", true)) and snapshot == (_save().call(&"get_snapshot") as Dictionary), "same rejected chest key remains a no-op")
+		hero.set_physics_process(true)
+		Input.action_press("move_up")
+		for i in range(100):
+			await physics_frame
+		Input.action_release("move_up")
+		await physics_frame
+		_expect(hero.global_position.y < origin.y * 16, "real Hero still physically exits past the two chests")
 	_body_complete = true
