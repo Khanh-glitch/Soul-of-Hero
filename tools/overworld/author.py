@@ -386,6 +386,11 @@ LANDMARKS = [
      (280, 36), "lm_throne", "throne", "Castellan's Citadel"),
 ]
 
+## Boulder silhouettes, small to large. Six of them, because the plateaus carry a few
+## hundred placements at even density and two or three sprites over that many cells is
+## a stamp the eye locks onto immediately.
+ROCK_FRAMES = ["rock_a", "rock_b", "rock_c", "rock_d", "rock_e", "rock_f"]
+
 CAMPS = [
     ("camp_refuge", "Ashen Refuge", (56, 216), True),
     ("camp_crossroads", "Wayfarer Stones", (152, 188), False),
@@ -1077,10 +1082,14 @@ def paint_scatter():
                 elif r < 0.078:
                     try_add("sarcophagus", x, y)
             elif g in ("g", "r"):
-                if r < 0.028:
-                    try_add("rock_b", x, y)
-                elif r < 0.042:
-                    try_add("rock_a", x, y)
+                # Six silhouettes, chosen by hash rather than by cumulative bands:
+                # with bands, the small frames (the ones that make a scatter look
+                # scattered rather than stamped) fall below the threshold almost
+                # everywhere and never appear. `r` still decides *whether* a cell
+                # carries a boulder, so density is unchanged.
+                if r < 0.050:
+                    try_add(ROCK_FRAMES[int(h01(902, x, y) * len(ROCK_FRAMES)) % len(ROCK_FRAMES)],
+                            x, y)
                 elif r < 0.050:
                     try_add("column_broken", x, y)
                 elif r < 0.056:
@@ -1201,10 +1210,9 @@ def paint_scatter():
                         try_add("wall_stub", x, y)
                     elif r < band * 0.70:
                         try_add("barrel", x, y)
-                elif r < band * 0.45:
-                    try_add("rock_a", x, y)
                 elif r < band * 0.85:
-                    try_add("rock_b", x, y)
+                    try_add(ROCK_FRAMES[int(h01(903, x, y) * len(ROCK_FRAMES)) % len(ROCK_FRAMES)],
+                            x, y)
             elif g == "d":
                 if r < band * 0.6:
                     try_add("grave_cross", x, y)
@@ -1564,6 +1572,38 @@ def paint_pools():
     return count
 
 
+def paint_stone_mottle():
+    """Weathered stone patches across the rock and gravel plateaus.
+
+    The north-east plateau is the largest single surface in the world and it was
+    one flat colour: `rock` and `gravel` have four to six variants, all within a
+    couple of points of each other (that is what stops them printing as a quilt),
+    chosen per 3x3 block. Uniform variants fixed one defect and exposed the other -
+    with no tonal variation inside the tile and none between variants, the plateau
+    has no structure at any scale below "the whole region".
+
+    So the structure goes on top, as an overlay placed by a smooth field, exactly as
+    the fen's water is: it fills its tile, carries no boundary, and a run of mottled
+    cells becomes a patch of weathered stone. Only exposed rock and gravel get it -
+    never a road, a lane, a plaza or anything already carrying an overlay.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or get(detail, x, y) != ".":
+                continue
+            if get(ground, x, y) not in ("r", "g"):
+                continue
+            field = patch_field(361, x, y, 9.0)
+            if field < 0.52:
+                continue
+            if field + (vnoise(x, y, 2.4, 362) - 0.5) * 0.16 < 0.52:
+                continue
+            put(detail, x, y, "w")
+            count += 1
+    return count
+
+
 def paint_kerbs():
     """A dressed-stone kerb round every paved surface.
 
@@ -1771,8 +1811,10 @@ def main():
     # Kerbs and pools last: they only claim cells nothing else has, so the
     # boundary dither must happen before them or it would eat their rims.
     pools = paint_pools()
+    mottle = paint_stone_mottle()
     kerbs = paint_kerbs()
     print("softened %d road cells in camps, feathered %d cells" % (softened, feathered))
+    print("stone mottle %d cells" % mottle)
     print("pools %d cells, kerbs %d cells" % (pools, kerbs))
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop

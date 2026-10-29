@@ -1083,8 +1083,17 @@ PROPS = {
     "tree_dead": tree_dead,
     "tree_pine": tree_pine,
     "bush": bush,
+    # Six boulder frames instead of two. The plateaus carry around two hundred of
+    # them at even scatter density, and two sprites over two hundred placements is a
+    # stamp: the eye locks onto the repeated silhouette immediately, and the field
+    # reads as pattern rather than as ground. Size and seed both vary, so the
+    # silhouettes are genuinely different shapes rather than the same shape scaled.
     "rock_a": lambda: rock(1, 26, 20),
     "rock_b": lambda: rock(2, 34, 26),
+    "rock_c": lambda: rock(7, 20, 15),
+    "rock_d": lambda: rock(11, 30, 22),
+    "rock_e": lambda: rock(15, 40, 30),
+    "rock_f": lambda: rock(19, 23, 18),
     # Four frames of the same idea: a rock patch seen from above. Replaces the
     # ledge/buttress sprites, which were drawn as elevations and read as objects
     # lying on the surface.

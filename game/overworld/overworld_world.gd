@@ -23,7 +23,7 @@ const FLAT_PROPS := ["disc_cache", "disc_bones", "disc_lore", "camp_bedroll"]
 ## Unmasked detail overlays that carry several frames. A single-frame overlay
 ## drawn on hundreds of scattered cells repeats identically and reads as a
 ## lattice, so these get a per-cell variant pick (see `_paint_grid`).
-const DETAIL_VARIANT_CODES := ["p"]
+const DETAIL_VARIANT_CODES := ["p", "w"]
 ## Prop frames the shortcut system can swap at runtime: closed -> open.
 const SHORTCUT_FRAMES := {
 	"short_bridge": ["short_bridge_broken", "short_bridge_fixed"],

@@ -532,3 +532,40 @@ VALIDATION PASSED`, and the static-contract job green on CI.
   wash line) is the obvious next step and needs new prop art, not new placement.
 - The hearth gravel is still tile-quantised at its edge. It reads as a hearth now,
   but it would read better with a dedicated edge tile set.
+
+## Eighth pass — tiles that repeat perfectly
+
+Four defects this pass turned out to have the same cause, and it is worth naming
+because it will produce more of them: **a tile pattern whose period divides 16 is
+invisible as a tile and obvious as a field.**
+
+An interior cell of a solid or paved mass uses the same frame as every other
+interior cell — the neighbour mask is identical — so whatever the tile contains
+repeats exactly on a 16 px grid. Anything inside the tile that lines up with the
+tile's own edges is therefore printed on that grid, hundreds of times.
+
+| Surface | What was wrong | What fixed it |
+| --- | --- | --- |
+| paving (`f`) | courses started at a random per-tile offset, so horizontal joints stopped at every tile edge; bricks were random-width, so vertical joints never met | course pitch 6 px and brick pitch 8 px, both dividing 16; only *which* vertical joint appears is randomised |
+| walls (`W`) | 16 px blocks with a per-block bevel — the bevel landed at the same offset in every cell, printing a lattice of bright rectangles across the burial fields | `courses(irregular=True)`: block widths from 5/7/9/4/6/8, seeded course starts, variable course height |
+| canopy (`T`) | per-pixel white noise at two tones — "television snow" repeated three hundred times | overlapping foliage clumps at *scattered* positions; the first attempt used a 5 px lattice and printed a diagonal weave |
+| rock field | four variants spread over 14 points of luminance, chosen per 3×3 block | tone within 1.5 points, variety from crack and grain seeds instead |
+
+Two more of the same family: the forest floor placed single trees by per-tile white
+noise (a checkerboard of isolated colliders, now a threshold on a coherent field),
+and the boulder scatter used two sprites for two hundred placements (now six, chosen
+by hash so the small frames actually appear).
+
+The plateau in the north-east also got a new overlay — `w`, weathered stone mottle,
+placed by the same smooth field that places the fen's water — so the largest surface
+in the world has structure at the scale between the tile and the region. The first
+version of that overlay was a per-2-pixel hash and read as pixel static; the mottle
+is 4–7 px blobs.
+
+### Still open
+
+- The plateau's overlay is subtle by design (it must tint the stone, not repaint it)
+  and at native zoom it is close to invisible. It needs either more contrast or
+  larger-scale landform — probably the latter, which is level design.
+- L10's plaza is furnished now, but the citadel wall behind it is still one flat
+  masonry field with no buttress or gatehouse reading.

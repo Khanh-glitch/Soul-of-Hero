@@ -20,6 +20,7 @@ Outputs (written by `author.py`):
 from __future__ import annotations
 
 import json
+import math
 import os
 
 from PIL import Image
@@ -234,8 +235,19 @@ def bevel_block(img, x, y, w, h, base, *, light, dark, top=None, joint=None):
         hline(img, x + 1, y + h - 2, w - 2, joint)
 
 
-def courses(img, x, y, w, h, base, *, row_h=8, seed=1, mortar=None, light=None, dark=None):
-    """Masonry courses: offset rows of blocks with mortar lines."""
+def courses(img, x, y, w, h, base, *, row_h=8, seed=1, mortar=None, light=None, dark=None,
+            irregular=False):
+    """Masonry courses: offset rows of blocks with mortar lines.
+
+    `irregular` matters only for *tiled* masonry. A 16 px block in a 16 px tile has
+    the same period as the tile, so every interior cell of a wall carries its
+    highlight at the same offset and a fortress wall prints as a lattice of bright
+    rectangles - which is what the burial-field walls did. With `irregular` the block
+    widths come from a small run of non-commensurate lengths (5, 7, 9, 4 px) and the
+    course heights vary, so the pattern never lines up with the tile edge and the
+    16 px repeat is invisible. Hand-framed landmark facades keep the regular version;
+    they are drawn once and their regularity is a design choice.
+    """
     light = light or shade(base, 1.25)
     dark = dark or shade(base, 0.62)
     mortar = mortar or shade(base, 0.5)
@@ -246,14 +258,22 @@ def courses(img, x, y, w, h, base, *, row_h=8, seed=1, mortar=None, light=None, 
         rh = min(row_h, int(y + h - yy))
         offset = 0 if row % 2 == 0 else 8
         x0 = int(x)
+        k = 0
+        if irregular:
+            # start the course at a seed-dependent offset so row starts do not align
+            x0 -= int(h01(seed, row, 1) * 6)
         while x0 < x + w:
             bx = x0 - offset
-            bw = 16
+            if irregular:
+                bw = (5, 7, 9, 4, 6, 8)[int(h01(seed, row, k, 2) * 6)]
+            else:
+                bw = 16
             bevel_block(img, max(x, bx), yy, min(bw, x + w - max(x, bx)), rh, base,
                         light=light, dark=dark, joint=mortar)
             x0 += bw
+            k += 1
         row += 1
-        yy += row_h
+        yy += rh if irregular else row_h
     for i in range(0, 10):
         cx = int(x) + int(h01(seed, i) * w)
         cy = int(y) + int(h01(seed, i, 3) * h)
@@ -558,17 +578,29 @@ def ground_flagstone(seed, *, base=None, joint=None, worn=0.0, tone=1.0):
     img = new(T, T)
     rect(img, 0, 0, T, T, shade(base, 0.97 + 0.05 * h01(seed, 3)))
 
-    row_y = -int(h01(seed, 1) * 5)
+    # Every interior cell of a paving field uses the *same* frame - the mask is the
+    # same when all four neighbours are paving - so the tile repeats exactly, and
+    # anything that depends on the tile boundary prints on that boundary. The
+    # course layout therefore has to be self-consistent at the edges: courses are
+    # built on a fixed 6 px pitch that divides 16 into 16 (top-aligned), rather than
+    # starting at a random offset, so the horizontal joints of one tile continue
+    # into the next. The per-row and per-brick noise then only decides *where a
+    # vertical joint falls*, never whether a course line exists.
+    row_y = 0
     row = 0
     joints = []
     while row_y < T:
-        row_h = 5 + int(h01(seed, row, 11) * 3)
+        row_h = 6 if row_y + 6 <= T else T - row_y
         if 0 < row_y < T:
             joints.append(("h", row_y, row, 0, 0))
-        x = -int(h01(seed, row, 12) * 8)
+        # Bricks are 8 px - again a pitch that divides the tile - and every other
+        # course is offset by half a brick. A random brick width means the vertical
+        # joints of neighbouring tiles never meet; a fixed pitch means the masonry
+        # continues across the seam and the seam itself disappears.
+        x = 0 if row % 2 == 0 else -4
         brick = 0
         while x < T:
-            bw = 6 + int(h01(seed, row, brick, 13) * 6)
+            bw = 8
             if 0 < x < T:
                 # a vertical joint belongs to ONE course. Running it the full
                 # height of the tile is what made paving print as graph paper:
@@ -1031,6 +1063,48 @@ def detail_kerb(mask_bits):
     return img
 
 
+def detail_stone(seed):
+    """Weathered stone mottle, for the great rock and gravel plateaus.
+
+    The north-east of the map is a plateau covering well over a thousand cells of
+    `rock` and `gravel`. Its tiles are individually fine and collectively flat: four
+    variants at the same value, chosen per 3x3 block, so from the camera's height the
+    whole plateau is one colour with a faint lattice of fissures over it. That is the
+    same defect the cliff mass had, and it has the same answer - structure at a scale
+    *between* the tile and the region, placed by a smooth field, not by the tile.
+
+    Like the pools, this fills its whole tile and carries no boundary of its own, so
+    a run of mottled cells merges into a patch of weathered stone and the shape comes
+    from the run. Five frames, picked per tile: a single frame over a thousand cells
+    is a lattice, and a per-block pick is one patch repeated nine times.
+    """
+    img = new(T, T)
+    rock = C("rock")
+    hi = mix(rock, C("rock_hi"), 0.55)
+    dk = mix(rock, C("rock_dk"), 0.75)
+    # Structure at 3-5 px, not 1-2. The first version put a per-2-pixel hash on
+    # top of the gradient and read as *pixel static*: at the camera's 2x zoom a 2 px
+    # feature is 4 screen px of dither, and dither over a thousand cells is noise, not
+    # stone. Weathered stone has patches the size of a hand, which at this scale is
+    # a third of a tile. So the mottle is built from a handful of soft blobs, each
+    # 4-7 px across, in the same tones as the ground beneath it.
+    for i in range(7):
+        cx = h01(seed, i, 21) * (T + 8) - 4
+        cy = h01(seed, i, 22) * (T + 8) - 4
+        r = 3.0 + 2.4 * h01(seed, i, 23)
+        light = h01(seed, i, 24) > 0.5
+        for y in range(T):
+            for x in range(T):
+                d = ((x + 0.5 - cx) ** 2 + (y + 0.5 - cy) ** 2) ** 0.5
+                if d > r:
+                    continue
+                edge = min(1.0, (r - d) / 1.6)
+                a = int(70 + 90 * edge)
+                col = mix(rock, hi, 0.30) if light else mix(rock, dk, 0.30)
+                img.putpixel((x, y), (col[0], col[1], col[2], a))
+    return img
+
+
 def detail_pool(seed):
     """Standing water on wet ground, placed per cell in world space.
 
@@ -1240,7 +1314,8 @@ def solid_wall(mask_bits, seed=0, *, base=None):
     n, e, s, w = opened_mask(mask_bits)
     base = base or C("stone")
     courses(img, 0, 0, T, T, shade(base, 0.85), row_h=5, seed=seed + 3,
-            mortar=shade(base, 0.45), light=shade(base, 1.22), dark=shade(base, 0.6))
+            mortar=shade(base, 0.45), light=shade(base, 1.22), dark=shade(base, 0.6),
+            irregular=True)
     if n:
         # jagged, broken coping
         for x in range(T):
@@ -1445,12 +1520,13 @@ DETAIL_BASE = {
     "x": ("bloodstain", lambda: detail_blood(207)),
     "z": ("ashdrift", lambda: detail_ash(208)),
     "p": ("pool", lambda: detail_pool(210)),
+    "w": ("stone_mottle", lambda: detail_stone(215)),
     "^": ("soulspark", lambda: detail_soulspark(209)),
 }
 
 ## Overlays that need several frames because a single frame repeats visibly when
 ## scattered. `pool` covers hundreds of fen cells.
-DETAIL_VARIANTS = {"p": 5}
+DETAIL_VARIANTS = {"p": 5, "w": 5}
 
 DETAIL_MASKED = {
     "/": "bank",
