@@ -29,6 +29,9 @@ static func _p(k: String) -> int:
 
 ## TS `class Column extends Fx` -- a rising transparent fluid column.
 class Column extends FX.Fx:
+	static func _p(k: String) -> int:
+		return int(M.P[k])
+
 	var bx: float = 0.0
 	var by: float = 0.0
 	var H: float = 0.0
@@ -83,7 +86,7 @@ class Column extends FX.Fx:
 			var wd: int = M.js_round(r * s_wob * f_top * f_bot)
 			var band: int = int(floor((1.0 - u) * 4.0 + float(cols))) % 4
 			var ramp: Array = lay[band]
-			var n: float = float(LIB_nz1(qx + float(yy) * 0.5, float(yy) * 0.4 - t * 6.0 + ph * 5.0)) / 255.0
+			var n: float = float(RNG.nz1(qx + float(yy) * 0.5, float(yy) * 0.4 - t * 6.0 + ph * 5.0)) / 255.0
 			var c1: int
 			if n > 0.66:
 				c1 = ramp[2]
@@ -121,6 +124,9 @@ class Column extends FX.Fx:
 
 ## TS `class Chamber extends Fx` -- the central distillation chamber.
 class Chamber extends FX.Fx:
+	static func _p(k: String) -> int:
+		return int(M.P[k])
+
 	var rad: float = 0.0
 	var cry: float = 0.0
 	var boil: float = 0.0
@@ -220,7 +226,7 @@ class Chamber extends FX.Fx:
 						layer = 2
 					var rp: Array = ramps[layer]
 					var tx_off: float = t * (2.0 if layer == 0 else (-3.0 if layer == 1 else 1.0))
-					var nn: float = float(LIB_nz1(float(px_i) * 0.14 + tx_off, float(py_i) * 0.14 + t * 1.6 + float(layer) * 9.0)) / 255.0
+					var nn: float = float(RNG.nz1(float(px_i) * 0.14 + tx_off, float(py_i) * 0.14 + t * 1.6 + float(layer) * 9.0)) / 255.0
 					var kf: float = floor((nn * 0.8 + (1.0 - absf(ny)) * 0.2 - ((float(dx) * 0.55 + float(dy) * 0.65) / Rf) * 0.18) * float(rp.size()) + (float(M.BAYER[((py_i & 3) << 2) | (px_i & 3)]) - 7.5) * 0.04)
 					var k: int = int(kf)
 					if k < 0:
@@ -295,9 +301,6 @@ static func _spawn(body: Callable):
 
 
 ## Wrapper so every `nz1` call site reads the same integer noise function.
-static func LIB_nz1(x: float, y: float) -> int:
-	return int(RNG.nz1(x, y))
-
 
 static func _stream_from(c, w, cx: float, gy: float, sx: float, sy: float, n: int, dly: float) -> void:
 	for i in range(n):

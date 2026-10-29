@@ -28,6 +28,9 @@ class CartState extends RefCounted:
 
 ## TS `class Pulse extends Fx` -- a travelling acid pulse along a flow branch.
 class Pulse extends FX.Fx:
+	static func _p(k: String) -> int:
+		return int(M.P[k])
+
 	var b: Dictionary
 	var net
 	var d: float = 0.0
