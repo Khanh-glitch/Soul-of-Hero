@@ -35,16 +35,24 @@ jobs:
       - name: Run pilot acceptance (both skills, full timeline, GOLD hash sync, cleanup)
         shell: bash
         run: |
-          set -uo pipefail
           OUT="$RUNNER_TEMP/venom-pilot"
           mkdir -p "$OUT"
           export VENOM_PILOT_OUT="$OUT"
-          timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_pilot_headless_test.gd 2>&1 | tee /tmp/pilot-run.log
-          STATUS=${PIPESTATUS[0]}
-          echo "::notice title=vfx-pilot status::godot exit status $STATUS"
-          grep -E 'GOLD93_VENOM_PILOT' /tmp/pilot-run.log | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot verdict::$line"; done
-          if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log || grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log; then
-            python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-run.log "vfx-pilot status=$STATUS"
+          set +e
+          timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_pilot_headless_test.gd > /tmp/pilot-run.log 2>&1
+          echo $? > /tmp/pilot-run.status
+          set -e
+          STATUS=$(cat /tmp/pilot-run.status)
+          echo "godot exit status $STATUS; log lines $(wc -l < /tmp/pilot-run.log)"
+          test "$STATUS" = "0" && grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log && ! grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log
+      - name: Pilot verdicts and failure digest
+        if: always()
+        shell: bash
+        run: |
+          echo "::notice title=vfx-pilot status::godot exit status $(cat /tmp/pilot-run.status 2>/dev/null || echo missing)"
+          grep -E 'GOLD93_VENOM_PILOT' /tmp/pilot-run.log 2>/dev/null | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot verdict::$line"; done
+          if [ "$(cat /tmp/pilot-run.status 2>/dev/null)" != "0" ] || ! grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log 2>/dev/null; then
+            python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-run.log "vfx-pilot failure digest"
             exit 1
           fi
       - name: Upload native frames and manifest
