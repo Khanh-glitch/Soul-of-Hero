@@ -703,7 +703,8 @@ func _handle_survival_input() -> void:
 				return
 	if Input.is_action_just_pressed(&"build_place"):
 		var hovered := get_viewport().gui_get_hovered_control()
-		if hovered != null and hovered.is_visible_in_tree() and hovered.mouse_filter != Control.MOUSE_FILTER_IGNORE:
+		if hovered != null and hovered.is_visible_in_tree() and hovered.mouse_filter != Control.MOUSE_FILTER_IGNORE \
+				and not survival_build.is_build_click_blocker(hovered):
 			return
 		var result := survival_build.try_place(survival_build.preview_cell())
 		if bool(result.get("ok", false)):

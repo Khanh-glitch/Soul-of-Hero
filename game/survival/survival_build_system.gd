@@ -737,6 +737,12 @@ func _cost_text(cost: Dictionary) -> String:
 
 
 ## Test/UI surface: what the build strip is showing right now.
+## The full-screen build blocker deliberately consumes world combat clicks;
+## it must not suppress the build tool's own polled placement input.
+func is_build_click_blocker(control: Control) -> bool:
+	return _hud_root != null and control != null and control == _hud_root.get_node_or_null("ClickBlocker")
+
+
 func build_hud_status() -> Dictionary:
 	var blocker: Node = null
 	if _hud_root != null:
