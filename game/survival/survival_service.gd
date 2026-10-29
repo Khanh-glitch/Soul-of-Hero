@@ -159,20 +159,13 @@ func is_recipe_learned(recipe_id: String) -> bool:
 
 
 func inventory_count(item_id: String) -> int:
+	# Delegated on purpose. The bag belongs to SaveService, and "how many of this
+	# item do I have" has one correct answer that already knows the stack-key
+	# rule; a second implementation here was wrong for every first stack.
 	var save := _save()
 	if save == null:
 		return 0
-	var stacks: Variant = save.call(&"get_inventory_stacks")
-	if not stacks is Dictionary:
-		return 0
-	var total := 0
-	for key: Variant in (stacks as Dictionary).keys():
-		var record: Variant = (stacks as Dictionary)[key]
-		if not record is Dictionary:
-			continue
-		if String((record as Dictionary).get("item_id", "")) == item_id:
-			total += int((record as Dictionary).get("quantity", 0))
-	return total
+	return int(save.call(&"inventory_total", item_id))
 
 
 func can_afford(cost: Dictionary) -> bool:
@@ -538,20 +531,7 @@ func inventory_totals() -> Dictionary:
 	var save := _save()
 	if save == null:
 		return {}
-	var stacks: Variant = save.call(&"get_inventory_stacks")
-	if not stacks is Dictionary:
-		return {}
-	var totals: Dictionary = {}
-	for key: Variant in (stacks as Dictionary).keys():
-		var record: Variant = (stacks as Dictionary)[key]
-		if not record is Dictionary:
-			continue
-		var item_id := String((record as Dictionary).get("item_id", ""))
-		var quantity := int((record as Dictionary).get("quantity", 0))
-		if item_id.is_empty() or quantity <= 0:
-			continue
-		totals[item_id] = int(totals.get(item_id, 0)) + quantity
-	return totals
+	return (save.call(&"inventory_totals") as Dictionary).duplicate(true)
 
 
 ## Moves *everything* that fits from the bag into a container, as one commit.

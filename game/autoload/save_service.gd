@@ -740,6 +740,35 @@ func grant_inventory_item(
 ## error inside the reader, which shows up as "the bag is empty" everywhere
 ## downstream. One accessor with no array to type is one fewer way to get that
 ## wrong.
+## Total quantity of every item in the committed bag, merged across stacks.
+##
+## A stack is keyed by its item id when it is the item's first stack, and the
+## record then omits `item_id` entirely (see `_with_inventory_stack_metadata`).
+## Anything that counts by reading `record.item_id` alone therefore reports zero
+## for the *most common* stack shape — so the base id is resolved here, through
+## the same helper the mutation path uses, and no caller has to know the rule.
+func inventory_totals() -> Dictionary:
+	var stacks := get_inventory_stacks()
+	var totals: Dictionary = {}
+	for raw_key: Variant in stacks.keys():
+		var stack_key := String(raw_key).strip_edges().to_lower()
+		var raw_record: Variant = stacks[raw_key]
+		if not raw_record is Dictionary:
+			continue
+		var record: Dictionary = raw_record
+		var item_id := _inventory_stack_base_id(stack_key, record)
+		var quantity := int(record.get("quantity", 0))
+		if item_id.is_empty() or quantity <= 0:
+			continue
+		totals[item_id] = int(totals.get(item_id, 0)) + quantity
+	return totals
+
+
+## Total quantity of one item in the committed bag.
+func inventory_total(item_id: String) -> int:
+	return int(inventory_totals().get(item_id.strip_edges().to_lower(), 0))
+
+
 func get_inventory_stacks() -> Dictionary:
 	_ensure_loaded()
 	var inventory: Variant = _data.get("inventory", {})

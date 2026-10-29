@@ -147,7 +147,11 @@ func _stacks(item_id: String) -> Dictionary:
 	if stacks is Dictionary:
 		for key: Variant in (stacks as Dictionary).keys():
 			var record: Variant = (stacks as Dictionary)[key]
-			if record is Dictionary and String((record as Dictionary).get("item_id", "")) == item_id:
+			if not record is Dictionary:
+				continue
+			# A first stack omits `item_id` and is keyed by the item id instead.
+			var base := String((record as Dictionary).get("item_id", String(key)))
+			if base == item_id:
 				out[String(key)] = int((record as Dictionary).get("quantity", 0))
 	return out
 
@@ -606,9 +610,13 @@ func _body() -> void:
 
 	print("[case 12] begin")  # heartbeat: a crash names the case it died in
 	# -- 12 repeated reloads neither duplicate nor lose ------------------------
+	print("[case 12] a: reading the committed bag")
 	var stable_wood := _count(WOOD)
+	print("[case 12] b: wood=%d" % stable_wood)
 	var stable_structures := int((_document().get("structures", {}) as Dictionary).size())
+	print("[case 12] c: structures=%d" % stable_structures)
 	var stable_chest: Dictionary = survival.call(&"container_contents", chest_id)
+	print("[case 12] d: chest=%s" % str(stable_chest))
 	for cycle in range(3):
 		_expect(bool(save.call(&"reload_save")), "case 12: reload %d succeeded" % (cycle + 1))
 		ow = await _reload_world(ow)
