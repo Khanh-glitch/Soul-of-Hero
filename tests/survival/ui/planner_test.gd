@@ -62,7 +62,7 @@ func _run() -> void:
 	planner._search.text = ""
 	planner._search.text_changed.emit("")
 	planner._select("core_formula")
-	check((planner._details.get_child(1) as Label).text.contains("research"), "research-gated formula remains distinct from a physical specimen")
+	check((planner._details.get_child(1) as Label).text.to_lower().contains("research"), "research-gated formula remains distinct from a physical specimen")
 	var research := planner._details.get_child(planner._details.get_child_count() - 2) as Button
 	check(research != null and research.disabled, "blocked research disabled")
 	planner._select("bandage")

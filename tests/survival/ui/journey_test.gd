@@ -253,11 +253,16 @@ func _run() -> void:
 	if not InputMap.action_has_event(&"ui_accept", accept):
 		InputMap.action_add_event(&"ui_accept", accept)
 	accept.pressed = true
-	Input.parse_input_event(accept)
+	check(accept.is_action_pressed(&"ui_accept"), "controller A is bound to the focused accept action")
+	var controller_accept := InputEventAction.new()
+	controller_accept.action = &"ui_accept"
+	controller_accept.device = 0
+	controller_accept.pressed = true
+	root.push_input(controller_accept, true)
 	await process_frame
 	check(view.current_projection().journey == 1, "controller A accepts focused journey tab")
-	accept.pressed = false
-	Input.parse_input_event(accept)
+	controller_accept.pressed = false
+	root.push_input(controller_accept, true)
 	await process_frame
 	view._journey_tabs[2].grab_focus()
 	var mouse := InputEventMouseButton.new()
