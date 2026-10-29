@@ -1,0 +1,85 @@
+name: Gold 93 Experimental Candidate Preflight
+
+on:
+  push:
+    branches:
+      - arena/4fa0fa84-soul-of-hero
+    paths:
+      - 'prototypes/skill_readiness/native/venom/venom_s*.gd'
+      - 'prototypes/skill_readiness/tests/gold93_candidate_load_probe.gd'
+      - '.github/workflows/gold-93-readiness-candidate-probe.yml'
+  workflow_dispatch:
+    inputs:
+      candidates:
+        description: 'Experimental skill scripts: venom_s3 venom_s4'
+        required: false
+        default: 'venom_s3 venom_s4'
+
+permissions:
+  contents: read
+
+jobs:
+  candidate-compile:
+    name: Isolated Godot 4.7 candidate compiler
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Load candidate scripts without preloading the skill registry
+        shell: bash
+        env:
+          CANDIDATES: ${{ inputs.candidates || 'venom_s3 venom_s4' }}
+        run: |
+          set -euo pipefail
+          BASE_DIR=/tmp/gold93-candidate
+          PROBE="$BASE_DIR/project"
+          mkdir -p "$PROBE"
+          ln -s "$GITHUB_WORKSPACE/prototypes" "$PROBE/prototypes"
+          cat > "$PROBE/project.godot" <<'EOF'
+          config_version=5
+          [application]
+          config/name="gold93-candidate-probe"
+          [rendering]
+          renderer/rendering_method="gl_compatibility"
+          EOF
+          timeout 180s godot --headless --editor --path "$PROBE" --import --quit >"$BASE_DIR/import.log" 2>&1 || true
+          echo '### Candidate scripts: compilation only, NOT source parity' >> "$GITHUB_STEP_SUMMARY"
+          failures=0
+          for candidate in $CANDIDATES; do
+            if [[ ! "$candidate" =~ ^venom_s(3|4)$ ]]; then
+              echo "::error title=Invalid candidate::Only venom_s3 and venom_s4 are supported"
+              exit 2
+            fi
+            logfile="$BASE_DIR/$candidate.log"
+            set +e
+            timeout 120s godot --headless --path "$PROBE" --script res://prototypes/skill_readiness/tests/gold93_candidate_load_probe.gd -- --candidate="$candidate" >"$logfile" 2>&1
+            status=$?
+            set -e
+            if [[ "$status" == 0 ]] && grep -q 'GOLD93_CANDIDATE_LOAD: PASS' "$logfile" && ! grep -qE 'SCRIPT ERROR:|Parse Error:|Compile Error:' "$logfile"; then
+              echo "- **$candidate**: LOAD PASS" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "- **$candidate**: LOAD FAIL; unregistered" >> "$GITHUB_STEP_SUMMARY"
+              failures=$((failures+1))
+              while IFS= read -r line; do
+                msg="$(printf '%s' "$line" | sed -e 's/%/%25/g' -e 's/\r/%0D/g')"
+                echo "::warning title=$candidate Godot compiler::$msg"
+              done < <(grep -E -A 2 'SCRIPT ERROR:|Parse Error:|Compile Error:|GOLD93_CANDIDATE_LOAD: FAIL' "$logfile" | tail -42 || true)
+            fi
+          done
+          if (( failures > 0 )); then
+            echo "::notice title=Experimental preflight::$failures unregistered scripts failed loading. Verified source-parity roster unaffected."
+          fi
+          exit 0
+      - name: Upload candidate diagnostic logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold93-experimental-candidate-logs
+          path: /tmp/gold93-candidate/*.log
+          if-no-files-found: warn
+          retention-days: 7
