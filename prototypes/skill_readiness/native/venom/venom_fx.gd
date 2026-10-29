@@ -939,8 +939,6 @@ class Shot extends Fx:
 			return
 		if age > life:
 			dead = true
-			if on_land != null and on_land.is_valid():
-				on_land.call(w, self)
 
 
 	## The airborne globule's own draw pass: shadow, then the authored callback
