@@ -151,6 +151,14 @@ func _body() -> void:
 	var reload_job: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
 	_expect(int(reload_job.get("elapsed", -1)) == int(before.get("elapsed", -2)), "reload preserves job without offline accrual")
 	_expect(await _wait_job(host, hand_job, "ready", 35.0), "actual physics-driven active session completes hand kit")
+	var current_receipt: Dictionary = host.call(&"_snapshot", "hand")
+	var tick_event := "a0tick.%s.hand.%d" % [String(current_receipt.get("session_id", "")), int(current_receipt.get("sequence", -1))]
+	var replay_tick: Dictionary = adapter.call(&"advance", "hand", current_receipt, tick_event)
+	var stale_tick: Dictionary = adapter.call(&"advance", "hand", snapshot, "native.stale")
+	var conflicting := current_receipt.duplicate(true)
+	conflicting["active_ticks"] = int(conflicting.active_ticks) + 1
+	var conflicting_tick: Dictionary = adapter.call(&"advance", "hand", conflicting, tick_event)
+	_expect(bool(replay_tick.get("duplicate", false)) and not bool(stale_tick.get("ok", false)) and String(conflicting_tick.get("reason", "")) == "event_id_conflict", "real host receipt replay is idempotent, stale receipt and changed replay rejected")
 	var collected: Dictionary = host.call(&"collect", hand_job)
 	_expect(bool(collected.get("ok", false)) and _count("workbench_kit") == 1, "A3 collects manufactured kit into sole inventory")
 	_expect(not bool((host.call(&"collect", hand_job) as Dictionary).get("ok", false)) and _count("workbench_kit") == 1, "duplicate collection cannot mint another kit")
