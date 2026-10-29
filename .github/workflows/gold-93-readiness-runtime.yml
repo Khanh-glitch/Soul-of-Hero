@@ -404,8 +404,28 @@ jobs:
         run: |
           set -uo pipefail
           LOG=/tmp/gold93-venom-diff-${{ matrix.skill }}.log
+          MEM=/tmp/gold93-venom-mem-${{ matrix.skill }}.log
+          : > "$MEM"
+          # Memory watchdog: records the peak RSS of the Godot process and kills
+          # it above 4 GB so the step still reports a verdict instead of being
+          # killed silently by the runner.
+          (
+            while sleep 0.5; do
+              rss=$(ps -eo rss=,args= | awk '/gold93_venom_differential_test/ && !/awk/ {print $1}' | sort -n | tail -1)
+              [ -z "$rss" ] && continue
+              echo "rss_kb=$rss" >> "$MEM"
+              if [ "$rss" -gt 4000000 ]; then
+                echo "WATCHDOG: rss_kb=$rss above 4000000, killing" >> "$MEM"
+                pkill -9 -f gold93_venom_differential_test || true
+                break
+              fi
+            done
+          ) &
+          WD=$!
           timeout 2400s stdbuf -o0 -e0 godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported --verbose 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
+          kill "$WD" 2>/dev/null || true
+          echo "::notice::[venomwright-${{ matrix.skill }}] memory: $(sort -t= -k2 -n "$MEM" | tail -1) samples=$(wc -l < "$MEM") $(grep WATCHDOG "$MEM" || true)"
           if [ "$STATUS" != "0" ]; then
             echo "::error::[venomwright-${{ matrix.skill }}] godot exited with status $STATUS"
             while IFS= read -r line; do echo "::error::[venomwright-${{ matrix.skill }}] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
