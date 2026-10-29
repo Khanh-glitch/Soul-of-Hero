@@ -1,3 +1,5 @@
+**LATEST STAFFING / 2026-10-29:** Six models TOTAL; A0/SURV-020 and pre-existing Gold/VFX port agent A4 are already active. Your separate A1 World assignment is one of the THREE normal-throughput open slots. You MUST plan complete continent plus generic POI anchoring independently. Scarce specialist S6 designs ONE OPTIONAL complex POI exemplar (issue #18) and must never block your world masterplan or give you a required schema. Do not copy Gold skill source, adjust core combat, or modify A0's working branch. This A1 work order remains READY; user has not sent it yet.
+
 **RESOURCE CORRECTION (2026-10-29): Do NOT assign this entire World task to the scarce premium model that quickly runs out of tokens. A1 is critical-path, requires a normal steady-throughput model. The scarce model is slot S6 of SIX TOTAL and is reserved for small OPTIONAL nonblocking visual studies. Previous 'high-thinking slow priority' allocation is superseded. Full design quality still required.**
 
 # A1 — WORLD ARCHITECT: A FULL CONTINENT THAT FEELS AUTHORED
