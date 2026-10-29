@@ -126,3 +126,49 @@ differential run. Then 008 Brine Serpents → 021, then ARCANA III 001–072
   runtime.
 - Source escrow: `/home/user/.gold93-private/sources/{venomwright,arcana}/src/game/`,
   outside the repo. Key is local-only; never commit or print it.
+
+## Session update (branch arena/c7b0c4e8-soul-of-hero): V8 math and 007/008 status
+
+Verified in Godot 4.7 on CI (`Gold 93 V8 math bit-exactness`, run 40826230510):
+`native/venom/v8_math.gd` is bit-exact against Node v22 vectors for sin, cos,
+atan2, hypot, asin, exp, log and pow with exponent 2 (0 mismatches each).
+`pow` with a general exponent is still a KNOWN_RESIDUAL (34/1000 mismatches);
+`tan` and the large-argument `__kernel_rem_pio2` path are not ported.
+
+**Godot literal precision bug (important for every port).** Godot's GDScript
+tokenizer does not round decimal literals with 16+ significant digits
+correctly. Example: `6.36619772367581382433e-01` in the tokenizer is one ulp
+off, which moves the pi/2 reduction by ~1e-12. All float constants in
+`v8_math.gd` are now `static var X = _w2f(hi, lo)` built from exact bits. Do
+not write long decimal literals in native GDScript. `venom_math.gd` TAU is
+`2.0 * PI` for the same reason.
+
+Regression, same commit: venomwright 001-006 `parity: true`,
+`first_divergent_tick: -1` on seed 7 and seed 21 (runtime workflow).
+
+**007 Hatchery Fall: still tick 90.** After the exact sin/cos fix the native
+scene hash is unchanged (`7169d7dc...`) and hit 22 is still `ky=-3.414103`
+vs original `-3.414105`. So libm sin/cos is NOT the cause. Remaining
+candidates (not yet tested): arithmetic order differences (for example
+`TAU*i/n` vs `2*PI*i/n`), spawn/release ordering at ticks 85-90, and the
+Cocoon rupture pulse.
+
+**008 Brine Serpents: first raster divergence at tick 125.** Hit count 33
+vs 32 (an extra native poison hit) and authored shock cue at event 93 is
+off: original (296.488, 249.885), native (296.059, 250.800). This is a logic
+difference in the serpent chain state (`venom_s4.gd` line ~415-440 uses
+`s.ch.s[i]` positions), not a rounding difference.
+
+**Skip vs pass in the runtime workflow.** The runtime differential runs with
+`--skip-unported`, so unregistered skills (7, 8, 9-21) report `success` as
+SKIP. Only 001-006 are real checks. Do not read a green 007/008 shard as parity.
+
+**009 Molting Harvester: not started.** There is no generator, and the original
+TypeScript is not in the repo or the sandbox (escrow key unavailable). A port
+needs the source decrypted outside the repo first.
+
+CI reporting: job logs are not downloadable from the sandbox. Verdicts and log
+tails are emitted as check-run annotations by
+`prototypes/skill_readiness/tools/ci/annotate_log.py`. Read them with
+`gh api repos/<repo>/check-runs/<job_id>/annotations`. Note: bash steps run
+with `-e`, so capture the Godot exit status with `set +e` first.
