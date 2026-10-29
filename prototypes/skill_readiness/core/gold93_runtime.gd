@@ -24,6 +24,7 @@ const MODULE_PATHS: Dictionary = {
 	"venomwright:004": "res://prototypes/skill_readiness/skills/venomwright/v004_source_native.gd",
 	"venomwright:005": "res://prototypes/skill_readiness/skills/venomwright/v005_source_native.gd",
 	"venomwright:006": "res://prototypes/skill_readiness/skills/venomwright/v006_source_native.gd",
+	"venomwright:008": "res://prototypes/skill_readiness/skills/venomwright/v008_source_native.gd",
 }
 
 ## Registry of the SOURCE-NATIVE engine: canonical id -> ORIGINAL skill id as
@@ -47,6 +48,7 @@ const SOURCE_NATIVE_IDS: Dictionary = {
 	"venomwright:004": 4,
 	"venomwright:005": 5,
 	"venomwright:006": 6,
+	"venomwright:008": 8,
 }
 
 const SOURCE_NATIVE_SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")

@@ -35,8 +35,17 @@ SCOPED_SOURCES = ("venomwright", "arcana_iii")
 # Modules whose ORIGINAL authored generator was actually ported from the
 # original archive and is executed by the native runtime. Adding an id here is a
 # fidelity claim backed by source-locked components, never a TODO marker.
+# Kept in step with Gold93Runtime.MODULE_PATHS. This tool is not wired into any
+# workflow today, but a stale table here would silently report ported ids as
+# blocked the moment it is, so it is updated with every registered module.
 NATIVE_EXECUTABLE_MODULES = {
     "venomwright:001": "prototypes/skill_readiness/skills/venomwright/v001_glassfang_hunt.gd",
+    "venomwright:002": "prototypes/skill_readiness/skills/venomwright/v002_source_native.gd",
+    "venomwright:003": "prototypes/skill_readiness/skills/venomwright/v003_source_native.gd",
+    "venomwright:004": "prototypes/skill_readiness/skills/venomwright/v004_source_native.gd",
+    "venomwright:005": "prototypes/skill_readiness/skills/venomwright/v005_source_native.gd",
+    "venomwright:006": "prototypes/skill_readiness/skills/venomwright/v006_source_native.gd",
+    "venomwright:008": "prototypes/skill_readiness/skills/venomwright/v008_source_native.gd",
 }
 
 SOURCE_ARCHIVE_BLOCKER = (

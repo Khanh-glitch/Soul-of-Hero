@@ -596,7 +596,9 @@ class Serpent extends FX.Fx:
 					"y": float(s[i]["y"]) - 2.0 - z, "r": rad(i)})
 		if pts.size() == 0:
 			return
-		DRAW.worm_body(L, pts, SERP(),
+		DRAW.worm_body(L, pts,
+				DRAW.pal(int(M.P["k0"]), LIB._hexn(0x0d2b2a), int(M.P["v0"]),
+						int(M.P["v1"]), int(M.P["v3"])),
 				{"stripe": int(M.P["y1"]), "stripeT": t * 0.6})
 		for i in range(n):
 			if i < gone or i > vis:
