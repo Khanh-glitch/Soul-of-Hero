@@ -468,21 +468,53 @@ def ground_gravel(seed):
 
 
 def ground_rock(seed, tone=1.0):
+    """Fractured stone plate: cracks, not strata.
+
+    Two previous versions laid a full-width horizontal seam in every variant.
+    Across a four-variant field that is a stack of perfectly level lines - the
+    same defect as the "two flat planks" cliff, one layer down, and it measured
+    100 % line coverage before this rewrite. These cracks wander in y, start and
+    stop inside the tile, and light a lip on one side only, which is what makes
+    stone read as broken rather than striped.
+    """
     base = shade(C("rock"), tone)
     img = new(T, T)
     grain(img, 0, 0, T, T, base, C("rock_hi"), C("rock_dk"), seed=seed, amount=0.18)
-    # flat strata: two long horizontal seams
-    y0 = 3 + int(h01(seed, 1) * 9)
-    hline(img, 0, y0, T, mix(C("rock_dk"), base, 0.35))
-    hline(img, 0, y0 + 1, T, mix(C("rock_hi"), base, 0.6))
-    speck(img, 0, 0, T, T, C("rock_dk"), 4, seed=seed + 5)
-    if h01(seed, 9) < 0.5:
-        # a seam of darker stone running out of the tile, so a rock field has
-        # direction rather than an even grain
-        sx = int(h01(seed, 10) * (T - 4)) + 1
-        for k in range(4):
-            px(img, sx + k, 4 + k, shade(base, 0.66))
-            px(img, sx + k, 5 + k, shade(base, 0.8))
+
+    # A short wandering fissure that starts and stops inside the tile.
+    cx = int(h01(seed, 1) * (T - 6)) + 3
+    y = 2 + int(h01(seed, 1, 2) * 4)
+    stop = T - 2 - int(h01(seed, 2, 3) * 3)
+    lit = 0
+    while y < stop:
+        step = 1 + int(h01(seed, y, 4) * 3)
+        lean = 0
+        r = h01(seed, y, 5)
+        if r < 0.34:
+            lean = -1
+        elif r > 0.66:
+            lean = 1
+        for k in range(step):
+            if y + k >= stop:
+                break
+            px(img, cx, y + k, shade(base, 0.84))
+            if lit < 4:
+                px(img, cx - lean, y + k, mix(base, C("rock_hi"), 0.24))
+                lit += 1
+        cx = max(2, min(T - 3, cx + lean))
+        y += step
+
+    # A second, shorter crack from an edge, so plates meet.
+    ex = int(h01(seed, 6) * (T - 8)) + 3
+    ey = 3 if h01(seed, 7) < 0.5 else T - 4
+    dy = 1 if ey < T // 2 else -1
+    for k in range(2 + int(h01(seed, 8) * 3)):
+        px(img, ex - (k // 3), ey + dy * k, shade(base, 0.88))
+    speck(img, 0, 0, T, T, C("rock_dk"), 3, seed=seed + 5)
+    for i in range(2):
+        gx = int(h01(seed, i, 51) * (T - 2)) + 1
+        gy = int(h01(seed, i, 52) * (T - 2)) + 1
+        px(img, gx, gy, C("rock_hi"))
     return img
 
 
@@ -671,28 +703,35 @@ def ground_cliff_top(seed):
     """The broken plateau surface.
 
     The cliff tops are the largest uninterrupted ground area in the world, so
-    they are where repeated tiling is most obvious. Grain is halved, each variant
-    gets one horizontal bedding seam (they are sedimentary, and a seam gives the
-    surface a direction), and one in two carries a crack.
+    they are where repeated tiling is most obvious. Two rules came out of trying
+    to paint them, both measured rather than guessed:
+
+    * a *hard* full-width line tiles into a horizon every 16 px and reads as
+      graph paper at map scale (100 % line coverage, which is how it was found);
+    * but a field of small per-tile features is worse, because the features land
+      at the same offsets in every variant and the plateau becomes a regular dot
+      grid. Both were rendered at world scale and compared before choosing.
+
+    What survives is a soft bedding seam - the stratification the plateau needs
+    for direction, at a contrast low enough that it does not rule a line - plus
+    one crack and a few chips, low contrast so they read as texture.
     """
     base = mix(C("rock"), C("gravel"), 0.4)
     img = new(T, T)
     grain(img, 0, 0, T, T, base, C("rock_hi"), C("rock_dk"),
           seed=seed, amount=0.09, soften=0.4)
-    # bedding: a seam that runs the full width, so the surface has a grain
     sy = 3 + int(h01(seed, 5) * 10)
-    hline(img, 0, sy, T, shade(base, 0.78))
-    hline(img, 0, sy + 1, T, shade(base, 1.14))
+    hline(img, 0, sy, T, shade(base, 0.90))
+    hline(img, 0, sy + 1, T, shade(base, 1.05))
     if h01(seed, 6) < 0.5:
-        # a crack running out of the tile, with a lit lip on one side
         cx = int(h01(seed, 7) * (T - 6)) + 2
         for k in range(5):
-            px(img, cx + k, 4 + k + (k % 2), shade(base, 0.6))
-            px(img, cx + k + 1, 4 + k + (k % 2), shade(base, 1.1))
+            px(img, cx + k, 4 + k + (k % 2), shade(base, 0.74))
+            px(img, cx + k + 1, 4 + k + (k % 2), shade(base, 1.06))
     for i in range(3):
         x = int(h01(seed, i, 81) * (T - 4)) + 2
         y = int(h01(seed, i, 82) * (T - 3)) + 1
-        hline(img, x, y, 2 + int(h01(seed, i, 83) * 3), C("rock_dk"))
+        hline(img, x, y, 2 + int(h01(seed, i, 83) * 3), shade(base, 0.84))
     return img
 
 
@@ -975,17 +1014,102 @@ def detail_soulspark(seed):
 # solid / obstacle tiles — opaque 16 x 16, carry collision
 # ---------------------------------------------------------------------------
 def solid_cliff(mask_bits, seed=0):
-    """Cliff face: dry-stone courses seen from the front, lit on top."""
+    """Cliff face, lit on top: two different tiles for two different jobs.
+
+    The interior variant (no exposed side) is the single most repeated graphic in
+    the world - 13 545 of the ~23 350 solid cells, in bands up to 380 wide - so
+    it carries *no feature at all*. That took three attempts to accept, each one
+    caught only by rendering the cliff at the camera's own 2x zoom rather than at
+    10x:
+
+      1. two 8 px `courses()` rows          -> the band printed as long grey
+         shelves, the most obvious artefact in the world overview;
+      2. irregular seams and loose stones   -> a corduroy dash grid, because every
+         variant put its dashes at a similar offset;
+      3. 22 % grain in 2 px blocks          -> the same dash grid at a finer
+         pitch.
+
+    Any feature inside this tile repeats on the 3-tile variant lattice, and across
+    a 380-tile band that is a grid. So the interior is a quiet bed with a
+    per-variant tone step and a whisper of grit, and all the structure of a cliff
+    face comes from decals placed in world space (`cliff_ledge_*`,
+    `cliff_crack_*`, `cliff_buttress_*` in `art_props.py`), which can be
+    irregular because they are not tiled.
+
+    The edge variants are a different case: they are seen in short runs along a
+    cliff rim, so they can carry a face, and they must carry a lit rim or the drop
+    is unreadable. Two earlier faces - blocky courses, and 4-7 px blocks with 1 px
+    dark joints - both printed as a brick wall, and the joints printed the shelf
+    harder than the courses had. What is here is one soft vertical gradient (lit
+    at the top, shaded at the foot), a single bedding seam that never spans the
+    tile, two vertical fissures with a lit left lip, and per-pixel grit drawn on
+    top of the gradient. No full-width horizontal line exists anywhere in it, so
+    a long run of it cannot align into a stripe.
+    """
     img = new(T, T)
     n, e, s, w = opened_mask(mask_bits)
     base = mix(C("rock"), C("stone"), 0.35)
-    courses(img, 0, 0, T, T, shade(base, 0.9 + 0.15 * h01(seed, 1)), row_h=8, seed=seed + 11,
-            mortar=shade(base, 0.45), light=shade(base, 1.2), dark=shade(base, 0.6))
+    # The mass is *dark*. Measured, the previous face sat at 79 mean luma against
+    # walkable ground at 84-101, i.e. the impassable half of the world was the
+    # same value as the walkable half and read as more ground. A cliff is a wall
+    # seen from above: it is in shadow, and the only bright part of it is the rim
+    # where the light lands. Every tone below is derived from this one number.
+    base = shade(base, 0.80)
+    if not (n or e or s or w):
+        tone = shade(base, 0.97 + 0.10 * h01(seed, 1))
+        rect(img, 0, 0, T, T, tone)
+        for gy in range(T):
+            for gx in range(T):
+                r = h01(seed + 9, gx, gy)
+                if r < 0.030:
+                    px(img, gx, gy, shade(tone, 1.10))
+                elif r < 0.060:
+                    px(img, gx, gy, shade(tone, 0.90))
+        return img
+
+    top = shade(base, 1.22 + 0.06 * h01(seed, 1))
+    foot = shade(base, 0.74)
+    for y in range(T):
+        t = y / float(T - 1)
+        hline(img, 0, y, T, mix(top, foot, t ** 0.85))
+    # one bedding seam, never full width
+    sy = 5 + int(h01(seed, 3) * 6)
+    sx0 = 1 + int(h01(seed, 4) * 5)
+    sx1 = sx0 + 5 + int(h01(seed, 5) * 6)
+    hline(img, sx0, sy, min(T - sx0, sx1 - sx0), shade(base, 0.5))
+    hline(img, sx0, sy + 1, min(T - sx0, sx1 - sx0), shade(base, 0.76))
+    # vertical fissures with a lit left lip
+    for i in range(2):
+        fx = 3 + int(h01(seed, i, 41) * 10)
+        fy = int(h01(seed, i, 42) * 6)
+        for k in range(4 + int(h01(seed, i, 43) * 5)):
+            y = fy + k
+            if y >= T:
+                break
+            px(img, fx, y, shade(base, 0.44))
+            px(img, fx + 1, y, shade(base, 1.1))
+    # grit and veining, low contrast. `grain()` fills with its base colour first,
+    # so a transparent base blanks the tile - it has to be drawn per pixel over
+    # the gradient that is already there.
+    for gy in range(T):
+        for gx in range(T):
+            r = h01(seed + 9, gx, gy)
+            shade_now = mix(top, foot, (gy / float(T - 1)) ** 0.85)
+            if r < 0.05:
+                px(img, gx, gy, shade(shade_now, 1.16))
+            elif r < 0.10:
+                px(img, gx, gy, shade(shade_now, 0.74))
     if n:
-        rect(img, 0, 0, T, 3, shade(base, 1.32))
-        hline(img, 0, 0, T, shade(base, 1.45))
+        # the lit rim: the top of the wall catches the sky, and this line is what
+        # tells the player where the drop is
+        rect(img, 0, 0, T, 3, shade(base, 1.55))
+        hline(img, 0, 0, T, shade(base, 1.75))
         for x in range(0, T, 2):
             px(img, x, 3, shade(base, 0.72))
+        # a fringe of moss and grit where the wall meets the ground above it
+        for x in range(T):
+            if h01(seed, x, 36) > 0.55:
+                px(img, x, 2, mix(C("grass_dk"), base, 0.45))
     if s:
         rect(img, 0, T - 3, T, 3, shade(base, 0.5))
         for x in range(1, T, 3):

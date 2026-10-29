@@ -5,15 +5,15 @@
  ],
  "sheets": {
   "props": {
-   "frames": 47,
+   "frames": 53,
    "image": "assets/environment/overworld/overworld_props.png",
    "index": {
     "barrel": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      376,
-      348,
+      30,
+      372,
       16,
       20
      ],
@@ -23,8 +23,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      470,
-      312,
+      28,
+      342,
       22,
       28
      ],
@@ -34,8 +34,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      176,
-      346,
+      298,
+      348,
       26,
       22
      ],
@@ -45,7 +45,7 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_banner.png",
      "rect": [
-      374,
+      430,
       306,
       16,
       34
@@ -56,8 +56,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_bedroll.png",
      "rect": [
-      480,
-      354,
+      134,
+      378,
       24,
       14
      ],
@@ -67,8 +67,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      460,
-      352,
+      114,
+      376,
       18,
       16
      ],
@@ -78,8 +78,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_fire.png",
      "rect": [
-      146,
-      344,
+      268,
+      346,
       28,
       24
      ],
@@ -89,7 +89,7 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_tent.png",
      "rect": [
-      326,
+      382,
       304,
       46,
       36
@@ -100,8 +100,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      300,
-      348,
+      462,
+      350,
       20,
       20
      ],
@@ -111,9 +111,75 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      78,
-      342,
+      200,
+      344,
       38,
+      26
+     ],
+     "source": "generated"
+    },
+    "cliff_buttress_a": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      308,
+      300,
+      26,
+      40
+     ],
+     "source": "generated"
+    },
+    "cliff_buttress_b": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      336,
+      300,
+      26,
+      40
+     ],
+     "source": "generated"
+    },
+    "cliff_crack_a": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      326,
+      348,
+      18,
+      22
+     ],
+     "source": "generated"
+    },
+    "cliff_crack_b": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      346,
+      348,
+      18,
+      22
+     ],
+     "source": "generated"
+    },
+    "cliff_ledge_a": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      88,
+      344,
+      34,
+      26
+     ],
+     "source": "generated"
+    },
+    "cliff_ledge_b": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      124,
+      344,
+      34,
       26
      ],
      "source": "generated"
@@ -133,8 +199,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
-      346,
+      402,
+      348,
       20,
       22
      ],
@@ -144,8 +210,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      394,
-      350,
+      48,
+      374,
       28,
       18
      ],
@@ -155,8 +221,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      322,
-      348,
+      484,
+      350,
       24,
       20
      ],
@@ -166,7 +232,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      392,
+      448,
       306,
       20,
       34
@@ -177,7 +243,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      414,
+      470,
       308,
       28,
       32
@@ -188,8 +254,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      444,
-      312,
+      2,
+      342,
       24,
       28
      ],
@@ -199,8 +265,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      424,
-      350,
+      78,
+      374,
       34,
       18
      ],
@@ -210,8 +276,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      58,
-      342,
+      180,
+      344,
       18,
       26
      ],
@@ -221,8 +287,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      38,
-      342,
+      160,
+      344,
       18,
       26
      ],
@@ -232,7 +298,7 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      308,
+      364,
       300,
       16,
       40
@@ -353,8 +419,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      348,
-      348,
+      2,
+      372,
       26,
       20
      ],
@@ -364,8 +430,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      2,
-      342,
+      52,
+      344,
       34,
       26
      ],
@@ -375,8 +441,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      204,
-      346,
+      366,
+      348,
       34,
       22
      ],
@@ -474,8 +540,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      118,
-      342,
+      240,
+      344,
       26,
       26
      ],
@@ -518,8 +584,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      262,
-      346,
+      424,
+      348,
       36,
       22
      ],
@@ -527,7 +593,7 @@
     }
    },
    "overridden": 14,
-   "sha256_16": "ea6ad39985eb94a7",
+   "sha256_16": "6486d93a5302be46",
    "skipped": []
   },
   "tiles": {
@@ -2956,7 +3022,7 @@
     }
    },
    "overridden": 0,
-   "sha256_16": "98842cf8192f1ffd",
+   "sha256_16": "85584a4a9a405c09",
    "skipped": []
   }
  }

@@ -755,13 +755,153 @@ def bush():
 
 
 def rock(seed=1, w=26, h=20):
+    """A boulder: a chipped, asymmetric crown on a flat footprint.
+
+    It used to be two stacked rectangles with a full-width bright line across the
+    top, which at the camera's 2x zoom read as a concrete block or a low bench -
+    about four hundred of them are scattered across the map, so the world was
+    littered with furniture. The silhouette is now a per-column height profile
+    that leans, with a notch cut out of one shoulder, and the lit crown follows
+    the profile instead of ruling a line. The first rewrite made a symmetrical
+    dome, which read as a haystack; the lean and the notch are what stop that.
+    """
     img = new(w, h)
-    rect(img, 2, h // 2, w - 4, h // 2 - 2, mix(C("rock"), C("rock_dk"), 0.35))
-    rect(img, 5, h // 3, w - 10, h // 2, C("rock"))
-    hline(img, 6, h // 3, w - 12, C("rock_hi"))
-    speck(img, 3, h // 3, w - 6, h - h // 3 - 2, C("rock_dk"), 10, seed=seed)
+    body = mix(C("rock"), C("rock_dk"), 0.34)
+    hi = mix(C("rock"), C("rock_hi"), 0.60)
+    lo = mix(C("rock_dk"), C("void"), 0.30)
+
+    base_y = h - 4
+    cx = w * 0.52
+    rx = w / 2.0 - 1.5
+    ry = base_y - 2.0
+    notch_x = 4 + int(h01(seed, 1) * (w - 10))
+    notch_w = 2 + int(h01(seed, 2) * 2)
+    notch_d = 1 + int(h01(seed, 3) * 2)
+    top = {}
+    for x in range(w):
+        dx = (x - cx) / rx
+        if abs(dx) > 1.0:
+            continue
+        span = (1.0 - dx ** 2) ** 0.5
+        wob = (h01(seed, x, 4) - 0.5) * 2.0
+        ty = int(round(base_y - 1 - span * ry + wob))
+        if notch_x <= x < notch_x + notch_w:
+            ty += notch_d
+        top[x] = max(2, min(base_y - 1, ty))
+    if not top:
+        return img
+    for x, ty in sorted(top.items()):
+        for y in range(ty, base_y):
+            px(img, x, y, body)
+        # lit crown: the top two rows, warmest on the light side (upper left)
+        px(img, x, ty, hi if x < cx else mix(hi, body, 0.55))
+        if ty + 1 < base_y:
+            px(img, x, ty + 1, mix(hi, body, 0.35))
+        px(img, x, base_y - 1, lo if x > cx else mix(lo, body, 0.5))
+    # facets: short, angled, and never touching either edge of the mass
+    for i in range(4):
+        fx = 4 + int(h01(seed, i, 5) * (w - 9))
+        fy = top.get(fx, base_y - 6) + 3
+        if fy >= base_y:
+            continue
+        for k in range(1 + int(h01(seed, i, 6) * 3)):
+            if fx + k < w and fy + (k % 2) < base_y:
+                px(img, fx + k, fy + (k % 2), mix(body, C("rock_dk"), 0.45))
     contact_shadow(img)
-    return outline_alpha(img)
+    return img
+
+
+def cliff_ledge(seed=1):
+    """A shelf of broken ledge standing out of a cliff face.
+
+    The cliff interior tile is deliberately featureless (see `solid_cliff` in
+    `art.py`): every feature drawn inside a 16 px tile repeats on the variant
+    lattice and prints a grid across a band hundreds of tiles wide. So all the
+    structure of a cliff face lives out here, in world space, where it can be
+    irregular. A first version was a rectangle with a lit top line and a dark
+    bottom line, and at 2x that read as a floating label rather than as stone.
+    """
+    img = new(34, 26)
+    face = mix(C("rock"), C("rock_dk"), 0.20)
+    lit = mix(C("rock"), C("rock_hi"), 0.50)
+    rect(img, 2, 11, 27, 6, face)
+    rect(img, 6, 7, 18, 4, mix(face, lit, 0.55))
+    rect(img, 11, 15, 14, 3, mix(face, C("rock_dk"), 0.35))
+    hline(img, 7, 7, 16, lit)
+    hline(img, 12, 4, 8, mix(lit, face, 0.4))
+    for i in range(5):
+        x = 2 + int(h01(seed, i, 1) * 27)
+        y = 16 + int(h01(seed, i, 2) * 3)
+        px(img, x, y, (0, 0, 0, 0))
+    for x in range(3, 30):
+        if img.getpixel((x, 17))[3]:
+            px(img, x, 17, mix(face, C("void"), 0.55))
+            px(img, x, 18, mix(face, C("void"), 0.30))
+    for i in range(6):
+        x = 3 + int(h01(seed, i, 3) * 25)
+        px(img, x, 11 + int(h01(seed, i, 4) * 5), mix(face, C("rock_dk"), 0.5))
+    return img
+
+
+def cliff_buttress(seed=1):
+    """A rock buttress standing out of a cliff face, two to three tiles tall.
+
+    The cliff mass is 380 tiles wide; a face made only of 16 px tiles reads as a
+    flat slab however good the tile is, because the eye has nothing at the scale
+    in between. This is that middle scale: a pillar lit down its left flank and
+    dropping into shadow on the right, with a stepped silhouette.
+
+    Value is the whole trick. Against the face it sits on, the body is two steps
+    lighter and the shadow side three steps darker - enough to read at 2x without
+    an outline, because an outline on a decal repeated across a wall is exactly
+    the grid this project already had to remove twice.
+    """
+    w, h = 26, 40
+    img = new(w, h)
+    face = mix(C("rock"), C("rock_dk"), 0.25)
+    lit = mix(C("rock"), C("rock_hi"), 0.55)
+    dark = mix(C("rock_dk"), C("void"), 0.25)
+    # (y, x, width): stacked slabs, each shorter than the one below
+    rows = [(2, 6, 16), (7, 3, 20), (13, 1, 22), (19, 4, 19), (26, 2, 21), (32, 5, 17)]
+    for y, x0, width in rows:
+        rect(img, x0, y, width, 6, face)
+        hline(img, x0, y, width, mix(face, lit, 0.55))
+        px(img, x0, y + 1, lit)
+        px(img, x0 + width - 1, y + 1, dark)
+        px(img, x0 + width - 1, y + 2, mix(dark, face, 0.4))
+    cx = 10 + int(h01(seed, 1) * 5)
+    for k in range(8, 30):
+        if h01(seed, k, 2) < 0.3:
+            continue
+        px(img, cx + (1 if k % 7 == 0 else 0), k, mix(face, C("void"), 0.35))
+    for i in range(5):
+        x = 4 + int(h01(seed, i, 3) * 16)
+        px(img, x, 33 + int(h01(seed, i, 4) * 4), (0, 0, 0, 0))
+    for y in range(36, h):
+        for x in range(w):
+            if img.getpixel((x, y))[3]:
+                px(img, x, y, mix(face, C("void"), 0.45))
+    return img
+
+
+def cliff_crack(seed=1):
+    """A crack in a cliff face: shadow only, no fill.
+
+    A broken line of dark pixels that wanders, because a straight one would
+    re-create the shelf problem at decal scale.
+    """
+    img = new(18, 22)
+    x = 4 + int(h01(seed, 1) * 8)
+    for y in range(2, 20):
+        if h01(seed, y, 2) < 0.15:
+            continue
+        px(img, x, y, mix(C("rock_dk"), C("void"), 0.45))
+        if h01(seed, y, 3) < 0.4:
+            px(img, x + 1, y, mix(C("rock_dk"), C("void"), 0.15))
+        if h01(seed, y, 4) < 0.3:
+            x += 1 if h01(seed, y, 5) < 0.5 else -1
+            x = max(1, min(16, x))
+    return img
 
 
 def gravestone(kind="slab"):
@@ -945,6 +1085,12 @@ PROPS = {
     "bush": bush,
     "rock_a": lambda: rock(1, 26, 20),
     "rock_b": lambda: rock(2, 34, 26),
+    "cliff_ledge_a": lambda: cliff_ledge(1),
+    "cliff_ledge_b": lambda: cliff_ledge(2),
+    "cliff_buttress_a": lambda: cliff_buttress(1),
+    "cliff_buttress_b": lambda: cliff_buttress(2),
+    "cliff_crack_a": lambda: cliff_crack(1),
+    "cliff_crack_b": lambda: cliff_crack(2),
     "gravestone": lambda: gravestone("slab"),
     "grave_cross": lambda: gravestone("cross"),
     "sarcophagus": sarcophagus,

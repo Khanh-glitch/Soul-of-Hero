@@ -67,6 +67,41 @@ def footprint_shadow(img, x0=0, x1=None, alpha=96):
             px(img, x, y, mix((r, g, b, a), (10, 8, 14, 255), fade / 255.0))
 
 
+## Every landmark is lifted to this median luminance. Measured (see
+## `tools/overworld/art_quality.py`) the painted exteriors sat at 0.315 while the
+## ground they stand on sits at 0.356: stone on stone, so a destination did not
+## read as a destination. The art direction wants front props in a band clearly
+## above the ground; 0.46 is that band, and the lift is computed per frame from
+## its own median, so a dark basalt wall and a pale sand facade both land in it
+## without being flattened to the same tone.
+VALUE_TARGET = 0.46
+
+
+def value_to_target(img, target=VALUE_TARGET, tint=(255, 246, 228)):
+    """Mix a frame toward warm light until its *opaque* median hits `target`.
+
+    Mixing keeps the relative steps between courses, niches and shadows; a
+    brightness multiply would flatten them, and a lift applied per building with
+    hand-tuned constants would drift the moment a frame is repainted.
+    """
+    opaque = [(x, y) for y in range(img.height) for x in range(img.width)
+              if img.getpixel((x, y))[3] > 128]
+    if not opaque:
+        return img
+    lumas = sorted((img.getpixel(p)[0] * 299 + img.getpixel(p)[1] * 587
+                    + img.getpixel(p)[2] * 114) // 1000 for p in opaque)
+    median = lumas[len(lumas) // 2] / 255.0
+    if median >= target:
+        return img
+    amount = min(0.55, (target - median) / max(0.05, 1.0 - median) * 1.05)
+    for x, y in opaque:
+        r, g, b, a = img.getpixel((x, y))
+        img.putpixel((x, y), (int(r + (tint[0] - r) * amount),
+                              int(g + (tint[1] - g) * amount),
+                              int(b + (tint[2] - b) * amount), a))
+    return img
+
+
 def value_lift(img, amount=0.18, tint=(255, 244, 226)):
     """Lift the building into the front-prop value band, keeping its structure.
 
@@ -566,19 +601,48 @@ def crypt():
     stone = C("stone")
     grass = C("grass")
 
-    # --- the mound: two turf shoulders rising toward the door ---------------
-    for x in range(0, 96):
-        # a low dome, highest at the door and falling away at both ends
-        d = abs(x - 48) / 48.0
-        top = int(20 + 26 * d * d)
-        rect(img, x, top, 1, 64 - top, shade(grass, 0.78 - 0.16 * d))
-        # lit crest line, so the mound has a top edge against the sky
-        rect(img, x, top, 1, 2, shade(grass, 1.16 - 0.1 * d))
-        # turf texture: tufts and worn patches
-        for i in range(3):
-            ty = top + 3 + int(30 * P.h01(x, i))
-            if ty < 62 and P.h01(x + i, 7) > 0.5:
-                px(img, x, ty, shade(grass, 0.9 if i % 2 else 1.06))
+    # --- the mound: turf shoulders rising toward the door -------------------
+    # The first version was a mathematically smooth dome across the full width
+    # of the sprite, and in the approach frame it read as a green hill with a
+    # door in it - no scale, no material, nothing that said "built". Three
+    # changes fix that: the crest wanders instead of following a parabola, the
+    # mound is narrower than the sprite so it has edges against the world, and a
+    # drystone revetment rings its foot, which is what actually makes a barrow
+    # read as a raised *tomb* rather than as a lump of ground.
+    crest = {}
+    for x in range(8, 88):
+        d = abs(x - 48) / 40.0
+        crest[x] = int(21 + 25 * d * d + (P.h01(x // 3, 3) - 0.5) * 3.5)
+    for x in range(8, 88):
+        top = crest[x]
+        rect(img, x, top, 1, 62 - top, shade(grass, 0.74 - 0.14 * abs(x - 48) / 40.0))
+        # lit crest, so the mound has a top edge against the world behind it
+        rect(img, x, top, 1, 2, shade(grass, 1.10))
+        # turf texture: tufts and worn patches, denser than before so the fill
+        # does not read as flat paint
+        for i in range(6):
+            ty = top + 3 + int(28 * P.h01(x, i, 11))
+            if ty < 60 and P.h01(x + i, 7) > 0.42:
+                px(img, x, ty, shade(grass, 0.88 if i % 2 else 1.05))
+        if P.h01(x, 12) > 0.86:
+            px(img, x, min(61, top + 4 + int(P.h01(x, 13) * 20)), shade(grass, 0.62))
+    # a stone crown at the crest: the one place a barrow shows its build, and
+    # without it the mound is only ever turf
+    for x in range(43, 54):
+        d = abs(x - 48) / 6.0
+        y = int(24 + 2 * d * d)
+        rect(img, x, y, 1, 3, shade(stone, 0.82))
+        rect(img, x, y, 1, 1, shade(stone, 1.06))
+
+    # the revetment: a ring of coursed drystone at the mound's foot
+    for x in range(8, 88):
+        d = abs(x - 48) / 40.0
+        base = int(52 + 6 * d * d)
+        rect(img, x, base, 1, 2, shade(stone, 0.60))
+        if x % 5 != 0:
+            px(img, x, base, shade(stone, 0.86))
+        if P.h01(x, 14) > 0.72:
+            px(img, x, base - 1, shade(stone, 0.74))
     # a worn track of bare earth coming down the mound to the entrance
     for y in range(34, 64):
         half = 4 + (y - 34) // 6
@@ -1366,6 +1430,10 @@ def main() -> int:
                           ("lm_ossuary", ossuary), ("lm_beacon", beacon),
                           ("lm_gate", gate), ("lm_throne", throne)):
         image = painter()
+        # Buildings only: the camp props are furniture that sits *in* the ground
+        # band by design, and lifting them would make a tent out-read a keep.
+        if name.startswith("lm_"):
+            image = value_to_target(image)
         path = os.path.join(OUT, "%s.png" % name)
         image.save(path)
         print("wrote %s (%dx%d)" % (os.path.relpath(path, ROOT), image.width, image.height))

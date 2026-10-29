@@ -165,13 +165,23 @@ def point_in_poly(x, y, poly):
 # ---------------------------------------------------------------------------
 # painting helpers
 # ---------------------------------------------------------------------------
-def blend_put(layer, x, y, code, alt=None, band=0.0, value=0.5, threshold=0.5, seed=0):
-    """Write `code`, but dither toward `alt` inside a threshold band."""
+def blend_put(layer, x, y, code, alt=None, band=0.0, value=0.5, threshold=0.5, seed=0,
+              clump=2):
+    """Write `code`, but dither toward `alt` inside a threshold band.
+
+    The decision is made per *clump* of tiles, not per tile. A per-tile dither
+    between two ground materials - gravel at 101 luma against rock at 94 - is salt
+    and pepper at the camera's 2x zoom: the ground reads as a quilt of individual
+    16 px squares rather than as one surface with a second material showing
+    through. Quantising the choice to a 2x2 block means the alternate material
+    arrives in clumps a few tiles wide, which is the smallest scale at which a
+    ground mix reads as geology.
+    """
     if not inside(x, y):
         return
     if alt and band > 0 and abs(value - threshold) < band:
         t = 0.5 + (value - threshold) / (2 * band)
-        if h01(seed, x, y) > t:
+        if h01(seed, x // clump, y // clump) > t:
             put(layer, x, y, alt)
             return
     put(layer, x, y, code)
@@ -954,6 +964,42 @@ def paint_scatter():
             elif g == "m":
                 if r < 0.030:
                     try_add("tree_dead", x, y)
+
+    # The cliff mass. It covers 13 500 cells in bands up to 380 tiles wide, and at
+    # map scale it reads as a grey slab. Tile-level detail cannot fix that: the
+    # defect is scale, not texture, and every attempt to put more structure inside
+    # the 16 px tile turned into a grid of lines or dots. So the face gets
+    # *incident* instead - broken ledges and cracks at a scale between the tile and
+    # the region, clustered rather than sprinkled, and only on cells ringed by more
+    # cliff so nothing floats over a rim or overhangs a road. None of these frames
+    # carries a collider, so they cannot make the mass walkable.
+    def buried_in_cliff(x, y):
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                code = get(solid, x + dx, y + dy)
+                if not code or not code.startswith("#"):
+                    return False
+        return True
+
+    for y in range(1, H - 1):
+        for x in range(1, W - 1):
+            code = get(solid, x, y)
+            if not code or not code.startswith("#") or not buried_in_cliff(x, y):
+                continue
+            r = h01(929, x, y)
+            band = 0.13 if h01(931, x // 5, y // 5) < 0.55 else 0.040
+            if r < band * 0.10:
+                try_add("cliff_buttress_a", x, y)
+            elif r < band * 0.20:
+                try_add("cliff_buttress_b", x, y)
+            elif r < band * 0.50:
+                try_add("cliff_ledge_a", x, y)
+            elif r < band * 0.70:
+                try_add("cliff_ledge_b", x, y)
+            elif r < band * 0.88:
+                try_add("cliff_crack_a", x, y)
+            elif r < band:
+                try_add("cliff_crack_b", x, y)
 
     # Fallen masonry on the plazas. The scatter above keeps a two-tile corridor
     # clear around every lane so nothing BLOCKING can pinch a road; that rule is
