@@ -41,9 +41,12 @@ jobs:
           export VENOM_PILOT_OUT="$OUT"
           timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_pilot_headless_test.gd 2>&1 | tee /tmp/pilot-run.log
           STATUS=${PIPESTATUS[0]}
-          grep -E 'GOLD93_VENOM_PILOT|SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log | head -40 | while IFS= read -r line; do echo "::notice::[vfx-pilot] $line"; done
-          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log; then echo "::error::[vfx-pilot] script error"; STATUS=1; fi
-          if [ "$STATUS" != "0" ]; then echo "::error::[vfx-pilot] godot exited with status $STATUS"; exit 1; fi
+          echo "::notice title=vfx-pilot status::godot exit status $STATUS"
+          grep -E 'GOLD93_VENOM_PILOT' /tmp/pilot-run.log | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot verdict::$line"; done
+          if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log || grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log; then
+            python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-run.log "vfx-pilot status=$STATUS"
+            exit 1
+          fi
       - name: Upload native frames and manifest
         if: always()
         uses: actions/upload-artifact@v4
@@ -101,10 +104,12 @@ jobs:
           timeout 600s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/skill_readiness/pilot/real_map/venom_pilot_real_map.tscn 2>&1 | tee /tmp/pilot-real-map.log
           STATUS=${PIPESTATUS[0]}
           set -e
-          grep -E 'GOLD93_VENOM_REAL_MAP|CHAPTER 1 CAMPAIGN|SCRIPT ERROR:|Parse Error:' /tmp/pilot-real-map.log | head -30 | while IFS= read -r line; do echo "::notice::[vfx-pilot-map] $line"; done
-          if grep -E 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/pilot-real-map.log; then echo "::error::[vfx-pilot-map] script error"; exit 1; fi
-          if [ "$STATUS" != "0" ]; then echo "::error::[vfx-pilot-map] godot exited with status $STATUS"; exit 1; fi
-          grep -F 'GOLD93_VENOM_REAL_MAP: PASS' /tmp/pilot-real-map.log || { echo "::error::[vfx-pilot-map] no PASS verdict"; exit 1; }
+          echo "::notice title=vfx-pilot-map status::godot exit status $STATUS"
+          grep -E 'GOLD93_VENOM_REAL_MAP|CHAPTER 1 CAMPAIGN' /tmp/pilot-real-map.log | head -20 | sed -e 's/%/%25/g' | while IFS= read -r line; do echo "::notice title=vfx-pilot-map verdict::$line"; done
+          if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_VENOM_REAL_MAP: PASS' /tmp/pilot-real-map.log || grep -qE 'SCRIPT ERROR:|Parse Error:|Shader compilation failed' /tmp/pilot-real-map.log; then
+            python3 vfx-only/prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-real-map.log "vfx-pilot-map status=$STATUS"
+            exit 1
+          fi
           test -s real-map/.artifacts/venom_real_map/l2_baseline_no_vfx.png
           test -s real-map/.artifacts/venom_real_map/l2_venom_006_t0070.png
           if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then echo "Tracked map altered"; exit 1; fi
