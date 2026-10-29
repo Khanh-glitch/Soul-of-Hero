@@ -85,11 +85,16 @@
         "E-01 trusted-code fixture composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40892629650 at 568a432 — actual pinned A3 adapter + A0 SaveService, authority 108 / bed 96 / topology 94, success; not production composition",
         "One-process disk-boundary interruptions: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893023725 at 8d69353 — 154 fault/reload checks, authority 108, bed 96, topology 94, success; not OS kill/power-loss evidence",
         "Real A3 specimen consumption and unique craft/collection: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893272031 at 7c2f5a7 — authority 124 / fault 154 / bed 96 / topology 94 passed with test-only clock.",
-        "Focused GUI accept and world mouse bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40894149050 at d561311 — authority 124 / fault 154 / bed 97 / topology 94 passed; fixture sets GUI focus, not a human playthrough. Earlier GUI mouse input failed in run 40893616929 and remains to diagnose."
+        "Focused GUI accept and world mouse bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40894149050 at d561311 — authority 124 / fault 154 / bed 97 / topology 94 passed; fixture sets GUI focus, not a human playthrough. Earlier GUI mouse input failed in run 40893616929 and remains to diagnose.",
+        "GUI pointer trace with no focus, actual paused button and native world bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40897582308 at 4e0ecb2 — bed 102, topology 94, authority 124, interruption 154 passed; injected native input, not human playtest.",
+        "E-02 station placement increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40899320774 at db0e72b — station 30, authority 124, interruption 154, bed 102, topology 94 passed; actual production clock and A3 wiring absent.",
+        "Station replacement and GUI world separation https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900018933 at 5ceca96 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed.",
+        "Receipt-bound station revision https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900172565 at b6dd082 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed with engine shutdown resource warnings. Overworld run 40900172653 failed its occlusion/frame performance assertion; cause unproven.",
+        "GUI trace disconnect: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885475 at 5882aa4 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed."
       ],
-      "next": "Verify pending real-A3 specimen/craft and native input CI; review E-01 guard; implement actual A0 placed-station footprints/payment and authoritative fixed-step active-session host against pinned A3, then complete full input journey, blocked fallback, 720p/2K/4K inspection, Web and NPC navigation.",
+      "next": "Investigate overworld performance failure 40900172653 and pending run 40900885519; implement production A0 active-session clock and actual A3 composition with pause/reload, no offline accrual, revision/removal and escrow recovery; then full player journey, visual/Web and remaining gates.",
       "assignment": {
-        "status": "CODE_IN_PROGRESS_E01_PINNED_A3_TESTED_E02_NOT_IMPLEMENTED",
+        "status": "CODE_IN_PROGRESS_GUI_AND_STATION_PLACEMENT_NATIVE_TESTED_E02_CLOCK_OPEN",
         "task_id": "SURV-020",
         "owner": "A0+A2",
         "assigned_date": "2026-10-29",
@@ -138,7 +143,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Diagnose 0274766 failed GUI mouse dispatch (coordinate fixture versus product behavior) without regressing green d561311, then implement/test real production station placement and authoritative fixed-step host.",
+    "first_test": "Inspect pending overworld 40900885519 and investigate performance failure 40900172653, then implement/test actual A0 active-session host with A3 and placed stations.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
