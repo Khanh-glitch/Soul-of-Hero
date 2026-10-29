@@ -24,5 +24,4 @@ func _process(_delta: float) -> void:
 			"move": [motion.x, motion.y],
 			"position": [hero.global_position.x, hero.global_position.y],
 			"action": String(hero.get(&"current_action"))})
-	if Engine.has_singleton("JavaScriptBridge"):
-		Engine.get_singleton("JavaScriptBridge").call(&"eval", "window.__survivalWebProbe=" + JSON.stringify(state) + ";", true)
+	JavaScriptBridge.eval("window.__survivalWebProbe=" + JSON.stringify(state) + ";", true)
