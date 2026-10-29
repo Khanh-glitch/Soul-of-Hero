@@ -13,7 +13,8 @@ func _process(_delta: float) -> void:
 	if not OS.has_feature("web") or _world == null:
 		return
 	var ready := bool(_world.call(&"is_world_ready"))
-	var state := {"ready": ready}
+	var state := {"ready": ready, "build_stage": int(_world.get(&"build_stage")),
+		"build_error": String(_world.get(&"build_error"))}
 	if ready:
 		var hero := _world.get(&"player") as CharacterBody2D
 		var economy: Node = _world.get(&"economy_panel")
