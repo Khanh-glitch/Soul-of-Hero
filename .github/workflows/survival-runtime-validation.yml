@@ -305,34 +305,49 @@ jobs:
           fi
           exit $missing
 
-      # The raw log lives on a host this project's tooling cannot always read.
-      # The job summary comes back through the API with the run itself, so the
-      # test's own words - including where it died - are always readable.
-      - name: Publish the run's own words (always)
+      # The raw log lives on a host this project's tooling cannot always read, and
+      # job summaries are not returned with the run either. Annotations are, so the
+      # test's own words are re-emitted as annotations from a step that always
+      # runs — newest last, because GitHub keeps roughly ten per step and these are
+      # the ones worth keeping.
+      - name: Re-emit the run's own words (always)
         if: always()
         run: |
-          {
-            echo "## Survival foundation run"
-            echo
-            if [ -f artifacts/survival-foundation.log ]; then
-              echo "### results"
-              echo '```'
-              grep -E "^(  (ok|FAIL) |SURVIVAL \[case |\[case |SURVIVAL FOUNDATION)"                 artifacts/survival-foundation.log | tail -80 || true
-              echo '```'
-              echo
-              echo "### last 30 lines"
-              echo '```'
-              tail -30 artifacts/survival-foundation.log || true
-              echo '```'
-            else
-              echo "no foundation log was produced"
-            fi
-            exit_code_file=artifacts/foundation-exit-code
-            if [ -f "$exit_code_file" ]; then
-              echo
-              echo "engine exit code: $(cat "$exit_code_file")"
-            fi
-          } >> "$GITHUB_STEP_SUMMARY" 2>&1 || true
+          log=artifacts/survival-foundation.log
+          annotate() {
+            printf '%s\n' "$2" | sed -e 's/%/%25/g' -e 's/\r//g' | {
+              IFS= read -r safe || true
+              printf '::%s::%s\n' "$1" "${safe}"
+            }
+          }
+          if [ ! -f "$log" ]; then
+            annotate error "survival: no foundation log was produced"
+            exit 0
+          fi
+          if [ -f artifacts/foundation-exit-code ]; then
+            annotate notice "survival: engine exit code $(cat artifacts/foundation-exit-code)"
+          fi
+          # Where it stopped.
+          case_lines=$(grep -c '\[case' "$log" || true)
+          annotate notice "survival: ${case_lines:-0} case heartbeats; last: $(grep '\[case' "$log" | tail -1)"
+          # What it said was wrong.
+          n=0
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            annotate error "$line"
+            n=$((n + 1))
+            [ "$n" -ge 6 ] && break
+          done <<< "$(grep -E '^  FAIL ' "$log" || true)"
+          # What the engine said went wrong, if anything.
+          m=0
+          while IFS= read -r line; do
+            [ -z "$line" ] && continue
+            annotate error "engine: $line"
+            m=$((m + 1))
+            [ "$m" -ge 3 ] && break
+          done <<< "$(grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' "$log" || true)"
+          # And the tail, in one line, so the diagnosis survives.
+          annotate notice "survival tail: $(tail -6 "$log" | tr '\n' '~' | cut -c1-500)"
 
       - name: Upload runtime evidence
         if: always()
