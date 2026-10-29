@@ -379,3 +379,32 @@ shipped it.
   improvement over a flat face and it is not yet *good*.
 - Camps, water margins and the L10 approach plaza are unchanged in this pass;
   the L10 frame still shows a wide empty flagstone plaza in front of the keep.
+
+## Fourth pass — paving, boundaries, and mixes
+
+Three more defects, all found by rendering the world at the camera's own 2x and
+looking at it, then measuring:
+
+| Defect | Cause | Fix |
+| --- | --- | --- |
+| paving never showed a joint, in three passes | `grain()` fills its rect with its base colour first, so the grain pass at the end of `ground_flagstone` repainted the tile and erased the courses drawn before it | grain paints first, courses after |
+| paving printed as graph paper | vertical joints ran the full height of the tile, so every brick aligned with every brick below | a joint belongs to its own course |
+| a paved plaza drew as a patchwork of 16 px slabs | the four floor variants spanned 14 luma | spread under 1 luma; variants differ in layout and wear |
+| every material mix in the world was a quilt of random rectangles | `blend_put` decided with a per-tile coin flip *inside* the threshold band, so the middle of the band - the decisive part - was noise | a mix is now a threshold on a smooth field (`patch_field`, fbm) with a small noise perturbing only the crossing |
+| the material mixes were fed white noise at two-tile resolution | `h01(seed, x // 2, y // 2)` passed as the field | mixes sample `patch_field` |
+| the L10 approach read as a quarry | ~400 boulders scattered over flagstone as well as open ground | paving gets broken columns, wall stubs and staves; boulders stay on open ground |
+| kerbs did not exist | plaza outlines are ellipse stair-steps | `detail_kerb` stamps 2 749 edge cells with a dressed-stone band, lit on top |
+
+The `blend_put` defect is worth singling out: it was written as a reasonable
+"dither toward the alternate material inside a threshold band", and it is the
+reason the forest floor and the whole south-west of the map were unreadable at map
+scale. An earlier attempt to fix the symptom by quantising the decision to a 2×2
+clump only moved the artefact to 32 px stair-steps, and is recorded as such in the
+function's docstring so it is not tried again.
+
+### Honest limits of this pass
+
+- The kerb reads at 4–6× zoom and is close to invisible at 2×. It is an
+  improvement, not a solution to a stepped plaza outline.
+- The cliff buttress decal still reads as a slab on the wall.
+- Camps are unchanged in this pass.

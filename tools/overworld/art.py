@@ -949,6 +949,56 @@ def detail_pebbles(seed):
     return img
 
 
+def detail_kerb(mask_bits):
+    """A dressed-stone kerb round the edge of a paved surface.
+
+    Mask convention: the baker sets a bit when the neighbour is paving, so a bit
+    *absent* is an exposed edge. (The first version read the bits the other way
+    round, which put the kerb on the inside of every plaza and left the actual
+    outline untouched - visible at once in a 4x crop, and worth recording because
+    every other masked overlay in this file inverts the mask and this one does
+    not.)
+
+    Plazas are painted as ellipses onto a tile grid, so their outline is a
+    stair-step of whole tiles. The ground layer cannot fix that - the cells are
+    what they are - so the fix is a kerb: a band of dressed stone along the edge,
+    lit on top and shadowed at its foot, which reads as built no matter how the
+    cells step. Without it, a paving region's boundary is the one place in the
+    world where the tile grid is visible on purpose.
+
+    A two-pixel version was tried first and measured as invisible at the camera's
+    2x zoom; the band is now three pixels and the top course is well above the
+    paving's own value, so the edge reads before the joints do.
+    """
+    img = new(T, T)
+    n, e, s, w = edge_mask(mask_bits)
+    stone = mix(C("stone"), C("stone_edge"), 0.10)
+    lit = shade(stone, 1.34)
+    mid = shade(stone, 1.04)
+    dark = shade(stone, 0.58)
+    for i in range(T):
+        if not n:
+            px(img, i, 0, lit)
+            px(img, i, 1, mid)
+            px(img, i, 2, dark)
+        if not s:
+            px(img, i, T - 3, dark)
+            px(img, i, T - 2, mid)
+            px(img, i, T - 1, lit)
+        if not w:
+            px(img, 0, i, mid)
+            px(img, 1, i, dark)
+        if not e:
+            px(img, T - 2, i, dark)
+            px(img, T - 1, i, mid)
+    for i in range(3, T - 2, 5):
+        if not n:
+            px(img, i, 1, dark)
+        if not s:
+            px(img, i, T - 2, dark)
+    return img
+
+
 def detail_moss(mask_bits):
     img = new(T, T)
     for x in range(16):
@@ -1281,6 +1331,8 @@ DETAIL_MASKED = {
     "/": "bank",
     "|": "conduit",
     "M": "moss",
+    # Inverted mask: bits mark the sides that are NOT paving. See `detail_kerb`.
+    "k": "kerb",
 }
 
 def solid_blocker(mask, seed=0):
@@ -1320,6 +1372,8 @@ def build_tileset():
                 img = detail_bank(mask)
             elif name == "conduit":
                 img = detail_conduit(mask)
+            elif name == "kerb":
+                img = detail_kerb(mask)
             else:
                 img = detail_moss(mask)
             cells.append(("%s#%d" % (name, mask), True, img))

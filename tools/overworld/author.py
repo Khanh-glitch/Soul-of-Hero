@@ -1274,7 +1274,7 @@ def validate():
 # ---------------------------------------------------------------------------
 # masks + bake
 # ---------------------------------------------------------------------------
-MASKED_DETAIL = set("/|M=+:")
+MASKED_DETAIL = set("/|M=+:k")
 
 
 def neighbour_mask(layer, x, y, match):
@@ -1290,6 +1290,31 @@ def neighbour_mask(layer, x, y, match):
     return m
 
 
+def paint_kerbs():
+    """A dressed-stone kerb round every paved surface.
+
+    Plazas are painted as ellipses onto a tile grid, so their outlines step by a
+    whole tile; a kerb is the only thing on the ground layer that can turn that
+    into a built edge. Only cells that are paving, walkable and carry no other
+    overlay get one, so a road running onto a plaza keeps its own surface right up
+    to the join.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(ground, x, y) != "f" or get(solid, x, y) != ".":
+                continue
+            if get(detail, x, y) != ".":
+                continue
+            paved_neighbours = sum(1 for dx, dy in ((0, -1), (1, 0), (0, 1), (-1, 0))
+                                   if get(ground, x + dx, y + dy) == "f")
+            if paved_neighbours == 4:
+                continue
+            put(detail, x, y, "k")
+            count += 1
+    return count
+
+
 def bake():
     gl = ["."] * (W * H)
     dl = ["."] * (W * H)
@@ -1301,7 +1326,13 @@ def bake():
             gl[i] = g
             d = detail[i]
             if d != "." and g != ".":
-                if d in MASKED_DETAIL:
+                if d == "k":
+                    # The kerb's mask is inverted on purpose: a bit marks a side
+                    # that is NOT paving, i.e. an exposed built edge. Masking it
+                    # the usual way (neighbour holds the same detail) would always
+                    # be zero, because the kerb is only ever one cell deep.
+                    dl[i] = d + "%x" % neighbour_mask(ground, x, y, lambda c: c != "f")
+                elif d in MASKED_DETAIL:
                     dl[i] = d + "%x" % neighbour_mask(detail, x, y, lambda c: c == d)
                 else:
                     dl[i] = d
@@ -1459,6 +1490,10 @@ def main():
     paint_roads()
     paint_scatter()
     reinstate_shortcut_bands()
+    # Kerbs last: they only mark cells nothing else has claimed, so the order
+    # matters - a road running onto a plaza keeps its own surface to the join.
+    kerbs = paint_kerbs()
+    print("kerbs %d cells" % kerbs)
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop
     # placement), applied before the gates so they are judged like any other
