@@ -299,6 +299,7 @@ func _body() -> void:
 	var world_point := Vector2(placement.x * 16 + 8, placement.y * 16 + 8)
 	var window_point := root.get_final_transform() * (camera.get_canvas_transform() * world_point)
 	await _click_window(window_point)
+	print("NORMAL_BUILD_TRACE target=%s world=%s window=%s preview=%s mouse_view=%s final=%s camera_canvas=%s hovered=%s rejection=%s kit=%d" % [str(placement), str(world_point), str(window_point), str(build.preview_cell()), str(root.get_mouse_position()), str(root.get_final_transform()), str(camera.get_canvas_transform()), str(root.gui_get_hovered_control()), build.last_rejection(), _count("workbench_kit")])
 	var structures: Dictionary = _survival().call(&"structures")
 	var station_id := ""
 	for key: Variant in structures.keys():
