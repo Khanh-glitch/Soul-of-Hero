@@ -5,6 +5,7 @@ on:
     branches:
       - feature/gold-93-skill-readiness-20261028
       - arena/4fa0fa84-soul-of-hero
+      - arena/c7b0c4e8-soul-of-hero
     paths:
       - 'docs/vfx/skill_readiness/**'
       - 'prototypes/skill_readiness/**'

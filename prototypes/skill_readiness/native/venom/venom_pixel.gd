@@ -1,6 +1,8 @@
 class_name VenomPixel
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 const RNG = preload("res://prototypes/skill_readiness/native/venom/venom_rng.gd")
 const P: Dictionary = M.P
@@ -208,8 +210,8 @@ class Layer extends RefCounted:
 		var steps: int = maxi(12, int(ceil(span * maxf(gr, gry) * 1.4)))
 		for i in range(steps + 1):
 			var ang: float = a0 + (span * float(i)) / float(steps)
-			var x: float = float(gcx) + cos(ang) * gr
-			var y: float = float(gcy) + sin(ang) * gry
+			var x: float = float(gcx) + V8M.v8_cos(ang) * gr
+			var y: float = float(gcy) + V8M.v8_sin(ang) * gry
 			if gw <= 1.2:
 				raw_px(M.js_round(x), M.js_round(y), c)
 			else:

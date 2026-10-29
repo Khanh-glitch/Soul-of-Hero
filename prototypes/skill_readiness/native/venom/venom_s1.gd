@@ -1,6 +1,8 @@
 class_name VenomS1
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/skills/s1.ts`
 ## **Glassfang Hunt** (skill 1) - the `Fang` summon and the `glassfang`
 ## generator, including every bite, circle, lunge, the shattering finisher, the
@@ -70,20 +72,20 @@ class Fang extends FX.Fx:
 		for i in range(n):
 			var q: Dictionary = s[i]
 			pts.append({"x": float(q["x"]),
-					"y": float(q["y"]) - z - 3 + sin(t * 14 - float(i) * 0.9) * 0.5,
+					"y": float(q["y"]) - z - 3 + V8M.v8_sin(t * 14 - float(i) * 0.9) * 0.5,
 					"r": float(FR[i]) * scale})
 		for i in range(1, 5):
-			var a: float = atan2(float(s[i - 1]["y"]) - float(s[i]["y"]),
+			var a: float = V8M.v8_atan2(float(s[i - 1]["y"]) - float(s[i]["y"]),
 					float(s[i - 1]["x"]) - float(s[i]["x"]))
-			var px: float = -sin(a)
-			var py: float = cos(a)
+			var px: float = -V8M.v8_sin(a)
+			var py: float = V8M.v8_cos(a)
 			for sd in [-1, 1]:
-				var sw: float = sin(t * 20 + float(i) * 1.5 + float(sd) * 1.6) * 2.2
+				var sw: float = V8M.v8_sin(t * 20 + float(i) * 1.5 + float(sd) * 1.6) * 2.2
 				var bx: float = float(pts[i]["x"]) + px * float(FR[i]) * float(sd)
 				var by: float = float(pts[i]["y"]) + py * float(FR[i]) * float(sd) + 1
-				var kx: float = bx + px * 3 * float(sd) + cos(a) * sw * 0.5
+				var kx: float = bx + px * 3 * float(sd) + V8M.v8_cos(a) * sw * 0.5
 				var ky: float = by + py * 3 * float(sd) * 0.8 - 1
-				var ex: float = bx + px * 4.5 * float(sd) + cos(a) * sw
+				var ex: float = bx + px * 4.5 * float(sd) + V8M.v8_cos(a) * sw
 				var ey: float = by + 3 + py * 2 * float(sd)
 				L.line(bx, by, kx, ky, int(M.P["v1"]))
 				L.line(kx, ky, ex, ey, int(M.P["v3"]))
@@ -110,12 +112,12 @@ class Fang extends FX.Fx:
 		for i in range(1, 6):
 			DRAW.shard(L, float(pts[i]["x"]),
 					float(pts[i]["y"]) - float(FR[i]) + 0.5,
-					-PI / 2 + sin(float(i) + t * 3) * 0.2, 2.8, 0.9,
+					-PI / 2 + V8M.v8_sin(float(i) + t * 3) * 0.2, 2.8, 0.9,
 					int(M.P["y2"]), int(M.P["v2"]), int(M.P["w"]))
 		var h: Dictionary = pts[0]
 		var a: float = heading
-		var fx: float = cos(a)
-		var fy: float = sin(a)
+		var fx: float = V8M.v8_cos(a)
+		var fy: float = V8M.v8_sin(a)
 		var qx: float = -fy
 		var qy: float = fx
 		var op: float = open * 0.55 + 0.2
@@ -191,9 +193,9 @@ class Glassfang extends RefCounted:
 				{"z": 3, "size": [2.0, 3.0], "land": 1})
 
 	func bite(e, pct: float, final: bool = false) -> void:
-		var a: float = atan2(e.y - fang.y, e.x - fang.x)
-		var px: float = e.x - cos(a) * e.r
-		var py: float = e.y - sin(a) * e.r
+		var a: float = V8M.v8_atan2(e.y - fang.y, e.x - fang.x)
+		var px: float = e.x - V8M.v8_cos(a) * e.r
+		var py: float = e.y - V8M.v8_sin(a) * e.r
 		LIB.hit_e(c, e, pct, {"kind": "bite", "k": 160.0 if final else 80.0,
 				"ang": a, "stag": 0.3, "at": [px, py], "big": final})
 		FX.shards(w, px, py, 7, 80, int(M.P["y1"]), int(M.P["v1"]), int(M.P["y2"]),
@@ -206,8 +208,8 @@ class Glassfang extends RefCounted:
 			w.mark(e, "crystal", 0.45, 0.4)
 
 	func contact(e, off: float = 0.0) -> Array:
-		var a: float = atan2(fang.y - e.y, fang.x - e.x)
-		return [e.x + cos(a + off) * (e.r + 3), e.y + sin(a + off) * (e.r + 3)]
+		var a: float = V8M.v8_atan2(fang.y - e.y, fang.x - e.x)
+		return [e.x + V8M.v8_cos(a + off) * (e.r + 3), e.y + V8M.v8_sin(a + off) * (e.r + 3)]
 
 	func start_leap(gx: float, gy: float, dur: float, arcH: float, resume: int) -> void:
 		leap_x0 = fang.x
@@ -242,7 +244,7 @@ class Glassfang extends RefCounted:
 				hy = float(hp[1])
 				var tx: float = tgt.x if tgt != null else c.tx
 				var ty: float = tgt.y if tgt != null else c.ty
-				c.ang = atan2(ty - hy, tx - hx)
+				c.ang = V8M.v8_atan2(ty - hy, tx - hx)
 				cx = M.lerpf(hx, tx, 0.55)
 				cy = M.lerpf(hy, ty, 0.55)
 				LIB.throw_arc(w, "vial", hx, hy, cx, cy, 0.08, 4, func(_ww, _pp): return, 22)
@@ -286,7 +288,7 @@ class Glassfang extends RefCounted:
 			5:  # bite + retreat
 				fang.open = 1
 				bite(tgt, 30)
-				a_retreat = atan2(tgt.y - fang.y, tgt.x - fang.x)
+				a_retreat = V8M.v8_atan2(tgt.y - fang.y, tgt.x - fang.x)
 				tick_n = LIB.tick_count(0.12)
 				tick_i = 0
 				pc = 6
@@ -296,9 +298,9 @@ class Glassfang extends RefCounted:
 					pc = 7
 					return resume()
 				var k: float = float(tick_i + 1) / float(tick_n)
-				fang.x -= cos(a_retreat) * 70 * LIB.F * (1 - k)
-				fang.y -= sin(a_retreat) * 70 * LIB.F * (1 - k)
-				fang.z = 6 * sin(k * PI)
+				fang.x -= V8M.v8_cos(a_retreat) * 70 * LIB.F * (1 - k)
+				fang.y -= V8M.v8_sin(a_retreat) * 70 * LIB.F * (1 - k)
+				fang.z = 6 * V8M.v8_sin(k * PI)
 				fang.open = 0.2
 				tick_i += 1
 				return LIB.F
@@ -307,7 +309,7 @@ class Glassfang extends RefCounted:
 					i += 1
 					pc = 4
 					return resume()
-				t0 = atan2(fang.y - tgt.y, fang.x - tgt.x)
+				t0 = V8M.v8_atan2(fang.y - tgt.y, fang.x - tgt.x)
 				t1 = t0 + rng.sign() * rng.range(1.8, 2.4)
 				rr = tgt.r + 13
 				tick_n = LIB.tick_count(0.26)
@@ -322,10 +324,10 @@ class Glassfang extends RefCounted:
 				var k2: float = float(tick_i + 1) / float(tick_n)
 				var th: float = M.lerpf(t0, t1, M.smoothstep(k2))
 				var rad: float = M.lerpf(
-						sqrt(pow(fang.x - tgt.x, 2.0) + pow(fang.y - tgt.y, 2.0)),
+						sqrt(V8M.v8_pow(fang.x - tgt.x, 2.0) + V8M.v8_pow(fang.y - tgt.y, 2.0)),
 						rr, 0.3)
-				fang.x = tgt.x + cos(th) * rad
-				fang.y = tgt.y + sin(th) * rad
+				fang.x = tgt.x + V8M.v8_cos(th) * rad
+				fang.y = tgt.y + V8M.v8_sin(th) * rad
 				fang.heading = th + PI + rng.range(-0.1, 0.1) * 0
 				fang.open = 0.3
 				fang.z = 0
@@ -388,8 +390,8 @@ class Glassfang extends RefCounted:
 				for _pi in range(3):
 					var a: float = rng.range(0.0, M.TAU)
 					var d: float = rng.range(8, 22)
-					var px: float = (fin.x if fin != null else fx0) + cos(a) * d
-					var py: float = (fin.y if fin != null else fy0) + sin(a) * d * 0.8
+					var px: float = (fin.x if fin != null else fx0) + V8M.v8_cos(a) * d
+					var py: float = (fin.y if fin != null else fy0) + V8M.v8_sin(a) * d * 0.8
 					w.add(FX.Pool.new(px, py, 6.5, MATS.MAT()["acid"], 4.2,
 							{"boil": 2, "blobs": 3, "tick": {
 									"every": 0.7, "amt": c.d(10),
@@ -412,7 +414,7 @@ class Glassfang extends RefCounted:
 				fang.x = M.lerpf(leap_x0, leap_gx, k3)
 				fang.y = M.lerpf(leap_y0, leap_gy, k3)
 				fang.z = M.lerpf(leap_z0, 0, k3) + 4 * leap_arc * k3 * (1 - k3)
-				fang.heading = atan2(leap_gy - leap_y0, leap_gx - leap_x0)
+				fang.heading = V8M.v8_atan2(leap_gy - leap_y0, leap_gx - leap_x0)
 				fang.open = 1 if k3 > 0.55 else 0.4
 				if leap_i % 3 == 0:
 					FX.shards(w, fang.x, fang.y, 1, 20, int(M.P["v2"]),
@@ -524,7 +526,7 @@ class Growth extends FX.Fx:
 		var pts: Array = []
 		for i in range(N + 1):
 			var u: float = float(i) / float(N)
-			var sway: float = sin(t * 1.5 + ph + u * 3) * 2.2 * u
+			var sway: float = V8M.v8_sin(t * 1.5 + ph + u * 3) * 2.2 * u
 			pts.append({"x": bx + sway + lean * u * gr, "y": by - Hh * u,
 					"r": M.lerpf(3.0, 1.6, u) * (0.6 + 0.4 * gr)})
 		DRAW.ball(L, bx, by, 4 * gr + 1, VenomS1.MEMB(), 3 * gr + 1)
@@ -536,7 +538,7 @@ class Growth extends FX.Fx:
 			var pu: bool = ign > 0 and ign * 8 > float(i)
 			L.disc(pts[i]["x"] + 1, pts[i]["y"], 0.9,
 					int(M.P["w"]) if pu else int(M.P["c1"]))
-			if sin(t * 4 + float(i) + ph) > 0.5 or pu:
+			if V8M.v8_sin(t * 4 + float(i) + ph) > 0.5 or pu:
 				L.px(M.js_round(float(pts[i]["x"]) + 1.0),
 						M.js_round(float(pts[i]["y"])), int(M.P["c3"]))
 		for s in [-1.0, 1.0]:
@@ -552,28 +554,28 @@ class Growth extends FX.Fx:
 		for k in range(7):
 			order.append({"k": k,
 					"a": (float(k) / 7.0) * M.TAU + ph + t * 0.25})
-		M.stable_sort(order, func(a, b): return sin(a["a"]) - sin(b["a"]))
+		M.stable_sort(order, func(a, b): return V8M.v8_sin(a["a"]) - V8M.v8_sin(b["a"]))
 		for q in order:
 			var a: float = float(q["a"])
-			var back: bool = sin(a) < 0
-			var ex: float = cos(a) * len_
-			var ey: float = sin(a) * len_ * 0.55 - o * 1.6 - (1 if back else 0)
+			var back: bool = V8M.v8_sin(a) < 0
+			var ex: float = V8M.v8_cos(a) * len_
+			var ey: float = V8M.v8_sin(a) * len_ * 0.55 - o * 1.6 - (1 if back else 0)
 			L.dl = 14
 			DRAW.shard(L, tp["x"] + ex * 0.15, tp["y"] + ey * 0.15 - 1,
-					atan2(ey, ex), len_, 1.7 + o * 1.4,
+					V8M.v8_atan2(ey, ex), len_, 1.7 + o * 1.4,
 					int(M.P["e3"]) if back else int(M.P["c0"]),
 					int(M.P["e2"]) if back else int(M.P["e3"]),
 					int(M.P["c2"]))
 			L.dl = 16
 		L.ellipse(tp["x"], tp["y"] - 1, 2 + o * 2, 1 + o * 1.4, int(M.P["k0"]))
 		L.px(M.js_round(float(tp["x"])), M.js_round(float(tp["y"]) - 1.0),
-				int(M.P["c3"]) if sin(t * 6 + ph) > 0 else int(M.P["c1"]))
+				int(M.P["c3"]) if V8M.v8_sin(t * 6 + ph) > 0 else int(M.P["c1"]))
 		if o > 0.6:
 			for i in range(6):
 				var aa: float = (float(i) / 6.0) * M.TAU
-				L.px(M.js_round(float(tp["x"]) + cos(aa) * (2 + o * 2)),
+				L.px(M.js_round(float(tp["x"]) + V8M.v8_cos(aa) * (2 + o * 2)),
 						M.js_round(float(tp["y"]) - 1.0
-								+ sin(aa) * (1 + o * 1.4)), int(M.P["i0"]))
+								+ V8M.v8_sin(aa) * (1 + o * 1.4)), int(M.P["i0"]))
 
 	func lit(gf, _w) -> void:
 		var tp: Dictionary = top()
@@ -627,7 +629,7 @@ static func _parasite(c, g) -> void:
 		var L = gf.s
 		var k: float = M.smoothstep(a * 1.6)
 		for s in [-1.0, 1.0]:
-			DRAW.ball(L, cx + s * (1 + k * 5), cy - 2 - sin(k * 3) * 2,
+			DRAW.ball(L, cx + s * (1 + k * 5), cy - 2 - V8M.v8_sin(k * 3) * 2,
 					2.6 - k * 0.6, MATS.PAL()["seed"], 3.2)
 		L.dl = M.js_round(16 * (1 - a))
 		L.disc(cx, cy - 3, 2 + k * 5, int(M.P["c1"]))
@@ -642,7 +644,7 @@ static func _parasite(c, g) -> void:
 	for i in range(6):
 		var a: float = (float(i) / 6.0) * M.TAU + 0.4
 		var d: float = 26 + M.hash_n(float(i) * 3.0 + float(c.id)) * 26
-		spots.append([cos(a) * d, sin(a) * d * 0.85,
+		spots.append([V8M.v8_cos(a) * d, V8M.v8_sin(a) * d * 0.85,
 				26 + M.hash_n(float(i)) * 8])
 	# hoisted before the membrane effect the way the original's `const startT`
 	# is: the closure only reads it at draw time, never at construction.
@@ -665,7 +667,7 @@ static func _parasite(c, g) -> void:
 		for gr in growths:
 			f.capsule(cx, cy, gr.bx, gr.by + 1, 2.4 * k, 3 * k)
 			f.disc(gr.bx, gr.by + 1,
-					(7 + 2 * sin(gf.t * 2 + gr.ph)) * M.smoothstep(gr.g) * gr.mw,
+					(7 + 2 * V8M.v8_sin(gf.t * 2 + gr.ph)) * M.smoothstep(gr.g) * gr.mw,
 					0.2)
 		f.shade(gf.s, MEMB_MAT(), gf.t, {"seed": 3})
 	var mem = w.add(FX.Custom.new(cx, cy, 8, {"gnd": _memb}))
@@ -701,8 +703,8 @@ static func _parasite(c, g) -> void:
 					var pts: Array = []
 					for i in range(9):
 						var u: float = float(i) / 8.0 * k
-						var wob: float = sin(u * 9 + gf.t * 25) * (1 - a) * 3 \
-								* sin(u * PI)
+						var wob: float = V8M.v8_sin(u * 9 + gf.t * 25) * (1 - a) * 3 \
+								* V8M.v8_sin(u * PI)
 						pts.append({"x": M.lerpf(float(tp["x"]), ex, u)
 										- (ey - float(tp["y"])) * 0.0 + wob * 0.3,
 								"y": M.lerpf(float(tp["y"]), ey, u) + wob,
@@ -718,7 +720,7 @@ static func _parasite(c, g) -> void:
 		for i in range(growths.size()):
 			var gr = growths[i]
 			gr.g = M.clampf((tm - gr.start) / 0.7, 0.0, 1.0)
-			gr.open_ = 0.5 + 0.5 * sin(tm * 2.4 + gr.ph) if gr.g > 0.6 \
+			gr.open_ = 0.5 + 0.5 * V8M.v8_sin(tm * 2.4 + gr.ph) if gr.g > 0.6 \
 					else gr.g * 0.5
 			if gr.g > 0.8 and int(floor(tm * 60.0)) % 6 == i % 6 \
 					and gr.open_ > 0.6:
@@ -739,8 +741,8 @@ static func _parasite(c, g) -> void:
 				for e in w.enemies:
 					if e.dying > 0:
 						continue
-					var d: float = sqrt(pow(e.x - gr.bx, 2.0)
-							+ pow(e.y - gr.by, 2.0)) - e.r
+					var d: float = sqrt(V8M.v8_pow(e.x - gr.bx, 2.0)
+							+ V8M.v8_pow(e.y - gr.by, 2.0)) - e.r
 					if d < bd and touch.n(e) < 3:
 						bd = d
 						best = e
@@ -803,8 +805,8 @@ static func _parasite(c, g) -> void:
 			var a: float = c.rng.range(0, M.TAU)
 			var sp: float = c.rng.range(30, 100)
 			w.parts.add({"k": "petal", "x": float(tp["x"]),
-					"y": float(tp["y"]), "z": 14, "vx": cos(a) * sp,
-					"vy": sin(a) * sp * 0.7, "vz": c.rng.range(30, 110),
+					"y": float(tp["y"]), "z": 14, "vx": V8M.v8_cos(a) * sp,
+					"vy": V8M.v8_sin(a) * sp * 0.7, "vz": c.rng.range(30, 110),
 					"grav": 70, "drag": 1.1, "size": c.rng.range(2, 4),
 					"rot": c.rng.range(0, M.TAU), "vr": c.rng.range(-8, 8),
 					"c1": int(M.P["g2"]) if i % 3 == 0 else int(M.P["c0"]),
@@ -836,9 +838,9 @@ static func _parasite(c, g) -> void:
 						var a: float = p.age
 						var r: float = 6 + a * 58 + float(i) * 0.7
 						var an: float = a0 + a * 2.1 + float(i) * 0.1 - d0
-						p.x = cx + cos(an) * r
-						p.y = cy + sin(an) * r * 0.85
-						p.z = 5 + sin(a * 5 + float(i)) * 3 + a * 6})
+						p.x = cx + V8M.v8_cos(an) * r
+						p.y = cy + V8M.v8_sin(an) * r * 0.85
+						p.z = 5 + V8M.v8_sin(a * 5 + float(i)) * 3 + a * 6})
 	var cl = FX.Cloud.new(cx, cy,
 			LIB.mk_puffs(c.rng, 9, 24, 10, 17, 6, 1.4),
 			MATS.VAP()["pale"], 2.4, c.id)
@@ -862,9 +864,9 @@ static func _parasite(c, g) -> void:
 static func _mote_fn(sx: float, sy: float, off: float, delay: float, p):
 	return func(q, _w, _dt):
 		var u: float = M.clampf((q.age - delay) / 0.6, 0, 1)
-		var px: float = M.lerpf(sx, p.x, u) + sin(u * PI) * off * 0.6
-		var py: float = M.lerpf(sy, p.y - 6, u) - sin(u * PI) * 14 \
-				+ sin(u * PI) * off * 0.2
+		var px: float = M.lerpf(sx, p.x, u) + V8M.v8_sin(u * PI) * off * 0.6
+		var py: float = M.lerpf(sy, p.y - 6, u) - V8M.v8_sin(u * PI) * 14 \
+				+ V8M.v8_sin(u * PI) * off * 0.2
 		q.x = px
 		q.y = py
 		if u >= 1:
@@ -875,13 +877,13 @@ static func _leech_crawl_up(e, i: int, a: float, sx: float, sy: float):
 	return func(gf, a2):
 		var L = gf.s
 		var u: float = M.smoothstep(a2)
-		var X: float = M.lerpf(sx, e.x + cos(float(i) * 2.4 + 1) * e.r * 0.85, u)
-		var Y: float = M.lerpf(sy, e.y - e.r * 0.8 + sin(float(i) * 2.4 + 1) * 4, u) \
-				- sin(u * PI) * 5
+		var X: float = M.lerpf(sx, e.x + V8M.v8_cos(float(i) * 2.4 + 1) * e.r * 0.85, u)
+		var Y: float = M.lerpf(sy, e.y - e.r * 0.8 + V8M.v8_sin(float(i) * 2.4 + 1) * 4, u) \
+				- V8M.v8_sin(u * PI) * 5
 		DRAW.worm_body(L, [{"x": X, "y": Y, "r": 1.5},
-				{"x": X - cos(a) * 2,
-						"y": Y - sin(a) * 1.5 + sin(gf.t * 30) * 0.8, "r": 1.4},
-				{"x": X - cos(a) * 4, "y": Y - sin(a) * 3, "r": 1}],
+				{"x": X - V8M.v8_cos(a) * 2,
+						"y": Y - V8M.v8_sin(a) * 1.5 + V8M.v8_sin(gf.t * 30) * 0.8, "r": 1.4},
+				{"x": X - V8M.v8_cos(a) * 4, "y": Y - V8M.v8_sin(a) * 3, "r": 1}],
 				MATS.PAL()["leech"], {"spec": false})
 		L.px(M.js_round(X), M.js_round(Y), int(M.P["m2"]))
 
@@ -891,8 +893,8 @@ static func _leech_regroup_up(i: int, sx: float, sy: float, mcx: float,
 	return func(gf, a):
 		var L = gf.s
 		var u: float = M.smoothstep(a)
-		var X: float = M.lerpf(sx, mcx, u) + sin(u * 6 + float(i)) * 4
-		var Y: float = M.lerpf(sy, mcy - 8, u) - sin(u * PI) * 16
+		var X: float = M.lerpf(sx, mcx, u) + V8M.v8_sin(u * 6 + float(i)) * 4
+		var Y: float = M.lerpf(sy, mcy - 8, u) - V8M.v8_sin(u * PI) * 16
 		DRAW.worm_body(L, [{"x": X, "y": Y, "r": 1.4},
 				{"x": X - 2, "y": Y + 1, "r": 1.3},
 				{"x": X - 4, "y": Y + 1.5, "r": 1}],
@@ -916,8 +918,8 @@ static func _leechwater(c, g) -> void:
 	LIB.cast_anim(w, c, true, 0.4)
 	var ox: float = p.x
 	var oy: float = p.y
-	var dirx: float = cos(c.ang)
-	var diry: float = sin(c.ang)
+	var dirx: float = V8M.v8_cos(c.ang)
+	var diry: float = V8M.v8_sin(c.ang)
 	var R: float = 150
 	var half: float = 0.62
 	g.y(0.03)
@@ -930,9 +932,9 @@ static func _leechwater(c, g) -> void:
 	var front := func() -> float:
 		return minf(R, (w.time - start) * 440 + 14)
 	var lane_at := func(i: int, s: float, t: float) -> Dictionary:
-		var a: float = float(lane_ang[i]) + sin(s * 0.045 + float(i) * 1.7 + t * 1.2) * 0.1
-		return {"x": ox + cos(a) * s + dirx * 6,
-				"y": oy + sin(a) * s * 0.96 + diry * 6, "a": a}
+		var a: float = float(lane_ang[i]) + V8M.v8_sin(s * 0.045 + float(i) * 1.7 + t * 1.2) * 0.1
+		return {"x": ox + V8M.v8_cos(a) * s + dirx * 6,
+				"y": oy + V8M.v8_sin(a) * s * 0.96 + diry * 6, "a": a}
 	var orgs: Array = []
 	for i in range(260):
 		orgs.append({"l": i % lanes, "k": int(floor(float(i) / float(lanes))) % 7,
@@ -959,7 +961,7 @@ static func _leechwater(c, g) -> void:
 			var s: int = 10
 			while s <= fr:
 				var q: Dictionary = lane_at.call(i, float(s), t)
-				var wd: float = (4.2 + 2.6 * sin(float(s) * 0.06 + float(i))) \
+				var wd: float = (4.2 + 2.6 * V8M.v8_sin(float(s) * 0.06 + float(i))) \
 						* M.clampf((fr - float(s)) / 12 + 0.5, 0.4, 1) \
 						* (maxf(0.0, 1 - mass["k"]) if mass != null else 1.0)
 				fld.capsule(prev["x"], prev["y"], q["x"], q["y"], wd, wd)
@@ -974,24 +976,24 @@ static func _leechwater(c, g) -> void:
 				continue
 			var s0: float = (float(o["k"]) / 7.0) * R \
 					+ fmod(t * 40 + float(o["k"]) * 31, R * 0.9) * 0.5
-			var sc: float = fmod(s0 + sin(t * 2 + float(o["k"])) * 5, R)
+			var sc: float = fmod(s0 + V8M.v8_sin(t * 2 + float(o["k"])) * 5, R)
 			var ang: float = float(o["ph"]) + t * float(o["sp"]) * 0.5
-			var sp: float = M.clampf(sc + cos(ang) * float(o["rs"]), 4, fr)
+			var sp: float = M.clampf(sc + V8M.v8_cos(ang) * float(o["rs"]), 4, fr)
 			var q2: Dictionary = lane_at.call(int(o["l"]), sp, t)
-			var nx: float = -sin(float(q2["a"]))
-			var ny: float = cos(float(q2["a"]))
+			var nx: float = -V8M.v8_sin(float(q2["a"]))
+			var ny: float = V8M.v8_cos(float(q2["a"]))
 			if sp > fr - 1:
 				continue
-			var X: float = M.js_round(float(q2["x"]) + nx * sin(ang) * float(o["rn"]))
-			var Y: float = M.js_round(float(q2["y"]) + ny * sin(ang) * float(o["rn"]))
+			var X: float = M.js_round(float(q2["x"]) + nx * V8M.v8_sin(ang) * float(o["rn"]))
+			var Y: float = M.js_round(float(q2["y"]) + ny * V8M.v8_sin(ang) * float(o["rn"]))
 			if M.hash_n(floor(float(o["ph"]) * 100.0) + f.age * 0) > fade:
 				continue
-			var bright: bool = sin(t * 7 + float(o["ph"]) * 3) > 0.45
+			var bright: bool = V8M.v8_sin(t * 7 + float(o["ph"]) * 3) > 0.45
 			L.px(X, Y, int(M.P["w"]) if bright else (int(M.P["y2"]) if int(o["k"]) % 3 == 0 else int(M.P["y1"])))
 			if int(o["k"]) % 2 == 0:
 				L.dl = 9
-				L.px(M.js_round(X - cos(float(q2["a"]))),
-						M.js_round(Y - sin(float(q2["a"]))), int(M.P["y0"]))
+				L.px(M.js_round(X - V8M.v8_cos(float(q2["a"]))),
+						M.js_round(Y - V8M.v8_sin(float(q2["a"]))), int(M.P["y0"]))
 				L.dl = 16
 	var _sw_lit := func(gf):
 		var fr2: float = front.call()
@@ -1020,8 +1022,8 @@ static func _leechwater(c, g) -> void:
 		# organisms transform into leech forms that crawl up and attach
 		for i in range(4):
 			var a: float = float(i) * 1.7 + M.hash_n(float(e.id)) * 6
-			var sx: float = e.x + cos(a) * 18
-			var sy: float = e.y + sin(a) * 12
+			var sx: float = e.x + V8M.v8_cos(a) * 18
+			var sy: float = e.y + V8M.v8_sin(a) * 12
 			w.add(FX.Custom.new(sx, sy, 0.38,
 					{"up": _leech_crawl_up(e, i, a, sx, sy)}, e.y + 2))
 	var tm: float = 0.0
@@ -1035,8 +1037,8 @@ static func _leechwater(c, g) -> void:
 			var d: float = sqrt(dx * dx + dy * dy)
 			if d - e.r > fr:
 				continue
-			var da: float = absf(M.ang_diff(c.ang, atan2(dy, dx)))
-			da = maxf(0.0, da - asin(minf(1.0, e.r / maxf(d, e.r + 1))))
+			var da: float = absf(M.ang_diff(c.ang, V8M.v8_atan2(dy, dx)))
+			da = maxf(0.0, da - V8M.v8_asin(minf(1.0, e.r / maxf(d, e.r + 1))))
 			if d > e.r + 4 and da > half:
 				continue
 			if contact.ok(e, w.time):
@@ -1087,18 +1089,18 @@ static func _leechwater(c, g) -> void:
 					for i in range(26):
 						var u: float = float(i) / 25.0
 						var an: float = u * M.TAU * 2.6 + t * 9
-						var rad: float = (3 + 9 * sin(u * PI)) * (1 - a * 0.3)
-						pts.append({"x": mcx + cos(an) * rad,
-								"y": mcy - 4 - u * 26 + sin(an) * rad * 0.4,
-								"r": 2.2 + sin(u * PI) * 2})
+						var rad: float = (3 + 9 * V8M.v8_sin(u * PI)) * (1 - a * 0.3)
+						pts.append({"x": mcx + V8M.v8_cos(an) * rad,
+								"y": mcy - 4 - u * 26 + V8M.v8_sin(an) * rad * 0.4,
+								"r": 2.2 + V8M.v8_sin(u * PI) * 2})
 					DRAW.worm_body(L, pts, MATS.PAL()["leech"],
 							{"stripe": int(M.P["y1"]), "stripeT": t})
 					for i in range(24):
 						var an2: float = float(i) * 0.9 + t * 6
 						var rd: float = 8 + (i % 5) * 2.2
-						L.px(M.js_round(mcx + cos(an2) * rd),
+						L.px(M.js_round(mcx + V8M.v8_cos(an2) * rd),
 								M.js_round(mcy - 6 - fmod(float(i) * 1.2, 24)
-										+ sin(an2) * rd * 0.4),
+										+ V8M.v8_sin(an2) * rd * 0.4),
 								int(M.P["y1"]) if i % 3 != 0 else int(M.P["w"])),
 				"lit": func(gf, a): DRAW.glow(gf.l, mcx, mcy - 14, 14 + a * 6,
 						int(M.P["y0"]), 0.3, 4)}, mcy + 4))
@@ -1118,7 +1120,7 @@ static func _leechwater(c, g) -> void:
 			int(M.P["m2"]), {"z": 10, "up": 120, "size": [3, 6], "land": 1})
 	for i in range(8):
 		var a: float = (float(i) / 8.0) * M.TAU
-		w.add(FX.Splash.new(mcx + cos(a) * 30, mcy + sin(a) * 26, 6,
+		w.add(FX.Splash.new(mcx + V8M.v8_cos(a) * 30, mcy + V8M.v8_sin(a) * 26, 6,
 				int(M.P["y1"]), int(M.P["y2"])))
 	w.add(FX.GroundDecal.new(mcx, mcy, "pits", 30, 3.5, c.id,
 			{"a": int(M.P["k0"]), "b": int(M.P["n3"]), "c": int(M.P["y1"])}, 0, 1))
@@ -1172,8 +1174,8 @@ class Bastion extends FX.Fx:
 
 	func leg_pos(i: int) -> Array:
 		var l: Dictionary = leg[i]
-		var ca: float = cos(face)
-		var sa: float = sin(face)
+		var ca: float = V8M.v8_cos(face)
+		var sa: float = V8M.v8_sin(face)
 		return [x + float(l["fx"]) * ca - float(l["fy"]) * sa,
 				y + float(l["fx"]) * sa + float(l["fy"]) * ca]
 
@@ -1197,7 +1199,7 @@ class Bastion extends FX.Fx:
 		var asmb: float = asm
 		if asmb <= 0:
 			return
-		var sh: float = sin(t * 90) * shake if shake > 0 else 0
+		var sh: float = V8M.v8_sin(t * 90) * shake if shake > 0 else 0
 		var bx: float = x + sh
 		var by: float = y - 12 - z + (1 - asmb) * 16
 		var frb: float = fr
@@ -1207,12 +1209,12 @@ class Bastion extends FX.Fx:
 			var lp: Array = leg_pos(i)
 			var tx: float = float(lp[0])
 			var ty: float = float(lp[1])
-			var ca: float = cos(face)
-			var sa: float = sin(face)
+			var ca: float = V8M.v8_cos(face)
+			var sa: float = V8M.v8_sin(face)
 			var sx: float = 1 if i % 2 != 0 else -1
 			var hx: float = bx + (sx * 11) * ca - ((1 if i >= 2 else -1) * 7) * sa
 			var hy: float = by + 4 + ((1 if i >= 2 else -1) * 7) * ca * 0.5
-			var fyy: float = ty - (sin(float(l["lift"]) * PI) * (16 if (i == slamLeg and slam >= 0) else 9) if float(l["lift"]) > 0 else 0)
+			var fyy: float = ty - (V8M.v8_sin(float(l["lift"]) * PI) * (16 if (i == slamLeg and slam >= 0) else 9) if float(l["lift"]) > 0 else 0)
 			var fxx: float = tx
 			var kx: float = (hx + fxx) / 2 + sx * 5
 			var ky: float = minf(hy, fyy) - 6
@@ -1233,24 +1235,24 @@ class Bastion extends FX.Fx:
 		DRAW.ball(L, bx, by + 2, 16, cer, 10)
 		for i in range(7):
 			var a: float = (float(i) / 7.0) * M.TAU + 0.3
-			var qx: float = bx + cos(a) * (10 + spread)
-			var qy: float = by + 1 + sin(a) * (6 + spread * 0.6)
-			L.poly([bx + cos(a - 0.35) * 5, by + sin(a - 0.35) * 3,
-					qx + cos(a - 0.3) * 4, qy + sin(a - 0.3) * 3,
-					qx + cos(a + 0.3) * 4, qy + sin(a + 0.3) * 3,
-					bx + cos(a + 0.35) * 5, by + sin(a + 0.35) * 3],
+			var qx: float = bx + V8M.v8_cos(a) * (10 + spread)
+			var qy: float = by + 1 + V8M.v8_sin(a) * (6 + spread * 0.6)
+			L.poly([bx + V8M.v8_cos(a - 0.35) * 5, by + V8M.v8_sin(a - 0.35) * 3,
+					qx + V8M.v8_cos(a - 0.3) * 4, qy + V8M.v8_sin(a - 0.3) * 3,
+					qx + V8M.v8_cos(a + 0.3) * 4, qy + V8M.v8_sin(a + 0.3) * 3,
+					bx + V8M.v8_cos(a + 0.35) * 5, by + V8M.v8_sin(a + 0.35) * 3],
 					int(M.P["i0"]) if i % 2 != 0 else int(M.P["i1"]))
-			L.line(bx + cos(a) * 5, by + sin(a) * 3, qx, qy,
+			L.line(bx + V8M.v8_cos(a) * 5, by + V8M.v8_sin(a) * 3, qx, qy,
 					int(M.P["n3"]) if i % 2 != 0 else int(M.P["u1"]), 1)
 		for i in range(7):
 			var a2: float = (float(i) / 7.0) * M.TAU + 0.3
-			var vx: float = bx + cos(a2) * 12
-			var vy: float = by + 1 + sin(a2) * 7
-			var pu: float = (sin(t * 5 - float(i)) + 1) / 2
-			L.line(bx + cos(a2) * 6, by + sin(a2) * 3.5, vx, vy,
+			var vx: float = bx + V8M.v8_cos(a2) * 12
+			var vy: float = by + 1 + V8M.v8_sin(a2) * 7
+			var pu: float = (V8M.v8_sin(t * 5 - float(i)) + 1) / 2
+			L.line(bx + V8M.v8_cos(a2) * 6, by + V8M.v8_sin(a2) * 3.5, vx, vy,
 					M.mix(int(M.P["e3"]), int(M.P["c2"]), pu))
 		var rr: float = 7 + swell * 4
-		LIB.draw_flask(L, bx, by - 3, rr, 0.8, sin(t * 3) * 0.25,
+		LIB.draw_flask(L, bx, by - 3, rr, 0.8, V8M.v8_sin(t * 3) * 0.25,
 				LIB.LIQ()["acid"], t * (1 + frb * 2), MATS.PAL()["glassHi"])
 		L.ring(bx, by - 3, rr + 1, 1, int(M.P["u1"]))
 		for i in range(int(floor(frb * 9))):
@@ -1262,10 +1264,10 @@ class Bastion extends FX.Fx:
 			# steps, not floor(): range(int(floor(...))) dropped the last segment.
 			for s in range(ceili(6 + frb * 8)):
 				a3 += (M.hash_n(float(s) + float(i) * 20.0) - 0.5) * 0.9
-				fx2 += cos(a3)
-				fy2 += sin(a3) * 0.7
+				fx2 += V8M.v8_cos(a3)
+				fy2 += V8M.v8_sin(a3) * 0.7
 				L.px(M.js_round(fx2), M.js_round(fy2),
-						int(M.P["w"]) if sin(t * 9 - float(s)) > 0 else int(M.P["g2"]))
+						int(M.P["w"]) if V8M.v8_sin(t * 9 - float(s)) > 0 else int(M.P["g2"]))
 				L.px(M.js_round(fx2) + 1, M.js_round(fy2), int(M.P["c1"]))
 		DRAW.ball(L, bx - 13, by - 4, 3.4, MATS.PAL()["cerB"], 3)
 		DRAW.ball(L, bx + 13, by - 4, 3.4, MATS.PAL()["cerB"], 3)
@@ -1345,13 +1347,13 @@ static func _bastion(c, g) -> void:
 			var dx: float = tgt.x - b.x
 			var dy: float = tgt.y - b.y
 			var d: float = sqrt(dx * dx + dy * dy)
-			var da: float = atan2(dy, dx) - b.face
+			var da: float = V8M.v8_atan2(dy, dx) - b.face
 			da = fmod(fmod(da + PI, M.TAU) + M.TAU, M.TAU) - PI
 			b.face += da * 0.1
 			if d > b.r + tgt.r + 14:
-				b.x += cos(b.face) * 26 * GEN.F
-				b.y += sin(b.face) * 26 * GEN.F
-				b.z = absf(sin(tm * 6)) * 0.8
+				b.x += V8M.v8_cos(b.face) * 26 * GEN.F
+				b.y += V8M.v8_sin(b.face) * 26 * GEN.F
+				b.z = absf(V8M.v8_sin(tm * 6)) * 0.8
 			b.x = M.clampf(b.x, 26, w.W - 26)
 			b.y = M.clampf(b.y, 24, w.H - 22)
 			slamCd -= GEN.F
@@ -1360,8 +1362,8 @@ static func _bastion(c, g) -> void:
 				var bd: float = 1e9
 				for i in range(4):
 					var lp: Array = b.leg_pos(i)
-					var dd: float = sqrt(pow(float(lp[0]) - tgt.x, 2.0)
-							+ pow(float(lp[1]) - tgt.y, 2.0))
+					var dd: float = sqrt(V8M.v8_pow(float(lp[0]) - tgt.x, 2.0)
+							+ V8M.v8_pow(float(lp[1]) - tgt.y, 2.0))
 					if dd < bd:
 						bd = dd
 						bi = i
@@ -1464,9 +1466,9 @@ static func _bastion(c, g) -> void:
 	for i in range(5):
 		var a: float = c.rng.range(0, M.TAU)
 		var d: float = c.rng.range(18, 40)
-		w.add(FX.Splash.new(bx + cos(a) * d, by + sin(a) * d * 0.8, 5,
+		w.add(FX.Splash.new(bx + V8M.v8_cos(a) * d, by + V8M.v8_sin(a) * d * 0.8, 5,
 				int(M.P["c1"]), int(M.P["c3"])))
-		w.add(FX.Embed.new(bx + cos(a) * d, by + sin(a) * d * 0.8, 3 + i % 3,
+		w.add(FX.Embed.new(bx + V8M.v8_cos(a) * d, by + V8M.v8_sin(a) * d * 0.8, 3 + i % 3,
 				int(M.P["i0"]), int(M.P["i3"]), int(M.P["w"]), 7))
 	g.y(1.2)
 
@@ -1493,7 +1495,7 @@ class Toad extends FX.Fx:
 		sy = y
 
 	func mouth() -> Array:
-		return [x + cos(f) * 9, y - z - 4 + sin(f) * 4]
+		return [x + V8M.v8_cos(f) * 9, y - z - 4 + V8M.v8_sin(f) * 4]
 
 	func shd(g, _w) -> void:
 		g.s.dl = 8
@@ -1503,8 +1505,8 @@ class Toad extends FX.Fx:
 	func up(g, _w) -> void:
 		var L = g.s
 		var t: float = g.t
-		var fx2: float = cos(f)
-		var fy2: float = sin(f)
+		var fx2: float = V8M.v8_cos(f)
+		var fy2: float = V8M.v8_sin(f)
 		var qx: float = -fy2
 		var base: float = y - z
 		var sx: float = 1 + sq * 0.28 + inf * 0.18
@@ -1525,12 +1527,12 @@ class Toad extends FX.Fx:
 		L.dl = M.js_round(vis * 16)
 		for i in range(2):
 			L.arc(x - fx2 * 2, base - 7 * sy2, 4 + float(i) * 2.2, 1,
-					atan2(-fy2, -fx2) - 1.1, atan2(-fy2, -fx2) + 1.1,
+					V8M.v8_atan2(-fy2, -fx2) - 1.1, V8M.v8_atan2(-fy2, -fx2) + 1.1,
 					int(M.P["k0"]), 3 + float(i) * 1.6)
 		for i in range(6):
 			var a: float = M.hash_n(float(i) * 3.0) * M.TAU
 			var d: float = 2 + M.hash_n(float(i) * 7.0) * 5
-			L.disc(x + cos(a) * d * sx, base - 7 * sy2 + sin(a) * d * 0.6, 0.9,
+			L.disc(x + V8M.v8_cos(a) * d * sx, base - 7 * sy2 + V8M.v8_sin(a) * d * 0.6, 0.9,
 					int(M.P["e0"]))
 		for s in [-1.0, 1.0]:
 			var ex: float = x + fx2 * 3 + qx * 4.2 * s
@@ -1546,11 +1548,11 @@ class Toad extends FX.Fx:
 			DRAW.ball(L, sx2, sy3, r, MATS.PAL()["toadSac"], r * 0.85)
 			for i in range(6):
 				var a2: float = (float(i) / 6.0) * M.TAU + 0.4
-				L.line(sx2, sy3, sx2 + cos(a2) * (r - 1),
-						sy3 + sin(a2) * (r * 0.85 - 1),
+				L.line(sx2, sy3, sx2 + V8M.v8_cos(a2) * (r - 1),
+						sy3 + V8M.v8_sin(a2) * (r * 0.85 - 1),
 						int(M.P["c2"]) if i % 2 != 0 else int(M.P["e3"]))
-			var bx2: float = sx2 + sin(t * 7) * r * 0.35
-			var by2: float = sy3 + cos(t * 5) * r * 0.3
+			var bx2: float = sx2 + V8M.v8_sin(t * 7) * r * 0.35
+			var by2: float = sy3 + V8M.v8_cos(t * 5) * r * 0.3
 			L.dl = 9
 			L.disc(bx2, by2, r * 0.4, int(M.P["c1"]))
 			L.dl = 6
@@ -1564,7 +1566,7 @@ class Toad extends FX.Fx:
 
 	func lit(g, _w) -> void:
 		if inf > 0.1:
-			var fx2: float = cos(f)
+			var fx2: float = V8M.v8_cos(f)
 			var r: float = 3 + inf * 8.5
 			DRAW.glow(g.l, x + fx2 * (7 + inf * 6.5), y - z - 3, r * 1.3,
 					int(M.P["c1"]), 0.3 * inf, 3)
@@ -1586,8 +1588,8 @@ static func _toad(c, g) -> void:
 	LIB.cast_anim(w, c)
 	g.y(0.06)
 	var sd: float = c.ang + PI / 2
-	var sxp: float = M.clampf(p.x + cos(sd) * 22, 14, w.W - 14)
-	var syp: float = M.clampf(p.y + sin(sd) * 22, 16, w.H - 14)
+	var sxp: float = M.clampf(p.x + V8M.v8_cos(sd) * 22, 14, w.W - 14)
+	var syp: float = M.clampf(p.y + V8M.v8_sin(sd) * 22, 16, w.H - 14)
 	var puddle = FX.Hits.new()
 	var vap = FX.Hits.new()
 	var glob = FX.Hits.new()
@@ -1602,7 +1604,7 @@ static func _toad(c, g) -> void:
 	w.add(toad)
 	for k in GEN.ticks(0.12):
 		toad.vis = k
-		toad.z = (1 - k) * -6 + sin(k * PI) * 6
+		toad.z = (1 - k) * -6 + V8M.v8_sin(k * PI) * 6
 		g.y(GEN.F)
 	toad.vis = 1
 	toad.z = 0
@@ -1611,15 +1613,15 @@ static func _toad(c, g) -> void:
 	# hop toward the target
 	var tx: float = c.tx
 	var ty: float = c.ty
-	var face: float = atan2(ty - syp, tx - sxp)
-	var hop: float = minf(46, sqrt(pow(tx - sxp, 2.0) + pow(ty - syp, 2.0)) * 0.5 + 10)
+	var face: float = V8M.v8_atan2(ty - syp, tx - sxp)
+	var hop: float = minf(46, sqrt(V8M.v8_pow(tx - sxp, 2.0) + V8M.v8_pow(ty - syp, 2.0)) * 0.5 + 10)
 	toad.f = face
 	var x0: float = toad.x
 	var y0: float = toad.y
 	for k in GEN.ticks(0.16):
-		toad.x = x0 + cos(face) * hop * k
-		toad.y = y0 + sin(face) * hop * k
-		toad.z = sin(k * PI) * 14
+		toad.x = x0 + V8M.v8_cos(face) * hop * k
+		toad.y = y0 + V8M.v8_sin(face) * hop * k
+		toad.z = V8M.v8_sin(k * PI) * 14
 		toad.sq = -0.3 if k < 0.15 else 0
 		g.y(GEN.F)
 	toad.z = 0
@@ -1637,8 +1639,8 @@ static func _toad(c, g) -> void:
 		for i in range(2):
 			var a: float = c.rng.range(-1.1, 1.1) + face
 			var d: float = c.rng.range(26, 52)
-			var ix: float = mx0 + cos(a) * d
-			var iy: float = my0 + 4 + sin(a) * d * 0.7
+			var ix: float = mx0 + V8M.v8_cos(a) * d
+			var iy: float = my0 + 4 + V8M.v8_sin(a) * d * 0.7
 			var kind: int = c.rng.int_n(3)
 			w.parts.add({"k": "chip" if kind == 0 else ("drop" if kind == 1 else "dust"),
 					"x": ix, "y": iy, "z": 1, "vx": 0, "vy": 0, "vz": 0,
@@ -1656,8 +1658,8 @@ static func _toad(c, g) -> void:
 	w.shake(3, 0.25)
 	w.shock(mx, my, 40, 0.3, 2)
 	w.add(FX.Flash.new(mx, my, 12, int(M.P["c3"]), 0.2, 4))
-	var cosf: float = cos(face)
-	var sinf: float = sin(face)
+	var cosf: float = V8M.v8_cos(face)
+	var sinf: float = V8M.v8_sin(face)
 	var layers: Array = [
 			[MATS.VAP()["dark"], 26, 14, 0],
 			[MATS.VAP()["green"], 21, 11, 1],
@@ -1689,7 +1691,7 @@ static func _toad(c, g) -> void:
 	for i in range(6):
 		var a: float = face + (float(i) - 2.5) * 0.14 + c.rng.range(-0.03, 0.03)
 		var sp: float = 150 + c.rng.range(-20, 30)
-		w.add(FX.Shot.new(mx, my, 6, cos(a) * sp, sin(a) * sp, 18, 90, 5,
+		w.add(FX.Shot.new(mx, my, 6, V8M.v8_cos(a) * sp, V8M.v8_sin(a) * sp, 18, 90, 5,
 				func(gg, x, y, _z, s):
 					var L = gg.s
 					DRAW.ball(L, x, y, 3.2, MATS.PAL()["liquid"])
@@ -1711,7 +1713,7 @@ static func _toad(c, g) -> void:
 	for k in GEN.ticks(0.8):
 		toad.inf = M.lerpf(0.1, 1.9, M.smoothstep(k))
 		toad.sq = -0.35 * k
-		toad.x += sin(k * 60) * 0.25
+		toad.x += V8M.v8_sin(k * 60) * 0.25
 		if int(floor(k * 60.0)) % 6 == 0:
 			FX.steam(w, toad.x, toad.y, 1, 10, int(M.P["e2"]),
 					int(M.P["c0"]), 3, {"z": 8})
@@ -1735,7 +1737,7 @@ static func _toad(c, g) -> void:
 		var a: float = c.rng.range(0, M.TAU)
 		var sp: float = c.rng.range(40, 120)
 		w.parts.add({"k": "petal", "x": ex, "y": ey, "z": 10,
-				"vx": cos(a) * sp, "vy": sin(a) * sp * 0.8,
+				"vx": V8M.v8_cos(a) * sp, "vy": V8M.v8_sin(a) * sp * 0.8,
 				"vz": c.rng.range(30, 100), "grav": 80, "drag": 1.2,
 				"size": c.rng.range(2, 4), "rot": c.rng.range(0, M.TAU),
 				"vr": c.rng.range(-9, 9),
@@ -1770,10 +1772,10 @@ static func _cloud_decay_body(cl, g) -> void:
 
 static func _inhale_fn(sx: float, sy: float, mx: float, my: float, face: float):
 	return func(q, _w, _dt):
-		var u: float = pow(q.age / q.max, 1.7)
-		var sw: float = sin(u * 3) * 6
-		q.x = M.lerpf(sx, mx, u) - sin(face) * sw
-		q.y = M.lerpf(sy, my, u) + cos(face) * sw
+		var u: float = V8M.v8_pow(q.age / q.max, 1.7)
+		var sw: float = V8M.v8_sin(u * 3) * 6
+		q.x = M.lerpf(sx, mx, u) - V8M.v8_sin(face) * sw
+		q.y = M.lerpf(sy, my, u) + V8M.v8_cos(face) * sw
 		q.z = M.lerpf(1, 5, u)
 
 
@@ -1791,7 +1793,7 @@ static func _toad_glob_hit(c, glob, i: int):
 		if not glob.ok(e, ww.time, 0, 2):
 			return false
 		LIB.hit_e(c, e, 30, {"kind": "acid", "k": 60,
-				"ang": atan2(s.vy, s.vx), "stag": 0.25, "at": [s.x, s.y]})
+				"ang": V8M.v8_atan2(s.vy, s.vx), "stag": 0.25, "at": [s.x, s.y]})
 		ww.poison(e, c.d(36), 3, c.id, c.def["id"])
 		ww.mark(e, "wet", 2)
 		ww.add(FX.Pool.new(e.x, e.y, 9, MATS.MAT()["acid"], 2,

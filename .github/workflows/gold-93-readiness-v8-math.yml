@@ -1,0 +1,59 @@
+name: Gold 93 V8 math bit-exactness
+
+# Checks prototypes/skill_readiness/native/venom/v8_math.gd against V8 (Node)
+# reference vectors, bit for bit. Every Venomwright and ARCANA skill that
+# calls Math.sin/cos/atan2/asin/exp/log/pow/hypot depends on this file.
+
+on:
+  push:
+    branches:
+      - arena/c7b0c4e8-soul-of-hero
+    paths:
+      - 'prototypes/skill_readiness/native/venom/v8_math.gd'
+      - 'prototypes/skill_readiness/tests/gold93_v8_math_test.gd'
+      - 'prototypes/skill_readiness/tests/data/v8_math_vectors.json'
+      - '.github/workflows/gold-93-readiness-v8-math.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  v8-math:
+    name: V8 math vs Node reference vectors
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1200s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
+            echo "::error::Godot import reported script errors"
+            exit 1
+          fi
+      - name: Bit-exact comparison
+        shell: bash
+        run: |
+          set -uo pipefail
+          LOG=/tmp/gold93-v8-math.log
+          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_v8_math_test.gd 2>&1 | tee "$LOG"
+          STATUS=${PIPESTATUS[0]}
+          {
+            echo "### V8 math (bit-exact vs Node $(node --version 2>/dev/null || echo ref))"
+            echo '```'
+            grep -E 'GOLD93_V8_MATH' "$LOG" || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ "$STATUS" != "0" ] || ! grep -q 'GOLD93_V8_MATH: PASS' "$LOG"; then
+            while IFS= read -r line; do echo "::error::[v8-math] $line"; done < <(grep -E 'GOLD93_V8_MATH|mismatch|SCRIPT ERROR|Parse Error' "$LOG" | sed -e 's/%/%25/g' | head -30)
+            exit 1
+          fi
+          grep -E 'GOLD93_V8_MATH' "$LOG"

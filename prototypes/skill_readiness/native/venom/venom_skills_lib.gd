@@ -1,6 +1,8 @@
 class_name VenomSkillsLib
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/skills/lib.ts` helpers:
 ## the frame clock, `hitE`, `ringAt`, `visRing`, `mkPuffs`, `drawFlask`, the
 ## liquid table `LIQ`, `vialSprite`, `throwArc`, `handPos` and `castAnim`.
@@ -28,8 +30,8 @@ static func tick_count(sec: float) -> int:
 
 
 static func dist(a, b) -> float:
-	return sqrt(pow(float(a["x"]) - float(b["x"]), 2.0)
-			+ pow(float(a["y"]) - float(b["y"]), 2.0))
+	return sqrt(V8M.v8_pow(float(a["x"]) - float(b["x"]), 2.0)
+			+ V8M.v8_pow(float(a["y"]) - float(b["y"]), 2.0))
 
 
 ## Authored damage entry point. Every skill routes its numbers through this, so
@@ -41,9 +43,9 @@ static func hit_e(c, e, frac: float, o: Dictionary = {}) -> bool:
 		var a: float = float(o.get("ang", 0.0))
 		if o.has("from"):
 			var fr = o["from"]
-			a = atan2(e.y - float(fr[1]), e.x - float(fr[0]))
-		kx = cos(a) * float(o["k"])
-		ky = sin(a) * float(o["k"])
+			a = V8M.v8_atan2(e.y - float(fr[1]), e.x - float(fr[0]))
+		kx = V8M.v8_cos(a) * float(o["k"])
+		ky = V8M.v8_sin(a) * float(o["k"])
 	var opts: Dictionary = {
 		"kind": String(o.get("kind", "impact")),
 		"src": int(c.def["id"]),
@@ -109,7 +111,7 @@ static func mk_puffs(rng, n: int, R: float, rmin: float, rmax: float, orb: float
 		var ang: float = rng.range(0.0, M.TAU)
 		var d: float = sqrt(rng.next()) * R
 		a.append({
-			"x": cos(ang) * d, "y": sin(ang) * d * 0.8,
+			"x": V8M.v8_cos(ang) * d, "y": V8M.v8_sin(ang) * d * 0.8,
 			"r": rng.range(rmin, rmax),
 			"ph": rng.range(0.0, M.TAU),
 			"sp": rng.range(0.5, sp) * rng.sign(),
@@ -161,7 +163,7 @@ static func draw_flask(L, cx: float, cy: float, r: float, fill: float, tilt: flo
 	if bubbles and r > 2.8:
 		for i in range(3):
 			var ph: float = fmod(t * (0.6 + float(i) * 0.25) + float(i) * 0.37, 1.0)
-			var bx: float = cx + sin(float(i) * 2.4 + t) * (r * 0.45)
+			var bx: float = cx + V8M.v8_sin(float(i) * 2.4 + t) * (r * 0.45)
 			var by: float = cy + r * 0.6 - ph * r * 1.1
 			if by > cy + lvl + tilt * (bx - cx) + 0.8:
 				L.dot(bx, by, int(liq[3]))
@@ -215,16 +217,16 @@ static func vial_sprite(g, x: float, y: float, kind: String, rot: float,
 			DRAW.ball(L, x, y, 2.4, pal["glassHi"])
 			L.rect(x - 1, y, 3, 2, int(P["c1"]))
 			L.dot(x - 1, y - 1, int(P["w"]))
-			L.dot(x + cos(rot) * 3, y + sin(rot) * 3, int(P["u1"]))
+			L.dot(x + V8M.v8_cos(rot) * 3, y + V8M.v8_sin(rot) * 3, int(P["u1"]))
 		"flask":
 			DRAW.ball(L, x, y, 3.2, pal["glassHi"])
 			L.rect(x - 2, y, 5, 3, int(P["c1"]))
 			L.dot(x - 1, y - 1, int(P["w"]))
-			L.dot(x + cos(rot) * 4, y + sin(rot) * 4, int(P["u2"]))
+			L.dot(x + V8M.v8_cos(rot) * 4, y + V8M.v8_sin(rot) * 4, int(P["u2"]))
 		"seed":
 			DRAW.ball(L, x, y, 2.8, pal["seed"], 3.4)
 			L.dot(x, y - 1, int(P["c2"]))
-			L.dot(x + cos(rot), y + sin(rot), int(P["e3"]))
+			L.dot(x + V8M.v8_cos(rot), y + V8M.v8_sin(rot), int(P["e3"]))
 		"cocoon":
 			DRAW.ball(L, x, y, 6.5, pal["chitin"], 8.5)
 			for i in range(-1, 2):
@@ -241,7 +243,7 @@ static func vial_sprite(g, x: float, y: float, kind: String, rot: float,
 			L.dot(x - 1, y - 1, int(P["w"]))
 			L.rect(x - 1, y, 3, 1.2, int(P["c3"]))
 		"globule":
-			var pu: bool = sin(a * 40) > 0
+			var pu: bool = V8M.v8_sin(a * 40) > 0
 			DRAW.ball(L, x, y, 3.8, pal["liquid"])
 			L.disc(x + 1, y + 1, 1.5, int(P["k0"]))
 			L.dot(x - 2, y - 2, int(P["w"]) if pu else int(P["c3"]))
@@ -269,7 +271,7 @@ static func throw_arc(w, kind: String, x0: float, y0: float, x1: float,
 
 static func hand_pos(w) -> Array:
 	var p = w.player
-	return [p.x + cos(p.face) * 8, p.y - 7 + sin(p.face) * 5]
+	return [p.x + V8M.v8_cos(p.face) * 8, p.y - 7 + V8M.v8_sin(p.face) * 5]
 
 
 static func cast_anim(w, c, face: bool = true, t: float = 0.32) -> void:
@@ -281,4 +283,4 @@ static func cast_anim(w, c, face: bool = true, t: float = 0.32) -> void:
 
 
 static func rotate(x: float, y: float, a: float) -> Array:
-	return [x * cos(a) - y * sin(a), x * sin(a) + y * cos(a)]
+	return [x * V8M.v8_cos(a) - y * V8M.v8_sin(a), x * V8M.v8_sin(a) + y * V8M.v8_cos(a)]

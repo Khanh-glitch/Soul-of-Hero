@@ -1,6 +1,8 @@
 class_name VenomFx
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the shared scaffolding of the ORIGINAL Venomwright
 ## `src/game/fx.ts`: the `Fx` base class, the particle system, the ground
 ## effects (Splash / Embed / Flash / Ring / Pool / GroundDecal), the volumetric vapour
@@ -209,8 +211,8 @@ class Particles extends RefCounted:
 					DRAW.shard(L, px, py, p.rot, p.size, p.size * 0.42, p.c1, p.c2, p.c3)
 				"chip":
 					var cs: float = maxf(1.5, p.size)
-					var ca: float = cos(p.rot)
-					var sa: float = sin(p.rot)
+					var ca: float = V8M.v8_cos(p.rot)
+					var sa: float = V8M.v8_sin(p.rot)
 					L.poly([px - ca * cs - sa * cs * 0.6, py - sa * cs + ca * cs * 0.6,
 							px + ca * cs - sa * cs * 0.6, py + sa * cs + ca * cs * 0.6,
 							px + ca * cs + sa * cs * 0.6, py + sa * cs - ca * cs * 0.6,
@@ -219,7 +221,7 @@ class Particles extends RefCounted:
 							px + ca * cs - sa * cs * 0.6, py + sa * cs + ca * cs * 0.6, p.c3)
 					L.dot(px, py, p.c2)
 				"bubble":
-					var wob: float = sin(p.age * 6 + float(p.seed)) * 0.8
+					var wob: float = V8M.v8_sin(p.age * 6 + float(p.seed)) * 0.8
 					DRAW.bubble(L, px + wob, py, p.size, p.c1, p.c2, p.c3)
 				"spore":
 					L.dot(px, py, p.c1)
@@ -248,8 +250,8 @@ class Particles extends RefCounted:
 						L.dot(p.x - p.vx * 0.03, p.y - p.vy * 0.03 - p.z + p.vz * 0.03,
 								M.mix(p.c1, int(M.P["k0"]), 0.5) if p.c2 != 0 else p.c1)
 				"petal":
-					var pc: float = cos(p.rot) * p.size
-					var ps: float = sin(p.rot) * p.size * 0.6
+					var pc: float = V8M.v8_cos(p.rot) * p.size
+					var ps: float = V8M.v8_sin(p.rot) * p.size * 0.6
 					L.poly([px - pc, py - ps, px, py - ps * 0.5 - 1, px + pc, py + ps,
 							px, py + ps * 0.5 + 1], p.c1)
 					L.dot(px, py, p.c2)
@@ -301,11 +303,11 @@ class Splash extends Fx:
 		for i in range(nn):
 			var an: float = (float(i) / float(nn)) * M.TAU + M.hash_n(float(i) + x) * 0.5
 			var rr: float = r * (0.8 + M.hash_n(i * 7 + y) * 0.4)
-			var qx: float = x + cos(an) * rr
-			var qy: float = y + sin(an) * rr * 0.8
+			var qx: float = x + V8M.v8_cos(an) * rr
+			var qy: float = y + V8M.v8_sin(an) * rr * 0.8
 			L.dot(qx, qy, c2 if a < 0.5 else c1)
 			if a < 0.6:
-				L.dot(x + cos(an) * rr * 0.6, y + sin(an) * rr * 0.5 - (1 - a) * 3, c1)
+				L.dot(x + V8M.v8_cos(an) * rr * 0.6, y + V8M.v8_sin(an) * rr * 0.5 - (1 - a) * 3, c1)
 		L.ring(x, y, r * 0.8, 0.8, c1)
 		L.dl = 16
 
@@ -399,7 +401,7 @@ class Ring extends Fx:
 
 	func upd(w, _dt: float) -> void:
 		var t: float = M.clampf(age / dur, 0.0, 1.0)
-		var e: float = 1 - pow(1 - t, float(o.get("ease", 2)))
+		var e: float = 1 - V8M.v8_pow(1 - t, float(o.get("ease", 2)))
 		var prev: float = cur
 		var r0: float = float(o.get("r0", 0.0))
 		cur = r0 + (r1 - r0) * e
@@ -427,8 +429,8 @@ class Ring extends Fx:
 					w.hit(en, float(h["amt"]), opts)
 		if o.get("dust", false) and int(floor(age * 60)) % 2 == 0:
 			var a: float = w.rng.next() * M.TAU
-			w.parts.add({"k": "dust", "x": x + cos(a) * cur, "y": y + sin(a) * cur,
-					"z": 1, "vx": cos(a) * 12, "vy": sin(a) * 12 - 4, "max": 0.5,
+			w.parts.add({"k": "dust", "x": x + V8M.v8_cos(a) * cur, "y": y + V8M.v8_sin(a) * cur,
+					"z": 1, "vx": V8M.v8_cos(a) * 12, "vy": V8M.v8_sin(a) * 12 - 4, "max": 0.5,
 					"size": 3, "c1": int(M.P["i3"]), "c2": int(M.P["i2"])})
 		if age >= dur:
 			dead = true
@@ -486,7 +488,7 @@ class Pool extends Fx:
 		for i in range(n):
 			var a: float = rr.range(0.0, M.TAU)
 			var d: float = rad_ * rr.range(0.25, 0.62)
-			blobs.append({"dx": cos(a) * d, "dy": sin(a) * d * 0.9,
+			blobs.append({"dx": V8M.v8_cos(a) * d, "dy": V8M.v8_sin(a) * d * 0.9,
 					"r": rad_ * rr.range(0.28, 0.5)})
 
 	func upd(w, dt: float) -> void:
@@ -498,7 +500,7 @@ class Pool extends Fx:
 		if boil != 0.0 and w.rng.next() < boil * dt * 60 * 0.1:
 			var a: float = w.rng.range(0.0, M.TAU)
 			var d: float = w.rng.range(0.0, rad * 0.7 * gs)
-			w.parts.add({"k": "bubble", "x": x + cos(a) * d, "y": y + sin(a) * d * 0.8,
+			w.parts.add({"k": "bubble", "x": x + V8M.v8_cos(a) * d, "y": y + V8M.v8_sin(a) * d * 0.8,
 					"z": 0, "vz": w.rng.range(5, 12), "max": w.rng.range(0.4, 0.9),
 					"size": w.rng.range(1.5, 3.2), "c1": mat["ramp"][3],
 					"c2": mat["rim"], "c3": mat["hi"]})
@@ -526,7 +528,7 @@ class Pool extends Fx:
 		f.reset()
 		for b in blobs:
 			f.disc(x + b["dx"] * gs, y + b["dy"] * gs,
-					b["r"] * gs * (1 + sin(g.t * 3 + b["dx"]) * 0.03), 0.25)
+					b["r"] * gs * (1 + V8M.v8_sin(g.t * 3 + b["dx"]) * 0.03), 0.25)
 		var dl: int = 16
 		if rem < 1:
 			dl = maxi(2, M.js_round(16 * rem))
@@ -581,8 +583,8 @@ class GroundDecal extends Fx:
 				var len: float = size * r.range(0.4, 1.0)
 				for k in range(ceili(len)):
 					a0 += r.range(-0.4, 0.4)
-					x0 += cos(a0)
-					y0 += sin(a0) * 0.9
+					x0 += V8M.v8_cos(a0)
+					y0 += V8M.v8_sin(a0) * 0.9
 					_push(x0, y0, cols_["a"])
 					if k % 3 == 0:
 						_push(x0 + 1, y0 + 1, cols_["b"])
@@ -594,11 +596,11 @@ class GroundDecal extends Fx:
 				var a: float = r.range(0.0, M.TAU)
 				var d: float = sqrt(r.next()) * size
 				var pr: float = r.range(0.8, 2.4)
-				var qx: float = cos(a) * d
-				var qy: float = sin(a) * d * 0.9
+				var qx: float = V8M.v8_cos(a) * d
+				var qy: float = V8M.v8_sin(a) * d * 0.9
 				for dy in range(-2, 3):
 					for dx in range(-3, 4):
-						var q: float = sqrt(pow(float(dx) / 1.3, 2.0) + pow(float(dy), 2.0))
+						var q: float = sqrt(V8M.v8_pow(float(dx) / 1.3, 2.0) + V8M.v8_pow(float(dy), 2.0))
 						if q < pr:
 							_push(qx + dx, qy + dy, cols_["a"])
 						elif q < pr + 1:
@@ -608,36 +610,36 @@ class GroundDecal extends Fx:
 			var a2: float = 0.0
 			while a2 < M.TAU:
 				var rr: float = size * (0.92 + M.hash_n(int(floor(a2 * 9)) + seed_) * 0.12)
-				_push(cos(a2) * rr, sin(a2) * rr * 0.85 - 1, cols_["b"])
-				_push(cos(a2) * (rr + 1.4), sin(a2) * (rr + 1.4) * 0.85 - 1,
+				_push(V8M.v8_cos(a2) * rr, V8M.v8_sin(a2) * rr * 0.85 - 1, cols_["b"])
+				_push(V8M.v8_cos(a2) * (rr + 1.4), V8M.v8_sin(a2) * (rr + 1.4) * 0.85 - 1,
 						cols_["c"] if a2 > 3.5 and a2 < 5.6 else cols_["b"])
-				_push(cos(a2) * (rr - 1.3), sin(a2) * (rr - 1.3) * 0.85, cols_["a"])
+				_push(V8M.v8_cos(a2) * (rr - 1.3), V8M.v8_sin(a2) * (rr - 1.3) * 0.85, cols_["a"])
 				a2 += 0.04
 			for i in range(ceili(size * 1.4)):
 				var ca: float = r.range(0.0, M.TAU)
 				var cd: float = r.range(size * 0.2, size * 0.88)
-				_push(cos(ca) * cd, sin(ca) * cd * 0.85,
+				_push(V8M.v8_cos(ca) * cd, V8M.v8_sin(ca) * cd * 0.85,
 						cols_["c"] if i % 4 == 0 else cols_["a"],
 						i * 2 if i % 4 == 0 else -1)
 		elif kind_ == "crescent":
 			for k in range(-1, 2):
 				var a3: float = -1.15
 				while a3 <= 1.15:
-					var rr: float = size + float(k) * 1.1 + cos(a3 * 1.3) * 0
+					var rr: float = size + float(k) * 1.1 + V8M.v8_cos(a3 * 1.3) * 0
 					var c: int = cols_["c"] if k == 0 else (cols_["b"] if k < 0 else cols_["a"])
-					var qx: float = cos(a3 + ang) * rr
-					var qy: float = sin(a3 + ang) * rr * 0.9
+					var qx: float = V8M.v8_cos(a3 + ang) * rr
+					var qy: float = V8M.v8_sin(a3 + ang) * rr * 0.9
 					var thick: float = (1 - absf(a3) / 1.3) * 2.3
 					for t in range(ceili(thick)):
-						_push(qx - cos(a3 + ang) * float(t) * 0.9,
-								qy - sin(a3 + ang) * float(t) * 0.9, c,
+						_push(qx - V8M.v8_cos(a3 + ang) * float(t) * 0.9,
+								qy - V8M.v8_sin(a3 + ang) * float(t) * 0.9, c,
 								M.js_round((a3 + 1.2) * 20) if k == 0 else -1)
 					a3 += 0.03
 		elif kind_ == "scorch":
 			for i in range(ceili(size * 2.4)):
 				var sa: float = r.range(0.0, M.TAU)
 				var sd: float = sqrt(r.next()) * size
-				_push(cos(sa) * sd, sin(sa) * sd * 0.85,
+				_push(V8M.v8_cos(sa) * sd, V8M.v8_sin(sa) * sd * 0.85,
 						cols_["b"] if i % 9 == 0 else cols_["a"])
 
 	func _push(px: float, py: float, c: int, g: int = -1) -> void:
@@ -655,8 +657,8 @@ class GroundDecal extends Fx:
 		var a0: float = a
 		for i in range(ln):
 			a0 += r.range(-0.45, 0.45)
-			x0 += cos(a0)
-			y0 += sin(a0) * 0.9
+			x0 += V8M.v8_cos(a0)
+			y0 += V8M.v8_sin(a0) * 0.9
 			var g: int = d0 + i
 			_push(x0 + 1, y0, cols["a"])
 			_push(x0, y0 + 1, cols["a"])
@@ -738,8 +740,8 @@ class Cloud extends Fx:
 
 	func pos(p: Dictionary, t: float) -> Vector2:
 		var a: float = float(p["ph"]) + t * float(p["sp"])
-		return Vector2(x + (float(p["x"]) + cos(a) * float(p["orb"])) * shrink,
-				y + (float(p["y"]) + sin(a) * float(p["orb"]) * float(p.get("sq", 0.6))) * shrink)
+		return Vector2(x + (float(p["x"]) + V8M.v8_cos(a) * float(p["orb"])) * shrink,
+				y + (float(p["y"]) + V8M.v8_sin(a) * float(p["orb"]) * float(p.get("sq", 0.6))) * shrink)
 
 	func upd(w, dt: float) -> void:
 		x += vx * dt
@@ -782,13 +784,13 @@ class Cloud extends Fx:
 		for i in range(puffs.size()):
 			var p: Dictionary = puffs[i]
 			list.append({"p": p, "q": pos(p, t), "i": i,
-					"d": sin(float(p["ph"]) + t * float(p["sp"])) * 0.5 + float(p.get("lay", 0.0))})
+					"d": V8M.v8_sin(float(p["ph"]) + t * float(p["sp"])) * 0.5 + float(p.get("lay", 0.0))})
 		M.stable_sort(list, func(a, b): return float(a["d"]) - float(b["d"]))
 		var rem: float = life - age
 		var f: float = rem / 1.2 if rem < 1.2 else 1.0
 		for o in list:
 			var p2: Dictionary = o["p"]
-			var rr: float = float(p2["r"]) * shrink * (0.9 + 0.1 * sin(t * 2 + float(o["i"]))) \
+			var rr: float = float(p2["r"]) * shrink * (0.9 + 0.1 * V8M.v8_sin(t * 2 + float(o["i"]))) \
 					* (0.4 + 0.6 * f) * minf(1.0, age * 2.2 + 0.2)
 			if rr < 1.5:
 				continue
@@ -799,7 +801,7 @@ class Cloud extends Fx:
 		var rem: float = life - age
 		var m: float = 10.0
 		for p in puffs:
-			m = maxf(m, sqrt(pow(float(p["x"]), 2.0) + pow(float(p["y"]), 2.0)) + float(p["r"]))
+			m = maxf(m, sqrt(V8M.v8_pow(float(p["x"]), 2.0) + V8M.v8_pow(float(p["y"]), 2.0)) + float(p["r"]))
 		DRAW.glow(g.l, x, y, m * 0.8, ramp[3], 0.1 * M.clampf(rem, 0.0, 1.0), 2)
 
 
@@ -974,7 +976,7 @@ static func drops(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
 		var sz0: float = float((o.get("size", [1.2, 3.0]))[0])
 		var sz1: float = float((o.get("size", [1.2, 3.0]))[1])
 		w.parts.add({"k": "drop", "x": x, "y": y, "z": float(o.get("z", 2.0)),
-				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vx": V8M.v8_cos(a) * s, "vy": V8M.v8_sin(a) * s * 0.85,
 				"vz": float(o.get("up", 60.0)) * (0.4 + w.rng.next() * 0.9),
 				"grav": 230, "size": w.rng.range(sz0, sz1),
 				"c1": c1, "c2": c2, "c3": c3, "land": int(o.get("land", 1)),
@@ -995,7 +997,7 @@ static func shards(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
 		var sz0: float = float((o.get("size", [3.0, 6.0]))[0])
 		var sz1: float = float((o.get("size", [3.0, 6.0]))[1])
 		w.parts.add({"k": "shard", "x": x, "y": y, "z": float(o.get("z", 3.0)),
-				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vx": V8M.v8_cos(a) * s, "vy": V8M.v8_sin(a) * s * 0.85,
 				"vz": float(o.get("up", 70.0)) * (0.4 + w.rng.next()),
 				"grav": 240, "size": w.rng.range(sz0, sz1),
 				"rot": w.rng.range(0.0, M.TAU), "vr": w.rng.range(-12.0, 12.0),
@@ -1016,7 +1018,7 @@ static func chips(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
 		var sz0: float = float((o.get("size", [1.8, 3.8]))[0])
 		var sz1: float = float((o.get("size", [1.8, 3.8]))[1])
 		w.parts.add({"k": "chip", "x": x, "y": y, "z": float(o.get("z", 3.0)),
-				"vx": cos(a) * s, "vy": sin(a) * s * 0.85,
+				"vx": V8M.v8_cos(a) * s, "vy": V8M.v8_sin(a) * s * 0.85,
 				"vz": float(o.get("up", 80.0)) * (0.4 + w.rng.next()),
 				"grav": 260, "size": w.rng.range(sz0, sz1),
 				"rot": w.rng.range(0.0, 3.0), "vr": w.rng.range(-14.0, 14.0),
@@ -1029,7 +1031,7 @@ static func steam(w, x: float, y: float, n: int, sp: float, c1: int, c2: int,
 		var a: float = w.rng.next() * M.TAU
 		var s: float = sp * w.rng.next()
 		w.parts.add({"k": "steam", "x": x, "y": y, "z": float(o.get("z", 2.0)),
-				"vx": cos(a) * s, "vy": sin(a) * s * 0.7,
+				"vx": V8M.v8_cos(a) * s, "vy": V8M.v8_sin(a) * s * 0.7,
 				"vz": float(o.get("vz", 14.0)) * (0.5 + w.rng.next()),
 				"size": size * (0.7 + w.rng.next() * 0.6),
 				"max": float(o.get("max", 0.9)) * (0.7 + w.rng.next() * 0.6),
@@ -1126,8 +1128,8 @@ class Chain extends RefCounted:
 		n = n_
 		gap = gap_
 		for i in range(n):
-			s.append({"x": cx - cos(ang) * gap * float(i),
-					"y": cy - sin(ang) * gap * float(i)})
+			s.append({"x": cx - V8M.v8_cos(ang) * gap * float(i),
+					"y": cy - V8M.v8_sin(ang) * gap * float(i)})
 
 	func move(cx: float, cy: float) -> void:
 		s[0]["x"] = cx

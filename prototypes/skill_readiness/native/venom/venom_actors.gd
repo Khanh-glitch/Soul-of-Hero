@@ -1,6 +1,8 @@
 class_name VenomActors
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/actors.ts`:
 ## `enemyShadow`, `drawEnemy`, the per-status `overlays`, `drawEnemyBars`,
 ## `drawPlayer` and `playerGlow`.
@@ -66,7 +68,7 @@ static func _tint_fn(e, w) -> CF:
 	var mia = e.st.get("miasma", null)
 	var rem = e.st.get("remedy", null)
 	c.ck = minf(0.7, cry.k * 0.7) if cry != null else 0.0
-	c.mk = 0.22 + 0.14 * sin(t * 7 + float(e.id)) if mia != null else 0.0
+	c.mk = 0.22 + 0.14 * V8M.v8_sin(t * 7 + float(e.id)) if mia != null else 0.0
 	c.rk = 0.45 if rem != null else 0.0
 	c.rcol = M.mix(int(M.P["g2"]), int(M.P["e1"]), rem.k) if rem != null else 0
 	c.fl = e.flash
@@ -130,15 +132,15 @@ static func draw_enemy(g, e, w) -> void:
 			# original REPLACES the filter: c => mix(c, P.i0, 0.8)
 			C.death_white = true
 	var f: float = e.face
-	var fx: float = cos(f)
-	var fy: float = sin(f)
+	var fx: float = V8M.v8_cos(f)
+	var fy: float = V8M.v8_sin(f)
 	var lg: float = e.lunge
 	var sq: float = e.squash / 0.14 if e.squash > 0 else 0.0
 	var h: float = (1 - sq * 0.22) * sy
-	var bx: float = e.x + fx * lg * 3 + (sin(t * 60) * 0.8 if e.stagger > 0 else 0.0)
+	var bx: float = e.x + fx * lg * 3 + (V8M.v8_sin(t * 60) * 0.8 if e.stagger > 0 else 0.0)
 	var by: float = e.y + sink + fy * lg * 1.5 + ((1 - sy) * 8 if sy < 1 else 0.0)
 	L.dl = dl
-	var sw: float = sin(e.walk) * 1.8
+	var sw: float = V8M.v8_sin(e.walk) * 1.8
 	var show_face: bool = fy > -0.35
 	var pal := MATS.PAL()
 
@@ -174,7 +176,7 @@ static func draw_enemy(g, e, w) -> void:
 static func _draw_imp(L, e, _w, C: CF, pal: Dictionary, bx: float, by: float,
 		fx: float, fy: float, h: float, sw: float, lg: float, show_face: bool) -> void:
 	var p: Dictionary = _tp(pal["imp"], C)
-	var as_: float = sin(e.walk + 1) * 2.2
+	var as_: float = V8M.v8_sin(e.walk + 1) * 2.2
 	L.rect(bx - 3.5, by + sw, 2.5, 2.5, C.apply(int(M.P["r0"])))
 	L.rect(bx + 1, by - sw, 2.5, 2.5, C.apply(int(M.P["r0"])))
 	L.line(bx - 4, by - 4 * h, bx - 6.5 + fx * lg * 2, by - 1 + as_, C.apply(int(M.P["r1"])), 1.2)
@@ -220,10 +222,10 @@ static func _draw_crab(L, e, _w, C: CF, pal: Dictionary, bx: float, by: float,
 	var p: Dictionary = _tp(pal["crab"], C)
 	for i in range(3):
 		for s in [-1, 1]:
-			var ph: float = sin(e.walk + float(i) * 2.1 + (3.0 if s > 0 else 0.0))
+			var ph: float = V8M.v8_sin(e.walk + float(i) * 2.1 + (3.0 if s > 0 else 0.0))
 			L.line(bx + float(s) * 3, by - 2 + float(i - 1) * 2,
 					bx + float(s) * (7.5 + ph),
-					by - 1 + float(i - 1) * 3 + cos(e.walk + float(i)) * 0.7,
+					by - 1 + float(i - 1) * 3 + V8M.v8_cos(e.walk + float(i)) * 0.7,
 					C.apply(int(M.P["u0"])))
 			L.dot(bx + float(s) * 5.2, by - 2 + float(i - 1) * 2.5, C.apply(int(M.P["u1"])))
 	DRAW.ball(L, bx, by - 3.5 * h, 6.2, p, 4 * h)
@@ -242,7 +244,7 @@ static func _draw_crab(L, e, _w, C: CF, pal: Dictionary, bx: float, by: float,
 static func _draw_cultist(L, e, C: CF, pal: Dictionary, bx: float, by: float,
 		fx: float, fy: float, h: float, sw: float, lg: float, show_face: bool) -> void:
 	var p: Dictionary = _tp(pal["bone"], C)
-	var as_: float = sin(e.walk) * 2.5
+	var as_: float = V8M.v8_sin(e.walk) * 2.5
 	L.rect(bx - 2.5, by + sw * 0.6, 2, 2.5, C.apply(int(M.P["i4"])))
 	L.rect(bx + 0.5, by - sw * 0.6, 2, 2.5, C.apply(int(M.P["i4"])))
 	L.line(bx - 3, by - 8 * h, bx - 5.5 + fx * lg * 3, by + 1 + as_, C.apply(int(M.P["i2"])))
@@ -265,7 +267,7 @@ static func _draw_brute(L, e, w, C: CF, pal: Dictionary, bx: float, by: float,
 		t: float) -> void:
 	var p: Dictionary = _tp(pal["brute"], C)
 	var iron: Dictionary = _tp(pal["iron"], C)
-	var as_: float = sin(e.walk) * 2.8
+	var as_: float = V8M.v8_sin(e.walk) * 2.8
 	L.rect(bx - 5.5, by + 1 + sw, 4.5, 3.5, C.apply(int(M.P["r0"])))
 	L.rect(bx + 1, by + 1 - sw, 4.5, 3.5, C.apply(int(M.P["r0"])))
 	for s in [-1, 1]:
@@ -292,7 +294,7 @@ static func _draw_brute(L, e, w, C: CF, pal: Dictionary, bx: float, by: float,
 		L.dot(hx - 1.2 + fx, hy - 0.5, C.apply(int(M.P["r2"])))
 		L.dot(hx + 1.2 + fx, hy - 0.5, C.apply(int(M.P["r2"])))
 	if fy > -0.5:
-		var pu: float = 0.5 + 0.5 * sin(t * 4 + float(e.id))
+		var pu: float = 0.5 + 0.5 * V8M.v8_sin(t * 4 + float(e.id))
 		L.disc(bx, by - 6.5 * h, 2.2, C.apply(M.mix(int(M.P["r2"]), int(M.P["g2"]), pu)))
 		L.dot(bx, by - 6.5 * h, C.apply(int(M.P["w"])))
 
@@ -301,7 +303,7 @@ static func _draw_titan(g, e, w, C: CF, pal: Dictionary, bx: float, by: float,
 		fx: float, fy: float, h: float, lg: float, show_face: bool, t: float) -> void:
 	var L = g.s
 	var p: Dictionary = _tp(pal["stone"], C)
-	var sw2: float = sin(e.walk * 0.7) * 3.2
+	var sw2: float = V8M.v8_sin(e.walk * 0.7) * 3.2
 	L.rect(bx - 13, by - 6 + sw2, 10, 10, C.apply(int(M.P["k2"])))
 	L.rect(bx + 3, by - 6 - sw2, 10, 10, C.apply(int(M.P["k2"])))
 	L.rect(bx - 13, by - 6 + sw2, 10, 2.5, C.apply(int(M.P["i3"])))
@@ -311,14 +313,14 @@ static func _draw_titan(g, e, w, C: CF, pal: Dictionary, bx: float, by: float,
 				by - 6 + sw2 * float(s) * 0.5, C.apply(int(M.P["k3"])), 6.5)
 		DRAW.ball(L, bx + float(s) * 24 + fx * lg * 4, by - 3 + sw2 * float(s) * 0.5, 7.5, p)
 	DRAW.ball(L, bx, by - 18 * h, 20, p, 16 * h)
-	var lava: float = 0.5 + 0.5 * sin(t * 2.5)
+	var lava: float = 0.5 + 0.5 * V8M.v8_sin(t * 2.5)
 	var lc: int = C.apply(M.mix(int(M.P["r2"]), int(M.P["g2"]), lava))
 	for i in range(7):
 		var a0: float = -2.6 + float(i) * 0.48
 		var r0: float = 4 + M.hash_n(i) * 6
-		L.line(bx + cos(a0) * r0, by - 18 * h + sin(a0) * r0 * 0.8,
-				bx + cos(a0 + 0.3) * (r0 + 8),
-				by - 18 * h + sin(a0 + 0.3) * (r0 + 7) * 0.8, lc, 1.2)
+		L.line(bx + V8M.v8_cos(a0) * r0, by - 18 * h + V8M.v8_sin(a0) * r0 * 0.8,
+				bx + V8M.v8_cos(a0 + 0.3) * (r0 + 8),
+				by - 18 * h + V8M.v8_sin(a0 + 0.3) * (r0 + 7) * 0.8, lc, 1.2)
 	DRAW.ball(L, bx - 18, by - 29 * h, 5.5, p)
 	DRAW.ball(L, bx + 18, by - 29 * h, 5.5, p)
 	for s in [-1, 1]:
@@ -370,7 +372,7 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 			L.dot(X, Y - 1, int(M.P["c1"]))
 			L.dot(X - 1, Y + 1.5, int(M.P["e2"]))
 			L.dot(X + 1, Y + 1.5, int(M.P["e2"]))
-			if sin(t * 8 + float(i) * 2) > 0.45:
+			if V8M.v8_sin(t * 8 + float(i) * 2) > 0.45:
 				L.dot(X, Y, int(M.P["c2"]))
 			if i % 2 == 0:
 				L.dl = 8
@@ -385,10 +387,10 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 			if M.hash_n(i + e.id) > ki:
 				continue
 			var a: float = (float(i) / float(ni)) * M.TAU + 0.3
-			var X: int = M.js_round(x + cos(a) * (rx + 1))
-			var Y: int = M.js_round(cy + sin(a) * (ry + 1))
-			var pu: bool = sin(t * 5 + float(i) * 1.7) > 0
-			L.line(X, Y, x + cos(a) * rx * 0.4, cy + sin(a) * ry * 0.4, int(M.P["e1"]))
+			var X: int = M.js_round(x + V8M.v8_cos(a) * (rx + 1))
+			var Y: int = M.js_round(cy + V8M.v8_sin(a) * (ry + 1))
+			var pu: bool = V8M.v8_sin(t * 5 + float(i) * 1.7) > 0
+			L.line(X, Y, x + V8M.v8_cos(a) * rx * 0.4, cy + V8M.v8_sin(a) * ry * 0.4, int(M.P["e1"]))
 			L.disc(X, Y, 1, int(M.P["e3"]))
 			L.dot(X, Y, int(M.P["c3"]) if pu else int(M.P["c1"]))
 
@@ -397,17 +399,17 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 		var nl: int = M.js_round(lee.k)
 		for i in range(nl):
 			var a: float = float(i) * 2.4 + 1
-			var bx: float = x + cos(a) * (rx + 0.5)
-			var by: float = cy + sin(a) * (ry + 0.5)
-			var wg: float = sin(t * 10 + float(i) * 2) * 1.2
-			var dx: float = cos(a)
-			var dy: float = sin(a) * 0.7
+			var bx: float = x + V8M.v8_cos(a) * (rx + 0.5)
+			var by: float = cy + V8M.v8_sin(a) * (ry + 0.5)
+			var wg: float = V8M.v8_sin(t * 10 + float(i) * 2) * 1.2
+			var dx: float = V8M.v8_cos(a)
+			var dy: float = V8M.v8_sin(a) * 0.7
 			DRAW.worm_body(L, [
 					{"x": bx, "y": by, "r": 1.5},
 					{"x": bx + dx * 2 + wg * -dy, "y": by + dy * 2 + wg * dx, "r": 1.4},
 					{"x": bx + dx * 4 - wg * -dy, "y": by + dy * 4 - wg * dx, "r": 1.1},
 			], MATS.PAL()["leech"], {"spec": false})
-			if sin(t * 6 + float(i)) > 0.1:
+			if V8M.v8_sin(t * 6 + float(i)) > 0.1:
 				L.dot(bx, by, int(M.P["m2"]))
 
 	var cry = e.st.get("crystal", null)
@@ -432,8 +434,8 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 			var a: float = -1.57 + (M.hash_n(i * 9 + e.id) - 0.5) * 2
 			for s in range(ceili(lv * 9)):
 				a += (M.hash_n(s + i * 20 + e.id) - 0.5) * 0.9
-				bx += cos(a)
-				by += sin(a)
+				bx += V8M.v8_cos(a)
+				by += V8M.v8_sin(a)
 				L.dot(bx, by, int(M.P["y2"]) if s % 3 == 0 else int(M.P["y1"]))
 				L.dot(bx + 0.8, by, int(M.P["v0"]))
 
@@ -446,12 +448,12 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 		for i in range(n):
 			var a: float = (float(i) / float(n)) * M.TAU + t * 0.4 * (1 - k)
 			var rr: float = 1 + (1 - k * 0.9) * 3
-			var X: float = x + cos(a) * (rx + rr)
-			var Y: float = cy + sin(a) * (ry + rr)
+			var X: float = x + V8M.v8_cos(a) * (rx + rr)
+			var Y: float = cy + V8M.v8_sin(a) * (ry + rr)
 			L.arc(X, Y, 1.8 - k * 0.4, 1, a + 1.2, a + 4.2, col)
 			L.dot(X, Y, col2)
-		if k < 0.25 and sin(t * 4 + float(e.id)) > 0.3:
-			var X: float = x + sin(t * 2) * 3
+		if k < 0.25 and V8M.v8_sin(t * 4 + float(e.id)) > 0.3:
+			var X: float = x + V8M.v8_sin(t * 2) * 3
 			var Y: float = cy - H * 0.55 - fmod(t * 10, 7.0)
 			L.rect(X - 1, Y, 3, 1, int(M.P["c3"]))
 			L.rect(X, Y - 1, 1, 3, int(M.P["c3"]))
@@ -463,11 +465,11 @@ static func overlays(g, e, w, x: float, y: float, H: float) -> void:
 				var len: float = (rx + 2) * minf(1.0, (k - 0.2) * 1.4)
 				for s in range(ceili(len)):
 					a += (M.hash_n(s + i * 9 + e.id) - 0.5) * 0.7
-					vx += cos(a)
-					vy += sin(a) * 0.8
+					vx += V8M.v8_cos(a)
+					vy += V8M.v8_sin(a) * 0.8
 					L.dot(vx, vy, int(M.P["k0"]))
 					L.dot(vx, vy + 1, int(M.P["m0"]))
-					if s % 3 == 0 and sin(t * 5 - float(s) * 0.5 + float(i)) > 0.3:
+					if s % 3 == 0 and V8M.v8_sin(t * 5 - float(s) * 0.5 + float(i)) > 0.3:
 						L.dot(vx, vy, int(M.P["c1"]))
 
 	var mia = e.st.get("miasma", null)
@@ -484,7 +486,7 @@ static func _ov_pos(e, i: int, s: int, x: float, cy: float, rx: float,
 		ry: float) -> Array:
 	var a: float = M.hash_n(e.id * 13 + i + s * 101) * M.TAU
 	var d: float = sqrt(M.hash_n(e.id * 7 + i * 3 + s * 53))
-	return [x + cos(a) * rx * d, cy + sin(a) * ry * d]
+	return [x + V8M.v8_cos(a) * rx * d, cy + V8M.v8_sin(a) * ry * d]
 
 
 # ---------------------------------------------------------------------------
@@ -548,13 +550,13 @@ static func draw_player(g, p, w) -> void:
 	var L = g.s
 	var t: float = w.time
 	var f: float = p.face
-	var fx: float = cos(f)
-	var fy: float = sin(f)
+	var fx: float = V8M.v8_cos(f)
+	var fy: float = V8M.v8_sin(f)
 	var qx: float = -fy
 	var qy: float = fx
 	var venom: bool = p.form == "venom"
 	var moving: bool = sqrt(p.vx * p.vx + p.vy * p.vy) > 10
-	var bob: float = absf(sin(p.walk)) * 1.2 if moving else sin(t * 2) * 0.4
+	var bob: float = absf(V8M.v8_sin(p.walk)) * 1.2 if moving else V8M.v8_sin(t * 2) * 0.4
 	var x: float = p.x
 	var y: float = p.y
 	var cy: float = y - 5 - bob
@@ -568,14 +570,14 @@ static func draw_player(g, p, w) -> void:
 		return [x + fx * fw + qx * sd, cy + fy * fw * 0.8 + qy * sd * 0.8 - up]
 
 	# boots
-	var sw: float = sin(p.walk) * 3
+	var sw: float = V8M.v8_sin(p.walk) * 3
 	for s in [-1, 1]:
 		L.rect(x + qx * 2 * float(s) + fx * sw * float(s) - 1,
 				y + qy * 2 * float(s) + fy * sw * float(s) * 0.6 + 0, 3, 2,
 				_CF(int(M.P["u0"]), hurt))
 	# cloak tail
-	var sway: float = sin(t * 4 + p.walk * 0.5) * 1.5 \
-			+ (sin(p.walk * 2) * 1.2 if moving else 0.0)
+	var sway: float = V8M.v8_sin(t * 4 + p.walk * 0.5) * 1.5 \
+			+ (V8M.v8_sin(p.walk * 2) * 1.2 if moving else 0.0)
 	var ext: float = 9 + (3 if moving else 0) + (6 if p.path != null else 0)
 	var t0: Array = _at.call(-1, 5.2, 1)
 	var t1: Array = _at.call(-1, -5.2, 1)
@@ -600,7 +602,7 @@ static func draw_player(g, p, w) -> void:
 		L.dot(fxp, fyp + 1, fc[i])
 		L.dot(fxp + 1, fyp + 2, fc[i])
 		L.dot(fxp, fyp, int(M.P["v3"]))
-		if sin(t * 4 + float(i) * 2) > 0.7:
+		if V8M.v8_sin(t * 4 + float(i) * 2) > 0.7:
 			L.dot(fxp, fyp - 1 - int(floor(fmod(t * 6, 3.0))), fc[i])
 	# torso
 	_torso(L, x, cy, qx, qy, fx, fy, 6.6, 5, _CF(coatD, hurt))
@@ -616,7 +618,7 @@ static func draw_player(g, p, w) -> void:
 	if venom:
 		for i in range(3):
 			var s: Array = _at.call(-1 + i, -3 + i * 2, 1)
-			var pu: bool = sin(t * 5 + float(i) * 1.5) > -0.2
+			var pu: bool = V8M.v8_sin(t * 5 + float(i) * 1.5) > -0.2
 			L.line(s[0], s[1], s[0] + qx * 2 + fx, s[1] + qy * 1.5 + fy,
 					int(M.P["c1"]) if pu else int(M.P["e3"]))
 	# shoulders
@@ -649,7 +651,7 @@ static func draw_player(g, p, w) -> void:
 	if fy > -0.5:
 		for s in [-1, 1]:
 			var gg: Array = _at.call(3.4, float(s) * 1.9, 6.4)
-			var pu: float = 0.5 + 0.5 * sin(t * 3)
+			var pu: float = 0.5 + 0.5 * V8M.v8_sin(t * 3)
 			L.disc(gg[0], gg[1], 0.8,
 					int(M.P["c1"]) if venom else M.mix(int(M.P["y0"]), int(M.P["y1"]), pu))
 			L.dot(gg[0], gg[1], int(M.P["w"]))
@@ -671,10 +673,10 @@ static func draw_player(g, p, w) -> void:
 	if venom:
 		for i in range(3):
 			var a: float = t * 2.2 + float(i) * 2.09
-			var X: float = x + cos(a) * 11
-			var Y: float = cy + 4 + sin(a) * 5 - 2 - sin(t * 3 + float(i)) * 1.5
+			var X: float = x + V8M.v8_cos(a) * 11
+			var Y: float = cy + 4 + V8M.v8_sin(a) * 5 - 2 - V8M.v8_sin(t * 3 + float(i)) * 1.5
 			DRAW.ball(L, X, Y, 1.8, pal["liquid"])
-			if sin(a) > 0.2:
+			if V8M.v8_sin(a) > 0.2:
 				L.dot(X - 0.5, Y - 0.5, int(M.P["w"]))
 
 
@@ -687,8 +689,8 @@ static func _torso(L, x: float, cy: float, qx: float, qy: float, fx: float,
 	var pts: Array = []
 	for k in range(12):
 		var a: float = (float(k) / 12.0) * M.TAU
-		var sd: float = cos(a) * rr
-		var fw: float = sin(a) * ry
+		var sd: float = V8M.v8_cos(a) * rr
+		var fw: float = V8M.v8_sin(a) * ry
 		pts.append(x + qx * sd + fx * fw)
 		pts.append(cy + 1 + (qy * sd + fy * fw) * 0.8)
 	L.poly(pts, c)
@@ -698,10 +700,10 @@ static func player_glow(g, p, w) -> void:
 	var venom: bool = p.form == "venom"
 	var t: float = w.time
 	if venom:
-		DRAW.glow(g.l, p.x, p.y - 6, 18 + sin(t * 4) * 1.5, int(M.P["c0"]), 0.24, 4)
+		DRAW.glow(g.l, p.x, p.y - 6, 18 + V8M.v8_sin(t * 4) * 1.5, int(M.P["c0"]), 0.24, 4)
 	else:
 		DRAW.glow(g.l, p.x, p.y - 6, 11, int(M.P["v2"]), 0.12, 3)
 	var f: float = p.face
 	var ck: float = p.cast / p.castMax if p.cast > 0 else 0.0
-	DRAW.glow(g.l, p.x + cos(f) * (5 + ck * 5), p.y - 5 + sin(f) * 4 - 2,
+	DRAW.glow(g.l, p.x + V8M.v8_cos(f) * (5 + ck * 5), p.y - 5 + V8M.v8_sin(f) * 4 - 2,
 			6 + ck * 3, int(M.P["c2"]) if venom else int(M.P["c1"]), 0.35, 3)

@@ -1,6 +1,8 @@
 class_name VenomEngine
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright casting pipeline from
 ## `src/game/engine.ts` / `src/game/skills/index.ts` (as exercised by the
 ## oracle driver): `buildGfx`, `resolve`, `autoAim` and `cast`.
@@ -66,7 +68,7 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 	var d: float = sqrt(dx * dx + dy * dy)
 	if d == 0.0:
 		d = 1.0
-	var ang: float = atan2(dy, dx)
+	var ang: float = V8M.v8_atan2(dy, dx)
 	var dd: float = minf(d, float(ai["range"]))
 	var r: Dictionary = {
 		"ang": ang,
@@ -83,11 +85,11 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 		var best = null
 		var bd: float = 1e9
 		for e in al:
-			var dm: float = sqrt(pow(e.x - mx, 2.0) + pow(e.y - my, 2.0)) - e.r
+			var dm: float = sqrt(V8M.v8_pow(e.x - mx, 2.0) + V8M.v8_pow(e.y - my, 2.0)) - e.r
 			if dm < bd and dm < 26:
 				bd = dm
 				best = e
-		if best != null and sqrt(pow(best.x - p.x, 2.0) + pow(best.y - p.y, 2.0)) \
+		if best != null and sqrt(V8M.v8_pow(best.x - p.x, 2.0) + V8M.v8_pow(best.y - p.y, 2.0)) \
 				- best.r > float(ai["range"]) + 4:
 			best = null
 		r["target"] = best
@@ -95,17 +97,17 @@ static func resolve(w, def: Dictionary, mx: float, my: float) -> Dictionary:
 	elif kind == "multi":
 		var cand: Array = []
 		for e in al:
-			if sqrt(pow(e.x - p.x, 2.0) + pow(e.y - p.y, 2.0)) - e.r < float(ai["range"]):
+			if sqrt(V8M.v8_pow(e.x - p.x, 2.0) + V8M.v8_pow(e.y - p.y, 2.0)) - e.r < float(ai["range"]):
 				cand.append(e)
 		M.stable_sort(cand, func(a, b):
-			return (sqrt(pow(a.x - mx, 2.0) + pow(a.y - my, 2.0))
-					- sqrt(pow(b.x - mx, 2.0) + pow(b.y - my, 2.0))))
+			return (sqrt(V8M.v8_pow(a.x - mx, 2.0) + V8M.v8_pow(a.y - my, 2.0))
+					- sqrt(V8M.v8_pow(b.x - mx, 2.0) + V8M.v8_pow(b.y - my, 2.0))))
 		var n: int = int(ai.get("n", 3))
 		r["targets"] = cand.slice(0, mini(n, cand.size()))
 		r["ok"] = r["targets"].size() > 0
 	elif kind == "dir" or kind == "path" or kind == "cone":
-		r["tx"] = p.x + cos(ang) * float(ai["range"])
-		r["ty"] = p.y + sin(ang) * float(ai["range"])
+		r["tx"] = p.x + V8M.v8_cos(ang) * float(ai["range"])
+		r["ty"] = p.y + V8M.v8_sin(ang) * float(ai["range"])
 	elif kind == "drag":
 		r["route"] = []
 		r["tx"] = mx
@@ -131,7 +133,7 @@ static func auto_aim(w, def: Dictionary) -> Dictionary:
 			var e = al[i]
 			var n: int = 0
 			for o in al:
-				if sqrt(pow(o.x - e.x, 2.0) + pow(o.y - e.y, 2.0)) < 55:
+				if sqrt(V8M.v8_pow(o.x - e.x, 2.0) + V8M.v8_pow(o.y - e.y, 2.0)) < 55:
 					n += 1
 			if n > bn:
 				bn = n
@@ -141,13 +143,13 @@ static func auto_aim(w, def: Dictionary) -> Dictionary:
 		var sy: float = 0.0
 		var cnt: int = 0
 		for o in al:
-			if sqrt(pow(o.x - c0.x, 2.0) + pow(o.y - c0.y, 2.0)) < 55:
+			if sqrt(V8M.v8_pow(o.x - c0.x, 2.0) + V8M.v8_pow(o.y - c0.y, 2.0)) < 55:
 				sx += o.x
 				sy += o.y
 				cnt += 1
 		cx = sx / float(cnt)
 		cy = sy / float(cnt)
-	var dist: float = sqrt(pow(cx - p.x, 2.0) + pow(cy - p.y, 2.0))
+	var dist: float = sqrt(V8M.v8_pow(cx - p.x, 2.0) + V8M.v8_pow(cy - p.y, 2.0))
 	var ai: Dictionary = def["aim"]
 	if String(ai["kind"]) == "ground" and dist > float(ai["range"]):
 		var k: float = float(ai["range"]) / dist
@@ -177,8 +179,8 @@ static func cast(w, def: Dictionary, r: Dictionary, run_fn: Callable) -> CastObj
 	c.targets = r.get("targets", [])
 	c.route = r.get("route", [])
 	c.rng = RNG.new(seedv)
-	c.dx = cos(c.ang)
-	c.dy = sin(c.ang)
+	c.dx = V8M.v8_cos(c.ang)
+	c.dy = V8M.v8_sin(c.ang)
 	p.face = c.ang
 	p.cast = float(def["cast"]) + 0.15
 	p.castMax = p.cast

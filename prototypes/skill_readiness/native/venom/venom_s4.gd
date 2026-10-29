@@ -1,6 +1,8 @@
 class_name VenomS4
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/skills/s2.ts` skill 08
 ## BRINE SERPENTS: the `Serpent` summon (16-segment Chain body, tapering
 ## radius, trail field shaded through MAT.brine, wormBody draw with stripe,
@@ -129,10 +131,10 @@ class Serpent extends FX.Fx:
 				continue
 			var q: Dictionary = s[i]
 			var nxt: Dictionary = s[mini(n - 1, i + 1)]
-			var a: float = atan2(float(q["y"]) - float(nxt["y"]),
+			var a: float = V8M.v8_atan2(float(q["y"]) - float(nxt["y"]),
 					float(q["x"]) - float(nxt["x"]))
-			var px_: float = -sin(a)
-			var py_: float = cos(a)
+			var px_: float = -V8M.v8_sin(a)
+			var py_: float = V8M.v8_cos(a)
 			var r: float = rad(i)
 			var yy: float = float(q["y"]) - 2.0 - z
 			L.px(M.js_round(float(q["x"]) + px_ * r * 0.8),
@@ -141,7 +143,7 @@ class Serpent extends FX.Fx:
 					M.js_round(yy - py_ * r * 0.8), int(M.P["v0"]))
 			if i > 0 and i % 2 == 1:
 				DRAW.shard(L, float(q["x"]), yy - r + 0.5,
-						-PI / 2.0 + sin(float(i) + t * 2.0) * 0.2,
+						-PI / 2.0 + V8M.v8_sin(float(i) + t * 2.0) * 0.2,
 						2.4 - float(i) * 0.07, 0.9, int(M.P["y2"]),
 						int(M.P["v2"]), int(M.P["w"]))
 			if i % 3 == 0 and reveal > 0.7:
@@ -149,12 +151,12 @@ class Serpent extends FX.Fx:
 		if vis >= 1:
 			var h: Dictionary = s[0]
 			var a2: float = hd
-			var fx2: float = cos(a2)
-			var fy2: float = sin(a2)
+			var fx2: float = V8M.v8_cos(a2)
+			var fy2: float = V8M.v8_sin(a2)
 			var qx: float = -fy2
 			var qy: float = fx2
 			var hy: float = float(h["y"]) - 2.0 - z
-			var op: float = 0.8 if mode == "lunge" else 0.3 + 0.2 * sin(t * 6.0)
+			var op: float = 0.8 if mode == "lunge" else 0.3 + 0.2 * V8M.v8_sin(t * 6.0)
 			for sd in [-1.0, 1.0]:
 				DRAW.shard(L, float(h["x"]) + fx2 * 2.5 + qx * sd,
 						hy + fy2 * 2.5 + qy * sd, a2 + sd * op, 4.8, 1.2,
@@ -198,13 +200,13 @@ class Ribbon extends FX.Fx:
 
 	func upd(w, _dt: float) -> void:
 		var k: float = clampf(age / 0.3, 0.0, 1.0)
-		len_ = L_ * (1.0 - pow(1.0 - k, 2.0))
+		len_ = L_ * (1.0 - V8M.v8_pow(1.0 - k, 2.0))
 		w0 = 2.0 + 5.0 * k * (1.0 - clampf((age - 0.7) / 0.7, 0.0, 1.0))
 		if age > 1.4:
 			dead = true
 			return
-		var ex: float = x + cos(a) * len_
-		var ey: float = y + sin(a) * len_ * 0.9
+		var ex: float = x + V8M.v8_cos(a) * len_
+		var ey: float = y + V8M.v8_sin(a) * len_ * 0.9
 		for e in w.enemies:
 			if e.dying > 0:
 				continue
@@ -218,8 +220,8 @@ class Ribbon extends FX.Fx:
 	func gnd(g, _w) -> void:
 		var f = g.f
 		f.reset()
-		var ex: float = x + cos(a) * len_
-		var ey: float = y + sin(a) * len_ * 0.9
+		var ex: float = x + V8M.v8_cos(a) * len_
+		var ey: float = y + V8M.v8_sin(a) * len_ * 0.9
 		f.capsule(x, y, ex, ey, w0, w0 * 0.7)
 		f.disc(ex, ey, w0 * 0.9, 0.2)
 		var dl: int = 16
@@ -303,13 +305,13 @@ static func _serpents(c, g) -> void:
 					var d: float = M.hypot(dx, dy)
 					if d == 0.0:
 						d = 1.0
-					var want: float = atan2(dy, dx) + sin(tm * 5.5 + s.ph) * 0.62 \
+					var want: float = V8M.v8_atan2(dy, dx) + V8M.v8_sin(tm * 5.5 + s.ph) * 0.62 \
 							* clampf(d / 50.0, 0.1, 1.0)
 					s.hd += clampf(M.ang_diff(s.hd, want), -7.0 * GEN.F,
 							7.0 * GEN.F)
 					var sp: float = 200.0 if s.role == 1 else 150.0
-					s.x += cos(s.hd) * sp * GEN.F
-					s.y += sin(s.hd) * sp * GEN.F
+					s.x += V8M.v8_cos(s.hd) * sp * GEN.F
+					s.y += V8M.v8_sin(s.hd) * sp * GEN.F
 					if d < e.r + 6.0:
 						if s.role == 0:
 							s.mode = "coil"
@@ -327,8 +329,8 @@ static func _serpents(c, g) -> void:
 					s.auxT += GEN.F
 					var th: float = s.auxT * 7.0 + s.ph
 					var rr: float = e.r + 4.5
-					s.x = e.x + cos(th) * rr
-					s.y = e.y + sin(th) * rr * 0.9
+					s.x = e.x + V8M.v8_cos(th) * rr
+					s.y = e.y + V8M.v8_sin(th) * rr * 0.9
 					s.hd = th + PI / 2.0
 					w.mark(e, "coil", 0.2, 1.0)
 					e.kx *= 0.5
@@ -338,21 +340,21 @@ static func _serpents(c, g) -> void:
 						if tick.ok(e, w.time, 0.3, 3):
 							LIB.hit_e(c, e, 20, {"kind": "pierce", "stag": 0.1,
 									"at": [e.x, e.y]})
-						w.add(FX.Splash.new(e.x + cos(th) * rr,
-								e.y + sin(th) * rr, 4, int(M.P["v2"]),
+						w.add(FX.Splash.new(e.x + V8M.v8_cos(th) * rr,
+								e.y + V8M.v8_sin(th) * rr, 4, int(M.P["v2"]),
 								int(M.P["y1"])))
 					if s.auxT > 1.5:
 						s.mode = "free"
 				elif s.mode == "lunge" and e != null:
 					s.auxT += GEN.F
-					var a3: float = atan2(e.y - s.y, e.x - s.x)
+					var a3: float = V8M.v8_atan2(e.y - s.y, e.x - s.x)
 					if s.auxT < 0.2:
-						s.x += cos(s.hd) * 230.0 * GEN.F
-						s.y += sin(s.hd) * 230.0 * GEN.F
+						s.x += V8M.v8_cos(s.hd) * 230.0 * GEN.F
+						s.y += V8M.v8_sin(s.hd) * 230.0 * GEN.F
 					else:
 						s.hd += 8.0 * GEN.F
-						s.x += cos(s.hd) * 120.0 * GEN.F
-						s.y += sin(s.hd) * 120.0 * GEN.F
+						s.x += V8M.v8_cos(s.hd) * 120.0 * GEN.F
+						s.y += V8M.v8_sin(s.hd) * 120.0 * GEN.F
 					if s.auxT > 1.0:
 						s.mode = "seek"
 						s.si += 1
@@ -360,8 +362,8 @@ static func _serpents(c, g) -> void:
 				elif s.mode == "visit":
 					s.auxT += GEN.F
 					s.hd += 6.0 * GEN.F
-					s.x += cos(s.hd) * 110.0 * GEN.F
-					s.y += sin(s.hd) * 110.0 * GEN.F
+					s.x += V8M.v8_cos(s.hd) * 110.0 * GEN.F
+					s.y += V8M.v8_sin(s.hd) * 110.0 * GEN.F
 					if s.auxT > 0.35:
 						s.mode = "seek"
 						s.si += 1
@@ -370,14 +372,14 @@ static func _serpents(c, g) -> void:
 				elif s.mode == "free":
 					var cc: Dictionary = _centroid(tg, ox, oy)
 					s.hd += clampf(M.ang_diff(s.hd,
-							atan2(cc["y"] - s.y, cc["x"] - s.x) + 1.2),
+							V8M.v8_atan2(cc["y"] - s.y, cc["x"] - s.x) + 1.2),
 							-6.0 * GEN.F, 6.0 * GEN.F)
-					s.x += cos(s.hd) * 90.0 * GEN.F
-					s.y += sin(s.hd) * 90.0 * GEN.F
+					s.x += V8M.v8_cos(s.hd) * 90.0 * GEN.F
+					s.y += V8M.v8_sin(s.hd) * 90.0 * GEN.F
 				else:
 					s.hd += 3.0 * GEN.F
-					s.x += cos(s.hd) * 60.0 * GEN.F
-					s.y += sin(s.hd) * 60.0 * GEN.F
+					s.x += V8M.v8_cos(s.hd) * 60.0 * GEN.F
+					s.y += V8M.v8_sin(s.hd) * 60.0 * GEN.F
 				s.x = clampf(s.x, 8.0, w.W - 8.0)
 				s.y = clampf(s.y, 10.0, w.H - 10.0)
 				if int(floor(tm * 60.0)) % 5 == 0 and s.reveal > 0.2:
@@ -400,8 +402,8 @@ static func _serpents(c, g) -> void:
 				if s.role == 0 and s.tgt != null and s.tgt.dying <= 0:
 					ccx = s.tgt.x
 					ccy = s.tgt.y
-				s.x = M.lerpf(s.x, ccx + cos(th2) * rr2, 0.14)
-				s.y = M.lerpf(s.y, ccy + sin(th2) * rr2 * 0.8, 0.14)
+				s.x = M.lerpf(s.x, ccx + V8M.v8_cos(th2) * rr2, 0.14)
+				s.y = M.lerpf(s.y, ccy + V8M.v8_sin(th2) * rr2 * 0.8, 0.14)
 				s.hd = th2 + PI / 2.0
 		g.y(GEN.F)
 		tm += GEN.F
@@ -412,7 +414,7 @@ static func _serpents(c, g) -> void:
 		for s in S:
 			var q: Dictionary = s.ch.s[i]
 			var nx: Dictionary = s.ch.s[mini(15, i + 1)]
-			var a4: float = atan2(float(q["y"]) - float(nx["y"]),
+			var a4: float = V8M.v8_atan2(float(q["y"]) - float(nx["y"]),
 					float(q["x"]) - float(nx["x"])) + PI / 2.0
 			s.gone = i + 1
 			FX.drops(w, float(q["x"]), float(q["y"]), 3, 60, int(M.P["v2"]),
@@ -449,10 +451,10 @@ static func _serpents(c, g) -> void:
 
 ## The ORIGINAL `bite` closure inside `serpents()`.
 static func _bite(w, c, s, e, pct: float, k: float, bites) -> void:
-	var a: float = atan2(e.y - s.y, e.x - s.x)
+	var a: float = V8M.v8_atan2(e.y - s.y, e.x - s.x)
 	if bites.ok(e, w.time, 0.3, 2):
 		LIB.hit_e(c, e, pct, {"kind": "bite", "k": k, "ang": a, "stag": 0.35,
-				"at": [e.x - cos(a) * e.r, e.y - sin(a) * e.r]})
+				"at": [e.x - V8M.v8_cos(a) * e.r, e.y - V8M.v8_sin(a) * e.r]})
 	else:
 		FX.drops(w, e.x, e.y, 4, 40, int(M.P["n3"]), int(M.P["v2"]),
 				int(M.P["k1"]), {"z": 5})

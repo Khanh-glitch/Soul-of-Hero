@@ -1,6 +1,8 @@
 class_name VenomS3
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/skills/s2.ts` skill 07
 ## HATCHERY FALL: the `Cocoon` summon (seamed shell, inner organisms, pulse
 ## band, insect transformation), the `Hatchling` summons (worm body, mandibles)
@@ -73,7 +75,7 @@ class Cocoon extends FX.Fx:
 	func up(g, _w) -> void:
 		var L = g.s
 		var t: float = g.t
-		var bx: float = x + (sin(t * 80) * shake if shake > 0 else 0)
+		var bx: float = x + (V8M.v8_sin(t * 80) * shake if shake > 0 else 0)
 		var cy: float = y - 14 - z
 		var op: float = open
 		if trans > 0.05:
@@ -87,10 +89,10 @@ class Cocoon extends FX.Fx:
 		DRAW.ball(L, bx, cy, 12 * sc + op * 1.5, MATS.PAL()["chitin"], 15 * sc)
 		for i in range(-3, 4):
 			var a: float = float(i) / 3.0 * 1.15
-			var px: float = bx + sin(a) * 12 * sc * (1 + op * 0.5)
-			var top: float = cy - cos(a) * 15 * sc
-			var bot: float = cy + cos(a) * 15 * sc
-			var seam: float = (sin(t * 4 + float(i)) + 1) / 2
+			var px: float = bx + V8M.v8_sin(a) * 12 * sc * (1 + op * 0.5)
+			var top: float = cy - V8M.v8_cos(a) * 15 * sc
+			var bot: float = cy + V8M.v8_cos(a) * 15 * sc
+			var seam: float = (V8M.v8_sin(t * 4 + float(i)) + 1) / 2
 			var rup: bool = (bool(ruptured[0]) if i < -1 else (bool(ruptured[1]) if i < 2 else bool(ruptured[2]))) and op > 0.3
 			var col: int = int(M.P["k0"]) if rup else M.mix(
 					int(M.P["e3"]),
@@ -105,14 +107,14 @@ class Cocoon extends FX.Fx:
 		for i in range(3):
 			var ox: float = float(i - 1) * 5 * sc
 			var oy: float = (float(-1) if i % 2 != 0 else 1.0) * 4 * sc
-			var s: float = (0.6 + 0.4 * sin(t * 2 + float(i) * 2)) * minf(1.0, age * 0.5 + 0.4)
+			var s: float = (0.6 + 0.4 * V8M.v8_sin(t * 2 + float(i) * 2)) * minf(1.0, age * 0.5 + 0.4)
 			L.arc(bx + ox, cy + oy, 3 * s * sc + 0.5, 1.5, 0.4 + float(i), 4.2 + float(i),
 					int(M.P["g1"]))
 			L.px(M.js_round(bx + ox + 2), M.js_round(cy + oy - 1), int(M.P["c3"]))
 		if pulseY >= 0:
 			var py: float = cy + 15 * sc - pulseY * 30 * sc
 			for dx in range(-10, 11):
-				var q: float = sqrt(maxf(0.0, 1 - pow((py - cy) / (15 * sc), 2.0))) * 12 * sc
+				var q: float = sqrt(maxf(0.0, 1 - V8M.v8_pow((py - cy) / (15 * sc), 2.0))) * 12 * sc
 				if absf(float(dx)) < q:
 					L.px(M.js_round(bx + float(dx)), M.js_round(py), int(M.P["c3"]))
 					if absi(dx) % 2 != 0:
@@ -145,7 +147,7 @@ class Cocoon extends FX.Fx:
 						int(M.P["g1"]))
 		for i in range(3):
 			for sd in [-1.0, 1.0]:
-				var ph: float = sin(t * 6 + float(i) + sd) * 2
+				var ph: float = V8M.v8_sin(t * 6 + float(i) + sd) * 2
 				L.line(bx + sd * 6 * s, by + float(i - 1) * 5 * s,
 						bx + sd * (13 + float(i) * 2) * s,
 						by + float(i - 1) * 8 * s + 6 + ph, int(M.P["n3"]), 2)
@@ -156,7 +158,7 @@ class Cocoon extends FX.Fx:
 		DRAW.ball(L, bx, by - 7 * s, 11 * s, MATS.PAL()["chitin"], 12 * s)
 		for i in range(4):
 			L.arc(bx, by - 7 * s, (4 + float(i) * 2.2) * s, 1, 0.3, 2.84,
-					M.mix(int(M.P["e3"]), int(M.P["g2"]), (sin(t * 5 - float(i)) + 1) / 2),
+					M.mix(int(M.P["e3"]), int(M.P["g2"]), (V8M.v8_sin(t * 5 - float(i)) + 1) / 2),
 					(5 + float(i) * 2.2) * s)
 		DRAW.ball(L, bx, by + 6 * s, 8 * s, hot, 7 * s)
 		for sd in [-1.0, 1.0]:
@@ -166,7 +168,7 @@ class Cocoon extends FX.Fx:
 			var ty: float = ey + 18 * s
 			L.line(bx + sd * 6 * s, by + 3 * s, ex, ey, int(M.P["n1"]), 4)
 			DRAW.ball(L, ex, ey, 3 * s, hot)
-			DRAW.shard(L, ex, ey, atan2(ty - ey, tx - ex), 20 * s, 3.2 * s,
+			DRAW.shard(L, ex, ey, V8M.v8_atan2(ty - ey, tx - ex), 20 * s, 3.2 * s,
 					int(M.P["g2"]), int(M.P["g0"]), int(M.P["w"]))
 			for i in range(1, 6):
 				L.px(M.js_round(M.lerpf(ex, tx, float(i) / 6.0) - sd * 2),
@@ -217,15 +219,15 @@ class Hatchling extends FX.Fx:
 	func up(g, _w) -> void:
 		var L = g.s
 		var t: float = g.t
-		var fx2: float = cos(hd)
-		var fy2: float = sin(hd)
+		var fx2: float = V8M.v8_cos(hd)
+		var fy2: float = V8M.v8_sin(hd)
 		var qx: float = -fy2
 		var qy: float = fx2
 		var by: float = y - z - 2
-		var w2: float = sin(t * 22 + ph) * 0.8
+		var w2: float = V8M.v8_sin(t * 22 + ph) * 0.8
 		for i in range(2):
 			for s in [-1.0, 1.0]:
-				var ph2: float = sin(t * 28 + float(i) * 2 + (1.6 if s > 0 else 0.0))
+				var ph2: float = V8M.v8_sin(t * 28 + float(i) * 2 + (1.6 if s > 0 else 0.0))
 				L.line(x - fx2 * float(i) * 2 + qx * s,
 						by + 1 - fy2 * float(i) * 1.5 + qy * s * 0.6,
 						x - fx2 * float(i) * 2 + qx * s * 4 + fx2 * ph2 * 1.5,
@@ -236,7 +238,7 @@ class Hatchling extends FX.Fx:
 			{"x": x + fx2 * 0.6, "y": by + fy2 * 0.4, "r": 2.3}]
 		DRAW.worm_body(L, segs, MATS.PAL()["chitin"], {})
 		L.px(M.js_round(float(segs[0]["x"])), M.js_round(float(segs[0]["y"]) - 1),
-				int(M.P["c3"]) if sin(t * 8 + ph) > 0 else int(M.P["c1"]))
+				int(M.P["c3"]) if V8M.v8_sin(t * 8 + ph) > 0 else int(M.P["c1"]))
 		var hx: float = x + fx2 * 3.2
 		var hy: float = by + fy2 * 2
 		DRAW.ball(L, hx, hy, 1.9, MATS.PAL()["chitin"])
@@ -292,7 +294,7 @@ static func _hatchery(c, g) -> void:
 	for i in range(1, n_open + 1):
 		var k: float = float(i) / float(n_open)
 		cocoon.open = M.smoothstep(k)
-		cocoon.z = sin(k * PI) * -1
+		cocoon.z = V8M.v8_sin(k * PI) * -1
 		g.y(GEN.F)
 	var swarm: Array = []
 	var released: int = 0
@@ -308,10 +310,10 @@ static func _hatchery(c, g) -> void:
 		w.shake(1.5, 0.12)
 		for i in range(4):
 			var a: float = float(sec - 1) * 1.0 + float(i - 1.5) * 0.7 + PI / 2
-			var hh = Hatchling.new(cx + cos(a) * 9, cy - 4 + sin(a) * 4, a, released_box[0])
+			var hh = Hatchling.new(cx + V8M.v8_cos(a) * 9, cy - 4 + V8M.v8_sin(a) * 4, a, released_box[0])
 			released_box[0] += 1
-			hh.vx = cos(a) * 60
-			hh.vy = sin(a) * 50
+			hh.vx = V8M.v8_cos(a) * 60
+			hh.vy = V8M.v8_sin(a) * 50
 			hh.z = 10
 			swarm.append(hh)
 			w.add(hh)
@@ -374,7 +376,7 @@ static func _hatchery(c, g) -> void:
 				d = 1.0
 			var ux: float = (tx - h.x) / d
 			var uy: float = (ty - h.y) / d
-			var sw: float = sin(tm * 3.2 + h.ph) * (0.8 if phase == 0 else 0.5) \
+			var sw: float = V8M.v8_sin(tm * 3.2 + h.ph) * (0.8 if phase == 0 else 0.5) \
 					* M.clampf(d / 40, 0.2, 1)
 			var vx: float = ux - uy * sw
 			var vy: float = uy + ux * sw
@@ -407,12 +409,12 @@ static func _hatchery(c, g) -> void:
 			if vl == 0.0:
 				vl = 1.0
 			var spd: float = (-35.0 if h.recoil > 0 else (105.0 if phase == 1 else 88.0)) \
-					* (1 + 0.1 * sin(h.ph))
+					* (1 + 0.1 * V8M.v8_sin(h.ph))
 			h.vx += (vx / vl * spd - h.vx) * 0.14
 			h.vy += (vy / vl * spd - h.vy) * 0.14
 			h.x += h.vx * GEN.F
 			h.y += h.vy * GEN.F
-			h.hd += M.ang_diff(h.hd, atan2(h.vy, h.vx)) * 0.25 \
+			h.hd += M.ang_diff(h.hd, V8M.v8_atan2(h.vy, h.vx)) * 0.25 \
 					* (0 if h.recoil > 0 else 1)
 			h.x = M.clampf(h.x, 6, w.W - 6)
 			h.y = M.clampf(h.y, 8, w.H - 8)
@@ -495,6 +497,6 @@ static func _hatchery(c, g) -> void:
 			{"a": int(M.P["k0"]), "b": int(M.P["n3"]), "c": int(M.P["g1"])}, 0, 1.2))
 	for i in range(4):
 		var a: float = (float(i) / 4.0) * M.TAU
-		S2P.plume(w, cx + cos(a) * 14, cy + sin(a) * 9, 24, 1.0, MATS.VAP()["gold"],
+		S2P.plume(w, cx + V8M.v8_cos(a) * 14, cy + V8M.v8_sin(a) * 9, 24, 1.0, MATS.VAP()["gold"],
 				9, i, float(i) * 0.05)
 	g.y(1.1)

@@ -1,6 +1,8 @@
 class_name VenomS2
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/skills/s2.ts`
 ## skills 6-10: Graft Caravan, Hatchery Fall, Brine Serpents, Molting
 ## Harvester, The Walking Crucible.
@@ -32,7 +34,7 @@ static func plume(w, px: float, py: float, h: float, life: float, ramp: Array,
 				for i in range(7):
 					var u: float = float(i) / 6.0
 					var rr: float = (r * (1 - u * 0.35)) * (0.5 + 0.5 * k)
-					DRAW.puff(L, px + sin(g.t * 3 + float(i) * 1.3 + float(seed)) * 3 * u,
+					DRAW.puff(L, px + V8M.v8_sin(g.t * 3 + float(i) * 1.3 + float(seed)) * 3 * u,
 							py - u * h * k - 2, rr, ramp, 12 * fade,
 							g.t + float(i) * 0.3, seed + i),
 			"lit": func(g, _a, f):
@@ -86,8 +88,8 @@ class Beetle extends FX.Fx:
 	func up(g, _w) -> void:
 		var L = g.s
 		var t: float = g.t
-		var fx2: float = cos(hd)
-		var fy2: float = sin(hd)
+		var fx2: float = V8M.v8_cos(hd)
+		var fy2: float = V8M.v8_sin(hd)
 		var qx: float = -fy2
 		var qy: float = fx2
 		var bx: float = x
@@ -97,7 +99,7 @@ class Beetle extends FX.Fx:
 			return
 		for i in range(3):
 			for s in [-1.0, 1.0]:
-				var ph: float = sin(legT * 1.8 + (PI if i % 2 != 0 else 0) + (PI if s > 0 else 0))
+				var ph: float = V8M.v8_sin(legT * 1.8 + (PI if i % 2 != 0 else 0) + (PI if s > 0 else 0))
 				var sx: float = bx + fx2 * float(i - 1) * 3.4 * sc + qx * 3 * sc * s
 				var sy2: float = by + fy2 * float(i - 1) * 3 * sc + qy * 3 * sc * s * 0.8 - 2
 				var kx: float = sx + qx * s * 3 * sc
@@ -126,7 +128,7 @@ class Beetle extends FX.Fx:
 			L.px(M.js_round(hx + qx * s * 1.6 + fx2), M.js_round(hy + qy * s * 1.6 - 1),
 					int(M.P["c1"]))
 			L.line(hx + fx2 * sc, hy - 1, hx + fx2 * 5 * sc + qx * s * 2,
-					hy - 2 + fy2 * 3 * sc + sin(t * 9 + s) * 1.2, int(M.P["n3"]))
+					hy - 2 + fy2 * 3 * sc + V8M.v8_sin(t * 9 + s) * 1.2, int(M.P["n3"]))
 		var fx0: float = bx - fx2 * 3 * sc
 		var fy0: float = by - 11.5 * sc
 		if flask:
@@ -135,7 +137,7 @@ class Beetle extends FX.Fx:
 			L.rect(M.js_round(fx0 - 1), M.js_round(fy0 - 5.4 * sc), 3, 2,
 					int(M.P["u1"]))
 			L.px(M.js_round(fx0), M.js_round(fy0 - 6.4 * sc), int(M.P["u2"]))
-			if big and sin(t * 22) > 0:
+			if big and V8M.v8_sin(t * 22) > 0:
 				L.px(M.js_round(fx0 + 4), M.js_round(fy0 - 3), int(M.P["m2"]))
 				L.px(M.js_round(fx0 - 4), M.js_round(fy0 + 1), int(M.P["w"]))
 		else:
@@ -147,7 +149,7 @@ class Beetle extends FX.Fx:
 
 	func lit(g, _w) -> void:
 		if flask:
-			DRAW.glow(g.l, x - cos(hd) * 3, y - z - 11, 7 * sc,
+			DRAW.glow(g.l, x - V8M.v8_cos(hd) * 3, y - z - 11, 7 * sc,
 					int(M.P["m1"]) if big else int(M.P["c1"]), 0.28, 3)
 
 
@@ -167,8 +169,8 @@ static func _caravan(c, g) -> void:
 	LIB.cast_anim(w, c, true, 0.4)
 	var ox: float = p.x
 	var oy: float = p.y
-	var dx: float = cos(c.ang)
-	var dy: float = sin(c.ang)
+	var dx: float = V8M.v8_cos(c.ang)
+	var dy: float = V8M.v8_sin(c.ang)
 	var nx: float = -dy
 	var ny: float = dx
 	var R: float = minf(230, float(c.def["aim"]["range"]))
@@ -181,18 +183,18 @@ static func _caravan(c, g) -> void:
 	var p2: Dictionary = {"x": M.lerpf(float(p0["x"]), float(p3["x"]), 0.66) - nx * 70 * side,
 			"y": M.lerpf(float(p0["y"]), float(p3["y"]), 0.66) - ny * 70 * side}
 	var bez := func(u: float) -> Dictionary:
-		var a: float = pow(1 - u, 3.0)
-		var b: float = 3 * pow(1 - u, 2.0) * u
+		var a: float = V8M.v8_pow(1 - u, 3.0)
+		var b: float = 3 * V8M.v8_pow(1 - u, 2.0) * u
 		var cc: float = 3 * (1 - u) * u * u
-		var d: float = pow(u, 3.0)
+		var d: float = V8M.v8_pow(u, 3.0)
 		return {"x": a * float(p0["x"]) + b * float(p1["x"]) + cc * float(p2["x"]) + d * float(p3["x"]),
 				"y": a * float(p0["y"]) + b * float(p1["y"]) + cc * float(p2["y"]) + d * float(p3["y"])}
 	var arc_len: float = 0.0
 	var prev_q: Dictionary = bez.call(0.0)
 	for i in range(1, 31):
 		var nq: Dictionary = bez.call(float(i) / 30.0)
-		arc_len += sqrt(pow(float(nq["x"]) - float(prev_q["x"]), 2.0)
-				+ pow(float(nq["y"]) - float(prev_q["y"]), 2.0))
+		arc_len += sqrt(V8M.v8_pow(float(nq["x"]) - float(prev_q["x"]), 2.0)
+				+ V8M.v8_pow(float(nq["y"]) - float(prev_q["y"]), 2.0))
 		prev_q = nq
 	var L0: float = arc_len
 	g.y(0.04)
@@ -249,7 +251,7 @@ static func _caravan(c, g) -> void:
 				[int(M.P["c3"]), int(M.P["c1"]), int(M.P["e2"])], 3)
 		for i in range(4):
 			var a: float = (float(i) / 4.0) * M.TAU + 0.5
-			plume(w, X + cos(a) * 12, Y + sin(a) * 8, 30 + float(i) * 4, 1.3,
+			plume(w, X + V8M.v8_cos(a) * 12, Y + V8M.v8_sin(a) * 8, 30 + float(i) * 4, 1.3,
 					MATS.VAP()["green"] if i % 2 != 0 else MATS.VAP()["pale"],
 					11, i, float(i) * 0.06)
 		var cl = FX.Cloud.new(X, Y, LIB.mk_puffs(c.rng, 13, 28, 11, 19, 7, 1.6),
@@ -282,7 +284,7 @@ static func _caravan(c, g) -> void:
 					beetles.append(null)
 				var big: bool = i == 5
 				var q0: Dictionary = bez.call(0.01)
-				var b = Beetle.new(float(q0["x"]), float(q0["y"]), atan2(dy, dx),
+				var b = Beetle.new(float(q0["x"]), float(q0["y"]), V8M.v8_atan2(dy, dx),
 						big, int(roles[i]))
 				b.spd = 90 if big else 150 + float(i) * 6
 				beetles[i] = b
@@ -302,7 +304,7 @@ static func _caravan(c, g) -> void:
 				for e in w.enemies:
 					if e.dying > 0:
 						continue
-					var d: float = sqrt(pow(e.x - b.x, 2.0) + pow(e.y - b.y, 2.0)) - e.r
+					var d: float = sqrt(V8M.v8_pow(e.x - b.x, 2.0) + V8M.v8_pow(e.y - b.y, 2.0)) - e.r
 					if d < bd:
 						bd = d
 						react = e
@@ -312,12 +314,12 @@ static func _caravan(c, g) -> void:
 					ty = react.y
 				else:
 					react = null
-			var want: float = atan2(ty - b.y, tx - b.x)
+			var want: float = V8M.v8_atan2(ty - b.y, tx - b.x)
 			var turn: float = float(11 if (b.role == 1 and react != null) else 5) * GEN.F
 			b.hd += M.clampf(M.ang_diff(b.hd, want), -turn, turn)
 			var climbing: bool = false
 			for d2 in debris:
-				if sqrt(pow(float(d2["x"]) - b.x, 2.0) + pow(float(d2["y"]) - b.y, 2.0)) < 7 \
+				if sqrt(V8M.v8_pow(float(d2["x"]) - b.x, 2.0) + V8M.v8_pow(float(d2["y"]) - b.y, 2.0)) < 7 \
 						and (not b.ruptured) == false and b.climb <= 0:
 					climbing = true
 					break
@@ -325,7 +327,7 @@ static func _caravan(c, g) -> void:
 				b.climb = 0.01
 			if b.climb > 0:
 				b.climb += GEN.F
-				b.z = sin(M.clampf(b.climb / 0.42, 0, 1) * PI) * 4.5
+				b.z = V8M.v8_sin(M.clampf(b.climb / 0.42, 0, 1) * PI) * 4.5
 				if b.climb > 0.42:
 					b.climb = 0
 					b.z = 0
@@ -333,25 +335,25 @@ static func _caravan(c, g) -> void:
 					* (0.5 if b.climb > 0 else 1)
 			var ox2: float = b.x
 			var oy2: float = b.y
-			b.x += cos(b.hd) * sp * GEN.F
-			b.y += sin(b.hd) * sp * GEN.F
+			b.x += V8M.v8_cos(b.hd) * sp * GEN.F
+			b.y += V8M.v8_sin(b.hd) * sp * GEN.F
 			b.vx = (b.x - ox2) / GEN.F
 			b.vy = (b.y - oy2) / GEN.F
 			b.u = M.clampf(b.u + (sp * GEN.F / L0) * M.clampf(
-					cos(M.ang_diff(b.hd, atan2(float(q["y"]) - b.y, float(q["x"]) - b.x))) + 0.2,
+					V8M.v8_cos(M.ang_diff(b.hd, V8M.v8_atan2(float(q["y"]) - b.y, float(q["x"]) - b.x))) + 0.2,
 					0.2, 1), 0, 1)
 			b.legT += sp * GEN.F * 0.5
 			b.tilt = M.lerpf(b.tilt, M.clampf(
-					-sin(M.ang_diff(atan2(b.vy, b.vx), b.hd)) * 0.9
-							+ sin(b.legT * 0.9) * 0.2, -0.7, 0.7), 0.2)
+					-V8M.v8_sin(M.ang_diff(V8M.v8_atan2(b.vy, b.vx), b.hd)) * 0.9
+							+ V8M.v8_sin(b.legT * 0.9) * 0.2, -0.7, 0.7), 0.2)
 			if M.hash_n(floor(tm * 60.0) + b.u * 100.0) > 0.9:
-				w.parts.add({"k": "dust", "x": b.x - cos(b.hd) * 5, "y": b.y + 2,
+				w.parts.add({"k": "dust", "x": b.x - V8M.v8_cos(b.hd) * 5, "y": b.y + 2,
 						"z": 0, "vz": 6, "max": 0.35, "size": 2,
 						"c1": int(M.P["i3"]), "c2": int(M.P["i2"])})
 			for e in w.enemies:
 				if e.dying > 0:
 					continue
-				var d3: float = sqrt(pow(e.x - b.x, 2.0) + pow(e.y - b.y, 2.0))
+				var d3: float = sqrt(V8M.v8_pow(e.x - b.x, 2.0) + V8M.v8_pow(e.y - b.y, 2.0))
 				if d3 < e.r + b.r:
 					if b.big and not final_done_box[0]:
 						detonate.call(b)
@@ -411,7 +413,7 @@ static func _caravan_shard_body(c, X: float, Y: float, i: int, g) -> void:
 	g.y(0.15 + float(i) * 0.045)
 	var a: float = c.rng.range(0, M.TAU)
 	var d: float = c.rng.range(5, 52)
-	w.parts.add({"k": "shard", "x": X + cos(a) * d, "y": Y + sin(a) * d * 0.8,
+	w.parts.add({"k": "shard", "x": X + V8M.v8_cos(a) * d, "y": Y + V8M.v8_sin(a) * d * 0.8,
 			"z": 90, "vx": 0, "vy": 0, "vz": -40, "grav": 120,
 			"size": c.rng.range(3, 6), "rot": c.rng.range(0, M.TAU),
 			"vr": c.rng.range(-8, 8), "c1": int(M.P["v2"]),

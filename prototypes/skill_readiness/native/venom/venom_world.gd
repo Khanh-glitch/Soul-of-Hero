@@ -1,6 +1,8 @@
 class_name VenomWorld
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright `src/game/world.ts`.
 ##
 ## Simulation only: enemies, player, tasks (the coroutine scheduler the skill
@@ -255,23 +257,23 @@ func place(e, formation: bool, edge: bool = false) -> void:
 		elif formation:
 			var a: float = r.range(-1.0, 1.0)
 			var d: float = r.range(70.0, minf(W * 0.62, 260.0))
-			e.x = p.x + cos(a) * d
-			e.y = p.y + sin(a) * d * 0.9
+			e.x = p.x + V8M.v8_cos(a) * d
+			e.y = p.y + V8M.v8_sin(a) * d * 0.9
 		else:
 			e.x = r.range(16.0, W - 16.0)
 			e.y = r.range(16.0, H - 16.0)
 		e.x = M.clampf(e.x, 12.0, W - 12.0)
 		e.y = M.clampf(e.y, 12.0, H - 12.0)
-		if sqrt(pow(e.x - p.x, 2.0) + pow(e.y - p.y, 2.0)) < 55:
+		if sqrt(V8M.v8_pow(e.x - p.x, 2.0) + V8M.v8_pow(e.y - p.y, 2.0)) < 55:
 			continue
 		var ok: bool = true
 		for o in enemies:
-			if sqrt(pow(o.x - e.x, 2.0) + pow(o.y - e.y, 2.0)) < o.r + e.r + 1:
+			if sqrt(V8M.v8_pow(o.x - e.x, 2.0) + V8M.v8_pow(o.y - e.y, 2.0)) < o.r + e.r + 1:
 				ok = false
 				break
 		if ok:
 			break
-	e.face = atan2(p.y - e.y, p.x - e.x)
+	e.face = V8M.v8_atan2(p.y - e.y, p.x - e.x)
 
 
 # ---------- helpers ----------
@@ -313,7 +315,7 @@ func alive() -> Array:
 func near(x: float, y: float, r: float) -> Array:
 	var out: Array = []
 	for e in enemies:
-		if e.dying <= 0 and sqrt(pow(e.x - x, 2.0) + pow(e.y - y, 2.0)) < r + e.r:
+		if e.dying <= 0 and sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0)) < r + e.r:
 			out.append(e)
 	return out
 
@@ -324,7 +326,7 @@ func nearest(x: float, y: float, maxD: float = 1e9, ex: Array = []) -> Enemy:
 	for e in enemies:
 		if e.dying > 0 or ex.has(e.id):
 			continue
-		var d: float = sqrt(pow(e.x - x, 2.0) + pow(e.y - y, 2.0)) - e.r
+		var d: float = sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0)) - e.r
 		if d < bd:
 			bd = d
 			b = e
@@ -344,9 +346,9 @@ func in_cone(x: float, y: float, ang: float, range_: float, half: float) -> Arra
 		if d < e.r + 3:
 			out.append(e)
 			continue
-		var da: float = atan2(dy, dx) - ang
+		var da: float = V8M.v8_atan2(dy, dx) - ang
 		da = absf(fmod(fmod(da + PI, M.TAU) + M.TAU, M.TAU) - PI)
-		if da <= half + asin(minf(1.0, e.r / d)):
+		if da <= half + V8M.v8_asin(minf(1.0, e.r / d)):
 			out.append(e)
 	return out
 
@@ -359,7 +361,7 @@ func seg_dist(px: float, py: float, ax: float, ay: float, bx: float,
 	if l2 == 0.0:
 		l2 = 1.0
 	var t: float = M.clampf(((px - ax) * vx + (py - ay) * vy) / l2, 0.0, 1.0)
-	return sqrt(pow(px - (ax + vx * t), 2.0) + pow(py - (ay + vy * t), 2.0))
+	return sqrt(V8M.v8_pow(px - (ax + vx * t), 2.0) + V8M.v8_pow(py - (ay + vy * t), 2.0))
 
 
 func shake(m: float, d: float = 0.25) -> void:
@@ -397,7 +399,7 @@ func stk(e, key: String):
 
 
 func push(e, x: float, y: float, v: float) -> void:
-	var d: float = sqrt(pow(e.x - x, 2.0) + pow(e.y - y, 2.0))
+	var d: float = sqrt(V8M.v8_pow(e.x - x, 2.0) + V8M.v8_pow(e.y - y, 2.0))
 	if d == 0.0:
 		d = 1.0
 	var w: float = 0.12 if e.kind == "boss" else (0.5 if e.kind == "elite" else 1.0)
@@ -448,7 +450,7 @@ func hit(e, amt: float, o: Dictionary) -> bool:
 	if float(o.get("kx", 0.0)) != 0.0 or float(o.get("ky", 0.0)) != 0.0:
 		e.kx += float(o.get("kx", 0.0)) * w
 		e.ky += float(o.get("ky", 0.0)) * w
-		e.dyDir = atan2(float(o.get("ky", 0.0)), float(o.get("kx", 0.0)))
+		e.dyDir = V8M.v8_atan2(float(o.get("ky", 0.0)), float(o.get("kx", 0.0)))
 	if is_poison:
 		e.tint = 1
 	else:
@@ -503,7 +505,7 @@ func contact(e, kind: String, x: float, y: float, o: Dictionary) -> void:
 			FX.chips(self, x, y, 2, 50, int(M.P["i1"]), int(M.P["i3"]),
 					int(M.P["i0"]), {"z": z})
 		"bite":
-			var a: float = atan2(float(o.get("ky", 0.0)), float(o.get("kx", 1.0)))
+			var a: float = V8M.v8_atan2(float(o.get("ky", 0.0)), float(o.get("kx", 1.0)))
 			FX.shards(self, x, y, 3, 60, int(M.P["y1"]), int(M.P["v2"]),
 					int(M.P["y2"]), {"z": z, "ang": a, "spread": 2,
 					"size": [2.0, 3.0]})
@@ -651,7 +653,7 @@ func update_player(dt: float) -> void:
 		var q: Dictionary = p.path
 		q["t"] = float(q["t"]) + dt
 		var f: float = M.clampf(float(q["t"]) / float(q["dur"]), 0.0, 1.0)
-		var e: float = 2 * f * f if f < 0.5 else 1 - pow(-2 * f + 2, 2) / 2
+		var e: float = 2 * f * f if f < 0.5 else 1 - V8M.v8_pow(-2 * f + 2, 2) / 2
 		var dist: float = (0.2 * f + 0.8 * e) * float(q["total"])
 		var i: int = 1
 		var lens: Array = q["len"]
@@ -669,7 +671,7 @@ func update_player(dt: float) -> void:
 		var dx: float = nx - p.x
 		var dy: float = ny - p.y
 		if sqrt(dx * dx + dy * dy) > 0.2:
-			p.face = atan2(dy, dx)
+			p.face = V8M.v8_atan2(dy, dx)
 		p.vx = dx / dt
 		p.vy = dy / dt
 		p.x = nx
@@ -704,7 +706,7 @@ func update_player(dt: float) -> void:
 		if sqrt(p.vx * p.vx + p.vy * p.vy) > 6:
 			p.walk += dt * sqrt(p.vx * p.vx + p.vy * p.vy) * 0.14
 			if p.cast <= 0:
-				p.face = atan2(p.vy, p.vx)
+				p.face = V8M.v8_atan2(p.vy, p.vx)
 		p.trail = maxf(0.0, p.trail - dt * 4)
 	for f in fx:
 		if f.push:
@@ -717,8 +719,8 @@ func update_player(dt: float) -> void:
 				p.y += (dy / d) * (m - d)
 	if p.form == "venom" and frame % 9 == 0:
 		var a: float = rng.range(0.0, M.TAU)
-		parts.add({"k": "steam", "x": p.x + cos(a) * 6, "y": p.y + sin(a) * 3,
-				"z": 6, "vx": cos(a) * 4, "vy": -2, "vz": 10, "size": 3,
+		parts.add({"k": "steam", "x": p.x + V8M.v8_cos(a) * 6, "y": p.y + V8M.v8_sin(a) * 3,
+				"z": 6, "vx": V8M.v8_cos(a) * 4, "vy": -2, "vz": 10, "size": 3,
 				"max": 0.9, "c1": int(M.P["e1"]), "c2": int(M.P["c0"]),
 				"drag": 1})
 
@@ -733,8 +735,8 @@ func glide(pts: Array, dur: float) -> void:
 	for i in range(1, all.size()):
 		var a: Dictionary = all[i - 1]
 		var b: Dictionary = all[i]
-		len.append(float(len[i - 1]) + sqrt(pow(float(b["x"]) - float(a["x"]), 2.0)
-				+ pow(float(b["y"]) - float(a["y"]), 2.0)))
+		len.append(float(len[i - 1]) + sqrt(V8M.v8_pow(float(b["x"]) - float(a["x"]), 2.0)
+				+ V8M.v8_pow(float(b["y"]) - float(a["y"]), 2.0)))
 	p.path = {"pts": all, "len": len,
 			"total": maxf(1.0, float(len[len.size() - 1])), "t": 0.0, "dur": dur}
 	p.mt = null
@@ -812,7 +814,7 @@ func update_enemies(dt: float) -> void:
 			var tank = null
 			var td: float = 1e9
 			for t in tanks:
-				var d: float = sqrt(pow(t.x - e.x, 2.0) + pow(t.y - e.y, 2.0)) - t.r
+				var d: float = sqrt(V8M.v8_pow(t.x - e.x, 2.0) + V8M.v8_pow(t.y - e.y, 2.0)) - t.r
 				if d < 70 and d < td:
 					td = d
 					tank = t
@@ -841,7 +843,7 @@ func update_enemies(dt: float) -> void:
 			e.y += my * sp * dt
 			if mx != 0.0 or my != 0.0:
 				e.walk += dt * sp * 0.22
-			var fa: float = atan2(dy, dx)
+			var fa: float = V8M.v8_atan2(dy, dx)
 			var da: float = fa - e.face
 			da = fmod(fmod(da + PI, M.TAU) + M.TAU, M.TAU) - PI
 			e.face += da * minf(1.0, dt * 8)

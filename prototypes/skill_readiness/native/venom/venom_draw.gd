@@ -1,6 +1,8 @@
 class_name VenomDraw
 extends RefCounted
 
+const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
+
 ## Native port of the ORIGINAL Venomwright free-form drawing helpers and of the
 ## liquid shading passes, transcribed 1:1 from `src/game/pixel.ts`:
 ##   `text`, `ball`, `shard`, `bubble`, `wormBody`, `glow`, `crystalPrism`,
@@ -103,8 +105,8 @@ static func shard(L, x: float, y: float, ang: float, len: float, wid: float,
 	if len < 1.5:
 		L.px(x, y, lit)
 		return
-	var ca: float = cos(ang)
-	var sa: float = sin(ang)
+	var ca: float = V8M.v8_cos(ang)
+	var sa: float = V8M.v8_sin(ang)
 	var tx: float = x + ca * len
 	var ty: float = y + sa * len
 	var bx: float = x - ca * len * 0.4
@@ -156,7 +158,7 @@ static func worm_body(L, s: Array, p: Dictionary, opts: Dictionary = {}) -> void
 		var T: float = float(opts.get("stripeT", 0.0))
 		var stripe: int = int(opts["stripe"])
 		for i in range(s.size()):
-			var kk: float = cos((float(i) / float(s.size())) * 9.0 - T * 7.0)
+			var kk: float = V8M.v8_cos((float(i) / float(s.size())) * 9.0 - T * 7.0)
 			if kk > 0.45:
 				L.disc(float(s[i]["x"]), float(s[i]["y"]),
 						maxf(0.4, float(s[i]["r"]) * 0.4 * kk), stripe)
@@ -195,8 +197,8 @@ static func crystal_prism(L, x: float, y: float, h: float, w: float, lean: float
 		var cx: float = x + lean * 0.5
 		var cy: float = y - h * 0.45
 		L.line(cx, cy - h * 0.22, cx, cy + h * 0.25, core)
-		if sin(t * 5.0 + x) > 0.1:
-			L.dot(cx, cy - h * 0.1 + sin(t * 3.0 + y) * h * 0.15, edge)
+		if V8M.v8_sin(t * 5.0 + x) > 0.1:
+			L.dot(cx, cy - h * 0.1 + V8M.v8_sin(t * 3.0 + y) * h * 0.15, edge)
 
 
 # ---------------------------------------------------------------------------
@@ -272,8 +274,8 @@ static func make_ground(L, seed: int, stage: int = 5) -> void:
 			if i % 5 == 0:
 				L.raw_px(M.js_round(x) + 1, M.js_round(y) + 1, M.hex("#1f3a30"))
 			a += r.range(-0.45, 0.45)
-			x += cos(a)
-			y += sin(a)
+			x += V8M.v8_cos(a)
+			y += V8M.v8_sin(a)
 			i += 1
 	if stage < 4:
 		return
@@ -288,10 +290,10 @@ static func make_ground(L, seed: int, stage: int = 5) -> void:
 	_rune_ring(L, cx, cy, rr * 0.55, rune2)
 	for i in range(12):
 		var a2: float = (float(i) / 12.0) * M.TAU
-		var x0f: float = cx + cos(a2) * (rr - 6.0 * k)
-		var y0f: float = cy + sin(a2) * (rr - 6.0 * k)
-		var x1f: float = cx + cos(a2 + 0.5) * rr * 0.55
-		var y1f: float = cy + sin(a2 + 0.5) * rr * 0.55
+		var x0f: float = cx + V8M.v8_cos(a2) * (rr - 6.0 * k)
+		var y0f: float = cy + V8M.v8_sin(a2) * (rr - 6.0 * k)
+		var x1f: float = cx + V8M.v8_cos(a2 + 0.5) * rr * 0.55
+		var y1f: float = cy + V8M.v8_sin(a2 + 0.5) * rr * 0.55
 		var steps2: int = int(ceil(sqrt((x1f - x0f) * (x1f - x0f) + (y1f - y0f) * (y1f - y0f))))
 		if steps2 <= 0:
 			continue
@@ -316,7 +318,7 @@ static func make_ground(L, seed: int, stage: int = 5) -> void:
 static func _rune_ring(L, cx: float, cy: float, r: float, c: int) -> void:
 	var ri: int = int(ceil(r))
 	for dy in range(-ri, ri + 1):
-		var wo: int = int(floor(sqrt(maxf(0.0, pow(r + 0.35, 2.0) - float(dy * dy)))))
+		var wo: int = int(floor(sqrt(maxf(0.0, V8M.v8_pow(r + 0.35, 2.0) - float(dy * dy)))))
 		L.raw_px(int(cx) - wo, int(cy) + dy, c)
 		L.raw_px(int(cx) + wo, int(cy) + dy, c)
 
