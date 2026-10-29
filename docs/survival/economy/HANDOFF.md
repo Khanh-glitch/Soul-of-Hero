@@ -49,7 +49,7 @@ See `HARDENING_STATUS.md`: E-01/E-02/E-03/E-04 PARTIAL with explicit A0/A4/A1 ga
 - 15 scenarios incl. early loss + targeted fallback, blocked safe route, catalyst drought, queue interruption. Native casts remain 0.
 - Owner contracts: `A0_ECONOMY_PRODUCER_CONTRACT.v2.json`, `A6_ECONOMY_READ_ONLY_CONTRACT.v2.json`, `OWNER_HANDOFFS_V2.md`. UI flags never authorize transactions.
 - Python **30 tests PASS** (10 preserved + 11 V1 + 9 V2); one V1 assertion updated to A1 shortcut-lock truth. Native adapter unchanged **362 checks / 20 cases**. Immutable conservation fixture unchanged.
-- V2 code SHA / CI recorded in PR #19 after push; prior checkpoint `08711ea7` CI-green.
+- V2 code SHA `211349c986aa2f0e5b4b4a94eab8b183ea663ea9`; push CI 40900020970 (contracts 123539426272 / native 123540371824) and PR-side CI 40900036492 (contracts 123539480449 / native 123539788855) both SUCCESS; native annotation 362 checks / 20 cases.
 
 ## Explicit non-claims
 - No Gold VFX/effect changes, no production overworld edits, no SaveService edits, no human playtest PASS, no offline production.

@@ -77,6 +77,6 @@ The 14×45-minute claim is a **SPARSE_SCENARIO_MODEL**, not proven engagement.
 - Native adapter: **362 checks / 20 cases PASS** (unchanged; fixture host, not production world).
 - Immutable conservation fixture: `balance_report.json` SHA-256 `45bceb2d6f9e190c9fd89b540cc11d088d98ebb6efcef36bb0f977cadc437e71` unchanged.
 - Product model: `progression_report.json` regenerated; baseline Ember discovery s3, Frost s5, sacrifice s8, manufacture s9; 0 native casts; 5 remaining late goals.
-- CI: pending final V2 code SHA; prior checkpoint `08711ea7` was CI-green.
+- CI at V2 code SHA `211349c986aa2f0e5b4b4a94eab8b183ea663ea9`: push run 40900020970 and PR-side run 40900036492 both **SUCCESS**; native annotation `A3 ECONOMY ADAPTER PASSED - 362 checks / 20 cases`.
 
 **NEXT_ATOMIC_ACTION:** Control Tower / A0 / A1 / A6 review of the V2 adoption + producer/consumer contracts; do not merge PR #19 or claim balance/human approval from simulation alone.

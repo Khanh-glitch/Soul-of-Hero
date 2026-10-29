@@ -113,7 +113,8 @@ python -m unittest discover -s tests/survival/catalog -p 'test_*.py' -v
 - Python: **30 tests PASS** (10 preserved hardening/catalog + 11 V1 progression + 9 V2 regressions). One V1 assertion updated to A1 PR #20 truth: unprepared east rush is `shortcut_locked`, not `abort_unprepared_hazard`.
 - Native adapter: **362 checks / 20 cases PASS** (unchanged).
 - Immutable `balance_report.json` unchanged.
-- V2 code SHA / CI: pending final commit; prior checkpoint `08711ea7` was CI-green (push 40888589145, PR 40888602324).
+- V2 code SHA: `211349c986aa2f0e5b4b4a94eab8b183ea663ea9`.
+- CI at V2 SHA: push run [40900020970](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900020970) **SUCCESS** (contracts job `123539426272`, native job `123540371824`); PR-side run [40900036492](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900036492) **SUCCESS** (contracts `123539480449`, native `123539788855`). Native annotation: `A3 ECONOMY ADAPTER PASSED - 362 checks / 20 cases`.
 
 ## 10. Next integration boundary
 

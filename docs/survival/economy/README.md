@@ -77,6 +77,7 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 
 ## CI evidence
 
+- Product model V2 at `211349c986aa2f0e5b4b4a94eab8b183ea663ea9`: push run [40900020970](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900020970) and PR-side run [40900036492](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900036492) both **SUCCESS**; native annotation `A3 ECONOMY ADAPTER PASSED - 362 checks / 20 cases`; Python 30 tests PASS.
 - Push run `40868991917`: `A3 CATALOG / BALANCE CONTRACTS` and `A3 NATIVE SAVE ADAPTER` both succeeded at `5536d872` (earlier green runs: 40868045642 / 40868053966).
 - PR #19 run `40868053966`: A3 jobs succeeded. The unrelated `Original main baseline comparison` job in the repository-wide Godot workflow failed; it is not an A3 gate and does not alter the A3 adapter result.
 - Native suite exercises the real SaveService autoload: fuel-gated smelting, station/knowledge/event identity, cancellation/full-bag/reload, specimen/blueprint/targeted research, technology prerequisites, A4-gated finite cast debit, repair/reconstruction identity, lossy salvage, legacy stack shapes, cultivation seed neutrality, and paused-job resume.
