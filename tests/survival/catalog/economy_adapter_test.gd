@@ -193,8 +193,12 @@ func _run() -> void:
 	_expect(eco.owned_instances("core_venom").is_empty(), "old shell reserved, not usable")
 	_finish_job(rebuild.job_id, "bench")
 	var fresh: Array[Dictionary] = eco.owned_instances("core_venom")
-	_expect(fresh.size() == 1 and String(fresh[0].instance_id) != shell_id, "new Core identity, old shell consumed")
-	_expect(int(fresh[0].uses) == 12, "reconstruction is manufacture, not free repair")
+	_expect(fresh.size() == 1, "new Core identity, old shell consumed")
+	if fresh.size() == 1:
+		_expect(String(fresh[0].instance_id) != shell_id, "reconstruction creates a new token")
+		_expect(int(fresh[0].uses) == 12, "reconstruction is manufacture, not free repair")
+	else:
+		print("DEBUG learn=", learn, " rebuild=", rebuild, " jobs=", eco.jobs(), " shell=", eco.instance(shell_id))
 	# 09 lossy dismantling and full-inventory refusal.
 	_begin("lossy recycling / no repair-recycle profit")
 	_station("bench", "workbench")
