@@ -203,11 +203,20 @@ func _event() -> String:
 func queue_recipe(recipe_id: String, station_id: String) -> Dictionary:
 	if not _commands_available():
 		return {"ok": false, "reason": "session_inactive"}
+	var station_kind := "hand"
 	if station_id != "hand":
 		var station := _resolve_station(station_id)
 		var node: Node2D = _build.call(&"structure_node", station_id)
 		if station.is_empty() or node == null or _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) > 64:
 			return {"ok": false, "reason": "station_not_reachable"}
+		station_kind = String(station.get("kind", ""))
+	# A3's hand resolver intentionally permits a caller-provided id. The player
+	# intent surface must use the one canonical hand queue and cannot bind hand
+	# recipes to a physical station's independent clock/capacity.
+	var catalog: Dictionary = _adapter.get(&"catalog")
+	var recipe: Dictionary = (catalog.get("recipes", {}) as Dictionary).get(recipe_id, {})
+	if recipe.is_empty() or String(recipe.get("station", "")) != station_kind:
+		return {"ok": false, "reason": "station_recipe_mismatch"}
 	return _adapter.call(&"enqueue", recipe_id, station_id, _event())
 
 
