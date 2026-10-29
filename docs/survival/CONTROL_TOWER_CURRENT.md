@@ -1,0 +1,64 @@
+# SOUL OF HERO — CONTROL TOWER / ACTIVE MULTI-AGENT OPERATIONS
+**Canonical cross-chat coordinator state, checked 2026-10-29 (Asia/Ho_Chi_Minh).** This file is a durable bridge across conversations, **not an automatically updating background monitor**. Any new reviewer/ChatGPT session MUST re-fetch live GitHub PR/issues/CI, read this file and the underlying Atlas/CT/decision documents, reconcile changes, then append an evidence-based checkpoint. Never treat this snapshot as eternally current.
+
+## 1. Locked product intent (not negotiable from green CI)
+- SOH Godot 4.7 top-down pixel fantasy survival RPG using **deep original Last Day Rules 2019–2020 behavioral mechanisms**, NOT uncritical late 2021–26 variants, PvP griefing or forced wipes.
+- World masterplan is **whole continent up-front**: causally placed biomes/elevation/rivers/resources/roads/settlements/POIs; current 10 Chapter 1 dungeons remain in roughly first quarter.
+- Single persistent save/inventory authority; systemic harvest→salvage/refine/research/craft→tool/equipment/physical finite-use Core→POI/gate/power/hazard/boss→new recipes and routes; player-owned home, outpost/logistics, optional replayable expeditions; after ~14-day-equivalent journey exciting new goals remain.
+- Gold skill effects from original user-authored source are **exact**, including particles, timelines, enemy impacts, terrain/world response and environment contrast: **no imitative redraw**. Rich top-down/tactical Hero combat/legibility are a real differential versus photorealistic shooter survival games. 2K/4K crisp pixel display.
+- Agent researches external repos, engine sources, code and separately art licenses CONTINUOUSLY; chooses evidence-backed reuse/adapt/reference/bespoke/reject.
+- The 1,355-line user Atlas original bytes at `docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md` (SHA256 `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`), `SOURCE_COVERAGE_TRACE.json` (44 SYS + 21 POI + 31 DEP + 12 JOURNEY = 108, plus 40 historical unknowns and 28 references), `SYSTEM_FUSION_BLUEPRINT.md` CT-01..CT-12 and `DECISIONS.md` must be consulted at each substantive acceptance.
+- F0–F5 design decisions are user-delegated but must be reviewed and recorded. **A native static/CI PASS is never a full Product Gate**; see `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md`.
+
+## 2. Six actual AI seats: report status truthfully
+| Physical seat | Owner / scope | Live state at snapshot | Next instruction | Dependency firewall |
+| --- | --- | --- | --- | --- |
+| 1 | **A0**, first already commissioned agent: integration/SaveService + construction (A2 responsibility) | **ACTIVE**, SURV-020 Draft PR #11, `arena/54306b59-soul-of-hero`, head `e038b64e46567ebd6413b9f500381643a18556f0` | **CONTINUE SAME A0**, [A0 instruction](tasks/SURV-020_A0_CONTINUE_20261029.md) | Owns build system, SaveService contracts, final merge; all others must not touch its in-flight files |
+| 2 | **A4**, separately commissioned PRE-PLAN Gold/VFX source parity/import agent | **ACTIVE by user; Git independent evidence**: workflow Gold runtime branch `arena/c7b0c4e8-soul-of-hero`; tested failing run 40856554718 (#13/#15/#16 Venomwright differential failed while others passed); newer Gold run 40857702000 queued at snapshot, DO NOT invent conclusion | Continue source parity/port on its own original assignment; get latest tested per-skill readiness before integration | **Do not issue another A4 Gold prompt**; A3 Core economy is independent; no SOH combat/library integration of unverified skill |
+| 3 | **A1** World & macro-POI geology | READY per user's last explicit "not yet sent" prompt; branch `feature/surv-a1-world-050a`, issue #12, no implementation PR seen | User sends dedicated A1 work order, start continent/POI anchor schema and validators | No production `chapter1_overworld.gd`/A0 data changes |
+| 4 | **A3** Economy, crafting/research + item/charge/recipe side of Skill Core + balance automation | READY, branch `feature/surv-a3-economy-030a`, issue #13, no implementation PR seen | Start typed graph and executable validators using SURV-010 real item IDs; independent from A4 port | No SaveService or existing survival catalog edits; price proposals not applied to live build until A0 review |
+| 5 | **A6** UX/HUD/visual interfaces and asset/repo license due diligence | READY, branch `feature/surv-a6-ux-010a`, issue #15, no implementation PR seen | Start isolated Godot UI scenes/adapters and UX tests | **Must not overwrite A0's construction build strip** or A4 Gold art; independent new paths only |
+| 6 | **S6/A5-DEEP** scarce exceptional model, limited tokens; optional high-reasoning single layered POI exemplar | READY, branch `feature/surv-s6-poi-depth-001`, issue #18; not yet assigned | User sends **Unit 1 only** from work order; one small checkpoint per token reset | **Never on critical path**; everyone else can finish if this never ships |
+
+A2/A5/A7/A8 historically name responsibilities, not additional physical agents. A7 QA role = A3 balance automation + coordinator's **independent** adversarial code/product review. A8 asset/repo sourcing = every implementation agent, A6 leads visual rights. Issue #14 is backlog for Core integration **not** a new Gold porter. Issues #16/17 are QA/research packets, not seventh/eighth agents. User may have started an agent privately after this snapshot — only user confirmation/actual branch content can move it from READY to ACTIVE.
+
+## 3. Project milestones and acceptance (checked state)
+**SURV-010:** source-code foundation verified at `d3885226c92445fad7688ef754f03ec0ef65691f` and native run [40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213) (125 checks /12 cases) and merged PR #10 (`2709b9f6bd0d1cc7a5b242e617184ddab0431470`). Technical scope only, not all survival.
+
+**SURV-020:** **IN PROGRESS / NOT APPROVED / DO NOT MERGE PR #11**. Narrow chest-safety incremental code at `77c639331d8d4b0c472e86e7538275e6778aa697`, Godot native run [40849106485](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485) success 132 checks; no roofs/doors/room topology/bed/respawn/player shelter sequence/screenshots. Deep code/test review is `docs/survival/reviews/SURV-020_STORAGE_77c63933_INDEPENDENT_REVIEW.md`: credible atomic demolition refusal and distinct repeated sweeps, but **logical input replay identity NOT proved**. Need document `STATE.json.phase` regression, A6-build-strip ownership contradiction and native negative tests. Full next command: `docs/survival/tasks/SURV-020_A0_CONTINUE_20261029.md`, which first demands bounded room topology and then rest of SURV-020.
+
+**GOLD:** independent stream has genuinely active CI; recent [40856554718](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40856554718) has Venomwright 13,15,16 failed tick-by-tick original TypeScript differential while many other named skill jobs passed. Later run [40857702000](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40857702000) queued at time of check; subsequent tool runs needed before new claims. This is NOT proof 93 original skills have production Game/Hero casting ready. Original Gold parity must include enemy and terrain cues. Protect A4 independent branch and compare exact tested SHA in every review.
+
+**A1/A3/A6/S6:** documents + branches prepared, not yet demonstrated by new gameplay commits in a task PR. Do not confuse documentation checks/CI with code execution.
+
+## 4. Coordinator workflow: every agent report produces a NEXT ACTION
+1. **Refresh live**: agent/branch/HEAD, PR/issue/status, CI job logs and exact commit, changed methods, test fixtures, native screenshots; source Atlas/CT relevant sections. Never read report-only or assume a passing workflow means gameplay.
+2. **Challenge**: data authority, state migration, loss/dupe, renderer/physics, negative/adversarial tests, cross-CT dependencies, UX and long-run motivation. Distinguish implementation, design, full integration gates.
+3. **Declare decision** `CONTINUE / CONTINUE_WITH_CORRECTION / HOLD_INTEGRATION / REASSIGN / REPLACE`, plus who, exact actionable prompt, next checkpoint artifact, verified/unknown claims and whether PR can merge. Without this, review is incomplete.
+4. **Route dependencies** to every impacted agent. If a contract/API isn't ready, provide versioned stub/interface; do not block unrelated tasks. Release only verified imports/skill families. Don't change someone else's task branch, and no double ownership of same code. Coordinator/authoritative integration resolves actual file conflicts.
+5. **Update durable state immediately**: canonical `CONTROL_TOWER_CURRENT.md`, role work order, relevant independent review, GitHub PR/Issue comment, Google Docs tab04 readback (or `DOCS_SYNC_PENDING`). At task dispatch, document BEFORE or at agent launch; each pushed checkpoint updates status; after acceptance record transition and next backlog item.
+6. **Cross-chat recovery**: in any new ChatGPT conversation, fetch GitHub current file **and live refs** and Docs tab04, read source Atlas and current task work orders. Do not pretend ChatGPT internal memory is guaranteed across disconnected chats or that chats automatically sync; durable Git+Docs are the continuity mechanism. User can say "Read docs/survival/CONTROL_TOWER_CURRENT.md and resume coordinating". State facts from citable source; don't copy stale snapshots.
+
+### Decision/exception rules (not arbitrary firing)
+- **CONTINUE** when agent ships source-consistent verified increments and is progressing along critical path; honest partial work is NOT grounds to fire.
+- **CONTINUE_WITH_CORRECTION** when adjacent value is credible but tests/contract boundaries are missing; issue one concrete targeted correction with a test and next primary feature checkpoint. **A0 CURRENT DECISION**.
+- **HOLD_INTEGRATION**, not stop other work, when branch is draft, authoritative schema is conflicting, Gold parity unverified, new destructive migration, SaveService transaction breaks, native QA fails or asset license unclear.
+- **REASSIGN / REPLACE** only with documented evidence of repeated non-progress on *the agreed next core deliverable after explicit correction*, recurring source-fidelity or ownership violations, uncorrected critical regressions, fabricated evidence, destructive data loss, inability to access required tooling/source or a clearly better contractor. Severe proven malicious/destructive/false-certification behavior may justify immediate stop. Before replacing, preserve all usable commits and evidence, identify root cause/needed access, move to clean owned branch and keep in-flight other agents isolated. No employment judgment based on token exhaustion or a single honest partial checkpoint.
+- **Stop/wait** only for a specific dependency: no original source bytes for Gold exact port, illegal/unlicensed asset, shared API destructive migration, unsolved cross-branch SaveService ownership, or native/runtime critical blocker. Explain **who unblocks what**. No blanket project freeze.
+- **Next milestone after SURV-020** requires actual WIP evidence; candidate: A0 integration of A3 economy stations and A6 UI, while A1/world and A4/Gold remain independent. Do not announce it completed/assigned until warranted.
+
+## 5. Monitor at meaningful *events* (without background claims)
+- A0 PR #11 next meaningful code push: must show bounded room topology with true Godot/negative tests, not another docs-only success. Evaluate collision/cell/edge model and changes to scene/SaveService.
+- A4 latest Gold CI: inspect tick-by-tick results, preserve passing skills, identify why failures persist and whether original source is available, no vanity 93-ready labels.
+- A1/A3/A6/S6 first genuine code/data commits: update READY→IN_PROGRESS **only when reported or verified**; check owned paths and independent contract semantics.
+- Any PR proposed for merge: compare exact SHA, current base, production scene screenshots, test truth, source fidelity and integration risk; A0/integrator handles merges after reviewer approval, with recorded fallback.
+
+## 6. Direct links
+- [Live SURV-020 Draft PR #11](https://github.com/Khanh-glitch/Soul-of-Hero/pull/11)
+- [SURV-020 continuation command](tasks/SURV-020_A0_CONTINUE_20261029.md)
+- [SURV-020 independent audit](reviews/SURV-020_STORAGE_77c63933_INDEPENDENT_REVIEW.md)
+- [Full A0/A2 SURV-020 work order](tasks/SURV-020_WORK_ORDER.md)
+- [Active staffing](ACTIVE_SIX_AGENT_DISPATCH_20261029.md)
+- [Independent deep review gates](INDEPENDENT_DEEP_REVIEW_PROTOCOL.md)
+- [Task-dispatch protocol](CHANGE_PROTOCOL.md)
+- Google Docs https://docs.google.com/document/d/1q8Vevy4qx_6AFyfJodmsWAhdSBBumtx31hxXnWPelqo/edit tab 04; 06 original research and 11 current four prompt copies.
