@@ -63,11 +63,12 @@ func rebuild(structures: Dictionary) -> void:
 		# The signature changes if a local edit affects this flood; distant
 		# clusters keep their results and do not scan their interiors again.
 		var keys: Array[String] = []
-		for raw_wall: Variant in walls.keys():
-			var wall: Vector2i = raw_wall
-			if wall.x >= lo.x and wall.x <= hi.x and wall.y >= lo.y and wall.y <= hi.y:
-				keys.append("%d,%d" % [wall.x, wall.y])
-		keys.sort()
+		# Probe the bounded local box, not the global wall set per cluster. This
+		# avoids quadratic work when many tiny, widely separated structures exist.
+		for y in range(lo.y, hi.y + 1):
+			for x in range(lo.x, hi.x + 1):
+				if walls.has(Vector2i(x, y)):
+					keys.append("%d,%d" % [x, y])
 		var cache_key := "%d,%d:%d,%d:%s" % [lo.x, lo.y, hi.x, hi.y, ";".join(keys)]
 		var derived: Dictionary = _cluster_cache.get(cache_key, {})
 		if not _cluster_cache.has(cache_key):
