@@ -99,7 +99,8 @@ func _run() -> void:
 	_expect(not bool(save.call(&"grant_inventory_item", id, "key_item", 1, "forge.escrow")), "generic grant cannot duplicate escrow")
 	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "A3 escrow audit remains valid")
 	lab_enabled = false
-	_expect(bool((economy.call(&"cancel", job_id, "cancel.after.removal") as Dictionary).get("ok", false)), "removed station retains cancellable escrow")
+	var cancelled: Dictionary = economy.call(&"cancel", job_id, "cancel.after.removal")
+	_expect(bool(cancelled.get("ok", false)), "removed station retains cancellable escrow: " + String(cancelled.get("reason", "")))
 	var filled: Array[String] = []
 	for i in range(40):
 		var key := "fixture_full_%02d" % i
@@ -114,13 +115,35 @@ func _run() -> void:
 		_expect(bool(save.call(&"consume_inventory_item", filled[0], 1, "free.0")), "free refund slot one")
 		_expect(bool(save.call(&"consume_inventory_item", filled[1], 1, "free.1")), "free refund slot two")
 	var collected: Dictionary = economy.call(&"collect", job_id, "collect.after.free")
-	_expect(bool(collected.get("ok", false)), "escrow specimen returned once after station removal")
+	_expect(bool(collected.get("ok", false)), "escrow specimen returned once after station removal: " + String(collected.get("reason", "")))
 	var again: Dictionary = economy.call(&"collect", job_id, "collect.after.free")
 	_expect(bool(again.get("duplicate", false)), "refund replay is idempotent")
 	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "actual A3 ownership audit passes after return")
 	_expect((economy.call(&"owned_instances", "iron_pick") as Array).size() == 1, "exactly one genuine specimen retained")
 	_expect(bool(save.call(&"reload_save")), "reload real returned pair")
 	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "A3 ownership audit passes after reload")
+	# External corruption is deliberately written to disk, not through a trusted
+	# API. A bad primary must not be replaced with a backup or new defaults.
+	var safe: Dictionary = save.call(&"get_snapshot")
+	for mode: String in ["quantity", "kind", "orphan", "duplicate", "schema"]:
+		var corrupt := safe.duplicate(true)
+		if mode == "schema":
+			corrupt["survival_economy"]["schema"] = 999
+		else:
+			_mutate_token(corrupt, id, mode)
+		var bytes := JSON.stringify(corrupt, "\t") + "\n"
+		var writer := FileAccess.open(path, FileAccess.WRITE)
+		writer.store_string(bytes)
+		writer.close()
+		_expect(not bool(save.call(&"reload_save")), "malformed " + mode + " load fails closed")
+		_expect(bool((save.call(&"get_economy_quarantine") as Dictionary).get("active", false)), "malformed " + mode + " is explicitly quarantined")
+		_expect(not bool(save.call(&"save_now")) and not bool(save.call(&"grant_inventory_item", "oak_wood", "material", 1, "quarantine." + mode)), "quarantine blocks writes: " + mode)
+		_expect(FileAccess.get_file_as_string(path) == bytes, "malformed bytes are not replaced: " + mode)
+		var repair := FileAccess.open(path, FileAccess.WRITE)
+		repair.store_string(JSON.stringify(safe, "\t") + "\n")
+		repair.close()
+		_expect(bool(save.call(&"reload_save")), "explicitly restored file reloads: " + mode)
+		_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "restored pair remains auditable: " + mode)
 	_finish()
 
 func _finish() -> void:

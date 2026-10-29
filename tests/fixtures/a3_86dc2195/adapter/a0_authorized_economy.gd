@@ -6,6 +6,6 @@ const PINNED_BASE = preload("res://tests/fixtures/a3_86dc2195/adapter/economy_se
 
 func _transact(operation: String, event_id: String, payload: Dictionary, mutator: Callable) -> Dictionary:
 	var owner := mutator.get_object()
-	if not mutator.is_valid() or (owner != self and owner != PINNED_BASE):
+	if not mutator.is_valid() or (owner != self and owner != PINNED_BASE and owner != get_script()):
 		return {"ok": false, "reason": "untrusted_economy_mutator", "duplicate": false}
 	return super._transact(operation, event_id, payload, mutator)

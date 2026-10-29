@@ -25,7 +25,7 @@ const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_f
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
 const PINNED_A3_SCRIPT_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
-const PINNED_A0_ADAPTER_SHA256 := "064499c2442035b333079617f36039f23898ebec4056accbe1b766cb50b8c3c4"
+const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -111,6 +111,8 @@ var _economy_adapter: RefCounted
 var _economy_facade: Node
 var _economy_mutation_active := false
 var _transaction_mutation_active := false
+var _economy_quarantine_reason := ""
+var _economy_quarantine_path := ""
 
 
 
@@ -147,6 +149,8 @@ func configure_storage(path: String, load_immediately := true) -> bool:
 	_legacy_import_path = ""
 	_data.clear()
 	_is_loaded = false
+	_economy_quarantine_reason = ""
+	_economy_quarantine_path = ""
 	if load_immediately:
 		return load_save()
 	return true
@@ -162,6 +166,9 @@ func register_migration(from_version: int, migration: Callable) -> bool:
 
 
 func load_save() -> bool:
+	# A manual retry may succeed after the user restores or repairs the file.
+	_economy_quarantine_reason = ""
+	_economy_quarantine_path = ""
 	if (
 			not FileAccess.file_exists(_save_path)
 			and not _legacy_import_path.is_empty()
@@ -170,6 +177,8 @@ func load_save() -> bool:
 		return _import_legacy_default_save()
 
 	var primary := _read_and_prepare(_save_path)
+	if bool(primary.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_save_path, String(primary.get("error", "invalid_ownership")))
 	if bool(primary.get("ok", false)):
 		var primary_snapshot: Dictionary = primary.get("data", {}).duplicate(true)
 		if bool(primary.get("was_migrated", false)):
@@ -203,6 +212,8 @@ func load_save() -> bool:
 		return true
 
 	var backup := _read_and_prepare(_backup_path)
+	if bool(backup.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_backup_path, String(backup.get("error", "invalid_ownership")))
 	if bool(backup.get("ok", false)):
 		var recovered: Dictionary = backup.get("data", {}).duplicate(true)
 		if bool(backup.get("was_migrated", false)):
@@ -219,6 +230,8 @@ func load_save() -> bool:
 		return true
 
 	var migration_backup := _read_and_prepare(_migration_backup_path)
+	if bool(migration_backup.get("economy_quarantine", false)):
+		return _quarantine_economy_save(_migration_backup_path, String(migration_backup.get("error", "invalid_ownership")))
 	if bool(migration_backup.get("ok", false)):
 		var migration_recovery: Dictionary = migration_backup.get("data", {}).duplicate(true)
 		if not _preserve_pre_migration_backup(_migration_backup_path):
@@ -242,6 +255,25 @@ func load_save() -> bool:
 		_push_failure("Loaded safe defaults in memory, but could not create the save file.")
 		return false
 	return true
+
+
+## A quarantined file remains untouched on disk. No profile writes, resets or
+## fallback-overwrite are allowed until an explicit repair/reload or a different
+## development profile is selected. This is fail-closed, not a recovery UI.
+func get_economy_quarantine() -> Dictionary:
+	return {"active": not _economy_quarantine_reason.is_empty(),
+		"reason": _economy_quarantine_reason, "path": _economy_quarantine_path}
+
+
+func _quarantine_economy_save(path: String, reason: String) -> bool:
+	_economy_quarantine_reason = reason
+	_economy_quarantine_path = path
+	_data = _default_data()
+	_is_loaded = true
+	var message := "Save ownership requires recovery (%s); original bytes were not modified." % reason
+	push_warning(message)
+	save_failed.emit(message)
+	return false
 
 
 func reload_save() -> bool:
@@ -2333,6 +2365,8 @@ func reset_to_defaults(confirmation: String) -> bool:
 
 
 func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> bool:
+	if not _economy_quarantine_reason.is_empty():
+		return false
 	var economy_authorized := capability != null and capability == _economy_capability
 	if capability != null and not economy_authorized:
 		return false
@@ -2364,6 +2398,8 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 
 
 func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> bool:
+	if not _economy_quarantine_reason.is_empty():
+		return false
 	_commit_in_progress = true
 	var result := false
 	var directory_error := DirAccess.make_dir_recursive_absolute(
@@ -2393,6 +2429,10 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> b
 		# External edits or a partial disk write must not replace a known-good
 		# backup with corrupt bytes. A valid new primary can still be committed.
 		var current_verification := _read_and_prepare(_save_path)
+		if bool(current_verification.get("economy_quarantine", false)):
+			_remove_if_present(_temporary_path)
+			_commit_in_progress = false
+			return _quarantine_economy_save(_save_path, String(current_verification.get("error", "invalid_ownership")))
 		if bool(current_verification.get("ok", false)) and not _copy_text_file(_save_path, _backup_path):
 			_remove_if_present(_temporary_path)
 			_push_failure("Could not rotate the previous save into its backup.")
@@ -2428,6 +2468,11 @@ func _read_and_prepare(path: String) -> Dictionary:
 	if json.parse(payload) != OK or not json.data is Dictionary:
 		return {"ok": false, "error": "invalid_json"}
 	var raw_document: Dictionary = json.data
+	# Check before legacy sanitization or fallback. Otherwise a corrupt unique
+	# record could be normalized away, then a backup/default silently written.
+	var ownership_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(raw_document)
+	if not ownership_error.is_empty():
+		return {"ok": false, "error": ownership_error, "economy_quarantine": true}
 	var version_variant: Variant = raw_document.get("schema_version", raw_document.get("version", 0))
 	var source_version := int(version_variant) if version_variant is int or version_variant is float else -1
 	var prepared := _prepare_document(raw_document)
@@ -4625,6 +4670,8 @@ func _accept_loaded_data(snapshot: Dictionary, recovery_source: String) -> void:
 func _import_legacy_default_save() -> bool:
 	var source_path := _legacy_import_path
 	var imported := _read_and_prepare(source_path)
+	if bool(imported.get("economy_quarantine", false)):
+		return _quarantine_economy_save(source_path, String(imported.get("error", "invalid_ownership")))
 	if not bool(imported.get("ok", false)):
 		# Never alter an unreadable legacy profile. Create an independent safe v2
 		# profile and leave the old bytes available for manual recovery.
