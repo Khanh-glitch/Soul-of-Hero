@@ -155,6 +155,32 @@ def main():
             d.ellipse([x-4,y-4,x+4,y+4],fill=(120,220,140),outline=(0,0,0),width=1)
             d.text((x+6,y-5),p["name"],font=font(11),fill=(240,255,240),stroke_width=1,stroke_fill=(0,0,0))
     paths.append(save(crop,"starter_quarter_detail.png"))
+    # First-hour hazard bootstrap detail
+    x0,y0,ww,hh = 0,120,520,420
+    full=base_image(plan,"biome",biome_colors(plan))
+    crop=full.crop((x0*SCALE,y0*SCALE,(x0+ww)*SCALE,(y0+hh)*SCALE)).resize((ww*2,hh*2), Image.Resampling.NEAREST)
+    d=ImageDraw.Draw(crop)
+    def L(x,y): return ((x-x0)*2,(y-y0)*2)
+    haz_cols={"hz_crown_heat":(230,120,60,110),"hz_crown_rot":(150,200,70,110),"hz_crown_cold":(120,190,230,90)}
+    overlay=Image.new("RGBA",crop.size,(0,0,0,0)); od=ImageDraw.Draw(overlay)
+    for hz in plan["hazards"]:
+        hx,hy,hw,hh2=hz["rect"]
+        if hx>x0+ww or hy>y0+hh or hx+hw<x0 or hy+hh2<y0: continue
+        a=L(hx,hy); b=L(hx+hw,hy+hh2)
+        od.rectangle([a,b],fill=haz_cols.get(hz["hazard_id"],(235,90,90,90)))
+        od.text((a[0]+4,a[1]+4),hz["hazard_id"],font=font(12,True),fill=(255,255,255,230))
+    crop=Image.alpha_composite(crop.convert("RGBA"),overlay).convert("RGB"); d=ImageDraw.Draw(crop)
+    edges={e["route_id"]:e for e in plan["route_graph"]["edges"]}
+    for rid,col,width in [("rt_east_seam",(235,80,80),3),("rt_crown_safe_approach",(90,230,140),4),("rt_south_seam",(90,230,140),3)]:
+        pts=[L(x,y) for x,y in edges[rid]["polyline"]]
+        d.line(pts,fill=col,width=width)
+    for pid,label in [("poi_crown_waystation","Ashen Waystation"),("poi_crown_relay_shed","Crown Relay Shed"),("poi_amberwood_apothecary","Orchard Apothecary")]:
+        p=next(q for q in plan["pois"] if q["poi_id"]==pid); x,y=L(*p["cell"])
+        d.ellipse([x-6,y-6,x+6,y+6],fill=(255,235,150),outline=(20,20,20),width=2)
+        d.text((x+8,y-6),label,font=font(13,True),fill=(255,255,240),stroke_width=1,stroke_fill=(0,0,0))
+    d.text((8,8),"First-hour bootstrap: green safe preparation/retreat; red filter-gated hazard shortcut.",font=font(15,True),fill=(255,255,255),stroke_width=1,stroke_fill=(0,0,0))
+    d.text((8,30),"Authored hazard rects are preserved. Native damage/mitigation is A0/A3 contract, not playtested.",font=font(12),fill=(240,240,230),stroke_width=1,stroke_fill=(0,0,0))
+    paths.append(save(crop,"novice_bootstrap_detail.png"))
     # Region panels
     cols=3; panel_w=520; panel_h=360; rows=math.ceil(len(plan["regions"])/cols)
     sheet=Image.new("RGB",(cols*panel_w, rows*panel_h),(18,20,24)); sd=ImageDraw.Draw(sheet)

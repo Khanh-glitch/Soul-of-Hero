@@ -1,6 +1,6 @@
 # Validation Evidence — SURV-050A (review corrections)
 
-Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI **passed** at correction head `ea64df75`. Native continent gameplay validation remains **NOT_TESTED**.
+Status: authored-data validation passed locally. Product-correction checkpoint adds novice hazard bootstrap, A1/A3 material decisions and truthful POI readiness. Previous isolated Godot 4.7 reader CI passed at `ea64df75`/`da93be3c`; product-correction CI status is recorded after push. Native continent gameplay validation remains **NOT_TESTED**.
 
 ## Commands
 
@@ -18,13 +18,13 @@ Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI **
 ## Local results
 
 - Compiler: `ok = true`.
-- Masterplan SHA-256: `008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d`.
-- Deterministic double-compile tree SHA-256: `36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3` (212 JSON artifacts). See `determinism_report.json`.
+- Masterplan SHA-256: `fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4`.
+- Deterministic double-compile tree SHA-256: `29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f` (221 JSON artifacts). See `determinism_report.json`.
 - Structural validator: `ok = true`, 0 errors. See `validation_report.json`.
-- JSON Schema validation: 11 schemas emitted; all validated objects PASS.
-- Pytest: `41 passed`. See `pytest_report.txt`.
-- Pacing audit: 10 concrete journeys resolve; `AUTHORED_ESTIMATE_NOT_PLAYTESTED`. See `PACING_ANALYSIS.md` and `data/survival/world/pacing_analysis.json`.
-- Previews: 8 PNGs regenerated and visually inspected; `previews/preview_manifest.json`.
+- JSON Schema validation: 15 schemas emitted; all validated objects PASS (including hazard_damage, novice_bootstrap, material_decisions, poi_authoring).
+- Pytest: `56 passed`. See `pytest_report.txt`.
+- Pacing audit: 11 concrete journeys resolve; first-hour safe preparation/retreat has zero authored hazard exposure; `AUTHORED_ESTIMATE_NOT_PLAYTESTED`. See `PACING_ANALYSIS.md` and `data/survival/world/pacing_analysis.json`.
+- Previews: 9 PNGs regenerated; routes/starter/novice-bootstrap detail visually inspected; `previews/preview_manifest.json`.
 - `py_compile`: clean.
 
 ## Metrics
@@ -40,13 +40,14 @@ Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI **
 | New POIs | 108 |
 | Preserved Chapter 1 entrances | 10 |
 | Resource sites / nodes | 33 / 178 |
-| Route edges | 129 (21 trunk + 108 spurs) |
+| Route edges | 130 (22 trunk + 108 spurs; includes safe first-hour approach) |
 | Chunks | 192 × 64×64 |
 | Physically reachable new POIs | 108 / 108 |
 | Capability access counts | novice 39, mid 99, late 108 |
 | Empty-space ratio (>64 tiles from anchor) | 0.0115 |
 | Max distance to meaningful anchor | 80.99 tiles |
 | Long-run post-14d goals | 5 |
+| POI content readiness | 106 site-contract-only, 2 interaction-spec-authored-not-native, 10 preserved baseline |
 
 Novice access increased from 38 to 39 because sheltered capability-source POIs are no longer over-gated by a hazard rect they do not occupy (e.g. the thermal wardhouse). Geography, region IDs, POI IDs, entrances and resource counts were not regenerated.
 
@@ -62,6 +63,9 @@ Novice access increased from 38 to 39 because sheltered capability-source POIs a
 - **Chunk/RLE negatives:** negative/zero/overlength/underlength counts, negative/fractional/boolean values, empty RLE, unknown layer values, missing required layers, chunk identity/alignment/bounds/path/manifest mismatch, hash mismatch, legacy `build_permission=0` rejection.
 - **Seam negatives:** missing/ocean seam connection fails `SEAM_DISCONNECT`; protected-clearance seam fails `SEAM_PROTECTED`.
 - **Pacing audit:** journeys resolve, capability grants are modeled, early home cost/node visits are bounded, post-14d goals are reachable with late caps, alternate detours exist, playtime remains `NOT_TESTED`.
+- **Novice hazard bootstrap:** safe approach has zero authored hazard exposure and walkable sampled cells; hazardous shortcut remains filter-gated and exposed; first-hour journey grants salvage/power/filter and retreats; no circular bootstrap material; removing safe route forces a long safe detour, not the hazard shortcut.
+- **Material decisions:** 8 explicit alias decisions and 12 explicit missing items; provenance/renewal/sinks preserved; negative schema mutation fails.
+- **POI readiness:** truthful counts; two distinct early exemplars validate against `poi_authoring` schema; relay first-hour power does not require missing copper; missing spec ref fails validator.
 - Existing negative mutations: duplicate ID, uphill river, orphan node, emptiness, novice starvation, long-run removal, chunk hash, moved entrance, mid-bypass, trunk disconnect.
 
 ## Godot 4.7 isolated reader

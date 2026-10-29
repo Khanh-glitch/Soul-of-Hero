@@ -674,6 +674,59 @@
       "fauna respawn"
     ]
   },
+  "novice_bootstrap": {
+    "cap_filter": {
+      "action": "filter_lesson",
+      "bootstrap_materials": [
+        "rare_herb",
+        "fibre"
+      ],
+      "poi": "poi_amberwood_apothecary",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "rare_herb",
+        "fibre",
+        "venom_sac"
+      ]
+    },
+    "cap_power_1": {
+      "action": "hand_crank_bypass",
+      "bootstrap_materials": [
+        "salvage",
+        "timber"
+      ],
+      "poi": "poi_crown_relay_shed",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "copper",
+        "salvage"
+      ]
+    },
+    "cap_salvage": {
+      "action": "salvage_locker",
+      "bootstrap_materials": [],
+      "poi": "poi_crown_waystation",
+      "requires": [],
+      "sustain_materials": [
+        "salvage"
+      ]
+    },
+    "cap_seal_1": {
+      "action": "seal_ledger",
+      "bootstrap_materials": [],
+      "poi": "poi_crown_waystation",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "salvage"
+      ]
+    }
+  },
   "pois": [
     [
       "poi_crown_waystation",
@@ -4224,6 +4277,158 @@
         [
           368,
           200
+        ],
+        [
+          392,
+          200
+        ]
+      ],
+      "foot",
+      [
+        "cap_filter"
+      ],
+      "high"
+    ],
+    [
+      "rt_crown_safe_approach",
+      "node_refuge",
+      "node_crown_east",
+      [
+        [
+          56,
+          218
+        ],
+        [
+          98,
+          218
+        ],
+        [
+          98,
+          221
+        ],
+        [
+          113,
+          221
+        ],
+        [
+          113,
+          225
+        ],
+        [
+          115,
+          225
+        ],
+        [
+          115,
+          226
+        ],
+        [
+          120,
+          226
+        ],
+        [
+          120,
+          230
+        ],
+        [
+          123,
+          230
+        ],
+        [
+          123,
+          233
+        ],
+        [
+          126,
+          233
+        ],
+        [
+          126,
+          238
+        ],
+        [
+          127,
+          238
+        ],
+        [
+          127,
+          240
+        ],
+        [
+          134,
+          240
+        ],
+        [
+          134,
+          243
+        ],
+        [
+          144,
+          243
+        ],
+        [
+          144,
+          245
+        ],
+        [
+          152,
+          245
+        ],
+        [
+          152,
+          248
+        ],
+        [
+          153,
+          248
+        ],
+        [
+          153,
+          249
+        ],
+        [
+          189,
+          249
+        ],
+        [
+          189,
+          252
+        ],
+        [
+          229,
+          252
+        ],
+        [
+          229,
+          253
+        ],
+        [
+          230,
+          253
+        ],
+        [
+          230,
+          254
+        ],
+        [
+          231,
+          254
+        ],
+        [
+          231,
+          255
+        ],
+        [
+          240,
+          255
+        ],
+        [
+          240,
+          256
+        ],
+        [
+          392,
+          256
         ],
         [
           392,

@@ -27,3 +27,10 @@ def test_pacing_analysis_present_and_bounded():
     assert all(g["reachable_with_late_caps"] for g in report["post_14d_goals"])
     assert all(a["alternate_exists"] for a in report["alternate_route_detours"])
     assert len(report["outpost_logistics"]) == 15
+    cf = report["novice_hazard_counterfactual"]
+    assert cf["first_hour_journey_ok"] is True
+    assert cf["first_hour_hazard_exposure"] == {}
+    assert cf["no_circular_bootstrap"] is True
+    assert cf["safe_first_hour_route"]["exposure"] == {}
+    assert cf["hazardous_shortcut"]["exposure"]["hz_crown_heat"]["tiles"] > 0
+    assert cf["hazardous_shortcut"]["exposure"]["hz_crown_rot"]["tiles"] > 0

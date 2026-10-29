@@ -135,25 +135,41 @@
     {
       "access_stages": [
         {
-          "note": "visible from route; environmental clue before commitment",
+          "note": "A lit lantern and painted green seal mark the postern road.",
           "requires": [],
           "stage": "approach"
         },
         {
-          "note": "gear/credential/power preparation",
+          "note": "Authored safe court/yard with retreat path; no hazard exposure.",
           "requires": [],
-          "stage": "outer"
+          "stage": "safe_court"
+        },
+        {
+          "note": "One-time world-state action; see authoring spec.",
+          "requires": [
+            "cap_salvage"
+          ],
+          "stage": "interaction"
+        },
+        {
+          "note": "Renewable cache/breaker or later material upgrade; not a first-hour blocker.",
+          "requires": [
+            "cap_salvage"
+          ],
+          "stage": "sustain_or_upgrade"
         }
       ],
-      "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
+      "alternate_approach": "Rear ditch from the forecourt returns to the postern road; it avoids the locker face but does not bypass cap_salvage teaching.",
       "archetype": "roadside_station",
+      "authoring_spec_ref": "poi_authoring/poi_crown_waystation.v1.json",
       "band": "early",
       "cell": [
         408,
         200
       ],
+      "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
       "core_family_contract": null,
-      "footprint_radius_tiles": 4,
+      "footprint_radius_tiles": 5,
       "grants_capabilities": [
         "cap_salvage",
         "cap_seal_1"
@@ -167,7 +183,7 @@
       "poi_id": "poi_crown_waystation",
       "preserved_legacy": false,
       "purpose": "Teach salvage->spares->seal grammar at the new east postern.",
-      "refresh_policy": "outer caches restock; specimen vault one-time until world-state change",
+      "refresh_policy": "Locker and seal ledger are one-time; roadside cache restocks on an A0/A3-approved cooldown.",
       "region_id": "r_ashen_crown",
       "required_capabilities": [],
       "status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
@@ -175,27 +191,42 @@
     {
       "access_stages": [
         {
-          "note": "visible from route; environmental clue before commitment",
+          "note": "A dead lamp and copper cable trench point to the shed.",
           "requires": [],
           "stage": "approach"
         },
         {
-          "note": "gear/credential/power preparation",
+          "note": "Authored safe court/yard with retreat path; no hazard exposure.",
+          "requires": [],
+          "stage": "safe_court"
+        },
+        {
+          "note": "One-time world-state action; see authoring spec.",
           "requires": [
+            "cap_power_1",
             "cap_salvage"
           ],
-          "stage": "outer"
+          "stage": "interaction"
+        },
+        {
+          "note": "Renewable cache/breaker or later material upgrade; not a first-hour blocker.",
+          "requires": [
+            "cap_power_1"
+          ],
+          "stage": "sustain_or_upgrade"
         }
       ],
-      "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
+      "alternate_approach": "Cable trench from the yard reaches the breaker side and returns to the road spur; it does not bypass the cap_salvage hand-crank lesson.",
       "archetype": "power_substation",
+      "authoring_spec_ref": "poi_authoring/poi_crown_relay_shed.v1.json",
       "band": "early",
       "cell": [
         440,
         236
       ],
+      "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
       "core_family_contract": null,
-      "footprint_radius_tiles": 4,
+      "footprint_radius_tiles": 6,
       "grants_capabilities": [
         "cap_power_1"
       ],
@@ -208,7 +239,7 @@
       "poi_id": "poi_crown_relay_shed",
       "preserved_legacy": false,
       "purpose": "A dead copper circuit; restoring it teaches fuel+switch+door.",
-      "refresh_policy": "outer caches restock; specimen vault one-time until world-state change",
+      "refresh_policy": "Hand-crank restoration and copper upgrade are one-time world repairs; breaker reset is a reusable utility state.",
       "region_id": "r_ashen_crown",
       "required_capabilities": [
         "cap_salvage"
@@ -230,11 +261,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "quarry",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         420,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -267,11 +300,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_gatehouse",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         300,
         330
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -304,11 +339,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "river_crossing",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         260,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -351,11 +388,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "burial_field",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         470,
         150
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "ember",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -392,11 +431,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost_forge",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         560,
         180
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -443,11 +484,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "hidden_cave",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         660,
         80
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "frost",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -494,11 +537,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "research_ruin",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         720,
         180
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "storm",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -536,11 +581,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "mountain_pass",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         540,
         120
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -577,11 +624,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_camp",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         600,
         220
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -618,11 +667,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         620,
         130
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -666,11 +717,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "lighthouse",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         930,
         120
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "storm",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -709,11 +762,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "power_substation",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         860,
         60
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -752,11 +807,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shipwreck",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         960,
         200
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -794,11 +851,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "hidden_cave",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         820,
         180
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -833,11 +892,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         900,
         40
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -872,11 +933,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         800,
         100
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -915,11 +978,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_factory",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         580,
         320
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -961,11 +1026,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "workshop",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         540,
         280
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -1013,11 +1080,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "mine",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         640,
         380
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "acid",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1056,11 +1125,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "bandit_camp",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         700,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1097,11 +1168,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "geothermal_site",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         600,
         420
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1138,11 +1211,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "fortified_pass",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         520,
         400
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1179,11 +1254,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "trading_post",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         660,
         460
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1221,11 +1298,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "harbor",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         900,
         420
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -1265,11 +1344,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "evaporite_works",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         880,
         360
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1306,11 +1387,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "trading_post",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         800,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1346,11 +1429,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "oasis",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         780,
         340
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1385,11 +1470,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "burial_field",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         940,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1426,11 +1513,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "warehouse",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         920,
         460
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1469,11 +1558,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "puzzle_ruin",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         560,
         560
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -1526,11 +1617,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "temple",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         640,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "venom",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1569,11 +1662,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         600,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1610,11 +1705,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_settlement",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         700,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1652,11 +1749,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         540,
         640
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1694,11 +1793,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "power_substation",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         660,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1748,11 +1849,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "layered_vault",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         840,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "abyss",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -1794,11 +1897,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "settlement",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         800,
         560
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -1848,11 +1953,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "hidden_cave",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         900,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "abyss",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1891,11 +1998,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "bandit_camp",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         940,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1933,11 +2042,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         860,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -1974,11 +2085,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         780,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2015,11 +2128,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "watermill",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         120,
         440
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2057,11 +2172,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "workshop",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         80,
         480
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [
@@ -2099,11 +2216,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "farm_ruin",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         180,
         420
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2147,11 +2266,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "burial_field",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         60,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "ember",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2186,11 +2307,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "river_crossing",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         170,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2223,11 +2346,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         200,
         500
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2260,11 +2385,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "settlement",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         300,
         420
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2308,11 +2435,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ruin_crossing",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         360,
         500
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "tide",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2357,11 +2486,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "research_ruin",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         420,
         440
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "storm",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2396,11 +2527,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         320,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2435,11 +2568,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "river_crossing",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         400,
         480
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2476,11 +2611,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "hidden_cave",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         440,
         520
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2525,11 +2662,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "hidden_cave",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         120,
         640
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "abyss",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2566,11 +2705,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "puzzle_ruin",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         60,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2615,11 +2756,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         180,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "frost",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2656,11 +2799,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         100,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2697,11 +2842,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         200,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2738,11 +2885,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shipwreck",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         40,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2781,11 +2930,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "power_substation",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         340,
         620
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2834,11 +2985,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         300,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "venom",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2876,11 +3029,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "route_works",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         380,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2917,11 +3072,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         300,
         640
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -2959,11 +3116,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "bandit_camp",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         420,
         660
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3001,11 +3160,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         440,
         600
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3040,11 +3201,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         420,
         60
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3079,11 +3242,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         470,
         100
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3120,11 +3285,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "power_substation",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         400,
         20
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3159,11 +3326,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "quarry",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         480,
         40
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3196,11 +3365,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_camp",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         440,
         140
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3235,11 +3406,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "fortified_pass",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         540,
         40
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3276,11 +3449,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         600,
         20
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3318,11 +3493,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "watermill",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         680,
         30
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3368,11 +3545,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "abandoned_camp",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         740,
         60
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": "frost",
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3409,11 +3588,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         780,
         30
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3448,11 +3629,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         840,
         20
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3487,11 +3670,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         740,
         420
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3528,11 +3713,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "quarry",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         750,
         480
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3569,11 +3756,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "evaporite_works",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         780,
         460
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3610,11 +3799,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         840,
         480
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3649,11 +3840,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         30,
         440
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3688,11 +3881,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "burial_field",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         20,
         500
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3727,11 +3922,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "settlement",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         490,
         470
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3767,11 +3964,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "fortified_pass",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         540,
         710
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3809,11 +4008,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         600,
         720
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3850,11 +4051,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         950,
         620
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3892,11 +4095,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         950,
         680
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3934,11 +4139,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         230,
         720
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -3976,11 +4183,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "power_substation",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         480,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4018,11 +4227,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "shrine",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         300,
         720
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4060,11 +4271,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "route_works",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         270,
         700
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4102,11 +4315,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "watermill",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         120,
         300
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4144,11 +4359,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "burial_field",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         60,
         340
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4183,11 +4400,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         180,
         340
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4220,11 +4439,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "quarry",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         30,
         280
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4257,11 +4478,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "farm_ruin",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         140,
         360
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4297,11 +4520,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         880,
         240
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4338,11 +4563,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         975,
         380
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4379,11 +4606,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         720,
         640
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4420,11 +4649,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         750,
         240
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4461,11 +4692,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "mid",
       "cell": [
         580,
         490
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4503,11 +4736,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "route_works",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         400,
         720
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4543,11 +4778,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         240,
         400
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4580,11 +4817,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "settlement",
+      "authoring_spec_ref": null,
       "band": "early",
       "cell": [
         280,
         555
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4619,11 +4858,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "ecological_site",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         20,
         640
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4660,11 +4901,13 @@
       ],
       "alternate_approach": "rear/climb/boat route where authored; never a fake invisible wall",
       "archetype": "outpost",
+      "authoring_spec_ref": null,
       "band": "late",
       "cell": [
         870,
         540
       ],
+      "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
       "core_family_contract": null,
       "footprint_radius_tiles": 4,
       "grants_capabilities": [],
@@ -4694,12 +4937,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_1",
       "cell": [
         88,
         180
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4728,12 +4973,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_2",
       "cell": [
         64,
         128
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4762,12 +5009,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_3",
       "cell": [
         132,
         152
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4796,12 +5045,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_4",
       "cell": [
         200,
         136
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4830,12 +5081,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_5",
       "cell": [
         192,
         192
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4864,12 +5117,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_6",
       "cell": [
         288,
         140
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4898,12 +5153,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_7",
       "cell": [
         208,
         80
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4932,12 +5189,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_8",
       "cell": [
         272,
         72
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -4966,12 +5225,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_9",
       "cell": [
         208,
         40
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -5000,12 +5261,14 @@
       ],
       "alternate_approach": "existing four shortcuts preserved",
       "archetype": "chapter1_dungeon_entrance",
+      "authoring_spec_ref": null,
       "band": "early",
       "campaign_level_id": "chapter_1_level_10",
       "cell": [
         280,
         36
       ],
+      "content_readiness": "PRESERVED_BASELINE",
       "core_family_contract": null,
       "footprint_radius_tiles": 5,
       "grants_capabilities": [],
@@ -5049,9 +5312,162 @@
             200
           ]
         ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "risk": "high",
+        "route_id": "rt_east_seam",
+        "to": "node_crown_east"
+      },
+      {
+        "from": "node_refuge",
+        "kind": "trunk",
+        "mode": "foot",
+        "polyline": [
+          [
+            56,
+            218
+          ],
+          [
+            98,
+            218
+          ],
+          [
+            98,
+            221
+          ],
+          [
+            113,
+            221
+          ],
+          [
+            113,
+            225
+          ],
+          [
+            115,
+            225
+          ],
+          [
+            115,
+            226
+          ],
+          [
+            120,
+            226
+          ],
+          [
+            120,
+            230
+          ],
+          [
+            123,
+            230
+          ],
+          [
+            123,
+            233
+          ],
+          [
+            126,
+            233
+          ],
+          [
+            126,
+            238
+          ],
+          [
+            127,
+            238
+          ],
+          [
+            127,
+            240
+          ],
+          [
+            134,
+            240
+          ],
+          [
+            134,
+            243
+          ],
+          [
+            144,
+            243
+          ],
+          [
+            144,
+            245
+          ],
+          [
+            152,
+            245
+          ],
+          [
+            152,
+            248
+          ],
+          [
+            153,
+            248
+          ],
+          [
+            153,
+            249
+          ],
+          [
+            189,
+            249
+          ],
+          [
+            189,
+            252
+          ],
+          [
+            229,
+            252
+          ],
+          [
+            229,
+            253
+          ],
+          [
+            230,
+            253
+          ],
+          [
+            230,
+            254
+          ],
+          [
+            231,
+            254
+          ],
+          [
+            231,
+            255
+          ],
+          [
+            240,
+            255
+          ],
+          [
+            240,
+            256
+          ],
+          [
+            392,
+            256
+          ],
+          [
+            392,
+            200
+          ]
+        ],
         "required_capabilities": [],
         "risk": "low",
-        "route_id": "rt_east_seam",
+        "route_id": "rt_crown_safe_approach",
         "to": "node_crown_east"
       },
       {

@@ -13,6 +13,7 @@ from collections import deque
 from pathlib import Path
 
 import authoring as A
+import product_contracts as PC
 from baseline import Baseline, ROOT
 from build_contract import LAYER_SEMANTICS, REQUIRED_LAYERS
 
@@ -512,7 +513,7 @@ def compile_all():
     lock = base.lock()
     write_json(OUT / "baseline_lock.json", lock)
     regions = expand_regions()
-    pois = expand_pois() + legacy_pois(base)
+    pois = PC.apply_poi_readiness(expand_pois() + legacy_pois(base))
     routes = expand_routes(pois)
     raster = build_raster(base, pois, routes)
     w, h = raster["w"], raster["h"]
@@ -565,6 +566,7 @@ def compile_all():
         "route_edge_count": len(routes["edges"]), "bridge_cells": len(raster["bridges"]),
         "physically_reachable_new_pois": poi_reach,
         "capability_access_counts": access,
+        "content_readiness_counts": {k: sum(1 for p in pois if p.get("content_readiness") == k) for k in (PC.READINESS_SITE, PC.READINESS_SPEC, PC.READINESS_LEGACY)},
         "max_distance_to_meaningful_anchor_tiles": round(max_empty, 2),
         "sampled_land_cells_over_64_tiles_from_anchor": empty_gt_64,
         "sampled_new_land_cells": samples,
@@ -599,21 +601,29 @@ def compile_all():
         },
     }
     write_json(OUT / "world_plan.v1.json", plan)
-    write_json(OUT / "authoring_source.json", {"regions": A.REGIONS, "pois": A.P, "trunk": A.TRUNK, "resource_sites": A.RESOURCE_SITES, "rivers": A.RIVERS, "lakes": A.LAKES, "hazards": A.HAZARDS, "capabilities": A.CAPABILITIES, "materials": A.MATERIALS, "hubs": A.HUBS, "seams": A.SEAMS, "coast": A.COAST})
+    write_json(OUT / "authoring_source.json", {"regions": A.REGIONS, "pois": A.P, "trunk": A.TRUNK, "resource_sites": A.RESOURCE_SITES, "rivers": A.RIVERS, "lakes": A.LAKES, "hazards": A.HAZARDS, "capabilities": A.CAPABILITIES, "materials": A.MATERIALS, "hubs": A.HUBS, "seams": A.SEAMS, "coast": A.COAST, "novice_bootstrap": A.NOVICE_BOOTSTRAP})
     # lightweight graph exports for A3/A5/A6
     write_json(OUT / "material_source_contracts.json", {
         "schema": "soh.world.material_sources.v1", "status": "AUTHORED_CONTRACT_NOT_A3_INTEGRATED",
         "materials": A.MATERIALS, "sites": sites, "nodes": nodes,
         "poi_consumers": [{"poi_id": p["poi_id"], "material_keys": p["material_keys"]} for p in pois],
-        "a0_item_hints": {"timber": "oak_wood", "iron": "iron_scrap", "salvage": "iron_scrap", "fibre": "reed_fibre", "stone": "stone_chunk"},
-        "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; A3 owns final mapping, yields, recipes and prices.",
+        "a0_item_hints": {"timber": "oak_wood", "iron": "iron_scrap", "salvage": "iron_scrap", "stone": "stone_chunk"},
+        "a1_a3_decision_contract": "a1_a3_material_decisions.json",
+        "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; fibre/rare_herb/venom_sac/frost_resin/peat/hardwood/bog_iron/glacial_iron require the explicit A1/A3 decision contract. A3 owns final mapping, yields, recipes and prices.",
     })
     write_json(OUT / "hazard_capability_contracts.json", {
         "schema": "soh.world.hazard_capabilities.v1", "status": "AUTHORED_CONTRACT_NOT_A6_INTEGRATED",
         "hazards": list(A_HAZ.values()), "capabilities": A.CAPABILITIES,
         "clue_policy": "environmental/gameplay clues before commitment; no arbitrary level walls",
         "note": "A6 owns UX/VFX presentation; A1 supplies stable labels, regions, rects, required capabilities and severity only.",
+        "damage_mitigation_contract": "hazard_damage_contract.json",
+        "novice_bootstrap_contract": "novice_bootstrap_contract.json",
     })
+    write_json(OUT / "hazard_damage_contract.json", PC.hazard_damage_contract())
+    write_json(OUT / "novice_bootstrap_contract.json", PC.novice_bootstrap_contract())
+    write_json(OUT / "a1_a3_material_decisions.json", PC.material_decision_contract())
+    for spec in PC.poi_authoring_specs():
+        write_json(OUT / "poi_authoring" / f"{spec['poi_id']}.v1.json", spec)
     write_json(OUT / "poi_route_graph.json", {"schema": "soh.world.poi_route_graph.v1", "pois": pois, "route_graph": routes, "capabilities": A.CAPABILITIES})
     sample_cells = {
         "legacy_legal_home": [54, 222],

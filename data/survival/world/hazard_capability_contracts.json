@@ -132,6 +132,7 @@
     }
   },
   "clue_policy": "environmental/gameplay clues before commitment; no arbitrary level walls",
+  "damage_mitigation_contract": "hazard_damage_contract.json",
   "hazards": [
     {
       "clue": "legacy crucible basin",
@@ -275,6 +276,7 @@
     }
   ],
   "note": "A6 owns UX/VFX presentation; A1 supplies stable labels, regions, rects, required capabilities and severity only.",
+  "novice_bootstrap_contract": "novice_bootstrap_contract.json",
   "schema": "soh.world.hazard_capabilities.v1",
   "status": "AUTHORED_CONTRACT_NOT_A6_INTEGRATED"
 }

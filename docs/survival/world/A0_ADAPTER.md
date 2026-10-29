@@ -107,12 +107,19 @@ Never rewrite `world_plan.v1.json` or chunk files to store runtime mutations. PR
 | Consumer | Contract | A1 guarantee | Not guaranteed |
 |---|---|---|---|
 | A0 construction/persistence | Chunk layers, seam carves, stable IDs, protected rects | Deterministic static truth, baseline lock, validator | Native spawning, collision reconciliation, SaveService schema |
-| A3 economy | `material_source_contracts.json`, `material_key`, renewal, causes, `a0_item_hints` | Geological/ecological source sites and POI consumers; legacy A0 item aliases are hints only | Final `item_id`, recipes, yields, prices, Gold balance |
+| A3 economy | `material_source_contracts.json`, `a1_a3_material_decisions.json`, `material_key`, renewal, causes | Geological/ecological source sites and POI consumers; explicit alias decisions preserve provenance/renewal/sinks | Final `item_id`, recipes, yields, prices, Gold balance |
 | A4 Gold/VFX | None | A1 does not import or modify Gold/VFX | Any A4 asset dependency |
-| A6 UX | `hazard_capability_contracts.json`, hazard clues, capability gates, POI purpose, alternate approaches | Stable hazard/capability labels, rects, severity, required preparation | Final HUD/map UI/VFX implementation |
+| A6 UX | `hazard_capability_contracts.json`, `hazard_damage_contract.json`, `novice_bootstrap_contract.json`, POI authoring clues | Stable hazard/capability labels, rects, severity, safe first-hour route, map clues | Final HUD/map UI/VFX implementation |
 | S6 optional POI | None | A1 plan is complete without S6 | S6 content is nonblocking |
 
 `material_key` is a world-source contract, not a final A3 item. `cap_*` is a preparation capability (equipment, credential, power, boat, seal), not a character level. Hazards communicate required preparation through clues and exposure; alternates may reduce combat but must not remove exposure preparation.
+
+## 6.1 Product-correction contracts
+
+- `novice_bootstrap_contract.json` separates first-hour bootstrap from sustain materials and publishes safe retreat routes.
+- `hazard_damage_contract.json` is an A0/A3 native-compatible proposal: A0 applies damage, A3 owns resistance values, A6 owns clues. It is not native-balanced.
+- `a1_a3_material_decisions.json` resolves PR #19 aliases without changing A3 catalog code.
+- `poi_authoring/*.v1.json` demonstrates two early interaction specs. The other 106 new POIs are truthfully `WORLD_SITE_CONTRACT_ONLY`, not implemented encounters.
 
 ## 7. Native acceptance gate before playable claims
 

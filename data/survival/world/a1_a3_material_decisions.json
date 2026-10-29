@@ -1,0 +1,225 @@
+{
+  "a3_code_changed_by_a1": false,
+  "a3_review_source": {
+    "head": "86dc21954fd0a1a4aa9f98b6ec7d1e6782cc800e",
+    "mapping_json_sha256": "e5d0cb6ef05fae8bbd90049d224782a1a20ad86387735445e0184687d34defee",
+    "mapping_md_sha256": "642ba9a6bed69ef42ad041944bed3ec03d2d3b1328e0692a7e633f1579763391",
+    "pr": 19
+  },
+  "alias_decisions": [
+    {
+      "a3_action": "Author a distinct bog_iron feedstock or source-tagged smelting path when the Ashwater pump loop is implemented; retain A1 node renewal.",
+      "decision": "SPLIT",
+      "material_key": "bog_iron",
+      "preserved_provenance": "redox precipitation at peat margin",
+      "preserved_renewal": "slow redox renewal",
+      "preserved_sinks": "filter frame; late tools",
+      "priority": "P2",
+      "proposed_a3_ids": [
+        "iron_ore"
+      ],
+      "reason": "Slow redox renewal at peat margins is not A3 finite-vein iron_ore. Keep bog_iron provenance for pump/filter-frame and late-tool sinks; do not collapse renewal/rarity into generic ore."
+    },
+    {
+      "a3_action": "Author glacial_iron or a cold-crucible bloom path for thermal ward/deep pressure frames; keep thaw-season vein provenance.",
+      "decision": "SPLIT",
+      "material_key": "glacial_iron",
+      "preserved_provenance": "magnetite skarn at granite contact",
+      "preserved_renewal": "thaw-season vein",
+      "preserved_sinks": "thermal ward; deep pressure frame",
+      "priority": "P1",
+      "proposed_a3_ids": [
+        "iron_ore"
+      ],
+      "reason": "Thaw-season magnetite skarn is a high-grade thermal/pressure feedstock, not generic iron_ore. Collapsing it removes the Frostcrown preparation identity."
+    },
+    {
+      "a3_action": "Map only riverine/lake reed sites (e.g. src_crown_reed, src_mere_reed) to reed_fibre; keep oasis/forest fibre as dry_fibre or a distinct A3 item before Saffron filter/rope sinks.",
+      "decision": "SPLIT",
+      "material_key": "fibre",
+      "preserved_provenance": "reed/oasis/forest understorey",
+      "preserved_renewal": "seasonal regrowth",
+      "preserved_sinks": "cloth; rope; filter mesh",
+      "priority": "P0",
+      "proposed_a3_ids": [
+        "reed_fibre"
+      ],
+      "reason": "A1 fibre spans river-margin reed and oasis/forest understorey. A3 reed_fibre is wetland-specific. First-hour filter mesh needs an explicit source-side split, not a global rename.",
+      "site_mapping": [
+        {
+          "a3_item_id": "reed_fibre",
+          "site_id": "src_crown_reed",
+          "status": "APPROVE_SOURCE_SPECIFIC"
+        },
+        {
+          "a3_item_id": null,
+          "site_id": "src_saffron_fibre",
+          "status": "MISSING_DRY_FIBRE_DECISION"
+        }
+      ]
+    },
+    {
+      "a3_action": "Reject hardwood=oak_wood. A0/A3 should author a hardwood construction tag/item for hulls and boardwalks; keep oak_wood for early generic timber.",
+      "decision": "REJECT",
+      "material_key": "hardwood",
+      "preserved_provenance": "monsoon canopy emergent trees",
+      "preserved_renewal": "slow grove",
+      "preserved_sinks": "boat hull; boardwalk; advanced frames",
+      "priority": "P1",
+      "proposed_a3_ids": [
+        "oak_wood"
+      ],
+      "reason": "Monsoon emergent hardwood is a slow-grove boat hull/boardwalk/advanced-frame material. oak_wood is generic structural timber; aliasing would erase boat logistics and rarity."
+    },
+    {
+      "a3_action": "Add frost_resin item and frost_extract/thermal-ward sink; retain tapped-stand cooldown. Do not rename frost_shard.",
+      "decision": "SPLIT",
+      "material_key": "frost_resin",
+      "preserved_provenance": "boreal conifer cold stress exudate",
+      "preserved_renewal": "tapped stand cooldown",
+      "preserved_sinks": "thermal ward; cold-seal core",
+      "priority": "P1",
+      "proposed_a3_ids": [
+        "frost_shard"
+      ],
+      "reason": "Tapped conifer cold-stress exudate is ecological, not mineral frost_shard. Approve the smallest A3 split because thermal ward/cold-seal core is a real sink."
+    },
+    {
+      "a3_action": "Add peat fuel/charcoal path and filter-carbon sink; preserve very slow cut renewal and Ashwater provenance.",
+      "decision": "SPLIT",
+      "material_key": "peat",
+      "preserved_provenance": "waterlogged acid bog accumulation",
+      "preserved_renewal": "very slow cut",
+      "preserved_sinks": "fuel; filter carbon",
+      "priority": "P2",
+      "proposed_a3_ids": [
+        "coal"
+      ],
+      "reason": "Cut acid-bog peat is a very slow renewable fuel/filter carbon, not geological coal. Approve split only with a real peat_charcoal/furnace-fuel or filter-carbon sink."
+    },
+    {
+      "a3_action": "Map orchard/remnant plot morphs (e.g. src_amber_herb) to moonleaf only with a real potion/filter/grafting sink; keep karst/cenote rare_herb distinct.",
+      "decision": "SPLIT",
+      "material_key": "rare_herb",
+      "preserved_provenance": "niche understorey and orchard remnant",
+      "preserved_renewal": "plot or wild patch",
+      "preserved_sinks": "potions; filter; grafting",
+      "priority": "P0",
+      "proposed_a3_ids": [
+        "moonleaf"
+      ],
+      "reason": "A1 rare_herb is broader than A3 moonleaf. First-hour filter preparation needs an explicit orchard-understorey mapping; cenote/karst herbs must not collapse into moonleaf.",
+      "site_mapping": [
+        {
+          "a3_item_id": "moonleaf",
+          "site_id": "src_amber_herb",
+          "status": "APPROVE_SOURCE_SPECIFIC_CONDITIONAL_ON_SINK"
+        },
+        {
+          "a3_item_id": null,
+          "site_id": "src_sunken_herb",
+          "status": "MISSING_KARST_HERB_DECISION"
+        }
+      ]
+    },
+    {
+      "a3_action": "Add venom_sac fauna-source item and extract_venom/toxin_mask sink; keep fauna respawn provenance. venom_spine remains a separate reward.",
+      "decision": "SPLIT",
+      "material_key": "venom_sac",
+      "preserved_provenance": "wetland predator and mangrove fauna",
+      "preserved_renewal": "fauna respawn",
+      "preserved_sinks": "filter gear; venom core family",
+      "priority": "P1",
+      "proposed_a3_ids": [
+        "venom_spine"
+      ],
+      "reason": "Fauna venom sac is not A3 venom_spine reward. Approve split because extract_venom/toxin_mask/venom-core are real sinks; bootstrap filter must not require venom_sac before cap_filter exists."
+    }
+  ],
+  "counts": {
+    "alias_decisions": 8,
+    "missing_items": 12
+  },
+  "missing_items": [
+    {
+      "dependency": "Power circuits, seal-2 forge, storm signal, pumps; first-hour relay uses a salvage/timber hand-crank bypass, so copper is not a first-hour softlock.",
+      "first_hour_blocking": false,
+      "material_key": "copper",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Boat hull seals, deepward/tide-ward insulation; mid-game traversal preparation.",
+      "first_hour_blocking": false,
+      "material_key": "rubber_sap",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Mortar, filter bed, grafting bed; A0 construction/A1 preparation gap.",
+      "first_hour_blocking": false,
+      "material_key": "limestone",
+      "priority": "P1"
+    },
+    {
+      "dependency": "Food/fermentation/trade; not required for the first-hour filter lesson.",
+      "first_hour_blocking": false,
+      "material_key": "honey",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Food preservation, flux, trade; Saffron logistics.",
+      "first_hour_blocking": false,
+      "material_key": "salt",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Seal inlay, trade, lens; access seals are credentials, not pearl crafts by default.",
+      "first_hour_blocking": false,
+      "material_key": "pearl",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Glass furnace/lens path; prerequisite for storm_glass identity.",
+      "first_hour_blocking": false,
+      "material_key": "silica_sand",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Signal tower/storm core; late Glasswind objective.",
+      "first_hour_blocking": false,
+      "material_key": "storm_glass",
+      "priority": "P2"
+    },
+    {
+      "dependency": "Precision cores/blades; late Embersteppe specialization.",
+      "first_hour_blocking": false,
+      "material_key": "obsidian",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Heat-proof construction; primarily A0 construction material.",
+      "first_hour_blocking": false,
+      "material_key": "basalt",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Tier-3 seal/abyssal core; late Pearl objective.",
+      "first_hour_blocking": false,
+      "material_key": "abyssal_pearl",
+      "priority": "P3"
+    },
+    {
+      "dependency": "Core blanks/power nodes; not interchangeable with ancient_catalyst without a design decision.",
+      "first_hour_blocking": false,
+      "material_key": "aether_crystal",
+      "priority": "P3"
+    }
+  ],
+  "principles": [
+    "material_key remains A1 world-source truth; A3 owns item ids, recipes, yields, prices and migration.",
+    "No alias is provenance-equivalent unless explicitly approved; source/renewal/sink/rarity must survive adoption.",
+    "MISSING_A3_ITEM remains explicit; do not manufacture filler items to reduce the count.",
+    "First-hour bootstrap may not depend on a downstream-gated sustain material."
+  ],
+  "schema": "soh.world.a1_a3_material_decisions.v1",
+  "status": "A1_DECISION_CONTRACT_FOR_A3_ADOPTION"
+}

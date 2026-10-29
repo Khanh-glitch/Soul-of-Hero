@@ -1,11 +1,11 @@
 {
   "a0_item_hints": {
-    "fibre": "reed_fibre",
     "iron": "iron_scrap",
     "salvage": "iron_scrap",
     "stone": "stone_chunk",
     "timber": "oak_wood"
   },
+  "a1_a3_decision_contract": "a1_a3_material_decisions.json",
   "materials": {
     "abyssal_pearl": [
       "ecological",
@@ -3129,7 +3129,7 @@
       "status": "CONTRACT_NOT_SPAWNED"
     }
   ],
-  "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; A3 owns final mapping, yields, recipes and prices.",
+  "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; fibre/rare_herb/venom_sac/frost_resin/peat/hardwood/bog_iron/glacial_iron require the explicit A1/A3 decision contract. A3 owns final mapping, yields, recipes and prices.",
   "poi_consumers": [
     {
       "material_keys": [

@@ -13,7 +13,8 @@ This directory contains the review package for the complete authored continent. 
 3. [`VALIDATION.md`](VALIDATION.md) — exact commands, validator/pytest/schema/determinism results.
 4. [`VISUAL_CRITIQUE.md`](VISUAL_CRITIQUE.md) — inspected previews, geography revisions, remaining visual limitations.
 5. [`PACING_ANALYSIS.md`](PACING_ANALYSIS.md) — concrete journey/travel/preparation/logistics estimates; playtime NOT_TESTED.
-6. [`RESEARCH_AND_LICENSES.md`](RESEARCH_AND_LICENSES.md) — required source reading, pinned external research, license/reuse decisions.
+6. [`PRODUCT_CORRECTIONS.md`](PRODUCT_CORRECTIONS.md) — novice hazard bootstrap, A1/A3 material decisions, truthful POI readiness and two early exemplars.
+7. [`RESEARCH_AND_LICENSES.md`](RESEARCH_AND_LICENSES.md) — required source reading, pinned external research, license/reuse decisions.
 
 ## Machine-readable artifacts
 
@@ -23,6 +24,9 @@ This directory contains the review package for the complete authored continent. 
 - `data/survival/world/reader_contract.json` — machine-readable build delegation, overlay precedence and sample cells for the isolated Godot reader.
 - `data/survival/world/hazard_capability_contracts.json` — A6 hazard/capability labels, rects, severity and required preparation.
 - `data/survival/world/pacing_analysis.json` — bounded travel/preparation/logistics estimates, not playtime proof.
+- `data/survival/world/novice_bootstrap_contract.json` / `hazard_damage_contract.json` — first-hour safe preparation and native-compatible A0/A3 damage/mitigation proposal.
+- `data/survival/world/a1_a3_material_decisions.json` — explicit A1 decisions for PR #19 aliases and 12 missing items.
+- `data/survival/world/poi_authoring/*.v1.json` — two early interaction specs; 106 other new POIs remain `WORLD_SITE_CONTRACT_ONLY`.
 - `data/survival/world/poi_route_graph.json` — POI/route/capability graph for A3/A5/A6.
 - `data/survival/world/material_source_contracts.json` — material source/consumer contracts for A3.
 - `data/survival/world/baseline_lock.json` — read-only production baseline hashes and entrance oracle.

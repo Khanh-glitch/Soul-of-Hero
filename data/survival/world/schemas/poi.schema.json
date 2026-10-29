@@ -11,6 +11,12 @@
     "archetype": {
       "type": "string"
     },
+    "authoring_spec_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "band": {
       "enum": [
         "early",
@@ -25,6 +31,13 @@
       "maxItems": 2,
       "minItems": 2,
       "type": "array"
+    },
+    "content_readiness": {
+      "enum": [
+        "WORLD_SITE_CONTRACT_ONLY",
+        "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+        "PRESERVED_BASELINE"
+      ]
     },
     "footprint_radius_tiles": {
       "minimum": 1,
@@ -81,7 +94,8 @@
     "purpose",
     "required_capabilities",
     "access_stages",
-    "preserved_legacy"
+    "preserved_legacy",
+    "content_readiness"
   ],
   "title": "poi",
   "type": "object"

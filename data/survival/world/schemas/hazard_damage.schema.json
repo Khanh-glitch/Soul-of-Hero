@@ -1,0 +1,51 @@
+{
+  "$id": "soh://world/hazard_damage.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "hazardous_shortcut": {
+      "type": "object"
+    },
+    "hazards": {
+      "items": {
+        "required": [
+          "hazard_id",
+          "kind",
+          "rect",
+          "required_capability",
+          "severity",
+          "unmitigated_hp_per_second_proposal",
+          "mitigation",
+          "retreat_rule"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "novice_safe_route": {
+      "required": [
+        "route_id",
+        "max_authored_hazard_tiles"
+      ],
+      "type": "object"
+    },
+    "schema": {
+      "const": "soh.world.hazard_damage.v1"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "status",
+    "native_playable",
+    "hazards",
+    "novice_safe_route",
+    "hazardous_shortcut"
+  ],
+  "title": "hazard_damage",
+  "type": "object"
+}

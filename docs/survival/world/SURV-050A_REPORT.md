@@ -10,7 +10,7 @@ Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20
 
 ## Executive summary
 
-This milestone delivers a complete causally authored continent as static world truth: 11 regions, 22 biomes, 27 material contracts, 12 preparation capabilities, 10 hazards, 9 rivers + 3 lakes + 1 subsurface conduit, 108 new POIs, 33 resource sites / 178 nodes, 21 cyclic trunk routes + 108 spurs, 5 post-14-day-equivalent goals, and 192 deterministic 64×64 chunks. The existing ten Chapter 1 dungeon entrances are preserved verbatim inside the opening quarter. The package includes 11 JSON schemas, a deterministic compiler/validator, 41 passing acceptance/negative tests, double-compile hash determinism, inspected/revised previews, an isolated Godot 4.7 chunk/RLE reader fixture, a bounded pacing/scale audit, and A0/A3/A6 handoff contracts. Review corrections make legacy `build=0` delegate to A0 via `build_permission=2` instead of forbidding homes.
+This milestone delivers a complete causally authored continent as static world truth: 11 regions, 22 biomes, 27 material contracts, 12 preparation capabilities, 10 hazards, 9 rivers + 3 lakes + 1 subsurface conduit, 108 new POIs, 33 resource sites / 178 nodes, 21 cyclic trunk routes + 108 spurs, 5 post-14-day-equivalent goals, and 192 deterministic 64×64 chunks. The existing ten Chapter 1 dungeon entrances are preserved verbatim inside the opening quarter. The package includes 15 JSON schemas, a deterministic compiler/validator, 56 passing acceptance/negative tests, double-compile hash determinism, inspected/revised previews, an isolated Godot 4.7 chunk/RLE reader fixture, a bounded pacing/scale audit, and A0/A3/A6 handoff contracts. Review corrections make legacy `build=0` delegate to A0 via `build_permission=2` instead of forbidding homes.
 
 It is review-ready as an authored world plan. It is **not** native playable integration: the production overworld controller, SaveService, A0 construction files, A3 economy files, A4 Gold/VFX, and A6 UX files were not modified.
 
@@ -26,7 +26,7 @@ It is review-ready as an authored world plan. It is **not** native playable inte
 | Roads, trade, transport, bottlenecks, alternates | 21 trunk edges, 108 spurs, boat/pass modes; single-trunk-edge removal keeps hubs connected |
 | Hazards and equipment preparation | 10 hazards, 12 capabilities; environmental clues, not level walls |
 | Outposts/logistics | watches, waystations, mills, boardwalks, pumps, drydock, ferry/pile sites |
-| Early/mid/late identities | region bands and capability gates; novice 39 / mid 99 / late 108 accessible new POIs; sheltered source POIs no longer over-gated by hazards they do not occupy |
+| Early/mid/late identities | region bands and capability gates; novice 39 / mid 99 / late 108 accessible new POIs; 106 POIs truthfully site-contract-only, 2 early interaction specs; sheltered source POIs no longer over-gated by hazards they do not occupy |
 | Exactly ten Chapter 1 entrances intact in initial quarter | baseline lock, preserved inset, entrance-preservation tests |
 | Other regions detailed upfront + discoveries after ~14d | 108 new POIs across all regions; 5 post-14d goals |
 | Machine-readable masterplan + region/biome/elevation/hydrology schemas | `data/survival/world/` + 11 schemas, `build_permission` layer, `reader_contract.json` |
@@ -83,17 +83,17 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 
 - Data: `data/survival/world/` (masterplan, 192 chunks, 10 schemas, graphs, contracts, baseline lock, metrics).
 - Tools: `tools/survival/worldgen/` (`authoring.py`, `compile_plan.py`, `baseline.py`, `validate_world.py`, `make_schemas.py`, `preview.py`, `check_determinism.py`, requirements).
-- Tests: `tests/survival/world/` (41 Python cases) + `tests/survival/world/godot/` isolated Godot 4.7 reader fixture.
+- Tests: `tests/survival/world/` (56 Python cases) + `tests/survival/world/godot/` isolated Godot 4.7 reader fixture.
 - CI: `.github/workflows/survival-world-reader.yml` (A1-owned, read-only fixture; not production integration).
 - Docs/previews: `docs/survival/world/` (report, adapter, research, visual critique, validation, determinism report, 8 PNGs).
 
 ## Validation summary
 
-- Validator: 0 errors; 11 schemas PASS.
-- Pytest: 41 passed.
-- Double-compile determinism: identical 212-artifact tree hash `36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3`.
-- Masterplan SHA-256: `008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d`.
-- Pacing audit: 10 journeys resolve; travel/preparation/logistics estimates only; playtime NOT_TESTED.
+- Validator: 0 errors; 15 schemas PASS.
+- Pytest: 56 passed.
+- Double-compile determinism: identical 221-artifact tree hash `29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f`.
+- Masterplan SHA-256: `fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4`.
+- Pacing audit: 11 journeys resolve; first-hour safe preparation/retreat has zero authored hazard exposure; travel/preparation/logistics estimates only; playtime NOT_TESTED.
 - Isolated Godot 4.7 reader CI: push run 40872678698 @ ea64df75 success; local Godot unavailable.
 - Empty-space ratio 1.15%; max anchor distance 80.99 tiles; all 108 new POIs physically reachable in the proposed walk layer.
 - Native Godot 4.7 not run; CI not triggered by A1. See `VALIDATION.md`.
@@ -108,6 +108,10 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 - Godot 4.7 binary download blocked by asset-host SSL; local native validation remains NOT_TESTED. A1-owned isolated reader CI added; exact run status recorded in `VALIDATION.md`.
 - Google Docs tab 04 sync completed and readback verified; control-tower tab 12 left to coordinator.
 - Early buffer trunk intersects legacy crown heat/rot hazard rects; A6 clues and A0/A3 early mitigation/alternate tuning remain open authored integration gates.
+
+## Living-world product corrections after independent PR #20 review
+
+See `PRODUCT_CORRECTIONS.md`. The first-hour safe route preserves heat/rot danger while removing the novice circular exposure problem; PR #19 material aliases received explicit A1 decisions; all 108 new POIs now carry truthful content-readiness status, with two early interaction exemplars (Ashen Waystation, Crown Relay Shed). This is still not 108 implemented encounters and not native playable.
 
 ## Review corrections after PR #20
 

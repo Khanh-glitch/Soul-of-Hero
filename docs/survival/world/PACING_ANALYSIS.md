@@ -9,7 +9,8 @@ Travel is foot-equivalent at 96 px/s along authored polylines; resource-site lin
 | Journey | Route tiles | Travel min | Detour ratio | Hazard exposure (tiles) | Grants |
 |---|---:|---:|---:|---|---|
 | early_legacy_home | 224 | 0.62 | - | none | - |
-| early_buffer_salvage_power | 868.12 | 2.41 | 1.083 | hz_crown_heat:129.36, hz_crown_rot:207.14 | poi_crown_waystation, poi_crown_relay_shed |
+| early_buffer_salvage_power | 1055.08 | 2.93 | 1.316 | none | poi_crown_waystation, poi_crown_relay_shed |
+| first_hour_safe_preparation_and_retreat | 1541.72 | 4.28 | 1.176 | none | poi_crown_waystation, poi_crown_relay_shed, poi_amberwood_apothecary |
 | mid_filter_bootstrap_and_sustain | 2925.51 | 8.13 | 2.024 | hz_ashwater_miasma:220.88 | poi_amberwood_apothecary |
 | mid_climb_bootstrap_and_sustain | 2608.86 | 7.25 | 2.609 | hz_crown_heat:64.68, hz_crown_rot:103.57, hz_ember_gas:99.44 | poi_ember_piton_works |
 | mid_thermal_bootstrap_and_sustain | 1314.41 | 3.65 | 1.167 | hz_crown_heat:129.36, hz_crown_rot:207.14 | poi_frost_wardhouse |
@@ -61,6 +62,14 @@ Shelter: 4x4 room: 11 walls + 1 door + 4 floors + 1 chest. Cost: {'oak_wood': 36
 | rt_frost_coast | 1.03 | 2.44 | 1.41 |
 | rt_ember_mere | 0.58 | 2.38 | 1.8 |
 | rt_saffron_pearl | 0.58 | 2.71 | 2.14 |
+
+## First-hour hazard bootstrap counterfactual
+
+Safe first-hour journey ok: True; hazard exposure: {}.
+Prepared shortcut `rt_east_seam` still exposes: {'hz_crown_heat': {'tiles': 64.68, 'seconds': 10.78}, 'hz_crown_rot': {'tiles': 103.57, 'seconds': 17.26}}. It requires `cap_filter`; danger is preserved, not disabled.
+Safe approach `rt_crown_safe_approach` exposure: {}. Circular bootstrap requirements: none.
+Native damage/mitigation is NOT_TESTED; A0/A3 must adopt `hazard_damage_contract.json` and `novice_bootstrap_contract.json`.
+
 
 ## Revisit value and caveat
 

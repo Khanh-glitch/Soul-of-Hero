@@ -1,10 +1,11 @@
-{
-  "artifact_count": 212,
-  "artifacts": [
+{"ok": true, "tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f", "artifacts": 221}
+terial_decisions.json",
+      "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
+    },
     {
-      "bytes": 77674,
+      "bytes": 80690,
       "path": "data/survival/world/authoring_source.json",
-      "sha256": "d12321b1e67c730176beb318f877f395213fa028ad05eefae7f58ebd89a0f74f"
+      "sha256": "9c6d84eac948b1564f921e44f60bb1e4b20ca64c69e03f86efc0fe5ca4506ca7"
     },
     {
       "bytes": 7195,
@@ -212,9 +213,9 @@
       "sha256": "e805543b74a6b4f738519a1e70403fa031efc44023956678d851f535cbefa5f6"
     },
     {
-      "bytes": 22678,
+      "bytes": 23301,
       "path": "data/survival/world/chunks/03_04.json",
-      "sha256": "dc19e9d1c543b8f231007882a812a5fbaa26325c3f8ac1151e8567116ac3b424"
+      "sha256": "a19b23acc6e7c3f92494d7e48d95d6fc97ef7c0c6c1f101b485438484a76d0ae"
     },
     {
       "bytes": 4921,
@@ -272,9 +273,9 @@
       "sha256": "390a69700f9c0d80bbe59653ba1a988dda43fda5fcf215666d9d094a3ef8156a"
     },
     {
-      "bytes": 20213,
+      "bytes": 20374,
       "path": "data/survival/world/chunks/04_04.json",
-      "sha256": "ce1a3185cd6365e41f2a76e6961c1f40c40ab3a2046657e5e87b1f4c0a3fbdd8"
+      "sha256": "e59c909158be13f8ce60b6ef846a6505f8130282e3ef42fb3027ea29a3c87406"
     },
     {
       "bytes": 39044,
@@ -332,9 +333,9 @@
       "sha256": "66badecf8838507cadae0a819da4902d464111f28334d6cc6c1bdb31c46d4032"
     },
     {
-      "bytes": 8203,
+      "bytes": 8364,
       "path": "data/survival/world/chunks/05_04.json",
-      "sha256": "f793d0b4c6551769cee681d288fe5195a2105d0fbd84f42dc99cf9295a0a3898"
+      "sha256": "a58bddae3966709e3ba6d3a5bc7ed2d40bc102665a8dcab9116fc480bb272444"
     },
     {
       "bytes": 29774,
@@ -387,14 +388,14 @@
       "sha256": "31b8664f9d248a4b77eae6b2cf1d43ed8bb2785fecc7474cfc0426fce0c4e832"
     },
     {
-      "bytes": 44000,
+      "bytes": 56858,
       "path": "data/survival/world/chunks/06_03.json",
-      "sha256": "490a563a79fd9d5b66babbfe3a35aaca2fa5580b05f0c8d77dd5a847ce72df54"
+      "sha256": "8bb0d95f7588124c9781fd942521e23b80271ef666c8cec5ce8a951002400c07"
     },
     {
-      "bytes": 32419,
+      "bytes": 32889,
       "path": "data/survival/world/chunks/06_04.json",
-      "sha256": "02d1314221f668b7aecd1d81a3f1ff80fb136b88e4eb0a8569e40f951414dfc4"
+      "sha256": "431cf6bd8ad2c62a3584ff0a6ddabc40252f43fe2b5d0026276f57a98ec0f70c"
     },
     {
       "bytes": 3020,
@@ -972,34 +973,54 @@
       "sha256": "c3670dc3667e7917fa5c1d16bc54d4e48b5427d0478ff35d6800067785c5eefe"
     },
     {
-      "bytes": 5925,
+      "bytes": 6053,
       "path": "data/survival/world/hazard_capability_contracts.json",
-      "sha256": "a18d6ea63a5e1bbc865b3d13faa9b808dc94a06107c2034839c05af9e2c7b639"
+      "sha256": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2"
     },
     {
-      "bytes": 107070,
+      "bytes": 11899,
+      "path": "data/survival/world/hazard_damage_contract.json",
+      "sha256": "18bfe51e30536bddee016c642afd652519fb80ca0f28a1ac8289864501543d35"
+    },
+    {
+      "bytes": 107225,
       "path": "data/survival/world/material_source_contracts.json",
-      "sha256": "43abb123b8a94a4ec42827416aa5875c6165b43959a39fd48ddddb8233f54a51"
+      "sha256": "c4277b0aeab503cc4f6e817e5d36c89b6ce741aba0b6cc277f95bc04534b7c5e"
     },
     {
-      "bytes": 732,
+      "bytes": 882,
       "path": "data/survival/world/metrics.json",
-      "sha256": "d0b6bb893aa9ee663f8bc33068dffcff2a580eb2e83043733f7ef7082717edd9"
+      "sha256": "e6cfb82024435395de8b2c5e24d49ef0c40c5043155e7dfb7130d0422c37c2b0"
     },
     {
-      "bytes": 51446,
+      "bytes": 2629,
+      "path": "data/survival/world/novice_bootstrap_contract.json",
+      "sha256": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a"
+    },
+    {
+      "bytes": 54158,
       "path": "data/survival/world/pacing_analysis.json",
-      "sha256": "bc2ea1b5d0629716aa53ce2bba4095ecc2ae0443077ccda6391f1fe3f4b957e5"
+      "sha256": "d09245bc67b221b97e8d077e637d7187644639c04b7f7f8bf2310223750d4c09"
     },
     {
-      "bytes": 219352,
+      "bytes": 6050,
+      "path": "data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json",
+      "sha256": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22"
+    },
+    {
+      "bytes": 5885,
+      "path": "data/survival/world/poi_authoring/poi_crown_waystation.v1.json",
+      "sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf"
+    },
+    {
+      "bytes": 233298,
       "path": "data/survival/world/poi_route_graph.json",
-      "sha256": "a83b2118a7795f2892a244ebdc5e934de2fb89eb485d859758f55f278710026d"
+      "sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9"
     },
     {
       "bytes": 2906,
       "path": "data/survival/world/reader_contract.json",
-      "sha256": "c2b366c5bf98880fd10b9400b52b793614774da904e91206b323ac4caa5591b1"
+      "sha256": "57f87c6c88ccf0c1ff0f47fc68bf4268dde82a27622fe223b5b2ee38ccbb871f"
     },
     {
       "bytes": 691,
@@ -1017,6 +1038,11 @@
       "sha256": "ce571aa33b70604b0624b99c90f2d9ec2cf1f1c3cd97bc4093bce81a006b3b07"
     },
     {
+      "bytes": 1024,
+      "path": "data/survival/world/schemas/hazard_damage.schema.json",
+      "sha256": "2a5bea95319fca0034d8fe31b02781070bd1b3d9ccaa7a12c40e5786a988f91c"
+    },
+    {
       "bytes": 1628,
       "path": "data/survival/world/schemas/hydrology.schema.json",
       "sha256": "b20ec49bf8c54f3cee3b19ab7b3681cd4a2a0b0d5b60ce39f2232e6c1b0578b6"
@@ -1032,9 +1058,24 @@
       "sha256": "ef2f9710965f2190aa0edc55b7475439d92eeb13081da9f35686d807e16986f1"
     },
     {
-      "bytes": 1551,
+      "bytes": 1534,
+      "path": "data/survival/world/schemas/material_decisions.schema.json",
+      "sha256": "93c3e1592dd1cff33fd42fb529d04b77ac8a89981966adb0f8b6e22f52c1d830"
+    },
+    {
+      "bytes": 969,
+      "path": "data/survival/world/schemas/novice_bootstrap.schema.json",
+      "sha256": "314a9361eb25088e4b0c3cf5f99695691ab71897f214f1270eab3c29a38997c9"
+    },
+    {
+      "bytes": 1839,
       "path": "data/survival/world/schemas/poi.schema.json",
-      "sha256": "161d5a94faff65c748c7c796dc857f76585e3de48d5c6e9d25ad2907bee7aef6"
+      "sha256": "6c376c62ef84d444956ef60439c5194b85dd21304696a223cfc5f5a569019ea7"
+    },
+    {
+      "bytes": 2429,
+      "path": "data/survival/world/schemas/poi_authoring.schema.json",
+      "sha256": "d087df9c994861c66fd6a343e7051f9ebf7b258aee49fc2aa3c4a4d115dc413f"
     },
     {
       "bytes": 1190,
@@ -1057,15 +1098,15 @@
       "sha256": "63aaef9d44fc834fbe961b60720e7cfa7ad244c42360db82e439d2e24131edae"
     },
     {
-      "bytes": 429046,
+      "bytes": 443152,
       "path": "data/survival/world/world_plan.v1.json",
-      "sha256": "008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d"
+      "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3",
-  "compile_2_tree_sha256": "36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3",
+  "compile_1_tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f",
+  "compile_2_tree_sha256": "29e0cbf05f442929df676ce7bbd1c91087b49fe923f586c83683cd371a9ae77f",
   "ok": true,
-  "plan_sha256": "008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d",
+  "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",
   "status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
 }

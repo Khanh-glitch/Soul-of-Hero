@@ -105,6 +105,17 @@ CAPABILITIES = {
     "cap_tide_ward": {"source":"poi_pearl_stilt_village","requires":["cap_boat","cap_filter"],"kind":"equipment","materials":["pearl","hardwood","rubber_sap"]},
 }
 
+# First-hour bootstrap is intentionally separated from sustain/repair materials.
+# A source POI teaches the capability on first visit; later material runs repair or
+# upgrade it. This prevents venom_sac (a filter-gated fauna source) from becoming
+# a prerequisite for the filter that opens it.
+NOVICE_BOOTSTRAP = {
+    "cap_salvage": {"poi": "poi_crown_waystation", "requires": [], "bootstrap_materials": [], "sustain_materials": ["salvage"], "action": "salvage_locker"},
+    "cap_seal_1": {"poi": "poi_crown_waystation", "requires": ["cap_salvage"], "bootstrap_materials": [], "sustain_materials": ["salvage"], "action": "seal_ledger"},
+    "cap_power_1": {"poi": "poi_crown_relay_shed", "requires": ["cap_salvage"], "bootstrap_materials": ["salvage", "timber"], "sustain_materials": ["copper", "salvage"], "action": "hand_crank_bypass"},
+    "cap_filter": {"poi": "poi_amberwood_apothecary", "requires": ["cap_salvage"], "bootstrap_materials": ["rare_herb", "fibre"], "sustain_materials": ["rare_herb", "fibre", "venom_sac"], "action": "filter_lesson"},
+}
+
 HAZARDS = [
     ("hz_crown_heat","r_ashen_crown","heat",[160,184,64,40],"legacy crucible basin","cap_filter",2),
     ("hz_crown_rot","r_ashen_crown","poison",[232,196,104,48],"legacy fen rot","cap_filter",2),
@@ -264,7 +275,8 @@ P = [
 # Trunk route graph: id, from_node, to_node, waypoints, mode, required caps, risk.
 # Nodes are region hubs or authored junctions; POI spurs are generated later.
 TRUNK = [
-    ("rt_east_seam","node_refuge","node_crown_east",[[56,218],[200,210],[368,200],[392,200]],"foot",[],"low"),
+    ("rt_east_seam","node_refuge","node_crown_east",[[56,218],[200,210],[368,200],[392,200]],"foot",["cap_filter"],"high"),
+    ("rt_crown_safe_approach","node_refuge","node_crown_east",[[56,218],[98,218],[98,221],[113,221],[113,225],[115,225],[115,226],[120,226],[120,230],[123,230],[123,233],[126,233],[126,238],[127,238],[127,240],[134,240],[134,243],[144,243],[144,245],[152,245],[152,248],[153,248],[153,249],[189,249],[189,252],[229,252],[229,253],[230,253],[230,254],[231,254],[231,255],[240,255],[240,256],[392,256],[392,200]],"foot",[],"low"),
     ("rt_south_seam","node_refuge","node_amber_north",[[56,218],[53,240],[53,264],[80,400]],"foot",[],"low"),
     ("rt_crown_buffer","node_crown_east","node_crown_south",[[392,200],[440,236],[420,300],[300,330]],"foot",[],"low"),
     ("rt_crown_mere","node_crown_south","node_mirrormere",[[300,330],[260,300],[330,360],[360,430]],"foot",[],"low"),

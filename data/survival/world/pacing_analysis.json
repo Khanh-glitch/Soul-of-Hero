@@ -151,7 +151,7 @@
     },
     {
       "combat_crafting_gathering_seconds": "NOT_TESTED",
-      "detour_ratio": 1.083,
+      "detour_ratio": 1.316,
       "direct_tiles": 801.5,
       "end_caps": [
         "cap_power_1",
@@ -173,36 +173,18 @@
           "poi": "poi_crown_relay_shed"
         }
       ],
-      "hazard_exposure": {
-        "hz_crown_heat": {
-          "seconds": 21.56,
-          "tiles": 129.36
-        },
-        "hz_crown_rot": {
-          "seconds": 34.52,
-          "tiles": 207.14
-        }
-      },
+      "hazard_exposure": {},
       "journey": "early_buffer_salvage_power",
       "legs": [
         {
           "from": "node_refuge",
-          "hazard_exposure": {
-            "hz_crown_heat": {
-              "seconds": 10.78,
-              "tiles": 64.68
-            },
-            "hz_crown_rot": {
-              "seconds": 17.26,
-              "tiles": 103.57
-            }
-          },
+          "hazard_exposure": {},
           "route_edges": [
-            "rt_east_seam",
+            "rt_crown_safe_approach",
             "sp_poi_crown_waystation"
           ],
-          "seconds": 58.75,
-          "tiles": 352.52,
+          "seconds": 74.33,
+          "tiles": 446.0,
           "to": "poi_crown_waystation"
         },
         {
@@ -229,22 +211,13 @@
         },
         {
           "from": "poi_crown_relay_shed",
-          "hazard_exposure": {
-            "hz_crown_heat": {
-              "seconds": 10.78,
-              "tiles": 64.68
-            },
-            "hz_crown_rot": {
-              "seconds": 17.26,
-              "tiles": 103.57
-            }
-          },
+          "hazard_exposure": {},
           "route_edges": [
             "sp_poi_crown_relay_shed",
-            "rt_east_seam"
+            "rt_crown_safe_approach"
           ],
-          "seconds": 66.09,
-          "tiles": 396.52,
+          "seconds": 81.67,
+          "tiles": 490.0,
           "to": "node_refuge"
         }
       ],
@@ -257,9 +230,113 @@
         "node_refuge"
       ],
       "start_caps": [],
-      "total_minutes": 2.41,
-      "total_seconds": 144.69,
-      "total_tiles": 868.12
+      "total_minutes": 2.93,
+      "total_seconds": 175.85,
+      "total_tiles": 1055.08
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.176,
+      "direct_tiles": 1311.24,
+      "end_caps": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_salvage",
+            "cap_seal_1"
+          ],
+          "poi": "poi_crown_waystation"
+        },
+        {
+          "grants": [
+            "cap_power_1"
+          ],
+          "poi": "poi_crown_relay_shed"
+        },
+        {
+          "grants": [
+            "cap_filter"
+          ],
+          "poi": "poi_amberwood_apothecary"
+        }
+      ],
+      "hazard_exposure": {},
+      "journey": "first_hour_safe_preparation_and_retreat",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {},
+          "route_edges": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_waystation"
+          ],
+          "seconds": 74.33,
+          "tiles": 446.0,
+          "to": "poi_crown_waystation"
+        },
+        {
+          "from": "poi_crown_waystation",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_crown_waystation",
+            "sp_poi_crown_relay_shed"
+          ],
+          "seconds": 12.67,
+          "tiles": 76.0,
+          "to": "poi_crown_relay_shed"
+        },
+        {
+          "from": "poi_crown_relay_shed",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_crown_relay_shed",
+            "rt_crown_safe_approach"
+          ],
+          "seconds": 81.67,
+          "tiles": 490.0,
+          "to": "node_refuge"
+        },
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {},
+          "route_edges": [
+            "rt_south_seam",
+            "sp_poi_amberwood_apothecary"
+          ],
+          "seconds": 44.14,
+          "tiles": 264.86,
+          "to": "poi_amberwood_apothecary"
+        },
+        {
+          "from": "poi_amberwood_apothecary",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_amberwood_apothecary",
+            "rt_south_seam"
+          ],
+          "seconds": 44.14,
+          "tiles": 264.86,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_crown_waystation",
+        "poi_crown_relay_shed",
+        "node_refuge",
+        "poi_amberwood_apothecary",
+        "node_refuge"
+      ],
+      "start_caps": [],
+      "total_minutes": 4.28,
+      "total_seconds": 256.95,
+      "total_tiles": 1541.72
     },
     {
       "combat_crafting_gathering_seconds": "NOT_TESTED",
@@ -1532,6 +1609,32 @@
       "total_tiles": 4101.6
     }
   ],
+  "novice_hazard_counterfactual": {
+    "bootstrap_circular_requirements": [],
+    "first_hour_hazard_exposure": {},
+    "first_hour_journey_ok": true,
+    "hazardous_shortcut": {
+      "exposure": {
+        "hz_crown_heat": {
+          "seconds": 10.78,
+          "tiles": 64.68
+        },
+        "hz_crown_rot": {
+          "seconds": 17.26,
+          "tiles": 103.57
+        }
+      },
+      "required_capability": "cap_filter",
+      "route_id": "rt_east_seam"
+    },
+    "native_damage": "NOT_TESTED; see hazard_damage_contract.json for A0/A3 proposal",
+    "no_circular_bootstrap": true,
+    "safe_first_hour_route": {
+      "exposure": {},
+      "max_hazard_tiles": 0,
+      "route_id": "rt_crown_safe_approach"
+    }
+  },
   "outpost_logistics": [
     {
       "cell": [

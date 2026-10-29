@@ -31,6 +31,16 @@ func _expect(condition: bool, message: String) -> void:
 		print("  FAIL ", message)
 
 
+func _product_json(root: String, rel: String) -> Dictionary:
+	var path := root.path_join(rel)
+	if not FileAccess.file_exists(path):
+		return {}
+	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
+	if parsed is Dictionary:
+		return parsed as Dictionary
+	return {}
+
+
 func _delegate_allow() -> Dictionary:
 	delegate_calls += 1
 	return {"ok": true, "reason": ""}
@@ -178,6 +188,29 @@ func _initialize() -> void:
 			"chunk hash mismatch rejected")
 		DirAccess.remove_absolute(tmp_path)
 		DirAccess.remove_absolute(tmp_dir)
+
+	print("[a1-reader] product-correction contracts")
+	var hazard_damage := _product_json(root, "hazard_damage_contract.json")
+	_expect(String(hazard_damage.get("schema", "")) == "soh.world.hazard_damage.v1", "hazard damage contract readable")
+	_expect(bool(hazard_damage.get("native_playable", true)) == false, "hazard damage contract is not native playable")
+	_expect(int(hazard_damage.get("novice_safe_route", {}).get("max_authored_hazard_tiles", -1)) == 0, "native-readable safe route has zero authored hazard tiles")
+	var bootstrap := _product_json(root, "novice_bootstrap_contract.json")
+	_expect(String(bootstrap.get("schema", "")) == "soh.world.novice_bootstrap.v1", "novice bootstrap contract readable")
+	_expect((bootstrap.get("stages", []) as Array).size() == 3, "novice bootstrap has salvage/power/filter stages")
+	var decisions := _product_json(root, "a1_a3_material_decisions.json")
+	_expect(String(decisions.get("schema", "")) == "soh.world.a1_a3_material_decisions.v1", "material decision contract readable")
+	_expect(int(decisions.get("counts", {}).get("alias_decisions", 0)) == 8, "eight explicit A3 alias decisions")
+	_expect(int(decisions.get("counts", {}).get("missing_items", 0)) == 12, "twelve explicit missing A3 items")
+	_expect(bool(decisions.get("a3_code_changed_by_a1", true)) == false, "A1 did not change A3 catalog code")
+	var waystation := _product_json(root, "poi_authoring/poi_crown_waystation.v1.json")
+	var relay := _product_json(root, "poi_authoring/poi_crown_relay_shed.v1.json")
+	_expect(String(waystation.get("poi_id", "")) == "poi_crown_waystation", "waystation authoring spec readable")
+	_expect(String(relay.get("poi_id", "")) == "poi_crown_relay_shed", "relay authoring spec readable")
+	_expect(int(waystation.get("footprint_radius_tiles", 0)) != int(relay.get("footprint_radius_tiles", 0)), "early exemplar footprints are distinct")
+	_expect((waystation.get("interface_requirements", []) as Array).size() >= 3 and (relay.get("interface_requirements", []) as Array).size() >= 3, "exemplars publish A0/A3/A6 interface requirements")
+	var readiness: Dictionary = reader.plan.get("metrics", {}).get("content_readiness_counts", {})
+	_expect(int(readiness.get("INTERACTION_SPEC_AUTHORED_NOT_NATIVE", 0)) == 2, "only two POIs claim authored interaction specs")
+	_expect(int(readiness.get("WORLD_SITE_CONTRACT_ONLY", 0)) == 106, "106 POIs remain truthful site-contract-only")
 
 	_finish()
 

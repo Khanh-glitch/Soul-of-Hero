@@ -59,3 +59,10 @@ After the W-01 build-delegation and hazard-exposure corrections, the eight previ
 Correction-specific visual finding: the early buffer trunk still passes through the authored legacy crown heat/rot rects. The pacing audit now quantifies that exposure instead of hiding it behind a “low risk” label. A6 environmental clues and A0/A3 early mitigation/alternate tuning remain open integration gates; no arbitrary level wall was added.
 
 Acceptance position unchanged: authored world only. Native tile/prop art, camera, collision and playable traversal remain unverified.
+
+
+## Product-correction pixel inspection (2026-10-29)
+
+- `previews/novice_bootstrap_detail.png` was opened and inspected: the green safe approach skirts the south side of the preserved legacy inset and reaches the east buffer without entering the orange `hz_crown_heat` or green `hz_crown_rot` rects. The red `rt_east_seam` shortcut still crosses both rects and is labeled filter-gated. The green south route reaches Orchard Apothecary. This is an authored contract render, not a native screenshot.
+- `previews/continent_routes.png` and `previews/starter_quarter_detail.png` were regenerated after adding the safe approach. The ten Chapter 1 entrances and two seam carves remain visible; the new safe route is a long southern rim path, not a rewritten Chapter 1.
+- Visual limitation: the safe route is deliberately longer and schematic. Native pathfinding, prop collision, hazard telegraph props and damage feedback remain A0/A3/A6 integration gates.

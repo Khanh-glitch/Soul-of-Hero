@@ -1,0 +1,75 @@
+{
+  "$id": "soh://world/material_decisions.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "a3_code_changed_by_a1": {
+      "const": false
+    },
+    "a3_review_source": {
+      "type": "object"
+    },
+    "alias_decisions": {
+      "items": {
+        "properties": {
+          "decision": {
+            "enum": [
+              "APPROVE",
+              "REJECT",
+              "SPLIT",
+              "DEFER"
+            ]
+          }
+        },
+        "required": [
+          "material_key",
+          "proposed_a3_ids",
+          "decision",
+          "priority",
+          "reason",
+          "a3_action",
+          "preserved_provenance",
+          "preserved_renewal",
+          "preserved_sinks"
+        ],
+        "type": "object"
+      },
+      "maxItems": 8,
+      "minItems": 8,
+      "type": "array"
+    },
+    "counts": {
+      "type": "object"
+    },
+    "missing_items": {
+      "items": {
+        "required": [
+          "material_key",
+          "priority",
+          "dependency",
+          "first_hour_blocking"
+        ],
+        "type": "object"
+      },
+      "maxItems": 12,
+      "minItems": 12,
+      "type": "array"
+    },
+    "schema": {
+      "const": "soh.world.a1_a3_material_decisions.v1"
+    },
+    "status": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "status",
+    "a3_review_source",
+    "alias_decisions",
+    "missing_items",
+    "counts",
+    "a3_code_changed_by_a1"
+  ],
+  "title": "material_decisions",
+  "type": "object"
+}

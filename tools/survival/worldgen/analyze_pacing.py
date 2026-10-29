@@ -16,6 +16,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from baseline import Baseline, ROOT
+import authoring as A
 from validate_world import OUT, load, reconstruct
 
 TILE_PX = 16
@@ -57,6 +58,16 @@ def build_graph(plan):
     return nodes, pois, sites, adj, edges
 
 
+def _path_nodes(start, goal, prev):
+    nodes = [goal]
+    cur = goal
+    while cur != start:
+        cur = prev[cur][0]
+        nodes.append(cur)
+    nodes.reverse()
+    return nodes
+
+
 def shortest(adj, edges, start, goal, caps, skip_edge=None):
     if start == goal:
         return {"ok": True, "tiles": 0.0, "seconds": 0.0, "edges": [], "nodes": [start]}
@@ -90,7 +101,7 @@ def shortest(adj, edges, start, goal, caps, skip_edge=None):
         cur = u
     path_edges.reverse()
     return {"ok": True, "tiles": dist[goal], "seconds": seconds(dist[goal]),
-            "edges": path_edges, "nodes": [start] + [prev.get(g, (None, None)) for g in []]}
+            "edges": path_edges, "nodes": _path_nodes(start, goal, prev)}
 
 
 def hazard_exposure(edges, path_edges, hazard_grid, hazard_ids, w):
@@ -203,6 +214,7 @@ def run():
     journeys = [early_home_loop()]
     specs = [
         ("early_buffer_salvage_power", ["node_refuge", "poi_crown_waystation", "src_crown_salvage", "poi_crown_relay_shed", "node_refuge"], set()),
+        ("first_hour_safe_preparation_and_retreat", ["node_refuge", "poi_crown_waystation", "poi_crown_relay_shed", "node_refuge", "poi_amberwood_apothecary", "node_refuge"], set()),
         ("mid_filter_bootstrap_and_sustain", ["node_refuge", "poi_amberwood_apothecary", "src_amber_herb", "src_crown_reed", "src_fen_venom", "node_refuge"], novice),
         ("mid_climb_bootstrap_and_sustain", ["node_refuge", "poi_ember_piton_works", "src_crown_iron", "src_crown_reed", "node_refuge"], novice | {"cap_filter"}),
         ("mid_thermal_bootstrap_and_sustain", ["node_refuge", "poi_frost_wardhouse", "src_frost_skarn", "src_frost_resin", "node_refuge"], novice | {"cap_filter", "cap_climb"}),
@@ -248,6 +260,30 @@ def run():
                            "alternate_minutes": round(cut_path.get("seconds", 0) / 60.0, 2) if cut_path["ok"] else None,
                            "alternate_exists": cut_path["ok"],
                            "detour_minutes": round((cut_path.get("seconds", 0) - base_path.get("seconds", 0)) / 60.0, 2) if cut_path["ok"] else None})
+    # Novice hazard counterfactual: the prepared shortcut is still dangerous;
+    # the first-hour safe approach is not. This does not disable hazard rects.
+    shortcut_exp = hazard_exposure(edges, ["rt_east_seam"], hazard_grid, hazard_ids, w)
+    safe_exp = hazard_exposure(edges, ["rt_crown_safe_approach"], hazard_grid, hazard_ids, w)
+    bootstrap_circularity = []
+    site_req = {s["site_id"]: set(s["required_capabilities"]) for s in plan["resource_sites"]}
+    mat_sites = defaultdict(list)
+    for s in plan["resource_sites"]:
+        mat_sites[s["material_key"]].append(s["site_id"])
+    for cap, row in A.NOVICE_BOOTSTRAP.items():
+        for mat in row["bootstrap_materials"]:
+            for sid in mat_sites.get(mat, []):
+                if cap in site_req[sid]:
+                    bootstrap_circularity.append({"capability": cap, "material": mat, "site": sid})
+    first_hour = next((j for j in journeys if j["journey"] == "first_hour_safe_preparation_and_retreat"), None)
+    novice_counterfactual = {
+        "hazardous_shortcut": {"route_id": "rt_east_seam", "required_capability": "cap_filter", "exposure": shortcut_exp},
+        "safe_first_hour_route": {"route_id": "rt_crown_safe_approach", "exposure": safe_exp, "max_hazard_tiles": 0},
+        "first_hour_journey_ok": bool(first_hour and first_hour.get("ok")),
+        "first_hour_hazard_exposure": first_hour.get("hazard_exposure", {}) if first_hour else None,
+        "bootstrap_circular_requirements": bootstrap_circularity,
+        "no_circular_bootstrap": not bootstrap_circularity,
+        "native_damage": "NOT_TESTED; see hazard_damage_contract.json for A0/A3 proposal",
+    }
     renewal = defaultdict(int)
     for s in plan["resource_sites"]:
         renewal[s["material_key"]] += s["placed_count"]
@@ -261,6 +297,7 @@ def run():
         "playtime_claim": "NOT_TESTED", "combat_crafting_gathering_seconds": "NOT_TESTED",
         "journeys": journeys, "post_14d_goals": goals, "outpost_logistics": outposts,
         "alternate_route_detours": alternates,
+        "novice_hazard_counterfactual": novice_counterfactual,
         "revisit_value": {"long_run_goals": len(goals), "resource_sites": len(sites),
                           "renewal_policies": sorted({s["renewal"] if "renewal" in s else plan["materials"][s["material_key"]][4] for s in sites.values()}),
                           "poi_restock_policy": "outer caches restock; specimen vault one-time until world-state change",
@@ -301,6 +338,11 @@ def run():
               "|---|---:|---:|---:|"]
     for a in alternates:
         lines.append(f"| {a['cut_edge']} | {a['base_minutes']} | {a['alternate_minutes']} | {a['detour_minutes']} |")
+    lines += ["", "## First-hour hazard bootstrap counterfactual", "",
+              f"Safe first-hour journey ok: {novice_counterfactual['first_hour_journey_ok']}; hazard exposure: {novice_counterfactual['first_hour_hazard_exposure']}.",
+              f"Prepared shortcut `rt_east_seam` still exposes: {shortcut_exp}. It requires `cap_filter`; danger is preserved, not disabled.",
+              f"Safe approach `rt_crown_safe_approach` exposure: {safe_exp}. Circular bootstrap requirements: {bootstrap_circularity or 'none'}.",
+              "Native damage/mitigation is NOT_TESTED; A0/A3 must adopt `hazard_damage_contract.json` and `novice_bootstrap_contract.json`.", ""]
     lines += ["", "## Revisit value and caveat", "",
               f"{len(goals)} post-14d goals, {len(sites)} resource sites with authored renewal policies, outer-cache restock vs one-time specimen vaults, and per-region revisit hooks are present. This does **not** prove fourteen-day playtime. Native pacing, hazard damage, recipe yields, combat and inventory friction remain separate A0/A3/A6 integration gates.", ""]
     (DOC / "PACING_ANALYSIS.md").write_text("\n".join(lines), encoding="utf-8")

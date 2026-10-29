@@ -311,6 +311,17 @@ def validate(plan, check_files=True, check_chunks=True):
             err("POI_REGION", f"{p['poi_id']} bad region")
         if not p["purpose"]:
             err("POI_THIN", f"{p['poi_id']} no purpose")
+        readiness = p.get("content_readiness")
+        if readiness not in {"WORLD_SITE_CONTRACT_ONLY", "INTERACTION_SPEC_AUTHORED_NOT_NATIVE", "PRESERVED_BASELINE"}:
+            err("POI_READINESS", f"{p['poi_id']} missing truthful content_readiness")
+        if readiness == "INTERACTION_SPEC_AUTHORED_NOT_NATIVE":
+            ref = p.get("authoring_spec_ref")
+            if not ref:
+                err("POI_SPEC_REF", f"{p['poi_id']} interaction spec has no authoring_spec_ref")
+            elif check_files and not (OUT / ref).exists():
+                err("POI_SPEC_MISSING", f"{p['poi_id']} authoring spec missing: {ref}")
+        if p.get("preserved_legacy") and readiness != "PRESERVED_BASELINE":
+            err("POI_READINESS", f"{p['poi_id']} legacy readiness must be PRESERVED_BASELINE")
 
     # POI density and spacing
     new_pois = [p for p in plan["pois"] if not p.get("preserved_legacy")]
@@ -354,6 +365,17 @@ def validate(plan, check_files=True, check_chunks=True):
     for e in trunk:
         if not connected_without(e["route_id"]):
             err("ROUTE_NO_ALT", f"removing {e['route_id']} disconnects hub network")
+    by_route = {e["route_id"]: e for e in edges}
+    safe = by_route.get("rt_crown_safe_approach")
+    shortcut = by_route.get("rt_east_seam")
+    if not safe or safe.get("required_capabilities"):
+        err("NOVICE_SAFE_ROUTE", "first-hour safe approach must exist and require no capability")
+    if not shortcut or "cap_filter" not in shortcut.get("required_capabilities", []):
+        err("NOVICE_SHORTCUT_PREP", "hazardous east-seam shortcut must require cap_filter preparation")
+    if check_files:
+        for fname in ("hazard_damage_contract.json", "novice_bootstrap_contract.json", "a1_a3_material_decisions.json"):
+            if not (OUT / fname).exists():
+                err("PRODUCT_CONTRACT_MISSING", fname)
 
     # chunk integrity + traversal
     if check_chunks:
@@ -463,6 +485,12 @@ def schema_validate(plan):
     if reader_path.exists():
         val("reader_contract", json.loads(reader_path.read_text(encoding="utf-8")))
     val("identity", plan["identity_contract"])
+    for name, fname in [("hazard_damage","hazard_damage_contract.json"),("novice_bootstrap","novice_bootstrap_contract.json"),("material_decisions","a1_a3_material_decisions.json")]:
+        fp = OUT / fname
+        if fp.exists(): val(name, json.loads(fp.read_text(encoding="utf-8")))
+    pdir = OUT / "poi_authoring"
+    if pdir.exists():
+        for fp in sorted(pdir.glob("*.v1.json")): val("poi_authoring", json.loads(fp.read_text(encoding="utf-8")))
     val("hydrology", {"rivers": plan["rivers"], "lakes": plan["lakes"], "subsurface_hydrology": plan["subsurface_hydrology"]})
     for r in plan["regions"]: val("region", r)
     for b in plan["biomes"].values(): val("biome", b)

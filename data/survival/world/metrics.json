@@ -5,6 +5,11 @@
     "mid": 99,
     "novice": 39
   },
+  "content_readiness_counts": {
+    "INTERACTION_SPEC_AUTHORED_NOT_NATIVE": 2,
+    "PRESERVED_BASELINE": 10,
+    "WORLD_SITE_CONTRACT_ONLY": 106
+  },
   "empty_space_ratio": 0.0115,
   "frame_tiles": [
     1024,
@@ -23,7 +28,7 @@
   "physically_reachable_new_pois": 108,
   "resource_node_count": 178,
   "resource_site_count": 33,
-  "route_edge_count": 129,
+  "route_edge_count": 130,
   "sampled_land_cells_over_64_tiles_from_anchor": 109,
   "sampled_new_land_cells": 9518,
   "starter_quarter_share_of_frame": 0.25
