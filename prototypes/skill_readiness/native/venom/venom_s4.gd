@@ -254,8 +254,7 @@ static func _serpents(c, g) -> void:
 		for e in w.enemies:
 			if e.dying <= 0 and not tg.has(e):
 				more.append(e)
-		M.stable_sort(more, func(a, b): return M.hypot(a.x - c.tx, a.y - c.ty)
-				- M.hypot(b.x - c.tx, b.y - c.ty))
+		M.stable_sort(more, func(a, b): return M.hypot(a.x - c.tx, a.y - c.ty) - M.hypot(b.x - c.tx, b.y - c.ty))
 		for e in more:
 			tg.append(e)
 		tg = tg.slice(0, mini(3, tg.size()))
