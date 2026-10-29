@@ -92,8 +92,10 @@ func _body() -> void:
 		for x in range(4, world.width - 4, 4):
 			player.global_position = Vector2((x + 2) * 16 + 8, (y + 2) * 16 + 8)
 			var valid := true
-			for yy in range(4):
-				for xx in range(4):
+			# The Hero's collision shape extends north of its foot. Keep a
+			# two-cell approach clear, not just the built footprint.
+			for yy in range(-2, 5):
+				for xx in range(-1, 5):
 					if not build.validate_cell(Vector2i(x + xx, y + yy)).is_empty():
 						valid = false
 			if valid:

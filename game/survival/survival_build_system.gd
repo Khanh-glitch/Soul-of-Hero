@@ -375,7 +375,31 @@ func validate_cell(cell: Vector2i) -> String:
 	var layer := String(svc.call(&"occupancy_layer", selected_piece)) if svc != null else "object"
 	if not entity_at_layer(cell, layer).is_empty():
 		return "cell_occupied"
+	if _world_blocker_in_cell(cell):
+		return "world_blocker"
 	return ""
+
+
+## Terrain data alone omits physical props. Query the live world collision layer
+## and exclude our own build objects by ownership, so a floor can still coexist
+## with its wall or furniture while authored prop/terrain bodies remain protected.
+func _world_blocker_in_cell(cell: Vector2i) -> bool:
+	if not is_inside_tree() or get_world_2d() == null:
+		return false
+	var query := PhysicsShapeQueryParameters2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(TILE - 2, TILE - 2)
+	query.shape = rect
+	query.transform = Transform2D(0.0, Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
+	query.collision_mask = SOLID_LAYER_MASK
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is Node and (collider as Node).get_parent() is SurvivalStructure:
+			continue
+		return true
+	return false
 
 
 func _near_authored_place(cell: Vector2i, clearance: int) -> bool:
