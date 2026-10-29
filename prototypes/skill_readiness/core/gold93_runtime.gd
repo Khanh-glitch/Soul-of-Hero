@@ -153,8 +153,10 @@ func source_native_executable(canonical_id: String) -> bool:
 		return false
 	if _source_native_cache.has(canonical_id):
 		return bool(_source_native_cache[canonical_id])
+	print("GOLD93_PROBE begin %s" % canonical_id)
 	var ok: bool = bool(SOURCE_NATIVE_SKILLS.probe_native(
 			int(SOURCE_NATIVE_IDS[canonical_id])))
+	print("GOLD93_PROBE end %s ok=%s" % [canonical_id, str(ok)])
 	_source_native_cache[canonical_id] = ok
 	return ok
 

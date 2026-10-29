@@ -296,10 +296,28 @@ func _end_task(t: Dictionary) -> void:
 		g.dispose()
 
 
+## Teardown bound, in world seconds.
+const DRAIN_SETTLE_SECONDS: float = 60.0
+
 ## Drain every still-suspended generator at the end of a run. A body parked in
 ## `y()` keeps its thread blocked; leaving it there at process exit crashes
 ## the engine (silent native abort), so harnesses must call this when done.
+##
+## A parked body is waiting for the world clock. If it were released directly,
+## `y()` would return at once while `time` stood still, and any authored loop
+## conditioned on world time (the original `while (time - t0 < n)` pattern)
+## would never exit: the driver would wait forever on the body. So teardown
+## lets the discarded world run on its own clock until every body has reached
+## its own end, bounded by DRAIN_SETTLE_SECONDS. Nothing produced during this
+## settle reaches a host: callers read hits and cues before they drain, and a
+## cancelled host cast is never stepped again.
 func drain_all() -> void:
+	var guard: int = int(DRAIN_SETTLE_SECONDS * 60.0)
+	while tasks.size() > 0 and guard > 0:
+		step(1.0 / 60.0)
+		guard -= 1
+	if tasks.size() > 0:
+		push_error("VenomWorld: %d generator(s) still running after %d s of teardown settle; releasing them" % [tasks.size(), int(DRAIN_SETTLE_SECONDS)])
 	for t in tasks:
 		_end_task(t)
 	tasks.clear()

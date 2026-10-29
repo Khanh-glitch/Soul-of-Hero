@@ -476,10 +476,13 @@ func update_aim(aim: Dictionary) -> void:
 
 
 func cancel() -> void:
-	# Cancel the authored generator: no further yielded step, draw or RNG draw
-	# may run. Every task of this cast (the named cast task AND the unnamed
-	# sub-generators it spawned) is ended through the world's own drain, so no
-	# thread-backed body stays parked after cancellation. Dropping a task from
+	# Cancel the authored generator. From here on nothing is emitted to the host
+	# and nothing is read from the world: the host stops stepping this cast.
+	# Every task of this cast (the named cast task AND the unnamed sub-generators
+	# it spawned) is ended through the world's own drain, so no thread-backed
+	# body stays parked after cancellation. The drain settles the discarded world
+	# on its own clock so each body reaches its end (see VenomWorld.drain_all);
+	# those remaining steps are not observable to the host. Dropping a task from
 	# `tasks` without ending its generator would leak that thread.
 	if _world != null:
 		_world.drain_all()

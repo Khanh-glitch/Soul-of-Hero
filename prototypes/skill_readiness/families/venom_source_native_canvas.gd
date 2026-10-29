@@ -32,6 +32,15 @@ var frames_presented: int = 0
 ## and `venom_pixel.Layer` stores those same four bytes in RGBA byte order, so
 ## the buffer can be uploaded as FORMAT_RGBA8 without swizzling.
 func _ready() -> void:
+	_ensure_sprites()
+
+
+## Creates the two layer sprites once. Called from `_ready` and also before the
+## first upload: a family can present a frame before this node has entered the
+## tree, and the upload must not depend on tree order.
+func _ensure_sprites() -> void:
+	if scene_sprite != null and glow_sprite != null:
+		return
 	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	scene_sprite = Sprite2D.new()
 	scene_sprite.name = "SourceNative_scene"
@@ -65,6 +74,7 @@ func set_source_to_map_transform(xform: Transform2D) -> void:
 func bind_layers(W: int, H: int) -> void:
 	if _w == W and _h == H and _scene_img != null:
 		return
+	_ensure_sprites()
 	_w = W
 	_h = H
 	_scene_img = Image.create(W, H, false, Image.FORMAT_RGBA8)
