@@ -325,6 +325,24 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
+      - name: Death transaction interruption boundaries (native)
+        run: |
+          mkdir -p artifacts/ud_death_faults
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_death_faults \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_save_interruption_test.gd -- --survival-save-fault-test >"$ARTIFACT_DIR/survival-interruption.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-interruption.log"
+          echo "::notice::interruption exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-interruption.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-interruption.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-interruption.log" "Death interruption" "SURVIVAL SAVE INTERRUPTION PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
       - name: Production bed and overworld respawn (native)
         run: |
           mkdir -p artifacts/ud_bed
@@ -492,6 +510,7 @@ jobs:
             artifacts/survival-topology.log
             artifacts/survival-bed.log
             artifacts/survival-a0-a3.log
+            artifacts/survival-interruption.log
             artifacts/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn

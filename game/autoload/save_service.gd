@@ -114,6 +114,8 @@ var _economy_mutation_active := false
 var _transaction_mutation_active := false
 var _economy_quarantine_reason := ""
 var _economy_quarantine_path := ""
+# Enabled only by the dedicated native fault test's explicit command-line flag.
+var _test_interruption_boundary := ""
 
 
 
@@ -2398,6 +2400,25 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	return true
 
 
+## Controlled crash-boundary simulation for isolated native tests only. This is
+## unavailable to release builds and normal gameplay. Each failure is one-shot.
+func configure_test_save_interruption(boundary: String) -> bool:
+	if not OS.is_debug_build() or not OS.get_cmdline_user_args().has("--survival-save-fault-test"):
+		return false
+	if boundary not in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
+		return false
+	_test_interruption_boundary = boundary
+	return true
+
+
+func _test_interrupt_here(boundary: String) -> bool:
+	if _test_interruption_boundary != boundary:
+		return false
+	_test_interruption_boundary = ""
+	_commit_in_progress = false
+	return true
+
+
 func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capability: RefCounted = null) -> bool:
 	if capability != _disk_commit_capability:
 		return false
@@ -2428,6 +2449,8 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capa
 		_commit_in_progress = false
 		return false
 
+	if _test_interrupt_here("after_temporary"):
+		return false
 	if rotate_primary_to_backup and FileAccess.file_exists(_save_path):
 		# External edits or a partial disk write must not replace a known-good
 		# backup with corrupt bytes. A valid new primary can still be committed.
@@ -2442,12 +2465,18 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capa
 			_commit_in_progress = false
 			return false
 
+	if _test_interrupt_here("after_backup"):
+		return false
 	_remove_if_present(_save_path)
+	if _test_interrupt_here("after_primary_removed"):
+		return false
 	var rename_error := DirAccess.rename_absolute(
 		ProjectSettings.globalize_path(_temporary_path),
 		ProjectSettings.globalize_path(_save_path)
 	)
 	if rename_error == OK:
+		if _test_interrupt_here("after_primary_renamed"):
+			return false
 		result = true
 	else:
 		# Best-effort rollback keeps the last known-good generation playable.
