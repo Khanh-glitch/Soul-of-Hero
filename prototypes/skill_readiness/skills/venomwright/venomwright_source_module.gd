@@ -476,17 +476,21 @@ func update_aim(aim: Dictionary) -> void:
 
 
 func cancel() -> void:
-	# Cancel the authored generator exactly the way the original's scheduler
-	# does: drop the task, so no further yielded step, draw or RNG draw runs.
+	# Cancel the authored generator: no further yielded step, draw or RNG draw
+	# may run. Every task of this cast (the named cast task AND the unnamed
+	# sub-generators it spawned) is ended through the world's own drain, so no
+	# thread-backed body stays parked after cancellation. Dropping a task from
+	# `tasks` without ending its generator would leak that thread.
 	if _world != null:
-		var name_: String = _cast_task_name()
-		for i in range(_world.tasks.size() - 1, -1, -1):
-			if String(_world.tasks[i].get("name", "")) == name_:
-				_world.tasks.remove_at(i)
+		_world.drain_all()
 	_finished = true
 
 
 func dispose() -> void:
+	# Drain before releasing the world: a thread-backed body parked in `y()`
+	# must be ended while the world it writes into still exists.
+	if _world != null:
+		_world.drain_all()
 	_world = null
 	_gfx = {}
 	_ground = null

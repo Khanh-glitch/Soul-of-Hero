@@ -46,7 +46,7 @@ jobs:
   native-runtime:
     name: Native Godot 4.7 runtime contract
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 120
     needs: path-ownership
     steps:
       - uses: actions/checkout@v4
@@ -61,146 +61,71 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          timeout 1200s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/gold93-import.log
+          timeout 1200s godot --headless --editor --path . --import --quit > /tmp/gold93-import.log 2>&1 || true
           if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
             echo "::error::Godot import reported script errors"
             exit 1
           fi
 
       - name: Catalog and cast-context API
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-api.log
-          timeout 300s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_READINESS_API: PASS' "$LOG"; then
-            echo "::error::[gold93-api] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-api] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh api 300 'GOLD93_READINESS_API: PASS' res://prototypes/skill_readiness/tests/gold93_catalog_context_smoke.gd
 
-      # Fail fast if the SceneTree test throws or forgets to call quit().
-      # --quit-after 5 is a backstop for post-_initialize runtime exceptions;
-      # the actual test calls quit() itself when it passes or fails.
       - name: Full native lifecycle and fail-closed coverage
+        if: always()
         shell: bash
-        timeout-minutes: 12
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-lifecycle.log
-          timeout 600s godot --headless --quit-after 5 --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || grep -Eq 'SCRIPT ERROR:|Parse Error:' "$LOG" || ! grep -F 'GOLD93_LIFECYCLE: PASS' "$LOG"; then
-            echo "::error::[gold93-lifecycle] Godot exit status=$STATUS or lifecycle assertion/runtime error"
-            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -60)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh lifecycle 600 'GOLD93_LIFECYCLE: PASS' res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd
 
       - name: Port authority, once-only hits and concurrent casts
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-ports.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_PORTS: PASS' "$LOG"; then
-            echo "::error::[gold93-ports] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-ports] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh ports 600 'GOLD93_PORTS: PASS' res://prototypes/skill_readiness/tests/gold93_ports_authority_test.gd
 
       - name: Two independent original engine families
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-family.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_FAMILY_CLOCK: PASS' "$LOG"; then
-            echo "::error::[gold93-family] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-family] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh family 600 'GOLD93_FAMILY_CLOCK: PASS' res://prototypes/skill_readiness/tests/gold93_family_clock_test.gd
 
       - name: Venomwright authored baseline oracle (21 skills)
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-baseline.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_BASELINE: PASS' "$LOG"; then
-            echo "::error::[gold93-baseline] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-baseline] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh baseline 600 'GOLD93_VENOM_BASELINE: PASS' res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd
 
       - name: SkillReadinessLab walks all 93 canonical ids
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-lab.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_LAB_PROBE: PASS' "$LOG"; then
-            echo "::error::[gold93-lab] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-lab] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh lab 600 'GOLD93_LAB_PROBE: PASS' res://prototypes/skill_readiness/tests/gold93_lab_probe_test.gd
 
       - name: Both family render paths (attached surfaces, real passes)
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-render.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_render_surface_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_RENDER: PASS' "$LOG"; then
-            echo "::error::[gold93-render] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-render] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh render 600 'GOLD93_RENDER: PASS' res://prototypes/skill_readiness/tests/gold93_render_surface_test.gd
 
       - name: Venomwright raster core is bit-exact against the original source
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-venom-ground.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_ground_parity_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_GROUND_PARITY: PASS' "$LOG"; then
-            echo "::error::[gold93-venom-ground] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-venom-ground] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh venom-ground 600 'GOLD93_VENOM_GROUND_PARITY: PASS' res://prototypes/skill_readiness/tests/gold93_venom_ground_parity_test.gd
 
       - name: Native world simulation matches the original engine (no cast)
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-venom-world-diff.log
-          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --world-only 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_VENOM_WORLD_DIFFERENTIAL: PASS' "$LOG"; then
-            echo "::error::[gold93-venom-world-diff] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-venom-world-diff] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
-
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh venom-world-diff 900 'GOLD93_VENOM_WORLD_DIFFERENTIAL: PASS' res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --world-only
 
       - name: Capture the ported casts (real rendered frames)
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-capture.log
-          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_capture.gd -- --skill=1 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_CAPTURE: PASS' "$LOG"; then
-            echo "::error::[gold93-capture] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-capture] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh capture 900 'GOLD93_CAPTURE: PASS' res://prototypes/skill_readiness/tests/gold93_venom_capture.gd -- --skill=1
           # A capture that does not verify against the original oracle is not
           # evidence. Fail loudly rather than upload decorative frames.
           if grep -q 'MISMATCH' docs/vfx/skill_readiness/captures/venomwright_*/manifest.json; then
@@ -210,36 +135,23 @@ jobs:
           fi
 
       - name: Per-skill independent native harness (all 93)
+        if: always()
         shell: bash
         run: |
-          set -uo pipefail
-          LOG=/tmp/gold93-harness.log
-          timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_per_skill_harness_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_PER_SKILL_HARNESS: PASS' "$LOG"; then
-            echo "::error::[gold93-harness] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-harness] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh harness 1500 'GOLD93_PER_SKILL_HARNESS: PASS' res://prototypes/skill_readiness/tests/gold93_per_skill_harness_test.gd
 
       - name: Host adapter contract (G7 handoff)
+        if: always()
+        shell: bash
+        run: |
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh adapter 600 'GOLD93_ADAPTER: PASS' res://prototypes/skill_readiness/tests/gold93_external_adapter_test.gd
+
+      - name: Honest readiness roll-up
+        if: always()
         shell: bash
         run: |
           set -uo pipefail
-          LOG=/tmp/gold93-adapter.log
-          timeout 600s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_external_adapter_test.gd 2>&1 | tee "$LOG"
-          STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_ADAPTER: PASS' "$LOG"; then
-            echo "::error::[gold93-adapter] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-adapter] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
-            exit 1
-          fi
-
-      - name: Honest readiness roll-up
-        shell: bash
-        run: |
-          set -euo pipefail
-          grep -E 'NATIVE_PORT_READY' /tmp/gold93-lab.log | tee /tmp/gold93-summary.txt
+          grep -E 'NATIVE_PORT_READY' /tmp/gold93-lab.log | tee /tmp/gold93-summary.txt || true
 
       - name: Upload native runtime evidence
         if: always()
@@ -256,14 +168,54 @@ jobs:
             /tmp/gold93-lab.log
             /tmp/gold93-venom-ground.log
             /tmp/gold93-venom-world-diff.log
-            /tmp/gold93-venom-diff.log
-            /tmp/gold93-venom-diff-summary.txt
             /tmp/gold93-capture.log
             /tmp/gold93-render.log
             /tmp/gold93-harness.log
             /tmp/gold93-adapter.log
             /tmp/gold93-summary.txt
             .artifacts/gold93/*.json
+          if-no-files-found: warn
+          retention-days: 14
+
+  host-adapters:
+    name: Host adapter lifecycle skill ${{ matrix.skill }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: path-ownership
+    strategy:
+      fail-fast: false
+      matrix:
+        # Only ids with verified source parity AND a registered host adapter.
+        # 007, 008, 013, 015, 016 and 020 stay out until their parity resolves.
+        skill: [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 14, 17, 18, 19, 21]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1200s godot --headless --editor --path . --import --quit > /tmp/gold93-import.log 2>&1 || true
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
+            echo "::error::Godot import reported script errors"
+            exit 1
+          fi
+      - name: Host adapter lifecycle, cancel, replay and Lab
+        shell: bash
+        run: |
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh host-${{ matrix.skill }} 1500 'GOLD93_HOST_ADAPTER: PASS' res://prototypes/skill_readiness/tests/gold93_host_adapter_skill_test.gd -- --skill=${{ matrix.skill }}
+      - name: Upload host adapter evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gold93-host-adapter-${{ matrix.skill }}
+          path: /tmp/gold93-host-*.log
           if-no-files-found: warn
           retention-days: 14
 

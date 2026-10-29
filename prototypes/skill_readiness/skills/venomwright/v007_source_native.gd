@@ -8,6 +8,6 @@ extends VenomwrightSourceModule
 
 
 func _init() -> void:
-	canonical_id = &"venomwright:07"
+	canonical_id = &"venomwright:007"
 	family = &"venomwright"
 	original_skill_id = 7

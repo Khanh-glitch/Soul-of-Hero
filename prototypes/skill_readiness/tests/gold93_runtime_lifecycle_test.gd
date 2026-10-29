@@ -14,6 +14,12 @@ const INTENTS = preload("res://prototypes/skill_readiness/core/gold93_intents.gd
 var _failures: Array[String] = []
 
 
+## Phase markers go to stderr, which is unbuffered: when `timeout` kills a hung
+## run, the last phase reached still reaches the log and the annotation.
+func _phase(name: String) -> void:
+	printerr("GOLD93_LIFECYCLE PHASE %s t=%d ms" % [name, Time.get_ticks_msec()])
+
+
 func _check(condition: bool, message: String) -> void:
 	if not condition:
 		_failures.append(message)
@@ -53,19 +59,26 @@ func _finish() -> void:
 
 
 func _initialize() -> void:
+	_phase("start")
 	var runtime = RUNTIME.new()
 	_check(runtime.catalog.is_valid(), "catalog invalid: " + runtime.catalog.error_message())
 
 	# Every host wrapper must identify itself by its canonical 3-digit id.
-	for sid in range(1, 7):
-		var id := "venomwright:%03d" % sid
+	# The verified host-castable set is read from MODULE_PATHS, so a registered
+	# adapter that is not in this list cannot slip past the check.
+	var host_ids: Array = RUNTIME.MODULE_PATHS.keys()
+	host_ids.sort()
+	_check(host_ids.size() == 15, "15 verified Venomwright host adapters expected, got %d" % host_ids.size())
+	for id in host_ids:
 		var mod = runtime.module_for(id)
 		_check(mod != null, "host wrapper must load for " + id)
 		if mod != null:
 			_check(String(mod.canonical_id) == id,
 					"host wrapper declared wrong canonical id for " + id)
+	_phase("host-wrappers-loaded")
 
 	# --- 1. real native cast -------------------------------------------------
+	_phase("001-cast")
 	var ctx := _make_context(20261028, _default_actors())
 	var params := PARAMS.diagnostic("venomwright")
 	var handle = runtime.cast(&"venomwright:001", ctx, params)
@@ -124,10 +137,12 @@ func _initialize() -> void:
 	_check(handle3.trace_digest() != digest_a, "a different source seed must change the cast")
 
 	# --- 4. blocked ids fail closed ------------------------------------------
+	_phase("blocked-ids")
 	# Which ids are castable is whatever the runtime actually has a ported
 	# generator for; everything else must fail closed. Neither the ported count
 	# nor the blocked count is hardcoded: both are read back from the runtime,
 	# so this stays true as generators land instead of rotting into a lie.
+	_phase("readiness-report")
 	var ported: Array = runtime.readiness_report()["native_executable"]
 	var blocked_count: int = 0
 	for id in runtime.catalog.ids():
@@ -161,6 +176,7 @@ func _initialize() -> void:
 			"every gameplay slot must stay unconfigured until the owner supplies it")
 	_check(params.lab_only, "diagnostic parameters must be flagged LAB-only")
 
+	_phase("axes")
 	var report: Dictionary = runtime.readiness_report()
 	# The axes are strictly separated: `native_port_ready` is the conjunction of
 	# executable AND parity-verified AND visually approved, so it can never
@@ -215,4 +231,5 @@ func _initialize() -> void:
 	_check(report["gameplay_configured"].size() == 0, "no gameplay numbers may be invented")
 	_check(report["production_integrated"].size() == 0, "production integration stays out of scope")
 
+	_phase("done")
 	_finish()

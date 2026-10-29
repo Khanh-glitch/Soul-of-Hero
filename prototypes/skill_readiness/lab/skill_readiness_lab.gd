@@ -101,6 +101,23 @@ func _on_skill_selected(_index: int) -> void:
 	_refresh_status()
 
 
+## Selects a canonical id through the same OptionButton the player uses.
+## Returns false if the id is not in the catalog. Used by the headless Lab tests.
+func select_id(id: String) -> bool:
+	for i in range(_selector.item_count):
+		if String(_selector.get_item_metadata(i)) == id:
+			_selector.select(i)
+			_release_handle()
+			_refresh_status()
+			return true
+	return false
+
+
+## The handle the Lab currently drives (null when idle). Read-only for tests.
+func current_handle():
+	return _handle
+
+
 func step_ticks(count: int) -> void:
 	if _handle == null:
 		return
