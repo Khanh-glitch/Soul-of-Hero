@@ -338,6 +338,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		return false
 
 	# ---- world, exactly as the oracle drove the original -------------------
+	if _verbose:
+		printerr("  begin seed %d ticks=%d cast_tick=%d" % [seed_, ticks, cast_tick])
 	var w := ProbeWorld.new(ENGINE.WW, ENGINE.WH)
 	w.cfg["density"] = density
 	w.reset_ids()
@@ -371,7 +373,7 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		w.step(F)
 		n += 1
 		if _verbose:
-			print("  step %4d" % n)
+			printerr("  step %4d" % n)
 		if n == cast_tick and not casted:
 			casted = true
 			var r: Dictionary = ENGINE.auto_aim(w, def)
@@ -410,6 +412,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 
 	# Suspended generator threads must be drained before the process exits.
 	w.drain_all()
+	if _verbose:
+		printerr("  loop done n=%d casted=%s" % [n, str(casted)])
 
 	if not casted:
 		_fail("skill %d: cast never fired (cast_tick=%d, ticks=%d)"
