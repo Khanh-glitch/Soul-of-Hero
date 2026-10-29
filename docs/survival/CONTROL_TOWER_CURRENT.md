@@ -62,3 +62,8 @@ A2/A5/A7/A8 historically name responsibilities, not additional physical agents. 
 - [Independent deep review gates](INDEPENDENT_DEEP_REVIEW_PROTOCOL.md)
 - [Task-dispatch protocol](CHANGE_PROTOCOL.md)
 - Google Docs https://docs.google.com/document/d/1q8Vevy4qx_6AFyfJodmsWAhdSBBumtx31hxXnWPelqo/edit tab 04; 06 original research and 11 current four prompt copies.
+
+
+## 2026-10-29 — S6 SPECIALIST QUOTA INCIDENT / LATEST OVERRIDE
+User has **actually dispatched S6** using Astra Max. A 1m40 visible local activity log shows broad Atlas (all 1355 lines) and repo/connector onboarding, without a verified BRIEF.md or source/code change. Git S6 branch last checked at initial a818042d; **ACTIVE/ATTEMPTED BY USER REPORT, OUTPUT NOT VERIFIED**, rather than simply READY. Apparent 5-hour allowance used in ~2 minutes is a quota observation, not evidence that the agent failed. Coordinator admits **oversized onboarding** in the original microtask prompt, which demanded full Atlas+all-doc reading despite a tiny task. **DO NOT FIRE S6** for this.
+NEW QUOTA POLICY: default Astra Medium, Low for lookups/checkpoints, High only for exact complicated design decisions, Max only for narrow proven-hard task. S6 microstage must read only relevant POI-05/08/09/10, DEP-03/04/05/31 and JOURNEY-11/12 source sections, not full universal new-chat bootstrap. Do not re-clone/read the entire source repeatedly. First output <=700 word BRIEF.md, then optional concise STATE/LOG, commit if possible. **See [S6_QUOTA_RECOVERY_20261029.md](S6_QUOTA_RECOVERY_20261029.md) for ready-to-send continuation prompt.** No other agent may wait for S6. Neither adjusting effort nor a new chat replenishes already exhausted shared quota; check actual Settings → Usage.
