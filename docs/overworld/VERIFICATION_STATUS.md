@@ -611,3 +611,104 @@ failure marker. The next run named the cause immediately.
   far (gate, throne); eight to go.
 - The plateau's stone mottle is nearly invisible at native zoom; it needs either more
   contrast or large-scale landform, and the latter is level design.
+
+## Tenth pass — scale, not texture
+
+The three art gaps left open by the ninth pass turned out to have one cause between
+them. Each was a defect at a scale *between* the tile and the region: a wall a hundred
+tiles across, a court nine hundred cells across, a camp seven tiles across. Every
+previous attempt had answered them inside a 16 px tile, which cannot work, because a
+tile repeated nine hundred times is the flat field, not a fix for it.
+
+### The citadel face
+
+The cliff mass is 22 000 cells in bands up to 380 tiles wide, and it was one tone from
+rim to centre. It now carries a six-step value ramp painted by a four-neighbour BFS
+distance field from open ground, with each band boundary roughened by value noise so
+the result is not a topographic contour map.
+
+The interesting part is the first attempt. Two levels — 34 % and 58 % — put a **24 %
+alpha step on a 16 px edge**, and at the camera's 2x zoom that prints as a square
+block standing in the rock. Six steps of about 7 % each, with a roughened boundary,
+read as a gradient. Two levels is what "add a value ramp" sounds like; six is what it
+takes.
+
+### Courses and piers on the cliff face
+
+`art_props.py` carried a comment stating that all the structure of a cliff face comes
+from `cliff_ledge_*`, `cliff_crack_*` and `cliff_buttress_*` decals. The cracks existed.
+The other two never did — a doc-to-code drift that had been there long enough to be
+quoted in the code as fact. Both are now built:
+
+* **course** — a 16 px projecting base at the foot of every south-facing face, two
+  joints, a lit top lip and the shadow it throws on the ground: 1251 placements;
+* **pilaster** — a 28x54 pier with a capital and a plinth, one every eight cells along
+  faces six cells or longer: 21 placements.
+
+Both frames carry an explicit dark contour, because a pier rendered in the same stone
+as the wall behind it is invisible however large it is. That is precisely how the first
+attempt at this failed: the frame rendered correctly in isolation and could not be
+found in the world.
+
+### The L10 court
+
+The court is 900-odd cells of a single flagstone, so the fix had to be *different
+tiles*, not a wash. The plateau connected to the keep is flooded from its foot, its
+distance to open ground computed, and the court laid the way a court is laid: a darker
+dressed border course along the flanks, a lighter processional walk running south from
+the keep, and a landing where the walk meets the steps. Measured mean luminance —
+field 88.5, border course 73.3, walk 104.2. Those are steps a player can read at 2x,
+which a 10 % tint was not.
+
+The station's framing changed with it. The keep is ten tiles tall, and the old offset
+(derived from sprite height, so the whole building fits under the top edge) put the
+entire court *below* the bottom edge: the station photographed a wall and none of the
+thing under review. At L10 the subject is the court, so the station frames the court.
+
+The throne also has the only colonnade in the world — two rows of piers, three deep,
+with a statue at the head of each row and lamps down the outer flanks. Everything in it
+stands at |dx| >= 7 against a 2.4-tile approach, so it frames the route without ever
+standing in it; the bake's reachability gate refuses a blocking prop in a walking lane
+and has caught an earlier draft of exactly that.
+
+### Camps
+
+The camps had furniture; they had no furniture at scale. A camp's largest object was a
+46x36 ridge tent — three tiles square — so a ring of three-tile objects left the middle
+of a seven-tile clearing reading as empty ground with litter at its edges. Five new
+frames, all drawn at the size their role implies:
+
+| frame | size | role |
+| --- | --- | --- |
+| `camp_pavilion` | 74x62 | the camp's command structure; peaked canvas, four poles, open front |
+| `camp_cookfire` | 52x40 | a cauldron in a stone hearth, fire showing round the rim |
+| `camp_wagon` | 66x46 | a two-wheeled supply wagon, tipped on its shafts |
+| `camp_table` | 56x30 | a trestle table with a map, a cup and two benches |
+| `camp_rack` | 44x44 | a weapon rack: spears, crossed swords, a hung shield |
+
+They are placed by what the camp *is*, not by filling space: the crossing gets the
+hearth and the wagon and only one bedroll; the supply depot gets the wagon and the rack
+beside its stores; the watch post gets the rack and the watch bill and nothing that
+suggests permanence; the refuge gets the pavilion behind its lean-to.
+
+The cauldron is on its second draft. The first hung a pot from a tripod, which at this
+size put the pot behind the legs and the flames behind the pot, and the whole hearth
+read as a dark blob on a ring of stones.
+
+### Gates
+
+`ART QUALITY PASSED — 19 families`, patch check deterministic / idempotent /
+non-destructive, `OVERWORLD TOPOLOGY VALIDATION PASSED`, `gd scope check passed`.
+
+### Still open
+
+- The plateau's `w` stone mottle still reads as almost nothing at native zoom. It is
+  now sitting under the depth ramp, which supplies the large-scale cue it was missing,
+  but the mottle itself has not been re-judged against a native capture.
+- The court's border course follows the plateau's real outline, which is ragged; on the
+  north and south ends a two-cell band painted blobs that read as stains, so it is now
+  a single cell and only along the flanks (|dx| >= 8). That is a compromise, not a
+  design.
+- No human has seen any of this as a native Godot screenshot. Everything above is
+  judged from offline renders of the shipped atlas, which share the atlas and the
+  per-cell variant hash with the runtime but are not the runtime.
