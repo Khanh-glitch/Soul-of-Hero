@@ -29,3 +29,5 @@ jobs:
           python-version: '3.12'
       - name: Validate machine-readable handoff and source docs
         run: python tools/survival/validate_handoff.py
+      - name: Verify immutable research atlas and all subsystem owner/gate records
+        run: python tools/survival/validate_atlas_contract.py
