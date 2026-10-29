@@ -1,3 +1,5 @@
+**RESOURCE CORRECTION (2026-10-29): A4 is critical-path Core/Gold work and must be assigned a model able to make steady progress; do NOT transfer the entire mission to the scarce premium fast-token-exhausting slot S6. Only independent OPTIONAL isolated visual experiments may be sent to S6. There are SIX TOTAL AI slots, including active A0.**
+
 # A4 — SKILL CORE + GOLD FIDELITY: EXACT SOURCE, EXACT CAST, FINITE ITEM
 **Your task is SURV-040A, issue #14.** This is a precision parity and combat-architecture mission. The user's Gold skill library is a locked visual/gameplay reference. Never produce prettier-looking but behaviorally different particle imitations.
 **Authorized branch:** `feature/surv-a4-core-gold-040a`. Edit ONLY `docs/survival/skills/**`, `data/survival/core_catalog/**`, `tools/survival/skill_parity/**`, `tests/survival/cores/**`; optional isolated `game/survival/skill_cores/**` if it avoids changing the current Hero/Gold systems. Other Gold owners and active combat branches are read-only until negotiated integration.
