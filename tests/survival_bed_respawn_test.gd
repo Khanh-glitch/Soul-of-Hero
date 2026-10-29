@@ -289,4 +289,6 @@ func _body() -> void:
 		dungeon_hero.call(&"respawn")
 		_expect(dungeon_hero.global_position == dungeon_checkpoint, "dungeon respawn retains its own checkpoint")
 	paused = false
+	dungeon.queue_free()
+	await process_frame
 	_body_complete = true
