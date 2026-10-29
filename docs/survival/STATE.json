@@ -115,9 +115,10 @@
         "Normal-input cloth 1/25 failure with horizontal overflow traced: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923336131 at 366184f; c6c135a layout fix and exact receipt assertions native pending.",
         "Pinned A6 composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923995445 at 1643118; original modal probe and isolated A6 tests pass, actual workspace six held-input assertions fail, bed 103 checks pass but step log gate fails ALSA; 071fcd9 fixes driver and traces event delivery, pending.",
         "A1 two-POI out-of-bounds and owner seam: docs/survival/handoffs/A0_A1_TWO_POI_NATIVE_GEOGRAPHY_BLOCKER_20261030.md; exact canonical slices are not mounted/playable.",
-        "A6 workspace test intermittent: run 40924148636 at d8d13bb 25/25 vs run 40924373575 at c6c135a 7/25 failures; both bed 103/103 but strict step fails ALSA."
+        "A6 workspace test intermittent: run 40924148636 at d8d13bb 25/25 vs run 40924373575 at c6c135a 7/25 failures; both bed 103/103 but strict step fails ALSA.",
+        "Actual A6 V3 + A0 composed Godot 4.7 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924666418 at 071fcd9: original modal probe passes, actual workspace 29, unchanged bed 103, A6 suites 39/31/74/7/39 pass; injected inputs, no production A6 mount, not full product acceptance."
       ],
-      "next": "Inspect 071fcd9 A6 native event trace and bed, fix held semantics; inspect c6c135a cloth/receipt/reload native and d8d13bb full-capacity fixture; continue anti-softlock, canonical A1 temporary composition and complete continuous journey, resolution/Web/performance and owner gates. Do not merge.",
+      "next": "Inspect native c6c135a / later actual scroll, exact cloth/receipt/reload and d8d13bb full-capacity fixture; continue anti-softlock, bounded A1 owner-compatible composition, continuous journey, visual/Web/perf, human and A4 gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
@@ -169,7 +170,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Inspect 071fcd9 A6 native event trace and bed, fix held semantics; inspect c6c135a cloth/receipt/reload native and d8d13bb full-capacity fixture; continue anti-softlock, canonical A1 temporary composition and complete continuous journey, resolution/Web/performance and owner gates. Do not merge.",
+    "first_test": "Inspect native c6c135a / later actual scroll, exact cloth/receipt/reload and d8d13bb full-capacity fixture; continue anti-softlock, bounded A1 owner-compatible composition, continuous journey, visual/Web/perf, human and A4 gates. Do not merge.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
