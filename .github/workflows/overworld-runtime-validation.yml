@@ -382,6 +382,16 @@ jobs:
           python3 tools/overworld/patches.py --empty
           python3 tools/overworld/patches.py --check
 
+      # The art gate. Every threshold in it is the measurement of a defect that
+      # actually shipped - full-width lines that tiled into horizons, a cliff
+      # interior that printed a corduroy grid at the camera's own zoom, landmark
+      # exteriors that sat at the same value as the ground they stand on. The
+      # atlas as it stood before the pass that added this step fails it.
+      - name: "Art quality: no tiled lines, no lattice, destinations above ground"
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 tools/overworld/art_quality.py | tee "$ARTIFACT_DIR/art-quality.log"
+
       # The sandbox that runs these pushes cannot read job logs (the log blob
       # host is blocked), and annotations are the only channel that survives. On
       # failure, surface the tail of every captured log as annotations so a red

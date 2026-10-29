@@ -325,3 +325,57 @@ machine, not the design, so the gate now asserts what the design claims:
 
 The raw numbers are printed on every run, so a human can see the machine the
 gate ran on instead of trusting a threshold.
+
+## Third pass — the cliff mass, and a gate instead of an eye
+
+The second pass fixed the ground. It did not fix the largest graphic in the
+world: `#f`, the cliff interior, is 13 545 of ~23 350 solid cells, in bands up to
+380 tiles wide. Every previous attempt at it had been judged at 10x zoom, where
+detail looks like detail. Judged at the camera's own 2x, it was a grey slab.
+
+| Defect | How it was found | Fix |
+| --- | --- | --- |
+| `solid_cliff` interior printed a corduroy dash grid across the whole map | a native 2x render of a cliff band (`cliff rim`, cell 118,13) | the interior carries **no feature at all** — a quiet bed, a per-variant tone step, a whisper of grit |
+| the cliff mass was the same value as walkable ground (79 luma vs 84–101) | measuring the tile families against each other | the mass is 76 against ground at 91–101, with a lit rim on the edge variants |
+| `ground_rock` and `ground_cliff_top` ruled a full-width line in every variant | the new line metric: 100 % coverage on both | wandering cracks inside the tile; a soft bedding seam for the plateau |
+| painted landmark exteriors sat at **0.315** median luminance against a **0.356** ground | the new value metric | every landmark mixed to its own 0.46 target; separation is now **+0.085** |
+| ground blends chose their material per tile, printing a 16 px quilt | a native render of the plateau edge (cell 250,60) | the choice is quantised to a 2×2 clump |
+| the crypt was a smooth green dome — a hill with a door | the L01 approach frame | wandering crest, dense turf, drystone revetment, crown stone: a built barrow |
+| `rock_a` / `rock_b` read as concrete crates (~400 scattered) | the same plateau-edge frame | per-column silhouette profile, lit crown, facets, flat footprint |
+
+**The face now comes from decals, not tiles.** `cliff_ledge_{a,b}`,
+`cliff_buttress_{a,b}` and `cliff_crack_{a,b}` are placed in world space on cliff
+cells ringed by more cliff, clustered 5 tiles at a time. They are not tiled, so
+they cannot form a lattice, and none of them carries a collider, so they cannot
+make the mass walkable. This is the structural conclusion of three failed tile
+attempts: **a surface that repeats on a 3-tile lattice cannot carry structure at
+all**, and structure has to be authored in world space.
+
+## `tools/overworld/art_quality.py` — the gate this pass added
+
+Counting pixels is how the last two passes shipped. This script makes the
+measurements that found each defect above into assertions:
+
+| Metric | What it catches | Threshold | Worst family now |
+| --- | --- | --- | --- |
+| static share | television snow — a surface of one high-contrast tone pair | ≤ 18 / 23 / 34 % by layer | rock 14.7 %, road_stone 20.6 %, cliff 22.6 % |
+| 3-tile lattice | variants that are near-identical, so the tile repeats 9× | ≤ 92 % | cliff_top 81 %, path 84 %, canopy 71 % |
+| longest straight line | a drawn line inside a tile, which tiles into a horizon | ≤ 60 % (ground/overlay) | rock 25 %, cliff_top 12 %, path 12 % |
+| value separation | destinations that do not read above the ground | ≥ +0.01 | +0.085 |
+
+It is wired into `tools/overworld/local_suite.sh` as `ART` and into the
+`Overworld (Hollow Marches) Runtime Validation` workflow as its own step. Both
+run it as a gate, not a report.
+
+`run` on the atlas at `d00621b` (the previous HEAD) exits non-zero: `ground/rock`
+and `ground/cliff_top` both measure 100 % line coverage, and with the previous
+`manual_landmarks.py` the value metric reads −0.041. The gate fails the state that
+shipped it.
+
+### What this pass did not do
+
+- The buttress decal is authored and placed, but at 26×40 px on a 640×360 frame
+  it reads as a slab on the wall rather than as rock relief. It is an
+  improvement over a flat face and it is not yet *good*.
+- Camps, water margins and the L10 approach plaza are unchanged in this pass;
+  the L10 frame still shows a wide empty flagstone plaza in front of the keep.

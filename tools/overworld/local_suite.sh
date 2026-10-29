@@ -28,6 +28,13 @@ run() { # name script expected-pattern
   fi
 }
 echo "== overworld suite (headless; CI uses Xvfb + GL) =="
+if python3 tools/overworld/art_quality.py >"$OUT/art_quality.log" 2>&1; then
+  printf '  PASS  %-16s %s\n' "ART" "$(tail -1 "$OUT/art_quality.log")"
+else
+  printf '  FAIL  %-16s\n' "ART"
+  tail -6 "$OUT/art_quality.log"
+  fail=1
+fi
 run STATIC  res://tests/overworld_static_contracts_test.gd  "OVERWORLD_STATIC_CONTRACTS PASSED" static
 run GUARD   res://tests/overworld_regression_guard_test.gd   "OVERWORLD_REGRESSION_GUARD PASSED" guard
 run KNIGHT  res://tests/overworld_knight_mini_test.gd        "KNIGHT_MINI PASSED" knight

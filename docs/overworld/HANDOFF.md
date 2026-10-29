@@ -339,3 +339,36 @@ rejected it. This is the ledger against the **original** mission, from HEAD
 The travel-region pass (water margins, plateau blockers); then the evaluation of
 the two missing tilesets, which needs the packs themselves; then a human look at
 the CI artifact.
+
+## Third pass (this turn)
+
+The cliff mass — the world's dominant repeated graphic — was rebuilt, and the
+measurements that found each defect became a gate (`tools/overworld/art_quality.py`,
+wired into both the local suite and CI).
+
+Closed this pass:
+
+- **Cliff face.** The interior variant (13 545 cells, bands to 380 wide) carried a
+  corduroy dash grid at the camera's own 2x zoom. It now carries no feature at
+  all; structure comes from `cliff_ledge_*`, `cliff_buttress_*` and
+  `cliff_crack_*` decals in world space, which cannot form a lattice because they
+  are not tiled.
+- **Cliff value.** The impassable mass was the same luminance as walkable ground
+  (79 vs 84–101). It is now 76 against 91–101.
+- **Full-width tile lines.** `ground_rock` and `ground_cliff_top` both ruled one,
+  measured at 100 % line coverage. Both rewritten.
+- **Landmark value.** All ten painted exteriors sat below the ground's median
+  luminance (0.315 vs 0.356). All are now mixed to 0.46; separation +0.085.
+- **Crypt.** A smooth turf dome became a built barrow: wandering crest, dense
+  turf, drystone revetment, crown stone.
+- **Boulders.** `rock_a`/`rock_b` read as concrete crates; they now have an
+  irregular silhouette, a lit crown and a flat footprint.
+- **Ground blends.** Per-tile material choice printed a 16 px quilt; quantised to
+  a 2×2 clump.
+
+Still open, and named rather than hidden:
+
+- The buttress decal is placed but reads as a slab on the wall; it needs another
+  pass or removal.
+- L10's approach plaza is still wide and empty in the native frame.
+- Camps, water margins and the L01–L05 approaches are unchanged this pass.
