@@ -182,4 +182,8 @@ static func probe_native(sid: int, ticks: int = 30, seed_: int = 7) -> bool:
 	var F: float = 1.0 / 60.0
 	for _i in range(ticks):
 		w.step(F)
-	return w.time > 0.0 and w.castLog.size() > 0
+	var executed: bool = w.time > 0.0 and w.castLog.size() > 0
+	# Probes stop before the authored generator completes. Drain thread-backed
+	# generators before returning so they cannot survive a released ProbeWorld.
+	w.drain_all()
+	return executed

@@ -56,6 +56,15 @@ func _initialize() -> void:
 	var runtime = RUNTIME.new()
 	_check(runtime.catalog.is_valid(), "catalog invalid: " + runtime.catalog.error_message())
 
+	# Every host wrapper must identify itself by its canonical 3-digit id.
+	for sid in range(1, 7):
+		var id := "venomwright:%03d" % sid
+		var mod = runtime.module_for(id)
+		_check(mod != null, "host wrapper must load for " + id)
+		if mod != null:
+			_check(String(mod.canonical_id) == id,
+					"host wrapper declared wrong canonical id for " + id)
+
 	# --- 1. real native cast -------------------------------------------------
 	var ctx := _make_context(20261028, _default_actors())
 	var params := PARAMS.diagnostic("venomwright")
@@ -176,6 +185,11 @@ func _initialize() -> void:
 	# factory must not report "N executable" by adding a source runner to a
 	# host runner.
 	var src_native: Array = report["source_native_executable"]
+	# The public runtime must not forget source-native implementations merely
+	# because their host adapters or source parity evidence are still pending.
+	for sid in [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21]:
+		var id := "venomwright:%03d" % sid
+		_check(src_native.has(id), "registered source-native id missing from report: " + id)
 	var host_cast: Array = report["host_adapter_castable"]
 	var parity_ids: Array = report["source_parity_verified"]
 	_check(parity_ids.size() <= src_native.size(),

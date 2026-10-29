@@ -47,6 +47,18 @@ const SOURCE_NATIVE_IDS: Dictionary = {
 	"venomwright:004": 4,
 	"venomwright:005": 5,
 	"venomwright:006": 6,
+	"venomwright:009": 9,
+	"venomwright:010": 10,
+	"venomwright:011": 11,
+	"venomwright:012": 12,
+	"venomwright:013": 13,
+	"venomwright:014": 14,
+	"venomwright:015": 15,
+	"venomwright:016": 16,
+	"venomwright:017": 17,
+	"venomwright:018": 18,
+	"venomwright:019": 19,
+	"venomwright:021": 21,
 }
 
 const SOURCE_NATIVE_SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")
@@ -164,6 +176,11 @@ func module_for(canonical_id: String):
 		return null
 	var module := instance as Gold93SkillModule
 	if not module.has_source_locked_generator():
+		return null
+	# Reject adapters whose embedded id disagrees with the catalog id.
+	# The previous v002-v006 wrappers silently used 2-digit ids.
+	if String(module.canonical_id) != canonical_id:
+		push_error("GOLD93_RUNTIME: adapter id mismatch: requested %s, module declares %s" % [canonical_id, String(module.canonical_id)])
 		return null
 	return module
 
