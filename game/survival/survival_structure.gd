@@ -25,6 +25,7 @@ const GROUP := &"player_interactable"
 const SERVICE_PATH := "/root/SurvivalService"
 const REACH := 44.0
 const PIECE_CHEST := "chest_wood"
+const PIECE_DOOR := "door_wood"
 
 var _prompt: Label
 var _last_interaction: Dictionary = {}
@@ -35,10 +36,11 @@ func _ready() -> void:
 	# remembered to put it in the group. Anything that materializes a structure —
 	# the build system now, a region loader or a save migration later — gets the
 	# same behaviour from the same place.
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
 		return
 	add_to_group(GROUP)
-	set_meta("container_entity", entity_id)
+	if piece_id == PIECE_CHEST:
+		set_meta("container_entity", entity_id)
 	_build_prompt()
 	refresh_prompt()
 
@@ -90,6 +92,20 @@ func interaction_verb() -> String:
 func refresh_prompt() -> void:
 	if _prompt == null:
 		return
+	if piece_id == PIECE_DOOR:
+		var svc := service()
+		if svc == null:
+			return
+		var record: Dictionary = (svc.call(&"structures") as Dictionary).get(entity_id, {})
+		var is_open := bool(record.get("door_open", false))
+		var shape := get_node_or_null("Solid/CollisionShape2D") as CollisionShape2D
+		if shape != null:
+			shape.set_deferred("disabled", is_open)
+		var sprite := get_node_or_null("Sprite") as Sprite2D
+		if sprite != null:
+			sprite.modulate = Color(0.65, 0.75, 0.65, 0.6) if is_open else Color.WHITE
+		_prompt.text = "[CLICK] Close door" if is_open else "[CLICK] Open door"
+		return
 	var contents := chest_contents()
 	var total := 0
 	for item_id: Variant in contents.keys():
@@ -111,18 +127,38 @@ func capacity() -> int:
 
 
 func can_interact(player: Node2D) -> bool:
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
 			return false
-	return interaction_verb() != "empty"
+	return piece_id == PIECE_DOOR or interaction_verb() != "empty"
+
+
+func _doorway_clear() -> bool:
+	# Conservative clearance around the cell, accounting for the Hero collider.
+	# Scene ownership lives here rather than in the save autoload.
+	var centre := global_position + Vector2(8, 8)
+	for actor: Node in get_tree().get_nodes_in_group(&"player"):
+		if actor is Node2D and (actor as Node2D).global_position.distance_to(centre) < 24.0:
+			return false
+	return true
+
+
+func _process(_delta: float) -> void:
+	if piece_id != PIECE_DOOR or _prompt == null:
+		return
+	_prompt.visible = false
+	for actor: Node in get_tree().get_nodes_in_group(&"player"):
+		if actor is Node2D and (actor as Node2D).global_position.distance_to(global_position) <= REACH:
+			_prompt.visible = true
+			break
 
 
 func interact(player: Node2D) -> bool:
 	# The chest owns the click even when it has nothing to offer: an empty press
 	# that silently becomes an attack swing is how a player loses a structure.
-	if piece_id != PIECE_CHEST:
+	if piece_id not in [PIECE_CHEST, PIECE_DOOR]:
 		return false
 	if player != null and is_instance_valid(player):
 		if player.global_position.distance_to(global_position) > REACH:
@@ -130,6 +166,10 @@ func interact(player: Node2D) -> bool:
 	var svc := service()
 	if svc == null:
 		return false
+	if piece_id == PIECE_DOOR:
+		_last_interaction = svc.call(&"toggle_door", entity_id, Callable(self, "_doorway_clear"))
+		refresh_prompt()
+		return true
 	var verb := interaction_verb()
 	var result: Dictionary = {}
 	if verb == "stash":

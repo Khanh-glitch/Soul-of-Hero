@@ -120,6 +120,30 @@ func _body() -> void:
 	_expect(bool(door.get("ok", false)), "paid door seals production boundary")
 	var room_id: String = build.room_topology.room_at(origin + Vector2i(1, 1))
 	_expect(not room_id.is_empty(), "closed production room derived from placed pieces")
+	var door_id := String(door.get("entity_id", ""))
+	var door_node := build.structure_node(door_id)
+	var door_shape := door_node.get_node("Solid/CollisionShape2D") as CollisionShape2D
+	await physics_frame
+	var start := door_node.global_position + Vector2(8, -12)
+	var body := player as CharacterBody2D
+	var blocked := body.test_move(Transform2D(0.0, start), Vector2(0, 25))
+	_expect(not door_shape.disabled and blocked, "closed door blocks the real Hero collider")
+	player.global_position = door_node.global_position + Vector2(8, -30)
+	_expect(door_node.interact(player), "door interaction opens")
+	await process_frame
+	await physics_frame
+	_expect(door_shape.disabled, "open door disables collision")
+	_expect(not body.test_move(Transform2D(0.0, start), Vector2(0, 25)), "real Hero collider can cross open doorway")
+	_expect(build.room_topology.room_at(origin + Vector2i(1, 1)) == room_id, "opening a door retains enclosure")
+	player.global_position = door_node.global_position + Vector2(8, 8)
+	_expect(door_node.interact(player), "occupied doorway consumes the click")
+	_expect(not bool(door_node.last_interaction().get("ok", true)), "door refuses to close on Hero")
+	player.global_position = door_node.global_position + Vector2(8, -30)
+	_expect(door_node.interact(player) and bool(door_node.last_interaction().get("ok", false)), "clear doorway closes")
+	await process_frame
+	await physics_frame
+	_expect(not door_shape.disabled, "closing door restores collision")
+	_expect(door_node.interact(player) and bool(door_node.last_interaction().get("open", false)), "door reopens before reload")
 	var interior_cell := origin + Vector2i(1, 1)
 	build.select_piece("foundation_wood")
 	var floor_result: Dictionary = build.try_place(interior_cell)
@@ -155,6 +179,11 @@ func _body() -> void:
 		return
 	build = ow.get(&"survival_build") as SurvivalBuildSystem
 	_expect(build.room_topology.room_at(interior_cell) == room_id, "room id stable after reload")
+	await process_frame
+	await physics_frame
+	var restored_door := build.structure_node(door_id)
+	var restored_shape := restored_door.get_node("Solid/CollisionShape2D") as CollisionShape2D
+	_expect(restored_shape.disabled, "door open collision state survives reload")
 	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
 		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
 		"distinct chest contents survive disk reload")

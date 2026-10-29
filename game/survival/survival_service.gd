@@ -402,6 +402,49 @@ func place_structure(
 	return result.duplicate(true)
 
 
+## Toggle a door atomically. Closing requires a world-owned overlap validator;
+## the autoload cannot determine whether a live Hero occupies the doorway.
+## The per-door revision generates distinct action keys while an optional stable
+## request key allows a caller to reject replay of the same logical command.
+func toggle_door(entity_id: String, close_validator: Callable, request_key := "") -> Dictionary:
+	var save := _save()
+	var entry: Dictionary = structures().get(entity_id, {})
+	if save == null or String(entry.get("piece", "")) != "door_wood":
+		return {"ok": false, "reason": "not_a_door"}
+	var revision := int(entry.get("door_revision", 0))
+	var key := request_key if not request_key.is_empty() else "survival.door.%s.%d" % [entity_id, revision + 1]
+	var result := {"ok": false, "reason": "rejected"}
+	var applied := bool(save.call(
+		&"transact_once", key,
+		func(candidate: Dictionary) -> bool:
+			var doc: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
+			var placed: Dictionary = doc.get("structures", {})
+			var current: Dictionary = placed.get(entity_id, {})
+			if String(current.get("piece", "")) != "door_wood" or int(current.get("door_revision", 0)) != revision:
+				result["reason"] = "changed"
+				return false
+			var was_open := bool(current.get("door_open", false))
+			if was_open and (not close_validator.is_valid() or not bool(close_validator.call())):
+				result["reason"] = "doorway_occupied"
+				return false
+			current["door_open"] = not was_open
+			current["door_revision"] = revision + 1
+			placed[entity_id] = current
+			doc["structures"] = placed
+			candidate["survival"] = doc
+			result["ok"] = true
+			result["reason"] = ""
+			result["open"] = not was_open
+			return true,
+		{"kind": "survival_door", "entity_id": entity_id},
+	))
+	if not applied:
+		result["ok"] = false
+		return result
+	survival_state_changed.emit()
+	return result
+
+
 ## Removes a structure without refunding. Demolition economics are A3's; this is
 ## the primitive they will call, and it exists now so that a misplaced structure
 ## is never a permanent save-file artefact during development.

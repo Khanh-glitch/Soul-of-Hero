@@ -106,6 +106,8 @@ static func sanitize(raw: Variant) -> Dictionary:
 				"orientation": int(entry.get("orientation", 0)),
 				"origin_key": String(entry.get("origin_key", "")),
 				"created_at": int(entry.get("created_at", 0)),
+				"door_open": bool(entry.get("door_open", false)),
+				"door_revision": maxi(0, int(entry.get("door_revision", 0))),
 			}
 	document["structures"] = structures
 
