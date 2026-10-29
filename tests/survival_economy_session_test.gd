@@ -212,9 +212,25 @@ func _body() -> void:
 	_expect(String(broken.get("status", "")) == "paused" and int(broken.get("elapsed", -1)) == int(disabled_after.get("elapsed", -2)), "broken station does not grant work")
 	_expect(bool(svc.call(&"remove_structure", bench)), "station can be removed with escrow preserved")
 	await process_frame
+	# A replacement consumes a separate fixture kit. A job reserved for the old
+	# receipt-bound identity must never silently retarget to this new station.
+	_expect(_give("workbench_kit", 1), "fixture replacement kit is separately paid")
+	var replacement: Dictionary = build.try_place(origin, "native.economy.replacement")
+	var new_bench := String(replacement.get("entity_id", ""))
+	_expect(bool(replacement.get("ok", false)) and not new_bench.is_empty() and new_bench != bench and _count("workbench_kit") == 0, "replacement at same footprint has a new paid identity")
+	if new_bench.is_empty():
+		_body_complete = true
+		return
+	var new_job_result: Dictionary = host.call(&"queue_recipe", "weave_cloth", new_bench)
+	var new_job := String(new_job_result.get("job_id", ""))
+	_expect(bool(new_job_result.get("ok", false)) and _count("reed_fibre") == 6, "new station owns a distinct newly reserved job")
+	_expect(await _wait_job(host, new_job, "ready", 30.0), "replacement earns its own active work")
+	var orphan: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(String(orphan.get("station_id", "")) == bench and String(orphan.get("status", "")) == "paused" and int(orphan.get("elapsed", -1)) == int(broken.get("elapsed", -2)), "old job cannot advance or retarget to replacement")
+	_expect(bool((host.call(&"collect", new_job) as Dictionary).get("ok", false)) and _count("binding_cloth") == 4, "new station collects only its own output")
 	_expect(bool((host.call(&"cancel", cancel_id) as Dictionary).get("ok", false)), "removed station job can be cancelled")
-	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 12, "cancelled removed-station escrow returns once")
-	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 2 and _count("reed_fibre") == 12, "production and returned inputs survive save reload")
+	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 9, "cancelled removed-station escrow returns once")
+	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 4 and _count("reed_fibre") == 9, "production and returned inputs survive save reload")
 	# One-process simulated interruption, not an OS kill or a power-loss test.
 	for boundary: String in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
 		_expect(_give(WOOD, 6) and _give(IRON, 2), "prepare fault case " + boundary)
