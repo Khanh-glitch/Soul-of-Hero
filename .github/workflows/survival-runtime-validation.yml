@@ -161,7 +161,27 @@ jobs:
           costed = set()
           for definition in pieces.values():
               costed.update(definition.get("cost", {}).keys())
-          for item in sorted(costed):
+          # Station kits are A3 craft-only outputs, not harvestable resources.
+          # Require the pinned catalog/recipe evidence rather than claiming they
+          # are reachable in the current production build (E-02 wiring is WIP).
+          a3_items = json.load(open("tests/fixtures/a3_86dc2195/items/items.json"))["items"]
+          a3_recipes = json.load(open("tests/fixtures/a3_86dc2195/recipes/recipes.json"))["recipes"]
+          a3_stations = json.load(open("tests/fixtures/a3_86dc2195/recipes/stations.json"))["stations"]
+          crafted_kits = set()
+          for piece_id, piece in pieces.items():
+              if piece.get("kind") != "station":
+                  continue
+              station = a3_stations.get(piece.get("station_kind"), {})
+              kit = station.get("kit", "")
+              if (not kit or piece.get("cost") != {kit: 1}
+                      or piece.get("footprint") != station.get("footprint")
+                      or piece.get("queue_capacity") != station.get("queue_capacity")
+                      or a3_items.get(kit, {}).get("acquisition_status") != "CRAFT_ONLY"
+                      or not any(r.get("outputs", {}).get(kit) == 1 for r in a3_recipes.values())):
+                  errors.append("station contract/kit mismatch: " + piece_id)
+              else:
+                  crafted_kits.add(kit)
+          for item in sorted(costed - crafted_kits):
               if reach.get(item, 10 ** 6) > 24:
                   errors.append("nothing yielding %s within 24 tiles of spawn (nearest %s)"
                                 % (item, reach.get(item, "none")))
@@ -304,6 +324,24 @@ jobs:
           echo "::notice::$(grep -E '\[spatial\]|\[door\]|\[frame\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Paid multi-cell station placement (native)
+        run: |
+          mkdir -p artifacts/ud_station
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_station \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_station_placement_test.gd >"$ARTIFACT_DIR/survival-station.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-station.log"
+          echo "::notice::station exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-station.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-station.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-station.log" "Station" "SURVIVAL STATION PLACEMENT PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
@@ -510,6 +548,7 @@ jobs:
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
             artifacts/survival-bed.log
+            artifacts/survival-station.log
             artifacts/survival-a0-a3.log
             artifacts/survival-interruption.log
             artifacts/roof_*.png

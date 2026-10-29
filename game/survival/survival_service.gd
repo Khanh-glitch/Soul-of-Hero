@@ -304,6 +304,35 @@ func occupancy_layer(piece_id: String) -> String:
 	return "floor" if String(piece_definition(piece_id).get("kind", "")) == "floor" else "object"
 
 
+## Fixed catalog footprints are the shared save/world occupancy contract.
+## Unknown or legacy pieces retain the historical single-cell footprint.
+func footprint_cells(piece_id: String, origin: Vector2i) -> Array[Vector2i]:
+	var raw: Variant = piece_definition(piece_id).get("footprint", [1, 1])
+	var size := Vector2i.ONE
+	if raw is Array and (raw as Array).size() == 2:
+		size = Vector2i(clampi(int(raw[0]), 1, 8), clampi(int(raw[1]), 1, 8))
+	var cells: Array[Vector2i] = []
+	for y in range(size.y):
+		for x in range(size.x):
+			cells.append(origin + Vector2i(x, y))
+	return cells
+
+
+## Resolves only durable player-owned station records, never caller metadata.
+func resolve_station(station_id: String) -> Dictionary:
+	var entry: Dictionary = structures().get(station_id, {})
+	var definition := piece_definition(String(entry.get("piece", "")))
+	if String(definition.get("kind", "")) != "station":
+		return {}
+	var condition := int(entry.get("station_condition", 100))
+	return {"ok": true, "station_id": station_id,
+		"kind": String(definition.get("station_kind", "")),
+		"tier": int(definition.get("station_tier", 1)),
+		"queue_capacity": int(definition.get("queue_capacity", 1)),
+		"operational": bool(entry.get("station_enabled", true)) and condition > 0,
+		"condition": condition, "station_revision": "placed:" + station_id}
+
+
 # ---------------------------------------------------------------------------
 # construction — CT-07
 # ---------------------------------------------------------------------------
@@ -328,6 +357,8 @@ func place_structure(
 	var save := _save()
 	if save == null:
 		return {"ok": false, "reason": "save_service_unavailable"}
+	if String(definition.get("kind", "")) == "station" and not spatial_validator.is_valid():
+		return {"ok": false, "reason": "world_validation_required"}
 	var cost: Dictionary = definition.get("cost", {})
 	if not can_afford(cost):
 		var shortfall := missing_for(cost)
@@ -346,15 +377,21 @@ func place_structure(
 		func(candidate: Dictionary) -> bool:
 			var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
 			var placed: Dictionary = document_candidate.get("structures", {})
+			var requested_cells := footprint_cells(piece_id, cell)
 			for existing_id: Variant in placed.keys():
 				var existing: Dictionary = placed[existing_id]
 				var existing_cell: Array = existing.get("cell", [])
-				if existing_cell.size() >= 2 \
-						and int(existing_cell[0]) == cell.x and int(existing_cell[1]) == cell.y \
-						and occupancy_layer(String(existing.get("piece", ""))) == occupancy_layer(piece_id):
-					result["ok"] = false
-					result["reason"] = "cell_occupied"
-					return false
+				if existing_cell.size() < 2 or occupancy_layer(String(existing.get("piece", ""))) != occupancy_layer(piece_id):
+					continue
+				var existing_origin := Vector2i(int(existing_cell[0]), int(existing_cell[1]))
+				for occupied_cell: Vector2i in footprint_cells(String(existing.get("piece", "")), existing_origin):
+					if occupied_cell in requested_cells:
+						result["ok"] = false
+						result["reason"] = "cell_occupied"
+						return false
+			if spatial_validator.is_valid() and not String(spatial_validator.call()).is_empty():
+				result["reason"] = "world_changed"
+				return false
 			# Payment and creation are in this one mutator: if the removal fails
 			# nothing is created, and if the commit fails neither happened.
 			for item_id: Variant in cost.keys():
@@ -366,6 +403,9 @@ func place_structure(
 					result["reason"] = "cannot_afford"
 					return false
 			var entity_id := SurvivalStateData.next_structure_id(document_candidate)
+			if placed.has(entity_id):
+				result["reason"] = "identity_collision"
+				return false
 			placed[entity_id] = {
 				"piece": piece_id,
 				"cell": [cell.x, cell.y],

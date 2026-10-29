@@ -34,6 +34,8 @@ const TILE := 16
 const BUILD_ART_PATH := "res://assets/survival/build/placeholder_build.png"
 const BUILD_ART_META := "res://data/survival/placeholder_build.json"
 const SOLID_LAYER_MASK := 1
+const BUILD_SLOTS: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood",
+	"station_furnace", "station_workbench", "station_research", "station_garden"]
 
 var active := false
 var selected_piece := "foundation_wood"
@@ -265,12 +267,18 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 		sprite.region_rect = Rect2(
 			int(frame.get("x", 0)), int(frame.get("y", 0)),
 			int(frame.get("w", TILE)), int(frame.get("h", TILE)))
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", piece_id, cell) if svc != null else [cell]
+	var footprint := Vector2i.ONE
+	for occupied: Vector2i in cells:
+		footprint.x = maxi(footprint.x, occupied.x - cell.x + 1)
+		footprint.y = maxi(footprint.y, occupied.y - cell.y + 1)
 	# Anchor the sprite by its foot: the catalog frame is drawn as a 16-wide cell
 	# whose base sits on the cell's south edge, which is what makes a wall read as
 	# standing in front of the floor it sits on.
-	sprite.position = Vector2(0, TILE - int(frame.get("h", TILE)))
+	sprite.position = Vector2(0, TILE * footprint.y - int(frame.get("h", TILE)))
 	node.add_child(sprite)
-	if SurvivalStructure.is_solid_piece(piece_id):
+	if SurvivalStructure.is_solid_piece(piece_id) or String((svc.call(&"piece_definition", piece_id) as Dictionary).get("kind", "")) == "station":
 		var body := StaticBody2D.new()
 		body.name = "Solid"
 		body.collision_layer = SOLID_LAYER_MASK
@@ -281,35 +289,37 @@ func _materialize(entity_id: String, piece_id: String, cell: Vector2i) -> Surviv
 		var shape := CollisionShape2D.new()
 		shape.name = "CollisionShape2D"
 		var rect := RectangleShape2D.new()
-		rect.size = Vector2(TILE - 2, TILE - 6)
+		rect.size = Vector2(TILE * footprint.x - 2, TILE * footprint.y - 6)
 		shape.shape = rect
-		shape.position = Vector2(TILE * 0.5, TILE * 0.5 - 3.0)
+		shape.position = Vector2(TILE * footprint.x * 0.5, TILE * footprint.y * 0.5 - 3.0)
 		body.add_child(shape)
 		node.add_child(body)
 	# A chest joins `player_interactable` from inside SurvivalStructure._ready, so
 	# the behaviour belongs to the piece rather than to this call site.
 	_structures_root.add_child(node)
 	_placed[entity_id] = node
-	var key := _cell_key(cell)
-	var slots: Dictionary = _occupied.get(key, {})
-	var svc := service()
 	var layer := String(svc.call(&"occupancy_layer", piece_id)) if svc != null else "object"
-	slots[layer] = entity_id
-	_occupied[key] = slots
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		slots[layer] = entity_id
+		_occupied[key] = slots
 	return node
 
 
 func _erase_occupancy(node: SurvivalStructure) -> void:
-	var key := _cell_key(node.cell)
-	var slots: Dictionary = _occupied.get(key, {})
 	var svc := service()
 	var layer := String(svc.call(&"occupancy_layer", node.piece_id)) if svc != null else "object"
-	if String(slots.get(layer, "")) == node.entity_id:
-		slots.erase(layer)
-	if slots.is_empty():
-		_occupied.erase(key)
-	else:
-		_occupied[key] = slots
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", node.piece_id, node.cell) if svc != null else [node.cell]
+	for occupied: Vector2i in cells:
+		var key := _cell_key(occupied)
+		var slots: Dictionary = _occupied.get(key, {})
+		if String(slots.get(layer, "")) == node.entity_id:
+			slots.erase(layer)
+		if slots.is_empty():
+			_occupied.erase(key)
+		else:
+			_occupied[key] = slots
 
 
 func _cell_key(cell: Vector2i) -> String:
@@ -464,6 +474,16 @@ func activate_bed(entity_id: String, actor: Node2D) -> Dictionary:
 ## * **within `build_range_tiles` of the player** — placement is a physical act;
 ## * **cell unoccupied** — one structure per cell.
 func validate_cell(cell: Vector2i) -> String:
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	for occupied: Vector2i in cells:
+		var reason := _validate_footprint_cell(occupied)
+		if not reason.is_empty():
+			return reason
+	return ""
+
+
+func _validate_footprint_cell(cell: Vector2i) -> String:
 	if world == null:
 		return "no_world"
 	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
@@ -657,7 +677,7 @@ func _build_hud() -> void:
 	panel.anchor_top = 1.0
 	panel.anchor_right = 1.0
 	panel.anchor_bottom = 1.0
-	panel.offset_top = -34.0
+	panel.offset_top = -48.0
 	panel.offset_bottom = -4.0
 	panel.offset_left = 8.0
 	panel.offset_right = -8.0
@@ -693,7 +713,7 @@ func _refresh_hud() -> void:
 		return
 	var parts: Array[String] = []
 	var svc := service()
-	var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood"]
+	var ids := BUILD_SLOTS
 	for index: int in ids.size():
 		var piece_id := ids[index]
 		var marker := ">" if piece_id == selected_piece else " "
@@ -706,7 +726,7 @@ func _refresh_hud() -> void:
 				cost_text = "%s (short)" % cost_text
 		parts.append("%s[%d] %s %s" % [marker, index + 1,
 			piece_id.replace("_wood", "").capitalize(), cost_text])
-	_hud_label.text = "BUILD   %s   —   left click to place, B to close" % "   ".join(parts)
+	_hud_label.text = "BUILD  %s\n%s  —  click to place, B to close" % ["  ".join(parts.slice(0, 5)), "  ".join(parts.slice(5))]
 
 
 func _cost_text(cost: Dictionary) -> String:
@@ -756,7 +776,12 @@ func _update_preview() -> void:
 	var frame: Dictionary = _frames.get(selected_piece, {})
 	_apply_frame(_preview, frame)
 	_preview.visible = _texture != null
-	_preview.position = Vector2(cell.x * TILE, cell.y * TILE + TILE - int(frame.get("h", TILE)))
+	var svc := service()
+	var cells: Array[Vector2i] = svc.call(&"footprint_cells", selected_piece, cell) if svc != null else [cell]
+	var height := 1
+	for occupied: Vector2i in cells:
+		height = maxi(height, occupied.y - cell.y + 1)
+	_preview.position = Vector2(cell.x * TILE, cell.y * TILE + TILE * height - int(frame.get("h", TILE)))
 	if _preview_frame != null:
 		var footprint: Dictionary = _frames.get("foundation_wood", {})
 		_apply_frame(_preview_frame, footprint)

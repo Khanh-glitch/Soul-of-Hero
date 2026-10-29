@@ -635,9 +635,9 @@ func _handle_survival_input() -> void:
 		return
 	if not survival_build.active:
 		return
-	for index: int in 5:
+	for index: int in SurvivalBuildSystem.BUILD_SLOTS.size():
 		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
-			var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood", "bed_wood"]
+			var ids: Array[String] = SurvivalBuildSystem.BUILD_SLOTS
 			if index < ids.size() and survival_build.select_piece(ids[index]):
 				_say("Build: %s — %s" % [
 					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])

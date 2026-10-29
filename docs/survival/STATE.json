@@ -95,8 +95,9 @@
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
         "branch": "arena/dea2428e-soul-of-hero",
-        "review": "Full SURV-020 native visual and gameplay evidence required",
-        "user_reported": "Draft PR #21 WIP; bed technical subgate accepted; E-01 trusted-code fixture tested; E-02 and full acceptance remain open."
+        "review": "Independent review on control-tower base: docs/survival/reviews/A0_SURV020_PR21_D561_E01_AUTHORITY_GUI_REVIEW_20261029.md; E-01 trusted-fixture accepted, E-02 and full SURV-020 held.",
+        "user_reported": "Draft PR #21 WIP; bed technical subgate accepted; E-01 trusted-code fixture tested; E-02 and full acceptance remain open.",
+        "continuation_work_order": "docs/survival/tasks/SURV-020_GUI_E02_CONTINUATION_20261029.md"
       }
     },
     {

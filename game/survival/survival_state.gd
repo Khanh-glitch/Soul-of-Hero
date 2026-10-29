@@ -111,6 +111,8 @@ static func sanitize(raw: Variant) -> Dictionary:
 				"created_at": int(entry.get("created_at", 0)),
 				"door_open": bool(entry.get("door_open", false)),
 				"door_revision": maxi(0, int(entry.get("door_revision", 0))),
+				"station_enabled": bool(entry.get("station_enabled", true)),
+				"station_condition": clampi(int(entry.get("station_condition", 100)), 0, 100),
 			}
 	document["structures"] = structures
 	# A stable structure identity, never unchecked coordinates from a save.
