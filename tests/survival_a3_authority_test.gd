@@ -60,8 +60,9 @@ func _run() -> void:
 		return _finish()
 	_expect(bool(economy.call(&"configure", port, _station)), "actual A3 catalog and service configured")
 	var instance_ids: Array[String] = []
-	for item_id: Variant in economy.catalog.get("items", {}):
-		if String(economy.catalog["items"][item_id].get("storage", "")) == "instance":
+	var a3_catalog: Dictionary = economy.get(&"catalog")
+	for item_id: Variant in a3_catalog.get("items", {}):
+		if String(a3_catalog["items"][item_id].get("storage", "")) == "instance":
 			instance_ids.append(String(item_id))
 	instance_ids.sort()
 	var approved: Array = Guard.APPROVED_INSTANCE_ITEMS.duplicate()
