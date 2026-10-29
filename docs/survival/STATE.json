@@ -119,9 +119,10 @@
         "Actual A6 V3 + A0 composed Godot 4.7 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924666418 at 071fcd9: original modal probe passes, actual workspace 29, unchanged bed 103, A6 suites 39/31/74/7/39 pass; injected inputs, no production A6 mount, not full product acceptance.",
         "Full bag+chest fixture https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924148719 at d8d13bb: 28 rollback, HUD, retry and reload checks pass; overall run fails old normal cloth scroll.",
         "Existing-overlay extension d7953e1: run 40925373707 fails six release-rearm assertions; bed 103 passes, workspace shutdown leak warnings; 4550d75 awaits delivered release events, native pending.",
-        "Web survival-specific CI-only browser fixture 3fc15cd / bridge revision 89b9c05; native Web export and Chromium result pending, not a human journey."
+        "Web survival-specific CI-only browser fixture 3fc15cd / bridge revision 89b9c05; native Web export and Chromium result pending, not a human journey.",
+        "Fresh-save real automated-input cloth/one receipt/reload https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924373477 at c6c135a: 28/28, session83/authority124/station32/capacity28/bed103/topology94; 4 ObjectDB and 2 resource shutdown warnings; not complete B0 or human."
       ],
-      "next": "Inspect c6c135a native normal-input cloth collection and 4550d75/later A6 release traces, bed and codex; inspect 3fc15cd/later Web fixture; continue last-exit anti-softlock, canonical A1 mapping and continuous B0/B1/B2, native resolution and performance. Do not merge.",
+      "next": "Inspect 4550d75/later A6 release traces/bed/codex and Web fixture, investigate shutdown leaks and unchanged perf; continue last-exit anti-softlock, bounded canonical A1 mapping and full continuous B0/B1/B2, native resolutions and human review. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
@@ -173,7 +174,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Inspect c6c135a native normal-input cloth collection and 4550d75/later A6 release traces, bed and codex; inspect 3fc15cd/later Web fixture; continue last-exit anti-softlock, canonical A1 mapping and continuous B0/B1/B2, native resolution and performance. Do not merge.",
+    "first_test": "Inspect 4550d75/later A6 release traces/bed/codex and Web fixture, investigate shutdown leaks and unchanged perf; continue last-exit anti-softlock, bounded canonical A1 mapping and full continuous B0/B1/B2, native resolutions and human review. Do not merge.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
