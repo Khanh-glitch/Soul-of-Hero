@@ -118,23 +118,25 @@ The script instantiates the real Chapter 1 overworld and Knight; checks nested m
 
 ## Native and visual validation
 
-A dedicated `.github/workflows/a6-v3-product-acceptance.yml` composes pinned A0 + A6 source, imports with Godot 4.7, audits the actual Atlas/coverage archive, runs the four required legacy A6 suites plus the new three-journey suite, runs A3's pinned owner-native economy adapter suite in its own checkout (not mounted into A0+A6), and records A0 bed/death and modal-input results. Captures are limited to eight PNGs: Satchel, four journey examples (cost shortfall, specimen confirmation, known clues, and safe-vs-shortcut risk) and Core detail at 1280×720; Core detail also at 2560×1440 and 3840×2160. The 2K/4K captures check integer multiples of the 640×360 logical layout; they do not prove real monitor legibility, non-integer scaling, color accessibility, weather/Gold contrast or human input comfort. The journey headless test checks that Joypad A maps to `ui_accept` and that the intended tab owns focus, then invokes the focused control's accept signal; it is not hardware-controller delivery or human playtest evidence. Exact run ID, per-suite counts and visual critique are added below after CI completes and the actual images have been inspected.
+A dedicated `.github/workflows/a6-v3-product-acceptance.yml` composes pinned A0 + A6 source, imports with Godot 4.7, audits the actual Atlas/coverage archive, runs the four required legacy A6 suites plus the new three-journey suite, runs A3's pinned owner-native economy adapter suite in its own checkout (not mounted into A0+A6), and records A0 bed/death and modal-input results. The eight A6 PNGs comprise Satchel, four journey examples (cost shortfall, specimen confirmation, known clues, safe-vs-shortcut risk), and Core detail at 1280×720; Core detail is also captured at 2560×1440 and 3840×2160. Up to three selected A0 owner frames are additional, with a combined cap of 12 representative PNGs and 80 MiB. The 2K/4K captures check integer multiples of the 640×360 logical layout; they do not prove real monitor legibility, non-integer scaling, color accessibility, weather/Gold contrast or human input comfort. The journey headless test checks that Joypad A maps to `ui_accept` and that the intended tab owns focus, then invokes the focused control's accept signal; it is not hardware-controller delivery or human playtest evidence.
 
 ### Current evidence ledger
 
 | Gate | Result |
 |---|---|
 | Local Godot 4.7 | Not installed; official binary download was previously blocked by restricted asset-host connectivity. |
-| Atlas/coverage audit | Passed locally in a temporary project tree using the pinned authentic evidence commit; hash, 1,355 lines, 108 entries, 40 unknowns, 28 citations and verbatim source ranges matched. CI repeats this from an immutable checkout. |
-| GDScript/YAML tooling | Edited scripts parsed with gdtoolkit; workflow YAML parsed with PyYAML. These checks do not replace Godot 4.7 import/tests. |
-| Native A6 composed CI | Pending V3 workflow run. |
-| Pinned A3 owner-native adapter test | Pending V3 workflow run; runs in the exact A3 checkout and remains a separate owner test, not combined A0/A6 production integration. |
-| Actual PNG capture/inspection | Pending V3 workflow run; no screenshot claim before review. |
-| A0 modal/gameplay safety | **BLOCKED** pending the executable native probe and A0 all-input gate. |
+| Atlas/coverage audit | Passed locally using pinned authentic evidence; 1,355 lines, 108 unique entries, 40 unknowns, 28 citations, matching content/trace SHAs and verbatim semantic source ranges. CI repeats the audit from an immutable checkout. |
+| GDScript/YAML/shell checks | Selected edited A6 GDScript passes `gdformat --check`; workflow YAML parses and all 11 embedded shell scripts pass `bash -n`. These do not replace native Godot tests. |
+| Native A6 composed CI | Run [40915707299](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40915707299), commit `476cd86b945c55799a558fc2fc9c05c11a779a3d`: journey 39/39, modal lifecycle 7/7, workspace V1 74/74, planner 31/31 and survival UI 39/39. All dedicated A6 suites pass. |
+| Pinned A3 owner-native adapter | Same run: **362 checks / 20 cases passed**, with the exact A3 owner checkout imported first and run separately from A0+A6. This does not mean A3 is production-mounted or runtime-integrated. |
+| A0 bed/death/respawn owner regression | Same run: **95/103 passed; 8 failed**. All reported failures are in the A3 unique-token adapter/custody/death-commit cases (`grant_instance`, mixed sweep, protected token through death/reload, and malformed-bag rejection). Do not edit A0-owned code here; hand this exact regression and failures to A0/A3 owners. Bed purchase, idempotency, collision, interaction, death/recovery cases before the A3 custody section passed. |
+| A0 modal/gameplay input regression | Same run reproduced the expected A0 blocker: `movement=false`, `combat_action=true (light_attack)`, `build_toggle=false`, `click_through=false`, `held_after_close=true`. The workflow records this expected blocker, not a passing safety gate. A0's Knight polls remain ungated. |
+| Captures and inspection | Same run completed all eight A6 named PNGs at requested 720p/2K/4K window sizes plus two available A0 frames (active bed and death); **10 selected frames total**, under the 12-frame cap. I inspected the bounded CI previews: journey/list/detail layouts and A0 world frames are present without obvious clipping; reduced previews make fine copy look small, so full-size legibility and human input comfort remain unverified. The A0 respawn frame was not produced because the owner regression failed before that capture. |
+| A0 modal/gameplay safety | **BLOCKED** until A0 gates every polled gameplay input and the combined native regression passes; no production mount or combat/build-input safety claim. |
 | A1 world integration/discovery | Authored contract only; runtime spawn/discovery/hazard damage not proven. |
-| A3 production/unique-item authority | Source code/catalog exist in PR #19; A0 guard/active-time integration remains pending; not mounted by A6. |
+| A3 production/unique-item authority | Catalog/source and owner test exist; the pinned A0+ A3 custody integration fails above, and A0 guard/active-time production integration remains pending. No A3 service is mounted by A6. |
 | A4 original Gold readiness | **UNVERIFIED / BLOCKED_PENDING_A4**. |
 | Human gameplay or Web playtest | Not performed. |
 | Production UI mounting | **HOLD**. |
 
-After CI, replace pending entries only with the actual run URL/ID and inspected evidence. Keep generated captures under ignored `.artifacts/`, at or below 12 PNGs, and out of Git.
+The CI artifact keeps the selected original PNGs and native logs for seven days; Git remains free of captures and Godot caches.

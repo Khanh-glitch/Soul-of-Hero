@@ -341,8 +341,24 @@ jobs:
           actual = {p.name for p in pngs}
           if actual != expected:
               raise SystemExit(f"capture set mismatch; missing={sorted(expected-actual)}, extra={sorted(actual-expected)}")
+          expected_dimensions = {
+              "a6_workspace_satchel_1280.png": "1280x720",
+              "a6_journey_a_shelter_cost_1280.png": "1280x720",
+              "a6_journey_b_sacrifice_confirmation_1280.png": "1280x720",
+              "a6_journey_c_discovered_clues_1280.png": "1280x720",
+              "a6_journey_c_route_risk_1280.png": "1280x720",
+              "a6_workspace_core_1280.png": "1280x720",
+              "a6_workspace_core_2560.png": "2560x1440",
+              "a6_workspace_core_3840.png": "3840x2160",
+              "roof_bed_active.png": "1280x720",
+              "roof_bed_death.png": "1280x720",
+              "roof_bed_respawn.png": "1280x720",
+          }
           for image in all_frames:
               dimensions = subprocess.check_output(["identify", "-format", "%wx%h", str(image)], text=True)
+              expected_size = expected_dimensions[image.name]
+              if dimensions != expected_size:
+                  raise SystemExit(f"{image}: expected {expected_size}, got {dimensions}")
               print(f"{image}: {dimensions}, {image.stat().st_size} bytes")
           print(f"bounded PNG total: {total} bytes across {len(all_frames)} representative frames")
           PY
