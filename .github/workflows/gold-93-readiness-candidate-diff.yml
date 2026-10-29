@@ -57,22 +57,12 @@ jobs:
           LOG=/tmp/gold93-candidate-diff-${{ matrix.skill }}.log
           timeout 2400s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --candidates 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
-          {
-            echo "### Candidate venomwright:${{ matrix.skill }} (UNREGISTERED)"
-            echo '```'
-            grep -E '"canonical"|"parity"|"first_divergent_tick"|"first_mismatch"|"hits_|"cues_|GOLD93_VENOM_DIFFERENTIAL' "$LOG" | tail -30 || true
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-          if [ "$STATUS" != "0" ] || grep -q 'GOLD93_VENOM_DIFFERENTIAL: FAIL' "$LOG"; then
-            echo "::error::[candidate-${{ matrix.skill }}] differential did not reach PASS (exit $STATUS)"
-            while IFS= read -r line; do echo "::error::[candidate-${{ matrix.skill }}] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | grep -E 'FAIL|SCRIPT ERROR|Parse Error|first_|original|native|event' | sed -e 's/%/%25/g' | head -30)
+          PAT='GOLD93_VENOM_DIFFERENTIAL|"canonical"|"parity"|first_divergent_tick|first_mismatch|hits_|cues_|FAIL|SCRIPT ERROR|Parse Error|Compile Error|ERROR:|original=|native  ='
+          if [ "$STATUS" != "0" ] || grep -q 'GOLD93_VENOM_DIFFERENTIAL: FAIL' "$LOG" || ! grep -q 'GOLD93_VENOM_DIFFERENTIAL: PASS' "$LOG"; then
+            python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level error --title "candidate ${{ matrix.skill }} exit=$STATUS" --log "$LOG" --tail 60 --pattern "$PAT"
             exit 1
           fi
-          if ! grep -q 'GOLD93_VENOM_DIFFERENTIAL: PASS' "$LOG"; then
-            echo "::error::[candidate-${{ matrix.skill }}] no PASS verdict recorded"
-            exit 1
-          fi
-          echo "CANDIDATE_PARITY: PASS ${{ matrix.skill }}"
+          python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level notice --title "candidate ${{ matrix.skill }} PARITY PASS" --log "$LOG" --tail 10 --pattern "$PAT"
       - name: Upload candidate logs
         if: always()
         uses: actions/upload-artifact@v4
