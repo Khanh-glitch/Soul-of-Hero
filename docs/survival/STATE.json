@@ -166,7 +166,7 @@
       "test": "tests/survival_foundation_test.gd (12 named cases, boots the production overworld scene)",
       "ci": ".github/workflows/survival-runtime-validation.yml (static contracts + native Xvfb runtime)",
       "status": "verified_natively",
-      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213",
+      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 at d3885226",
       "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
       "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
     },

@@ -73,7 +73,7 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 
 ## 2026-10-29 — SURV-010 VERIFIED (native engine, 125 checks)
 
-- **Run:** [Survival A0 (Foundation) Runtime Validation 40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213) — `success`, Godot 4.7 under Xvfb, booting the production `chapter1_overworld.tscn`. Result line: `SURVIVAL FOUNDATION PASSED - 125 checks`, engine exit 0, all twelve cases reported.
+- **Run:** [Survival A0 (Foundation) Runtime Validation 40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213) at `d3885226` — `success`, Godot 4.7 under Xvfb, booting the production `chapter1_overworld.tscn`. Result line: `SURVIVAL FOUNDATION PASSED - 125 checks`, engine exit 0, all twelve cases reported.
 - **Same SHA, other gates:** Overworld (Hollow Marches) `success`, Hollow Marches browser playtest `success`, survival static contracts (data + parse + wiring) `success`.
 - **Pre-existing red, unchanged and not caused by this work:** *Godot 4.7 Runtime Validation → Original main baseline comparison* fails 3/89 smoke checks (sword combo second light input, hot-tuned light damage) identically at `c1925d8d` and now. It is recorded in `STATE.json` under `evidence.pre_existing_red`; this work neither claims nor fixes it.
 - **Three real defects the first native run found** — all of them invisible to static checks, which is the point of running the engine:
