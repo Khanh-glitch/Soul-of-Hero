@@ -20,3 +20,13 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - **Commit:** `9816c8c8bfef8a78153a519fcbe8a40066b909c5`; branch HEAD independently checked, diff = 11 new handoff/validation files, 486 insertions and no other paths.
 - **Automated test:** [Survival Handoff Contract run 40827332506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40827332506) — `completed/success` for that exact SHA. This verifies handoff structure ONLY, not new gameplay.
 - **Next:** SURV-010 implement harvest → authoritative inventory → 2D paid placement → reload with no duplication; no native/Web survival playtest has been run yet.
+
+## 2026-10-29 — SURV-005: source-grounded 2019–2020 A–Z mechanics and decisive autonomy
+
+- **Key user instruction:** research the whole historical Last Day Rules/Last Island of Survival (2019–2020 preferred), preserve all engaging subsystems, permit agent approval only through explicit gates, **14-day horizon must leave exciting unopened POIs/recipes/skill Core paths and replay drive**.
+- **Critical discovery:** original Chinese release 王牌战争：文明重启 official 2019 sources plus Aug 27, 2020 *never-reset Action Base* and 15-day restart session coupling. Original published sources reveal tiered keycards and power circuits, three-tier workbenches, drawing/research station, repairable vs irreparable weapons, drop-and-recover, 2019 actual formula examples and item loot roles.
+- **Research artifact:** `docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md` covers world, seasons, lore, loot, categories, specific dated recipes, uncertain totals, stations, supply economy, construction, deaths, hazards, sources S01–S27, adaptation matrix and F0–F5 gates.
+- **Google Docs tab:** `05 · Last Day Rules 2019–2020 · A–Z` (tabId `t.dg7e10u8in6k`), 29,902 characters published; tab 04 handoff update will follow after code commit/verification.
+- **Research-only status:** verified existence and dated sources; **no new gameplay implementation or native/Web playtest**. Original total recipe count not available and NOT asserted. Research task SURV-005 is a research completion claim, not full user-requested game implementation.
+- **Decisions:** D021–D031 in DECISIONS.md, reflecting user's delegated gate authority. Next task remains SURV-010; full game scope cannot be collapsed into a tiny prototype.
+- **Commit:** inspect branch HEAD after this atomic update; record exact SHA and Docs readback.

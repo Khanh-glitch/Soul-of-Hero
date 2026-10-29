@@ -1,0 +1,207 @@
+{
+  "version": 1,
+  "created": "2026-10-29",
+  "attribution": "Research and design gate outcomes, NOT runtime implementation",
+  "historical_scope": "2019–2020 H1/H2/H3",
+  "research_file": "docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md",
+  "user_locked": [
+    "long_run_14day_unfinished",
+    "gold_full_source_fidelity",
+    "full_continent_authored",
+    "10_ch1_dungeons_starter_quarter",
+    "freeform_topdown_shelter",
+    "limited_use_core_recipes",
+    "user_autonomous_gate_permission"
+  ],
+  "fact_gates": [
+    {
+      "id": "F0",
+      "pass_when": "2019–2020 official/dated contemporary evidence or two independent historical accounts",
+      "reject_when": "Different franchise, later edition only, undocumented exactness"
+    },
+    {
+      "id": "F1",
+      "pass_when": "Meaningfully improves material/knowledge/exploration/build/risk/replay loops",
+      "reject_when": "Decorative busywork or empty grind"
+    },
+    {
+      "id": "F2",
+      "pass_when": "Own code or clear compliant source license; no restricted art",
+      "reject_when": "Unauthorized proprietary source/asset copying"
+    },
+    {
+      "id": "F3",
+      "pass_when": "No regression of SOH heroes, combat, dungeons, save, native Gold or authored world",
+      "reject_when": "Violates those invariants"
+    },
+    {
+      "id": "F4",
+      "pass_when": "Deterministic state and transaction tests, collision, native and Web evidence",
+      "reject_when": "Unverified or broken runtime"
+    },
+    {
+      "id": "F5",
+      "pass_when": "14-day depth and replay goal evidence while rewarding early rare Core",
+      "reject_when": "Exhausted quickly or monotonous padding"
+    }
+  ],
+  "mechanic_coverage": [
+    {
+      "id": "MECH-01",
+      "name": "Historic 2019 whole-island+15-day session lifecycle",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G01",
+        "U-G13"
+      ],
+      "tests": [
+        "14day_replay_goals"
+      ]
+    },
+    {
+      "id": "MECH-02",
+      "name": "Permanent base plus opt-in repeatable expedition cycles",
+      "design": "APPROVED_BY_GATE",
+      "implementation": "not_started",
+      "requirement": [
+        "U-W01",
+        "U-G13",
+        "U-P01"
+      ],
+      "tests": [
+        "persistent_home_on_run_reset",
+        "expedition_second_run_changes"
+      ]
+    },
+    {
+      "id": "MECH-03",
+      "name": "Scavenging barrels, loot tiers, recycler and components",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G04"
+      ],
+      "tests": [
+        "loot_node_persistence",
+        "low_risk_nonboss_reward"
+      ]
+    },
+    {
+      "id": "MECH-04",
+      "name": "Physical Skill Core, uses, research, blueprint and recreation",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G05",
+        "U-G09",
+        "U-G10"
+      ],
+      "tests": [
+        "core_use_atomic",
+        "learn_recraft_save",
+        "gold_full_cast_parity"
+      ]
+    },
+    {
+      "id": "MECH-05",
+      "name": "Genuine freeform house/roof/storage/bed/farm",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G08",
+        "U-G11"
+      ],
+      "tests": [
+        "room_roof_per_room",
+        "collision_reload",
+        "inventory_chest_atomic"
+      ]
+    },
+    {
+      "id": "MECH-06",
+      "name": "Tiered environmental hazards and multistage keycard POI graph",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G06",
+        "U-W02"
+      ],
+      "tests": [
+        "unsafe_poi_warning",
+        "tiered_ward_power_access"
+      ]
+    },
+    {
+      "id": "MECH-07",
+      "name": "Full world grammar + 10 dungeon exteriors in opening quarter",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-W01",
+        "U-W03",
+        "U-W05"
+      ],
+      "tests": [
+        "continent_regions_authored",
+        "ten_dungeons_starter_quarter",
+        "native_terrain_readability"
+      ]
+    },
+    {
+      "id": "MECH-08",
+      "name": "Death, bag recovery, durable learned blueprints",
+      "design": "APPROVED_BY_GATE",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G07"
+      ],
+      "tests": [
+        "death_no_dupe",
+        "recoverable_bag",
+        "knowledge_retained"
+      ]
+    },
+    {
+      "id": "MECH-09",
+      "name": "Historical exact total recipe count",
+      "design": "REJECT_EXACT_NUMBER_UNVERIFIED",
+      "implementation": "not_started",
+      "requirement": [],
+      "tests": [
+        "recipe_source_epoch_required"
+      ]
+    },
+    {
+      "id": "MECH-10",
+      "name": "Forced 15 day wipe and compulsory PvP",
+      "design": "REJECT_SOLO_DEFAULT",
+      "implementation": "not_applicable",
+      "requirement": [
+        "U-G01"
+      ],
+      "tests": [
+        "no_compulsory_reset",
+        "no_offline_raid"
+      ]
+    },
+    {
+      "id": "MECH-11",
+      "name": "Long-term early rare ability thrill and replay incentive",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G13"
+      ],
+      "tests": [
+        "first_rare_core_value",
+        "14day_replay_goals"
+      ]
+    }
+  ],
+  "precise_original_recipe_total": {
+    "status": "NOT_VERIFIED_DO_NOT_CLAIM",
+    "reason": "No complete 2019–2020 versioned official master list found, only dated overlapping sample catalogs"
+  },
+  "implementation_gate": "Not started; CI document consistency does not prove gameplay"
+}

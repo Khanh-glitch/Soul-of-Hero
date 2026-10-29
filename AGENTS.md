@@ -25,3 +25,5 @@ This file is the handoff contract for any AI coding agent taking over this branc
 **At every handoff:** Commit tested code and evidence, append WORKLOG.md, update STATE.json/task statuses and any changed DECISIONS.md, include exact new HEAD + tests/CI URLs + known failures + next concrete command. A future agent must be able to resume **without reading this conversation**.
 
 **If interrupted mid-task:** Leave a concise WIP log with branch, uncommitted files, last known test, failing command and the very next action. Do not mark complete.
+
+**NEW REQUIRED READING — historical gameplay atlas and 14-day depth/replay:** docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md, Google Docs tab 05 t.dg7e10u8in6k, Decisions D021–D031 and ACCEPT-REPLAY-01..06. User explicitly delegated binary gate-based design approval, not indefinite waiting. Preserve 2019/2020 source epoch, exact source-locked Gold, and clear difference between design approval and working native gameplay.

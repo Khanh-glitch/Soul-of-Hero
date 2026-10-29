@@ -26,3 +26,19 @@ Each decision carries a state: **LOCKED_USER**, **ENGINEERING_DEFAULT_REVISABLE*
 | D020 | OPEN | Extent of weather, crops/NPC automation and dynamic hostile raids in first production pass | Important long-term mechanics; calibrate scope after functional loop |
 
 **Change policy:** if a LOCKED_USER item appears contradictory with a newly discovered technical fact, mark a conflict and propose alternatives in issue #9; do not silently change it. Record exact date, decision owner and code impact for any later resolution.
+
+## 2026-10-29 — Explicit user delegation and historical research gate results
+User has granted autonomous authority to **approve or reject designs via evidence-based gates**; no indefinite 'proposed but nobody decides' state. See [2019–2020 Atlas](LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md) §14 for F0–F5. The agent must decide a passed idea while preserving authority boundary: **APPROVED_BY_GATE ≠ APPROVED_BY_USER ≠ CODE_IMPLEMENTED**.
+| ID | Verdict | Decision / why |
+| --- | --- | --- |
+| D021 | LOCKED_USER | Preserve the 14-day incomplete-yet-exciting original experience: only a few rare skill/weapon unlocks, many unopened bases/rooms/formulas, strong replay curiosity; **deep content instead of artificial grind**. |
+| D022 | LOCKED_USER | User delegates gate-based design approval to implementation agent; no indefinite undecided ideas. Failed gate -> reject or name explicit missing evidence and test; do not silently shelve. |
+| D023 | APPROVED_BY_GATE | Historical reference pinned to 2019–2020 China 王牌战争：文明重启 / global Last Day Rules, with H1=2019 main, H2=Nov 2019 revamp, H3=Aug 2020 persistent Action Base. Do not confuse Last Day on Earth or latest Last Island. Evidence S01–S14. |
+| D024 | APPROVED_BY_GATE | Hybrid **persistent home + optional repeatable expedition scenarios** (not forced wipe), directly grounded in official Aug 2020 Action Base. Subject to gameplay and user-value gates; reversible until native prototype passes. |
+| D025 | APPROVED_BY_GATE | Retain road-barrel salvage, tiered loot, recycler scrap loop, station tiers, blueprint reverse-engineering, card/key + power/switch multistage POIs, hazards and repair classes. Translate to fantasy semantics without dropping functionality. |
+| D026 | APPROVED_BY_GATE | Keep physical limited-use Skill Core and permanent learned blueprint distinct; reconcile repairable ordinary vs irreparable exceptional prototype; no single hardcoded 2019 firearm durability value. |
+| D027 | APPROVED_BY_GATE | Uncluttered resource causality, farm/production to replace mundane repeated gathering, while rare catalysts still drive expeditions. |
+| D028 | REJECTED | Force-reset persistent SOH home after 15 days, copy paid multiplayer monetization and offline raid; defeats solo player's ownership and original 2020 persistent-base precedent. |
+| D029 | REJECTED_EXACTNESS_CLAIM | Claiming a precise original total number of craftable recipes, numerical POI respawn timers or research prices from merged years. Published sources differ; only source/date/mode-stamped recipe samples are admissible. |
+| D030 | APPROVED_BY_GATE | Explicit long-form acceptance: after an extended multi-session ~14-day play journey the player has gained meaningful rare abilities but still ≥3 distinct valuable next objectives and major unfamiliar POIs. Test boredom vs artificial scarcity; numbers are new product gates, not original 2019 stats. |
+| D031 | KEEP_OPEN_AS_FACT_NOT_DESIGN | Exact 2019 item/recipe full count requires version-pinned dataset/game client source. Research claim FAILS without evidence; behavior-level design can proceed. |

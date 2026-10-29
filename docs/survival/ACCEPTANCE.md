@@ -29,3 +29,12 @@ A production-quality playable vertical slice must exercise the complete route in
 5. Honest fail list and next executable task in STATE.json/WORKLOG.md.
 
 **Do not announce full game complete before the above is actually verified.**
+
+## Long-run depth and replay experience (new MANDATORY gates, 2026-10-29)
+The user experienced roughly 14 days of Last Day Rules and had only a handful of guns/recipes and unopened dangerous sites; that **desire to restart with unexplored possibility** is now a hard quality criterion.
+- [ ] `ACCEPT-REPLAY-01`: Over a representative long-form sequence paced as ~14 day sessions (not necessarily 14 actual offline wall-clock days), a typical inexperienced player obtains **several individually exciting rare Core skills** and coherent progress; no first-session flood of interchangeable "rare" skills.
+- [ ] `ACCEPT-REPLAY-02`: At the end of that sequence player can name ≥3 **distinct**, reachable future goals spanning at least two of exploration/research/building/combat, and still has a meaningful unopened POI or ability branch. Do not pass by making 1 recipe require 100,000 repetitive harvest actions.
+- [ ] `ACCEPT-REPLAY-03`: Optional new expedition replay generates **materially different choices** in routes, hazards/loot/POI goals, with retained persistent base/learned knowledge. No forced full-world wipe, offline raid or copied competitive badge race.
+- [ ] `ACCEPT-REPLAY-04`: Low-risk roadside scavenging/salvage and non-boss POI still provide economically meaningful progress; complex key/power/puzzle/strong-enemy areas reward planned return.
+- [ ] `ACCEPT-REPLAY-05`: Provenance: any claim of "exact 2019 total recipes" must cite a complete build-specific original database; currently **not verified**. The 2019–2020 atlas provides sourced partial example recipes, not a full copy.
+- [ ] `ACCEPT-REPLAY-06`: Gate approval must have documented F0–F5 outcome and evidence; implement failures are FAILED not quietly "pending".

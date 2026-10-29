@@ -23,3 +23,6 @@ At the end of **every meaningful implementation session**: update Git `STATE.jso
 
 ## Provenance and safety
 Original tabs retained without editing. The summaries in tab 03 are structured interpretations and gap tracking, NOT a complete word-for-word speaker transcript. For exact phrasing, revisit the source conversation. Do not put personal secrets/tokens into repo or document.
+
+## 2026-10-29 historical A–Z research sync
+New Google tab `t.dg7e10u8in6k`: `05 · Last Day Rules 2019–2020 · A–Z`. Source-grounded detailed 29,902-character atlas is mirrored in `docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md`. See full H1/H2/H3 version boundaries, dated formula samples, missing recipe count, long-run replay value and autonomous F0–F5 approval gates. Tab 04 appends verified commit/test data; read all **five** tabs, not just old tab 1–4.
