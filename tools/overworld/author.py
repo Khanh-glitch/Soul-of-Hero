@@ -1030,12 +1030,22 @@ def paint_scatter():
             r = h01(913, x, y)
             band = 0.085 if hot(x, y, 917) else 0.016
             if g in ("f", "g", "r", "a"):
-                if r < band * 0.45:
+                # A paved plaza is a *built* surface: what falls on it is masonry
+                # and staves, not boulders. Before this split the same boulder
+                # scatter ran over the flagstone aprons too, and a native frame of
+                # the L10 approach read as a quarry rather than as the forecourt
+                # of a citadel - thirteen boulders in one screen of flagstone.
+                if g == "f":
+                    if r < band * 0.30:
+                        try_add("column_broken", x, y)
+                    elif r < band * 0.58:
+                        try_add("wall_stub", x, y)
+                    elif r < band * 0.70:
+                        try_add("barrel", x, y)
+                elif r < band * 0.45:
                     try_add("rock_a", x, y)
                 elif r < band * 0.85:
                     try_add("rock_b", x, y)
-                elif g == "f" and r < band * 1.0:
-                    try_add("barrel", x, y)
             elif g == "d":
                 if r < band * 0.6:
                     try_add("grave_cross", x, y)

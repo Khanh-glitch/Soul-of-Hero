@@ -537,93 +537,87 @@ def ground_mud(seed):
 
 
 def ground_flagstone(seed, *, base=None, joint=None, worn=0.0, tone=1.0):
-    """Broken masonry paving: irregular brick courses with interior joints only.
+    """Broken masonry paving: courses of slabs with joints you can actually see.
 
-    Three earlier passes failed at the camera's 2x zoom for the same reason:
-    something was drawn on *every* tile edge (a border, four 8 px quadrants, or
-    an always-present mortar line), and a paved region resolved into a repeating
-    grid. Joints are therefore drawn only *inside* the tile, and edge bricks run
-    off the tile, so courses read as continuous masonry across cells.
+    The previous version had the right idea - joints drawn only inside the tile,
+    edge bricks running off it, so courses continue across cells - but the joints
+    were drawn at 0.86 tone against a 1.0 field, i.e. about four luma, and then a
+    10 % grain pass and a moss speckle were laid on top. At the camera's 2x zoom
+    the result was grey mush with no paviour lines at all: the L10 forecourt, which
+    is 600 cells of this stone, read as scattered debris on an untextured floor
+    rather than as a paved terrace.
+
+    What makes paving read is the *pair* of lines: a dark joint, and the lit edge
+    of the slab on the light side of it. Joint contrast is now 0.58 tone, the lit
+    edge is 1.14, and the grain and moss are cut right back so they cannot eat the
+    lines. Tone spread across variants stays narrow (0.98-1.03) so the plaza is one
+    surface; the variants differ in course layout and wear.
     """
     base = shade(base or C("stone"), tone)
     joint = shade(joint or C("stone_edge"), tone)
     img = new(T, T)
-    rect(img, 0, 0, T, T, shade(base, 0.94 + 0.1 * h01(seed, 3)))
+    rect(img, 0, 0, T, T, shade(base, 0.97 + 0.05 * h01(seed, 3)))
+
     row_y = -int(h01(seed, 1) * 5)
     row = 0
     joints = []
     while row_y < T:
-        row_h = 4 + int(h01(seed, row, 11) * 3)
+        row_h = 5 + int(h01(seed, row, 11) * 3)
         if 0 < row_y < T:
-            joints.append(("h", row_y, row))
-        x = -int(h01(seed, row, 12) * 7)
+            joints.append(("h", row_y, row, 0, 0))
+        x = -int(h01(seed, row, 12) * 8)
         brick = 0
         while x < T:
-            bw = 5 + int(h01(seed, row, brick, 13) * 5)
+            bw = 6 + int(h01(seed, row, brick, 13) * 6)
             if 0 < x < T:
-                joints.append(("v", x, row * 31 + brick))
+                # a vertical joint belongs to ONE course. Running it the full
+                # height of the tile is what made paving print as graph paper:
+                # every brick lined up vertically through every course.
+                joints.append(("v", x, row * 31 + brick, row_y, row_h))
             brick += 1
             x += bw
         row_y += row_h
         row += 1
-    for kind, at, k in joints:
-        tone = 0.86 + 0.1 * h01(seed, k, 5)
+
+    # Grain goes down BEFORE the joints. `grain()` fills its region with its base
+    # colour first (it is a painter, not a brush), so a grain pass drawn after the
+    # courses repaints the whole tile and erases them - which is exactly why paving
+    # in this world has never shown a paviour line, at any contrast, in three
+    # passes. Every other caller in this file paints grain first for the same
+    # reason.
+    grain(img, 0, 0, T, T, shade(base, 0.98), shade(base, 1.05), shade(base, 0.90),
+          seed=seed + 11, amount=0.05)
+
+    for kind, at, k, r0, rh in joints:
+        depth = 0.76 + 0.08 * h01(seed, k, 5)
         if kind == "h":
-            hline(img, 0, at, T, shade(joint, tone))
-            hline(img, 0, at + 1, T, shade(base, 1.08))
+            # one dark line, one lit arris below it: the pair is what reads as a
+            # raised slab edge. Two dark rows plus an arris was too busy.
+            hline(img, 0, at, T, shade(joint, depth))
+            if at + 1 < T:
+                hline(img, 0, at + 1, T, shade(base, 1.07))
         else:
-            vline(img, at, 0, T, shade(joint, tone))
-            vline(img, at + 1, 0, T, shade(base, 1.04))
-    grain(img, 0, 0, T, T, shade(base, 0.96), shade(base, 1.06), shade(base, 0.88),
-          seed=seed + 11, amount=0.1)
+            # clipped to its own course, so the courses stay offset from each
+            # other instead of aligning into a grid
+            y0 = max(0, r0)
+            y1 = min(T, r0 + rh)
+            vline(img, at, y0, y1 - y0, shade(joint, depth))
+            if at + 1 < T:
+                vline(img, at + 1, y0, y1 - y0, shade(base, 1.05))
+
+    # a few chipped corners, inside the tile
     for i in range(2 + int(worn * 2)):
         cx = int(h01(seed, i, 21) * (T - 6)) + 2
         cy = int(h01(seed, i, 22) * (T - 6)) + 2
         for k in range(2 + int(h01(seed, i, 23) * 3)):
-            px(img, cx + k, cy + k // 2, shade(base, 0.74))
+            px(img, cx + k, cy + k // 2, shade(joint, 0.72))
     if worn > 0:
-        speck(img, 0, 0, T, T, joint, int(7 * worn), seed=seed + 4)
-        speck(img, 0, 0, T, T, mix(C("grass_dk"), base, 0.55), int(6 * worn), seed=seed + 6)
-    # Weathering in BLOCKS, not speckle. A plaza is read from across the screen
-    # at 2x zoom, where four variants of one stone that differ by five percent
-    # collapse into a single flat value (measured: 46-62pct of the frame in one
-    # 16-step colour bucket, before this pass). A 4x4 patch of moss, a slab that
-    # has sunk out of the course, or a paler stone set in to repair a hole is
-    # legible at that distance, and three of them per four variants means a
-    # paved region has structure instead of a tone.
-    roll = h01(seed, 31)
-    if roll < 0.45:
-        # moss and damp in a corner of the tile, worn through the joints
-        mx = int(h01(seed, 32) * (T - 7)) + 1
-        my = int(h01(seed, 33) * (T - 7)) + 1
-        w = 3 + int(h01(seed, 34) * 4)
-        h = 3 + int(h01(seed, 35) * 3)
-        for yy in range(h):
-            span = w - (1 if yy in (0, h - 1) else 0)
-            for xx in range(span):
-                if h01(seed, 36, xx, yy) < 0.82:
-                    px(img, mx + xx, my + yy, mix(C("grass_dk"), base, 0.42))
-        px(img, mx + 1, my + 1, mix(C("grass_dk"), base, 0.22))
-    elif roll < 0.75:
-        # a slab that has dropped: dark face, lit lip on the north and west
-        sx = 2 + int(h01(seed, 37) * (T - 9))
-        sy = 2 + int(h01(seed, 38) * (T - 8))
-        rect(img, sx, sy, 5, 4, shade(base, 0.62))
-        hline(img, sx, sy, 5, shade(base, 0.88))
-        vline(img, sx, sy, 4, shade(base, 0.92))
-        px(img, sx, sy + 3, shade(joint, 0.8))
-    else:
-        # a paler stone set in to repair a hole, one course deep
-        sx = 1 + int(h01(seed, 39) * (T - 8))
-        sy = 1 + int(h01(seed, 40) * (T - 6))
-        rect(img, sx, sy, 6, 4, shade(base, 1.22))
-        hline(img, sx, sy, 6, shade(base, 1.34))
-        frame_box(img, sx, sy, 6, 4, shade(base, 0.95))
+        # moss and grit collect in the joints, not across the slabs
+        for i in range(int(5 * worn)):
+            jx = int(h01(seed, i, 41) * (T - 2)) + 1
+            jy = int(h01(seed, i, 42) * (T - 2)) + 1
+            px(img, jx, jy, mix(C("grass_dk"), joint, 0.45))
     return img
-
-
-def client_joint(colour):
-    return colour
 
 
 def ground_ritual(seed):
@@ -1227,9 +1221,13 @@ GROUND_TILES = {
     "mud0": lambda: ground_mud(71),
     "mud1": lambda: ground_mud(72),
     "floor0": lambda: ground_flagstone(81),
-    "floor1": lambda: ground_flagstone(82, worn=0.7, tone=0.92),
-    "floor2": lambda: ground_flagstone(83, worn=1.0, tone=1.08),
-    "floor3": lambda: ground_flagstone(84, worn=0.4, tone=0.96),
+    # Tone spread is deliberately narrow (0.98-1.03): the four variants used to
+    # span 0.92-1.08, i.e. 14 luma, and a plaza drawn from them read as a
+    # patchwork of individual 16 px slabs rather than as one paved surface. The
+    # variants now differ in joint layout and wear, not in brightness.
+    "floor1": lambda: ground_flagstone(82, worn=0.7, tone=0.98),
+    "floor2": lambda: ground_flagstone(83, worn=1.0, tone=1.03),
+    "floor3": lambda: ground_flagstone(84, worn=0.4, tone=0.995),
     "ritual0": lambda: ground_ritual(91),
     "ritual1": lambda: ground_ritual(92),
     "soul0": lambda: ground_soul(101),
