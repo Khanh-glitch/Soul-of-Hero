@@ -898,15 +898,47 @@
    "lit": false
   },
   {
+   "frame": "column_broken",
+   "x": 4312.0,
+   "y": 648.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
    "frame": "column",
-   "x": 4344.0,
-   "y": 712.0,
+   "x": 4376.0,
+   "y": 648.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column",
+   "x": 4600.0,
+   "y": 648.0,
    "flags": "",
    "z": 1,
    "lit": false
   },
   {
    "frame": "column_broken",
+   "x": 4664.0,
+   "y": 648.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column_broken",
+   "x": 4312.0,
+   "y": 712.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column",
    "x": 4376.0,
    "y": 712.0,
    "flags": "",
@@ -914,7 +946,7 @@
    "lit": false
   },
   {
-   "frame": "column_broken",
+   "frame": "column",
    "x": 4600.0,
    "y": 712.0,
    "flags": "",
@@ -922,17 +954,113 @@
    "lit": false
   },
   {
-   "frame": "column",
-   "x": 4632.0,
+   "frame": "column_broken",
+   "x": 4664.0,
    "y": 712.0,
    "flags": "",
    "z": 1,
    "lit": false
   },
   {
+   "frame": "column_broken",
+   "x": 4312.0,
+   "y": 776.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column",
+   "x": 4376.0,
+   "y": 776.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column",
+   "x": 4600.0,
+   "y": 776.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "column_broken",
+   "x": 4664.0,
+   "y": 776.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "statue",
+   "x": 4344.0,
+   "y": 616.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "statue",
+   "x": 4632.0,
+   "y": 616.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "lamp",
+   "x": 4280.0,
+   "y": 632.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4696.0,
+   "y": 632.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4280.0,
+   "y": 696.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4696.0,
+   "y": 696.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4280.0,
+   "y": 760.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
+   "frame": "lamp",
+   "x": 4696.0,
+   "y": 760.0,
+   "flags": "",
+   "z": 0,
+   "lit": true
+  },
+  {
    "frame": "brazier",
    "x": 4424.0,
-   "y": 744.0,
+   "y": 792.0,
    "flags": "",
    "z": 0,
    "lit": true
@@ -940,23 +1068,7 @@
   {
    "frame": "brazier",
    "x": 4552.0,
-   "y": 744.0,
-   "flags": "",
-   "z": 0,
-   "lit": true
-  },
-  {
-   "frame": "lamp",
-   "x": 4376.0,
-   "y": 776.0,
-   "flags": "",
-   "z": 0,
-   "lit": true
-  },
-  {
-   "frame": "lamp",
-   "x": 4600.0,
-   "y": 776.0,
+   "y": 792.0,
    "flags": "",
    "z": 0,
    "lit": true
@@ -1186,8 +1298,16 @@
    "lit": false
   },
   {
+   "frame": "camp_pavilion",
+   "x": 872.0,
+   "y": 3416.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
    "frame": "camp_tent",
-   "x": 856.0,
+   "x": 824.0,
    "y": 3464.0,
    "flags": "",
    "z": 1,
@@ -1200,6 +1320,22 @@
    "flags": "",
    "z": 1,
    "lit": true
+  },
+  {
+   "frame": "camp_table",
+   "x": 968.0,
+   "y": 3448.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_rack",
+   "x": 808.0,
+   "y": 3512.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
   },
   {
    "frame": "camp_bedroll",
@@ -1274,6 +1410,30 @@
    "lit": true
   },
   {
+   "frame": "camp_cookfire",
+   "x": 2376.0,
+   "y": 3032.0,
+   "flags": "",
+   "z": 1,
+   "lit": true
+  },
+  {
+   "frame": "camp_table",
+   "x": 2488.0,
+   "y": 3032.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_wagon",
+   "x": 2536.0,
+   "y": 3064.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
    "frame": "camp_banner",
    "x": 2472.0,
    "y": 3016.0,
@@ -1344,6 +1504,30 @@
    "flags": "",
    "z": 1,
    "lit": false
+  },
+  {
+   "frame": "camp_wagon",
+   "x": 4072.0,
+   "y": 2584.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_rack",
+   "x": 3880.0,
+   "y": 2552.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_cookfire",
+   "x": 4008.0,
+   "y": 2616.0,
+   "flags": "",
+   "z": 1,
+   "lit": true
   },
   {
    "frame": "lamp",
@@ -1447,6 +1631,22 @@
    "y": 1704.0,
    "flags": "",
    "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "camp_rack",
+   "x": 3256.0,
+   "y": 1704.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "camp_table",
+   "x": 3368.0,
+   "y": 1720.0,
+   "flags": "",
+   "z": 1,
    "lit": false
   },
   {
@@ -91463,6 +91663,10182 @@
    "y": 3592.0,
    "flags": "",
    "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5256.0,
+   "y": 199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5288.0,
+   "y": 199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5320.0,
+   "y": 199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5336.0,
+   "y": 199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5048.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5080.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5160.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5192.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5208.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5224.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5272.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5304.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5352.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5368.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5384.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5400.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5416.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5432.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5448.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5496.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5512.0,
+   "y": 215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 648.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 824.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 840.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 872.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3096.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3112.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3128.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3144.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3160.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3176.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3208.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3256.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3272.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3304.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4936.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4952.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4984.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5000.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5016.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5032.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5064.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5096.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5112.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5128.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5144.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5176.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5240.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5464.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5480.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5544.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5560.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5576.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5608.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5624.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5640.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5656.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5672.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5704.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5720.0,
+   "y": 231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 504.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 520.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 536.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 552.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 584.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 616.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 680.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 696.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 712.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 728.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 744.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 760.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 776.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 792.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 808.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 856.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 888.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 904.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 952.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 968.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 984.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2936.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3032.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3048.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3064.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3080.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3192.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3224.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3240.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3288.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3336.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3384.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3400.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3416.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3448.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3544.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3560.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4632.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4696.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4840.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4856.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4872.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4888.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4904.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4920.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4968.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5528.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5592.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5688.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5752.0,
+   "y": 247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 312.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 376.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 408.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 424.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 440.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 456.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 472.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 568.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 600.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 632.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 648.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 664.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 920.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 936.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1000.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1016.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1032.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1048.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1064.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1080.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1096.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1112.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1144.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1192.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2824.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2888.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2920.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2952.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2968.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2984.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3000.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3016.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3096.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3320.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3352.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3432.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3464.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3496.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3512.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3528.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3576.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3592.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3608.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3624.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3656.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3704.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3720.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3768.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3800.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4488.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4536.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4600.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4616.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4648.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4680.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4712.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4728.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4744.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4760.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4776.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4792.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4808.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4824.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5736.0,
+   "y": 263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 56.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 72.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 88.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 168.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 200.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 216.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 264.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 280.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 296.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 328.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 344.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 360.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 392.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 488.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1128.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1160.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1176.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1208.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1224.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1272.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1288.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1320.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1336.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2696.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2760.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2792.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2840.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2856.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2872.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2904.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2936.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3480.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3544.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3560.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3640.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3672.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3688.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3736.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3752.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3784.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3832.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3848.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3864.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3912.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3928.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3976.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3992.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4024.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4056.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4264.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4472.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4504.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4520.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4552.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4568.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4584.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4664.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4696.0,
+   "y": 279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 8.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 24.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 40.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 104.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 120.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 136.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 152.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 184.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 232.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1240.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1256.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1304.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1352.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1368.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1384.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1400.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1416.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1448.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1480.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2616.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2632.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2664.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2680.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2712.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2728.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2744.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2776.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2808.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3816.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3880.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3896.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3944.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3960.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4008.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4088.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4152.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4168.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4200.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4216.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4232.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4248.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4280.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4296.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4312.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4328.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4344.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4360.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4376.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4392.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4408.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4424.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4440.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4456.0,
+   "y": 295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 72.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1432.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1464.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1496.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1512.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1528.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1544.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1576.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1608.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1624.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1656.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1672.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2440.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2472.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2520.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2536.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2552.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2568.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2584.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2600.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2648.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2696.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4040.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4072.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4104.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4120.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4136.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4184.0,
+   "y": 311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1560.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1592.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1640.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1688.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1704.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1720.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1752.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1768.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1816.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1848.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2312.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2328.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2344.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2360.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2392.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2456.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2488.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2504.0,
+   "y": 327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1736.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1784.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1800.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1832.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1880.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1896.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1912.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1944.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2024.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2232.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2248.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2280.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2296.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2376.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2408.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2424.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4104.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4376.0,
+   "y": 343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1848.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1864.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1928.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1960.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1976.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1992.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2008.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2056.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2104.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2120.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2136.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2168.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2184.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2200.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2216.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2264.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2312.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4264.0,
+   "y": 359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2024.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2040.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2072.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2088.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2152.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5704.0,
+   "y": 375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4680.0,
+   "y": 391.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2936.0,
+   "y": 423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4632.0,
+   "y": 423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4664.0,
+   "y": 423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2920.0,
+   "y": 439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3912.0,
+   "y": 439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3928.0,
+   "y": 439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4648.0,
+   "y": 439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5912.0,
+   "y": 439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2888.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2904.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4440.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4456.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4472.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4488.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4504.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4520.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4536.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4552.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4568.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4584.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4600.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4616.0,
+   "y": 455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2840.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2856.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3944.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3960.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3992.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4040.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4056.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4344.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4360.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4392.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4408.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5896.0,
+   "y": 471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2680.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2712.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2728.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2744.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2776.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2792.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2808.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2824.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2872.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3976.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4008.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4024.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4072.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4088.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4104.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4120.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4136.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4152.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4184.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4200.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4232.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4296.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4328.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4376.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4424.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5880.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5928.0,
+   "y": 487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2600.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2616.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2632.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2648.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2664.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2696.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2760.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4168.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4216.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4248.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4264.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4280.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4312.0,
+   "y": 503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2200.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2536.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2552.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2568.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2584.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5864.0,
+   "y": 519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2488.0,
+   "y": 535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2504.0,
+   "y": 535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2520.0,
+   "y": 535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5576.0,
+   "y": 551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5848.0,
+   "y": 551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5864.0,
+   "y": 551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2216.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2408.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2424.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2440.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2456.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2472.0,
+   "y": 567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2248.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2344.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2376.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2392.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5816.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2232.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2264.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2296.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2328.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2360.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5928.0,
+   "y": 599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2248.0,
+   "y": 615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2280.0,
+   "y": 615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2312.0,
+   "y": 615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5544.0,
+   "y": 615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5784.0,
+   "y": 647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5800.0,
+   "y": 647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5528.0,
+   "y": 663.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5768.0,
+   "y": 663.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5752.0,
+   "y": 679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5736.0,
+   "y": 695.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5928.0,
+   "y": 695.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5752.0,
+   "y": 711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5944.0,
+   "y": 711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5512.0,
+   "y": 743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5736.0,
+   "y": 743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5720.0,
+   "y": 775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5944.0,
+   "y": 775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5496.0,
+   "y": 791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5720.0,
+   "y": 823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5944.0,
+   "y": 839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5704.0,
+   "y": 855.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5960.0,
+   "y": 919.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5704.0,
+   "y": 935.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5176.0,
+   "y": 951.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5960.0,
+   "y": 967.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5688.0,
+   "y": 983.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5192.0,
+   "y": 1031.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5208.0,
+   "y": 1047.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5672.0,
+   "y": 1047.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3192.0,
+   "y": 1063.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3480.0,
+   "y": 1063.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5224.0,
+   "y": 1063.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3288.0,
+   "y": 1079.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3176.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3208.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3224.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3272.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3304.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3336.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3496.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5256.0,
+   "y": 1095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3128.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3160.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3192.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3240.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3256.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3288.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3320.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3352.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3384.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3400.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3416.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3432.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3448.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3480.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3512.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3560.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3624.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3752.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5240.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5272.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5656.0,
+   "y": 1111.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3032.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3080.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3096.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3112.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3144.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3464.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3528.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3544.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3576.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3592.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3608.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3640.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3656.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5288.0,
+   "y": 1127.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2920.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2968.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3000.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3016.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3048.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3064.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3672.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3688.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3704.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3720.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5640.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5928.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5944.0,
+   "y": 1143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2936.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2952.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2984.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3736.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3752.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3768.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3784.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3816.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3832.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3848.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3864.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3880.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3896.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5304.0,
+   "y": 1159.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3800.0,
+   "y": 1175.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5320.0,
+   "y": 1175.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5640.0,
+   "y": 1191.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5320.0,
+   "y": 1207.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5336.0,
+   "y": 1207.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5352.0,
+   "y": 1207.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5368.0,
+   "y": 1239.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5624.0,
+   "y": 1239.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5384.0,
+   "y": 1255.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5400.0,
+   "y": 1271.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5912.0,
+   "y": 1271.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5416.0,
+   "y": 1303.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5432.0,
+   "y": 1303.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5592.0,
+   "y": 1303.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5608.0,
+   "y": 1303.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5576.0,
+   "y": 1319.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5448.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5464.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5480.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5496.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5512.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5544.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5560.0,
+   "y": 1335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5528.0,
+   "y": 1351.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 8.0,
+   "y": 1367.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5896.0,
+   "y": 1383.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 8.0,
+   "y": 1431.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5896.0,
+   "y": 1431.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 216.0,
+   "y": 1479.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 56.0,
+   "y": 1495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4488.0,
+   "y": 1511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5880.0,
+   "y": 1511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 8.0,
+   "y": 1527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4056.0,
+   "y": 1543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4072.0,
+   "y": 1543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4136.0,
+   "y": 1543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4168.0,
+   "y": 1543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4184.0,
+   "y": 1543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4024.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4040.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4088.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4104.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4120.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4152.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4200.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4216.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4232.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4248.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4264.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4280.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4312.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4328.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4344.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4376.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4392.0,
+   "y": 1559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 72.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 232.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3192.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3704.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3928.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3944.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3976.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3992.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4008.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4296.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4360.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4408.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4424.0,
+   "y": 1575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 56.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3272.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3288.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3304.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3320.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3336.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3352.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3384.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3400.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3864.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3896.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3912.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3960.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4440.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4456.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4472.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4488.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4504.0,
+   "y": 1591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 8.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3720.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3736.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3784.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3816.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3832.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3848.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3880.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4520.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4536.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4552.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4568.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4584.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4600.0,
+   "y": 1607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 72.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3176.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3752.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3768.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3800.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4632.0,
+   "y": 1623.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 24.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3112.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3128.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3144.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3160.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4616.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5864.0,
+   "y": 1639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 232.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3064.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3080.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3096.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4648.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4664.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4680.0,
+   "y": 1655.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3016.0,
+   "y": 1671.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 8.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 72.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2968.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3032.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3048.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4696.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4712.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4728.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4872.0,
+   "y": 1687.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2904.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2936.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2984.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3000.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4744.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5848.0,
+   "y": 1703.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 24.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2840.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2856.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2920.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2952.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4760.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4776.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4888.0,
+   "y": 1719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 88.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2776.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2792.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2824.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2872.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2888.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4792.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4808.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4824.0,
+   "y": 1735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2696.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2728.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2744.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2760.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2808.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4840.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4856.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4872.0,
+   "y": 1751.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2616.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2648.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2664.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2680.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2712.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5848.0,
+   "y": 1767.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2536.0,
+   "y": 1783.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2552.0,
+   "y": 1783.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2584.0,
+   "y": 1783.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2600.0,
+   "y": 1783.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2632.0,
+   "y": 1783.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 88.0,
+   "y": 1799.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2504.0,
+   "y": 1799.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2520.0,
+   "y": 1799.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2568.0,
+   "y": 1799.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1096.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2376.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2392.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2440.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2456.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2472.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2488.0,
+   "y": 1815.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2408.0,
+   "y": 1831.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2424.0,
+   "y": 1831.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 24.0,
+   "y": 1847.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 1847.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1272.0,
+   "y": 1847.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 88.0,
+   "y": 1879.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 264.0,
+   "y": 1879.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1240.0,
+   "y": 1879.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1256.0,
+   "y": 1879.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 104.0,
+   "y": 1895.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1208.0,
+   "y": 1895.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1224.0,
+   "y": 1895.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1064.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1080.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1096.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1112.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1128.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1144.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1160.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1176.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1192.0,
+   "y": 1911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 24.0,
+   "y": 1927.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 904.0,
+   "y": 1927.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1016.0,
+   "y": 1927.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 872.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 888.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 952.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 984.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1000.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1032.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1048.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6136.0,
+   "y": 1943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 40.0,
+   "y": 1959.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 104.0,
+   "y": 1959.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 936.0,
+   "y": 1959.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 968.0,
+   "y": 1959.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 856.0,
+   "y": 1975.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 920.0,
+   "y": 1975.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 1975.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 840.0,
+   "y": 1991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 104.0,
+   "y": 2007.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 824.0,
+   "y": 2007.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 760.0,
+   "y": 2023.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 808.0,
+   "y": 2023.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 6136.0,
+   "y": 2023.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 264.0,
+   "y": 2039.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 280.0,
+   "y": 2039.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 744.0,
+   "y": 2039.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 792.0,
+   "y": 2039.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6120.0,
+   "y": 2039.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 40.0,
+   "y": 2055.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 776.0,
+   "y": 2055.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 104.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4072.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4088.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4104.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 4120.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 4136.0,
+   "y": 2071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 120.0,
+   "y": 2087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 744.0,
+   "y": 2087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 760.0,
+   "y": 2087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 6120.0,
+   "y": 2087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 728.0,
+   "y": 2103.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5800.0,
+   "y": 2103.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 648.0,
+   "y": 2119.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 696.0,
+   "y": 2119.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 712.0,
+   "y": 2119.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 744.0,
+   "y": 2119.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 280.0,
+   "y": 2135.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 616.0,
+   "y": 2135.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 664.0,
+   "y": 2135.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 680.0,
+   "y": 2135.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6120.0,
+   "y": 2135.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 56.0,
+   "y": 2151.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 584.0,
+   "y": 2151.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 632.0,
+   "y": 2151.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 120.0,
+   "y": 2167.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 520.0,
+   "y": 2167.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 536.0,
+   "y": 2167.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 552.0,
+   "y": 2167.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 600.0,
+   "y": 2167.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 280.0,
+   "y": 2183.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 376.0,
+   "y": 2183.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 504.0,
+   "y": 2183.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 568.0,
+   "y": 2183.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6136.0,
+   "y": 2183.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 392.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 408.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 440.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 456.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 472.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 488.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 520.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5800.0,
+   "y": 2199.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 264.0,
+   "y": 2215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 424.0,
+   "y": 2215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5816.0,
+   "y": 2215.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 104.0,
+   "y": 2231.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 72.0,
+   "y": 2247.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 264.0,
+   "y": 2263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 2263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6136.0,
+   "y": 2263.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 104.0,
+   "y": 2279.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1640.0,
+   "y": 2295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1816.0,
+   "y": 2295.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1832.0,
+   "y": 2311.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 104.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 264.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1784.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1800.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 6136.0,
+   "y": 2327.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1720.0,
+   "y": 2343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1752.0,
+   "y": 2343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1768.0,
+   "y": 2343.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 88.0,
+   "y": 2359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1736.0,
+   "y": 2359.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1656.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1672.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1688.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1704.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 2375.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1624.0,
+   "y": 2391.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1640.0,
+   "y": 2391.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1608.0,
+   "y": 2407.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 2407.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1176.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1416.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1480.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1512.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1544.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1576.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1592.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5832.0,
+   "y": 2423.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1320.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1400.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1448.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1464.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1496.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1528.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1560.0,
+   "y": 2439.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1192.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1256.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1272.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1288.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1304.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1336.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1352.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1368.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1384.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1432.0,
+   "y": 2455.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 232.0,
+   "y": 2471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1240.0,
+   "y": 2471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1320.0,
+   "y": 2471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 2471.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1208.0,
+   "y": 2487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1224.0,
+   "y": 2487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3688.0,
+   "y": 2487.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3672.0,
+   "y": 2503.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1096.0,
+   "y": 2519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1112.0,
+   "y": 2519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2664.0,
+   "y": 2519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3640.0,
+   "y": 2519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3656.0,
+   "y": 2519.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 248.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1016.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1032.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1064.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1080.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2680.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3608.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3624.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 2535.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1000.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1048.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2696.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2712.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2728.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3560.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3576.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3592.0,
+   "y": 2551.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 232.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 936.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 952.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 968.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 984.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1016.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2744.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2760.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2776.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3528.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3544.0,
+   "y": 2567.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 840.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 872.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 920.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2792.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2808.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2824.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2840.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3496.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3512.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 2583.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 824.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 856.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 888.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 904.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2856.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2872.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2888.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3448.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3464.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3480.0,
+   "y": 2599.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 664.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 744.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 760.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 776.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 792.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 808.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2904.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2920.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2936.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2952.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2968.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2984.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3000.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3016.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3336.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3352.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3384.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3400.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3416.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3432.0,
+   "y": 2615.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 504.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 632.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 648.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 696.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 712.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 728.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3032.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3048.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3064.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3080.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3096.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3112.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3288.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3304.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3320.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5848.0,
+   "y": 2631.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 520.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 536.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 568.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 584.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 600.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 616.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 680.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2568.0,
+   "y": 2647.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 232.0,
+   "y": 2663.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 552.0,
+   "y": 2663.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2504.0,
+   "y": 2679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2520.0,
+   "y": 2679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2536.0,
+   "y": 2679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2552.0,
+   "y": 2679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3976.0,
+   "y": 2679.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3960.0,
+   "y": 2695.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5848.0,
+   "y": 2695.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 216.0,
+   "y": 2711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2472.0,
+   "y": 2711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2488.0,
+   "y": 2711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3880.0,
+   "y": 2711.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1736.0,
+   "y": 2727.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2424.0,
+   "y": 2727.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2440.0,
+   "y": 2727.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2280.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2392.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2408.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2456.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3928.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3944.0,
+   "y": 2743.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 216.0,
+   "y": 2759.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1736.0,
+   "y": 2759.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2296.0,
+   "y": 2759.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2376.0,
+   "y": 2759.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 232.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1752.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1768.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1784.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1832.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2328.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2360.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3912.0,
+   "y": 2775.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1800.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1816.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1848.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1864.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1880.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2312.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2344.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3896.0,
+   "y": 2791.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1896.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1912.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1928.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1944.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2200.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2216.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2328.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3864.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3880.0,
+   "y": 2807.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 232.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1960.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 1976.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 1992.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2008.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2056.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2104.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2120.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2136.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2152.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2168.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2184.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5864.0,
+   "y": 2823.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2024.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2040.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2072.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2088.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3624.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3848.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3864.0,
+   "y": 2839.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3832.0,
+   "y": 2855.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3800.0,
+   "y": 2871.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3816.0,
+   "y": 2871.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5864.0,
+   "y": 2887.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2504.0,
+   "y": 2903.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3784.0,
+   "y": 2903.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3768.0,
+   "y": 2919.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 248.0,
+   "y": 2935.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3736.0,
+   "y": 2951.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3752.0,
+   "y": 2951.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5864.0,
+   "y": 2951.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2520.0,
+   "y": 2967.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3640.0,
+   "y": 2967.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2536.0,
+   "y": 2983.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3720.0,
+   "y": 2983.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5880.0,
+   "y": 2983.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 264.0,
+   "y": 3047.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2536.0,
+   "y": 3047.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2552.0,
+   "y": 3063.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2568.0,
+   "y": 3063.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2584.0,
+   "y": 3079.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2600.0,
+   "y": 3079.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3720.0,
+   "y": 3095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5880.0,
+   "y": 3095.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3640.0,
+   "y": 3143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3656.0,
+   "y": 3143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3672.0,
+   "y": 3143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3688.0,
+   "y": 3143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3704.0,
+   "y": 3143.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2600.0,
+   "y": 3175.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2616.0,
+   "y": 3191.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5896.0,
+   "y": 3191.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2632.0,
+   "y": 3207.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 296.0,
+   "y": 3223.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2648.0,
+   "y": 3223.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2664.0,
+   "y": 3239.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5880.0,
+   "y": 3303.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 312.0,
+   "y": 3319.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2648.0,
+   "y": 3319.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5880.0,
+   "y": 3335.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2664.0,
+   "y": 3351.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 312.0,
+   "y": 3367.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2680.0,
+   "y": 3367.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2696.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2904.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2920.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2936.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2952.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2968.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2984.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3000.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3576.0,
+   "y": 3399.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2712.0,
+   "y": 3415.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3560.0,
+   "y": 3415.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3544.0,
+   "y": 3431.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 296.0,
+   "y": 3447.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2728.0,
+   "y": 3447.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3512.0,
+   "y": 3447.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3528.0,
+   "y": 3447.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2744.0,
+   "y": 3463.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3496.0,
+   "y": 3463.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5864.0,
+   "y": 3463.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2760.0,
+   "y": 3479.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2776.0,
+   "y": 3479.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3480.0,
+   "y": 3479.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 296.0,
+   "y": 3495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2792.0,
+   "y": 3495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2808.0,
+   "y": 3495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2824.0,
+   "y": 3495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3464.0,
+   "y": 3495.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 280.0,
+   "y": 3511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2840.0,
+   "y": 3511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2856.0,
+   "y": 3511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3448.0,
+   "y": 3511.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2872.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2888.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3336.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3352.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3432.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5864.0,
+   "y": 3527.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 296.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2904.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2920.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3384.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3400.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3416.0,
+   "y": 3543.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2936.0,
+   "y": 3559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2952.0,
+   "y": 3559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2968.0,
+   "y": 3559.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 280.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2984.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3000.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3224.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3240.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3256.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5864.0,
+   "y": 3575.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3016.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3032.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3064.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3080.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3096.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3112.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3128.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3144.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3160.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3176.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3192.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3208.0,
+   "y": 3591.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3048.0,
+   "y": 3607.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 280.0,
+   "y": 3639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5848.0,
+   "y": 3639.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 264.0,
+   "y": 3671.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5848.0,
+   "y": 3719.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 264.0,
+   "y": 3735.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 3799.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 5832.0,
+   "y": 3847.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 248.0,
+   "y": 3895.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5832.0,
+   "y": 3911.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 248.0,
+   "y": 3927.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 5816.0,
+   "y": 3943.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 232.0,
+   "y": 3975.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 6136.0,
+   "y": 3975.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 136.0,
+   "y": 3991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 168.0,
+   "y": 3991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 184.0,
+   "y": 3991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 200.0,
+   "y": 3991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 216.0,
+   "y": 3991.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 120.0,
+   "y": 4007.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 152.0,
+   "y": 4007.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 104.0,
+   "y": 4055.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 6136.0,
+   "y": 4071.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2264.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2280.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2744.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2760.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2776.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2840.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2856.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2872.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2936.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 2968.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 2984.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3000.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3032.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3272.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3304.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3320.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3336.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3352.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_a",
+   "x": 3368.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_ledge_b",
+   "x": 3400.0,
+   "y": 4087.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 5400.0,
+   "y": 226.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3144.0,
+   "y": 242.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 728.0,
+   "y": 258.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4888.0,
+   "y": 258.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 1048.0,
+   "y": 274.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4760.0,
+   "y": 274.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4328.0,
+   "y": 306.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 2568.0,
+   "y": 322.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4488.0,
+   "y": 466.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4120.0,
+   "y": 498.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3864.0,
+   "y": 1170.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4248.0,
+   "y": 1570.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3320.0,
+   "y": 1602.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 4568.0,
+   "y": 1618.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 1112.0,
+   "y": 1922.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 2952.0,
+   "y": 2626.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3384.0,
+   "y": 2626.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3080.0,
+   "y": 2642.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 2152.0,
+   "y": 2834.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 2952.0,
+   "y": 3410.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "cliff_pilaster",
+   "x": 3112.0,
+   "y": 3602.0,
+   "flags": "",
+   "z": 1,
    "lit": false
   },
   {

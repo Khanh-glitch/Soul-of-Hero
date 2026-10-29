@@ -686,6 +686,27 @@ def _forecourt(lid, tx, ty, kind, seed):
     a necropolis, broken masonry for a ruin.
     """
     bench_xs = (-7, 7)
+    if kind == "throne":
+        # The Castellan's court is the largest paved space in the world and the only
+        # one that is architecture rather than terrain, so it gets the only colonnade
+        # in the world: two rows of piers flanking the processional way, three deep,
+        # plus a statue at the head of each row. Everything here is a *solid* prop
+        # standing off the walk (|dx| >= 7 against a 2.4-tile approach), so the
+        # colonnade frames the route without ever standing in it - the bake's
+        # reachability gate enforces that, and it refused an earlier draft that put a
+        # sarcophagus on the centreline.
+        for dy in (4, 8, 12):
+            for dx in (-11, -7, 7, 11):
+                frame = "column" if abs(dx) == 7 else "column_broken"
+                add_prop(frame, *tile_pos(tx + dx, ty + dy), z=1)
+        for dx in (-9, 9):
+            add_prop("statue", *tile_pos(tx + dx, ty + 2), z=1)
+        for dy in (3, 7, 11):
+            for dx in (-13, 13):
+                add_prop("lamp", *tile_pos(tx + dx, ty + dy), lit=True)
+        for dx in (-4, 4):
+            add_prop("brazier", *tile_pos(tx + dx, ty + 13), lit=True)
+        return
     if kind in ("sacred", "schism", "throne", "ritual"):
         for dx in (-9, -7, 7, 9):
             add_prop("column" if abs(dx) == 9 else "column_broken",
@@ -918,8 +939,15 @@ def paint_camps():
     _camp_clearing(cid, tx, ty, 8, 5)
     _camp_hearth(tx + 1, ty + 2, stable_seed(cid + "_hearth"))
     _camp_approach(cid, tx, ty)
-    add_prop("camp_tent", *tile_pos(tx - 3, ty), z=1)
+    # The camp's command structure: a pavilion big enough to read as a building
+    # rather than as another three-tile object in a ring of them. The old lean-to
+    # stays - it is the thing the player meets first - and the pavilion stands
+    # behind it, which is also how a real camp is laid out.
+    add_prop("camp_pavilion", *tile_pos(tx - 2, ty - 3), z=1)
+    add_prop("camp_tent", *tile_pos(tx - 5, ty), z=1)
     add_prop("camp_fire", *tile_pos(tx + 1, ty + 2), lit=True, z=1)
+    add_prop("camp_table", *tile_pos(tx + 4, ty - 1), z=1)
+    add_prop("camp_rack", *tile_pos(tx - 6, ty + 3), z=1)
     add_prop("camp_bedroll", *tile_pos(tx - 1, ty + 3))
     add_prop("fence", *tile_pos(tx + 4, ty + 1))          # drying rack
     add_prop("camp_crate", *tile_pos(tx - 5, ty + 2))
@@ -935,6 +963,12 @@ def paint_camps():
     add_prop("disc_shrine", *tile_pos(tx + 5, ty - 2), lit=True, z=1)
     add_prop("column_broken", *tile_pos(tx - 5, ty - 2), z=1)
     add_prop("camp_fire", *tile_pos(tx, ty + 3), lit=True, z=1)
+    # A crossing is a place people wait, so it gets the hearth and the table and no
+    # sleeping gear beyond one bedroll: the camp where the road forks is where you
+    # eat and read the signpost, not where you make a home.
+    add_prop("camp_cookfire", *tile_pos(tx - 4, ty + 1), lit=True, z=1)
+    add_prop("camp_table", *tile_pos(tx + 3, ty + 1), z=1)
+    add_prop("camp_wagon", *tile_pos(tx + 6, ty + 3), z=1)
     add_prop("camp_banner", *tile_pos(tx + 2, ty), z=1)
     add_prop("camp_bedroll", *tile_pos(tx - 5, ty + 2))
     add_prop("camp_trophies", *tile_pos(tx + 7, ty + 1))
@@ -950,6 +984,11 @@ def paint_camps():
     add_prop("barrel", *tile_pos(tx + 3, ty + 1))
     add_prop("camp_fire", *tile_pos(tx - 3, ty + 3), lit=True, z=1)
     add_prop("camp_banner", *tile_pos(tx + 5, ty + 2), z=1)
+    # A supply depot is defined by what it stores, so the wagon and the rack flank
+    # the stores and the cookfire sits where the porters actually stop.
+    add_prop("camp_wagon", *tile_pos(tx + 6, ty + 3), z=1)
+    add_prop("camp_rack", *tile_pos(tx - 6, ty + 1), z=1)
+    add_prop("camp_cookfire", *tile_pos(tx + 2, ty + 5), lit=True, z=1)
     add_prop("lamp", *tile_pos(tx - 5, ty + 1), lit=True)
     add_prop("fence", *tile_pos(tx + 1, ty + 4))
 
@@ -969,6 +1008,10 @@ def paint_camps():
     add_prop("camp_bedroll", *tile_pos(tx - 2, ty + 1))
     add_prop("camp_crate", *tile_pos(tx + 3, ty + 1), z=1)
     add_prop("barrel", *tile_pos(tx + 4, ty + 2))
+    # The ridge camp is a watch post, so it gets the gear a watch needs and nothing
+    # that suggests permanence: a rack for the spears and a table for the watch bill.
+    add_prop("camp_rack", *tile_pos(tx - 5, ty + 2), z=1)
+    add_prop("camp_table", *tile_pos(tx + 2, ty + 3), z=1)
     add_prop("camp_trophies", *tile_pos(tx + 5, ty), z=1)
 
 
@@ -1671,6 +1714,213 @@ def paint_stone_mottle():
     return count
 
 
+def paint_cliff_depth():
+    """Three-step value ramp across the cliff mass, by distance to open ground.
+
+    The clip is the world's dominant graphic and it was one tone from rim to centre.
+    `w`-style mottle inside the tile cannot fix that: the defect is scale, and every
+    attempt to draw structure in 16 px produced a grid. Value against depth is the
+    cue that works at any scale, and it needs no new art in the tile - just two
+    darkening overlays placed by a distance field.
+
+    Distance is a 4-neighbour BFS from open cells, which is exact enough at this size
+    and cheap. The band boundary is then roughened with noise so the mass reads as
+    weathered rock rather than as a topographic contour map.
+    """
+    from collections import deque
+    dist = {}
+    queue = deque()
+    for y in range(H):
+        for x in range(W):
+            cell = get(solid, x, y)
+            if not cell or not cell.startswith("#"):
+                continue
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nx, ny = x + dx, y + dy
+                if not inside(nx, ny) or not (get(solid, nx, ny) or "").startswith("#"):
+                    dist[(x, y)] = 1
+                    queue.append((x, y))
+                    break
+    while queue:
+        x, y = queue.popleft()
+        d = dist[(x, y)]
+        if d >= 14:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if not inside(nx, ny):
+                continue
+            cell = get(solid, nx, ny)
+            if not cell or not cell.startswith("#") or (nx, ny) in dist:
+                continue
+            dist[(nx, ny)] = d + 1
+            queue.append((nx, ny))
+
+    painted = 0
+    for (x, y), d in dist.items():
+        if get(detail, x, y) != ".":
+            continue
+        # Roughen the band edge so the ramp does not trace a clean contour.
+        # Six steps over the ramp, each about 7 % darker than the last. A roughened
+        # boundary per step; two levels, which is what the first version used, put a
+        # 24 % alpha jump on a tile edge and read as a square block.
+        wobble = (vnoise(x, y, 2.6, 371) - 0.5) * 2.4
+        dd = d + wobble
+        if dd < 2.4:
+            continue
+        step = min(6, int((dd - 2.4) / 1.9) + 1)
+        put(detail, x, y, str(step))
+        painted += 1
+    return painted
+
+
+def paint_cliff_face():
+    """Course the base of every south-facing cliff, and pier the long runs.
+
+    The cliff mass is the backdrop to the whole eastern half of the map and to L10
+    in particular, and the recorded gap was that it is "one flat masonry field with
+    no buttress or course change". Both of those are *world-space* features, so they
+    belong here and not in the tile: a course along the foot of the face, and a pier
+    every so many tiles along it.
+
+    Two rules learned the hard way this pass, both about depth sorting:
+
+    * a prop's `y` is its **foot**, so anything placed on the wall's own cell is drawn
+      underneath the cliff and vanishes - the footing goes on the open cell *below*
+      the face, with its base on that cell;
+    * a prop made of the same stone as the wall behind it is invisible regardless of
+      its size, so both frames carry an explicit dark contour.
+
+    Faces shorter than three cells are skipped: a two-tile ledge on a lone boulder
+    reads as litter, not as masonry.
+    """
+    faces = []
+    for y in range(1, H - 1):
+        for x in range(W):
+            if (get(solid, x, y) or "") != "#":
+                continue
+            if (get(solid, x, y + 1) or "") != ".":
+                continue
+            faces.append((x, y))
+
+    ledges = 0
+    for x, y in faces:
+        variant = "cliff_ledge_a" if h01(941, x, y) < 0.5 else "cliff_ledge_b"
+        add_prop(variant, x * TILE + 8, (y + 1) * TILE + 7, z=1)
+        ledges += 1
+
+    # Pier the continuous runs: a pilaster every eight cells, only where the face is
+    # at least six cells long, so a pier always has wall either side of it.
+    by_row = {}
+    for x, y in faces:
+        by_row.setdefault(y, []).append(x)
+    piers = 0
+    for y, xs in by_row.items():
+        xs.sort()
+        run_start = xs[0]
+        run = [xs[0]]
+        for x in xs[1:] + [None]:
+            if x is not None and x == run[-1] + 1:
+                run.append(x)
+                continue
+            if len(run) >= 6:
+                for k in range(run_start + 3, run[-1] - 1, 8):
+                    add_prop("cliff_pilaster", k * TILE + 8, (y + 2) * TILE + 2, z=1)
+                    piers += 1
+            if x is not None:
+                run_start = x
+                run = [x]
+    return ledges, piers
+
+
+def paint_court():
+    """Give the citadel court a paving hierarchy: apron, axial walk, border course.
+
+    L10's plateau is over nine hundred cells of identical flagstone, and the recorded
+    gap is exactly that - a flat field behind the keep, with no hierarchy to read. The
+    plaza is *made* of the tile, so no tile work can fix it; what fixes it is laying
+    the court the way a court is laid:
+
+    * an **apron** of dressed stone directly before the keep, where the player arrives;
+    * an **axial walk** running south from the keep, so the approach has a spine;
+    * a **border course** two cells deep around the whole plateau, which both frames
+      the field and tells the player where the walkable court ends.
+
+    All three are placed by distance from the throne and from the plateau edge, so
+    they follow whatever shape the plateau actually is rather than a rectangle
+    painted on top of it.
+    """
+    throne = next((l for l in LANDMARKS if l[0] == "lm_throne"), None)
+    if throne is None:
+        return 0
+    # LANDMARKS rows are (id, level, name, region, pos, frame, kind, title).
+    tx, ty = throne[4]
+
+    def paved(x, y):
+        cell = get(ground, x, y) or "."
+        return cell in "fd"
+
+    # Flood the plateau from the keep foot.
+    from collections import deque
+    connected = {(tx, ty)}
+    queue = deque([(tx, ty)])
+    while queue:
+        x, y = queue.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if not inside(nx, ny) or (nx, ny) in connected or not paved(nx, ny):
+                continue
+            connected.add((nx, ny))
+            queue.append((nx, ny))
+
+    # Distance to the plateau edge, for the border course.
+    edge = {}
+    queue = deque()
+    for (x, y) in connected:
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, ny = x + dx, y + dy
+            if (nx, ny) not in connected:
+                edge[(x, y)] = 1
+                queue.append((x, y))
+                break
+    while queue:
+        x, y = queue.popleft()
+        d = edge[(x, y)]
+        if d >= 3:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n in connected and n not in edge:
+                edge[n] = d + 1
+                queue.append(n)
+
+    # Lay the court on the ground layer, not as a wash. The defect is that the plaza
+    # is *made of* identical tiles, so the fix has to be different tiles: a dressed
+    # border course two cells deep around the whole plateau, and a five-wide axial
+    # walk running south from the keep. Together they read as a court with a spine,
+    # and both follow the plateau's real outline rather than a rectangle.
+    ay_max = max([y - ty for (x, y) in connected if abs(x - tx) <= 3] or [34])
+    walked = 0
+    bordered = 0
+    for (x, y) in connected:
+        ax, ay = x - tx, y - ty
+        if abs(ax) <= 3 and 1 <= ay <= ay_max:
+            put(ground, x, y, "G")
+            walked += 1
+        elif abs(ax) <= 5 and 1 <= ay <= 5:
+            # Landing before the steps: the walk opens out where it meets the keep,
+            # so the approach has a destination rather than a stripe running to a wall.
+            put(ground, x, y, "G")
+            walked += 1
+        elif edge.get((x, y), 99) == 1 and abs(ax) >= 8:
+            # A single-cell border course, and only along the flanks - the plateau's
+            # north and south ends are ragged, and a two-cell band there painted
+            # blobs that read as stains rather than as a course.
+            put(ground, x, y, "F")
+            bordered += 1
+    return bordered + walked
+
+
 def paint_kerbs():
     """A dressed-stone kerb round every paved surface.
 
@@ -1806,7 +2056,15 @@ def world_document():
                 # Framing for the capture stations: put the camera far enough
                 # south that the whole silhouette fits under the frame's top
                 # edge (the view is 11.25 tiles tall at zoom 2).
-                "capture_offset": [0, 5 - prop_height_tiles(visual)],
+                #
+                # The throne is the exception, deliberately. Its keep is ten tiles
+                # tall, so framing the whole building put the entire court below the
+                # bottom edge - the station photographed a wall and none of the
+                # colonnade, walk or border course that the court is made of. At L10
+                # the subject is the court, not the keep, so the station frames what
+                # the player actually crosses.
+                "capture_offset": [0, 6] if kind == "throne"
+                else [0, 5 - prop_height_tiles(visual)],
             }
             for lid, level, title, region, (tx, ty), visual, kind, subtitle in LANDMARKS
         ],
@@ -1879,9 +2137,14 @@ def main():
     # boundary dither must happen before them or it would eat their rims.
     pools = paint_pools()
     mottle = paint_stone_mottle()
+    cliff_depth = paint_cliff_depth()
+    cliff_ledges, cliff_piers = paint_cliff_face()
+    court = paint_court()
     kerbs = paint_kerbs()
     print("softened %d road cells in camps, feathered %d cells" % (softened, feathered))
-    print("stone mottle %d cells" % mottle)
+    print("stone mottle %d cells, cliff depth %d, facedges %d, piers %d"
+          % (mottle, cliff_depth, cliff_ledges, cliff_piers))
+    print("court: %d border + axial cells" % court)
     print("pools %d cells, kerbs %d cells" % (pools, kerbs))
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop

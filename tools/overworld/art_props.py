@@ -17,6 +17,8 @@ from __future__ import annotations
 import json
 import os
 
+import math
+
 from PIL import Image
 
 from art import (  # same directory
@@ -440,6 +442,219 @@ def lm_throne():
 # ---------------------------------------------------------------------------
 # camps, shortcuts, discoveries
 # ---------------------------------------------------------------------------
+def camp_pavilion():
+    """A big square pavilion: four corner poles, a peaked canvas roof, side curtains.
+
+    The camps' furniture problem was scale, not count. `camp_tent` is a 46x36 ridge
+    tent - about three tiles square - and a ring of three-tile objects around a fire
+    leaves the middle of a seven-tile clearing reading as empty ground with litter at
+    the edges. A pavilion is the size a camp's *command* structure should be: five by
+    five tiles, tall enough to break the treeline silhouette, with an open front the
+    player walks past rather than around.
+    """
+    img = new(74, 62)
+    base_y = 50
+    # Side curtains, drawn first so the roof overlaps them.
+    rect(img, 6, 22, 12, base_y - 22, shade(C("cloth"), 0.86))
+    rect(img, 56, 22, 12, base_y - 22, shade(C("cloth"), 0.66))
+    for x in range(6, 18, 4):
+        vline(img, x, 24, base_y - 24, shade(C("cloth"), 0.74))
+    for x in range(56, 68, 4):
+        vline(img, x, 24, base_y - 24, shade(C("cloth"), 0.56))
+    # Roof: a wide shrug of canvas peaking at the centre, lit on the left.
+    peak = 6
+    for i in range(30):
+        half = 4 + int(i * 1.72)
+        y = peak + i
+        base = mix(C("cloth"), C("wood_dk"), i / 44.0)
+        rect(img, 37 - half, y, half * 2, 1, base)
+        hline(img, 37 - half, y, half, shade(base, 1.16))
+        hline(img, 37, y, half, shade(base, 0.72))
+    # Valance along the eaves, then the four corner poles.
+    for x in range(5, 70):
+        if h01(611, x) < 0.86:
+            px(img, x, 34, shade(C("cloth"), 1.05))
+            px(img, x, 35, shade(C("cloth"), 0.62))
+    for x in (7, 66):
+        vline(img, x, 22, base_y - 20, C("wood"))
+        vline(img, x + 1, 22, base_y - 20, C("wood_dk"))
+        px(img, x, 20, C("wood_hi"))
+    # The open front: a dark interior with a lit floor cloth.
+    arch(img, 26, 30, 23, base_y - 30, C("void"), edge=shade(C("cloth"), 0.44))
+    rect(img, 26, base_y - 3, 23, 3, shade(C("cloth"), 0.8))
+    # Pennant on the ridge.
+    vline(img, 37, 0, peak + 2, C("wood"))
+    for i in range(6):
+        hline(img, 38, 1 + i, 6 - i, C("blood") if i % 2 else C("blood_hi"))
+    contact_shadow(img)
+    return outline_alpha(img)
+
+
+def camp_cookfire():
+    """A cauldron on a stone hearth, with the fire showing round its rim.
+
+    The first draft hung a pot from a tripod, which at this size buried the pot behind
+    the legs and the flames behind the pot - the whole thing read as a dark blob on a
+    rock ring. A cauldron sitting *in* the embers is both simpler to draw and easier
+    to read: the ring of stones says hearth, the iron body says cooking, and the fire
+    is on the outside where it can actually be seen.
+    """
+    img = new(52, 40)
+    cx, base_y = 26, 30
+    # Stone ring, seen as a shallow ellipse.
+    for i in range(16):
+        a_ = i * 6.283 / 16
+        x = int(cx + math.cos(a_) * 19)
+        y = int(base_y + math.sin(a_) * 6)
+        rect(img, x - 3, y - 2, 6, 4, shade(C("stone"), 0.9 + 0.12 * h01(621, i)))
+        px(img, x - 3, y - 2, C("stone_hi"))
+        px(img, x + 2, y + 1, shade(C("stone"), 0.7))
+    # Ash bed.
+    for i in range(-15, 16):
+        h = 3 - abs(i) // 8
+        for k in range(max(1, h)):
+            px(img, cx + i, base_y - k, shade(C("rock_dk"), 0.46 + 0.12 * h01(622, i)))
+    # Flames, drawn *behind* the cauldron's lip and around its sides.
+    for i in range(11):
+        half = max(1, 6 - abs(i - 3))
+        hline(img, cx - half, base_y - 4 - i, half * 2, C("fire_hi") if i > 6 else C("fire"))
+    for dx in (-13, -11, 11, 13):
+        for k in range(4 + int(h01(625, dx) * 4)):
+            px(img, cx + dx, base_y - 3 - k, C("fire") if k < 3 else C("fire_hi"))
+    # Cauldron: body, rim, two handles, and a highlight on the near side.
+    rect(img, cx - 9, base_y - 17, 19, 13, C("iron_dk"))
+    rect(img, cx - 8, base_y - 16, 17, 4, shade(C("void"), 1.5))
+    hline(img, cx - 9, base_y - 17, 19, C("iron_hi"))
+    hline(img, cx - 9, base_y - 16, 19, C("iron"))
+    for dx in (-11, 9):
+        for yy in range(6):
+            for xx in range(3):
+                if (xx - 1) ** 2 + (yy - 3) ** 2 < 6:
+                    px(img, cx + dx + xx, base_y - 15 + yy, C("iron_dk"))
+    # A ladle resting across the rim.
+    for i in range(9):
+        px(img, cx + 2 + i, base_y - 18 - i // 4, C("wood_dk"))
+    contact_shadow(img)
+    return outline_alpha(img)
+
+
+def camp_table():
+    """A trestle table with two benches: where the day's plan gets drawn in the dirt."""
+    img = new(56, 30)
+    top_y = 10
+    for x in (6, 44):
+        rect(img, x, top_y + 4, 5, 15, C("wood_dk"))
+    rect(img, 2, top_y, 52, 5, C("wood"))
+    hline(img, 2, top_y, 52, C("wood_hi"))
+    hline(img, 2, top_y + 4, 52, C("wood_dk"))
+    # Planks, joints, and what is on it.
+    for x in range(6, 52, 9):
+        vline(img, x, top_y + 1, 3, C("wood_dk"))
+    # A map, but not a lamp: at `bone` strength the sheet read as a glowing white
+    # rectangle from across the camp and pulled the eye off the fire. Parchment is
+    # only a shade lighter than the table it lies on, and the ink carries the reading.
+    rect(img, 12, top_y - 5, 9, 5, shade(C("bone_dk"), 0.82))
+    hline(img, 12, top_y - 5, 9, shade(C("bone_dk"), 0.95))
+    px(img, 15, top_y - 3, C("blood_dk"))
+    px(img, 16, top_y - 2, C("blood_dk"))
+    hline(img, 13, top_y - 1, 6, shade(C("wood_dk"), 0.7))
+    rect(img, 30, top_y - 4, 4, 4, C("wood_hi"))                # a cup
+    px(img, 31, top_y - 5, C("gold"))
+    for x in (14, 36):
+        rect(img, x, 24, 12, 3, C("wood"))
+        hline(img, x, 24, 12, C("wood_hi"))
+    contact_shadow(img)
+    return outline_alpha(img)
+
+
+def camp_wagon():
+    """A two-wheeled supply wagon, tipped on its shafts."""
+    img = new(66, 46)
+    base_y = 34
+    # Bed.
+    rect(img, 8, base_y - 16, 44, 14, C("wood"))
+    for x in range(10, 50, 6):
+        vline(img, x, base_y - 15, 12, C("wood_dk"))
+    hline(img, 8, base_y - 16, 44, C("wood_hi"))
+    hline(img, 8, base_y - 3, 44, C("wood_dk"))
+    # Load: crates and a barrel under a lashed cover.
+    rect(img, 12, base_y - 24, 14, 8, C("wood_hi"))
+    rect(img, 17, base_y - 24, 1, 8, C("wood_dk"))
+    rect(img, 30, base_y - 22, 9, 7, shade(C("cloth"), 0.9))
+    hline(img, 12, base_y - 24, 14, shade(C("wood_hi"), 1.1))
+    for i in range(4):
+        vline(img, 34 + i * 2, base_y - 26, 3, C("cloth"))
+    # Wheels: iron rim, wooden spokes, and the shadow under the rim.
+    for wx in (18, 46):
+        for yy in range(-9, 10):
+            for xx in range(-9, 10):
+                dd = xx * xx + yy * yy
+                if 44 <= dd <= 68:
+                    px(img, wx + xx, base_y + yy, C("wood_dk"))
+                elif 68 < dd <= 84:
+                    px(img, wx + xx, base_y + yy, C("iron_dk"))
+        for k in (-8, -4, 0, 4, 8):
+            px(img, wx + k, base_y, C("wood_dk"))
+            px(img, wx, base_y + k, C("wood_dk"))
+        px(img, wx, base_y, C("iron"))
+    # Shafts, resting on the ground.
+    for i in range(14):
+        px(img, 52 + i, base_y - 4 + i // 3, C("wood_dk"))
+        px(img, 52 + i, base_y - 3 + i // 3, C("wood"))
+    contact_shadow(img)
+    return outline_alpha(img)
+
+
+def camp_rack():
+    """A weapon rack: two uprights, a crossbar, and the company's gear leaning in it.
+
+    Drawn with two-pixel shafts and explicit iron heads - the first pass used
+    one-pixel spears at a slight angle and the whole rack read as a picket fence with
+    a red smudge on it.
+    """
+    img = new(48, 48)
+    base_y = 42
+    for x in (5, 39):
+        vline(img, x, 10, base_y - 10, C("wood"))
+        vline(img, x + 1, 10, base_y - 10, C("wood_dk"))
+        px(img, x, 9, C("wood_hi"))
+        px(img, x + 1, base_y - 1, C("wood_dk"))
+    hline(img, 5, 16, 36, C("wood"))
+    hline(img, 5, 17, 36, C("wood_hi"))
+    hline(img, 5, 18, 36, C("wood_dk"))
+    # Three spears, leaning, with leaf heads above the crossbar.
+    for i, (hx, lean) in enumerate(((12, -3), (21, 0), (31, 3))):
+        for k in range(24):
+            x = hx + lean * k // 20
+            # A solid shaft with a lit edge. Alternating the colour per pixel, which
+            # the first draft did, turns a spear into a string of beads.
+            px(img, x, 20 + k, C("wood"))
+            px(img, x + 1, 20 + k, C("wood_dk"))
+        tip_x, tip_y = hx + lean * 24 // 20, 19
+        for k in range(5):
+            hline(img, tip_x - k // 2, tip_y - k, 2 + k, C("iron"))
+        px(img, tip_x, tip_y - 5, C("iron_hi"))
+    # Two swords crossed behind the rack.
+    for i, (hx, lean) in enumerate(((16, -5), (28, 5))):
+        for k in range(20):
+            px(img, hx + lean * k // 24, 24 - k, C("iron"))
+        hline(img, hx + lean * 20 // 24 - 1, 24 - 19, 4, C("iron_hi"))
+        for k in range(4):
+            px(img, hx + lean * k // 24, 24 + k, C("wood_dk"))
+    # A shield hung on the right upright.
+    for yy in range(14):
+        for xx in range(12):
+            d = (xx - 5.5) ** 2 + (yy - 6.5) ** 2
+            if d < 30:
+                px(img, 31 + xx, 24 + yy, C("blood_dk"))
+            elif d < 40:
+                px(img, 31 + xx, 24 + yy, C("iron_dk"))
+    hline(img, 34, 27, 6, C("blood_hi"))
+    px(img, 37, 31, C("gold"))
+    contact_shadow(img)
+    return outline_alpha(img)
+
+
 def camp_tent():
     """A ridge tent seen from three-quarters: two canvas slopes, a dark mouth."""
     img = new(46, 36)
@@ -884,6 +1099,90 @@ def cliff_patch(seed=1, size=44):
     return img
 
 
+def cliff_ledge(variant=0):
+    """A projecting course at the foot of a standing cliff face.
+
+    The cliff is the world's largest graphic and it has structure *inside* the mass
+    now (the depth ramp) and on top of it (patches, cracks), but its base is a
+    straight seam where a 22 000-cell wall of stone meets flat ground. Real rock
+    outcrops and real fortress walls both deliver that seam as a **course**: the
+    stone steps out over the ground it stands on, catching light along its top edge
+    and throwing a band of shadow underneath. Sixteen pixels wide so it tiles along
+    any face, two variants so a long run does not repeat on a fixed rhythm.
+    """
+    img = new(16, 18)
+    joint = 3 if variant == 0 else 10
+    top = shade(C("rock_dk"), 1.30)
+    body = shade(C("rock_dk"), 1.06)
+    low = shade(C("rock_dk"), 0.72)
+    # Shadow the course throws onto the ground below it.
+    for x in range(1, 15):
+        for y in range(14, 18):
+            if (y - 14) < 1 + int(h01(181 + variant, x) * 3):
+                px(img, x, y, (14, 12, 16, 150))
+    # The course itself: lit top lip, body, dark underside.
+    rect(img, 0, 4, 16, 11, body)
+    hline(img, 0, 4, 16, top)
+    hline(img, 0, 5, 16, shade(C("rock_dk"), 1.22))
+    hline(img, 0, 14, 16, low)
+    # One vertical joint, not centred, and never at the seam where tiles meet.
+    vline(img, joint, 5, 9, shade(C("rock_dk"), 0.86))
+    # Grit, so two adjacent courses are not identical.
+    for i in range(5):
+        gx = int(h01(182 + variant, i) * 15)
+        gy = 6 + int(h01(183 + variant, i) * 7)
+        px(img, gx, gy, shade(C("rock_dk"), 0.94))
+    # A ragged top lip: the course is weathered away in places, and a perfectly
+    # straight 400-tile line is the single most obvious sign of a tiled wall.
+    for x in range(16):
+        if h01(184 + variant, x) < 0.22:
+            for y in range(4, 6):
+                px(img, x, y, body)
+    return img
+
+
+def cliff_pilaster():
+    """A pier projecting from a cliff face, to break a wall that runs for hundreds of tiles.
+
+    Placed at intervals along a face, its job is to give the eye a vertical to hold
+    on to. It is drawn full height - 54 px, taller than a landmark column - because
+    the defect it answers is *scale*: a 16 px detail against a 380-tile wall is
+    invisible however well it is shaded, which is exactly how the first attempt at
+    this failed. The west flank is lit, the east flank shadowed, and both flanks carry
+    an explicit dark contour, because a pier rendered in the same stone as the wall
+    behind it disappears into it.
+    """
+    img = new(28, 54)
+    body = shade(C("rock_dk"), 1.02)
+    lit = shade(C("rock_dk"), 1.34)
+    dark = shade(C("rock_dk"), 0.66)
+    # Capital: the pier broadens as it meets the wall above.
+    rect(img, 0, 0, 28, 12, shade(C("rock_dk"), 1.12))
+    hline(img, 0, 0, 28, lit)
+    hline(img, 0, 11, 28, dark)
+    # Shaft, tapering two pixels a side toward the foot.
+    for y in range(12, 50):
+        inset = 2 if y < 40 else 4
+        rect(img, inset, y, 28 - inset * 2, 1, body)
+        vline(img, inset, y, 1, lit)
+        vline(img, 27 - inset, y, 1, dark)
+    # Weathering: chipped courses, never across the full width.
+    for i in range(4):
+        y = 16 + int(h01(191, i) * 28)
+        x = 5 + int(h01(192, i) * 12)
+        for k in range(2 + int(h01(193, i) * 4)):
+            if x + k < 22:
+                px(img, x + k, y, shade(body, 0.88))
+    # Plinth, wider than the shaft, and its shadow on the ground.
+    rect(img, 0, 50, 28, 4, shade(C("rock_dk"), 0.9))
+    hline(img, 0, 50, 28, lit)
+    for x in range(1, 27):
+        for y in range(53, 54):
+            px(img, x, y, (14, 12, 16, 150))
+    _outline_columns(img)
+    return img
+
+
 def cliff_crack(seed=1):
     """A crack in a cliff face: shadow only, no fill.
 
@@ -962,6 +1261,26 @@ def wall_stub():
     hline(img, 0, 20, 36, C("stone_edge"))
     contact_shadow(img)
     return outline_alpha(img)
+
+
+def _outline_columns(img):
+    """Darken the outer silhouette of a mask-less prop by one pixel.
+
+    `outline_alpha` outlines *transparency*, which a solid sprite does not have. A
+    tall solid prop set against the same material it is made of needs an explicit
+    contour or it reads as a slightly different shade of the wall.
+    """
+    w, h = img.size
+    edge = (18, 16, 22)
+    for y in range(h):
+        for x in range(w):
+            if img.getpixel((x, y))[3] == 0:
+                continue
+            if (x == 0 or y == 0 or x == w - 1 or y == h - 1
+                    or img.getpixel((x - 1, y))[3] == 0 or img.getpixel((x + 1, y))[3] == 0
+                    or img.getpixel((x, y - 1))[3] == 0 or img.getpixel((x, y + 1))[3] == 0):
+                r, g, b, a = img.getpixel((x, y))
+                img.putpixel((x, y), (max(0, r - 46), max(0, g - 46), max(0, b - 44), a))
 
 
 def statue():
@@ -1059,6 +1378,11 @@ PROPS = {
     "lm_throne": lm_throne,
     # camps
     "camp_tent": camp_tent,
+    "camp_pavilion": camp_pavilion,
+    "camp_cookfire": camp_cookfire,
+    "camp_table": camp_table,
+    "camp_wagon": camp_wagon,
+    "camp_rack": camp_rack,
     "camp_fire": camp_fire,
     "camp_bedroll": camp_bedroll,
     "camp_banner": camp_banner,
@@ -1110,6 +1434,9 @@ PROPS = {
     "column_broken": lambda: column(True),
     "wall_stub": wall_stub,
     "statue": statue,
+    "cliff_ledge_a": lambda: cliff_ledge(0),
+    "cliff_ledge_b": lambda: cliff_ledge(1),
+    "cliff_pilaster": cliff_pilaster,
     "lamp": lamp,
     "brazier": brazier,
     "cart": cart,

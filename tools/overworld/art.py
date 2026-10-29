@@ -1063,6 +1063,34 @@ def detail_kerb(mask_bits):
     return img
 
 
+def detail_cliff_depth(seed, strength):
+    """A full-tile darkening wash, used to give the cliff mass a depth ramp.
+
+    The cliff covers 22 000 cells in bands up to 380 tiles wide, and every previous
+    attempt to give it structure worked *inside* one tile - which is the wrong scale.
+    At the camera's 2x zoom a player crossing the mass sees a single flat grey field
+    for tens of seconds. What a top-down landform actually communicates is **value
+    against depth**: a raised mass is darker where it is deeper, because light does
+    not reach into it. Three tonal steps placed by distance-to-edge turn one flat field
+    into a mass with a rim, a flank and a core - structure at exactly the scale that
+    was missing, and the one thing a tile cannot do.
+
+    The wash carries no boundary of its own (it fills the tile, alpha varies only with
+    per-variant noise) so bands meet in an irregular line rather than on the tile grid.
+    """
+    img = new(T, T)
+    base = mix(C("rock_dk"), C("void"), 0.35)
+    for y in range(T):
+        for x in range(T):
+            # A little low-frequency variation so a band is not a perfectly even wash;
+            # 4 px cells, not per-pixel, because per-pixel noise over 22 000 cells is
+            # static rather than shading.
+            n = h01(seed, x // 4, y // 4) - 0.5
+            a = int(max(0, min(255, 255 * strength * (0.82 + 0.36 * n))))
+            img.putpixel((x, y), (base[0], base[1], base[2], a))
+    return img
+
+
 def detail_stone(seed):
     """Weathered stone mottle, for the great rock and gravel plateaus.
 
@@ -1471,6 +1499,17 @@ GROUND_TILES = {
     "floor1": lambda: ground_flagstone(82, worn=0.7, tone=0.98),
     "floor2": lambda: ground_flagstone(83, worn=1.0, tone=1.03),
     "floor3": lambda: ground_flagstone(84, worn=0.4, tone=0.995),
+    # The citadel court laid as dressed slabs: darker than the field paving, with a
+    # tight joint grid, so a band of it reads as a *different course* of stone rather
+    # than as a tinted patch. This is what gives L10's 900-cell plaza a hierarchy -
+    # border, axial walk, field - instead of one flat field of identical bricks.
+    "court0": lambda: ground_flagstone(85, worn=0.25, tone=0.80),
+    "court1": lambda: ground_flagstone(86, worn=0.35, tone=0.83),
+    # The processional way: the same dressed slab, *lighter* than the field so
+    # the eye is pulled along it to the keep. A court reads by contrast between
+    # its courses, not by any one of them.
+    "court_lit0": lambda: ground_flagstone(87, worn=0.3, tone=1.14),
+    "court_lit1": lambda: ground_flagstone(88, worn=0.2, tone=1.18),
     "ritual0": lambda: ground_ritual(91),
     "ritual1": lambda: ground_ritual(92),
     "soul0": lambda: ground_soul(101),
@@ -1502,6 +1541,8 @@ GROUND_CODES = {
     "a": ["ash0", "ash1"],
     "m": ["mud0", "mud1"],
     "f": ["floor0", "floor1", "floor2", "floor3"],
+    "F": ["court0", "court1"],
+    "G": ["court_lit0", "court_lit1"],
     "v": ["ritual0", "ritual1"],
     "y": ["soul0", "soul1"],
     "~": ["water0", "water1", "water2"],
@@ -1521,6 +1562,15 @@ DETAIL_BASE = {
     "z": ("ashdrift", lambda: detail_ash(208)),
     "p": ("pool", lambda: detail_pool(210)),
     "w": ("stone_mottle", lambda: detail_stone(215)),
+    # Six steps of the same wash, not two. A two-level ramp puts a 24 % alpha step on
+    # a 16 px boundary, which prints as a visible square block; six steps of 7 %
+    # each, with a roughened boundary, read as a gradient.
+    "1": ("cliff_shade1", lambda: detail_cliff_depth(216, 0.10)),
+    "2": ("cliff_shade2", lambda: detail_cliff_depth(217, 0.17)),
+    "3": ("cliff_shade3", lambda: detail_cliff_depth(218, 0.24)),
+    "4": ("cliff_shade4", lambda: detail_cliff_depth(219, 0.31)),
+    "5": ("cliff_shade5", lambda: detail_cliff_depth(220, 0.38)),
+    "6": ("cliff_shade6", lambda: detail_cliff_depth(221, 0.45)),
     "^": ("soulspark", lambda: detail_soulspark(209)),
 }
 
