@@ -1,0 +1,39 @@
+name: A0 production output capacity probe
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['tests/survival_economy_session_test.gd', '.github/workflows/a0-output-capacity-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_output
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/import-output.log 2>&1
+      - name: Real A3 session output saturation
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_output --resolution 960x540 --windowed --script res://tests/survival_economy_session_test.gd > artifacts/output.log 2>&1
+          rc=$?
+          cat artifacts/output.log
+          echo "::notice::output exit=$rc $(grep -E 'finished output adversary|full bag refuses|failed collect retains|repeated full collect|full output custody|free one real bag slot|successful output retry|SURVIVAL ECONOMY SESSION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/output.log | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/output.log 'Output capacity' 'SURVIVAL ECONOMY SESSION PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: output-capacity-native
+          path: artifacts/*.log
