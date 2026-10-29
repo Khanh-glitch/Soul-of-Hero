@@ -421,3 +421,60 @@ single assertion. Three things changed:
   tiles.
 - Camps are sparse in the middle; new furniture art needed.
 - L10 approach plaza, far south-west field, marsh overlay variety.
+
+## Fifth pass — the original mission, item by item
+
+State at `7dccf4d4`: all three CI jobs green (STATIC CONTRACTS, VISUAL EVIDENCE,
+NATIVE RUNTIME) — the first fully green run since `0712fb4d`, and the first time
+NATIVE RUNTIME has passed in this session.
+
+### 1. Ten landmark exteriors, four camps, problematic travel regions
+
+| Item | State |
+| --- | --- |
+| Ten landmark exteriors | **Done.** All ten hand-painted and value-lifted over earlier passes; this pass gave every one a forecourt, because all ten had the same compositional fault — building, approach and plaza all north of the player and nothing in front, so each read as a wall seen from a distance. The Crimson Gate additionally got a gatehouse (two towers flanking the arch) it had never had. |
+| Four camps | **Done.** Procedural hearths replacing four gravel rectangles; a reserved scatter zone so a camp owns its footprint; road paving that degrades to footpath inside a clearing; an approach path to the nearest road; Watch Ridge rebuilt around its actual windbreak. |
+| Travel regions | **Done.** Forest floor was a per-tile coin flip (checkerboard of single-tree colliders); canopy was per-pixel white noise; rock field was a variant quilt; paving and walls tiled on their own period; boulders came in two sprites for two hundred placements; material boundaries stair-cased on every tile edge. All fixed and measured. |
+
+### 2. Asset evaluation
+
+Complete (`ASSET_EVALUATION.md`): 0x72 accepted for dungeon interiors, rejected for
+overworld terrain and props with measured seams. Dark World and Classical Ruin are
+**not evaluable** — neither is in the repository or the reachable catalog. That is a
+blocker, not an omission.
+
+### 3. Hybrid pipeline
+
+`data/overworld/world_patches.json` plus the procedural painters; deterministic,
+idempotent, non-destructive, gated by `patches.py --check`. This pass added four new
+procedural passes to the same pipeline (`feather_boundaries`, `soften_camp_roads`,
+`paint_pools`, `paint_stone_mottle`), each placed by a coherent field rather than by
+tile choice.
+
+### 4. Selective occlusion
+
+Done earlier and still green natively. Note: its precondition was being satisfied by
+accident (scattered boulders overlapping the gate) until this pass gave the gate a
+real gatehouse.
+
+### 5. Coverage, passes, performance, regression
+
+- Native station frames: **15**, regenerated this pass.
+- Before/after galleries regenerate from a worktree of the old revision.
+- Performance probe, topology validation, art-quality gate, patch check, scope check
+  and `gdparse` all pass locally; CI runs the same gates natively.
+
+### Honest gaps
+
+1. **No human has looked at the CI artifact.** The sandbox cannot read job logs or
+   artifacts (the blob host returns `EOF`). Every art judgement here rests on
+   offline renders built from the shipped atlas at the camera's real 2x framing —
+   which is faithful, but it is not the same as a person looking at the game.
+2. **The plateau overlay is nearly invisible.** `w` (stone mottle) is placed on
+   7 000 cells and is subtle to the point of not reading at native zoom. More
+   contrast would make it patchwork; the real answer is large-scale landform, which
+   is level design.
+3. **Camps are sparse in the middle.** Props cluster at the edges; the centre of a
+   large clearing is bare. Needs new furniture art.
+4. **The citadel wall behind L10 is one flat masonry field** with no buttress or
+   gatehouse reading.
