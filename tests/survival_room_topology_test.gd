@@ -160,6 +160,26 @@ func _body() -> void:
 		"distinct chest contents survive disk reload")
 	_expect(not build.entity_at_layer(interior_cell, "floor").is_empty() and not build.entity_at_layer(interior_cell, "object").is_empty(),
 		"floor and furniture survive reload")
+	# Fill through the real inventory API until capacity refuses the next stack.
+	var fillers: Array[String] = []
+	for index in range(35):
+		var item := "room_filler_%02d" % index
+		if not _give(item, 50):
+			break
+		fillers.append(item)
+	_expect(not fillers.is_empty() and fillers.size() < 35, "real bag reaches capacity")
+	var refused: bool = bool(service.call(&"transfer_from_container", chest_one_id, STONE, 1, "survival.test.room.fullbag"))
+	_expect(not refused and int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1,
+		"full bag refuses withdrawal without losing chest contents")
+	if not fillers.is_empty():
+		_expect(bool(_save().call(&"consume_inventory_item", fillers[0], 50, "survival.test.room.free_slot")),
+			"free one real inventory slot")
+		var key := "survival.test.room.same_command"
+		_expect(bool(service.call(&"transfer_from_container", chest_one_id, STONE, 1, key)), "keyed withdrawal succeeds")
+		_expect(not bool(service.call(&"transfer_from_container", chest_one_id, STONE, 1, key)) and _count(STONE) == 1,
+			"replaying one keyed transfer cannot duplicate items")
+		_expect(bool(service.call(&"transfer_to_container", chest_one_id, STONE, 1, "survival.test.room.restore")),
+			"restore item with a distinct command")
 	_expect(bool(service.call(&"remove_structure", wall_to_remove)), "production wall demolition committed")
 	await process_frame
 	await physics_frame
