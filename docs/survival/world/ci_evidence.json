@@ -1,115 +1,4 @@
 {
-  "workflow": "SURV-050A World Reader",
-  "run_id": 40872678698,
-  "head_sha": "ea64df75d251a5e7dee08dd919a78667250b772c",
-  "status": "completed",
-  "conclusion": "success",
-  "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698",
-  "event": "push",
-  "jobs": [
-    {
-      "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
-      "conclusion": "success",
-      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123443486388",
-      "steps": [
-        {
-          "name": "Set up job",
-          "conclusion": "success"
-        },
-        {
-          "name": "Run actions/checkout@v4",
-          "conclusion": "success"
-        },
-        {
-          "name": "Run actions/setup-python@v5",
-          "conclusion": "success"
-        },
-        {
-          "name": "Install authoring dependencies",
-          "conclusion": "success"
-        },
-        {
-          "name": "Compile authored world",
-          "conclusion": "success"
-        },
-        {
-          "name": "Pacing / scale audit (estimates, not playtime)",
-          "conclusion": "success"
-        },
-        {
-          "name": "Validate world + schemas",
-          "conclusion": "success"
-        },
-        {
-          "name": "Negative / acceptance tests",
-          "conclusion": "success"
-        },
-        {
-          "name": "Double-compile determinism",
-          "conclusion": "success"
-        },
-        {
-          "name": "Upload Python evidence",
-          "conclusion": "success"
-        },
-        {
-          "name": "Post Run actions/setup-python@v5",
-          "conclusion": "success"
-        },
-        {
-          "name": "Post Run actions/checkout@v4",
-          "conclusion": "success"
-        },
-        {
-          "name": "Complete job",
-          "conclusion": "success"
-        }
-      ]
-    },
-    {
-      "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
-      "conclusion": "success",
-      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123444090242",
-      "steps": [
-        {
-          "name": "Set up job",
-          "conclusion": "success"
-        },
-        {
-          "name": "Run actions/checkout@v4",
-          "conclusion": "success"
-        },
-        {
-          "name": "Run chickensoft-games/setup-godot@v2",
-          "conclusion": "success"
-        },
-        {
-          "name": "Import isolated reader fixture only",
-          "conclusion": "success"
-        },
-        {
-          "name": "Run read-only chunk/RLE/build-contract tests",
-          "conclusion": "success"
-        },
-        {
-          "name": "Anti-vacuity gate",
-          "conclusion": "success"
-        },
-        {
-          "name": "Upload Godot reader evidence",
-          "conclusion": "success"
-        },
-        {
-          "name": "Post Run actions/checkout@v4",
-          "conclusion": "success"
-        },
-        {
-          "name": "Complete job",
-          "conclusion": "success"
-        }
-      ]
-    }
-  ],
   "artifacts": [
     {
       "name": "a1-world-python-evidence",
@@ -120,32 +9,419 @@
       "size_in_bytes": 1805
     }
   ],
+  "conclusion": "success",
+  "event": "push",
+  "head_sha": "ea64df75d251a5e7dee08dd919a78667250b772c",
+  "jobs": [
+    {
+      "conclusion": "success",
+      "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Install authoring dependencies"
+        },
+        {
+          "conclusion": "success",
+          "name": "Compile authored world"
+        },
+        {
+          "conclusion": "success",
+          "name": "Pacing / scale audit (estimates, not playtime)"
+        },
+        {
+          "conclusion": "success",
+          "name": "Validate world + schemas"
+        },
+        {
+          "conclusion": "success",
+          "name": "Negative / acceptance tests"
+        },
+        {
+          "conclusion": "success",
+          "name": "Double-compile determinism"
+        },
+        {
+          "conclusion": "success",
+          "name": "Upload Python evidence"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/setup-python@v5"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123443486388"
+    },
+    {
+      "conclusion": "success",
+      "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
+      "steps": [
+        {
+          "conclusion": "success",
+          "name": "Set up job"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run chickensoft-games/setup-godot@v2"
+        },
+        {
+          "conclusion": "success",
+          "name": "Import isolated reader fixture only"
+        },
+        {
+          "conclusion": "success",
+          "name": "Run read-only chunk/RLE/build-contract tests"
+        },
+        {
+          "conclusion": "success",
+          "name": "Anti-vacuity gate"
+        },
+        {
+          "conclusion": "success",
+          "name": "Upload Godot reader evidence"
+        },
+        {
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@v4"
+        },
+        {
+          "conclusion": "success",
+          "name": "Complete job"
+        }
+      ],
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698/job/123444090242"
+    }
+  ],
   "limitation": "Raw CI logs/artifact ZIP retrieval blocked by sandbox egress (results-receiver / Azure blob EOF). GitHub job/step conclusions and anti-vacuity gate success are authoritative; fixture requires >=50 assertions and PASS phrase.",
-  "scope": "Isolated read-only authored-data consumer only. Not native continent/SaveService/paid-home integration.",
   "product_correction_checkpoint": {
     "code_head": "b9c81fdb38325276b05f8d98a571bc787c54ccfe",
-    "push_run": {
-      "id": 40889886618,
-      "conclusion": "success",
-      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618"
-    },
-    "pr_run": {
-      "id": 40889899260,
-      "conclusion": "success",
-      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889899260"
-    },
     "jobs": [
       {
-        "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
         "conclusion": "success",
+        "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
         "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618/job/123503482520"
       },
       {
-        "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
         "conclusion": "success",
+        "name": "A1 GODOT 4.7 ISOLATED CHUNK READER",
         "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618/job/123504555562"
       }
     ],
+    "pr_run": {
+      "conclusion": "success",
+      "id": 40889899260,
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889899260"
+    },
+    "push_run": {
+      "conclusion": "success",
+      "id": 40889886618,
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40889886618"
+    },
     "scope": "A1 authored-data + isolated Godot 4.7 reader/product-contract consumption. Not native continent gameplay."
-  }
+  },
+  "run_id": 40872678698,
+  "scope": "Isolated read-only authored-data consumer only. Not native continent/SaveService/paid-home integration.",
+  "status": "completed",
+  "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40872678698",
+  "vertical_slice_checkpoint": {
+    "docs_sync": {
+      "marker": "A1_SURV050A_NATIVE_SLICE_ec9edecb",
+      "readback_start_index": 77869,
+      "status": "DONE",
+      "tab_id": "t.h4haqfdoyzzn"
+    },
+    "head_sha": "ec9edecbc7fbf10b43753502cd6f56977fb09800",
+    "limitation": "Raw CI log/artifact ZIP hosts remain egress-blocked; GitHub job/step conclusions and anti-vacuity gates are authoritative. Isolated slice fixture does not claim production Hero movement, combat, damage, SaveService persistence, A3 EconomyService or A6 UI integration.",
+    "native_playable": false,
+    "pr_run": {
+      "conclusion": "success",
+      "event": "pull_request",
+      "head_sha": "ec9edecbc7fbf10b43753502cd6f56977fb09800",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install authoring dependencies"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile authored world"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile native-ready two-POI vertical slice contracts"
+            },
+            {
+              "conclusion": "success",
+              "name": "Render vertical-slice inspection diagram"
+            },
+            {
+              "conclusion": "success",
+              "name": "Pacing / scale audit (estimates, not playtime)"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate world + schemas"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate vertical-slice handoff"
+            },
+            {
+              "conclusion": "success",
+              "name": "Negative / acceptance tests"
+            },
+            {
+              "conclusion": "success",
+              "name": "Double-compile determinism"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Python evidence"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "name": "A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import isolated reader fixture only"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run read-only chunk/RLE/build-contract tests"
+            },
+            {
+              "conclusion": "success",
+              "name": "Anti-vacuity gate"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run isolated vertical-slice contract vectors"
+            },
+            {
+              "conclusion": "success",
+              "name": "Slice anti-vacuity gate"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Godot reader evidence"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "run_id": 40903953241,
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40903953241"
+    },
+    "push_run": {
+      "conclusion": "success",
+      "event": "push",
+      "head_sha": "ec9edecbc7fbf10b43753502cd6f56977fb09800",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install authoring dependencies"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile authored world"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile native-ready two-POI vertical slice contracts"
+            },
+            {
+              "conclusion": "success",
+              "name": "Render vertical-slice inspection diagram"
+            },
+            {
+              "conclusion": "success",
+              "name": "Pacing / scale audit (estimates, not playtime)"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate world + schemas"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate vertical-slice handoff"
+            },
+            {
+              "conclusion": "success",
+              "name": "Negative / acceptance tests"
+            },
+            {
+              "conclusion": "success",
+              "name": "Double-compile determinism"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Python evidence"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        },
+        {
+          "conclusion": "success",
+          "name": "A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import isolated reader fixture only"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run read-only chunk/RLE/build-contract tests"
+            },
+            {
+              "conclusion": "success",
+              "name": "Anti-vacuity gate"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run isolated vertical-slice contract vectors"
+            },
+            {
+              "conclusion": "success",
+              "name": "Slice anti-vacuity gate"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Godot reader evidence"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job"
+            }
+          ]
+        }
+      ],
+      "run_id": 40903943412,
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40903943412"
+    },
+    "slice_gate": {
+      "min_assertions": 120,
+      "pass_phrase": "SURVIVAL SLICE CONTRACT PASSED",
+      "required_vectors": 7,
+      "vectors": 10
+    },
+    "status": "NATIVE_READY_CONTRACT_NOT_MOUNTED"
+  },
+  "workflow": "SURV-050A World Reader"
 }
