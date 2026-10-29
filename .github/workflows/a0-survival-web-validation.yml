@@ -1,0 +1,81 @@
+name: A0 survival Web fixture validation
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths:
+      - game/survival/**
+      - game/overworld/**
+      - game/characters/knight/**
+      - game/autoload/**
+      - game/ui/**
+      - data/survival/**
+      - tools/survival/web_probe.*
+      - .github/workflows/a0-survival-web-validation.yml
+      - export_presets.cfg
+      - project.godot
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  web-survival-fixture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      GODOT_SILENCE_ROOT_WARNING: 1
+      LIBGL_ALWAYS_SOFTWARE: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: true
+      - name: Compose temporary browser-only entry scene
+        run: |
+          set -euo pipefail
+          cp tools/survival/web_probe.gd game/survival/web_probe_ci.gd
+          cp tools/survival/web_probe.tscn game/survival/web_probe_ci.tscn
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('project.godot')
+          s = p.read_text()
+          old = 'run/main_scene="res://game/app/app_root.tscn"'
+          assert s.count(old) == 1
+          p.write_text(s.replace(old, 'run/main_scene="res://game/survival/web_probe_ci.tscn"'))
+          PY
+          echo "Temporary CI fixture from A0 $(git rev-parse HEAD); production entrypoint not changed in Git." >> "$GITHUB_STEP_SUMMARY"
+      - name: Import and export real Web runtime
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/web-survival build/web
+          timeout --signal=TERM --kill-after=10s 240s godot --headless --audio-driver Dummy --editor --path . --import 2>&1 | tee artifacts/web-survival/import.log
+          timeout --signal=TERM --kill-after=10s 480s godot --headless --audio-driver Dummy --path . --export-release 'Web Playtest' build/web/index.html 2>&1 | tee artifacts/web-survival/export.log
+          for file in index.html index.js index.wasm index.pck; do test -s "build/web/$file"; done
+          ! grep -E 'SCRIPT ERROR|Parse Error|^ERROR:' artifacts/web-survival/import.log artifacts/web-survival/export.log
+      - name: Drive production survival overworld in Chromium
+        run: |
+          set -euo pipefail
+          npm install --prefix "$RUNNER_TEMP/web-probe" --no-save --no-audit --no-fund playwright-core@1.56.1
+          export NODE_PATH="$RUNNER_TEMP/web-probe/node_modules"
+          export CHROME_BIN="$(command -v google-chrome || command -v chromium || true)"
+          test -n "$CHROME_BIN"
+          python3 -m http.server 8787 --bind 127.0.0.1 --directory build/web > artifacts/web-survival/http.log 2>&1 &
+          web_pid=$!
+          trap 'kill "$web_pid" 2>/dev/null || true' EXIT
+          export WEB_SMOKE_URL=http://127.0.0.1:8787/
+          export WEB_SMOKE_OUTPUT=artifacts/web-survival
+          timeout --signal=TERM --kill-after=10s 150s node tools/survival/web_probe.cjs 2>&1 | tee artifacts/web-survival/browser.log
+          grep -q 'SURVIVAL WEB BROWSER FIXTURE PASSED' artifacts/web-survival/browser.log
+      - name: Surface outcome
+        if: always()
+        run: |
+          for file in artifacts/web-survival/*.log; do
+            test -f "$file" || continue
+            printf '::notice::%s: %s\n' "$file" "$(grep -E 'SURVIVAL WEB|SCRIPT ERROR|Parse Error|^ERROR:' "$file" | tail -5 | tr '\n' '~' | cut -c1-2500)"
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: survival-web-fixture-evidence
+          path: artifacts/web-survival/
+          if-no-files-found: warn
