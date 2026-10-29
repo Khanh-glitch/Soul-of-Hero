@@ -27,9 +27,5 @@ static func run_factory(skill_id: int):
 		8:
 			return func(c): return S4.serpents(c)
 		17:
-			return func(c):
-				printerr("R17 candidate factory invoked")
-				var g = R17.extraction(c)
-				printerr("R17 candidate returned null=%s" % str(g == null))
-				return g
+			return func(c): return R17.extraction(c)
 	return null

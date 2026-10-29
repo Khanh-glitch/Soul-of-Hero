@@ -44,12 +44,10 @@ static func extraction(c):
 		_extraction_body(c, box[0])
 		return null)
 	box.append(gen)
-	printerr("R17 extraction factory gen_null=%s" % str(gen == null))
 	return gen
 
 
 static func _extraction_body(c, g) -> void:
-	printerr("R17 body start")
 	var w = c.w
 	var p = w.player
 	LIB.cast_anim(w, c, true, 0.5)
@@ -161,12 +159,12 @@ static func _extraction_body(c, g) -> void:
 			if nt <= 0.0 and tm > 0.25 and d < R * 0.8 and pull.ok(e, w.time, 0.4, 4):
 				LIB.hit_e(c, e, 25.0, {"kind": "acid", "stag": 0.12, "heal": 0.06, "at": [e.x, e.y]})
 				healAcc += 1
-				var ex_pos: float = e.x
-				var ey_pos: float = e.y
+				# TS: `fn: (q) => lerp(e.x, p.x, u)` reads the enemy LIVE each frame,
+				# so the mote follows the enemy as it is pulled. Do not capture.
 				var mote_fn := func(q, _ww, _dt) -> void:
 					var u: float = q.age / q.max
-					q.x = M.lerpf(ex_pos, p.x, u)
-					q.y = M.lerpf(ey_pos, p.y - 6.0, u) - V8M.v8_sin(u * PI) * 10.0
+					q.x = M.lerpf(e.x, p.x, u)
+					q.y = M.lerpf(e.y, p.y - 6.0, u) - V8M.v8_sin(u * PI) * 10.0
 				w.parts.add({"k": "mote", "x": e.x, "y": e.y, "z": 6.0, "max": 0.5, "c1": int(M.P["c2"]), "c2": int(M.P["c1"]),
 						"glow": 1, "fn": mote_fn})
 		if nt <= 0.0:
