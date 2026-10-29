@@ -18,6 +18,7 @@ const S2H = preload("res://prototypes/skill_readiness/native/venom/venom_s2_harv
 const S2C = preload("res://prototypes/skill_readiness/native/venom/venom_s2_crucible.gd")
 const S3C = preload("res://prototypes/skill_readiness/native/venom/venom_s3_catalyst.gd")
 const S3V = preload("res://prototypes/skill_readiness/native/venom/venom_s3_verdigris.gd")
+const S3G = preload("res://prototypes/skill_readiness/native/venom/venom_s3_garden.gd")
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 
 
@@ -115,6 +116,8 @@ static func run_factory(skill_id: int):
 			return func(c): return S3C.catalyst(c)
 		12:
 			return func(c): return S3V.wake(c)
+		13:
+			return func(c): return S3G.garden(c)
 	return null
 
 
