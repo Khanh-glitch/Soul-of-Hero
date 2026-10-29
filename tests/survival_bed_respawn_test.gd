@@ -299,11 +299,11 @@ func _body() -> void:
 	await process_frame
 	_expect(not button.has_focus(), "pointer scenario starts without keyboard focus")
 	var gui_trace: Array[String] = []
-	button.gui_input.connect(func(e: InputEvent) -> void:
+	var trace_gui := func(e: InputEvent) -> void:
 		if e is InputEventMouseButton:
 			var m := e as InputEventMouseButton
 			gui_trace.append("%s@%s" % ["press" if m.pressed else "release", str(m.position)])
-	)
+	button.gui_input.connect(trace_gui)
 	var center_view := button.get_global_transform_with_canvas() * (button.size * 0.5)
 	var center_window := root.get_final_transform() * center_view
 	var visible_rect := root.get_visible_rect()
@@ -345,6 +345,7 @@ func _body() -> void:
 	mouse_release.pressed = false
 	Input.parse_input_event(mouse_release)
 	await process_frame
+	button.gui_input.disconnect(trace_gui)
 	print("GUI_POINTER_TRACE events=%s dead=%s pending=%s" % [str(gui_trace), str(hero.get(&"dead")), str((svc.call(&"document") as Dictionary).get("pending_death", ""))])
 	_expect(gui_trace.size() == 2 and gui_trace[0].begins_with("press") and gui_trace[1].begins_with("release"), "visible button receives GUI pointer press and release")
 	_expect(not bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "direct GUI pointer release respawns second death independently")
