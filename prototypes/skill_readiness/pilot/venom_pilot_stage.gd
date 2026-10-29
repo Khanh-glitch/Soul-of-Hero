@@ -30,15 +30,16 @@ var ground = null
 var tick: int = 0
 var cast_started: bool = false
 var cast_obj = null
-var last_scene_bytes_hash: String = ""
+var overlay: bool = false
 
 
 ## Build a fresh world exactly as the oracle driver does. Returns false when the
 ## skill is not a pilot skill or has no native generator.
-func start(sid: int) -> bool:
+func start(sid: int, as_overlay: bool = false) -> bool:
 	if not PILOT_SKILLS.has(sid) or not SKILLS.has_generator(sid):
 		return false
 	skill_id = sid
+	overlay = as_overlay
 	def = SKILLS.defs()[sid]
 	world = WORLD.new(ENGINE.WW, ENGINE.WH)
 	world.cfg["density"] = DENSITY
@@ -74,6 +75,11 @@ func advance(count: int) -> void:
 			var r: Dictionary = ENGINE.auto_aim(world, def)
 			cast_obj = ENGINE.cast(world, def, r, SKILLS.run_factory(skill_id))
 		_render()
+
+
+## Venom-world position of the caster (the origin of every effect).
+func player_xy() -> Vector2:
+	return Vector2(float(world.player.x), float(world.player.y))
 
 
 func sim_time() -> float:
@@ -114,13 +120,16 @@ func _to_image(L) -> Image:
 	return Image.create_from_data(L.W, L.H, false, Image.FORMAT_RGBA8, L.bytes)
 
 
-## Same render order as the differential test: scene <- ground, glow <- black,
-## then the world draws both layers.
+## GOLD mode: scene <- ground, glow <- black, then the world draws both layers
+## (identical to the differential test). Overlay mode: the scene starts black
+## instead of the venom ground, so the effects can be added onto a real map.
 func _render() -> void:
-	layers["s"].copy_from(ground)
+	if overlay:
+		layers["s"].clear(0xFF000000)
+	else:
+		layers["s"].copy_from(ground)
 	layers["l"].clear(0xFF000000)
 	layers["s"].reset()
 	layers["l"].reset()
 	layers["t"] = world.time
 	world.draw(layers)
-	last_scene_bytes_hash = ""
