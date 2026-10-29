@@ -58,12 +58,19 @@ if [ -n "$hard" ]; then
   real=${real:-0}
 fi
 if [ "$real" -gt 0 ]; then
+  # One compact summary FIRST, before any detail. GitHub caps annotations at ten
+  # per step and silently drops the rest, so a gate that emits a dozen detail lines
+  # and then a summary can lose the summary entirely - which is how a failing
+  # occlusion step reported nothing but engine shutdown chatter.
+  summary=$(printf '%s\n' "$hard" | grep -vE "$SHUTDOWN_NOTICES" | head -3 \
+    | sed -e 's/%/%25/g' -e 's/\r//g' | tr '\n' '~' | cut -c1-320)
+  echo "::error::${label}: ${real} engine/script error line(s) :: ${summary}"
   echo "::error::${label}: ${real} engine/script error line(s) in the log"
   # Print each error with up to two following stack-frame lines.
   awk '/SCRIPT ERROR|Parse Error|^ERROR:/{window=3} window>0{print; window--}' "$log" \
     | grep -E "$ERROR_PATTERN|^[[:space:]]+at: " \
     | grep -vE "$SHUTDOWN_NOTICES" \
-    | head -14 \
+    | head -4 \
     | while IFS= read -r line; do
         emit error "$line"
       done
@@ -73,8 +80,12 @@ fi
 # 2. The run has to have said it passed.
 if [ -n "$required" ]; then
   if ! grep -qF "$required" "$log"; then
-    echo "::error::${label}: log never reported \"${required}\""
-    tail -20 "$log" | while IFS= read -r line; do
+    # The last handful of lines, compacted into one annotation: it is the only
+    # thing that survives the cap, so it has to carry the diagnosis.
+    summary=$(tail -6 "$log" | sed -e 's/%/%25/g' -e 's/\r//g' -e 's/\x1b\[[0-9;]*m//g' \
+      | tr '\n' '~' | cut -c1-320)
+    echo "::error::${label}: never reported \"${required}\" :: tail: ${summary}"
+    tail -6 "$log" | while IFS= read -r line; do
       emit error "tail: ${line}"
     done
     exit 1
