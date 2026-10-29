@@ -285,11 +285,12 @@ jobs:
           tail -40 "$ARTIFACT_DIR/godot-import.log"
           exit $rc
 
-      - name: Mount isolated pinned A3 catalogs for native composition
+      - name: Verify vendored production catalogs match pinned A3 fixtures
         run: |
-          test ! -e data/survival/items && test ! -e data/survival/recipes
-          ln -s ../../tests/fixtures/a3_86dc2195/items data/survival/items
-          ln -s ../../tests/fixtures/a3_86dc2195/recipes data/survival/recipes
+          for f in items/items.json items/sources.json recipes/recipes.json recipes/research.json recipes/stations.json; do
+            cmp "data/survival/$f" "tests/fixtures/a3_86dc2195/$f"
+          done
+          cmp game/survival/economy/vendor/a3_economy_service.gd tests/fixtures/a3_86dc2195/adapter/economy_service.gd
 
       - name: Foundation loop, twelve cases (state-asserting)
         run: |
@@ -360,6 +361,24 @@ jobs:
           echo "::notice::a0-a3 exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-a0-a3.log" | tr '\n' '~')"
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-a0-a3.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-a0-a3.log" "A0 A3 authority" "A0 A3 AUTHORITY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: Production A0 active-session and real A3 queues (native)
+        run: |
+          mkdir -p artifacts/ud_economy_session
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_economy_session \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_economy_session_test.gd >"$ARTIFACT_DIR/survival-economy-session.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-economy-session.log"
+          echo "::notice::economy-session exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-economy-session.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-economy-session.log" | head -12 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-economy-session.log" "Economy session" "SURVIVAL ECONOMY SESSION PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
@@ -549,6 +568,7 @@ jobs:
             artifacts/survival-topology.log
             artifacts/survival-bed.log
             artifacts/survival-station.log
+            artifacts/survival-economy-session.log
             artifacts/survival-a0-a3.log
             artifacts/survival-interruption.log
             artifacts/roof_*.png

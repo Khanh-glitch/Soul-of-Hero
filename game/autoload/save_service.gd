@@ -26,6 +26,7 @@ const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_f
 # evidence of authority.
 const PINNED_A3_SCRIPT_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "703a8baa741ca6c4ad1e21ddd43b05c48af887dbfef7ed00d78117838e947ec3"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -1325,7 +1326,7 @@ func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
 	if adapter == null:
 		return false
 	var script: Variant = adapter.get_script()
-	if not script is Script or String(script.source_code).sha256_text() != PINNED_A0_ADAPTER_SHA256:
+	if not script is Script or String(script.source_code).sha256_text() not in [PINNED_A0_ADAPTER_SHA256, PINNED_A0_PRODUCTION_ADAPTER_SHA256]:
 		return false
 	var parent: Script = script.get_base_script()
 	return parent != null and String(parent.source_code).sha256_text() == PINNED_A3_SCRIPT_SHA256

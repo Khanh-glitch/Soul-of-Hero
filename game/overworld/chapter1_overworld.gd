@@ -45,6 +45,7 @@ const WORLD_SCRIPT := preload("res://game/overworld/overworld_world.gd")
 const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversability.gd")
 const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
+const ECONOMY_SESSION_SCRIPT := preload("res://game/survival/economy/economy_session.gd")
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
 const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
@@ -71,6 +72,7 @@ var occlusion: OverworldOcclusion
 var traversability_failures: Array[Dictionary] = []
 
 var survival_build: SurvivalBuildSystem
+var economy_session: Node
 var _death_bags: Dictionary = {}
 var _death_bag_root: Node2D
 var survival_nodes: Dictionary = {}  # node_id:String -> SurvivalResourceNode
@@ -157,6 +159,7 @@ func _build_world() -> void:
 	# nodes and built structures carry collision, and the occlusion system has to
 	# see them when it buckets occluders.
 	_build_survival()
+	_build_economy_session()
 	_build_occlusion()
 	_build_hud()
 	_connect_run_events()
@@ -168,6 +171,20 @@ func _build_world() -> void:
 	var survival := get_node_or_null("/root/SurvivalService")
 	if survival != null and not String((survival.call(&"document") as Dictionary).get("pending_death", "")).is_empty():
 		player.call(&"_die")
+
+
+func _build_economy_session() -> void:
+	var save := get_node_or_null("/root/SaveService")
+	var survival := get_node_or_null("/root/SurvivalService")
+	if save == null or survival == null or survival_build == null:
+		return
+	economy_session = ECONOMY_SESSION_SCRIPT.new()
+	economy_session.name = "EconomySession"
+	add_child(economy_session)
+	if not bool(economy_session.call(&"configure", save, survival, self, survival_build, player)):
+		push_warning("Economy session unavailable; crafting remains disabled.")
+		economy_session.queue_free()
+		economy_session = null
 
 
 func _build_traversability() -> void:
