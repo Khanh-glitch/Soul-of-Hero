@@ -1,5 +1,5 @@
 {
-  "schema": "soh.source_coverage.v1",
+  "schema": "soh.source_coverage.v2",
   "source_hash_sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
   "source_lines": 1355,
   "mechanism_entries": [
@@ -25,7 +25,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-03",
@@ -49,7 +53,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-04",
@@ -73,7 +81,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-05",
@@ -97,7 +109,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-06",
@@ -121,7 +137,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-07",
@@ -144,7 +164,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-08",
@@ -167,7 +191,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-09",
@@ -192,7 +220,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A1",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-10",
@@ -215,7 +247,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-11",
@@ -238,7 +274,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-12",
@@ -262,7 +302,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-13",
@@ -286,7 +330,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-14",
@@ -310,7 +358,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-15",
@@ -333,7 +385,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-16",
@@ -356,7 +412,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-17",
@@ -381,7 +441,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-18",
@@ -404,7 +468,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-19",
@@ -428,7 +496,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-20",
@@ -452,7 +524,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-21",
@@ -478,7 +554,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-22",
@@ -502,7 +582,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-23",
@@ -525,7 +609,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-24",
@@ -548,7 +636,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-25",
@@ -573,7 +665,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-26",
@@ -596,7 +692,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-27",
@@ -619,7 +719,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-28",
@@ -642,7 +746,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-29",
@@ -665,7 +773,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-30",
@@ -688,7 +800,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-31",
@@ -711,7 +827,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A2",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-32",
@@ -735,7 +855,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-33",
@@ -759,7 +883,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-34",
@@ -782,7 +910,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A5",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-35",
@@ -806,7 +938,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5",
+      "disposition": "ADAPT_SOCIAL_AND_WIPE_TO_SOLO_PVE_EXPEDITION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-36",
@@ -831,7 +967,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-37",
@@ -854,7 +994,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-38",
@@ -878,7 +1022,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A4+A5",
+      "disposition": "APPROVED_CORE_BEHAVIOR",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-39",
@@ -902,7 +1050,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-40",
@@ -927,7 +1079,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-41",
@@ -951,7 +1107,11 @@
       "acceptance_seed": "",
       "decision": "GATE_REQUIRED",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ADAPT_SOCIAL_AND_WIPE_TO_SOLO_PVE_EXPEDITION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-42",
@@ -974,7 +1134,11 @@
       "acceptance_seed": "",
       "decision": "GATE_REQUIRED",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-43",
@@ -997,7 +1161,11 @@
       "acceptance_seed": "",
       "decision": "GATE_REQUIRED",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-44",
@@ -1021,7 +1189,11 @@
       "acceptance_seed": "",
       "decision": "GATE_REQUIRED",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "SYS-45",
@@ -1045,7 +1217,11 @@
       "acceptance_seed": "",
       "decision": "GATE_REQUIRED",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A6+A7",
+      "disposition": "APPROVED_EXTENSION_EPOCH_LATER_NOT_2019_BASELINE",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-01",
@@ -1069,7 +1245,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-02",
@@ -1092,7 +1272,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-03",
@@ -1115,7 +1299,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-04",
@@ -1138,7 +1326,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-05",
@@ -1162,7 +1354,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-06",
@@ -1186,7 +1382,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-07",
@@ -1210,7 +1410,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-08",
@@ -1233,7 +1437,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-09",
@@ -1257,7 +1465,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-10",
@@ -1281,7 +1493,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-11",
@@ -1304,7 +1520,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-12",
@@ -1327,7 +1547,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-13",
@@ -1351,7 +1575,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-14",
@@ -1375,7 +1603,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-15",
@@ -1398,7 +1630,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-16",
@@ -1422,7 +1658,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-17",
@@ -1447,7 +1687,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-18",
@@ -1470,7 +1714,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-19",
@@ -1493,7 +1741,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-20",
@@ -1516,7 +1768,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "POI-21",
@@ -1539,7 +1795,11 @@
       "acceptance_seed": "",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ADAPT_AS_ARCHETYPE_NOT_VERBATIM_LOCATION",
+      "design_gate": "F0-F5",
+      "required_evidence": "Data/source definition + runtime + native screenshot + relevant tests"
     },
     {
       "id": "DEP-01",
@@ -1563,7 +1823,11 @@
       "acceptance_seed": "Test: người chơi farm đường một buổi, mở được ít nhất một nhánh cải tiến nhưng vẫn cần thám hiểm để hoàn thành. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-02",
@@ -1586,7 +1850,11 @@
       "acceptance_seed": "Test: cho người chơi một món hiếm còn 20% độ bền, đo tỷ lệ chọn giữ/dùng/học. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A4",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-03",
@@ -1609,7 +1877,11 @@
       "acceptance_seed": "Test: map có tối thiểu một tuyến hợp lệ, không khóa vòng tròn deadlock. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-04",
@@ -1633,7 +1905,11 @@
       "acceptance_seed": "Test: UI nói rõ thiếu nguồn và không làm tiêu hao thẻ vô cớ trong SOH. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-05",
@@ -1656,7 +1932,11 @@
       "acceptance_seed": "Test: có ít nhất hai chiến lược chuẩn bị: đồ chống chịu và đường di chuyển ngắn. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-06",
@@ -1680,7 +1960,11 @@
       "acceptance_seed": "Test: tài nguyên hiếm có ít nhất hai sink khác biệt, không là một chìa khóa độc dụng. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-07",
@@ -1703,7 +1987,11 @@
       "acceptance_seed": "Test: sức chứa thực và khoảng về nhà ảnh hưởng quyết định route. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-08",
@@ -1727,7 +2015,11 @@
       "acceptance_seed": "Test: phá/hỏng tủ tác động đúng các công trình thuộc phạm vi, không tác động nhầm lân cận. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-09",
@@ -1750,7 +2042,11 @@
       "acceptance_seed": "Test: save/load sau khi generator tắt phải khôi phục đúng trạng thái thiết bị. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-10",
@@ -1773,7 +2069,11 @@
       "acceptance_seed": "Test: ít nhất hai khu đất tạo trade-off khác nhau, không tồn tại vị trí toàn lợi. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-11",
@@ -1797,7 +2097,11 @@
       "acceptance_seed": "Test: hệ recipe graph cho thấy tối thiểu một vật liệu tái định giá ở mỗi tier. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-12",
@@ -1820,7 +2124,11 @@
       "acceptance_seed": "Test: whitelist và quota không cho gửi trái phép đồ cao cấp vào ngày 1. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-13",
@@ -1843,7 +2151,11 @@
       "acceptance_seed": "Test: world stage update không reset recipe player đã học theo luật mode. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-14",
@@ -1866,7 +2178,11 @@
       "acceptance_seed": "Test: sự kiện công bố vị trí/mốc có thời gian hợp lý và hành vi rõ. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-15",
@@ -1889,7 +2205,11 @@
       "acceptance_seed": "Test: sau 5 chu kỳ trồng, thời gian prep giảm mà nhu cầu farm loot quý không về 0. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-16",
@@ -1913,7 +2233,11 @@
       "acceptance_seed": "Test: route xa được rút số lượt qua lại hoặc số item bỏ lại. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-17",
@@ -1937,7 +2261,11 @@
       "acceptance_seed": "Test: mỗi vật liệu độc quyền có lý do, nguồn hiển thị và phương án lấy lại khi thất bại. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-18",
@@ -1960,7 +2288,11 @@
       "acceptance_seed": "Test: túi rơi không bị nhân đôi, vị trí tồn tại qua save/load. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-19",
@@ -1983,7 +2315,11 @@
       "acceptance_seed": "Test: queue không sinh item miễn phí khi tắt game giữa thao tác. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-20",
@@ -2006,7 +2342,11 @@
       "acceptance_seed": "Test: UI từ chối đúng loại vượt giới hạn và không xóa công trình đã tạo. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-21",
@@ -2029,7 +2369,11 @@
       "acceptance_seed": "Test: tháp không bắn xuyên tường, không nhắm thành viên được cấp quyền. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-22",
@@ -2052,7 +2396,11 @@
       "acceptance_seed": "Test: số tuyến tới mỗi kho có cách biệt về chi phí và rủi ro. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-23",
@@ -2075,7 +2423,11 @@
       "acceptance_seed": "Test: UI chỉ tiết lộ metadata đã khám phá và không phá bất ngờ nội dung. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-24",
@@ -2098,7 +2450,11 @@
       "acceptance_seed": "Test: recipe sở hữu meta không vô tình biến thành item free trong battle. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-25",
@@ -2121,7 +2477,11 @@
       "acceptance_seed": "Test: buff không nhân bất thường với vật liệu quý, định nghĩa yield rõ. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-26",
@@ -2144,7 +2504,11 @@
       "acceptance_seed": "Test: bảng hiệu quả chống cháy hiển thị và chống exploit chồng lửa. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A1+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-27",
@@ -2167,7 +2531,11 @@
       "acceptance_seed": "Test: nhân vật đi vào phòng thì mái phòng đó mờ, camera không che cửa. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A2+A5",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-28",
@@ -2190,7 +2558,11 @@
       "acceptance_seed": "Test: khi rời team, chỉ revoke quyền group-granted, không khóa recipe cá nhân. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-29",
@@ -2213,7 +2585,11 @@
       "acceptance_seed": "Test: hành động dài không yêu cầu đứng bất động nếu không có quy định. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A3+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-30",
@@ -2236,7 +2612,11 @@
       "acceptance_seed": "Test: không cho capture ngoài 18–22h; buff áp theo milestone đúng mode. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A0+A7",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "DEP-31",
@@ -2259,7 +2639,11 @@
       "acceptance_seed": "Test: đồ nghiên cứu và phần thưởng phòng có identity khác đồ boss. Nếu bài test không làm được bằng thao tác trong game thì đây mới chỉ là tên tính năng trên bảng, chưa phải hệ thống chơi được.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A5+A3",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-01",
@@ -2280,7 +2664,11 @@
       "acceptance_seed": "Không khóa người chơi trong tutorial tuyến tính; sau khi tạo nhà, không bắt vào dungeon ngay.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-02",
@@ -2301,7 +2689,11 @@
       "acceptance_seed": "Không gắn sở hữu item với quyền chế tạo; những lựa chọn cần được UI giải thích chính xác.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-03",
@@ -2322,7 +2714,11 @@
       "acceptance_seed": "Kiểm thử softlock: luôn còn con đường tạo/kiếm nguồn phù hợp nếu người chơi tiêu hao nhầm thẻ.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-04",
@@ -2343,7 +2739,11 @@
       "acceptance_seed": "Không tự động nâng level để triệt tiêu độc; kiến thức và sự chuẩn bị được thưởng.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-05",
@@ -2364,7 +2764,11 @@
       "acceptance_seed": "Collision, ownership và save phải đúng; không chỉ thay texture căn nhà.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-06",
@@ -2385,7 +2789,11 @@
       "acceptance_seed": "Tiền đồn phải có chức năng sử dụng thật, trạng thái riêng và mối quan hệ với căn cứ chính.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-07",
@@ -2406,7 +2814,11 @@
       "acceptance_seed": "Thử nghiệm đo net gain, không dùng giá trị hiếm đơn thuần để chấm nhiệm vụ.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-08",
@@ -2427,7 +2839,11 @@
       "acceptance_seed": "Cần search recipe, ingredient reverse lookup và bộ lọc kho; không bắt nhớ mọi công thức.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-09",
@@ -2448,7 +2864,11 @@
       "acceptance_seed": "Hãy đo số lần AI stuck, exploit góc, damage hợp lệ và khả năng khôi phục sau save/load.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-10",
@@ -2469,7 +2889,11 @@
       "acceptance_seed": "Cơ chế này chỉ có ý nghĩa nếu SOH có team/settlement; với game solo không cần ép cho đủ danh mục.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-11",
@@ -2490,7 +2914,11 @@
       "acceptance_seed": "Không đặt tất cả phần thưởng rare độc quyền sau boss: bảo tồn đường khám phá/puzzle/rủi ro phi chiến đấu.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     },
     {
       "id": "JOURNEY-12",
@@ -2511,7 +2939,11 @@
       "acceptance_seed": "Kiểm thử ít nhất 3 buổi chơi liên tiếp không vào dungeon mà vẫn tiến triển thật, rồi vào dungeon với sự chuẩn bị đã tích lũy.",
       "decision": "ACCEPT_BEHAVIORAL_RECONSTRUCTION",
       "implementation": "NOT_STARTED",
-      "era": "source-specific epochs; see referenced lines; not assumed 2019"
+      "era": "source-specific epochs; see referenced lines; not assumed 2019",
+      "owner": "A7+A0",
+      "disposition": "ACCEPT_TEST_AND_RELATIONSHIP",
+      "design_gate": "F0-F5",
+      "required_evidence": "Deterministic fixture plus actual game interaction, logs, no duplication"
     }
   ],
   "unknown_original_facts": [
@@ -2858,5 +3290,14 @@
       "citation": "- **[S28] [B] App version release history** — Version number international 2.43 July, 2.44 July, 2.45 September 2026. URL: https://apptopia.com/ios/app/1463021419/about"
     }
   ],
-  "completeness": "All atlas named subsystem/POI/dependency/journey headings indexed. Implementation not started. Recorded examples are not confirmed universal 2019 facts."
+  "completeness": "All atlas named subsystem/POI/dependency/journey headings indexed. Implementation not started. Recorded examples are not confirmed universal 2019 facts.",
+  "trace_stats": {
+    "subsystems": 44,
+    "poi_templates": 21,
+    "dependencies": 31,
+    "journeys": 12,
+    "unknown_original_facts": 40,
+    "historical_sources": 28
+  },
+  "owner_rules": "A0..A8 defined in MULTI_AGENT_EXECUTION.md; each owner responsible for approved/rejected/external scope; no silence as defer"
 }
