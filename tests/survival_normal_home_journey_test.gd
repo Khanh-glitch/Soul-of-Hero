@@ -346,4 +346,82 @@ func _body() -> void:
 	var returned := await _walk_path(hero, near_door)
 	_expect(returned and not (build.room_topology.room_at(nav.cell_of(hero.global_position))).is_empty(),
 		"ordinary movement returns through the door into the same home")
+	if not returned:
+		_body_complete = true
+		return
+	# A resource expedition after the home exists: plan against the live Hero
+	# shape (including new wall/door bodies), then use only ordinary movement.
+	var exit_path := _route(nav.cell_of(hero.global_position), center + Vector2i(0, -4), nav, hero)
+	var left_again := not exit_path.is_empty() and await _walk_path(hero, exit_path)
+	_expect(left_again, "ordinary movement leaves home for a resource expedition")
+	if not left_again:
+		_body_complete = true
+		return
+	var from_cell := nav.cell_of(hero.global_position)
+	var distances_after_build := nav.reachable_from(from_cell)
+	var options: Array[Dictionary] = []
+	var shape_cache: Dictionary = {}
+	for raw: Variant in (ow.get(&"survival_nodes") as Dictionary).values():
+		var oak := raw as SurvivalResourceNode
+		if oak == null or oak.resource_kind != "oak_tree" or not bool(_survival().call(&"is_node_harvestable", oak.node_id, "oak_tree")):
+			continue
+		var goal := nav.cell_of(oak.global_position)
+		if not nav.in_bounds(goal) or goal.distance_squared_to(center) < 36 or not _shape_clear(goal, nav, hero, shape_cache):
+			continue
+		var distance := distances_after_build[goal.y * nav.width + goal.x]
+		if distance >= 0:
+			options.append({"node": oak, "goal": goal, "distance": distance})
+	options.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.distance) < int(b.distance))
+	var source: SurvivalResourceNode = null
+	var source_path: Array[Vector2i] = []
+	for index in range(mini(options.size(), 8)):
+		var option: Dictionary = options[index]
+		var attempt_path := _route(from_cell, option.goal, nav, hero)
+		if not attempt_path.is_empty():
+			source = option.node as SurvivalResourceNode
+			source_path = attempt_path
+			break
+	_expect(source != null, "bounded shape-aware planning finds a live oak source away from home")
+	if source == null:
+		_body_complete = true
+		return
+	var reached_source := await _walk_path(hero, source_path)
+	_expect(reached_source and source.can_interact(hero), "ordinary movement reaches the live oak source")
+	if not reached_source or not source.can_interact(hero):
+		_body_complete = true
+		return
+	await create_timer(0.3).timeout
+	var before_oak := _count(WOOD)
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	_expect(_count(WOOD) == before_oak + 2, "ordinary world click harvests two oak on the expedition")
+	if _count(WOOD) != before_oak + 2:
+		print("HOME_EXPEDITION_HARVEST_FAIL node=%s result=%s actor=%s" % [source.node_id, str(source.last_result()), str(hero.global_position)])
+		_body_complete = true
+		return
+	var home_path := _route(nav.cell_of(hero.global_position), center + Vector2i.UP, nav, hero)
+	_expect(not home_path.is_empty(), "live-shape route leads from source back through the open door")
+	if home_path.is_empty():
+		_body_complete = true
+		return
+	var home_again := await _walk_path(hero, home_path)
+	_expect(home_again and not (build.room_topology.room_at(nav.cell_of(hero.global_position))).is_empty(),
+		"ordinary movement brings gathered oak back into the same home")
+	if not home_again:
+		_body_complete = true
+		return
+	var back_to_chest := await _walk_path(hero, near_chest)
+	_expect(back_to_chest, "ordinary movement reaches the home chest after the expedition")
+	if not back_to_chest:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	var contents := chest.chest_contents()
+	_expect(int(contents.get(WOOD, 0)) == 2 and int(contents.get("binding_cloth", 0)) == 2 \
+		and _count(WOOD) == 0 and _count("binding_cloth") == 0,
+		"ordinary chest click stores expedition oak and manufactured cloth together")
+	var reloaded := bool(_save().call(&"reload_save"))
+	var after_reload: Dictionary = _survival().call(&"container_contents", chest_id)
+	_expect(reloaded and int(after_reload.get(WOOD, 0)) == 2 and int(after_reload.get("binding_cloth", 0)) == 2 \
+		and _count(WOOD) == 0 and _count("binding_cloth") == 0,
+		"expedition and crafted custody persist on exactly the chest side after reload")
 	_body_complete = true
