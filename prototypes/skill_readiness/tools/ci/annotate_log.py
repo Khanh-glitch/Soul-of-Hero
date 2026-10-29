@@ -40,7 +40,7 @@ def main() -> int:
             continue
         if any(p.search(line) for p in pats):
             keep.append(line)
-    tail = [l for l in lines[-args.tail:] if not l.startswith("Godot Engine v")]
+    tail = [l for l in lines[-args.tail:] if not l.startswith("Godot Engine v")] if args.tail > 0 else []
     items = ["== matched =="] + keep[-200:] + ["== tail =="] + tail
     items = [it[:400] for it in items]
     # Annotation messages above a few KB are silently dropped by the platform,

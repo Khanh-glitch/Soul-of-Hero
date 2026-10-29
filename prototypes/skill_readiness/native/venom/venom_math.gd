@@ -18,7 +18,7 @@ const V8M = preload("res://prototypes/skill_readiness/native/venom/v8_math.gd")
 ##   * packed colours are 0xAABBGGRR
 ##   * `>>`, `>>>`, `<<`, `|`, `^` and `Math.imul` are 32-bit
 
-const TAU: float = 6.283185307179586
+const TAU: float = 2.0 * PI  # exact: avoids decimal-literal rounding in Godot
 const BAYER: PackedByteArray = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5]
 
 # ---------------------------------------------------------------------------

@@ -420,7 +420,7 @@ jobs:
             exit 1
           fi
           # Per-tick verdicts stay visible in the log even when the shard is green.
-          grep -E '"canonical"|"parity"|"first_divergent_tick"|SKIP' "$LOG" | tail -20
+          python3 prototypes/skill_readiness/tools/ci/annotate_log.py --level notice --title "venomwright-${{ matrix.skill }} verdict" --log "$LOG" --tail 0 --pattern 'GOLD93_VENOM_DIFFERENTIAL|"canonical"|"parity"|first_divergent_tick|SKIP'
 
   # ARCANA III gets its own matrix so a Venomwright regression can never be
   # masked by an ARCANA shard and vice versa. The two families are different
