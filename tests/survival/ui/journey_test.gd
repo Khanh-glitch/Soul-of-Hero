@@ -249,12 +249,16 @@ func _run() -> void:
 	view._journey_tabs[1].grab_focus()
 	var accept := InputEventJoypadButton.new()
 	accept.button_index = JOY_BUTTON_A
+	accept.device = 0
 	if not InputMap.action_has_event(&"ui_accept", accept):
 		InputMap.action_add_event(&"ui_accept", accept)
 	accept.pressed = true
-	root.push_input(accept, true)
+	Input.parse_input_event(accept)
 	await process_frame
 	check(view.current_projection().journey == 1, "controller A accepts focused journey tab")
+	accept.pressed = false
+	Input.parse_input_event(accept)
+	await process_frame
 	view._journey_tabs[2].grab_focus()
 	var mouse := InputEventMouseButton.new()
 	mouse.button_index = MOUSE_BUTTON_LEFT

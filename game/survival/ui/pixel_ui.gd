@@ -142,7 +142,7 @@ static func icon_texture(record: Dictionary) -> Texture2D:
 			_fill(image, Rect2i(x, 20, 1, 2), base if pip < int(ceil(float(uses) * 6.0 / maximum)) else Color("514b48"))
 		if uses == 0:
 			_fill(image, Rect2i(17, 5, 2, 2), Color("ff806d"))
-	if String(record.get("condition", "")).to_lower() in ["damaged", "broken", "worn", "poor"]:
+	if str(record.get("condition", "")).to_lower() in ["damaged", "broken", "worn", "poor"]:
 		_fill(image, Rect2i(18, 16, 3, 3), Color("ff725f"))
 	elif bool(record.get("equipped", false)):
 		_fill(image, Rect2i(18, 4, 3, 3), Color("a9e7a6"))
