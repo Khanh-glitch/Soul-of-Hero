@@ -215,7 +215,23 @@ func _body() -> void:
 	var economy: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("survival_economy", {})
 	var attributes: Dictionary = (economy.get("instances", {}) as Dictionary).get(token, {})
 	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "A3 token attributes remain coupled through death and reload")
-	_expect(bool(ow.call(&"_respawn_overworld_hero")), "actual Hero respawns via active bed")
+	var hud: Node = ow.get(&"hud")
+	var button := hud.find_child("Respawn", true, false) as Button
+	_expect(button != null and button.is_visible_in_tree(), "paused overworld exposes an actual respawn button")
+	if button != null:
+		await process_frame
+		var event := InputEventMouseButton.new()
+		event.button_index = MOUSE_BUTTON_LEFT
+		event.position = button.get_global_rect().get_center()
+		root.warp_mouse(event.position)
+		await process_frame
+		event.pressed = true
+		Input.parse_input_event(event)
+		await process_frame
+		event.pressed = false
+		Input.parse_input_event(event)
+		await process_frame
+	_expect(not bool(hero.get(&"dead")), "normal GUI mouse input respawns actual Hero via active bed")
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")
 	_expect(String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "respawn commit clears pending death")
@@ -236,7 +252,27 @@ func _body() -> void:
 			"full inventory refuses recovery and preserves bag")
 		if not fillers.is_empty():
 			_expect(bool(_save().call(&"consume_inventory_item", fillers[0], 50, "survival.test.bed.free_slot")), "free capacity for bag")
-		_expect(bool(bag.call(&"interact", hero)) and _count(STONE) == 3, "recover bag by real interaction without item loss")
+		# Dispatch a real world click through Knight input and physics rather than
+		# calling the bag method; this is automated input, not a human playtest.
+		camera = ow.get(&"camera")
+		camera.reset_smoothing()
+		camera.force_update_scroll()
+		await process_frame
+		var recovery_click := InputEventMouseButton.new()
+		recovery_click.button_index = MOUSE_BUTTON_LEFT
+		recovery_click.position = root.get_canvas_transform() * (bag as Node2D).global_position
+		root.warp_mouse(recovery_click.position)
+		await process_frame
+		hero.set_physics_process(true)
+		recovery_click.pressed = true
+		Input.parse_input_event(recovery_click)
+		await physics_frame
+		await physics_frame
+		recovery_click.pressed = false
+		Input.parse_input_event(recovery_click)
+		await physics_frame
+		hero.set_physics_process(false)
+		_expect(_count(STONE) == 3, "normal world mouse input recovers bag without item loss")
 		_expect(not bool(svc.call(&"recover_death_bag", bag_id)), "replaying recovery cannot duplicate")
 	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "knowledge remains after bag recovery")
 	var inject_bag := func(candidate: Dictionary) -> bool:
