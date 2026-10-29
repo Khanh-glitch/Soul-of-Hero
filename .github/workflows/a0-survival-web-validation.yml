@@ -33,6 +33,9 @@ jobs:
       - name: Compose temporary browser-only entry scene
         run: |
           set -euo pipefail
+          printf '%s  %s\n' \
+            703a8baa741ca6c4ad1e21ddd43b05c48af887dbfef7ed00d78117838e947ec3 game/survival/economy/a0_economy_adapter.gd \
+            b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c game/survival/economy/vendor/a3_economy_service.gd | sha256sum -c -
           cp tools/survival/web_probe.gd game/survival/web_probe_ci.gd
           cp tools/survival/web_probe.tscn game/survival/web_probe_ci.tscn
           python3 - <<'PY'
@@ -42,6 +45,16 @@ jobs:
           old = 'run/main_scene="res://game/app/app_root.tscn"'
           assert s.count(old) == 1
           p.write_text(s.replace(old, 'run/main_scene="res://game/survival/web_probe_ci.tscn"'))
+          # Read-only breadcrumbs in this temporary checkout locate a native
+          # Web engine abort inside the synchronous world builder.
+          world = Path('game/overworld/chapter1_overworld.gd')
+          s = world.read_text()
+          for marker in ('_build_survival()', '_build_economy_session()', '_build_occlusion()', '_build_hud()', '_build_economy_panel()', '_connect_run_events()', '_apply_hud()'):
+              needle = '\t' + marker + '\n'
+              assert s.count(needle) == 1, marker
+              crumb = "\tJavaScriptBridge.eval(\"window.__survivalBuildTrace=(window.__survivalBuildTrace||[]).concat('%s');\", true)\n" % marker
+              s = s.replace(needle, needle + crumb)
+          world.write_text(s)
           PY
           echo "Temporary CI fixture from A0 $(git rev-parse HEAD); production entrypoint not changed in Git." >> "$GITHUB_STEP_SUMMARY"
       - name: Import and export real Web runtime

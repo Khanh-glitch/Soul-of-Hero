@@ -19,6 +19,7 @@ const path = require('node:path');
       await page.waitForFunction(() => window.__survivalWebProbe?.ready === true, null, {timeout:90000});
     } catch (e) {
       const diagnostics = await page.evaluate(() => ({probe: window.__survivalWebProbe,
+        buildTrace: window.__survivalBuildTrace,
         status: document.querySelector('#status')?.innerText?.slice(0, 1000),
         canvas: [document.querySelector('canvas')?.width, document.querySelector('canvas')?.height],
         title: document.title}));

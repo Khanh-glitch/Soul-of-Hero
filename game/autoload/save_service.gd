@@ -21,6 +21,11 @@ signal hero_identity_unlocked(hero_id: StringName)
 
 const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
 const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_facade.gd")
+# Exported tokenized GDScript may not retain source_code. The production port
+# still binds to these exact preloaded Script resources and their base identity;
+# source bytes are independently SHA-pinned in native and export CI.
+const PRODUCTION_ECONOMY_ADAPTER := preload("res://game/survival/economy/a0_economy_adapter.gd")
+const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_economy_service.gd")
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
@@ -1326,10 +1331,21 @@ func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
 	if adapter == null:
 		return false
 	var script: Variant = adapter.get_script()
-	if not script is Script or String(script.source_code).sha256_text() not in [PINNED_A0_ADAPTER_SHA256, PINNED_A0_PRODUCTION_ADAPTER_SHA256]:
+	if not script is Script:
 		return false
 	var parent: Script = script.get_base_script()
-	return parent != null and String(parent.source_code).sha256_text() == PINNED_A3_SCRIPT_SHA256
+	if parent == null:
+		return false
+	var source := String(script.source_code)
+	var base_source := String(parent.source_code)
+	# Tokenized release exports strip source. Only the actual preloaded
+	# production script pair can take this branch, never a caller-provided path,
+	# label or generic script; CI verifies both pinned source byte hashes before
+	# export. This remains a trusted-code boundary, not an anti-tamper sandbox.
+	if source.is_empty() and base_source.is_empty():
+		return script == PRODUCTION_ECONOMY_ADAPTER and parent == PRODUCTION_ECONOMY_BASE
+	return source.sha256_text() in [PINNED_A0_ADAPTER_SHA256, PINNED_A0_PRODUCTION_ADAPTER_SHA256] \
+		and base_source.sha256_text() == PINNED_A3_SCRIPT_SHA256
 
 
 func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
