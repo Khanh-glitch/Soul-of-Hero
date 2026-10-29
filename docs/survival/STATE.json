@@ -104,9 +104,10 @@
         "Paid same-cell replacement job isolation: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40909702058 at 2e3eff9.",
         "Actual host receipt replay/stale: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40909792544 at 48fdbc6, session 74.",
         "Overquantum in-process trusted-clock fault: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40910842731 at 5ef3668, session 78.",
-        "World interaction reach and teleported injected pointer: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40911620325 at 1cef716, session 81; not normal-input navigation."
+        "World interaction reach and teleported injected pointer: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40911620325 at 1cef716, session 81; not normal-input navigation.",
+        "Knight always-available far/near interaction probe and teleported world click: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912938059 at f759924, session 83; not a normal-input navigation journey."
       ],
-      "next": "Inspect f759924 interaction-range probe native and overworld runs; then continuous fresh-save input journey, A1/A3 producer decisions, actual native resolution/Web evidence and cross-agent gates. Do not merge.",
+      "next": "Inspect pending overworld run 40912937999; build continuous fresh-save input journey, resolve A1/A3 source decisions, capture and review actual native resolution/Web evidence, complete A6/NPC cross-agent gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
