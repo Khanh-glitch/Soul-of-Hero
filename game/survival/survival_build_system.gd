@@ -29,6 +29,7 @@ signal placement_committed(entity_id: String, piece_id: String, cell: Vector2i)
 signal build_mode_changed(active: bool)
 
 const ROOM_TOPOLOGY = preload("res://game/survival/survival_room_topology.gd")
+const ROOF_LAYER = preload("res://game/survival/survival_roof_layer.gd")
 const TILE := 16
 const BUILD_ART_PATH := "res://assets/survival/build/placeholder_build.png"
 const BUILD_ART_META := "res://data/survival/placeholder_build.json"
@@ -50,6 +51,7 @@ var _frames: Dictionary = {}
 var _placed: Dictionary = {}          # entity_id -> SurvivalStructure
 var _occupied: Dictionary = {}        # "x,y" -> {floor/object: entity_id}
 var room_topology = ROOM_TOPOLOGY.new()
+var roof_layer: Node2D
 var _last_rejection := ""
 var _ready_built := false
 var _hud_layer: CanvasLayer
@@ -73,6 +75,11 @@ func configure(world_ref: OverworldWorld, player_ref: Node2D, camera_ref: Camera
 			and not svc.is_connected(&"survival_state_changed", _refresh_hud):
 		svc.connect(&"survival_state_changed", _refresh_hud)
 	rebuild_from_save()
+	if roof_layer == null:
+		roof_layer = ROOF_LAYER.new()
+		roof_layer.name = "RoomRoofs"
+		add_child(roof_layer)
+	roof_layer.call(&"configure", self, player, room_topology)
 
 
 func _ensure_roots() -> void:

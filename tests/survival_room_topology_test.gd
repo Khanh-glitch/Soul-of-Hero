@@ -38,6 +38,20 @@ func _walk_hero(body: CharacterBody2D, start: Vector2, steps: int) -> float:
 	return body.global_position.y - start.y
 
 
+func _capture_roof_frame(name: String) -> void:
+	await process_frame
+	await RenderingServer.frame_post_draw
+	var image := root.get_texture().get_image()
+	_expect(image != null and not image.is_empty(), "native frame captured: " + name)
+	if image == null or image.is_empty():
+		return
+	var path := "user://roof_%s.png" % name
+	_expect(image.save_png(path) == OK, "native frame saved: " + name)
+	var crop := image.get_region(Rect2i(320, 180, 320, 180))
+	crop.save_png("user://roof_%s_crop.png" % name)
+	print("[frame] %s" % ProjectSettings.globalize_path(path))
+
+
 func _body() -> void:
 	print("[topology] bounded algorithm")
 	var model = TOPOLOGY_SCRIPT.new()
@@ -110,7 +124,7 @@ func _body() -> void:
 			# The Hero's collision shape extends north of its foot. Keep a
 			# two-cell approach clear, not just the built footprint.
 			for yy in range(-2, 5):
-				for xx in range(-1, 5):
+				for xx in range(-1, 8):
 					if not build.validate_cell(Vector2i(x + xx, y + yy)).is_empty():
 						valid = false
 			if valid:
@@ -175,6 +189,39 @@ func _body() -> void:
 	await physics_frame
 	_expect(not door_shape.disabled, "closing door restores collision")
 	_expect(door_node.interact(player) and bool(door_node.last_interaction().get("open", false)), "door reopens before reload")
+	# Extend the existing structure into a second room sharing its east wall.
+	_expect(_give(WOOD, 12), "timber granted for adjacent room")
+	build.select_piece("wall_wood")
+	player.global_position = Vector2((origin.x + 3) * 16 + 8, (origin.y + 2) * 16 + 8)
+	for yy in range(4):
+		for xx in range(4, 7):
+			if yy != 0 and yy != 3 and xx != 6:
+				continue
+			var extension: Dictionary = build.try_place(origin + Vector2i(xx, yy))
+			_expect(bool(extension.get("ok", false)), "paid adjacent wall %d,%d" % [xx, yy])
+	var adjacent_id: String = build.room_topology.room_at(origin + Vector2i(4, 1))
+	_expect(not adjacent_id.is_empty() and adjacent_id != room_id, "production shared wall separates rooms")
+	var roof := build.roof_layer
+	var camera: Camera2D = ow.get(&"camera") as Camera2D
+	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y - 2) * 16 + 8)
+	camera.reset_smoothing()
+	await create_timer(0.65).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99 and float(roof.call(&"alpha_for", adjacent_id)) > 0.99,
+		"both roofs visible from outside")
+	await _capture_roof_frame("outside")
+	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y + 1) * 16 + 8)
+	camera.reset_smoothing()
+	await create_timer(0.45).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) < 0.01 and float(roof.call(&"alpha_for", adjacent_id)) > 0.99,
+		"only the occupied room roof hides")
+	await _capture_roof_frame("inside")
+	player.global_position = Vector2((origin.x + 4) * 16 + 8, (origin.y + 1) * 16 + 8)
+	camera.reset_smoothing()
+	await create_timer(0.45).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99 and float(roof.call(&"alpha_for", adjacent_id)) < 0.01,
+		"adjacent room transition restores the first roof and hides the second")
+	await _capture_roof_frame("adjacent")
+	player.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 2) * 16 + 8)
 	var interior_cell := origin + Vector2i(1, 1)
 	build.select_piece("foundation_wood")
 	var floor_result: Dictionary = build.try_place(interior_cell)

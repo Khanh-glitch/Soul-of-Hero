@@ -301,6 +301,25 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
+      - name: Surface native roof capture bytes for visual review
+        if: always()
+        run: |
+          python3 - <<'PYROOF'
+          import base64, glob, os
+          for name in ('outside', 'inside', 'adjacent'):
+              matches = glob.glob('artifacts/**/roof_' + name + '_crop.png', recursive=True)
+              if not matches:
+                  print('::warning::missing native roof capture ' + name)
+                  continue
+              encoded = base64.b64encode(open(matches[0], 'rb').read()).decode('ascii')
+              chunks = [encoded[i:i + 6000] for i in range(0, len(encoded), 6000)]
+              if len(chunks) > 30:
+                  print('::warning::native roof capture too large for annotations: ' + name)
+                  continue
+              for i, chunk in enumerate(chunks):
+                  print('::notice::ROOF_CAPTURE_%s_%d_OF_%d:%s' % (name.upper(), i + 1, len(chunks), chunk))
+          PYROOF
+
       - name: Every check actually ran (anti-vacuity)
         if: always()
         run: |
@@ -376,6 +395,7 @@ jobs:
           path: |
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
+            artifacts/ud_topology/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn
           retention-days: 14
