@@ -114,7 +114,7 @@ jobs:
           set -uo pipefail
           mkdir -p real-map/.artifacts/venom_real_map
           set +e
-          timeout 600s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/skill_readiness/pilot/real_map/venom_pilot_real_map.tscn 2>&1 | tee /tmp/pilot-real-map.log
+          timeout 1200s xvfb-run -a -s '-screen 0 1280x720x24' env LIBGL_ALWAYS_SOFTWARE=1 godot --audio-driver Dummy --path real-map --rendering-method gl_compatibility --resolution 1280x720 res://prototypes/skill_readiness/pilot/real_map/venom_pilot_real_map.tscn 2>&1 | tee /tmp/pilot-real-map.log
           STATUS=${PIPESTATUS[0]}
           set -e
           echo "::notice title=vfx-pilot-map status::godot exit status $STATUS"
@@ -125,6 +125,7 @@ jobs:
           fi
           test -s real-map/.artifacts/venom_real_map/l2_baseline_no_vfx.png
           test -s real-map/.artifacts/venom_real_map/l2_venom_006_t0070.png
+          test -s real-map/.artifacts/venom_real_map/l2_venom_010_t0300.png
           if ! git -C real-map diff --quiet HEAD -- game/ data/ assets/ project.godot; then echo "Tracked map altered"; exit 1; fi
       - name: Upload real-map pilot frames
         if: always()

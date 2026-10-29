@@ -13,9 +13,12 @@ extends "res://tests/chapter_1_campaign_level_visual_capture.gd"
 
 const STAGE = preload("res://prototypes/skill_readiness/pilot/venom_pilot_stage.gd")
 const OUT_DIR := "res://.artifacts/venom_real_map"
-const SKILL_ID: int = 6
-const SHOT_TICKS: Array = [1, 30, 70, 120, 180, 260, 340]
-const LAST_TICK: int = 360
+## Per-skill evidence plan. 006: its full recorded timeline (385 ticks) and the
+## start of its aftermath. 010: the full recorded timeline (840 ticks).
+const RUNS: Array = [
+	{"skill": 6, "last": 420, "shots": [1, 30, 70, 120, 180, 260, 340]},
+	{"skill": 10, "last": 840, "shots": [1, 120, 300, 480, 600, 720, 840]},
+]
 
 var _real_map_failures: int = 0
 
@@ -52,17 +55,38 @@ func _capture_campaign_state(game: Node2D) -> void:
 	_verify(baseline != null and baseline.save_png(folder.path_join("l2_baseline_no_vfx.png")) == OK,
 		"baseline frame of the untouched real map")
 
+	var total_shots: int = 0
+	var expected_shots: int = 0
+	var skills_done: Array = []
+	for run in RUNS:
+		var r: Dictionary = await _run_skill(game, knight, level, folder, run)
+		total_shots += int(r["shots"])
+		expected_shots += int(r["expected"])
+		skills_done.append(int(run["skill"]))
+	_verify(total_shots == expected_shots, "every checkpoint frame captured from the live viewport")
+	_verify(knight.is_inside_tree(), "real Knight still in the live tree")
+	_verify(level.geometry.get_used_cells().size() > 0, "real map collision survives the overlay")
+	var verdict: String = "PASS" if _real_map_failures == 0 else "FAIL"
+	var ids: String = ""
+	for sid in skills_done:
+		ids += ("" if ids.is_empty() else ",") + ("%03d" % int(sid))
+	print("GOLD93_VENOM_REAL_MAP: %s | skills %s | real AppFlow Level2 | shots %d/%d | failures %d" % [
+		verdict, ids, total_shots, expected_shots, _real_map_failures])
+
+
+func _run_skill(game: Node2D, knight: CharacterBody2D, level: DungeonLevel, folder: String, run: Dictionary) -> Dictionary:
+	var sid: int = int(run["skill"])
+	var shots: Array = run["shots"]
 	var stage = STAGE.new()
-	_verify(stage.start(SKILL_ID, true), "native pilot stage starts in overlay mode")
+	_verify(stage.start(sid, true), "native pilot stage starts in overlay mode (skill %03d)" % sid)
 	if not stage.overlay:
-		_real_map_failures += 1
-		return
+		return {"shots": 0, "expected": shots.size()}
 
 	var additive := CanvasItemMaterial.new()
 	additive.blend_mode = CanvasItemMaterial.BLEND_MODE_ADD
 	var root := Node2D.new()
-	root.name = "NativeVenomPilotOnRealMap"
-	# Venom world coordinates map 1:1 onto map pixels, with the caster on the Knight.
+	root.name = "NativeVenomPilot_%03d" % sid
+	# Venom world units are map pixels (world 600x340, raster 1200x680 at k=2, sprite scale 0.5).
 	root.position = knight.global_position - stage.player_xy()
 	game.add_child(root)
 	var scene_sprite := Sprite2D.new()
@@ -80,26 +104,25 @@ func _capture_campaign_state(game: Node2D) -> void:
 
 	var shots_saved: int = 0
 	var peak_fx: int = 0
-	for t in range(1, LAST_TICK + 1):
+	var last: int = int(run["last"])
+	for t in range(1, last + 1):
 		stage.advance(1)
 		var live: Dictionary = stage.live_counts()
 		peak_fx = maxi(peak_fx, int(live["fx"]))
 		scene_sprite.texture = ImageTexture.create_from_image(stage.scene_image())
 		glow_sprite.texture = ImageTexture.create_from_image(stage.glow_image())
-		if SHOT_TICKS.has(t):
+		if shots.has(t):
 			await RenderingServer.frame_post_draw
 			var shot: Image = get_viewport().get_texture().get_image()
-			if shot != null and shot.save_png(folder.path_join("l2_venom_%03d_t%04d.png" % [SKILL_ID, t])) == OK:
+			if shot != null and shot.save_png(folder.path_join("l2_venom_%03d_t%04d.png" % [sid, t])) == OK:
 				shots_saved += 1
 			else:
-				_verify(false, "frame %d saved" % t)
+				_verify(false, "frame %d of skill %03d saved" % [t, sid])
 		elif t % 10 == 0:
 			await get_tree().process_frame
 
-	_verify(shots_saved == SHOT_TICKS.size(), "every checkpoint frame captured from the live viewport")
-	_verify(peak_fx > 0, "native effects were live on the real map")
-	_verify(level.geometry.get_used_cells().size() > 0, "real map collision survives the overlay")
-	_verify(knight.is_inside_tree(), "real Knight still in the live tree")
-	var verdict: String = "PASS" if _real_map_failures == 0 else "FAIL"
-	print("GOLD93_VENOM_REAL_MAP: %s | skill %03d | real AppFlow Level2 | shots %d | peak_fx %d | failures %d" % [
-		verdict, SKILL_ID, shots_saved, peak_fx, _real_map_failures])
+	_verify(peak_fx > 0, "native effects were live on the real map (skill %03d)" % sid)
+	print("GOLD93_VENOM_REAL_MAP skill %03d | shots %d | peak_fx %d | live_fx_end %d" % [sid, shots_saved, peak_fx, int(stage.live_counts()["fx"])])
+	root.queue_free()
+	await get_tree().process_frame
+	return {"shots": shots_saved, "expected": shots.size()}
