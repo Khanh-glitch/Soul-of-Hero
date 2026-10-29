@@ -96,9 +96,13 @@
         "Actual panel injected input and real A3: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905802870 at 88e10ce, session 22.",
         "Modal/focus, disabled/broken station and same-process enqueue faults: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959562 at 142d0ac, session 55; not a fresh-save journey.",
         "Unchanged performance gate failed again +98%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959492 at 142d0ac; PERF_VARIABILITY_UNEXPLAINED.",
-        "Mounted resource interaction with teleported physics-disabled Hero and cleared inventory, production composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40906471143 at 07b9c8f, session 57; not normal input or approved A1 source provenance."
+        "Mounted resource interaction with teleported physics-disabled Hero and cleared inventory, production composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40906471143 at 07b9c8f, session 57; not normal input or approved A1 source provenance.",
+        "Immediate pause partial-step discard: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40907113917 at 39cbf48, session 59.",
+        "Synthetic foreign modal protection: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40907861606 at 0cb51c0, session 60; not real A6.",
+        "Canonical station-kind intent: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40908404398 at 318604a, session 61.",
+        "Physical workbench capacity/FIFO/refunds, additional fixture fibre: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40908536498 at 56342af, session 67; not normal-input journey."
       ],
-      "next": "Inspect new native CI for partial-tick pause handling and performance failure diagnostics; continue normal-input fresh-save journey, E-02 adversarial lifecycle, A1/A3 provenance, native resolution and Web evidence. Do not merge.",
+      "next": "Inspect latest overworld/general CI at 56342af; continue E-02 adversarial cases and non-fixture normal-input journey, A1/A3 source decisions, native resolution and Web evidence; do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
