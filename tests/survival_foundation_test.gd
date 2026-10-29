@@ -416,6 +416,11 @@ func _body() -> void:
 	_expect(into, "case 07: the deposit is accepted")
 	var contents: Dictionary = survival.call(&"container_contents", chest_id)
 	_expect(int(contents.get(STONE, 0)) == 6, "case 07: the chest holds 6 stone")
+	var before_demolition := _document()
+	_expect(not bool(survival.call(&"remove_structure", chest_id)),
+		"case 07: a nonempty chest cannot be demolished")
+	_expect(_document() == before_demolition,
+		"case 07: refused demolition preserves the whole survival document")
 	_expect(_count(STONE) == total_before - 6,
 		"case 07: the bag lost exactly 6 stone (%d)" % _count(STONE))
 	var stored_total := 0
@@ -459,6 +464,13 @@ func _body() -> void:
 			"case 07: everything came back (%d)" % _count(STONE))
 		var after_take := (survival.call(&"container_contents", chest_id) as Dictionary)
 		_expect(after_take.is_empty(), "case 07: the chest is empty again")
+		# An identical second cycle is a new action, not a replay of the first.
+		_expect(chest_node.interact(player), "case 07: second identical deposit accepted")
+		_expect(_count(STONE) == 0, "case 07: second deposit really moved stone")
+		_expect(chest_node.interact(player), "case 07: second identical withdrawal accepted")
+		_expect(_count(STONE) == bag_before, "case 07: second round trip conserves stone")
+		_expect((survival.call(&"container_contents", chest_id) as Dictionary).is_empty(),
+			"case 07: second withdrawal empties the chest")
 		# Case 08 records the reload expectations from here, so put the bag back to
 		# a known state rather than depending on case 03's leftovers.
 		_expect(_count(WOOD) > 0, "case 07: the building timber came back too")

@@ -85,6 +85,14 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - **What is still not true:** no human playthrough, no balance verdict, no browser playtest of *survival* specifically, no roofed room, bed, respawn, crafting, station, Core or hazard. `code_claims.survival_system_integrated` stays **false** in `STATE.json` — SURV-020 onward is where that claim is earned.
 - **Next:** SURV-020 (enclosed room, roof fade, bed and respawn) on these contracts.
 
+## 2026-10-29 — SURV-020 WIP: storage safety prerequisite, not a completed shelter
+
+- PR #10 was merged to `feature/survival-rpg-foundation-20261029` at `2709b9f6bd0d1cc7a5b242e617184ddab0431470`; verified SURV-010 commit is `d3885226c92445fad7688ef754f03ec0ef65691f`. Work continues on the fixed Arena session branch, not the requested separate task branch (session branch restriction). No force push.
+- In progress: nonempty chest demolition refuses atomically; repeated identical chest sweeps use a durable sequence instead of a permanently reused quantity signature. SURV-010 case 07 has added assertions. Godot 4.7 native Xvfb run [40849106485](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485) at `77c639331d8d4b0c472e86e7538275e6778aa697` passed: `SURVIVAL FOUNDATION PASSED - 132 checks`, engine exit 0. This validates only the existing foundation and storage assertions, not SURV-020 shelter gameplay.
+- A room/roof/bed/door prototype was not connected or included because it had unresolved topology cost, collision and player lifecycle problems. No player-facing shelter/bed/respawn is claimed. SURV-020 is **in_progress**, not verified. No native visual frames or survival-specific Web evidence yet. The full playable scenario, navigation, death bag dependency and human visual review remain open.
+- `DOCS_SYNC_PENDING`: Google Docs connector disconnected; tab 04 not written or read back for this work.
+- Next action: implement and engine-test bounded room topology, then integrate roofs, doors and respawn. Draft PR #11 targets `feature/survival-rpg-foundation-20261029`; do not merge as completed SURV-020.
+
 ## 2026-10-29 — SURV-020 assignment checkpoint recorded after user caught missing intake documentation
 
 - **User correction acknowledged:** assigning an agent **MUST** immediately produce durable task intake, scope, owner, gates, dependency boundaries and work-status record, not only chat prompt and end-of-task summary. The full in-progress work order is now in `docs/survival/tasks/SURV-020_WORK_ORDER.md`.

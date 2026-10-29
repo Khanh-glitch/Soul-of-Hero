@@ -44,7 +44,7 @@ static func empty_document() -> Dictionary:
 		"structures": {},
 		"containers": {},
 		"knowledge": {"recipes": {}},
-		"counters": {"structure": 0},
+		"counters": {"structure": 0, "container_sweeps": 0},
 	}
 
 
@@ -143,10 +143,11 @@ static func sanitize(raw: Variant) -> Dictionary:
 				}
 	document["knowledge"] = knowledge
 
-	var counters: Dictionary = {"structure": 0}
+	var counters: Dictionary = {"structure": 0, "container_sweeps": 0}
 	var raw_counters: Variant = source.get("counters", {})
 	if raw_counters is Dictionary:
 		counters["structure"] = maxi(0, int((raw_counters as Dictionary).get("structure", 0)))
+		counters["container_sweeps"] = maxi(0, int((raw_counters as Dictionary).get("container_sweeps", 0)))
 	document["counters"] = counters
 	return document
 

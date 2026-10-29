@@ -40,3 +40,17 @@ Design autonomy F0–F5 applies. Never copy unauthorized proprietary code/art. T
 **Decision:**  
 **Cross-system API/save/Gold/world effects:**  
 **Next action and reconsideration trigger:**  
+
+### 2026-10-29 — A0/A2 / SURV-020 / CT-02, CT-03, CT-07, CT-11 (in progress)
+**Question:** What can safely support arbitrary player-built rooms and their roof visibility without replacing SOH's save, collision or Hero lifecycle?
+
+**SOH inspection:** Existing pieces occupy entire 16px cells; furniture cannot currently share a cell with foundations. `SurvivalBuildSystem` materializes terrain-layer physics bodies and `SaveService.transact_once` commits inventory and survival state together. `Knight.respawn()` uses `GameSession.checkpoint`; dungeon checkpoints use the same lifecycle. Neither a topology/roof system nor bed integration exists at the verified A0 commit. Naively restoring an overworld bed checkpoint in a dungeon would be unsafe. Demolition previously erased nonempty containers, and repeated identical chest sweeps reused a permanent receipt.
+
+**Search:** GitHub repository search `godot flood-fill`, `godot tilemap building`, plus previously identified Life After Death. Inspected source, not just README:
+- [Life After Death](https://github.com/rumiazhari/life-after-death) commit `08dd648397305271345c4b25eab3d75d5e015cc9`: `scripts/world/room.gd` uses authored rectangular Area2D rooms and explicit door associations; `scripts/voxel/voxel_roof_occlusion_controller_3d.gd` uses a Node3D actor and stored building bounds, hides whole buildings. No clear code/art license in API. **REFERENCE_ONLY**: informative portal association but neither arbitrary derived 2D rooms nor independently cleared reuse; not imported. Web suitability not established.
+- [godot_flood_fill](https://github.com/maidopi-usagi/godot_flood_fill) commit `00a1902e96acb0b270909d8fec2e28cac6ebf44e`, MIT: `jfa_impl/JumpFlooding.cs` and `flood_fill.glsl` implement image-oriented C# GPU compute. **REJECT** for room topology: image rather than authoritative wall graph, .NET/compute dependencies incompatible with this project's compatibility/Web target without further work. No external code/art copied.
+- **BUILD_BESPOKE** is the tentative topology/roof direction, but not yet an approved or tested implementation. An initial local draft scanned a bounding rectangle spanning distant structures and could become unbounded; it was not connected to the game or included in the branch. Design must handle splits, merges, diagonal seals, shared boundaries, independently fading roofs and spatially bounded invalidation before integration.
+
+**Storage decision:** keep `SaveService` as sole inventory authority; reject demolition of a nonempty container within the same transaction; distinguish legitimate repeat sweeps with a persistent monotonically increasing counter and receipt check. Scope does not add a second inventory, change outer schema or touch Gold. Native foundation test: [run 40849106485](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485) at `77c639331d8d4b0c472e86e7538275e6778aa697` passed 132 checks, exit 0. Godot 4.7 Web compatibility of shelter remains unverified.
+
+**Revisit:** investigate source/engine navigation and player physics when integrating doors, and re-evaluate the local topology approach once tested on complex layouts and large, separated bases.

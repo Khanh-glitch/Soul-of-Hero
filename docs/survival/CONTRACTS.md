@@ -83,3 +83,9 @@ design intent.
   A7 to re-tune against `ECONOMY_AND_14DAY_REPLAY_BALANCE.md`, not a design verdict.
 * **A green CI run is the only thing allowed to move `STATE.json`'s
   `code_claims.survival_system_integrated` to `true`.**
+
+### SURV-020 WIP storage safety (not shelter acceptance)
+
+- Demolition of a nonempty container is rejected within the save transaction; its contents, structure and inventory remain intact. No automatic refund or evacuation is claimed.
+- Repeated whole-container sweeps use a committed `survival.counters.container_sweeps` sequence and `survival.transfer.all.v2.*` receipts rather than quantity signatures. This additive counter defaults to zero for v1 survival documents, and existing receipts are skipped if an older build dropped the counter. As with existing sweep calls, separate calls are separate user actions; caller-supplied replay keys are not available on this API.
+- Evidence: [native run 40849106485](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485), code commit `77c639331d8d4b0c472e86e7538275e6778aa697`; 132 foundation checks. This does not verify rooms, roofs, beds, respawn, shelter visuals or Web shelter behavior.
