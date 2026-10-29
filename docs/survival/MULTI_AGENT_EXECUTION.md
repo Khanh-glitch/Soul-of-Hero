@@ -68,3 +68,16 @@ A merge requires deterministic headless tests and relevant native screenshot/rec
 
 ## 7. Agent takeover prompt — reusable
 "Continue Soul of Hero Survival RPG from issue #9 and current feature/survival-rpg-foundation-20261029 HEAD. Read AGENTS.md; the immutable 1355-line user Atlas in docs/survival/source_archive; SOURCE_COVERAGE_TRACE.json; SYSTEM_FUSION_BLUEPRINT.md; ATLAS_RECONCILIATION_AND_DECISIONS.md; MULTI_AGENT_EXECUTION.md; CONTRACTS.md, STATE.json, DECISIONS.md, ACCEPTANCE.md, WORKLOG.md and Google Docs tabs 03–LIVE. Adopt your explicit A# owner role, read the real code, implement CT-* on your OWN branch, test and integrate without editing other agents' files. Report verified vs unverified truth and update both Git+Docs. Do not await user approvals for small passed gate decisions."
+
+## 8. CONTINUOUS RESEARCH — per-agent mandatory workflow
+No agent is confined to The FOG, Survival Core Lite, Coheronia, GLoot, or the original 2019–2020 research. Those are pinned historical *starting candidates*. Every responsible agent runs live feature-oriented research before committing to a new subsystem implementation, and reopens the research if a later source could materially improve a design, solve a failure, or reduce integration cost.
+- A0: source-of-truth/atomic transaction/version migration, Godot native and browser test harness patterns.
+- A1: authored biome/terrain rules, streaming/LOD, river graph, map readability, region-access gameplay.
+- A2: genuinely top-down 2D freeform construction, collision/navigation, room detection, dynamic roof, storage.
+- A3: recipe DAG, loot rarity, material ecology, production, research, farming, transactions.
+- A4: exact Gold animation integration, native JS/TypeScript parity harness, skill item resource economy.
+- A5: graded POI puzzles, power circuits, PvE AI, hazards, pathing and softlock validation.
+- A6: pixel-readable 2K/4K HUD, build tools, inventory and map UI, art licensing.
+- A7: simulation, economy sinks, replay/14-day depth, automated exploratory tests.
+- A8: continuous licensing/provenance and repository dependency/security audit.
+At each task intake and major obstacle, append a compact **decision record** with search terms, candidates inspected, implementation/library versions, proof, decision, what it connects to in CT-01..CT-12, and reassessment trigger to `RESEARCH_LOG.md`. Search is not a ritual; stop when a solution is justified and verified, reopen when evidence changes. Agent A0 audits these records at PR/merge.

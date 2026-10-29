@@ -387,5 +387,13 @@
         "state": "NOT_ASSIGNED"
       }
     ]
+  },
+  "research_policy": {
+    "status": "LOCKED_USER_CONTINUOUS",
+    "applies_to": "All A0-A8 roles and every material design, implementation, integration, testing or optimization decision",
+    "required_flow": "Inspect existing SOH and requirements -> independently discover newer relevant sources and repos -> source/license/compatibility review -> choose REUSE/ADAPT/BUILD/REJECT -> implement/test -> re-research on new evidence",
+    "ledger": "docs/survival/RESEARCH_LOG.md",
+    "preexisting_repo_list_is_exhaustive": false,
+    "does_not_claim_new_repositories_were_discovered": true
   }
 }

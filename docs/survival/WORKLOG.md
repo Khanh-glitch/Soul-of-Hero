@@ -49,3 +49,8 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - Google Doc same existing document: tab 06 (original uploaded research mirror) and tab 07 (four full design/agent docs) created and their contents read back; Git is exact-byte source, Docs extraction may normalize paragraph newlines. Original tabs 1–5 preserved.
 - Existing source context re-audited: `SaveService` 4702 lines, `OverworldWorld` 529, `Chapter1Overworld` 782; `transact_once` and TileMapLayer confirmed, 10-landmark guard and existing OverworldState preserved. This is source inspection, not runtime testing.
 - **Changed gameplay files:** NONE. **Native/Web survival test:** NOT RUN. **New agents launched:** NONE (agent contracts prepared only). **Next:** A0 should lock CT schema on own integration branch and parallelize A1/A2/A3/A4/A6/A7 branches; first SURV-010 actual harvest→inventory→paid 2D build→save/reload proof, then full integrated scope.
+
+## 2026-10-29 — Continuous discovery rule / A0 prompt clarification
+- User confirms that the A0 prompt's "inspect external repositories" must apply to **every relevant phase and specialist agent**, not only initial due diligence. Research is a renewable engineering capability and source catalog is not frozen.
+- Locked D044, updated AGENTS.md / MULTI_AGENT_EXECUTION.md / SOURCES.md; created RESEARCH_LOG.md with repeatable search→evaluate→reuse/adapt/build→test→re-search protocol.
+- This is a documentation/agent-policy update ONLY. No survival gameplay code changed, no new external source has been validated by this policy change. CI result to be verified after commit; Google Doc tab 04 to be synced.

@@ -59,3 +59,5 @@ This user research file was provided to preserve nuance and enable systemic rath
 | D041 | APPROVED_BY_GATE | Preserve user Atlas original 2019–2020 emotional core but analyze later 2021–2026 cases as dated optional extensions only, never masquerading as 2019 facts. |
 | D042 | REJECTED | Isolated agent patches without shared CT schema, migration, runtime test, owner and connected economic/gameplay effects. |
 | D043 | APPROVED_BY_GATE | Binary gameplay acceptance and long-form core content/replay experience; measure actual net-expedition value, rarity satisfaction, economic sink, POI depth and setup productivity. |
+
+| D044 | LOCKED_USER | Research and proactive GitHub/tool/asset discovery are **permanent engineering requirements across all agent sessions**; prior research and repository lists are foundational but never exhaustive/frozen. Each material decision must have an evidence-backed choice to reuse, adapt, build or reject and be revisited when relevant new facts emerge. See AGENTS.md and RESEARCH_LOG.md. |

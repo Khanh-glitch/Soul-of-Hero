@@ -33,3 +33,6 @@ Audit on 2026-10-29. All third-party source SHAs are **reference snapshots**, no
 ## Source adoption policy
 
 Pin commit and license snapshot; isolate an adapter; run headless Godot, native rendering and Web export; preserve original required attribution; never copy third-party art unless separately licensed.
+
+## Living-source registry policy — supersedes any interpretation that this list is exhaustive
+This page's initial candidate list is only a historical snapshot. As development continues, agent A0–A8 must actively discover newer/different candidate repositories and designs for each significant subsystem and store dated positive/negative results in `RESEARCH_LOG.md`. Pin exact source SHA at adoption and reevaluate when engines, dependencies, licensing or functionality change. Separate source code rights from art and content. A rejected repo remains useful evidence; document why. Future research is required at every material design/implementation decision and on new blockers, not performed once at project kick-off.
