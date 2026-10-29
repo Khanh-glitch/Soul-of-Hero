@@ -58,9 +58,20 @@
     {
       "id": "SURV-010",
       "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
-      "status": "not_started",
-      "evidence": [],
-      "next": "Inspect exact SaveService inventory transaction methods and world collision; implement with dedicated tests"
+      "status": "in_progress",
+      "evidence": [
+        "game/survival/survival_state.gd",
+        "game/survival/survival_service.gd",
+        "game/survival/survival_build_system.gd",
+        "game/survival/survival_resource_node.gd",
+        "game/survival/survival_structure.gd",
+        "data/survival/survival_catalog.json",
+        "data/survival/hollow_marches_resources.json",
+        "tests/survival_foundation_test.gd",
+        ".github/workflows/survival-runtime-validation.yml",
+        "docs/survival/CONTRACTS.md implementation status table"
+      ],
+      "next": "Awaiting first green survival-runtime-validation run: parse gate, data contracts and the twelve-case native foundation test. Only that result may set code_claims.survival_system_integrated."
     },
     {
       "id": "SURV-020",
@@ -100,18 +111,17 @@
   ],
   "next_action": {
     "task_id": "SURV-010",
-    "owner": "A0+A2+A3",
+    "owner": "A0",
     "entrypoints": [
-      "game/autoload/save_service.gd",
-      "game/overworld/overworld_world.gd",
-      "game/overworld/chapter1_overworld.gd",
-      "game/loot/loot_catalog.gd",
-      "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
-      "docs/survival/MULTI_AGENT_EXECUTION.md"
+      "game/survival/survival_service.gd",
+      "game/survival/survival_build_system.gd",
+      "tests/survival_foundation_test.gd",
+      ".github/workflows/survival-runtime-validation.yml",
+      "docs/survival/CONTRACTS.md"
     ],
-    "first_test": "Real Godot harvest wood -> authoritative bag/unique item -> paid building placement/physics -> reload with no duplication; do not create second save/inventory system",
-    "parallel_start": "A1 full continent world plan, A4 Gold source inspection, A6 build/map HUD, A7 data + replay telemetry proceed concurrently on OWN branches",
-    "design_gate": "All approved via F0–F5, runtime must separately pass native/Web and 12 source journeys"
+    "first_test": "Run survival-runtime-validation on the committed SHA; fix every failure it reports before claiming any part of the loop.",
+    "then": "SURV-020 roofed room + bed + respawn on top of the same contract set; A1 replaces the resource plan with the continent ecology without code changes.",
+    "design_gate": "A green native run of the twelve cases is required before STATE.json code_claims may change."
   },
   "blockers": [
     {
@@ -154,7 +164,14 @@
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
     "google_docs_tab_06": "written+readback: original full uploaded research text, Git remains exact-bytes source",
     "google_docs_tab_07": "written+readback: 4 full design documents",
-    "runtime_implementation": "NOT_STARTED"
+    "runtime_implementation": "A0_SLICE_WRITTEN_NOT_YET_CI_VERIFIED",
+    "a0_foundation": {
+      "code": "game/survival/{survival_state,survival_service,survival_build_system,survival_resource_node,survival_structure}.gd; SurvivalService autoload in project.godot line 24",
+      "data": "data/survival/survival_catalog.json; data/survival/hollow_marches_resources.json (91 nodes, 5 kinds)",
+      "test": "tests/survival_foundation_test.gd (12 named cases, boots the production overworld scene)",
+      "ci": ".github/workflows/survival-runtime-validation.yml (static contracts + native Xvfb runtime)",
+      "status": "written; no green run recorded yet; no native or Web playtest of the survival loop has happened"
+    }
   },
   "design_authority": {
     "user_delegated_binary_gates": true,

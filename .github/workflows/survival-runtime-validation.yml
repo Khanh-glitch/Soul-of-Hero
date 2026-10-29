@@ -1,0 +1,316 @@
+name: Survival A0 (Foundation) Runtime Validation
+
+# SURV-010 gate. Three jobs, each independently reported:
+#
+#   static-contracts : the survival data files agree with each other and with the
+#                      world they are planted in, and every script parses under the
+#                      real engine parser (not a regex, not a linter).
+#   native-runtime   : the twelve-case foundation test runs on a real Godot build
+#                      under Xvfb, booting the production overworld scene.
+#   evidence         : the logs, always, so a failure can be read without a rerun.
+#
+# The runtime job is the only one that can claim the loop works. Nothing here
+# passes on an exit code alone: tools/ci/gate_log.sh fails a run that printed a
+# script error or that never reached its PASS summary.
+
+on:
+  push:
+    branches: [arena/54306b59-soul-of-hero]
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/workflows/survival-runtime-validation.yml'
+      - 'game/survival/**'
+      - 'game/overworld/chapter1_overworld.gd'
+      - 'game/autoload/save_service.gd'
+      - 'game/autoload/input_bootstrap.gd'
+      - 'data/survival/**'
+      - 'assets/survival/**'
+      - 'tools/survival/**'
+      - 'tests/survival_*'
+      - 'project.godot'
+  workflow_dispatch:
+
+env:
+  ARTIFACT_DIR: artifacts
+
+jobs:
+  static-contracts:
+    name: SURVIVAL STATIC CONTRACTS
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Prepare artifact directory
+        run: mkdir -p "$ARTIFACT_DIR"
+
+      - name: Import project assets (editor import pass)
+        run: |
+          mkdir -p artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import >"$ARTIFACT_DIR/godot-import.log" 2>&1
+          rc=$?
+          echo "import exit_code=$rc"
+          tail -40 "$ARTIFACT_DIR/godot-import.log"
+          exit $rc
+
+      - name: Survival data contracts (mandatory)
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          errors = []
+
+          catalog = json.load(open("data/survival/survival_catalog.json"))
+          plan = json.load(open("data/survival/hollow_marches_resources.json"))
+          world = json.load(open("data/overworld/hollow_marches.json"))
+          art = json.load(open("data/survival/placeholder_build.json"))
+
+          resources = catalog.get("resources", {})
+          items = catalog.get("items", {})
+          pieces = catalog.get("pieces", {})
+
+          # --- the catalog is closed under its own references -------------------
+          if not resources:
+              errors.append("catalog has no resources")
+          for kind, definition in resources.items():
+              item = definition.get("item", "")
+              if item not in items:
+                  errors.append("resource %s yields unknown item %s" % (kind, item))
+              if int(definition.get("per_hit", 0)) < 1:
+                  errors.append("resource %s has per_hit < 1" % kind)
+              if int(definition.get("hits", 0)) < 1:
+                  errors.append("resource %s has hits < 1" % kind)
+              if int(definition.get("per_hit", 1)) * int(definition.get("hits", 1)) < 2:
+                  errors.append("resource %s yields less than 2 per node" % kind)
+              if not definition.get("sources"):
+                  errors.append("resource %s names no authored prop to stand on" % kind)
+
+          # --- build pieces: costs only reference real items, art exists -------
+          for piece_id, definition in pieces.items():
+              if piece_id not in art.get("frames", {}):
+                  errors.append("piece %s has no frame in placeholder_build.json" % piece_id)
+              cost = definition.get("cost", {})
+              if not cost:
+                  errors.append("piece %s is free" % piece_id)
+              for item_id, quantity in cost.items():
+                  if item_id not in items:
+                      errors.append("piece %s costs unknown item %s" % [piece_id, item_id])
+                  if int(quantity) < 1:
+                      errors.append("piece %s has a non-positive cost for %s" % [piece_id, item_id])
+              if definition.get("interaction", "") == "container" and int(definition.get("slots", 0)) < 1:
+                  errors.append("container piece %s has no slots" % piece_id)
+
+          # --- the plan only plants kinds the catalog knows ---------------------
+          world_props = {(int(p["x"]) // 16, int(p["y"]) // 16): p.get("frame", "")
+                         for p in json.load(open("data/overworld/hollow_marches_props.json"))["props"]}
+          nodes = plan.get("nodes", [])
+          if len(nodes) < 60:
+              errors.append("resource plan has only %d nodes" % len(nodes))
+          seen_ids = set()
+          counts = {}
+          for node in nodes:
+              kind = node.get("kind", "")
+              cell = node.get("cell", [])
+              if kind not in resources:
+                  errors.append("plan plants unknown kind %s" % kind)
+                  continue
+              if len(cell) != 2:
+                  errors.append("%s node has a malformed cell" % kind)
+                  continue
+              node_id = "%s@%d,%d" % (kind, cell[0], cell[1])
+              if node_id in seen_ids:
+                  errors.append("duplicate node id %s" % node_id)
+              seen_ids.add(node_id)
+              counts[kind] = counts.get(kind, 0) + 1
+              # The plan puts the node on open ground *beside* its source prop: the
+              # prop itself is solid and cannot be stood on. So the node is legal
+              # when any 4-neighbour (or its own cell) carries one of its kind's
+              # source frames.
+              source_frames = resources[kind].get("sources", [])
+              neighbours = [world_props.get((cell[0] + dx, cell[1] + dy))
+                            for dx, dy in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1))]
+              if not any(frame in source_frames for frame in neighbours if frame):
+                  errors.append("%s node at %s has no %s prop beside it (saw %s)"
+                                % (node_id, cell, source_frames,
+                                   [f for f in neighbours if f][:4]))
+
+          # --- every material a build piece costs is findable from the spawn --
+          # This is the playability claim that matters: a new player with an empty
+          # bag must be able to reach timber and iron on foot without a guide. It
+          # is asserted per *material*, not per node kind, because iron is
+          # legitimately found in two places (veins in the rock, and the supplies
+          # left in the abandoned camps).
+          sx, sy = world["start_position"]
+          reach = {}
+          for node in nodes:
+              kind, cell = node.get("kind", ""), node.get("cell", [0, 0])
+              item = resources.get(kind, {}).get("item", "")
+              if not item:
+                  continue
+              distance = max(abs(cell[0] - sx), abs(cell[1] - sy))
+              reach[item] = min(reach.get(item, 10 ** 6), distance)
+          costed = set()
+          for definition in pieces.values():
+              costed.update(definition.get("cost", {}).keys())
+          for item in sorted(costed):
+              if reach.get(item, 10 ** 6) > 24:
+                  errors.append("nothing yielding %s within 24 tiles of spawn (nearest %s)"
+                                % (item, reach.get(item, "none")))
+          print("spawn reach per material (chebyshev tiles):",
+                {k: v for k, v in sorted(reach.items())})
+          print("node counts:", dict(sorted(counts.items())))
+
+          if errors:
+              for error in errors:
+                  print("SURVIVAL_DATA_FAIL:", error)
+              sys.exit(1)
+          print("survival data contracts OK: %d kinds, %d items, %d pieces, %d nodes"
+                % (len(resources), len(items), len(pieces), len(nodes)))
+          PY
+
+      - name: Parse gate (every survival script + the files it touches, mandatory)
+        run: |
+          # The engine is the parser. `--check-only --script` compiles the file and
+          # exits non-zero on a syntax or type error, naming the file and line.
+          # Tests are included: they are never loaded by the game, so a compile
+          # error there would otherwise surface as a mysterious assertion failure.
+          status=0
+          : >"$ARTIFACT_DIR/parse-gate.log"
+          for f in game/survival/*.gd \
+                   tests/survival_*.gd \
+                   game/overworld/chapter1_overworld.gd \
+                   game/autoload/save_service.gd \
+                   game/autoload/input_bootstrap.gd; do
+            mkdir -p artifacts/ud_parse
+            : >"$ARTIFACT_DIR/parse-one.log"
+            if ! timeout --signal=TERM --kill-after=10s 60s \
+                godot --headless --path . --user-data-dir artifacts/ud_parse \
+                      --check-only --script "res://$f" >"$ARTIFACT_DIR/parse-one.log" 2>&1; then
+              echo "::error::parse gate failed for $f"
+              grep -nE "SCRIPT ERROR|Parse Error|ERROR" "$ARTIFACT_DIR/parse-one.log" | head -5 \
+                | while IFS= read -r line; do echo "::error::$f :: $line"; done
+              tail -10 "$ARTIFACT_DIR/parse-one.log"
+              status=1
+            fi
+            cat "$ARTIFACT_DIR/parse-one.log" >>"$ARTIFACT_DIR/parse-gate.log"
+          done
+          if [ "$status" -eq 0 ]; then
+            echo "all survival scripts parsed"
+          fi
+          exit "$status"
+
+      - name: Autoload wiring (static contract)
+        run: |
+          # A survival autoload that is not registered is invisible to every test
+          # until one of them calls it and gets null — this names the fault here.
+          set -e
+          grep -qE '^SurvivalService="\*res://game/survival/survival_service.gd"' project.godot \
+            || { echo "::error::SurvivalService is not registered as an autoload"; exit 1; }
+          # The build actions are created at runtime by InputBootstrap rather than
+          # declared in project.godot, so the source of truth is that file.
+          for action in build_toggle build_place build_slot_1 build_slot_2 build_slot_3 build_slot_4; do
+            grep -q "&\"${action}\"," game/autoload/input_bootstrap.gd \
+              || { echo "::error::input action ${action} is not declared by InputBootstrap"; exit 1; }
+            grep -q "&\"${action}\": \[" game/autoload/input_bootstrap.gd \
+              || { echo "::error::input action ${action} has no default binding"; exit 1; }
+          done
+          echo "autoload + build input actions wired"
+
+      - name: Upload static evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: survival-static-evidence
+          path: |
+            artifacts/godot-import.log
+            artifacts/parse-gate.log
+          if-no-files-found: warn
+          retention-days: 14
+
+  native-runtime:
+    name: SURVIVAL NATIVE RUNTIME
+    needs: static-contracts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+
+      - name: Install Xvfb (GL-backed runtime)
+        run: |
+          sudo apt-get update -y || true
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xvfb libgl1-mesa-dri || true
+          mkdir -p "$ARTIFACT_DIR"
+
+      - name: Import project assets
+        run: |
+          mkdir -p artifacts/ud_import
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+            --user-data-dir artifacts/ud_import --import >"$ARTIFACT_DIR/godot-import.log" 2>&1
+          rc=$?
+          echo "import exit_code=$rc"
+          tail -40 "$ARTIFACT_DIR/godot-import.log"
+          exit $rc
+
+      - name: Foundation loop, twelve cases (state-asserting)
+        run: |
+          # Xvfb + opengl3 because the overworld paints ImageTexture atlases at
+          # runtime; headless has no RenderingServer to back them.
+          mkdir -p artifacts/ud_survival
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_survival \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_foundation_test.gd >"$ARTIFACT_DIR/survival-foundation.log" 2>&1
+          rc=$?; echo "foundation exit_code=$rc"; cat "$ARTIFACT_DIR/survival-foundation.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-foundation.log" \
+            "Foundation" "SURVIVAL FOUNDATION PASSED"
+          exit $rc
+
+      - name: Every check actually ran (anti-vacuity)
+        if: always()
+        run: |
+          # A test that asserts nothing passes trivially. The foundation suite must
+          # report all twelve cases by name, so a silently-skipped case is a
+          # failure rather than a green run with fewer checks in it.
+          log="$ARTIFACT_DIR/survival-foundation.log"
+          [ -f "$log" ] || { echo "::error::no foundation log"; exit 1; }
+          missing=0
+          for case_id in 01 02 03 04 05 06 07 08 09 10 11 12; do
+            if ! grep -q "case ${case_id}:" "$log"; then
+              echo "::error::case ${case_id} never reported a result"
+              missing=1
+            fi
+          done
+          checks=$(grep -cE "^  (ok|FAIL) " "$log" || true)
+          echo "assertions reported: ${checks}"
+          if [ "${checks:-0}" -lt 40 ]; then
+            echo "::error::only ${checks} assertions ran; the suite is not exercising the loop"
+            exit 1
+          fi
+          exit $missing
+
+      - name: Upload runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: survival-runtime-evidence
+          path: |
+            artifacts/survival-foundation.log
+            artifacts/godot-import.log
+          if-no-files-found: warn
+          retention-days: 14

@@ -44,6 +44,9 @@ const HUD_SCRIPT := preload("res://game/overworld/overworld_hud.gd")
 const WORLD_SCRIPT := preload("res://game/overworld/overworld_world.gd")
 const TRAVERSABILITY_SCRIPT := preload("res://game/overworld/overworld_traversability.gd")
 const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
+const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
+const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
+const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
 
 const CAMERA_ZOOM := Vector2.ONE
 const WEARY_SPEED_SCALE := 0.82
@@ -66,6 +69,8 @@ var occlusion: OverworldOcclusion
 ## the build reports here instead of silently shipping a walled-in dungeon door.
 var traversability_failures: Array[Dictionary] = []
 
+var survival_build: SurvivalBuildSystem
+var survival_nodes: Dictionary = {}  # node_id:String -> SurvivalResourceNode
 var gates: Dictionary = {}       # level_id:String -> OverworldGate
 var camps: Dictionary = {}       # camp_id:String -> OverworldCamp
 var discoveries: Dictionary = {} # id:String -> OverworldDiscovery
@@ -145,6 +150,10 @@ func _build_world() -> void:
 	# closed wall.
 	_build_traversability()
 	_settle_spawn_on_walkable_ground()
+	# Survival sits between traversability and occlusion on purpose: its resource
+	# nodes and built structures carry collision, and the occlusion system has to
+	# see them when it buckets occluders.
+	_build_survival()
 	_build_occlusion()
 	_build_hud()
 	_connect_run_events()
@@ -186,6 +195,77 @@ func _settle_spawn_on_walkable_ground() -> void:
 	player.position = resolved
 	if camera != null:
 		camera.reset_smoothing()
+
+
+func _build_survival() -> void:
+	# Resource nodes come from an authored plan, not a random scatter: each entry
+	# is a real world cell next to a real route, so a player walking the marches
+	# meets timber where there are trees and stone where there is rock. The plan
+	# is data (data/survival/hollow_marches_resources.json) so A1 can replace it
+	# with the continent's ecology without touching this file.
+	var root := _ensure_node("Resources")
+	var plan := _load_json(SURVIVAL_RESOURCE_PLAN_PATH)
+	for raw: Variant in plan.get("nodes", []):
+		if not raw is Dictionary:
+			continue
+		var entry: Dictionary = raw
+		var cell: Array = entry.get("cell", [])
+		if cell.size() < 2:
+			continue
+		var cell_value := Vector2i(int(cell[0]), int(cell[1]))
+		var kind := String(entry.get("kind", ""))
+		var node_id := SurvivalStateData.resource_node_id(kind, cell_value)
+		var node := SURVIVAL_NODE_SCRIPT.new() as SurvivalResourceNode
+		node.name = "Res_%s" % node_id.replace("@", "_").replace(",", "_")
+		node.node_id = node_id
+		node.resource_kind = kind
+		var svc := get_node_or_null("/root/SurvivalService")
+		if svc != null:
+			node.display_name = String(
+				(svc.call(&"resource_definition", kind) as Dictionary).get("label", kind))
+		node.position = Vector2(cell_value.x * 16 + 8, cell_value.y * 16 + 8)
+		root.add_child(node)
+		survival_nodes[node_id] = node
+
+	survival_build = SURVIVAL_BUILD_SCRIPT.new() as SurvivalBuildSystem
+	survival_build.name = "SurvivalBuild"
+	add_child(survival_build)
+	survival_build.configure(world, player, camera, state)
+	var svc2 := get_node_or_null("/root/SurvivalService")
+	if svc2 != null and svc2.has_signal(&"survival_state_changed"):
+		svc2.connect(&"survival_state_changed", _on_survival_state_changed)
+
+
+func _on_survival_state_changed() -> void:
+	# A reconcile, not a rebuild: this signal fires on every harvest and every
+	# container transfer, and tearing the whole structure layer down each time
+	# would destroy colliders the player is standing against.
+	if survival_build != null and is_instance_valid(survival_build):
+		survival_build.reconcile_from_save()
+	# Only the node that changed needs to re-read its own state, but the signal
+	# carries no identity — a chain of harvests is short, and refreshing the plan
+	# costs one dictionary lookup per node against a document already in memory.
+	for node_id: String in survival_nodes:
+		var node: SurvivalResourceNode = survival_nodes[node_id]
+		if is_instance_valid(node):
+			node.refresh()
+
+
+func survival_node(node_id: String) -> SurvivalResourceNode:
+	return survival_nodes.get(node_id, null)
+
+
+## The survival slice's test surface: one call that answers "what is actually in
+## the running world right now" without reaching into private state.
+func survival_status() -> Dictionary:
+	var svc := get_node_or_null("/root/SurvivalService")
+	var document: Dictionary = svc.call(&"document") if svc != null else {}
+	return {
+		"nodes": survival_nodes.size(),
+		"structures": survival_build.placed_count() if survival_build != null else 0,
+		"document_structures": (document.get("structures", {}) as Dictionary).size(),
+		"build_active": survival_build.active if survival_build != null else false,
+	}
 
 
 func _build_occlusion() -> void:
@@ -470,8 +550,60 @@ func _process(delta: float) -> void:
 	state.tick(delta, hazard, safe)
 	_apply_fatigue()
 	_apply_hud()
+	_handle_survival_input()
 	if Input.is_action_just_pressed(&"pause") or Input.is_action_just_pressed(&"ui_cancel"):
 		_retreat_to_home()
+
+
+## Build-mode input. Deliberately a small, self-contained block: survival does not
+## touch the Knight's combat bindings, and the modal build tool is enterable and
+## leavable with one key so an accidental press cannot trap the player.
+func _handle_survival_input() -> void:
+	if survival_build == null or not is_instance_valid(survival_build):
+		return
+	if Input.is_action_just_pressed(&"build_toggle"):
+		survival_build.set_active(not survival_build.active)
+		_say("Build: %s" % survival_build.selected_piece.replace("_", " ")
+			if survival_build.active else "Build closed")
+		return
+	if not survival_build.active:
+		return
+	if Input.is_action_just_pressed(&"ui_cancel"):
+		survival_build.set_active(false)
+		return
+	for index: int in 4:
+		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
+			var ids: Array[String] = ["foundation_wood", "wall_wood", "door_wood", "chest_wood"]
+			if index < ids.size() and survival_build.select_piece(ids[index]):
+				_say("Build: %s — %s" % [
+					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])
+				return
+	if Input.is_action_just_pressed(&"build_place"):
+		var result := survival_build.try_place(survival_build.preview_cell())
+		if bool(result.get("ok", false)):
+			_say("Built %s." % survival_build.selected_piece.replace("_", " "))
+		else:
+			_say(_build_rejection_message(String(result.get("reason", "rejected"))))
+
+
+func _build_rejection_message(reason: String) -> String:
+	match reason:
+		"cannot_afford":
+			return "Not enough materials."
+		"on_route", "protected_place", "near_shortcut":
+			return "That ground is part of the road."
+		"solid_terrain", "water":
+			return "You cannot build there."
+		"out_of_range":
+			return "Too far away."
+		"cell_occupied":
+			return "Something is already there."
+		"not_configured":
+			return "The ground here is not ready yet."
+		"duplicate_or_failed":
+			return "The build could not be recorded."
+		_:
+			return "You cannot build there."
 
 
 func _in_hazard(position: Vector2) -> bool:

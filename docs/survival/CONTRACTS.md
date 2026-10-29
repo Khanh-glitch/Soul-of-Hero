@@ -1,6 +1,10 @@
 # Integration & data contracts (initial architectural RFC)
 
-**Status:** DRAFT interface contract; **no runtime code is claimed implemented**.
+**Status:** DRAFT interface contract. The contract text below is unchanged and still
+the design authority. What exists in code is tracked separately in
+[Implementation status](#implementation-status-a0-slice-surv-010) at the end of this
+file — anything not listed there is unimplemented, and a listing there is a claim
+about *code paths plus named tests*, never about art, balance or acceptance.
 
 ## Ownership matrix
 
@@ -45,3 +49,32 @@ No final IDs or balance numbers are invented here. Actual names may change, but 
 - Use asset placeholders temporarily with clearly labeled development status; no loss of preexisting 10 dungeon art.
 - Make construction and harvesting data-driven and region-agnostic before applying to the entire designed continent.
 - Only adopt MIT components after reviewing pinned source code, addon dependencies, source license vs art license, export compatibility and integration tests.
+
+---
+
+## Implementation status — A0 slice (SURV-010)
+
+The first slice implements the contracts below against the existing authorities. It
+adds no second inventory, no second save file and no second world.
+
+| Contract | What the code does | Where | Proven by |
+| --- | --- | --- | --- |
+| CT-01 (one save document) | Survival state lives at `save["survival"]` and is read/written only through `SaveService.transact_once`. The namespace is additive: an older build's `_merge_defaults` leaves it alone, and a newer schema is refused rather than guessed at. | `game/survival/survival_state.gd` | `survival_foundation_test.gd` cases 08, 11 |
+| CT-02 (harvest is atomic and idempotent) | One swing = one transaction keyed `survival.harvest.<node>.<next_harvest_count>`. The key is derived from the *committed* counter, so a replay, a double-click or a retried event finds it already applied and pays nothing. Respawn is evaluated inside the same transaction, so two swings racing a ripe node cannot both be paid. | `SurvivalService.harvest` | cases 01, 02, 12 |
+| CT-03 (containers round-trip) | Deposits and withdrawals move both halves in one candidate document; a full bag or a missing stack aborts the whole transfer. `deposit_all` / `withdraw_all` sweep a container in a single commit and never half-move a stack. | `SurvivalService._transfer`, `_transfer_all` | cases 07, 08 |
+| CT-04 (authored terrain is not blocked) | Placement refuses solid terrain, water, protected landmarks and camps, route detail, shortcut clearances and cells outside reach, and the traversability endpoints are re-asserted after the survival layer exists. | `SurvivalBuildSystem.validate_cell`, `SurvivalService.place_structure` | cases 05, 10 |
+| CT-05 (dynamic collision) | A placed solid piece carries a `StaticBody2D` on the terrain layer, so the Knight's existing mask stops it with no player-code change. Foundations deliberately have no body. | `SurvivalStructure`, `SurvivalBuildSystem._materialize` | case 09 |
+| CT-06 (build pays and creates once) | Payment and entity creation are in the same mutator; the entity id is allocated inside the transaction from the document's own counter. A failed commit leaves the save byte-identical. | `SurvivalService.place_structure` | cases 03, 04, 06 |
+| CT-07 (reload restores exactly) | The scene is a projection of the document: `rebuild_from_save` on world build, `reconcile_from_save` on every state signal (add/remove/refresh only), and the chest's prompt is re-derived. Nothing else may add a structure node. | `SurvivalBuildSystem`, `SurvivalStructure` | cases 08, 12 |
+| CT-08 (recipe knowledge is permanent) | `learn_recipe` writes to `survival.knowledge.recipes` under its own transaction key; learning is idempotent and never grants items. | `SurvivalService.learn_recipe` | data-contract gate (no runtime case yet) |
+
+### Deliberately not claimed
+
+* **Roofed rooms, beds, respawn, farming, smelting, research stations, Skill Cores**
+  are later slices (SURV-020/030/040). Nothing here fakes them.
+* **Building art** is a labelled placeholder atlas written by
+  `tools/survival/build_art.py`; the `BUILD-ART` blocker stands.
+* **Balance numbers** (4 pieces, 5 resource kinds, 91 nodes) are a playable draft for
+  A7 to re-tune against `ECONOMY_AND_14DAY_REPLAY_BALANCE.md`, not a design verdict.
+* **A green CI run is the only thing allowed to move `STATE.json`'s
+  `code_claims.survival_system_integrated` to `true`.**
