@@ -80,7 +80,7 @@ static func recipe_presentation(recipe_id: String, source: Dictionary, ingredien
 	var inputs: Variant = source.get("inputs", {})
 	if not inputs is Dictionary: return {}
 	var ingredients: Array[Dictionary] = []
-	var input_ids := inputs.keys()
+	var input_ids: Array = inputs.keys()
 	input_ids.sort()
 	for raw_id: Variant in input_ids:
 		var item_id := String(raw_id)
@@ -95,7 +95,7 @@ static func recipe_presentation(recipe_id: String, source: Dictionary, ingredien
 		})
 	var fuel: Variant = source.get("fuel", {})
 	if fuel is Dictionary:
-		var fuel_ids := fuel.keys()
+		var fuel_ids: Array = fuel.keys()
 		fuel_ids.sort()
 		for raw_fuel_id: Variant in fuel_ids:
 			var fuel_id := String(raw_fuel_id)

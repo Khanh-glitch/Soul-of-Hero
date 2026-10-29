@@ -7,7 +7,7 @@ var _highlight := Color("f4c778")
 func configure(fill: Color, edge: Color, highlight: Color = Color("f4c778")) -> void:
 	_edge = edge
 	_highlight = highlight
-	add_theme_stylebox_override("panel", PixelUI.panel_style(fill, edge))
+	add_theme_stylebox_override("panel", PIXEL_UI.panel_style(fill, edge))
 	queue_redraw()
 
 func _draw() -> void:

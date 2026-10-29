@@ -67,7 +67,7 @@ func _run() -> void:
 	check(not unspecified_core.has("equipped") and not unspecified_core.has("formula_learned") and not unspecified_core.has("can_equip"), "missing equipment and formula owners remain unknown, not false")
 	check(ADAPTER.recipe_status("recipe", false) == "Research required" and ADAPTER.recipe_status("recipe", true) == "Formula learned", "A3 recipe category and permanent profile knowledge are distinct")
 	check(ADAPTER.recipe_status("recipe", null) == "Knowledge state unavailable", "missing permanent formula projection stays unknown rather than not learned")
-	check(ADAPTER.recipe_status("starter", null) == "Starter formula" and ADAPTER.recipe_status("recipe", null) == "Knowledge state unavailable", "missing formula authority is not displayed as unlearned")
+	check(ADAPTER.recipe_status("starter", null) == "Starter catalog" and ADAPTER.recipe_status("recipe", null) == "Knowledge state unavailable", "missing formula authority is not displayed as unlearned")
 	var a3_recipe := {"id":"smelt_ore", "category":"manufacture", "outputs":{"iron_ingot":2}, "inputs":{"iron_ore":4}, "station":"furnace", "min_tier":1, "duration_ticks":16, "knowledge":"recipe", "fuel":{"charcoal":1}, "required_technologies":["tech_smelting"], "balance_status":"SOH_PROPOSAL"}
 	var recipe_view: Dictionary = ADAPTER.recipe_presentation("smelt_ore", a3_recipe, {"iron_ore":{"have":2, "source":"A1 material source: not confirmed"}, "charcoal":{"have":0}}, false, true, "Unavailable", "No queue", "Requires active furnace")
 	check(recipe_view.ingredients.size() == 2 and recipe_view.ingredients[0].id == "iron_ore" and recipe_view.ingredients[0].need == 4 and recipe_view.ingredients[1].kind == "fuel", "A3 dictionary inputs and fuel map to visible ingredient requirements")
@@ -94,7 +94,7 @@ func _run() -> void:
 	many[0]["max_condition"] = 100
 	ui.set_bag(many)
 	ui.set_placement(p)
-	var notes: Array[Dictionary] = [{"title": "Frost", "text": "Prepare cold protection before venturing beyond the marches."}, {"title": "Recipe", "text": ADAPTER.recipe_status(true, false)}]
+	var notes: Array[Dictionary] = [{"title": "Frost", "text": "Prepare cold protection before venturing beyond the marches."}, {"title": "Recipe", "text": ADAPTER.recipe_status("recipe", false)}]
 	ui.set_field_entries(notes)
 	ui.open_journal()
 	await process_frame

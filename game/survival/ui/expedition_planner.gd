@@ -457,7 +457,7 @@ func _workshop_detail() -> void:
 	var knowledge := String(rec.get("knowledge", "Unknown"))
 	var formula_learned: Variant = rec.get("formula_learned", null)
 	var needs_research := knowledge == "recipe" and formula_learned is bool and not bool(formula_learned)
-	_details.add_child(_label(ADAPTER.recipe_status(knowledge, formula_learned), 10, TEAL if formula_learned == true or knowledge == "starter" else GOLD))
+	_details.add_child(_label(ADAPTER.recipe_status(knowledge, formula_learned), 10, TEAL if formula_learned == true or knowledge == "starter" else PIXEL_UI.GOLD))
 	_details.add_child(_label("Station: %s · tier %d+" % [rec.get("station", "Unknown"), int(rec.get("min_tier", 0))], 10, MUTED))
 	if rec.has("station_status"): _details.add_child(_label("Station status: %s" % rec.station_status, 10, MUTED))
 	if rec.has("queue_status"): _details.add_child(_label("Queue: %s" % rec.queue_status, 10, MUTED))

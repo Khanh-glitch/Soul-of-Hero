@@ -318,7 +318,7 @@ func _render() -> void:
 		_step_buttons[index].add_theme_color_override(
 			"font_color", GOLD if index == _step else PAPER
 		)
-	var continuity := [
+	var continuity: String = [
 		"PERMANENT HOME · OPTIONAL OUTING",
 		"FINITE PHYSICAL CORE · PERMANENT KNOWLEDGE",
 		"HOME PERSISTS · EXPEDITION IS OPTIONAL",
