@@ -92,9 +92,10 @@ func validate_geometry(poi_id: String) -> Dictionary:
 		var layers: Dictionary = chunk_reader.cell_layers(key)
 		if not bool(layers.get("ok", false)):
 			return {"ok": false, "reason": "chunk_cell_unresolved"}
-		if int(layers["layers"].get("walk", 0)) != 1:
+		var values: Dictionary = layers.get("values", {})
+		if int(values.get("walk", 0)) != 1:
 			return {"ok": false, "reason": "required_nav_not_walkable"}
-		if int(layers["layers"].get("hazard", 0)) != 0:
+		if int(values.get("hazard", 0)) != 0:
 			return {"ok": false, "reason": "required_nav_hazardous"}
 	for ent: Variant in geo["entrances"]:
 		var clear := _cells_set(ent["clearance_cells"])

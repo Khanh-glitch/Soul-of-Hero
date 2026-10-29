@@ -124,6 +124,10 @@ jobs:
           echo "slice exit_code=$rc"
           cat "$ARTIFACT_DIR/godot-slice.log"
           echo "$rc" >"$ARTIFACT_DIR/slice-exit-code"
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::A1 slice log tail: $(tail -c 1800 "$ARTIFACT_DIR/godot-slice.log" | tr '
+' ' ')"
+          fi
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/godot-slice.log" \
             "A1WorldSlice" "SURVIVAL SLICE CONTRACT PASSED"
           exit $rc
