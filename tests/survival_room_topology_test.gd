@@ -47,7 +47,7 @@ func _capture_roof_frame(name: String) -> void:
 		return
 	var path := "res://artifacts/roof_%s.png" % name
 	_expect(image.save_png(path) == OK, "native frame saved: " + name)
-	var crop := image.get_region(Rect2i(320, 180, 320, 180))
+	var crop := image.get_region(Rect2i((image.get_width() - 280) / 2, (image.get_height() - 140) / 2, 280, 140))
 	crop.save_png("res://artifacts/roof_%s_crop.png" % name)
 	print("[frame] %s" % ProjectSettings.globalize_path(path))
 
@@ -166,8 +166,10 @@ func _body() -> void:
 	var closed_distance: float = await _walk_hero(body, start, 24)
 	print("[door] closed actual travel=%.2f" % closed_distance)
 	_expect(closed_distance < 18.0, "closed door stops actual move_and_slide travel")
+	player.global_position = door_node.global_position + Vector2(0, -60)
+	_expect(not door_node.can_interact(player) and not door_node.interact(player), "door rejects interaction outside reach")
 	player.global_position = door_node.global_position + Vector2(8, -30)
-	_expect(door_node.interact(player), "door interaction opens")
+	_expect(door_node.can_interact(player) and door_node.interact(player), "door interaction opens within reach")
 	await process_frame
 	await physics_frame
 	_expect(door_shape.disabled, "open door disables collision")
@@ -203,24 +205,38 @@ func _body() -> void:
 	_expect(not adjacent_id.is_empty() and adjacent_id != room_id, "production shared wall separates rooms")
 	var roof := build.roof_layer
 	var camera: Camera2D = ow.get(&"camera") as Camera2D
-	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y - 2) * 16 + 8)
+	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y - 3) * 16 + 8)
+	camera.offset = Vector2(32, 64)
 	camera.reset_smoothing()
 	await create_timer(0.65).timeout
 	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99 and float(roof.call(&"alpha_for", adjacent_id)) > 0.99,
 		"both roofs visible from outside")
 	await _capture_roof_frame("outside")
 	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y + 1) * 16 + 8)
+	camera.offset = Vector2(32, 8)
 	camera.reset_smoothing()
 	await create_timer(0.45).timeout
 	_expect(float(roof.call(&"alpha_for", room_id)) < 0.01 and float(roof.call(&"alpha_for", adjacent_id)) > 0.99,
 		"only the occupied room roof hides")
 	await _capture_roof_frame("inside")
 	player.global_position = Vector2((origin.x + 4) * 16 + 8, (origin.y + 1) * 16 + 8)
+	camera.offset = Vector2(-16, 8)
 	camera.reset_smoothing()
 	await create_timer(0.45).timeout
 	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99 and float(roof.call(&"alpha_for", adjacent_id)) < 0.01,
 		"adjacent room transition restores the first roof and hides the second")
 	await _capture_roof_frame("adjacent")
+	camera.offset = Vector2.ZERO
+	player.global_position = Vector2((origin.x + 1) * 16 + 8, (origin.y + 1) * 16 + 8)
+	await create_timer(0.45).timeout
+	player.global_position = door_node.global_position + Vector2(8, 8)
+	await create_timer(0.3).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) < 0.01, "roof stays faded while Hero occupies doorway")
+	player.global_position = door_node.global_position + Vector2(8, -20)
+	await create_timer(0.1).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) < 0.01, "exit grace prevents immediate threshold flicker")
+	await create_timer(0.5).timeout
+	_expect(float(roof.call(&"alpha_for", room_id)) > 0.99, "roof restores after leaving doorway")
 	player.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 2) * 16 + 8)
 	var interior_cell := origin + Vector2i(1, 1)
 	build.select_piece("foundation_wood")
@@ -262,6 +278,12 @@ func _body() -> void:
 	var restored_door := build.structure_node(door_id)
 	var restored_shape := restored_door.get_node("Solid/CollisionShape2D") as CollisionShape2D
 	_expect(restored_shape.disabled, "door open collision state survives reload")
+	var restored_player := ow.get(&"player") as CharacterBody2D
+	var restored_start := restored_door.global_position + Vector2(8, -12)
+	var obstructed_distance: float = await _walk_hero(restored_player, restored_start, 24)
+	print("[door] reloaded open with indoor chest travel=%.2f" % obstructed_distance)
+	_expect(obstructed_distance > closed_distance and obstructed_distance < open_distance,
+		"reloaded open door admits movement but nearby chest stops the Hero")
 	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
 		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
 		"distinct chest contents survive disk reload")
