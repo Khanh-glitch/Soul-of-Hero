@@ -81,6 +81,9 @@ func _run() -> void:
 			"forged metadata and " + mode + " cannot commit")
 	var bag_path: Array = ["inventory", "item_stacks", id, "quantity"]
 	_expect(not bool(save.call(&"patch_state_path", bag_path, 2)), "nontransactional patch cannot bypass guard")
+	var bad_snapshot: Dictionary = save.call(&"get_snapshot")
+	_mutate_token(bad_snapshot, id, "quantity")
+	_expect(not bool(save.call(&"_commit_snapshot", bad_snapshot, false)), "direct disk snapshot cannot bypass commit boundary")
 	var fake := func(c: Dictionary) -> bool: return _mutate_token(c, id, "quantity")
 	_expect(not bool(port.call(&"transact_once", "fake.port", fake, {"kind": "survival_economy"})), "untrusted callable cannot use A3 port")
 	var wrapped: Dictionary = economy.call(&"_transact", "grant", "fake.wrapper", {},
@@ -137,6 +140,14 @@ func _run() -> void:
 		writer.close()
 		_expect(not bool(save.call(&"reload_save")), "malformed " + mode + " load fails closed")
 		_expect(bool((save.call(&"get_economy_quarantine") as Dictionary).get("active", false)), "malformed " + mode + " is explicitly quarantined")
+		if mode == "quantity":
+			var application := (load("res://game/app/app_root.tscn") as PackedScene).instantiate()
+			root.add_child(application)
+			_expect(application.find_child("SaveRecoveryOverlay", true, false) != null and paused,
+				"production app blocks play and shows recovery overlay")
+			application.queue_free()
+			paused = false
+			await process_frame
 		_expect(not bool(save.call(&"save_now")) and not bool(save.call(&"grant_inventory_item", "oak_wood", "material", 1, "quarantine." + mode)), "quarantine blocks writes: " + mode)
 		_expect(FileAccess.get_file_as_string(path) == bytes, "malformed bytes are not replaced: " + mode)
 		var repair := FileAccess.open(path, FileAccess.WRITE)

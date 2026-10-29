@@ -33,6 +33,7 @@ var _current_route := &""
 var _is_switching := false
 var _boot_state := &"idle"
 var _preloaded_home_scene: PackedScene
+var _save_quarantine_layer: CanvasLayer
 
 
 func _ready() -> void:
@@ -41,6 +42,11 @@ func _ready() -> void:
 		JavaScriptBridge.eval("window.__soulHeroAppReady = true;")
 	_apply_persisted_runtime_settings()
 	var save_service := get_node_or_null("/root/SaveService")
+	if save_service != null and save_service.has_signal(&"save_failed"):
+		save_service.connect(&"save_failed", _on_save_failure)
+		if save_service.has_method(&"get_economy_quarantine") and bool((save_service.call(&"get_economy_quarantine") as Dictionary).get("active", false)):
+			_show_save_quarantine()
+			return
 	if save_service != null and save_service.has_signal(&"settings_changed"):
 		var settings_callback := Callable(self, "_apply_persisted_runtime_settings")
 		if not save_service.is_connected(&"settings_changed", settings_callback):
@@ -106,6 +112,60 @@ func _ready() -> void:
 		_finish_boot.call_deferred()
 		if OS.get_cmdline_user_args().has("--ui-shell-capture"):
 			_capture_ui_shell.call_deferred()
+
+
+## A damaged unique-item save is never silently replaced with an empty profile.
+## This is a fatal save-recovery overlay, independent of A6's survival UI.
+func _on_save_failure(_message: String) -> void:
+	var save := get_node_or_null("/root/SaveService")
+	if save != null and save.has_method(&"get_economy_quarantine") and bool((save.call(&"get_economy_quarantine") as Dictionary).get("active", false)):
+		_show_save_quarantine()
+
+
+func _show_save_quarantine() -> void:
+	if is_instance_valid(_save_quarantine_layer):
+		return
+	get_tree().paused = true
+	_save_quarantine_layer = CanvasLayer.new()
+	_save_quarantine_layer.name = "SaveRecoveryOverlay"
+	_save_quarantine_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	_save_quarantine_layer.layer = 100
+	add_child(_save_quarantine_layer)
+	var background := ColorRect.new()
+	background.color = Color(0.055, 0.045, 0.07, 0.98)
+	background.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_quarantine_layer.add_child(background)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_save_quarantine_layer.add_child(center)
+	var panel := VBoxContainer.new()
+	panel.custom_minimum_size = Vector2(360, 0)
+	panel.add_theme_constant_override("separation", 16)
+	center.add_child(panel)
+	var title := Label.new()
+	title.text = "Save needs recovery"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 22)
+	panel.add_child(title)
+	var body := Label.new()
+	body.text = "A unique item or its ownership record is invalid. Your original save has not been changed. Restore a valid backup, then retry."
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.custom_minimum_size = Vector2(360, 0)
+	body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	panel.add_child(body)
+	var retry := Button.new()
+	retry.name = "RetrySaveRecovery"
+	retry.text = "Retry after restoring save"
+	retry.pressed.connect(_retry_quarantined_save)
+	panel.add_child(retry)
+
+
+func _retry_quarantined_save() -> void:
+	var save := get_node_or_null("/root/SaveService")
+	if save == null or not bool(save.call(&"reload_save")):
+		return
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 
 ## CI-only local Web browser route. Public Pages cannot activate this mode.

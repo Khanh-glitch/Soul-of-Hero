@@ -107,6 +107,7 @@ var _is_loaded := false
 var _commit_in_progress := false
 var _migrations: Dictionary = {}
 var _economy_capability := RefCounted.new()
+var _disk_commit_capability := RefCounted.new()
 var _economy_adapter: RefCounted
 var _economy_facade: Node
 var _economy_mutation_active := false
@@ -187,7 +188,7 @@ func load_save() -> bool:
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Could not preserve the pre-v2 save; migration was not committed.")
 				return false
-			if not _commit_snapshot(primary_snapshot, false):
+			if not _commit_snapshot(primary_snapshot, false, _disk_commit_capability):
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared the current schema in memory, but could not commit the migrated save.")
 				return false
@@ -202,7 +203,7 @@ func load_save() -> bool:
 			# Rules generations are independent from the outer save schema. Rotate
 			# the untouched profile to the ordinary backup, then persist the
 			# normalized inventory so a future load cannot reinterpret rarity 5.
-			if not _commit_snapshot(primary_snapshot, true):
+			if not _commit_snapshot(primary_snapshot, true, _disk_commit_capability):
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared a rules migration in memory, but could not commit the upgraded profile.")
 				return false
@@ -223,7 +224,7 @@ func load_save() -> bool:
 				return false
 		_accept_loaded_data(recovered, "backup")
 		# Never rotate a corrupt primary over the known-good backup.
-		if not _commit_snapshot(recovered, false):
+		if not _commit_snapshot(recovered, false, _disk_commit_capability):
 			_push_failure("Recovered the backup in memory, but could not repair the primary save.")
 		if bool(backup.get("was_migrated", false)):
 			save_migrated.emit(int(backup.get("source_version", 0)), CURRENT_SCHEMA_VERSION, _migration_backup_path)
@@ -239,7 +240,7 @@ func load_save() -> bool:
 			_push_failure("Loaded the permanent migration backup in memory, but could not prepare rollback storage.")
 			return false
 		_accept_loaded_data(migration_recovery, "migration_backup")
-		if not _commit_snapshot(migration_recovery, false):
+		if not _commit_snapshot(migration_recovery, false, _disk_commit_capability):
 			_push_failure("Recovered the permanent migration backup in memory, but could not repair the primary save.")
 		if bool(migration_backup.get("was_migrated", false)):
 			save_migrated.emit(
@@ -251,7 +252,7 @@ func load_save() -> bool:
 
 	var defaults := _default_data()
 	_accept_loaded_data(defaults, "defaults" if FileAccess.file_exists(_save_path) else "")
-	if not _commit_snapshot(defaults, false):
+	if not _commit_snapshot(defaults, false, _disk_commit_capability):
 		_push_failure("Loaded safe defaults in memory, but could not create the save file.")
 		return false
 	return true
@@ -2334,7 +2335,7 @@ func reset_progression_keep_settings(confirmation: String) -> bool:
 	if not bool(prepared.get("ok", false)):
 		return false
 	reset_snapshot = prepared.get("data", {})
-	if not _commit_snapshot(reset_snapshot, false):
+	if not _commit_snapshot(reset_snapshot, false, _disk_commit_capability):
 		return false
 	if not _copy_text_file(_save_path, _backup_path):
 		_remove_if_present(_backup_path)
@@ -2351,7 +2352,7 @@ func reset_to_defaults(confirmation: String) -> bool:
 	if confirmation not in [RESET_ALL_TOKEN, LEGACY_RESET_ALL_TOKEN]:
 		return false
 	var defaults := _default_data()
-	if not _commit_snapshot(defaults, false):
+	if not _commit_snapshot(defaults, false, _disk_commit_capability):
 		return false
 	if not _copy_text_file(_save_path, _backup_path):
 		# A stale pre-reset backup is more dangerous than having no backup until
@@ -2389,7 +2390,7 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	if not economy_authorized and UNIQUE_OWNERSHIP_GUARD.changed_by_generic(_data, snapshot):
 		return false
 	snapshot["revision"] = int(_data.get("revision", 0)) + 1
-	if not _commit_snapshot(snapshot, true):
+	if not _commit_snapshot(snapshot, true, _disk_commit_capability):
 		return false
 	_data = snapshot
 	_is_loaded = true
@@ -2397,7 +2398,9 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	return true
 
 
-func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool) -> bool:
+func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capability: RefCounted = null) -> bool:
+	if capability != _disk_commit_capability:
+		return false
 	if not _economy_quarantine_reason.is_empty():
 		return false
 	_commit_in_progress = true
@@ -4683,7 +4686,7 @@ func _import_legacy_default_save() -> bool:
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but its migration backup could not be created.")
 		return false
-	if not _commit_snapshot(snapshot, false):
+	if not _commit_snapshot(snapshot, false, _disk_commit_capability):
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but the v2 profile could not be committed.")
 		return false

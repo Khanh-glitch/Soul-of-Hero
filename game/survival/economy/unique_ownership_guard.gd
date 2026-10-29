@@ -8,6 +8,13 @@ static func _is_token(value: Variant) -> bool:
 	return (value is String or value is StringName) and String(value).strip_edges().to_lower().begins_with(PREFIX)
 
 
+static func _is_uint(value: Variant, maximum: int) -> bool:
+	if not (value is int or value is float):
+		return false
+	var number := float(value)
+	return is_finite(number) and number >= 0.0 and number <= float(maximum) and number == floor(number)
+
+
 static func _valid_id(id: String) -> bool:
 	if id.length() != 27 or not id.begins_with(PREFIX) or id.substr(18, 1) != "_":
 		return false
@@ -82,16 +89,38 @@ static func inspect(document: Dictionary) -> String:
 	for field: String in ["instances", "jobs", "technologies", "commands"]:
 		if not state.get(field, null) is Dictionary:
 			return "invalid_economy_" + field
-	if not state.get("counter", null) is int and not state.get("counter", null) is float:
+	if not _is_uint(state.get("counter", null), 1000000):
 		return "invalid_economy_counter"
-	if int(schema) == 2 and not state.get("time", null) is Dictionary:
-		return "invalid_economy_time"
+	if int(schema) == 2:
+		var time: Variant = state.get("time", null)
+		if not time is Dictionary or not time.get("session_id", null) is String or not time.get("stations", null) is Dictionary:
+			return "invalid_economy_time"
+		var session_index: Variant = time.get("latest_session_index", null)
+		var sequence: Variant = time.get("sequence", null)
+		var initial := (session_index is int or session_index is float) and (sequence is int or sequence is float) and float(session_index) == -1.0 and float(sequence) == -1.0 and String(time.session_id).is_empty() and (time.stations as Dictionary).is_empty()
+		if not initial and (not _is_uint(session_index, 1000000000000) or not _is_uint(sequence, 1000000000000) or String(time.session_id).is_empty()):
+			return "invalid_economy_time_session"
+		if (time.stations as Dictionary).size() > 256:
+			return "invalid_economy_time_stations"
+		for station: Variant in (time.stations as Dictionary).values():
+			if not station is Dictionary or not _is_uint(station.get("active_ticks", null), 1000000000000) or not station.get("station_revision", null) is String:
+				return "invalid_economy_time_station"
 	var instances: Dictionary = state["instances"]
 	for id_value: Variant in instances:
 		var id := String(id_value)
 		var record: Variant = instances[id_value]
 		if not _valid_id(id) or not record is Dictionary or String(record.get("instance_id", "")) != id:
 			return "invalid_instance_identity"
+		for field: String in ["item_id", "location", "origin"]:
+			if not record.get(field, null) is String or String(record[field]).is_empty():
+				return "invalid_instance_field:" + field
+		for field: String in ["condition", "max_condition", "uses", "max_uses"]:
+			if not _is_uint(record.get(field, null), 100):
+				return "invalid_instance_field:" + field
+		if not _is_uint(record.get("revision", null), 1000000):
+			return "invalid_instance_revision"
+		if int(record["max_condition"]) <= 0 or int(record["condition"]) > int(record["max_condition"]) or int(record["uses"]) > int(record["max_uses"]):
+			return "invalid_instance_limits"
 		var location := String(record.get("location", ""))
 		if location == "bag":
 			if not tokens.has(id):
@@ -105,18 +134,40 @@ static func inspect(document: Dictionary) -> String:
 		if not instances.has(id):
 			return "orphan_token"
 	var referenced := {}
-	for job: Variant in (state["jobs"] as Dictionary).values():
-		if not job is Dictionary:
+	for job_id: Variant in (state["jobs"] as Dictionary).keys():
+		var job: Variant = state["jobs"][job_id]
+		if not job is Dictionary or String(job.get("job_id", "")) != String(job_id):
 			return "invalid_job"
+		for field: String in ["kind", "target", "station_id", "station_kind", "status"]:
+			if not job.get(field, null) is String:
+				return "invalid_job_field:" + field
+		if String(job["status"]) not in ["queued", "running", "paused", "ready", "collected", "cancelled"]:
+			return "invalid_job_status"
+		for field: String in ["elapsed", "duration", "tier"]:
+			if not _is_uint(job.get(field, null), 1000000):
+				return "invalid_job_field:" + field
+		for field: String in ["reserved", "reserved_fuel", "outputs"]:
+			var amounts: Variant = job.get(field, null)
+			if not amounts is Dictionary:
+				return "invalid_job_field:" + field
+			for item_id: Variant in amounts:
+				if _is_token(item_id) or not _is_uint(amounts[item_id], 1000000) or int(amounts[item_id]) <= 0:
+					return "invalid_job_quantity:" + field
 		for field: String in ["reserved_instances", "output_instances"]:
 			var entries: Variant = job.get(field, {})
 			if not entries is Dictionary:
 				return "invalid_escrow"
 			for id_value: Variant in entries:
 				var id := String(id_value)
-				if referenced.has(id) or not instances.has(id) or tokens.has(id):
+				if referenced.has(id) or not instances.has(id) or tokens.has(id) or not entries[id_value] is Dictionary:
 					return "invalid_escrow_reference"
+				if entries[id_value] != instances[id]:
+					return "escrow_attribute_mismatch"
 				referenced[id] = true
+	for id_value: Variant in instances:
+		var location := String(instances[id_value].get("location", ""))
+		if (location == "job_output" or location.begins_with("research:") or location.begins_with("reconstruction:")) and not referenced.has(String(id_value)):
+			return "orphan_escrow"
 	return ""
 
 
