@@ -648,6 +648,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_echo():
 		return
 	if event.is_action_pressed(&"economy_toggle") and economy_panel != null and not bool(player.get(&"dead")):
+		# A different visible modal owns input; do not stack a crafting panel on
+		# top of it. Closing our own panel remains available with the same key.
+		if _has_gameplay_modal() and not bool(economy_panel.call(&"is_open")):
+			get_viewport().set_input_as_handled()
+			return
 		if survival_build != null and survival_build.active:
 			survival_build.set_active(false)
 		economy_panel.call(&"toggle")

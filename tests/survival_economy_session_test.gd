@@ -102,6 +102,22 @@ func _body() -> void:
 	_expect(int(modal_before.get("elapsed", -1)) == int(modal_after.get("elapsed", -2)), "visible gameplay modal grants no active production")
 	panel.call(&"close_panel")
 	await process_frame
+	# A representative foreign modal must prevent opening our panel. This is a
+	# generic A0 contract check, not an integration test of the real A6 UI.
+	var other_modal := Control.new()
+	other_modal.add_to_group(&"gameplay_modal")
+	ow.add_child(other_modal)
+	var blocked_toggle := InputEventAction.new()
+	blocked_toggle.action = &"economy_toggle"
+	blocked_toggle.pressed = true
+	Input.parse_input_event(blocked_toggle)
+	await process_frame
+	blocked_toggle.pressed = false
+	Input.parse_input_event(blocked_toggle)
+	await process_frame
+	_expect(not bool(panel.call(&"is_open")), "crafting panel cannot open over another gameplay modal")
+	other_modal.queue_free()
+	await process_frame
 	var adapter: RefCounted = host.get(&"_adapter")
 	var snapshot: Dictionary = host.call(&"_snapshot", "hand")
 	var forged := snapshot.duplicate(true)

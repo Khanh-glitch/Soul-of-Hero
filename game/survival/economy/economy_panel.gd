@@ -63,6 +63,9 @@ func toggle() -> void:
 	if _root.visible:
 		_refresh()
 
+func is_open() -> bool:
+	return _root != null and _root.is_visible_in_tree()
+
 func _close() -> void:
 	close_panel()
 
