@@ -163,9 +163,29 @@ difference in the serpent chain state (`venom_s4.gd` line ~415-440 uses
 `--skip-unported`, so unregistered skills (7, 8, 9-21) report `success` as
 SKIP. Only 001-006 are real checks. Do not read a green 007/008 shard as parity.
 
-**009 Molting Harvester: not started.** There is no generator, and the original
-TypeScript is not in the repo or the sandbox (escrow key unavailable). A port
-needs the source decrypted outside the repo first.
+**009 Molting Harvester: source parity verified** (run 40830034083 on `f6f36f8`,
+job 123302218901). Ported from the decrypted original `s2.ts` 409-535 into
+`native/venom/venom_s2_harvester.gd`. `parity: true`, `first_divergent_tick: -1`
+on seed 7 (440 ticks, 104 sampled rows). Still needs owner visual approval and
+production integration.
+
+**010 The Walking Crucible: source parity verified** (run 40832336038 on
+`5ecb4aa`, job 123309419652). Ported line-by-line from `s2.ts` 531-684 into
+`native/venom/venom_s2_crucible.gd`. The shared `FlowNet` and `mkBranch`
+(`lib.ts` 136-247) are in `native/venom/venom_flow.gd`. `parity: true`,
+`first_divergent_tick: -1` on seed 7 (840 ticks, 184 sampled rows, 82 hits,
+89 cues). Still needs owner visual approval and production integration.
+
+Registered native ids are 1-6, 9 and 10. All of them are verified against the
+original TypeScript on seed 7. 001-006 are also verified on seed 21. 009 and 010
+have only seed-7 oracles on disk. The 007 and 008 divergences are unchanged and out
+of scope for this session.
+
+**Porting rule that held for 009 and 010.** Re-read the original TypeScript before
+every port, not recalled code. Inner GDScript classes cannot call the outer
+script's static helpers, so each inner class carries its own copy (for example,
+`_lf` in `Crucible` and `FlowNet`). Draw callbacks receive five arguments
+(`g, x, y - z, z, a, self`), and `Custom` callbacks receive `(g, age/life, self)`.
 
 CI reporting: job logs are not downloadable from the sandbox. Verdicts and log
 tails are emitted as check-run annotations by
