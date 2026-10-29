@@ -263,3 +263,23 @@ prints the trace and the key JSON fields as notices.
 
 Sequencing: 017 (`s4.ts` 11-99) is read but not written. 018-021, 007/008 and
 ARCANA 001-072 are not started.
+
+## 017 Reverse Extraction: candidate blocker (open)
+
+- Runs: `40864102529` (`945167e`), `40864438265` (`020b3cc`), `40864970748` (`c5f19fe`), `40865231544` (`2d5f69f`).
+- Symptom: native 0/44 hits and 0/45 cues, raster diverges at tick 2. Each tick logs
+  `SCRIPT ERROR: Invalid call. Nonexistent function 'is_valid' in base 'Nil'` at `venom_world.gd:603`
+  (`t["gen"]` is nil). Cast tick is 1.
+- Ruled out: registry `venom_skills.run_factory` has no arm for 17 and returns null, so the candidate
+  factory is used. Candidates 007 and 008 in the same run have no nil-generator error. No compile or
+  preload error appears for `venom_r17.gd`.
+- Unresolved: markers `R17 candidate factory invoked` and `R17 extraction factory gen_null=` never appear
+  in annotations, even after `annotate_log.py` was changed to keep the first 60 matches (`2d5f69f`).
+  The marker lines are absent from every candidate-lane annotation, so `R17.extraction` is not reached.
+- Tool fix (kept): `annotate_log.py` previously kept only the last 200 matches. Repeated SCRIPT ERROR
+  lines pushed early evidence out. It now keeps the first 60 and the last 140. The candidate workflow
+  pattern now includes `R17`.
+- Next step: determine why the candidate closure from `venom_candidates.run_factory(17)` does not run
+  during `ENGINE.cast` (`venom_engine.gd:187`). Options: print from the test harness at the cast point
+  (`gold93_venom_differential_test.gd:377-380`), or trace what `factory.call(c)` returns. Do not change
+  generator logic before this is known.
