@@ -410,9 +410,14 @@ func remove_structure(entity_id: String) -> bool:
 			var placed: Dictionary = document_candidate.get("structures", {})
 			if not placed.has(entity_id):
 				return false
+			var containers: Dictionary = document_candidate.get("containers", {})
+			# Never destroy a container and silently delete its contents. This
+			# guard is inside the transaction so the check and removal are atomic.
+			var contents: Dictionary = containers.get(entity_id, {})
+			if not contents.is_empty():
+				return false
 			placed.erase(entity_id)
 			document_candidate["structures"] = placed
-			var containers: Dictionary = document_candidate.get("containers", {})
 			containers.erase(entity_id)
 			document_candidate["containers"] = containers
 			candidate["survival"] = document_candidate
@@ -570,22 +575,24 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 		if quantity <= 0:
 			continue
 		if into_container and not stored.has(item_id):
-			if projected_slots + planned.size() >= capacity:
+			if projected_slots >= capacity:
 				continue
+			projected_slots += 1
 		planned[String(item_id)] = quantity
 	if planned.is_empty():
 		return {"ok": false, "reason": "container_full", "moved": {}}
 	var moved: Dictionary = {}
-	# One commit for the whole sweep. The key includes the planned quantities so
-	# that the identical sweep replayed in the same second is refused, while a
-	# genuinely different sweep gets its own receipt.
-	var signature := ""
-	for item_id: Variant in planned.keys():
-		signature += "%s=%d;" % [String(item_id), int(planned[item_id])]
+	# A committed sequence distinguishes two legitimate identical sweeps. The
+	# old quantity signature permanently rejected the second identical deposit.
+	# A failed candidate does not advance this counter or leave a receipt.
+	var sequence := int((document().get("counters", {}) as Dictionary).get("container_sweeps", 0)) + 1
+	# An older build may drop this new counter while retaining transaction receipts.
+	# Skip those receipts rather than making the next sweep permanently unusable.
+	while bool(save.call(&"is_transaction_applied", "%sall.v2.%d" % [TX_TRANSFER_PREFIX, sequence])):
+		sequence += 1
 	var applied := bool(save.call(
 		&"transact_once",
-		"%sall.%s.%s.%s" % [
-			TX_TRANSFER_PREFIX, container_id, "in" if into_container else "out", signature.md5_text()],
+		"%sall.v2.%d" % [TX_TRANSFER_PREFIX, sequence],
 		func(candidate: Dictionary) -> bool:
 			var document_candidate: Dictionary = SurvivalStateData.sanitize(candidate.get("survival", {}))
 			var containers: Dictionary = document_candidate.get("containers", {})
@@ -621,6 +628,9 @@ func _transfer_all(container_id: String, into_container: bool) -> Dictionary:
 				return false
 			containers[container_id] = contents
 			document_candidate["containers"] = containers
+			var counters: Dictionary = document_candidate.get("counters", {})
+			counters["container_sweeps"] = sequence
+			document_candidate["counters"] = counters
 			candidate["survival"] = document_candidate
 			return true,
 		{

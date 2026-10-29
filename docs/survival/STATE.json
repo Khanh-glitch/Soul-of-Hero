@@ -72,9 +72,11 @@
     {
       "id": "SURV-020",
       "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
-      "status": "not_started",
-      "evidence": [],
-      "next": "Extend validated 2D placement after SURV-010"
+      "status": "in_progress",
+      "evidence": [
+        "Storage safety increment: tests/survival_foundation_test.gd case 07 (native run pending)"
+      ],
+      "next": "Run the SURV-010 native gate on the new commit; then implement local bounded topology, per-room roofs, doors and the existing player lifecycle integration for beds and respawn."
     },
     {
       "id": "SURV-030",
@@ -114,7 +116,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Enclosed wall room with a door -> roof fades when the player is inside and not otherwise; bed sets respawn; all of it survives reload through the same document.",
+    "first_test": "Run the modified SURV-010 foundation native workflow and inspect its case 07 demolition and repeated chest sweep assertions; do not mark SURV-020 verified.",
     "parallel_start": "A1 replaces the resource plan with the continent ecology (no code change); A6 replaces the placeholder build art and the build strip; A7 re-tunes the four piece costs.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -153,7 +155,7 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "verified_google_tabs_03_04_05_readback_2026_10_29; atlas_git_bb86778666012081cdf411b6d791b8798c374281",
+    "docs_sync": "DOCS_SYNC_PENDING: google_docs connector disconnected; 2026-10-29 SURV-020 work not synced to tab 04",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -170,7 +172,8 @@
       "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
       "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
     },
-    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it"
+    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it",
+    "surv_020": "IN_PROGRESS: only storage safety increment implemented; native runtime validation pending; rooms, roofs, doors, beds, respawn, visual and Web evidence not implemented"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
