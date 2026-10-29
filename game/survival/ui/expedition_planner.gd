@@ -6,6 +6,7 @@ signal closed
 signal request_action(action: String, target_id: String, payload: Dictionary)
 signal snapshot_changed(snapshot: Dictionary)
 signal journal_requested
+signal journeys_requested
 
 const PIXEL_UI := preload("res://game/survival/ui/pixel_ui.gd")
 const PIXEL_PANEL := preload("res://game/survival/ui/pixel_panel.gd")
@@ -20,6 +21,7 @@ const MAP := preload("res://game/survival/ui/expedition_map.gd")
 const ADAPTER := preload("res://game/survival/ui/survival_view_adapter.gd")
 
 var show_workspace_navigation := false
+var show_journeys_navigation := false
 var _snapshot: Dictionary = {}
 var _tab := 0
 var _selection := ""
@@ -80,8 +82,11 @@ func close_planner() -> void:
 		_previous_focus.grab_focus()
 	closed.emit()
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if visible and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or event.is_echo(): return
+	var cancel := event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel")
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE: cancel = true
+	if cancel:
 		close_planner()
 		get_viewport().set_input_as_handled()
 
@@ -205,6 +210,12 @@ func _build() -> void:
 	satchel.tooltip_text = "Switch to journal and satchel"
 	satchel.pressed.connect(func(): journal_requested.emit())
 	header.add_child(satchel)
+	var journeys := _button("JOURNEYS")
+	journeys.visible = show_journeys_navigation
+	journeys.custom_minimum_size.x = 62
+	journeys.tooltip_text = "Open the three fixture-labeled acceptance journeys"
+	journeys.pressed.connect(func(): journeys_requested.emit())
+	header.add_child(journeys)
 	var close := _button("ESC  CLOSE")
 	close.custom_minimum_size.x = 76
 	close.pressed.connect(close_planner)

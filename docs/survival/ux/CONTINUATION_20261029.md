@@ -1,6 +1,6 @@
-# SURV-UX-010A continuation — independent desk and safety boundary
+# SURV-UX-010A continuation — historical desk and safety notes
 
-> Historical v0 checkpoint. For the newer isolated V1 workspace and correlated protocol, see [V1_WORKSPACE_CONTRACT.md](V1_WORKSPACE_CONTRACT.md). Production hold and A0 input-gate warning remain in force.
+> **Historical V0/V1 continuation.** The current sustained acceptance ledger is [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). V3 adds a pinned temporary A0+A6 native CI composition and three fixture-labeled journeys; neither this historical note nor V3 authorizes production mounting. The A0 all-gameplay-input gate remains blocking.
 
 **Status: WIP / HOLD PRODUCTION INTEGRATION.** Coordinator's `A6_UX_LOCAL_CHECKPOINT_0bf9151d_COORDINATION.md` decision is CONTINUE_WITH_CORRECTION. Existing journal retained; this checkpoint adds a separate reusable desk in the same owned UI subtree, not an integrated game feature. Neither A0, A1, A3, A4 nor S6 code was edited. New code is `game/survival/ui/expedition_planner.{tscn,gd}`, `expedition_map.gd`, and a storage projection in `survival_view_adapter.gd`. Journal gains an open/close state seam. Test fixture and native captures live under `tests/survival/ui/`.
 

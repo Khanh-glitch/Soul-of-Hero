@@ -5,8 +5,10 @@ signal request_action(action: String, target_id: String, payload: Dictionary)
 signal closed
 const JOURNAL := preload("res://game/survival/ui/survival_journal.tscn")
 const DESK := preload("res://game/survival/ui/expedition_planner.tscn")
+const JOURNEYS := preload("res://game/survival/ui/acceptance_journeys.gd")
 var journal: Control
 var desk: Control
+var journeys: Control
 var _switching := false
 var _modal_reported := false
 var _focus_before: Control
@@ -19,16 +21,30 @@ func _ready() -> void:
 	add_to_group(&"gameplay_modal")
 	journal = JOURNAL.instantiate()
 	desk = DESK.instantiate()
+	journeys = JOURNEYS.new()
+	journeys.name = "AcceptanceJourneys"
+	journeys.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	journeys.visible = false
 	journal.show_workspace_navigation = true
+	journal.show_journeys_navigation = true
 	desk.show_workspace_navigation = true
+	desk.show_journeys_navigation = true
+	journeys.show_workspace_navigation = true
 	add_child(journal)
 	add_child(desk)
+	add_child(journeys)
 	journal.desk_requested.connect(show_desk)
 	desk.journal_requested.connect(show_journal)
+	journal.journeys_requested.connect(show_journeys)
+	desk.journeys_requested.connect(show_journeys)
+	journeys.journal_requested.connect(show_journal)
+	journeys.desk_requested.connect(show_desk)
 	journal.closed.connect(_child_closed)
 	desk.closed.connect(_child_closed)
+	journeys.closed.connect(_child_closed)
 	journal.modal_state_changed.connect(_child_modal_changed)
 	desk.modal_state_changed.connect(_child_modal_changed)
+	journeys.modal_state_changed.connect(_child_modal_changed)
 	tree_exiting.connect(_on_tree_exiting)
 	desk.request_action.connect(func(action: String, id: String, payload: Dictionary): request_action.emit(action, id, payload))
 	desk.snapshot_changed.connect(_snapshot_changed)
@@ -43,7 +59,7 @@ func _process(_delta: float) -> void:
 	_sync_modal_state()
 
 func _sync_modal_state(force_closed := false) -> void:
-	var active := not force_closed and is_visible_in_tree() and ((is_instance_valid(journal) and journal.is_visible_in_tree()) or (is_instance_valid(desk) and desk.is_visible_in_tree()))
+	var active := not force_closed and is_visible_in_tree() and ((is_instance_valid(journal) and journal.is_visible_in_tree()) or (is_instance_valid(desk) and desk.is_visible_in_tree()) or (is_instance_valid(journeys) and journeys.is_visible_in_tree()))
 	if active == _modal_reported: return
 	_modal_reported = active
 	modal_state_changed.emit(active)
@@ -65,6 +81,7 @@ func show_desk() -> void:
 	if not visible or desk.visible: return
 	_switching = true
 	journal.close_journal()
+	journeys.close_journeys()
 	desk.open_planner()
 	_switching = false
 	_sync_modal_state()
@@ -73,7 +90,17 @@ func show_journal() -> void:
 	if not visible or journal.visible: return
 	_switching = true
 	desk.close_planner()
+	journeys.close_journeys()
 	journal.open_journal()
+	_switching = false
+	_sync_modal_state()
+
+func show_journeys() -> void:
+	if not visible or journeys.visible: return
+	_switching = true
+	journal.close_journal()
+	desk.close_planner()
+	journeys.open_journeys()
 	_switching = false
 	_sync_modal_state()
 
@@ -82,6 +109,7 @@ func close_workspace() -> void:
 	_switching = true
 	journal.close_journal()
 	desk.close_planner()
+	journeys.close_journeys()
 	_switching = false
 	_finish_close()
 
@@ -101,6 +129,11 @@ func apply_snapshot(snapshot: Dictionary) -> bool:
 
 func apply_host_response(response: Dictionary) -> bool:
 	return desk.apply_host_response(response)
+
+## Owner-authored inputs are assembled by the test/acceptance fixture, never by
+## this production-facing UI. The journey view only stores a read-only projection.
+func apply_journey_fixture(snapshot: Dictionary) -> bool:
+	return journeys.set_fixture(snapshot)
 
 func _snapshot_changed(snapshot: Dictionary) -> void:
 	var rows: Array[Dictionary] = []

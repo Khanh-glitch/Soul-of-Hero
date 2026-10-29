@@ -1,6 +1,8 @@
-# SURV-UX-010A — isolated journal checkpoint
+# SURV-UX-010A — A6 acceptance record
 
-> **Continuation note:** `V2_VISUAL_SYSTEM.md` records the recovered-source V2 visual system, canonical A1/A3 read-only projections, testing boundary and unresolved A0 input gate. Its bespoke folio skin and pixel emblems supersede the older “flat/default-font” visual critique below for source state, but **do not** supersede the production hold or make prior native screenshot evidence current.
+> **Current V3 status (2026-10-29):** See [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). A6 now adds three source-grounded, fixture-labeled presentation journeys and a dedicated pinned A0+A6 Godot 4.7 CI workflow. Production mounting remains **HOLD**: A0 Knight movement/combat polling is still ungated. The legacy text below is preserved as historical V0/V1/V2 evidence and must not be read as current V3 CI, screenshot, or integration evidence.
+
+> **Historical continuation note:** `V2_VISUAL_SYSTEM.md` records the recovered-source V2 visual system, canonical A1/A3 read-only projections, testing boundary and unresolved A0 input gate. Its bespoke folio skin and pixel emblems supersede the older “flat/default-font” visual critique below for source state, but **do not** supersede the production hold or make prior native screenshot evidence current.
 
 **Status: WIP; HOLD INTEGRATION pending A0 review.** This is a working, deliberately isolated UI increment, **not** the complete survival experience or a replacement for the live HUD. No production scene is wired to it. Branch base `1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7`; assigned integration branch was `00461ea6327bba93c571b25520587b66bcf0dcc5` when checked with `git ls-remote`, and may have advanced. Do not overwrite the live build strip, SaveService, A4 Gold, or other agents' changes.
 

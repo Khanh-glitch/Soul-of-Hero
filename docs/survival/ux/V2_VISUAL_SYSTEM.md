@@ -1,6 +1,8 @@
-# A6 UX / visual system V2 — continuation milestone
+# A6 UX / visual system V2 — historical continuation milestone
 
-**Status: working isolated prototype; native visual sign-off and production integration are HOLD.**
+> Current acceptance work supersedes this snapshot: see [V3_SUSTAINED_PRODUCT_ACCEPTANCE.md](V3_SUSTAINED_PRODUCT_ACCEPTANCE.md). V3 refreshes the A0 pin, adds the three fixture-labeled journeys, dedicated composition CI and native image inspection; V2’s pending-capture/source snapshot is historical. Production integration remains HOLD.
+
+**Historical V2 status: working isolated prototype; native visual sign-off and production integration were HOLD.**
 
 Recovery provenance: exact source-only recovery head `bb71bd059a8a70b2fe5121902c68f0864b7e8b68` (tree `bde993a6f04227820cb23deb734cb65cb31038c0`). The 31 recovered files were materialized on the Arena-pinned working branch without switching away from it. This continuation adds bespoke presentation code, V2 read-only projections, lifecycle coverage and a bounded capture harness. It does not change gameplay authorities, project render globals, A0/A1/A3/A4 files, SaveService, Gold effects or production scene wiring.
 

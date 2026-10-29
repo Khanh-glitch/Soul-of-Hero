@@ -6,6 +6,7 @@ signal closed
 signal modal_state_changed(active: bool)
 signal item_selected(stack_key: String)
 signal desk_requested
+signal journeys_requested
 
 const ADAPTER := preload("res://game/survival/ui/survival_view_adapter.gd")
 const PIXEL_UI := preload("res://game/survival/ui/pixel_ui.gd")
@@ -19,6 +20,7 @@ const TEAL := Color("91d6ac")
 const CORAL := Color("ff9278")
 
 var show_workspace_navigation := false
+var show_journeys_navigation := false
 var _items: Array[Dictionary] = []
 var _build: Dictionary = {}
 var _field: Array[Dictionary] = []
@@ -65,8 +67,11 @@ func close_journal() -> void:
 		_previous_focus.grab_focus()
 	closed.emit()
 
-func _unhandled_key_input(event: InputEvent) -> void:
-	if visible and event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_ESCAPE:
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible or event.is_echo(): return
+	var cancel := event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel")
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE: cancel = true
+	if cancel:
 		close_journal()
 		get_viewport().set_input_as_handled()
 
@@ -154,6 +159,12 @@ func _build_ui() -> void:
 	desk.tooltip_text = "Open expedition desk"
 	desk.pressed.connect(func(): desk_requested.emit())
 	header.add_child(desk)
+	var journeys := _button("JOURNEY")
+	journeys.visible = show_journeys_navigation
+	journeys.custom_minimum_size.x = 58
+	journeys.tooltip_text = "Open the three fixture-labeled acceptance journeys"
+	journeys.pressed.connect(func(): journeys_requested.emit())
+	header.add_child(journeys)
 	var close := _button("ESC  CLOSE")
 	close.custom_minimum_size.x = 76
 	close.pressed.connect(close_journal)
