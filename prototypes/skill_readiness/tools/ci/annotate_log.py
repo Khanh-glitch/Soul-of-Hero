@@ -41,7 +41,11 @@ def main() -> int:
         if any(p.search(line) for p in pats):
             keep.append(line)
     tail = [l for l in lines[-args.tail:] if not l.startswith("Godot Engine v")] if args.tail > 0 else []
-    items = ["== matched =="] + keep[-200:] + ["== tail =="] + tail
+    # Keep the first matches as well as the last: early markers (setup, first
+    # cast) must survive a flood of repeated per-tick SCRIPT ERROR lines.
+    if len(keep) > 200:
+        keep = keep[:60] + ["== ... repeated matches elided ..."] + keep[-140:]
+    items = ["== matched =="] + keep + ["== tail =="] + tail
     items = [it[:400] for it in items]
     # Annotation messages above a few KB are silently dropped by the platform,
     # so the evidence is split into several small annotations.
