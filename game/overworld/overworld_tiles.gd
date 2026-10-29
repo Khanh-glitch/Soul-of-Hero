@@ -81,6 +81,27 @@ static func _carries_collision(frame_name: String) -> bool:
 
 ## Atlas cell for a decoded layer token, e.g. "=7" -> the road tile with the
 ## 0b0111 neighbour mask, "~" -> a water variant.
+## Per-TILE variant pick for scattered overlays.
+##
+## `variant_index` deliberately quantises to a 3x3 block, because ground variants
+## carry a tone and a per-tile choice made the four stone tones a checkerboard.
+## An overlay is the opposite case: it is a *feature* (a pool, a patch), so a
+## per-block pick draws the same feature nine times in a row and the feature
+## reads as a lattice. Different hash, different quantisation, on purpose.
+static func overlay_variant_index(x: int, y: int, count: int) -> int:
+	if count <= 1:
+		return 0
+	var mixed := abs((x * 92837111) ^ (y * 689287499) ^ 0x51ED270B)
+	return mixed % count
+
+
+## How many frames a multi-variant overlay carries (1 when it is single-frame).
+static func detail_variant_count(meta: Dictionary, code: String) -> int:
+	var entry: Dictionary = (meta.get("codes", {}) as Dictionary).get("detail", {}).get(code, {})
+	var names: Array = entry.get("variant_names", [])
+	return names.size()
+
+
 static func cell_for(meta: Dictionary, token: String, layer_name: String) -> Vector2i:
 	var index: Dictionary = meta.get("index", {})
 	var codes: Dictionary = meta.get("codes", {})
@@ -106,6 +127,18 @@ static func cell_for(meta: Dictionary, token: String, layer_name: String) -> Vec
 			if variants > 0 and m >= variants:
 				m = m % variants
 			frame = "%s#%d" % [base, m]
+		elif entry.has("variant_names"):
+			# Multi-variant overlay: same per-cell lattice hash as ground, so a
+			# scattered overlay (the fen's pools) cannot draw one frame on every
+			# cell it covers. Empty mask means the caller did not pass a position,
+			# in which case the first frame is the safe answer.
+			var names: Array = entry.get("variant_names", [])
+			if names.is_empty():
+				frame = base
+			elif mask.is_empty():
+				frame = String(names[0])
+			else:
+				frame = String(names[mask.hex_to_int() % names.size()])
 		else:
 			frame = base
 	var rect: Array = index.get(frame, [])

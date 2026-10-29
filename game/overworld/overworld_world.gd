@@ -19,6 +19,11 @@ const PROPS_META_PATH := "res://data/overworld/overworld_props.json"
 ## Props that stand on the ground and should be drawn *behind* a player
 ## standing in front of them, versus flat things that sit underfoot.
 const FLAT_PROPS := ["disc_cache", "disc_bones", "disc_lore", "camp_bedroll"]
+
+## Unmasked detail overlays that carry several frames. A single-frame overlay
+## drawn on hundreds of scattered cells repeats identically and reads as a
+## lattice, so these get a per-cell variant pick (see `_paint_grid`).
+const DETAIL_VARIANT_CODES := ["p"]
 ## Prop frames the shortcut system can swap at runtime: closed -> open.
 const SHORTCUT_FRAMES := {
 	"short_bridge": ["short_bridge_broken", "short_bridge_fixed"],
@@ -181,6 +186,17 @@ func _paint_grid(layer: TileMapLayer, cells: PackedStringArray, layer_name: Stri
 					continue
 				var pick := OverworldTiles.variant_index(x, y, names.size())
 				cell = OverworldTiles.cell_for(tiles_meta, code + ("%x" % pick if names.size() > 1 else ""), "ground")
+			elif layer_name == "detail" and DETAIL_VARIANT_CODES.has(token.substr(0, 1)):
+				# A scattered overlay needs a per-cell frame or it draws the same
+				# art on every cell it covers, which reads as a lattice. The mask
+				# slot carries the variant pick, exactly as it does for ground.
+				var vsize := OverworldTiles.detail_variant_count(tiles_meta, token.substr(0, 1))
+				if vsize <= 1:
+					cell = OverworldTiles.cell_for(tiles_meta, token, layer_name)
+				else:
+					cell = OverworldTiles.cell_for(tiles_meta,
+						token.substr(0, 1) + "%x" % OverworldTiles.overlay_variant_index(x, y, vsize),
+						layer_name)
 			else:
 				cell = OverworldTiles.cell_for(tiles_meta, token, layer_name)
 			if cell.x < 0:

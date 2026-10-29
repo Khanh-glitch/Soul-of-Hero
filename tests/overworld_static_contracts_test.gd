@@ -139,6 +139,36 @@ func _run() -> void:
 		by_campaign[String(by_world[wid])] = String(wid)
 	_expect(by_campaign.size() == 10, "derived campaign→world map bijective")
 
+	# --- the atlas must be able to draw a scattered overlay without a lattice ---
+	#
+	# An unmasked detail overlay drawn from a single frame repeats identically on
+	# every cell it covers; scattered over the fen that read as a grid of puddles.
+	# The contract is that every overlay code declared in the baked layers either is
+	# single-use by construction (a road, a path - one frame is correct there) or
+	# carries several frames for a per-tile pick.
+	var atlas_file := FileAccess.open("res://data/overworld/overworld_tiles.json", FileAccess.READ)
+	_expect(atlas_file != null, "overworld_tiles.json accessible")
+	if atlas_file != null:
+		var atlas := JSON.parse_string(atlas_file.get_as_text()) as Dictionary
+		atlas_file.close()
+		var detail_codes: Dictionary = ((atlas.get("codes", {}) as Dictionary).get("detail", {}) as Dictionary)
+		var layers_file := FileAccess.open("res://data/overworld/hollow_marches_layers.json", FileAccess.READ)
+		if layers_file != null:
+			var layers := JSON.parse_string(layers_file.get_as_text()) as Dictionary
+			layers_file.close()
+			var used := {}
+			for run in (layers.get("layers", {}) as Dictionary).get("detail", {}).get("rle", []):
+				used[String(run[0]).substr(0, 1)] = true
+			for code in used.keys():
+				_expect(detail_codes.has(code), "detail code '%s' is in the atlas" % code)
+			_expect(detail_codes.has("p"), "the pool overlay is in the atlas")
+			var pool: Dictionary = detail_codes.get("p", {}) as Dictionary
+			var pool_frames: Array = pool.get("variant_names", [])
+			_expect(pool_frames.size() >= 4,
+				"the pool overlay carries at least 4 frames (has %d)" % pool_frames.size())
+			_expect(not bool(pool.get("masked", true)),
+				"the pool overlay is unmasked (it has no neighbours to mask against)")
+
 	if failures.size() > 0:
 		push_error("OVERWORLD_STATIC_CONTRACTS FAIL")
 		quit(1)

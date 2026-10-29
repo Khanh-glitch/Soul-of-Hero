@@ -82,7 +82,7 @@ def variant_index(x, y, count):
     return abs((bx * 73856093) ^ (by * 19349663)) % count
 
 
-def frame_for(meta, code_token, layer):
+def frame_for(meta, code_token, layer, x=0, y=0):
     code = code_token[0]
     mask = code_token[1] if len(code_token) > 1 else None
     codes = meta["codes"]
@@ -100,6 +100,12 @@ def frame_for(meta, code_token, layer):
             return None
         if entry["masked"] and mask:
             return "%s#%d" % (entry["frame"], int(mask, 16))
+        variants = entry.get("variant_names")
+        if variants:
+            # per-TILE pick, not the 3x3 ground lattice: an overlay is a feature,
+            # so a per-block pick would draw it nine times in a row.
+            mixed = abs((x * 92837111) ^ (y * 689287499) ^ 0x51ED270B)
+            return variants[mixed % len(variants)]
         return entry["frame"]
     entry = codes["solid"].get(code)
     if not entry:
@@ -136,7 +142,7 @@ def render(x0, y0, x1, y1, *, scale=1, draw_props=True, layers=None):
         for x in range(x0, x1):
             i = y * W + x
             g = ground[i]
-            names = frame_for(meta, g, "ground")
+            names = frame_for(meta, g, "ground", x, y)
             if names is None:
                 continue
             if isinstance(names, list):
@@ -146,12 +152,12 @@ def render(x0, y0, x1, y1, *, scale=1, draw_props=True, layers=None):
             blit(sheet, pick, (x - x0) * T, (y - y0) * T, flip=flip_id(x, y))
             d = detail[i]
             if d != ".":
-                f = frame_for(meta, d, "detail")
+                f = frame_for(meta, d, "detail", x, y)
                 if f:
                     blit(sheet, f, (x - x0) * T, (y - y0) * T)
             s = solid[i]
             if s != ".":
-                f = frame_for(meta, s, "solid")
+                f = frame_for(meta, s, "solid", x, y)
                 if f:
                     blit(sheet, f, (x - x0) * T, (y - y0) * T)
 

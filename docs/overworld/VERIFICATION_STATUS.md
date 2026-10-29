@@ -408,3 +408,29 @@ function's docstring so it is not tried again.
   improvement, not a solution to a stepped plaza outline.
 - The cliff buttress decal still reads as a slab on the wall.
 - Camps are unchanged in this pass.
+
+## Fifth pass — water margins and the fen
+
+The mission's "visually problematic travel regions" still had one item open: the
+south-east fen and the marsh west of the basin. Both were called out from native
+screenshots, not statistics.
+
+| Defect | Cause | Fix |
+| --- | --- | --- |
+| the fen read as small blue tiles scattered among olive ones | the bog tile carried three 3 px pale streaks, each reading as a separate object | water removed from the tile entirely; the tile now carries wet *ground* — cool, dark, slightly specular |
+| second attempt printed a striped rug | water run off two tile edges so neighbours would join, which lined every copy up at one offset | abandoned; recorded in the docstring |
+| third attempt printed the same rug at a shorter period | a contained pool in every variant | abandoned: any feature every variant carries at a similar offset becomes a pattern |
+| the overlay version printed a grid | `bog` is chosen per 3×3 block, so a per-block overlay variant ran a pool through nine cells | overlays now get a per-**tile** pick (`OverlayTiles.overlay_variant_index`), deliberately not the ground's block hash |
+| pools read as a scatter of separate puddles | blobs inset from the tile edge left a dry gutter between neighbours | water fills the tile at its edges, so a run of wet cells joins into one sheet |
+
+The structural change is the last one: **a per-cell overlay can only compose into a
+larger form if it reaches its own cell boundary.** Every earlier version inset the
+water, for good local reasons — a ragged shape, a margin, a highlight — and every
+one of them printed the cell grid back into the sheet. The lit shoreline was
+removed for the same reason: a highlight on row 0 of every pool tile is a stripe
+across the water every 16 px.
+
+`detail_variant_count()` / `overlay_variant_index()` are mirrored in
+`tools/overworld/preview.py`, and `tests/overworld_static_contracts_test.gd` now
+asserts that the pool overlay is present, unmasked and carries at least four
+frames — so this cannot silently regress to a single frame.

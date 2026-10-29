@@ -1290,6 +1290,36 @@ def neighbour_mask(layer, x, y, match):
     return m
 
 
+def paint_pools():
+    """Standing water on the marsh, placed by a per-cell field.
+
+    The bog tile cannot carry a pool: `bog` is chosen per 3x3 block, so a pool in
+    the tile lands on the block lattice (three attempts at it printed a pattern
+    across the fen). A detail overlay on a smooth field has no lattice to land on.
+    Only marsh and mud get pools, never a lane and never a cell that already
+    carries an overlay, and the field is smooth enough that adjacent pools cluster
+    into sheets.
+    """
+    count = 0
+    for y in range(H):
+        for x in range(W):
+            if get(solid, x, y) != "." or get(detail, x, y) != ".":
+                continue
+            if get(ground, x, y) not in ("b", "m"):
+                continue
+            field = patch_field(351, x, y, 11.0)
+            # Only the wettest ~18 % of the marsh carries open water. A first
+            # threshold of 0.36 covered most of the fen, and a pool on nearly
+            # every cell is not a marsh, it is a lake with a tiling bug.
+            if field < 0.58:
+                continue
+            if field + (vnoise(x, y, 2.0, 352) - 0.5) * 0.14 < 0.58:
+                continue
+            put(detail, x, y, "p")
+            count += 1
+    return count
+
+
 def paint_kerbs():
     """A dressed-stone kerb round every paved surface.
 
@@ -1492,8 +1522,9 @@ def main():
     reinstate_shortcut_bands()
     # Kerbs last: they only mark cells nothing else has claimed, so the order
     # matters - a road running onto a plaza keeps its own surface to the join.
+    pools = paint_pools()
     kerbs = paint_kerbs()
-    print("kerbs %d cells" % kerbs)
+    print("pools %d cells, kerbs %d cells" % (pools, kerbs))
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop
     # placement), applied before the gates so they are judged like any other

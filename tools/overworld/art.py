@@ -730,12 +730,44 @@ def ground_cliff_top(seed):
 
 
 def ground_bog(seed):
+    """Standing water in a marsh: mostly wet ground, with real pools rare.
+
+    Three attempts are worth recording, because the fen is 592 cells and every one
+    of them showed:
+
+      1. three 3 px pale streaks per tile -> each read as a separate object, so the
+         fen looked like small blue tiles scattered among olive ones;
+      2. water running off two tile edges, so neighbours would join -> every copy
+         lined up at the same offset and the fen printed as a striped rug;
+      3. a contained pool in every variant -> the same rug at a shorter period.
+
+    The lesson is the one this atlas keeps teaching: *any* feature that every
+    variant carries at a similar offset becomes a pattern across a large region,
+    and because `bog` is chosen per 3x3 block, a per-variant feature also lands on
+    the block lattice. So the wetness is carried only by the tile's colour and
+    sheen - a cool, dark, slightly specular ground that reads as saturated at 2x.
+    Pools are placed in world space by `detail_pool`, where a per-cell field
+    decides, and cannot form a lattice. A marsh read from above is mostly the
+    colour of wet peat.
+    """
+    base = mix(C("moor_dk"), C("mud"), 0.42)
     img = new(T, T)
-    grain(img, 0, 0, T, T, mix(C("moor_dk"), C("mud"), 0.5), C("moor"), C("water_dk"), seed=seed, amount=0.2)
+    grain(img, 0, 0, T, T, base, mix(C("moor"), C("water_hi"), 0.26),
+          mix(C("water_dk"), base, 0.42), seed=seed, amount=0.16, soften=0.5)
+    # a wet sheen across the whole tile: short horizontal highlights, low contrast
     for i in range(3):
-        cx = int(h01(seed, i, 91) * (T - 6)) + 3
-        cy = int(h01(seed, i, 92) * (T - 4)) + 2
-        hline(img, cx, cy, 3, mix(C("water_hi"), C("moor"), 0.4))
+        sx = 1 + int(h01(seed, i, 71) * (T - 6))
+        sy = 2 + int(h01(seed, i, 72) * (T - 4))
+        hline(img, sx, sy, 2 + int(h01(seed, i, 73) * 3),
+              mix(C("water_hi"), base, 0.30))
+    # No pool here on purpose. `bog` is a ground family chosen per 3x3 block from
+    # four variants, so a pool drawn into the tile appears once per block and lines
+    # up on the variant lattice - three attempts at a pool inside this tile each
+    # printed a pattern across the fen. Pools are placed in world space instead, by
+    # the detail overlay below, where a per-cell field decides.
+    if h01(seed, 96) < 0.5:
+        bx = 2 + int(h01(seed, 97) * 11)
+        blade(img, bx, 8 + int(h01(seed, 98) * 5), 3, mix(C("moor_hi"), base, 0.30), lean=1)
     return img
 
 
@@ -996,6 +1028,42 @@ def detail_kerb(mask_bits):
             px(img, i, 1, dark)
         if not s:
             px(img, i, T - 2, dark)
+    return img
+
+
+def detail_pool(seed):
+    """Standing water on wet ground, placed per cell in world space.
+
+    Sized to *nearly fill* its tile: a small blob per cell was tried first and read
+    as a scatter of isolated puddles with gaps between them, which is not what a
+    marsh looks like from above. With the water reaching most of the tile, a run of
+    wet cells joins into a sheet and the ragged edge comes from the boundary of the
+    run rather than from each cell, so the pools read as water that has found a
+    level. The shape is per-variant (five frames) and picked per tile, not per 3x3
+    block - a per-block pick draws the same puddle nine times and reads as a grid.
+    """
+    img = new(T, T)
+    base = mix(C("water_dk"), C("mud"), 0.26)
+    deep = mix(C("water_dk"), C("void"), 0.20)
+    # The water fills the whole tile at its edges. This is the third attempt at a
+    # pool overlay and the two failures are instructive: small blobs read as a
+    # scatter of separate puddles, and inset blobs (a per-variant margin) left a
+    # 1-2 px dry gutter between neighbours, which printed a *grid* dividing the
+    # sheets back into cells. For a run of wet cells to look like one body of
+    # water, the water has to reach the cell boundary - so it does, and the shape
+    # of the sheet comes from the run's ragged boundary field instead.
+    rect(img, 0, 0, T, T, base)
+    # Deeper water, as a smooth per-variant gradient rather than per-pixel noise,
+    # and no highlight along the tile's own top edge: a lit line on row 0 of every
+    # pool tile printed a horizontal stripe every 16 px straight across the sheet -
+    # the same shelf problem as the cliff face, one layer down. A body of water
+    # assembled from cells cannot know where its own shoreline is, so it carries no
+    # shoreline; the marsh's edge is where the `bog` ground simply stops.
+    for y in range(T):
+        t = y / float(T - 1)
+        for x in range(T):
+            if h01(seed, x, y) < 0.45 - 0.25 * t:
+                px(img, x, y, deep if t > 0.5 else mix(deep, base, 0.5))
     return img
 
 
@@ -1295,6 +1363,8 @@ GROUND_TILES = {
     "cliff_top3": lambda: ground_cliff_top(124),
     "bog0": lambda: ground_bog(131),
     "bog1": lambda: ground_bog(132),
+    "bog2": lambda: ground_bog(133),
+    "bog3": lambda: ground_bog(134),
 }
 
 # codes used by the authored layer grids; the first entry is the default variant
@@ -1312,7 +1382,7 @@ GROUND_CODES = {
     "~": ["water0", "water1", "water2"],
     "-": ["shallow0", "shallow1", "shallow2", "shallow3"],
     "c": ["cliff_top0", "cliff_top1", "cliff_top2", "cliff_top3"],
-    "b": ["bog0", "bog1"],
+    "b": ["bog0", "bog1", "bog2", "bog3"],
 }
 
 DETAIL_BASE = {
@@ -1324,8 +1394,13 @@ DETAIL_BASE = {
     "o": ("pebbles", lambda: detail_pebbles(206)),
     "x": ("bloodstain", lambda: detail_blood(207)),
     "z": ("ashdrift", lambda: detail_ash(208)),
+    "p": ("pool", lambda: detail_pool(210)),
     "^": ("soulspark", lambda: detail_soulspark(209)),
 }
+
+## Overlays that need several frames because a single frame repeats visibly when
+## scattered. `pool` covers hundreds of fen cells.
+DETAIL_VARIANTS = {"p": 5}
 
 DETAIL_MASKED = {
     "/": "bank",
@@ -1361,9 +1436,22 @@ def build_tileset():
     frames["ground"] = {code: names for code, names in GROUND_CODES.items()}
 
     # detail: plain variants
+    frames["detail"] = {}
     for code, (name, fn) in DETAIL_BASE.items():
-        cells.append((name, False, fn()))
-    frames["detail"] = {code: {"frame": DETAIL_BASE[code][0], "masked": False} for code in DETAIL_BASE}
+        variants = DETAIL_VARIANTS.get(code)
+        if variants:
+            # An unmasked overlay drawn from a *single* frame is identical on every
+            # cell it covers, which prints a lattice the moment it is scattered over
+            # a region - the fen's pools did exactly that. Multi-variant overlays
+            # get several frames and a per-cell pick, the way ground does.
+            names = []
+            for i in range(variants):
+                cells.append(("%s%d" % (name, i), False, detail_pool(210 + i)))
+                names.append("%s%d" % (name, i))
+            frames["detail"][code] = {"frame": name, "masked": False, "variant_names": names}
+        else:
+            cells.append((name, False, fn()))
+            frames["detail"][code] = {"frame": name, "masked": False}
 
     # detail: edge-masked families (16 orientation variants each)
     for code, name in DETAIL_MASKED.items():
