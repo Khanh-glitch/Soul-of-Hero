@@ -11,6 +11,22 @@ func _finish() -> void:
 	print("NORMAL HOME JOURNEY %s - %d checks" % ["PASSED" if failures.is_empty() else "FAILED", checks])
 	quit(0 if failures.is_empty() else 1)
 
+# Send distinct press/release objects across physics and render boundaries.
+# Godot 4.7 warns that mutating/reusing one event in the same frame is unsafe.
+func _tap_action(action: StringName) -> void:
+	var press := InputEventAction.new()
+	press.action = action
+	press.pressed = true
+	Input.parse_input_event(press)
+	await physics_frame
+	await process_frame
+	var release := InputEventAction.new()
+	release.action = action
+	release.pressed = false
+	Input.parse_input_event(release)
+	await physics_frame
+	await process_frame
+
 func _gather_until(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability, kind: String, item: String, quantity: int) -> bool:
 	var camera := ow.get(&"camera") as Camera2D
 	for attempt in range(80):
@@ -167,7 +183,9 @@ func _body() -> void:
 	if not walked:
 		_body_complete = true
 		return
-	await _tap_action(&"build_toggle")
+	print("HOME_BUILD_BEFORE active=%s selected=%s" % [str(build.active), build.selected_piece])
+	if not build.active:
+		await _tap_action(&"build_toggle")
 	await _tap_action(&"build_slot_2")
 	print("HOME_BUILD_MODE active=%s selected=%s modal=%s paused=%s wood=%d iron=%d" % [str(build.active), build.selected_piece, str(ow.call(&"_has_gameplay_modal")), str(paused), _count(WOOD), _count(IRON)])
 	_expect(build.active and build.selected_piece == "wall_wood", "ordinary build inputs arm and select paid walls")
