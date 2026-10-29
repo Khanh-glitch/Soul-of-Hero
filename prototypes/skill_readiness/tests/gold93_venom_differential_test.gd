@@ -410,7 +410,13 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			if _verbose and which == "":
 				print("  tick %4d OK  scene=%s" % [n, got["scene_sha256"]])
 
-	# Suspended generator threads must be drained before the process exits.
+	# Capture authored events at the exact oracle end tick BEFORE teardown.
+	# VenomGen.dispose() releases its parked thread through the remaining
+	# yield points. Those teardown-only callbacks can emit additional events
+	# which were never part of the original timeline. Never compare them.
+	var actual_hits: Array = w.hits.duplicate(true)
+	var actual_cues: Array = w.cues.duplicate(true)
+	# Still drain the worker threads to avoid an unsafe headless exit.
 	w.drain_all()
 	if _verbose:
 		printerr("  loop done n=%d casted=%s" % [n, str(casted)])
@@ -420,8 +426,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 				% [sid, cast_tick, ticks])
 
 	# ---- authored event logs ----------------------------------------------
-	var hit_res := _compare_events(oracle.get("hits", []), w.hits)
-	var cue_res := _compare_events(oracle.get("cues", []), w.cues)
+	var hit_res := _compare_events(oracle.get("hits", []), actual_hits)
+	var cue_res := _compare_events(oracle.get("cues", []), actual_cues)
 
 	var matched: bool = (divergent_tick < 0) and casted and hit_res[0] and cue_res[0]
 	print(JSON.stringify({
@@ -433,9 +439,9 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		"sampled_compared": compared,
 		"cast_tick": cast_tick,
 		"hits_original": oracle.get("hits", []).size(),
-		"hits_native": w.hits.size(),
+		"hits_native": actual_hits.size(),
 		"cues_original": oracle.get("cues", []).size(),
-		"cues_native": w.cues.size(),
+		"cues_native": actual_cues.size(),
 		"first_divergent_tick": divergent_tick,
 		"first_mismatch": first_mismatch,
 		"hit_mismatch": hit_res[1],
