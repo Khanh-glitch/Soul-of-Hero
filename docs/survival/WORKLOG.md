@@ -92,3 +92,12 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - A room/roof/bed/door prototype was not connected or included because it had unresolved topology cost, collision and player lifecycle problems. No player-facing shelter/bed/respawn is claimed. SURV-020 is **in_progress**, not verified. No native visual frames or survival-specific Web evidence yet. The full playable scenario, navigation, death bag dependency and human visual review remain open.
 - `DOCS_SYNC_PENDING`: Google Docs connector disconnected; tab 04 not written or read back for this work.
 - Next action: implement and engine-test bounded room topology, then integrate roofs, doors and respawn. Draft PR #11 targets `feature/survival-rpg-foundation-20261029`; do not merge as completed SURV-020.
+
+## 2026-10-29 — SURV-020 assignment checkpoint recorded after user caught missing intake documentation
+
+- **User correction acknowledged:** assigning an agent **MUST** immediately produce durable task intake, scope, owner, gates, dependency boundaries and work-status record, not only chat prompt and end-of-task summary. The full in-progress work order is now in `docs/survival/tasks/SURV-020_WORK_ORDER.md`.
+- **Actual Git state:** PR [#10](https://github.com/Khanh-glitch/Soul-of-Hero/pull/10) is MERGED, not OPEN; merge commit `2709b9f6bd0d1cc7a5b242e617184ddab0431470`; SURV-010 125 check native run [40845406213](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213) is still source evidence.
+- **User-reported agent state:** SURV-020 agent is already working. Mark task `in_progress` **by user report only**; no SURV-020 branch, commit, engine test, or visual evidence independently verified yet. All integration `code_claims` remain false for the full Survival RPG.
+- **No interference:** do not modify the agent's in-flight gameplay code or Arena branch. This is a docs/state intake correction. Subsequent native results must be checked against exact SHA.
+- **Cross-chat contract change:** At task dispatch record work order in Git and append Google Docs tab 04, with `assigned / user_reported_in_progress / code_verified` distinguished. At checkpoints record real commits/tests; at completion record acceptance and unresolved cases.
+- **Next:** continue SURV-020 room/roof/bed/respawn with A0+A2; sync Google Docs and verify readback in this turn.

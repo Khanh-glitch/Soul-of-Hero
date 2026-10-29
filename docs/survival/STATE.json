@@ -74,9 +74,20 @@
       "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
       "status": "in_progress",
       "evidence": [
-        "Storage-safety increment only: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485 at 77c639331d8d4b0c472e86e7538275e6778aa697 — Godot 4.7 Xvfb, SURVIVAL FOUNDATION PASSED - 132 checks, engine exit 0"
+        "Storage-safety increment only: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485 at 77c639331d8d4b0c472e86e7538275e6778aa697 — Godot 4.7 Xvfb, SURVIVAL FOUNDATION PASSED - 132 checks, engine exit 0",
+        "docs/survival/tasks/SURV-020_WORK_ORDER.md"
       ],
-      "next": "Implement local bounded room topology and per-room roof rendering; integrate physically traversable doors and bed/respawn into the existing production overworld lifecycle; validate and visually inspect end-to-end before verification."
+      "next": "Implement local bounded room topology and per-room roof rendering; integrate physically traversable doors and bed/respawn into the existing production overworld lifecycle; validate and visually inspect end-to-end before verification.",
+      "assignment": {
+        "status": "CODE_IN_PROGRESS_STORAGE_INCREMENT_NATIVE_TESTED",
+        "task_id": "SURV-020",
+        "owner": "A0+A2",
+        "assigned_date": "2026-10-29",
+        "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
+        "branch": "arena/54306b59-soul-of-hero",
+        "review": "Full SURV-020 native visual and gameplay evidence required",
+        "user_reported": "Agent is working now; do not assume actual worktree/branch visibility"
+      }
     },
     {
       "id": "SURV-030",
@@ -173,7 +184,14 @@
       "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
     },
     "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it",
-    "surv_020": "IN_PROGRESS: storage safety increment natively passed 132 checks at 77c639331d8d4b0c472e86e7538275e6778aa697, run 40849106485; rooms, roofs, doors, beds, respawn, visual and Web shelter evidence remain unimplemented"
+    "surv_020": "IN_PROGRESS: storage safety increment natively passed 132 checks at 77c639331d8d4b0c472e86e7538275e6778aa697, run 40849106485; rooms, roofs, doors, beds, respawn, visual and Web shelter evidence remain unimplemented",
+    "pr10": {
+      "state": "MERGED",
+      "merge_commit": "2709b9f6bd0d1cc7a5b242e617184ddab0431470",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
+      "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
+    },
+    "surv020_status": "IN_PROGRESS: storage increment passed native test; shelter not verified"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,

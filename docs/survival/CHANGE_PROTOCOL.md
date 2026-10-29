@@ -39,3 +39,8 @@ Use this paragraph verbatim when switching agent or starting new chat if the new
 ## When agents disagree
 
 Record observable evidence and open a short issue comment referencing the exact code/commit. Prefer native gameplay observation and reproducible tests over another agent's assertion. Do not silently erase previous failed tests or decisions.
+
+## Dispatch / checkpoint / completion: required immediate records
+**Dispatch (before or at agent task launch):** preserve the full concrete prompt as a versioned task work order, record `assigned` with the intended owner and agent branch (if known) in STATE.json, append WORKLOG.md and Google Docs tab 04, and link to issue/PR. This does **not** mean implementation happened.
+**While working:** after any meaningful pushed commit, CI discovery or accepted architecture decision, append an evidence-oriented checkpoint (SHA, paths, CT contracts, tests, failures, next). A separate agent cannot observe private local work automatically; prefer user-reported / not-yet-verified labels to unsupported claims.
+**Completion:** mark VERIFIED only on reproducible engine evidence; update Git and Docs. If connector unavailable, append exact pending Docs entry to Git and flag DOCS_SYNC_PENDING. **Never defer documenting task intake until its completion**.
