@@ -61,12 +61,14 @@ func _body() -> void:
 	walls = _perimeter(0, 0, 5, 5)
 	walls.merge(_perimeter(5000, 5000, 5, 5))
 	model.rebuild(walls)
+	print("[spatial] distant: rooms=%d scanned=%d overflow=%d" % [model.rooms.size(), model.scanned_cells, model.overflow_clusters])
 	_expect(model.rooms.size() == 2 and model.scanned_cells < 100, "far buildings avoid global rectangle scan")
 	var distant_id: String = model.room_at(Vector2i(5002, 5002))
 	walls.erase("0,2")
 	model.rebuild(walls)
 	_expect(model.rooms.size() == 1 and model.room_at(Vector2i(5002, 5002)) == distant_id,
 		"local edit preserves unrelated room identity")
+	print("[spatial] after breach: rooms=%d rescanned=%d" % [model.rooms.size(), model.scanned_cells])
 	_expect(model.scanned_cells < 50, "unchanged distant cluster uses cached topology")
 	walls = _perimeter(0, 0, 130, 130)
 	model.rebuild(walls)
@@ -127,6 +129,23 @@ func _body() -> void:
 		"floor and chest occupy separate layers of one cell")
 	_expect(not build.entity_at_layer(interior_cell, "floor").is_empty() and not build.entity_at_layer(interior_cell, "object").is_empty(),
 		"both occupancy layers materialized")
+	var wood_before_duplicate := _count(WOOD)
+	var duplicate: Dictionary = build.try_place(interior_cell)
+	_expect(not bool(duplicate.get("ok", false)) and _count(WOOD) == wood_before_duplicate,
+		"second object on the same cell is rejected without charging")
+	_expect(_give(IRON, 1) and _give(STONE, 3), "materials for a second chest and storage test granted")
+	var second_chest: Dictionary = build.try_place(origin + Vector2i(2, 1))
+	var chest_one_id := String(chest_result.get("entity_id", ""))
+	var chest_two_id := String(second_chest.get("entity_id", ""))
+	_expect(bool(second_chest.get("ok", false)) and chest_one_id != chest_two_id,
+		"two chests have distinct persistent identities")
+	_expect(bool(service.call(&"transfer_to_container", chest_one_id, STONE, 1, "survival.test.room.chest1")),
+		"deposit into first indoor chest")
+	_expect(bool(service.call(&"transfer_to_container", chest_two_id, STONE, 2, "survival.test.room.chest2")),
+		"deposit into second indoor chest")
+	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
+		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
+		"two chests hold independent contents")
 	_expect(build.structure_node(wall_to_remove).get_node_or_null("Solid") != null, "real wall collider exists")
 	_expect(bool(_save().call(&"reload_save")), "disk save reloaded")
 	ow = await _reload_world(ow)
@@ -136,6 +155,9 @@ func _body() -> void:
 		return
 	build = ow.get(&"survival_build") as SurvivalBuildSystem
 	_expect(build.room_topology.room_at(interior_cell) == room_id, "room id stable after reload")
+	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
+		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
+		"distinct chest contents survive disk reload")
 	_expect(not build.entity_at_layer(interior_cell, "floor").is_empty() and not build.entity_at_layer(interior_cell, "object").is_empty(),
 		"floor and furniture survive reload")
 	_expect(bool(service.call(&"remove_structure", wall_to_remove)), "production wall demolition committed")
@@ -143,4 +165,7 @@ func _body() -> void:
 	await physics_frame
 	_expect(build.room_topology.room_at(interior_cell).is_empty(), "demolition removes enclosure")
 	_expect(build.structure_node(wall_to_remove) == null, "demolition removes collision node")
+	_expect(int((service.call(&"container_contents", chest_one_id) as Dictionary).get(STONE, 0)) == 1
+		and int((service.call(&"container_contents", chest_two_id) as Dictionary).get(STONE, 0)) == 2,
+		"breaching room preserves both occupied chests")
 	_body_complete = true
