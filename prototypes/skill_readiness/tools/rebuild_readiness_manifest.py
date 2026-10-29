@@ -22,6 +22,7 @@ Run from the repository root:
 from __future__ import annotations
 
 import json
+import re
 from collections import Counter
 from pathlib import Path
 
@@ -32,12 +33,21 @@ VENOM_BASELINES = ROOT / "docs" / "vfx" / "skill_readiness" / "venom_21_source_b
 
 SCOPED_SOURCES = ("venomwright", "arcana_iii")
 
-# Modules whose ORIGINAL authored generator was actually ported from the
-# original archive and is executed by the native runtime. Adding an id here is a
-# fidelity claim backed by source-locked components, never a TODO marker.
-NATIVE_EXECUTABLE_MODULES = {
-    "venomwright:001": "prototypes/skill_readiness/skills/venomwright/v001_glassfang_hunt.gd",
-}
+RUNTIME_SOURCE = ROOT / "prototypes" / "skill_readiness" / "core" / "gold93_runtime.gd"
+
+
+def load_native_executable_modules() -> dict[str, str]:
+    """Host modules come from `MODULE_PATHS` in the runtime, the single source of
+    truth. A second hand-kept copy here went stale (it still listed only 001)."""
+    text = RUNTIME_SOURCE.read_text(encoding="utf-8")
+    block = text.split("const MODULE_PATHS: Dictionary = {", 1)[1].split("\n}", 1)[0]
+    pairs = re.findall(r'"(venomwright:\d{3}|arcana[^"]*)":\s*"([^"]+)"', block)
+    if not pairs:
+        raise SystemExit("MODULE_PATHS parsed empty from gold93_runtime.gd")
+    return {key: path.replace("res://", "") for key, path in pairs}
+
+
+NATIVE_EXECUTABLE_MODULES = load_native_executable_modules()
 
 SOURCE_ARCHIVE_BLOCKER = (
     "ORIGINAL_SOURCE_ARCHIVE_UNAVAILABLE: the original Gold ZIP is stored in "
@@ -194,9 +204,11 @@ def main() -> int:
         "venomwright_sha256": "ab0dba56055f1d81b558fef658e2ce99b7b460d87cb732c29eec1bd0dd2fd716",
         "arcana_iii_sha256": "8402633cbc9666b6f628f1b6101acc6123d67af0a1797a229ea02aa5d440677d",
         "consequence": (
-            "92 of 93 authored generators cannot be source-locked until the "
-            "pinned archives are supplied. No algorithm has been invented to "
-            "work around this."
+            "72 ARCANA III generators stay blocked until the pinned ARCANA archive "
+            "is restored; no approximation is invented. 6 Venomwright skills "
+            "(007, 008, 013, 015, 016, 020) have no host module because their "
+            "source parity is unresolved. Every other registered id is backed by "
+            "a host module that drives the original ported generator."
         ),
     }
 

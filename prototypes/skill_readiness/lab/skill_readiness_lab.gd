@@ -18,9 +18,12 @@ const INTENTS = preload("res://prototypes/skill_readiness/core/gold93_intents.gd
 
 const SOURCE_SEED: int = 20261028
 
-@onready var _selector: OptionButton = %SkillSelector
-@onready var _status: RichTextLabel = %StatusLabel
-@onready var _stage: Node2D = %Stage
+# Path lookups, not unique-name (%) lookups: the Lab must resolve its nodes the
+# same way whether it is instanced in the editor, in the game or in a headless
+# test, and the test must not depend on scene-owner bookkeeping.
+@onready var _selector: OptionButton = $Panel/VBox/SkillSelector
+@onready var _status: RichTextLabel = $Panel/VBox/StatusLabel
+@onready var _stage: Node2D = $Stage
 
 var runtime
 var _handle = null

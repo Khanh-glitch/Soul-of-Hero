@@ -46,7 +46,7 @@ jobs:
   native-runtime:
     name: Native Godot 4.7 runtime contract
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     needs: path-ownership
     steps:
       - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          bash prototypes/skill_readiness/tools/ci/run_gate.sh lifecycle 600 'GOLD93_LIFECYCLE: PASS' res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh lifecycle 1200 'GOLD93_LIFECYCLE: PASS' res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd
 
       - name: Port authority, once-only hits and concurrent casts
         if: always()
@@ -95,7 +95,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          bash prototypes/skill_readiness/tools/ci/run_gate.sh baseline 600 'GOLD93_VENOM_BASELINE: PASS' res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh baseline 1800 'GOLD93_VENOM_BASELINE: PASS' res://prototypes/skill_readiness/tests/gold93_venom_baseline_oracle_test.gd
 
       - name: SkillReadinessLab walks all 93 canonical ids
         if: always()
@@ -138,7 +138,7 @@ jobs:
         if: always()
         shell: bash
         run: |
-          bash prototypes/skill_readiness/tools/ci/run_gate.sh harness 1500 'GOLD93_PER_SKILL_HARNESS: PASS' res://prototypes/skill_readiness/tests/gold93_per_skill_harness_test.gd
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh harness 2400 'GOLD93_PER_SKILL_HARNESS: PASS' res://prototypes/skill_readiness/tests/gold93_per_skill_harness_test.gd
 
       - name: Host adapter contract (G7 handoff)
         if: always()

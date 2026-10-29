@@ -76,6 +76,10 @@ func _parse_skill() -> int:
 
 
 func _initialize() -> void:
+	await _run()
+
+
+func _run() -> void:
 	_skill = _parse_skill()
 	_id = "venomwright:%03d" % _skill
 	if _skill <= 0:
@@ -158,8 +162,25 @@ func _initialize() -> void:
 
 	# --- 5. the Lab drives the same id through its real selector -------------
 	_phase("lab")
+	await _run_lab()
+
+	_phase("done")
+	print("GOLD93_HOST_ADAPTER: %s stats ticks=%d emitted=%d damage=%d status=%d digest=%s" % [
+		_id, ticks_c, emitted_c, damage_c, status_c, digest_c.substr(0, 16)])
+	_finish()
+
+
+## The Lab is a scene: its `_ready` (which builds the selector and the stage)
+## runs only once it has entered the tree and is ready. Waiting on that explicitly
+## is what makes the Lab checks meaningful; otherwise they would run on nil nodes.
+func _run_lab() -> void:
 	var lab = LAB_SCENE.instantiate()
 	root.add_child(lab)
+	if not lab.is_node_ready():
+		await lab.ready
+	_check(lab.is_node_ready(), "the Lab scene must be ready after entering the tree")
+	if not lab.is_node_ready():
+		return
 	_check(lab.select_id(_id), "the Lab selector must offer " + _id)
 	lab.cast_selected()
 	var lab_h = lab.current_handle()
@@ -179,11 +200,6 @@ func _initialize() -> void:
 	_check(lab.current_handle() == null, "release_all must release the Lab's handle")
 	root.remove_child(lab)
 	lab.free()
-
-	_phase("done")
-	print("GOLD93_HOST_ADAPTER: %s stats ticks=%d emitted=%d damage=%d status=%d digest=%s" % [
-		_id, ticks_c, emitted_c, damage_c, status_c, digest_c.substr(0, 16)])
-	_finish()
 
 
 func _finish() -> void:
