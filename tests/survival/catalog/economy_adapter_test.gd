@@ -51,6 +51,9 @@ func _snapshot() -> Dictionary:
 	return save.call(&"get_snapshot")
 
 func _finish_job(job_id: String, station := "bench") -> void:
+	if job_id.is_empty():
+		_expect(false, "finish_job received empty job_id (prior enqueue/research failed)")
+		return
 	_expect(bool(eco.advance(station, 1000, "tick.%d.%s.%d" % [case_id, job_id, Time.get_ticks_usec()]).ok), "advance production")
 	_expect(bool(eco.collect(job_id, "collect.%d.%s" % [case_id, job_id]).ok), "collect output")
 
@@ -171,10 +174,12 @@ func _run() -> void:
 	_begin("repair / reconstruction conservation")
 	_station("bench", "workbench", 2); _station("lab", "research")
 	_give("iron_parts", 4); _give("binding_cloth", 4); _give("core_blank", 1); _give("venom_extract", 1); _give("knowledge_spares", 2)
+	var shell: Dictionary = eco.grant_instance("core_venom", "fixture.shell", 0, 100)
+	var shell_id: String = shell.instance_id
 	var pick: Dictionary = eco.grant_instance("iron_pick", "fixture.pick", -1, 20)
 	_expect(bool(eco.repair(pick.instance_id, "bench", "repair.pick").ok), "equipment repaired with materials")
 	_expect(int(eco.instance(pick.instance_id).condition) == 100, "condition restored")
-	_expect(not bool(eco.repair(cid, "bench", "repair.core").ok), "Core charge repair forbidden")
+	_expect(not bool(eco.repair(shell_id, "bench", "repair.core").ok), "Core charge repair forbidden")
 	_give("knowledge_spares", 30); _give("research_notes", 8); _give("soul_ember", 2); _give("crypt_bone_shard", 2); _give("iron_scrap", 3); _give("iron_ingot", 2)
 	for tid in ["tech_smelting", "tech_precision", "tech_core_binding"]:
 		var job: Dictionary = eco.research_technology(tid, "lab", "earn." + tid)
@@ -183,20 +188,21 @@ func _run() -> void:
 	var learn: Dictionary = eco.research_recipe("rebuild_core_venom", "lab", "targeted", "learn.rebuild")
 	_expect(bool(learn.ok), "targeted reconstruction research")
 	_finish_job(learn.job_id, "lab")
-	var rebuild: Dictionary = eco.reconstruct_core("rebuild_core_venom", cid, "bench", "rebuild.job")
+	var rebuild: Dictionary = eco.reconstruct_core("rebuild_core_venom", shell_id, "bench", "rebuild.job")
 	_expect(bool(rebuild.ok), "reconstruction queued")
 	_expect(eco.owned_instances("core_venom").is_empty(), "old shell reserved, not usable")
 	_finish_job(rebuild.job_id, "bench")
 	var fresh: Array[Dictionary] = eco.owned_instances("core_venom")
-	_expect(fresh.size() == 1 and String(fresh[0].instance_id) != cid, "new Core identity, old shell consumed")
+	_expect(fresh.size() == 1 and String(fresh[0].instance_id) != shell_id, "new Core identity, old shell consumed")
 	_expect(int(fresh[0].uses) == 12, "reconstruction is manufacture, not free repair")
 	# 09 lossy dismantling and full-inventory refusal.
 	_begin("lossy recycling / no repair-recycle profit")
 	_station("bench", "workbench")
 	_give("iron_ingot", 1)
+	var salvage_pick: Dictionary = eco.grant_instance("iron_pick", "fixture.salvage.pick", -1, 40)
 	_expect(bool(eco.dismantle_stack("iron_ingot", 1, "bench", "salvage.ingot").ok), "ingot dismantled")
 	_expect(_count("iron_ingot") == 0 and _count("iron_scrap") == 2, "3-scrap ingot returns only 2 scrap")
-	var old_pick: String = pick.instance_id
+	var old_pick: String = salvage_pick.instance_id
 	_expect(bool(eco.dismantle_instance(old_pick, "bench", "salvage.pick").ok), "unique equipment dismantled")
 	_expect(eco.owned_instances("iron_pick").is_empty(), "unique token removed")
 	_expect(not bool(eco.dismantle_instance(old_pick, "bench", "salvage.pick.again").ok), "cannot dismantle twice")
