@@ -54,6 +54,9 @@ func _run() -> void:
 			"exact carried quantity preserved: " + boundary)
 		_expect(bool(save.call(&"reload_save")) and int((save.call(&"inventory_totals") as Dictionary).get("oak_wood", 0)) == 3,
 			"recovered inventory persists after second reload: " + boundary)
+	for phase: String in ["respawn", "recovery"]:
+		for boundary: String in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
+			_exercise_later_boundary(phase, boundary)
 	if failures.is_empty():
 		print("SURVIVAL SAVE INTERRUPTION PASSED - %d checks" % checks)
 		quit(0)
@@ -62,3 +65,42 @@ func _run() -> void:
 		for failure: String in failures:
 			print("  - " + failure)
 		quit(1)
+
+
+func _exercise_later_boundary(phase: String, boundary: String) -> void:
+	var label := phase + ":" + boundary
+	var path := "user://tests/death_fault_%s_%s_%d.json" % [phase, boundary, Time.get_ticks_usec()]
+	_expect(bool(save.call(&"configure_storage", path, true)), "fresh profile: " + label)
+	_expect(bool(save.call(&"grant_inventory_item", "oak_wood", "material", 3, "fixture.wood")), "seed carried wood: " + label)
+	var death: Dictionary = survival.call(&"begin_overworld_death", Vector2(400, 400))
+	var bag_id := String(death.get("entity_id", ""))
+	_expect(bool(death.get("ok", false)) and not bag_id.is_empty(), "create durable death bag: " + label)
+	if phase == "recovery":
+		_expect(bool(survival.call(&"finish_overworld_death", Vector2(500, 500))), "prepare completed respawn: " + label)
+	_expect(bool(save.call(&"configure_test_save_interruption", boundary)), "arm interruption: " + label)
+	var reported := false
+	if phase == "respawn":
+		reported = bool(survival.call(&"finish_overworld_death", Vector2(500, 500)))
+	else:
+		reported = bool(survival.call(&"recover_death_bag", bag_id))
+	_expect(not reported, "interrupted transaction has no success acknowledgment: " + label)
+	_expect(bool(save.call(&"reload_save")), "reload a valid durable generation: " + label)
+	var doc: Dictionary = survival.call(&"document")
+	var pending := String(doc.get("pending_death", ""))
+	var bags: Dictionary = doc.get("death_bags", {})
+	var wood := int((save.call(&"inventory_totals") as Dictionary).get("oak_wood", 0))
+	if phase == "respawn":
+		_expect(bags.has(bag_id) and wood == 0 and (pending.is_empty() if boundary == "after_primary_renamed" else pending == bag_id),
+			"respawn is either wholly committed or wholly pending: " + label)
+		if not pending.is_empty():
+			_expect(bool(survival.call(&"finish_overworld_death", Vector2(500, 500))), "retry pending respawn: " + label)
+		_expect(bool(survival.call(&"recover_death_bag", bag_id)), "recover bag after respawn: " + label)
+	else:
+		_expect(pending.is_empty() and (not bags.has(bag_id) and wood == 3 if boundary == "after_primary_renamed" else bags.has(bag_id) and wood == 0),
+			"recovery owns wood on exactly one side: " + label)
+		if bags.has(bag_id):
+			_expect(bool(survival.call(&"recover_death_bag", bag_id)), "retry uncommitted bag recovery: " + label)
+	_expect(not bool(survival.call(&"recover_death_bag", bag_id)), "replayed recovery never duplicates: " + label)
+	_expect(int((save.call(&"inventory_totals") as Dictionary).get("oak_wood", 0)) == 3, "exact carried wood restored: " + label)
+	_expect(bool(save.call(&"reload_save")) and int((save.call(&"inventory_totals") as Dictionary).get("oak_wood", 0)) == 3,
+		"restored wood persists after reload: " + label)
