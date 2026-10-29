@@ -2,9 +2,9 @@
 
 - Issue: #13
 - PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/19
-- Head: `arena/7a12b27e-soul-of-hero` (hardening increment; final SHA recorded in PR #19 after CI)
+- Head: `arena/7a12b27e-soul-of-hero`; hardening code SHA `17e0358bf388680312789caecc7d26f3779aafb1` (final docs handoff SHA recorded in PR #19)
 - Base: `feature/survival-rpg-foundation-20261029`
-- Google Docs tab 04: `DOCS_SYNC_PENDING` (connector disconnected)
+- Google Docs tab 04: synced via connector after hardening CI (see tab 04 entry)
 
 ## Delivered
 - Catalogs/schemas: `data/survival/items/`, `data/survival/recipes/`
@@ -18,9 +18,12 @@
 ## Evidence
 - Catalog audit: PASS (56 items, 36 recipes, 5 technologies, 36 sources, 7 stations; all contract-reachable; no production cycles).
 - Python adversarial/balance/mapping/schema/growth tests: 10/10 PASS locally at hardening authoring time.
-- Native Godot 4.7 SaveService adapter: prior milestone PASS at a579b313 / run 40869212146; hardening native suite expanded to 20 cases and pending final CI at the new SHA.
+- Native Godot 4.7 SaveService adapter: hardening suite PASS at 17e0358b, 362 checks / 20 cases; push run 40878087266 and PR-side run 40878096753 both SUCCESS.
 - Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED.
 - Save-growth serialization model: schema-2 compaction saves ~409 KB in the 14-session model and ~14.6 MB at 100k receipts versus legacy duplicate commands; A0 receipt/terminal-instance retention still pending.
+
+## Hardening status
+See `HARDENING_STATUS.md`: E-01/E-02/E-03/E-04 PARTIAL with explicit A0/A4/A1 gates; E-05 DONE_A3_SCOPED. Overall NATIVE_FIXTURE_PASS / WORLD_NOT_INTEGRATED. PR #19 remains OPEN / NOT APPROVED FOR MERGE.
 
 ## Hardening contracts
 - `A0_SAVE_SERVICE_GUARD_CONTRACT.md`: exact generic drop/transfer/merge/equip/container/reward guard request. A3 native negatives demonstrate the current A0 blocker; A3 does not claim to protect SaveService APIs it does not own.
