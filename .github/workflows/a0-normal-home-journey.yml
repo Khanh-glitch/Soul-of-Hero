@@ -2,7 +2,7 @@ name: A0 ordinary-input home continuation
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['tests/survival_normal_home_journey_test.gd', '.github/workflows/a0-normal-home-journey.yml']
+    paths: ['tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', 'game/survival/**', 'game/overworld/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', '.github/workflows/a0-normal-home-journey.yml']
   workflow_dispatch:
 permissions:
   contents: read
