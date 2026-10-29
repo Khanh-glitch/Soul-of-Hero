@@ -167,7 +167,11 @@ func _add(candidate: Dictionary, item_id: String, quantity: int, kind := "materi
 func _add_outputs(candidate: Dictionary, outputs: Dictionary) -> bool:
 	for id: Variant in outputs.keys():
 		var definition := item(String(id))
-		if definition.is_empty() or String(definition.get("storage", "")) != "stack":
+		if definition.is_empty():
+			return false
+		if String(definition.get("storage", "")) == "instance":
+			continue # Unique outputs are carried by output_instances tokens, not stacks.
+		if String(definition.get("storage", "")) != "stack":
 			return false
 		var kind := String(definition.get("kind", "material"))
 		if kind == "station_kit":

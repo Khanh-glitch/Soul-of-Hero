@@ -55,7 +55,10 @@ func _finish_job(job_id: String, station := "bench") -> void:
 		_expect(false, "finish_job received empty job_id (prior enqueue/research failed)")
 		return
 	_expect(bool(eco.advance(station, 1000, "tick.%d.%s.%d" % [case_id, job_id, Time.get_ticks_usec()]).ok), "advance production")
-	_expect(bool(eco.collect(job_id, "collect.%d.%s" % [case_id, job_id]).ok), "collect output")
+	var collected: Dictionary = eco.collect(job_id, "collect.%d.%s" % [case_id, job_id])
+	_expect(bool(collected.ok), "collect output")
+	if not bool(collected.ok):
+		print("DEBUG collect failed job=", job_id, " result=", collected, " state=", eco.jobs().get(job_id, {}))
 
 func _run() -> void:
 	save = root.get_node_or_null("SaveService")
@@ -81,7 +84,7 @@ func _run() -> void:
 	_expect(_count("charcoal") == 1 and _count("iron_ingot") == 1, "furnace outputs exact")
 	# 02 prerequisites and duplicate command payload binding.
 	_begin("station, knowledge, event identity")
-	_give("oak_wood", 20)
+	_give("oak_wood", 20); _give("iron_scrap", 2)
 	_expect(not bool(eco.enqueue("burn_charcoal", "missing", "no.station").ok), "phantom station refused")
 	_expect(not bool(eco.enqueue("craft_core_venom", "hand", "no.knowledge").ok), "unknown Core recipe refused")
 	_station("bench", "workbench")
@@ -99,7 +102,7 @@ func _run() -> void:
 	_expect(bool(eco.cancel(cancelled.job_id, "cancel.once").ok), "cancel reserved job")
 	_expect(_count("oak_wood") == 0, "refund remains in escrow, not duplicated in bag")
 	# Fill all 30 real SaveService slots with distinct valid stack ids.
-	for i in range(28):
+	for i in range(30):
 		_give("fixture_blocker_%02d" % i, 1)
 	_expect(not bool(eco.collect(cancelled.job_id, "collect.full").ok), "full bag refuses collection")
 	_expect(bool(save.call(&"reload_save")), "reload from disk")
