@@ -42,3 +42,20 @@ User has granted autonomous authority to **approve or reject designs via evidenc
 | D029 | REJECTED_EXACTNESS_CLAIM | Claiming a precise original total number of craftable recipes, numerical POI respawn timers or research prices from merged years. Published sources differ; only source/date/mode-stamped recipe samples are admissible. |
 | D030 | APPROVED_BY_GATE | Explicit long-form acceptance: after an extended multi-session ~14-day play journey the player has gained meaningful rare abilities but still ≥3 distinct valuable next objectives and major unfamiliar POIs. Test boredom vs artificial scarcity; numbers are new product gates, not original 2019 stats. |
 | D031 | KEEP_OPEN_AS_FACT_NOT_DESIGN | Exact 2019 item/recipe full count requires version-pinned dataset/game client source. Research claim FAILS without evidence; behavior-level design can proceed. |
+
+## 2026-10-29 — Gated decisions after complete user-supplied 1355-line study
+This user research file was provided to preserve nuance and enable systemic rather than one-off changes. A0 is delegated design authority under gates, while status 'design approved' cannot be confused with a native gameplay success.
+| ID | Status | Decision and why |
+| --- | --- | --- |
+| D032 | LOCKED_USER | Preserve full uploaded research text in Git and Google Docs, including 44 mechanisms, 21 POIs, 31 dependencies, 12 play journeys, 40 factual unknowns and 28 references. Never ask user to attach it again just to reacquire context. |
+| D033 | LOCKED_USER | Every feature is a systemic modification connected with world, inventory/recipe, base, exploration, combat, save and UI; no patchwork independent functionality. |
+| D034 | LOCKED_USER | Top-down pixel SOH with Skills must have its **own superiority** versus a prettier realistic shooter: native visual skill spectacle, readable tactical information, meaningful Core × environment agency, good offline pacing. |
+| D035 | LOCKED_USER | Use parallel specialist agents with reusable repository algorithms, not white-page reinvention or indiscriminate mass cloning. |
+| D036 | APPROVED_BY_GATE | Continuous authored full-continent masterplan, 10 existing Chapter 1 dungeon exteriors in starter ~quarter and in-world access; `CT-01`. |
+| D037 | APPROVED_BY_GATE | CT-01..CT-12 connected domain architecture with sole owner of state/save/inventory, agent ownership A0..A8. |
+| D038 | APPROVED_BY_GATE | Separate POI, player home, outpost and territory capture semantics. Grade keys + energy + resist + alternate paths; no literal 2026 POI coordinates. |
+| D039 | APPROVED_BY_GATE | Distinguish Recipe Knowledge, physical blueprint, physical item, Core instance, spatial construction blueprint, unlock scope; atomic operations and absence of infinite salvage loop. |
+| D040 | APPROVED_BY_GATE | Sources: SOH direct; The FOG selected MIT code logic (separate licensed art); Survival Core Lite gather/needs/recipe adapter; Coheronia placement logic; GLoot optional UI; Seasons Gone farming ideas. No competing SaveManager or 3D building import. |
+| D041 | APPROVED_BY_GATE | Preserve user Atlas original 2019–2020 emotional core but analyze later 2021–2026 cases as dated optional extensions only, never masquerading as 2019 facts. |
+| D042 | REJECTED | Isolated agent patches without shared CT schema, migration, runtime test, owner and connected economic/gameplay effects. |
+| D043 | APPROVED_BY_GATE | Binary gameplay acceptance and long-form core content/replay experience; measure actual net-expedition value, rarity satisfaction, economic sink, POI depth and setup productivity. |

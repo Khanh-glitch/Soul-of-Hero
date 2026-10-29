@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-29",
-  "phase": "HISTORICAL_RESEARCH_GATED_APPROVED_READY_TO_IMPLEMENT",
+  "phase": "SYSTEMIC_FUSION_SPEC_APPROVED_MULTI_AGENT_READY_IMPLEMENTATION_NOT_STARTED",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
     "survival_system_integrated": false,
@@ -28,6 +28,21 @@
         "official 2019-08/2019-11/2020-08 sources S01-S27"
       ],
       "next": "Research gate passed; original exact aggregate recipe count remains explicitly unverified and must not be claimed"
+    },
+    {
+      "id": "SURV-006",
+      "name": "Preserve full user research source, cross-index every atlas mechanism, approve systemic fusion architecture and multi-agent plan",
+      "status": "verified",
+      "evidence": [
+        "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "docs/survival/SOURCE_COVERAGE_TRACE.json",
+        "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
+        "docs/survival/ATLAS_RECONCILIATION_AND_DECISIONS.md",
+        "docs/survival/MULTI_AGENT_EXECUTION.md",
+        "docs/survival/ECONOMY_AND_14DAY_REPLAY_BALANCE.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40838554299"
+      ],
+      "next": "Assign A0..A8 real agents/branches; start SURV-010 implementation; these documents do not mean gameplay implemented"
     },
     {
       "id": "SURV-000",
@@ -85,14 +100,18 @@
   ],
   "next_action": {
     "task_id": "SURV-010",
+    "owner": "A0+A2+A3",
     "entrypoints": [
       "game/autoload/save_service.gd",
       "game/overworld/overworld_world.gd",
       "game/overworld/chapter1_overworld.gd",
-      "game/loot/loot_catalog.gd"
+      "game/loot/loot_catalog.gd",
+      "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
+      "docs/survival/MULTI_AGENT_EXECUTION.md"
     ],
-    "first_test": "Harvest genuine world resource -> inventory -> paid freeform construction -> collision/nav update -> save/reload; linked requirements MECH-03, MECH-05, U-G02/U-G08",
-    "design_gate": "F0-F5 binary; full runtime acceptance includes mandatory 14day_replay_goals"
+    "first_test": "Real Godot harvest wood -> authoritative bag/unique item -> paid building placement/physics -> reload with no duplication; do not create second save/inventory system",
+    "parallel_start": "A1 full continent world plan, A4 Gold source inspection, A6 build/map HUD, A7 data + replay telemetry proceed concurrently on OWN branches",
+    "design_gate": "All approved via F0–F5, runtime must separately pass native/Web and 12 source journeys"
   },
   "blockers": [
     {
@@ -130,7 +149,12 @@
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
     "docs_sync": "verified_google_tabs_03_04_05_readback_2026_10_29; atlas_git_bb86778666012081cdf411b6d791b8798c374281",
-    "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only"
+    "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
+    "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+    "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
+    "google_docs_tab_06": "written+readback: original full uploaded research text, Git remains exact-bytes source",
+    "google_docs_tab_07": "written+readback: 4 full design documents",
+    "runtime_implementation": "NOT_STARTED"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
@@ -291,5 +315,77 @@
         "14day_replay_goals"
       ]
     }
-  ]
+  ],
+  "archived_full_original_research": {
+    "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+    "sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+    "bytes": 148205,
+    "lines": 1355,
+    "source_kind": "user_uploaded_verbatim",
+    "readback": "GitHub bytes verified against original SHA-256",
+    "comparison": "docs/survival/ATLAS_RECONCILIATION_AND_DECISIONS.md"
+  },
+  "system_architecture": {
+    "status": "APPROVED_DESIGN_NOT_RUNTIME",
+    "contracts_file": "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
+    "agent_plan": "docs/survival/MULTI_AGENT_EXECUTION.md",
+    "balance": "docs/survival/ECONOMY_AND_14DAY_REPLAY_BALANCE.md",
+    "trace_file": "docs/survival/SOURCE_COVERAGE_TRACE.json",
+    "audit_validator": "tools/survival/validate_atlas_contract.py",
+    "counts": {
+      "subsystems": 44,
+      "poi": 21,
+      "dependencies": 31,
+      "journeys": 12,
+      "unknown_facts": 40,
+      "sources": 28
+    },
+    "agents": [
+      {
+        "id": "A0",
+        "owns": "integration_save_ci",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A1",
+        "owns": "world_ecology",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A2",
+        "owns": "construction",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A3",
+        "owns": "economy_research",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A4",
+        "owns": "skill_gold",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A5",
+        "owns": "poi_ai_hazards",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A6",
+        "owns": "ux_pixel",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A7",
+        "owns": "balance_qa",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A8",
+        "owns": "licensing",
+        "state": "NOT_ASSIGNED"
+      }
+    ]
+  }
 }

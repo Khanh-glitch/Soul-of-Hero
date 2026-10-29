@@ -26,3 +26,9 @@ Original tabs retained without editing. The summaries in tab 03 are structured i
 
 ## 2026-10-29 historical A–Z research sync
 New Google tab `t.dg7e10u8in6k`: `05 · Last Day Rules 2019–2020 · A–Z`. Source-grounded detailed 29,902-character atlas is mirrored in `docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md`. See full H1/H2/H3 version boundaries, dated formula samples, missing recipe count, long-run replay value and autonomous F0–F5 approval gates. Tab 04 appends verified commit/test data; read all **five** tabs, not just old tab 1–4.
+
+## 2026-10-29 uploaded source research archived fully
+- Tab `t.zd0pbvgw748h`, title `06 · BẢN GỐC NGHIÊN CỨU · 1355 DÒNG`: full Markdown research text mirrored; original exact byte copy in `source_archive/` with SHA256 proof.
+- Tab `t.zhlc1xjywaxp`, title `07 · FUSION KIẾN TRÚC · AGENT PLAN`: full copies of SYSTEM_FUSION_BLUEPRINT, ATLAS_RECONCILIATION_AND_DECISIONS, MULTI_AGENT_EXECUTION, ECONOMY_AND_14DAY_REPLAY_BALANCE.
+- The LIVE journal tab 04 is updated after each real Git commit with commit/tests/failures; Git `STATE.json` is authoritative for code status. Google Docs does not auto-sync by itself.
+- The detailed 108-entry machine index is Git `SOURCE_COVERAGE_TRACE.json`, not a thin summary. Source file never edited.

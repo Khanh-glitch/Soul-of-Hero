@@ -40,3 +40,9 @@ No construction/loot/crafting/survival gameplay code has been added by this kick
 Review `CONTRACTS.md` and `STATE.json`, then implement a **single end-to-end mechanically playable slice** using read-only licensed references and an adapter to existing SOH inventory/save: harvest nodes → player inventory → place a collision-enabled wall/door/foundation → persist and reload. Grow that slice to roofed room, chest, workstation/crafting, blueprint/Core then world hazards before calling the mission complete.
 
 This is an integration path, NOT a request to show user a tiny unfinished demo and stop. Deliver internally validated increments and record every partial truth in the repository.
+
+## Major update 2026-10-29: full research source, architecture and differentiation
+Full user-provided Atlas (1355 lines, SHA256 in AGENTS.md) now permanently archived in this Git branch. **It is more complete than either the preceding 2019–2020 research synthesis or this brief START_HERE**; readers MUST consult full original and `SOURCE_COVERAGE_TRACE.json` (108 named mechanisms + 40 source unknowns + 28 references).
+Design approved: systemic fusion of world/biome/resources; physical item+recipe research/production; actual multi-room top-down construction, material durability, storage, electrical circuits, territory; layered POI access and hazard; finite Core/Gold parity; PvE risk/recovery; persistent home and opt-in repeatable expedition; new game-wide 14-day depth test; clearly distinct top-down tactical and pixel-art virtues.
+Read master documents `SYSTEM_FUSION_BLUEPRINT.md`, `ATLAS_RECONCILIATION_AND_DECISIONS.md`, `MULTI_AGENT_EXECUTION.md`, `ECONOMY_AND_14DAY_REPLAY_BALANCE.md`. The last document preserves original quantitative epoch distinctions and SOH-specific proposed test targets.
+**No gameplay code was modified during the source-archiving/design pass.** Do not claim the game systems have been verified. Real Godot native/Web work begins SURV-010.
