@@ -29,7 +29,7 @@ func _body() -> void:
 		for x in range(6, world.width - 7, 4):
 			hero.global_position = Vector2((x + 2) * 16 + 8, (y + 2) * 16 + 15)
 			var valid := true
-			for dy in range(-1, 6):
+			for dy in range(-3, 6):
 				for dx in range(-1, 6):
 					if not build.validate_cell(Vector2i(x + dx, y + dy)).is_empty():
 						valid = false
@@ -63,7 +63,7 @@ func _body() -> void:
 	Input.action_press("move_up")
 	for i in range(120):
 		await physics_frame
-	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d north_solid=%s gap=%s" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count(), str(world.is_solid_cell(gap.x, gap.y - 1)), str(build.entity_at_layer(gap, "object"))])
+	print("HERO_EXIT_WALK origin=%s hero=%s velocity=%s collisions=%d north1=%s north2=%s gap=%s" % [str(origin), str(hero.global_position), str(hero.velocity), hero.get_slide_collision_count(), str(world.is_solid_cell(gap.x, gap.y - 1)), str(world.is_solid_cell(gap.x, gap.y - 2)), str(build.entity_at_layer(gap, "object"))])
 	for index in range(hero.get_slide_collision_count()):
 		var hit := hero.get_slide_collision(index)
 		var collider := hit.get_collider()
