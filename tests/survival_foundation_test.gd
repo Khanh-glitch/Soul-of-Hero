@@ -143,7 +143,7 @@ func _document() -> Dictionary:
 
 func _stacks(item_id: String) -> Dictionary:
 	var out: Dictionary = {}
-	var stacks: Variant = _save().call(&"get_value", ["inventory", "item_stacks"], {})
+	var stacks: Variant = _save().call(&"get_inventory_stacks")
 	if stacks is Dictionary:
 		for key: Variant in (stacks as Dictionary).keys():
 			var record: Variant = (stacks as Dictionary)[key]
@@ -199,12 +199,16 @@ func _find_buildable(ow: Node, offset: Vector2i) -> Vector2i:
 func _reload_world(ow: Node) -> Node:
 	# Tear the scene down and boot a fresh one against the same save file. This is
 	# the "player quit and came back" path, not a soft reload.
+	print("[reload] tearing down")
 	ow.queue_free()
 	await process_frame
 	_host.queue_free()
 	_host = null
 	await process_frame
-	return await _boot()
+	print("[reload] booting a fresh overworld")
+	var fresh := await _boot()
+	print("[reload] booted=%s" % str(fresh != null))
+	return fresh
 
 
 # ---------------------------------------------------------------------------
@@ -296,7 +300,7 @@ func _body() -> void:
 	_expect(bool(hud_state.get("active", false)), "build modal: opens on request")
 	_expect(bool(hud_state.get("blocker_visible", false)),
 		"build modal: the click blocker is up, so a placement click is not an attack")
-	_expect(String(hud_state.get("text", "")).contains("wall"),
+	_expect(String(hud_state.get("text", "")).contains("[2] Wall"),
 		"build modal: the strip lists the pieces")
 	_expect(String(hud_state.get("text", "")).contains("short"),
 		"build modal: an empty bag is shown as short of materials")
@@ -591,7 +595,10 @@ func _body() -> void:
 		"case 11: the survival namespace is stamped with its schema")
 	_expect(_count(WOOD) == 7, "case 11: the legacy inventory is intact (%d)" % _count(WOOD))
 	# The legacy save is still loadable by anything that ignores survival.
-	_expect(int(save.call(&"get_value", ["schema_version"], -1)) == LivingArsenalSaveService.CURRENT_SCHEMA_VERSION,
+	# A typed local: `Object.call` rejects an untyped array where `get_value`
+	# expects `Array[String]`, which is exactly the trap the accessor above avoids.
+	var schema_path: Array[String] = ["schema_version"]
+	_expect(int(save.call(&"get_value", schema_path, -1)) == LivingArsenalSaveService.CURRENT_SCHEMA_VERSION,
 		"case 11: the outer save schema is unchanged by survival")
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(legacy_path))
 	_expect(bool(save.call(&"configure_storage", save_path, true)),

@@ -162,7 +162,7 @@ func inventory_count(item_id: String) -> int:
 	var save := _save()
 	if save == null:
 		return 0
-	var stacks: Variant = save.call(&"get_value", ["inventory", "item_stacks"], {})
+	var stacks: Variant = save.call(&"get_inventory_stacks")
 	if not stacks is Dictionary:
 		return 0
 	var total := 0
@@ -538,7 +538,7 @@ func inventory_totals() -> Dictionary:
 	var save := _save()
 	if save == null:
 		return {}
-	var stacks: Variant = save.call(&"get_value", ["inventory", "item_stacks"], {})
+	var stacks: Variant = save.call(&"get_inventory_stacks")
 	if not stacks is Dictionary:
 		return {}
 	var totals: Dictionary = {}

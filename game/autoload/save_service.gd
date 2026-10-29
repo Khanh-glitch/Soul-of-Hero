@@ -731,6 +731,26 @@ func grant_inventory_item(
 	)
 
 
+## The inventory's stack map as committed, as a copy.
+##
+## Callers that only want to read the bag should use this rather than
+## `get_value(["inventory", "item_stacks"], {})`. That path works from GDScript
+## source, but [method Object.call] passes variants and then rejects an untyped
+## array where `get_value` expects `Array[String]` — the failure is a runtime
+## error inside the reader, which shows up as "the bag is empty" everywhere
+## downstream. One accessor with no array to type is one fewer way to get that
+## wrong.
+func get_inventory_stacks() -> Dictionary:
+	_ensure_loaded()
+	var inventory: Variant = _data.get("inventory", {})
+	if not inventory is Dictionary:
+		return {}
+	var stacks: Variant = (inventory as Dictionary).get("item_stacks", {})
+	if not stacks is Dictionary:
+		return {}
+	return (stacks as Dictionary).duplicate(true)
+
+
 ## Adds items to the inventory of a *candidate* save document.
 ##
 ## This is the body of [method grant_inventory_item] without the transaction
