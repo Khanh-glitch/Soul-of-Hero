@@ -1,0 +1,31 @@
+name: Survival Handoff Contract
+
+on:
+  push:
+    branches:
+      - 'feature/survival-rpg-foundation-20261029'
+    paths:
+      - 'AGENTS.md'
+      - 'docs/survival/**'
+      - 'tools/survival/**'
+      - '.github/workflows/survival-handoff-contract.yml'
+  pull_request:
+    paths:
+      - 'AGENTS.md'
+      - 'docs/survival/**'
+      - 'tools/survival/**'
+      - '.github/workflows/survival-handoff-contract.yml'
+  workflow_dispatch:
+
+jobs:
+  validate-handoff:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate machine-readable handoff and source docs
+        run: python tools/survival/validate_handoff.py

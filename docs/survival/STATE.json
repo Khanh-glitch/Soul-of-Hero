@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "project": "Soul of Hero — Survival RPG",
+  "issue": "https://github.com/Khanh-glitch/Soul-of-Hero/issues/9",
+  "branch": "feature/survival-rpg-foundation-20261029",
+  "base_branch": "arena/54306b59-soul-of-hero",
+  "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
+  "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
+  "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
+  "updated_date": "2026-10-29",
+  "phase": "CONTINUITY_BOOTSTRAP",
+  "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
+  "code_claims": {
+    "survival_system_integrated": false,
+    "freeform_construction_integrated": false,
+    "gold_core_combat_integrated": false,
+    "native_playtest_passed": false,
+    "web_playtest_passed": false
+  },
+  "tasks": [
+    {
+      "id": "SURV-000",
+      "name": "Persistent cross-agent state, audit source locks, acceptance and validation",
+      "status": "implemented_unverified",
+      "evidence": [
+        "docs/survival/",
+        "AGENTS.md",
+        "tools/survival/validate_handoff.py"
+      ],
+      "next": "Verify GitHub CI for the bootstrap commit, then transition to verified"
+    },
+    {
+      "id": "SURV-010",
+      "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Inspect exact SaveService inventory transaction methods and world collision; implement with dedicated tests"
+    },
+    {
+      "id": "SURV-020",
+      "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Extend validated 2D placement after SURV-010"
+    },
+    {
+      "id": "SURV-030",
+      "name": "Smelting, workbench, recipe knowledge, loot with persistent container IDs",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Port selected permissively licensed contracts through SOH SaveService"
+    },
+    {
+      "id": "SURV-040",
+      "name": "Physical Skill Core instance + usage + research + recrafting",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Do not label VFX Gold-ready unless source verified; start independent economy schema"
+    },
+    {
+      "id": "SURV-050",
+      "name": "Full continent biome/resource/hazard/progression with initial quarter Chapter 1 cluster",
+      "status": "not_started",
+      "evidence": [],
+      "next": "World grammar masterplan, region data, route/topology tests, chunk viability"
+    },
+    {
+      "id": "SURV-060",
+      "name": "Real engine+browser full survival loop acceptance and human visual review",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Run ACCEPTANCE.md with evidence across integrated systems"
+    }
+  ],
+  "next_action": {
+    "task_id": "SURV-010",
+    "entrypoints": [
+      "game/autoload/save_service.gd",
+      "game/overworld/overworld_world.gd",
+      "game/overworld/chapter1_overworld.gd",
+      "game/loot/loot_catalog.gd"
+    ],
+    "first_test": "player harvest wood, place one paid collision-enabled structure, save/reload without duplication"
+  },
+  "blockers": [
+    {
+      "id": "GOLD-ZIP",
+      "scope": "Gold full-fidelity port only",
+      "status": "not_in_audited_git_tree",
+      "details": "Two SHA-locked archives must be supplied/verified at native port stage; general gameplay work not blocked"
+    },
+    {
+      "id": "BUILD-ART",
+      "scope": "final production building art only",
+      "status": "needs_asset_selection_and_license",
+      "details": "Cainos and existing packs need 2D modular fit review; use clearly labeled placeholders for mechanics"
+    }
+  ],
+  "cross_agent_rules": {
+    "source_of_truth": [
+      "AGENTS.md",
+      "docs/survival/STATE.json",
+      "docs/survival/WORKLOG.md",
+      "GitHub issue #9"
+    ],
+    "write_scope": "owned feature branch only",
+    "protect_branches": [
+      "main",
+      "arena/54306b59-soul-of-hero",
+      "feature/gold-93-skill-readiness-20261028"
+    ],
+    "advance_rule": "update state and append log after every verified commit; verify live GitHub HEAD"
+  },
+  "evidence": {
+    "bootstrap_ci": "pending",
+    "native_gameplay": "not_run",
+    "web_gameplay": "not_run",
+    "gold_visual_parity": "not_run"
+  }
+}
