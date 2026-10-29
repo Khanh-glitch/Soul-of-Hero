@@ -117,7 +117,7 @@ static func _extraction_body(c, g) -> void:
 				var an: float = a0 + u * u * 6.5 + u * 1.5
 				q.x = vx + V8M.v8_cos(an) * rr
 				q.y = vy + V8M.v8_sin(an) * rr * 0.9
-				q.z = 2.0 + V8M.v8_sin(u * M.PI) * 7.0 * (1.0 - u)
+				q.z = 2.0 + V8M.v8_sin(u * PI) * 7.0 * (1.0 - u)
 			w.parts.add({"k": "drop", "x": vx, "y": vy, "z": 2.0, "max": 0.9 / sp, "size": float(int(c.rng.range(1.0, 3.5))),
 					"c1": int(M.P["c1"]), "c2": int(M.P["c3"]), "c3": int(M.P["e2"]), "glow": 1, "fn": part_fn})
 		for f in res_:
@@ -166,7 +166,7 @@ static func _extraction_body(c, g) -> void:
 				var mote_fn := func(q, _ww, _dt) -> void:
 					var u: float = q.age / q.max
 					q.x = M.lerpf(ex_pos, p.x, u)
-					q.y = M.lerpf(ey_pos, p.y - 6.0, u) - V8M.v8_sin(u * M.PI) * 10.0
+					q.y = M.lerpf(ey_pos, p.y - 6.0, u) - V8M.v8_sin(u * PI) * 10.0
 				w.parts.add({"k": "mote", "x": e.x, "y": e.y, "z": 6.0, "max": 0.5, "c1": int(M.P["c2"]), "c2": int(M.P["c1"]),
 						"glow": 1, "fn": mote_fn})
 		if nt <= 0.0:
@@ -189,7 +189,7 @@ static func _extraction_body(c, g) -> void:
 				var u: float = float(i) / 13.0
 				var tt: float = M.clampf(u + a * 0.2, 0.0, 1.0)
 				var X: float = M.lerpf(vx, hx, tt) + V8M.v8_sin(u * 6.0 + float(s) * 2.0 + t * 10.0) * 7.0 * (1.0 - tt) * (1.0 - a)
-				var Y: float = M.lerpf(vy, hy, tt) + V8M.v8_cos(u * 5.0 + float(s)) * 5.0 * (1.0 - tt) - V8M.v8_sin(tt * M.PI) * 8.0
+				var Y: float = M.lerpf(vy, hy, tt) + V8M.v8_cos(u * 5.0 + float(s)) * 5.0 * (1.0 - tt) - V8M.v8_sin(tt * PI) * 8.0
 				pts.append(_pts_to_seg(X, Y, (2.4 - u * 1.4) * (1.0 - a * 0.5)))
 			L.dl = 13
 			DRAW.worm_body(L, pts, MATS.PAL()["liquid"], {"stripe": int(M.P["c3"]), "stripeT": t})
