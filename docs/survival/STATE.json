@@ -79,18 +79,20 @@
         "Native topology increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794 at 4afe3d94cea92be9cc2355f3fb8362ab358907f4; foundation 132 and topology 50 checks; not full acceptance",
         "Native door increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097 at 30cb746e4f1881c86abefc6cdd229ee0c2ef6011; foundation 132 and topology/door 62 checks; not full acceptance",
         "Native incremental door/roof/modal fixture: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40871270822 at 15965c26 — Godot 4.7 Xvfb, foundation 132 and topology/door/roof/modal 94 checks; not SURV-020 acceptance",
-        "Continuation draft https://github.com/Khanh-glitch/Soul-of-Hero/pull/21; stale PR #11 does not contain this branch"
+        "Continuation draft https://github.com/Khanh-glitch/Soul-of-Hero/pull/21; stale PR #11 does not contain this branch",
+        "Native bed/death/partial token guards: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480211 at 62b6ab5e507982a3651604ed924fd47e9dbd5056 — foundation gate, topology 94, bed 95; not full SURV-020 acceptance",
+        "Overworld native AppFlow and regression suite: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480215 at 62b6ab5e507982a3651604ed924fd47e9dbd5056; not a full shelter playthrough"
       ],
-      "next": "Implement paid indoor bed activation and safe overworld respawn through existing player lifecycle/SaveService, with dungeon-aware fallback and actual death/reload tests; continue native visual and full-loop acceptance.",
+      "next": "Complete A3 generic unique-token guards and production authoritative station/active-tick integration with actual A3 adapter, preserve escrow/replay; separately finish death crash-boundary, movement, art, visual resolutions, Web and human acceptance.",
       "assignment": {
-        "status": "CODE_IN_PROGRESS_DOOR_ROOF_MODAL_INCREMENT_NATIVE_TESTED",
+        "status": "CODE_IN_PROGRESS_BED_NATIVE_TESTED_A3_GUARDS_PARTIAL",
         "task_id": "SURV-020",
         "owner": "A0+A2",
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
         "branch": "arena/dea2428e-soul-of-hero",
         "review": "Full SURV-020 native visual and gameplay evidence required",
-        "user_reported": "Draft PR #21 is actual continuation; old #11 is stale. No merge or full acceptance."
+        "user_reported": "Draft PR #21 remains WIP: scoped native bed/death and partial token refusals; A3 host and full acceptance pending."
       }
     },
     {
