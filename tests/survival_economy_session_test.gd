@@ -4,6 +4,14 @@ extends "res://tests/survival_foundation_test.gd"
 ## with a teleported, physics-disabled Hero and cleared inventory. Later fault
 ## cases use fixture grants. This is NOT a normal-input fresh-save journey.
 
+class InteractionProbe extends Node2D:
+	var used := false
+	func can_interact(_player: Node2D) -> bool:
+		return true
+	func interact(_player: Node2D) -> bool:
+		used = true
+		return true
+
 func _finish() -> void:
 	paused = false
 	if FileAccess.file_exists(save_path):
@@ -67,6 +75,23 @@ func _body() -> void:
 		return
 	hero.global_position = sample_tree.global_position + Vector2(300, 0)
 	_expect(not sample_tree.can_interact(hero) and not sample_tree.interact(hero) and _count(WOOD) == 0, "distant direct resource interaction cannot harvest")
+	# Isolate an always-available interactable to cover the Knight's own range
+	# guard, independently of the resource's additional per-node check.
+	var temporarily_removed: Array[Node] = []
+	for existing: Node in get_nodes_in_group(&"player_interactable"):
+		existing.remove_from_group(&"player_interactable")
+		temporarily_removed.append(existing)
+	var probe := InteractionProbe.new()
+	ow.add_child(probe)
+	probe.global_position = hero.global_position + Vector2(300, 0)
+	probe.add_to_group(&"player_interactable")
+	_expect(not bool(hero.call(&"_try_interact")) and not probe.used, "Knight refuses an available distant world interaction")
+	hero.global_position = probe.global_position
+	_expect(bool(hero.call(&"_try_interact")) and probe.used, "Knight accepts the same available interaction nearby")
+	probe.remove_from_group(&"player_interactable")
+	probe.queue_free()
+	for existing: Node in temporarily_removed:
+		existing.add_to_group(&"player_interactable")
 	# One actual unhandled world click at a teleported node; this checks input
 	# routing and proximity but is not navigation or a fresh-save playthrough.
 	hero.global_position = sample_tree.global_position
