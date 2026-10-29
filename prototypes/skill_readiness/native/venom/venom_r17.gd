@@ -44,10 +44,12 @@ static func extraction(c):
 		_extraction_body(c, box[0])
 		return null)
 	box.append(gen)
+	printerr("R17 extraction factory gen_null=%s" % str(gen == null))
 	return gen
 
 
 static func _extraction_body(c, g) -> void:
+	printerr("R17 body start")
 	var w = c.w
 	var p = w.player
 	LIB.cast_anim(w, c, true, 0.5)
