@@ -55,8 +55,15 @@ func _body() -> void:
 	_key(KEY_Q, true)
 	_key(KEY_B, true)
 	_joy(JOY_BUTTON_A, true)
+	# Godot queues parsed events until a process frame. Do not close the
+	# workspace before the actual key/controller presses reach the input gate.
+	await process_frame
 	await physics_frame
+	await process_frame
 	await physics_frame
+	var gate := hero.get_node("GameplayInputGate")
+	print("A6_INPUT_TRACE open move=%s attack=%s dash=%s latched=%s held=%s" % [str(Input.is_action_pressed(&"move_right")), str(Input.is_action_pressed(&"attack")), str(Input.is_action_pressed(&"dash")), str(gate.get(&"_event_latches")), str(gate.get(&"_held_under_modal"))])
+	_expect(Input.is_action_pressed(&"move_right") and Input.is_action_pressed(&"attack") and Input.is_action_pressed(&"dash"), "injected keyboard and controller presses reached Input before close")
 	_expect(hero.global_position.distance_to(before) < 0.5 and String(hero.get(&"current_action")).is_empty(), "injected keyboard movement and combat do not leak under A6")
 	_expect(bool(build.get(&"active")) == build_before, "build toggle does not leak under A6")
 	for action: StringName in [&"move_right", &"attack", &"skill", &"soul_relay_1", &"build_toggle", &"dash"]:
@@ -64,6 +71,7 @@ func _body() -> void:
 	workspace.call(&"close_workspace")
 	await physics_frame
 	await physics_frame
+	print("A6_INPUT_TRACE closed move=%s attack=%s dash=%s latched=%s held=%s" % [str(Input.is_action_pressed(&"move_right")), str(Input.is_action_pressed(&"attack")), str(Input.is_action_pressed(&"dash")), str(gate.get(&"_event_latches")), str(gate.get(&"_held_under_modal"))])
 	_expect((hero.get(&"move_input") as Vector2).length() < 0.01 and String(hero.get(&"current_action")).is_empty(), "held gameplay inputs remain suppressed after closing A6")
 	for action: StringName in [&"move_right", &"attack", &"skill", &"soul_relay_1", &"build_toggle", &"dash"]:
 		_expect(not bool(hero.call(&"gameplay_input_allowed", action)), "held press remains suppressed after close: " + String(action))
@@ -83,6 +91,26 @@ func _body() -> void:
 	_expect((hero.get(&"move_input") as Vector2).x > 0.5, "fresh movement press works after release")
 	_key(KEY_D, false)
 	await physics_frame
+	workspace.call(&"open_workspace")
+	await process_frame
+	var click := InputEventMouseButton.new()
+	click.button_index = MOUSE_BUTTON_LEFT
+	click.position = root.get_final_transform() * (root.get_visible_rect().size * 0.5)
+	root.warp_mouse(click.position)
+	await process_frame
+	click.pressed = true
+	Input.parse_input_event(click)
+	await process_frame
+	await physics_frame
+	_expect(String(hero.get(&"current_action")).is_empty(), "actual A6 workspace pointer press does not attack")
+	workspace.call(&"close_workspace")
+	await process_frame
+	_expect(not bool(hero.call(&"gameplay_input_allowed", &"attack")) and not bool(hero.call(&"gameplay_input_allowed", &"build_place")), "held A6 pointer press remains suppressed after close")
+	click.pressed = false
+	Input.parse_input_event(click)
+	await process_frame
+	await physics_frame
+	_expect(bool(hero.call(&"gameplay_input_allowed", &"attack")), "pointer release rearms attack")
 	workspace.call(&"open_workspace")
 	await process_frame
 	paused = true
