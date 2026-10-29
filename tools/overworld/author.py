@@ -732,16 +732,90 @@ CAMPS = [
 ]
 
 
+def _camp_hearth(tx, ty, seed):
+    """Scorched ground under and around a camp fire.
+
+    This replaces four rectangular "hearth" patches that painted a 5x3 block of
+    gravel: a bright, tile-aligned rectangle in the middle of a dirt clearing, which
+    read as a paving slab someone had dropped on the camp. A hearth is not a slab -
+    it is a rough circle of ash and gravel whose edge is set by where people stood.
+
+    Kept small on purpose. First attempt ringed it with boulders and covered the
+    whole clearing: the fire had a `rock_a` on every fourth cell of a 4-tile ellipse,
+    which is two dozen grey domes across the camp. A hearth is one fire's footprint,
+    roughly three tiles across, with ash drifting a little further and thinning out.
+    """
+    for x, y in ellipse(tx, ty, 2.6, 2.2, wobble=0.6, seed=seed):
+        if get(solid, x, y) != ".":
+            continue
+        if h01(seed + 7, x, y) < 0.70:
+            put(ground, x, y, "g")
+        if h01(seed + 8, x, y) < 0.80:
+            put(detail, x, y, "z")
+    # Ash drifts further than the fire ever reached, thinning as it goes.
+    for x, y in ellipse(tx, ty, 4.4, 3.6, wobble=0.7, seed=seed + 1):
+        if get(solid, x, y) != "." or get(detail, x, y) != ".":
+            continue
+        if h01(seed + 3, x, y) < 0.26:
+            put(detail, x, y, "z")
+
+
 def _camp_clearing(cid, tx, ty, rx=8, ry=5, ground_code="d"):
     for x, y in ellipse(tx, ty, rx, ry, wobble=0.4, seed=stable_seed(cid)):
         put(ground, x, y, ground_code)
         put(solid, x, y, ".")
 
 
+def _camp_approach(cid, tx, ty, radius=18):
+    """A worn footpath from a camp out to the nearest road.
+
+    A camp with no connection to the road network is an island: the eye reads the
+    clearing as a patch of different ground with furniture on it. Roads here are
+    `=`/`+` detail overlays, so "connected" is a path that reaches one. Drawn as
+    `path` (`:`) rather than road, because nobody paved it - it is where feet have
+    been.
+    """
+    best = None
+    best_d = radius * radius * 4
+    for y in range(max(1, ty - radius), min(H - 1, ty + radius)):
+        for x in range(max(1, tx - radius), min(W - 1, tx + radius)):
+            if get(detail, x, y) not in ("=", "+"):
+                continue
+            d = (x - tx) * (x - tx) + (y - ty) * (y - ty)
+            if d < best_d:
+                best_d = d
+                best = (x, y)
+    if best is None:
+        return 0
+    ex, ey = best
+    # Walk the straight line, nudging it with coherent noise so it curves the way a
+    # path worn around obstacles does.
+    steps = max(abs(ex - tx), abs(ey - ty))
+    painted = 0
+    for i in range(1, steps):
+        f = i / float(steps)
+        wob = (vnoise(f * 6.0, 0.5, 3.0, stable_seed(cid + "_approach")) - 0.5) * 3.0
+        x = int(round(tx + (ex - tx) * f + wob))
+        y = int(round(ty + (ey - ty) * f - wob * 0.4))
+        if not inside(x, y) or get(solid, x, y) != ".":
+            continue
+        if get(detail, x, y) in ("=", "+"):
+            continue
+        if get(ground, x, y) in ("~", "-"):
+            continue
+        put(detail, x, y, ":")
+        if get(detail, x, y) != "=" and get(ground, x, y) in ("f", ",", ";", "g", "a"):
+            put(ground, x, y, "d")
+        painted += 1
+    return painted
+
+
 def paint_camps():
     # --- Ashen Refuge: a lean-to, a cook fire, somewhere to dry meat --------
     cid, _name, (tx, ty), _ = CAMPS[0]
     _camp_clearing(cid, tx, ty, 8, 5)
+    _camp_hearth(tx + 1, ty + 2, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
     add_prop("camp_tent", *tile_pos(tx - 3, ty), z=1)
     add_prop("camp_fire", *tile_pos(tx + 1, ty + 2), lit=True, z=1)
     add_prop("camp_bedroll", *tile_pos(tx - 1, ty + 3))
@@ -753,6 +827,8 @@ def paint_camps():
     # --- Wayfarer Stones: a crossing, not a camp ---------------------------
     cid, _name, (tx, ty), _ = CAMPS[1]
     _camp_clearing(cid, tx, ty, 7, 4, ground_code="g")    # trodden grass
+    _camp_hearth(tx, ty + 3, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
     add_prop("signpost", *tile_pos(tx - 2, ty), z=1)
     add_prop("disc_shrine", *tile_pos(tx + 5, ty - 2), lit=True, z=1)
     add_prop("column_broken", *tile_pos(tx - 5, ty - 2), z=1)
@@ -764,6 +840,8 @@ def paint_camps():
     # --- Relay Foot: a supply depot on the path to the mast ----------------
     cid, _name, (tx, ty), _ = CAMPS[2]
     _camp_clearing(cid, tx, ty, 7, 5)
+    _camp_hearth(tx - 3, ty + 3, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
     add_prop("camp_crate", *tile_pos(tx - 2, ty - 1), z=1)
     add_prop("camp_crate", *tile_pos(tx - 1, ty - 2), z=1)   # stacked
     add_prop("barrel", *tile_pos(tx + 2, ty - 1), z=1)
@@ -776,13 +854,20 @@ def paint_camps():
     # --- Watch Ridge: a brazier and a windbreak, facing outward ------------
     cid, _name, (tx, ty), _ = CAMPS[3]
     _camp_clearing(cid, tx, ty, 6, 4)
-    add_prop("brazier", *tile_pos(tx + 2, ty - 1), lit=True, z=1)
+    _camp_hearth(tx + 1, ty - 1, stable_seed(cid + "_hearth"))
+    _camp_approach(cid, tx, ty)
+    add_prop("brazier", *tile_pos(tx + 1, ty - 1), lit=True, z=1)
+    # The windbreak is the point of this camp ("facing outward"), so it is a line
+    # rather than two stones standing apart: five segments on the exposed north-west
+    # side, with the fire tucked behind it and the watch seat facing the gap.
+    for i in range(5):
+        add_prop("wall_stub", *tile_pos(tx - 4 + i, ty - 3), z=1)
+    add_prop("wall_stub", *tile_pos(tx - 5, ty - 2), z=1)
+    add_prop("wall_stub", *tile_pos(tx + 1, ty - 3), z=1)
     add_prop("camp_bedroll", *tile_pos(tx - 2, ty + 1))
-    add_prop("camp_trophies", *tile_pos(tx + 4, ty + 2))
-    add_prop("wall_stub", *tile_pos(tx - 4, ty - 2))      # stone windbreak
-    add_prop("wall_stub", *tile_pos(tx - 2, ty - 3))
-    add_prop("barrel", *tile_pos(tx - 5, ty + 4))
-    add_prop("camp_fire", *tile_pos(tx, ty + 4), lit=True)
+    add_prop("camp_crate", *tile_pos(tx + 3, ty + 1), z=1)
+    add_prop("barrel", *tile_pos(tx + 4, ty + 2))
+    add_prop("camp_trophies", *tile_pos(tx + 5, ty), z=1)
 
 
 def paint_shortcuts():
@@ -906,6 +991,16 @@ def paint_scatter():
             return False
         add_prop(frame, px, py)
         return True
+    # A camp owns its own ground. Without this, `paint_scatter` sees the clearing as
+    # ordinary terrain and fills it with whatever the surrounding region scatters -
+    # at Watch Ridge that was twenty-four boulders and a handful of wall stubs
+    # standing in the middle of the camp, and at Ashen Refuge grave markers inside
+    # the clearing. A camp that cannot clear its own footprint does not read as a
+    # place someone made; it reads as a camp someone dropped into a rockfield.
+    camp_zone = set()
+    for _cid, _name, (tx, ty), _unlock in CAMPS:
+        camp_zone.update(ellipse(tx, ty, 13, 10, wobble=0.5,
+                                 seed=stable_seed(_cid + "_camp_zone")))
     lane = set()
     for x in range(W):
         for y in range(H):
@@ -919,7 +1014,7 @@ def paint_scatter():
 
     def free(x, y):
         return (get(solid, x, y) == "." and (x, y) not in corridor
-                and (x, y) not in reserved
+                and (x, y) not in reserved and (x, y) not in camp_zone
                 and get(ground, x, y) not in ("f", "~", "-", "v", "y"))
 
     for y in range(H):
@@ -1308,6 +1403,107 @@ def neighbour_mask(layer, x, y, match):
     return m
 
 
+# Ground codes that must keep a hard edge, with the reason.
+#
+# Water is the important one: a bank is a thing you can see and fall off, and the
+# `bank` detail overlay is drawn against it. Roads are the other: a road that
+# dissolves into the grass stops reading as a road. Everything else in the world is
+# material meeting material - dirt into mud, mud into grass, grass into scrub - and
+# in nature those boundaries interpenetrate over a tile or two rather than
+# stair-casing along a tile edge.
+_FEATHER_FIXED = set("~-")
+
+
+def soften_camp_roads():
+    """A road crossing a camp stops being a road where the camp begins.
+
+    Three of the four camps sit on the road network, which is deliberate - they are
+    the places you can reach, so they are the places people camped. But the road's
+    paving overlay is a hard-edged pattern, and a rectangle of it in the middle of a
+    dirt clearing reads as a dropped slab rather than as a route. So inside each
+    clearing the paving degrades to *path* (`:`), completely at the centre and
+    partially at the rim, and the gravel ground under it goes back to dirt. From
+    outside, the road still runs up to the camp; inside, the camp is a place and not
+    a junction.
+    """
+    replaced = 0
+    for cid, _name, (tx, ty), _unlock in CAMPS:
+        for x, y in ellipse(tx, ty, 9, 6, wobble=0.4, seed=stable_seed(cid)):
+            if not inside(x, y):
+                continue
+            if get(detail, x, y) not in ("=", "+"):
+                continue
+            d = ((x - tx) / 9.0) ** 2 + ((y - ty) / 6.0) ** 2
+            reach = 1.0 - d
+            if h01(631, x, y) > reach * 1.25:
+                continue
+            put(detail, x, y, ":")
+            if get(ground, x, y) == "g":
+                put(ground, x, y, "d")
+            replaced += 1
+    return replaced
+
+
+def feather_boundaries(passes=2, seed=441):
+    """Dither every material boundary in the world over one to two tiles.
+
+    The ground is painted per-cell from noise fields, and it meets itself on tile
+    edges: a clearing ends, a forest floor begins, and the seam is a staircase of
+    16 px steps. Every camp, landmark and riverbank in the world inherits that seam,
+    which is a large part of why a camp looked dropped onto the terrain rather than
+    standing in it.
+
+    This does not blur anything. It walks the boundary and lets the two materials
+    interpenetrate cell-by-cell on a coherent noise field, the way soil and leaf
+    litter actually mix at an edge. Cells carrying a road/path/plaza overlay and
+    their neighbours are left alone, because those edges are load-bearing for
+    gameplay: you can see where the road is.
+    """
+    protect = set()
+    for x in range(W):
+        for y in range(H):
+            if get(detail, x, y) in ("=", "+", ":"):
+                protect.add((x, y))
+    # Roads are drawn with a verge, and the verge is part of the road's read.
+    grown = set()
+    for x, y in protect:
+        for dy in (-1, 0, 1):
+            for dx in (-1, 0, 1):
+                grown.add((x + dx, y + dy))
+    protect = grown
+
+    for pass_index in range(passes):
+        changes = []
+        for y in range(1, H - 1):
+            for x in range(1, W - 1):
+                if (x, y) in protect or get(solid, x, y) != ".":
+                    continue
+                own = get(ground, x, y)
+                if own in _FEATHER_FIXED:
+                    continue
+                foreign = {}
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    code = get(ground, x + dx, y + dy)
+                    if code != own and code not in _FEATHER_FIXED:
+                        foreign[code] = foreign.get(code, 0) + 1
+                if not foreign:
+                    continue
+                # Only feather toward the dominant neighbour: a cell on a three-way
+                # corner otherwise picks material at random and the corner frays
+                # into speckle instead of blending.
+                best = max(foreign, key=foreign.get)
+                if list(foreign.values()).count(foreign[best]) > 1 and len(foreign) > 1:
+                    continue
+                # Coherent noise, so the interpenetration has lobes and tongues
+                # instead of per-cell static.
+                t = fbm(x, y, seed=seed + pass_index, scale=3.4, octaves=2)
+                if t > 0.56 + 0.10 * pass_index:
+                    changes.append((x, y, best))
+        for x, y, code in changes:
+            put(ground, x, y, code)
+    return len(changes)
+
+
 def paint_pools():
     """Standing water on the marsh, placed by a per-cell field.
 
@@ -1540,8 +1736,13 @@ def main():
     reinstate_shortcut_bands()
     # Kerbs last: they only mark cells nothing else has claimed, so the order
     # matters - a road running onto a plaza keeps its own surface to the join.
+    softened = soften_camp_roads()
+    feathered = feather_boundaries()
+    # Kerbs and pools last: they only claim cells nothing else has, so the
+    # boundary dither must happen before them or it would eat their rims.
     pools = paint_pools()
     kerbs = paint_kerbs()
+    print("softened %d road cells in camps, feathered %d cells" % (softened, feathered))
     print("pools %d cells, kerbs %d cells" % (pools, kerbs))
 
     # Local, hand-authored overrides for the *world* (terrain cells and prop

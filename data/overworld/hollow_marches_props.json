@@ -587,11 +587,67 @@
   },
   {
    "frame": "brazier",
-   "x": 3368.0,
+   "x": 3352.0,
    "y": 1656.0,
    "flags": "",
    "z": 1,
    "lit": true
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3272.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3288.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3304.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3320.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3336.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3256.0,
+   "y": 1640.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "wall_stub",
+   "x": 3352.0,
+   "y": 1624.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
   },
   {
    "frame": "camp_bedroll",
@@ -602,7 +658,15 @@
    "lit": false
   },
   {
-   "frame": "camp_trophies",
+   "frame": "camp_crate",
+   "x": 3384.0,
+   "y": 1688.0,
+   "flags": "",
+   "z": 1,
+   "lit": false
+  },
+  {
+   "frame": "barrel",
    "x": 3400.0,
    "y": 1704.0,
    "flags": "",
@@ -610,36 +674,12 @@
    "lit": false
   },
   {
-   "frame": "wall_stub",
-   "x": 3272.0,
-   "y": 1640.0,
+   "frame": "camp_trophies",
+   "x": 3416.0,
+   "y": 1672.0,
    "flags": "",
-   "z": 0,
+   "z": 1,
    "lit": false
-  },
-  {
-   "frame": "wall_stub",
-   "x": 3304.0,
-   "y": 1624.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "barrel",
-   "x": 3256.0,
-   "y": 1736.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "camp_fire",
-   "x": 3336.0,
-   "y": 1736.0,
-   "flags": "",
-   "z": 0,
-   "lit": true
   },
   {
    "frame": "short_bridge",
@@ -11306,14 +11346,6 @@
    "lit": false
   },
   {
-   "frame": "rock_b",
-   "x": 3208.0,
-   "y": 1560.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "column_broken",
    "x": 3528.0,
    "y": 1560.0,
@@ -11556,14 +11588,6 @@
   {
    "frame": "rock_a",
    "x": 2792.0,
-   "y": 1592.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_a",
-   "x": 3496.0,
    "y": 1592.0,
    "flags": "",
    "z": 0,
@@ -11882,14 +11906,6 @@
    "lit": false
   },
   {
-   "frame": "rock_a",
-   "x": 3176.0,
-   "y": 1624.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_b",
    "x": 3832.0,
    "y": 1624.0,
@@ -11988,30 +12004,6 @@
   {
    "frame": "bush",
    "x": 2792.0,
-   "y": 1640.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_b",
-   "x": 3112.0,
-   "y": 1640.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_b",
-   "x": 3192.0,
-   "y": 1640.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_a",
-   "x": 3240.0,
    "y": 1640.0,
    "flags": "",
    "z": 0,
@@ -12290,14 +12282,6 @@
    "lit": false
   },
   {
-   "frame": "rock_a",
-   "x": 3176.0,
-   "y": 1672.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_b",
    "x": 3704.0,
    "y": 1672.0,
@@ -12468,22 +12452,6 @@
   {
    "frame": "bush",
    "x": 2440.0,
-   "y": 1688.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_b",
-   "x": 3192.0,
-   "y": 1688.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "wall_stub",
-   "x": 3208.0,
    "y": 1688.0,
    "flags": "",
    "z": 0,
@@ -12724,14 +12692,6 @@
   {
    "frame": "rock_b",
    "x": 3096.0,
-   "y": 1704.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3160.0,
    "y": 1704.0,
    "flags": "",
    "z": 0,
@@ -12986,14 +12946,6 @@
    "lit": false
   },
   {
-   "frame": "rock_b",
-   "x": 3336.0,
-   "y": 1736.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "tree_dead",
    "x": 3896.0,
    "y": 1736.0,
@@ -13146,22 +13098,6 @@
    "lit": false
   },
   {
-   "frame": "rock_a",
-   "x": 3256.0,
-   "y": 1752.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_a",
-   "x": 3304.0,
-   "y": 1752.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 4360.0,
    "y": 1752.0,
@@ -13292,14 +13228,6 @@
   {
    "frame": "tree_dead",
    "x": 3032.0,
-   "y": 1768.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "tree_pine",
-   "x": 3464.0,
    "y": 1768.0,
    "flags": "",
    "z": 0,
@@ -13474,22 +13402,6 @@
    "lit": false
   },
   {
-   "frame": "tree_dead",
-   "x": 3176.0,
-   "y": 1784.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "rock_a",
-   "x": 3208.0,
-   "y": 1784.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 3992.0,
    "y": 1784.0,
@@ -13636,14 +13548,6 @@
   {
    "frame": "bush",
    "x": 2248.0,
-   "y": 1800.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3304.0,
    "y": 1800.0,
    "flags": "",
    "z": 0,
@@ -13812,14 +13716,6 @@
   {
    "frame": "bush",
    "x": 3336.0,
-   "y": 1816.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3400.0,
    "y": 1816.0,
    "flags": "",
    "z": 0,
@@ -14060,14 +13956,6 @@
   {
    "frame": "tree_dead",
    "x": 3256.0,
-   "y": 1832.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "tree_pine",
-   "x": 3288.0,
    "y": 1832.0,
    "flags": "",
    "z": 0,
@@ -18258,14 +18146,6 @@
    "lit": false
   },
   {
-   "frame": "tree_pine",
-   "x": 3896.0,
-   "y": 2440.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "tree_dead",
    "x": 4344.0,
    "y": 2440.0,
@@ -18412,14 +18292,6 @@
   {
    "frame": "rock_b",
    "x": 3720.0,
-   "y": 2456.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3880.0,
    "y": 2456.0,
    "flags": "",
    "z": 0,
@@ -18707,22 +18579,6 @@
   },
   {
    "frame": "bush",
-   "x": 3752.0,
-   "y": 2504.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3864.0,
-   "y": 2504.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
    "x": 5784.0,
    "y": 2504.0,
    "flags": "",
@@ -18980,14 +18836,6 @@
   {
    "frame": "rock_b",
    "x": 3272.0,
-   "y": 2552.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3784.0,
    "y": 2552.0,
    "flags": "",
    "z": 0,
@@ -19259,14 +19107,6 @@
   },
   {
    "frame": "tree_dead",
-   "x": 4152.0,
-   "y": 2584.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "tree_dead",
    "x": 4376.0,
    "y": 2584.0,
    "flags": "",
@@ -19332,22 +19172,6 @@
   {
    "frame": "bush",
    "x": 3784.0,
-   "y": 2600.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3832.0,
-   "y": 2600.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 3864.0,
    "y": 2600.0,
    "flags": "",
    "z": 0,
@@ -21938,14 +21762,6 @@
    "lit": false
   },
   {
-   "frame": "rock_a",
-   "x": 2600.0,
-   "y": 2872.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "bush",
    "x": 3432.0,
    "y": 2872.0,
@@ -22252,22 +22068,6 @@
   {
    "frame": "tree_dead",
    "x": 2136.0,
-   "y": 2920.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 2472.0,
-   "y": 2920.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 2504.0,
    "y": 2920.0,
    "flags": "",
    "z": 0,
@@ -22858,14 +22658,6 @@
    "lit": false
   },
   {
-   "frame": "bush",
-   "x": 2280.0,
-   "y": 2984.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_a",
    "x": 2712.0,
    "y": 2984.0,
@@ -23274,14 +23066,6 @@
    "lit": false
   },
   {
-   "frame": "tree_pine",
-   "x": 2264.0,
-   "y": 3032.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "rock_b",
    "x": 3304.0,
    "y": 3032.0,
@@ -23452,14 +23236,6 @@
   {
    "frame": "bush",
    "x": 2216.0,
-   "y": 3048.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "bush",
-   "x": 2328.0,
    "y": 3048.0,
    "flags": "",
    "z": 0,
@@ -23932,14 +23708,6 @@
   {
    "frame": "bush",
    "x": 1688.0,
-   "y": 3112.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "tree_dead",
-   "x": 2296.0,
    "y": 3112.0,
    "flags": "",
    "z": 0,
@@ -25226,14 +24994,6 @@
    "lit": false
   },
   {
-   "frame": "grave_cross",
-   "x": 744.0,
-   "y": 3320.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
    "frame": "tree_pine",
    "x": 1560.0,
    "y": 3320.0,
@@ -25316,14 +25076,6 @@
   {
    "frame": "bush",
    "x": 376.0,
-   "y": 3336.0,
-   "flags": "",
-   "z": 0,
-   "lit": false
-  },
-  {
-   "frame": "gravestone",
-   "x": 968.0,
    "y": 3336.0,
    "flags": "",
    "z": 0,
@@ -86138,6 +85890,14 @@
    "lit": false
   },
   {
+   "frame": "rock_b",
+   "x": 3928.0,
+   "y": 2552.0,
+   "flags": "",
+   "z": 0,
+   "lit": false
+  },
+  {
    "frame": "bush",
    "x": 5304.0,
    "y": 2552.0,
@@ -88356,6 +88116,14 @@
   {
    "frame": "grave_cross",
    "x": 472.0,
+   "y": 3496.0,
+   "flags": "",
+   "z": 0,
+   "lit": false
+  },
+  {
+   "frame": "rock_a",
+   "x": 920.0,
    "y": 3496.0,
    "flags": "",
    "z": 0,

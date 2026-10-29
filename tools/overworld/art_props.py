@@ -831,7 +831,13 @@ def cliff_patch(seed=1, size=44):
     """
     img = new(size, size)
     base = mix(C("rock"), C("rock_dk"), 0.45)
-    tone = 0.96 + 0.12 * h01(seed, 1)
+    # Some patches are darker than the rock and some lighter. With every patch
+    # lighter, an isolated one composites as a soft dome - a lit top over a darker
+    # base, which reads as a boulder sitting on the cliff rather than as stone. A
+    # mixed distribution reads as tonal variation even where the patches are sparse,
+    # which is the whole point: they are meant to be *the same rock*, differently
+    # weathered.
+    tone = 0.90 + 0.20 * h01(seed, 1)
     # A *gradient* across the patch, not one flat tone. A flat-tone rectangle is
     # visible as a rectangle however low its contrast: the edges are straight lines
     # on a surface that has none. With the tone drifting across each sprite, the

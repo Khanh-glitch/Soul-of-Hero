@@ -1,56 +1,7 @@
 {
  "schema": "hollow_marches_world_patches/v1",
- "why": "Local, hand-authored corrections to the baked world. Applied before the bake's gates.",
- "terrain": [
-  {
-   "id": "camp_refuge_hearth",
-   "layer": "ground",
-   "set": "g",
-   "rect": [
-    54,
-    217,
-    58,
-    219
-   ],
-   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
-  },
-  {
-   "id": "camp_crossroads_hearth",
-   "layer": "ground",
-   "set": "g",
-   "rect": [
-    150,
-    189,
-    154,
-    191
-   ],
-   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
-  },
-  {
-   "id": "camp_relay_base_hearth",
-   "layer": "ground",
-   "set": "g",
-   "rect": [
-    246,
-    159,
-    250,
-    161
-   ],
-   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
-  },
-  {
-   "id": "camp_ridge_hearth",
-   "layer": "ground",
-   "set": "g",
-   "rect": [
-    206,
-    105,
-    210,
-    107
-   ],
-   "why": "gravel hearth under the camp fire. Two earlier attempts were wrong for different reasons: the path detail tile printed static, and this patch wrote ',' (grass) where gravel was meant, which put a green patch under every fire."
-  }
- ],
+ "why": "Local, hand-authored corrections to the baked world. Applied before the bake's gates. The four camp hearth patches that lived here were removed when hearths became procedural in author.py: a 5x3 gravel rectangle under a fire reads as a paving slab, and no rectangle can be made to look like a hearth.",
+ "terrain": [],
  "props": [
   {
    "id": "camp_refuge_no_grave_cross",

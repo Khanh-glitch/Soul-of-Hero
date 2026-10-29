@@ -2,34 +2,6 @@
  "schema": "hollow_marches_patch_report/v1",
  "applied": [
   {
-   "id": "camp_refuge_hearth",
-   "kind": "terrain",
-   "layer": "ground",
-   "code": "g",
-   "cells": 15
-  },
-  {
-   "id": "camp_crossroads_hearth",
-   "kind": "terrain",
-   "layer": "ground",
-   "code": "g",
-   "cells": 15
-  },
-  {
-   "id": "camp_relay_base_hearth",
-   "kind": "terrain",
-   "layer": "ground",
-   "code": "g",
-   "cells": 15
-  },
-  {
-   "id": "camp_ridge_hearth",
-   "kind": "terrain",
-   "layer": "ground",
-   "code": "g",
-   "cells": 15
-  },
-  {
    "id": "camp_refuge_no_grave_cross",
    "kind": "prop",
    "op": "remove",
@@ -38,7 +10,7 @@
     56,
     216
    ],
-   "touched": 4
+   "touched": 2
   },
   {
    "id": "camp_refuge_no_gravestone",
@@ -82,7 +54,7 @@
     248,
     158
    ],
-   "touched": 3
+   "touched": 1
   },
   {
    "id": "camp_relay_base_no_gravestone",
@@ -93,7 +65,7 @@
     248,
     158
    ],
-   "touched": 3
+   "touched": 0
   },
   {
    "id": "camp_ridge_no_grave_cross",
@@ -141,9 +113,9 @@
   }
  ],
  "summary": {
-  "terrain_cells": 51,
-  "prop_edits": 16,
-  "patches": 14,
-  "hash": "019badaf4ddaeed5f35c70e321fa4178a2c637f3f2656686830b963015ed4212"
+  "terrain_cells": 0,
+  "prop_edits": 9,
+  "patches": 10,
+  "hash": "650839680e4271ecdbe22705e969c8de8f5c0edf919d1369e2b0db0930eb97b1"
  }
 }

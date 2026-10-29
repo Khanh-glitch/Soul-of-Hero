@@ -15,6 +15,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_mark("begin")
 	var f := FileAccess.open(WORLD_DATA_PATH, FileAccess.READ)
 	_expect(f != null, "hollow_marches.json accessible")
 	var wd: Dictionary = {}
@@ -55,6 +56,7 @@ func _run() -> void:
 		_expect(String(d.get("campaign_level_id", "")).begins_with("chapter_1_level_"),
 			"landmark %s declares campaign_level_id" % d.get("id", "?"))
 
+	_mark("world-data")
 	# Survival block invariants.
 	var surv: Dictionary = wd.get("survival", {}) as Dictionary
 	if not surv.is_empty():
@@ -70,6 +72,7 @@ func _run() -> void:
 			_expect(float(max_p) / wild >= 120.0, "wild drain lasts ≥ 2 min")
 		_expect(is_equal_approx(safe, 0.0), "safe drain is 0")
 
+	_mark("survival")
 	# Shortcut carve boxes: authored, four numbers, and solid in the baked layers.
 	var layers_file := FileAccess.open("res://data/overworld/hollow_marches_layers.json", FileAccess.READ)
 	_expect(layers_file != null, "hollow_marches_layers.json accessible")
@@ -111,6 +114,7 @@ func _run() -> void:
 					all_solid = false
 		_expect(all_solid, "%s carve box is solid while closed (baked)" % sid)
 
+	_mark("carve-boxes")
 	# Every landmark threshold must be walkable in the baked layers.
 	if not solid_grid.is_empty():
 		var unwalkable := 0
@@ -131,6 +135,7 @@ func _run() -> void:
 				unwalkable += 1
 		_expect_equal(unwalkable, 0, "all ten thresholds stand on walkable ground")
 
+	_mark("thresholds")
 	# Registry bijectivity.
 	var by_world: Dictionary = reg.get("camp_levels_by_world_id", {}) as Dictionary
 	_expect(by_world.size() == 10, "registry camp_levels_by_world_id has 10 entries")
@@ -139,6 +144,7 @@ func _run() -> void:
 		by_campaign[String(by_world[wid])] = String(wid)
 	_expect(by_campaign.size() == 10, "derived campaign→world map bijective")
 
+	_mark("registry")
 	# --- the atlas must be able to draw a scattered overlay without a lattice ---
 	#
 	# An unmasked detail overlay drawn from a single frame repeats identically on
@@ -176,6 +182,7 @@ func _run() -> void:
 			_expect(not bool(pool.get("masked", true)),
 				"the pool overlay is unmasked (it has no neighbours to mask against)")
 
+	_mark("atlas-block")
 	if failures.size() > 0:
 		push_error("OVERWORLD_STATIC_CONTRACTS FAIL")
 		quit(1)
@@ -186,6 +193,14 @@ func _run() -> void:
 
 func _expect_equal(actual: Variant, expected: Variant, msg: String) -> void:
 	_expect(actual == expected, "%s (expected %s, got %s)" % [msg, expected, actual])
+
+
+func _mark(label: String) -> void:
+	# A progress checkpoint that survives into the run summary. If the script dies
+	# part-way - a runtime error, not a failed check - the last marker shows where,
+	# which is the difference between "some assertion failed" and a five-minute
+	# guess. Costs one line of stdout per section.
+	print("::notice::OW_STATIC_MARK " + label)
 
 
 func _expect(cond: bool, msg: String) -> void:
