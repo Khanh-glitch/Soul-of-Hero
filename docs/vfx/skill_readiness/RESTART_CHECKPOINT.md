@@ -239,3 +239,27 @@ verdict never reached the annotations. The always-run diagnostics step
 
 Memory and disk were never the cause: peak RSS was about 207 MB, free disk 85 GB,
 MemAvailable about 15 GB. The `setsid` change and watchdog are kept as diagnostics.
+
+## State after run 40861447433 on `6db5a1d`
+
+Regression: 001-006, 009, 010, 011, 012 and 014 all still PASS.
+
+- 013 Garden, still unverified. Scene first diverges at tick 320. The six live
+  shots at tick 320 are the Flower bloom shots (`age=0.067`, `z=5`, `sy=0`).
+  Native `Shot` now matches `fx.ts` `Shot.upd` (commit `6db5a1d`). Shot
+  constructor arguments match `s3.ts` 197-200. The remaining mismatch is not
+  yet localised. Candidates: the shot `air` draw (`shard` + ellipse) or the
+  position integration per frame.
+- 015 Vat, unverified. `parity: false`, `first_divergent_tick: -1`, so the
+  mismatch is in hits or cues, not the raster. Next: read `hit_mismatch` and
+  `cue_mismatch` from the always-step output. Its JSON fields were cut by the
+  diagnostic grep, which needs `\t`-indented keys.
+- 016 Crystal Rot, unverified. Scene first diverges at tick 195. Trace at that
+  tick shows native `fx` objects with `up` hooks and a `Custom` with all four hooks.
+
+CI diagnostics that are now in place (kept, cheap): watchdog with RSS, log size
+and disk limits; `setsid` for Godot; an `if: always()` diagnostics step that
+prints the trace and the key JSON fields as notices.
+
+Sequencing: 017 (`s4.ts` 11-99) is read but not written. 018-021, 007/008 and
+ARCANA 001-072 are not started.
