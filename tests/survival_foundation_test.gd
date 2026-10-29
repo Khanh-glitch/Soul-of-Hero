@@ -251,12 +251,18 @@ func _body() -> void:
 	var node_view: SurvivalResourceNode = ow.call(&"survival_node", tree_id)
 	_expect(node_view != null, "case 01: the node exists in the mounted scene")
 	if node_view != null:
+		var old_player_position := player.global_position
+		player.global_position = node_view.global_position + Vector2(300, 0)
+		_expect(not node_view.interact(player), "case 01: distant node interaction is rejected")
+		# This is a direct-interaction fixture, not a player navigation test.
+		player.global_position = node_view.global_position
 		var via_node := _count(WOOD)
 		var node_hit := bool(node_view.interact(player))
 		_expect(node_hit and _count(WOOD) > via_node,
-			"case 01: interacting through the world node also gathers")
+			"case 01: interacting through the nearby world node also gathers")
 		_expect(not node_view.last_result().is_empty(),
 			"case 01: interacting through the node reports its result")
+		player.global_position = old_player_position
 
 	print("[case 02] begin")  # heartbeat: a crash names the case it died in
 	# -- 02 exhausted node yields nothing; replay cannot farm it ----------------
