@@ -116,7 +116,14 @@ python tools/survival/economy/model_progression.py --json docs/survival/economy/
 python -m unittest discover -s tests/survival/catalog -p 'test_*.py' -v
 ```
 
-Local product-model gate: **21 Python tests PASS** (10 preserved hardening/catalog tests + 11 new progression negatives/sensitivities). Native hardening suite remains **362 checks / 20 cases** from the accepted fixture scope; this product model does not alter it. Final CI evidence is recorded in PR #19 after push.
+Product-model code SHA: `9b6b7771a3160e7c55b2935e3811cb26bb1137e4`.
+
+CI evidence at that code SHA:
+- Push run [40887990965](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40887990965): **SUCCESS**; contracts job `123496766421`, native job `123496952381`.
+- PR-side run [40888010777](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40888010777): **SUCCESS**.
+- Python suite: **21 tests PASS** (10 preserved hardening/catalog tests + 11 new progression negatives/sensitivities).
+- Native hardening suite remains **362 checks / 20 cases PASS**; this product model does not alter it.
+- The old `balance_report.json` is byte-identical to the preserved technical fixture (SHA-256 `45bceb2d6f9e190c9fd89b540cc11d088d98ebb6efcef36bb0f977cadc437e71`).
 
 ## 11. Next integration boundary
 

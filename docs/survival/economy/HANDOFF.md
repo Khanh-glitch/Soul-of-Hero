@@ -21,7 +21,7 @@
 - Python adversarial/balance/mapping/schema/growth tests: 10/10 PASS locally at hardening authoring time.
 - Native Godot 4.7 SaveService adapter: hardening suite PASS at 17e0358b, 362 checks / 20 cases; push run 40878087266 and PR-side run 40878096753 both SUCCESS.
 - Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED. The 156-specimen baseline is preserved as a technical fixture.
-- Product progression model: separate SIMULATION_ONLY SOH proposal; baseline Ember discovery session 3, Frost session 5, Ember sacrifice session 8, manufacture session 9; 5 late goals remain; 21 Python tests locally PASS before final CI.
+- Product progression model: separate SIMULATION_ONLY SOH proposal; baseline Ember discovery session 3, Frost session 5, Ember sacrifice session 8, manufacture session 9; 5 late goals remain. Code SHA 9b6b7771; push CI 40887990965 and PR-side CI 40888010777 SUCCESS; Python 21 tests PASS; native hardening remains 362 checks / 20 cases.
 - Save-growth serialization model: schema-2 compaction saves ~409 KB in the 14-session model and ~14.6 MB at 100k receipts versus legacy duplicate commands; A0 receipt/terminal-instance retention still pending.
 
 ## Hardening status
