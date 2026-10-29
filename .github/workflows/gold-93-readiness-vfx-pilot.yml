@@ -1,0 +1,53 @@
+name: Gold 93 VFX pilot (Venomwright 006 and 010, native frames vs recorded GOLD hashes)
+on:
+  push:
+    paths:
+      - 'prototypes/skill_readiness/pilot/**'
+      - 'prototypes/skill_readiness/native/venom/**'
+      - 'docs/vfx/skill_readiness/oracle/venomwright_006.json'
+      - 'docs/vfx/skill_readiness/oracle/venomwright_010.json'
+      - '.github/workflows/gold-93-readiness-vfx-pilot.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pilot-headless:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import project (Godot 4.7)
+        shell: bash
+        run: |
+          set -uo pipefail
+          timeout 300s godot --headless --editor --path . --import --quit 2>&1 | tee /tmp/pilot-import.log
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-import.log; then
+            echo "::error::[vfx-pilot] parse error during import"; exit 1
+          fi
+      - name: Run pilot acceptance (both skills, full timeline, GOLD hash sync, cleanup)
+        shell: bash
+        run: |
+          set -uo pipefail
+          OUT="$RUNNER_TEMP/venom-pilot"
+          mkdir -p "$OUT"
+          export VENOM_PILOT_OUT="$OUT"
+          timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/pilot/tests/venom_pilot_headless_test.gd 2>&1 | tee /tmp/pilot-run.log
+          STATUS=${PIPESTATUS[0]}
+          grep -E 'GOLD93_VENOM_PILOT|SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log | head -40 | while IFS= read -r line; do echo "::notice::[vfx-pilot] $line"; done
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log; then echo "::error::[vfx-pilot] script error"; STATUS=1; fi
+          if [ "$STATUS" != "0" ]; then echo "::error::[vfx-pilot] godot exited with status $STATUS"; exit 1; fi
+      - name: Upload native frames and manifest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: venom-pilot-frames
+          path: ${{ runner.temp }}/venom-pilot
+          if-no-files-found: warn
+          retention-days: 14
