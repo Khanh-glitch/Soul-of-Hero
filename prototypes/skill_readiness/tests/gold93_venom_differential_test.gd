@@ -30,6 +30,7 @@ const ENGINE = preload("res://prototypes/skill_readiness/native/venom/venom_engi
 const SKILLS = preload("res://prototypes/skill_readiness/native/venom/venom_skills.gd")
 const REGISTRY = preload("res://prototypes/skill_readiness/core/gold93_parity_registry.gd")
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
+const CANDIDATES = preload("res://prototypes/skill_readiness/native/venom/venom_candidates.gd")
 
 const ORACLE_DIR := "res://docs/vfx/skill_readiness/oracle"
 const DIAG_DIR := "res://docs/vfx/skill_readiness/diagnostics"
@@ -43,6 +44,9 @@ var _dump_tick: int = -1
 ## is not ported yet is "not yet applicable", not "broken": without this flag
 ## every unported shard would fail and the matrix could not be declared once.
 var _skip_unported: bool = false
+## `-- --candidates` lets the differential reach UNVERIFIED generators in
+## venom_candidates.gd. Without it, only the registry is visible.
+var _use_candidates: bool = false
 
 
 func _init() -> void:
@@ -59,6 +63,8 @@ func _init() -> void:
 			_dump_tick = int(a.substr(12))
 		elif a == "--skip-unported":
 			_skip_unported = true
+		elif a == "--candidates":
+			_use_candidates = true
 	if world_only:
 		var wok := _run_world_only()
 		print("GOLD93_VENOM_WORLD_DIFFERENTIAL: " + ("PASS" if wok else "FAIL"))
@@ -71,7 +77,7 @@ func _init() -> void:
 		ids = [int(only)]
 	else:
 		for k in SKILLS.defs():
-			if SKILLS.has_generator(int(k)):
+			if _has_gen(int(k)):
 				ids.append(int(k))
 		ids.sort()
 	if ids.is_empty():
@@ -86,6 +92,19 @@ func _init() -> void:
 	for f in _failures:
 		print("  FAIL " + str(f))
 	quit(0 if ok else 1)
+
+
+## Registry first; candidates only when explicitly requested.
+func _has_gen(sid: int) -> bool:
+	if SKILLS.has_generator(sid):
+		return true
+	return _use_candidates and CANDIDATES.has_generator(sid)
+
+
+func _factory(sid: int):
+	if SKILLS.has_generator(sid):
+		return SKILLS.run_factory(sid)
+	return CANDIDATES.run_factory(sid)
 
 
 func _fail(msg: String) -> void:
@@ -243,7 +262,7 @@ func _run_world_seed(oracle: Dictionary, canonical: String) -> bool:
 
 
 func _run(sid: int) -> bool:
-	if _skip_unported and not SKILLS.has_generator(sid):
+	if _skip_unported and not _has_gen(sid):
 		# Recorded as PENDING, never as PASS: an unported skill has no parity
 		# evidence and must not be counted as verified anywhere.
 		print("GOLD93_VENOM_DIFFERENTIAL: SKIP skill %d (generator not ported)" % sid)
@@ -300,10 +319,10 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		_fail("skill %d: no native def" % sid)
 		return false
 	var def: Dictionary = defs[sid]
-	if not SKILLS.has_generator(sid):
+	if not _has_gen(sid):
 		_fail("skill %d: generator not ported" % sid)
 		return false
-	var factory: Callable = SKILLS.run_factory(sid)
+	var factory: Callable = _factory(sid)
 
 	var proto: Dictionary = oracle.get("protocol", {})
 	var seed_: int = int(proto.get("seed", 7))
