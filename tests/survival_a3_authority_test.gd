@@ -79,6 +79,22 @@ func _run() -> void:
 		var attempted := func(c: Dictionary) -> bool: return _mutate_token(c, id, mode)
 		_expect(not bool(save.call(&"transact_once", "forge." + mode, attempted, {"kind": "survival_economy"})),
 			"forged metadata and " + mode + " cannot commit")
+	var forged_id := "soh_i_000000000099_deadbeef"
+	var balanced_forgery := func(c: Dictionary) -> bool:
+		var stacks: Dictionary = c["inventory"]["item_stacks"]
+		stacks[forged_id] = {"kind": "key_item", "quantity": 1}
+		var state: Dictionary = c["survival_economy"]
+		var copy: Dictionary = state["instances"][id].duplicate(true)
+		copy["instance_id"] = forged_id
+		state["instances"][forged_id] = copy
+		return true
+	_expect(not bool(save.call(&"transact_once", "forge.balanced", balanced_forgery, {"kind": "survival_economy"})), "even a balanced forged token and attribute pair is unauthorized")
+	var forged_terminal := func(c: Dictionary) -> bool:
+		c["inventory"]["item_stacks"].erase(id)
+		c["survival_economy"]["instances"][id]["location"] = "dismantled"
+		return true
+	_expect(not bool(save.call(&"transact_once", "forge.terminal", forged_terminal, {"kind": "survival_economy"})), "balanced but unauthorized terminal conversion refused")
+	_expect(save.call(&"create_pinned_economy_port", RefCounted.new()) == null, "unreviewed object cannot bind an economy authority")
 	var bag_path: Array = ["inventory", "item_stacks", id, "quantity"]
 	_expect(not bool(save.call(&"patch_state_path", bag_path, 2)), "nontransactional patch cannot bypass guard")
 	var bad_snapshot: Dictionary = save.call(&"get_snapshot")
@@ -92,6 +108,16 @@ func _run() -> void:
 			return _mutate_token(c, id, "erase"))
 	_expect(not bool(wrapped.get("ok", false)), "A3 wrapper refuses foreign mutator")
 	_expect(bool((economy.call(&"ownership_audit") as Dictionary).get("ok", false)), "audit remains valid after generic attacks")
+	var callback_result := {"called": false, "accepted": false}
+	var attack_on_signal := func(_snapshot: Dictionary) -> void:
+		callback_result["called"] = true
+		callback_result["accepted"] = bool(save.call(&"patch_state_path", ["survival_economy", "instances", id, "condition"], 1))
+	save.connect(&"save_committed", attack_on_signal)
+	var wear: Dictionary = economy.call(&"wear", id, 1, "legitimate.wear")
+	save.disconnect(&"save_committed", attack_on_signal)
+	_expect(bool(wear.get("ok", false)), "genuine A3 wear commits")
+	_expect(bool(callback_result["called"]) and not bool(callback_result["accepted"]), "save signal re-entry cannot inherit A3 authorization")
+	_expect(int((economy.call(&"instance", id) as Dictionary).get("condition", 0)) == 69, "re-entry cannot rewrite A3 attributes")
 	_expect(bool(save.call(&"grant_inventory_item", "knowledge_spares", "material", 5, "fixture.spares")), "ordinary inventory grant unaffected")
 	var research: Dictionary = economy.call(&"research_recipe", "iron_pick", "lab", "specimen", "specimen.research", id)
 	_expect(bool(research.get("ok", false)), "genuine A3 moves specimen into research escrow")
@@ -149,6 +175,7 @@ func _run() -> void:
 			paused = false
 			await process_frame
 		_expect(not bool(save.call(&"save_now")) and not bool(save.call(&"grant_inventory_item", "oak_wood", "material", 1, "quarantine." + mode)), "quarantine blocks writes: " + mode)
+		_expect(not bool(save.call(&"reset_to_defaults", "RESET_SOUL_OF_HERO_SAVE")), "quarantine blocks destructive reset: " + mode)
 		_expect(FileAccess.get_file_as_string(path) == bytes, "malformed bytes are not replaced: " + mode)
 		var repair := FileAccess.open(path, FileAccess.WRITE)
 		repair.store_string(JSON.stringify(safe, "\t") + "\n")
