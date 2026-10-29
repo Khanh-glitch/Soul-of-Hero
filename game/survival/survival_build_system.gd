@@ -363,7 +363,23 @@ func _wake_cell_clear(cell: Vector2i, ignore_body: RID = RID()) -> bool:
 	if ignore_body.is_valid():
 		exclusions.append(ignore_body)
 	query.exclude = exclusions
-	return get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
+	if not get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty():
+		return false
+	# Do not wake beside a live enemy merely because its exact body rectangle
+	# misses the Hero's. Layer 4 is shared, so only moving actor bodies count.
+	var danger := PhysicsShapeQueryParameters2D.new()
+	var radius := CircleShape2D.new()
+	radius.radius = 48.0
+	danger.shape = radius
+	danger.transform = Transform2D(0.0, foot + body_shape.position)
+	danger.collision_mask = 4
+	danger.collide_with_areas = false
+	danger.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(danger, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is CharacterBody2D or collider is RigidBody2D:
+			return false
+	return true
 
 
 func _wake_has_exit(start: Vector2i, room_id: String) -> bool:

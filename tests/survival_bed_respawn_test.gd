@@ -95,6 +95,43 @@ func _body() -> void:
 	_expect(String((svc.call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id,
 		"active bed survives world restart")
 	_expect(bool(build.bed_wake_position(bed_id).get("ok", false)), "closed door permits a safe wake and exit")
+	var doorway := build.structure_node(String(door.get("entity_id", "")))
+	var blocker := StaticBody2D.new()
+	blocker.collision_layer = 1
+	var blocker_shape := CollisionShape2D.new()
+	var rect := RectangleShape2D.new()
+	rect.size = Vector2(16, 16)
+	blocker_shape.shape = rect
+	blocker.add_child(blocker_shape)
+	ow.add_child(blocker)
+	blocker.global_position = doorway.global_position + Vector2(8, -8)
+	await physics_frame
+	_expect(not bool(build.bed_wake_position(bed_id).get("ok", true)), "obstructed door exit invalidates bed wake")
+	_expect(String((ow.call(&"_resolve_overworld_respawn") as Dictionary).get("source", "")) == "camp", "obstructed bed selects safe fallback")
+	blocker.queue_free()
+	await physics_frame
+	var enemy := CharacterBody2D.new()
+	enemy.collision_layer = 4
+	var enemy_shape := CollisionShape2D.new()
+	var enemy_rect := RectangleShape2D.new()
+	enemy_rect.size = Vector2(8, 8)
+	enemy_shape.shape = enemy_rect
+	enemy.add_child(enemy_shape)
+	ow.add_child(enemy)
+	enemy.global_position = build.structure_node(bed_id).global_position + Vector2(8, 8)
+	await physics_frame
+	_expect(not bool(build.bed_wake_position(bed_id).get("ok", true)), "nearby enemy-layer actor prevents unsafe bed wake")
+	enemy.queue_free()
+	await physics_frame
+	hero.global_position = doorway.global_position + Vector2(24, 31)
+	_expect(doorway.interact(hero), "open door from reach")
+	await process_frame
+	await physics_frame
+	_expect(bool(build.bed_wake_position(bed_id).get("ok", false)), "open doorway permits safe bed wake")
+	_expect(doorway.interact(hero), "close clear door from reach")
+	await process_frame
+	await physics_frame
+
 	_expect(bool(svc.call(&"learn_recipe", "bed_test_recipe", "test", "survival.test.recipe")), "learned knowledge committed")
 	_expect(_give(STONE, 3), "carried materials granted before death")
 	var old_checkpoint := Vector2(123, 456)
@@ -137,6 +174,16 @@ func _body() -> void:
 		_expect(bool(bag.call(&"interact", hero)) and _count(STONE) == 3, "recover bag by real interaction without item loss")
 		_expect(not bool(svc.call(&"recover_death_bag", bag_id)), "replaying recovery cannot duplicate")
 	_expect(bool(svc.call(&"is_recipe_learned", "bed_test_recipe")), "knowledge remains after bag recovery")
+	var first_bag_count: int = ((svc.call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).size()
+	hero.call(&"kill")
+	var second_doc: Dictionary = svc.call(&"document")
+	var second_bag := String(second_doc.get("pending_death", ""))
+	_expect(not second_bag.is_empty() and second_bag != bag_id and (second_doc.get("death_bags", {}) as Dictionary).size() == first_bag_count + 1,
+		"repeated death creates a distinct durable bag")
+	_expect(bool(ow.call(&"_respawn_overworld_hero")), "second death respawns independently")
+	_expect(bool(_save().call(&"reload_save")), "reload after second respawn")
+	_expect((svc.call(&"document") as Dictionary).get("death_bags", {}).has(second_bag), "unrecovered bag persists after restart boundary")
+
 	_expect(bool(svc.call(&"remove_structure", breach_id)), "demolish enclosing wall")
 	await physics_frame
 	_expect(not bool(build.bed_wake_position(bed_id).get("ok", true)), "breached room invalidates bed")
