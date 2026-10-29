@@ -84,7 +84,7 @@ func _run() -> void:
 	Input.action_press(&"build_toggle")
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	var moved := world.player.global_position.distance_to(before) > 0.5
+	var moved: bool = world.player.global_position.distance_to(before) > 0.5
 	var action := String(world.player.current_action)
 	var combat_action := not action.is_empty()
 	var build_changed := bool(world.survival_build.active) != build_before
@@ -116,7 +116,7 @@ func _run() -> void:
 	await get_tree().physics_frame
 	modal.visible = false
 	await get_tree().physics_frame
-	var held_input_after_close := world.player.move_input.x > 0.5
+	var held_input_after_close: bool = world.player.move_input.x > 0.5
 	for key: StringName in [&"move_right", &"light_attack", &"skill", &"build_toggle", &"attack"]:
 		Input.action_release(key)
 	await get_tree().physics_frame

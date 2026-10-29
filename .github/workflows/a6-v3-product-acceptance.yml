@@ -367,11 +367,17 @@ jobs:
               with tempfile.NamedTemporaryFile(suffix=".jpg") as thumb:
                   subprocess.run(["convert", str(png), "-resize", "480x270!", "-strip", "-sampling-factor", "4:2:0", "-quality", "30", thumb.name], check=True)
                   encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
-                  if len(encoded) > 45000:
-                      subprocess.run(["convert", str(png), "-resize", "320x180!", "-strip", "-quality", "25", thumb.name], check=True)
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "320x180!", "-strip", "-quality", "20", thumb.name], check=True)
                       encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
-                  if len(encoded) > 45000:
-                      raise SystemExit(f"visual preview exceeds annotation bound: {png.name}")
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "240x135!", "-strip", "-quality", "12", thumb.name], check=True)
+                      encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      subprocess.run(["convert", str(png), "-resize", "160x90!", "-strip", "-quality", "8", thumb.name], check=True)
+                      encoded = subprocess.check_output(["base64", "-w0", thumb.name], text=True)
+                  if len(encoded) > 3500:
+                      raise SystemExit(f"visual preview exceeds GitHub annotation's 4096-character truncation limit: {png.name}")
                   print(f"::notice file=.github/workflows/a6-v3-product-acceptance.yml,line=1,title=A6_preview_{png.stem}::{encoded}")
           PY
 
