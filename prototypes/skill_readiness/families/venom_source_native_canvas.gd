@@ -80,8 +80,11 @@ func present(scene, glow) -> void:
 	if scene == null or glow == null:
 		return
 	bind_layers(int(scene.W), int(scene.H))
-	_scene_img.data = scene.bytes
-	_glow_img.data = glow.bytes
+	# `Image.data` is a read-only derived property in Godot 4 - assigning to it
+	# silently fails with a "!p_data.has(width)" error. `set_data()` is the
+	# in-place upload the proven gold_pair canvases use.
+	_scene_img.set_data(_w, _h, false, Image.FORMAT_RGBA8, scene.bytes)
+	_glow_img.set_data(_w, _h, false, Image.FORMAT_RGBA8, glow.bytes)
 	_scene_tex.update(_scene_img)
 	_glow_tex.update(_glow_img)
 	frames_presented += 1

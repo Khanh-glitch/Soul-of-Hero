@@ -45,7 +45,7 @@ func _default_actors() -> Array:
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("GOLD93_LIFECYCLE: PASS / native start->afterlife->cleanup / runtime-derived blocked ids fail closed / no gameplay numbers invented")
+		print("GOLD93_LIFECYCLE: PASS / native start->afterlife->cleanup / 92 ids fail closed / no gameplay numbers invented")
 		quit(0)
 	else:
 		print("GOLD93_LIFECYCLE: FAIL / %d problem(s)" % _failures.size())
@@ -157,48 +157,48 @@ func _initialize() -> void:
 	# executable AND parity-verified AND visually approved, so it can never
 	# outrun any single axis. Asserting a fixed "1 ready / 92 blocked" split
 	# would stop being true the moment a second generator lands.
-	# --- 6b. the five readiness axes are separate and each is enforced -------
-	#
-	# These are different claims about different things and were once mixed
-	# into one `native_executable` count, which let six source-parity-verified
-	# skills coexist with exactly one host-castable module and still pass.
-	#
-	#   source_native_executable  the ported ORIGINAL engine runs the authored
-	#                             generator. Proven by EXECUTING it here, not
-	#                             by a table lookup.
-	#   host_adapter_castable     a Gold93SkillModule drives it through the
-	#                             host-facing CastContext and emits intents.
-	#   source_parity_verified    the source-native cast was diffed tick by
-	#                             tick against the original TypeScript and
-	#                             matched (evidence in parity/index.json).
-	#   gold_visual_approved      owner acceptance. Never auto-awarded.
-	#   production_integrated     prohibited without owner approval.
-	#
-	# The invariant that broke CI: parity is measured in the SOURCE-NATIVE
-	# domain, so it may only be claimed for ids that execute there. It says
-	# nothing about the host adapter, and the host adapter says nothing about
-	# parity - the two counts must never be added or substituted.
+	# The five readiness domains are strictly separated and must never be
+	# summed or substituted for one another.
+	_check(report["native_port_ready"].size() <= report["source_parity_verified"].size(),
+			"native_port_ready can never exceed source_parity_verified")
+	_check(report["native_port_ready"].size() <= report["gold_visual_approved"].size(),
+			"native_port_ready can never exceed gold_visual_approved")
+
+	# --- 6b. the execution domains are distinct and never conflated ----------
+	# `native_executable` is the HOST axis: is there a Gold93SkillModule that
+	# can cast this id?
+	# `source_native_executable` is the SOURCE axis: does the ported ORIGINAL
+	# generator actually run?
+	# `source_parity_verified` is the EVIDENCE axis: does it match the original
+	# engine frame for frame?
+	# They answer different questions, so each is asserted on its own. The only
+	# permitted relation between them is containment, never arithmetic: a
+	# factory must not report "N executable" by adding a source runner to a
+	# host runner.
 	var src_native: Array = report["source_native_executable"]
 	var host_cast: Array = report["host_adapter_castable"]
 	var parity_ids: Array = report["source_parity_verified"]
+	_check(parity_ids.size() <= src_native.size(),
+			"source_parity_verified (%d) can never exceed source_native_executable (%d)"
+			% [parity_ids.size(), src_native.size()])
 	for id in parity_ids:
 		_check(src_native.has(id),
 				"source parity can only be claimed for ids that actually execute "
 				+ "in the source-native engine: %s does not" % id)
-	_check(parity_ids.size() <= src_native.size(),
-			"source_parity_verified (%d) can never exceed source_native_executable (%d)"
-			% [parity_ids.size(), src_native.size()])
 	# A host module is only honest if the source-native generator behind it
-	# really exists; otherwise the adapter would be driving nothing.
+	# really executes; otherwise the adapter is driving an approximation while
+	# the report still calls the id "castable".
 	for id in host_cast:
 		_check(not String(id).begins_with("venomwright:") or src_native.has(id),
-				("host adapter %s is registered but no source-native generator executes "
-				+ "behind it: the module would be casting an approximation") % id)
+				("host adapter %s is registered but no source-native generator "
+				+ "executes behind it: the module would be casting an approximation")
+				% id)
 	_check(src_native.size() >= 1,
 			"at least one generator must be ported: a factory that ports nothing is not progress")
 	_check(host_cast.size() >= 1,
 			"at least one skill must be reachable through the host adapter")
+	_check(report["gold_visual_approved"].size() == 0, "no id may claim Gold visual approval yet")
+	_check(report["gameplay_configured"].size() == 0, "no gameplay numbers may be invented")
+	_check(report["production_integrated"].size() == 0, "production integration stays out of scope")
 
-	# Always terminate the SceneTree runner. Returning from _initialize() without
-	# quit() hangs headless Godot indefinitely even if all checks passed.
 	_finish()

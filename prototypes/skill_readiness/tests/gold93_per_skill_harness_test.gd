@@ -154,7 +154,11 @@ func _run_skill(runtime, key: String) -> Dictionary:
 
 	var before_cancel: int = int(handle.result().get("intents", {}).get("emitted", 0))
 	row["intents_emitted"] = before_cancel
-	_check(before_cancel > 0, "a native cast must emit a real intent stream: " + key)
+	# Deliberately NOT asserting `before_cancel > 0` here. The smoke window is
+	# only SMOKE_TICKS long (a third of a second), and several authored casts
+	# have their first contact later than that - so this would assert the
+	# fixture's luck rather than the code. Whether a cast really emits is
+	# asserted on the full cast below, which runs to completion.
 
 	_check(handle.cancel(), "cancel() must succeed while running: " + key)
 	handle.tick_source(SMOKE_TICKS)
@@ -168,8 +172,9 @@ func _run_skill(runtime, key: String) -> Dictionary:
 	row["combat_rejected"] = int(combat.get("rejected", 0))
 	_check(row["combat_applied"] == 0,
 			"unconfigured rules must never apply damage: " + key)
-	_check(row["combat_rejected"] > 0,
-			"unconfigured rules must be rejected by the authority: " + key)
+	# The authority can only reject what the cast actually submitted, so this
+	# is asserted on the full cast below rather than on the short smoke window.
+	_check(row["combat_rejected"] >= 0, "combat rejection count must be readable: " + key)
 
 	row["resources_released"] = handle.release_resources()
 	_check(row["resources_released"] > 0, "teardown must release owned resources: " + key)
@@ -201,6 +206,33 @@ func _run_skill(runtime, key: String) -> Dictionary:
 	row["trace_digest"] = full.trace_digest()
 	_check(not row["trace_digest"].is_empty(),
 			"a full cast must produce a deterministic trace digest: " + key)
+
+	# The full cast ran the whole authored timeline, so it is the honest place
+	# to require that the cast actually did something and that every authored
+	# event survived the trip into typed intents.
+	var full_combat: Dictionary = full.result().get("combat", {})
+	_check(int(full_combat.get("applied", 0)) == 0,
+			"unconfigured rules must never apply damage: " + key)
+	_check(int(full_combat.get("rejected", 0)) > 0,
+			"unconfigured rules must be rejected by the authority: " + key)
+	var full_stats: Dictionary = full.module.stats() if full.module != null else {}
+	var full_emitted: int = int(full.result().get("intents", {}).get("emitted", 0))
+	if full_stats.has("damage_intents"):
+		# Modules that publish the authored-event counters are held to exact
+		# 1:1 transmission.
+		var authored: int = (int(full_stats.get("damage_intents", 0))
+				+ int(full_stats.get("status_intents", 0)))
+		_check(authored > 0,
+				"a full authored cast must produce real events: " + key)
+		_check(full_emitted == authored,
+				"every authored event must become exactly one typed intent: " + key
+				+ " (%d emitted vs %d authored)" % [full_emitted, authored])
+	else:
+		# The legacy gold_pair module does not publish per-event counters and
+		# lives outside this prototype (read-only dependency), so it can only
+		# be held to the weaker "it emitted something" bar here.
+		_check(full_emitted > 0,
+				"a full authored cast must produce real events: " + key)
 	full.dispose()
 	full_stage.queue_free()
 
@@ -271,8 +303,21 @@ func _initialize() -> void:
 				"every id must attach its family surfaces: " + String(row.get("key", "")))
 		_check(int(row.get("combat_applied", 0)) == 0,
 				"no id may apply unconfigured damage: " + String(row.get("key", "")))
-	_check(native == 1, "exactly one id is natively executable today, got %d" % native)
-	_check(blocked == 92, "exactly 92 ids must fail closed today, got %d" % blocked)
+	# The split must never be hardcoded. The factory exists to grow the native
+	# side, so a frozen "1 native / 92 blocked" assertion would have to be
+	# edited every time a generator lands - and editing a test to match new
+	# code is how a gate stops being a gate. What must hold is that the split
+	# is exhaustive, that it agrees with what the runtime itself reports, and
+	# that it moves in one direction only.
+	_check(native + blocked == 93,
+			"every id is either natively executable or fails closed, got %d + %d"
+			% [native, blocked])
+	_check(native >= 1,
+			"the factory must have ported at least one generator, got %d" % native)
+	var reported_native: int = RUNTIME.new().readiness_report()["native_executable"].size()
+	_check(native == reported_native,
+			"the harness must agree with the runtime's own count: %d vs %d"
+			% [native, reported_native])
 	_check(leaked == 0, "no harness instance may leak a node, got %d" % leaked)
 	_check(int(families.get("venomwright", 0)) == 21, "21 Venomwright harness rows")
 	_check(int(families.get("arcana_iii", 0)) == 72, "72 ARCANA harness rows")
@@ -301,7 +346,21 @@ func _initialize() -> void:
 
 func _finish() -> void:
 	if _failures.is_empty():
-		print("GOLD93_PER_SKILL_HARNESS: PASS / 93 isolated harness instances / 1 native full cast / 92 fail-closed / zero leaked nodes / zero unconfigured damage")
+		# Counted from the run, never hardcoded: the native side grows as
+		# generators are ported, and a PASS line that still said "1 native"
+		# would be lying about the evidence that was just collected.
+		var native: int = 0
+		var blocked: int = 0
+		for row in _rows:
+			if bool(row.get("native_executable", false)):
+				native += 1
+			else:
+				blocked += 1
+		print("GOLD93_PER_SKILL_HARNESS: PASS / %d isolated harness instances / "
+				% _rows.size()
+				+ "%d native full cast / %d fail-closed / zero leaked nodes / "
+				% [native, blocked]
+				+ "zero unconfigured damage")
 		quit(0)
 	else:
 		print("GOLD93_PER_SKILL_HARNESS: FAIL / %d problem(s)" % _failures.size())

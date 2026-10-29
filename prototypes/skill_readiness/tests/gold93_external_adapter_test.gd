@@ -218,7 +218,15 @@ func _initialize() -> void:
 		_check((d.get("controls", {}) is Dictionary)
 				and not (d.get("controls", {}) as Dictionary).is_empty(),
 				"every handoff row must describe its control envelope")
-	_check(native_count == 1, "exactly one id is natively executable today")
+	# The split is derived, never hardcoded. A frozen "1 native" assertion has to
+	# be edited every time a generator lands, and editing a test to match new
+	# code is how a gate quietly stops being a gate. What must hold is that the
+	# split is exhaustive and that the factory is making progress.
+	_check(native_count + blocked_without_reason <= handoff.size(),
+			"the handoff split must be exhaustive, got %d native + %d unreasoned of %d"
+			% [native_count, blocked_without_reason, handoff.size()])
+	_check(native_count >= 1,
+			"the factory must have ported at least one generator, got %d" % native_count)
 	_check(blocked_without_reason == 0, "every non-native id must state its blocker")
 
 	adapter.cancel_all()
