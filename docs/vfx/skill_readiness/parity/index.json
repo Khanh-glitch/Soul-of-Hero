@@ -332,6 +332,21 @@
 		 "seed": 7.0,
 		 "skill": 19.0,
 		 "status": "PASS"
+		},
+		"venomwright:021": {
+		 "cue_mismatch": "",
+		 "cues_native": 192.0,
+		 "cues_original": 192.0,
+		 "evidence": "CI run 40875117169 job 123451839886 (candidate lane, original-source differential, commit e10ac66)",
+		 "first_divergent_tick": -1.0,
+		 "first_mismatch": "",
+		 "hit_mismatch": "",
+		 "hits_native": 132.0,
+		 "hits_original": 132.0,
+		 "recorded_utc": "2026-10-29",
+		 "seed": 7.0,
+		 "skill": 21.0,
+		 "status": "PASS"
 		}
 	}
 }
