@@ -50,6 +50,19 @@ jobs:
           STATUS=$(cat /tmp/pilot-run.status)
           echo "godot exit status $STATUS; log lines $(wc -l < /tmp/pilot-run.log)"
           test "$STATUS" = "0" && grep -q 'GOLD93_VENOM_PILOT: PASS' /tmp/pilot-run.log && ! grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-run.log
+      - name: Demo scene smoke (venom_pilot_demo.tscn, 240 frames, headless)
+        if: matrix.skill == 6
+        shell: bash
+        run: |
+          set +e
+          timeout 300s godot --headless --path . --quit-after 240 res://prototypes/skill_readiness/pilot/venom_pilot_demo.tscn > /tmp/pilot-demo.log 2>&1
+          STATUS=$?
+          set -e
+          echo "::notice title=vfx-pilot demo::demo scene exit status $STATUS"
+          if [ "$STATUS" != "0" ] || grep -qE 'SCRIPT ERROR:|Parse Error:' /tmp/pilot-demo.log; then
+            python3 prototypes/skill_readiness/pilot/tools/pilot_log_digest.py /tmp/pilot-demo.log "vfx-pilot demo smoke status=$STATUS"
+            exit 1
+          fi
       - name: Pilot verdicts and failure digest
         if: always()
         shell: bash
