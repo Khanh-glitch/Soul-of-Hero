@@ -215,7 +215,7 @@ func _body() -> void:
 	var economy: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("survival_economy", {})
 	var attributes: Dictionary = (economy.get("instances", {}) as Dictionary).get(token, {})
 	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "A3 token attributes remain coupled through death and reload")
-	var hud: Node = ow.get(&"hud")
+	var hud: OverworldHud = ow.get(&"hud")
 	var button := hud.find_child("Respawn", true, false) as Button
 	_expect(button != null and button.is_visible_in_tree(), "paused overworld exposes an actual respawn button")
 	if button != null:
@@ -295,7 +295,9 @@ func _body() -> void:
 	# no grab_focus and no direct signal call. Input.parse_input_event feeds raw
 	# window coordinates, while Control transforms describe viewport coordinates.
 	button = hud.find_child("Respawn", true, false) as Button
+	button.release_focus()
 	await process_frame
+	_expect(not button.has_focus(), "pointer scenario starts without keyboard focus")
 	var gui_trace: Array[String] = []
 	button.gui_input.connect(func(e: InputEvent) -> void:
 		if e is InputEventMouseButton:
