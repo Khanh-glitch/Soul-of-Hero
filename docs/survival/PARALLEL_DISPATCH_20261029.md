@@ -53,3 +53,10 @@ Google Docs tab **10 · PROMPT TỪNG AGENT & REVIEW SÂU** contains the *full t
 5. A6 UI/UX + asset/reuse audit/A8 support (regular-throughput).
 6. S6 scarce premium model: **nonblocking optional mini-commissions in independent visual/technical art R&D**; not a mandatory World/Core/production deliverable. Former "A9" is a legacy label for **this sixth slot, not a seventh bot**.
 Issues #12, #13, #14, #15 are direct launch packets for slots 2–5. Issues #16/#17 remain valid QA/research packets **distributed to existing slots**, not extra A7/A8 bot sessions. The special slow slot has NOT been issued a prompt, branch or job yet. User said none of the new prompts were sent; A0 remains the only reported active agent. Any prompt line identifying A1 as the scarce premium slow model is outdated and replaced by this correction.
+
+
+## SUPERSEDING STAFFING UPDATE — ACTIVE A4 GOLD IMPORT (2026-10-29)
+Read the latest [ACTIVE_SIX_AGENT_DISPATCH_20261029.md](ACTIVE_SIX_AGENT_DISPATCH_20261029.md) **before** assigning agents. The prior guidance saying A4 is available, six independent Issues #12–#17 can be launched, or scarce S6 should draw generic visual art was based on incomplete staffing information and is OVERRIDDEN.
+Two actual existing agents: A0 SURV-020, **A4 pre-existing source-faithful Gold/VFX library port**. Three normal-throughput agents available: A1 World #12, A3 Economy/physical Core economy #13, A6 UI/asset audit #15. Last scarce slot: **S6/A5-DEEP issue #18**, one optional multi-layer POI design micro-stage at a time with no critical-path dependency. Issues #14/#16/#17 remain work packets/backlogs, not extra separate AI. User has not yet sent new prompts.
+The special task is grounded in source Atlas POI-05/08/09/10, DEP-03/04/05/31 and JOURNEY-11/12; its hard puzzle/key/power/hazard/route/loot graph requires superior design judgment but is explicitly optional. Cocos-side live agent progress is user-reported and not verified by current Godot branch snapshots; do not overclaim ready skills.
+Google Docs **tab 11** will contain only the current four prompts and the corrected staff record; tab 10 is an archived prior plan.
