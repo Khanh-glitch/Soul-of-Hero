@@ -11,6 +11,7 @@ on:
     branches:
       - arena/c7b0c4e8-soul-of-hero
     paths:
+      - 'prototypes/skill_readiness/tools/ci/**'
       - 'prototypes/skill_readiness/native/venom/**'
       - 'prototypes/skill_readiness/tests/gold93_venom_differential_test.gd'
       - 'docs/vfx/skill_readiness/oracle/**'

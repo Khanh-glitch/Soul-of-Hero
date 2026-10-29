@@ -9,6 +9,7 @@ on:
     branches:
       - arena/c7b0c4e8-soul-of-hero
     paths:
+      - 'prototypes/skill_readiness/tools/ci/**'
       - 'prototypes/skill_readiness/native/venom/v8_math.gd'
       - 'prototypes/skill_readiness/tests/gold93_v8_math_test.gd'
       - 'prototypes/skill_readiness/tests/data/v8_math_vectors.json'
