@@ -383,6 +383,21 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
+      - name: Fresh spawn ordinary-input resource gathering (native, partial journey)
+        run: |
+          mkdir -p artifacts/ud_normal_gather
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --audio-driver Dummy --user-data-dir artifacts/ud_normal_gather \
+              --resolution 960x540 --windowed --script res://tests/survival_normal_input_gather_test.gd >"$ARTIFACT_DIR/survival-normal-gather.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-normal-gather.log"
+          echo "::notice::normal-gather exit=$rc $(tail -12 "$ARTIFACT_DIR/survival-normal-gather.log" | tr '\n' '~')"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-normal-gather.log" "Normal gather" "SURVIVAL NORMAL INPUT GATHER PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
       - name: Death transaction interruption boundaries (native)
         run: |
           mkdir -p artifacts/ud_death_faults
