@@ -41,11 +41,20 @@ func _check(condition: bool, message: String) -> void:
 		push_error("GOLD93_HARNESS: " + message)
 
 
+## The harness fixture. Every skill is judged on the same set of reachable
+## targets. The first three sit on the aim line; the rest bracket the caster
+## side of the field, where the original recordings place their first contacts
+## (for example Acid Lattice, 011, hits at x 222..260). Without them a skill
+## whose authored contacts land on the caster side would be checked against no
+## targets at all, and "real events" would fail for fixture reasons.
 func _actors() -> Array:
 	return [
 		{"id": 1, "x": 340.0, "y": 170.0, "r": 8.0, "exists": true, "dying": 0.0},
 		{"id": 2, "x": 430.0, "y": 215.0, "r": 7.0, "exists": true, "dying": 0.0},
 		{"id": 3, "x": 290.0, "y": 110.0, "r": 6.0, "exists": true, "dying": 0.0},
+		{"id": 4, "x": 240.0, "y": 175.0, "r": 7.0, "exists": true, "dying": 0.0},
+		{"id": 5, "x": 260.0, "y": 150.0, "r": 7.0, "exists": true, "dying": 0.0},
+		{"id": 6, "x": 225.0, "y": 200.0, "r": 7.0, "exists": true, "dying": 0.0},
 	]
 
 
