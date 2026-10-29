@@ -192,3 +192,34 @@ tails are emitted as check-run annotations by
 `prototypes/skill_readiness/tools/ci/annotate_log.py`. Read them with
 `gh api repos/<repo>/check-runs/<job_id>/annotations`. Note: bash steps run
 with `-e`, so capture the Godot exit status with `set +e` first.
+
+## Venomwright 011-016 status (latest checkpoint)
+
+Verified on remote Godot 4.7 (`first_divergent_tick: -1`, seed 7):
+- 011 Catalyst (run 40836889066), 012 Verdigris (run 40839728409), 014 Cascade
+  (run 40840130966 and run 40840839754, job 14).
+- Regression on `770d951`: 001, 006, 009, 010, 011, 012, 014 still pass.
+
+Written and registered, NOT source-parity verified:
+- 013 Garden (`venom_s3_garden.gd`, id 13). CI job fails with no output
+  (runs 40839971799, 40840839754, 40842437136, 40845135970, 40847085577,
+  40848940298).
+- 015 Vat (`venom_s3_vat.gd`, id 15). Same silent failure.
+- 016 Crystal Rot (`venom_s3_rot.gd`, id 16, commit `d1c49f0`). Same silent failure
+  on its first run (runs 40842557140 and later).
+
+Diagnosis so far for 013/015/016 (not conclusive):
+- The differential step ends about 60 s after it starts, with no `::error::`
+  lines, not even for its own failure message. Skill 014 runs about 65 s and passes.
+- Refuted: a `stdout` buffering loss (`stdbuf` changed nothing), and generator
+  threads still parked at exit (`drain_all()` added in `770d951`, no change).
+- Not yet known: whether the runner or Godot process is killed (suspect a memory
+  blow-up in these three generators), or whether the test fails before the first
+  step. Verbose step lines were added with `printerr` in `b3d8abc`, but they did
+  not appear in the annotations for passing or failing jobs, so they cannot
+  localise the failure yet.
+- Next debugging step: reproduce memory growth locally with a Godot build if one
+  becomes available, or bisect the three generators by early `return`s in CI.
+
+Not started: 017-021 (`s4.ts` 11-189 read for 017), 007/008 discrepancies, and
+ARCANA 001-072.
