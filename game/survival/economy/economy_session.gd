@@ -60,8 +60,19 @@ func _exit_tree() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
 		_focused = false
+		_discard_partial_steps()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		_focused = true
+	elif what == NOTIFICATION_PAUSED:
+		# A pausable node receives no physics callbacks while the tree is paused.
+		# Discard here, not only inside _physics_process, so a short pause cannot
+		# retain a pre-pause fraction when processing resumes.
+		_discard_partial_steps()
+
+
+func _discard_partial_steps() -> void:
+	for value: Variant in _stations.values():
+		value["steps"] = 0
 
 
 func _new_session(snapshot: Dictionary) -> bool:
@@ -129,8 +140,7 @@ func _gameplay_active() -> bool:
 func _physics_process(_delta: float) -> void:
 	if not _gameplay_active():
 		# Discard partial ticks when interrupted; never credit paused/modal time.
-		for value: Variant in _stations.values():
-			value["steps"] = 0
+		_discard_partial_steps()
 		return
 	if _jobs_dirty:
 		_jobs = _adapter.call(&"jobs")

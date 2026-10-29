@@ -91,19 +91,25 @@
         "Station replacement and GUI world separation https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900018933 at 5ceca96 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed.",
         "Receipt-bound station revision https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900172565 at b6dd082 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed with engine shutdown resource warnings. Overworld run 40900172653 failed its occlusion/frame performance assertion; cause unproven.",
         "GUI trace disconnect: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885475 at 5882aa4 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed.",
-        "Overworld follow-up https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885519 at 5882aa4 passed static/native/visual including perf; prior failure cause not established."
+        "Overworld follow-up https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885519 at 5882aa4 passed static/native/visual including perf; prior failure cause not established.",
+        "Production clock and A3 composition fixture: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40904441440 at 9f5ad36, session 21.",
+        "Actual panel injected input and real A3: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905802870 at 88e10ce, session 22.",
+        "Modal/focus, disabled/broken station and same-process enqueue faults: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959562 at 142d0ac, session 55; not a fresh-save journey.",
+        "Unchanged performance gate failed again +98%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959492 at 142d0ac; PERF_VARIABILITY_UNEXPLAINED.",
+        "Mounted resource interaction with teleported physics-disabled Hero and cleared inventory, production composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40906471143 at 07b9c8f, session 57; not normal input or approved A1 source provenance."
       ],
-      "next": "Investigate reproducibility of overworld performance failure 40900172653 despite passing follow-up 40900885519; implement production A0 active-session clock and actual A3 composition with pause/reload, no offline accrual, revision/removal and escrow recovery; then full player journey, visual/Web and remaining gates.",
+      "next": "Inspect new native CI for partial-tick pause handling and performance failure diagnostics; continue normal-input fresh-save journey, E-02 adversarial lifecycle, A1/A3 provenance, native resolution and Web evidence. Do not merge.",
       "assignment": {
-        "status": "CODE_IN_PROGRESS_GUI_AND_STATION_PLACEMENT_NATIVE_TESTED_E02_CLOCK_OPEN",
+        "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
         "owner": "A0+A2",
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
         "branch": "arena/dea2428e-soul-of-hero",
         "review": "Independent review on control-tower base: docs/survival/reviews/A0_SURV020_PR21_D561_E01_AUTHORITY_GUI_REVIEW_20261029.md; E-01 trusted-fixture accepted, E-02 and full SURV-020 held.",
-        "user_reported": "Draft PR #21 WIP; bed technical subgate accepted; E-01 trusted-code fixture tested; E-02 and full acceptance remain open.",
-        "continuation_work_order": "docs/survival/tasks/SURV-020_GUI_E02_CONTINUATION_20261029.md"
+        "user_reported": "Draft PR #21 WIP; E-01 fixture and bed technical subgates accepted; production composition tested with fixtures; E-02 full acceptance and SURV-020 remain open; PERF_VARIABILITY_UNEXPLAINED; DOCS_SYNC_PENDING.",
+        "continuation_work_order": "docs/survival/tasks/SURV-020_GUI_E02_CONTINUATION_20261029.md",
+        "sustained_work_order": "docs/survival/tasks/A0_SURV020_E02_FULL_PRODUCTION_JOURNEY_SUSTAINED_20261029.md (integration branch)"
       }
     },
     {

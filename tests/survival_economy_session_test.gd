@@ -110,7 +110,16 @@ func _body() -> void:
 	_expect(not bool(denied.get("ok", false)) and String(denied.get("reason", "")).begins_with("time_receipt_mismatch"), "actual A3 rejects forged UI tick receipt")
 	var zero: Dictionary = adapter.call(&"advance", "hand", snapshot, "native.zero")
 	_expect(not bool(zero.get("ok", false)) and String(zero.get("reason", "")) == "no_elapsed_time", "new receipt with zero elapsed time rejected")
+	var partial_deadline := Time.get_ticks_msec() + 3000
+	while Time.get_ticks_msec() < partial_deadline:
+		var records: Dictionary = host.get(&"_stations")
+		if int((records.get("hand", {}) as Dictionary).get("steps", 0)) >= 5:
+			break
+		await physics_frame
+	var partial_records: Dictionary = host.get(&"_stations")
+	_expect(int((partial_records.get("hand", {}) as Dictionary).get("steps", 0)) >= 5, "active callbacks accumulate a partial second before pause")
 	paused = true
+	_expect(int(((host.get(&"_stations") as Dictionary).get("hand", {}) as Dictionary).get("steps", -1)) == 0, "tree pause immediately discards partial active steps")
 	var before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
 	await create_timer(0.5, true).timeout
 	var after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
