@@ -4,6 +4,7 @@ ROOT=pathlib.Path(__file__).resolve().parents[3]
 sys.path.insert(0,str(ROOT/'tools/survival/economy'))
 import validate_economy as ve
 import simulate_economy as sim
+import measure_save_growth as growth
 
 class EconomyContracts(unittest.TestCase):
     def load(self,p): return json.loads((ROOT/'data/survival'/p).read_text())
@@ -75,6 +76,27 @@ class EconomyContracts(unittest.TestCase):
                 self.assertEqual(rc,1)
                 self.assertTrue(any('unknown item' in e for e in json.loads(out.read_text())['errors']))
         finally: ve.load=original
+class EconomyStateSchema(unittest.TestCase):
+    def load(self,p): return json.loads((ROOT/'data/survival'/p).read_text())
+    def test_schema2_accepts_compacted_namespace_and_rejects_legacy_shape(self):
+        import jsonschema
+        schema=self.load('recipes/state.schema.json')
+        token='soh_i_000000000001_0123abcd'
+        valid={'schema':2,'instances':{token:{'instance_id':token,'item_id':'core_venom','location':'bag','condition':100,'max_condition':100,'uses':12,'max_uses':12,'revision':0,'origin':'economy'}},'jobs':{},'technologies':{},'commands':{},'counter':1,'time':{'latest_session_index':-1,'session_id':'','sequence':-1,'stations':{}}}
+        jsonschema.validate(valid,schema)
+        legacy=copy.deepcopy(valid); legacy['schema']=1; del legacy['time']
+        with self.assertRaises(jsonschema.ValidationError): jsonschema.validate(legacy,schema)
+        bad=copy.deepcopy(valid); bad['instances'][token]['uses']=101
+        with self.assertRaises(jsonschema.ValidationError): jsonschema.validate(bad,schema)
+        bad=copy.deepcopy(valid); bad['time']['stations']['x']={'active_ticks':-1,'station_revision':'rev'}
+        with self.assertRaises(jsonschema.ValidationError): jsonschema.validate(bad,schema)
+    def test_save_growth_model_measures_compaction(self):
+        r=growth.scenario('unit',1000,10)
+        self.assertGreater(r['schema2_compacted_bytes'],0)
+        self.assertGreater(r['bytes_saved_by_compaction'],0)
+        self.assertEqual(r,growth.scenario('unit',1000,10))
+        self.assertGreater(growth.scenario('unit10',10000,10)['schema2_compacted_bytes'],r['schema2_compacted_bytes'])
+
 if __name__=='__main__': unittest.main()
 
 class A1MaterialMapping(unittest.TestCase):
@@ -91,3 +113,15 @@ class A1MaterialMapping(unittest.TestCase):
             else: self.assertTrue(v['a3_item_ids'])
             self.assertEqual(v['a1_contract']['status'],'CONTRACT_NOT_SPAWNED')
         self.assertEqual(m['counts']['missing_a3_item'],12)
+    def test_alias_review_is_explicit_and_unapproved(self):
+        m=json.loads((ROOT/'data/survival/items/a1_material_mapping.json').read_text())
+        aliases={k:v for k,v in m['materials'].items() if v['mapping_status']=='MAPPED_PROPOSED_ALIAS'}
+        self.assertEqual(len(aliases),8)
+        for k,v in aliases.items():
+            self.assertIn('alias_review',v)
+            self.assertFalse(v['alias_review']['provenance_equivalent'])
+            self.assertEqual(v['a1_approval'],'UNRESOLVED_PENDING_A1_PR20')
+            self.assertTrue(v['alias_review']['rationale'])
+        self.assertEqual(m['smallest_proposed_split_set'],['frost_resin','venom_sac','peat'])
+        for k in ['frost_resin','venom_sac','peat']:
+            self.assertIn('separate',aliases[k]['alias_review']['recommended_action'])

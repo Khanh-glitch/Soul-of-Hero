@@ -1,12 +1,13 @@
 # SURV-030A — A3 Economy Architect
 
-Status: **implementation authored; catalog/balance contracts and native SaveService adapter CI pass; production integration and gameplay-design PASS NOT claimed.**
+Status: **sustained adversarial hardening authored; catalog/balance contracts pass; native SaveService adapter hardening pending final CI at the new SHA; production integration and gameplay-design PASS NOT claimed.**
 
 ## What this slice owns
 
 - Machine-readable economy catalogs: `data/survival/items/{items,sources,loot_tables,migration_map,a1_material_mapping}.json`, `data/survival/recipes/{recipes,stations,research}.json` and JSON Schemas.
 - Isolated runtime adapter: `game/survival/economy/economy_service.gd` (RefCounted, **not** an autoload, **not** a second save authority).
-- Validation/simulation: `tools/survival/economy/{validate_economy,simulate_economy}.py`.
+- Validation/simulation/growth: `tools/survival/economy/{validate_economy,simulate_economy,measure_save_growth}.py`.
+- Safety contracts: `A0_SAVE_SERVICE_GUARD_CONTRACT.md`, `A0_ACTIVE_TICK_HOST_CONTRACT.md`, `A4_SKILL_ATTESTATION_CONTRACT.md`, `SAVE_GROWTH_AND_RETENTION.md`.
 - Tests: `tests/survival/catalog/` (Python contract/balance tests + Godot adapter test against the real SaveService).
 - CI: `.github/workflows/survival-a3-economy.yml`.
 

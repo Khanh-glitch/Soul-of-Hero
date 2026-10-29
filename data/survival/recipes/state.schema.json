@@ -1,94 +1,95 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SOH survival_economy namespace schema 2",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schema",
-    "instances",
-    "jobs",
-    "technologies",
-    "commands",
-    "counter"
-  ],
+  "required": ["schema", "instances", "jobs", "technologies", "commands", "counter", "time"],
   "properties": {
-    "schema": {
-      "const": 1
-    },
+    "schema": {"const": 2},
     "instances": {
       "type": "object",
+      "propertyNames": {"pattern": "^soh_i_[0-9]{12}_[0-9a-f]{8}$"},
       "additionalProperties": {
         "type": "object",
         "additionalProperties": false,
-        "required": [
-          "instance_id",
-          "item_id",
-          "location",
-          "condition",
-          "max_condition",
-          "uses",
-          "max_uses",
-          "revision",
-          "origin"
-        ],
+        "required": ["instance_id", "item_id", "location", "condition", "max_condition", "uses", "max_uses", "revision", "origin"],
         "properties": {
-          "instance_id": {
-            "type": "string",
-            "pattern": "^[a-z][a-z0-9_]{0,63}$"
-          },
-          "item_id": {
-            "type": "string",
-            "pattern": "^[a-z][a-z0-9_]{0,63}$"
-          },
-          "location": {
-            "type": "string"
-          },
-          "condition": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "max_condition": {
-            "type": "integer",
-            "minimum": 1,
-            "maximum": 100
-          },
-          "uses": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "max_uses": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "revision": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 1000000
-          },
-          "origin": {
-            "type": "string"
-          }
+          "instance_id": {"type": "string", "pattern": "^soh_i_[0-9]{12}_[0-9a-f]{8}$"},
+          "item_id": {"type": "string", "pattern": "^[a-z][a-z0-9_]{0,63}$"},
+          "location": {"type": "string", "minLength": 1},
+          "condition": {"type": "integer", "minimum": 0, "maximum": 100},
+          "max_condition": {"type": "integer", "minimum": 1, "maximum": 100},
+          "uses": {"type": "integer", "minimum": 0, "maximum": 100},
+          "max_uses": {"type": "integer", "minimum": 0, "maximum": 100},
+          "revision": {"type": "integer", "minimum": 0, "maximum": 1000000},
+          "origin": {"type": "string"}
         }
       }
     },
     "jobs": {
-      "type": "object"
-    },
-    "technologies": {
-      "type": "object"
-    },
-    "commands": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["job_id", "kind", "target", "station_id", "station_kind", "tier", "status", "elapsed", "duration", "reserved", "reserved_fuel", "reserved_instances", "outputs", "output_instances"],
+        "properties": {
+          "job_id": {"type": "string"},
+          "kind": {"enum": ["craft", "research", "technology"]},
+          "target": {"type": "string"},
+          "station_id": {"type": "string"},
+          "station_kind": {"type": "string"},
+          "tier": {"type": "integer", "minimum": 0},
+          "status": {"enum": ["queued", "running", "paused", "ready", "collected", "cancelled"]},
+          "elapsed": {"type": "integer", "minimum": 0},
+          "duration": {"type": "integer", "minimum": 0},
+          "reserved": {"$ref": "#/$defs/quantity_map"},
+          "reserved_fuel": {"$ref": "#/$defs/quantity_map"},
+          "outputs": {"$ref": "#/$defs/quantity_map"},
+          "reserved_instances": {"$ref": "#/$defs/instance_ref_map"},
+          "output_instances": {"$ref": "#/$defs/instance_ref_map"}
+        }
       }
     },
-    "counter": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 1000000
+    "technologies": {"type": "object"},
+    "commands": {
+      "type": "object",
+      "description": "Legacy v1 payload signatures only. Schema 2 operations store payload_sha256 in SaveService applied_transactions metadata and do not grow this map.",
+      "additionalProperties": {"type": "string"}
+    },
+    "counter": {"type": "integer", "minimum": 0, "maximum": 1000000},
+    "time": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["latest_session_index", "session_id", "sequence", "stations"],
+      "properties": {
+        "latest_session_index": {"type": "integer", "minimum": -1, "maximum": 1000000000},
+        "session_id": {"type": "string", "maxLength": 96},
+        "sequence": {"type": "integer", "minimum": -1, "maximum": 1000000000000},
+        "stations": {
+          "type": "object",
+          "maxProperties": 256,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["active_ticks", "station_revision"],
+            "properties": {
+              "active_ticks": {"type": "integer", "minimum": 0, "maximum": 1000000000000},
+              "station_revision": {"type": "string", "maxLength": 128}
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "quantity_map": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 1, "maximum": 1000000}
+    },
+    "instance_ref_map": {
+      "type": "object",
+      "propertyNames": {"pattern": "^soh_i_[0-9]{12}_[0-9a-f]{8}$"},
+      "additionalProperties": {"type": "object"}
     }
   }
 }

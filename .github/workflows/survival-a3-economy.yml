@@ -46,6 +46,8 @@ jobs:
         run: python -m unittest discover -s tests/survival/catalog -p 'test_*.py' -v
       - name: Deterministic economic simulation
         run: python tools/survival/economy/simulate_economy.py --json "$ARTIFACT_DIR/balance_report.json"
+      - name: Save-growth serialization model
+        run: python tools/survival/economy/measure_save_growth.py --json "$ARTIFACT_DIR/save_growth_report.json"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -75,7 +77,7 @@ jobs:
       - name: Economy adapter against real SaveService
         run: |
           set +e
-          timeout --signal=TERM --kill-after=10s 180s godot --headless --path . \
+          timeout --signal=TERM --kill-after=10s 300s godot --headless --path . \
             --user-data-dir artifacts/a3-runtime \
             --script res://tests/survival/catalog/economy_adapter_test.gd \
             >"$ARTIFACT_DIR/adapter.log" 2>&1

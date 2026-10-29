@@ -57,16 +57,22 @@ Source: A1 PR #20 `data/survival/world/material_source_contracts.json` (read-onl
 - `silica_sand`: Glass furnace/lens path absent; storm_glass also missing.
 - `storm_glass`: Signal tower/storm core absent; A3 core_ember is soul_ember-based, not storm glass.
 
-## Proposed aliases / provenance mismatches
+## Proposed aliases / provenance mismatches — A1 approval UNRESOLVED
 
-- `bog_iron` → `iron_ore`: Functional iron feedstock; A1 redox renewal differs from A3 finite vein proposal.
-- `fibre` → `reed_fibre`: A3 has only reed_fibre; generic fibre/oasis/forest sources collapse to it unless A1 splits ids.
-- `frost_resin` → `frost_shard`: Functional cold reagent for frost_extract/ward; A1 ecological resin vs A3 mineral shard is a provenance mismatch.
-- `glacial_iron` → `iron_ore`: High-grade iron feedstock; no separate glacial steel recipe yet.
-- `hardwood` → `oak_wood`: A3 oak_wood is generic wood; boat hull/boardwalk are A0 construction, not A3 recipes.
-- `peat` → `coal`: Functional solid fuel; A3 coal is a proposed node, charcoal is wood-derived. Peat charcoal recipe not authored.
-- `rare_herb` → `moonleaf`: Functional potion/herb feedstock; A1 rare_herb is broader than A3 moonleaf.
-- `venom_sac` → `venom_spine`: Functional venom reagent; A1 sac/fauna vs A3 spine/reward is a provenance mismatch.
+All eight aliases are now explicitly marked `a1_approval = UNRESOLVED_PENDING_A1_PR20` and `provenance_equivalent = false` in `a1_material_mapping.json`. They are adaptation proposals, not approved renames.
+
+| material_key | proposed A3 id | A3 review decision | rationale / smallest next action |
+|---|---|---|---|
+| `bog_iron` | `iron_ore` | HOLD_ALIAS_PENDING_A1 | Functional iron feedstock, but A1 bog redox renewal is not A3 finite vein. A1 may approve functional alias only with node provenance retained. |
+| `fibre` | `reed_fibre` | HOLD_ALIAS_PENDING_A1 | A1 generic fibre spans oasis/forest/seasonal sources; A3 reed_fibre is wetland-specific. Prefer A1 source-side split or explicit adaptation contract; no new A3 item without a distinct sink. |
+| `frost_resin` | `frost_shard` | HOLD_ALIAS_PENDING_A1 | Ecological tapped resin is not mineral frost_shard. Propose separate `frost_resin` only if A1 confirms tapped-stand source and A3 authors a real frost_extract/ward sink. |
+| `glacial_iron` | `iron_ore` | HOLD_ALIAS_PENDING_A1 | High-grade iron can smelt like iron_ore, but thaw-season vein provenance differs. No separate glacial steel recipe is authored. |
+| `hardwood` | `oak_wood` | HOLD_ALIAS_PENDING_A1 | A3 oak_wood is generic wood; A1 hardwood implies slow grove/boat hull/boardwalk semantics partly owned by A0. Decide construction tag vs distinct item before any A3 split. |
+| `peat` | `coal` | HOLD_ALIAS_PENDING_A1 | Cut peat is not coal by default. Propose separate `peat` fuel only if A1 confirms cuttable bog source and A3 authors a peat_charcoal or furnace-fuel sink. |
+| `rare_herb` | `moonleaf` | HOLD_ALIAS_PENDING_A1 | A1 rare_herb is broader than A3 moonleaf. A1 may map specific herb nodes to moonleaf; do not collapse all rare_herb without provenance contract. |
+| `venom_sac` | `venom_spine` | HOLD_ALIAS_PENDING_A1 | Fauna venom sac is not venom_spine reward. Propose separate `venom_sac` only if A1 confirms fauna source and A3 authors a real extract_venom/toxin_mask sink. |
+
+Smallest proposed split/new-item set: **`frost_resin`, `venom_sac`, `peat`** — proposal only, conditional on A1 source confirmation and real A3 sinks. The 12 MISSING items remain explicit; no unused filler items were added to reduce the missing count.
 
 ## Capability gaps
 

@@ -44,7 +44,8 @@
         "poi_pearl_customs",
         "poi_pearl_grotto",
         "poi_pearl_nursery"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "aether_crystal": {
       "material_key": "aether_crystal",
@@ -83,7 +84,8 @@
         "poi_sunken_tower",
         "poi_ashwater_shrine",
         "poi_verdant_south_shrine"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "basalt": {
       "material_key": "basalt",
@@ -116,7 +118,8 @@
         "poi_ember_east_watch",
         "poi_ember_ash_quarry",
         "poi_ember_south_watch"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "bog_iron": {
       "material_key": "bog_iron",
@@ -173,7 +176,14 @@
         "poi_ashwater_south_pump",
         "poi_ashwater_west_boardwalk",
         "poi_ashwater_south_boardwalk"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "Functional iron feedstock, but A1 bog redox renewal is not A3 finite vein iron_ore. Alias is an adaptation proposal, not provenance identity.",
+        "recommended_action": "A1 may approve functional alias with source provenance retained on world node; do not rename A1 key."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "clay": {
       "material_key": "clay",
@@ -223,7 +233,8 @@
         "poi_mirrormere_observatory",
         "poi_mere_east_pile",
         "poi_mere_south_pile"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "copper": {
       "material_key": "copper",
@@ -265,7 +276,8 @@
         "poi_crown_old_signal",
         "poi_saffron_south_pan",
         "poi_ashwater_south_pump"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "fibre": {
       "material_key": "fibre",
@@ -329,7 +341,14 @@
         "poi_mirrormere_ferry",
         "poi_crown_rim_shrine",
         "poi_crown_herder_camp"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A1 generic fibre spans oasis/forest/seasonal sources; A3 reed_fibre is a specific wetland feedstock.",
+        "recommended_action": "Prefer A1 source-side split or explicit adaptation contract; no new A3 item without a distinct sink."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "frost_resin": {
       "material_key": "frost_resin",
@@ -396,7 +415,14 @@
         "poi_frost_rime_cairn",
         "poi_frost_avalanche_hut",
         "poi_frost_south_watch"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A1 ecological tapped resin is not A3 mineral frost_shard. Cold reagent function overlaps, provenance does not.",
+        "recommended_action": "Propose separate frost_resin item only if A1 confirms tapped-stand source and A3 authors a real frost_extract/ward sink; otherwise keep MISSING/HOLD."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "glacial_iron": {
       "material_key": "glacial_iron",
@@ -452,7 +478,14 @@
         "poi_frost_miners_hut",
         "poi_frost_north_gate",
         "poi_frost_glacier_mill"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "High-grade iron feedstock can smelt like iron_ore, but thaw-season vein provenance differs.",
+        "recommended_action": "A1 may approve functional alias with provenance retained; no separate glacial steel recipe is authored."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "hardwood": {
       "material_key": "hardwood",
@@ -541,7 +574,14 @@
         "poi_ashwater_west_boardwalk",
         "poi_verdant_east_blind",
         "poi_ashwater_south_boardwalk"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A3 oak_wood is generic wood; A1 hardwood implies slow grove/boat hull/boardwalk semantics owned partly by A0.",
+        "recommended_action": "A1/A0 decide whether hardwood is a construction tag or distinct item; no A3 split without a recipe sink."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "honey": {
       "material_key": "honey",
@@ -572,7 +612,8 @@
         "poi_amberwood_apothecary",
         "poi_amberwood_orchard",
         "poi_crown_south_orchard"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "iron": {
       "material_key": "iron",
@@ -628,7 +669,8 @@
         "poi_amberwood_mill",
         "poi_crown_tuff_terrace",
         "poi_crown_south_quarry"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "limestone": {
       "material_key": "limestone",
@@ -664,7 +706,8 @@
         "poi_verdant_south_gate",
         "poi_sunken_south_spring",
         "poi_sunken_west_spring"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "obsidian": {
       "material_key": "obsidian",
@@ -695,7 +738,8 @@
       "a1_poi_consumers": [
         "poi_ember_convict_mine",
         "poi_ember_fumarole"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "pearl": {
       "material_key": "pearl",
@@ -741,7 +785,8 @@
         "poi_pearl_east_nursery",
         "poi_sunken_south_spring",
         "poi_sunken_west_spring"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "peat": {
       "material_key": "peat",
@@ -799,7 +844,14 @@
       "a1_poi_consumers": [
         "poi_ashwater_watch",
         "poi_ashwater_south_shrine"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A1 cut peat is a slow renewable solid fuel; A3 coal is a proposed node and charcoal is wood-derived. Peat is not coal by default.",
+        "recommended_action": "Propose separate peat fuel only if A1 confirms cuttable bog source and A3 authors a peat_charcoal or furnace-fuel sink; otherwise keep HOLD."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "rare_herb": {
       "material_key": "rare_herb",
@@ -877,7 +929,14 @@
         "poi_amber_west_holt",
         "poi_verdant_south_shrine",
         "poi_crown_south_orchard"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A1 rare_herb is broader than A3 moonleaf; potion/herb function overlaps but provenance and rarity differ.",
+        "recommended_action": "A1 may map specific herb nodes to moonleaf; do not collapse all rare_herb without a provenance contract."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     },
     "reed_fibre": {
       "material_key": "reed_fibre",
@@ -937,7 +996,8 @@
         "poi_mirrormere_reed_holt",
         "poi_mere_east_pile",
         "poi_mere_south_pile"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "rubber_sap": {
       "material_key": "rubber_sap",
@@ -969,7 +1029,8 @@
       "a1_poi_consumers": [
         "poi_saffron_drydock",
         "poi_verdant_root_lift"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "salt": {
       "material_key": "salt",
@@ -1012,7 +1073,8 @@
         "poi_glass_tide_watch",
         "poi_saffron_tide_watch",
         "poi_pearl_north_beacon"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "salvage": {
       "material_key": "salvage",
@@ -1218,7 +1280,8 @@
         "poi_crown_south_mill",
         "poi_crown_south_barrow",
         "poi_ember_south_watch"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "silica_sand": {
       "material_key": "silica_sand",
@@ -1253,7 +1316,8 @@
         "poi_glass_north_cliff",
         "poi_glass_aukery",
         "poi_glass_tide_watch"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "stone": {
       "material_key": "stone",
@@ -1331,7 +1395,8 @@
         "poi_saffron_tide_watch",
         "poi_frost_south_watch",
         "poi_amber_edge_watch"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "storm_glass": {
       "material_key": "storm_glass",
@@ -1363,7 +1428,8 @@
         "poi_frost_observatory",
         "poi_glasswind_light",
         "poi_glasswind_signal"
-      ]
+      ],
+      "a1_approval": "MISSING_EXPLICIT_NO_A3_ITEM"
     },
     "sulfur": {
       "material_key": "sulfur",
@@ -1414,7 +1480,8 @@
         "poi_ember_cinder_camp",
         "poi_ember_fumarole",
         "poi_ember_ash_quarry"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "timber": {
       "material_key": "timber",
@@ -1509,7 +1576,8 @@
         "poi_crown_south_orchard",
         "poi_amber_edge_watch",
         "poi_pearl_north_beacon"
-      ]
+      ],
+      "a1_approval": "A3_DIRECT_MAPPING_PROPOSED_PENDING_A1_ACK"
     },
     "venom_sac": {
       "material_key": "venom_sac",
@@ -1587,7 +1655,14 @@
         "poi_ashwater_bog_camp",
         "poi_ashwater_south_shrine",
         "poi_verdant_east_blind"
-      ]
+      ],
+      "alias_review": {
+        "provenance_equivalent": false,
+        "decision": "HOLD_ALIAS_PENDING_A1",
+        "rationale": "A1 fauna venom sac is not A3 venom_spine reward. Venom reagent function overlaps, provenance does not.",
+        "recommended_action": "Propose separate venom_sac item only if A1 confirms fauna source and A3 authors a real extract_venom/toxin_mask sink; otherwise keep MISSING/HOLD."
+      },
+      "a1_approval": "UNRESOLVED_PENDING_A1_PR20"
     }
   },
   "capability_mapping": {
@@ -1620,5 +1695,12 @@
       ],
       "note": "A3 frost_cloak gives frost:60; heat/thermal power capability not fully modeled."
     }
-  }
+  },
+  "alias_review_status": "A3_REVIEWED_A1_APPROVAL_UNRESOLVED",
+  "smallest_proposed_split_set": [
+    "frost_resin",
+    "venom_sac",
+    "peat"
+  ],
+  "split_set_condition": "Proposal only. Add items/recipes only after A1 confirms provenance/source and A3 authors a real sink; do not reduce MISSING count by manufacturing unused items."
 }
