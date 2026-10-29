@@ -1,0 +1,39 @@
+name: A0 ordinary-input home continuation
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['tests/survival_normal_home_journey_test.gd', '.github/workflows/a0-normal-home-journey.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_home
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/import-home.log 2>&1
+      - name: Fresh ordinary-input home journey
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_home --resolution 960x540 --windowed --script res://tests/survival_normal_home_journey_test.gd > artifacts/home.log 2>&1
+          rc=$?
+          cat artifacts/home.log
+          echo "::notice::home exit=$rc $(grep -E '^HOME_|^NORMAL HOME|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/home.log | tail -12 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/home.log 'Normal home' 'NORMAL HOME JOURNEY PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: normal-home-journey-native
+          path: artifacts/*.log
