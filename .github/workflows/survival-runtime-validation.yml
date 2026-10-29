@@ -265,6 +265,12 @@ jobs:
           tail -40 "$ARTIFACT_DIR/godot-import.log"
           exit $rc
 
+      - name: Mount isolated pinned A3 catalogs for native composition
+        run: |
+          test ! -e data/survival/items && test ! -e data/survival/recipes
+          ln -s ../../tests/fixtures/a3_86dc2195/items data/survival/items
+          ln -s ../../tests/fixtures/a3_86dc2195/recipes data/survival/recipes
+
       - name: Foundation loop, twelve cases (state-asserting)
         run: |
           # Xvfb + opengl3 because the overworld paints ImageTexture atlases at
@@ -298,6 +304,24 @@ jobs:
           echo "::notice::$(grep -E '\[spatial\]|\[door\]|\[frame\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
+      - name: A0 plus pinned A3 unique authority (native)
+        run: |
+          mkdir -p artifacts/ud_a0_a3
+          set +e
+          timeout --signal=TERM --kill-after=15s 600s \
+            xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+                  --audio-driver Dummy --user-data-dir artifacts/ud_a0_a3 \
+                  --resolution 960x540 --windowed \
+                  --script res://tests/survival_a3_authority_test.gd >"$ARTIFACT_DIR/survival-a0-a3.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-a0-a3.log"
+          echo "::notice::a0-a3 exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-a0-a3.log" | tr '\n' '~')"
+          grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-a0-a3.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-a0-a3.log" "A0 A3 authority" "A0 A3 AUTHORITY PASSED"
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
@@ -467,6 +491,7 @@ jobs:
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
             artifacts/survival-bed.log
+            artifacts/survival-a0-a3.log
             artifacts/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn

@@ -1,6 +1,7 @@
 extends "res://tests/survival_foundation_test.gd"
 
 const FIBRE := "reed_fibre"
+const PinnedA3 = preload("res://tests/fixtures/a3_86dc2195/adapter/a0_authorized_economy.gd")
 
 
 func _finish() -> void:
@@ -167,23 +168,14 @@ func _body() -> void:
 	await process_frame
 	await physics_frame
 
-	# Synthetic A3-shaped pair (not an A3 ownership-audit integration test).
-	# Until A3 is composed, generic creation remains an unresolved blocker.
-	var token := "soh_i_000000000001_deadbeef"
-	var fixture_pair := func(candidate: Dictionary) -> bool:
-		var inventory: Dictionary = candidate.get("inventory", {})
-		var stacks: Dictionary = inventory.get("item_stacks", {})
-		stacks[token] = {"kind": "key_item", "quantity": 1}
-		inventory["item_stacks"] = stacks
-		candidate["inventory"] = inventory
-		candidate["survival_economy"] = {"schema": 2, "counter": 1,
-			"instances": {token: {"instance_id": token, "item_id": "iron_pick", "location": "bag",
-				"condition": 70, "max_condition": 100, "uses": 0, "max_uses": 0,
-				"revision": 0, "origin": "test_fixture"}},
-			"jobs": {}, "technologies": {}, "commands": {},
-			"time": {"latest_session_index": -1, "session_id": "", "sequence": -1, "stations": {}}}
-		return true
-	_expect(bool(_save().call(&"transact_once", "fixture.unique.token", fixture_pair)), "fixture creates synthetic token and attributes atomically")
+	# Genuine pinned A3 adapter, composed through A0's narrow authority port.
+	# The test catalogs are mounted from the immutable fixture in native CI.
+	var economy_adapter := PinnedA3.new()
+	var economy_port: Node = _save().call(&"create_pinned_economy_port", economy_adapter)
+	_expect(economy_port != null and economy_adapter.configure(economy_port), "compose pinned A3 adapter and real SaveService")
+	var fixture_grant: Dictionary = economy_adapter.grant_instance("iron_pick", "fixture.unique.token", -1, 70)
+	var token := String(fixture_grant.get("instance_id", ""))
+	_expect(bool(fixture_grant.get("ok", false)) and not token.is_empty(), "A3 creates real token and attributes atomically")
 	_expect(not bool(_save().call(&"drop_inventory_item", token, 1, "fixture.unique.drop")), "generic drop refuses unique token")
 	_expect(not bool(_save().call(&"home_transfer_to_storage", "item_stack", token, "fixture.unique.storage")), "home storage refuses unique token")
 	_expect(_give(WOOD, 4) and _give(IRON, 1), "chest materials granted for unique-token guard")
@@ -219,10 +211,10 @@ func _body() -> void:
 	hero.set_physics_process(false)
 	_expect(bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == bag_id,
 		"restart restores death and does not create a duplicate bag")
-	_expect(_count(token) == 1, "protected synthetic token survives death and reload exactly once")
+	_expect(_count(token) == 1, "protected A3 token survives death and reload exactly once")
 	var economy: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("survival_economy", {})
 	var attributes: Dictionary = (economy.get("instances", {}) as Dictionary).get(token, {})
-	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "synthetic token attributes remain coupled through death and reload")
+	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "A3 token attributes remain coupled through death and reload")
 	_expect(bool(ow.call(&"_respawn_overworld_hero")), "actual Hero respawns via active bed")
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")
@@ -254,9 +246,9 @@ func _body() -> void:
 		survival["death_bags"] = bags
 		candidate["survival"] = survival
 		return true
-	_expect(bool(_save().call(&"transact_once", "fixture.corrupt.bag", inject_bag)), "fixture injects a malformed duplicate token in a bag")
+	_expect(not bool(_save().call(&"transact_once", "fixture.corrupt.bag", inject_bag)), "commit guard refuses malformed duplicate token in a bag")
 	_expect(not bool(svc.call(&"recover_death_bag", "synthetic_bad_bag")) and _count(token) == 1,
-		"malformed unique-token bag is preserved and refused, not duplicated")
+		"recovery cannot duplicate a rejected malformed token bag")
 	var first_bag_count: int = ((svc.call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).size()
 	hero.call(&"kill")
 	var second_doc: Dictionary = svc.call(&"document")

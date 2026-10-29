@@ -19,6 +19,14 @@ signal hero_progression_changed(hero_id: StringName, snapshot: Dictionary)
 signal hero_shards_changed(hero_id: StringName, amount: int)
 signal hero_identity_unlocked(hero_id: StringName)
 
+const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
+const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_facade.gd")
+# Immutable, first-party A3 integration fixture. Production composition must
+# explicitly review/re-pin future adapter revisions; a caller label is never
+# evidence of authority.
+const PINNED_A3_SCRIPT_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
+const PINNED_A0_ADAPTER_SHA256 := "064499c2442035b333079617f36039f23898ebec4056accbe1b766cb50b8c3c4"
+
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
 const LEGACY_HERO_SOUL_RULES_VERSION := 1
@@ -98,6 +106,12 @@ var _data: Dictionary = {}
 var _is_loaded := false
 var _commit_in_progress := false
 var _migrations: Dictionary = {}
+var _economy_capability := RefCounted.new()
+var _economy_adapter: RefCounted
+var _economy_facade: Node
+var _economy_mutation_active := false
+var _transaction_mutation_active := false
+
 
 
 func _init() -> void:
@@ -802,6 +816,18 @@ func add_items_to_candidate(
 		quantity: int,
 		source_metadata: Dictionary = {},
 ) -> bool:
+	if item_id.strip_edges().to_lower().begins_with("soh_i_"):
+		return false
+	return _add_items_to_candidate_internal(candidate, item_id, kind_id, quantity, source_metadata)
+
+
+func _add_items_to_candidate_internal(
+		candidate: Dictionary,
+		item_id: String,
+		kind_id: String,
+		quantity: int,
+		source_metadata: Dictionary = {},
+) -> bool:
 	var normalized_item := String(item_id).strip_edges().to_lower()
 	var normalized_kind := String(kind_id).strip_edges().to_lower()
 	if not _is_valid_identifier(normalized_item) or normalized_kind not in INVENTORY_ITEM_KIND_IDS \
@@ -871,6 +897,16 @@ func consume_inventory_item(
 ## candidate cannot cover `quantity`, nothing is removed and the caller must abort
 ## its transaction. That is what stops a partially paid construction.
 func remove_items_from_candidate(
+		candidate: Dictionary,
+		item_id: String,
+		quantity: int,
+) -> bool:
+	if item_id.strip_edges().to_lower().begins_with("soh_i_"):
+		return false
+	return _remove_items_from_candidate_internal(candidate, item_id, quantity)
+
+
+func _remove_items_from_candidate_internal(
 		candidate: Dictionary,
 		item_id: String,
 		quantity: int,
@@ -1232,6 +1268,72 @@ func is_transaction_applied(transaction_key: String) -> bool:
 	return transactions.has(transaction_key)
 
 
+## Bind only the reviewed A3 adapter, not arbitrary client-supplied metadata.
+## This is in-process code isolation, not a security boundary against hostile
+## scripts with reflection; production UI must not receive this facade.
+func create_pinned_economy_port(adapter: RefCounted) -> Node:
+	if adapter == null:
+		return null
+	if not _is_pinned_economy_adapter(adapter):
+		return null
+	if _economy_facade != null and is_instance_valid(_economy_facade):
+		_economy_facade.queue_free()
+	_economy_capability = RefCounted.new()
+	_economy_adapter = adapter
+	_economy_facade = ECONOMY_SAVE_FACADE.new()
+	_economy_facade.bind(self, adapter, _economy_capability)
+	add_child(_economy_facade)
+	return _economy_facade
+
+
+func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
+	if adapter == null:
+		return false
+	var script: Variant = adapter.get_script()
+	if not script is Script or String(script.source_code).sha256_text() != PINNED_A0_ADAPTER_SHA256:
+		return false
+	var parent: Script = script.get_base_script()
+	return parent != null and String(parent.source_code).sha256_text() == PINNED_A3_SCRIPT_SHA256
+
+
+func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
+	if capability != _economy_capability or adapter != _economy_adapter or mutator.get_object() != adapter:
+		return false
+	if not _is_pinned_economy_adapter(adapter):
+		return false
+	return _transact_once_internal(key, mutator, metadata, capability)
+
+
+func _economy_add_to_candidate(capability: RefCounted, candidate: Dictionary, item_id: String, kind: String, quantity: int, metadata: Dictionary) -> bool:
+	if capability != _economy_capability or not _economy_mutation_active:
+		return false
+	var id := item_id.strip_edges().to_lower()
+	if id.begins_with("soh_i_"):
+		if quantity != 1 or kind != "key_item":
+			return false
+		var inventory: Dictionary = candidate.get("inventory", {})
+		var stacks: Dictionary = inventory.get("item_stacks", {})
+		if not _matching_inventory_stack_keys(stacks, id).is_empty():
+			return false
+	return _add_items_to_candidate_internal(candidate, id, kind, quantity, metadata)
+
+
+func _economy_remove_from_candidate(capability: RefCounted, candidate: Dictionary, item_id: String, quantity: int) -> bool:
+	if capability != _economy_capability or not _economy_mutation_active:
+		return false
+	var id := item_id.strip_edges().to_lower()
+	if id.begins_with("soh_i_"):
+		var inventory: Dictionary = candidate.get("inventory", {})
+		var stacks: Dictionary = inventory.get("item_stacks", {})
+		var keys := _matching_inventory_stack_keys(stacks, id)
+		if quantity != 1 or keys.size() != 1 or keys[0] != id:
+			return false
+		var record: Variant = stacks[id]
+		if not record is Dictionary or String(record.get("kind", "")) != "key_item" or int(record.get("quantity", 0)) != 1:
+			return false
+	return _remove_items_from_candidate_internal(candidate, id, quantity)
+
+
 ## Applies a mutation and its transaction receipt as one durable snapshot.
 ## Returns false for an already-applied key, rejected mutation, or I/O failure.
 ## The mutator receives a deep-copy Dictionary and may return false to reject it.
@@ -1240,7 +1342,21 @@ func transact_once(
 	mutator: Callable,
 	metadata: Dictionary = {}
 ) -> bool:
+	return _transact_once_internal(transaction_key, mutator, metadata, null)
+
+
+func _transact_once_internal(
+	transaction_key: String,
+	mutator: Callable,
+	metadata: Dictionary,
+	capability: RefCounted,
+) -> bool:
 	_ensure_loaded()
+	var economy_authorized := capability != null and capability == _economy_capability
+	if capability != null and not economy_authorized:
+		return false
+	if _transaction_mutation_active or _commit_in_progress:
+		return false
 	if not _is_valid_transaction_key(transaction_key):
 		_push_failure("Invalid transaction key: %s" % transaction_key)
 		return false
@@ -1251,7 +1367,11 @@ func transact_once(
 		return false
 
 	var candidate := _data.duplicate(true)
+	_transaction_mutation_active = true
+	_economy_mutation_active = economy_authorized
 	var mutation_result: Variant = mutator.call(candidate)
+	_economy_mutation_active = false
+	_transaction_mutation_active = false
 	if mutation_result is bool and not bool(mutation_result):
 		return false
 
@@ -1261,7 +1381,8 @@ func transact_once(
 		"metadata": metadata.duplicate(true),
 	}
 	candidate["applied_transactions"] = transactions
-	if not _commit_candidate(candidate):
+	var committed := _commit_candidate(candidate, capability)
+	if not committed:
 		return false
 	transaction_applied.emit(transaction_key)
 	return true
@@ -2211,15 +2332,28 @@ func reset_to_defaults(confirmation: String) -> bool:
 	return true
 
 
-func _commit_candidate(candidate: Dictionary) -> bool:
-	if _commit_in_progress:
+func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> bool:
+	var economy_authorized := capability != null and capability == _economy_capability
+	if capability != null and not economy_authorized:
+		return false
+	if _commit_in_progress or _transaction_mutation_active:
 		_push_failure("Rejected a re-entrant save commit.")
+		return false
+	var original_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(_data)
+	var candidate_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(candidate)
+	if not original_error.is_empty() or not candidate_error.is_empty():
+		return false
+	if not economy_authorized and UNIQUE_OWNERSHIP_GUARD.changed_by_generic(_data, candidate):
 		return false
 	var prepared := _prepare_document(candidate)
 	if not bool(prepared.get("ok", false)):
 		_push_failure(String(prepared.get("error", "Save validation failed.")))
 		return false
 	var snapshot: Dictionary = prepared.get("data", {})
+	if not String(UNIQUE_OWNERSHIP_GUARD.inspect(snapshot)).is_empty():
+		return false
+	if not economy_authorized and UNIQUE_OWNERSHIP_GUARD.changed_by_generic(_data, snapshot):
+		return false
 	snapshot["revision"] = int(_data.get("revision", 0)) + 1
 	if not _commit_snapshot(snapshot, true):
 		return false
