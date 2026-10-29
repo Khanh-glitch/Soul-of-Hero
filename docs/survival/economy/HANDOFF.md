@@ -1,0 +1,32 @@
+# A3 Git/Docs Handoff — SURV-030A
+
+- Issue: #13
+- PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/19
+- Head: `arena/7a12b27e-soul-of-hero` @ `23d9cca8` (Arena-fixed session branch; requested task ref `feature/surv-a3-economy-030a` is represented by the PR head)
+- Base: `feature/survival-rpg-foundation-20261029`
+- Google Docs tab 04: `DOCS_SYNC_PENDING` (connector disconnected)
+
+## Delivered
+- Catalogs/schemas: `data/survival/items/`, `data/survival/recipes/`
+- Adapter: `game/survival/economy/economy_service.gd`
+- Validation/simulation: `tools/survival/economy/`
+- Tests: `tests/survival/catalog/`
+- CI: `.github/workflows/survival-a3-economy.yml`
+- Reports: `docs/survival/economy/{validation_report,balance_report,reverse_index}.json`
+
+## Evidence
+- Catalog audit: PASS (56 items, 36 recipes, 5 technologies, 36 sources, 7 stations; all contract-reachable; no production cycles).
+- Python adversarial/balance tests: 6/6 PASS.
+- Native Godot 4.7 SaveService adapter: PASS in CI runs 40868045642 / 40868053966.
+- Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED.
+
+## Next owner actions
+1. A0: review `migration_map.json`; add unique-token routing/refusal for generic drop/transfer/merge; station resolver/power/condition/removal guards; preserve `survival_economy` namespace.
+2. A1: bind `PROPOSED_A1` sources/loot tables to actual nodes/POIs/risk/replenishment; confirm roadside vs sealed-archive pacing.
+3. A4: provide verified abstract skill attestation for `soh.core.*`; until then Core cast remains fail-closed.
+4. A6: consume read-only catalogs after A0/A1 contract freeze.
+5. Independent reviewer: audit transaction atomicity, unique ownership, salvage/reconstruction conservation, and replay binding.
+6. Design/playtest: measure knowledge-spare pressure, Core manufacture pacing, and exploration catalyst demand in the integrated world before any gameplay PASS.
+
+## Explicit non-claims
+- No Gold VFX/effect changes, no production overworld edits, no SaveService edits, no human playtest PASS, no offline production.

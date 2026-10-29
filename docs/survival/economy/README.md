@@ -1,6 +1,6 @@
 # SURV-030A — A3 Economy Architect
 
-Status: **implementation authored; catalog/balance contracts pass; native SaveService adapter validation pending CI; production integration and gameplay-design PASS NOT claimed.**
+Status: **implementation authored; catalog/balance contracts and native SaveService adapter CI pass; production integration and gameplay-design PASS NOT claimed.**
 
 ## What this slice owns
 
@@ -56,7 +56,7 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 | Schema/reference/accessibility/cycle audit | PASS (catalog contract feasibility) | `validation_report.json` |
 | Python adversarial/balance tests | PASS | `tests/survival/catalog/test_economy_contracts.py` |
 | Deterministic balance model | PASS for conservation invariants; **not** a playtest | `balance_report.json` |
-| Native SaveService adapter | PENDING CI | `.github/workflows/survival-a3-economy.yml` |
+| Native SaveService adapter | PASS (CI) | Godot 4.7 run [40868045642](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868045642), PR run [40868053966](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40868053966) |
 | A0 station/power/unique-token guard integration | PENDING | `migration_map.json` |
 | A1 source/POI/risk integration | PENDING | `sources.json` proposed entries |
 | A4 verified skill attestation | BLOCKED_PENDING_A4 | item `skill_readiness` |
@@ -68,3 +68,9 @@ godot --headless --path . --script res://tests/survival/catalog/economy_adapter_
 2. Station resolver is injected; production placement/power/condition/removal guards are A0-owned.
 3. Balance model currently shows knowledge-spare pressure can delay Core manufacture under baseline yields; this is a tuning finding, not a fun claim.
 4. Google Docs tab 04 sync is `DOCS_SYNC_PENDING` (connector disconnected).
+
+## CI evidence
+
+- Push run `40868045642`: `A3 CATALOG / BALANCE CONTRACTS` and `A3 NATIVE SAVE ADAPTER` both succeeded at `23d9cca8`.
+- PR #19 run `40868053966`: A3 jobs succeeded. The unrelated `Original main baseline comparison` job in the repository-wide Godot workflow failed; it is not an A3 gate and does not alter the A3 adapter result.
+- Native suite exercises the real SaveService autoload: fuel-gated smelting, station/knowledge/event identity, cancellation/full-bag/reload, specimen/blueprint/targeted research, technology prerequisites, A4-gated finite cast debit, repair/reconstruction identity, lossy salvage, legacy stack shapes, cultivation seed neutrality, and paused-job resume.
