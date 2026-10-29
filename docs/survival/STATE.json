@@ -8,7 +8,7 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-29",
-  "phase": "CONTINUITY_BOOTSTRAP",
+  "phase": "SURVIVAL_FOUNDATION_READY",
   "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
   "code_claims": {
     "survival_system_integrated": false,
@@ -21,13 +21,13 @@
     {
       "id": "SURV-000",
       "name": "Persistent cross-agent state, audit source locks, acceptance and validation",
-      "status": "implemented_unverified",
+      "status": "verified",
       "evidence": [
-        "docs/survival/",
-        "AGENTS.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/commit/9816c8c8bfef8a78153a519fcbe8a40066b909c5",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40827332506",
         "tools/survival/validate_handoff.py"
       ],
-      "next": "Verify GitHub CI for the bootstrap commit, then transition to verified"
+      "next": "Track SURV-010: harvest/store/place/persist real SOH gameplay"
     },
     {
       "id": "SURV-010",
@@ -112,7 +112,7 @@
     "advance_rule": "update state and append log after every verified commit; verify live GitHub HEAD"
   },
   "evidence": {
-    "bootstrap_ci": "pending",
+    "bootstrap_ci": "passed_at_9816c8c8bfef8a78153a519fcbe8a40066b909c5_run_40827332506",
     "native_gameplay": "not_run",
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run"

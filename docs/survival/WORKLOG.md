@@ -13,3 +13,10 @@
 - **Commit SHA:** inspect current branch HEAD from GitHub after this atomic commit (cannot self-embed own commit hash without altering hash).
 
 Never erase prior entries. Append the actual SHA and test outcome of subsequent work in a new entry.
+
+## 2026-10-29 — Verified continuity bootstrap and branch head
+
+- **Task:** SURV-000 verified.
+- **Commit:** `9816c8c8bfef8a78153a519fcbe8a40066b909c5`; branch HEAD independently checked, diff = 11 new handoff/validation files, 486 insertions and no other paths.
+- **Automated test:** [Survival Handoff Contract run 40827332506](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40827332506) — `completed/success` for that exact SHA. This verifies handoff structure ONLY, not new gameplay.
+- **Next:** SURV-010 implement harvest → authoritative inventory → 2D paid placement → reload with no duplication; no native/Web survival playtest has been run yet.
