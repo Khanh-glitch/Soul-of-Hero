@@ -305,7 +305,11 @@ Root causes found this session (all visible in annotations):
 
 Open items:
 
-- 020 tick-180 raster divergence. Hits and cues match. TEMP-DIAG `push_error("GOLD93_D20 ...")` lines in `venom_r20.gd` log every reservoir activation and Pulse creation. Remove them after diagnosis.
+- 020 tick-180 raster divergence (candidate, not registered). Narrowed with timed diagnostics from run 40876542432 (commit 4eb26b6, job 123456713070; the TEMP-DIAG lines were removed afterwards):
+  - Tick 180 is t = 3.0 s. All 12 reservoir activations happen at t = 3.48-5.87 s, so Pulses and activation effects do not exist at tick 180. Pulses were ruled out.
+  - Pulse creation was verified against TS: `best` is found for all 12 reservoirs, each creates a dir +1 and a dir -1 Pulse, and `Pulse` init/upd/gnd/lit match `s4.ts` 258-273.
+  - The 21 `kind=fx` gnd-only objects at tick 180 are `Splash`/`Embed` objects created by landing walk-phase `drops` particles (`venom_fx.gd` 159-163, matching `fx.ts` 60-67). The walk loop, `drops` defaults and `Splash` gnd were checked line by line against the TS and match.
+  - Remaining candidates: draw order or raster content of the walk-phase particles, `FlowNet` width lerp during the 0.55 s branch widening, or the closing `Flash`. Needs a raster-level diff at tick 180 or a per-object dump of Splash/Drop state. Not resolved.
 - 021: re-run after `e10ac66` to read the next divergence.
 - Registry runtime lane for 018 and 019 (`40873595693`, `40873147804`): pending at time of writing.
 - Still open from earlier: 013 tick-320 raster, 015 event-32 knockback, 016 tick-195 raster, 007 tick-90 and 008 tick-125 candidates.
