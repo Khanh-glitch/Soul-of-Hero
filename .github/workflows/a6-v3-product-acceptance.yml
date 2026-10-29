@@ -237,7 +237,7 @@ jobs:
           export SOUL_OF_HERO_SAVE_PATH="user://a6_a0_bed_respawn_${GITHUB_RUN_ID}_${GITHUB_RUN_ATTEMPT}.json"
           export LIVING_ARSENAL_SAVE_PATH="$SOUL_OF_HERO_SAVE_PATH"
           set +e
-          timeout --signal=TERM --kill-after=10s 180s godot --headless --path a0-source --script res://tests/survival_bed_respawn_test.gd 2>&1 | tee a0-source/.artifacts/a6-ci/a0-bed-respawn.log
+          timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --path a0-source --windowed --resolution 1280x720 --script res://tests/survival_bed_respawn_test.gd 2>&1 | tee a0-source/.artifacts/a6-ci/a0-bed-respawn.log
           result=${PIPESTATUS[0]}
           set -e
           echo "A0 bed/death/respawn test exit code: $result"
