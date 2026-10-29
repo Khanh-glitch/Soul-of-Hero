@@ -223,3 +223,19 @@ Diagnosis so far for 013/015/016 (not conclusive):
 
 Not started: 017-021 (`s4.ts` 11-189 read for 017), 007/008 discrepancies, and
 ARCANA 001-072.
+
+## Real verdicts for 013, 015, 016 (run 40857702000 on `2c062d0`)
+
+The earlier "silent failure" was not a crash. The differential step ran, but its
+verdict never reached the annotations. The always-run diagnostics step
+(`Venomwright differential diagnostics (always)`) now reports the log tail.
+
+- 013 Garden: hits 7/7 match, glow matches, scene hash first diverges at tick 320
+  (the last oracle tick). Mismatch is in the scene raster only.
+- 015 Vat: `parity: false`, 79 sampled rows, 34 original hits. Divergent tick not
+  yet read from the log tail.
+- 016 Crystal Rot: hits 15/15 match, glow matches, scene hash first diverges at
+  tick 195.
+
+Memory and disk were never the cause: peak RSS was about 207 MB, free disk 85 GB,
+MemAvailable about 15 GB. The `setsid` change and watchdog are kept as diagnostics.
