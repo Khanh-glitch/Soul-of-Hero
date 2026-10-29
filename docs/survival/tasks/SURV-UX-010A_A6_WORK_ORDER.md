@@ -1,3 +1,5 @@
+**LATEST STAFFING / 2026-10-29:** Six models TOTAL; A0 SURV-020 and separate A4 Gold/VFX port are already active. You are an available A6 UX/Visual integration slot; also own licensed art/source due diligence previously identified as A8 workstream, not another bot. Begin with read-only UX audit, reusable isolated UI components, inventory/build/crafting/Core UX contracts and native tests in YOUR paths. A0 is changing construction HUD; do not edit it. Existing A4 Gold port is independent; never alter its visual source and never claim 93 cast-ready skills. Scarce S6 POI research is OPTIONAL, no dependency on it. READY, not launched.
+
 # A6 — TOP-DOWN PIXEL UX: WHY THIS GAME IS BETTER IN ITS OWN MEDIUM
 **Your task is SURV-UX-010A, issue #15.** You own player-facing interaction clarity, not just a UI reskin or concept poster.
 **Authorized branch** `feature/surv-a6-ux-010a`. Edit ONLY `docs/survival/ux/**`, `game/survival/ui/**`, cleared `assets/survival/ui/**` and `tests/survival/ui/**`. A2 currently owns the live build cost strip and construction UI in active PR #11; do not overwrite it. Read its interfaces and build adapter components for later integration.
