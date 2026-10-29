@@ -291,7 +291,61 @@ func _body() -> void:
 	var second_bag := String(second_doc.get("pending_death", ""))
 	_expect(not second_bag.is_empty() and second_bag != bag_id and (second_doc.get("death_bags", {}) as Dictionary).size() == first_bag_count + 1,
 		"repeated death creates a distinct durable bag")
-	_expect(bool(ow.call(&"_respawn_overworld_hero")), "second death respawns independently")
+	# Second death: exercise the real paused GUI with pointer press and release,
+	# no grab_focus and no direct signal call. Input.parse_input_event feeds raw
+	# window coordinates, while Control transforms describe viewport coordinates.
+	button = hud.find_child("Respawn", true, false) as Button
+	await process_frame
+	var gui_trace: Array[String] = []
+	button.gui_input.connect(func(e: InputEvent) -> void:
+		if e is InputEventMouseButton:
+			var m := e as InputEventMouseButton
+			gui_trace.append("%s@%s" % ["press" if m.pressed else "release", str(m.position)])
+	)
+	var center_view := button.get_global_transform_with_canvas() * (button.size * 0.5)
+	var center_window := root.get_final_transform() * center_view
+	var visible_rect := root.get_visible_rect()
+	print("GUI_POINTER_TRACE viewport=%s final=%s camera=%s button_rect=%s button_canvas=%s center_view=%s center_window=%s layer=%s filter=%s paused=%s can_process=%s" % [
+		str(visible_rect), str(root.get_final_transform()), str(camera.global_position), str(button.get_global_rect()), str(button.get_global_transform_with_canvas()), str(center_view), str(center_window), str(hud.layer), str(button.mouse_filter), str(paused), str(button.can_process())])
+	_expect(paused and button.can_process() and visible_rect.has_point(center_view), "paused GUI button processes and its center is inside visible viewport")
+	# An out-of-button click must not activate respawn or alter the death receipt.
+	var outside := InputEventMouseButton.new()
+	outside.button_index = MOUSE_BUTTON_LEFT
+	outside.position = root.get_final_transform() * Vector2(visible_rect.position.x + 2, visible_rect.position.y + 2)
+	outside.pressed = true
+	Input.parse_input_event(outside)
+	outside.pressed = false
+	Input.parse_input_event(outside)
+	await process_frame
+	_expect(bool(hero.get(&"dead")) and gui_trace.is_empty() and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == second_bag,
+		"paused outside click neither activates respawn nor alters world death")
+	# Deliver motion first, as a physical pointer does, to update hover hierarchy.
+	var motion := InputEventMouseMotion.new()
+	motion.position = center_window
+	motion.global_position = center_window
+	Input.parse_input_event(motion)
+	await process_frame
+	var hovered := root.gui_get_hovered_control()
+	print("GUI_POINTER_TRACE hover=%s" % (str(hovered.get_path()) if hovered != null else "none"))
+	var mouse_press := InputEventMouseButton.new()
+	mouse_press.button_index = MOUSE_BUTTON_LEFT
+	mouse_press.position = center_window
+	mouse_press.global_position = center_window
+	mouse_press.button_mask = MOUSE_BUTTON_MASK_LEFT
+	mouse_press.pressed = true
+	Input.parse_input_event(mouse_press)
+	await process_frame
+	_expect(bool(hero.get(&"dead")), "GUI press alone does not respawn before release")
+	var mouse_release := InputEventMouseButton.new()
+	mouse_release.button_index = MOUSE_BUTTON_LEFT
+	mouse_release.position = center_window
+	mouse_release.global_position = center_window
+	mouse_release.pressed = false
+	Input.parse_input_event(mouse_release)
+	await process_frame
+	print("GUI_POINTER_TRACE events=%s dead=%s pending=%s" % [str(gui_trace), str(hero.get(&"dead")), str((svc.call(&"document") as Dictionary).get("pending_death", ""))])
+	_expect(gui_trace.size() == 2 and gui_trace[0].begins_with("press") and gui_trace[1].begins_with("release"), "visible button receives GUI pointer press and release")
+	_expect(not bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "direct GUI pointer release respawns second death independently")
 	_expect(bool(_save().call(&"reload_save")), "reload after second respawn")
 	_expect((svc.call(&"document") as Dictionary).get("death_bags", {}).has(second_bag), "unrecovered bag persists after restart boundary")
 

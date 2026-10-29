@@ -356,6 +356,7 @@ jobs:
           rc=$?
           cat "$ARTIFACT_DIR/survival-bed.log"
           echo "::notice::bed exit=$rc $(tail -6 "$ARTIFACT_DIR/survival-bed.log" | tr '\n' '~')"
+          grep '^GUI_POINTER_TRACE ' "$ARTIFACT_DIR/survival-bed.log" | head -3 | while IFS= read -r line; do echo "::notice::$line"; done
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-bed.log" | head -10 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-bed.log" "Bed" "SURVIVAL BED RESPAWN PASSED"
           gate=$?
