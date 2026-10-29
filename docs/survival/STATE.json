@@ -105,9 +105,11 @@
         "Actual host receipt replay/stale: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40909792544 at 48fdbc6, session 74.",
         "Overquantum in-process trusted-clock fault: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40910842731 at 5ef3668, session 78.",
         "World interaction reach and teleported injected pointer: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40911620325 at 1cef716, session 81; not normal-input navigation.",
-        "Knight always-available far/near interaction probe and teleported world click: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912938059 at f759924, session 83; not a normal-input navigation journey."
+        "Knight always-available far/near interaction probe and teleported world click: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912938059 at f759924, session 83; not a normal-input navigation journey.",
+        "First partial fresh-save normal-input movement, scrap click and reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832863 at c8ab791, 4 checks; no fixture inventory or actor teleport; not full journey or A1 provenance approval.",
+        "Overworld gate failed again +104% with direct timing evidence: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912937999 at f759924; PERF_VARIABILITY_UNEXPLAINED."
       ],
-      "next": "Inspect pending overworld run 40912937999; build continuous fresh-save input journey, resolve A1/A3 source decisions, capture and review actual native resolution/Web evidence, complete A6/NPC cross-agent gates. Do not merge.",
+      "next": "Extend normal-input fresh-save scrap to kit, paid station, production, shelter/death/recovery and counterfactual; inspect c8ab791 overworld/general CI; obtain A1/A3 provenance, native resolution, Web and cross-agent gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
