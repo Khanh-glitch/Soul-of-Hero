@@ -38,10 +38,9 @@ jobs:
           bash tools/ci/gate_log.sh artifacts/visual.log 'Visual fixture' 'SURVIVAL TOPOLOGY PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
-      - name: Bundle exact images
+      - name: Install review thumbnail encoder
         if: always()
-        run: |
-          if compgen -G 'artifacts/visual_*.png' > /dev/null; then tar -czf artifacts/visual-frames.tar.gz -C artifacts $(cd artifacts && printf '%s\n' visual_*.png); fi
+        run: python3 -m pip install --user Pillow==11.3.0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -49,94 +48,19 @@ jobs:
           path: |
             artifacts/visual*.png
             artifacts/visual.log
-      # Ten notices per step maximum; intact PNG bytes, SHA verified on receipt.
-      - name: Frame transfer 00
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
+      # Downscaled lossy review copies only. The artifact contains actual PNGs.
+      - name: Review thumbnail transfer 00
+        if: always()
         run: python3 tools/ci/visual_annotation_chunks.py 0
-      - name: Frame transfer 01
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
+      - name: Review thumbnail transfer 01
+        if: always()
         run: python3 tools/ci/visual_annotation_chunks.py 1
-      - name: Frame transfer 02
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
+      - name: Review thumbnail transfer 02
+        if: always()
         run: python3 tools/ci/visual_annotation_chunks.py 2
-      - name: Frame transfer 03
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
+      - name: Review thumbnail transfer 03
+        if: always()
         run: python3 tools/ci/visual_annotation_chunks.py 3
-      - name: Frame transfer 04
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
+      - name: Review thumbnail transfer 04
+        if: always()
         run: python3 tools/ci/visual_annotation_chunks.py 4
-      - name: Frame transfer 05
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 5
-      - name: Frame transfer 06
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 6
-      - name: Frame transfer 07
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 7
-      - name: Frame transfer 08
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 8
-      - name: Frame transfer 09
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 9
-      - name: Frame transfer 10
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 10
-      - name: Frame transfer 11
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 11
-      - name: Frame transfer 12
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 12
-      - name: Frame transfer 13
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 13
-      - name: Frame transfer 14
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 14
-      - name: Frame transfer 15
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 15
-      - name: Frame transfer 16
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 16
-      - name: Frame transfer 17
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 17
-      - name: Frame transfer 18
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 18
-      - name: Frame transfer 19
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 19
-      - name: Frame transfer 20
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 20
-      - name: Frame transfer 21
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 21
-      - name: Frame transfer 22
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 22
-      - name: Frame transfer 23
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 23
-      - name: Frame transfer 24
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 24
-      - name: Frame transfer 25
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 25
-      - name: Frame transfer 26
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 26
-      - name: Frame transfer 27
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 27
-      - name: Frame transfer 28
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 28
-      - name: Frame transfer 29
-        if: always() && hashFiles('artifacts/visual-frames.tar.gz') != ''
-        run: python3 tools/ci/visual_annotation_chunks.py 29
