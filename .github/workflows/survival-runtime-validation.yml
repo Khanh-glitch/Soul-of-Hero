@@ -373,7 +373,7 @@ jobs:
             godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
                   --audio-driver Dummy --user-data-dir artifacts/ud_economy_session \
                   --resolution 960x540 --windowed \
-                  --script res://tests/survival_economy_session_test.gd >"$ARTIFACT_DIR/survival-economy-session.log" 2>&1
+                  --script res://tests/survival_economy_session_test.gd -- --survival-save-fault-test >"$ARTIFACT_DIR/survival-economy-session.log" 2>&1
           rc=$?
           cat "$ARTIFACT_DIR/survival-economy-session.log"
           echo "::notice::economy-session exit=$rc $(tail -8 "$ARTIFACT_DIR/survival-economy-session.log" | tr '\n' '~')"

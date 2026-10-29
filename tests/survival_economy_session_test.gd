@@ -74,6 +74,10 @@ func _body() -> void:
 		if String(job.get("target", "")) == "workbench_kit":
 			hand_job = String(key)
 	_expect(not hand_job.is_empty() and _count(WOOD) == 2 and _count(IRON) == 0, "player GUI click reserves actual A3 hand recipe inputs atomically")
+	var modal_before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	await create_timer(1.2).timeout
+	var modal_after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(modal_before.get("elapsed", -1)) == int(modal_after.get("elapsed", -2)), "visible gameplay modal grants no active production")
 	panel.call(&"close_panel")
 	await process_frame
 	var adapter: RefCounted = host.get(&"_adapter")
@@ -90,6 +94,12 @@ func _body() -> void:
 	var after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
 	_expect(int(before.get("elapsed", -1)) == int(after.get("elapsed", -2)), "paused tree cannot grant production ticks")
 	paused = false
+	host.notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
+	var focus_before: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	await create_timer(1.2).timeout
+	var focus_after: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
+	_expect(int(focus_before.get("elapsed", -1)) == int(focus_after.get("elapsed", -2)), "focus-out notification prevents production while inactive")
+	host.notification(Node.NOTIFICATION_APPLICATION_FOCUS_IN)
 	_expect(bool(_save().call(&"reload_save")), "reload save while hand job reserved")
 	var reload_job: Dictionary = (host.call(&"jobs") as Dictionary).get(hand_job, {})
 	_expect(int(reload_job.get("elapsed", -1)) == int(before.get("elapsed", -2)), "reload preserves job without offline accrual")
@@ -123,9 +133,40 @@ func _body() -> void:
 	var cancel_start: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
 	var cancel_id := String(cancel_start.get("job_id", ""))
 	_expect(bool(cancel_start.get("ok", false)) and _count("reed_fibre") == 0, "second job reserves remaining inputs")
+	_expect(bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_enabled"], false)), "disable persisted placed station")
+	_expect(await _wait_job(host, cancel_id, "paused", 5.0), "disabled station pauses actual queued job")
+	var disabled_before: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	await create_timer(1.2).timeout
+	var disabled_after: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(int(disabled_before.get("elapsed", -1)) == int(disabled_after.get("elapsed", -2)), "disabled time cannot be banked as production")
+	_expect(bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_condition"], 0)) and bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_enabled"], true)), "zero condition remains inoperative even when enabled")
+	await create_timer(1.2).timeout
+	var broken: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
+	_expect(String(broken.get("status", "")) == "paused" and int(broken.get("elapsed", -1)) == int(disabled_after.get("elapsed", -2)), "broken station does not grant work")
 	_expect(bool(svc.call(&"remove_structure", bench)), "station can be removed with escrow preserved")
 	await process_frame
 	_expect(bool((host.call(&"cancel", cancel_id) as Dictionary).get("ok", false)), "removed station job can be cancelled")
 	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 3, "cancelled removed-station escrow returns once")
 	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 2 and _count("reed_fibre") == 3, "production and returned inputs survive save reload")
+	# One-process simulated interruption, not an OS kill or a power-loss test.
+	for boundary: String in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
+		_expect(_give(WOOD, 6) and _give(IRON, 2), "prepare fault case " + boundary)
+		var wood_before := _count(WOOD)
+		var iron_before := _count(IRON)
+		var ids_before := (host.call(&"jobs") as Dictionary).keys()
+		_expect(bool(_save().call(&"configure_test_save_interruption", boundary)), "arm explicit debug interruption " + boundary)
+		var interrupted: Dictionary = host.call(&"queue_recipe", "workbench_kit", "hand")
+		_expect(not bool(interrupted.get("ok", false)), "interrupted enqueue reports no success " + boundary)
+		_expect(bool(_save().call(&"reload_save")), "reload durable generation " + boundary)
+		var fresh_id := ""
+		for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+			if key not in ids_before:
+				fresh_id = String(key)
+		if fresh_id.is_empty():
+			_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before, "no committed job means inputs remain " + boundary)
+		else:
+			_expect(_count(WOOD) == wood_before - 6 and _count(IRON) == iron_before - 2, "committed job owns exact reserved inputs " + boundary)
+			_expect(bool((host.call(&"cancel", fresh_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", fresh_id) as Dictionary).get("ok", false)), "recover interrupted escrow " + boundary)
+			_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before, "returned escrow conserved " + boundary)
+		_expect(bool((adapter.call(&"ownership_audit") as Dictionary).get("ok", false)), "ownership audit survives interruption " + boundary)
 	_body_complete = true
