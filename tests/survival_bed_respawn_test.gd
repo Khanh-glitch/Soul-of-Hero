@@ -220,18 +220,18 @@ func _body() -> void:
 	_expect(button != null and button.is_visible_in_tree(), "paused overworld exposes an actual respawn button")
 	if button != null:
 		await process_frame
-		var event := InputEventMouseButton.new()
-		event.button_index = MOUSE_BUTTON_LEFT
-		event.position = button.get_global_rect().get_center()
-		root.warp_mouse(event.position)
-		await process_frame
+		# Establish GUI focus in this automated fixture; ui_accept then travels
+		# through the real paused Button rather than invoking its signal or handler.
+		button.grab_focus()
+		var event := InputEventAction.new()
+		event.action = &"ui_accept"
 		event.pressed = true
 		Input.parse_input_event(event)
 		await process_frame
 		event.pressed = false
 		Input.parse_input_event(event)
 		await process_frame
-	_expect(not bool(hero.get(&"dead")), "normal GUI mouse input respawns actual Hero via active bed")
+	_expect(not bool(hero.get(&"dead")), "focused GUI accept input respawns actual Hero via active bed")
 	_expect(not bool(hero.get(&"dead")) and root.get_node("GameSession").get(&"checkpoint") == old_checkpoint,
 		"overworld respawn keeps dungeon checkpoint untouched")
 	_expect(String((svc.call(&"document") as Dictionary).get("pending_death", "")) == "", "respawn commit clears pending death")
