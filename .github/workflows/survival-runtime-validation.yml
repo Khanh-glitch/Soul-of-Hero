@@ -301,24 +301,41 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
-      - name: Surface native roof capture bytes for visual review
+      - name: Roof frame outside review bytes 1
         if: always()
-        run: |
-          python3 - <<'PYROOF'
-          import base64, glob, os
-          for name in ('outside', 'inside', 'adjacent'):
-              matches = glob.glob('artifacts/**/roof_' + name + '_crop.png', recursive=True)
-              if not matches:
-                  print('::warning::missing native roof capture ' + name)
-                  continue
-              encoded = base64.b64encode(open(matches[0], 'rb').read()).decode('ascii')
-              chunks = [encoded[i:i + 6000] for i in range(0, len(encoded), 6000)]
-              if len(chunks) > 30:
-                  print('::warning::native roof capture too large for annotations: ' + name)
-                  continue
-              for i, chunk in enumerate(chunks):
-                  print('::notice::ROOF_CAPTURE_%s_%d_OF_%d:%s' % (name.upper(), i + 1, len(chunks), chunk))
-          PYROOF
+        run: python3 tools/ci/emit_roof_capture.py outside 0
+
+      - name: Roof frame outside review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py outside 1
+
+      - name: Roof frame outside review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py outside 2
+
+      - name: Roof frame inside review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 0
+
+      - name: Roof frame inside review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 1
+
+      - name: Roof frame inside review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py inside 2
+
+      - name: Roof frame adjacent review bytes 1
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 0
+
+      - name: Roof frame adjacent review bytes 2
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 1
+
+      - name: Roof frame adjacent review bytes 3
+        if: always()
+        run: python3 tools/ci/emit_roof_capture.py adjacent 2
 
       - name: Every check actually ran (anti-vacuity)
         if: always()
