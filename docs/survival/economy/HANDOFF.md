@@ -13,16 +13,17 @@
 - Tests: `tests/survival/catalog/`
 - CI: `.github/workflows/survival-a3-economy.yml`
 - Reports: `docs/survival/economy/{validation_report,balance_report,reverse_index}.json`
+- A1 mapping: `data/survival/items/a1_material_mapping.json`, `docs/survival/economy/A1_MATERIAL_MAPPING.md` (27 contracts: 7 existing, 8 proposed aliases, 12 explicit missing)
 
 ## Evidence
 - Catalog audit: PASS (56 items, 36 recipes, 5 technologies, 36 sources, 7 stations; all contract-reachable; no production cycles).
-- Python adversarial/balance tests: 6/6 PASS.
+- Python adversarial/balance/mapping tests: 7/7 PASS.
 - Native Godot 4.7 SaveService adapter: PASS in CI runs 40868045642 / 40868053966.
 - Balance model: conservation invariants PASS; gameplay-design NOT_HUMAN_PLAYTESTED.
 
 ## Next owner actions
 1. A0: review `migration_map.json`; add unique-token routing/refusal for generic drop/transfer/merge; station resolver/power/condition/removal guards; preserve `survival_economy` namespace.
-2. A1: bind `PROPOSED_A1` sources/loot tables to actual nodes/POIs/risk/replenishment; confirm roadside vs sealed-archive pacing.
+2. A1: review `a1_material_mapping.json` proposed aliases and 12 explicit missing items; bind `CONTRACT_NOT_SPAWNED` nodes/POIs to native spawning/replenishment; confirm roadside vs sealed-archive pacing.
 3. A4: provide verified abstract skill attestation for `soh.core.*`; until then Core cast remains fail-closed.
 4. A6: consume read-only catalogs after A0/A1 contract freeze.
 5. Independent reviewer: audit transaction atomicity, unique ownership, salvage/reconstruction conservation, and replay binding.

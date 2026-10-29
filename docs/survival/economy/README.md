@@ -4,7 +4,7 @@ Status: **implementation authored; catalog/balance contracts and native SaveServ
 
 ## What this slice owns
 
-- Machine-readable economy catalogs: `data/survival/items/{items,sources,loot_tables,migration_map}.json`, `data/survival/recipes/{recipes,stations,research}.json` and JSON Schemas.
+- Machine-readable economy catalogs: `data/survival/items/{items,sources,loot_tables,migration_map,a1_material_mapping}.json`, `data/survival/recipes/{recipes,stations,research}.json` and JSON Schemas.
 - Isolated runtime adapter: `game/survival/economy/economy_service.gd` (RefCounted, **not** an autoload, **not** a second save authority).
 - Validation/simulation: `tools/survival/economy/{validate_economy,simulate_economy}.py`.
 - Tests: `tests/survival/catalog/` (Python contract/balance tests + Godot adapter test against the real SaveService).

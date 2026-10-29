@@ -76,3 +76,18 @@ class EconomyContracts(unittest.TestCase):
                 self.assertTrue(any('unknown item' in e for e in json.loads(out.read_text())['errors']))
         finally: ve.load=original
 if __name__=='__main__': unittest.main()
+
+class A1MaterialMapping(unittest.TestCase):
+    def test_mapping_covers_27_contracts_and_references_real_a3_items(self):
+        m=json.loads((ROOT/'data/survival/items/a1_material_mapping.json').read_text())
+        items=json.loads((ROOT/'data/survival/items/items.json').read_text())['items']
+        self.assertEqual(m['counts']['a1_materials'],27)
+        self.assertEqual(len(m['materials']),27)
+        for k,v in m['materials'].items():
+            self.assertEqual(v['material_key'],k)
+            self.assertIn(v['mapping_status'],['MAPPED_EXISTING','MAPPED_PROPOSED_ALIAS','MISSING_A3_ITEM'])
+            for iid in v['a3_item_ids']: self.assertIn(iid,items)
+            if v['mapping_status']=='MISSING_A3_ITEM': self.assertEqual(v['a3_item_ids'],[])
+            else: self.assertTrue(v['a3_item_ids'])
+            self.assertEqual(v['a1_contract']['status'],'CONTRACT_NOT_SPAWNED')
+        self.assertEqual(m['counts']['missing_a3_item'],12)

@@ -1,0 +1,1624 @@
+{
+  "schema": "soh.economy.a1_material_mapping.v1",
+  "status": "A3_REVIEW_MAPPING_NOT_NATIVE_INTEGRATED",
+  "a1_source": "data/survival/world/material_source_contracts.json @ PR #20 / arena/e385312a-soul-of-hero",
+  "principles": [
+    "material_key is a world-source contract, not a final A3 item.",
+    "Do not change A1 static source, A0 SaveService, or A4 skill library.",
+    "MISSING_A3_ITEM means no current A3 inventory id/recipe; proposed aliases require A1/A3 design agreement."
+  ],
+  "counts": {
+    "a1_materials": 27,
+    "mapped_existing": 7,
+    "mapped_proposed_alias": 8,
+    "missing_a3_item": 12
+  },
+  "materials": {
+    "abyssal_pearl": {
+      "material_key": "abyssal_pearl",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "tide-locked deep grotto mollusc",
+        "processing": "pressure polishing",
+        "a1_sinks": "tier-3 seal; abyssal core",
+        "renewal": "tide-gated bed",
+        "node_count": 3,
+        "site_count": 1,
+        "regions": [
+          "r_pearl_mangroves"
+        ],
+        "required_capabilities": [
+          "cap_boat"
+        ],
+        "renewal_descriptions": [
+          "tide-gated bed"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No pearl/abyssal item in A3. A1 tier-3 seal/abyssal core sink has no A3 recipe yet.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_pearl_customs",
+        "poi_pearl_grotto",
+        "poi_pearl_nursery"
+      ]
+    },
+    "aether_crystal": {
+      "material_key": "aether_crystal",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "hydrothermal vug in fractured limestone/granite",
+        "processing": "resonance cutting",
+        "a1_sinks": "core blanks; power nodes",
+        "renewal": "finite vug",
+        "node_count": 4,
+        "site_count": 1,
+        "regions": [
+          "r_frost_crown"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "finite vug"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "A3 core catalyst is ancient_catalyst from sealed archives, not a hydrothermal vug. Do not silently alias; design decision required.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_frost_ice_cave",
+        "poi_frost_observatory",
+        "poi_verdant_root_lift",
+        "poi_verdant_canopy_temple",
+        "poi_verdant_river_gate",
+        "poi_mirrormere_observatory",
+        "poi_sunken_cenote",
+        "poi_sunken_tower",
+        "poi_ashwater_shrine",
+        "poi_verdant_south_shrine"
+      ]
+    },
+    "basalt": {
+      "material_key": "basalt",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "cooled lava flow",
+        "processing": "kiln block",
+        "a1_sinks": "heat-proof construction",
+        "renewal": "finite flow",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_ember_steppe"
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "finite flow"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Heat-proof construction is A0 construction material; no A3 inventory item/recipe.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_ember_basalt_gate",
+        "poi_ember_east_watch",
+        "poi_ember_ash_quarry",
+        "poi_ember_south_watch"
+      ]
+    },
+    "bog_iron": {
+      "material_key": "bog_iron",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "redox precipitation at peat margin",
+        "processing": "bloom furnace",
+        "a1_sinks": "filter frame; late tools",
+        "renewal": "slow redox renewal",
+        "node_count": 5,
+        "site_count": 1,
+        "regions": [
+          "r_ashwater_fen"
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "slow redox renewal"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "iron_ore"
+      ],
+      "note": "Functional iron feedstock; A1 redox renewal differs from A3 finite vein proposal.",
+      "a3_sources": [
+        {
+          "source_id": "node_iron_ore",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "tool_item",
+              "value": "stone_pick"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "iron_ore",
+          "kind": "recipe",
+          "id": "smelt_ore"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_ashwater_pump",
+        "poi_ashwater_boardwalk",
+        "poi_ashwater_resurgence",
+        "poi_ashwater_south_pump",
+        "poi_ashwater_west_boardwalk",
+        "poi_ashwater_south_boardwalk"
+      ]
+    },
+    "clay": {
+      "material_key": "clay",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "lacustrine silt lens",
+        "processing": "kiln brick",
+        "a1_sinks": "furnace lining; pottery",
+        "renewal": "finite lens",
+        "node_count": 5,
+        "site_count": 1,
+        "regions": [
+          "r_mirrormere"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "finite lens"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "clay"
+      ],
+      "note": "Exact id; furnace lining/kiln sink pending A0 station construction.",
+      "a3_sources": [
+        {
+          "source_id": "node_clay",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "clay",
+          "kind": "recipe",
+          "id": "garden_kit"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_ferry_pile",
+        "poi_amberwood_ferry",
+        "poi_mirrormere_piles",
+        "poi_mirrormere_observatory",
+        "poi_mere_east_pile",
+        "poi_mere_south_pile"
+      ]
+    },
+    "copper": {
+      "material_key": "copper",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "basalt-hosted vein and wadi placer",
+        "processing": "smelt -> ingot",
+        "a1_sinks": "wire; power circuits; trade",
+        "renewal": "finite vein",
+        "node_count": 11,
+        "site_count": 2,
+        "regions": [
+          "r_ember_steppe",
+          "r_saffron_coast"
+        ],
+        "required_capabilities": [
+          "cap_filter",
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "finite vein"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No copper ingot/wire/power-circuit item. A3 power contract currently uses charcoal as placeholder fuel.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_crown_relay_shed",
+        "poi_glasswind_signal",
+        "poi_ember_old_forge",
+        "poi_ember_convict_mine",
+        "poi_ember_caravan_serai",
+        "poi_saffron_salt_pan",
+        "poi_verdant_river_gate",
+        "poi_ashwater_pump",
+        "poi_crown_old_signal",
+        "poi_saffron_south_pan",
+        "poi_ashwater_south_pump"
+      ]
+    },
+    "fibre": {
+      "material_key": "fibre",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "reed/oasis/forest understorey",
+        "processing": "retting and rope walk",
+        "a1_sinks": "cloth; rope; filter mesh",
+        "renewal": "seasonal regrowth",
+        "node_count": 11,
+        "site_count": 2,
+        "regions": [
+          "r_ashen_crown",
+          "r_saffron_coast"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "seasonal regrowth"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "reed_fibre"
+      ],
+      "note": "A3 has only reed_fibre; generic fibre/oasis/forest sources collapse to it unless A1 splits ids.",
+      "a3_sources": [
+        {
+          "source_id": "live_reed_fibre",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 240,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "weave_cloth"
+        },
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "make_compost"
+        },
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "garden_kit"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_ember_piton_works",
+        "poi_saffron_caravan",
+        "poi_saffron_wadi_well",
+        "poi_amberwood_apothecary",
+        "poi_mirrormere_ferry",
+        "poi_crown_rim_shrine",
+        "poi_crown_herder_camp"
+      ]
+    },
+    "frost_resin": {
+      "material_key": "frost_resin",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "boreal conifer cold stress exudate",
+        "processing": "alembic distillate",
+        "a1_sinks": "thermal ward; cold-seal core",
+        "renewal": "tapped stand cooldown",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_frost_crown"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "tapped stand cooldown"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "frost_shard"
+      ],
+      "note": "Functional cold reagent for frost_extract/ward; A1 ecological resin vs A3 mineral shard is a provenance mismatch.",
+      "a3_sources": [
+        {
+          "source_id": "node_frost_shard",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "medium",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "tool_item",
+              "value": "stone_pick"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "frost_shard",
+          "kind": "recipe",
+          "id": "extract_frost"
+        },
+        {
+          "item_id": "frost_shard",
+          "kind": "recipe",
+          "id": "craft_core_frost"
+        },
+        {
+          "item_id": "frost_shard",
+          "kind": "technology",
+          "id": "tech_frost"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_frost_wardhouse",
+        "poi_frost_goat_pass",
+        "poi_frost_tarn_shrine",
+        "poi_frost_rime_cairn",
+        "poi_frost_avalanche_hut",
+        "poi_frost_south_watch"
+      ]
+    },
+    "glacial_iron": {
+      "material_key": "glacial_iron",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "magnetite skarn at granite contact",
+        "processing": "cold-crucible bloom",
+        "a1_sinks": "thermal ward; deep pressure frame",
+        "renewal": "thaw-season vein",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_frost_crown"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "thaw-season vein"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "iron_ore"
+      ],
+      "note": "High-grade iron feedstock; no separate glacial steel recipe yet.",
+      "a3_sources": [
+        {
+          "source_id": "node_iron_ore",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "tool_item",
+              "value": "stone_pick"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "iron_ore",
+          "kind": "recipe",
+          "id": "smelt_ore"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_frost_wardhouse",
+        "poi_frost_ice_cave",
+        "poi_frost_miners_hut",
+        "poi_frost_north_gate",
+        "poi_frost_glacier_mill"
+      ]
+    },
+    "hardwood": {
+      "material_key": "hardwood",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "monsoon canopy emergent trees",
+        "processing": "seasoned plank",
+        "a1_sinks": "boat hull; boardwalk; advanced frames",
+        "renewal": "slow grove",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_verdant_fold"
+        ],
+        "required_capabilities": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "slow grove"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "oak_wood"
+      ],
+      "note": "A3 oak_wood is generic wood; boat hull/boardwalk are A0 construction, not A3 recipes.",
+      "a3_sources": [
+        {
+          "source_id": "live_oak_wood",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 300,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "burn_charcoal"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "workbench_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "research_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "garden_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "stone_pick"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "iron_pick"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "salvage_hammer"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_saffron_drydock",
+        "poi_verdant_root_lift",
+        "poi_verdant_terraces",
+        "poi_pearl_stilt_village",
+        "poi_mirrormere_ferry",
+        "poi_sunken_graft",
+        "poi_sunken_wreck",
+        "poi_ashwater_boardwalk",
+        "poi_verdant_south_gate",
+        "poi_ashwater_west_boardwalk",
+        "poi_verdant_east_blind",
+        "poi_ashwater_south_boardwalk"
+      ]
+    },
+    "honey": {
+      "material_key": "honey",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "orchard and oasis pollinator hive",
+        "processing": "comb press",
+        "a1_sinks": "food; fermentation; trade",
+        "renewal": "hive cooldown",
+        "node_count": 4,
+        "site_count": 1,
+        "regions": [
+          "r_amberwood"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "hive cooldown"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No honey/fermentation item; field_meal uses grain/wild_berries.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_verdant_terraces",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_orchard",
+        "poi_crown_south_orchard"
+      ]
+    },
+    "iron": {
+      "material_key": "iron",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "weathered tuff and lateritic seam",
+        "processing": "bloom furnace",
+        "a1_sinks": "fasteners; tools; ward frames",
+        "renewal": "finite vein",
+        "node_count": 5,
+        "site_count": 1,
+        "regions": [
+          "r_ashen_crown"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "finite vein"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "iron_ore"
+      ],
+      "note": "A1 iron maps to A3 iron_ore feedstock; iron_scrap remains salvage/live reward path.",
+      "a3_sources": [
+        {
+          "source_id": "node_iron_ore",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "tool_item",
+              "value": "stone_pick"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "iron_ore",
+          "kind": "recipe",
+          "id": "smelt_ore"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_waystation",
+        "poi_crown_quarry",
+        "poi_glasswind_wreck",
+        "poi_ember_piton_works",
+        "poi_amberwood_mill",
+        "poi_crown_tuff_terrace",
+        "poi_crown_south_quarry"
+      ]
+    },
+    "limestone": {
+      "material_key": "limestone",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "karst tower and terrace",
+        "processing": "lime kiln",
+        "a1_sinks": "mortar; filter; grafting bed",
+        "renewal": "finite quarry",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_sunken_orchard"
+        ],
+        "required_capabilities": [
+          "cap_deepward"
+        ],
+        "renewal_descriptions": [
+          "finite quarry"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Mortar/filter/grafting bed has no A3 item; A0 construction/A1 world prep owns it.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_saffron_coral_tomb",
+        "poi_sunken_cenote",
+        "poi_sunken_tower",
+        "poi_sunken_subspring",
+        "poi_verdant_south_gate",
+        "poi_sunken_south_spring",
+        "poi_sunken_west_spring"
+      ]
+    },
+    "obsidian": {
+      "material_key": "obsidian",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "rapid-cooled lava seam",
+        "processing": "knapping / anneal",
+        "a1_sinks": "precision cores; blades",
+        "renewal": "fumarole-cycle exposure",
+        "node_count": 4,
+        "site_count": 1,
+        "regions": [
+          "r_ember_steppe"
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "fumarole-cycle exposure"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Precision cores/blades not represented; A3 spring/steel path is separate.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_ember_convict_mine",
+        "poi_ember_fumarole"
+      ]
+    },
+    "pearl": {
+      "material_key": "pearl",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "freshwater/tidal mollusc bed",
+        "processing": "nacre polishing",
+        "a1_sinks": "seal inlay; trade; lens",
+        "renewal": "bed cooldown",
+        "node_count": 10,
+        "site_count": 2,
+        "regions": [
+          "r_mirrormere",
+          "r_pearl_mangroves"
+        ],
+        "required_capabilities": [
+          "cap_boat"
+        ],
+        "renewal_descriptions": [
+          "bed cooldown"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Seal inlay/trade/lens has no A3 item; access seals are key_item credentials, not pearl crafts.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_frost_tarn_shrine",
+        "poi_glasswind_wreck",
+        "poi_saffron_coral_tomb",
+        "poi_saffron_customs",
+        "poi_pearl_customs",
+        "poi_pearl_stilt_village",
+        "poi_pearl_grotto",
+        "poi_pearl_smuggler",
+        "poi_pearl_nursery",
+        "poi_mirrormere_piles",
+        "poi_mirrormere_causeway",
+        "poi_mirrormere_smuggler",
+        "poi_sunken_subspring",
+        "poi_pearl_east_nursery",
+        "poi_sunken_south_spring",
+        "poi_sunken_west_spring"
+      ]
+    },
+    "peat": {
+      "material_key": "peat",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "waterlogged acid bog accumulation",
+        "processing": "drying / charcoal",
+        "a1_sinks": "fuel; filter carbon",
+        "renewal": "very slow cut",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_ashwater_fen"
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "very slow cut"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "coal"
+      ],
+      "note": "Functional solid fuel; A3 coal is a proposed node, charcoal is wood-derived. Peat charcoal recipe not authored.",
+      "a3_sources": [
+        {
+          "source_id": "node_coal",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "tool_item",
+              "value": "stone_pick"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "coal",
+          "kind": "recipe",
+          "id": "alloy_steel"
+        },
+        {
+          "item_id": "coal",
+          "kind": "salvage_output_of",
+          "id": "steel_ingot"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_ashwater_watch",
+        "poi_ashwater_south_shrine"
+      ]
+    },
+    "rare_herb": {
+      "material_key": "rare_herb",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "niche understorey and orchard remnant",
+        "processing": "drying / essence",
+        "a1_sinks": "potions; filter; grafting",
+        "renewal": "plot or wild patch",
+        "node_count": 11,
+        "site_count": 2,
+        "regions": [
+          "r_amberwood",
+          "r_sunken_orchard"
+        ],
+        "required_capabilities": [
+          "cap_deepward"
+        ],
+        "renewal_descriptions": [
+          "plot or wild patch"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "moonleaf"
+      ],
+      "note": "Functional potion/herb feedstock; A1 rare_herb is broader than A3 moonleaf.",
+      "a3_sources": [
+        {
+          "source_id": "node_moonleaf",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "moonleaf",
+          "kind": "recipe",
+          "id": "extract_venom"
+        },
+        {
+          "item_id": "moonleaf",
+          "kind": "recipe",
+          "id": "extract_frost"
+        },
+        {
+          "item_id": "moonleaf",
+          "kind": "recipe",
+          "id": "minor_salve"
+        },
+        {
+          "item_id": "moonleaf",
+          "kind": "salvage_output_of",
+          "id": "venom_extract"
+        },
+        {
+          "item_id": "moonleaf",
+          "kind": "salvage_output_of",
+          "id": "frost_extract"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_saffron_wadi_well",
+        "poi_verdant_spore_hollow",
+        "poi_verdant_terraces",
+        "poi_amberwood_apothecary",
+        "poi_amberwood_orchard",
+        "poi_mirrormere_reed_holt",
+        "poi_sunken_graft",
+        "poi_ashwater_resurgence",
+        "poi_amber_west_holt",
+        "poi_verdant_south_shrine",
+        "poi_crown_south_orchard"
+      ]
+    },
+    "reed_fibre": {
+      "material_key": "reed_fibre",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "lake-margin reed bed",
+        "processing": "retting",
+        "a1_sinks": "cloth; rope; thatch",
+        "renewal": "seasonal bed",
+        "node_count": 7,
+        "site_count": 1,
+        "regions": [
+          "r_mirrormere"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "seasonal bed"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "reed_fibre"
+      ],
+      "note": "Exact legacy id preserved.",
+      "a3_sources": [
+        {
+          "source_id": "live_reed_fibre",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 240,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "weave_cloth"
+        },
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "make_compost"
+        },
+        {
+          "item_id": "reed_fibre",
+          "kind": "recipe",
+          "id": "garden_kit"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_ferry_pile",
+        "poi_amberwood_ferry",
+        "poi_mirrormere_piles",
+        "poi_mirrormere_reed_holt",
+        "poi_mere_east_pile",
+        "poi_mere_south_pile"
+      ]
+    },
+    "rubber_sap": {
+      "material_key": "rubber_sap",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "tropical liana and sap tree",
+        "processing": "latex cure",
+        "a1_sinks": "seals; boat; insulation",
+        "renewal": "tapped grove",
+        "node_count": 5,
+        "site_count": 1,
+        "regions": [
+          "r_verdant_fold"
+        ],
+        "required_capabilities": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "tapped grove"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Seals/boat/insulation has no A3 item; A0/A1 preparation capability gap.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_saffron_drydock",
+        "poi_verdant_root_lift"
+      ]
+    },
+    "salt": {
+      "material_key": "salt",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "evaporite pan and sea spray",
+        "processing": "pan raking / boiling",
+        "a1_sinks": "food preservation; flux; trade",
+        "renewal": "dry-wind renewal",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_saffron_coast"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "dry-wind renewal"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Food preservation/flux/trade has no A3 item or recipe.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_glasswind_gullery",
+        "poi_ember_caravan_serai",
+        "poi_saffron_salt_pan",
+        "poi_saffron_caravan",
+        "poi_pearl_stilt_village",
+        "poi_pearl_beacon",
+        "poi_glass_aukery",
+        "poi_saffron_south_pan",
+        "poi_saffron_south_watch",
+        "poi_pearl_east_beacon",
+        "poi_pearl_east_nursery",
+        "poi_glass_tide_watch",
+        "poi_saffron_tide_watch",
+        "poi_pearl_north_beacon"
+      ]
+    },
+    "salvage": {
+      "material_key": "salvage",
+      "a1_contract": {
+        "category": "anthropic",
+        "cause": "road barrels and abandoned supply caches",
+        "processing": "recycler -> spares",
+        "a1_sinks": "research; station upgrades",
+        "renewal": "road cache restock",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_ashen_crown"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "road cache restock"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "iron_scrap",
+        "knowledge_spares"
+      ],
+      "note": "A3 salvage_hammer dismantles to scrap; study recipes convert trophies to knowledge_spares. Road cache restock matches roadside loot.",
+      "a3_sources": [
+        {
+          "source_id": "live_iron_scrap",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        },
+        {
+          "source_id": "road_scrap",
+          "yield_per_claim": 3,
+          "replenishment_seconds": 1800,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": []
+        },
+        {
+          "source_id": "road_supplies",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 1800,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "iron_scrap",
+          "kind": "recipe",
+          "id": "smelt_iron"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "recipe",
+          "id": "make_spares"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "recipe",
+          "id": "furnace_kit"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "recipe",
+          "id": "workbench_kit"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "technology",
+          "id": "tech_smelting"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "iron_ingot"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "steel_ingot"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "iron_parts"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "spring"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "core_blank"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "charged_blank"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "core_venom"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "core_frost"
+        },
+        {
+          "item_id": "iron_scrap",
+          "kind": "salvage_output_of",
+          "id": "core_ember"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "make_notes"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "research_kit"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "core_blank"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "rebuild_core_venom"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "rebuild_core_frost"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "recipe",
+          "id": "rebuild_core_ember"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "technology",
+          "id": "tech_smelting"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "technology",
+          "id": "tech_precision"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "salvage_output_of",
+          "id": "predator_jaw"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "kind": "salvage_output_of",
+          "id": "fractured_axe_insignia"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_waystation",
+        "poi_crown_relay_shed",
+        "poi_crown_orchard_gate",
+        "poi_crown_barrow_field",
+        "poi_frost_miners_hut",
+        "poi_glasswind_wreck",
+        "poi_glasswind_smuggler",
+        "poi_ember_old_forge",
+        "poi_ember_cinder_camp",
+        "poi_ember_caravan_serai",
+        "poi_saffron_drydock",
+        "poi_saffron_caravan",
+        "poi_saffron_customs",
+        "poi_pearl_customs",
+        "poi_pearl_smuggler",
+        "poi_amberwood_barrow",
+        "poi_mirrormere_causeway",
+        "poi_mirrormere_smuggler",
+        "poi_sunken_wreck",
+        "poi_ashwater_pump",
+        "poi_ashwater_bog_camp",
+        "poi_crown_north_watch",
+        "poi_crown_old_signal",
+        "poi_crown_herder_camp",
+        "poi_frost_avalanche_hut",
+        "poi_ember_east_watch",
+        "poi_amber_west_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_barrow",
+        "poi_ember_south_watch"
+      ]
+    },
+    "silica_sand": {
+      "material_key": "silica_sand",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "wave-sorted cliff sand",
+        "processing": "glass furnace",
+        "a1_sinks": "storm glass; lenses",
+        "renewal": "tidal placer",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_glasswind_coast"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "tidal placer"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Glass furnace/lens path absent; storm_glass also missing.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_glasswind_light",
+        "poi_glasswind_smuggler",
+        "poi_glasswind_gullery",
+        "poi_glass_north_cliff",
+        "poi_glass_aukery",
+        "poi_glass_tide_watch"
+      ]
+    },
+    "stone": {
+      "material_key": "stone",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "moraine and caldera tuff outcrop",
+        "processing": "cut block",
+        "a1_sinks": "foundations; mill repair",
+        "renewal": "finite outcrop, slow renewal",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_ashen_crown"
+        ],
+        "required_capabilities": [],
+        "renewal_descriptions": [
+          "finite outcrop, slow renewal"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "stone_chunk"
+      ],
+      "note": "Exact legacy id preserved.",
+      "a3_sources": [
+        {
+          "source_id": "live_stone_chunk",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 480,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "stone_chunk",
+          "kind": "recipe",
+          "id": "furnace_kit"
+        },
+        {
+          "item_id": "stone_chunk",
+          "kind": "recipe",
+          "id": "advanced_furnace_kit"
+        },
+        {
+          "item_id": "stone_chunk",
+          "kind": "recipe",
+          "id": "stone_pick"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_quarry",
+        "poi_crown_barrow_field",
+        "poi_frost_goat_pass",
+        "poi_glasswind_watch",
+        "poi_ember_basalt_gate",
+        "poi_amberwood_mill",
+        "poi_amberwood_barrow",
+        "poi_amberwood_watch",
+        "poi_mirrormere_causeway",
+        "poi_sunken_watch",
+        "poi_crown_north_watch",
+        "poi_crown_rim_shrine",
+        "poi_crown_tuff_terrace",
+        "poi_frost_north_gate",
+        "poi_frost_rime_cairn",
+        "poi_glass_north_cliff",
+        "poi_amber_west_barrow",
+        "poi_crown_south_mill",
+        "poi_crown_south_barrow",
+        "poi_crown_south_watch",
+        "poi_crown_south_quarry",
+        "poi_saffron_tide_watch",
+        "poi_frost_south_watch",
+        "poi_amber_edge_watch"
+      ]
+    },
+    "storm_glass": {
+      "material_key": "storm_glass",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "fulgurite where lightning strikes silica",
+        "processing": "storm-ward anneal",
+        "a1_sinks": "signal tower; storm core",
+        "renewal": "storm-event placer",
+        "node_count": 4,
+        "site_count": 1,
+        "regions": [
+          "r_glasswind_coast"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "storm-event placer"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "Signal tower/storm core absent; A3 core_ember is soul_ember-based, not storm glass.",
+      "a3_sources": [],
+      "a3_economic_sinks": [],
+      "a1_poi_consumers": [
+        "poi_frost_observatory",
+        "poi_glasswind_light",
+        "poi_glasswind_signal"
+      ]
+    },
+    "sulfur": {
+      "material_key": "sulfur",
+      "a1_contract": {
+        "category": "geological",
+        "cause": "fumarole sublimation",
+        "processing": "sublimation trap",
+        "a1_sinks": "acid resist; flux; core catalyst",
+        "renewal": "fumarole cycle",
+        "node_count": 6,
+        "site_count": 1,
+        "regions": [
+          "r_ember_steppe"
+        ],
+        "required_capabilities": [
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "fumarole cycle"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "sulfur"
+      ],
+      "note": "Exact id; acid resist/flux sink via extract_venom and protection gear.",
+      "a3_sources": [
+        {
+          "source_id": "node_sulfur",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 600,
+          "risk": "low",
+          "integration_status": "PROPOSED_A1",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "sulfur",
+          "kind": "recipe",
+          "id": "extract_venom"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_ember_old_forge",
+        "poi_ember_convict_mine",
+        "poi_ember_cinder_camp",
+        "poi_ember_fumarole",
+        "poi_ember_ash_quarry"
+      ]
+    },
+    "timber": {
+      "material_key": "timber",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "mixed/boreal forest canopy",
+        "processing": "sawmill plank",
+        "a1_sinks": "construction; tool hafts; fuel",
+        "renewal": "regrowing stand",
+        "node_count": 13,
+        "site_count": 2,
+        "regions": [
+          "r_amberwood",
+          "r_glasswind_coast"
+        ],
+        "required_capabilities": [
+          "cap_thermal"
+        ],
+        "renewal_descriptions": [
+          "regrowing stand"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_EXISTING",
+      "a3_item_ids": [
+        "oak_wood"
+      ],
+      "note": "A3 oak_wood is the current generic timber id.",
+      "a3_sources": [
+        {
+          "source_id": "live_oak_wood",
+          "yield_per_claim": 2,
+          "replenishment_seconds": 300,
+          "risk": "low",
+          "integration_status": "LIVE_SURV_010",
+          "requirements": []
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "burn_charcoal"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "workbench_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "research_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "garden_kit"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "stone_pick"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "iron_pick"
+        },
+        {
+          "item_id": "oak_wood",
+          "kind": "recipe",
+          "id": "salvage_hammer"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_crown_orchard_gate",
+        "poi_glasswind_watch",
+        "poi_verdant_hunter_camp",
+        "poi_pearl_beacon",
+        "poi_amberwood_mill",
+        "poi_amberwood_orchard",
+        "poi_amberwood_watch",
+        "poi_sunken_watch",
+        "poi_ashwater_watch",
+        "poi_frost_glacier_mill",
+        "poi_saffron_south_watch",
+        "poi_amber_west_holt",
+        "poi_pearl_east_beacon",
+        "poi_crown_south_mill",
+        "poi_crown_south_watch",
+        "poi_crown_south_orchard",
+        "poi_amber_edge_watch",
+        "poi_pearl_north_beacon"
+      ]
+    },
+    "venom_sac": {
+      "material_key": "venom_sac",
+      "a1_contract": {
+        "category": "ecological",
+        "cause": "wetland predator and mangrove fauna",
+        "processing": "venom alembic",
+        "a1_sinks": "filter gear; venom core family",
+        "renewal": "fauna respawn",
+        "node_count": 10,
+        "site_count": 2,
+        "regions": [
+          "r_ashwater_fen",
+          "r_verdant_fold"
+        ],
+        "required_capabilities": [
+          "cap_climb",
+          "cap_filter"
+        ],
+        "renewal_descriptions": [
+          "fauna respawn"
+        ],
+        "status": "CONTRACT_NOT_SPAWNED"
+      },
+      "mapping_status": "MAPPED_PROPOSED_ALIAS",
+      "a3_item_ids": [
+        "venom_spine"
+      ],
+      "note": "Functional venom reagent; A1 sac/fauna vs A3 spine/reward is a provenance mismatch.",
+      "a3_sources": [
+        {
+          "source_id": "legacy_venom_spine",
+          "yield_per_claim": 1,
+          "replenishment_seconds": 0,
+          "risk": "combat",
+          "integration_status": "LIVE_EXISTING_REWARDS",
+          "requirements": []
+        },
+        {
+          "source_id": "venom_cache",
+          "yield_per_claim": 1,
+          "replenishment_seconds": 3600,
+          "risk": "medium",
+          "integration_status": "PROPOSED_A1",
+          "requirements": [
+            {
+              "kind": "resistance",
+              "value": "venom:30"
+            }
+          ]
+        }
+      ],
+      "a3_economic_sinks": [
+        {
+          "item_id": "venom_spine",
+          "kind": "recipe",
+          "id": "extract_venom"
+        },
+        {
+          "item_id": "venom_spine",
+          "kind": "recipe",
+          "id": "craft_core_venom"
+        },
+        {
+          "item_id": "venom_spine",
+          "kind": "technology",
+          "id": "tech_toxin"
+        }
+      ],
+      "a1_poi_consumers": [
+        "poi_verdant_canopy_temple",
+        "poi_verdant_spore_hollow",
+        "poi_verdant_hunter_camp",
+        "poi_ashwater_shrine",
+        "poi_ashwater_bog_camp",
+        "poi_ashwater_south_shrine",
+        "poi_verdant_east_blind"
+      ]
+    }
+  },
+  "capability_mapping": {
+    "cap_boat": {
+      "status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No boat item; A1/A0 world traversal capability."
+    },
+    "cap_climb": {
+      "status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No climb gear item; A1/A0 world traversal capability."
+    },
+    "cap_deepward": {
+      "status": "MISSING_A3_ITEM",
+      "a3_item_ids": [],
+      "note": "No deepward credential/gear; A3 seals are access_tier placeholders."
+    },
+    "cap_filter": {
+      "status": "PARTIAL_A3_GEAR",
+      "a3_item_ids": [
+        "toxin_mask"
+      ],
+      "note": "A3 toxin_mask gives venom:60; generic filter/acid capability not fully modeled."
+    },
+    "cap_thermal": {
+      "status": "PARTIAL_A3_GEAR",
+      "a3_item_ids": [
+        "frost_cloak"
+      ],
+      "note": "A3 frost_cloak gives frost:60; heat/thermal power capability not fully modeled."
+    }
+  }
+}
