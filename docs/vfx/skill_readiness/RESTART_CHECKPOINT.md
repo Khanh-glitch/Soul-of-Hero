@@ -321,3 +321,28 @@ Open items:
 - Renderer: PixiJS 8 WebGL multipass at 480x270. There is no CPU-deterministic frame, so the Venomwright raster-hash differential cannot be used as-is. Headless Godot in CI has no WebGL reference. Options are recorded in the session summary.
 - Skill 1 "Black Sun Coronation" is `ECLIPSE[0]` in `eclipse.ts` (id 1, dur 10, 4 phases). Its `setup(c: Ctx)` depends on the engine's particle, layer, and post stack.
 - No ARCANA native module, no oracle, and no parity record exists yet.
+
+## Session checkpoint: native runtime gates and host castability (CI bec65d1)
+
+Evidence: native runtime run `40930552334` at `bec65d1`, read from check-run annotations.
+
+- Lifecycle, baseline oracle, 93-id Lab walk, render, capture, ports, family, world diff, ground and per-skill harness (all 93) all pass.
+- Host adapters pass for 15 Venomwright ids: 001–006, 009–012, 014, 017–019, 021. Each one checks canonical id, cancel, full cast, replay, dispose and the Lab. Library level only (HOST_CASTABLE_VERIFIED), not production integration.
+- Still red, as before: differential for 013 (tick-320 raster), 015 (event-32 knockback) and 016 (tick-195 raster). Candidate 007, 008 and 020 also still fail. These are not regressions. They are unregistered or unresolved.
+
+What was broken in the runtime gates and is now fixed (not weakened):
+
+1. Lifecycle and Lab-walk hang: `VenomWorld.drain_all()` released parked generator bodies directly. A body parked in `y()` waits on the world clock. Released with `_kill`, `y()` returns at once while `time` stands still, so an authored loop conditioned on world time never exits. `drain_all()` now settles the discarded world on its own clock, bounded to 60 s, before releasing what remains. Nothing from that settle reaches a host.
+   - The cancel contract in `venomwright_source_module.gd` was updated to say so.
+   - The pilot still passes (`f5c530d`).
+2. Canvas nil on first upload (harness, skill 011): `VenomSourceNativeCanvas` creates its sprites on demand now.
+3. Lab test: the Lab scene is awaited until ready, the Lab resolves its nodes by path, and the Lab is removed after a frame. The `bool()` call on a string control was replaced by a typed formatter.
+4. `run_gate.sh` escalates to SIGKILL (`timeout -k 30`). A Godot process that ignores SIGTERM no longer blocks the job until its job timeout.
+5. Harness fixture: three more reachable targets on the caster side. 011's recorded hits sit at x 222–260, which the old fixture did not reach.
+6. Host test: the raster assertion applies only to sources that produce VenomWorld rasters. Skill 001 renders through the gold_pair family path.
+
+Open, not started this session:
+- 020 tick-180 raster: still blocked on the original TypeScript and archive key. See `VENOMWRIGHT_020_TICK180_BLOCKER.md`.
+- 013, 015, 016 and 007, 008 differentials: unchanged.
+- ARCANA III: still blocked on the original archive.
+- Manifest `source_numeric_oracle` evidence pointer is a generic constant in the rebuild script. It points at `prototypes/gold_pair/tests` for every host-castable entry, which is not the per-skill oracle. Correct it before using the manifest as audit evidence.
