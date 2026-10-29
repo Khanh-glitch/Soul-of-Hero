@@ -43,7 +43,9 @@ jobs:
       - name: Bit-exact comparison
         shell: bash
         run: |
-          set -uo pipefail
+          # GitHub bash runs with -e; the Godot pipeline must not abort the step
+          set +e
+          set -o pipefail
           LOG=/tmp/gold93-v8-math.log
           timeout 900s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_v8_math_test.gd 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
