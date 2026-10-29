@@ -189,6 +189,21 @@ func _body() -> void:
 	_expect(door_node.interact(player), "occupied doorway consumes the click")
 	_expect(not bool(door_node.last_interaction().get("ok", true)), "door refuses to close on Hero")
 	player.global_position = door_node.global_position + Vector2(8, -30)
+	var blocker := CharacterBody2D.new()
+	blocker.collision_layer = 4
+	blocker.collision_mask = 0
+	var blocker_shape := CollisionShape2D.new()
+	var blocker_rect := RectangleShape2D.new()
+	blocker_rect.size = Vector2(10, 10)
+	blocker_shape.shape = blocker_rect
+	blocker.add_child(blocker_shape)
+	ow.add_child(blocker)
+	blocker.global_position = door_node.global_position + Vector2(8, 8)
+	await physics_frame
+	_expect(door_node.interact(player) and not bool(door_node.last_interaction().get("ok", true)),
+		"door refuses to close on a live enemy-layer character")
+	blocker.queue_free()
+	await physics_frame
 	_expect(door_node.interact(player) and bool(door_node.last_interaction().get("ok", false)), "clear doorway closes")
 	await process_frame
 	await physics_frame

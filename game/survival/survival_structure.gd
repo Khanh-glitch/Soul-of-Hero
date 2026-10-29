@@ -142,6 +142,21 @@ func _doorway_clear() -> bool:
 	for actor: Node in get_tree().get_nodes_in_group(&"player"):
 		if actor is Node2D and (actor as Node2D).global_position.distance_to(centre) < 24.0:
 			return false
+	# Query live actor bodies as well as the Hero. Terrain and the door itself are
+	# on layer 1; players and enemies use layers 2 and 4 respectively. Areas are
+	# excluded so an attack hitbox or interactable prompt cannot jam the door.
+	var query := PhysicsShapeQueryParameters2D.new()
+	var doorway := RectangleShape2D.new()
+	doorway.size = Vector2(16, 16)
+	query.shape = doorway
+	query.transform = Transform2D(0.0, centre)
+	query.collision_mask = 2 | 4
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	for hit: Dictionary in get_world_2d().direct_space_state.intersect_shape(query, 64):
+		var collider: Variant = hit.get("collider")
+		if collider is CharacterBody2D or collider is RigidBody2D:
+			return false
 	return true
 
 

@@ -295,7 +295,7 @@ jobs:
           rc=$?
           cat "$ARTIFACT_DIR/survival-topology.log"
           echo "::notice::topology exit=$rc $(tail -4 "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
-          echo "::notice::$(grep -E '\[spatial\]|\[door\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
+          echo "::notice::$(grep -E '\[spatial\]|\[door\]|\[frame\]' "$ARTIFACT_DIR/survival-topology.log" | tr '\n' '~')"
           grep -E 'SCRIPT ERROR|Parse Error|^ERROR:|  FAIL  ' "$ARTIFACT_DIR/survival-topology.log" | head -8 | while IFS= read -r line; do echo "::error::$line"; done
           bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-topology.log" "Topology" "SURVIVAL TOPOLOGY PASSED"
           gate=$?
