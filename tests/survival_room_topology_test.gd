@@ -45,10 +45,10 @@ func _capture_roof_frame(name: String) -> void:
 	_expect(image != null and not image.is_empty(), "native frame captured: " + name)
 	if image == null or image.is_empty():
 		return
-	var path := "user://roof_%s.png" % name
+	var path := "res://artifacts/roof_%s.png" % name
 	_expect(image.save_png(path) == OK, "native frame saved: " + name)
 	var crop := image.get_region(Rect2i(320, 180, 320, 180))
-	crop.save_png("user://roof_%s_crop.png" % name)
+	crop.save_png("res://artifacts/roof_%s_crop.png" % name)
 	print("[frame] %s" % ProjectSettings.globalize_path(path))
 
 

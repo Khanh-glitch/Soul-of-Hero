@@ -395,7 +395,7 @@ jobs:
           path: |
             artifacts/survival-foundation.log
             artifacts/survival-topology.log
-            artifacts/ud_topology/roof_*.png
+            artifacts/roof_*.png
             artifacts/godot-import.log
           if-no-files-found: warn
           retention-days: 14
