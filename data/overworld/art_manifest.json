@@ -12,8 +12,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      30,
-      372,
+      116,
+      388,
       16,
       20
      ],
@@ -23,8 +23,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      28,
-      342,
+      182,
+      356,
       22,
       28
      ],
@@ -34,8 +34,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      298,
-      348,
+      380,
+      362,
       26,
       22
      ],
@@ -45,8 +45,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_banner.png",
      "rect": [
-      430,
-      306,
+      50,
+      350,
       16,
       34
      ],
@@ -56,8 +56,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_bedroll.png",
      "rect": [
-      134,
-      378,
+      220,
+      394,
       24,
       14
      ],
@@ -67,8 +67,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      114,
-      376,
+      200,
+      392,
       18,
       16
      ],
@@ -78,8 +78,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_fire.png",
      "rect": [
-      268,
-      346,
+      350,
+      360,
       28,
       24
      ],
@@ -89,8 +89,8 @@
      "license": "original",
      "origin": "assets/environment/overworld/overrides/props/camp_tent.png",
      "rect": [
-      382,
-      304,
+      2,
+      348,
       46,
       36
      ],
@@ -100,8 +100,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      462,
-      350,
+      40,
+      388,
       20,
       20
      ],
@@ -111,32 +111,10 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      200,
-      344,
+      282,
+      358,
       38,
       26
-     ],
-     "source": "generated"
-    },
-    "cliff_buttress_a": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      308,
-      300,
-      26,
-      40
-     ],
-     "source": "generated"
-    },
-    "cliff_buttress_b": {
-     "license": "original",
-     "origin": "tools/overworld",
-     "rect": [
-      336,
-      300,
-      26,
-      40
      ],
      "source": "generated"
     },
@@ -144,8 +122,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      326,
-      348,
+      408,
+      362,
       18,
       22
      ],
@@ -155,32 +133,54 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      346,
-      348,
+      428,
+      362,
       18,
       22
      ],
      "source": "generated"
     },
-    "cliff_ledge_a": {
+    "cliff_patch_a": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      88,
-      344,
-      34,
-      26
+      192,
+      302,
+      44,
+      44
      ],
      "source": "generated"
     },
-    "cliff_ledge_b": {
+    "cliff_patch_b": {
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      124,
-      344,
+      446,
+      308,
+      38,
+      38
+     ],
+     "source": "generated"
+    },
+    "cliff_patch_c": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      2,
+      296,
+      50,
+      50
+     ],
+     "source": "generated"
+    },
+    "cliff_patch_d": {
+     "license": "original",
+     "origin": "tools/overworld",
+     "rect": [
+      90,
+      350,
       34,
-      26
+      34
      ],
      "source": "generated"
     },
@@ -188,8 +188,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      476,
-      248,
+      54,
+      300,
       20,
       46
      ],
@@ -199,8 +199,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      402,
-      348,
+      484,
+      362,
       20,
       22
      ],
@@ -210,8 +210,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      48,
-      374,
+      134,
+      390,
       28,
       18
      ],
@@ -221,8 +221,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      484,
-      350,
+      62,
+      388,
       24,
       20
      ],
@@ -232,8 +232,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      448,
-      306,
+      68,
+      350,
       20,
       34
      ],
@@ -243,8 +243,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      470,
-      308,
+      126,
+      352,
       28,
       32
      ],
@@ -254,8 +254,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      2,
-      342,
+      156,
+      356,
       24,
       28
      ],
@@ -265,8 +265,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      78,
-      374,
+      164,
+      390,
       34,
       18
      ],
@@ -276,8 +276,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      180,
-      344,
+      262,
+      358,
       18,
       26
      ],
@@ -287,8 +287,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      160,
-      344,
+      242,
+      358,
       18,
       26
      ],
@@ -298,8 +298,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      364,
-      300,
+      428,
+      306,
       16,
       40
      ],
@@ -419,8 +419,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      2,
-      372,
+      88,
+      388,
       26,
       20
      ],
@@ -430,8 +430,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      52,
-      344,
+      206,
+      358,
       34,
       26
      ],
@@ -441,8 +441,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      366,
-      348,
+      448,
+      362,
       34,
       22
      ],
@@ -452,8 +452,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      144,
-      300,
+      264,
+      306,
       80,
       40
      ],
@@ -463,8 +463,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      226,
-      300,
+      346,
+      306,
       80,
       40
      ],
@@ -496,8 +496,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      2,
-      296,
+      76,
+      302,
       56,
       44
      ],
@@ -507,8 +507,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      60,
-      296,
+      134,
+      302,
       56,
       44
      ],
@@ -540,8 +540,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      240,
-      344,
+      322,
+      358,
       26,
       26
      ],
@@ -551,8 +551,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      118,
-      298,
+      238,
+      304,
       24,
       42
      ],
@@ -584,8 +584,8 @@
      "license": "original",
      "origin": "tools/overworld",
      "rect": [
-      424,
-      348,
+      2,
+      386,
       36,
       22
      ],
@@ -593,7 +593,7 @@
     }
    },
    "overridden": 14,
-   "sha256_16": "4fce84b1f5f25762",
+   "sha256_16": "90302afc7869678e",
    "skipped": []
   },
   "tiles": {
@@ -3275,7 +3275,7 @@
     }
    },
    "overridden": 0,
-   "sha256_16": "63e91962008f3157",
+   "sha256_16": "d2f86baa94c82ac9",
    "skipped": []
   }
  }

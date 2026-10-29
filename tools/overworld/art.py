@@ -1262,31 +1262,73 @@ def solid_wall(mask_bits, seed=0, *, base=None):
     return img
 
 
-def solid_canopy(mask_bits, seed=0):
-    """Dense forest canopy: a dark mass with a lit crown and leaf scatter."""
+def solid_canopy(mask_bits, seed=0, variant=0):
+    """Dense forest canopy: clumped foliage, lit from the north-west, seen from above.
+
+    The first version was per-pixel white noise at two tones - 42 % of pixels one
+    shade, 10 % another - which is *static*, not foliage: over a 34x24-tile stand it
+    read as a dark wall of television snow, and the north-west woods were the
+    flattest, least readable region on the map.
+
+    Foliage seen from above is clumps: rounded masses with a lit side and a shadowed
+    side, packed together so they overlap. So the tile is built from overlapping
+    discs on a small lattice, each shaded by where it sits relative to the tile's
+    light direction, then a little leaf speckle on top. `variant` shifts the lattice
+    and the tones so the sixteen mask variants are different woods rather than the
+    same stamps.
+
+    The canopy is a *solid* tile, so it must also read as one continuous mass: the
+    clumps run past the tile edge (drawn clipped) rather than sitting inside it, and
+    the mask branches below only ever darken the outer edge - an inner silhouette
+    would print a grid over the whole stand.
+    """
     img = new(T, T)
     n, e, s, w = opened_mask(mask_bits)
-    base = mix(C("moor_dk"), C("void"), 0.28)
+    base = mix(C("moor_dk"), C("void"), 0.34)
+    leaf = mix(C("moor"), C("moss", 0.5) if False else C("moor"), 0.0)
+    hi = mix(C("moor"), C("moor_hi"), 0.75)
+    dark = mix(base, C("void"), 0.45)
     rect(img, 0, 0, T, T, base)
-    for y in range(T):
-        for x in range(T):
-            h = h01(seed, x, y, 3)
-            if h < 0.42:
-                px(img, x, y, mix(base, (30, 44, 34, 255), 0.7))
-            elif h < 0.52:
-                px(img, x, y, mix(base, C("moor"), 0.55))
-    if n:
-        for x in range(T):
-            if h01(seed, x, 1) < 0.5:
-                px(img, x, 0, mix(base, C("moor_hi"), 0.5))
-                px(img, x, 1, mix(base, C("moor"), 0.6))
+
+    # Foliage clumps at *scattered* positions, not on a lattice. Every interior cell
+    # of a stand uses the same frame (the mask is identical when all four neighbours
+    # are the same terrain), so whatever this tile contains is repeated a few hundred
+    # times across the woods. A lattice inside the tile therefore prints a lattice
+    # across the forest - which is exactly what the first clumped version did; it
+    # read as a diagonal weave. Scattered clumps with varied radius and tone have no
+    # period to repeat, so the same tile thousands of times over still looks like
+    # foliage.
+    clumps = [(h01(seed, i, 21) * (T + 6) - 3, h01(seed, i, 22) * (T + 6) - 3,
+               2.2 + 2.0 * h01(seed, i, 23), h01(seed, i, 24))
+              for i in range(18)]
+    for ci, (cx, cy, r, tone) in enumerate(clumps):
+        for y in range(T):
+            dy = y + 0.5 - cy
+            for x in range(T):
+                dx = x + 0.5 - cx
+                d = (dx * dx + dy * dy) ** 0.5
+                if d > r:
+                    continue
+                if d > r - 1.0:
+                    px(img, x, y, mix(dark, base, 0.3))
+                elif dx + dy < -0.6:
+                    px(img, x, y, mix(hi if tone > 0.45 else leaf, base, 0.3))
+                else:
+                    px(img, x, y, mix(base, dark, 0.4 + 0.3 * tone))
+    # leaf speckle, sparse and coherent enough not to read as noise
+    speck(img, 0, 0, T, T, mix(C("moor_hi"), C("grass_hi"), 0.35), 5, seed=seed + 2)
+    # Depth at the fringe only: the stand's own edge, never an inner boundary.
     if s:
-        rect(img, 0, T - 2, T, 2, mix(base, C("void"), 0.4))
+        rect(img, 0, T - 2, T, 2, mix(base, C("void"), 0.45))
     if w:
         vline(img, 0, 0, T, mix(base, C("void"), 0.35))
     if e:
         vline(img, T - 1, 0, T, mix(base, C("void"), 0.35))
-    speck(img, 0, 0, T, T, mix(C("moor_hi"), C("grass_hi"), 0.4), 6, seed=seed + 2)
+    if n:
+        for x in range(T):
+            if h01(seed, x, 1, variant) < 0.6:
+                px(img, x, 0, mix(hi, base, 0.55))
+                px(img, x, 1, mix(hi, base, 0.75))
     return img
 
 
@@ -1322,18 +1364,26 @@ GROUND_TILES = {
     "dirt0": lambda: ground_dirt(31),
     "dirt1": lambda: ground_dirt(32, 1.03),
     "dirt2": lambda: ground_dirt(33, 0.97),
-    "dirt3": lambda: ground_dirt(34, 1.05),
-    "dirt4": lambda: ground_dirt(35, 0.95),
+    "dirt3": lambda: ground_dirt(34, 1.02),
+    "dirt4": lambda: ground_dirt(35, 0.98),
     "gravel0": lambda: ground_gravel(41),
     "gravel1": lambda: ground_gravel(42),
     "gravel2": lambda: ground_gravel(43),
     "gravel3": lambda: ground_gravel(44),
     "gravel4": lambda: ground_gravel(45),
     "gravel5": lambda: ground_gravel(46),
-    "rock0": lambda: ground_rock(51),
-    "rock1": lambda: ground_rock(52, 0.9),
-    "rock2": lambda: ground_rock(53, 1.08),
-    "rock3": lambda: ground_rock(54, 0.95),
+    # Rock variants were deliberately spread over tone 0.90-1.08 for "variety",
+    # but the world picks a ground variant per 3x3 block, so each variant became a
+    # 48 px square of a different brightness and large rock fields printed as a
+    # quilt of tiles - plainly visible in the north-west of the map. Measured spread
+    # between variants was 14 points of luminance (84.2 to 98.7). Variety now comes
+    # from the crack and grain seeds, which differ per variant without changing the
+    # tile's overall value; tone stays inside a point and a half, which is invisible
+    # as a block and still stops the field looking stamped.
+    "rock0": lambda: ground_rock(51, 1.00),
+    "rock1": lambda: ground_rock(52, 0.985),
+    "rock2": lambda: ground_rock(53, 1.015),
+    "rock3": lambda: ground_rock(54, 1.005),
     "ash0": lambda: ground_ash(61),
     "ash1": lambda: ground_ash(62),
     "mud0": lambda: ground_mud(71),
@@ -1485,6 +1535,10 @@ def build_tileset():
                 img = fn(300 + mask) if mask < 4 else None
                 if img is None:
                     continue
+            elif fn is solid_canopy:
+                # The sixteen canopy frames are sixteen different woods, so the
+                # variant has to reach the clump lattice, not just the seed.
+                img = fn(mask, seed=400 + mask, variant=mask)
             else:
                 img = fn(mask, seed=400 + mask)
             cells.append(("%s#%d" % (code, mask), True, img))

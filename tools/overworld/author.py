@@ -267,9 +267,24 @@ def wall(points, half_width=1.0):
 
 
 def thicket(cells, density=0.55, seed=0):
+    """A stand of trees: solid mass, ragged fringe.
+
+    This used per-tile white noise at 40-62 %, which is a coin flip per cell and
+    therefore prints as a checkerboard: isolated single-tree colliders spread evenly
+    across the whole region, each one a 16 px dark tile. Two forests in the
+    north-west of the map were the largest "flat" areas a player crosses, and they
+    read as static rather than as woodland.
+
+    Now the density becomes a threshold on a coherent field, so trees cluster: the
+    interior of the region passes the threshold solidly and the boundary breaks up
+    into tongues. `density` keeps its old meaning - the fraction of the area that is
+    wooded - the *arrangement* is what changed.
+    """
     out = set()
+    threshold = 0.5 + (0.55 - density) * 0.6
     for x, y in cells:
-        if h01(seed, x, y) < density:
+        field = fbm(x, y, seed=seed, scale=2.6, octaves=3)
+        if field > threshold:
             put(solid, x, y, "T")
             out.add((x, y))
     return out
@@ -482,7 +497,7 @@ def paint_landforms():
 
     # southern marsh: the sea of reeds the road turns away from
     for x, y in ellipse(196, 268, 250, 30, wobble=0.5, seed=210):
-        blend_put(ground, x, y, "b", ";", 0.2, h01(211, x // 2, y // 2), 0.5, seed=212)
+        blend_put(ground, x, y, "b", ";", 0.2, fbm(x, y, seed=211, scale=3.2, octaves=2), 0.5, seed=212)
     for x, y in ellipse(196, 284, 250, 26, wobble=0.4, seed=213):
         put(solid, x, y, "#" if h01(214, x, y) < 0.55 else ".")
 
@@ -492,7 +507,7 @@ def paint_landforms():
 
     # the central ruins: broken paving in a bowl of gravel
     for x, y in ellipse(132, 152, 32, 24, wobble=0.45, seed=230):
-        blend_put(ground, x, y, "g", "f", 0.22, h01(231, x // 2, y // 2), 0.5, seed=232)
+        blend_put(ground, x, y, "g", "f", 0.22, fbm(x, y, seed=231, scale=3.2, octaves=2), 0.5, seed=232)
     for x, y in ellipse(130, 150, 21, 15, wobble=0.5, seed=233):
         if h01(234, x, y) < 0.72:
             put(ground, x, y, "f")
@@ -704,10 +719,25 @@ def paint_landmarks():
             for dx in (-9, 9):
                 add_prop("wall_stub", *tile_pos(tx + dx, ty + 4))
         elif kind == "throne":
-            for dx in (-15, 15):
-                add_prop("statue", *tile_pos(tx + dx, ty + 3))
-            for dx in (-10, 10):
-                add_prop("brazier", *tile_pos(tx + dx, ty + 6), lit=True)
+            # The final approach. It was two statues fifteen tiles out and two
+            # braziers ten tiles out - every one of them outside the camera frame at
+            # 2x, so the last plaza in the game was a bare grey field with a carpet
+            # down the middle. A processional route is made of things close enough
+            # together to pass between: a colonnade at +-5 running the length of the
+            # approach, braziers on the carpet line, statues and walls framing the
+            # mouth of the plaza.
+            for dy in (1, 3, 5, 7, 9):
+                for dx in (-5, 5):
+                    add_prop("column" if dy % 4 == 1 else "column_broken",
+                             *tile_pos(tx + dx, ty + dy), z=1)
+            for dy in (2, 6, 10):
+                for dx in (-2, 2):
+                    add_prop("brazier", *tile_pos(tx + dx, ty + dy), lit=True)
+            for dx in (-8, 8):
+                add_prop("statue", *tile_pos(tx + dx, ty + 8), z=1)
+            for dy in range(2, 12, 2):
+                for dx in (-11, 11):
+                    add_prop("wall_stub", *tile_pos(tx + dx, ty + dy), z=1)
 
 
 # One camp, four places. The first version of this function drew the same eight
