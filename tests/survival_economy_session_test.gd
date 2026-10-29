@@ -260,4 +260,23 @@ func _body() -> void:
 			_expect(bool((host.call(&"cancel", fresh_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", fresh_id) as Dictionary).get("ok", false)), "recover interrupted escrow " + boundary)
 			_expect(_count(WOOD) == wood_before and _count(IRON) == iron_before, "returned escrow conserved " + boundary)
 		_expect(bool((adapter.call(&"ownership_audit") as Dictionary).get("ok", false)), "ownership audit survives interruption " + boundary)
+	# Explicit trusted-memory fault injection: demonstrate A3's independent
+	# quantum limit even if the host itself were corrupted. No elapsed wall time
+	# or player-facing clock API is introduced, and state is restored immediately.
+	_expect(_give(WOOD, 6) and _give(IRON, 2), "fixture inputs for overquantum adversary")
+	var quantum_job: Dictionary = host.call(&"queue_recipe", "workbench_kit", "hand")
+	var quantum_id := String(quantum_job.get("job_id", ""))
+	_expect(bool(quantum_job.get("ok", false)), "real hand job establishes a time baseline")
+	var original_records: Dictionary = (host.get(&"_stations") as Dictionary).duplicate(true)
+	var original_sequence := int(host.get(&"_sequence"))
+	var base_receipt: Dictionary = host.call(&"_snapshot", "hand")
+	var tampered_records: Dictionary = original_records.duplicate(true)
+	tampered_records["hand"] = {"ticks": int(base_receipt.active_ticks) + 601, "ack": int(base_receipt.active_ticks), "steps": 0, "revision": "hand", "was_operational": true}
+	host.set(&"_stations", tampered_records)
+	host.set(&"_sequence", original_sequence + 1)
+	var too_large: Dictionary = adapter.call(&"advance", "hand", host.call(&"_snapshot", "hand"), "native.overquantum")
+	host.set(&"_stations", original_records)
+	host.set(&"_sequence", original_sequence)
+	_expect(String(too_large.get("reason", "")) == "time_quantum_exceeded", "actual A3 rejects even host-matching overquantum fault")
+	_expect(bool((host.call(&"cancel", quantum_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", quantum_id) as Dictionary).get("ok", false)), "overquantum rejection preserves refundable inputs")
 	_body_complete = true
