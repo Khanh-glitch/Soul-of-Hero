@@ -27,3 +27,18 @@ User-locked design: near-complete 2019–2020 survival behavior fused with real 
 
 ## Dispatch vs runtime truth
 An issue/work order/branch means assignment is **READY**, not running; mark IN_PROGRESS only when an agent reports actual session work or commits, and VERIFIED only after source/game tests & screenshot evidence. If no agent orchestration tool is available, the user launches independent sessions and supplies the single-role issue URL; cloud browser/workflow is not automatically invoked from an issue. A0/A2 continues without pausing. Check PR #11 and integration SHA at each checkpoint; issue #9 and Google Docs tab 04 are cross-agent record.
+
+
+## 2026-10-29 — Individually revised full prompts and mandatory adversarial review
+
+The user reiterated **deep source/code inspection is required for acceptance**: never read an agent report, count green tests, and declare full product PASS without inspecting implementation methods, test oracles, native screenshots, real interactions and cross-system value. Canonical independent review policy: [INDEPENDENT_DEEP_REVIEW_PROTOCOL.md](INDEPENDENT_DEEP_REVIEW_PROTOCOL.md), with layers R0 source requirements, R1 diff/code dependency forensics, R2 adversarial test oracle, R3 actual native/visual truth, R4 systemic product experience/14-day long-run, R5 separate binary gate verdicts. SURV-010 125 native checks remain a scoped technical PASS, NOT certification of the finished survival game.
+
+Six **fully separate, expanded** prompts were replaced on each individual agent task branch:
+- **A1 / issue #12 / high-thinking slow-priority:** `feature/surv-a1-world-050a:docs/survival/tasks/SURV-050A_A1_WORK_ORDER.md`. Full continent causal geography, economy/POI topology and long-run exploration. Highest long-duration conceptual reasoning investment; commit checkpoints across explicitly resumed sessions.
+- **A3 / issue #13:** `feature/surv-a3-economy-030a:docs/survival/tasks/SURV-030A_A3_WORK_ORDER.md`. Real source-linked crafting/research/resource economy graph, deep tests against loops and current SaveService.
+- **A4 / issue #14 / high-thinking parity-priority:** `feature/surv-a4-core-gold-040a:docs/survival/tasks/SURV-040A_A4_WORK_ORDER.md`. Exact original Gold source identity and native trace parity, physical Core limited use, full on-enemy/world cues; don't invent VFX.
+- **A6 / issue #15:** `feature/surv-a6-ux-010a:docs/survival/tasks/SURV-UX-010A_A6_WORK_ORDER.md`. Native interactive pixel UX, readability, Codecs and build/crafting/player feedback; do not touch A2 UI branch.
+- **A7 / issue #16 / analytical deep review:** `feature/surv-a7-balance-060a:docs/survival/tasks/SURV-060A_A7_WORK_ORDER.md`. Independent real-code QA and economic/14-day pacing; label unrun empirical gates instead of certifying made-up playtime.
+- **A8 / issue #17:** `feature/surv-a8-reuse-audit-010a:docs/survival/tasks/SURV-RSCH-010A_A8_WORK_ORDER.md`. Ongoing feature-driven repository search, exact SHAs, code vs art licensing, import fit and reuse decisions.
+
+Google Docs tab **10 · PROMPT TỪNG AGENT & REVIEW SÂU** contains the *full text* of these six work orders plus the detailed review protocol. Tab 04 remains the LIVE per-commit record. These prompt rewrites **do not launch agent sessions**. A1 is ideal for a powerful reasoning model that is used across token-reset sessions with Git checkpoints; A4 is also a difficult source-parity task. They need not rush; avoid claiming invisible background execution.
