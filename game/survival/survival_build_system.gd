@@ -364,7 +364,7 @@ func _near_authored_place(cell: Vector2i, clearance: int) -> bool:
 func _on_route_detail(cell: Vector2i) -> bool:
 	if world == null:
 		return false
-	var token := world.detail_code_at(Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
+	var token: String = world.detail_code_at(Vector2(cell.x * TILE + 8, cell.y * TILE + 8))
 	return token in ["=", "+", ":"]
 
 

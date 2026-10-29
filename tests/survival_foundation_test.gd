@@ -219,7 +219,7 @@ func _body() -> void:
 	if save == null or survival == null:
 		_body_complete = true
 		return
-	_expect(bool(survival.call(&"catalog_error")).is_empty(), "the survival catalog loaded")
+	_expect(String(survival.call(&"catalog_error")).is_empty(), "the survival catalog loaded")
 
 	var world: OverworldWorld = ow.get(&"world") as OverworldWorld
 	var build: SurvivalBuildSystem = ow.get(&"survival_build") as SurvivalBuildSystem

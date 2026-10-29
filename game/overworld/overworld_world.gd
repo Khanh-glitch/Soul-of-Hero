@@ -87,6 +87,11 @@ var blocker_root: Node2D
 ## Authoritative copy of the solid grid (after shortcut unlocking).
 var _solid: PackedStringArray = PackedStringArray()
 var _ground: PackedStringArray = PackedStringArray()
+## The detail (decal) layer, kept decoded alongside ground and solid so that
+## gameplay can ask about a cell instead of reading a TileMapLayer's atlas
+## coordinates. Survival placement is the first caller: roads are detail tiles,
+## and "you may not build on the road" is a rule about cells, not sprites.
+var _detail: PackedStringArray = PackedStringArray()
 var _shortcut_open: Dictionary = {}
 ## frame name -> AtlasTexture, shared by every sprite that uses it.
 var _atlas_cache: Dictionary = {}
@@ -123,7 +128,7 @@ func build(world_data: Dictionary, layers_path: String, props_path: String,
 
 	_ground = _decode(layers, "ground")
 	_solid = _decode(layers, "solid")
-	var detail := _decode(layers, "detail")
+	_detail = _decode(layers, "detail")
 	if _ground.size() != width * height or _solid.size() != width * height:
 		push_error("OverworldWorld: baked grid does not match world bounds.")
 		return false
@@ -148,7 +153,7 @@ func build(world_data: Dictionary, layers_path: String, props_path: String,
 
 	var ground_cells := _paint_grid(ground_layer, _ground, "ground")
 	var solid_cells := _paint_grid(solid_layer, _solid, "solid")
-	_paint_grid(detail_layer, detail, "detail")
+	_paint_grid(detail_layer, _detail, "detail")
 	var prop_count := _paint_props(props_path)
 	painted.emit(ground_cells, solid_cells, prop_count)
 	return true
@@ -476,6 +481,19 @@ func ground_code_at(world_position: Vector2) -> String:
 	if x < 0 or y < 0 or x >= width or y >= height:
 		return ""
 	var token := _ground[y * width + x]
+	return token.substr(0, 1) if not token.is_empty() else ""
+
+
+## The first character of the detail token at a world position ("" off-map).
+##
+## Signs and debris share this layer with the road, so callers that care about one
+## of them must match the token, not just test for presence.
+func detail_code_at(world_position: Vector2) -> String:
+	var x := int(floor(world_position.x / float(TILE)))
+	var y := int(floor(world_position.y / float(TILE)))
+	if x < 0 or y < 0 or x >= width or y >= height:
+		return ""
+	var token := _detail[y * width + x]
 	return token.substr(0, 1) if not token.is_empty() else ""
 
 
