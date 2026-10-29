@@ -12,6 +12,7 @@ extends RefCounted
 ## the GDScript equivalent of the original `function*` skill bodies.
 
 const S2 = preload("res://prototypes/skill_readiness/native/venom/venom_s2.gd")
+const S3 = preload("res://prototypes/skill_readiness/native/venom/venom_s3.gd")
 const S1 = preload("res://prototypes/skill_readiness/native/venom/venom_s1.gd")
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 

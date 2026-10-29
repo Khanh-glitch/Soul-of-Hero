@@ -83,6 +83,31 @@ static func lerpf(a: float, b: float, t: float) -> float:
 	return a + (b - a) * t
 
 
+## Faithful port of JavaScript `Math.hypot(x, y)`.
+##
+## The original engine measures every distance with `Math.hypot`, which is NOT
+## `sqrt(x*x + y*y)`: it scales by the larger magnitude first
+## (`max * sqrt(1 + (min/max)^2)`) so it neither overflows nor loses the low
+## bits. Skills 1-6 happen to match either way, but Hatchery Fall's boids
+## flocking is chaotic - a 1e-16 difference in the separation term compounds
+## into a visible divergence within ~90 ticks. Replacing every distance in
+## `venom_s3.gd` with this is what closes that gap.
+static func hypot(x: float, y: float) -> float:
+	var ax: float = absf(x)
+	var ay: float = absf(y)
+	if ax < ay:
+		var t: float = ax
+		ax = ay
+		ay = t
+	if ax == 0.0:
+		return 0.0
+	# Beyond this ratio the smaller term cannot affect the result at all.
+	if ay / ax < 1e-18:
+		return ax
+	var r: float = ay / ax
+	return ax * sqrt(1.0 + r * r)
+
+
 static func smoothstep(t: float) -> float:
 	t = clampf(t, 0.0, 1.0)
 	return t * t * (3.0 - 2.0 * t)

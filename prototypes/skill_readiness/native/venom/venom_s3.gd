@@ -9,12 +9,25 @@ extends RefCounted
 ## flocking with separation + alignment + cohesion, per-hatchling bite hits,
 ## the recall phase, the fuse-into-insect transformation and the final burst.
 ##
-## PORT STATUS: written against the original source but NOT yet registered in
-## `venom_skills.gd`. It is deliberately inert until the differential oracle
-## has been run against it -- an unregistered generator cannot be counted as
-## source-native-executable, and shipping it registered would let a broken
-## module take the whole family down at import time. Register case 7 once the
-## differential run reports parity.
+## PORT STATUS: written against the original source but NOT registered in
+## `venom_skills.gd`, because it does not yet reproduce the original.
+##
+## Measured divergence (seed 7, oracle `venomwright_007.json`): the rendered
+## raster matches the original for 89 ticks and then diverges at tick 90, and
+## the boids-flock knockback angle drifts - hit 22 wants
+## `ky=-3.414105`, the port produces `ky=-3.414103`. Hit counts (30/30) and
+## cue counts (5/5) agree, so the authored timeline is right; something inside
+## the hatchling flocking update accumulates a small error before the first
+## rupture pulse.
+##
+## `Math.hypot` has been ported faithfully (`M.hypot`) and applied throughout
+## this file, which was the most likely suspect - the original measures every
+## distance with `Math.hypot` and the port used `sqrt(x*x + y*y)`. It did not
+## close the gap, so the cause is still open.
+##
+## Register case 7 only once the differential reports a clean match. An
+## unregistered generator cannot be counted as source-native-executable, and
+## shipping it registered would turn the skill-7 differential shard red.
 
 const M = preload("res://prototypes/skill_readiness/native/venom/venom_math.gd")
 const DRAW = preload("res://prototypes/skill_readiness/native/venom/venom_draw.gd")
@@ -342,7 +355,7 @@ static func _hatchery(c, g) -> void:
 				for e in w.enemies:
 					if e.dying <= 0:
 						cand.append({"e": e,
-								"d": sqrt(pow(e.x - h.x, 2.0) + pow(e.y - h.y, 2.0))})
+								"d": M.hypot(e.x - h.x, e.y - h.y)})
 				M.stable_sort(cand, func(a, b): return float(a["d"]) - float(b["d"]))
 				h.tgt = cand[mini(cand.size() - 1, h.idx % 3)]["e"] if cand.size() > 0 else null
 			var tx: float = h.x
@@ -356,7 +369,7 @@ static func _hatchery(c, g) -> void:
 			else:
 				tx = cx
 				ty = cy
-			var d: float = sqrt(pow(tx - h.x, 2.0) + pow(ty - h.y, 2.0))
+			var d: float = M.hypot(tx - h.x, ty - h.y)
 			if d == 0.0:
 				d = 1.0
 			var ux: float = (tx - h.x) / d
@@ -375,7 +388,7 @@ static func _hatchery(c, g) -> void:
 					continue
 				var dx: float = h.x - o.x
 				var dy: float = h.y - o.y
-				var dd: float = sqrt(dx * dx + dy * dy)
+				var dd: float = M.hypot(dx, dy)
 				if dd < 7 and dd > 0.1:
 					sx += dx / dd * (7 - dd) * 0.25
 					sy += dy / dd * (7 - dd) * 0.25
@@ -390,7 +403,7 @@ static func _hatchery(c, g) -> void:
 			vy += sy
 			vx += ((gx - h.x) / 100) * 0.12
 			vy += ((gy - h.y) / 100) * 0.12
-			var vl: float = sqrt(vx * vx + vy * vy)
+			var vl: float = M.hypot(vx, vy)
 			if vl == 0.0:
 				vl = 1.0
 			var spd: float = (-35.0 if h.recoil > 0 else (105.0 if phase == 1 else 88.0)) \
@@ -403,7 +416,7 @@ static func _hatchery(c, g) -> void:
 					* (0 if h.recoil > 0 else 1)
 			h.x = M.clampf(h.x, 6, w.W - 6)
 			h.y = M.clampf(h.y, 8, w.H - 8)
-			if phase == 1 and sqrt(pow(h.x - cx, 2.0) + pow(h.y - cy + 4, 2.0)) < 7:
+			if phase == 1 and M.hypot(h.x - cx, h.y - cy + 4) < 7:
 				h.absorb = true
 				h.dead = true
 				cocoon.glowAdd = minf(1.0, cocoon.glowAdd + 0.1)
@@ -415,7 +428,7 @@ static func _hatchery(c, g) -> void:
 				for e in w.enemies:
 					if e.dying > 0 or h.cd > 0:
 						continue
-					if sqrt(pow(e.x - h.x, 2.0) + pow(e.y - h.y, 2.0)) < e.r + 3.5 \
+					if M.hypot(e.x - h.x, e.y - h.y) < e.r + 3.5 \
 							and bites.ok(e, w.time, 0.2, 6):
 						LIB.hit_e(c, e, 14, {"kind": "bite", "k": 40,
 								"from": [h.x, h.y], "stag": 0.12, "at": [h.x, h.y]})
