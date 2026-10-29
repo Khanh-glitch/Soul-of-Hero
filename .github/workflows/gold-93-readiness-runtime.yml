@@ -428,7 +428,9 @@ jobs:
             done
           ) &
           WD=$!
-          timeout 2400s stdbuf -o0 -e0 godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported --verbose 2>&1 | tee "$LOG"
+          # setsid: run Godot in its own session so a process-group signal from
+          # the engine cannot take this shell (and its verdict reporting) down.
+          setsid -w timeout 2400s stdbuf -o0 -e0 godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported --verbose 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
           kill "$WD" 2>/dev/null || true
           echo "::notice::[venomwright-${{ matrix.skill }}] status=$STATUS samples=$(wc -l < "$MEM") $(grep -E 'WATCHDOG|rss_kb' "$MEM" | tail -2 | tr '\n' ' ') log_bytes_final=$(stat -c %s "$LOG" 2>/dev/null || echo 0)"
