@@ -1,0 +1,1293 @@
+{
+  "format": "S6_LOCAL_SEMANTIC_GRAPH_1",
+  "concept": "Whitewater Assay Works",
+  "unit": 2,
+  "status": "DESIGN_ONLY",
+  "native": "NATIVE_NOT_TESTED",
+  "review": "GRAPH_STRUCTURAL_REVIEW_PENDING",
+  "unit1_commit": "1e67253675bba27c2b4b1901a7566e7060357d36",
+  "scope": "All IDs are local design labels, never production item/world/skill IDs. Optional; no exclusive global progression gate. No Gold Core required.",
+  "provenance": {
+    "HISTORICAL_ATLAS": [
+      {
+        "anchor": "POI-08 / S08 / 2019-10-31",
+        "claim": "Four underground entrances, five sectors, heavy zombies and card rooms documented in Atlas; not reproduced here as an exact map."
+      },
+      {
+        "anchor": "DEP-03/04/05/31",
+        "claim": "Atlas analytical chains: tiered access, independent power, hazard preparation, boss-to-card-to-distinct-specimen/research. Chains are analysis, not historical named quests."
+      },
+      {
+        "anchor": "JOURNEY-11/12",
+        "claim": "SOH design scenarios in original Atlas: differentiated boss rewards and parallel non-dungeon progress."
+      }
+    ],
+    "SOH_PROPOSAL": "Every node, credential, action, cost, flood/vent behavior and recovery rule below is new proposed SOH design. No source-authentic timing, balance value or implementation claim."
+  },
+  "semantics": {
+    "conditions": "All requires entries are AND. Arrays mean membership; numbers/booleans/strings mean equality. min entries are lower bounds. debit and set apply atomically after all checks pass. Failed actions change nothing.",
+    "edges": "Directed movement only; actions occur at their node. Egress conditions never inherit ingress requirements. blocked_edges is an external fault set used by the witness runner.",
+    "units": "priming, protection, service_supplies and cargo_free are abstract witness units, not proposed production quantities, seconds or inventory slots. Unit 3 must replace coarse exposure with a bounded safety model.",
+    "credential": "Reusable carried authorization, not consumed by doors. maintenance and assay are independent flags. Mechanical registry can replace maintenance without either credential; assay service can reissue without assay.",
+    "power": "Exactly none, drainage or ventilation. Every start or mode change spends priming; shutting down is free. No passive resource generation. Switching cannot reset rewards.",
+    "hazard": "protection is a coarse remaining safe-work budget. Prepared means protection >= required work plus reserved retreat margin. Egress service channels are assumed dry/shielded and cost zero here; physical proof deferred.",
+    "persistence": "Reward receipt flags, service_record, gallery_record and egress_open persist; carried credentials/items can be dropped. Power failure sets power none. Reload preserves committed state; transaction implementation not supplied.",
+    "knowledge": "research_lead is information, not recipe ownership. recipe_known remains false throughout these sorties; later A3-approved research consumes the physical specimen under a separate contract."
+  },
+  "initial_state": {
+    "maintenance": false,
+    "assay": false,
+    "power": "none",
+    "priming": 0,
+    "protection": 0,
+    "service_supplies": 0,
+    "cargo_free": 0,
+    "ordinary_taken": false,
+    "clue": false,
+    "gallery_record": false,
+    "residue_taken": false,
+    "service_record": false,
+    "boss_defeated": false,
+    "boss_salvage": false,
+    "specimen_taken": false,
+    "carrying_specimen": false,
+    "research_lead": false,
+    "future_access_lead": false,
+    "egress_open": false,
+    "recipe_known": false
+  },
+  "nodes": [
+    {
+      "id": "ww_boundary",
+      "role": "Public entrance and actual expedition exit",
+      "clue": "Supply road continues beyond installation",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "none",
+      "benefit": "Return home; no region ownership imposed",
+      "retreat": "Outside"
+    },
+    {
+      "id": "ww_walk",
+      "role": "Dry inspection walk and partial salvage",
+      "clue": "Flow diagram shows two mutually exclusive distributor destinations",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "none; no compulsory enemies",
+      "benefit": "Ordinary supplies and operating clue",
+      "retreat": "ww_boundary"
+    },
+    {
+      "id": "ww_registry",
+      "role": "Mechanical maintenance sign-out desk",
+      "clue": "Public evacuation roster identifies service staff duties",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "none",
+      "benefit": "Issue or replace maintenance authorization without power or assay",
+      "retreat": "ww_walk"
+    },
+    {
+      "id": "ww_distributor",
+      "role": "Dry control station",
+      "clue": "Separate credential symbol, power pointer and flood/air gauges",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "none at controls",
+      "benefit": "Choose powered wing; preview cost before switching",
+      "retreat": "ww_walk"
+    },
+    {
+      "id": "ww_culvert",
+      "role": "Optional shorter approach from road",
+      "clue": "Residue tide mark and exposure warning visible outside",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "exposed; prepared crossing costs protection",
+      "benefit": "Reach distributor without combat, still no assay authorization",
+      "retreat": "ww_boundary or ww_refuge"
+    },
+    {
+      "id": "ww_gallery",
+      "role": "Residue gallery and calibration sockets",
+      "clue": "Drain gauge reveals floor; etched sampling stations distinguish deposit from specimen",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "drainage required for entry; exposed work",
+      "benefit": "Finite optional residue and calibration record",
+      "retreat": "ww_refuge"
+    },
+    {
+      "id": "ww_service",
+      "role": "Mechanical certification bench",
+      "clue": "Service docket explains calibration record plus replacement seal supplies",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "dry",
+      "benefit": "Noncombat assay authorization; no specimen awarded",
+      "retreat": "ww_distributor"
+    },
+    {
+      "id": "ww_custodian",
+      "role": "Optional custodian encounter bay",
+      "clue": "Visible authorization harness and warned patrol boundary",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "combat; no skill-specific solution assumed",
+      "benefit": "Assay credential plus distinct salvage after victory",
+      "retreat": "ww_refuge; withdrawal available before or during encounter in model"
+    },
+    {
+      "id": "ww_annex",
+      "role": "Assay reception and powered security door",
+      "clue": "Credential reader separately reports power and air conditions",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "ventilation required for admission; residual exposure",
+      "benefit": "Read sample handling and future research destinations",
+      "retreat": "ww_refuge"
+    },
+    {
+      "id": "ww_collection",
+      "role": "Sealed assay collection",
+      "clue": "Unique labeled physical sample, not a recipe or boss drop",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "ventilated handling still consumes protection",
+      "benefit": "One-time physical specimen; future inspection access clue",
+      "retreat": "ww_refuge"
+    },
+    {
+      "id": "ww_refuge",
+      "role": "Dry emergency service spine",
+      "clue": "Hand-open escape flaps and ground-plane exit arrows",
+      "discovery": "Visible on approach; read labels before commitment",
+      "hazard": "assumed shielded; never depends on electricity",
+      "benefit": "Persistent inspection connection after opening outward latch",
+      "retreat": "ww_walk"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e01",
+      "from": "ww_boundary",
+      "to": "ww_walk",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e02",
+      "from": "ww_walk",
+      "to": "ww_boundary",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e03",
+      "from": "ww_walk",
+      "to": "ww_registry",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e04",
+      "from": "ww_registry",
+      "to": "ww_walk",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e05",
+      "from": "ww_walk",
+      "to": "ww_distributor",
+      "credential": [
+        "maintenance"
+      ],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Maintenance sign-out required at public registry; no power required",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e06",
+      "from": "ww_distributor",
+      "to": "ww_walk",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e07",
+      "from": "ww_boundary",
+      "to": "ww_culvert",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "Prepared crossing; preserve one protection unit as margin",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {
+        "protection": 2
+      },
+      "debit": {
+        "protection": 1
+      },
+      "set": {},
+      "rejection": "Exposed culvert: bring protection or use dry inspection walk",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e08",
+      "from": "ww_culvert",
+      "to": "ww_distributor",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e09",
+      "from": "ww_culvert",
+      "to": "ww_boundary",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e10",
+      "from": "ww_distributor",
+      "to": "ww_gallery",
+      "credential": [
+        "maintenance"
+      ],
+      "power_allocation": [
+        "drainage"
+      ],
+      "exposure": "Prepared crossing; preserve one protection unit as margin",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "drainage"
+        ]
+      },
+      "min": {
+        "protection": 2
+      },
+      "debit": {
+        "protection": 1
+      },
+      "set": {},
+      "rejection": "Need maintenance authorization, drainage and protection separately; no charge on rejection",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e11",
+      "from": "ww_gallery",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e12",
+      "from": "ww_distributor",
+      "to": "ww_service",
+      "credential": [
+        "maintenance"
+      ],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e13",
+      "from": "ww_service",
+      "to": "ww_distributor",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e14",
+      "from": "ww_distributor",
+      "to": "ww_custodian",
+      "credential": [
+        "maintenance"
+      ],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e15",
+      "from": "ww_custodian",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e16",
+      "from": "ww_distributor",
+      "to": "ww_annex",
+      "credential": [
+        "assay"
+      ],
+      "power_allocation": [
+        "ventilation"
+      ],
+      "exposure": "Prepared crossing; preserve one protection unit as margin",
+      "requires": {
+        "assay": true,
+        "power": [
+          "ventilation"
+        ]
+      },
+      "min": {
+        "protection": 2
+      },
+      "debit": {
+        "protection": 1
+      },
+      "set": {},
+      "rejection": "Assay authorization accepted only with ventilation and remaining protection; return to dry controls",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e17",
+      "from": "ww_annex",
+      "to": "ww_collection",
+      "credential": [
+        "assay"
+      ],
+      "power_allocation": [
+        "ventilation"
+      ],
+      "exposure": "Prepared crossing; preserve one protection unit as margin",
+      "requires": {
+        "assay": true,
+        "power": [
+          "ventilation"
+        ]
+      },
+      "min": {
+        "protection": 2
+      },
+      "debit": {},
+      "set": {},
+      "rejection": "Collection needs assay, ventilation and safe handling reserve",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e18",
+      "from": "ww_annex",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e19",
+      "from": "ww_collection",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e20",
+      "from": "ww_refuge",
+      "to": "ww_walk",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {
+        "egress_open": true
+      },
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e21",
+      "from": "ww_walk",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ],
+        "egress_open": true
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Inspection latch opens from inside first; dry walk remains available",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e22",
+      "from": "ww_culvert",
+      "to": "ww_refuge",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "No exposure debit on this connection",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Route unavailable; return by marked service escape",
+      "retreat": "Use node.retreat; egress has independent conditions"
+    }
+  ],
+  "actions": [
+    {
+      "id": "take_supplies",
+      "node": "ww_walk",
+      "requires": {
+        "ordinary_taken": false
+      },
+      "min": {},
+      "debit": {},
+      "set": {
+        "ordinary_taken": true
+      },
+      "description": "Finite ordinary salvage receipt; no automatic reset on revisit",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "read_diagram",
+      "node": "ww_walk",
+      "requires": {},
+      "min": {},
+      "debit": {},
+      "set": {
+        "clue": true
+      },
+      "description": "Shows separate key, power and exposure symbols",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "sign_out",
+      "node": "ww_registry",
+      "requires": {},
+      "min": {},
+      "debit": {},
+      "set": {
+        "maintenance": true
+      },
+      "description": "Reusable mechanical service token; replaceable after loss; not assay clearance",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "start_drainage",
+      "node": "ww_distributor",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "none",
+          "ventilation"
+        ]
+      },
+      "min": {
+        "priming": 1
+      },
+      "debit": {
+        "priming": 1
+      },
+      "set": {
+        "power": "drainage"
+      },
+      "description": "Spend external priming supply to establish flow. Warning: gallery floods when drainage stops; annex loses safe air when ventilation stops. Escape spine stays available. No exact transition duration asserted.",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "start_ventilation",
+      "node": "ww_distributor",
+      "requires": {
+        "maintenance": true,
+        "power": [
+          "none",
+          "drainage"
+        ]
+      },
+      "min": {
+        "priming": 1
+      },
+      "debit": {
+        "priming": 1
+      },
+      "set": {
+        "power": "ventilation"
+      },
+      "description": "Spend external priming supply to establish flow. Warning: gallery floods when drainage stops; annex loses safe air when ventilation stops. Escape spine stays available. No exact transition duration asserted.",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "shutdown",
+      "node": "ww_distributor",
+      "requires": {},
+      "min": {},
+      "debit": {},
+      "set": {
+        "power": "none"
+      },
+      "description": "Free reversible shutdown; next start still costs priming",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "calibrate",
+      "node": "ww_gallery",
+      "requires": {
+        "power": "drainage",
+        "maintenance": true
+      },
+      "min": {
+        "protection": 2
+      },
+      "debit": {
+        "protection": 1
+      },
+      "set": {
+        "gallery_record": true
+      },
+      "description": "Manual calibration in exposure; service record is not a rare reward",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "take_residue",
+      "node": "ww_gallery",
+      "requires": {
+        "power": "drainage",
+        "residue_taken": false
+      },
+      "min": {
+        "protection": 2,
+        "cargo_free": 1
+      },
+      "debit": {
+        "protection": 1,
+        "cargo_free": 1
+      },
+      "set": {
+        "residue_taken": true
+      },
+      "description": "Finite optional rare material; no exclusive required recipe dependency",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "certify",
+      "node": "ww_service",
+      "requires": {
+        "maintenance": true,
+        "gallery_record": true,
+        "service_record": false
+      },
+      "min": {
+        "service_supplies": 1
+      },
+      "debit": {
+        "service_supplies": 1
+      },
+      "set": {
+        "assay": true,
+        "service_record": true
+      },
+      "description": "Mechanical comparison of calibration with engraved tolerances; replace failed seals using outside supplies. Avoid combat through logistics and exposure, not free credential pickup",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "reissue_assay",
+      "node": "ww_service",
+      "requires": {
+        "maintenance": true,
+        "service_record": true
+      },
+      "min": {
+        "service_supplies": 1
+      },
+      "debit": {
+        "service_supplies": 1
+      },
+      "set": {
+        "assay": true
+      },
+      "description": "Lost credential can be replaced without entering assay collection",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "defeat_custodian",
+      "node": "ww_custodian",
+      "requires": {
+        "boss_defeated": false
+      },
+      "min": {},
+      "debit": {},
+      "set": {
+        "boss_defeated": true,
+        "boss_salvage": true,
+        "assay": true
+      },
+      "description": "Successful ordinary-combat outcome is an explicit witness assumption, not guaranteed or runtime tested; bypasses exposed calibration and service supplies, grants separate salvage",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "read_register",
+      "node": "ww_annex",
+      "requires": {},
+      "min": {},
+      "debit": {},
+      "set": {
+        "research_lead": true,
+        "future_access_lead": true
+      },
+      "description": "Specimen may enable later home research; inspection network clue does not reserve another A1 POI",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    },
+    {
+      "id": "take_specimen",
+      "node": "ww_collection",
+      "requires": {
+        "power": "ventilation",
+        "assay": true,
+        "specimen_taken": false
+      },
+      "min": {
+        "protection": 2,
+        "cargo_free": 1
+      },
+      "debit": {
+        "protection": 1,
+        "cargo_free": 1
+      },
+      "set": {
+        "specimen_taken": true,
+        "carrying_specimen": true
+      },
+      "description": "Unique physical specimen receipt. Does not learn recipe or grant a Core",
+      "rejection": "Show each unmet condition and cost; failure consumes nothing"
+    }
+  ],
+  "routes": [
+    {
+      "id": "A",
+      "start": "ww_boundary",
+      "exit": "ww_boundary",
+      "initial_overrides": {},
+      "ordered_nodes": [
+        "ww_boundary",
+        "ww_walk",
+        "ww_boundary"
+      ],
+      "steps": [
+        {
+          "kind": "edge",
+          "id": "e01"
+        },
+        {
+          "kind": "action",
+          "id": "take_supplies"
+        },
+        {
+          "kind": "action",
+          "id": "read_diagram"
+        },
+        {
+          "kind": "edge",
+          "id": "e02"
+        }
+      ],
+      "expected": {
+        "ordinary_taken": true,
+        "clue": true,
+        "maintenance": false,
+        "assay": false,
+        "power": "none",
+        "protection": 0,
+        "recipe_known": false
+      },
+      "exit_options": [
+        "e02"
+      ],
+      "claim": "Safe partial salvage, no forced damage, credential or combat."
+    },
+    {
+      "id": "B",
+      "start": "ww_boundary",
+      "exit": "ww_boundary",
+      "initial_overrides": {
+        "priming": 2,
+        "protection": 5,
+        "service_supplies": 1,
+        "cargo_free": 1
+      },
+      "ordered_nodes": [
+        "ww_boundary",
+        "ww_walk",
+        "ww_registry",
+        "ww_walk",
+        "ww_distributor",
+        "ww_gallery",
+        "ww_refuge",
+        "ww_walk",
+        "ww_distributor",
+        "ww_service",
+        "ww_distributor",
+        "ww_annex",
+        "ww_collection",
+        "ww_refuge",
+        "ww_walk",
+        "ww_boundary"
+      ],
+      "steps": [
+        {
+          "kind": "edge",
+          "id": "e01"
+        },
+        {
+          "kind": "action",
+          "id": "read_diagram"
+        },
+        {
+          "kind": "edge",
+          "id": "e03"
+        },
+        {
+          "kind": "action",
+          "id": "sign_out"
+        },
+        {
+          "kind": "edge",
+          "id": "e04"
+        },
+        {
+          "kind": "edge",
+          "id": "e05"
+        },
+        {
+          "kind": "action",
+          "id": "start_drainage"
+        },
+        {
+          "kind": "edge",
+          "id": "e10"
+        },
+        {
+          "kind": "action",
+          "id": "calibrate"
+        },
+        {
+          "kind": "edge",
+          "id": "e11"
+        },
+        {
+          "kind": "edge",
+          "id": "e20"
+        },
+        {
+          "kind": "edge",
+          "id": "e05"
+        },
+        {
+          "kind": "edge",
+          "id": "e12"
+        },
+        {
+          "kind": "action",
+          "id": "certify"
+        },
+        {
+          "kind": "edge",
+          "id": "e13"
+        },
+        {
+          "kind": "action",
+          "id": "start_ventilation"
+        },
+        {
+          "kind": "edge",
+          "id": "e16"
+        },
+        {
+          "kind": "action",
+          "id": "read_register"
+        },
+        {
+          "kind": "edge",
+          "id": "e17"
+        },
+        {
+          "kind": "action",
+          "id": "take_specimen"
+        },
+        {
+          "kind": "edge",
+          "id": "e19"
+        },
+        {
+          "kind": "edge",
+          "id": "e20"
+        },
+        {
+          "kind": "edge",
+          "id": "e02"
+        }
+      ],
+      "expected": {
+        "carrying_specimen": true,
+        "research_lead": true,
+        "future_access_lead": true,
+        "recipe_known": false,
+        "priming": 0,
+        "protection": 1,
+        "residue_taken": false,
+        "egress_open": true
+      },
+      "exit_options": [
+        "e06",
+        "e11/e20/e02",
+        "e18/e20/e02",
+        "e19/e20/e02"
+      ],
+      "claim": "Noncombat prepared recovery; cannot also take residue with this protection/cargo budget. Better provisioned survivors may legitimately earn both."
+    }
+  ],
+  "unresolved_edges": [
+    {
+      "id": "U1",
+      "edges": [
+        "e11",
+        "e18",
+        "e19",
+        "e22"
+      ],
+      "question": "Can every occupied position reach the dry escape before exposure/flood causes unavoidable death? Graph has no distances or timing.",
+      "next_unit": 3
+    },
+    {
+      "id": "U2",
+      "edges": [
+        "e19",
+        "e21",
+        "e17"
+      ],
+      "question": "Death bag retrieval with all portable credentials, protection, priming and unique specimen inside: no proven witness yet.",
+      "next_unit": 3
+    },
+    {
+      "id": "U3",
+      "edges": [
+        "e18",
+        "e19",
+        "e20"
+      ],
+      "question": "Blocked emergency passage, combat body blocking and construction exclusion; single-exit guarantee currently a design assumption.",
+      "next_unit": 3
+    },
+    {
+      "id": "U4",
+      "edges": [
+        "e10",
+        "e16"
+      ],
+      "question": "Exhaustive loss/depletion/reload combinations and renewable outside preparation sources are not modeled.",
+      "next_unit": 3
+    },
+    {
+      "id": "U5",
+      "edges": [
+        "e14",
+        "e07"
+      ],
+      "question": "Combat costs versus noncombat provisioning, shortcut length and pixel readability need later balance/spatial/native evidence.",
+      "next_unit": "later"
+    }
+  ],
+  "tradeoff": {
+    "switching": "Two startups in route B exhaust two priming units. Extra mode cycles require additional externally sourced supplies and hazardous trips; never regenerate specimen/residue. No irreversible wing lockout.",
+    "boss_alternative": "From distributor e14 -> defeat_custodian -> e15/e20/e05 -> start_ventilation -> e16/e17. Saves calibration, service supplies and one startup; combat cost is unresolved, not asserted balanced.",
+    "preparation": "Dry walk costs travel but no protection; culvert is exposed shortcut. No production distance claim until spatial design. Both reach the same control area without granting assay.",
+    "return": "Finite loot stays taken; clues/records/latch remain. Return for deferred residue, research specimen recovery or inspection access; no daily refill or infinite stock assumed."
+  },
+  "failure_cases": [
+    {
+      "id": "F_power",
+      "start": "ww_collection",
+      "state_changes": {
+        "power": "none",
+        "assay": false,
+        "protection": 0
+      },
+      "escape_edges": [
+        "e19",
+        "e20",
+        "e02"
+      ],
+      "result": "Structural escape to boundary without power/key/gear; actual flood/air timing UNPROVEN."
+    },
+    {
+      "id": "F_lost_credentials",
+      "start": "ww_distributor",
+      "state_changes": {
+        "maintenance": false,
+        "assay": false
+      },
+      "escape_edges": [
+        "e06",
+        "e02"
+      ],
+      "reentry": "e01/e03 sign_out, e04/e05/e12; certify after calibration or reissue_assay if service_record. No assay required on replacement path."
+    },
+    {
+      "id": "F_expired",
+      "start": "ww_gallery",
+      "state_changes": {
+        "protection": 0,
+        "power": "none"
+      },
+      "escape_edges": [
+        "e11",
+        "e20",
+        "e02"
+      ],
+      "result": "Dry emergency path only; survival during transition requires Unit 3 proof."
+    },
+    {
+      "id": "F_blocked_return",
+      "start": "ww_annex",
+      "blocked_edges": [
+        "e18"
+      ],
+      "escape_edges": [],
+      "result": "UNPROVEN. No guaranteed escape if sole emergency flap becomes inaccessible. Adoption must prohibit blocking it or add independent escape."
+    },
+    {
+      "id": "F_death",
+      "start": "ww_collection",
+      "state_changes": {
+        "carrying_specimen": false,
+        "assay": false,
+        "maintenance": false
+      },
+      "escape_edges": [],
+      "result": "UNPROVEN. Bag holds specimen and credentials; receipt remains consumed. Registry/service permit replacement keys but bag access, lost priming and equipment recovery need Unit 3 model. Never respawn specimen as workaround."
+    },
+    {
+      "id": "F_no_combat",
+      "route": "B",
+      "result": "Encoded route uses service certification and no defeat action."
+    },
+    {
+      "id": "F_reload",
+      "result": "Intended preserve receipts, records and latch; implementation atomicity, bag conservation and interrupted switching NOT_TESTED."
+    }
+  ],
+  "rejection_cases": [
+    {
+      "action": "e16",
+      "overrides": {
+        "assay": true,
+        "power": "none",
+        "protection": 5
+      },
+      "reason": "Power independently missing"
+    },
+    {
+      "action": "e16",
+      "overrides": {
+        "assay": false,
+        "power": "ventilation",
+        "protection": 5
+      },
+      "reason": "Assay independently missing"
+    },
+    {
+      "action": "e16",
+      "overrides": {
+        "assay": true,
+        "power": "ventilation",
+        "protection": 0
+      },
+      "reason": "Protection independently missing"
+    },
+    {
+      "action": "start_drainage",
+      "overrides": {
+        "maintenance": true,
+        "power": "ventilation",
+        "priming": 0
+      },
+      "reason": "No free toggle"
+    }
+  ]
+}
