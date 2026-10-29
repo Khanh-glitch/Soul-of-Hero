@@ -81,18 +81,22 @@
         "Native incremental door/roof/modal fixture: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40871270822 at 15965c26 — Godot 4.7 Xvfb, foundation 132 and topology/door/roof/modal 94 checks; not SURV-020 acceptance",
         "Continuation draft https://github.com/Khanh-glitch/Soul-of-Hero/pull/21; stale PR #11 does not contain this branch",
         "Native bed/death/partial token guards: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480211 at 62b6ab5e507982a3651604ed924fd47e9dbd5056 — foundation gate, topology 94, bed 95; not full SURV-020 acceptance",
-        "Overworld native AppFlow and regression suite: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480215 at 62b6ab5e507982a3651604ed924fd47e9dbd5056; not a full shelter playthrough"
+        "Overworld native AppFlow and regression suite: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480215 at 62b6ab5e507982a3651604ed924fd47e9dbd5056; not a full shelter playthrough",
+        "E-01 trusted-code fixture composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40892629650 at 568a432 — actual pinned A3 adapter + A0 SaveService, authority 108 / bed 96 / topology 94, success; not production composition",
+        "One-process disk-boundary interruptions: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893023725 at 8d69353 — 154 fault/reload checks, authority 108, bed 96, topology 94, success; not OS kill/power-loss evidence",
+        "Real A3 specimen consumption and unique craft/collection: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893272031 at 7c2f5a7 — authority 124 / fault 154 / bed 96 / topology 94 passed with test-only clock.",
+        "Focused GUI accept and world mouse bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40894149050 at d561311 — authority 124 / fault 154 / bed 97 / topology 94 passed; fixture sets GUI focus, not a human playthrough. Earlier GUI mouse input failed in run 40893616929 and remains to diagnose."
       ],
-      "next": "Complete A3 generic unique-token guards and production authoritative station/active-tick integration with actual A3 adapter, preserve escrow/replay; separately finish death crash-boundary, movement, art, visual resolutions, Web and human acceptance.",
+      "next": "Verify pending real-A3 specimen/craft and native input CI; review E-01 guard; implement actual A0 placed-station footprints/payment and authoritative fixed-step active-session host against pinned A3, then complete full input journey, blocked fallback, 720p/2K/4K inspection, Web and NPC navigation.",
       "assignment": {
-        "status": "CODE_IN_PROGRESS_BED_NATIVE_TESTED_A3_GUARDS_PARTIAL",
+        "status": "CODE_IN_PROGRESS_E01_PINNED_A3_TESTED_E02_NOT_IMPLEMENTED",
         "task_id": "SURV-020",
         "owner": "A0+A2",
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
         "branch": "arena/dea2428e-soul-of-hero",
         "review": "Full SURV-020 native visual and gameplay evidence required",
-        "user_reported": "Draft PR #21 remains WIP: scoped native bed/death and partial token refusals; A3 host and full acceptance pending."
+        "user_reported": "Draft PR #21 WIP; bed technical subgate accepted; E-01 trusted-code fixture tested; E-02 and full acceptance remain open."
       }
     },
     {
@@ -133,7 +137,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Implement a paid indoor bed and persistent activation through the existing SaveService, then test actual overworld death/respawn with safe collision-checked fallback, demolished/blocked beds, legacy saves and dungeon isolation.",
+    "first_test": "Diagnose 0274766 failed GUI mouse dispatch (coordinate fixture versus product behavior) without regressing green d561311, then implement/test real production station placement and authoritative fixed-step host.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
