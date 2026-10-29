@@ -336,8 +336,9 @@ func _body() -> void:
 		return
 	await physics_frame
 	await physics_frame
-	var outside: Array[Vector2i] = [center + Vector2i(0, -3)]
+	var outside: Array[Vector2i] = [center + Vector2i(0, -4)]
 	var exited := await _walk_path(hero, outside)
+	print("HOME_EXIT hero=%s cell=%s door=%s walked=%s" % [str(hero.global_position), str(nav.cell_of(hero.global_position)), str(door_cell), str(exited)])
 	_expect(exited and nav.cell_of(hero.global_position).y < door_cell.y, "ordinary movement exits the actual home")
 	if not exited:
 		_body_complete = true
