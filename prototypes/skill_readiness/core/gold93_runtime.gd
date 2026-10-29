@@ -117,10 +117,21 @@ func module_path_for(canonical_id: String) -> String:
 ## this skill's authored generator. This EXECUTES the generator inside a real
 ## `venom_world`; it is not a table lookup, so it cannot claim a generator
 ## exists while the port is broken.
+## Memoised per process. `readiness_report()` walks all 93 ids and is called
+## several times per test run; un-cached, each pass re-executed a full
+## 30-tick world probe per source-native id, which stacked up to minutes.
+var _source_native_cache: Dictionary = {}
+
+
 func source_native_executable(canonical_id: String) -> bool:
 	if not SOURCE_NATIVE_IDS.has(canonical_id):
 		return false
-	return bool(SOURCE_NATIVE_SKILLS.probe_native(int(SOURCE_NATIVE_IDS[canonical_id])))
+	if _source_native_cache.has(canonical_id):
+		return bool(_source_native_cache[canonical_id])
+	var ok: bool = bool(SOURCE_NATIVE_SKILLS.probe_native(
+			int(SOURCE_NATIVE_IDS[canonical_id])))
+	_source_native_cache[canonical_id] = ok
+	return ok
 
 
 ## True when a host cast can be driven end to end: a registered
