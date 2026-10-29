@@ -113,17 +113,30 @@ func _body() -> void:
 	# it a hundred steps while the player is far from everything: if bucketing
 	# works, that is far cheaper per step than the same call standing behind a
 	# landmark with dozens of neighbours.
+	# The claim is *structural*: the step examines only what is in the buckets
+	# around the player, so an empty neighbourhood examines far fewer sprites
+	# than a busy one. It used to be asserted as wall time ("isolated <= busy"),
+	# which is what failed this gate on CI: the step's cost is dominated by a
+	# fixed sweep of the bucket ring, so the two positions differ by less than
+	# the timer noise on a shared runner, and the comparison flipped. Counting
+	# the sprites actually considered is the same claim without the noise, and it
+	# is a stronger one - it holds on any machine and it cannot pass by luck.
 	player.global_position = Vector2(16.0, 16.0)
 	occlusion.snap()
-	await _frames(2)
-	var isolated_step := _occlusion_step_ms(occlusion, 240)
+	occlusion.step(0.016)
+	var considered_empty := occlusion.considered_count()
 	player.global_position = free
 	occlusion.snap()
-	await _frames(2)
-	print("  perf: occlusion step away from all occluders %.3f ms" % isolated_step)
-	_expect(isolated_step <= per_step + 0.001,
-		"an empty neighbourhood costs no more than a busy one (%.3f ms <= %.3f ms)"
-		% [isolated_step, per_step])
+	occlusion.step(0.016)
+	var considered_busy := occlusion.considered_count()
+	print("  perf: occlusion considered %d sprites in an empty neighbourhood, %d behind a landmark"
+		% [considered_empty, considered_busy])
+	_expect(considered_empty < considered_busy,
+		"an empty neighbourhood examines fewer sprites than a busy one (%d < %d)"
+		% [considered_empty, considered_busy])
+	_expect(considered_busy < occlusion.occluder_count(),
+		"the step examines a fraction of the world's %d occluders (%d)"
+		% [occlusion.occluder_count(), considered_busy])
 
 	# --- 3. traversability queries are trivial next to a fade step ----------
 	var start := Time.get_ticks_usec()

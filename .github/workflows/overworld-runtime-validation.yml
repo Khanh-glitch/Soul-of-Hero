@@ -402,7 +402,14 @@ jobs:
           for f in "$ARTIFACT_DIR"/*.log; do
             [ -f "$f" ] || continue
             name="$(basename "$f")"
-            tail -n 8 "$f" | while IFS= read -r line; do
+            # The last lines of a Godot log are shutdown noise. What a reader
+            # needs is the assertion that failed and the numbers around it, so
+            # pull the measured lines and the failures out from anywhere in the
+            # file first, then fall back to the tail.
+            { grep -E 'perf:|  FAIL |FAIL |OVERWORLD.*FAILED|checks?, [0-9]+ failure' "$f" || true
+              echo "--- tail ---"
+              tail -n 4 "$f"
+            } | head -n 24 | while IFS= read -r line; do
               line="${line//'%'/'%25'}"
               line="${line//$'\r'/}"
               echo "::error title=$name::${line:0:900}"
