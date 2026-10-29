@@ -201,6 +201,13 @@ jobs:
           done >> "$GITHUB_STEP_SUMMARY"
           exit "$failures"
 
+      - name: Import pinned A3 owner project before its native suite
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p a3-source/.artifacts/a3-ci
+          timeout --signal=TERM --kill-after=10s 180s godot --headless --editor --path a3-source --import 2>&1 | tee a3-source/.artifacts/a3-ci/import.log
+
       - name: Run pinned A3 economy owner-native adapter regression (separate checkout)
         shell: bash
         run: |
