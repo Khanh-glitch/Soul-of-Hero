@@ -129,7 +129,8 @@
     "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "tab_05_written_and_readback_pending_git_commit"
+    "docs_sync": "verified_google_tabs_03_04_05_readback_2026_10_29; atlas_git_bb86778666012081cdf411b6d791b8798c374281",
+    "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,

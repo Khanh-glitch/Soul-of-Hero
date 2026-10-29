@@ -30,3 +30,13 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - **Research-only status:** verified existence and dated sources; **no new gameplay implementation or native/Web playtest**. Original total recipe count not available and NOT asserted. Research task SURV-005 is a research completion claim, not full user-requested game implementation.
 - **Decisions:** D021–D031 in DECISIONS.md, reflecting user's delegated gate authority. Next task remains SURV-010; full game scope cannot be collapsed into a tiny prototype.
 - **Commit:** inspect branch HEAD after this atomic update; record exact SHA and Docs readback.
+
+## 2026-10-29 — SURV-005 VERIFIED ARCHIVAL SYNCHRONIZATION
+
+- Source atlas initial commit: `68faae048ba0ac8b8a3c40a0d2cc85e42ce1e6a8`.
+- Gate/decision & acceptance matrix commit: `ceb625b33f76e87a095fbc5480e25d804fb5166a`.
+- Historical addendum with 2019 support mechanics and 2020 planting/economy: `bb86778666012081cdf411b6d791b8798c374281`.
+- CI for exact historical atlas HEAD: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40830754794 — successful handoff validator only.
+- Google Doc source https://docs.google.com/document/d/1q8Vevy4qx_6AFyfJodmsWAhdSBBumtx31hxXnWPelqo/edit — tab 03 (~14.5k extracted chars including user's full final instruction), tab 04 (~5.6k chars), tab 05 (~34k extracted chars including dated 2019/2020 source atlas) all **written and read back**.
+- **Verified:** research/document preservation, not gameplay. **Blocked original historical exact total recipe count:** no version-pinned exhaustive original dataset. **No gameplay, native VFX or Web survival CI run.**
+- **Next implementation task unchanged:** SURV-010, with new mandatory 14-day depth/replay acceptance linked to world/content development.
