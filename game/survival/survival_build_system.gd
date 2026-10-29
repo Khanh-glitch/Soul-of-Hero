@@ -781,8 +781,8 @@ func _build_hud() -> void:
 	panel.anchor_top = 1.0
 	panel.anchor_right = 1.0
 	panel.anchor_bottom = 1.0
-	panel.offset_top = -48.0
-	panel.offset_bottom = -4.0
+	panel.offset_top = -128.0
+	panel.offset_bottom = -18.0
 	panel.offset_left = 8.0
 	panel.offset_right = -8.0
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -792,6 +792,7 @@ func _build_hud() -> void:
 	_hud_label.name = "Text"
 	_hud_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_hud_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_hud_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_hud_label.add_theme_font_size_override("font_size", 10)
 	_hud_label.add_theme_color_override("font_color", Color(0.94, 0.92, 0.84))
 	_hud_label.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
@@ -830,7 +831,8 @@ func _refresh_hud() -> void:
 				cost_text = "%s (short)" % cost_text
 		parts.append("%s[%d] %s %s" % [marker, index + 1,
 			piece_id.replace("_wood", "").capitalize(), cost_text])
-	_hud_label.text = "BUILD  %s\n%s  —  click to place, B to close" % ["  ".join(parts.slice(0, 5)), "  ".join(parts.slice(5))]
+	_hud_label.text = "BUILD — click to place, B to close\n%s\n%s\n%s" % [
+		"   ".join(parts.slice(0, 3)), "   ".join(parts.slice(3, 6)), "   ".join(parts.slice(6, 9))]
 
 
 func _cost_text(cost: Dictionary) -> String:

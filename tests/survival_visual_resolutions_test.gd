@@ -32,11 +32,18 @@ func _body() -> void:
 	Input.parse_input_event(toggle)
 	await process_frame
 	_expect(panel != null and bool(panel.call(&"is_open")), "actual economy UI is visible for capture")
+	var hud := ow.get(&"hud") as CanvasLayer
+	_expect(hud != null and (panel as CanvasLayer).layer > hud.layer, "crafting modal paints above overworld HUD")
 	await _capture("economy")
 	panel.call(&"close_panel")
 	await process_frame
 	var build := ow.get(&"survival_build") as SurvivalBuildSystem
 	build.set_active(true)
+	await process_frame
+	var strip := build.get_node("BuildHud/BuildRoot/Strip") as Control
+	var text := strip.get_node("Text") as Label
+	_expect(strip.get_global_rect().position.x >= 0.0 and strip.get_global_rect().end.x <= root.get_visible_rect().size.x, "construction strip fits viewport")
+	_expect(text.get_visible_line_count() == text.get_line_count() and text.text.contains("[9]"), "all wrapped construction lines and slots fit")
 	await _capture("build")
 	build.set_active(false)
 	await super._body()

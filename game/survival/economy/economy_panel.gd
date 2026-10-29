@@ -9,7 +9,9 @@ var _list: VBoxContainer
 var _notice: Label
 
 func _ready() -> void:
-	layer = 18
+	# The modal must paint above the overworld's always-visible HUD (layer 20);
+	# death closes this panel before presenting its own UI.
+	layer = 21
 	_root = Control.new()
 	_root.name = "EconomyOverlay"
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
