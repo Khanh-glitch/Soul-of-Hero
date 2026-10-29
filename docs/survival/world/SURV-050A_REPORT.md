@@ -10,7 +10,7 @@ Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20
 
 ## Executive summary
 
-This milestone delivers a complete causally authored continent as static world truth: 11 regions, 22 biomes, 27 material contracts, 12 preparation capabilities, 10 hazards, 9 rivers + 3 lakes + 1 subsurface conduit, 108 new POIs, 33 resource sites / 178 nodes, 21 cyclic trunk routes + 108 spurs, 5 post-14-day-equivalent goals, and 192 deterministic 64×64 chunks. The existing ten Chapter 1 dungeon entrances are preserved verbatim inside the opening quarter. The package includes JSON schemas, a deterministic compiler/validator, 18 passing acceptance/negative tests, double-compile hash determinism, inspected/revised previews, and A0/A3/A6 handoff contracts.
+This milestone delivers a complete causally authored continent as static world truth: 11 regions, 22 biomes, 27 material contracts, 12 preparation capabilities, 10 hazards, 9 rivers + 3 lakes + 1 subsurface conduit, 108 new POIs, 33 resource sites / 178 nodes, 21 cyclic trunk routes + 108 spurs, 5 post-14-day-equivalent goals, and 192 deterministic 64×64 chunks. The existing ten Chapter 1 dungeon entrances are preserved verbatim inside the opening quarter. The package includes 11 JSON schemas, a deterministic compiler/validator, 41 passing acceptance/negative tests, double-compile hash determinism, inspected/revised previews, an isolated Godot 4.7 chunk/RLE reader fixture, a bounded pacing/scale audit, and A0/A3/A6 handoff contracts. Review corrections make legacy `build=0` delegate to A0 via `build_permission=2` instead of forbidding homes.
 
 It is review-ready as an authored world plan. It is **not** native playable integration: the production overworld controller, SaveService, A0 construction files, A3 economy files, A4 Gold/VFX, and A6 UX files were not modified.
 
@@ -26,18 +26,20 @@ It is review-ready as an authored world plan. It is **not** native playable inte
 | Roads, trade, transport, bottlenecks, alternates | 21 trunk edges, 108 spurs, boat/pass modes; single-trunk-edge removal keeps hubs connected |
 | Hazards and equipment preparation | 10 hazards, 12 capabilities; environmental clues, not level walls |
 | Outposts/logistics | watches, waystations, mills, boardwalks, pumps, drydock, ferry/pile sites |
-| Early/mid/late identities | region bands and capability gates; novice 38 / mid 99 / late 108 accessible new POIs |
+| Early/mid/late identities | region bands and capability gates; novice 39 / mid 99 / late 108 accessible new POIs; sheltered source POIs no longer over-gated by hazards they do not occupy |
 | Exactly ten Chapter 1 entrances intact in initial quarter | baseline lock, preserved inset, entrance-preservation tests |
 | Other regions detailed upfront + discoveries after ~14d | 108 new POIs across all regions; 5 post-14d goals |
-| Machine-readable masterplan + region/biome/elevation/hydrology schemas | `data/survival/world/` + 10 schemas |
+| Machine-readable masterplan + region/biome/elevation/hydrology schemas | `data/survival/world/` + 11 schemas, `build_permission` layer, `reader_contract.json` |
 | Resource/ecosystem definitions, POI/route graph, stable IDs | material contracts, POI/route graph, identity contract |
-| Deterministic geographic/traversal validators | validator, 18 pytest cases, negative mutations, double-compile determinism |
+| Deterministic geographic/traversal validators | validator, 41 pytest cases, RLE/identity/seam/build-delegation negatives, double-compile determinism |
 | Authored previews/diagrams inspected and revised | 8 previews, `VISUAL_CRITIQUE.md` |
 | A0 integration contracts | `A0_ADAPTER.md`; no SaveService/controller change |
 | Coordinate A0/A3/A4/A6; S6 optional | cross-agent contract table; S6 nonblocking |
 | Research/licenses recorded | `RESEARCH_AND_LICENSES.md`; no unlicensed code/art committed |
 | Commit/push/PR when review-ready | active branch checkpoint + PR to integration; issue #12 comment |
-| Google Docs tab 04 | `DOCS_SYNC_PENDING` (connector disconnected) |
+| Google Docs tab 04 | `DOCS_SYNC_PENDING` (connector enabled; targeted sync in progress) |
+| Legacy build delegation (W-01) | `build_permission=2`, A0 delegate contract, legal-home negative regression, isolated Godot reader fixture |
+| Realistic scale/pacing (W-02) | `PACING_ANALYSIS.md`: 10 concrete journeys, hazard exposure, outpost logistics, alternate detours; playtime NOT_TESTED |
 
 ## Continent design
 
@@ -73,7 +75,7 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 
 ### Progression counterfactuals
 
-- **Novice finds no value:** rejected. 38 new POIs are novice-accessible; staple timber/stone/iron/fibre/salvage sources are open.
+- **Novice finds no value:** rejected. 39 new POIs are novice-accessible; staple timber/stone/iron/fibre/salvage sources are open.
 - **Midgame bypasses all preparation:** rejected. Late core/specimen vaults require late-earned `cap_seal_3`, `cap_deepward`, or `cap_tide_ward`; mid profile cannot open them.
 - **Endgame has nothing left:** rejected. Five post-14d goals remain: tide customs, karst dive, fen purification, storm signal, canopy lift.
 
@@ -81,15 +83,18 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 
 - Data: `data/survival/world/` (masterplan, 192 chunks, 10 schemas, graphs, contracts, baseline lock, metrics).
 - Tools: `tools/survival/worldgen/` (`authoring.py`, `compile_plan.py`, `baseline.py`, `validate_world.py`, `make_schemas.py`, `preview.py`, `check_determinism.py`, requirements).
-- Tests: `tests/survival/world/` (18 cases).
+- Tests: `tests/survival/world/` (41 Python cases) + `tests/survival/world/godot/` isolated Godot 4.7 reader fixture.
+- CI: `.github/workflows/survival-world-reader.yml` (A1-owned, read-only fixture; not production integration).
 - Docs/previews: `docs/survival/world/` (report, adapter, research, visual critique, validation, determinism report, 8 PNGs).
 
 ## Validation summary
 
-- Validator: 0 errors; schemas PASS.
-- Pytest: 18 passed.
-- Double-compile determinism: identical 208-artifact tree hash `77e71e19c5da2b05cc3305955c17aef5a825ff6a22d3aebbadb5ff97704fab9a`.
-- Masterplan SHA-256: `46eb504b44a2b18e25a807aae875e9002ce63fc92ab6975e20466db212928715`.
+- Validator: 0 errors; 11 schemas PASS.
+- Pytest: 41 passed.
+- Double-compile determinism: identical 212-artifact tree hash `36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3`.
+- Masterplan SHA-256: `008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d`.
+- Pacing audit: 10 journeys resolve; travel/preparation/logistics estimates only; playtime NOT_TESTED.
+- Isolated Godot 4.7 reader CI: pending exact run at correction checkpoint; local Godot unavailable.
 - Empty-space ratio 1.15%; max anchor distance 80.99 tiles; all 108 new POIs physically reachable in the proposed walk layer.
 - Native Godot 4.7 not run; CI not triggered by A1. See `VALIDATION.md`.
 
@@ -100,8 +105,19 @@ Nine descending rivers: Crown lower → Mirrormere → south sea; Frost tributar
 - A6 must implement environmental hazard clues/map UX; A1 supplies the grammar and labels.
 - A4 Gold/VFX untouched; no dependency.
 - S6 optional POI is nonblocking; the continent is complete without it.
-- Godot 4.7 binary download blocked by asset-host SSL; native validation remains pending.
-- Google Docs connector disconnected: `DOCS_SYNC_PENDING` for tab 04.
+- Godot 4.7 binary download blocked by asset-host SSL; local native validation remains NOT_TESTED. A1-owned isolated reader CI added; exact run status recorded in `VALIDATION.md`.
+- Google Docs connector enabled; targeted tab 04 read/write still being completed: `DOCS_SYNC_PENDING`.
+- Early buffer trunk intersects legacy crown heat/rot hazard rects; A6 clues and A0/A3 early mitigation/alternate tuning remain open authored integration gates.
+
+## Review corrections after PR #20
+
+Decision: `KEEP A1 / CONTINUE_WITH_TARGETED_CORRECTIONS`. The continent, regions, stable IDs, ten entrances and resource counts were preserved; no new project, no POI inflation, no geography regeneration.
+
+- **W-01 legacy build delegation:** added required `build_permission` chunk layer and `layer_semantics`. Legacy inset keeps historical `build=0` but sets `build_permission=2`; adapters must call A0 `validate_cell`. Missing delegate is an error, not deny. Legal fresh-save home cell `[54,222]` is a negative regression against naive zero-blocking. Protected camp `[56,216]` and dynamic child occupancy still veto. Walk/road overlays are mutable only outside legacy, stale/immutable overlays fail closed, and A0/dynamic occupancy wins.
+- **W-02 scale/pacing:** added `analyze_pacing.py`, `pacing_analysis.json` and `PACING_ANALYSIS.md`. Ten concrete journeys measure route tiles, foot-equivalent minutes, detour ratios, hazard exposure, capability grants, outpost round-trips and alternate-route cuts. Early legacy home loop is bounded at 36 oak_wood + 2 iron_scrap, 7 node visits, 20 gather hits, ~0.62 min grid travel estimate. Post-14d goals are reachable with late caps in ~1.3–3.8 min travel each. Combat/crafting/gathering/day-equivalent playtime remain NOT_TESTED; no fourteen-day claim is made from POI count or ideal crossing.
+- **Hazard exposure correction:** capability-source POIs are gated by a hazard capability only when their cell actually lies inside the authored exposure rect. The thermal wardhouse is sheltered and bootstraps `cap_thermal`; exposed ice caves still require it. Novice accessible new POIs rose 38→39 without adding POIs.
+- **Reader/CI:** minimal isolated Godot 4.7 fixture under `tests/survival/world/godot/` consumes chunks/RLE, verifies identity/hash/bounds/adjacent seams, legacy delegation, overlay precedence and malformed input. A1-owned workflow runs Python authoring/schema/determinism/pytest plus the Godot fixture. This is not production overworld/SaveService integration.
+- **Handoffs:** `material_source_contracts.json` now carries legacy A0 item hints (A3 owns final mapping/yields/recipes); `hazard_capability_contracts.json` publishes stable A6 labels/rects/severity/preparation. Both remain authored contracts, not production-integrated gameplay.
 
 ## Branch note
 
@@ -109,9 +125,9 @@ The work order names `feature/surv-a1-world-050a`, but this Arena session is pin
 
 ## Next steps
 
-1. A0 review `A0_ADAPTER.md`, implement native chunk adapter and seam carves behind baseline-lock verification.
+1. A0 review `A0_ADAPTER.md` §4.1 build delegation, implement native chunk adapter and seam carves behind baseline-lock verification; run native paid-home/topology tests separately.
 2. A3 map material contracts to items/recipes; A6 map hazard/capability clues to UX.
-3. Run Godot 4.7 native CI (overworld + survival validation) after adapter lands; do not claim playable from this data package alone.
-4. Sync this report to Google Docs tab 04 when the connector is reconnected (`DOCS_SYNC_PENDING`).
+3. Review the A1 isolated Godot 4.7 reader CI run; then run native overworld + survival validation after the A0 adapter lands. Do not claim playable from this data package alone.
+4. Complete Google Docs tab 04 sync and verify readback (`DOCS_SYNC_PENDING` until confirmed).
 5. Native tile/prop art pass and grade-limited road refinement using the strategic previews as constraints, not as final art.
 6. GitHub issue #12 direct comment returned `403 Resource not accessible by integration`; the same checkpoint was posted as a PR #20 comment. Re-post to issue #12 when permissions allow.

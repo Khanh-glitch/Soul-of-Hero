@@ -46,3 +46,16 @@ Preview manifest: `docs/survival/world/previews/preview_manifest.json`.
 ## Acceptance position
 
 The visual pass materially changed the geography (coast, drainage, biome transitions, emptiness, progression gates). The remaining limitations are native integration/art limitations, not missing continent design. The plan is review-ready as A1 static truth; native playable status remains false.
+
+## Review-correction pixel inspection (2026-10-29)
+
+After the W-01 build-delegation and hazard-exposure corrections, the eight previews were regenerated and the following PNGs were opened and read as images, not merely listed by manifest:
+
+- `continent_biome.png`: the legacy inset remains a distinct textured rectangle inside the Ashen Crown; region panels show temperate/moorland early land, snow-dominated Frostcrown, volcanic Embersteppe, arid Saffron, tropical Verdant, tidal Pearl, karst Sunken and bog Ashwater. Ownership borders are still schematic white lines.
+- `starter_quarter_detail.png`: all ten Chapter 1 entrance labels are visible inside the preserved inset. The east and south seam carves render as small yellow postern rectangles, not a rewritten Chapter 1. New buffer POIs (Ashen Waystation, Crown Relay Shed, Tuff Quarry Camp, Crown Ferry Pile, Orchard Gate Ruin, etc.) sit outside the inset.
+- `continent_routes.png`: trunk roads read as a cyclic yellow network; spurs are thin connectors; the Saffron→Pearl boat leg is blue. Some region-panel labels overlap at this scale (e.g. Glasswind/Embersteppe titles), confirming the need for local panels rather than continent-scale label density.
+- `capability_graph.png`: equipment/credential/power nodes and source POIs are legible; edges cross but the preparation grammar is readable. `cap_thermal` sources from the wardhouse, `cap_filter` from the apothecary, `cap_climb` from Piton Works, `cap_boat` from the drydock, seals from forge/customs, deepward from root lift. This is a contract diagram, not a native UI screenshot.
+
+Correction-specific visual finding: the early buffer trunk still passes through the authored legacy crown heat/rot rects. The pacing audit now quantifies that exposure instead of hiding it behind a “low risk” label. A6 environmental clues and A0/A3 early mitigation/alternate tuning remain open integration gates; no arbitrary level wall was added.
+
+Acceptance position unchanged: authored world only. Native tile/prop art, camera, collision and playable traversal remain unverified.

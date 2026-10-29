@@ -53,6 +53,12 @@
         4096
       ]
     ],
+    "build_permission": [
+      [
+        0,
+        4096
+      ]
+    ],
     "elevation_band": [
       [
         2,

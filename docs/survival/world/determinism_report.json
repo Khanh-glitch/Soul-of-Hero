@@ -1,5 +1,5 @@
 {
-  "artifact_count": 208,
+  "artifact_count": 212,
   "artifacts": [
     {
       "bytes": 77674,
@@ -12,979 +12,994 @@
       "sha256": "4974ef579881c156683f554e6de57506ff8f381c1b4187de48f992101dd6d4a6"
     },
     {
-      "bytes": 24147,
+      "bytes": 24220,
       "path": "data/survival/world/chunks/00_00.json",
-      "sha256": "35b49be1643197654178f0769e8669e18fa90c10e5cc8490cbd3666b4f2726eb"
+      "sha256": "df88be9fd2947436604901161621f35d6befc23fa7c3b857bee7924636be6c42"
     },
     {
-      "bytes": 50954,
+      "bytes": 51027,
       "path": "data/survival/world/chunks/00_01.json",
-      "sha256": "40845fbe1c58bb4e20e14ec39461763073374abace7c30fc53ba3f79c926a2ec"
+      "sha256": "e572f1f47b099b13d8f9649b44bd3e5b2d0b584533419b98b8adcd42c39be252"
     },
     {
-      "bytes": 55357,
+      "bytes": 55430,
       "path": "data/survival/world/chunks/00_02.json",
-      "sha256": "bf3786115bfebab954b52b205711f4771dd4d037a6e61d74c264b8f95ac425b2"
+      "sha256": "f47003cbb8c7530608ac77543d3b9a136e5ec22a059eeaf06ce356d3d282a266"
     },
     {
-      "bytes": 60388,
+      "bytes": 60461,
       "path": "data/survival/world/chunks/00_03.json",
-      "sha256": "8dd22556b1824a4f214157adf06056be61fd115e7fc6856dfbccb98a5d303679"
+      "sha256": "3809d18a194b9ad9128aec105606966b42a5547e4b505d35ec3e49e3e6303184"
     },
     {
-      "bytes": 23427,
+      "bytes": 30620,
       "path": "data/survival/world/chunks/00_04.json",
-      "sha256": "65743799cce41ad7f83b1cba7eff5001b5b222ce7eb42e1d18dfe81386ca7e8a"
+      "sha256": "72850418a2eccca6386ff4ce034c97713c778a50cee587cd98c346ce32162780"
     },
     {
-      "bytes": 10298,
+      "bytes": 12066,
       "path": "data/survival/world/chunks/00_05.json",
-      "sha256": "3717d8aa4169e6d2f5e29569702928bbe4b08583567ed8a0fb0cb0aba3079e42"
+      "sha256": "aa08a1d6a5d3d33987341448b34c42fa4f42528b68dbcc4d4c8e6b82008d43f6"
     },
     {
-      "bytes": 23644,
+      "bytes": 28032,
       "path": "data/survival/world/chunks/00_06.json",
-      "sha256": "5c9d656d5b947c902d52a6369df76fbecbb7229223b7c321415547179307ff2e"
+      "sha256": "7a0b8409838497b92289f643bc63f33d707157382db10b234e67179098b4b946"
     },
     {
-      "bytes": 33966,
+      "bytes": 42352,
       "path": "data/survival/world/chunks/00_07.json",
-      "sha256": "ac34261992db807219c0d4632000a23853fd6dc8b0cffa88290c6fa2b2ca9a72"
+      "sha256": "273e364b68066cc3a2dec4a43024930d9b63e2c88d8fed6d09ecc4458aac631d"
     },
     {
-      "bytes": 20210,
+      "bytes": 25208,
       "path": "data/survival/world/chunks/00_08.json",
-      "sha256": "142bd1478b3c5388984f91efa6a02c907078f56fde6a0da410022358c844192e"
+      "sha256": "06bf9809bc2e621e7971c98385099ed5893a33a64bb05406bb737cf46dcd9bf2"
     },
     {
-      "bytes": 16496,
+      "bytes": 20535,
       "path": "data/survival/world/chunks/00_09.json",
-      "sha256": "e6127aeb354ad4ec9da4b8c6e6c7433a56b3f4b1f50411d0ca9344a09af4fb6c"
+      "sha256": "4dd5c15ac358bb60b97ec0cbe6481d58c9e386ad3dd37c84824c5addfe7cf0f2"
     },
     {
-      "bytes": 23471,
+      "bytes": 29892,
       "path": "data/survival/world/chunks/00_10.json",
-      "sha256": "53a03d5cadae7796788146e802b1f7a9dfbd7918aac09e5c6644b70a902ad32e"
+      "sha256": "090741641c32ed2fe24253bd5df58aa8d7eae39faab355d02dc5a12b5c8bbf35"
     },
     {
-      "bytes": 10200,
+      "bytes": 12166,
       "path": "data/survival/world/chunks/00_11.json",
-      "sha256": "e5245fcc662e2141a4d50cbc572078a83c033b1d4d2f3fbb6b669361bbbbe8e5"
+      "sha256": "f50d8339713d3c1e569c3e845ab8a966c5c65efbaa0be02db1c69712a2bcb414"
     },
     {
-      "bytes": 38150,
+      "bytes": 38223,
       "path": "data/survival/world/chunks/01_00.json",
-      "sha256": "b6b5884402a59d7cacff4f15000e2335527e722b2dd53483295a915c92d6c254"
+      "sha256": "abd43d44f619c30452089c1f4c954722457c6c8f43c5d1b9b1a56aa73f61ccd5"
     },
     {
-      "bytes": 55387,
+      "bytes": 55460,
       "path": "data/survival/world/chunks/01_01.json",
-      "sha256": "f0e0a978690cf310921f9e6d2c3d076023e8db155f4fa27348f08c5f471f8e60"
+      "sha256": "50ec0cbc86d92352fadb370a4d1162039596394dd1ec5b856104d3dbb06d5006"
     },
     {
-      "bytes": 62738,
+      "bytes": 62811,
       "path": "data/survival/world/chunks/01_02.json",
-      "sha256": "2cbf4a369f13cbb54bbd6cdfacac24303f18d9ebd86c5839b63f99f383736638"
+      "sha256": "e0b9ae81d8c87b2a9a6bef9c7cbb0e6cc2afde42fca8b6dc888121b96d3035ed"
     },
     {
-      "bytes": 65082,
+      "bytes": 65155,
       "path": "data/survival/world/chunks/01_03.json",
-      "sha256": "43e19c8b5e7a9680b7feb0864cfa2c97311d64600e81ec3ee80f107a917d8fc5"
+      "sha256": "9615946e33adfab7a354b10a8359e1e6b90b7e34f38f7f61e1b33d37a2d53b8a"
     },
     {
-      "bytes": 17693,
+      "bytes": 22232,
       "path": "data/survival/world/chunks/01_04.json",
-      "sha256": "e0de9e171f9e38868702abc283042f60b10258ce30f52ea8efd8fbe5b531536a"
+      "sha256": "cc7ceddbaa5aa032181e994fb4f1cbd5544cb28fec74dddc33b4dab6d0dc947e"
     },
     {
-      "bytes": 35796,
+      "bytes": 44498,
       "path": "data/survival/world/chunks/01_05.json",
-      "sha256": "260f23070e22897032a2600500f2a7c233482cf40ebacf111af30179515578a7"
+      "sha256": "e76e6d950540d7ac0ad5f67fceadeb57b788e37128bc57f5b5bda1ede14fb88b"
     },
     {
-      "bytes": 56263,
+      "bytes": 70478,
       "path": "data/survival/world/chunks/01_06.json",
-      "sha256": "e9cb39a727bdc7782cc04ac94ace94a9df29eb410d99c83166cb31fd9ac0227c"
+      "sha256": "cb00f860907322823a9736cff45f67029c6119c9c31ec26b5c99c3c4f18474be"
     },
     {
-      "bytes": 26178,
+      "bytes": 31550,
       "path": "data/survival/world/chunks/01_07.json",
-      "sha256": "c7af2cf701207e6832e50c9f863215871449d7205909fb34875b4d951b312c97"
+      "sha256": "781e39addc06a204285f1b4946f3af62dbb927add0a191341cdb82c0b3ffeec8"
     },
     {
-      "bytes": 5232,
+      "bytes": 5771,
       "path": "data/survival/world/chunks/01_08.json",
-      "sha256": "be9b435c71a290a7abbc36bfe7b2f55e16fd49ceba4bcc2da1816c0f93f91670"
+      "sha256": "e4170ca5144a259a937f35f20b0eeb2bc948f62900d52ea5181d3cacaaf99196"
     },
     {
-      "bytes": 12252,
+      "bytes": 13985,
       "path": "data/survival/world/chunks/01_09.json",
-      "sha256": "c1d95061f3cf421fb62ccf7bc03f31b5efc24abb423a985bfedad8df89010417"
+      "sha256": "f7907ed7ac40c6818f2c409c87a9a3274ceb09a7ae70e137d185d3fc97ad648d"
     },
     {
-      "bytes": 23984,
+      "bytes": 24057,
       "path": "data/survival/world/chunks/01_10.json",
-      "sha256": "5bd18430ccb0fbdef43ec8f05af29ff246b181ba4fba109a888d45b32a3818a9"
+      "sha256": "768e66b07a3fd2f24d0048d5f9da6397843b10ba6a8a01d36ef9ba5a0fac7d7c"
     },
     {
-      "bytes": 7581,
+      "bytes": 8668,
       "path": "data/survival/world/chunks/01_11.json",
-      "sha256": "af0ac298dc8c556b926c94398edb90b391f7051581ca56969607a20ee617911c"
+      "sha256": "1d66a84dd58539053a118d2235e6b82cb6ebf059b45e53c8874d3af09194257e"
     },
     {
-      "bytes": 35239,
+      "bytes": 35312,
       "path": "data/survival/world/chunks/02_00.json",
-      "sha256": "782c379a7f8536e6b1edbfdf8c66f1be693c06677a2c3af0f8b3d867657f1007"
+      "sha256": "3e755168d52d949da25d0016ebf762082beb70fea3419b99bc1f1892513b8a15"
     },
     {
-      "bytes": 54241,
+      "bytes": 54314,
       "path": "data/survival/world/chunks/02_01.json",
-      "sha256": "b4eeb4eea36920948add5fc7b75c0d8f8805eb8a7130ffa224fe60c8ede6151e"
+      "sha256": "67a69a0fec6fc3180705362d20a2a3ad514e6d07fcabac494600570f6543313f"
     },
     {
-      "bytes": 63480,
+      "bytes": 63553,
       "path": "data/survival/world/chunks/02_02.json",
-      "sha256": "05631894d78c9e5009452a2be6a6b92901dae37a9a2fcdca25cf4385e0507125"
+      "sha256": "58d41d5c8aa0345a656caa5386db69ab9f61c631908bf721eefb99a0e0c5eb29"
     },
     {
-      "bytes": 66744,
+      "bytes": 66817,
       "path": "data/survival/world/chunks/02_03.json",
-      "sha256": "b2b2f5a7128a40e1c8e67b65b159f340a262dccef8d1c6e0d2f5e075485011e5"
+      "sha256": "c0f664f7ab1e93e2abe4501e66beada52defb3c74f9a3f8316ab1ed5691fa826"
     },
     {
-      "bytes": 3841,
+      "bytes": 3914,
       "path": "data/survival/world/chunks/02_04.json",
-      "sha256": "d33290ed3b890ce31822994e87bc776e2cb4904de27cf4d5fc434cdf01790580"
+      "sha256": "52f90ead27d865efc088b5a8d6a0b4d0cb6f15bfb3308fc1e3ca59cd975cefe8"
     },
     {
-      "bytes": 15220,
+      "bytes": 18461,
       "path": "data/survival/world/chunks/02_05.json",
-      "sha256": "385b899d854f1bfea9fe443c0588bcf2787d382c6086ac748407c73ee6287df1"
+      "sha256": "02f63efc8f717fe526a5a965795212021ec093c36cd52c60b3f2b29962c7d424"
     },
     {
-      "bytes": 14379,
+      "bytes": 17998,
       "path": "data/survival/world/chunks/02_06.json",
-      "sha256": "60ff3b7cdf540e74d48b78e81043d9f489e92756f1c0d490c7c5c7eb70a3dc80"
+      "sha256": "86cb48e9410227da5d5e7d8e4cf3611c9d2b10caea1f578a4f814eeb6ad90e30"
     },
     {
-      "bytes": 44134,
+      "bytes": 54340,
       "path": "data/survival/world/chunks/02_07.json",
-      "sha256": "c3eca284795956b359b7f16dc5b092cc5ff4fb7593928547aa8c3b808303e849"
+      "sha256": "67cf729d31b6ca3cd655dabcaf84e4ed70ab6bbce731c4dd5e95c7c8d86b823a"
     },
     {
-      "bytes": 43128,
+      "bytes": 51794,
       "path": "data/survival/world/chunks/02_08.json",
-      "sha256": "18f1e732856bd2ba802189a1468dd7bedef44b985a8c138e6d319d8e9ecd0d59"
+      "sha256": "4915dbdd115e56b0a96f9d0fa4b421412a8acf962c10ee994b7ac6131bfd6b56"
     },
     {
-      "bytes": 35054,
+      "bytes": 40912,
       "path": "data/survival/world/chunks/02_09.json",
-      "sha256": "fe16ffa9c94f39ddd97b66cdabb123d9c248902ecb6a881ae51ea7566bd31232"
+      "sha256": "d5010a527d9744756ec84f66c0efbd234374f267b4778e0d483aca4897d71aa6"
     },
     {
-      "bytes": 43019,
+      "bytes": 48250,
       "path": "data/survival/world/chunks/02_10.json",
-      "sha256": "a3d6a8055f9b2498289197bbb29bfbdfb8f2ec41b66f904d30fbbf0709e8a934"
+      "sha256": "c137958706c6f4998c84032d4607abf7c368a1564ec9d47ebe5173515decc790"
     },
     {
-      "bytes": 14508,
+      "bytes": 16757,
       "path": "data/survival/world/chunks/02_11.json",
-      "sha256": "68100793f3f3d0d3b6e2bb7d5278faf1e5fbe544e7ca7c5d4d530994d6985725"
+      "sha256": "7aecf8af7a781a674fb90ab576d6be27a75a652cfe0b63f52c77607982bd3283"
     },
     {
-      "bytes": 39721,
+      "bytes": 39794,
       "path": "data/survival/world/chunks/03_00.json",
-      "sha256": "da47d27d1870487adf45cdea62d71ec833f6b6b66fe9e9b2ff440b8b58c091c6"
+      "sha256": "ab48e84fd238f0fd219754f5c3e864f90f31b8f336781b731e3214297f11acb8"
     },
     {
-      "bytes": 50072,
+      "bytes": 50145,
       "path": "data/survival/world/chunks/03_01.json",
-      "sha256": "af032e22b86942a37799376cb6b7987957aa719d1a65d7122e91eab69b9bf442"
+      "sha256": "212b1461306702790a0ca21376c218015659445960c7ba6e3e38e364e75427a4"
     },
     {
-      "bytes": 57583,
+      "bytes": 57656,
       "path": "data/survival/world/chunks/03_02.json",
-      "sha256": "171730946261ef469d15f59790ffcaed37e22f6ea8f5850d1423ae0c39c81387"
+      "sha256": "c77963e69c2c5b0d9c2d70c0336ca32ec4c7ec3a1d95c548db0128aab7f62b62"
     },
     {
-      "bytes": 69017,
+      "bytes": 69090,
       "path": "data/survival/world/chunks/03_03.json",
-      "sha256": "2dc6ae671d30c51770f49f711547583e0ddf564eace458f2e71657647cfc401b"
+      "sha256": "e805543b74a6b4f738519a1e70403fa031efc44023956678d851f535cbefa5f6"
     },
     {
-      "bytes": 19208,
+      "bytes": 22678,
       "path": "data/survival/world/chunks/03_04.json",
-      "sha256": "13c08372946ebafa9d948c2a6b1d2805d892e35023e2865ccc56837971f0e86a"
+      "sha256": "dc19e9d1c543b8f231007882a812a5fbaa26325c3f8ac1151e8567116ac3b424"
     },
     {
-      "bytes": 4579,
+      "bytes": 4921,
       "path": "data/survival/world/chunks/03_05.json",
-      "sha256": "608b5c268f382780b19c26d3498a469f19032e275c4ac6ee39e2733115412ac6"
+      "sha256": "ed58343ff1c83e9c259efbfed9f805352a22f0948c4752a8dd5da28c80e1b4aa"
     },
     {
-      "bytes": 19739,
+      "bytes": 21430,
       "path": "data/survival/world/chunks/03_06.json",
-      "sha256": "8aae50ceb53bf8d37ed8aafea245dc92f6426695131128a4c55d7faef5750ab2"
+      "sha256": "76a5c4d0093ae41f277b91c682620f14e4324df9cb4890786fb3e16a73e43091"
     },
     {
-      "bytes": 35963,
+      "bytes": 43341,
       "path": "data/survival/world/chunks/03_07.json",
-      "sha256": "7c79996cba84f6010204c91561ff3954b49fef88d669fef7ca63b8657ebcc7d7"
+      "sha256": "936500963670f786a36796561d6163f1c433ae9efae748b3334124f2981d8c54"
     },
     {
-      "bytes": 7111,
+      "bytes": 7299,
       "path": "data/survival/world/chunks/03_08.json",
-      "sha256": "348dcacb7fdd27793e1bb4058194b2d1e8705a8fb6459f537eb5053ef1d3a84e"
+      "sha256": "00ca4679e675ff2ebe6654d7762cf5de8eeca9ebe86fa0b832da51b55ed0fa6b"
     },
     {
-      "bytes": 12197,
+      "bytes": 14119,
       "path": "data/survival/world/chunks/03_09.json",
-      "sha256": "8b38bc7d6cd3038efd595f1b5a3a26646dd53a4cd4eeb0dafd1ee9c8b176e6ab"
+      "sha256": "3fad8abc44932f0abe67a421728f6b392d55343f9cfa1bb99c0e656ebce533c4"
     },
     {
-      "bytes": 10161,
+      "bytes": 12478,
       "path": "data/survival/world/chunks/03_10.json",
-      "sha256": "70396c2c9f64aa80f06aa0744d361290948a642f92a5a0e5ccedba065106d512"
+      "sha256": "177f2ef405b4622581ccb221103a78cb2754e157a15de8addbdec2e205b76644"
     },
     {
-      "bytes": 9961,
+      "bytes": 12237,
       "path": "data/survival/world/chunks/03_11.json",
-      "sha256": "1a05205da9acfc08dc9254514432d76ebd4aa6d4a0b097022583c59cd3ec91d1"
+      "sha256": "e58fb86a80c11f590217bfb9e84cd40d5481497198d2d4cf8717e6a58702fc8b"
     },
     {
-      "bytes": 30992,
+      "bytes": 31065,
       "path": "data/survival/world/chunks/04_00.json",
-      "sha256": "2a3ba6beeee3635ced5a5420c110ac34c830b30a72a47140fd0526566b5acdf1"
+      "sha256": "52d70cf60906f3565304780256c9015319917e73053f4bb143a06cbbb3621d84"
     },
     {
-      "bytes": 58581,
+      "bytes": 58654,
       "path": "data/survival/world/chunks/04_01.json",
-      "sha256": "a9b3a2bad00360e8f009e7397de41f502ca20ec6e7d2a700d912a296590ee41a"
+      "sha256": "22668d1314b806edf57253ab50f067573086bbb1a2ab1046ea457fcc1eb61f61"
     },
     {
-      "bytes": 60491,
+      "bytes": 60564,
       "path": "data/survival/world/chunks/04_02.json",
-      "sha256": "8537183dba59eef7fa19db5a47147617c37e6bd225ffe70602580ea4e46791af"
+      "sha256": "9fe4bff4e2b8e03d9658d3dad2b980151109a0fa7e0ca9d3dbce31dbf3a94997"
     },
     {
-      "bytes": 64322,
+      "bytes": 64395,
       "path": "data/survival/world/chunks/04_03.json",
-      "sha256": "b5aacbbc99467073f90dd39ecfc23cc28466654f6ba3c8639af9a237c795d065"
+      "sha256": "390a69700f9c0d80bbe59653ba1a988dda43fda5fcf215666d9d094a3ef8156a"
     },
     {
-      "bytes": 17967,
+      "bytes": 20213,
       "path": "data/survival/world/chunks/04_04.json",
-      "sha256": "c7a07150ce2e900588f6a38218f9c089415bcf0a0d1149834e54d1310debdfc3"
+      "sha256": "ce1a3185cd6365e41f2a76e6961c1f40c40ab3a2046657e5e87b1f4c0a3fbdd8"
     },
     {
-      "bytes": 32559,
+      "bytes": 39044,
       "path": "data/survival/world/chunks/04_05.json",
-      "sha256": "7e0633ac38894d8760e91c311676d7d9e661071b091af1f1a8d50bcd2bbc896c"
+      "sha256": "7effa940201c5fa64633a9f67cc3d7369656f95fa1c02a60ffa81573f4e74b9c"
     },
     {
-      "bytes": 22321,
+      "bytes": 26645,
       "path": "data/survival/world/chunks/04_06.json",
-      "sha256": "95230bc472c4379492b66c6a3cb25bf8ad967bd6c538571f6e1c3274aa4c3d68"
+      "sha256": "8d1a7aa04210720b52c5a74cfbe82d970b1d88fb8951ac4babd81a839a8be7c7"
     },
     {
-      "bytes": 24062,
+      "bytes": 26270,
       "path": "data/survival/world/chunks/04_07.json",
-      "sha256": "755339a59d0770c30a611d6852775eefcb88a95a7bacbef8b3dd0c2c5ee2a5ad"
+      "sha256": "b7ea5b79fcbe241f986b20e5021965db40307b30d220d02335490fcb325877b7"
     },
     {
-      "bytes": 11892,
+      "bytes": 11965,
       "path": "data/survival/world/chunks/04_08.json",
-      "sha256": "74fe58438bbd22ba67bdbce0c069378916df17914d98c7d4b22a7b5f7a55f39d"
+      "sha256": "37afe9cad1bbd71da5f3bbe5c76d3e47385e7f3cddc40584bc21fadd28c79725"
     },
     {
-      "bytes": 26332,
+      "bytes": 26405,
       "path": "data/survival/world/chunks/04_09.json",
-      "sha256": "7fc645afbc4690bb2fcfabf171d239172b957de9a3b1a61db40f3ec1c77157b4"
+      "sha256": "ca08cf3cc25dae6d21954130a2f9a4d56375644f5c2ce934d2239759a92ab17e"
     },
     {
-      "bytes": 42188,
+      "bytes": 42261,
       "path": "data/survival/world/chunks/04_10.json",
-      "sha256": "9bde62ebe7c8f627b8ee99eb28e5275a015123f61eab92e75b5606b827058784"
+      "sha256": "1fd09d55d03bda890eeacd8890af06f285eb161b445ea03961d6e898242961f0"
     },
     {
-      "bytes": 14950,
+      "bytes": 15023,
       "path": "data/survival/world/chunks/04_11.json",
-      "sha256": "fffaa3d6f57afd0d1e9753e1a8957af72731f8ba8eca3d912bed0ba8c61a4d6a"
+      "sha256": "5a6e63bae4fb48430971b46d60c79d8412576baa0e0e2ae9524731337f7243b3"
     },
     {
-      "bytes": 21222,
+      "bytes": 21295,
       "path": "data/survival/world/chunks/05_00.json",
-      "sha256": "62f10bc7e6fafe4c943236dc641a1076e361f75f8245037d9723b8849a0cf3b3"
+      "sha256": "9c90db1e7551219e312cfecf0d65e0277a5464f837a6c06d5804345a775eb93d"
     },
     {
-      "bytes": 37130,
+      "bytes": 37203,
       "path": "data/survival/world/chunks/05_01.json",
-      "sha256": "f3868daf4ffd7fc9983202b7ce265f954c27dabc93ee188caeb9db9aace88db9"
+      "sha256": "b7ad6fa770871a5ac360940d62498858938a3ae7a66128bc9855c291cc7bfc93"
     },
     {
-      "bytes": 38154,
+      "bytes": 38227,
       "path": "data/survival/world/chunks/05_02.json",
-      "sha256": "ad94da1fbcef690a9471c89a1b5bf67eb3c97e91edb77b088553c0a4d434ed0a"
+      "sha256": "d86ed19ef1c3ea8cd86fec6469581b0db9e21f1843d0cce44fc9fdc703c884b9"
     },
     {
-      "bytes": 61140,
+      "bytes": 61213,
       "path": "data/survival/world/chunks/05_03.json",
-      "sha256": "2572b217df4830c5113ab01965c5cd4e74b10d9d0898f2fb5e744de9c8989ea5"
+      "sha256": "66badecf8838507cadae0a819da4902d464111f28334d6cc6c1bdb31c46d4032"
     },
     {
-      "bytes": 7196,
+      "bytes": 8203,
       "path": "data/survival/world/chunks/05_04.json",
-      "sha256": "b67f1c762494ed71d831250f36a597b8b7df90913f85c90ae6e4a1c1584791e6"
+      "sha256": "f793d0b4c6551769cee681d288fe5195a2105d0fbd84f42dc99cf9295a0a3898"
     },
     {
-      "bytes": 26308,
+      "bytes": 29774,
       "path": "data/survival/world/chunks/05_05.json",
-      "sha256": "c213d0d1bd83bb77b74856fe2cb4c3a62fc0cf3bb5388018b89ea5be9e56c5f5"
+      "sha256": "ad914134329df2fdd5c920815823c93a87713f38f57a804c8de1718bce849c41"
     },
     {
-      "bytes": 37405,
+      "bytes": 37635,
       "path": "data/survival/world/chunks/05_06.json",
-      "sha256": "b9a0ed37a4376f6a1458bc88dc95cf1a02ecf5dc86525abd96ff6013044d2dc2"
+      "sha256": "aa5184eb7c4b281f1004da9bd53b2b78d783b297d30a1a96cb6233c6907beb31"
     },
     {
-      "bytes": 23177,
+      "bytes": 23250,
       "path": "data/survival/world/chunks/05_07.json",
-      "sha256": "3ea84c5685e6483a1a2df3c25562dd1002a28c3674e100066216ce1c84531ed1"
+      "sha256": "c43766eed071ab30260b1b7db914bfdfdb13e07819d1dc606c399c52f1b2af0a"
     },
     {
-      "bytes": 41925,
+      "bytes": 41998,
       "path": "data/survival/world/chunks/05_08.json",
-      "sha256": "56f87e3eb2c74f2fd41a440d4a716853399221f72d8d555a502eb30872147290"
+      "sha256": "393ea61b9f3c7580f9cab127abffa5e70f8af6be9b59a790b75ae46845dba028"
     },
     {
-      "bytes": 51459,
+      "bytes": 51532,
       "path": "data/survival/world/chunks/05_09.json",
-      "sha256": "96efa3d8a4baccd01993e5645102ec7e9aafe13157f541dfd956d8ac82d91c7b"
+      "sha256": "1b61b9d0cf8ebd6ff265064af35c246f51cf69203413b79e7bcbcc18266b61ac"
     },
     {
-      "bytes": 34882,
+      "bytes": 34955,
       "path": "data/survival/world/chunks/05_10.json",
-      "sha256": "3f30d6ca8e91c3cf6f9279da1f1b3f333603b80387d800f832ccdda7d8fc59d9"
+      "sha256": "4a82d358abb63c5e23c9511dd6e2c5f9eb84619361a096e6f11e1af0f5862155"
     },
     {
-      "bytes": 6181,
+      "bytes": 6254,
       "path": "data/survival/world/chunks/05_11.json",
-      "sha256": "09e4bc94e332b69714de093a548db08e4c44045a24f6876009be67cf22124ab9"
+      "sha256": "d3011d9e5f1a12fd18ce1d9c440e125df94148d626f25135e65031f0a0621f7a"
     },
     {
-      "bytes": 17929,
+      "bytes": 22314,
       "path": "data/survival/world/chunks/06_00.json",
-      "sha256": "4f37c2fdcf09032cfb3f338dc9bdc4ade4c7311f4ef21b255597f70ebd6ba0ec"
+      "sha256": "6eef70fe80b51dbb4e2ecc90b53a18190fa2033c8a0ba5e6b2f52e1f680233de"
     },
     {
-      "bytes": 37463,
+      "bytes": 47379,
       "path": "data/survival/world/chunks/06_01.json",
-      "sha256": "1f2266eb185650113f12dbc90d6c83170f8b172a82cf4a61125e2400ae6cd2af"
+      "sha256": "13c8b9af98a51e295c973b8fb8d0ff99826df47301a95c2ae0925d75f6e79318"
     },
     {
-      "bytes": 53948,
+      "bytes": 69726,
       "path": "data/survival/world/chunks/06_02.json",
-      "sha256": "980d4b7eb748e97d4d38ad2447964e442ed22247801511b8e4cb820ccbdb4d71"
+      "sha256": "31b8664f9d248a4b77eae6b2cf1d43ed8bb2785fecc7474cfc0426fce0c4e832"
     },
     {
-      "bytes": 34459,
+      "bytes": 44000,
       "path": "data/survival/world/chunks/06_03.json",
-      "sha256": "58e992a5c721ff23d2943718dd5cc5604750a811690872ece156b1cad8e651c4"
+      "sha256": "490a563a79fd9d5b66babbfe3a35aaca2fa5580b05f0c8d77dd5a847ce72df54"
     },
     {
-      "bytes": 25116,
+      "bytes": 32419,
       "path": "data/survival/world/chunks/06_04.json",
-      "sha256": "ee14677836f186044b8eed0825c92cf0dd56f3d85b163e82552cb782463335ec"
+      "sha256": "02d1314221f668b7aecd1d81a3f1ff80fb136b88e4eb0a8569e40f951414dfc4"
     },
     {
-      "bytes": 2947,
+      "bytes": 3020,
       "path": "data/survival/world/chunks/06_05.json",
-      "sha256": "61d0c94dbfeed4b2615405e132430fd61680684f5223f1f886f9f1409e0efd2c"
+      "sha256": "82323e9bb655e04fe061464683a2a6382581a3ae37f791004a07d46eb1f3a339"
     },
     {
-      "bytes": 36906,
+      "bytes": 42752,
       "path": "data/survival/world/chunks/06_06.json",
-      "sha256": "4410a2ea72139866349668ef1a449cc537f5e119e1354018b144fe983edf4bc2"
+      "sha256": "d64512fa954cd8d0993c5b9282c8a8352c8a3aa1dd178bff7a593b8c588eccae"
     },
     {
-      "bytes": 38730,
+      "bytes": 40588,
       "path": "data/survival/world/chunks/06_07.json",
-      "sha256": "bbbaf7f770dc98b59f42b20064daf7abc4393ebcb161cd5e8025038d52c1fcb1"
+      "sha256": "3bfea2f14426b1f75246bd8a245a3064f39b3232b4cbfc03a066e14864a8a8fe"
     },
     {
-      "bytes": 15992,
+      "bytes": 16065,
       "path": "data/survival/world/chunks/06_08.json",
-      "sha256": "48d9313caaffed6db55b997880bfb34c2851ee3130130fc6ed0097439e3a72e4"
+      "sha256": "296d98aa1216d552b8fa626801774fbb4cff9b83c34e6f05f33e96e5031813eb"
     },
     {
-      "bytes": 21884,
+      "bytes": 21957,
       "path": "data/survival/world/chunks/06_09.json",
-      "sha256": "40f1fccec9484a81ed251b25ad801f19101355857212761451e265e37765d0ac"
+      "sha256": "d5b87f3130e22988462df140adc4bf57baebe715e6262117f0609e7096c53299"
     },
     {
-      "bytes": 25921,
+      "bytes": 25994,
       "path": "data/survival/world/chunks/06_10.json",
-      "sha256": "a8fd45c8c55524951fd5caf683d07a8c8536b0e81a362156c3ca62645ec272e6"
+      "sha256": "da50ee63bfed6752482863eded80640014dc735cd99a4a6d383aa27b4ecfc129"
     },
     {
-      "bytes": 10843,
+      "bytes": 10916,
       "path": "data/survival/world/chunks/06_11.json",
-      "sha256": "3e55f10c809847c2fbfa48a86f07b0cbabc02d037dfce2b115519bb8897363f9"
+      "sha256": "dee180de49a709433187cbd6a16d0b1fcf9989235a82fc1d686b06eb3e754a7c"
     },
     {
-      "bytes": 50177,
+      "bytes": 52406,
       "path": "data/survival/world/chunks/07_00.json",
-      "sha256": "25593e9d9e0ce997e2a26e1cf9883bc82c79c883f1f98d71278342856630450d"
+      "sha256": "7c4b5907beea67999b2568d8bbab5c6aa115a1daaaa0a214c032c0ce5b028434"
     },
     {
-      "bytes": 52833,
+      "bytes": 57987,
       "path": "data/survival/world/chunks/07_01.json",
-      "sha256": "29ac83793bc4015b2560cbc9865068e2485f57d4a273bb1292b564d7c067e328"
+      "sha256": "a47a50187fde117c6b4fd8a4f96e10efc54cbe7f259213b1df7ff0357660f167"
     },
     {
-      "bytes": 51097,
+      "bytes": 57107,
       "path": "data/survival/world/chunks/07_02.json",
-      "sha256": "efafce642119bed7ec461c26eec99913d7702af3d118c5b180824a48bbb4f692"
+      "sha256": "e784373d3192fa56f47668ba5598643c7e0a77dc2f2aa5055093d5c5d4019070"
     },
     {
-      "bytes": 34587,
+      "bytes": 34660,
       "path": "data/survival/world/chunks/07_03.json",
-      "sha256": "3f522134574bb93ce7f2cbbbbc5f5ffb9c03ce32a022aca045da47aeb202b851"
+      "sha256": "bb9e03f04d663cb2244deb066d91aa8bd7df4f804b00c8229f26163f10b36551"
     },
     {
-      "bytes": 19686,
+      "bytes": 19759,
       "path": "data/survival/world/chunks/07_04.json",
-      "sha256": "e9a5c0a7bb871ef594e2cf3c9e0ed40967a655491baeb6e23e93e510044c80b7"
+      "sha256": "b25883b5aecca425dd6f079dcb5dfea08687beb4236e58d5c5fda5c9cb8816a1"
     },
     {
-      "bytes": 44096,
+      "bytes": 47865,
       "path": "data/survival/world/chunks/07_05.json",
-      "sha256": "07b6c56615c0ddbadd170dd0f5c02258cffad0d34db1a7ade637d7239ede5339"
+      "sha256": "618b036a0df096a83784728df2b94d50f4ae9fb1a8c75bdffac21cf27dd1bbdd"
     },
     {
-      "bytes": 46615,
+      "bytes": 52083,
       "path": "data/survival/world/chunks/07_06.json",
-      "sha256": "fb3e3fe956c367c7ee9dfad590ce41fdaddd7e206ab1229976ff90d40308ffca"
+      "sha256": "281c6add98c60a43b6a09b9346d6cd702f5765553afb1d126266ec113613213f"
     },
     {
-      "bytes": 28760,
+      "bytes": 31116,
       "path": "data/survival/world/chunks/07_07.json",
-      "sha256": "02fabe37c3df2ed2744d55fb9a52883c603f86784af7e133e75d751279137169"
+      "sha256": "29e0f42b2bd2c1e9736456d3f9275be3a3a1b5d0526c662b4b32d428ce547d46"
     },
     {
-      "bytes": 11291,
+      "bytes": 11364,
       "path": "data/survival/world/chunks/07_08.json",
-      "sha256": "c41fa70344940b4f808f56daa93e77e7886125a792ea4c1831223994fe3d17bf"
+      "sha256": "fc8083da5ae25d5fed5dc595d8a8e8a9a585c7c1dd3b672ab1f3ae6f386c415a"
     },
     {
-      "bytes": 18950,
+      "bytes": 19023,
       "path": "data/survival/world/chunks/07_09.json",
-      "sha256": "8171f62b8ab85240cee09db82590d5c8e363098bdf38ec6b88e954d5a2732b85"
+      "sha256": "8652c921537469e23c968a00e9f7fe6455125396ae3dd9e577cc76e39ec719f6"
     },
     {
-      "bytes": 22750,
+      "bytes": 22823,
       "path": "data/survival/world/chunks/07_10.json",
-      "sha256": "d47ddc8741baf361dc28618cda149e93ef53b88aec3bd997235dd4526aca11ac"
+      "sha256": "95b787c61edfb5bf4d2573c25d583e942df2da1cf4997d5688b998c46e3d604e"
     },
     {
-      "bytes": 8310,
+      "bytes": 8383,
       "path": "data/survival/world/chunks/07_11.json",
-      "sha256": "e898a042497408578f15cd2bba45b710ef433b2b459fcb049dcf4cb621507859"
+      "sha256": "c8bf1d587892f4c815784db21ee94b76025238a5c7fc78312c05ac6d06c1efba"
     },
     {
-      "bytes": 45039,
+      "bytes": 49999,
       "path": "data/survival/world/chunks/08_00.json",
-      "sha256": "00960569ef99ef9b3f58b06e4bd7b583a3223e313345b451d3b04f5468adf071"
+      "sha256": "dd880800ef7993b0bcc22e207e2d738001e15d1e97924e2a503c50b060c0b73a"
     },
     {
-      "bytes": 68675,
+      "bytes": 75668,
       "path": "data/survival/world/chunks/08_01.json",
-      "sha256": "381a3a5439b5e13fb5cf819acf8bb55f193d6fc659d9ddfccdf6e17b5ea88899"
+      "sha256": "77f45d3514147fefd2c33f4ef2840f6cee63d67a18333021b808ff69e3211d65"
     },
     {
-      "bytes": 82120,
+      "bytes": 88888,
       "path": "data/survival/world/chunks/08_02.json",
-      "sha256": "1ab6c1f581998b3b39bca21e646b4a5a9f5e0e612731e9e58cd8bf5169f92774"
+      "sha256": "ba72e477464a7398941916e74d8c6d9bc728464d90d0ec8b4aa61ef5d7a0d5c2"
     },
     {
-      "bytes": 56567,
+      "bytes": 61685,
       "path": "data/survival/world/chunks/08_03.json",
-      "sha256": "6dc7346382d3588abf6a414f4638373eea5c43a028b21f9a2090f34e8b0ff87a"
+      "sha256": "b16d0a143d142375f39917817be26c2098765cacb5a22d9b8193a8d41b7f094a"
     },
     {
-      "bytes": 59162,
+      "bytes": 68817,
       "path": "data/survival/world/chunks/08_04.json",
-      "sha256": "e45c36631d3bf3d4b14d5f93c60ef162f2e2a20f810ce076c004ac727d33369c"
+      "sha256": "11cff9274739b01b694dc9f15ccf977af8ac9ed0c096a15d7dc147d55c2b6a49"
     },
     {
-      "bytes": 53480,
+      "bytes": 62257,
       "path": "data/survival/world/chunks/08_05.json",
-      "sha256": "6cb2a7e680606e321e260bbe2b5361f9f6d31b3726f69b4394f572a622791eb1"
+      "sha256": "e63428864ee58c1b6712d90c3764ba3609c6f12368eac1529f00e783a8d4d24e"
     },
     {
-      "bytes": 36312,
+      "bytes": 42269,
       "path": "data/survival/world/chunks/08_06.json",
-      "sha256": "ea20c8f3e13ac0bb75b679bcaeac15a5c2e20be602440a81605fe97f1085a773"
+      "sha256": "d551091bf203b3d7a607d66395cdcd8b38134c7d161c4d5fdac688fe31bb3955"
     },
     {
-      "bytes": 21782,
+      "bytes": 23809,
       "path": "data/survival/world/chunks/08_07.json",
-      "sha256": "097ec30acf8f772633be4e60a513a9205690eea7b229e3f9bd64434a6d6a4c78"
+      "sha256": "29147403bc62a60fd2b061e8576a503cc3922b120e61eea7a45253090e594db8"
     },
     {
-      "bytes": 54622,
+      "bytes": 61773,
       "path": "data/survival/world/chunks/08_08.json",
-      "sha256": "e619d545c16f2aaa5fe2fd558d9152aee9c9d094076b374fa28092952ede51fd"
+      "sha256": "de4f0051d31a8c5e87a8f2200f0445c2247c60a20dc8f083d539dc76ad1323e9"
     },
     {
-      "bytes": 59318,
+      "bytes": 64342,
       "path": "data/survival/world/chunks/08_09.json",
-      "sha256": "06a009849535aca2ea5d40035c5b8609e85e4c9e52fc8b03b1ff63855c21c641"
+      "sha256": "41690e58dbbb80369125164780c4b811a4d9ddab3beaa6a2313fb094fec0206f"
     },
     {
-      "bytes": 31190,
+      "bytes": 36209,
       "path": "data/survival/world/chunks/08_10.json",
-      "sha256": "74c6017ff5e7b6b6ba18a87d4247dc8e9db3a720c21afdc3f1d14675b9abcc7a"
+      "sha256": "057ed4c2f6175cfebc5ff19720729dd2ba458622141fd4ed7b859afa82ae112f"
     },
     {
-      "bytes": 10787,
+      "bytes": 12368,
       "path": "data/survival/world/chunks/08_11.json",
-      "sha256": "e0899d967da6c4351462a91139390ccc9a45d6bf53958bdf7f1be9a8b2eed13f"
+      "sha256": "8d39b2234efa91982783ecfdd62e943ac2feef4000a8ed20207802811e42ad31"
     },
     {
-      "bytes": 25101,
+      "bytes": 25174,
       "path": "data/survival/world/chunks/09_00.json",
-      "sha256": "60d1ccee1be92773fd099a1fee6ae6af3e4a5d85921bc6de346694e84c9bfe23"
+      "sha256": "51ea5559ef81272226f8b7ab690e804cf016e7f33eb4b116653d727628d14d26"
     },
     {
-      "bytes": 40777,
+      "bytes": 40850,
       "path": "data/survival/world/chunks/09_01.json",
-      "sha256": "e704ec9841ae640b19d3f468022ce277f7751481cf5e1a27dfe1926268ab888d"
+      "sha256": "d61b8f53e71f3c1ef906b0bc9093f0a974f05475da206d43075cd138b1253027"
     },
     {
-      "bytes": 32699,
+      "bytes": 32772,
       "path": "data/survival/world/chunks/09_02.json",
-      "sha256": "94c5cf8254f8d840ac4cd1990b96a3c2121172b6b0eeb11309c554becb988a35"
+      "sha256": "71d0da97aa7458a6878c267aaeba568bac5139e0b3897d27c9c872d80202537a"
     },
     {
-      "bytes": 22390,
+      "bytes": 22581,
       "path": "data/survival/world/chunks/09_03.json",
-      "sha256": "8b69e67af7a84aa3fa4a275e8392dd3c1820239eebd51713bc02816ab68b8bf5"
+      "sha256": "b51e632ae36dbe74c05c1139e0aeba3c4dd8ffd410b302436935461a19dee735"
     },
     {
-      "bytes": 12109,
+      "bytes": 12223,
       "path": "data/survival/world/chunks/09_04.json",
-      "sha256": "692ccf0a268a46772eb8df6aa7c2484dd6e49e97917c515a9e7c49cbcacd2b4f"
+      "sha256": "1f0843c8ad5471b6fb1d0ff910680d2fa3916999beb739ca9b4d0219b09bb285"
     },
     {
-      "bytes": 43881,
+      "bytes": 43954,
       "path": "data/survival/world/chunks/09_05.json",
-      "sha256": "0813103242ba7c2e9186ffa5af5e5a6d1c4278ef63abe7e83c1f410ecc38cb83"
+      "sha256": "17b770fcf783eb0436544efec1dad8ddcfa280ece555cc2a0cb99dfc30a7149e"
     },
     {
-      "bytes": 30219,
+      "bytes": 30831,
       "path": "data/survival/world/chunks/09_06.json",
-      "sha256": "0204c624854dbe6df8fd346a6d340b4eeebb78e38532fd9058409cebc79b6065"
+      "sha256": "94e6fb87dc006bb4c7e4e2ebd8de9f5294f8a10cc9a4509e7fa875739df739b4"
     },
     {
-      "bytes": 39290,
+      "bytes": 47364,
       "path": "data/survival/world/chunks/09_07.json",
-      "sha256": "3ef139a977458f2d486f7dfe8beb5e2c775df484b4b18042474245632b9a29d1"
+      "sha256": "c70a050a230856c3f6ce78f64819bca78b294e9f44a9d410b8c13f0e89bc0d16"
     },
     {
-      "bytes": 42417,
+      "bytes": 46841,
       "path": "data/survival/world/chunks/09_08.json",
-      "sha256": "1a1d219dee49bd6515bc70c372dcb656e0cba9b4efcf20f4c2e697c479d2ec66"
+      "sha256": "edfb0fbee7a37d01fe5f21f5bc0665c74cf4b829134e8e60aa27869eceae774f"
     },
     {
-      "bytes": 40246,
+      "bytes": 40319,
       "path": "data/survival/world/chunks/09_09.json",
-      "sha256": "8dd60f16897d0680a01c9bee6821f3fe2b0a69360055ce965600bffe590b58ef"
+      "sha256": "90fb952a1790f975ab64113d1a20b8a2153fe64ce485c793ab9b9116868dff44"
     },
     {
-      "bytes": 30457,
+      "bytes": 35414,
       "path": "data/survival/world/chunks/09_10.json",
-      "sha256": "e8bbbc287f0c2cbad5aa0c62ff13ab2852d39a46157f45637a888d83db3e5a0f"
+      "sha256": "fc8593414688f4ada6437965b46b989dc729417e0b3edb04fe7a82d08c7131fb"
     },
     {
-      "bytes": 10303,
+      "bytes": 11956,
       "path": "data/survival/world/chunks/09_11.json",
-      "sha256": "7cac712a84a8234153fa92455c2f9584952381c6dc7223dfb66b96f589309f65"
+      "sha256": "b46ac8051d9ec310d1eca72a3adf25329b7f35029ecd700612e4a44f3f9541a6"
     },
     {
-      "bytes": 11883,
+      "bytes": 11956,
       "path": "data/survival/world/chunks/10_00.json",
-      "sha256": "b6916d9eb9d5fa330c88bc76dc56481694b7d5b4c881bfd333304234e557157f"
+      "sha256": "b2e29b7fc20c4c168ee3ac85f9df03fffaeaf8242cd0592e0ae05924d2f5a2de"
     },
     {
-      "bytes": 19385,
+      "bytes": 19458,
       "path": "data/survival/world/chunks/10_01.json",
-      "sha256": "e9b125bf49eee365a8f0f0956f17a8cf984262415fafc79a30265236a32debb5"
+      "sha256": "5d981bc923209e754feeafc16b41af003ed18ea3f7116076855a79778cab4638"
     },
     {
-      "bytes": 8293,
+      "bytes": 8366,
       "path": "data/survival/world/chunks/10_02.json",
-      "sha256": "57a5ab05e1b3a1afa2340ceb146e625d9b68cb1dfcdf17976350e37ac5906b4d"
+      "sha256": "a558f1e6ff7e6d7de58189550ffce4251bfc5b6167aeb46f6ad9f2270d7a9156"
     },
     {
-      "bytes": 4938,
+      "bytes": 5208,
       "path": "data/survival/world/chunks/10_03.json",
-      "sha256": "e770582b6ab71434e269db23949f021772802fe5c70aec2804b40054ad4001ff"
+      "sha256": "687788bdbd830c2d8a7b77d8c9e6cb95c46edfb195bc6194052fb7faa172079c"
     },
     {
-      "bytes": 12285,
+      "bytes": 14070,
       "path": "data/survival/world/chunks/10_04.json",
-      "sha256": "7c9c52288334d44411a41bf8458a0ead277ba7c6bc871c9658f6017d548ecaa1"
+      "sha256": "712e58c11ece33f24d56e6c0e0e6d9da888d7dd7f063ea390b64fb1a184f13ae"
     },
     {
-      "bytes": 31163,
+      "bytes": 36180,
       "path": "data/survival/world/chunks/10_05.json",
-      "sha256": "9cea6b1539bf5c46f7119198655daf4e9726f203b7908a9463224060aafde872"
+      "sha256": "27f832ded5a3fe026a3bc739f6e46ca46e2dfea6c3cf2d32737ad9a6394f259d"
     },
     {
-      "bytes": 37947,
+      "bytes": 42996,
       "path": "data/survival/world/chunks/10_06.json",
-      "sha256": "8d81cf8799093eee95cb4b613d84709f8996497f921d01070e2a521bf946d4ab"
+      "sha256": "fff87a240bd1f18a4c63c351c90ccebebd8d3f870802a02560cfa9cbb6a7d83e"
     },
     {
-      "bytes": 20574,
+      "bytes": 23710,
       "path": "data/survival/world/chunks/10_07.json",
-      "sha256": "2b49113ad167a97b8599b182ee1c46899214025254f9dea346cea3d6d2a6971e"
+      "sha256": "73c7e46df6a44aaf8faad133a19eb385f6f5ca5c6a6ca0775bca0e7cf0aaed69"
     },
     {
-      "bytes": 20237,
+      "bytes": 23344,
       "path": "data/survival/world/chunks/10_08.json",
-      "sha256": "e580e75d3d1fd956408e0cd216ae1c1521b1619a7c9616a1ba27c9845e3ff41d"
+      "sha256": "848ab3e1af33be95956be26779b4f26277eeffcaf9115e188d98ed834e943f30"
     },
     {
-      "bytes": 37830,
+      "bytes": 42854,
       "path": "data/survival/world/chunks/10_09.json",
-      "sha256": "ce71015f4518e11d02666e66c863b217b1428e87c5ca3715fdca3e6de53523ee"
+      "sha256": "714f3a8fa0136798354a62dd65fe7875b2132fb6e9aedcba1d19153b4e826389"
     },
     {
-      "bytes": 47017,
+      "bytes": 55296,
       "path": "data/survival/world/chunks/10_10.json",
-      "sha256": "891c67b656a0247877cb51623a14c7ea9b8edb1dfe0a8c7cc840ccdb8e8679ff"
+      "sha256": "06135e55a2e7be30aad73f5ff2973a1048fefbb3213a3e82cec0bad2420eb142"
     },
     {
-      "bytes": 14969,
+      "bytes": 17619,
       "path": "data/survival/world/chunks/10_11.json",
-      "sha256": "13d561d9c149301f59d18668278d6b772e6b70d94b7415f27ee5a8b88076b252"
+      "sha256": "8ac3b4b0eab7e0f37af25529eac4a53fd71153d3147038285caa8eef02af27e4"
     },
     {
-      "bytes": 45773,
+      "bytes": 50770,
       "path": "data/survival/world/chunks/11_00.json",
-      "sha256": "a5ba51b1270ddc945e387742352216cd595a453a8d87796c1369de966e8a93c0"
+      "sha256": "9a4cf7ef85443ca3b6f954177b5c675dd2f7c75487b1d7d2637f8ed294c4ff79"
     },
     {
-      "bytes": 45990,
+      "bytes": 50039,
       "path": "data/survival/world/chunks/11_01.json",
-      "sha256": "997ea5cb762dc1eded3de84eaa751d832525b737a1d800a931deabf810a3aa18"
+      "sha256": "0c061b2efeda001d101c6872c4295d189c3bff4d56aeafdf9c04caab23f7064f"
     },
     {
-      "bytes": 58843,
+      "bytes": 65116,
       "path": "data/survival/world/chunks/11_02.json",
-      "sha256": "04292484b836f7d317d532e1df858ddf4798d91e827a9acfe110096ae4c05d1f"
+      "sha256": "99978ff8a41983a6c443bd7c3afdb90db0590fc895622f2f6c13cc9b1e3a38b2"
     },
     {
-      "bytes": 42597,
+      "bytes": 49643,
       "path": "data/survival/world/chunks/11_03.json",
-      "sha256": "def19ea0364d01b6547225fa227354fec7f5ea55eb1d37e4c03b2808eb8dc8d4"
+      "sha256": "907a4efa39fd05e571366b3509c1dde463958bd0ab6fcd7b0de94df22ab26cd3"
     },
     {
-      "bytes": 20402,
+      "bytes": 22010,
       "path": "data/survival/world/chunks/11_04.json",
-      "sha256": "5c00547881c5da266086f8945db588d8636d612c541b56ade115812591e01f74"
+      "sha256": "0719929e7afba7aab325bdd2bf781505ce8ff7313943600898ee5db41fe2d01e"
     },
     {
-      "bytes": 29927,
+      "bytes": 33773,
       "path": "data/survival/world/chunks/11_05.json",
-      "sha256": "425c9ccd71c575f6dee55b3ac43bba98e1f258505a8baf8ce3c60181616bfb34"
+      "sha256": "167f3c1bcb116c94a6170a7387b00a851e2823cb3fa42ec7f030122affaca988"
     },
     {
-      "bytes": 34533,
+      "bytes": 39302,
       "path": "data/survival/world/chunks/11_06.json",
-      "sha256": "8c53de0938df49cf02c6100f44ac491b27cbbc112c27bc7e0a492148673e2b7c"
+      "sha256": "0b709ab1e54fde66eec18da7485fbda9af8e433ff562cf7ffdb67b228743c5c2"
     },
     {
-      "bytes": 31449,
+      "bytes": 37290,
       "path": "data/survival/world/chunks/11_07.json",
-      "sha256": "8daf5a07f4566b4db245e6fe852ac7f59bf4659ff10db780ef0ea5e4858dd67b"
+      "sha256": "729b4f2879c0607891b2428aafc344be4808fb0c212efc750be192c345b39ca3"
     },
     {
-      "bytes": 17347,
+      "bytes": 19127,
       "path": "data/survival/world/chunks/11_08.json",
-      "sha256": "3bb1256a9230367919110f0bf5e78c1971ae3a003691b3b60f2a7ba117e604de"
+      "sha256": "2ee72523038bccb16e643254767f8b2758daa902bbc8ecbfe6cb36e36041b153"
     },
     {
-      "bytes": 39973,
+      "bytes": 43821,
       "path": "data/survival/world/chunks/11_09.json",
-      "sha256": "88814629aa94a413124e863166a66d720ff768b52eaa901ae4e5e3eb4e97beaa"
+      "sha256": "df2c6c79d44bda590b0903bc4dc5e6911e15acf87d5ca2da5ca931c645e63ff0"
     },
     {
-      "bytes": 22632,
+      "bytes": 24170,
       "path": "data/survival/world/chunks/11_10.json",
-      "sha256": "532fe0fa77063968009dd04955bebebea8eaaaae7342cb3edfc38408e994ab0d"
+      "sha256": "c2eb44eb9b74325af09a2d45265a6d0deb1fcdc63e7c48cac222aae3f9080f01"
     },
     {
-      "bytes": 8740,
+      "bytes": 9709,
       "path": "data/survival/world/chunks/11_11.json",
-      "sha256": "1faac103ee1f5d9f4ed341fa78608d2e6e473cd8547c8370f736ae69cef33af1"
+      "sha256": "eb7f014db597172ce9bb5f4393a7868e13ba50d91d2509b2a7255ed10eca133d"
     },
     {
-      "bytes": 40777,
+      "bytes": 46318,
       "path": "data/survival/world/chunks/12_00.json",
-      "sha256": "d688ab840ccc95ff9b930128e8c7c495d50f87ddff12175bf0c49407f0b62dfb"
+      "sha256": "2ee2905ddd15fe88fa04cafc654de0c8cc21d71dc5035bc8d361624d7610d6b5"
     },
     {
-      "bytes": 80073,
+      "bytes": 96084,
       "path": "data/survival/world/chunks/12_01.json",
-      "sha256": "4995ee5895e45749bf08d96ebdb2a69a6d90826830026732203cfdc714bd158c"
+      "sha256": "6c3088c5974dc49465432baef851576f0c6e62bd72517a61bfa14c518140faf7"
     },
     {
-      "bytes": 67334,
+      "bytes": 80568,
       "path": "data/survival/world/chunks/12_02.json",
-      "sha256": "41489c9be81aa49206f6fdc394b19b1f77fa9dc1928421561f7b1f2b66ace59a"
+      "sha256": "2a63b2b7540fa08165b9ed055b4391f9912095397a762a461ac455acca716314"
     },
     {
-      "bytes": 43975,
+      "bytes": 48973,
       "path": "data/survival/world/chunks/12_03.json",
-      "sha256": "e0c4919474368d75a5dc30dd9e0c951bd5824619d88075d49e29a93664cd0bf6"
+      "sha256": "fffa889a759fa068a5a1eaf06ed41af2fee2a9c578c282e181e1db4cf1d10d27"
     },
     {
-      "bytes": 47625,
+      "bytes": 54778,
       "path": "data/survival/world/chunks/12_04.json",
-      "sha256": "a94f82c1f320c827fa56d7057fb7373f5109ccec2e66ee52017717d6197d78f9"
+      "sha256": "3768685c1316d1f004ddd45aae058df1121498297cb33a12e49de2facf004179"
     },
     {
-      "bytes": 53003,
+      "bytes": 60608,
       "path": "data/survival/world/chunks/12_05.json",
-      "sha256": "3051407c7de1c42edd6a467a4e7d1480a9f8835000b3798b8e4d7999bb90804a"
+      "sha256": "b379692927a05062d6a74a4a692b25fdf12180176498e30d64efc474359b9013"
     },
     {
-      "bytes": 16798,
+      "bytes": 16871,
       "path": "data/survival/world/chunks/12_06.json",
-      "sha256": "557df6d4f3f65b0c73ca04ce737a17ec1d925967c4be48ca6e238c1edaa28d85"
+      "sha256": "d11210cf00ba172290bf632e0aaf442abefd4573ad3aae15401a2e8f58283a12"
     },
     {
-      "bytes": 36756,
+      "bytes": 43974,
       "path": "data/survival/world/chunks/12_07.json",
-      "sha256": "b3a148b35779e33a1a246b6c3c4ba853209f802a2d31475dc528d7a4a7a14977"
+      "sha256": "54e25b11b6f0d0859847cb09eb17c53091cc0820de91ef34f962be9259be977e"
     },
     {
-      "bytes": 47573,
+      "bytes": 47646,
       "path": "data/survival/world/chunks/12_08.json",
-      "sha256": "77de94992243f2d10a7d903880a62c88853b26506bd2de936b643cfbd2be47c9"
+      "sha256": "801d6bca074e5740c31269d005875cf903c8935c2df1d7ec488b6bcda67deaa8"
     },
     {
-      "bytes": 47675,
+      "bytes": 47748,
       "path": "data/survival/world/chunks/12_09.json",
-      "sha256": "727c743094514f482d5b305eab7f2056c7fe7d245e1b72f6640d09aab196833f"
+      "sha256": "0bd65dca96722b5019dd8048ea5836a4f110fbd321870c540bd99f49529598e4"
     },
     {
-      "bytes": 20247,
+      "bytes": 20320,
       "path": "data/survival/world/chunks/12_10.json",
-      "sha256": "b8848616d708266d2a239c19db57257fc1a0bc6fdecbc19305d7c9eaf68fd3f7"
+      "sha256": "bef55ca3de0649daf46bfb3dd841acd812ed14ebf2257b386487e5655076cad7"
     },
     {
-      "bytes": 8550,
+      "bytes": 8623,
       "path": "data/survival/world/chunks/12_11.json",
-      "sha256": "f507267b74d1a4396b550c6217f74437c72ee129d6b19c74388ed86f2cf0e589"
+      "sha256": "73be88db8c77e8b00e95eb7c54555e133945597a86c3ce8ba53e90f6b102c9a4"
     },
     {
-      "bytes": 37601,
+      "bytes": 44028,
       "path": "data/survival/world/chunks/13_00.json",
-      "sha256": "9a010e9748ed0a4b1a66b21e6c334c767d89a8780053b5f49557dd16e1ce2beb"
+      "sha256": "2bf56ba4ab6c0d15887ced8b5392e106e66ba218f42f1dfad840e41d6b5cd10f"
     },
     {
-      "bytes": 53055,
+      "bytes": 60994,
       "path": "data/survival/world/chunks/13_01.json",
-      "sha256": "3ffe99df253d386199b249e0bf4842923b61948797640df7110ff103c5e0f5f9"
+      "sha256": "dc7c6b976e4daf3e75cd694f5d4dbbded5816340c962a1728d9341620f9645b5"
     },
     {
-      "bytes": 69003,
+      "bytes": 82208,
       "path": "data/survival/world/chunks/13_02.json",
-      "sha256": "7519c4cbdd69c297dd69edd24535bde698c5ab7a64d1a764db56cdc632208812"
+      "sha256": "06ac24bda2da1beae65f785b4eff3a0eaae442179dd53e80650012185c31dcdd"
     },
     {
-      "bytes": 40099,
+      "bytes": 49262,
       "path": "data/survival/world/chunks/13_03.json",
-      "sha256": "7a09e47322c12f435675610883767f3530747959ce93a248b3623a16aaa24257"
+      "sha256": "9618b149d9fc447743f78ca8b1979031ad9416a82dbc0ac7129a86bfc3957150"
     },
     {
-      "bytes": 30253,
+      "bytes": 35870,
       "path": "data/survival/world/chunks/13_04.json",
-      "sha256": "63928625fee1a1012727cc07213ce6c6abb30733d3b33965710ac1a6ec087313"
+      "sha256": "117e67859a32adaa3a7cb056a17ea4fe576d98f5a2826220b3d7e35105d65b4f"
     },
     {
-      "bytes": 54295,
+      "bytes": 59266,
       "path": "data/survival/world/chunks/13_05.json",
-      "sha256": "fecd5f8dd4ea8d22fc3b4a10e498135522716ec210f7e117e98178d778d9e7da"
+      "sha256": "b8cd2f0de045658f73f347e34829e7c519c9c2bd594d829ad035b40d4936cc44"
     },
     {
-      "bytes": 52686,
+      "bytes": 60301,
       "path": "data/survival/world/chunks/13_06.json",
-      "sha256": "80b5ad0dd0b246cc4831710c00eb1112a081bd7736ba4403410eda9a194df82e"
+      "sha256": "6b57a6b3ed2d310acb07d2378af97d2cf00b683486f170017b85c1c818fea405"
     },
     {
-      "bytes": 29232,
+      "bytes": 35227,
       "path": "data/survival/world/chunks/13_07.json",
-      "sha256": "668981f72f689a529cc9c0bf78424c345e172dd7e0bd357b84f458c3f4eddf67"
+      "sha256": "714ef4bed9568ae09fa634730989e395497a365c979f367a88da49eaa2c63991"
     },
     {
-      "bytes": 24663,
+      "bytes": 24736,
       "path": "data/survival/world/chunks/13_08.json",
-      "sha256": "7c5ab24f9033f752b18b324bed795f6632d4ec10860e229dace8a35c2ea8b025"
+      "sha256": "26afecb42b88563969089dff476f471958e5cdbfa26cee19f569b3e37372ee42"
     },
     {
-      "bytes": 37008,
+      "bytes": 37081,
       "path": "data/survival/world/chunks/13_09.json",
-      "sha256": "a3cf23c27a44e54721c768eed69df9f6d98e5ef608ae2662035761df782b2a51"
+      "sha256": "e20f9f1137753118816eb1926449641616160e437bcdd40dfec4948c347d6933"
     },
     {
-      "bytes": 29214,
+      "bytes": 29287,
       "path": "data/survival/world/chunks/13_10.json",
-      "sha256": "9b4c101d5e522314568c046d3b41100137a31473b04ca289ef7be4dc078047b0"
+      "sha256": "ca2da946c537b8d4048c1aabe6e3ab1f4514b70e8741fff02e311d086c048571"
     },
     {
-      "bytes": 7584,
+      "bytes": 7657,
       "path": "data/survival/world/chunks/13_11.json",
-      "sha256": "94a861a5da6d806baeb3df7a2af0b29340cadd5b79cd46033ece0396abc8f27a"
+      "sha256": "a8ef209b6f1d5d2288eca41b002fbb2053fcada21adf1296fe2e0428c667aa6a"
     },
     {
-      "bytes": 19064,
+      "bytes": 21742,
       "path": "data/survival/world/chunks/14_00.json",
-      "sha256": "47f11dfdfe4cbee3f4b161c5028c5b7aa5455f2fddce37b63e9bef69b1c255c3"
+      "sha256": "fd21799f3870645f78a7c5afcc44c3944966e45d710e193a6a963fed6e3776ba"
     },
     {
-      "bytes": 12407,
+      "bytes": 13487,
       "path": "data/survival/world/chunks/14_01.json",
-      "sha256": "40d7f23add2e06576b94b4dd5340ed4fe50de9f9e9c82c5ef592aa803c1c26ac"
+      "sha256": "c223c18fb81288712a34ca619b0a17780104cde78cc752b3ac082451b4637313"
     },
     {
-      "bytes": 19130,
+      "bytes": 21821,
       "path": "data/survival/world/chunks/14_02.json",
-      "sha256": "958d4e2f4f4b7e1c97de78fbdfecb2bbe271fb66047417fc871e648ac2bbb6f4"
+      "sha256": "be88cb0e8cd22c642079a30822d9e109bc133186286c54460f1eee9219413327"
     },
     {
-      "bytes": 8770,
+      "bytes": 9844,
       "path": "data/survival/world/chunks/14_03.json",
-      "sha256": "8fc6c03f02c42a9677fb19ff7d766461d8cc4da2b0096ceab2d2b622644315a8"
+      "sha256": "8204b2d347d2eba468e7979fd431c39ea698765dfd6fabcb9a6fd3cead4fbee2"
     },
     {
-      "bytes": 34025,
+      "bytes": 39962,
       "path": "data/survival/world/chunks/14_04.json",
-      "sha256": "6fea38396b538ea4e7af267dc8b6a9b31041a5a2ae2232b9e6ca2a1567951192"
+      "sha256": "2bfd9a51141486f909fbcc40d7d2aeb28b90bdea15c2ce76c8ab502ff35dc09d"
     },
     {
-      "bytes": 53878,
+      "bytes": 60509,
       "path": "data/survival/world/chunks/14_05.json",
-      "sha256": "c0c17b86d107288b0386c7db7b1966bfc08c4cb9d28f2dd9f06ffe25f183503c"
+      "sha256": "81bd24191bad95a0600fcb92dfd1b7c9c24c340ec80de949dab699887a2c6e57"
     },
     {
-      "bytes": 40254,
+      "bytes": 48292,
       "path": "data/survival/world/chunks/14_06.json",
-      "sha256": "488c620ad8cce056d707c79d424230ee5ad4c40fdebc61da4b4021a7a7d29faf"
+      "sha256": "835098866da85d6476f05c39d046d75f049bc6db7fecd84dc3bb97dd21e51ef5"
     },
     {
-      "bytes": 37541,
+      "bytes": 46306,
       "path": "data/survival/world/chunks/14_07.json",
-      "sha256": "8f185f32e65ba2a6a33f3a98d3fb316917b21deabfe90d9bb555d8b77fdaac87"
+      "sha256": "ea48778b87764d169cc8c7df9ffd499aacbf65967b10678dfb8ec2b0393749df"
     },
     {
-      "bytes": 33005,
+      "bytes": 33078,
       "path": "data/survival/world/chunks/14_08.json",
-      "sha256": "1534c8364d00dff3a5868ca37b3a4057b0fae525bd108da02a9ea838c6284fa8"
+      "sha256": "3412fb17f76351637ad77032d1b42eced059ccdb82a030f9f24e01d24423c5b8"
     },
     {
-      "bytes": 34229,
+      "bytes": 34302,
       "path": "data/survival/world/chunks/14_09.json",
-      "sha256": "cd976fc0e52fc7b071daaac70391bed5586ee0db06204940acb8d7c13c9ba45e"
+      "sha256": "224e9dcfa35d9239f3a3f4190b2d28264d6f2cb7a0ac007e373e1d8958adea1b"
     },
     {
-      "bytes": 29580,
+      "bytes": 29653,
       "path": "data/survival/world/chunks/14_10.json",
-      "sha256": "09a0f287a0d908a4d7929265cf503d4328cbd956de30aa1df124620ee18c61fa"
+      "sha256": "69a0f1e46cd8acfe537f01055b10b9ce0067f3c5765803b90085bb19fed6ecb4"
     },
     {
-      "bytes": 3906,
+      "bytes": 3979,
       "path": "data/survival/world/chunks/14_11.json",
-      "sha256": "e198882e3f27d1d8af28a6c4bca3a626f63167946b3f8b0b50852c47482827b8"
+      "sha256": "16abfbc4e9761c57b557f08df541870617bdf2e9472ef910ba92f668c7309a31"
     },
     {
-      "bytes": 7568,
+      "bytes": 8725,
       "path": "data/survival/world/chunks/15_00.json",
-      "sha256": "d77a911d0d0a1e8fd2397628aea4599133afc443a0f8c8236bcbd2de618361fa"
+      "sha256": "6c8a714734542b0849a9340e02b0ea04484dc658da5eae7104ca86903ef2c792"
     },
     {
-      "bytes": 29333,
+      "bytes": 34509,
       "path": "data/survival/world/chunks/15_01.json",
-      "sha256": "b43f4bd6f12ace8fa9506716756e41d52773623b469c2c7fcf60a9e9061ce4f8"
+      "sha256": "55b6d0d65516a7942be8d7f5e1a2615651dd013ac773af29bdfdaa29cc6bf0fc"
     },
     {
-      "bytes": 28650,
+      "bytes": 33789,
       "path": "data/survival/world/chunks/15_02.json",
-      "sha256": "de94505fd24fe586a605eac2eff81ea32b32b1b7f6925c639be5fef0dc451c32"
+      "sha256": "5267f9c58d06875203c4e14ac60230a04b3b7f5d1742dc542fa463c5bf6035d5"
     },
     {
-      "bytes": 28486,
+      "bytes": 33510,
       "path": "data/survival/world/chunks/15_03.json",
-      "sha256": "3de30c70d98f21c96e06903ca716e4bb1ec3503555e3dbe78c136108cbc2824c"
+      "sha256": "f72b66f4fbbbdd9feaf2805fa843d7bfa6059912b2ada34a38ea3dd5e900728c"
     },
     {
-      "bytes": 27221,
+      "bytes": 32245,
       "path": "data/survival/world/chunks/15_04.json",
-      "sha256": "08a70a829bbde39cc2336252217ab404b5bfdc1e7edf2461830d7788351919dc"
+      "sha256": "5f006f2455bf89f8028ce51778a37c55bfe53c104497ef55481541d2ffab2148"
     },
     {
-      "bytes": 29096,
+      "bytes": 34729,
       "path": "data/survival/world/chunks/15_05.json",
-      "sha256": "2b8bedcb0fa9c5fb67cf5c4f91ba41a268ac6f6661a02971e5a60cc8e5602767"
+      "sha256": "85e208cc01ff4afe3771e4d824f73b065725569ebd50ce8d0ed1dbd50e0bde32"
     },
     {
-      "bytes": 30265,
+      "bytes": 35441,
       "path": "data/survival/world/chunks/15_06.json",
-      "sha256": "540367e139dcac86f86e94c18c5ae726db7b32f588d85408b8e4293a996edf9d"
+      "sha256": "504c509f30e0e0cb1021b08629fb2bef033270582d787b845e3dacaaf7412e63"
     },
     {
-      "bytes": 28203,
+      "bytes": 33227,
       "path": "data/survival/world/chunks/15_07.json",
-      "sha256": "ce0903f5cc8d2d871c9d4da6753707c3c4ef33510f04d1fce8ecb58b8af69cde"
+      "sha256": "97e351f35c9518718e9ddc84be9022ac908657228240905c511e3a132a78a4fb"
     },
     {
-      "bytes": 19629,
+      "bytes": 19702,
       "path": "data/survival/world/chunks/15_08.json",
-      "sha256": "1438da20fbe509643ca25d1d830077295b90b6bcc14ee604b2bf13c36c14c566"
+      "sha256": "5f4d1b434524d4cb870dfc0259189ef14eba0ec915ea51fce91182f83344edaf"
     },
     {
-      "bytes": 18809,
+      "bytes": 18882,
       "path": "data/survival/world/chunks/15_09.json",
-      "sha256": "7f8eb58f3c762d9241213be7855c9459cd54770d61f72510243a7023fdf8dda3"
+      "sha256": "e5070a215430223d806c1327eea83c6e0770402ddd407f19c2bea4ef5750340b"
     },
     {
-      "bytes": 15935,
+      "bytes": 16008,
       "path": "data/survival/world/chunks/15_10.json",
-      "sha256": "eba3127467d1f12a62f4fbee1a4eefccbd882fb68d78b2b943645031a6f3cfee"
+      "sha256": "e50e28bed89983967aeb48d7be9d876e56e456db44ccea09ec4d4c4d393421f6"
     },
     {
-      "bytes": 3716,
+      "bytes": 3789,
       "path": "data/survival/world/chunks/15_11.json",
-      "sha256": "29b9da3192801eec2f6bf0b7b11e47b491a1358cec7b3d7693c97155754e9412"
+      "sha256": "c3670dc3667e7917fa5c1d16bc54d4e48b5427d0478ff35d6800067785c5eefe"
     },
     {
-      "bytes": 106758,
+      "bytes": 5925,
+      "path": "data/survival/world/hazard_capability_contracts.json",
+      "sha256": "a18d6ea63a5e1bbc865b3d13faa9b808dc94a06107c2034839c05af9e2c7b639"
+    },
+    {
+      "bytes": 107070,
       "path": "data/survival/world/material_source_contracts.json",
-      "sha256": "b588e643bb8b52a05e7ab8b1081a33cb7e1970a6c7534f3f178985f49a139ec6"
+      "sha256": "43abb123b8a94a4ec42827416aa5875c6165b43959a39fd48ddddb8233f54a51"
     },
     {
       "bytes": 732,
       "path": "data/survival/world/metrics.json",
-      "sha256": "a4413541c3d914f71abe68ae39d2e9a32b4ee6e62e4a03218774847d160283d7"
+      "sha256": "d0b6bb893aa9ee663f8bc33068dffcff2a580eb2e83043733f7ef7082717edd9"
     },
     {
-      "bytes": 219427,
+      "bytes": 51446,
+      "path": "data/survival/world/pacing_analysis.json",
+      "sha256": "bc2ea1b5d0629716aa53ce2bba4095ecc2ae0443077ccda6391f1fe3f4b957e5"
+    },
+    {
+      "bytes": 219352,
       "path": "data/survival/world/poi_route_graph.json",
-      "sha256": "cc25bd2ca086abc543311ff12bd2cafe7b3b7f5f783ba64163718d103e396492"
+      "sha256": "a83b2118a7795f2892a244ebdc5e934de2fb89eb485d859758f55f278710026d"
+    },
+    {
+      "bytes": 2906,
+      "path": "data/survival/world/reader_contract.json",
+      "sha256": "c2b366c5bf98880fd10b9400b52b793614774da904e91206b323ac4caa5591b1"
     },
     {
       "bytes": 691,
@@ -992,9 +1007,9 @@
       "sha256": "8f93ac7ddbede3e9efcdee37c74870e5ea4c22b0d7395af44a665526c0b95516"
     },
     {
-      "bytes": 842,
+      "bytes": 5075,
       "path": "data/survival/world/schemas/chunk.schema.json",
-      "sha256": "e3407b46f472fcdc06b313b073b25a726199791781a2d11804d0d4ddb096f445"
+      "sha256": "ea1aa07b766e109db1c9f1cd1cebb2f33d0c71cc564b8e1e55026216a0280bbc"
     },
     {
       "bytes": 656,
@@ -1012,14 +1027,19 @@
       "sha256": "cd2ba3b02cbc65b08e9a2f4394813c761a6524a07f6bc009d00a6e921cccc9df"
     },
     {
-      "bytes": 1615,
+      "bytes": 1693,
       "path": "data/survival/world/schemas/masterplan.schema.json",
-      "sha256": "a20c6092c5409835443c971a60f70387361ee107c20344f62b12135f7af38798"
+      "sha256": "ef2f9710965f2190aa0edc55b7475439d92eeb13081da9f35686d807e16986f1"
     },
     {
       "bytes": 1551,
       "path": "data/survival/world/schemas/poi.schema.json",
       "sha256": "161d5a94faff65c748c7c796dc857f76585e3de48d5c6e9d25ad2907bee7aef6"
+    },
+    {
+      "bytes": 1190,
+      "path": "data/survival/world/schemas/reader_contract.schema.json",
+      "sha256": "914f5530db7416274d64e98f54cf49a453493e9933ec56638f93c9c6e916985b"
     },
     {
       "bytes": 1458,
@@ -1037,15 +1057,15 @@
       "sha256": "63aaef9d44fc834fbe961b60720e7cfa7ad244c42360db82e439d2e24131edae"
     },
     {
-      "bytes": 426999,
+      "bytes": 429046,
       "path": "data/survival/world/world_plan.v1.json",
-      "sha256": "46eb504b44a2b18e25a807aae875e9002ce63fc92ab6975e20466db212928715"
+      "sha256": "008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d"
     }
   ],
-  "compile_1_tree_sha256": "77e71e19c5da2b05cc3305955c17aef5a825ff6a22d3aebbadb5ff97704fab9a",
-  "compile_2_tree_sha256": "77e71e19c5da2b05cc3305955c17aef5a825ff6a22d3aebbadb5ff97704fab9a",
+  "compile_1_tree_sha256": "36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3",
+  "compile_2_tree_sha256": "36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3",
   "ok": true,
-  "plan_sha256": "46eb504b44a2b18e25a807aae875e9002ce63fc92ab6975e20466db212928715",
+  "plan_sha256": "008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d",
   "schema": "soh.world.determinism.v1",
   "status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
 }

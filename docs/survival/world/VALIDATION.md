@@ -1,27 +1,31 @@
-# Validation Evidence — SURV-050A
+# Validation Evidence — SURV-050A (review corrections)
 
-Status: static/data validation passed. Native Godot gameplay validation **not run**.
+Status: authored-data validation passed locally. Isolated Godot 4.7 reader CI is **pending run** at the correction checkpoint. Native continent gameplay validation remains **NOT_TESTED**.
 
 ## Commands
 
 ```bash
-python3 tools/survival/worldgen/compile_plan.py
-python3 tools/survival/worldgen/make_schemas.py
+.venv/bin/python tools/survival/worldgen/make_schemas.py
+.venv/bin/python tools/survival/worldgen/compile_plan.py
+.venv/bin/python tools/survival/worldgen/analyze_pacing.py
 .venv/bin/python tools/survival/worldgen/validate_world.py
 .venv/bin/python -m pytest tests/survival/world -q
-python3 tools/survival/worldgen/check_determinism.py
+.venv/bin/python tools/survival/worldgen/check_determinism.py
 .venv/bin/python tools/survival/worldgen/preview.py
+.venv/bin/python -m py_compile tools/survival/worldgen/*.py
 ```
 
-## Results
+## Local results
 
 - Compiler: `ok = true`.
-- Masterplan SHA-256: `46eb504b44a2b18e25a807aae875e9002ce63fc92ab6975e20466db212928715`.
-- Deterministic double-compile tree SHA-256: `77e71e19c5da2b05cc3305955c17aef5a825ff6a22d3aebbadb5ff97704fab9a` (208 JSON artifacts). See `determinism_report.json`.
+- Masterplan SHA-256: `008d415f015610d1bb2ca6a940fc5e2974abe19406904e53ffb0ae7c9a89f46d`.
+- Deterministic double-compile tree SHA-256: `36dcd527c58ffc7912a0c2124b5a10f600cd9f8b6262541593cb469a4b30b5c3` (212 JSON artifacts). See `determinism_report.json`.
 - Structural validator: `ok = true`, 0 errors. See `validation_report.json`.
-- JSON Schema validation: 10 schemas emitted; all validated objects PASS.
-- Pytest: `18 passed`. See `pytest_report.txt`.
-- Previews: 8 PNGs + `previews/preview_manifest.json`.
+- JSON Schema validation: 11 schemas emitted; all validated objects PASS.
+- Pytest: `41 passed`. See `pytest_report.txt`.
+- Pacing audit: 10 concrete journeys resolve; `AUTHORED_ESTIMATE_NOT_PLAYTESTED`. See `PACING_ANALYSIS.md` and `data/survival/world/pacing_analysis.json`.
+- Previews: 8 PNGs regenerated and visually inspected; `previews/preview_manifest.json`.
+- `py_compile`: clean.
 
 ## Metrics
 
@@ -39,27 +43,40 @@ python3 tools/survival/worldgen/check_determinism.py
 | Route edges | 129 (21 trunk + 108 spurs) |
 | Chunks | 192 × 64×64 |
 | Physically reachable new POIs | 108 / 108 |
-| Capability access counts | novice 38, mid 99, late 108 |
+| Capability access counts | novice 39, mid 99, late 108 |
 | Empty-space ratio (>64 tiles from anchor) | 0.0115 |
 | Max distance to meaningful anchor | 80.99 tiles |
 | Long-run post-14d goals | 5 |
 
+Novice access increased from 38 to 39 because sheltered capability-source POIs are no longer over-gated by a hazard rect they do not occupy (e.g. the thermal wardhouse). Geography, region IDs, POI IDs, entrances and resource counts were not regenerated.
+
 ## Test coverage
 
-- Masterplan validator + JSON schemas.
+- Masterplan validator + JSON schemas (including `reader_contract`).
 - Exactly ten legacy entrances preserved; thresholds/cells match baseline lock; fresh-save baseline flood reaches every threshold with shortcuts closed.
 - Physical accessibility from spawn for every new POI, resource node, and seam carve endpoint.
-- Resource distribution: every region has sources; every POI material has a world source; novice staple loop (timber/stone/iron/fibre/salvage) is open; no new nodes inside the preserved inset; renewal policies present.
-- POI density and emptiness: ≥5 new POIs per region, ≥80 total, empty ratio ≤5%, max anchor distance ≤96 tiles, ≥3 long-run goals, ≥20 late POIs.
-- Alternate routes: removing any single trunk edge keeps the hub network connected; boat/pass alternates exist.
-- Three counterfactuals: novice finds value; midgame cannot open late core/specimen vaults; endgame retains post-14d goals and late discovery.
-- Negative mutations fail closed: duplicate ID, seam into protected clearance, uphill river, orphan resource node, excessive emptiness, novice starvation, missing long-run goals, chunk hash mismatch, moved legacy entrance, mid-bypass of a late core vault, trunk disconnect.
+- Resource distribution, causal sources, novice staple loop, renewal policies, no new nodes inside the preserved inset.
+- POI density/emptiness, alternate routes, three progression counterfactuals.
+- **W-01 build delegation:** legal legacy home cell `[54,222]` has `build=0`, `build_permission=2`; A0 oracle/delegate allows it; naive zero-blocking would deny it. Missing delegate is an error. Protected camp and dynamic-child occupancy veto are honored. New-land candidates require A0; roads deny A1 candidates.
+- **Overlay precedence:** walk/road overlays apply only outside legacy, cannot mutate immutable layers, stale bases fail closed, overlays cannot authorize construction.
+- **Chunk/RLE negatives:** negative/zero/overlength/underlength counts, negative/fractional/boolean values, empty RLE, unknown layer values, missing required layers, chunk identity/alignment/bounds/path/manifest mismatch, hash mismatch, legacy `build_permission=0` rejection.
+- **Seam negatives:** missing/ocean seam connection fails `SEAM_DISCONNECT`; protected-clearance seam fails `SEAM_PROTECTED`.
+- **Pacing audit:** journeys resolve, capability grants are modeled, early home cost/node visits are bounded, post-14d goals are reachable with late caps, alternate detours exist, playtime remains `NOT_TESTED`.
+- Existing negative mutations: duplicate ID, uphill river, orphan node, emptiness, novice starvation, long-run removal, chunk hash, moved entrance, mid-bypass, trunk disconnect.
+
+## Godot 4.7 isolated reader
+
+- Local Godot binary: unavailable. Release asset download failed (`release-assets.githubusercontent.com` SSL). PyPI does not provide a Godot engine binary (`godot` is an unrelated DOT-language package).
+- A1-owned CI fixture: `tests/survival/world/godot/` + `.github/workflows/survival-world-reader.yml`.
+- CI run status at this checkpoint: **PENDING** (will be updated with exact run URL/SHA after push).
+- The fixture is read-only and isolated. It does not boot the production overworld, SaveService, or A0 paid-construction transaction. The A0 delegate is a contract stub; native paid-home integration is a separate A0 gate.
 
 ## What this does not prove
 
-- No native Godot 4.7 runtime, camera, Knight movement, occlusion, prop collision, POI spawning, or SaveService round-trip was executed.
-- Godot binary download failed (`release-assets.githubusercontent.com` SSL). Existing `workflow_dispatch` CI workflows were not triggered by A1.
+- No native continent controller, camera, Knight movement, occlusion, prop collision reconciliation, POI/resource spawning, hazard damage, or SaveService round-trip was executed.
 - `walk` is a proposed traversal layer; A0 must reconcile it with production solid RLE and lower-body prop collision before any playable claim.
+- Pacing numbers are foot-equivalent travel estimates along authored polylines plus straight-line site detours. Combat, crafting, gathering animation, inventory friction, boat speed and day-equivalent playtime are **NOT_TESTED**.
 - Pillow previews are authored design renders, not engine screenshots.
+- Early buffer route intersects legacy crown heat/rot hazard rects; A6 must clue these and A0/A3 must decide early mitigation/alternates. This is an authored tuning gate, not a native damage claim.
 
 Native playable integration remains `false`.

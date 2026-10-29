@@ -14,6 +14,7 @@ from pathlib import Path
 
 import authoring as A
 from baseline import Baseline, ROOT
+from build_contract import LAYER_SEMANTICS, REQUIRED_LAYERS
 
 OUT = ROOT / "data" / "survival" / "world"
 CHUNK_DIR = OUT / "chunks"
@@ -181,7 +182,15 @@ def expand_regions():
 def expand_pois():
     pois = []
     for pid, rid, name, archetype, pos, band, purpose, mats, caps, rewards, hz, core in A.P:
-        req = sorted(set(caps) | ({A_HAZ[hz]["requires"] } if hz else set()))
+        # A hazard capability is required only when the POI actually sits inside
+        # the authored exposure rect. Sheltered source POIs (e.g. the thermal
+        # wardhouse) must not demand the very gear they are meant to bootstrap.
+        hazard_req = set()
+        if hz:
+            hx, hy, hw, hh = A_HAZ[hz]["rect"]
+            if hx <= pos[0] < hx + hw and hy <= pos[1] < hy + hh:
+                hazard_req.add(A_HAZ[hz]["requires"])
+        req = sorted(set(caps) | hazard_req)
         stages = [
             {"stage": "approach", "requires": [], "note": "visible from route; environmental clue before commitment"},
             {"stage": "outer", "requires": req, "note": "gear/credential/power preparation"},
@@ -268,6 +277,7 @@ def build_raster(base: Baseline, pois, routes):
     elev = array("H", [0]) * n
     walk = bytearray(n)
     build = bytearray(n)
+    build_permission = bytearray(n)
     hazard = bytearray(n)
     road = bytearray(n)
     preserved = bytearray(n)
@@ -323,6 +333,7 @@ def build_raster(base: Baseline, pois, routes):
             surface[i] = surf_index[A.BIOMES[b]["surface"]]
             walk[i] = 1 if A.BIOMES[b]["walkable"] else 0
             build[i] = 1 if A.BIOMES[b]["buildable"] else 0
+            build_permission[i] = build[i]
 
     # rivers and lakes (new land only; legacy hydrology remains untouched)
     for riv in A.RIVERS:
@@ -334,7 +345,7 @@ def build_raster(base: Baseline, pois, routes):
                 x, y = i % w, i // w
                 d, t = seg_dist(x, y, a[0], a[1], b[0], b[1])
                 if d <= width / 2 + 1:
-                    biome[i] = bio_index["riverine"]; surface[i] = surf_index["water"]; walk[i] = 0; build[i] = 0
+                    biome[i] = bio_index["riverine"]; surface[i] = surf_index["water"]; walk[i] = 0; build[i] = 0; build_permission[i] = 0
                     elev[i] = int(a[2] + (b[2] - a[2]) * t)
             draw_line(None, w, h, a[:2], b[:2], wet, width=int(width / 2 + 3))
     for l in A.LAKES:
@@ -345,7 +356,7 @@ def build_raster(base: Baseline, pois, routes):
                 if preserved[i]:
                     continue
                 if ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 <= 1.0:
-                    biome[i] = bio_index["lake"]; surface[i] = surf_index["water"]; walk[i] = 0; build[i] = 0; elev[i] = l[5]
+                    biome[i] = bio_index["lake"]; surface[i] = surf_index["water"]; walk[i] = 0; build[i] = 0; build_permission[i] = 0; elev[i] = l[5]
 
     # legacy inset: copy the production collision/ground truth verbatim
     for y in range(base.h):
@@ -354,7 +365,8 @@ def build_raster(base: Baseline, pois, routes):
             j = y * base.w + x
             preserved[i] = 1
             walk[i] = 0 if base.blocked[j] else 1
-            build[i] = 0  # A0 existing build validator remains authoritative here
+            build[i] = 0  # historical hint, NOT authority
+            build_permission[i] = 2  # delegate to A0 validate_cell; never deny from build=0
             biome[i] = bio_index[legacy_biome(base.ground[j])]
             surface[i] = surf_index["legacy"]
             elev[i] = 0  # unknown legacy elevation is not fabricated
@@ -379,6 +391,8 @@ def build_raster(base: Baseline, pois, routes):
                     return
                 was_water = surface[i] == surf_index["water"]
                 walk[i] = 1; road[i] = 1; build[i] = 0
+                if not preserved[i]:
+                    build_permission[i] = 0
                 surface[i] = surf_index["bridge" if was_water else "road"]
                 if was_water:
                     bridges.append(i)
@@ -392,7 +406,7 @@ def build_raster(base: Baseline, pois, routes):
             for xx in range(max(0, x - r), min(w, x + r + 1)):
                 i = yy * w + xx
                 if not preserved[i]:
-                    walk[i] = 1; build[i] = 0
+                    walk[i] = 1; build[i] = 0; build_permission[i] = 0
                     if surface[i] == surf_index["water"]:
                         surface[i] = surf_index["bridge"]
 
@@ -405,9 +419,12 @@ def build_raster(base: Baseline, pois, routes):
                 hazard[i] = haz_index[hz[0]]
                 if hz[6] >= 3:
                     build[i] = 0
+                    if not preserved[i]:
+                        build_permission[i] = 0
 
     return {"w": w, "h": h, "region": region, "biome": biome, "surface": surface, "elev": elev,
-            "walk": walk, "build": build, "hazard": hazard, "road": road, "preserved": preserved,
+            "walk": walk, "build": build, "build_permission": build_permission,
+            "hazard": hazard, "road": road, "preserved": preserved,
             "bridges": sorted(set(bridges)), "rid_index": rid_index, "bio_index": bio_index,
             "surf_index": surf_index, "haz_index": haz_index}
 
@@ -468,7 +485,9 @@ def flood_walk(walk, w, h, origin):
 def chunk_data(raster, cx, cy):
     w = raster["w"]; size = A.CHUNK
     layers = {}
-    for key in ("region","biome","surface","walk","build","hazard","road","preserved"):
+    for key in REQUIRED_LAYERS:
+        if key == "elevation_band":
+            continue
         arr = raster[key]
         vals = []
         for y in range(cy * size, min((cy + 1) * size, raster["h"])):
@@ -556,6 +575,7 @@ def compile_all():
         "schema": "soh.world.masterplan.v1", "world_id": A.WORLD_ID, "status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
         "frame": A.FRAME, "legacy_inset": A.LEGACY, "starter_quarter": A.STARTER_QUARTER,
         "chunk_size": A.CHUNK, "baseline_lock": "baseline_lock.json",
+        "layer_semantics": LAYER_SEMANTICS,
         "regions": regions, "biomes": A.BIOMES, "materials": A.MATERIALS,
         "capabilities": A.CAPABILITIES, "hazards": list(A_HAZ.values()),
         "rivers": expand_rivers(), "lakes": expand_lakes(), "subsurface_hydrology": A.SUBSURFACE,
@@ -572,14 +592,52 @@ def compile_all():
             "owner": "A0", "production_controller_changed": False, "saveservice_changed": False,
             "load_order": ["baseline_lock", "world_plan", "chunk_manifest", "chunks", "dynamic_survival_state"],
             "seam_policy": "apply legacy_seam_carves through existing shortcut/carve mechanism; never move dungeon thresholds",
+            "legacy_build_delegation": "build_permission=2 inside preserved inset; call A0 validate_cell; build=0 is not a denial",
+            "build_permission_layer": "build_permission",
+            "overlay_precedence": LAYER_SEMANTICS["overlay_precedence"],
             "native_playable": False,
         },
     }
     write_json(OUT / "world_plan.v1.json", plan)
     write_json(OUT / "authoring_source.json", {"regions": A.REGIONS, "pois": A.P, "trunk": A.TRUNK, "resource_sites": A.RESOURCE_SITES, "rivers": A.RIVERS, "lakes": A.LAKES, "hazards": A.HAZARDS, "capabilities": A.CAPABILITIES, "materials": A.MATERIALS, "hubs": A.HUBS, "seams": A.SEAMS, "coast": A.COAST})
     # lightweight graph exports for A3/A5/A6
-    write_json(OUT / "material_source_contracts.json", {"schema": "soh.world.material_sources.v1", "materials": A.MATERIALS, "sites": sites, "nodes": nodes, "poi_consumers": [{"poi_id": p["poi_id"], "material_keys": p["material_keys"]} for p in pois], "note": "material_key is a contract, not a final A3 item_id"})
+    write_json(OUT / "material_source_contracts.json", {
+        "schema": "soh.world.material_sources.v1", "status": "AUTHORED_CONTRACT_NOT_A3_INTEGRATED",
+        "materials": A.MATERIALS, "sites": sites, "nodes": nodes,
+        "poi_consumers": [{"poi_id": p["poi_id"], "material_keys": p["material_keys"]} for p in pois],
+        "a0_item_hints": {"timber": "oak_wood", "iron": "iron_scrap", "salvage": "iron_scrap", "fibre": "reed_fibre", "stone": "stone_chunk"},
+        "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; A3 owns final mapping, yields, recipes and prices.",
+    })
+    write_json(OUT / "hazard_capability_contracts.json", {
+        "schema": "soh.world.hazard_capabilities.v1", "status": "AUTHORED_CONTRACT_NOT_A6_INTEGRATED",
+        "hazards": list(A_HAZ.values()), "capabilities": A.CAPABILITIES,
+        "clue_policy": "environmental/gameplay clues before commitment; no arbitrary level walls",
+        "note": "A6 owns UX/VFX presentation; A1 supplies stable labels, regions, rects, required capabilities and severity only.",
+    })
     write_json(OUT / "poi_route_graph.json", {"schema": "soh.world.poi_route_graph.v1", "pois": pois, "route_graph": routes, "capabilities": A.CAPABILITIES})
+    sample_cells = {
+        "legacy_legal_home": [54, 222],
+        "legacy_protected_camp": [56, 216],
+        "new_road_no_build": [400, 200],
+        "new_build_candidate": [480, 240],
+    }
+    write_json(OUT / "reader_contract.json", {
+        "schema": "soh.world.reader_contract.v1",
+        "world_id": A.WORLD_ID,
+        "plan_sha256": sha(OUT / "world_plan.v1.json"),
+        "frame": A.FRAME, "legacy_inset": A.LEGACY, "chunk_size": A.CHUNK,
+        "required_layers": list(REQUIRED_LAYERS),
+        "layer_semantics": LAYER_SEMANTICS,
+        "sample_cells": sample_cells,
+        "legacy_delegate_contract": {
+            "callable": "A0 SurvivalBuildSystem.validate_cell(cell) -> String",
+            "adapter_wrapper": "return {ok: reason.is_empty(), reason: reason}",
+            "empty_reason_means": "allow",
+            "missing_delegate_means": "error_legacy_build_delegate_required",
+            "build_zero_in_legacy_means": "delegate_not_deny",
+        },
+        "native_playable": False,
+    })
     write_json(OUT / "metrics.json", metrics)
     print(canon({"ok": True, "metrics": metrics, "plan_sha256": sha(OUT / "world_plan.v1.json")}))
     return plan

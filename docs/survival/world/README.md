@@ -12,13 +12,17 @@ This directory contains the review package for the complete authored continent. 
 2. [`A0_ADAPTER.md`](A0_ADAPTER.md) — load order, chunk grammar, seam carves, protected rects, identity/dynamic-state separation.
 3. [`VALIDATION.md`](VALIDATION.md) — exact commands, validator/pytest/schema/determinism results.
 4. [`VISUAL_CRITIQUE.md`](VISUAL_CRITIQUE.md) — inspected previews, geography revisions, remaining visual limitations.
-5. [`RESEARCH_AND_LICENSES.md`](RESEARCH_AND_LICENSES.md) — required source reading, pinned external research, license/reuse decisions.
+5. [`PACING_ANALYSIS.md`](PACING_ANALYSIS.md) — concrete journey/travel/preparation/logistics estimates; playtime NOT_TESTED.
+6. [`RESEARCH_AND_LICENSES.md`](RESEARCH_AND_LICENSES.md) — required source reading, pinned external research, license/reuse decisions.
 
 ## Machine-readable artifacts
 
 - `data/survival/world/world_plan.v1.json` — masterplan.
 - `data/survival/world/chunks/*.json` — 192 deterministic 64×64 RLE chunks.
-- `data/survival/world/schemas/*.schema.json` — masterplan/chunk/region/biome/elevation/hydrology/resource/POI/route/identity schemas.
+- `data/survival/world/schemas/*.schema.json` — 11 schemas including `reader_contract`; chunk schema now requires `build_permission`.
+- `data/survival/world/reader_contract.json` — machine-readable build delegation, overlay precedence and sample cells for the isolated Godot reader.
+- `data/survival/world/hazard_capability_contracts.json` — A6 hazard/capability labels, rects, severity and required preparation.
+- `data/survival/world/pacing_analysis.json` — bounded travel/preparation/logistics estimates, not playtime proof.
 - `data/survival/world/poi_route_graph.json` — POI/route/capability graph for A3/A5/A6.
 - `data/survival/world/material_source_contracts.json` — material source/consumer contracts for A3.
 - `data/survival/world/baseline_lock.json` — read-only production baseline hashes and entrance oracle.
@@ -30,8 +34,9 @@ This directory contains the review package for the complete authored continent. 
 ```bash
 python3 -m venv .venv
 .venv/bin/pip install -r tools/survival/worldgen/requirements.txt
-python3 tools/survival/worldgen/compile_plan.py
 python3 tools/survival/worldgen/make_schemas.py
+python3 tools/survival/worldgen/compile_plan.py
+python3 tools/survival/worldgen/analyze_pacing.py
 .venv/bin/python tools/survival/worldgen/validate_world.py
 .venv/bin/python -m pytest tests/survival/world -q
 python3 tools/survival/worldgen/check_determinism.py
@@ -40,4 +45,6 @@ python3 tools/survival/worldgen/check_determinism.py
 
 Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20 (to integration). Issue: #12.
 
-Google Docs tab 04 sync: `DOCS_SYNC_PENDING` (connector disconnected).
+Google Docs tab 04 sync: `DOCS_SYNC_PENDING` (connector enabled; targeted tab read/write still being completed at this checkpoint).
+
+Isolated Godot 4.7 reader fixture: `tests/survival/world/godot/`; CI: `.github/workflows/survival-world-reader.yml`. This is authored-data consumption proof only, not native continent integration.

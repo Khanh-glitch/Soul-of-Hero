@@ -1,0 +1,117 @@
+name: SURV-050A World Reader
+
+# A1-owned authored-world gate. This workflow does not boot the production
+# overworld, does not modify SaveService, and does not claim native continent
+# integration. It proves the authored data compiles deterministically and that a
+# minimal isolated Godot 4.7 reader can consume the chunks/RLE/build contract.
+
+on:
+  push:
+    branches: [arena/e385312a-soul-of-hero]
+    paths:
+      - '.github/workflows/survival-world-reader.yml'
+      - 'data/survival/world/**'
+      - 'tools/survival/worldgen/**'
+      - 'tests/survival/world/**'
+      - 'docs/survival/world/**'
+  pull_request:
+    branches: [main, feature/survival-rpg-foundation-20261029]
+    paths:
+      - '.github/workflows/survival-world-reader.yml'
+      - 'data/survival/world/**'
+      - 'tools/survival/worldgen/**'
+      - 'tests/survival/world/**'
+      - 'docs/survival/world/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ARTIFACT_DIR: artifacts/a1-world
+
+jobs:
+  python-authoring:
+    name: A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install authoring dependencies
+        run: python -m pip install -r tools/survival/worldgen/requirements.txt
+      - name: Compile authored world
+        run: |
+          mkdir -p "$ARTIFACT_DIR"
+          python tools/survival/worldgen/make_schemas.py
+          python tools/survival/worldgen/compile_plan.py | tee "$ARTIFACT_DIR/compile.json"
+      - name: Pacing / scale audit (estimates, not playtime)
+        run: python tools/survival/worldgen/analyze_pacing.py | tee "$ARTIFACT_DIR/pacing.json"
+      - name: Validate world + schemas
+        run: python tools/survival/worldgen/validate_world.py | tee "$ARTIFACT_DIR/validation.json"
+      - name: Negative / acceptance tests
+        run: python -m pytest tests/survival/world -q | tee "$ARTIFACT_DIR/pytest.txt"
+      - name: Double-compile determinism
+        run: python tools/survival/worldgen/check_determinism.py | tee "$ARTIFACT_DIR/determinism.json"
+      - name: Upload Python evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-python-evidence
+          path: artifacts/a1-world/
+          if-no-files-found: warn
+          retention-days: 14
+
+  godot-reader:
+    name: A1 GODOT 4.7 ISOLATED CHUNK READER
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import isolated reader fixture only
+        run: |
+          mkdir -p "$ARTIFACT_DIR" artifacts/ud_a1_import
+          timeout --signal=TERM --kill-after=10s 180s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_import \
+            --import >"$ARTIFACT_DIR/godot-import.log" 2>&1
+          rc=$?
+          echo "fixture import exit_code=$rc"
+          tail -40 "$ARTIFACT_DIR/godot-import.log"
+          exit $rc
+      - name: Run read-only chunk/RLE/build-contract tests
+        run: |
+          mkdir -p artifacts/ud_a1_reader
+          timeout --signal=TERM --kill-after=15s 300s godot --headless \
+            --path tests/survival/world/godot --user-data-dir artifacts/ud_a1_reader \
+            --script res://reader_test.gd -- --world-root="$GITHUB_WORKSPACE/data/survival/world" \
+            >"$ARTIFACT_DIR/godot-reader.log" 2>&1
+          rc=$?
+          echo "reader exit_code=$rc"
+          cat "$ARTIFACT_DIR/godot-reader.log"
+          echo "$rc" >"$ARTIFACT_DIR/reader-exit-code"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/godot-reader.log" \
+            "A1WorldReader" "SURVIVAL WORLD READER PASSED"
+          exit $rc
+      - name: Anti-vacuity gate
+        if: always()
+        run: |
+          log="$ARTIFACT_DIR/godot-reader.log"
+          [ -f "$log" ] || { echo "::error::no A1 reader log"; exit 1; }
+          checks=$(grep -cE '^  (ok|FAIL) ' "$log" || true)
+          echo "A1 reader assertions reported: ${checks}"
+          [ "${checks:-0}" -ge 50 ] || { echo "::error::A1 reader ran fewer than 50 assertions"; exit 1; }
+          grep -q 'SURVIVAL WORLD READER PASSED' "$log" || { echo "::error::A1 reader did not reach PASS summary"; exit 1; }
+      - name: Upload Godot reader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-world-godot-reader-evidence
+          path: artifacts/a1-world/
+          if-no-files-found: warn
+          retention-days: 14

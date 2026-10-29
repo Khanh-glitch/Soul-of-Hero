@@ -385,8 +385,7 @@
         {
           "note": "gear/credential/power preparation",
           "requires": [
-            "cap_seal_1",
-            "cap_thermal"
+            "cap_seal_1"
           ],
           "stage": "outer"
         }
@@ -415,8 +414,7 @@
       "refresh_policy": "outer caches restock; specimen vault one-time until world-state change",
       "region_id": "r_frost_crown",
       "required_capabilities": [
-        "cap_seal_1",
-        "cap_thermal"
+        "cap_seal_1"
       ],
       "status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED"
     },
@@ -5749,8 +5747,7 @@
           ]
         ],
         "required_capabilities": [
-          "cap_seal_1",
-          "cap_thermal"
+          "cap_seal_1"
         ],
         "risk": "mid",
         "route_id": "sp_poi_frost_wardhouse",

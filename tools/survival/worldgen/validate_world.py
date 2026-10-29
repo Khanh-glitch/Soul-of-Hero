@@ -13,6 +13,8 @@ import sys
 from collections import defaultdict, deque
 from pathlib import Path
 
+from build_contract import REQUIRED_LAYERS, BINARY_LAYERS, BUILD_PERMISSION
+
 ROOT = Path(__file__).resolve().parents[3]
 OUT = ROOT / "data" / "survival" / "world"
 
@@ -26,12 +28,120 @@ def sha(b: bytes) -> str:
 
 
 def decode_rle(rle, total):
+    """Strict RLE decode: positive integer counts, non-negative integer values,
+    no overrun/underrun. Negative counts are rejected, not silently ignored."""
+    if not isinstance(rle, list) or not rle:
+        raise ValueError("RLE must be a non-empty list of [value, count] pairs")
+    if not isinstance(total, int) or isinstance(total, bool) or total <= 0:
+        raise ValueError("RLE total must be a positive integer")
     out = []
-    for v, n in rle:
+    used = 0
+    for pair in rle:
+        if not isinstance(pair, (list, tuple)) or len(pair) != 2:
+            raise ValueError("RLE pair must be [value, count]")
+        v, n = pair
+        if isinstance(v, bool) or not isinstance(v, int) or v < 0:
+            raise ValueError(f"RLE value must be a non-negative integer, got {v!r}")
+        if isinstance(n, bool) or not isinstance(n, int) or n <= 0:
+            raise ValueError(f"RLE count must be a positive integer, got {n!r}")
+        if used + n > total:
+            raise ValueError(f"RLE overrun {used + n} > {total}")
         out.extend([v] * n)
-    if len(out) != total:
-        raise ValueError(f"RLE length {len(out)} != {total}")
+        used += n
+    if used != total:
+        raise ValueError(f"RLE underrun {used} != {total}")
     return out
+
+
+def layer_allowed_values(layer, chunk, plan):
+    legend = chunk.get("legend", {})
+    if layer in ("region", "biome", "surface"):
+        names = legend.get(layer, [])
+        return set(range(1, len(names) + 1))
+    if layer == "hazard":
+        return set(range(0, len(legend.get("hazard", [])) + 1))
+    if layer in BINARY_LAYERS:
+        return {0, 1}
+    if layer == "build_permission":
+        return set(BUILD_PERMISSION)
+    if layer == "elevation_band":
+        return None  # any non-negative integer; legacy unknown is 0
+    return None
+
+
+def validate_chunk_document(chunk, plan, manifest=None):
+    """Identity, bounds, legend, RLE and layer-value checks for one chunk."""
+    errors = []
+    def err(code, msg): errors.append({"code": code, "message": msg})
+    if not isinstance(chunk, dict):
+        return [{"code": "CHUNK_TYPE", "message": "chunk is not an object"}]
+    if chunk.get("schema") != "soh.world.chunk.v1":
+        err("CHUNK_SCHEMA", "not a world chunk v1")
+    frame = plan["frame"]; size = plan["chunk_size"]
+    w, h = frame["w"], frame["h"]
+    origin = chunk.get("origin"); dims = chunk.get("size")
+    if not isinstance(origin, list) or len(origin) != 2 or not all(isinstance(v, int) and not isinstance(v, bool) for v in origin):
+        err("CHUNK_ORIGIN", "origin must be [int, int]")
+        return errors
+    if not isinstance(dims, list) or len(dims) != 2 or not all(isinstance(v, int) and not isinstance(v, bool) and v > 0 for v in dims):
+        err("CHUNK_SIZE", "size must be [positive int, positive int]")
+        return errors
+    ox, oy = origin; cw, ch = dims
+    if ox % size or oy % size:
+        err("CHUNK_ALIGN", f"origin {origin} not aligned to chunk size {size}")
+    cx, cy = ox // size, oy // size
+    expected_id = f"chunk:{cx}:{cy}"
+    if chunk.get("chunk_id") != expected_id:
+        err("CHUNK_IDENTITY", f"chunk_id {chunk.get('chunk_id')} != {expected_id}")
+    if ox < 0 or oy < 0 or ox + cw > w or oy + ch > h or cw > size or ch > size:
+        err("CHUNK_BOUNDS", f"chunk {origin} {dims} outside frame {w}x{h}")
+    expected_path = f"chunks/{cx:02d}_{cy:02d}.json"
+    if manifest is not None:
+        if manifest.get("chunk_id") != chunk.get("chunk_id"):
+            err("CHUNK_MANIFEST_ID", "manifest chunk_id mismatch")
+        if manifest.get("origin") != origin or manifest.get("size") != dims:
+            err("CHUNK_MANIFEST_BOUNDS", "manifest origin/size mismatch")
+        if manifest.get("path") != expected_path:
+            err("CHUNK_PATH", f"manifest path {manifest.get('path')} != {expected_path}")
+    layers = chunk.get("layers")
+    if not isinstance(layers, dict):
+        err("CHUNK_LAYERS", "layers missing")
+        return errors
+    for layer in REQUIRED_LAYERS:
+        if layer not in layers:
+            err("CHUNK_LAYER_MISSING", f"missing required layer {layer}")
+    legend = chunk.get("legend", {})
+    for key, expected in (("region", {r["region_id"] for r in plan["regions"]}),
+                          ("biome", set(plan["biomes"])),
+                          ("hazard", {hz["hazard_id"] for hz in plan["hazards"]})):
+        names = legend.get(key)
+        if not isinstance(names, list) or len(names) != len(set(names)) or set(names) != expected:
+            err("CHUNK_LEGEND", f"{key} legend does not match plan identities")
+    total = cw * ch
+    decoded = {}
+    for layer in REQUIRED_LAYERS:
+        if layer not in layers:
+            continue
+        try:
+            vals = decode_rle(layers[layer], total)
+        except ValueError as e:
+            err("RLE_INVALID", f"{layer}: {e}")
+            continue
+        decoded[layer] = vals
+        allowed = layer_allowed_values(layer, chunk, plan)
+        if allowed is not None:
+            bad = next((v for v in vals if v not in allowed), None)
+            if bad is not None:
+                err("LAYER_VALUE", f"{layer} contains unknown value {bad}")
+    if "preserved" in decoded and "build_permission" in decoded:
+        for i, (pres, perm) in enumerate(zip(decoded["preserved"], decoded["build_permission"])):
+            if pres and perm != 2:
+                err("LEGACY_BUILD_AUTHORITY", f"preserved cell {i} build_permission={perm}, expected 2 (delegate to A0)")
+                break
+            if not pres and perm == 2:
+                err("BUILD_AUTHORITY", f"new-land cell {i} incorrectly delegates to legacy A0 inset")
+                break
+    return errors
 
 
 def reconstruct(plan, layer):
@@ -248,15 +358,46 @@ def validate(plan, check_files=True, check_chunks=True):
     # chunk integrity + traversal
     if check_chunks:
         w,h = plan["frame"]["w"], plan["frame"]["h"]
+        expected_chunks = ((w + plan["chunk_size"] - 1) // plan["chunk_size"]) * ((h + plan["chunk_size"] - 1) // plan["chunk_size"])
+        if len(plan["chunk_manifest"]) != expected_chunks:
+            err("CHUNK_COUNT", f"manifest has {len(plan['chunk_manifest'])} chunks, expected {expected_chunks}")
+        seen_ids = set()
         for m in plan["chunk_manifest"]:
+            cid = m.get("chunk_id")
+            if cid in seen_ids:
+                err("CHUNK_DUP", f"duplicate manifest chunk {cid}")
+            seen_ids.add(cid)
             p = OUT / m["path"]
             if not p.exists():
                 err("CHUNK_MISSING", m["path"]); continue
             if sha(p.read_bytes()) != m["sha256"]:
                 err("CHUNK_HASH", m["path"])
+            try:
+                chunk = json.loads(p.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as e:
+                err("CHUNK_JSON", f"{m['path']}: {e}"); continue
+            for e in validate_chunk_document(chunk, plan, m):
+                err(e["code"], f"{m['path']}: {e['message']}")
+        if any(e["code"] in {"RLE_INVALID", "CHUNK_LAYER_MISSING", "CHUNK_JSON", "CHUNK_TYPE"} for e in errors):
+            return {"ok": False, "errors": errors, "warnings": warn,
+                    "checks": {"regions": len(rids), "pois": len(plan["pois"]), "new_pois": len(new_pois),
+                               "resource_nodes": len(plan["resource_nodes"]), "routes": len(edges),
+                               "chunks": len(plan["chunk_manifest"]), "long_run_goals": len(plan["long_run_goals"])}}
         walk = reconstruct(plan, "walk")
+        road_grid = reconstruct(plan, "road")
         origin = tuple(json.loads((OUT/"baseline_lock.json").read_text())["spawn_resolved"]) if check_files else (56,218)
         reach = flood(walk, w, h, origin)
+        for seam in plan.get("legacy_seam_carves", []):
+            x0, y0, x1, y1 = seam["carve"]
+            ok = True
+            for y in range(y0, y1 + 1):
+                for x in range(x0, x1 + 1):
+                    i = y * w + x
+                    if not walk[i] or not road_grid[i]:
+                        ok = False
+            fx, fy = seam["from"]; tx, ty = seam["to"]
+            if not ok or fy * w + fx not in reach or ty * w + tx not in reach:
+                err("SEAM_DISCONNECT", f"{seam['id']} carve is not walkable/road-connected from spawn")
         for p in new_pois:
             x,y=p["cell"]
             if y*w+x not in reach:
@@ -318,6 +459,9 @@ def schema_validate(plan):
         except jsonschema.ValidationError as e:
             results[name] = f"FAIL: {e.message}"
     val("masterplan", plan)
+    reader_path = OUT / "reader_contract.json"
+    if reader_path.exists():
+        val("reader_contract", json.loads(reader_path.read_text(encoding="utf-8")))
     val("identity", plan["identity_contract"])
     val("hydrology", {"rivers": plan["rivers"], "lakes": plan["lakes"], "subsurface_hydrology": plan["subsurface_hydrology"]})
     for r in plan["regions"]: val("region", r)

@@ -1,0 +1,2067 @@
+{
+  "alternate_route_detours": [
+    {
+      "alternate_exists": true,
+      "alternate_minutes": 2.48,
+      "base_minutes": 1.59,
+      "cut_edge": "rt_crown_frost",
+      "detour_minutes": 0.89,
+      "from": "node_refuge",
+      "to": "node_frost"
+    },
+    {
+      "alternate_exists": true,
+      "alternate_minutes": 2.44,
+      "base_minutes": 1.03,
+      "cut_edge": "rt_frost_coast",
+      "detour_minutes": 1.41,
+      "from": "node_frost",
+      "to": "node_glasswind"
+    },
+    {
+      "alternate_exists": true,
+      "alternate_minutes": 2.38,
+      "base_minutes": 0.58,
+      "cut_edge": "rt_ember_mere",
+      "detour_minutes": 1.8,
+      "from": "node_ember",
+      "to": "node_mirrormere"
+    },
+    {
+      "alternate_exists": true,
+      "alternate_minutes": 2.71,
+      "base_minutes": 0.58,
+      "cut_edge": "rt_saffron_pearl",
+      "detour_minutes": 2.14,
+      "from": "node_saffron",
+      "to": "node_pearl"
+    }
+  ],
+  "capability_bootstrap_policy": "source POI grants starter capability/recipe on first visit; material sites model sustain/repair after grant",
+  "combat_crafting_gathering_seconds": "NOT_TESTED",
+  "journeys": [
+    {
+      "a0_item_aliases": {
+        "iron_scrap": "iron/salvage",
+        "oak_wood": "timber"
+      },
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "cost": {
+        "iron_scrap": 2,
+        "oak_wood": 36
+      },
+      "gather_hits_total": 20,
+      "journey": "early_legacy_home",
+      "model": "Manhattan grid estimate on preserved legacy inset; not native pathfinding",
+      "node_visits": [
+        {
+          "cell": [
+            59,
+            202
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 19,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            55,
+            238
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 21,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            48,
+            203
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 23,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            55,
+            195
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 24,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            62,
+            238
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 26,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            55,
+            245
+          ],
+          "hits": 3,
+          "item": "oak_wood",
+          "kind": "oak_tree",
+          "manhattan_from_spawn": 28,
+          "respawn_seconds": 300,
+          "yield_per_node": 6
+        },
+        {
+          "cell": [
+            47,
+            221
+          ],
+          "hits": 2,
+          "item": "iron_scrap",
+          "kind": "scrap_pile",
+          "manhattan_from_spawn": 12,
+          "respawn_seconds": 600,
+          "yield_per_node": 2
+        }
+      ],
+      "ok": true,
+      "respawn_revisit_seconds": {
+        "iron_scrap": 600,
+        "oak_wood": 300
+      },
+      "shelter": "4x4 room: 11 walls + 1 door + 4 floors + 1 chest",
+      "travel_minutes_estimate": 0.62,
+      "travel_seconds_estimate": 37.33,
+      "travel_tiles_estimate": 224
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.083,
+      "direct_tiles": 801.5,
+      "end_caps": [
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_salvage",
+            "cap_seal_1"
+          ],
+          "poi": "poi_crown_waystation"
+        },
+        {
+          "grants": [
+            "cap_power_1"
+          ],
+          "poi": "poi_crown_relay_shed"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        }
+      },
+      "journey": "early_buffer_salvage_power",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "sp_poi_crown_waystation"
+          ],
+          "seconds": 58.75,
+          "tiles": 352.52,
+          "to": "poi_crown_waystation"
+        },
+        {
+          "from": "poi_crown_waystation",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_crown_waystation",
+            "site_link_src_crown_salvage"
+          ],
+          "seconds": 6.26,
+          "tiles": 37.54,
+          "to": "src_crown_salvage"
+        },
+        {
+          "from": "src_crown_salvage",
+          "hazard_exposure": {},
+          "route_edges": [
+            "site_link_src_crown_salvage",
+            "sp_poi_crown_relay_shed"
+          ],
+          "seconds": 13.59,
+          "tiles": 81.54,
+          "to": "poi_crown_relay_shed"
+        },
+        {
+          "from": "poi_crown_relay_shed",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "sp_poi_crown_relay_shed",
+            "rt_east_seam"
+          ],
+          "seconds": 66.09,
+          "tiles": 396.52,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_crown_waystation",
+        "src_crown_salvage",
+        "poi_crown_relay_shed",
+        "node_refuge"
+      ],
+      "start_caps": [],
+      "total_minutes": 2.41,
+      "total_seconds": 144.69,
+      "total_tiles": 868.12
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 2.024,
+      "direct_tiles": 1445.46,
+      "end_caps": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_filter"
+          ],
+          "poi": "poi_amberwood_apothecary"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_ashwater_miasma": {
+          "seconds": 36.81,
+          "tiles": 220.88
+        }
+      },
+      "journey": "mid_filter_bootstrap_and_sustain",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {},
+          "route_edges": [
+            "rt_south_seam",
+            "sp_poi_amberwood_apothecary"
+          ],
+          "seconds": 44.14,
+          "tiles": 264.86,
+          "to": "poi_amberwood_apothecary"
+        },
+        {
+          "from": "poi_amberwood_apothecary",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_amberwood_apothecary",
+            "rt_amber_loop",
+            "site_link_src_amber_herb"
+          ],
+          "seconds": 65.84,
+          "tiles": 395.07,
+          "to": "src_amber_herb"
+        },
+        {
+          "from": "src_amber_herb",
+          "hazard_exposure": {},
+          "route_edges": [
+            "site_link_src_amber_herb",
+            "rt_amber_loop",
+            "rt_amber_mere",
+            "rt_crown_mere",
+            "site_link_src_crown_reed"
+          ],
+          "seconds": 152.49,
+          "tiles": 914.93,
+          "to": "src_crown_reed"
+        },
+        {
+          "from": "src_crown_reed",
+          "hazard_exposure": {
+            "hz_ashwater_miasma": {
+              "seconds": 18.41,
+              "tiles": 110.44
+            }
+          },
+          "route_edges": [
+            "site_link_src_crown_reed",
+            "rt_crown_mere",
+            "rt_mere_fen",
+            "rt_mere_fen_south",
+            "site_link_src_fen_venom"
+          ],
+          "seconds": 89.56,
+          "tiles": 537.37,
+          "to": "src_fen_venom"
+        },
+        {
+          "from": "src_fen_venom",
+          "hazard_exposure": {
+            "hz_ashwater_miasma": {
+              "seconds": 18.41,
+              "tiles": 110.44
+            }
+          },
+          "route_edges": [
+            "site_link_src_fen_venom",
+            "rt_mere_fen_south",
+            "rt_mere_fen",
+            "rt_amber_mere",
+            "rt_south_seam"
+          ],
+          "seconds": 135.55,
+          "tiles": 813.28,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_amberwood_apothecary",
+        "src_amber_herb",
+        "src_crown_reed",
+        "src_fen_venom",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "total_minutes": 8.13,
+      "total_seconds": 487.59,
+      "total_tiles": 2925.51
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 2.609,
+      "direct_tiles": 999.9,
+      "end_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_climb"
+          ],
+          "poi": "poi_ember_piton_works"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 10.78,
+          "tiles": 64.68
+        },
+        "hz_crown_rot": {
+          "seconds": 17.26,
+          "tiles": 103.57
+        },
+        "hz_ember_gas": {
+          "seconds": 16.57,
+          "tiles": 99.44
+        }
+      },
+      "journey": "mid_climb_bootstrap_and_sustain",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 8.29,
+              "tiles": 49.72
+            }
+          },
+          "route_edges": [
+            "rt_south_seam",
+            "rt_amber_mere",
+            "rt_ember_mere",
+            "sp_poi_ember_piton_works"
+          ],
+          "seconds": 132.75,
+          "tiles": 796.53,
+          "to": "poi_ember_piton_works"
+        },
+        {
+          "from": "poi_ember_piton_works",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 8.29,
+              "tiles": 49.72
+            }
+          },
+          "route_edges": [
+            "sp_poi_ember_piton_works",
+            "rt_ember_mere",
+            "rt_crown_mere",
+            "rt_crown_buffer",
+            "site_link_src_crown_iron"
+          ],
+          "seconds": 136.46,
+          "tiles": 818.76,
+          "to": "src_crown_iron"
+        },
+        {
+          "from": "src_crown_iron",
+          "hazard_exposure": {},
+          "route_edges": [
+            "site_link_src_crown_iron",
+            "rt_crown_buffer",
+            "site_link_src_crown_reed"
+          ],
+          "seconds": 61.71,
+          "tiles": 370.25,
+          "to": "src_crown_reed"
+        },
+        {
+          "from": "src_crown_reed",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "site_link_src_crown_reed",
+            "rt_crown_buffer",
+            "rt_east_seam"
+          ],
+          "seconds": 103.89,
+          "tiles": 623.32,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_ember_piton_works",
+        "src_crown_iron",
+        "src_crown_reed",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "total_minutes": 7.25,
+      "total_seconds": 434.81,
+      "total_tiles": 2608.86
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.167,
+      "direct_tiles": 1126.27,
+      "end_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_thermal"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_thermal"
+          ],
+          "poi": "poi_frost_wardhouse"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        }
+      },
+      "journey": "mid_thermal_bootstrap_and_sustain",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "sp_poi_frost_wardhouse"
+          ],
+          "seconds": 95.41,
+          "tiles": 572.48,
+          "to": "poi_frost_wardhouse"
+        },
+        {
+          "from": "poi_frost_wardhouse",
+          "hazard_exposure": {},
+          "route_edges": [
+            "sp_poi_frost_wardhouse",
+            "site_link_src_frost_skarn"
+          ],
+          "seconds": 7.45,
+          "tiles": 44.72,
+          "to": "src_frost_skarn"
+        },
+        {
+          "from": "src_frost_skarn",
+          "hazard_exposure": {},
+          "route_edges": [
+            "site_link_src_frost_skarn",
+            "site_link_src_frost_resin"
+          ],
+          "seconds": 14.12,
+          "tiles": 84.72,
+          "to": "src_frost_resin"
+        },
+        {
+          "from": "src_frost_resin",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "site_link_src_frost_resin",
+            "rt_crown_frost",
+            "rt_east_seam"
+          ],
+          "seconds": 102.08,
+          "tiles": 612.48,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_frost_wardhouse",
+        "src_frost_skarn",
+        "src_frost_resin",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "total_minutes": 3.65,
+      "total_seconds": 219.07,
+      "total_tiles": 1314.41
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.396,
+      "direct_tiles": 1240.4,
+      "end_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_thermal"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_seal_2"
+          ],
+          "poi": "poi_ember_old_forge"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        },
+        "hz_ember_gas": {
+          "seconds": 53.94,
+          "tiles": 323.64
+        }
+      },
+      "journey": "mid_seal2_forge_run",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 3.66,
+              "tiles": 21.94
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "rt_frost_ember",
+            "sp_poi_ember_old_forge"
+          ],
+          "seconds": 120.94,
+          "tiles": 725.64,
+          "to": "poi_ember_old_forge"
+        },
+        {
+          "from": "poi_ember_old_forge",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 12.13,
+              "tiles": 72.8
+            }
+          },
+          "route_edges": [
+            "sp_poi_ember_old_forge",
+            "site_link_src_ember_copper"
+          ],
+          "seconds": 12.13,
+          "tiles": 72.8,
+          "to": "src_ember_copper"
+        },
+        {
+          "from": "src_ember_copper",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 23.31,
+              "tiles": 139.88
+            }
+          },
+          "route_edges": [
+            "site_link_src_ember_copper",
+            "site_link_src_ember_sulfur"
+          ],
+          "seconds": 23.31,
+          "tiles": 139.88,
+          "to": "src_ember_sulfur"
+        },
+        {
+          "from": "src_ember_sulfur",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 14.84,
+              "tiles": 89.02
+            }
+          },
+          "route_edges": [
+            "site_link_src_ember_sulfur",
+            "rt_frost_ember",
+            "rt_crown_frost",
+            "rt_east_seam"
+          ],
+          "seconds": 132.12,
+          "tiles": 792.72,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_ember_old_forge",
+        "src_ember_copper",
+        "src_ember_sulfur",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_thermal"
+      ],
+      "total_minutes": 4.81,
+      "total_seconds": 288.51,
+      "total_tiles": 1731.04
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.669,
+      "direct_tiles": 1921.84,
+      "end_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_stormward",
+        "cap_thermal"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_boat"
+          ],
+          "poi": "poi_saffron_drydock"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        },
+        "hz_ember_gas": {
+          "seconds": 32.25,
+          "tiles": 193.5
+        },
+        "hz_pearl_tide": {
+          "seconds": 13.2,
+          "tiles": 79.18
+        },
+        "hz_saffron_heat": {
+          "seconds": 0.17,
+          "tiles": 1.0
+        },
+        "hz_verdant_spore": {
+          "seconds": 66.26,
+          "tiles": 397.54
+        }
+      },
+      "journey": "mid_boat_bootstrap_and_sustain",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 16.93,
+              "tiles": 101.57
+            },
+            "hz_saffron_heat": {
+              "seconds": 0.17,
+              "tiles": 1.0
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "rt_frost_ember",
+            "rt_ember_coast",
+            "sp_poi_saffron_drydock"
+          ],
+          "seconds": 183.25,
+          "tiles": 1099.48,
+          "to": "poi_saffron_drydock"
+        },
+        {
+          "from": "poi_saffron_drydock",
+          "hazard_exposure": {
+            "hz_pearl_tide": {
+              "seconds": 13.2,
+              "tiles": 79.18
+            },
+            "hz_verdant_spore": {
+              "seconds": 34.01,
+              "tiles": 204.04
+            }
+          },
+          "route_edges": [
+            "sp_poi_saffron_drydock",
+            "rt_saffron_pearl",
+            "rt_verdant_pearl",
+            "site_link_src_verdant_hardwood"
+          ],
+          "seconds": 94.73,
+          "tiles": 568.41,
+          "to": "src_verdant_hardwood"
+        },
+        {
+          "from": "src_verdant_hardwood",
+          "hazard_exposure": {
+            "hz_verdant_spore": {
+              "seconds": 17.45,
+              "tiles": 104.72
+            }
+          },
+          "route_edges": [
+            "site_link_src_verdant_hardwood",
+            "site_link_src_verdant_sap"
+          ],
+          "seconds": 17.45,
+          "tiles": 104.72,
+          "to": "src_verdant_sap"
+        },
+        {
+          "from": "src_verdant_sap",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 15.32,
+              "tiles": 91.93
+            },
+            "hz_verdant_spore": {
+              "seconds": 14.8,
+              "tiles": 88.78
+            }
+          },
+          "route_edges": [
+            "site_link_src_verdant_sap",
+            "rt_ember_verdant",
+            "rt_ember_mere",
+            "rt_crown_mere",
+            "site_link_src_crown_reed"
+          ],
+          "seconds": 135.21,
+          "tiles": 811.28,
+          "to": "src_crown_reed"
+        },
+        {
+          "from": "src_crown_reed",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "site_link_src_crown_reed",
+            "rt_crown_buffer",
+            "rt_east_seam"
+          ],
+          "seconds": 103.89,
+          "tiles": 623.32,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_saffron_drydock",
+        "src_verdant_hardwood",
+        "src_verdant_sap",
+        "src_crown_reed",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_stormward",
+        "cap_thermal"
+      ],
+      "total_minutes": 8.91,
+      "total_seconds": 534.53,
+      "total_tiles": 3207.21
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.645,
+      "direct_tiles": 1806.95,
+      "end_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_tide_ward"
+          ],
+          "poi": "poi_pearl_stilt_village"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        },
+        "hz_ember_gas": {
+          "seconds": 32.42,
+          "tiles": 194.5
+        },
+        "hz_pearl_tide": {
+          "seconds": 34.28,
+          "tiles": 205.68
+        },
+        "hz_saffron_heat": {
+          "seconds": 0.17,
+          "tiles": 1.0
+        },
+        "hz_verdant_spore": {
+          "seconds": 66.26,
+          "tiles": 397.54
+        }
+      },
+      "journey": "late_tide_ward_run",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 16.93,
+              "tiles": 101.57
+            },
+            "hz_pearl_tide": {
+              "seconds": 10.71,
+              "tiles": 64.25
+            },
+            "hz_saffron_heat": {
+              "seconds": 0.17,
+              "tiles": 1.0
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "rt_frost_ember",
+            "rt_ember_coast",
+            "rt_saffron_pearl",
+            "sp_poi_pearl_stilt_village"
+          ],
+          "seconds": 217.91,
+          "tiles": 1307.45,
+          "to": "poi_pearl_stilt_village"
+        },
+        {
+          "from": "poi_pearl_stilt_village",
+          "hazard_exposure": {
+            "hz_pearl_tide": {
+              "seconds": 10.54,
+              "tiles": 63.25
+            }
+          },
+          "route_edges": [
+            "sp_poi_pearl_stilt_village",
+            "site_link_src_pearl_bed"
+          ],
+          "seconds": 10.54,
+          "tiles": 63.25,
+          "to": "src_pearl_bed"
+        },
+        {
+          "from": "src_pearl_bed",
+          "hazard_exposure": {
+            "hz_pearl_tide": {
+              "seconds": 13.03,
+              "tiles": 78.18
+            },
+            "hz_verdant_spore": {
+              "seconds": 34.01,
+              "tiles": 204.04
+            }
+          },
+          "route_edges": [
+            "site_link_src_pearl_bed",
+            "rt_verdant_pearl",
+            "site_link_src_verdant_hardwood"
+          ],
+          "seconds": 70.61,
+          "tiles": 423.68,
+          "to": "src_verdant_hardwood"
+        },
+        {
+          "from": "src_verdant_hardwood",
+          "hazard_exposure": {
+            "hz_verdant_spore": {
+              "seconds": 17.45,
+              "tiles": 104.72
+            }
+          },
+          "route_edges": [
+            "site_link_src_verdant_hardwood",
+            "site_link_src_verdant_sap"
+          ],
+          "seconds": 17.45,
+          "tiles": 104.72,
+          "to": "src_verdant_sap"
+        },
+        {
+          "from": "src_verdant_sap",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 15.49,
+              "tiles": 92.93
+            },
+            "hz_verdant_spore": {
+              "seconds": 14.8,
+              "tiles": 88.78
+            }
+          },
+          "route_edges": [
+            "site_link_src_verdant_sap",
+            "rt_ember_verdant",
+            "rt_frost_ember",
+            "rt_crown_frost",
+            "rt_east_seam"
+          ],
+          "seconds": 178.81,
+          "tiles": 1072.86,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_pearl_stilt_village",
+        "src_pearl_bed",
+        "src_verdant_hardwood",
+        "src_verdant_sap",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_stormward",
+        "cap_thermal"
+      ],
+      "total_minutes": 8.26,
+      "total_seconds": 495.33,
+      "total_tiles": 2971.97
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.636,
+      "direct_tiles": 1935.42,
+      "end_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_seal_3",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_seal_3"
+          ],
+          "poi": "poi_pearl_customs"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        },
+        "hz_ember_gas": {
+          "seconds": 33.86,
+          "tiles": 203.14
+        },
+        "hz_pearl_tide": {
+          "seconds": 113.42,
+          "tiles": 680.52
+        },
+        "hz_saffron_heat": {
+          "seconds": 0.33,
+          "tiles": 2.0
+        }
+      },
+      "journey": "late_seal3_customs_run",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 16.93,
+              "tiles": 101.57
+            },
+            "hz_pearl_tide": {
+              "seconds": 20.14,
+              "tiles": 120.81
+            },
+            "hz_saffron_heat": {
+              "seconds": 0.17,
+              "tiles": 1.0
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "rt_frost_ember",
+            "rt_ember_coast",
+            "rt_saffron_pearl",
+            "sp_poi_pearl_customs"
+          ],
+          "seconds": 227.34,
+          "tiles": 1364.02,
+          "to": "poi_pearl_customs"
+        },
+        {
+          "from": "poi_pearl_customs",
+          "hazard_exposure": {
+            "hz_pearl_tide": {
+              "seconds": 35.46,
+              "tiles": 212.77
+            }
+          },
+          "route_edges": [
+            "sp_poi_pearl_customs",
+            "site_link_src_pearl_abyss"
+          ],
+          "seconds": 35.46,
+          "tiles": 212.77,
+          "to": "src_pearl_abyss"
+        },
+        {
+          "from": "src_pearl_abyss",
+          "hazard_exposure": {
+            "hz_pearl_tide": {
+              "seconds": 36.58,
+              "tiles": 219.45
+            }
+          },
+          "route_edges": [
+            "site_link_src_pearl_abyss",
+            "site_link_src_pearl_bed"
+          ],
+          "seconds": 36.58,
+          "tiles": 219.45,
+          "to": "src_pearl_bed"
+        },
+        {
+          "from": "src_pearl_bed",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 16.93,
+              "tiles": 101.57
+            },
+            "hz_pearl_tide": {
+              "seconds": 21.25,
+              "tiles": 127.49
+            },
+            "hz_saffron_heat": {
+              "seconds": 0.17,
+              "tiles": 1.0
+            }
+          },
+          "route_edges": [
+            "site_link_src_pearl_bed",
+            "rt_saffron_pearl",
+            "rt_ember_coast",
+            "rt_frost_ember",
+            "rt_crown_frost",
+            "rt_east_seam"
+          ],
+          "seconds": 228.45,
+          "tiles": 1370.7,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_pearl_customs",
+        "src_pearl_abyss",
+        "src_pearl_bed",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "total_minutes": 8.8,
+      "total_seconds": 527.82,
+      "total_tiles": 3166.94
+    },
+    {
+      "combat_crafting_gathering_seconds": "NOT_TESTED",
+      "detour_ratio": 1.585,
+      "direct_tiles": 2588.17,
+      "end_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_deepward",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_seal_3",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "grants": [
+        {
+          "grants": [
+            "cap_deepward"
+          ],
+          "poi": "poi_verdant_root_lift"
+        }
+      ],
+      "hazard_exposure": {
+        "hz_crown_heat": {
+          "seconds": 21.56,
+          "tiles": 129.36
+        },
+        "hz_crown_rot": {
+          "seconds": 34.52,
+          "tiles": 207.14
+        },
+        "hz_ember_gas": {
+          "seconds": 61.95,
+          "tiles": 371.72
+        },
+        "hz_frost_ridge": {
+          "seconds": 78.38,
+          "tiles": 470.3
+        },
+        "hz_verdant_spore": {
+          "seconds": 39.19,
+          "tiles": 235.12
+        }
+      },
+      "journey": "late_deepward_root_lift_run",
+      "legs": [
+        {
+          "from": "node_refuge",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            },
+            "hz_ember_gas": {
+              "seconds": 15.49,
+              "tiles": 92.93
+            },
+            "hz_verdant_spore": {
+              "seconds": 4.8,
+              "tiles": 28.78
+            }
+          },
+          "route_edges": [
+            "rt_east_seam",
+            "rt_crown_frost",
+            "rt_frost_ember",
+            "rt_ember_verdant",
+            "sp_poi_verdant_root_lift"
+          ],
+          "seconds": 168.81,
+          "tiles": 1012.86,
+          "to": "poi_verdant_root_lift"
+        },
+        {
+          "from": "poi_verdant_root_lift",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 15.49,
+              "tiles": 92.93
+            },
+            "hz_frost_ridge": {
+              "seconds": 39.19,
+              "tiles": 235.15
+            },
+            "hz_verdant_spore": {
+              "seconds": 4.8,
+              "tiles": 28.78
+            }
+          },
+          "route_edges": [
+            "sp_poi_verdant_root_lift",
+            "rt_ember_verdant",
+            "rt_frost_ember",
+            "rt_frost_coast",
+            "site_link_src_frost_vug"
+          ],
+          "seconds": 155.54,
+          "tiles": 933.21,
+          "to": "src_frost_vug"
+        },
+        {
+          "from": "src_frost_vug",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 15.49,
+              "tiles": 92.93
+            },
+            "hz_frost_ridge": {
+              "seconds": 39.19,
+              "tiles": 235.15
+            },
+            "hz_verdant_spore": {
+              "seconds": 14.8,
+              "tiles": 88.78
+            }
+          },
+          "route_edges": [
+            "site_link_src_frost_vug",
+            "rt_frost_coast",
+            "rt_frost_ember",
+            "rt_ember_verdant",
+            "site_link_src_verdant_sap"
+          ],
+          "seconds": 165.54,
+          "tiles": 993.21,
+          "to": "src_verdant_sap"
+        },
+        {
+          "from": "src_verdant_sap",
+          "hazard_exposure": {
+            "hz_ember_gas": {
+              "seconds": 15.49,
+              "tiles": 92.93
+            },
+            "hz_verdant_spore": {
+              "seconds": 14.8,
+              "tiles": 88.78
+            }
+          },
+          "route_edges": [
+            "site_link_src_verdant_sap",
+            "rt_ember_verdant",
+            "rt_frost_ember",
+            "site_link_src_frost_skarn"
+          ],
+          "seconds": 90.85,
+          "tiles": 545.1,
+          "to": "src_frost_skarn"
+        },
+        {
+          "from": "src_frost_skarn",
+          "hazard_exposure": {
+            "hz_crown_heat": {
+              "seconds": 10.78,
+              "tiles": 64.68
+            },
+            "hz_crown_rot": {
+              "seconds": 17.26,
+              "tiles": 103.57
+            }
+          },
+          "route_edges": [
+            "site_link_src_frost_skarn",
+            "rt_crown_frost",
+            "rt_east_seam"
+          ],
+          "seconds": 102.87,
+          "tiles": 617.21,
+          "to": "node_refuge"
+        }
+      ],
+      "ok": true,
+      "sequence": [
+        "node_refuge",
+        "poi_verdant_root_lift",
+        "src_frost_vug",
+        "src_verdant_sap",
+        "src_frost_skarn",
+        "node_refuge"
+      ],
+      "start_caps": [
+        "cap_boat",
+        "cap_climb",
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1",
+        "cap_seal_2",
+        "cap_seal_3",
+        "cap_stormward",
+        "cap_thermal",
+        "cap_tide_ward"
+      ],
+      "total_minutes": 11.39,
+      "total_seconds": 683.6,
+      "total_tiles": 4101.6
+    }
+  ],
+  "outpost_logistics": [
+    {
+      "cell": [
+        56,
+        218
+      ],
+      "from_spawn_minutes": 0.0,
+      "from_spawn_tiles": 0.0,
+      "hub": "node_refuge",
+      "nearest_sites": [
+        {
+          "material": "timber",
+          "round_trip_minutes": 1.5,
+          "site": "src_amber_timber"
+        },
+        {
+          "material": "salvage",
+          "round_trip_minutes": 1.99,
+          "site": "src_crown_salvage"
+        },
+        {
+          "material": "iron",
+          "round_trip_minutes": 2.33,
+          "site": "src_crown_iron"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        392,
+        200
+      ],
+      "from_spawn_minutes": 0.93,
+      "from_spawn_tiles": 336.52,
+      "hub": "node_crown_east",
+      "nearest_sites": [
+        {
+          "material": "salvage",
+          "round_trip_minutes": 0.12,
+          "site": "src_crown_salvage"
+        },
+        {
+          "material": "iron",
+          "round_trip_minutes": 0.46,
+          "site": "src_crown_iron"
+        },
+        {
+          "material": "stone",
+          "round_trip_minutes": 0.49,
+          "site": "src_crown_tuff"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        300,
+        330
+      ],
+      "from_spawn_minutes": 1.63,
+      "from_spawn_tiles": 587.26,
+      "hub": "node_crown_south",
+      "nearest_sites": [
+        {
+          "material": "fibre",
+          "round_trip_minutes": 0.2,
+          "site": "src_crown_reed"
+        },
+        {
+          "material": "pearl",
+          "round_trip_minutes": 1.49,
+          "site": "src_mere_pearl"
+        },
+        {
+          "material": "salvage",
+          "round_trip_minutes": 1.51,
+          "site": "src_crown_salvage"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        80,
+        400
+      ],
+      "from_spawn_minutes": 0.51,
+      "from_spawn_tiles": 184.86,
+      "hub": "node_amber_north",
+      "nearest_sites": [
+        {
+          "material": "timber",
+          "round_trip_minutes": 0.47,
+          "site": "src_amber_timber"
+        },
+        {
+          "material": "rare_herb",
+          "round_trip_minutes": 1.75,
+          "site": "src_amber_herb"
+        },
+        {
+          "material": "rare_herb",
+          "round_trip_minutes": 1.77,
+          "site": "src_sunken_herb"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        170,
+        540
+      ],
+      "from_spawn_minutes": 1.16,
+      "from_spawn_tiles": 419.3,
+      "hub": "node_amber_south",
+      "nearest_sites": [
+        {
+          "material": "rare_herb",
+          "round_trip_minutes": 0.45,
+          "site": "src_amber_herb"
+        },
+        {
+          "material": "honey",
+          "round_trip_minutes": 0.56,
+          "site": "src_amber_honey"
+        },
+        {
+          "material": "rare_herb",
+          "round_trip_minutes": 1.65,
+          "site": "src_sunken_herb"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        360,
+        430
+      ],
+      "from_spawn_minutes": 1.47,
+      "from_spawn_tiles": 530.32,
+      "hub": "node_mirrormere",
+      "nearest_sites": [
+        {
+          "material": "pearl",
+          "round_trip_minutes": 0.28,
+          "site": "src_mere_pearl"
+        },
+        {
+          "material": "clay",
+          "round_trip_minutes": 0.4,
+          "site": "src_mere_clay"
+        },
+        {
+          "material": "reed_fibre",
+          "round_trip_minutes": 0.55,
+          "site": "src_mere_reed"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        380,
+        600
+      ],
+      "from_spawn_minutes": 1.91,
+      "from_spawn_tiles": 688.59,
+      "hub": "node_mere_south",
+      "nearest_sites": [
+        {
+          "material": "venom_sac",
+          "round_trip_minutes": 0.25,
+          "site": "src_fen_venom"
+        },
+        {
+          "material": "bog_iron",
+          "round_trip_minutes": 0.36,
+          "site": "src_fen_bogiron"
+        },
+        {
+          "material": "peat",
+          "round_trip_minutes": 0.5,
+          "site": "src_fen_peat"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        560,
+        180
+      ],
+      "from_spawn_minutes": 1.59,
+      "from_spawn_tiles": 572.48,
+      "hub": "node_frost",
+      "nearest_sites": [
+        {
+          "material": "frost_resin",
+          "round_trip_minutes": 0.22,
+          "site": "src_frost_resin"
+        },
+        {
+          "material": "glacial_iron",
+          "round_trip_minutes": 0.25,
+          "site": "src_frost_skarn"
+        },
+        {
+          "material": "sulfur",
+          "round_trip_minutes": 1.22,
+          "site": "src_ember_sulfur"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        800,
+        100
+      ],
+      "from_spawn_minutes": 2.62,
+      "from_spawn_tiles": 943.66,
+      "hub": "node_glasswind",
+      "nearest_sites": [
+        {
+          "material": "timber",
+          "round_trip_minutes": 0.25,
+          "site": "src_glass_timber"
+        },
+        {
+          "material": "storm_glass",
+          "round_trip_minutes": 0.56,
+          "site": "src_glass_storm"
+        },
+        {
+          "material": "aether_crystal",
+          "round_trip_minutes": 0.68,
+          "site": "src_frost_vug"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        580,
+        320
+      ],
+      "from_spawn_minutes": 2.02,
+      "from_spawn_tiles": 725.64,
+      "hub": "node_ember",
+      "nearest_sites": [
+        {
+          "material": "sulfur",
+          "round_trip_minutes": 0.37,
+          "site": "src_ember_sulfur"
+        },
+        {
+          "material": "copper",
+          "round_trip_minutes": 0.4,
+          "site": "src_ember_copper"
+        },
+        {
+          "material": "obsidian",
+          "round_trip_minutes": 0.7,
+          "site": "src_ember_obsidian"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        900,
+        420
+      ],
+      "from_spawn_minutes": 3.05,
+      "from_spawn_tiles": 1099.48,
+      "hub": "node_saffron",
+      "nearest_sites": [
+        {
+          "material": "salt",
+          "round_trip_minutes": 0.46,
+          "site": "src_saffron_salt"
+        },
+        {
+          "material": "copper",
+          "round_trip_minutes": 0.79,
+          "site": "src_saffron_copper"
+        },
+        {
+          "material": "fibre",
+          "round_trip_minutes": 0.8,
+          "site": "src_saffron_fibre"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        560,
+        560
+      ],
+      "from_spawn_minutes": 2.81,
+      "from_spawn_tiles": 1012.86,
+      "hub": "node_verdant",
+      "nearest_sites": [
+        {
+          "material": "hardwood",
+          "round_trip_minutes": 0.25,
+          "site": "src_verdant_hardwood"
+        },
+        {
+          "material": "rubber_sap",
+          "round_trip_minutes": 0.33,
+          "site": "src_verdant_sap"
+        },
+        {
+          "material": "venom_sac",
+          "round_trip_minutes": 0.56,
+          "site": "src_verdant_venom"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        800,
+        560
+      ],
+      "from_spawn_minutes": 3.63,
+      "from_spawn_tiles": 1307.45,
+      "hub": "node_pearl",
+      "nearest_sites": [
+        {
+          "material": "pearl",
+          "round_trip_minutes": 0.35,
+          "site": "src_pearl_bed"
+        },
+        {
+          "material": "abyssal_pearl",
+          "round_trip_minutes": 0.87,
+          "site": "src_pearl_abyss"
+        },
+        {
+          "material": "salt",
+          "round_trip_minutes": 1.61,
+          "site": "src_saffron_salt"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        120,
+        640
+      ],
+      "from_spawn_minutes": 1.28,
+      "from_spawn_tiles": 459.43,
+      "hub": "node_sunken",
+      "nearest_sites": [
+        {
+          "material": "rare_herb",
+          "round_trip_minutes": 0.25,
+          "site": "src_sunken_herb"
+        },
+        {
+          "material": "limestone",
+          "round_trip_minutes": 0.25,
+          "site": "src_sunken_lime"
+        },
+        {
+          "material": "bog_iron",
+          "round_trip_minutes": 1.14,
+          "site": "src_fen_bogiron"
+        }
+      ],
+      "region": null
+    },
+    {
+      "cell": [
+        340,
+        620
+      ],
+      "from_spawn_minutes": 1.79,
+      "from_spawn_tiles": 643.87,
+      "hub": "node_ashwater",
+      "nearest_sites": [
+        {
+          "material": "bog_iron",
+          "round_trip_minutes": 0.11,
+          "site": "src_fen_bogiron"
+        },
+        {
+          "material": "peat",
+          "round_trip_minutes": 0.25,
+          "site": "src_fen_peat"
+        },
+        {
+          "material": "venom_sac",
+          "round_trip_minutes": 0.5,
+          "site": "src_fen_venom"
+        }
+      ],
+      "region": null
+    }
+  ],
+  "playtime_claim": "NOT_TESTED",
+  "post_14d_goals": [
+    {
+      "after_day_equivalent": 14,
+      "day_equivalent_playtime": "NOT_TESTED",
+      "goal_id": "goal_tide_customs",
+      "poi": "poi_pearl_customs",
+      "reachable_with_late_caps": true,
+      "required_capabilities": [
+        "cap_boat",
+        "cap_seal_2",
+        "cap_tide_ward"
+      ],
+      "travel_minutes": 3.79,
+      "travel_tiles": 1364.02
+    },
+    {
+      "after_day_equivalent": 14,
+      "day_equivalent_playtime": "NOT_TESTED",
+      "goal_id": "goal_karst_dive",
+      "poi": "poi_sunken_cenote",
+      "reachable_with_late_caps": true,
+      "required_capabilities": [
+        "cap_deepward"
+      ],
+      "travel_minutes": 1.28,
+      "travel_tiles": 459.43
+    },
+    {
+      "after_day_equivalent": 14,
+      "day_equivalent_playtime": "NOT_TESTED",
+      "goal_id": "goal_fen_purification",
+      "poi": "poi_ashwater_pump",
+      "reachable_with_late_caps": true,
+      "required_capabilities": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_seal_2"
+      ],
+      "travel_minutes": 1.79,
+      "travel_tiles": 643.87
+    },
+    {
+      "after_day_equivalent": 14,
+      "day_equivalent_playtime": "NOT_TESTED",
+      "goal_id": "goal_storm_signal",
+      "poi": "poi_glasswind_light",
+      "reachable_with_late_caps": true,
+      "required_capabilities": [
+        "cap_seal_2"
+      ],
+      "travel_minutes": 2.99,
+      "travel_tiles": 1075.19
+    },
+    {
+      "after_day_equivalent": 14,
+      "day_equivalent_playtime": "NOT_TESTED",
+      "goal_id": "goal_canopy_lift",
+      "poi": "poi_verdant_root_lift",
+      "reachable_with_late_caps": true,
+      "required_capabilities": [
+        "cap_climb",
+        "cap_filter",
+        "cap_thermal"
+      ],
+      "travel_minutes": 2.81,
+      "travel_tiles": 1012.86
+    }
+  ],
+  "revisit_value": {
+    "long_run_goals": 5,
+    "poi_restock_policy": "outer caches restock; specimen vault one-time until world-state change",
+    "region_revisit_hooks": {
+      "r_amberwood": "Mill repair unlocks a plank route; old stored fruit becomes valuable after a fermentation recipe.",
+      "r_ashen_crown": "Re-open the four legacy shortcuts; learn seal/power grammar at the buffer waystation before leaving the quarter.",
+      "r_ashwater_fen": "Pump restoration changes safe channels; a bog-core specimen and a late-game purification loop.",
+      "r_ember_steppe": "Fumarole cycles open obsidian seams; restore the old forge to refine higher cores.",
+      "r_frost_crown": "Thaw-season veins, ice-cave cores and a high observatory that only powers after a thermal ward.",
+      "r_glasswind_coast": "Tide-gated wrecks and a storm-warded signal tower; revisit after cap_stormward.",
+      "r_mirrormere": "Drowned vault revealed by lowering a sluice; freshwater pearls and a ferry shortcut.",
+      "r_pearl_mangroves": "Abyssal pearls in tide-locked grottoes; a floating outpost earns its keep by shortening the return leg.",
+      "r_saffron_coast": "Caravan contracts, salt-pan harvesting after dry wind, and a harbor drydock for boats.",
+      "r_sunken_orchard": "Cenote diving after cap_deepward; a grafting puzzle revalues Amberwood cuttings.",
+      "r_verdant_fold": "Canopy temples, venom-core specimens and a root elevator opened by a living-wood puzzle."
+    },
+    "renewal_policies": [
+      "bed cooldown",
+      "dry-wind renewal",
+      "fauna respawn",
+      "finite flow",
+      "finite lens",
+      "finite outcrop, slow renewal",
+      "finite quarry",
+      "finite vein",
+      "finite vug",
+      "fumarole cycle",
+      "fumarole-cycle exposure",
+      "hive cooldown",
+      "plot or wild patch",
+      "regrowing stand",
+      "road cache restock",
+      "seasonal bed",
+      "seasonal regrowth",
+      "slow grove",
+      "slow redox renewal",
+      "storm-event placer",
+      "tapped grove",
+      "tapped stand cooldown",
+      "thaw-season vein",
+      "tidal placer",
+      "tide-gated bed",
+      "very slow cut"
+    ],
+    "resource_sites": 33
+  },
+  "scale_caveat": "POI count and ideal straight crossing do not prove fourteen-day depth; these are bounded travel/preparation estimates only.",
+  "schema": "soh.world.pacing_analysis.v1",
+  "status": "AUTHORED_ESTIMATE_NOT_PLAYTESTED",
+  "travel_model": {
+    "boat_speed": "NOT_AUTHORED; foot-equivalent lower bound used",
+    "route_polylines": "authored",
+    "site_links": "straight-line detour estimate to nearest hub",
+    "speed_px_s": 96.0,
+    "tile_px": 16
+  }
+}

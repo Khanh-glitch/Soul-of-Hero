@@ -16,6 +16,12 @@ ID = {"type": "string", "minLength": 1}
 CELL = {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}
 RECT = {"type": "array", "items": {"type": "integer"}, "minItems": 4, "maxItems": 4}
 CAPS = {"type": "array", "items": {"type": "string", "pattern": "^cap_[a-z0-9_]+$"}}
+RLE = {"type": "array", "minItems": 1, "items": {"type": "array", "items": {"type": "integer", "minimum": 0}, "minItems": 2, "maxItems": 2}}
+REQUIRED_LAYERS = ["region", "biome", "surface", "walk", "build", "build_permission", "hazard", "road", "preserved", "elevation_band"]
+LAYER_PROPS = {k: RLE for k in REQUIRED_LAYERS}
+LAYER_PROPS["build_permission"] = {"type": "array", "minItems": 1, "items": {"type": "array", "minItems": 2, "maxItems": 2, "items": [{"type": "integer", "enum": [0, 1, 2]}, {"type": "integer", "minimum": 1}]}}
+for k in ("walk", "build", "road", "preserved"):
+    LAYER_PROPS[k] = {"type": "array", "minItems": 1, "items": {"type": "array", "minItems": 2, "maxItems": 2, "items": [{"type": "integer", "enum": [0, 1]}, {"type": "integer", "minimum": 1}]}}
 
 SCHEMAS = {
 "region": s("region", "object", {
@@ -54,7 +60,9 @@ SCHEMAS = {
     ["route_id","from","to","polyline","mode","required_capabilities"]),
 "chunk": s("chunk", "object", {
     "schema":{"const":"soh.world.chunk.v1"}, "chunk_id":{"type":"string","pattern":"^chunk:[0-9]+:[0-9]+$"},
-    "origin":CELL, "size":CELL, "tile_px":{"const":16}, "layers":{"type":"object"}, "legend":{"type":"object"}},
+    "origin":CELL, "size":CELL, "tile_px":{"const":16},
+    "layers":{"type":"object", "properties":LAYER_PROPS, "required":REQUIRED_LAYERS, "additionalProperties":False},
+    "legend":{"type":"object"}},
     ["schema","chunk_id","origin","size","tile_px","layers","legend"]),
 "identity": s("identity", "object", {
     "world_id":ID, "region_id_pattern":{"type":"string"}, "poi_id_pattern":{"type":"string"}, "chunk_id_pattern":{"type":"string"},
@@ -66,8 +74,16 @@ SCHEMAS = {
     "biomes":{"type":"object"}, "materials":{"type":"object"}, "capabilities":{"type":"object"}, "hazards":{"type":"array"},
     "rivers":{"type":"array"}, "lakes":{"type":"array"}, "pois":{"type":"array"}, "route_graph":{"type":"object"},
     "resource_sites":{"type":"array"}, "resource_nodes":{"type":"array"}, "long_run_goals":{"type":"array"},
-    "chunk_manifest":{"type":"array"}, "metrics":{"type":"object"}, "identity_contract":{"type":"object"}, "integration":{"type":"object"}},
-    ["schema","world_id","status","frame","legacy_inset","starter_quarter","regions","pois","route_graph","resource_nodes","chunk_manifest","metrics","identity_contract","integration"]),
+    "chunk_manifest":{"type":"array"}, "metrics":{"type":"object"}, "identity_contract":{"type":"object"}, "integration":{"type":"object"},
+    "layer_semantics":{"type":"object"}},
+    ["schema","world_id","status","frame","legacy_inset","starter_quarter","regions","pois","route_graph","resource_nodes","chunk_manifest","metrics","identity_contract","integration","layer_semantics"]),
+"reader_contract": s("reader_contract", "object", {
+    "schema":{"const":"soh.world.reader_contract.v1"}, "world_id":ID, "plan_sha256":{"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "frame":{"type":"object"}, "legacy_inset":{"type":"object"}, "chunk_size":{"type":"integer","const":64},
+    "required_layers":{"type":"array","items":{"type":"string"},"minItems":10,"maxItems":10},
+    "layer_semantics":{"type":"object"}, "sample_cells":{"type":"object"}, "legacy_delegate_contract":{"type":"object"},
+    "native_playable":{"const":False}},
+    ["schema","world_id","plan_sha256","frame","legacy_inset","chunk_size","required_layers","layer_semantics","sample_cells","legacy_delegate_contract","native_playable"]),
 }
 
 if __name__ == "__main__":

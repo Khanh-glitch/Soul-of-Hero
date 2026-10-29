@@ -41,3 +41,10 @@ Pinned metadata/source/license files were fetched into `.arena/research/` during
 ## License compliance statement
 
 No third-party source code, textures, audio, or generated art from the researched repositories is committed in this milestone. If A0/A5 later adapt MIT code, preserve the MIT notice. If any GDQuest art is ever imported, add CC-By 4.0 attribution to “GDQuest and contributors (https://www.gdquest.com/)”. Eden and Herbak remain reference-only because no license was found.
+
+## Review-correction engine acquisition / fixture provenance (2026-10-29)
+
+- Godot 4.7 Linux release asset download remained blocked by `release-assets.githubusercontent.com` SSL failure. No substitute engine version was used and no native result is claimed from the local sandbox.
+- PyPI probes (`godot-binary`, `godot-engine`, `godot_bin`, `godot`) found no Godot engine binary; `godot` is an unrelated Python DOT-language package. It was rejected as an engine source.
+- The A1-owned CI fixture uses the repository's existing `chickensoft-games/setup-godot@v2` action at version `4.7.0`, matching the existing survival/overworld workflows. The fixture project and reader/test scripts are original A1 work, not third-party code.
+- The isolated reader fixture is read-only and does not import Godot procedural-generation demo assets, Azgaar code, Eden code, or any unlicensed source. Existing research reuse/reject decisions remain unchanged.

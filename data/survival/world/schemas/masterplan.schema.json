@@ -29,6 +29,9 @@
     "lakes": {
       "type": "array"
     },
+    "layer_semantics": {
+      "type": "object"
+    },
     "legacy_inset": {
       "type": "object"
     },
@@ -87,7 +90,8 @@
     "chunk_manifest",
     "metrics",
     "identity_contract",
-    "integration"
+    "integration",
+    "layer_semantics"
   ],
   "title": "masterplan",
   "type": "object"

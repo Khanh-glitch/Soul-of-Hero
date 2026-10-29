@@ -1,0 +1,62 @@
+{
+  "$id": "soh://world/reader_contract.v1.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "properties": {
+    "chunk_size": {
+      "const": 64,
+      "type": "integer"
+    },
+    "frame": {
+      "type": "object"
+    },
+    "layer_semantics": {
+      "type": "object"
+    },
+    "legacy_delegate_contract": {
+      "type": "object"
+    },
+    "legacy_inset": {
+      "type": "object"
+    },
+    "native_playable": {
+      "const": false
+    },
+    "plan_sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "required_layers": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 10,
+      "type": "array"
+    },
+    "sample_cells": {
+      "type": "object"
+    },
+    "schema": {
+      "const": "soh.world.reader_contract.v1"
+    },
+    "world_id": {
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "schema",
+    "world_id",
+    "plan_sha256",
+    "frame",
+    "legacy_inset",
+    "chunk_size",
+    "required_layers",
+    "layer_semantics",
+    "sample_cells",
+    "legacy_delegate_contract",
+    "native_playable"
+  ],
+  "title": "reader_contract",
+  "type": "object"
+}

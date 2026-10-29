@@ -1,4 +1,11 @@
 {
+  "a0_item_hints": {
+    "fibre": "reed_fibre",
+    "iron": "iron_scrap",
+    "salvage": "iron_scrap",
+    "stone": "stone_chunk",
+    "timber": "oak_wood"
+  },
   "materials": {
     "abyssal_pearl": [
       "ecological",
@@ -3122,7 +3129,7 @@
       "status": "CONTRACT_NOT_SPAWNED"
     }
   ],
-  "note": "material_key is a contract, not a final A3 item_id",
+  "note": "material_key is a contract, not a final A3 item_id. a0_item_hints are legacy survival aliases only; A3 owns final mapping, yields, recipes and prices.",
   "poi_consumers": [
     {
       "material_keys": [
@@ -4452,5 +4459,6 @@
       ],
       "site_id": "src_ember_basalt"
     }
-  ]
+  ],
+  "status": "AUTHORED_CONTRACT_NOT_A3_INTEGRATED"
 }
