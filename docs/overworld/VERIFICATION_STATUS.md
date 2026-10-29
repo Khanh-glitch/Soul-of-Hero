@@ -467,3 +467,68 @@ at 50 % — because the previous two passes each fixed one scale and broke the o
   are no ridges, valleys or buttress masses at the scale of the terrain itself. That
   is a level-design change, not a tile change, and is out of scope for this pass.
 - Camps are unchanged.
+
+## Seventh pass — the four camps
+
+Camps were the one art item never touched. Reviewed at native scale first, and each
+had the same two defects: an object that read as a slab, and props scattered across
+ground the camp did not own.
+
+### The hearth was a paving slab
+
+Four hand-authored patches painted a 5×3 **rectangle of gravel** under each camp
+fire. Straight edges, one flat tone, in the middle of a dirt clearing: it read as a
+slab dropped on the camp. Removed; hearths are now procedural in `author.py` —
+a noisy disc of gravel and a wider, thinner drift of ash (`z`), both placed by
+ellipse with per-cell noise so the rim is where people stood rather than where a
+rectangle ended.
+
+The four patches were also centred on the *camp*, not on its fire, so at Watch Ridge
+and Relay Foot the gravel sat beside the flames rather than under them. The procedural
+hearth takes the fire's own tile.
+
+### The camp did not own its ground
+
+`paint_scatter` filled camp clearings with whatever the surrounding region scatters —
+twenty-four boulders and several wall stubs inside Watch Ridge, grave markers inside
+Ashen Refuge. Camps now reserve a 13×10 zone in the scatter pass. This is the
+difference between a place someone made and a camp someone dropped into a rockfield.
+
+### The road ran through the middle
+
+Three camps sit on the road network. Their paving overlays are hard-edged, so a
+rectangle of paving appeared inside each clearing. Inside the camp the paving now
+degrades to footpath (`:`), fully at the centre and partially at the rim, and each
+camp has a worn approach path out to the nearest road. From outside, the road still
+runs up to the camp; inside, the camp is a place, not a junction.
+
+### Material boundaries, world-wide
+
+Every ground material met every other on a tile edge, so a clearing, a forest floor
+and a riverbank all ended in a 16 px staircase — the reason a camp read as dropped on
+the terrain rather than standing in it. `feather_boundaries()` dithers every material
+junction on a coherent noise field (4 326 cells this bake), letting the two materials
+interpenetrate over one to two tiles. Water and cells carrying road/path/plaza
+overlays are excluded: a bank and a lane have to stay legible.
+
+### Watch Ridge
+
+The camp's premise is "a brazier and a windbreak facing outward", and it had two
+loose stones and a second camp fire four tiles outside the clearing. It now has a
+five-segment windbreak wall with the brazier behind it, a seat-side cluster, and one
+fire.
+
+### Verified
+
+All four camps re-rendered at native 2x after every change; the world overview
+re-rendered at 50 % to check the feathering did not turn the map into speckle. Gates:
+`ART QUALITY PASSED - 19 families`, `patch check passed`, `OVERWORLD TOPOLOGY
+VALIDATION PASSED`, and the static-contract job green on CI.
+
+### Still open
+
+- Camps are sparse in the middle: the props cluster at the edges and the centre of a
+  large clearing is bare ground. More camp furniture (benches, stacked firewood, a
+  wash line) is the obvious next step and needs new prop art, not new placement.
+- The hearth gravel is still tile-quantised at its edge. It reads as a hearth now,
+  but it would read better with a dedicated edge tile set.

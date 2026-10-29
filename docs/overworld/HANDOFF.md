@@ -11,8 +11,8 @@ from a green exit code.
 | Item | Value |
 | --- | --- |
 | Branch | `arena/54306b59-soul-of-hero` (only branch written to; `main` untouched) |
-| HEAD | tip of `arena/54306b59-soul-of-hero`; the verified content state is `a00e837f` |
-| Verified | run `40692926869` — all three jobs green (15/15 PNGs, frame report published); browser playtest run `40692926892` green. Commits after `a00e837f` are documentation, and this workflow ignores `docs/**` |
+| HEAD | tip of `arena/54306b59-soul-of-hero`; the last content state with the static-contract job green is `3d3f0c18` |
+| Verified | static contracts green on `3d3f0c18`; VISUAL EVIDENCE green on `0712fb4d`; NATIVE RUNTIME has been red since `8be364c` on `main` too — see section H, it is an upstream defect, not a regression here |
 | Playable | <https://khanh-glitch.github.io/Soul-of-Hero/> (Web export, Chromium smoke-tested before publish) |
 | Base | `5214788933b1a827f3a177d11ff486433dfe5e8a` (`main`) |
 | Engine | Godot `4.7.stable.custom_build`, built from source in-sandbox (scons 4.11.1 + local `pkg-config` shim) |
@@ -372,3 +372,52 @@ Still open, and named rather than hidden:
   pass or removal.
 - L10's approach plaza is still wide and empty in the native frame.
 - Camps, water margins and the L01–L05 approaches are unchanged this pass.
+
+## Fourth pass — cliff mass, camps, and a CI lesson
+
+### Art
+
+- **Cliff mass.** The buttress decal that "read as a slab" was five attempts and one
+  diagnosis: every attempt drew an elevation with a silhouette on a surface seen from
+  above. A ledge with a shadow underneath, a lit flank, a ragged rim, a flat
+  rectangle, a soft blob — each failed for a version of the same reason. The working
+  form is a full-tile patch whose alpha falls to nothing at its edge, placed at ~30 %
+  density with a half-tile jitter so neighbours overlap. Some patches are darker than
+  the rock and some lighter; when every patch was lighter, an isolated one composited
+  as a lit dome.
+- **Camps** got their first art pass: procedural hearths instead of four gravel
+  rectangles, a reserved scatter zone so a camp owns its footprint, road paving that
+  degrades to footpath inside a clearing, an approach path to the nearest road, and a
+  real windbreak at Watch Ridge.
+- **Material boundaries** world-wide are dithered over one to two tiles instead of
+  meeting on a tile edge. This is the change that most improved how camps sit in the
+  terrain, and it applies to every clearing, bank and forest edge in the world.
+
+### What actually went wrong in CI, and what now prevents it
+
+Six red runs, three distinct causes, all in the same family: **GDScript is stricter
+than any published grammar check**.
+
+1. `var names` twice in one function — locals are function-scoped.
+2. `var x := abs(...)` — `abs` is the Variant overload, so `:=` cannot infer.
+3. `var layers_file` twice in one function, in scopes that overlap.
+
+Each read as "step 8 failed" because the log lives behind a host this tooling cannot
+read, and a script that will not compile exits in under a second without reaching a
+single assertion. Three things changed:
+
+- The parse gate now loads **test scripts too**, one at a time, and annotates the
+  failing file and the offending line. Tests were the gap: nothing compiled them
+  until the step that ran them.
+- The static-contract step re-emits `SCRIPT ERROR` / `Parse Error` /
+  `OW_STATIC_FAIL` lines as annotations, and `_expect` emits its own.
+- `tools/overworld/gd_scope_check.py` runs locally in the suite and catches the
+  overlapping-scope class in a second, calibrated against this repository's green
+  code (disjoint sibling blocks are legal and common; nested ones are not).
+
+### Still open
+
+- Cliff-scale landform: the mass is mottled but regionally uniform. Level design, not
+  tiles.
+- Camps are sparse in the middle; new furniture art needed.
+- L10 approach plaza, far south-west field, marsh overlay variety.
