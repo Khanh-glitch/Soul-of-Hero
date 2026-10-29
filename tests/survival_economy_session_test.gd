@@ -183,6 +183,23 @@ func _body() -> void:
 	var cancel_start: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
 	var cancel_id := String(cancel_start.get("job_id", ""))
 	_expect(bool(cancel_start.get("ok", false)) and _count("reed_fibre") == 0, "second job reserves remaining inputs")
+	# Extra fibre is a test fixture for the multi-job capacity/FIFO adversary.
+	_expect(_give("reed_fibre", 9), "fixture fibre for queue capacity and fairness")
+	var queued_two: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var queued_three: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	var id_two := String(queued_two.get("job_id", ""))
+	var id_three := String(queued_three.get("job_id", ""))
+	var rejected_four: Dictionary = host.call(&"queue_recipe", "weave_cloth", bench)
+	_expect(bool(queued_two.get("ok", false)) and bool(queued_three.get("ok", false)) and String(rejected_four.get("reason", "")) == "queue_full" and _count("reed_fibre") == 3, "physical workbench enforces capacity without consuming rejected inputs")
+	var fairness_deadline := Time.get_ticks_msec() + 10000
+	var queued_jobs: Dictionary = host.call(&"jobs")
+	while Time.get_ticks_msec() < fairness_deadline and int((queued_jobs.get(cancel_id, {}) as Dictionary).get("elapsed", 0)) == 0:
+		await process_frame
+		queued_jobs = host.call(&"jobs")
+	_expect(int((queued_jobs.get(cancel_id, {}) as Dictionary).get("elapsed", 0)) > 0 and int((queued_jobs.get(id_two, {}) as Dictionary).get("elapsed", -1)) == 0 and int((queued_jobs.get(id_three, {}) as Dictionary).get("elapsed", -1)) == 0, "active ticks serve oldest job first, not every job simultaneously")
+	for queued_id: String in [id_two, id_three]:
+		_expect(bool((host.call(&"cancel", queued_id) as Dictionary).get("ok", false)) and bool((host.call(&"collect", queued_id) as Dictionary).get("ok", false)), "cancel queued capacity fixture and recover reserved fibre")
+	_expect(_count("reed_fibre") == 9, "capacity-test refunds conserve both reserved inputs")
 	_expect(bool(_save().call(&"patch_state_path", ["survival", "structures", bench, "station_enabled"], false)), "disable persisted placed station")
 	_expect(await _wait_job(host, cancel_id, "paused", 5.0), "disabled station pauses actual queued job")
 	var disabled_before: Dictionary = (host.call(&"jobs") as Dictionary).get(cancel_id, {})
@@ -196,8 +213,8 @@ func _body() -> void:
 	_expect(bool(svc.call(&"remove_structure", bench)), "station can be removed with escrow preserved")
 	await process_frame
 	_expect(bool((host.call(&"cancel", cancel_id) as Dictionary).get("ok", false)), "removed station job can be cancelled")
-	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 3, "cancelled removed-station escrow returns once")
-	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 2 and _count("reed_fibre") == 3, "production and returned inputs survive save reload")
+	_expect(bool((host.call(&"collect", cancel_id) as Dictionary).get("ok", false)) and _count("reed_fibre") == 12, "cancelled removed-station escrow returns once")
+	_expect(bool(_save().call(&"reload_save")) and _count("binding_cloth") == 2 and _count("reed_fibre") == 12, "production and returned inputs survive save reload")
 	# One-process simulated interruption, not an OS kill or a power-loss test.
 	for boundary: String in ["after_temporary", "after_backup", "after_primary_removed", "after_primary_renamed"]:
 		_expect(_give(WOOD, 6) and _give(IRON, 2), "prepare fault case " + boundary)
