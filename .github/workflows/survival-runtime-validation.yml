@@ -399,6 +399,22 @@ jobs:
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
 
+      - name: Full bag and chest harvest rollback (fixture, native)
+        if: ${{ !cancelled() }}
+        run: |
+          mkdir -p artifacts/ud_capacity
+          set +e
+          timeout --signal=TERM --kill-after=15s 180s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 \
+              --audio-driver Dummy --user-data-dir artifacts/ud_capacity \
+              --resolution 960x540 --windowed --script res://tests/survival_full_capacity_test.gd >"$ARTIFACT_DIR/survival-capacity.log" 2>&1
+          rc=$?
+          cat "$ARTIFACT_DIR/survival-capacity.log"
+          echo "::notice::full-capacity exit=$rc $(grep -E 'SURVIVAL FULL CAPACITY|  FAIL  |SCRIPT ERROR|Parse Error' "$ARTIFACT_DIR/survival-capacity.log" | tail -12 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/survival-capacity.log" "Full capacity" "SURVIVAL FULL CAPACITY PASSED"
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+
       - name: Death transaction interruption boundaries (native)
         run: |
           mkdir -p artifacts/ud_death_faults

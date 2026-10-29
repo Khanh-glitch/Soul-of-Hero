@@ -848,9 +848,15 @@ func _open_shortcut_count() -> int:
 	return count
 
 
-func _say(text: String) -> void:
+## Resource-node descendants discover this host via their ancestor chain.
+## Keep harvest success and full-pack feedback on the existing overworld HUD.
+func show_prompt(text: String, seconds := 3.0) -> void:
 	if hud != null:
-		hud.show_prompt(text)
+		hud.show_prompt(text, seconds)
+
+
+func _say(text: String) -> void:
+	show_prompt(text)
 	travel_prompt.emit(text)
 
 
