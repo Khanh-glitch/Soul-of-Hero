@@ -1266,6 +1266,18 @@ def paint_scatter():
             if depth < 4:
                 continue
             r = h01(929, x, y)
+            if depth < 7:
+                # A 44 px patch is sized for the great mass, not for a wall two cells
+                # thick: on a lattice of one-cell walls the patches overlap into a
+                # continuous smooth grey smear over ground they do not belong to,
+                # which looked worse than the flat tile it replaced. Thin walls carry
+                # fractures instead - they are a couple of pixels wide and read as
+                # cracks in a wall rather than as weather over a field.
+                if r < 0.055:
+                    try_add("cliff_crack_a", x, y)
+                elif r < 0.085:
+                    try_add("cliff_crack_b", x, y)
+                continue
             # Density is what turns a scatter of blobs into one mottled surface.
             # At ~15 % the patches were separated islands on a flat field; a rock
             # mass read from above is *continuously* mottled, so the wet ~55 % of
@@ -1968,7 +1980,11 @@ def paint_paved_wear():
     of a door does not want a gradient on it.
     """
     from collections import deque
-    paved_codes = "fdg"
+    # Flagstone only. Gravel and dirt are *already* textured by their own tiles, and a
+    # flat pale wash on top of them does not read as wear - it reads as a smear, which
+    # is exactly how the first version turned a gravel crossing into a smooth grey
+    # blob. Worn paving is a property of laid stone.
+    paved_codes = "f"
 
     def walkable_paved(x, y):
         return ((get(solid, x, y) or "") == "."

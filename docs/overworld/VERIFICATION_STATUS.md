@@ -764,6 +764,22 @@ through. They are now in `SOLID_PROP_PREFIXES` with the tents and carts; all fou
 clearings still pass the bake's reachability gate and the topology validator, so no
 piece of furniture is standing in an approach lane.
 
+### Two corrections to the worn-paving pass
+
+Both found by rendering a station nobody had looked at — `road_terrain` at (150, 170),
+which is in the native capture list and had never been reviewed.
+
+* **Thin walls take fractures, not patches.** A 44 px patch is sized for the great
+  mass. On the lattice of one-cell walls north of the crossroads the patches overlap
+  into a continuous smooth grey smear over ground they do not belong to — worse than
+  the flat tile they replaced. Walls under seven enclosed neighbours now carry cracks
+  (a couple of pixels wide, read as fractures in masonry) and no patches.
+* **Worn paving is flagstone only.** Gravel and dirt already have texture from their
+  own tiles, and a flat pale wash over them does not read as wear; it reads as a
+  smear. The first version put 3368 cells of wash over `f`, `d` *and* `g`, which
+  flattened the gravel crossing at the crossroads into a grey blob. Restricted to laid
+  stone: 669 cells, and the flagstone plazas keep the effect.
+
 ### Still open
 
 - The large paved fields still read as fields. The worn washes and the pebble trim give
