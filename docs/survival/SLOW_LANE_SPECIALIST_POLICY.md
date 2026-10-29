@@ -1,43 +1,50 @@
-# SOH — Six Actual AI Slots, Including One Scarce High-Reasoning Specialist
-**2026-10-29. Latest user resource correction — supersedes the earlier 9-agent and A9-extra-capacity interpretations.**
-**Design staffing plan, not proof that five more agents have started.**
+# SOH — Six physical AI slots (two already active) + nonblocking specialist policy
+**2026-10-29 latest user correction. THIS OVERRIDES earlier A9 visual-lab/S6 drawing assumptions.**
 
-The user has **approximately SIX AI agents/models total**. The first already-commissioned agent is **A0**, who completed SURV-010 and is running SURV-020. A0 currently implements construction work historically labeled "A2"; that DOES NOT mean a separate A2 agent is active. Only one bot is confirmed active from the user's dispatch history.
+## Confirmed staffing truth and current limitations
 
-The special very strong model is **ONE OF THESE SIX**, not a bonus seventh/ninth AI. Its available tokens are quickly exhausted, causing tiny sporadic output and repeated manually resumed sessions. “Long-duration” refers to **calendar spread and interruptions**, NOT continuous huge work, high throughput or extra agent capacity.
+The user has approximately **6 AI total**. Already commissioned:
+- **Slot 1 — A0 Integration & Construction/SURV-020:** the first agent, finished SURV-010 native scope, now doing SURV-020 in Draft PR #11. "A2" denotes construction responsibility; a second A2 agent is not confirmed.
+- **Slot 2 — A4 GOLD VFX IMPORT/PORT:** a pre-existing, independently commissioned agent from **before** the survival-redevelopment plan. Its mandate is to import user-authored external/Cocos-side combat VFX into an actionable source-faithful in-game skill library *ahead of demand*, including exact original Gold effect behavior, enemy impacts, world/terrain FX and timing, native runtime and honest parity. **Do not replace or re-prompt its active work.** User reports it is running. Git snapshots `feature/gold-venom-arcana-factory-20261028` and `feature/gold-93-skill-readiness-20261028` contain Godot-focused code/CI at 2026-10-28 snapshots; current Cocos-side pipeline progress is **NOT independently verified**. No Git branch of the reported agent was identified beyond those snapshots.
 
-## Six real slots — compact staffing allocation
+**This leaves approximately FOUR physical AI slots.** Slots in the table are proposed allocation; don't mark new agents RUNNING until the user sends the prompt and/or they push actual results.
 
-| Physical slot | Workstream / prior labels | Start/throughput requirement | Practical ownership |
-| --- | --- | --- | --- |
-| **1: A0 — already active** | Integration, real SaveService, SURV-020 construction (also performs A2 duties), game native CI & merges | In progress; DO NOT reassign or reset | CT-02/03/07 integrations, cross-agent merge and contract authority |
-| **2: A1** | Full-continent World & POI planning (also covers A5 design interfaces) | Dedicated regular-throughput capable model; start now if available | CT-01/02/06 + POI ecology, route and map grammar; A5 runtime later coordinated |
-| **3: A3** | Resource economy, crafting, research, farming; economic test harness (absorbs parts of A7) | Regular-throughput; start now | CT-03/04/05/06; real catalog, station/recipe graph and balance fixtures |
-| **4: A4** | Gold VFX source-faithful Core/Skill integration | Regular-throughput precision model; start now | CT-10, native differential/charge contract; cannot wait for rare slow model |
-| **5: A6** | Survival UI/UX, pixel clarity, asset/third-party source due diligence (absorbs A8 for visual assets) | Regular-throughput; start now | UI new owned paths, Codex, build feedback; each agent also audits licenses of imported code |
-| **6: SPECIAL S6** | **Independent optional Masterpiece Visual R&D**; previously misleadingly called "A9" | Can make a tiny, irregular contribution and run out of tokens without blocking anyone | Single outstanding environment/landmark visual micro-commission at a time, optional, handoff-safe |
+| Slot | Workstream | Staffing/prerequisites |
+| --- | --- | --- |
+| 1 | A0 Integration + Construction, SaveService & reviewed merge | **ACTIVE**; don't modify its in-flight PR #11 |
+| 2 | A4 Pre-existing Gold library VFX source-parity port | **ACTIVE, USER REPORTED**; protected original Gold workstream |
+| 3 | A1 World & Region/POI geography | READY; consistent throughput, owns complete continent masterplan |
+| 4 | A3 Economy/Crafting/Research & **physical Core item/recipe economics** | READY; persistent knowledge, charges/recipe catalog; no duplicate VFX implementation |
+| 5 | A6 Survival UI/HUD, pixel clarity & asset/source due diligence | READY; use independent UI paths; no A0 construction HUD overwrite |
+| 6 | **S6 / A5-DEEP — POI dependency/encounter design R&D** | READY OPTIONAL; scarce powerful model, little output each quota window, never any critical path |
 
-**Six slots total, not A0 + six prepared Issues + A9.** Numbered role labels A2/A5/A7/A8 describe **workstreams and contracts**, not automatically separate AI. The existing issues #12–#17 and branches remain as correctly scoped **task packets**, not evidence six other physical bots exist. In a six-slot allocation: #12 A1, #13 A3, #14 A4, #15 A6. Issue #16 QA work is split between A0's independent code review, A3's automated balance harness and cross-agent reviewer; #17 source/license work is a per-agent duty, with A6 leading art/UI provenance. These two issues may remain open as backlogs but should **NOT** be simultaneously staffed as additional AI. A0 remains integration reviewer; an implementing agent never alone certifies full product PASS.
+A5-DEEP is a **specialized occasional designer**, not a seventh agent. This slot replaces the earlier A9 'invent some visual masterpieces' proposal: the user rightly rejected ungrounded decorative busywork. Its task is based on a real coverage weakness in the original Atlas: **the deep internal design of one memorable multi-stage POI**, linking access cards, power sources, environmental risk, bosses, valuable loot, research knowledge and multiple travel paths. See Atlas POI-05/08/09/10, DEP-03/04/05/31 and JOURNEY-11/12; use one coherent facility without pretending to copy an exact 2019 map.
 
-## Special S6 requirements (hard gates)
+## Why A5-DEEP merits a superior reasoning model
+A good multilayer POI isn't merely a map or artwork. It must reconcile world geography/architecture, card and circuit state, threat visibility, early discoveries, role-based tactical Skill Core interactions, economic tradeoffs, failure and retreat/reentry, persisted state, plausible history and 2D art/level readability. Its mission/lock graph must avoid softlocks and support non-linear player strategy; both runtime and balance remain other agents' domains. Research in graph-based dungeon dependencies (e.g. `amidos2006/GraphDungeonGenerator` mission graph/geometry separation; academic controllable lock/key graph design), but inspect real source and license before code reuse.
 
-1. **Worth exceptional reasoning/visual intelligence.** Hard art-direction/composition or precisely scoped stand-alone visual technical research; not boilerplate auditing or an everyday code module.
-2. **Zero critical-path dependency.** A0, A1, A3, A4, A6 and all release paths continue with existing/baseline assets and contracts even if S6 never completes. No agent waits for S6 to define map sizes, recipe tables, Gold source, art pipeline or final integration.
-3. **Tiny atomic units, calendar-long spread.** One ambitious but isolated micro-commission decomposed into meaningful checkpoint-sized pieces. Interrupted or token-exhausted sessions are routine and safe.
-4. **No real-world background promise.** Resumption must be explicitly initiated by user. The next session reads committed `BRIEF.md`, `STATE.json`, `WORKLOG.md`, input and current artifact and performs the next smallest validated step; checkpoint if token runs out.
-5. **Only optional sidecar output**, never touching production files while incomplete: `prototypes/survival/special_visual_lab/<piece_id>/**`, `docs/survival/special_visual_lab/**`. Release/traversal/QA must not depend on it.
-6. **Source license and fidelity preserved**; don't redraw Gold original effects and label them as native parity.
+**Critical-path firewall:**
+- A1 authors the entire continent, 21 POI archetypes and planned route/resource graph **independently** of A5-DEEP; A5 chooses one already-known archetype for an optional exemplar, not the world's entire POI architecture.
+- A3 authors the economy/keys/craft recipe contracts; it doesn't wait for the exemplar.
+- A4 Gold ports source skills; A5 cannot edit the port or redefine the skill catalog.
+- A0 owns runtime scene/SaveService/POI integration. Do not block construction or future playable POI implementation waiting for A5.
+- A6 handles general POI/UI look and feel without relying on A5's bespoke concept.
+- If this slot stops indefinitely, the game still progresses and ships using ordinary POI content. **A5 deliverables are exceptional additive enhancements ONLY, never mandatory schema/engine gates.**
 
-### Example first isolated micro-commission (NOT YET DISPATCHED)
+**Micro-work protocol for short token windows:** On each session choose ONE self-contained action, make a small durable commit, write last completed step/next atomic step/risks in `docs/survival/poi_deep_lab/STATE.json` and LOG.md. Do not promise background work. Never leave another agent waiting. Possible increments:
+1. Select one meaningful original POI archetype and explicit constraints, source/date and why it matters.
+2. Draw and validate 8–15 room/mission nodes and 2+ viable progression routes.
+3. Encode credential + independent power + hazard state machine and softlock counterexamples.
+4. Design combat telegraphs/terrain-Core affordances and boss route tradeoffs.
+5. Specify loot/research rewards, farming/repair economy and persistent resets.
+6. Art/room readability guidance, player journeys and tabletop adversarial checks.
+7. Final stand-alone exemplar package and authoring handoff; only then possible adoption into production after A0/A1 approval.
 
-Design one visually exceptional top-down pixel-art exterior/landmark study for an important future POI, with readable scale, silhouette, 2K/4K crispness and climate-aware integration. The final design may be independently adopted by World/UX after visual/licensing review, but a baseline POI can proceed without it. User has **not** received a prompt for this commission yet; do not mark it in progress.
+**Directory ownership:** `docs/survival/poi_deep_lab/**`, `prototypes/survival/poi_deep_lab/**` only. No edits to production `game/**`, `data/survival/world/**`, existing Chapter-1 dungeon levels, A1/A3/A4/A6 branches, project.godot or shared docs state. It is intentionally isolated.
 
-## Scheduling, ownership and exact prior mistakes
+## Who handles the other original workstream labels?
 
-- Prior suggestion "give scarce premium model to A1 World" is **REVOKED**: complete continent planning is an active dependency for A3/A5/POI work. A1 needs regular throughput, not a model finishing one fragment every quota window.
-- Prior suggestion "give it the entire A4 Gold" is **REVOKED**: Core contract and verified native ports are needed in the main feature path. A4 needs regular progress, although a *completely independent optional* visual analysis may be given to S6 later.
-- Prior creation of a dedicated **A9** agent label was misleading. Treat it as the **S6 slot of the existing six-person capacity**, not another bot or mandatory role.
-- User explicitly said they have NOT yet sent the other recently written prompts. Branches/issues are READY, not running, except the already-running A0/SURV-020.
-- Test acceptance remains rigorous: verify actual code/diff/test oracles/native gameplay and product/14-day system value, not thin green-CI-only gates.
+A2 construction remains A0 duty while SURV-020. A5 broad POI runtime is not a separately staffed AI yet; future integration by A0/regular agents as needed. A7 Balance tests are A3's automated balance fixtures plus **independent review of actual code/test/visual outcomes by coordinating reviewer**; no self-approval. A8 source/license research is continuously required of every agent, with A6 coordinating art/UX provenance. Existing issues #14 Gold/Core, #16 QA and #17 research remain historical/backlog work packets, not mandates to launch extra AI; reconcile them via explicit issue updates.
 
-**Source:** user correction 2026-10-29; when ambiguity arises, six total is a planning CAP, not a claim of access to multiple executors in this ChatGPT runtime.
+### Exactly what is not being claimed
+No prompts for the 4 open slots have been sent yet according to user. A4's Cocos/import pipeline state cannot be inferred from a Godot branch snapshot. No new A5-DEEP agent is automatically running because an issue/branch is created. A1/A3/A6 runtime features not completed just because their prompt was authored.
