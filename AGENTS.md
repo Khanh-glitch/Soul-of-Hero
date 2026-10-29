@@ -1,5 +1,7 @@
 # Agent entry point — Soul of Hero Survival RPG
 
+**MANDATORY: Google Docs design archive** — read `docs/survival/GOOGLE_DOCS_AUDIT.md` and Google Doc tabs 1, 2, 03 (requirement IDs), 04 (live journal). The Docs source contains valuable specifics omitted from earlier Git summaries. Write back to Docs tab 04 as well as Git state/log after implementation, and verify both; if impossible mark `DOCS_SYNC_PENDING`.
+
 This file is the handoff contract for any AI coding agent taking over this branch. **Do not rely on chat memory.** Read these source-controlled files IN ORDER before editing:
 
 1. `docs/survival/START_HERE.md` — user intent, scope and truths.
