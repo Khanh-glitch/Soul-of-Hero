@@ -660,6 +660,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not (event.is_action_pressed(&"pause") or event.is_action_pressed(&"ui_cancel")):
 		return
+	if (event.is_action_pressed(&"pause") and not _world_action_allowed(&"pause")) \
+			or (event.is_action_pressed(&"ui_cancel") and not _world_action_allowed(&"ui_cancel")):
+		get_viewport().set_input_as_handled()
+		return
 	if build_stage != BuildStage.READY:
 		return
 	if _has_gameplay_modal():
@@ -681,13 +685,22 @@ func _has_gameplay_modal() -> bool:
 	return false
 
 
+func _world_action_allowed(action: StringName) -> bool:
+	return player == null or not is_instance_valid(player) or not player.has_method(&"gameplay_input_allowed") \
+		or bool(player.call(&"gameplay_input_allowed", action))
+
+
+func _world_action_just_pressed(action: StringName) -> bool:
+	return _world_action_allowed(action) and Input.is_action_just_pressed(action)
+
+
 ## Build-mode input. Deliberately a small, self-contained block: survival does not
 ## touch the Knight's combat bindings, and the modal build tool is enterable and
 ## leavable with one key so an accidental press cannot trap the player.
 func _handle_survival_input() -> void:
 	if survival_build == null or not is_instance_valid(survival_build) or _has_gameplay_modal():
 		return
-	if Input.is_action_just_pressed(&"build_toggle"):
+	if _world_action_just_pressed(&"build_toggle"):
 		survival_build.set_active(not survival_build.active)
 		_say("Build: %s" % survival_build.selected_piece.replace("_", " ")
 			if survival_build.active else "Build closed")
@@ -695,13 +708,13 @@ func _handle_survival_input() -> void:
 	if not survival_build.active:
 		return
 	for index: int in SurvivalBuildSystem.BUILD_SLOTS.size():
-		if Input.is_action_just_pressed(&"build_slot_%d" % (index + 1)):
+		if _world_action_just_pressed(&"build_slot_%d" % (index + 1)):
 			var ids: Array[String] = SurvivalBuildSystem.BUILD_SLOTS
 			if index < ids.size() and survival_build.select_piece(ids[index]):
 				_say("Build: %s — %s" % [
 					ids[index].replace("_", " "), survival_build.cost_summary(ids[index])])
 				return
-	if Input.is_action_just_pressed(&"build_place"):
+	if _world_action_just_pressed(&"build_place"):
 		var hovered := get_viewport().gui_get_hovered_control()
 		if hovered != null and hovered.is_visible_in_tree() and hovered.mouse_filter != Control.MOUSE_FILTER_IGNORE \
 				and not survival_build.is_build_click_blocker(hovered):

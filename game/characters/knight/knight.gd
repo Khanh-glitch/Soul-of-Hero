@@ -17,6 +17,7 @@ enum PlayerState {
 	DEAD,
 }
 
+const GameplayInputGateScript := preload("res://game/survival/gameplay_input_gate.gd")
 const KnightAnimations := preload("res://game/characters/knight/knight_animation_library.gd")
 const AxeWarriorAnimations := preload("res://game/characters/knight/axe_warrior_animation_library.gd")
 const ArcherAnimations := preload("res://game/characters/knight/archer_animation_library.gd")
@@ -391,9 +392,13 @@ var _kit_buff_owner_hero_id: StringName = &""
 var _kit_buff_damage_multiplier := 1.0
 var _kit_buff_move_speed := 1.0
 var _kit_release_animation_left := 0.0
+var _gameplay_input_gate: SurvivalGameplayInputGate
 
 
 func _ready() -> void:
+	_gameplay_input_gate = GameplayInputGateScript.new() as SurvivalGameplayInputGate
+	_gameplay_input_gate.name = "GameplayInputGate"
+	add_child(_gameplay_input_gate)
 	_visible_defense_rng.randomize()
 	motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	_normal_collision_mask = collision_mask
@@ -469,6 +474,8 @@ func _unhandled_input(event: InputEvent) -> void:
 	var mouse_event := event as InputEventMouseButton
 	if mouse_event.button_index not in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT] or not mouse_event.pressed:
 		return
+	if _gameplay_input_gate != null and (not _gameplay_input_gate.permits(&"attack") or _gameplay_input_gate.modal_visible()):
+		return
 	# PASS-mode book pages and scroll regions may forward an event even while
 	# visibly owning the pointer. They still suppress gameplay just like Buttons.
 	if _pointer_is_over_input_ui():
@@ -487,10 +494,16 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if _gameplay_input_gate != null:
+		_gameplay_input_gate.sync()
+		if _gameplay_input_gate.modal_visible():
+			_pending_gameplay_lmb = false
+			_pending_gameplay_rmb = false
+			_lmb_is_gameplay_press = false
 	_resolve_frame_pointer_clicks()
 	_tick_timers(delta)
 	_update_live_crowd_pressure(delta)
-	move_input = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	move_input = _gameplay_input_gate.movement() if _gameplay_input_gate != null else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if _kit_buff_id == &"knight_shadow_double":
 		move_input *= _kit_buff_move_speed
 	if _armed_skill_charge_started:
@@ -508,7 +521,7 @@ func _physics_process(delta: float) -> void:
 	elif move_input.length_squared() > 0.01:
 		_update_facing(move_input.normalized())
 
-	if Input.is_action_just_pressed("debug_hit"):
+	if _gameplay_action_just_pressed("debug_hit"):
 		take_damage(15, global_position + facing_direction * 20.0)
 
 	if dead:
@@ -520,7 +533,7 @@ func _physics_process(delta: float) -> void:
 	# Relay input must stay live during every action. The manager is authoritative
 	# about readiness/takeover frames, and a successful Relay already cancels the
 	# outgoing animation safely (including an Archer shot or an active Dash).
-	if Input.is_action_just_pressed(&"soul_relay_1"):
+	if _gameplay_action_just_pressed(&"soul_relay_1"):
 		if hero_soul_manager.request_soul_relay():
 			# Do not let the remainder of the outgoing Hero's physics tick move or
 			# restart the freshly relayed body after it lands on the Soul visual.
@@ -533,7 +546,7 @@ func _physics_process(delta: float) -> void:
 	if _tick_armed_hero_skill(delta):
 		return
 
-	if Input.is_action_just_pressed(&"ultimate"):
+	if _gameplay_action_just_pressed(&"ultimate"):
 		_arm_hero_skill(&"active_2")
 
 	# A proximity interaction owns this world click before any attack state or
@@ -727,7 +740,7 @@ func _reset_archer_state(reason: StringName) -> void:
 
 
 func _handle_locomotion(delta: float) -> void:
-	var crouching := Input.is_action_pressed("crouch")
+	var crouching := _gameplay_action_pressed("crouch")
 	if _try_context_actions(crouching):
 		return
 
@@ -740,28 +753,28 @@ func _handle_locomotion(delta: float) -> void:
 
 
 func _try_context_actions(crouching: bool) -> bool:
-	if Input.is_action_just_pressed(&"interact"):
+	if _gameplay_action_just_pressed(&"interact"):
 		return _try_interact()
 	if _gameplay_attack_just_pressed():
 		var hand_weapon := weapon_manager.get_hand_weapon()
 		if hand_weapon != null and hand_weapon.weapon_id != &"sword":
 			return _start_hand_attack(true, _frame_attack_pointer_aim())
 		return _start_sword_hero_attack(_frame_attack_pointer_aim())
-	if Input.is_action_just_pressed("light_attack"):
+	if _gameplay_action_just_pressed("light_attack"):
 		if crouching:
 			return _start_action("crouch_attack")
 		if combo_memory_remaining > 0.0:
 			return _start_action("combo_attack")
 		return _start_action("light_attack")
-	if Input.is_action_just_pressed("heavy_attack"):
+	if _gameplay_action_just_pressed("heavy_attack"):
 		return _start_action("heavy_attack")
-	if Input.is_action_just_pressed("jump"):
+	if _gameplay_action_just_pressed("jump"):
 		return _start_action("hop")
-	if Input.is_action_just_pressed("dash") and dash_cooldown_remaining <= 0.0:
+	if _gameplay_action_just_pressed("dash") and dash_cooldown_remaining <= 0.0:
 		return _start_action("dash")
-	if Input.is_action_just_pressed("roll"):
+	if _gameplay_action_just_pressed("roll"):
 		return _start_action("roll")
-	if Input.is_action_just_pressed("slide") and (move_input.length_squared() > 0.01 or velocity.length() > 20.0):
+	if _gameplay_action_just_pressed("slide") and (move_input.length_squared() > 0.01 or velocity.length() > 20.0):
 		return _start_action("slide")
 	return false
 
@@ -903,24 +916,42 @@ func _clear_target_indicator() -> void:
 	_target_indicator_target = null
 
 
+## Shared with the overworld build/retreat path. These wrappers gate gameplay
+## reads only; they do not consume events intended for the visible UI.
+func gameplay_input_allowed(action: StringName) -> bool:
+	return _gameplay_input_gate == null or _gameplay_input_gate.permits(action)
+
+func _gameplay_action_pressed(action: StringName) -> bool:
+	return gameplay_input_allowed(action) and Input.is_action_pressed(action)
+
+func _gameplay_action_just_pressed(action: StringName) -> bool:
+	return gameplay_input_allowed(action) and Input.is_action_just_pressed(action)
+
+func _gameplay_action_just_released(action: StringName) -> bool:
+	return gameplay_input_allowed(action) and Input.is_action_just_released(action)
+
 func _gameplay_attack_just_pressed() -> bool:
+	if not gameplay_input_allowed(&"attack"):
+		return false
 	if _frame_gameplay_lmb_press and not _lmb_consumed_until_release:
 		return true
 	# `attack` also contains LMB. If this frame's physical LMB was accepted by a
 	# Control, do not let Input's global action state bypass GUI consumption.
 	if _frame_saw_lmb_press:
 		return false
-	return Input.is_action_just_pressed(&"attack")
+	return _gameplay_action_just_pressed(&"attack")
 
 
 func _gameplay_attack_pressed() -> bool:
+	if not gameplay_input_allowed(&"attack"):
+		return false
 	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 		return _lmb_is_gameplay_press and not _lmb_consumed_until_release
-	return Input.is_action_pressed(&"attack")
+	return _gameplay_action_pressed(&"attack")
 
 
 func _gameplay_skill_just_pressed() -> bool:
-	return Input.is_action_just_pressed(&"skill")
+	return _gameplay_action_just_pressed(&"skill")
 
 
 func _active_hero_ranked_skill_profile(slot: StringName) -> Dictionary:
@@ -1699,10 +1730,10 @@ func _handle_action(delta: float) -> void:
 		)
 		_axe_charge_snapshot = AXE_CHARGE_MATH.evaluate(AXE_DEFINITION.normal_attack, action_elapsed)
 		_update_axe_charge_vfx()
-		if Input.is_action_just_released("attack"):
+		if _gameplay_action_just_released("attack"):
 			_release_axe_charge()
 		return
-	if current_action == "light_attack" and Input.is_action_just_pressed("light_attack") and action_elapsed >= 0.10:
+	if current_action == "light_attack" and _gameplay_action_just_pressed("light_attack") and action_elapsed >= 0.10:
 		queued_combo = true
 	if current_action in ["sword_attack_1", "sword_attack_2", "sword_attack_3", "sword_attack_4", "sword_attack_5", "bow_attack"] \
 			and _gameplay_attack_just_pressed():
@@ -1811,7 +1842,7 @@ func _handle_action(delta: float) -> void:
 			)
 			if _gameplay_skill_just_pressed():
 				_request_axe_recall()
-			if Input.is_action_just_pressed("dash") and dash_cooldown_remaining <= 0.0:
+			if _gameplay_action_just_pressed("dash") and dash_cooldown_remaining <= 0.0:
 				current_action = ""
 				action_elapsed = 0.0
 				weapon_manager.notify_action_interruptible()
@@ -2296,7 +2327,7 @@ func _update_animation() -> void:
 	if turn_remaining > 0.0 and velocity.length() > 8.0:
 		_play_animation("turn")
 		return
-	if Input.is_action_pressed("crouch"):
+	if _gameplay_action_pressed("crouch"):
 		_play_animation("crouch_walk" if velocity.length() > 5.0 else "crouch")
 	elif velocity.length() > 7.0:
 		_play_animation("run")
@@ -5809,7 +5840,7 @@ func get_realtime_state() -> Dictionary:
 		"facing": [facing_direction.x, facing_direction.y],
 		"action": current_action if not current_action.is_empty() else String(sprite.animation),
 		"player_state": _player_state_name(),
-		"crouching": Input.is_action_pressed("crouch"),
+		"crouching": _gameplay_action_pressed("crouch"),
 		"tuning": {
 			"move_speed": move_speed,
 			"hop_speed": hop_speed,
