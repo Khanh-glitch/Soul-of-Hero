@@ -26,6 +26,7 @@ const SEMANTIC_ACTIONS := [
 	# Survival build tool. Its own actions rather than reuse of `attack`, so the
 	# build modal can never fire a swing and combat input keeps its exact meaning.
 	&"build_toggle",
+	&"economy_toggle",
 	&"build_place",
 	&"build_slot_1",
 	&"build_slot_2",
@@ -86,6 +87,7 @@ const KEYBOARD_BINDINGS := {
 	# ordinary left click (see MOUSE_BINDINGS below) resolved by the build layer
 	# only while the modal is open.
 	&"build_toggle": [KEY_B],
+	&"economy_toggle": [KEY_C],
 	&"build_slot_1": [KEY_1],
 	&"build_slot_2": [KEY_2],
 	&"build_slot_3": [KEY_3],

@@ -36,9 +36,41 @@ func _body() -> void:
 	hero.set_physics_process(false)
 	_clear_inventory()
 	_expect(_give(WOOD, 8) and _give(IRON, 2) and _give("reed_fibre", 6), "fixture materials in real shared inventory")
-	var start: Dictionary = host.call(&"queue_recipe", "workbench_kit", "hand")
-	var hand_job := String(start.get("job_id", ""))
-	_expect(bool(start.get("ok", false)) and not hand_job.is_empty() and _count(WOOD) == 2 and _count(IRON) == 0, "actual hand recipe reserves A3 inputs atomically")
+	# Open the actual A0 production panel through its normal action and click a
+	# visible recipe button; the materials themselves remain fixture grants.
+	var toggle_event := InputEventAction.new()
+	toggle_event.action = &"economy_toggle"
+	toggle_event.pressed = true
+	Input.parse_input_event(toggle_event)
+	toggle_event.pressed = false
+	Input.parse_input_event(toggle_event)
+	await process_frame
+	await process_frame
+	var panel: Node = ow.get(&"economy_panel")
+	var button := panel.find_child("Recipe_workbench_kit_hand", true, false) as Button
+	_expect(button != null and button.is_visible_in_tree(), "normal economy input exposes hand-kit button")
+	if button != null:
+		var click_position := root.get_final_transform() * (button.get_global_transform_with_canvas() * (button.size * 0.5))
+		var motion := InputEventMouseMotion.new()
+		motion.position = click_position
+		Input.parse_input_event(motion)
+		var click := InputEventMouseButton.new()
+		click.position = click_position
+		click.button_index = MOUSE_BUTTON_LEFT
+		click.pressed = true
+		Input.parse_input_event(click)
+		await process_frame
+		click.pressed = false
+		Input.parse_input_event(click)
+		await process_frame
+	var hand_job := ""
+	for key: Variant in (host.call(&"jobs") as Dictionary).keys():
+		var job: Dictionary = (host.call(&"jobs") as Dictionary)[key]
+		if String(job.get("target", "")) == "workbench_kit":
+			hand_job = String(key)
+	_expect(not hand_job.is_empty() and _count(WOOD) == 2 and _count(IRON) == 0, "player GUI click reserves actual A3 hand recipe inputs atomically")
+	panel.call(&"close_panel")
+	await process_frame
 	var adapter: RefCounted = host.get(&"_adapter")
 	var snapshot: Dictionary = host.call(&"_snapshot", "hand")
 	var forged := snapshot.duplicate(true)

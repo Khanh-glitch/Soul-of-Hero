@@ -82,7 +82,7 @@ func _build() -> void:
 	# Anchored to the bottom edge, not pinned to y=340: the window stretches with
 	# the player's monitor and an absolutely positioned hint would drift.
 	_hint_label = _label(
-		"WASD move  ·  CLICK to enter  ·  ESC to retreat to the Sanctum",
+		"WASD move  ·  CLICK interact  ·  B build  ·  C craft  ·  ESC retreat",
 		8,
 		Color(0.62, 0.60, 0.54)
 	)

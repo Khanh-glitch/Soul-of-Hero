@@ -215,3 +215,47 @@ func cancel(job_id: String) -> Dictionary:
 	if not _commands_available():
 		return {"ok": false, "reason": "session_inactive"}
 	return _adapter.call(&"cancel", job_id, _event())
+
+
+## Read-only player/A6 surfaces; never expose the adapter, facade or host receipt.
+func nearby_stations() -> Array[Dictionary]:
+	var result: Array[Dictionary] = [{"station_id": "hand", "kind": "hand", "tier": 0, "operational": true}]
+	if not _configured or not is_instance_valid(_hero):
+		return result
+	var structures: Dictionary = _survival.call(&"structures")
+	var ids: Array = structures.keys()
+	ids.sort()
+	for value: Variant in ids:
+		var id := String(value)
+		var station := _resolve_station(id)
+		if station.is_empty():
+			continue
+		var node: Node2D = _build.call(&"structure_node", id)
+		if node != null and _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) <= 64:
+			result.append(station.duplicate(true))
+	return result
+
+
+func available_recipes(station_id: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not _configured:
+		return result
+	var station := {"kind": "hand", "tier": 0} if station_id == "hand" else _resolve_station(station_id)
+	if station.is_empty():
+		return result
+	var catalog: Dictionary = _adapter.get(&"catalog")
+	var recipes: Dictionary = catalog.get("recipes", {})
+	var ids: Array = recipes.keys()
+	ids.sort()
+	for value: Variant in ids:
+		var id := String(value)
+		var recipe: Dictionary = recipes[id]
+		if String(recipe.get("station", "")) != String(station.get("kind", "")) \
+				or int(recipe.get("min_tier", 0)) > int(station.get("tier", 0)) \
+				or not bool(_adapter.call(&"known", id)):
+			continue
+		result.append({"id": id, "inputs": (recipe.get("inputs", {}) as Dictionary).duplicate(true),
+			"fuel": (recipe.get("fuel", {}) as Dictionary).duplicate(true),
+			"outputs": (recipe.get("outputs", {}) as Dictionary).duplicate(true),
+			"duration_ticks": int(recipe.get("duration_ticks", 0))})
+	return result
