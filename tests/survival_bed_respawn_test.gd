@@ -174,7 +174,7 @@ func _body() -> void:
 	_expect(bool(_save().call(&"grant_inventory_item", token, "key_item", 1, "fixture.unique.token")), "fixture creates synthetic unique token")
 	_expect(not bool(_save().call(&"drop_inventory_item", token, 1, "fixture.unique.drop")), "generic drop refuses unique token")
 	_expect(not bool(_save().call(&"home_transfer_to_storage", "item_stack", token, "fixture.unique.storage")), "home storage refuses unique token")
-	_expect(_give(WOOD, 4), "chest timber granted for unique-token guard")
+	_expect(_give(WOOD, 4) and _give(IRON, 1), "chest materials granted for unique-token guard")
 	build.select_piece("chest_wood")
 	var chest: Dictionary = build.try_place(origin + Vector2i(1, 1), "fixture.unique.chest")
 	var chest_id := String(chest.get("entity_id", ""))
