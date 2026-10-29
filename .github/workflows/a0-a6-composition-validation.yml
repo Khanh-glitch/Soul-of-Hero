@@ -78,11 +78,12 @@ jobs:
         run: |
           set +e
           mkdir -p artifacts/ud_a6
-          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_a6 --resolution 960x540 --windowed --script res://tests/survival_a6_modal_composition_test.gd > artifacts/a6-workspace-world.log 2>&1
+          timeout --signal=TERM --kill-after=10s 600s xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_a6 --resolution 960x540 --windowed --script res://tests/survival_a6_modal_composition_test.gd > artifacts/a6-workspace-world.log 2>&1
           rc=$?
           cat artifacts/a6-workspace-world.log
           echo "::notice::A6 workspace exit=$rc $(grep -E 'A0 A6 COMPOSITION|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/a6-workspace-world.log | tail -10 | tr '\n' '~')"
           grep '^A6_INPUT_TRACE ' artifacts/a6-workspace-world.log | while IFS= read -r line; do echo "::notice::$line"; done
+          grep -E 'Leaked instance:|ObjectDB instances were leaked|resources still in use at exit|Resource still in use:' artifacts/a6-workspace-world.log | head -8 | while IFS= read -r line; do echo "::notice::A6_LEAK_DIAG $line"; done
           bash tools/ci/gate_log.sh artifacts/a6-workspace-world.log 'A6 workspace in world' 'A0 A6 COMPOSITION PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -91,10 +92,11 @@ jobs:
         run: |
           set +e
           mkdir -p artifacts/ud_a6_bed
-          timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --path . --audio-driver Dummy --windowed --resolution 1280x720 --user-data-dir artifacts/ud_a6_bed --script res://tests/survival_bed_respawn_test.gd > artifacts/a6-bed.log 2>&1
+          timeout --signal=TERM --kill-after=10s 240s xvfb-run -a -s "-screen 0 1280x720x24" godot --verbose --path . --audio-driver Dummy --windowed --resolution 1280x720 --user-data-dir artifacts/ud_a6_bed --script res://tests/survival_bed_respawn_test.gd > artifacts/a6-bed.log 2>&1
           rc=$?
           cat artifacts/a6-bed.log
           echo "::notice::A6 composed bed exit=$rc $(grep -E 'SURVIVAL BED|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/a6-bed.log | tail -12 | tr '\n' '~')"
+          grep -E 'Leaked instance:|ObjectDB instances were leaked|resources still in use at exit|Resource still in use:' artifacts/a6-bed.log | head -8 | while IFS= read -r line; do echo "::notice::BED_LEAK_DIAG $line"; done
           bash tools/ci/gate_log.sh artifacts/a6-bed.log 'A6 composed bed' 'SURVIVAL BED RESPAWN PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
