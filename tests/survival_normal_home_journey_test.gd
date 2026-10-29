@@ -424,4 +424,47 @@ func _body() -> void:
 	_expect(reloaded and int(after_reload.get(WOOD, 0)) == 2 and int(after_reload.get("binding_cloth", 0)) == 2 \
 		and _count(WOOD) == 0 and _count("binding_cloth") == 0,
 		"expedition and crafted custody persist on exactly the chest side after reload")
+	if not reloaded:
+		_body_complete = true
+		return
+	# Recreate the actual overworld against the disk save, not just live nodes.
+	ow.queue_free()
+	await process_frame
+	_host.queue_free()
+	_host = null
+	await process_frame
+	var disk_loaded := bool(_save().call(&"reload_save"))
+	var fresh := await _boot()
+	_expect(disk_loaded and fresh != null, "saved journey boots a fresh production overworld")
+	if fresh == null:
+		_body_complete = true
+		return
+	var fresh_build := fresh.get(&"survival_build") as SurvivalBuildSystem
+	var fresh_nav := fresh.get(&"traversability") as OverworldTraversability
+	var fresh_hero := fresh.get(&"player") as CharacterBody2D
+	var fresh_chest := fresh_build.structure_node(chest_id)
+	var reconstructed := fresh_chest != null and fresh_build.structure_node(bed_id) != null \
+		and fresh_build.structure_node(door_id) != null and not (fresh_build.room_topology.room_at(center)).is_empty() \
+		and String((_survival().call(&"document") as Dictionary).get("spawn_anchor", "")) == bed_id
+	_expect(reconstructed, "fresh world reconstructs the same roofed room, door, chest and active bed")
+	if not reconstructed:
+		_body_complete = true
+		return
+	var fresh_contents := fresh_chest.chest_contents()
+	_expect(int(fresh_contents.get(WOOD, 0)) == 2 and int(fresh_contents.get("binding_cloth", 0)) == 2 \
+		and _count(WOOD) == 0 and _count("binding_cloth") == 0,
+		"fresh world preserves exact chest-side expedition and crafted custody")
+	var fresh_start := fresh_nav.cell_of(fresh_hero.global_position)
+	var fresh_path := _route(fresh_start, near_chest[0], fresh_nav, fresh_hero)
+	var fresh_approach := (fresh_start == near_chest[0]) or (not fresh_path.is_empty() and await _walk_path(fresh_hero, fresh_path))
+	_expect(fresh_approach, "ordinary movement in the reconstructed world reaches the same chest")
+	if not fresh_approach:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	_expect(_count(WOOD) == 2 and _count("binding_cloth") == 2 and fresh_chest.chest_contents().is_empty(),
+		"ordinary click recovers both exact stacks from the reconstructed chest")
+	_expect(bool(_save().call(&"reload_save")) and _count(WOOD) == 2 and _count("binding_cloth") == 2 \
+		and (_survival().call(&"container_contents", chest_id) as Dictionary).is_empty(),
+		"recovered stacks survive disk reload without duplicate chest custody")
 	_body_complete = true
