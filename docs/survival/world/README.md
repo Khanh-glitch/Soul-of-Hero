@@ -38,4 +38,6 @@ python3 tools/survival/worldgen/check_determinism.py
 .venv/bin/python tools/survival/worldgen/preview.py
 ```
 
+Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20 (to integration). Issue: #12.
+
 Google Docs tab 04 sync: `DOCS_SYNC_PENDING` (connector disconnected).

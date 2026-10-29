@@ -5,7 +5,8 @@ Owner: A1 World Architect
 Issue: #12  
 Integration target: `feature/survival-rpg-foundation-20261029`  
 Active work branch: `arena/e385312a-soul-of-hero`  
-Assigned branch in work order: `feature/surv-a1-world-050a` (left untouched; see branch note below)
+Assigned branch in work order: `feature/surv-a1-world-050a` (left untouched; see branch note below)  
+Review PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/20
 
 ## Executive summary
 
