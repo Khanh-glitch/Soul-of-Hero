@@ -110,9 +110,10 @@
         "Overworld gate failed again +104% with direct timing evidence: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912937999 at f759924; PERF_VARIABILITY_UNEXPLAINED.",
         "Fresh-save input scrap and oak → GUI hand queue → active kit escrow → reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40914953517 at b797b9b, 11 checks, no fixture grants/teleport; not collected station or full journey.",
         "Additional unchanged perf failure +47%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832746 at c8ab791; PERF_VARIABILITY_UNEXPLAINED.",
-        "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020."
+        "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020.",
+        "Fresh-save automated input gathers scrap/oak, manufactures and GUI-collects kit, pays and reloads physical bench: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40918666020 at 394d1ca, 17 partial journey checks; shutdown leak/resource warnings, source approval and full journey open."
       ],
-      "next": "Inspect 40918666020 NORMAL_BUILD_TRACE and repair real-input bench placement as necessary; then production, shelter, threat, respawn/bag/reload, provenance, native resolution/Web and cross-agent gates. Do not merge.",
+      "next": "Inspect native run for 815a9fd fresh-input reed → placed bench → cloth; fix failures and shutdown warnings, then continue shelter/threat/respawn/bag/reload and counterfactual, A1/A3 provenance, native resolution/Web, cross-agent gates. Do not merge.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
