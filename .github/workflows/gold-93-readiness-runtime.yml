@@ -79,23 +79,20 @@ jobs:
             exit 1
           fi
 
-      # 1500s, up from 600s. This step genuinely does more work now that six
-      # real engines are constructed and probed instead of one: every
-      # `readiness_report()` walks all 93 ids, and each source-native id is a
-      # full world instantiation plus a live cast probe. Raising the budget is
-      # the correct response to real added work; the job cap (40 min) still
-      # bounds the whole thing, and every other step keeps its own limit.
+      # Fail fast if the SceneTree test throws or forgets to call quit().
+      # --quit-after 5 is a backstop for post-_initialize runtime exceptions;
+      # the actual test calls quit() itself when it passes or fails.
       - name: Full native lifecycle and fail-closed coverage
         shell: bash
-        timeout-minutes: 30
+        timeout-minutes: 12
         run: |
           set -uo pipefail
           LOG=/tmp/gold93-lifecycle.log
-          timeout 1500s godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
+          timeout 600s godot --headless --quit-after 5 --path . --script res://prototypes/skill_readiness/tests/gold93_runtime_lifecycle_test.gd 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
-          if [ "$STATUS" != "0" ] || ! grep -F 'GOLD93_LIFECYCLE: PASS' "$LOG"; then
-            echo "::error::[gold93-lifecycle] godot exited with status $STATUS"
-            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -40)
+          if [ "$STATUS" != "0" ] || grep -Eq 'SCRIPT ERROR:|Parse Error:' "$LOG" || ! grep -F 'GOLD93_LIFECYCLE: PASS' "$LOG"; then
+            echo "::error::[gold93-lifecycle] Godot exit status=$STATUS or lifecycle assertion/runtime error"
+            while IFS= read -r line; do echo "::error::[gold93-lifecycle] $line"; done < <(grep -vE '^Godot Engine v' "$LOG" | sed -e 's/%/%25/g' | tail -60)
             exit 1
           fi
 
