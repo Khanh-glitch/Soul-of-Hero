@@ -270,6 +270,16 @@ func _body() -> void:
 	var chest_id := build.entity_at_layer(chest_cell, "object")
 	await _tap_action(&"build_toggle")
 	_expect(not build.active and _count(WOOD) == 0 and _count(IRON) == 0, "shelter charges exactly player-gathered material")
+	var far_door := build.structure_node(door_id)
+	var view := ow.get(&"camera") as Camera2D
+	view.reset_smoothing()
+	view.force_update_scroll()
+	await process_frame
+	var far_pointer := root.get_final_transform() * (view.get_canvas_transform() * (far_door.global_position + Vector2(8, 8)))
+	_expect(hero.global_position.distance_to(far_door.global_position) > SurvivalStructure.REACH, "door begins beyond its normal interaction reach")
+	await _click_window(far_pointer)
+	_expect(not bool(((_survival().call(&"structures") as Dictionary).get(door_id, {}) as Dictionary).get("door_open", false)),
+		"pointing at a far door does not bypass normal reach")
 	var near_chest: Array[Vector2i] = [center + Vector2i.LEFT]
 	var moved_chest := await _walk_path(hero, near_chest)
 	_expect(moved_chest, "ordinary movement approaches the built chest")
@@ -311,20 +321,15 @@ func _body() -> void:
 		await physics_frame
 	_set_direction(Vector2.ZERO)
 	await physics_frame
-	# Furniture on both sides competes in the nearest-object dispatcher. Align
-	# with the door's interaction origin using movement, not a direct call.
-	for _frame in range(60):
-		var horizontal := door.global_position.x - hero.global_position.x
-		if absf(horizontal) <= 1.5:
-			break
-		_set_direction(Vector2(signf(horizontal) * 16.0, 0.0))
-		await physics_frame
-	_set_direction(Vector2.ZERO)
-	await physics_frame
 	print("HOME_DOOR_APPROACH hero=%s door=%s bed=%s chest=%s" % [str(hero.global_position), str(door.global_position), str(build.structure_node(bed_id).global_position), str(chest.global_position)])
-	await _click_window(root.get_final_transform() * (root.get_visible_rect().size * 0.5))
+	var camera := ow.get(&"camera") as Camera2D
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	var door_pointer := root.get_final_transform() * (camera.get_canvas_transform() * (door.global_position + Vector2(8, 8)))
+	await _click_window(door_pointer)
 	var opened := bool(((_survival().call(&"structures") as Dictionary).get(door_id, {}) as Dictionary).get("door_open", false))
-	_expect(opened, "ordinary world click opens the paid door")
+	_expect(opened, "ordinary pointer on the paid door opens it despite nearer furniture")
 	if not opened:
 		print("HOME_DOOR_FAIL door=%s bed=%s chest=%s" % [str(door.last_interaction()), str(build.structure_node(bed_id).last_interaction()), str(chest.last_interaction())])
 		_body_complete = true

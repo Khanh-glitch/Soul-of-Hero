@@ -779,7 +779,7 @@ func _try_context_actions(crouching: bool) -> bool:
 	return false
 
 
-func _try_interact() -> bool:
+func _try_interact(pointer_world := Vector2.ZERO, has_pointer := false) -> bool:
 	# Placing the carried torch owns the whole input press. This prevents the
 	# same press from immediately picking it back up or activating a door below
 	# the player after it has been reparented into the world.
@@ -801,6 +801,18 @@ func _try_interact() -> bool:
 	candidates.sort_custom(func(a: Dictionary, b: Dictionary) -> bool:
 		return float(a.distance_squared) < float(b.distance_squared)
 	)
+	# A placed survival door can be visually targeted even when adjacent
+	# furniture has a nearer node origin. Keep keyboard interaction and every
+	# non-door candidate on the existing nearest-first path. Its own interact()
+	# still enforces the normal local reach and doorway safety rules.
+	if has_pointer:
+		for record: Dictionary in candidates:
+			var candidate := record.node as Node2D
+			if candidate is SurvivalStructure and (candidate as SurvivalStructure).piece_id == SurvivalStructure.PIECE_DOOR \
+					and float(record.distance_squared) <= SurvivalStructure.REACH * SurvivalStructure.REACH \
+					and Rect2(candidate.global_position, Vector2(SurvivalStructure.TILE, SurvivalStructure.TILE)).has_point(pointer_world):
+				if bool(candidate.call(&"interact", self)):
+					return true
 	for record: Dictionary in candidates:
 		var interactable := record.node as Node2D
 		if is_instance_valid(interactable) and bool(interactable.call(&"interact", self)):
@@ -826,7 +838,7 @@ func _resolve_frame_pointer_clicks() -> void:
 
 
 func _consume_frame_world_interaction() -> bool:
-	if not _frame_gameplay_lmb_press or not _try_interact():
+	if not _frame_gameplay_lmb_press or not _try_interact(_frame_lmb_aim_world, _frame_lmb_aim_valid):
 		return false
 	_lmb_consumed_until_release = true
 	_frame_gameplay_lmb_press = false
