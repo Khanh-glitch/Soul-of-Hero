@@ -158,7 +158,14 @@ func _run() -> void:
 			layers_file.close()
 			var used := {}
 			for run in (layers.get("layers", {}) as Dictionary).get("detail", {}).get("rle", []):
-				used[String(run[0]).substr(0, 1)] = true
+				var run_code := String(run[0]).substr(0, 1)
+				# "." is the layer's "nothing here" marker, not an atlas code: the
+				# renderer skips it before it ever looks a frame up. It accounts for
+				# the great majority of detail-layer cells, so counting it as an
+				# overlay would assert against a frame that must not exist.
+				if run_code == ".":
+					continue
+				used[run_code] = true
 			for code in used.keys():
 				_expect(detail_codes.has(code), "detail code '%s' is in the atlas" % code)
 			_expect(detail_codes.has("p"), "the pool overlay is in the atlas")
