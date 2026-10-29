@@ -314,12 +314,11 @@ func _body() -> void:
 		if (value as Button).text == "Collect":
 			collect_button = value as Button
 			break
-	var scrolls := panel.find_children("*", "ScrollContainer", true, false)
-	_expect(collect_button != null and not scrolls.is_empty(), "completed escrow exposes a GUI collect control")
-	if collect_button == null or scrolls.is_empty():
+	var scroll := _owning_scroll(collect_button)
+	_expect(collect_button != null and scroll != null, "completed escrow exposes a GUI collect control inside its scroll owner")
+	if collect_button == null or scroll == null:
 		_body_complete = true
 		return
-	var scroll := scrolls[0] as ScrollContainer
 	var collect_visible := await _scroll_to(scroll, collect_button)
 	_expect(collect_visible, "ordinary wheel input reaches the collect control")
 	if not collect_visible:
@@ -372,12 +371,11 @@ func _body() -> void:
 		return
 	await _tap_action(&"economy_toggle")
 	var weave_button := panel.find_child("Recipe_weave_cloth_%s" % station_id, true, false) as Button
-	var weave_scrolls := panel.find_children("*", "ScrollContainer", true, false)
-	_expect(weave_button != null and not weave_scrolls.is_empty(), "nearby paid bench exposes its real weave recipe")
-	if weave_button == null or weave_scrolls.is_empty():
+	var weave_scroll := _owning_scroll(weave_button)
+	_expect(weave_button != null and weave_scroll != null, "nearby paid bench exposes its real weave recipe inside its scroll owner")
+	if weave_button == null or weave_scroll == null:
 		_body_complete = true
 		return
-	var weave_scroll := weave_scrolls[0] as ScrollContainer
 	var weave_visible := await _scroll_to(weave_scroll, weave_button)
 	_expect(weave_visible, "ordinary wheel input reaches the workbench recipe")
 	if not weave_visible:
@@ -406,8 +404,11 @@ func _body() -> void:
 	await _tap_action(&"economy_toggle")
 	var output_button: Button = null
 	for value: Node in panel.find_children("*", "Button", true, false):
-		if (value as Button).text == "Collect":
-			output_button = value as Button
+		var candidate := value as Button
+		var row := candidate.get_parent()
+		var label := row.get_child(0) as Label if row != null and row.get_child_count() > 0 else null
+		if candidate.text == "Collect" and label != null and label.text.begins_with("weave cloth: ready"):
+			output_button = candidate
 			break
 	var output_scroll := _owning_scroll(output_button)
 	_expect(output_button != null and output_scroll != null, "produced cloth exposes a GUI collection control inside its scroll owner")
@@ -421,8 +422,9 @@ func _body() -> void:
 		return
 	var cloth_before := _count("binding_cloth")
 	var receipts_before := _collect_receipt_count()
+	_expect(cloth_before == 0, "fresh journey has no cloth before collection")
 	await _click_window(root.get_final_transform() * (output_button.get_global_transform_with_canvas() * (output_button.size * 0.5)))
-	_expect(_count("binding_cloth") == cloth_before + 2 and _collect_receipt_count() == receipts_before + 1, "ordinary GUI collects exactly two cloth with one committed receipt")
+	_expect(_count("binding_cloth") == 2 and _collect_receipt_count() == receipts_before + 1, "ordinary GUI collects exactly two cloth with one committed receipt")
 	await _tap_action(&"economy_toggle")
 	_expect(bool(_save().call(&"reload_save")) and not (_survival().call(&"resolve_station", station_id) as Dictionary).is_empty() and _count("binding_cloth") == cloth_before + 2 and _collect_receipt_count() == receipts_before + 1, "paid workbench, exact cloth and collection receipt survive reload")
 	_body_complete = true

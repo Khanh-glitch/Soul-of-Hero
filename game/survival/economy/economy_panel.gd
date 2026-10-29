@@ -96,6 +96,9 @@ func _refresh() -> void:
 			var button := Button.new()
 			button.name = "Recipe_%s_%s" % [String(recipe.id), id]
 			button.text = "%s — %s — %ds" % [String(recipe.id).replace("_", " ").capitalize(), _format_items(recipe.inputs), int(recipe.duration_ticks)]
+			# A long recipe must wrap within the scroll viewport instead of
+			# widening the list and pushing Collect beyond the right edge.
+			button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			button.disabled = not bool(station.get("operational", true))
 			button.pressed.connect(_queue.bind(String(recipe.id), id))
 			_list.add_child(button)
@@ -109,6 +112,7 @@ func _refresh() -> void:
 		_list.add_child(row)
 		var label := Label.new()
 		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		label.text = "%s: %s %d/%d" % [String(job.get("target", "")).replace("_", " "), String(job.get("status", "")), int(job.get("elapsed", 0)), int(job.get("duration", 0))]
 		row.add_child(label)
 		var action := Button.new()
