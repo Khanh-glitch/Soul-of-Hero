@@ -404,7 +404,7 @@ jobs:
         run: |
           set -uo pipefail
           LOG=/tmp/gold93-venom-diff-${{ matrix.skill }}.log
-          timeout 2400s stdbuf -o0 -e0 godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported 2>&1 | tee "$LOG"
+          timeout 2400s stdbuf -o0 -e0 godot --headless --path . --script res://prototypes/skill_readiness/tests/gold93_venom_differential_test.gd -- --skill=${{ matrix.skill }} --skip-unported --verbose 2>&1 | tee "$LOG"
           STATUS=${PIPESTATUS[0]}
           if [ "$STATUS" != "0" ]; then
             echo "::error::[venomwright-${{ matrix.skill }}] godot exited with status $STATUS"

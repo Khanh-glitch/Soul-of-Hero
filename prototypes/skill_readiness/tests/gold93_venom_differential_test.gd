@@ -370,6 +370,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 	while n < ticks:
 		w.step(F)
 		n += 1
+		if _verbose:
+			print("  step %4d" % n)
 		if n == cast_tick and not casted:
 			casted = true
 			var r: Dictionary = ENGINE.auto_aim(w, def)
