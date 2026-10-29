@@ -234,8 +234,14 @@ func _refresh_status() -> void:
 func _format_controls(controls: Dictionary) -> String:
 	var on: Array[String] = []
 	for key in controls.keys():
-		if bool(controls[key]):
-			on.append(String(key))
+		var value = controls[key]
+		# Flags are shown when on; descriptive values (for example the target
+		# semantics string) are shown as they are.
+		if value is bool:
+			if value:
+				on.append(String(key))
+		else:
+			on.append("%s=%s" % [String(key), str(value)])
 	return ", ".join(on)
 
 

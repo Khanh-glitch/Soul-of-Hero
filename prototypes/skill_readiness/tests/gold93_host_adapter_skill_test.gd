@@ -113,16 +113,22 @@ func _run() -> void:
 	_check(hb.status == Gold93SkillHandle.Status.RUNNING,
 			"cast must still be RUNNING after 45 source ticks, got " + hb.status_name())
 	var world_b = mb.source_runtime()
-	_check(world_b != null and world_b.tasks.size() > 0,
-			"the authored generator must be live before cancel")
+	_check(world_b != null, "the source runtime must exist for " + _id)
+	var tasks_before: int = _generator_tasks(world_b)
+	if tasks_before >= 0:
+		_check(tasks_before > 0, "the authored generator must be live before cancel")
 	var emitted_before_cancel: int = _emitted(hb)
 	_check(hb.cancel(), "cancel() must succeed while RUNNING")
 	_check(hb.status == Gold93SkillHandle.Status.CANCELLED, "cancel must reach CANCELLED")
-	_check(world_b != null and world_b.tasks.size() == 0,
-			"cancel must end every generator task of this cast (threads must not stay parked)")
+	if tasks_before >= 0:
+		_check(_generator_tasks(world_b) == 0,
+				"cancel must end every generator task of this cast (threads must not stay parked)")
+	_phase("cancelled")
 	hb.tick_source(10)
 	_check(_emitted(hb) == emitted_before_cancel, "no intent may be emitted after cancellation")
+	_phase("cancel-stepped")
 	hb.dispose()
+	_phase("disposed")
 	_check(hb.status == Gold93SkillHandle.Status.DISPOSED, "dispose must reach DISPOSED")
 
 	# --- 3. full cast reaches FINISHED with typed, unapplied intents ----------
@@ -198,8 +204,22 @@ func _run_lab() -> void:
 			"the Lab run_to_end must reach FINISHED")
 	lab.release_all()
 	_check(lab.current_handle() == null, "release_all must release the Lab's handle")
+	# Let the root finish its current child update before removing the Lab.
+	await process_frame
 	root.remove_child(lab)
 	lab.free()
+
+
+## Thread-backed generator tasks of a source runtime. The shared VenomWorld
+## keeps them in `tasks`; a source without thread-backed generators (the
+## Glassfang engine of skill 001) has none, so -1 means "not applicable".
+func _generator_tasks(src) -> int:
+	if src == null:
+		return -1
+	var t = src.get("tasks")
+	if not (t is Array):
+		return -1
+	return t.size()
 
 
 func _finish() -> void:
