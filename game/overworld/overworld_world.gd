@@ -18,7 +18,22 @@ const PROPS_META_PATH := "res://data/overworld/overworld_props.json"
 
 ## Props that stand on the ground and should be drawn *behind* a player
 ## standing in front of them, versus flat things that sit underfoot.
-const FLAT_PROPS := ["disc_cache", "disc_bones", "disc_lore", "camp_bedroll"]
+## Props that lie flat on the ground and must never be treated as occluders.
+##
+## The cliff decals belong here for the same reason the camp bedroll does: they are
+## *surface* - patches of weathered rock and a projecting lip at the foot of a wall -
+## and they are drawn across the wall they decorate, which means a sprite centred on a
+## wall cell necessarily overhangs the walkable ground south of it. Once the decals
+## were allowed onto the narrow walls (which is where they were needed), a player
+## standing at the foot of any such wall was inside a patch's rect, and the occlusion
+## system dutifully faded a piece of masonry they were nowhere near. A wall is not a
+## thing standing in front of you.
+const FLAT_PROPS := [
+	"disc_cache", "disc_bones", "disc_lore", "camp_bedroll",
+	"cliff_patch_a", "cliff_patch_b", "cliff_patch_c", "cliff_patch_d",
+	"cliff_crack_a", "cliff_crack_b",
+	"cliff_ledge_a", "cliff_ledge_b",
+]
 
 ## Unmasked detail overlays that carry several frames. A single-frame overlay
 ## drawn on hundreds of scattered cells repeats identically and reads as a

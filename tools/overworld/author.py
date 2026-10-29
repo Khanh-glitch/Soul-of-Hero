@@ -1847,7 +1847,9 @@ def paint_cliff_face():
                 continue
             if len(run) >= 6:
                 for k in range(run_start + 3, run[-1] - 1, 8):
-                    add_prop("cliff_pilaster", k * TILE + 8, (y + 2) * TILE + 2, z=1)
+                    # Foot on the open cell immediately below the face, so the pier
+                    # stands against the wall rather than a tile out in front of it.
+                    add_prop("cliff_pilaster", k * TILE + 8, (y + 1) * TILE + 6, z=1)
                     piers += 1
             if x is not None:
                 run_start = x

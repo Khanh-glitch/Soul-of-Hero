@@ -109964,7 +109964,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 5400.0,
-   "y": 226.0,
+   "y": 214.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -109972,7 +109972,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3144.0,
-   "y": 242.0,
+   "y": 230.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -109980,7 +109980,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 728.0,
-   "y": 258.0,
+   "y": 246.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -109988,7 +109988,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4888.0,
-   "y": 258.0,
+   "y": 246.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -109996,7 +109996,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 1048.0,
-   "y": 274.0,
+   "y": 262.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110004,7 +110004,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4760.0,
-   "y": 274.0,
+   "y": 262.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110012,7 +110012,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4328.0,
-   "y": 306.0,
+   "y": 294.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110020,7 +110020,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 2568.0,
-   "y": 322.0,
+   "y": 310.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110028,7 +110028,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4488.0,
-   "y": 466.0,
+   "y": 454.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110036,7 +110036,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4120.0,
-   "y": 498.0,
+   "y": 486.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110044,7 +110044,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3864.0,
-   "y": 1170.0,
+   "y": 1158.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110052,7 +110052,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4248.0,
-   "y": 1570.0,
+   "y": 1558.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110060,7 +110060,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3320.0,
-   "y": 1602.0,
+   "y": 1590.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110068,7 +110068,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 4568.0,
-   "y": 1618.0,
+   "y": 1606.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110076,7 +110076,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 1112.0,
-   "y": 1922.0,
+   "y": 1910.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110084,7 +110084,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 2952.0,
-   "y": 2626.0,
+   "y": 2614.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110092,7 +110092,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3384.0,
-   "y": 2626.0,
+   "y": 2614.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110100,7 +110100,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3080.0,
-   "y": 2642.0,
+   "y": 2630.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110108,7 +110108,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 2152.0,
-   "y": 2834.0,
+   "y": 2822.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110116,7 +110116,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 2952.0,
-   "y": 3410.0,
+   "y": 3398.0,
    "flags": "",
    "z": 1,
    "lit": false
@@ -110124,7 +110124,7 @@
   {
    "frame": "cliff_pilaster",
    "x": 3112.0,
-   "y": 3602.0,
+   "y": 3590.0,
    "flags": "",
    "z": 1,
    "lit": false
