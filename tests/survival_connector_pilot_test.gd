@@ -99,16 +99,30 @@ func _body() -> void:
 		if collider != null:
 			collider_names.append(String(collider.get_path()))
 	print("A0_CONNECTOR_LOCKER exact_stand=(408,199) shape_clear=%s colliders=%s" % [str(locker_clear), str(collider_names)])
+	var original_box := RectangleShape2D.new()
+	original_box.size = Vector2(16, 16)
+	var original_transform := Transform2D(0.0, Vector2(408 * 16 + 8, 198 * 16 + 8))
+	_expect(locker_shape.shape.collide(locker_query.transform, original_box, original_transform), "adverse original full-tile locker shape overlaps exact stand")
+	_expect(collider_names.is_empty(), "corrected authored obstacle is clear in independent live physics")
 	# This is a REQUIRED positive gate, not an expected-negative pass. Continue
 	# other diagnostics when it fails, but never label the pilot accepted.
 	_expect(locker_clear, "original locker stand (408,199) clears actual Hero shape against authored blockers")
-	var outbound := await _leg(hero, nav, Vector2i(408, 200), "Refuge to Waystation approach")
+	# A1-owned toe-clearance correction preserves exact coordinates; the
+	# positive gate is the specified locker stand, never the anchor substitute.
+	var outbound := await _leg(hero, nav, Vector2i(408, 199), "Refuge to exact Waystation locker stand")
 	if outbound:
 		var probe := REACH_PROBE.new()
 		probe.name = "FixtureReachOnly"
 		probe.position = Vector2(408 * 16 + 8, 198 * 16 + 8)
 		world.add_child(probe)
-		_expect(hero.global_position.distance_to(probe.global_position) <= 44.0, "approach is in diagnostic interaction reach, not proof of specified stand")
+		# Path tolerance can stop a few pixels shy of the 24px interaction
+		# radius; move closer using the real Hero without leaving the stand.
+		var reach_deadline := Time.get_ticks_msec() + 2500
+		while hero.global_position.distance_to(probe.global_position) > 24.0 and Time.get_ticks_msec() < reach_deadline:
+			_set_direction(probe.global_position - hero.global_position)
+			await physics_frame
+		_set_direction(Vector2.ZERO)
+		_expect(nav.cell_of(hero.global_position) == Vector2i(408, 199) and hero.global_position.distance_to(probe.global_position) <= 24.0, "actual Hero at exact locker stand is within the authored 24px reach")
 		camera.reset_smoothing()
 		camera.force_update_scroll()
 		await process_frame
@@ -137,7 +151,7 @@ func _body() -> void:
 			if returned:
 				var inverse_relay := await _leg(hero, nav, Vector2i(442, 234), "inverse Refuge to Relay crank stand")
 				if inverse_relay:
-					var inverse_station := await _leg(hero, nav, Vector2i(408, 200), "inverse Relay to Waystation approach")
+					var inverse_station := await _leg(hero, nav, Vector2i(408, 199), "inverse Relay to exact Waystation locker stand")
 					var inverse_refuge := false
 					if inverse_station:
 						inverse_refuge = await _leg(hero, nav, refuge, "inverse Waystation to Refuge")
