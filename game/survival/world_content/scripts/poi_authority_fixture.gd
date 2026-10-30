@@ -1,3 +1,4 @@
+class_name PoiAuthorityFixture
 extends Node
 
 ## TEST FIXTURE ONLY. Never install as an autoload or use as a production economy.

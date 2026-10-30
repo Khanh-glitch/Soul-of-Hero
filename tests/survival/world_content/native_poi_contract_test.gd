@@ -72,8 +72,8 @@ func _scene_and_data_contracts() -> void:
 func _interaction_eligibility_and_choice() -> void:
 	var pair := await _make_site(0)
 	var site: NativePoiSite = pair.site
-	var actor: CharacterBody2D = pair.actor
-	var authority: Node = pair.authority
+	var actor: WorldContentTestActor = pair.actor
+	var authority: PoiAuthorityFixture = pair.authority
 	var intents: Array[Dictionary] = []
 	site.intent_requested.connect(func(intent: Dictionary): intents.append(intent))
 	actor.global_position = site.get_spawn_position()
@@ -142,8 +142,8 @@ func _interaction_eligibility_and_choice() -> void:
 
 	var leave_pair := await _make_site(0)
 	var leave_site: NativePoiSite = leave_pair.site
-	var leave_actor: CharacterBody2D = leave_pair.actor
-	var leave_authority: Node = leave_pair.authority
+	var leave_actor: WorldContentTestActor = leave_pair.actor
+	var leave_authority: PoiAuthorityFixture = leave_pair.authority
 	leave_actor.global_position = leave_site.get_stand_position()
 	leave_actor.set("facing", Vector2.UP)
 	leave_site.cycle_choice(2)
@@ -171,7 +171,8 @@ func _physical_access_and_retreat_basic() -> void:
 	for index: int in [0, 1]:
 		var pair := await _make_site(index)
 		var site: NativePoiSite = pair.site
-		var actor: CharacterBody2D = pair.actor
+		var actor: WorldContentTestActor = pair.actor
+		var authority: PoiAuthorityFixture = pair.authority
 		var spawn := site.get_spawn_position()
 		var stand := site.get_stand_position()
 		actor.global_position = spawn
@@ -193,9 +194,9 @@ func _physical_access_and_retreat_basic() -> void:
 			"reachable stand accepts its authored action: %s" % site.get_source_id()
 		)
 		var pending: Dictionary = site._pending.duplicate(true)
-		var rejection := pair.authority.submit_intent(pending)
+		var rejection := authority.submit_intent(pending)
 		site.receive_authoritative_result(
-			pending.intent_id, rejection, pair.authority.project_state(site.get_source_id())
+			pending.intent_id, rejection, authority.project_state(site.get_source_id())
 		)
 		actor.request_test_motion(Vector2(0.0, spawn.y - actor.global_position.y))
 		await physics_frame
@@ -211,8 +212,8 @@ func _physical_access_and_retreat_basic() -> void:
 func _authority_failures_and_retry() -> void:
 	var pair := await _make_site(0)
 	var site: NativePoiSite = pair.site
-	var actor: CharacterBody2D = pair.actor
-	var authority: Node = pair.authority
+	var actor: WorldContentTestActor = pair.actor
+	var authority: PoiAuthorityFixture = pair.authority
 	var submitted: Array[Dictionary] = []
 	site.intent_requested.connect(func(intent: Dictionary): submitted.append(intent))
 	actor.global_position = site.get_stand_position()
@@ -275,8 +276,8 @@ func _authority_failures_and_retry() -> void:
 func _candidate_claims_capacity_and_reload() -> void:
 	var pair := await _make_site(1)
 	var site: NativePoiSite = pair.site
-	var actor: CharacterBody2D = pair.actor
-	var authority: Node = pair.authority
+	var actor: WorldContentTestActor = pair.actor
+	var authority: PoiAuthorityFixture = pair.authority
 	var submitted: Array[Dictionary] = []
 	site.intent_requested.connect(func(intent: Dictionary): submitted.append(intent))
 	actor.global_position = site.get_stand_position()
@@ -339,8 +340,8 @@ func _candidate_claims_capacity_and_reload() -> void:
 
 	var orchard := await _make_site(1)
 	var orchard_site: NativePoiSite = orchard.site
-	var orchard_actor: CharacterBody2D = orchard.actor
-	var orchard_authority: Node = orchard.authority
+	var orchard_actor: WorldContentTestActor = orchard.actor
+	var orchard_authority: PoiAuthorityFixture = orchard.authority
 	var orchard_intents: Array[Dictionary] = []
 	orchard_site.intent_requested.connect(func(intent: Dictionary): orchard_intents.append(intent))
 	orchard_actor.global_position = orchard_site.get_stand_position()
@@ -367,7 +368,7 @@ func _candidate_claims_capacity_and_reload() -> void:
 	var cultivated := await _make_site(1)
 	var cultivated_site: NativePoiSite = cultivated.site
 	var cultivator: CharacterBody2D = cultivated.actor
-	var cultivation_authority: Node = cultivated.authority
+	var cultivation_authority: PoiAuthorityFixture = cultivated.authority
 	var cultivation_intents: Array[Dictionary] = []
 	cultivated_site.intent_requested.connect(
 		func(intent: Dictionary): cultivation_intents.append(intent)
@@ -424,8 +425,8 @@ func _candidate_claims_capacity_and_reload() -> void:
 func _physical_mill_gate_and_retreat() -> void:
 	var pair := await _make_site(2)
 	var site: NativePoiSite = pair.site
-	var actor: CharacterBody2D = pair.actor
-	var authority: Node = pair.authority
+	var actor: WorldContentTestActor = pair.actor
+	var authority: PoiAuthorityFixture = pair.authority
 	actor.global_position = Vector2(528, 536)
 	actor.set("facing", Vector2.UP)
 	await physics_frame
@@ -529,8 +530,7 @@ func _make_site(index: int) -> Dictionary:
 	root.add_child(site)
 	await process_frame
 	site.set_projection(fixture.project_state(site.get_source_id()))
-	var actor := CharacterBody2D.new()
-	actor.set_script(ACTOR_SCRIPT)
+	var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
 	actor.collision_layer = 2
 	actor.collision_mask = 1
 	var shape := CircleShape2D.new()

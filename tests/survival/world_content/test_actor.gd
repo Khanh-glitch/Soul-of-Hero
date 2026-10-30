@@ -1,3 +1,4 @@
+class_name WorldContentTestActor
 extends CharacterBody2D
 
 var facing := Vector2.UP

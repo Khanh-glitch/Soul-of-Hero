@@ -14,7 +14,7 @@ const FIXTURE_SCRIPT := preload(
 )
 const PROBE_SCRIPT := preload("res://game/survival/world_content/scripts/player_probe.gd")
 
-var _authority: Node
+var _authority: PoiAuthorityFixture
 var _site: NativePoiSite
 var _probe: CharacterBody2D
 var _site_index := 0
@@ -25,7 +25,7 @@ var _details: Label
 
 func _ready() -> void:
 	_install_fixture_inputs()
-	_authority = FIXTURE_SCRIPT.new()
+	_authority = FIXTURE_SCRIPT.new() as PoiAuthorityFixture
 	_authority.name = "S2TestAuthorityFixture"
 	_authority.configure()
 	add_child(_authority)
