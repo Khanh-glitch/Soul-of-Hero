@@ -14,7 +14,7 @@ import re
 import sys
 
 CHUNK = 3000
-MAX_CHUNKS = 12
+MAX_CHUNKS = 10  # GitHub drops workflow-command annotations past 10 per step
 
 
 def escape(s: str) -> str:
@@ -41,6 +41,11 @@ def main() -> int:
         if any(p.search(line) for p in pats):
             keep.append(line)
     tail = [l for l in lines[-args.tail:] if not l.startswith("Godot Engine v")] if args.tail > 0 else []
+    # Verdict/summary lines must land in the FIRST chunks: the platform keeps
+    # only the first 10 annotations a step emits, so a flooded match list
+    # would otherwise push the summary past the cut.
+    prio = re.compile(r"SUM|DIFFERENTIAL|first_|FAIL|PASS")
+    keep = [l for l in keep if prio.search(l)] + [l for l in keep if not prio.search(l)]
     # Keep the first matches as well as the last: early markers (setup, first
     # cast) must survive a flood of repeated per-tick SCRIPT ERROR lines.
     if len(keep) > 200:
