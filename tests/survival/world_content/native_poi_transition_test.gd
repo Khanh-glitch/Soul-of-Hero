@@ -351,7 +351,29 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				)
 				root.add_child(revisit_site)
 				await process_frame
-				revisit_site.set_projection(authority.project_state(revisit_site.get_source_id()))
+				var serialized_owner_snapshot := JSON.stringify(authority.snapshot())
+				var restarted_snapshot: Variant = JSON.parse_string(serialized_owner_snapshot)
+				var restarted_authority := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
+				restarted_authority.configure(
+					restarted_snapshot if restarted_snapshot is Dictionary else {}
+				)
+				var restored_projection := restarted_authority.project_state(
+					revisit_site.get_source_id()
+				)
+				_check(
+					revisit_site.set_projection(restored_projection),
+					"site revisit accepts its serialized owner projection after fixture restart"
+				)
+				_check(
+					(
+						restored_projection.source_id == canonical_site_id
+						and (
+							restored_projection.projection_revision
+							== authority.snapshot().projection_revision
+						)
+					),
+					"serialized restart projection retains POI identity and owner revision"
+				)
 				var revisit_state := revisit_site.get_site_state()
 				_check(
 					revisit_site.get_source_id() == canonical_site_id,
@@ -361,6 +383,13 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 					_check(
 						revisit_state.has("quarry_route"),
 						"Quarry revisit restores its route from the owner projection"
+					)
+					_check(
+						(
+							not revisit_site.has_node("ChoiceBlocker_brace_oak")
+							and revisit_site.has_node("ChoiceBlocker_chock_stone")
+						),
+						"serialized Quarry projection reopens only the selected east route after restart"
 					)
 				elif index == 1:
 					_check(

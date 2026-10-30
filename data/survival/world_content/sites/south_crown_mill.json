@@ -146,7 +146,7 @@
     {
       "action_id": "repair_waterwheel",
       "option_id": "repair",
-      "label": "Re-seat the wheel \u00b7 1 Oak Wood + 1 Iron Scrap",
+      "label": "Re-seat the waterwheel",
       "requires_capabilities": [
         "cap_salvage"
       ],
@@ -206,7 +206,7 @@
     {
       "action_id": "recover_fastener",
       "object_id": "mill_scrap_pile",
-      "label": "Recover a sound fastener \u00b7 1 Iron Scrap",
+      "label": "Recover a sound fastener",
       "requires_capabilities": [
         "cap_salvage"
       ],
@@ -319,75 +319,199 @@
     ],
     "profile": "mill",
     "visual_layout": {
-      "ground_family": "ash",
-      "ground_areas": [
-        {
-          "center": [
-            4,
-            1
-          ],
-          "radius": [
-            4,
-            2
-          ],
-          "family": "moor"
-        }
+      "lighting_profile": "overcast_frontier",
+      "ground_rows": [
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ],
+        [
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3"
+        ],
+        [
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0"
+        ],
+        [
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1"
+        ],
+        [
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2",
+          "gravel_3",
+          "gravel_0",
+          "gravel_1",
+          "gravel_2"
+        ]
       ],
-      "paths": [
+      "overlays": [
         {
-          "family": "gravel",
-          "width": 2,
-          "points": [
-            [
-              3,
-              7
-            ],
-            [
-              3,
-              6
-            ],
-            [
-              4,
-              5
-            ]
-          ]
-        }
-      ],
-      "props": [
-        {
-          "frame": "mill_wheel",
+          "frame": "road_dirt_10",
           "cell": [
-            5,
-            3
-          ],
-          "id": "waterwheel"
-        },
-        {
-          "frame": "wall_stub",
-          "cell": [
-            1,
+            3,
             4
           ],
-          "id": "race_wall"
+          "layer": "road"
         },
         {
-          "frame": "wall_stub",
+          "frame": "road_dirt_10",
           "cell": [
-            6,
+            4,
             4
           ],
-          "id": "race_wall_east"
+          "layer": "road"
         },
         {
-          "frame": "handcart",
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
           "cell": [
             3,
             6
           ],
-          "id": "haul_cart"
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
         }
       ],
-      "lighting_profile": "overcast_frontier"
+      "props": [
+        {
+          "frame": "lm_mill_house",
+          "local_px": [
+            72,
+            76
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "mill_wheel",
+          "local_px": [
+            100,
+            80
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "fence_h",
+          "local_px": [
+            24,
+            48
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "log_pile",
+          "local_px": [
+            104,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        }
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ]
     },
     "obstacles_px": [
       [

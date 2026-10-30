@@ -1,25 +1,25 @@
 {
   "schema": "soh.a8.local_art_manifest.v1",
   "owner": "A8",
-  "source_policy": "selected original SOH project art from A1-curated shared world atlas; no Drive ZIP, third-party raw asset, Cainos art, or avatar art copied",
+  "source_policy": "A8 adopts A1 PR #20 exact-head original SOH shared 16px atlas and shell visual skin; no third-party or avatar art copied.",
   "a1_visual_contract": "data/survival/world/art/a8_visual_contract.v1.json",
   "a1_pr": 20,
-  "a1_head": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+  "a1_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
   "source_atlas": "data/survival/world/art/atlas.v1.json",
   "source_atlas_sha256": {
-    "props": "36505528776568e398b5770493407b5706b4a102bc03e1b50b436277d500d9d4",
-    "terrain": "59eb49569e6ac7d4493749318e3511564db695c3840a5dd7a32e53f96d280384"
+    "props": "6c4cfd80c99ab0a430dfa7c67372043341d09f6b1bd25af13793429e0b9aa190",
+    "terrain": "1de66aa8f9e078801bd163ef2e12c0c973fdb8a3b08ec61cd192846277c45dbf"
   },
   "textures": {
     "terrain": {
       "path": "res://game/survival/world_content/art/terrain.png",
-      "sha256": "59eb49569e6ac7d4493749318e3511564db695c3840a5dd7a32e53f96d280384",
-      "license": "original SOH art; source manifest license original"
+      "sha256": "4317e9b1aa49dbd401fb6b8c03b67e79311acca90fb04604f9c7017626da811e",
+      "license": "original SOH art; A1 atlas manifest license original"
     },
     "props": {
       "path": "res://game/survival/world_content/art/props.png",
-      "sha256": "36505528776568e398b5770493407b5706b4a102bc03e1b50b436277d500d9d4",
-      "license": "original SOH art; inherited frames license original"
+      "sha256": "8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030",
+      "license": "original SOH art; A1 atlas manifest license original"
     }
   },
   "tile_px": 16,
@@ -48,144 +48,6 @@
       16,
       16
     ],
-    "moor_0": [
-      64,
-      0,
-      16,
-      16
-    ],
-    "moor_1": [
-      80,
-      0,
-      16,
-      16
-    ],
-    "moor_2": [
-      96,
-      0,
-      16,
-      16
-    ],
-    "moor_3": [
-      112,
-      0,
-      16,
-      16
-    ],
-    "soil_0": [
-      128,
-      0,
-      16,
-      16
-    ],
-    "soil_1": [
-      144,
-      0,
-      16,
-      16
-    ],
-    "soil_2": [
-      160,
-      0,
-      16,
-      16
-    ],
-    "soil_3": [
-      176,
-      0,
-      16,
-      16
-    ],
-    "gravel_0": [
-      0,
-      16,
-      16,
-      16
-    ],
-    "gravel_1": [
-      16,
-      16,
-      16,
-      16
-    ],
-    "gravel_2": [
-      32,
-      16,
-      16,
-      16
-    ],
-    "gravel_3": [
-      48,
-      16,
-      16,
-      16
-    ],
-    "grass_0": [
-      192,
-      0,
-      16,
-      16
-    ],
-    "grass_1": [
-      208,
-      0,
-      16,
-      16
-    ],
-    "grass_2": [
-      224,
-      0,
-      16,
-      16
-    ],
-    "grass_3": [
-      240,
-      0,
-      16,
-      16
-    ],
-    "forest_0": [
-      256,
-      0,
-      16,
-      16
-    ],
-    "forest_1": [
-      272,
-      0,
-      16,
-      16
-    ],
-    "forest_2": [
-      288,
-      0,
-      16,
-      16
-    ],
-    "forest_3": [
-      304,
-      0,
-      16,
-      16
-    ],
-    "water_0": [
-      64,
-      16,
-      16,
-      16
-    ],
-    "water_1": [
-      80,
-      16,
-      16,
-      16
-    ],
-    "water_2": [
-      96,
-      16,
-      16,
-      16
-    ],
     "bank_0": [
       448,
       80,
@@ -195,6 +57,42 @@
     "bank_1": [
       496,
       80,
+      16,
+      16
+    ],
+    "bank_10": [
+      416,
+      96,
+      16,
+      16
+    ],
+    "bank_11": [
+      464,
+      96,
+      16,
+      16
+    ],
+    "bank_12": [
+      0,
+      112,
+      16,
+      16
+    ],
+    "bank_13": [
+      48,
+      112,
+      16,
+      16
+    ],
+    "bank_14": [
+      96,
+      112,
+      16,
+      16
+    ],
+    "bank_15": [
+      144,
+      112,
       16,
       16
     ],
@@ -246,49 +144,1351 @@
       16,
       16
     ],
-    "bank_10": [
-      416,
-      96,
-      16,
-      16
-    ],
-    "bank_11": [
-      464,
-      96,
-      16,
-      16
-    ],
-    "bank_12": [
+    "basalt_0": [
+      448,
       0,
-      112,
       16,
       16
     ],
-    "bank_13": [
-      48,
-      112,
+    "basalt_1": [
+      464,
+      0,
       16,
       16
     ],
-    "bank_14": [
+    "basalt_2": [
+      480,
+      0,
+      16,
+      16
+    ],
+    "basalt_3": [
+      496,
+      0,
+      16,
+      16
+    ],
+    "blend_ash_gravel_0": [
+      416,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_1": [
+      432,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_10": [
+      64,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_11": [
+      80,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_12": [
       96,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_13": [
+      112,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_14": [
+      128,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_15": [
+      144,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_2": [
+      448,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_3": [
+      464,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_4": [
+      480,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_5": [
+      496,
+      64,
+      16,
+      16
+    ],
+    "blend_ash_gravel_6": [
+      0,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_7": [
+      16,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_8": [
+      32,
+      80,
+      16,
+      16
+    ],
+    "blend_ash_gravel_9": [
+      48,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_0": [
+      160,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_1": [
+      176,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_10": [
+      320,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_11": [
+      336,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_12": [
+      352,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_13": [
+      368,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_14": [
+      384,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_15": [
+      400,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_2": [
+      192,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_3": [
+      208,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_4": [
+      224,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_5": [
+      240,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_6": [
+      256,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_7": [
+      272,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_8": [
+      288,
+      80,
+      16,
+      16
+    ],
+    "blend_forest_soil_9": [
+      304,
+      80,
+      16,
+      16
+    ],
+    "blend_grass_forest_0": [
+      416,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_1": [
+      432,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_10": [
+      64,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_11": [
+      80,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_12": [
+      96,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_13": [
+      112,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_14": [
+      128,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_15": [
+      144,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_2": [
+      448,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_3": [
+      464,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_4": [
+      480,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_5": [
+      496,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_forest_6": [
+      0,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_7": [
+      16,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_8": [
+      32,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_forest_9": [
+      48,
+      64,
+      16,
+      16
+    ],
+    "blend_grass_soil_0": [
+      160,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_1": [
+      176,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_10": [
+      320,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_11": [
+      336,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_12": [
+      352,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_13": [
+      368,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_14": [
+      384,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_15": [
+      400,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_2": [
+      192,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_3": [
+      208,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_4": [
+      224,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_5": [
+      240,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_6": [
+      256,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_7": [
+      272,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_8": [
+      288,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_soil_9": [
+      304,
+      16,
+      16,
+      16
+    ],
+    "blend_grass_water_0": [
+      416,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_1": [
+      432,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_10": [
+      64,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_11": [
+      80,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_12": [
+      96,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_13": [
+      112,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_14": [
+      128,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_15": [
+      144,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_2": [
+      448,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_3": [
+      464,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_4": [
+      480,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_5": [
+      496,
+      32,
+      16,
+      16
+    ],
+    "blend_grass_water_6": [
+      0,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_7": [
+      16,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_8": [
+      32,
+      48,
+      16,
+      16
+    ],
+    "blend_grass_water_9": [
+      48,
+      48,
+      16,
+      16
+    ],
+    "blend_moor_ash_0": [
+      416,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_1": [
+      432,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_10": [
+      64,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_11": [
+      80,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_12": [
+      96,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_13": [
+      112,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_14": [
+      128,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_15": [
+      144,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_2": [
+      448,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_3": [
+      464,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_4": [
+      480,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_5": [
+      496,
+      16,
+      16,
+      16
+    ],
+    "blend_moor_ash_6": [
+      0,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_7": [
+      16,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_8": [
+      32,
+      32,
+      16,
+      16
+    ],
+    "blend_moor_ash_9": [
+      48,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_0": [
+      160,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_1": [
+      176,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_10": [
+      320,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_11": [
+      336,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_12": [
+      352,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_13": [
+      368,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_14": [
+      384,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_15": [
+      400,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_2": [
+      192,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_3": [
+      208,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_4": [
+      224,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_5": [
+      240,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_6": [
+      256,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_7": [
+      272,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_8": [
+      288,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_basalt_9": [
+      304,
+      32,
+      16,
+      16
+    ],
+    "blend_snow_tundra_0": [
+      160,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_1": [
+      176,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_10": [
+      320,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_11": [
+      336,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_12": [
+      352,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_13": [
+      368,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_14": [
+      384,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_15": [
+      400,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_2": [
+      192,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_3": [
+      208,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_4": [
+      224,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_5": [
+      240,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_6": [
+      256,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_7": [
+      272,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_8": [
+      288,
+      64,
+      16,
+      16
+    ],
+    "blend_snow_tundra_9": [
+      304,
+      64,
+      16,
+      16
+    ],
+    "blend_soil_gravel_0": [
+      160,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_1": [
+      176,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_10": [
+      320,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_11": [
+      336,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_12": [
+      352,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_13": [
+      368,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_14": [
+      384,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_15": [
+      400,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_2": [
+      192,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_3": [
+      208,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_4": [
+      224,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_5": [
+      240,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_6": [
+      256,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_7": [
+      272,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_8": [
+      288,
+      48,
+      16,
+      16
+    ],
+    "blend_soil_gravel_9": [
+      304,
+      48,
+      16,
+      16
+    ],
+    "court_0": [
+      160,
       112,
       16,
       16
     ],
-    "bank_15": [
-      144,
+    "court_1": [
+      176,
       112,
+      16,
+      16
+    ],
+    "court_2": [
+      192,
+      112,
+      16,
+      16
+    ],
+    "court_3": [
+      208,
+      112,
+      16,
+      16
+    ],
+    "forest_0": [
+      256,
+      0,
+      16,
+      16
+    ],
+    "forest_1": [
+      272,
+      0,
+      16,
+      16
+    ],
+    "forest_2": [
+      288,
+      0,
+      16,
+      16
+    ],
+    "forest_3": [
+      304,
+      0,
+      16,
+      16
+    ],
+    "grass_0": [
+      192,
+      0,
+      16,
+      16
+    ],
+    "grass_1": [
+      208,
+      0,
+      16,
+      16
+    ],
+    "grass_2": [
+      224,
+      0,
+      16,
+      16
+    ],
+    "grass_3": [
+      240,
+      0,
+      16,
+      16
+    ],
+    "gravel_0": [
+      0,
+      16,
+      16,
+      16
+    ],
+    "gravel_1": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "gravel_2": [
+      32,
+      16,
+      16,
+      16
+    ],
+    "gravel_3": [
+      48,
+      16,
+      16,
+      16
+    ],
+    "ice_0": [
+      112,
+      16,
+      16,
+      16
+    ],
+    "ice_1": [
+      128,
+      16,
+      16,
+      16
+    ],
+    "ice_2": [
+      144,
+      16,
+      16,
+      16
+    ],
+    "moor_0": [
+      64,
+      0,
+      16,
+      16
+    ],
+    "moor_1": [
+      80,
+      0,
+      16,
+      16
+    ],
+    "moor_2": [
+      96,
+      0,
+      16,
+      16
+    ],
+    "moor_3": [
+      112,
+      0,
+      16,
+      16
+    ],
+    "road_dirt_0": [
+      416,
+      80,
+      16,
+      16
+    ],
+    "road_dirt_1": [
+      464,
+      80,
+      16,
+      16
+    ],
+    "road_dirt_10": [
+      384,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_11": [
+      432,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_12": [
+      480,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_13": [
+      16,
+      112,
+      16,
+      16
+    ],
+    "road_dirt_14": [
+      64,
+      112,
+      16,
+      16
+    ],
+    "road_dirt_15": [
+      112,
+      112,
+      16,
+      16
+    ],
+    "road_dirt_2": [
+      0,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_3": [
+      48,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_4": [
+      96,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_5": [
+      144,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_6": [
+      192,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_7": [
+      240,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_8": [
+      288,
+      96,
+      16,
+      16
+    ],
+    "road_dirt_9": [
+      336,
+      96,
+      16,
+      16
+    ],
+    "road_stone_0": [
+      432,
+      80,
+      16,
+      16
+    ],
+    "road_stone_1": [
+      480,
+      80,
+      16,
+      16
+    ],
+    "road_stone_10": [
+      400,
+      96,
+      16,
+      16
+    ],
+    "road_stone_11": [
+      448,
+      96,
+      16,
+      16
+    ],
+    "road_stone_12": [
+      496,
+      96,
+      16,
+      16
+    ],
+    "road_stone_13": [
+      32,
+      112,
+      16,
+      16
+    ],
+    "road_stone_14": [
+      80,
+      112,
+      16,
+      16
+    ],
+    "road_stone_15": [
+      128,
+      112,
+      16,
+      16
+    ],
+    "road_stone_2": [
+      16,
+      96,
+      16,
+      16
+    ],
+    "road_stone_3": [
+      64,
+      96,
+      16,
+      16
+    ],
+    "road_stone_4": [
+      112,
+      96,
+      16,
+      16
+    ],
+    "road_stone_5": [
+      160,
+      96,
+      16,
+      16
+    ],
+    "road_stone_6": [
+      208,
+      96,
+      16,
+      16
+    ],
+    "road_stone_7": [
+      256,
+      96,
+      16,
+      16
+    ],
+    "road_stone_8": [
+      304,
+      96,
+      16,
+      16
+    ],
+    "road_stone_9": [
+      352,
+      96,
+      16,
+      16
+    ],
+    "snow_0": [
+      320,
+      0,
+      16,
+      16
+    ],
+    "snow_1": [
+      336,
+      0,
+      16,
+      16
+    ],
+    "snow_2": [
+      352,
+      0,
+      16,
+      16
+    ],
+    "snow_3": [
+      368,
+      0,
+      16,
+      16
+    ],
+    "soil_0": [
+      128,
+      0,
+      16,
+      16
+    ],
+    "soil_1": [
+      144,
+      0,
+      16,
+      16
+    ],
+    "soil_2": [
+      160,
+      0,
+      16,
+      16
+    ],
+    "soil_3": [
+      176,
+      0,
+      16,
+      16
+    ],
+    "tundra_0": [
+      384,
+      0,
+      16,
+      16
+    ],
+    "tundra_1": [
+      400,
+      0,
+      16,
+      16
+    ],
+    "tundra_2": [
+      416,
+      0,
+      16,
+      16
+    ],
+    "tundra_3": [
+      432,
+      0,
+      16,
+      16
+    ],
+    "water_0": [
+      64,
+      16,
+      16,
+      16
+    ],
+    "water_1": [
+      80,
+      16,
+      16,
+      16
+    ],
+    "water_2": [
+      96,
+      16,
       16,
       16
     ]
   },
   "props_frames": {
+    "banner": [
+      638,
+      2,
+      18,
+      42
+    ],
+    "beehive": [
+      238,
+      108,
+      22,
+      24
+    ],
     "bush": [
-      286,
+      668,
       108,
       26,
       22
+    ],
+    "cache_closed": [
+      220,
+      2,
+      26,
+      24
+    ],
+    "cache_open": [
+      248,
+      2,
+      26,
+      24
+    ],
+    "cache_spent": [
+      276,
+      2,
+      26,
+      24
     ],
     "cairn": [
       734,
@@ -303,7 +1503,7 @@
       30
     ],
     "column_broken": [
-      472,
+      854,
       108,
       20,
       22
@@ -313,6 +1513,12 @@
       2,
       34,
       22
+    ],
+    "drying_rack": [
+      208,
+      108,
+      28,
+      30
     ],
     "fence_h": [
       676,
@@ -350,6 +1556,54 @@
       16,
       34
     ],
+    "light_pool": [
+      142,
+      108,
+      64,
+      40
+    ],
+    "lm_amber_apothecary": [
+      938,
+      2,
+      80,
+      64
+    ],
+    "lm_amber_watch": [
+      872,
+      2,
+      64,
+      84
+    ],
+    "lm_frost_shrine": [
+      2,
+      108,
+      56,
+      68
+    ],
+    "lm_mill_house": [
+      500,
+      108,
+      88,
+      76
+    ],
+    "lm_orchard_shed": [
+      426,
+      108,
+      72,
+      60
+    ],
+    "lm_quarry_workface": [
+      336,
+      108,
+      88,
+      64
+    ],
+    "lm_waystation": [
+      476,
+      2,
+      160,
+      104
+    ],
     "log_pile": [
       840,
       2,
@@ -375,28 +1629,40 @@
       24
     ],
     "rock_a": [
-      314,
+      696,
       108,
       26,
       20
     ],
     "rock_c": [
-      342,
+      724,
       108,
       20,
       15
     ],
     "rock_e": [
-      364,
+      746,
       108,
       40,
       30
     ],
     "signpost": [
-      406,
+      788,
       108,
       26,
       26
+    ],
+    "snow_drift": [
+      262,
+      108,
+      36,
+      16
+    ],
+    "split_rail": [
+      300,
+      108,
+      34,
+      18
     ],
     "stump": [
       340,
@@ -417,7 +1683,7 @@
       64
     ],
     "tree_dead": [
-      208,
+      590,
       108,
       40,
       58
@@ -441,13 +1707,13 @@
       64
     ],
     "tree_pine": [
-      250,
+      632,
       108,
       34,
       58
     ],
     "wall_stub": [
-      434,
+      816,
       108,
       36,
       22
@@ -459,7 +1725,7 @@
       18
     ]
   },
-  "transform_policy": "terrain tiles are exactly 16x16; prop frames render at source pixel dimensions with feet anchor bottom-center; nearest filtering; no fractional scaling",
+  "transform_policy": "16px terrain cells; source-sized props anchored bottom-center at integer local pixels; nearest filtering; no fractional scale; shell doorway remains visually and physically clear.",
   "source_visual_grammar": "data/survival/world/art/world_art_grammar.v1.json",
   "lighting_profiles": {
     "overcast_frontier": {
@@ -475,7 +1741,8 @@
         0.34,
         1.0
       ],
-      "warm_lamp_energy": 0.85
+      "warm_lamp_energy": 0.85,
+      "notes": "neutral grey-violet daylight; warm shelter pockets at night"
     },
     "amber_morning": {
       "ambient_day": [
@@ -490,7 +1757,24 @@
         0.3,
         1.0
       ],
-      "warm_lamp_energy": 0.75
+      "warm_lamp_energy": 0.75,
+      "notes": "living green/amber canopy; warm worked windows"
+    },
+    "frost_blue_hour": {
+      "ambient_day": [
+        0.76,
+        0.84,
+        0.96,
+        1.0
+      ],
+      "ambient_night": [
+        0.26,
+        0.32,
+        0.46,
+        1.0
+      ],
+      "warm_lamp_energy": 0.95,
+      "notes": "cold snow/basalt; soul-cyan shrine accent and rare warm refuge"
     }
   },
   "visual_contract_summary": {
@@ -509,5 +1793,46 @@
     "minimum_readable_feature_px": 4,
     "collision_readability": "art creates no collision; physical mass uses authored A8 collision geometry",
     "lighting": "A1 ambient profiles overcast_frontier and amber_morning are applied as shared day ambient tints; lamp is source art only, no A0 clock/Light2D integration is claimed"
+  },
+  "a1_shell_visual_source": {
+    "path": "data/survival/world/art/a8_shell_visuals.v1.json",
+    "sha256": "96ef8ada5eb78a7b025f6018ddaf0a2a8464639a0b7574cae58b956eff01dfd8",
+    "atlas_sha256": "0de810de2aa04a645a7ec82991da48542559f3336eff804cf21baa99dd959b74",
+    "visual_contract_sha256": "8290c7cb0ee64305ff810d07340ecc302a301fd2eba9f50b8e38bb8a14270fe7",
+    "grammar_sha256": "d54b1c9885bcf75b401f6b6f5a3158839cd9b357162961a5ec713aba4252e506",
+    "adoption": "Adopt 16px nearest-filter shared ramp, exact shell ground rows/road overlays and authored site landmarks. Retain all A8 geometry/physics/identity unchanged.",
+    "a8_visual_overrides": [
+      {
+        "site_id": "crown_south_quarry",
+        "source_prop": "handcart@[40,112]",
+        "effective_prop": "omitted",
+        "reason": "The source anchor intersects the physical entry radius; the alternative left-side placement collided visually with the authored rock. Keep the native doorway approach clean."
+      },
+      {
+        "site_id": "crown_south_orchard",
+        "source_prop": "drying_rack@[40,96]",
+        "effective_prop": "drying_rack@[24,96]",
+        "reason": "Move the rack outside A1 doorway_clear_rect_px without changing any collision."
+      },
+      {
+        "site_id": "crown_south_mill",
+        "source_prop": "handcart@[40,112]",
+        "effective_prop": "omitted",
+        "reason": "The source handcart overlaps the A1 doorway-clear rectangle/portal; keep the wheel, log pile, fences and mill-house landmark."
+      },
+      {
+        "site_id": "crown_south_mill",
+        "source_prop": "mill_wheel@[104,80]",
+        "effective_prop": "mill_wheel@[100,80]",
+        "reason": "Use the native 56px frame wholly inside the 128px shell instead of clipping four pixels."
+      },
+      {
+        "site_id": "crown_south_mill",
+        "source_prop": "lm_mill_house@[72,64]",
+        "effective_prop": "lm_mill_house@[72,76]",
+        "reason": "The 76px-tall landmark otherwise clips 12px beyond the shell; keep the full source frame visible above the doorway-clear zone."
+      }
+    ],
+    "rejected_inherited_art": "Previous A8-local atlas pin 2f6edd3f is superseded by A1 PR #20 head 939720d5: refreshed both original SOH texture sheets and all frame coordinates; no foreign asset imports."
   }
 }

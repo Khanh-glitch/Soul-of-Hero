@@ -166,7 +166,7 @@
     {
       "action_id": "clear_irrigation",
       "option_id": "water",
-      "label": "Clear the fallen sluice \u00b7 1 Stone Chunk",
+      "label": "Clear the fallen sluice",
       "requires_state": [],
       "costs": {
         "stone_chunk": 1
@@ -201,7 +201,7 @@
     {
       "action_id": "gather_reeds",
       "object_id": "sluice_reeds",
-      "label": "Cut the bank reeds \u00b7 1 Reed Fibre",
+      "label": "Cut the bank reeds",
       "requires_state": [],
       "costs": {},
       "rewards": {
@@ -290,75 +290,226 @@
     ],
     "profile": "orchard",
     "visual_layout": {
-      "ground_family": "forest",
-      "ground_areas": [
-        {
-          "center": [
-            4,
-            3
-          ],
-          "radius": [
-            4,
-            3
-          ],
-          "family": "soil"
-        }
+      "lighting_profile": "amber_morning",
+      "ground_rows": [
+        [
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "soil_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "grass_1",
+          "grass_2"
+        ],
+        [
+          "grass_0",
+          "grass_1",
+          "soil_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "grass_2",
+          "grass_3"
+        ],
+        [
+          "grass_1",
+          "grass_2",
+          "soil_3",
+          "soil_0",
+          "soil_1",
+          "soil_2",
+          "grass_3",
+          "grass_0"
+        ],
+        [
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1"
+        ],
+        [
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2",
+          "grass_3",
+          "grass_0",
+          "grass_1",
+          "grass_2"
+        ]
       ],
-      "paths": [
+      "overlays": [
         {
-          "family": "gravel",
-          "width": 2,
-          "points": [
-            [
-              3,
-              7
-            ],
-            [
-              3,
-              6
-            ],
-            [
-              4,
-              5
-            ]
-          ]
-        }
-      ],
-      "props": [
-        {
-          "frame": "tree_orchard",
+          "frame": "road_dirt_10",
           "cell": [
-            1,
+            3,
             4
           ],
-          "id": "graft_tree_west"
+          "layer": "road"
         },
         {
-          "frame": "tree_orchard",
+          "frame": "road_dirt_10",
           "cell": [
-            6,
+            4,
             4
           ],
-          "id": "graft_tree_east"
+          "layer": "road"
         },
         {
-          "frame": "reeds",
+          "frame": "road_dirt_10",
+          "cell": [
+            3,
+            5
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
           "cell": [
             4,
             5
           ],
-          "id": "sluice_reeds"
+          "layer": "road"
         },
         {
-          "frame": "signpost",
+          "frame": "road_dirt_10",
           "cell": [
             3,
             6
           ],
-          "id": "return_sign"
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_10",
+          "cell": [
+            4,
+            6
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            3,
+            7
+          ],
+          "layer": "road"
+        },
+        {
+          "frame": "road_dirt_4",
+          "cell": [
+            4,
+            7
+          ],
+          "layer": "road"
         }
       ],
-      "lighting_profile": "amber_morning"
+      "props": [
+        {
+          "frame": "lm_orchard_shed",
+          "local_px": [
+            72,
+            64
+          ],
+          "role": "authored_landmark",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            24,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "tree_orchard",
+          "local_px": [
+            104,
+            64
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "drying_rack",
+          "local_px": [
+            24,
+            96
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "beehive",
+          "local_px": [
+            104,
+            96
+          ],
+          "role": "ordinary_harvestable",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            24,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        },
+        {
+          "frame": "split_rail",
+          "local_px": [
+            104,
+            112
+          ],
+          "role": "background_scenery",
+          "collision_change": false
+        }
+      ],
+      "doorway_clear_rect_px": [
+        44,
+        92,
+        40,
+        36
+      ]
     },
     "obstacles_px": [
       [

@@ -111,19 +111,32 @@ func _build_ground() -> void:
 	_terrain_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_terrain_layer.tile_set = tile_set
 	add_child(_terrain_layer)
-	var base_family := str(_layout.get("ground_family", "ash"))
-	for y: int in range(_rows):
-		for x: int in range(_columns):
-			_paint_cell(Vector2i(x, y), _family_frame(base_family, x, y), source_id)
-	for area: Dictionary in _layout.get("ground_areas", []):
-		_paint_ellipse(
-			VECTOR_UTIL.from_int_pair(area.get("center", []), Vector2i(-1, -1)),
-			VECTOR_UTIL.from_int_pair(area.get("radius", []), Vector2i.ZERO),
-			str(area.get("family", base_family)),
-			source_id
-		)
-	for path: Dictionary in _layout.get("paths", []):
-		_paint_path(path, source_id)
+	var ground_rows: Array = _layout.get("ground_rows", [])
+	if not ground_rows.is_empty():
+		for y: int in range(mini(ground_rows.size(), _rows)):
+			var row: Array = ground_rows[y]
+			for x: int in range(mini(row.size(), _columns)):
+				_paint_cell(Vector2i(x, y), str(row[x]), source_id)
+		for overlay: Dictionary in _layout.get("overlays", []):
+			_paint_cell(
+				VECTOR_UTIL.from_int_pair(overlay.get("cell", []), Vector2i(-1, -1)),
+				str(overlay.get("frame", "")),
+				source_id
+			)
+	else:
+		var base_family := str(_layout.get("ground_family", "ash"))
+		for y: int in range(_rows):
+			for x: int in range(_columns):
+				_paint_cell(Vector2i(x, y), _family_frame(base_family, x, y), source_id)
+		for area: Dictionary in _layout.get("ground_areas", []):
+			_paint_ellipse(
+				VECTOR_UTIL.from_int_pair(area.get("center", []), Vector2i(-1, -1)),
+				VECTOR_UTIL.from_int_pair(area.get("radius", []), Vector2i.ZERO),
+				str(area.get("family", base_family)),
+				source_id
+			)
+		for path: Dictionary in _layout.get("paths", []):
+			_paint_path(path, source_id)
 	var state_paths: Dictionary = _layout.get("state_paths", {})
 	for state_key: String in state_paths:
 		var values: Dictionary = state_paths[state_key]
@@ -215,9 +228,21 @@ func _make_sprite(prop: Dictionary) -> Sprite2D:
 	var frame_map: Dictionary = _manifest.get("props_frames", {})
 	if not frame_map.has(frame_name):
 		return null
-	var cell := VECTOR_UTIL.from_int_pair(prop.get("cell", []), Vector2i(-1, -1))
-	if cell.x < 0 or cell.y < 0:
-		return null
+	var anchor := Vector2(-1, -1)
+	if prop.has("local_px"):
+		anchor = VECTOR_UTIL.from_pair(prop.get("local_px", []), Vector2(-1, -1))
+		if anchor.x < 0.0 or anchor.y < 0.0:
+			return null
+		if (
+			not is_equal_approx(anchor.x, roundf(anchor.x))
+			or not is_equal_approx(anchor.y, roundf(anchor.y))
+		):
+			return null
+	else:
+		var cell := VECTOR_UTIL.from_int_pair(prop.get("cell", []), Vector2i(-1, -1))
+		if cell.x < 0 or cell.y < 0:
+			return null
+		anchor = Vector2(float(cell.x * TILE_PX + 8), float(cell.y * TILE_PX + TILE_PX))
 	var rect: Array = frame_map[frame_name]
 	if rect.size() != 4 or int(rect[2]) <= 0 or int(rect[3]) <= 0:
 		return null
@@ -228,7 +253,7 @@ func _make_sprite(prop: Dictionary) -> Sprite2D:
 	sprite.name = str(prop.get("id", frame_name)).replace(":", "_").replace("/", "_")
 	sprite.texture = texture_region
 	sprite.centered = false
-	sprite.position = Vector2(float(cell.x * TILE_PX + 8), float(cell.y * TILE_PX + TILE_PX))
+	sprite.position = anchor
 	sprite.offset = Vector2(-float(floori(float(rect[2]) * 0.5)), -float(rect[3]))
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	return sprite

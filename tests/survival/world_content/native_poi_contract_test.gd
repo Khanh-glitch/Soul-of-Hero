@@ -142,6 +142,14 @@ func _interaction_eligibility_and_choice() -> void:
 	var site: NativePoiSite = pair.site
 	var actor: WorldContentTestActor = pair.actor
 	var authority: PoiAuthorityFixture = pair.authority
+	var initial_projection: Dictionary = authority.project_state(site.get_source_id())
+	var foreign_projection: Dictionary = initial_projection.duplicate(true)
+	foreign_projection.source_id = "poi_forged_elsewhere"
+	_check(not site.set_projection(foreign_projection), "foreign owner projection is rejected")
+	var malformed_projection: Dictionary = initial_projection.duplicate(true)
+	malformed_projection.clock_seconds = INF
+	malformed_projection.projection_revision += 1
+	_check(not site.set_projection(malformed_projection), "non-finite owner clock is rejected")
 	var intents: Array[Dictionary] = []
 	site.intent_requested.connect(func(intent: Dictionary): intents.append(intent))
 	actor.global_position = site.get_spawn_position()
@@ -172,6 +180,15 @@ func _interaction_eligibility_and_choice() -> void:
 		)
 		var result: Dictionary = authority.submit_intent(intent)
 		_check(result.status == "committed", "fixture accepts affordable candidate route")
+		var mismatched_receipt: Dictionary = result.duplicate(true)
+		mismatched_receipt.intent_id = "forged|receipt"
+		_check(
+			not site.receive_authoritative_result(
+				intent.intent_id, mismatched_receipt, authority.project_state(site.get_source_id())
+			),
+			"receipt for a different intent cannot clear or satisfy the pending action"
+		)
+		_check(site.has_pending_intent(), "mismatched receipt leaves the matching action pending")
 		_check(
 			site.receive_authoritative_result(
 				intent.intent_id, result, authority.project_state(site.get_source_id())
@@ -185,6 +202,20 @@ func _interaction_eligibility_and_choice() -> void:
 		_check(
 			site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/west_ramp_chock"),
 			"owner-projected west route adds its corresponding source-backed visual"
+		)
+		_check(
+			not site.set_projection(initial_projection),
+			"older owner revision cannot roll back a committed Quarry route"
+		)
+		var conflicting_projection: Dictionary = authority.project_state(site.get_source_id())
+		conflicting_projection.site_state.quarry_route = "east_braced"
+		_check(
+			not site.set_projection(conflicting_projection),
+			"same-revision conflicting route state is rejected"
+		)
+		_check(
+			site.get_site_state().quarry_route == "west_chocked",
+			"rejected stale/conflicting projections leave the accepted route unchanged"
 		)
 		_check(
 			(
@@ -378,9 +409,22 @@ func _candidate_claims_capacity_and_reload() -> void:
 		candidate.intent_id, granted, authority.project_state(site.get_source_id())
 	)
 	var snapshot: Dictionary = authority.snapshot()
+	var serialized_snapshot := JSON.stringify(snapshot)
+	var deserialized_snapshot: Variant = JSON.parse_string(serialized_snapshot)
+	_check(
+		deserialized_snapshot is Dictionary,
+		"owner fixture snapshot survives JSON process serialization"
+	)
 	var reload_fixture := FIXTURE_SCRIPT.new()
-	reload_fixture.configure(snapshot)
+	reload_fixture.configure(deserialized_snapshot if deserialized_snapshot is Dictionary else {})
 	var reloaded_projection: Dictionary = reload_fixture.project_state(site.get_source_id())
+	_check(
+		(
+			reloaded_projection.source_id == site.get_source_id()
+			and reloaded_projection.projection_revision == snapshot.projection_revision
+		),
+		"serialized owner projection preserves canonical identity and monotonic revision"
+	)
 	_check(
 		reload_fixture.submit_intent(candidate).status == "rejected",
 		"saved claim ledger rejects a duplicate after fixture reload"

@@ -26,6 +26,7 @@ func configure(seed_snapshot: Dictionary = {}) -> void:
 	if seed_snapshot.is_empty():
 		_snapshot = {
 			"schema_version": 1,
+			"projection_revision": 0,
 			"inventory": {"oak_wood": 2, "stone_chunk": 2, "iron_scrap": 1, "reed_fibre": 1},
 			"bag_capacity": 8,
 			"site_state": {},
@@ -38,6 +39,8 @@ func configure(seed_snapshot: Dictionary = {}) -> void:
 		}
 	else:
 		_snapshot = seed_snapshot.duplicate(true)
+	if not _snapshot.has("projection_revision"):
+		_snapshot["projection_revision"] = 0
 
 
 func has_capability(capability: String) -> bool:
@@ -45,11 +48,22 @@ func has_capability(capability: String) -> bool:
 
 
 func set_capabilities(capabilities: Array[String]) -> void:
+	if _snapshot.get("capabilities", []) == capabilities:
+		return
 	_snapshot["capabilities"] = capabilities.duplicate()
+	_increment_projection_revision()
 
 
 func advance_time(seconds: float) -> void:
-	_snapshot["clock_seconds"] = float(_snapshot.get("clock_seconds", 0.0)) + maxf(0.0, seconds)
+	var elapsed := maxf(0.0, seconds)
+	if elapsed <= 0.0:
+		return
+	_snapshot["clock_seconds"] = float(_snapshot.get("clock_seconds", 0.0)) + elapsed
+	_increment_projection_revision()
+
+
+func _increment_projection_revision() -> void:
+	_snapshot["projection_revision"] = int(_snapshot.get("projection_revision", 0)) + 1
 
 
 func project_state(site_id: String) -> Dictionary:
@@ -63,6 +77,8 @@ func project_state(site_id: String) -> Dictionary:
 			ready_actions.append(action_id)
 	return {
 		"schema_version": 1,
+		"source_id": site_id,
+		"projection_revision": int(_snapshot.get("projection_revision", 0)),
 		"site_state": _snapshot.get("site_state", {}).get(site_id, {}).duplicate(true),
 		"claim_generation": _snapshot.get("claim_generation", {}).get(site_id, {}).duplicate(true),
 		"capabilities": _snapshot.get("capabilities", []).duplicate(),
@@ -194,6 +210,7 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 		)
 	unlocks[source_id] = site_unlocks
 	_snapshot["unlock_at"] = unlocks
+	_increment_projection_revision()
 	return {
 		"intent_id": intent_id,
 		"status": "committed",

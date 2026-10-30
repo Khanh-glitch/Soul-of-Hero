@@ -1,43 +1,71 @@
-# A8 native world-content module — S2 engineering status
+# A8 native world-content pilot — source, native, visual, and production status
 
-**Scope:** South Quarry, South Orchard Ruin, and South Crown Mill; shared native Godot interaction engine; one local-worksite transition contract; and a non-canonical fourth-site authoring fixture. This is an A8-owned native module, **not** an A0 production mount, A3-authorized economy, full-game approval, or release-ready integration.
+**Scope:** A8-owned native content for South Quarry, South Orchard Ruin, and South Crown Mill. This is not an A0 production mount, A3-approved economy, full-game approval, or release-ready integration. Work remains on the existing PR #26 branch.
 
-## Implemented in A8-owned paths
+## Player-visible content implemented in A8-owned roots
 
-- Each canonical POI now has two scene roles: a 128×128 compact overworld shell at its unchanged A1 cell and a separate 960×608 local worksite using the shared `NativePoiSite` engine. The local worksite is never directly mounted at the A1 world transform. Shell roots use the exact 1:1, rotation-0 transform `root = canonical_cell * 16 + (8,8) - action_socket`, with the centered `[64,64]` socket and no fractional scaling.
-- Exterior shells retain five solid boundary segments around a real south doorway. The larger local scenes retain their authored collision and now have a central south ingress/egress gap. `transition_contract.v1.json` defines typed enter/exit requests: entering is possible only at the physically reached shell door; retreat returns to that shell door and canonical anchor. A8 emits requests only. It does not mount production scenes, move the authoritative Hero, save position, or treat an interior spawn as an overworld coordinate. The small in-pilot transition host is explicitly S2-only.
-- Wrapper generation uses the actual source filename (e.g. `sites/south_quarry.json`), not the `site_id`. `author_site.py --check` independently parses each serialized `definition_path`, resolves the referenced file, and verifies `site_id` plus `source.poi_id`; it does not trust its own generated text for existence or identity. Adversarial Python tests prove that a missing path, wrong identity, and root escape are rejected.
-- `NativePoiSite` consumes `get_facing_direction()` first when the composed Hero exposes A0's real interface (`game/characters/knight/knight.gd` at current A0 head); fixture-facing fallbacks remain test-only. Choices, capabilities, cooldowns, collision and scene dressing react to accepted owner projections. No scene-local inventory, receipt, or durable POI state is introduced.
-- A8 now pins the original SOH `terrain.png` / `props.png` source atlas from A1 PR #20 head `2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b` in `a8_art_manifest.v1.json` with exact SHA-256 values and selected source-frame rectangles. The shells and local worksites use a 16 px `TileMapLayer`, native-size atlas `Sprite2D`s, integer bottom-center anchors, nearest filtering, and A1's shared `overcast_frontier` / `amber_morning` day ambient profiles. No Drive data, Cainos art, or procedural rectangle renderer is used. The art layer adds no collision; substantial wall/tree masses are paired with authored A8 obstacle geometry. Owner-projected states add/remove corresponding Quarry, Orchard and Mill art props.
+- Each canonical site has a **128×128 1:1 exterior shell** and a separate **960×608 interior**. Quarry shell identity stays at A1 cell `[30,280]`; its local interaction stand, portal, and scene spawn are separate interior coordinates. A0 owns reachable-world mounting and transitions.
+- Shells use five physical boundary segments around a real south doorway; interiors retain authored collision walls and a central south egress. Typed entry/exit requests carry world/POI/cell identity and local anchors. A8 does not relocate the production Hero, persist world coordinates, or substitute a second SaveService.
+- The Quarry has a normal work-side route, two distinct physical preparation branches, and an honest unchosen blocker. East brace opens only `[544,232,20,116]`; west chock opens only `[448,232,20,116]`. Fixture-tested axis-aligned route lengths are 286 px east and 390 px west; the unchosen body remains. Leaving the seam is safe, item-free, and keeps a warning/extraction lock. These are physical traversal distinctions, not simulated damage rates.
+- Orchard is a living graft remnant: amber grass/soil, orchard rows and shed, sluice choice, projected flowing channel, and delayed graft-mark return. Mill is a heavy stopped watermill: ash/gravel yard, mill-house/wheel, capability-gated maintenance, repair-or-leave branch, projected race/repair evidence, and a distinct fastener workstation. Their mechanics and native silhouettes differ; they are not palette-only reskins.
+- A8 art is visual-only and contributes no collision. A1 route geometry, A0 mount/SaveService, A3 authorization, and A6 avatars are not changed. No duplicate POI, filler placeholder, debug UI, third-party/Cainos art, or fake production receipt is introduced.
 
-## Distinct worksite loops
+## A1 art comparison and exact disposition
 
-1. **South Quarry** — `poi_crown_south_quarry`, cell `[30,280]`. East-shelf bracing and west-ramp chocking are separate route preparations with distinct collision-blocker consequences; leaving the unstable seam is a safe no-item refusal. Extraction is denied unless an owner projection reports a safe route. The work face has a projection-driven recovery state and the same physical route supports retreat and later return.
-2. **South Orchard Ruin** — `poi_crown_south_orchard`, cell `[140,360]`. The sluice choice drives visible irrigation state; accepted water flow reveals the delayed graft-mark return interaction. Gathering remains low-risk in the fixture and is **not** a live A3 source grant. Honey and rare herb remain blocked.
-3. **South Crown Mill** — `poi_crown_south_mill`, cell `[120,300]`. The stopped race is inspectable from the outer side. The outer gate requires `cap_salvage`; the inner maintenance gate requires both that capability and an owner-projected `mill_wheel=turning`. Repair/leave are exclusive choices at a reachable near-side workstation. Repair projects a flowing race path and repaired-bearing/lamp props (the atlas wheel itself remains static), opens the inner physical gate and enables a separate state-gated fastener workstation. The entrance and outer inspection path remain safely retreatable.
+The previous A8-local art pin at A1 PR #20 commit `2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b` is superseded by the directly inspected current A1 head `939720d50a0b822ff9042d4104dc69ba78ffe0f8`. A8 copied only the two original-SOH atlas textures into its owned root and refreshed all manifest rectangles from current A1 `atlas.v1.json`:
 
-All fixture costs, yields, source quantities, and cooldowns remain non-live. The latest A3 PR #19 v3 bindings contain no Quarry, Orchard, or Mill binding, and `A8_QUARRY_AUTHORIZATION_V4.json` is `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`: no Quarry route cost, outcrop reward, source mapping, cooldown, or capability grant is approved. Generic `live_*` IDs with `poi_id: null` do not authorize these sites. Production must not grant those items or treat fixture pricing as approved.
+- `terrain.png`: SHA-256 `4317e9b1aa49dbd401fb6b8c03b67e79311acca90fb04604f9c7017626da811e`, 512×128 px.
+- `props.png`: SHA-256 `8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030`, 1024×186 px.
 
-## Current owner source snapshots
+Adopted: A1's 16 px grid, current shared ramp, nearest filtering, source-sized integer props, per-site shell ground rows/road overlays, and authored Quarry/Orchard/Mill landmarks. A1 shell JSON's `a8_definition_sha256` values refer to the older A8 review snapshot (`5ccf7b3f`) and are not treated as current-definition hashes; current identity, bounds, socket, and entry are checked directly. Doorway/bounds corrections are explicit in `a8_art_manifest.v1.json`: omit Quarry handcart and Mill handcart that intrude on the portal, move the Orchard rack left of the clear doorway, shift the Mill wheel left to avoid four-pixel clipping, and move the Mill-house anchor down so the 76 px source frame stays inside its 128 px shell. These corrections change no geometry or collision.
 
-- A1 PR #20 head: `2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b`; the read-only `A8_SITE_TRANSFORM_CONTRACT.md` supplies Quarry `[30,280]`, Orchard `[140,360]`, Mill `[120,300]`, four-tile radius, and exact 1:1 transform. A1 geography is unchanged by this patch.
-- A3 PR #19 head: `c5e80922132ca9cf89ea15c480e1a4be465ba0b7`; `data/survival/items/world_source_bindings.v3.json` is schema `soh.economy.world_source_bindings.v3`, status `A3_V4_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT`. Its present rows bind only Waystation cache/deadfall and Waystation/Relay world actions; it does not authorize A8 sources, prices, rewards or timers. Its embedded A1 pin is older (`2951bf8559b2e289ce99fd4d394d44c46fdd91b1`), so this A8 audit uses the current A1 head separately.
-- A0 PR #21 head: `5387bed6260cb7b9bd4d8229ee759dee08a0d918`, still draft/conflicting at last check. The Hero facing getter exists at this head; A0 remains sole owner of production mounting, actor/source/claim checks, transition persistence, SaveService commits and world identity.
-- A6 PR #24 head: `08ccb8348f2e7a75e09af47a1741c158fc46e794`. Integration target `feature/survival-rpg-foundation-20261029` was last observed at `86831332324428c7623ad431a577d101b7af5c9c`.
-- The accessible decision ledger ends at D050; canonical D051–D054 records were not located in this checkout. An earlier pilot note cited D051/D054 for avatar identities, but that claim is not relied on or reasserted here. No avatar art or player implementation is changed. The A8 atlas copies are traceable to A1 PR #20's original-SOH atlas manifest; no Drive, Cainos, or third-party raw art is used.
+A static atlas-composition preview was used only to review the A1 sprite layout; it is not a native capture and is not visual acceptance.
 
-## Scoped validation and evidence
+## A0 reachable-world insertion contract
 
-**Completed independent/static checks on pushed commit `d6f11728`:**
+The actionable A0-owned insertion steps are in `A0_QUARRY_REACHABLE_WORLD_INSERTION_SPEC.v1.md`. The exact Quarry shell transform is root `[424,4424]`, local socket `[64,64]`, canonical pixel center `[488,4488]`, scale `[1,1]`, rotation 0°. A0 must mount only the 128 px shell, and make A1's `node_refuge` → `sp_poi_crown_south_quarry` foot route reachable through world/streaming/camera/collision. A0's current Waystation host is 448×256 px and does not include cell `[30,280]`; current reachability is therefore unproved. The 960×608 worksite is transition-only, never an overworld mount.
 
-- `python3 tools/survival/world_content/author_site.py --check` passed for all four site definitions and actual wrapper references.
-- Five adversarial path/identity tests and four atlas/layout/provenance tests passed; all nine A8 world-content JSON files parsed.
-- Scoped `gdformat --check`, `gdlint`, and `git diff --check` passed. Texture hashes match A1 PR #20's pinned atlas manifest.
+A1 PR #20 current inspected head is `939720d50a0b822ff9042d4104dc69ba78ffe0f8`. A0 PR #21 current inspected head is `e0c797cc09eeb8cffa302aaedc5d31d40f368ff3`. A0 remains sole owner of the production mount, live actor/transition checks, global coordinates, durable instance identity, owner adapter, and existing SaveService.
 
-**Native status: `PENDING`; no native PASS is claimed.** The local workspace has no Godot executable. Current-head A8 run `41033322405`, runtime/headless/capture run `41033322381`, and handoff run `41033322366` were queued with no job steps at the last observation. Earlier A8 run `41024526858` on head `5ccf7b3f` failed in the native physics/interaction step; GitHub's signed log fetch returned EOF, so that failure's assertion remains unknown. No current-head scene execution, native physics result, interaction pass, or A8 capture has yet been reviewed. Static checks are not native acceptance; keep status pending until these runs execute and the A8 captures are visually inspected.
+## A3 Quarry economics evidence pack
 
-The PR-only workflow runs authoring and art-manifest checks, imports native resources with Godot 4.7, runs physical/interaction/transition suites, preserves failure logs as artifacts/step summaries, and captures the A8 harness at 1280×720, 2560×1440, and 3840×2160. Capture generation alone is not visual evidence.
+The machine-readable pack is `data/survival/world_content/quarry_economics_evidence.v1.json`. It records A1 route geometry, distinct interior paths/blockers, extant oak/stone sources and sinks, a proposed-but-unallocated site-bound identity, and symbolic net-yield/break-even scenarios. Unknown route prices, Quarry yield, active cooldown, risk opportunity cost, and source binding remain `null`.
 
-## A0 production handoff boundary
+A3 PR #19 current inspected head is `c5e80922132ca9cf89ea15c480e1a4be465ba0b7`. Its Quarry V4 verdict is `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`: no route costs, extraction quantity/source, cooldown, capability grant, or Quarry binding is authorized. Generic `live_stone_chunk` with `poi_id:null` and S2 fixture numbers are not Quarry authority. A3's production adapter must remain fail-closed until A3 issues a new authorization.
 
-A0 may mount only the three compact shell scenes at the exact A1 cells, then consume the typed local-worksite doorway requests. Before production, A0 must validate the actual Hero/source/current transition at commit time, persist the real global position through SaveService, derive the durable return anchor from A1, and supply the approved production owner adapter. A8's in-pilot transition host and `PoiAuthorityFixture` are not substitutes. A3 must separately authorize each item/source/action and balance; until then no fixture cost, extraction, gathering, or salvage reward becomes live. No A0/A1/A3/A4/A6/S6/A7 production paths are edited here.
+## Owner projection and restart boundary
+
+A8 now tests a versioned owner-projection proposal bound to canonical `source_id` and monotonically increasing `projection_revision`. It rejects foreign, malformed, older, and conflicting same-revision snapshots, and requires receipt identity to match the pending intent. A fixture snapshot is JSON-serialized/reloaded to verify that the adapter contract preserves route, claim-generation, clock, and identity semantics. This is fixture-only evidence; it is not A0 SaveService persistence. A0 must map the proposal to its existing service and prove a real process restart with no second reward before production.
+
+The test fixture has fake inventory and candidate values solely for isolated owner-boundary tests. Native scenes default to non-fixture intents; no live Quarry, Orchard, or Mill reward is authorized. No local scene keeps durable state.
+
+## Evidence status — do not conflate categories
+
+### Source/static
+
+- `python3 -m unittest discover -s tests/survival/world_content -p 'test_*.py'` checks the current texture hashes/dimensions, frame rectangles, interior/shell layouts, doorway clearance, wrapper references, source identity, projection contract fields, and price-free UI labels; **13 tests passed** at the source refresh.
+- `gdformat --check` and `gdlint` parse/format-check the changed GDScript contracts. Static success does not substitute for Godot runtime behavior.
+- A8 code/schema/source checks and the A1 art-composition check are static evidence only.
+
+### Native
+
+- No local Godot 4 executable is installed. Native import, physical movement, interactions, exact-head transition tests, serialized restart behavior, and failure logs remain pending until exact PR-head CI executes.
+- The last **old-head** failure, run `41024526858`, job `123959371999`, is described by the CT review as import success followed by failure in the native physics/interaction step while preloading `poi_authority_fixture.gd`, with parser/inference cascades in `native_poi_contract_test.gd`; later steps were skipped and the run had zero artifacts. Direct `gh run view --log-failed` retrieval ended with EOF. Do not infer a particular API call as the cause, and do not apply this old-head result to new source without current-head logs.
+
+### Visual
+
+- When the exact-head CI capture runs, inspect actual native captures at 1280×720, 2560×1440, and 3840×2160. Capture generation alone is not review. Static previews do not meet this criterion.
+
+### Production
+
+- Not mounted or demonstrated reachable in A0, no A0 SaveService adapter, no live site binding, and no A3 authorization. This pilot is not production-integrated or complete.
+
+## Cross-owner decisions
+
+CT decisions D051–D054 are authoritative on `docs/ct-loot-discovery-gate-20261030`. D052 prohibits AI-work clutter, meaningless POIs/debug labels, and declaring completion without inspected native/visual evidence. D053 requires repository-first research. D054 delegates competent non-avatar art selection and expects substantive native output. This work adopts the inspected A1 visual contract and leaves A6 avatar ownership untouched; no A6 files are modified.
+
+- **A0:** review/implement the reachable-world spec within A0 ownership and prove live reachability/transition/SaveService restart.
+- **A1:** retain the canonical cell/route/footprint; review the doorway-clear shell visual skin, which is visual-only.
+- **A3:** reassess each route cost and site-bound extraction source only after native route/restart evidence. Keep live values and transactions blocked until a new authorization.
+
+No merge is requested or performed.

@@ -24,6 +24,8 @@ var site_id := ""
 var display_name := ""
 var projection: Dictionary = {
 	"schema_version": 1,
+	"source_id": "",
+	"projection_revision": -1,
 	"site_state": {},
 	"claim_generation": {},
 	"capabilities": [],
@@ -31,6 +33,8 @@ var projection: Dictionary = {
 	"resource_ready_at": {},
 	"clock_seconds": 0.0
 }
+var _projection_revision := -1
+var _projection_initialized := false
 var _gate_bodies: Array[StaticBody2D] = []
 var _pending: Dictionary = {}
 var _choice_index := 0
@@ -74,16 +78,71 @@ func _load_definition() -> bool:
 	)
 
 
-func set_projection(owner_projection: Dictionary) -> void:
+# gdlint: disable=max-returns
+func set_projection(owner_projection: Dictionary) -> bool:
 	if int(owner_projection.get("schema_version", 0)) != 1:
 		player_feedback.emit("This place cannot read that state version.")
-		return
+		return false
+	if str(owner_projection.get("source_id", "")) != get_source_id():
+		player_feedback.emit("This place received state for a different site.")
+		return false
+	var revision_value: Variant = owner_projection.get("projection_revision", null)
+	if typeof(revision_value) != TYPE_INT or int(revision_value) < 0:
+		player_feedback.emit("This place received an invalid owner-state revision.")
+		return false
+	var revision := int(revision_value)
+	if _projection_initialized:
+		if revision < _projection_revision:
+			player_feedback.emit("A newer owner-state revision is already active here.")
+			return false
+		if revision == _projection_revision:
+			if _projection_payload_matches(owner_projection):
+				return true
+			player_feedback.emit("Conflicting site state used the same owner revision.")
+			return false
+	var owner_state: Variant = owner_projection.get("site_state", null)
+	var generation: Variant = owner_projection.get("claim_generation", null)
+	var capabilities: Variant = owner_projection.get("capabilities", null)
+	var ready_actions: Variant = owner_projection.get("ready_actions", null)
+	var ready_at: Variant = owner_projection.get("resource_ready_at", null)
+	var owner_clock: Variant = owner_projection.get("clock_seconds", null)
+	if (
+		not owner_state is Dictionary
+		or not generation is Dictionary
+		or not capabilities is Array
+		or not ready_actions is Array
+		or not ready_at is Dictionary
+		or (typeof(owner_clock) != TYPE_INT and typeof(owner_clock) != TYPE_FLOAT)
+		or not is_finite(float(owner_clock))
+		or float(owner_clock) < 0.0
+	):
+		player_feedback.emit("This place received malformed owner state.")
+		return false
 	projection = owner_projection.duplicate(true)
+	_projection_revision = revision
+	_projection_initialized = true
 	if is_instance_valid(_art):
 		_art.call("set_site_state", projection.get("site_state", {}))
 	_refresh_gate()
 	_rebuild_choice_blockers()
 	projection_applied.emit(projection)
+	return true
+
+
+func _projection_payload_matches(candidate: Dictionary) -> bool:
+	for field: String in [
+		"schema_version",
+		"source_id",
+		"site_state",
+		"claim_generation",
+		"capabilities",
+		"ready_actions",
+		"resource_ready_at",
+		"clock_seconds"
+	]:
+		if projection.get(field) != candidate.get(field):
+			return false
+	return true
 
 
 func get_spawn_position() -> Vector2:
@@ -262,10 +321,18 @@ func receive_authoritative_result(
 ) -> bool:
 	if _pending.is_empty() or str(_pending.get("intent_id", "")) != intent_id:
 		return false
+	if str(result.get("intent_id", "")) != intent_id:
+		return false
+	var outcome := str(result.get("status", ""))
+	if outcome != "committed" and outcome != "rejected" and outcome != "interrupted":
+		return false
 	_pending.clear()
-	var outcome := str(result.get("status", "rejected"))
 	if outcome == "committed":
-		set_projection(new_projection)
+		if not set_projection(new_projection):
+			player_feedback.emit(
+				"The owner committed the work; refresh this site's state before continuing."
+			)
+			return false
 		player_feedback.emit(str(result.get("feedback", "The work is done.")))
 	else:
 		player_feedback.emit(str(result.get("reason", "The owner rejected the work.")))

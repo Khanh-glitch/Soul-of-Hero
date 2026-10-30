@@ -20,8 +20,8 @@ class ArtManifestTests(unittest.TestCase):
 
     def test_texture_hashes_and_png_dimensions_match_the_pinned_source(self) -> None:
         expected = {
-            "terrain": ("59eb49569e6ac7d4493749318e3511564db695c3840a5dd7a32e53f96d280384", (512, 128)),
-            "props": ("36505528776568e398b5770493407b5706b4a102bc03e1b50b436277d500d9d4", (1024, 178)),
+            "terrain": ("4317e9b1aa49dbd401fb6b8c03b67e79311acca90fb04604f9c7017626da811e", (512, 128)),
+            "props": ("8be1628352be518e1ac8d7f90a58bb74bf40b1355ff59c3861608d1c99ca2030", (1024, 186)),
         }
         for name, (digest, dimensions) in expected.items():
             record = self.manifest["textures"][name]
@@ -33,7 +33,7 @@ class ArtManifestTests(unittest.TestCase):
             self.assertEqual(contents[:8], b"\x89PNG\r\n\x1a\n")
 
     def test_frames_are_positive_and_inside_the_copied_atlas(self) -> None:
-        dimensions = {"terrain": (512, 128), "props": (1024, 178)}
+        dimensions = {"terrain": (512, 128), "props": (1024, 186)}
         for name, frames, expected_size in (
             ("terrain", self.terrain_frames, 16),
             ("props", self.prop_frames, None),
@@ -99,7 +99,42 @@ class ArtManifestTests(unittest.TestCase):
                     self._assert_cell_inside(cell, width // 16, height // 16, path.name)
             shell = data["overworld_shell"]
             self.assertEqual(shell["bounds_px"], [128, 128], path.name)
+            self.assertEqual(shell["action_socket"], [64, 64], path.name)
+            self.assertEqual(shell["entry_portal"], [64, 108], path.name)
             shell_layout = shell["visual_layout"]
+            self.assertIn(shell_layout["lighting_profile"], self.manifest["lighting_profiles"])
+            rows = shell_layout["ground_rows"]
+            self.assertEqual(len(rows), 8, path.name)
+            for row in rows:
+                self.assertEqual(len(row), 8, path.name)
+                for frame in row:
+                    self.assertIn(frame, self.terrain_frames, (path.name, frame))
+            for overlay in shell_layout.get("overlays", []):
+                self.assertIn(overlay["frame"], self.terrain_frames, (path.name, overlay))
+                self._assert_cell_inside(overlay["cell"], 8, 8, path.name)
+            clear_rect = shell_layout["doorway_clear_rect_px"]
+            self.assertEqual(clear_rect, [44, 92, 40, 36], path.name)
+            clear_left, clear_top, clear_width, clear_height = clear_rect
+            for prop in shell_layout.get("props", []):
+                self.assertIn(prop["frame"], self.prop_frames, (path.name, prop))
+                self.assertIn("local_px", prop, (path.name, prop))
+                anchor_x, anchor_y = prop["local_px"]
+                self.assertTrue(all(isinstance(value, int) for value in (anchor_x, anchor_y)), (path.name, prop))
+                frame_x, frame_y, frame_width, frame_height = self.prop_frames[prop["frame"]]
+                del frame_x, frame_y
+                left = anchor_x - frame_width // 2
+                top = anchor_y - frame_height
+                self.assertGreaterEqual(left, 0, (path.name, prop))
+                self.assertGreaterEqual(top, 0, (path.name, prop))
+                self.assertLessEqual(left + frame_width, 128, (path.name, prop))
+                self.assertLessEqual(top + frame_height, 128, (path.name, prop))
+                self.assertFalse(
+                    left < clear_left + clear_width
+                    and left + frame_width > clear_left
+                    and top < clear_top + clear_height
+                    and top + frame_height > clear_top,
+                    f"{path.name}: {prop['frame']} overlaps the clear doorway",
+                )
             for obstacle in shell.get("obstacles_px", []):
                 self.assertEqual(len(obstacle), 4, path.name)
                 self.assertTrue(all(isinstance(value, int) for value in obstacle), path.name)
@@ -110,25 +145,39 @@ class ArtManifestTests(unittest.TestCase):
                 self.assertGreater(obstacle_height, 0, path.name)
                 self.assertLessEqual(x + obstacle_width, 128, path.name)
                 self.assertLessEqual(y + obstacle_height, 128, path.name)
-            self.assertIn(shell_layout["ground_family"], {name.rsplit("_", 1)[0] for name in self.terrain_frames})
-            self.assertIn(shell_layout["lighting_profile"], self.manifest["lighting_profiles"])
-            for prop in shell_layout.get("props", []):
-                self.assertIn(prop["frame"], self.prop_frames, (path.name, prop))
-                self._assert_cell_inside(prop["cell"], 8, 8, path.name)
-                if prop["frame"] == "wall_stub":
-                    self._assert_prop_overlaps_geometry(
-                        prop, self.prop_frames, shell.get("obstacles_px", []), path.name
+
+
+    def test_shell_landmarks_and_worksite_loops_are_not_reskins_or_price_labels(self) -> None:
+        expected = {
+            "south_quarry.json": ("lm_quarry_workface", "quarry"),
+            "south_orchard_ruin.json": ("lm_orchard_shed", "orchard"),
+            "south_crown_mill.json": ("lm_mill_house", "mill"),
+        }
+        action_sets: list[set[str]] = []
+        for filename, (landmark, profile) in expected.items():
+            data = json.loads((ROOT / "data/survival/world_content/sites" / filename).read_text())
+            shell = data["overworld_shell"]
+            shell_props = {item["frame"] for item in shell["visual_layout"]["props"]}
+            self.assertIn(landmark, shell_props, filename)
+            self.assertEqual(shell["profile"], profile, filename)
+            action_ids = {
+                action["action_id"]
+                for group in ("choices", "actions")
+                for action in data.get(group, [])
+            }
+            self.assertTrue(action_ids, filename)
+            action_sets.append(action_ids)
+            for group in ("choices", "actions"):
+                for action in data.get(group, []):
+                    label = action.get("label", "")
+                    self.assertNotRegex(
+                        label,
+                        r"\b\d+\s+(?:Oak Wood|Stone Chunk|Iron Scrap|Reed Fibre)\b",
+                        (filename, label),
                     )
-            for variant in shell_layout.get("state_props", []):
-                for prop in variant.get("props", []):
-                    self.assertIn(prop["frame"], self.prop_frames, (path.name, prop))
-                    self._assert_cell_inside(prop["cell"], 8, 8, path.name)
-            for area in shell_layout.get("ground_areas", []):
-                self.assertTrue(self._has_family(area["family"]))
-            for path_data in shell_layout.get("paths", []):
-                self.assertTrue(self._has_family(path_data["family"]))
-                for cell in path_data["points"]:
-                    self._assert_cell_inside(cell, 8, 8, path.name)
+        self.assertTrue(action_sets[0].isdisjoint(action_sets[1]))
+        self.assertTrue(action_sets[0].isdisjoint(action_sets[2]))
+        self.assertTrue(action_sets[1].isdisjoint(action_sets[2]))
 
     def test_site_renderer_has_no_procedural_or_unlicensed_art_fallback(self) -> None:
         for filename in ("native_poi_site.gd", "native_poi_shell.gd"):

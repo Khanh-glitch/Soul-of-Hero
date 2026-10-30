@@ -1,0 +1,167 @@
+{
+  "schema": "soh.a8.quarry_economics_evidence.v1",
+  "owner": "A8",
+  "consumer": "A3",
+  "status": "EVIDENCE_CANDIDATE_NO_AUTHORIZATION",
+  "decision_source": {
+    "a3_pr": 19,
+    "a3_head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+    "authorization_path": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json",
+    "authorization_schema": "soh.economy.a8_quarry_authorization.v4",
+    "authorization_status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+    "authorized_route_costs": null,
+    "authorized_extraction_yield": null,
+    "authorized_replenishment_seconds": null,
+    "authorized_site_binding": null,
+    "authorized_capability_grant": null
+  },
+  "source_pins": {
+    "a1_pr": 20,
+    "a1_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "a0_pr": 21,
+    "a0_head": "e0c797cc09eeb8cffa302aaedc5d31d40f368ff3",
+    "world_id": "world:soh_continent_v1",
+    "region_id": "r_ashen_crown",
+    "poi_id": "poi_crown_south_quarry",
+    "canonical_cell": [30, 280]
+  },
+  "physical_route_evidence": {
+    "world_approach": {
+      "route_id": "sp_poi_crown_south_quarry",
+      "from_node": "node_refuge",
+      "from_cell": [56, 218],
+      "to_poi_cell": [30, 280],
+      "mode": "foot",
+      "required_capabilities": [],
+      "risk_band": "early",
+      "polyline_euclidean_cells": 67.23,
+      "polyline_euclidean_px_at_16px_per_cell": 1075.7,
+      "evidence_limit": "A1 authored graph polyline only; not measured A0 player travel time or proof of current production reachability. A0 Waystation host bounds are 448x256px and do not include cell [30,280]."
+    },
+    "interior_access": {
+      "scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+      "canvas_px": [960, 608],
+      "spawn_px": [480, 548],
+      "approach_stand_px": [506, 378],
+      "axis_aligned_spawn_to_stand_px": 196,
+      "doorway_exit_px": [480, 560],
+      "evidence_limit": "A8 local native test path; not A0 production route traversal."
+    },
+    "route_alternatives": [
+      {
+        "route": "east_braced",
+        "action_id": "brace_east_shelf",
+        "object_id": "brace_oak",
+        "candidate_cost_item_id": "oak_wood",
+        "authorized_cost_quantity": null,
+        "test_path_px": [[506, 378], [600, 378], [600, 280], [506, 280]],
+        "axis_aligned_traversal_px": 286,
+        "blocker_rect_px": [544, 232, 20, 116],
+        "consequence": "Owner projection removes only the east brace blocker; west chock blocker remains physically closed.",
+        "risk_basis": "Shorter approach in this authored interior route; still requires bracing the east shelf. No damage/status hazard rate is implemented or claimed."
+      },
+      {
+        "route": "west_chocked",
+        "action_id": "chock_west_ramp",
+        "object_id": "chock_stone",
+        "candidate_cost_item_id": "stone_chunk",
+        "authorized_cost_quantity": null,
+        "test_path_px": [[506, 378], [360, 378], [360, 280], [506, 280]],
+        "axis_aligned_traversal_px": 390,
+        "blocker_rect_px": [448, 232, 20, 116],
+        "consequence": "Owner projection removes only the west chock blocker; east brace blocker remains physically closed.",
+        "risk_basis": "104px / 6.5 tiles longer than the east test path and requires chocking the loose west ramp. No damage/status hazard rate is implemented or claimed."
+      }
+    ],
+    "distinct_route_delta_px": 104,
+    "unworked_choice": {
+      "action_id": "leave_seam_unworked",
+      "cost": null,
+      "reward": null,
+      "result": "Safe owner-projected refusal; unstable seam remains visibly warned and extraction is rejected."
+    }
+  },
+  "site_bound_binding_candidate": {
+    "binding_status": "NONE_EXISTS_A3_REJECTED",
+    "durable_instance_id": null,
+    "source_class": "south_quarry_outcrop",
+    "source_object_id": "south_seam_outcrop",
+    "action_id": "extract_outcrop",
+    "item_id": "stone_chunk",
+    "source_id": "live_stone_chunk",
+    "poi_id": "poi_crown_south_quarry",
+    "region_id": "r_ashen_crown",
+    "claim_generation_owner": "A0 SaveService-backed transaction authority only",
+    "claim_key_formula_candidate": "world_id|poi_id|canonical_cell|durable_instance_id|object_id|action_id|owner_generation",
+    "note": "A8 does not mint the durable instance id or binding. A0/A1 must resolve canonical identity and A3 must approve a site-specific source/action mapping before production."
+  },
+  "existing_source_sink_comparison": {
+    "stone_chunk": {
+      "existing_sinks": [
+        {"sink": "furnace_kit", "quantity": 8},
+        {"sink": "advanced_furnace_kit", "quantity": 8}
+      ],
+      "existing_sources": [
+        {
+          "source_id": "live_stone_chunk",
+          "description": "generic harvest; 2 per claim / 480 active seconds in A3 review",
+          "poi_id": null,
+          "status": "SOH_PROPOSAL_GENERIC_NOT_QUARRY_AUTHORIZATION"
+        }
+      ]
+    },
+    "oak_wood": {
+      "existing_sinks": [
+        {"sink": "workbench_kit", "quantity": 6},
+        {"sink": "research_kit", "quantity": 4},
+        {"sink": "burn_charcoal", "quantity": 2},
+        {"sink": "iron_pick", "quantity": 2},
+        {"sink": "relay_hand_crank_bypass", "quantity": 1}
+      ],
+      "existing_sources": [
+        {
+          "source_id": "live_oak_wood",
+          "description": "generic live harvest; not site-bound to Quarry",
+          "poi_id": null,
+          "status": "SOH_PROPOSAL_GENERIC_NOT_QUARRY_AUTHORIZATION"
+        },
+        {
+          "source_id": "waystation_deadfall",
+          "description": "2 per claim / 300 active seconds",
+          "poi_id": "poi_crown_waystation",
+          "status": "EXISTING_A3_BINDING_NOT_QUARRY_AUTHORIZATION"
+        }
+      ]
+    }
+  },
+  "symbolic_net_yield_scenarios": {
+    "variables": {
+      "C_east_oak": null,
+      "C_west_stone": null,
+      "Y_quarry_stone_per_claim": null,
+      "T_quarry_active_seconds": null,
+      "E_east_exposure_opportunity_cost": null,
+      "E_west_exposure_opportunity_cost": null
+    },
+    "formulas": {
+      "east_after_k_claims": "k * Y_quarry_stone_per_claim - C_east_oak - E_east_exposure_opportunity_cost(k)",
+      "west_after_k_claims": "k * Y_quarry_stone_per_claim - C_west_stone - E_west_exposure_opportunity_cost(k)",
+      "repeat_claim_count": "owner-authorized active-time schedule only; T_quarry_active_seconds is currently null",
+      "break_even": "when Y_quarry_stone_per_claim > 0, first non-negative net occurs at the smallest k where k*Y >= C_route + E_route(k)"
+    },
+    "scenarios": [
+      {"case": "leave_unworked", "claims": 0, "net": "0; no cost and no yield"},
+      {"case": "first_east_visit", "claims": 1, "net": "Y_quarry_stone_per_claim - C_east_oak - E_east(1); unresolved"},
+      {"case": "first_west_visit", "claims": 1, "net": "Y_quarry_stone_per_claim - C_west_stone - E_west(1); unresolved"},
+      {"case": "repeat_visits", "claims": "k constrained by A3/A0 active-time cooldown", "net": "k*Y_quarry_stone_per_claim - C_route - E_route(k); unresolved"}
+    ],
+    "fail_closed_rule": "No numbers may be substituted from S2 fixture costs/rewards/cooldowns or generic source bindings. All unknowns remain null until A3 approves a site-bound action/source model."
+  },
+  "evidence_separation": {
+    "source_static": "A8 site JSON, A1 route geometry, A3 source/sink and rejection records; separately linted/tested in this PR.",
+    "native": "A8 exact-head Godot collision/interaction tests required; not implied by this data pack.",
+    "visual": "Native 720p/2K/4K captures must be inspected; static atlas preview is not visual acceptance.",
+    "production": "A0 mount/route/SaveService evidence absent; no live integration or reward is authorized."
+  },
+  "request_to_a3": "Review this evidence after exact-head native route and restart evidence is available. Reassess or reject each route cost separately, the site-bound outcrop source/yield/active cooldown, and the durable instance/claim identity. Keep all live Quarry transactions fail-closed until a new A3 authorization explicitly approves them."
+}
