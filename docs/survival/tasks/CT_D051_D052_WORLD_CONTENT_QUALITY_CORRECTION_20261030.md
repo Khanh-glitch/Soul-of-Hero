@@ -1,0 +1,7 @@
+# User-locked character and no-filler rules for A8 (2026-10-30)
+
+Authoritative decisions D051/D052: https://github.com/Khanh-glitch/Soul-of-Hero/blob/docs/ct-loot-discovery-gate-20261030/docs/survival/DECISIONS.md
+
+The player has exactly two bald, unarmored starting avatars, one male and one female, from the original user Drive asset collection. Each visibly changes to the matching armor L1 or L2 sprite when the corresponding equipment is worn, not merely on experience level. Character rendering is A6/A0 owner scope; A8 native content must not substitute a Knight, pretend it has original sprite bytes, or ship false character artwork.
+
+A8 work must not generate AI work garbage: no large batches of empty POI shells, arbitrary fetch quests, duplicated loot systems, walls of dialogue, excessive signs, dummy actions, raw debug labels in game, or standalone demonstration passed off as gameplay. A POI is usable only if a player can observe real affordances, make a meaningful choice, operate physically, obtain an A0-authorized consequence, leave safely and have a reason to return. Keep final art and UI clean; internal validator diagnostics may be verbose but must not leak into player scenes. Prefer three truly native finished Godot scenes over 106 nominally complete markers. Every claim includes collision, real input, state, persistence boundary and negative tests, or is explicitly NOT_READY.
