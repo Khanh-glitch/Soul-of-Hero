@@ -109,6 +109,7 @@ func refresh() -> void:
 		_host_sprite.visible = true
 		_emit_state()
 		return
+	_appearance_gate = ""
 	var manifest := _load_manifest()
 	var requested_grade := int(projection.get("armor_grade", 0))
 	var resolved: Dictionary = PIPELINE.resolve_owner_appearance(projection, manifest)
