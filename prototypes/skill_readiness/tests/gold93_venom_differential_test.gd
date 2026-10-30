@@ -401,7 +401,13 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			for entry in w.objhash_log:
 				var sp: PackedStringArray = String(entry).split(" ")
 				compact.append("%s:%s" % [sp[0], sp[1].substr(0, 6)])
-			print("GOLD93_OBJ t=%d n=%d %s" % [n, compact.size(), " ".join(compact)])
+			# Chunked at 10 entries: annotation messages cap near 1000 chars.
+			var part: int = 0
+			var i0: int = 0
+			while i0 < compact.size():
+				print("GOLD93_OBJ t=%d p=%d %s" % [n, part, " ".join(compact.slice(i0, mini(i0 + 10, compact.size())))])
+				part += 1
+				i0 += 10
 			w.objhash_on = false
 		if _dump_tick == n:
 			_dump_rasters(g, sid, n)
