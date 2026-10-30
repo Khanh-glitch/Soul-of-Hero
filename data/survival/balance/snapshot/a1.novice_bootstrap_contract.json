@@ -1,0 +1,105 @@
+{
+  "bootstrap": {
+    "cap_filter": {
+      "action": "filter_lesson",
+      "bootstrap_materials": [
+        "rare_herb",
+        "fibre"
+      ],
+      "poi": "poi_amberwood_apothecary",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "rare_herb",
+        "fibre",
+        "venom_sac"
+      ]
+    },
+    "cap_power_1": {
+      "action": "hand_crank_bypass",
+      "bootstrap_materials": [
+        "salvage",
+        "timber"
+      ],
+      "poi": "poi_crown_relay_shed",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "copper",
+        "salvage"
+      ]
+    },
+    "cap_salvage": {
+      "action": "salvage_locker",
+      "bootstrap_materials": [],
+      "poi": "poi_crown_waystation",
+      "requires": [],
+      "sustain_materials": [
+        "salvage"
+      ]
+    },
+    "cap_seal_1": {
+      "action": "seal_ledger",
+      "bootstrap_materials": [],
+      "poi": "poi_crown_waystation",
+      "requires": [
+        "cap_salvage"
+      ],
+      "sustain_materials": [
+        "salvage"
+      ]
+    }
+  },
+  "circularity_rule": "A capability source POI may grant its capability on first visit; sustain/repair materials may be gated by that capability, but bootstrap materials may not require the capability being granted.",
+  "first_hour_goal": "Reach salvage, local power and filter preparation, then retreat, without requiring a capability that is only granted downstream.",
+  "hazardous_shortcut_route_id": "rt_east_seam",
+  "native_playable": false,
+  "safe_route_ids": [
+    "rt_crown_safe_approach",
+    "rt_south_seam",
+    "rt_crown_buffer"
+  ],
+  "schema": "soh.world.novice_bootstrap.v1",
+  "stages": [
+    {
+      "bootstrap_materials": [],
+      "grants": [
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "poi": "poi_crown_waystation",
+      "retreat_route_id": "rt_crown_safe_approach",
+      "route_id": "rt_crown_safe_approach",
+      "stage": "safe_salvage"
+    },
+    {
+      "bootstrap_materials": [
+        "salvage",
+        "timber"
+      ],
+      "grants": [
+        "cap_power_1"
+      ],
+      "poi": "poi_crown_relay_shed",
+      "retreat_route_id": "rt_crown_safe_approach",
+      "route_id": "rt_crown_buffer",
+      "stage": "power_discovery"
+    },
+    {
+      "bootstrap_materials": [
+        "rare_herb",
+        "fibre"
+      ],
+      "grants": [
+        "cap_filter"
+      ],
+      "poi": "poi_amberwood_apothecary",
+      "retreat_route_id": "rt_south_seam",
+      "route_id": "rt_south_seam",
+      "stage": "filter_preparation"
+    }
+  ],
+  "status": "AUTHORED_CONTRACT_NOT_NATIVE_PLAYTESTED"
+}

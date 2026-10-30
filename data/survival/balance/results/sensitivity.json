@@ -1,0 +1,664 @@
+{
+  "core_capable_sources": {
+    "core_capable_loot_tables": 0,
+    "eligible_roadside_containers_basis": "derived: no authored table that a roadside container would use can emit a core-tagged item, and no roadside container POI is resolved against A1",
+    "eligible_roadside_containers_today": 0,
+    "loot_tables": [
+      {
+        "can_emit_core_tagged_item": false,
+        "excluded_tags": [
+          "rare",
+          "core",
+          "exploration_only"
+        ],
+        "replenishment_seconds": 1800,
+        "rolls": 3,
+        "table_id": "roadside_cache"
+      },
+      {
+        "can_emit_core_tagged_item": false,
+        "excluded_tags": [],
+        "replenishment_seconds": 7200,
+        "rolls": 2,
+        "table_id": "specimen_vault"
+      }
+    ],
+    "physical_core_specimen_sources": [
+      {
+        "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+        "discovery_chance": 1.0,
+        "item_id": "core_ember",
+        "one_time": true,
+        "poi_id": "poi_crown_barrow_field",
+        "requires_capabilities": [
+          "cap_seal_1"
+        ],
+        "risk": "medium",
+        "source_id": "specimen_ember"
+      },
+      {
+        "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+        "discovery_chance": 1.0,
+        "item_id": "core_frost",
+        "one_time": true,
+        "poi_id": "poi_frost_ice_cave",
+        "requires_capabilities": [
+          "cap_thermal",
+          "cap_seal_2"
+        ],
+        "risk": "high",
+        "source_id": "specimen_frost"
+      },
+      {
+        "binding_status": "PROVISIONAL_A3_BINDING_TO_A1_POI",
+        "discovery_chance": 1.0,
+        "item_id": "core_venom",
+        "one_time": true,
+        "poi_id": "poi_verdant_canopy_temple",
+        "requires_capabilities": [
+          "cap_climb",
+          "cap_filter",
+          "cap_seal_3"
+        ],
+        "risk": "high",
+        "source_id": "specimen_venom"
+      }
+    ],
+    "plan_sources": [
+      "plan_drop_ember",
+      "plan_drop_frost",
+      "plan_drop_venom"
+    ],
+    "roadside_core_capable_loot_tables": 0
+  },
+  "core_probability_grid": {
+    "basis": "pure probability arithmetic on assumed p and assumed eligible crate counts; not an authored rate",
+    "label": "HYPOTHETICAL_NOT_A3_TUNING",
+    "note": "The counts are illustrations of how the answer scales. They must not be read as a proposal to set p anywhere; the current data contains no usable p.",
+    "table": [
+      {
+        "crates_per_trip": 0,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 1,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 2,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 4,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 8,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 16,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.0
+      },
+      {
+        "crates_per_trip": 0,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 1,
+        "expected_trips_to_first": 500.0,
+        "p_after_10_trips": 0.019820957,
+        "p_after_1_trips": 0.002,
+        "p_after_20_trips": 0.039249043,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 2,
+        "expected_trips_to_first": 250.0,
+        "p_after_10_trips": 0.039249043,
+        "p_after_1_trips": 0.003996,
+        "p_after_20_trips": 0.076957599,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 4,
+        "expected_trips_to_first": 125.0,
+        "p_after_10_trips": 0.076957599,
+        "p_after_1_trips": 0.007976032,
+        "p_after_20_trips": 0.147992725,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 8,
+        "expected_trips_to_first": 62.5,
+        "p_after_10_trips": 0.147992725,
+        "p_after_1_trips": 0.015888447,
+        "p_after_20_trips": 0.274083604,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 16,
+        "expected_trips_to_first": 31.25,
+        "p_after_10_trips": 0.274083604,
+        "p_after_1_trips": 0.031524451,
+        "p_after_20_trips": 0.473045385,
+        "p_per_crate": 0.002
+      },
+      {
+        "crates_per_trip": 0,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 1,
+        "expected_trips_to_first": 200.0,
+        "p_after_10_trips": 0.04888987,
+        "p_after_1_trips": 0.005,
+        "p_after_20_trips": 0.09538952,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 2,
+        "expected_trips_to_first": 100.0,
+        "p_after_10_trips": 0.09538952,
+        "p_after_1_trips": 0.009975,
+        "p_after_20_trips": 0.181679879,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 4,
+        "expected_trips_to_first": 50.0,
+        "p_after_10_trips": 0.181679879,
+        "p_after_1_trips": 0.019850499,
+        "p_after_20_trips": 0.33035218,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 8,
+        "expected_trips_to_first": 25.0,
+        "p_after_10_trips": 0.33035218,
+        "p_after_1_trips": 0.039306956,
+        "p_after_20_trips": 0.551571797,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 16,
+        "expected_trips_to_first": 12.5,
+        "p_after_10_trips": 0.551571797,
+        "p_after_1_trips": 0.077068876,
+        "p_after_20_trips": 0.798912146,
+        "p_per_crate": 0.005
+      },
+      {
+        "crates_per_trip": 0,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 1,
+        "expected_trips_to_first": 100.0,
+        "p_after_10_trips": 0.095617925,
+        "p_after_1_trips": 0.01,
+        "p_after_20_trips": 0.182093062,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 2,
+        "expected_trips_to_first": 50.0,
+        "p_after_10_trips": 0.182093062,
+        "p_after_1_trips": 0.0199,
+        "p_after_20_trips": 0.331028241,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 4,
+        "expected_trips_to_first": 25.0,
+        "p_after_10_trips": 0.331028241,
+        "p_after_1_trips": 0.03940399,
+        "p_after_20_trips": 0.552476786,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 8,
+        "expected_trips_to_first": 12.5,
+        "p_after_10_trips": 0.552476786,
+        "p_after_1_trips": 0.077255306,
+        "p_after_20_trips": 0.799722973,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 16,
+        "expected_trips_to_first": 6.25,
+        "p_after_10_trips": 0.799722973,
+        "p_after_1_trips": 0.148542229,
+        "p_after_20_trips": 0.959889113,
+        "p_per_crate": 0.01
+      },
+      {
+        "crates_per_trip": 0,
+        "expected_trips_to_first": null,
+        "p_after_10_trips": 0.0,
+        "p_after_1_trips": 0.0,
+        "p_after_20_trips": 0.0,
+        "p_per_crate": 0.02
+      },
+      {
+        "crates_per_trip": 1,
+        "expected_trips_to_first": 50.0,
+        "p_after_10_trips": 0.182927193,
+        "p_after_1_trips": 0.02,
+        "p_after_20_trips": 0.332392028,
+        "p_per_crate": 0.02
+      },
+      {
+        "crates_per_trip": 2,
+        "expected_trips_to_first": 25.0,
+        "p_after_10_trips": 0.332392028,
+        "p_after_1_trips": 0.0396,
+        "p_after_20_trips": 0.554299596,
+        "p_per_crate": 0.02
+      },
+      {
+        "crates_per_trip": 4,
+        "expected_trips_to_first": 12.5,
+        "p_after_10_trips": 0.554299596,
+        "p_after_1_trips": 0.07763184,
+        "p_after_20_trips": 0.80135115,
+        "p_per_crate": 0.02
+      },
+      {
+        "crates_per_trip": 8,
+        "expected_trips_to_first": 6.25,
+        "p_after_10_trips": 0.80135115,
+        "p_after_1_trips": 0.149236977,
+        "p_after_20_trips": 0.960538634,
+        "p_per_crate": 0.02
+      },
+      {
+        "crates_per_trip": 16,
+        "expected_trips_to_first": 3.125,
+        "p_after_10_trips": 0.960538634,
+        "p_after_1_trips": 0.276202279,
+        "p_after_20_trips": 0.998442801,
+        "p_per_crate": 0.02
+      }
+    ]
+  },
+  "count_uncertainty": [
+    {
+      "crates_per_trip": 0,
+      "p_after_10_trips": 0.0,
+      "p_per_crate": 0.002,
+      "relative_to_base": 0.0
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.019820957,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.039249043,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.9802
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.019820957,
+      "p_per_crate": 0.002,
+      "relative_to_base": 0.505
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.039249043,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.058292046,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.4852
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.058292046,
+      "p_per_crate": 0.002,
+      "relative_to_base": 0.7575
+    },
+    {
+      "crates_per_trip": 4,
+      "p_after_10_trips": 0.076957599,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 5,
+      "p_after_10_trips": 0.095253182,
+      "p_per_crate": 0.002,
+      "relative_to_base": 1.2377
+    },
+    {
+      "crates_per_trip": 0,
+      "p_after_10_trips": 0.0,
+      "p_per_crate": 0.005,
+      "relative_to_base": 0.0
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.04888987,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.09538952,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.9511
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.04888987,
+      "p_per_crate": 0.005,
+      "relative_to_base": 0.5125
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.09538952,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.139615808,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.4636
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.139615808,
+      "p_per_crate": 0.005,
+      "relative_to_base": 0.7685
+    },
+    {
+      "crates_per_trip": 4,
+      "p_after_10_trips": 0.181679879,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 5,
+      "p_after_10_trips": 0.221687443,
+      "p_per_crate": 0.005,
+      "relative_to_base": 1.2202
+    },
+    {
+      "crates_per_trip": 0,
+      "p_after_10_trips": 0.0,
+      "p_per_crate": 0.01,
+      "relative_to_base": 0.0
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.095617925,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.182093062,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.9044
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.095617925,
+      "p_per_crate": 0.01,
+      "relative_to_base": 0.5251
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.182093062,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.260299627,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.4295
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.260299627,
+      "p_per_crate": 0.01,
+      "relative_to_base": 0.7863
+    },
+    {
+      "crates_per_trip": 4,
+      "p_after_10_trips": 0.331028241,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 5,
+      "p_after_10_trips": 0.394993933,
+      "p_per_crate": 0.01,
+      "relative_to_base": 1.1932
+    },
+    {
+      "crates_per_trip": 0,
+      "p_after_10_trips": 0.0,
+      "p_per_crate": 0.02,
+      "relative_to_base": 0.0
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.182927193,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.332392028,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.8171
+    },
+    {
+      "crates_per_trip": 1,
+      "p_after_10_trips": 0.182927193,
+      "p_per_crate": 0.02,
+      "relative_to_base": 0.5503
+    },
+    {
+      "crates_per_trip": 2,
+      "p_after_10_trips": 0.332392028,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.454515681,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.3674
+    },
+    {
+      "crates_per_trip": 3,
+      "p_after_10_trips": 0.454515681,
+      "p_per_crate": 0.02,
+      "relative_to_base": 0.82
+    },
+    {
+      "crates_per_trip": 4,
+      "p_after_10_trips": 0.554299596,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.0
+    },
+    {
+      "crates_per_trip": 5,
+      "p_after_10_trips": 0.63583032,
+      "p_per_crate": 0.02,
+      "relative_to_base": 1.1471
+    }
+  ],
+  "crates_needed_for_confidence": {
+    "p=0.0": {
+      "n_for_50pct": null,
+      "n_for_90pct": null
+    },
+    "p=0.002": {
+      "n_for_50pct": 347,
+      "n_for_90pct": 1151
+    },
+    "p=0.005": {
+      "n_for_50pct": 139,
+      "n_for_90pct": 460
+    },
+    "p=0.01": {
+      "n_for_50pct": 69,
+      "n_for_90pct": 230
+    },
+    "p=0.02": {
+      "n_for_50pct": 35,
+      "n_for_90pct": 114
+    }
+  },
+  "labels": {
+    "hypothetical": "HYPOTHETICAL_NOT_A3_TUNING",
+    "rule": "no authored Core rate exists in the pinned data; grid values are illustrations only"
+  },
+  "reading_sensitivity": {
+    "difference_note": "A3's JSON says 'rolls' without stating replacement. The tool uses reading A everywhere else; the gap is reported so a reviewer can judge whether the ambiguity matters for the claim being made.",
+    "reading_a": {
+      "label": "independent draws with replacement",
+      "p_at_least_one": {
+        "grain_seed": 0.385875,
+        "iron_scrap": 0.784,
+        "knowledge_spares": 0.657,
+        "research_notes": 0.385875
+      }
+    },
+    "reading_b": {
+      "label": "without-replacement draft of distinct entries",
+      "p_at_least_one": {
+        "grain_seed": 0.615304,
+        "iron_scrap": 0.913369,
+        "knowledge_spares": 0.856022,
+        "research_notes": 0.615304
+      }
+    },
+    "table_id": "roadside_cache"
+  },
+  "research_gate": {
+    "gating_expected_claims": 2.525,
+    "gating_item": "knowledge_spares",
+    "note": "Only the existing roadside_cache table is assumed; the table's A3 POI is unresolved.",
+    "p_gated_item_covered_in_10_claims": 0.997437,
+    "per_item": {
+      "iron_scrap": {
+        "authoritative_source": "this_table",
+        "expected_claims": 0.5098,
+        "mean_units_per_claim": 3.6,
+        "p_covered_in_10_claims": 0.999998,
+        "required_units": 3
+      },
+      "knowledge_spares": {
+        "authoritative_source": "this_table",
+        "expected_claims": 2.5253,
+        "mean_units_per_claim": 1.35,
+        "p_covered_in_10_claims": 0.997437,
+        "required_units": 4
+      }
+    },
+    "sink": "tech_smelting"
+  },
+  "schema": "soh.balance.sensitivity.v1",
+  "seeded_sessions": {
+    "basis": "seeded resampling of authored table weights over an assumed claim budget; no human playtest",
+    "claims_per_session": 3,
+    "label": "HYPOTHETICAL_NOT_A3_TUNING",
+    "p_no_spares_and_no_notes": 0.0,
+    "per_item": {
+      "grain_seed": {
+        "mean": 18.99,
+        "p10": 14.0,
+        "p50": 19.0,
+        "p90": 24.0,
+        "zero_runs": 0
+      },
+      "iron_scrap": {
+        "mean": 150.656,
+        "p10": 128.0,
+        "p50": 150.0,
+        "p90": 173.0,
+        "zero_runs": 0
+      },
+      "knowledge_spares": {
+        "mean": 56.632,
+        "p10": 46.0,
+        "p50": 57.0,
+        "p90": 67.0,
+        "zero_runs": 0
+      },
+      "research_notes": {
+        "mean": 18.957,
+        "p10": 14.0,
+        "p50": 19.0,
+        "p90": 24.0,
+        "zero_runs": 0
+      }
+    },
+    "runs": 4000,
+    "runs_with_no_spares_and_no_notes": 0,
+    "seed": 20261030,
+    "sessions": 14,
+    "table_id": "roadside_cache"
+  },
+  "unlucky_player": {
+    "basis": "exact arithmetic on the authored weights; assumes a container exists",
+    "claims_for_90pct_chance_of_one_useful_claim": 2,
+    "claims_per_trip": 3,
+    "p_one_claim_yields_none_of_tracked": 0.166375,
+    "p_one_trip_yields_none_of_tracked": 0.004605,
+    "table_id": "roadside_cache",
+    "tracked_items": [
+      "knowledge_spares",
+      "research_notes"
+    ]
+  }
+}

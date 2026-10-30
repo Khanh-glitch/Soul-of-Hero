@@ -1,0 +1,138 @@
+{
+  "assertions": [
+    {
+      "assertion_id": "A01_roadside_expectation_reproduces_review",
+      "detail": "exact per-claim expectation 3.6 scrap / 1.35 spares / 0.45 notes / 0.45 seeds",
+      "holds": true,
+      "tags": [
+        "loot"
+      ]
+    },
+    {
+      "assertion_id": "A02_no_authored_core_drop_table",
+      "detail": "no existing table can emit a core-tagged item, and the junk table excludes the tag explicitly",
+      "holds": true,
+      "tags": [
+        "core"
+      ]
+    },
+    {
+      "assertion_id": "A03_zero_native_loot_bearing_pois",
+      "detail": "118 authored POIs, 0 with native A3 loot",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A04_loot_source_pois_unresolved",
+      "detail": "all 16 A3 loot sources fail A1 POI resolution",
+      "holds": true,
+      "tags": [
+        "access"
+      ]
+    },
+    {
+      "assertion_id": "A05_resource_nodes_not_counted_as_containers",
+      "detail": "178 resource nodes stay on the harvest axis; eligible roadside containers counted separately = 0",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A06_first_hour_route_reproduced",
+      "detail": "the tool's own route length matches A1's published 1541.72 tiles within 1 tile",
+      "holds": true,
+      "tags": [
+        "time"
+      ]
+    },
+    {
+      "assertion_id": "A07_no_capability_self_dependency_in_authored_data",
+      "detail": "no authored capability gate requires the capability it is the only source of",
+      "holds": true,
+      "tags": [
+        "world"
+      ]
+    },
+    {
+      "assertion_id": "A08_research_bootstrap_cycle_detected",
+      "detail": "knowledge_spares <-> research station cycle is present and reported",
+      "holds": true,
+      "tags": [
+        "economy"
+      ]
+    },
+    {
+      "assertion_id": "A09_one_time_claims_not_double_counted",
+      "detail": "the duplicated locker claim in P1 is blocked by the one-time policy",
+      "holds": true,
+      "tags": [
+        "claims"
+      ]
+    },
+    {
+      "assertion_id": "A10_adversarial_suite_complete",
+      "detail": "24/24 adversarial cases pass",
+      "holds": true,
+      "tags": [
+        "adversarial"
+      ]
+    },
+    {
+      "assertion_id": "A11_owner_pins_consistent",
+      "detail": "A3's pinned A1 hashes agree with the pinned A1 snapshot",
+      "holds": true,
+      "tags": [
+        "provenance"
+      ]
+    },
+    {
+      "assertion_id": "A12_underprepared_shortcut_not_invented",
+      "detail": "the east-seam shortcut is reported as capability-locked, not as an unmitigated crossing",
+      "holds": true,
+      "tags": [
+        "routes"
+      ]
+    }
+  ],
+  "assertions_all_hold": true,
+  "explicit_non_claims": [
+    "This is not a playtest and not native gameplay acceptance.",
+    "No Core drop rate is derived, chosen or recommended.",
+    "No existing loot table or A1/A3 file is modified by this tool.",
+    "A1's 118 POIs are authored contracts; 0 of them hand out A3 loot natively today.",
+    "A3's 14-session model is a conservation/scenario model, not human pacing evidence.",
+    "Gold-blocked Cores remain BLOCKED_PENDING_A4 and are not treated as usable skills."
+  ],
+  "headline": {
+    "a3_loot_sources_total": 16,
+    "a3_loot_sources_with_unresolved_a1_poi": 16,
+    "adversarial_cases_passed": "24/24",
+    "findings_by_severity": {
+      "BLOCKER": 0,
+      "INFO": 9,
+      "MAJOR": 20,
+      "MINOR": 28
+    },
+    "loot_tables_authored": 2,
+    "loot_tables_that_can_emit_a_core": 0,
+    "poi_playability": {
+      "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
+      "CONTRACT_ONLY_NOT_PLAYABLE": 106,
+      "SHIPPED_LEGACY_SCENE_NO_A3_LOOT": 10
+    },
+    "pois_authored": 118,
+    "pois_loot_bearing_natively": 0,
+    "resource_nodes_authored_not_crates": 178
+  },
+  "schema": "soh.balance.summary.v1",
+  "source_basis": {
+    "a1_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+    "hypothesis_file": "data/survival/balance/hypotheses.v1.json"
+  },
+  "status": "ANALYSIS_COMPLETE_NOT_NATIVE_NOT_HUMAN",
+  "tool": "A7 independent balance / loot-discovery inspector"
+}

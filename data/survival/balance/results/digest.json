@@ -1,0 +1,14 @@
+{
+  "artifacts": {
+    "access.json": "770b78983cb322ac498abbdd747e6f382f1174879cef87ce5c9bf55b14b3d6d0",
+    "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
+    "findings.json": "2e71ac9b7f656a3f9d6883fe77d8c6d172bbcba2dbdbd0c09cfe1b494c4256d1",
+    "opportunity.json": "3b20600aba2a07361e80279aa404d28c3daaa23f212dca10ccf0e7c0742d1b72",
+    "provenance.json": "02bcc07e3d1c9383da45d39193fc1a909a3b3c3eab81b9a4b94550d5d8637905",
+    "sensitivity.json": "0f2ce8762925e19fd8af589b53e10d6302f209a076b3b87274115a8998d015b2",
+    "summary.json": "598dcd1d7c058f3f43bf79fb41143748fd28837abcc6dc363bb6896ed57c59b8"
+  },
+  "combined_sha256": "52d03cdde40626994a4fa887955acfa25c458c28dc6558555b58b4709e2478de",
+  "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
+  "schema": "soh.balance.digest.v1"
+}

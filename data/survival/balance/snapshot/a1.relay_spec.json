@@ -1,0 +1,229 @@
+{
+  "alternate_approach": "Cable trench from the yard reaches the breaker side and returns to the road spur; it does not bypass the cap_salvage hand-crank lesson.",
+  "approach_topology": {
+    "edges": [
+      {
+        "from": "road_spur",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "yard"
+      },
+      {
+        "from": "yard",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "hand_crank"
+      },
+      {
+        "from": "yard",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "breaker"
+      },
+      {
+        "from": "yard",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "cable_trench"
+      },
+      {
+        "from": "cable_trench",
+        "hazard_exposure": [],
+        "mode": "foot",
+        "to": "retreat_spur"
+      }
+    ],
+    "nodes": [
+      {
+        "cell": [
+          424,
+          224
+        ],
+        "id": "road_spur",
+        "kind": "approach"
+      },
+      {
+        "cell": [
+          436,
+          232
+        ],
+        "id": "yard",
+        "kind": "safe_yard"
+      },
+      {
+        "cell": [
+          440,
+          236
+        ],
+        "id": "hand_crank",
+        "kind": "interaction"
+      },
+      {
+        "cell": [
+          442,
+          238
+        ],
+        "id": "breaker",
+        "kind": "interaction"
+      },
+      {
+        "cell": [
+          444,
+          240
+        ],
+        "id": "cable_trench",
+        "kind": "alternate"
+      },
+      {
+        "cell": [
+          424,
+          224
+        ],
+        "id": "retreat_spur",
+        "kind": "retreat"
+      }
+    ],
+    "retreat_path": [
+      "hand_crank",
+      "yard",
+      "road_spur",
+      "retreat_spur"
+    ],
+    "safe_route_id": "rt_crown_safe_approach"
+  },
+  "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+  "failure_recovery": {
+    "death": "Restored hand-crank persists; breaker state may reset safely.",
+    "missing_capability": "cap_salvage clue points back to Ashen Waystation.",
+    "reload": "cap_power_1 is not re-granted; copper upgrade remains locked until A3 item exists."
+  },
+  "footprint_radius_tiles": 6,
+  "interface_requirements": [
+    {
+      "owner": "A0",
+      "requirement": "Persist relay_local_bus and hand_crank_restored; atomic material debit + cap_power_1 grant; breaker reset survives reload.",
+      "test_id": "A1_POI_RELAY_A0_POWER"
+    },
+    {
+      "owner": "A3",
+      "requirement": "Resolve salvage/timber bootstrap costs to approved A3 items; copper upgrade remains MISSING_A3_ITEM until authored, not silently aliased.",
+      "test_id": "A1_POI_RELAY_A3_FUEL"
+    },
+    {
+      "owner": "A6",
+      "requirement": "Show dead-lamp/cable clue, hand-crank prompt, and copper-upgrade material gap without implying first-hour power is blocked.",
+      "test_id": "A1_POI_RELAY_A6_POWER_CLUE"
+    }
+  ],
+  "map_clues": [
+    {
+      "clue_id": "relay_dead_lamp",
+      "kind": "environmental",
+      "text": "A dead lamp and copper cable trench point to the shed."
+    },
+    {
+      "clue_id": "relay_hand_crank",
+      "kind": "interaction",
+      "text": "Hand-crank bypass accepts salvage and timber fuel; copper upgrade is a later repair."
+    }
+  ],
+  "native_playable": false,
+  "persistence": {
+    "keys": [
+      "world_mutations[poi_crown_relay_shed]",
+      "capability_grants[cap_power_1]",
+      "route_unlocks[relay_local_bus]"
+    ],
+    "one_time_flags": [
+      "relay_hand_crank_restored",
+      "relay_copper_upgraded"
+    ],
+    "save_owner": "A0",
+    "static_plan_mutation": false
+  },
+  "poi_id": "poi_crown_relay_shed",
+  "purpose": "First-hour powered relay: hand-crank bypass teaches local power without requiring missing copper item; copper upgrade remains a later sink.",
+  "refresh_policy": "Hand-crank restoration and copper upgrade are one-time world repairs; breaker reset is a reusable utility state.",
+  "rewards": [
+    {
+      "capability_grants": [
+        "cap_power_1"
+      ],
+      "material_keys": [],
+      "policy": "ONE_TIME",
+      "rarity": "starter_world_repair",
+      "reward_id": "bypass_reward"
+    },
+    {
+      "material_keys": [],
+      "policy": "STATE_RESET",
+      "rarity": "utility",
+      "reward_id": "breaker_reward"
+    },
+    {
+      "a3_item_hints": [],
+      "material_keys": [
+        "copper",
+        "salvage"
+      ],
+      "policy": "ONE_TIME",
+      "rarity": "upgrade_pending_A3_copper",
+      "reward_id": "upgrade_reward"
+    }
+  ],
+  "schema": "soh.world.poi_authoring.v1",
+  "world_state_actions": [
+    {
+      "action_id": "hand_crank_bypass",
+      "consumes": {
+        "salvage": 2,
+        "timber": 1
+      },
+      "effects": [
+        "grant:cap_power_1",
+        "flag:relay_hand_crank_restored",
+        "power:relay_local_bus"
+      ],
+      "failure_recovery": "A0 transaction consumes materials and grants power atomically; interruption before commit refunds/not-debits.",
+      "kind": "power",
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_salvage"
+      ],
+      "reward_ref": "bypass_reward"
+    },
+    {
+      "action_id": "breaker_reset",
+      "consumes": {},
+      "cooldown_seconds_proposal": 60,
+      "effects": [
+        "reset:relay_breaker"
+      ],
+      "failure_recovery": "Overload trips breaker; reset is idempotent and does not re-grant cap_power_1.",
+      "kind": "power",
+      "one_time": false,
+      "requires_capabilities": [
+        "cap_power_1"
+      ],
+      "reward_ref": "breaker_reward"
+    },
+    {
+      "action_id": "copper_upgrade",
+      "consumes": {
+        "copper": 2,
+        "salvage": 1
+      },
+      "effects": [
+        "flag:relay_copper_upgraded",
+        "unlock:relay_cache"
+      ],
+      "failure_recovery": "Blocked until A3 copper item exists; UI shows material clue, not a fake wall. First-hour power does not depend on this.",
+      "kind": "power",
+      "one_time": true,
+      "requires_capabilities": [
+        "cap_power_1"
+      ],
+      "reward_ref": "upgrade_reward"
+    }
+  ]
+}

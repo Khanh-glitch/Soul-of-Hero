@@ -1,0 +1,488 @@
+{
+  "codes": [
+    "BOOTSTRAP_DEPENDENCY_CYCLE",
+    "DEATH_CARGO_LOSS_UNMODELLED",
+    "ITEM_OVEROWNED",
+    "PROVISIONAL_BINDING",
+    "QUANTITY_OWNERSHIP_UNRESOLVED",
+    "RECIPE_CYCLE",
+    "RESISTANCE_CHAIN_BLOCKED",
+    "ROUTE_LOCKED_FOR_CAPABILITIES",
+    "SOURCE_ID_DIVERGENCE",
+    "SOURCE_POI_UNRESOLVED",
+    "SOURCE_REGION_UNRESOLVED",
+    "SOURCE_REQUIREMENT_UNMAPPED"
+  ],
+  "findings": [
+    {
+      "code": "BOOTSTRAP_DEPENDENCY_CYCLE",
+      "code_meaning": "a capability/item bootstrap needs its own downstream output",
+      "detail": "research_kit needs 3 knowledge_spares, whose only producer (make_spares, study_predator_jaw, study_axe_insignia) runs at the research station, and no LIVE source provides spares",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "knowledge_spares"
+    },
+    {
+      "code": "DEATH_CARGO_LOSS_UNMODELLED",
+      "code_meaning": "death risk applies to cargo that the model cannot recover",
+      "detail": "edge risk mixes severity high,low with progression band early,late,mid; A3's death-chance keys ['combat', 'high', 'low', 'medium'] cover 6/130 edges, so cargo-loss expectation cannot be computed for the rest",
+      "owner": "A1/A3",
+      "severity": "MAJOR",
+      "subject": "A1 route_graph.risk"
+    },
+    {
+      "code": "QUANTITY_OWNERSHIP_UNRESOLVED",
+      "code_meaning": "one owner assigns a quantity to another owner's reward",
+      "detail": "A1 authors item hints and policy ONE_TIME,RENEWABLE_COOLDOWN with 0 quantities; A3 assigns a1_crown_salvage={'iron_scrap': 3, 'knowledge_spares': 1}; waystation_locker={'iron_scrap': 2, 'knowledge_spares': 2}",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "poi_crown_waystation"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "plan_drop_ember"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "plan_drop_frost"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "plan_drop_venom"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "road_grain_seed"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "road_notes"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "road_scrap"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "road_seed"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "road_supplies"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "seal_blue_seal"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "seal_green_seal"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "seal_purple_seal"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "specimen_ember"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "specimen_frost"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "specimen_venom"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "code": "SOURCE_POI_UNRESOLVED",
+      "code_meaning": "source POI id does not resolve to an A1 POI",
+      "detail": "A3 POI reference None is not an A1 poi_id",
+      "owner": "A3",
+      "severity": "MAJOR",
+      "subject": "venom_cache"
+    },
+    {
+      "code": "SOURCE_REQUIREMENT_UNMAPPED",
+      "code_meaning": "source requirement kind has no A1 capability vocabulary",
+      "detail": "resistance venom:60 is required at a POI whose A1 hazard kind is acid_gas (access capability cap_filter); mitigation key and hazard kind disagree",
+      "owner": "A1/A3",
+      "severity": "MAJOR",
+      "subject": "vault_catalyst:venom:60"
+    },
+    {
+      "code": "ITEM_OVEROWNED",
+      "code_meaning": "two live sources claim the same item with different yields",
+      "detail": "sources disagree on yield: live_iron_scrap=2, road_scrap=3",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "iron_scrap"
+    },
+    {
+      "code": "ITEM_OVEROWNED",
+      "code_meaning": "two live sources claim the same item with different yields",
+      "detail": "sources disagree on yield: node_moonleaf_seed=2, road_seed=1",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "moonleaf_seed"
+    },
+    {
+      "code": "RESISTANCE_CHAIN_BLOCKED",
+      "code_meaning": "the mitigation item for a gated source is itself behind an unreachable chain",
+      "detail": "mitigation item exists only in the authored-plan ladder, not in native or legacy-reward play",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "code": "RESISTANCE_CHAIN_BLOCKED",
+      "code_meaning": "the mitigation item for a gated source is itself behind an unreachable chain",
+      "detail": "mitigation item exists only in the authored-plan ladder, not in native or legacy-reward play",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "venom_cache"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'catalyst_vault' while sources.json uses ['vault_catalyst']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "ancient_catalyst"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_mere_clay' while sources.json uses ['node_clay']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "clay"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_crown_iron' while sources.json uses ['node_iron_ore']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "iron_ore"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_amber_herb' while sources.json uses ['node_moonleaf']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "moonleaf"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_mere_reed' while sources.json uses ['live_reed_fibre']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "reed_fibre"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_crown_reed' while sources.json uses ['live_reed_fibre']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "reed_fibre"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_crown_tuff' while sources.json uses ['live_stone_chunk']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "stone_chunk"
+    },
+    {
+      "code": "SOURCE_ID_DIVERGENCE",
+      "code_meaning": "the same physical source has different ids in different A3 files",
+      "detail": "progression_model uses 'a1_ember_sulfur' while sources.json uses ['node_sulfur']",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "sulfur"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "plan_drop_ember"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "plan_drop_frost"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "plan_drop_venom"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "road_grain_seed"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "road_notes"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "road_scrap"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "road_seed"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "road_supplies"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "seal_blue_seal"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "seal_green_seal"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'opening_marches' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "seal_purple_seal"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'sealed_archive' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "specimen_ember"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'sealed_archive' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "specimen_frost"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'sealed_archive' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "specimen_venom"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'sealed_archive' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "code_meaning": "source region id does not resolve to an A1 region",
+      "detail": "A3 region 'mire_wetlands' is not an A1 region_id",
+      "owner": "A3",
+      "severity": "MINOR",
+      "subject": "venom_cache"
+    },
+    {
+      "code": "PROVISIONAL_BINDING",
+      "code_meaning": "binding is provisional and not owner-approved",
+      "detail": "binding status PROVISIONAL_A3_BINDING_NOT_A1_APPROVED is not owner-approved",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "catalyst_vault"
+    },
+    {
+      "code": "PROVISIONAL_BINDING",
+      "code_meaning": "binding is provisional and not owner-approved",
+      "detail": "binding status PROVISIONAL_A3_BINDING_TO_A1_POI is not owner-approved",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "specimen_ember"
+    },
+    {
+      "code": "PROVISIONAL_BINDING",
+      "code_meaning": "binding is provisional and not owner-approved",
+      "detail": "binding status PROVISIONAL_A3_BINDING_TO_A1_POI is not owner-approved",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "specimen_frost"
+    },
+    {
+      "code": "PROVISIONAL_BINDING",
+      "code_meaning": "binding is provisional and not owner-approved",
+      "detail": "binding status PROVISIONAL_A3_BINDING_TO_A1_POI is not owner-approved",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "specimen_venom"
+    },
+    {
+      "code": "RECIPE_CYCLE",
+      "code_meaning": "item production graph contains a cycle",
+      "detail": "seed-preserving cultivation yield (crop returns one seed); not an exploit",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "grain_seed -> grain_seed"
+    },
+    {
+      "code": "RECIPE_CYCLE",
+      "code_meaning": "item production graph contains a cycle",
+      "detail": "seed-preserving cultivation yield (crop returns one seed); not an exploit",
+      "owner": "A3",
+      "severity": "INFO",
+      "subject": "moonleaf_seed -> moonleaf_seed"
+    },
+    {
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "code_meaning": "trip requires a capability the actor does not hold",
+      "detail": "no route to poi_ember_convict_mine with ['cap_filter', 'cap_power_1', 'cap_salvage', 'cap_seal_1']",
+      "owner": "A1/A3",
+      "severity": "INFO",
+      "subject": "catalyst_vault"
+    },
+    {
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "code_meaning": "trip requires a capability the actor does not hold",
+      "detail": "no route to poi_frost_ice_cave with ['cap_filter', 'cap_power_1', 'cap_salvage', 'cap_seal_1']",
+      "owner": "A1/A3",
+      "severity": "INFO",
+      "subject": "specimen_frost"
+    },
+    {
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "code_meaning": "trip requires a capability the actor does not hold",
+      "detail": "no route to poi_verdant_canopy_temple with ['cap_filter', 'cap_power_1', 'cap_salvage', 'cap_seal_1']",
+      "owner": "A1/A3",
+      "severity": "INFO",
+      "subject": "specimen_venom"
+    }
+  ],
+  "not_claimed": [
+    "native gameplay acceptance",
+    "human playtest / fun / pacing",
+    "A4 Gold attestation or Core usability",
+    "any Core drop rate",
+    "any adjustment of existing loot tables"
+  ],
+  "schema": "soh.balance.findings.v1",
+  "severity_counts": {
+    "BLOCKER": 0,
+    "INFO": 9,
+    "MAJOR": 20,
+    "MINOR": 28
+  }
+}

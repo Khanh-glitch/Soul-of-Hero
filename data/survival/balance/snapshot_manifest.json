@@ -1,0 +1,183 @@
+{
+  "schema": "soh.balance.snapshot_manifest.v1",
+  "purpose": "Read-only pinned extracts of other owners' authored data, so this QA analysis is reproducible without their branches. No upstream file is edited here.",
+  "pinned_at_utc": "2026-10-30",
+  "snapshots": [
+    {
+      "key": "a1.world_plan",
+      "owner": "A1",
+      "role": "geography: 118 POIs, 33 sites, 178 nodes, 130 route edges",
+      "upstream_path": "data/survival/world/world_plan.v1.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
+      "snapshot_path": "data/survival/balance/snapshot/a1.world_plan.json",
+      "size_bytes": 443152
+    },
+    {
+      "key": "a1.poi_route_graph",
+      "owner": "A1",
+      "role": "route graph + POI index",
+      "upstream_path": "data/survival/world/poi_route_graph.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+      "snapshot_path": "data/survival/balance/snapshot/a1.poi_route_graph.json",
+      "size_bytes": 233298
+    },
+    {
+      "key": "a1.material_source_contracts",
+      "owner": "A1",
+      "role": "material_key contracts, sites, nodes, poi consumers",
+      "upstream_path": "data/survival/world/material_source_contracts.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "c4277b0aeab503cc4f6e817e5d36c89b6ce741aba0b6cc277f95bc04534b7c5e",
+      "snapshot_path": "data/survival/balance/snapshot/a1.material_source_contracts.json",
+      "size_bytes": 107225
+    },
+    {
+      "key": "a1.pacing_analysis",
+      "owner": "A1",
+      "role": "travel model, journeys, outpost logistics",
+      "upstream_path": "data/survival/world/pacing_analysis.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "d09245bc67b221b97e8d077e637d7187644639c04b7f7f8bf2310223750d4c09",
+      "snapshot_path": "data/survival/balance/snapshot/a1.pacing_analysis.json",
+      "size_bytes": 54158
+    },
+    {
+      "key": "a1.novice_bootstrap_contract",
+      "owner": "A1",
+      "role": "capability bootstrap chain",
+      "upstream_path": "data/survival/world/novice_bootstrap_contract.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a",
+      "snapshot_path": "data/survival/balance/snapshot/a1.novice_bootstrap_contract.json",
+      "size_bytes": 2629
+    },
+    {
+      "key": "a1.a1_a3_material_decisions",
+      "owner": "A1",
+      "role": "material alias decisions",
+      "upstream_path": "data/survival/world/a1_a3_material_decisions.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0",
+      "snapshot_path": "data/survival/balance/snapshot/a1.a1_a3_material_decisions.json",
+      "size_bytes": 9443
+    },
+    {
+      "key": "a1.waystation_spec",
+      "owner": "A1",
+      "role": "authored first-hour POI reward policy",
+      "upstream_path": "data/survival/world/poi_authoring/poi_crown_waystation.v1.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+      "snapshot_path": "data/survival/balance/snapshot/a1.waystation_spec.json",
+      "size_bytes": 5885
+    },
+    {
+      "key": "a1.relay_spec",
+      "owner": "A1",
+      "role": "authored first-hour POI reward policy",
+      "upstream_path": "data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json",
+      "upstream_ref": "arena_e385312a-soul-of-hero",
+      "upstream_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "sha256": "ce450be63c341011fe1d472f3194f9cbe128e4b5e36f2bb9ef207c6818bfda22",
+      "snapshot_path": "data/survival/balance/snapshot/a1.relay_spec.json",
+      "size_bytes": 6050
+    },
+    {
+      "key": "a3.loot_tables",
+      "owner": "A3",
+      "role": "only existing loot tables",
+      "upstream_path": "data/survival/items/loot_tables.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "0e3220698192112c26eca6e768689fb9b1e9bad0477ad6e694aac7082c5360d8",
+      "snapshot_path": "data/survival/balance/snapshot/a3.loot_tables.json",
+      "size_bytes": 1557
+    },
+    {
+      "key": "a3.items",
+      "owner": "A3",
+      "role": "56 items + source_ids ownership",
+      "upstream_path": "data/survival/items/items.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "0dd502bb439a11657c10074e51a55d144ae6b9eb622afa55967207380ba85a2d",
+      "snapshot_path": "data/survival/balance/snapshot/a3.items.json",
+      "size_bytes": 28476
+    },
+    {
+      "key": "a3.sources",
+      "owner": "A3",
+      "role": "36 sources",
+      "upstream_path": "data/survival/items/sources.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "7c2cddcdbdb8f2dbb96564abf91fed7ff598a1c750d052302bef685bd112a602",
+      "snapshot_path": "data/survival/balance/snapshot/a3.sources.json",
+      "size_bytes": 18227
+    },
+    {
+      "key": "a3.recipes",
+      "owner": "A3",
+      "role": "36 recipes = material sinks",
+      "upstream_path": "data/survival/recipes/recipes.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "4933b4698c2a7f3808a536559d0b9c202f9a9254922544f4702825c4443523e4",
+      "snapshot_path": "data/survival/balance/snapshot/a3.recipes.json",
+      "size_bytes": 20782
+    },
+    {
+      "key": "a3.research",
+      "owner": "A3",
+      "role": "5 technologies",
+      "upstream_path": "data/survival/recipes/research.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "6cca178ac00a99e4d2acfa441869331d325d9bb4d7d1637709b0692db5d512b2",
+      "snapshot_path": "data/survival/balance/snapshot/a3.research.json",
+      "size_bytes": 1969
+    },
+    {
+      "key": "a3.stations",
+      "owner": "A3",
+      "role": "stations + queue caps",
+      "upstream_path": "data/survival/recipes/stations.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "aa05487252b8064729252994954eb73007fe525d2201f8aa725065dd0ee01851",
+      "snapshot_path": "data/survival/balance/snapshot/a3.stations.json",
+      "size_bytes": 2702
+    },
+    {
+      "key": "a3.progression_model",
+      "owner": "A3",
+      "role": "assumptions, product sources, scenarios",
+      "upstream_path": "data/survival/recipes/progression_model.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "75dc5f01367dd49a964b2e4c620e32d96e8e7d200458e028a1c76ea05d3c60af",
+      "snapshot_path": "data/survival/balance/snapshot/a3.progression_model.json",
+      "size_bytes": 67196
+    },
+    {
+      "key": "a3.a1_source_adoption_v2",
+      "owner": "A3",
+      "role": "adopted/rejected/missing item ownership contract",
+      "upstream_path": "data/survival/items/a1_source_adoption.v2.json",
+      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "43ce9681a120be47274770e1c96f90fdc488cfc5f198627d807b9f1325718ed0",
+      "snapshot_path": "data/survival/balance/snapshot/a3.a1_source_adoption_v2.json",
+      "size_bytes": 20811
+    }
+  ]
+}

@@ -1,0 +1,1289 @@
+{
+  "first_hour_route_reproduction": {
+    "a1_journey_hint": null,
+    "a1_published_first_hour_tiles": 1541.72,
+    "difference_note": "A1's own pacing_analysis number is reproduced from the same polylines; a large gap would mean either the tool or A1's model used different legs.",
+    "difference_tiles": -0.0,
+    "legs": [
+      {
+        "goal": "poi_crown_waystation",
+        "route_ids": [
+          "rt_crown_safe_approach",
+          "sp_poi_crown_waystation"
+        ],
+        "start": "node_refuge",
+        "tiles": 446.0
+      },
+      {
+        "goal": "poi_crown_relay_shed",
+        "route_ids": [
+          "sp_poi_crown_waystation",
+          "sp_poi_crown_relay_shed"
+        ],
+        "start": "poi_crown_waystation",
+        "tiles": 76.0
+      },
+      {
+        "goal": "poi_amberwood_apothecary",
+        "route_ids": [
+          "sp_poi_crown_relay_shed",
+          "rt_crown_safe_approach",
+          "rt_south_seam",
+          "sp_poi_amberwood_apothecary"
+        ],
+        "start": "poi_crown_relay_shed",
+        "tiles": 754.86
+      },
+      {
+        "goal": "node_refuge",
+        "route_ids": [
+          "sp_poi_amberwood_apothecary",
+          "rt_south_seam"
+        ],
+        "start": "poi_amberwood_apothecary",
+        "tiles": 264.86
+      }
+    ],
+    "movement_seconds": 256.95,
+    "sequence": [
+      "node_refuge",
+      "poi_crown_waystation",
+      "poi_crown_relay_shed",
+      "poi_amberwood_apothecary",
+      "node_refuge"
+    ],
+    "total_tiles": 1541.72
+  },
+  "patterns": [
+    {
+      "blocked_claims": [
+        {
+          "reason": "one_time_already_claimed",
+          "source_id": "waystation_locker"
+        }
+      ],
+      "bottleneck_risk": "early",
+      "bottleneck_risk_band": "early",
+      "bottleneck_risk_severity": "unknown",
+      "capabilities": [],
+      "capacity_slots": 30,
+      "cargo_survival": [
+        {
+          "death_chance": null,
+          "detail": "A1 risk label has no A3 death-chance key; no cargo-loss number is computed",
+          "status": "UNMODELLED_NO_DEATH_MODEL_KEY"
+        }
+      ],
+      "claims_allowed": {
+        "a1_amber_herb": 2,
+        "a1_crown_salvage": 1,
+        "waystation_locker": 1
+      },
+      "death_chance_hypothesis": null,
+      "death_chance_status": "UNMODELLED_NO_DEATH_MODEL_KEY",
+      "findings": [
+        {
+          "code": "DEATH_CARGO_LOSS_UNMODELLED",
+          "code_meaning": "death risk applies to cargo that the model cannot recover",
+          "detail": "A1 risk label 'early' has no A3 death-chance key; expected cargo survival is not computed",
+          "owner": "A1/A3",
+          "severity": "INFO",
+          "subject": "P1_SAFE_BOOTSTRAP_LOOP"
+        }
+      ],
+      "gather_seconds": 24.0,
+      "interaction_seconds": 135.0,
+      "label": "Authored first-hour loop: Refuge - Waystation - Relay - Refuge - Apothecary - Refuge, safe corridors only",
+      "legs": [
+        {
+          "goal": "poi_crown_waystation",
+          "risk": "early",
+          "route_ids": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_waystation"
+          ],
+          "seconds": 74.3,
+          "start": "node_refuge",
+          "tiles": 446.0
+        },
+        {
+          "goal": "poi_crown_relay_shed",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_waystation",
+            "sp_poi_crown_relay_shed"
+          ],
+          "seconds": 12.7,
+          "start": "poi_crown_waystation",
+          "tiles": 76.0
+        },
+        {
+          "goal": "poi_amberwood_apothecary",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_relay_shed",
+            "rt_crown_safe_approach",
+            "rt_south_seam",
+            "sp_poi_amberwood_apothecary"
+          ],
+          "seconds": 125.8,
+          "start": "poi_crown_relay_shed",
+          "tiles": 754.86
+        },
+        {
+          "goal": "node_refuge",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_amberwood_apothecary",
+            "rt_south_seam"
+          ],
+          "seconds": 44.1,
+          "start": "poi_amberwood_apothecary",
+          "tiles": 264.86
+        }
+      ],
+      "loot_slots": 3,
+      "loot_units": {
+        "iron_scrap": 5.0,
+        "knowledge_spares": 3.0,
+        "moonleaf": 2.0
+      },
+      "notes": "The duplicated locker claim is deliberate: it exercises the one-time policy and must be blocked, not counted twice.",
+      "overflow_slots": 0,
+      "pattern_id": "P1_SAFE_BOOTSTRAP_LOOP",
+      "session_budget_seconds": 2700.0,
+      "sink_coverage": {
+        "basis": "trip loot only; native harvest and prior-session stock are excluded",
+        "covered": [],
+        "detail": {
+          "furnace_kit": {
+            "requirements": {
+              "iron_scrap": 3,
+              "stone_chunk": 8
+            },
+            "shortfall": {
+              "stone_chunk": 8.0
+            },
+            "status": "SHORT"
+          },
+          "research_kit": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 3,
+              "oak_wood": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "oak_wood": 4.0
+            },
+            "status": "SHORT"
+          },
+          "stone_pick": {
+            "requirements": {
+              "oak_wood": 2,
+              "stone_chunk": 3
+            },
+            "shortfall": {
+              "oak_wood": 2.0,
+              "stone_chunk": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_core_binding": {
+            "requirements": {
+              "crypt_bone_shard": 2,
+              "research_notes": 3,
+              "soul_ember": 2
+            },
+            "shortfall": {
+              "crypt_bone_shard": 2.0,
+              "research_notes": 3.0,
+              "soul_ember": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_frost": {
+            "requirements": {
+              "frost_shard": 1,
+              "research_notes": 2
+            },
+            "shortfall": {
+              "frost_shard": 1.0,
+              "research_notes": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_precision": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 1.0
+            },
+            "status": "SHORT"
+          },
+          "tech_smelting": {
+            "requirements": {
+              "iron_scrap": 3,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "knowledge_spares": 1.0
+            },
+            "status": "SHORT"
+          },
+          "tech_toxin": {
+            "requirements": {
+              "research_notes": 2,
+              "venom_spine": 1
+            },
+            "shortfall": {
+              "research_notes": 2.0,
+              "venom_spine": 1.0
+            },
+            "status": "SHORT"
+          },
+          "weave_cloth": {
+            "requirements": {
+              "reed_fibre": 3
+            },
+            "shortfall": {
+              "reed_fibre": 3.0
+            },
+            "status": "SHORT"
+          },
+          "workbench_kit": {
+            "requirements": {
+              "iron_scrap": 2,
+              "oak_wood": 6
+            },
+            "shortfall": {
+              "oak_wood": 6.0
+            },
+            "status": "SHORT"
+          }
+        },
+        "short": [
+          "furnace_kit",
+          "research_kit",
+          "stone_pick",
+          "tech_core_binding",
+          "tech_frost",
+          "tech_precision",
+          "tech_smelting",
+          "tech_toxin",
+          "weave_cloth",
+          "workbench_kit"
+        ]
+      },
+      "sinkless_units": 0.0,
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "total_accounted_seconds": 416.0,
+      "travel_seconds": 257.0,
+      "travel_tiles": 1541.72,
+      "unmodelled_time": [
+        "combat",
+        "player reading/planning/deciding",
+        "UI frames",
+        "death and recovery"
+      ],
+      "useful_units": 10.0
+    },
+    {
+      "blocked_claims": [],
+      "bottleneck_risk": "early",
+      "bottleneck_risk_band": "early",
+      "bottleneck_risk_severity": "unknown",
+      "capabilities": [
+        "cap_filter",
+        "cap_power_1",
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "capacity_slots": 30,
+      "cargo_survival": [
+        {
+          "death_chance": null,
+          "detail": "A1 risk label has no A3 death-chance key; no cargo-loss number is computed",
+          "status": "UNMODELLED_NO_DEATH_MODEL_KEY"
+        }
+      ],
+      "claims_allowed": {
+        "a1_crown_iron": 1,
+        "a1_crown_reed": 2,
+        "a1_crown_tuff": 1
+      },
+      "death_chance_hypothesis": null,
+      "death_chance_status": "UNMODELLED_NO_DEATH_MODEL_KEY",
+      "findings": [
+        {
+          "code": "DEATH_CARGO_LOSS_UNMODELLED",
+          "code_meaning": "death risk applies to cargo that the model cannot recover",
+          "detail": "A1 risk label 'early' has no A3 death-chance key; expected cargo survival is not computed",
+          "owner": "A1/A3",
+          "severity": "INFO",
+          "subject": "P2_FILTERED_MATERIAL_RUN"
+        }
+      ],
+      "gather_seconds": 24.0,
+      "interaction_seconds": 90.0,
+      "label": "After cap_filter: Refuge - Quarry - Ferry Pile - Refuge material run",
+      "legs": [
+        {
+          "goal": "poi_crown_quarry",
+          "risk": "early",
+          "route_ids": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_quarry"
+          ],
+          "seconds": 89.0,
+          "start": "node_refuge",
+          "tiles": 533.85
+        },
+        {
+          "goal": "poi_crown_ferry_pile",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_quarry",
+            "rt_crown_buffer",
+            "sp_poi_crown_ferry_pile"
+          ],
+          "seconds": 67.4,
+          "start": "poi_crown_quarry",
+          "tiles": 404.59
+        },
+        {
+          "goal": "node_refuge",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_ferry_pile",
+            "rt_crown_buffer",
+            "rt_crown_safe_approach"
+          ],
+          "seconds": 121.8,
+          "start": "poi_crown_ferry_pile",
+          "tiles": 730.75
+        }
+      ],
+      "loot_slots": 3,
+      "loot_units": {
+        "iron_ore": 2.0,
+        "reed_fibre": 4.0,
+        "stone_chunk": 2.0
+      },
+      "notes": "Requires stone_pick for quarry claims (A3 requires_items) which is craftable from native sources; the tool does not model tool durability because none is authored.",
+      "overflow_slots": 0,
+      "pattern_id": "P2_FILTERED_MATERIAL_RUN",
+      "session_budget_seconds": 2700.0,
+      "sink_coverage": {
+        "basis": "trip loot only; native harvest and prior-session stock are excluded",
+        "covered": [
+          "weave_cloth"
+        ],
+        "detail": {
+          "furnace_kit": {
+            "requirements": {
+              "iron_scrap": 3,
+              "stone_chunk": 8
+            },
+            "shortfall": {
+              "iron_scrap": 3.0,
+              "stone_chunk": 6.0
+            },
+            "status": "SHORT"
+          },
+          "research_kit": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 3,
+              "oak_wood": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 3.0,
+              "oak_wood": 4.0
+            },
+            "status": "SHORT"
+          },
+          "stone_pick": {
+            "requirements": {
+              "oak_wood": 2,
+              "stone_chunk": 3
+            },
+            "shortfall": {
+              "oak_wood": 2.0,
+              "stone_chunk": 1.0
+            },
+            "status": "SHORT"
+          },
+          "tech_core_binding": {
+            "requirements": {
+              "crypt_bone_shard": 2,
+              "research_notes": 3,
+              "soul_ember": 2
+            },
+            "shortfall": {
+              "crypt_bone_shard": 2.0,
+              "research_notes": 3.0,
+              "soul_ember": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_frost": {
+            "requirements": {
+              "frost_shard": 1,
+              "research_notes": 2
+            },
+            "shortfall": {
+              "frost_shard": 1.0,
+              "research_notes": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_precision": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 4.0
+            },
+            "status": "SHORT"
+          },
+          "tech_smelting": {
+            "requirements": {
+              "iron_scrap": 3,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_scrap": 3.0,
+              "knowledge_spares": 4.0
+            },
+            "status": "SHORT"
+          },
+          "tech_toxin": {
+            "requirements": {
+              "research_notes": 2,
+              "venom_spine": 1
+            },
+            "shortfall": {
+              "research_notes": 2.0,
+              "venom_spine": 1.0
+            },
+            "status": "SHORT"
+          },
+          "weave_cloth": {
+            "requirements": {
+              "reed_fibre": 3
+            },
+            "shortfall": {},
+            "status": "COVERED_BY_TRIP"
+          },
+          "workbench_kit": {
+            "requirements": {
+              "iron_scrap": 2,
+              "oak_wood": 6
+            },
+            "shortfall": {
+              "iron_scrap": 2.0,
+              "oak_wood": 6.0
+            },
+            "status": "SHORT"
+          }
+        },
+        "short": [
+          "furnace_kit",
+          "research_kit",
+          "stone_pick",
+          "tech_core_binding",
+          "tech_frost",
+          "tech_precision",
+          "tech_smelting",
+          "tech_toxin",
+          "workbench_kit"
+        ]
+      },
+      "sinkless_units": 0.0,
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "total_accounted_seconds": 392.2,
+      "travel_seconds": 278.2,
+      "travel_tiles": 1669.18,
+      "unmodelled_time": [
+        "combat",
+        "player reading/planning/deciding",
+        "UI frames",
+        "death and recovery"
+      ],
+      "useful_units": 8.0
+    },
+    {
+      "blocked_claims": [],
+      "bottleneck_risk": "early",
+      "bottleneck_risk_band": "early",
+      "bottleneck_risk_severity": "unknown",
+      "capabilities": [],
+      "capacity_slots": 30,
+      "cargo_survival": [
+        {
+          "death_chance": null,
+          "detail": "A1 risk label has no A3 death-chance key; no cargo-loss number is computed",
+          "status": "UNMODELLED_NO_DEATH_MODEL_KEY"
+        }
+      ],
+      "claims_allowed": {
+        "a1_crown_salvage": 1
+      },
+      "death_chance_hypothesis": null,
+      "death_chance_status": "UNMODELLED_NO_DEATH_MODEL_KEY",
+      "findings": [
+        {
+          "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+          "code_meaning": "trip requires a capability the actor does not hold",
+          "detail": "intended route needs ['cap_filter']; trip falls back to permitted routes",
+          "owner": "A1",
+          "severity": "MAJOR",
+          "subject": "P3_UNDERPREPARED_SHORTCUT:rt_east_seam"
+        },
+        {
+          "code": "DEATH_CARGO_LOSS_UNMODELLED",
+          "code_meaning": "death risk applies to cargo that the model cannot recover",
+          "detail": "A1 risk label 'early' has no A3 death-chance key; expected cargo survival is not computed",
+          "owner": "A1/A3",
+          "severity": "INFO",
+          "subject": "P3_UNDERPREPARED_SHORTCUT"
+        }
+      ],
+      "gather_seconds": 6.0,
+      "interaction_seconds": 45.0,
+      "label": "Underprepared player insists on the east seam shortcut without cap_filter",
+      "legs": [
+        {
+          "goal": "poi_crown_waystation",
+          "risk": "early",
+          "route_ids": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_waystation"
+          ],
+          "seconds": 74.3,
+          "start": "node_refuge",
+          "tiles": 446.0
+        },
+        {
+          "goal": "node_refuge",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_waystation",
+            "rt_crown_safe_approach"
+          ],
+          "seconds": 74.3,
+          "start": "poi_crown_waystation",
+          "tiles": 446.0
+        }
+      ],
+      "loot_slots": 2,
+      "loot_units": {
+        "iron_scrap": 3.0,
+        "knowledge_spares": 1.0
+      },
+      "notes": "The route requires cap_filter, so the intended trip is not passable; the model reports the lock and the fallback route instead of an invented unmitigated crossing.",
+      "overflow_slots": 0,
+      "pattern_id": "P3_UNDERPREPARED_SHORTCUT",
+      "session_budget_seconds": 2700.0,
+      "sink_coverage": {
+        "basis": "trip loot only; native harvest and prior-session stock are excluded",
+        "covered": [],
+        "detail": {
+          "furnace_kit": {
+            "requirements": {
+              "iron_scrap": 3,
+              "stone_chunk": 8
+            },
+            "shortfall": {
+              "stone_chunk": 8.0
+            },
+            "status": "SHORT"
+          },
+          "research_kit": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 3,
+              "oak_wood": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 2.0,
+              "oak_wood": 4.0
+            },
+            "status": "SHORT"
+          },
+          "stone_pick": {
+            "requirements": {
+              "oak_wood": 2,
+              "stone_chunk": 3
+            },
+            "shortfall": {
+              "oak_wood": 2.0,
+              "stone_chunk": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_core_binding": {
+            "requirements": {
+              "crypt_bone_shard": 2,
+              "research_notes": 3,
+              "soul_ember": 2
+            },
+            "shortfall": {
+              "crypt_bone_shard": 2.0,
+              "research_notes": 3.0,
+              "soul_ember": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_frost": {
+            "requirements": {
+              "frost_shard": 1,
+              "research_notes": 2
+            },
+            "shortfall": {
+              "frost_shard": 1.0,
+              "research_notes": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_precision": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_smelting": {
+            "requirements": {
+              "iron_scrap": 3,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "knowledge_spares": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_toxin": {
+            "requirements": {
+              "research_notes": 2,
+              "venom_spine": 1
+            },
+            "shortfall": {
+              "research_notes": 2.0,
+              "venom_spine": 1.0
+            },
+            "status": "SHORT"
+          },
+          "weave_cloth": {
+            "requirements": {
+              "reed_fibre": 3
+            },
+            "shortfall": {
+              "reed_fibre": 3.0
+            },
+            "status": "SHORT"
+          },
+          "workbench_kit": {
+            "requirements": {
+              "iron_scrap": 2,
+              "oak_wood": 6
+            },
+            "shortfall": {
+              "oak_wood": 6.0
+            },
+            "status": "SHORT"
+          }
+        },
+        "short": [
+          "furnace_kit",
+          "research_kit",
+          "stone_pick",
+          "tech_core_binding",
+          "tech_frost",
+          "tech_precision",
+          "tech_smelting",
+          "tech_toxin",
+          "weave_cloth",
+          "workbench_kit"
+        ]
+      },
+      "sinkless_units": 0.0,
+      "status": "AUTHORED_CONTRACT_NOT_NATIVE",
+      "total_accounted_seconds": 199.7,
+      "travel_seconds": 148.7,
+      "travel_tiles": 892.0,
+      "unmodelled_time": [
+        "combat",
+        "player reading/planning/deciding",
+        "UI frames",
+        "death and recovery"
+      ],
+      "useful_units": 4.0
+    },
+    {
+      "blocked_claims": [],
+      "bottleneck_risk": "early",
+      "bottleneck_risk_band": "early",
+      "bottleneck_risk_severity": "unknown",
+      "capabilities": [
+        "cap_salvage"
+      ],
+      "capacity_slots": 30,
+      "cargo_survival": [
+        {
+          "death_chance": null,
+          "detail": "A1 risk label has no A3 death-chance key; no cargo-loss number is computed",
+          "status": "UNMODELLED_NO_DEATH_MODEL_KEY"
+        }
+      ],
+      "claims_allowed": {
+        "road_supplies": 3
+      },
+      "death_chance_hypothesis": null,
+      "death_chance_status": "UNMODELLED_NO_DEATH_MODEL_KEY",
+      "findings": [
+        {
+          "code": "NONE_ELIGIBLE",
+          "code_meaning": "no eligible container/source exists for the requested claim set",
+          "detail": "loot table source has no placed A1 container; yields below are hypothetical",
+          "owner": "A3",
+          "severity": "INFO",
+          "subject": "road_supplies"
+        },
+        {
+          "code": "DEATH_CARGO_LOSS_UNMODELLED",
+          "code_meaning": "death risk applies to cargo that the model cannot recover",
+          "detail": "A1 risk label 'early' has no A3 death-chance key; expected cargo survival is not computed",
+          "owner": "A1/A3",
+          "severity": "INFO",
+          "subject": "P4_ROADSIDE_CONTAINER_SEARCH"
+        }
+      ],
+      "gather_seconds": 60.0,
+      "interaction_seconds": 90.0,
+      "label": "Player searches for roadside supply crates using A3's only authored table",
+      "legs": [
+        {
+          "goal": "poi_crown_quarry",
+          "risk": "early",
+          "route_ids": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_quarry"
+          ],
+          "seconds": 89.0,
+          "start": "node_refuge",
+          "tiles": 533.85
+        },
+        {
+          "goal": "poi_crown_ferry_pile",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_quarry",
+            "rt_crown_buffer",
+            "sp_poi_crown_ferry_pile"
+          ],
+          "seconds": 67.4,
+          "start": "poi_crown_quarry",
+          "tiles": 404.59
+        },
+        {
+          "goal": "node_refuge",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_ferry_pile",
+            "rt_crown_buffer",
+            "rt_crown_safe_approach"
+          ],
+          "seconds": 121.8,
+          "start": "poi_crown_ferry_pile",
+          "tiles": 730.75
+        }
+      ],
+      "loot_slots": 4,
+      "loot_units": {
+        "grain_seed": 1.35,
+        "iron_scrap": 10.8,
+        "knowledge_spares": 4.05,
+        "research_notes": 1.35
+      },
+      "notes": "roadside_cache is the only existing loot table and its A3 source POI is unresolved against A1. This pattern measures what three claims would be worth IF a container existed; it is not evidence that one exists.",
+      "overflow_slots": 0,
+      "pattern_id": "P4_ROADSIDE_CONTAINER_SEARCH",
+      "session_budget_seconds": 2700.0,
+      "sink_coverage": {
+        "basis": "trip loot only; native harvest and prior-session stock are excluded",
+        "covered": [
+          "tech_smelting"
+        ],
+        "detail": {
+          "furnace_kit": {
+            "requirements": {
+              "iron_scrap": 3,
+              "stone_chunk": 8
+            },
+            "shortfall": {
+              "stone_chunk": 8.0
+            },
+            "status": "SHORT"
+          },
+          "research_kit": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 3,
+              "oak_wood": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "oak_wood": 4.0
+            },
+            "status": "SHORT"
+          },
+          "stone_pick": {
+            "requirements": {
+              "oak_wood": 2,
+              "stone_chunk": 3
+            },
+            "shortfall": {
+              "oak_wood": 2.0,
+              "stone_chunk": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_core_binding": {
+            "requirements": {
+              "crypt_bone_shard": 2,
+              "research_notes": 3,
+              "soul_ember": 2
+            },
+            "shortfall": {
+              "crypt_bone_shard": 2.0,
+              "research_notes": 1.65,
+              "soul_ember": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_frost": {
+            "requirements": {
+              "frost_shard": 1,
+              "research_notes": 2
+            },
+            "shortfall": {
+              "frost_shard": 1.0,
+              "research_notes": 0.65
+            },
+            "status": "SHORT"
+          },
+          "tech_precision": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_smelting": {
+            "requirements": {
+              "iron_scrap": 3,
+              "knowledge_spares": 4
+            },
+            "shortfall": {},
+            "status": "COVERED_BY_TRIP"
+          },
+          "tech_toxin": {
+            "requirements": {
+              "research_notes": 2,
+              "venom_spine": 1
+            },
+            "shortfall": {
+              "research_notes": 0.65,
+              "venom_spine": 1.0
+            },
+            "status": "SHORT"
+          },
+          "weave_cloth": {
+            "requirements": {
+              "reed_fibre": 3
+            },
+            "shortfall": {
+              "reed_fibre": 3.0
+            },
+            "status": "SHORT"
+          },
+          "workbench_kit": {
+            "requirements": {
+              "iron_scrap": 2,
+              "oak_wood": 6
+            },
+            "shortfall": {
+              "oak_wood": 6.0
+            },
+            "status": "SHORT"
+          }
+        },
+        "short": [
+          "furnace_kit",
+          "research_kit",
+          "stone_pick",
+          "tech_core_binding",
+          "tech_frost",
+          "tech_precision",
+          "tech_toxin",
+          "weave_cloth",
+          "workbench_kit"
+        ]
+      },
+      "sinkless_units": 0.0,
+      "status": "HYPOTHESIS_SOURCE_UNBOUND",
+      "total_accounted_seconds": 428.2,
+      "travel_seconds": 278.2,
+      "travel_tiles": 1669.18,
+      "unmodelled_time": [
+        "combat",
+        "player reading/planning/deciding",
+        "UI frames",
+        "death and recovery"
+      ],
+      "useful_units": 17.55
+    },
+    {
+      "blocked_claims": [],
+      "bottleneck_risk": "medium",
+      "bottleneck_risk_band": null,
+      "bottleneck_risk_severity": "medium",
+      "capabilities": [
+        "cap_salvage",
+        "cap_seal_1"
+      ],
+      "capacity_slots": 30,
+      "cargo_survival": [
+        {
+          "cargo_recovery_probability": 0.0,
+          "death_chance": 0.03,
+          "expected_retained_fraction": 0.97,
+          "expected_retained_units": {
+            "core_ember": 0.97
+          }
+        },
+        {
+          "cargo_recovery_probability": 0.5,
+          "death_chance": 0.03,
+          "expected_retained_fraction": 0.985,
+          "expected_retained_units": {
+            "core_ember": 0.985
+          }
+        },
+        {
+          "cargo_recovery_probability": 1.0,
+          "death_chance": 0.03,
+          "expected_retained_fraction": 1.0,
+          "expected_retained_units": {
+            "core_ember": 1.0
+          }
+        }
+      ],
+      "claims_allowed": {
+        "specimen_ember": 1
+      },
+      "death_chance_hypothesis": 0.03,
+      "death_chance_status": "MODELLED_FROM_A3_ASSUMPTION",
+      "findings": [],
+      "gather_seconds": 6.0,
+      "interaction_seconds": 45.0,
+      "label": "First Core attempt at the ember barrow field (provisional binding, one-time)",
+      "legs": [
+        {
+          "goal": "poi_crown_barrow_field",
+          "risk": "early",
+          "route_ids": [
+            "rt_crown_safe_approach",
+            "sp_poi_crown_barrow_field"
+          ],
+          "seconds": 87.1,
+          "start": "node_refuge",
+          "tiles": 522.65
+        },
+        {
+          "goal": "node_refuge",
+          "risk": "early",
+          "route_ids": [
+            "sp_poi_crown_barrow_field",
+            "rt_crown_safe_approach"
+          ],
+          "seconds": 87.1,
+          "start": "poi_crown_barrow_field",
+          "tiles": 522.65
+        }
+      ],
+      "loot_slots": 1,
+      "loot_units": {
+        "core_ember": 1.0
+      },
+      "notes": "A3 declares discovery_chance 1.0 for this source. The Core is therefore an access/distance problem under the current data, not a probability problem; the POI is still contract-only.",
+      "overflow_slots": 0,
+      "pattern_id": "P5_FIRST_CORE_DETERMINISTIC",
+      "session_budget_seconds": 2700.0,
+      "sink_coverage": {
+        "basis": "trip loot only; native harvest and prior-session stock are excluded",
+        "covered": [],
+        "detail": {
+          "furnace_kit": {
+            "requirements": {
+              "iron_scrap": 3,
+              "stone_chunk": 8
+            },
+            "shortfall": {
+              "iron_scrap": 3.0,
+              "stone_chunk": 8.0
+            },
+            "status": "SHORT"
+          },
+          "research_kit": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 3,
+              "oak_wood": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 3.0,
+              "oak_wood": 4.0
+            },
+            "status": "SHORT"
+          },
+          "stone_pick": {
+            "requirements": {
+              "oak_wood": 2,
+              "stone_chunk": 3
+            },
+            "shortfall": {
+              "oak_wood": 2.0,
+              "stone_chunk": 3.0
+            },
+            "status": "SHORT"
+          },
+          "tech_core_binding": {
+            "requirements": {
+              "crypt_bone_shard": 2,
+              "research_notes": 3,
+              "soul_ember": 2
+            },
+            "shortfall": {
+              "crypt_bone_shard": 2.0,
+              "research_notes": 3.0,
+              "soul_ember": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_frost": {
+            "requirements": {
+              "frost_shard": 1,
+              "research_notes": 2
+            },
+            "shortfall": {
+              "frost_shard": 1.0,
+              "research_notes": 2.0
+            },
+            "status": "SHORT"
+          },
+          "tech_precision": {
+            "requirements": {
+              "iron_ingot": 2,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_ingot": 2.0,
+              "knowledge_spares": 4.0
+            },
+            "status": "SHORT"
+          },
+          "tech_smelting": {
+            "requirements": {
+              "iron_scrap": 3,
+              "knowledge_spares": 4
+            },
+            "shortfall": {
+              "iron_scrap": 3.0,
+              "knowledge_spares": 4.0
+            },
+            "status": "SHORT"
+          },
+          "tech_toxin": {
+            "requirements": {
+              "research_notes": 2,
+              "venom_spine": 1
+            },
+            "shortfall": {
+              "research_notes": 2.0,
+              "venom_spine": 1.0
+            },
+            "status": "SHORT"
+          },
+          "weave_cloth": {
+            "requirements": {
+              "reed_fibre": 3
+            },
+            "shortfall": {
+              "reed_fibre": 3.0
+            },
+            "status": "SHORT"
+          },
+          "workbench_kit": {
+            "requirements": {
+              "iron_scrap": 2,
+              "oak_wood": 6
+            },
+            "shortfall": {
+              "iron_scrap": 2.0,
+              "oak_wood": 6.0
+            },
+            "status": "SHORT"
+          }
+        },
+        "short": [
+          "furnace_kit",
+          "research_kit",
+          "stone_pick",
+          "tech_core_binding",
+          "tech_frost",
+          "tech_precision",
+          "tech_smelting",
+          "tech_toxin",
+          "weave_cloth",
+          "workbench_kit"
+        ]
+      },
+      "sinkless_units": 0.0,
+      "status": "PROVISIONAL_BINDING_NOT_NATIVE",
+      "total_accounted_seconds": 225.2,
+      "travel_seconds": 174.2,
+      "travel_tiles": 1045.3,
+      "unmodelled_time": [
+        "combat",
+        "player reading/planning/deciding",
+        "UI frames",
+        "death and recovery"
+      ],
+      "useful_units": 1.0
+    }
+  ],
+  "schema": "soh.balance.opportunity.v1",
+  "session_seconds": 2700,
+  "time_model": {
+    "gather_and_interaction": "A3 progression_model.assumptions (design proposals)",
+    "travel": "A1 authored polylines / 96 px per second (A3 assumption)",
+    "unmodelled": [
+      "combat",
+      "player reading/planning/deciding",
+      "UI frames and menus",
+      "death and recovery",
+      "terrain collision detours outside graded corridors",
+      "boat speed (A1 marks it NOT_AUTHORED)"
+    ]
+  },
+  "trip_budget_sensitivity": [
+    {
+      "session_budget_seconds": 2700.0,
+      "share_of_budget": 0.1541,
+      "trip_seconds": 416.0,
+      "trips_per_session_floor": 6
+    },
+    {
+      "session_budget_seconds": 5400.0,
+      "share_of_budget": 0.077,
+      "trip_seconds": 416.0,
+      "trips_per_session_floor": 12
+    },
+    {
+      "session_budget_seconds": 1350.0,
+      "share_of_budget": 0.3081,
+      "trip_seconds": 416.0,
+      "trips_per_session_floor": 3
+    },
+    {
+      "session_budget_seconds": 2700.0,
+      "share_of_budget": 0.1453,
+      "trip_seconds": 392.2,
+      "trips_per_session_floor": 6
+    },
+    {
+      "session_budget_seconds": 5400.0,
+      "share_of_budget": 0.0726,
+      "trip_seconds": 392.2,
+      "trips_per_session_floor": 13
+    },
+    {
+      "session_budget_seconds": 1350.0,
+      "share_of_budget": 0.2905,
+      "trip_seconds": 392.2,
+      "trips_per_session_floor": 3
+    },
+    {
+      "session_budget_seconds": 2700.0,
+      "share_of_budget": 0.074,
+      "trip_seconds": 199.7,
+      "trips_per_session_floor": 13
+    },
+    {
+      "session_budget_seconds": 5400.0,
+      "share_of_budget": 0.037,
+      "trip_seconds": 199.7,
+      "trips_per_session_floor": 27
+    },
+    {
+      "session_budget_seconds": 1350.0,
+      "share_of_budget": 0.1479,
+      "trip_seconds": 199.7,
+      "trips_per_session_floor": 6
+    },
+    {
+      "session_budget_seconds": 2700.0,
+      "share_of_budget": 0.1586,
+      "trip_seconds": 428.2,
+      "trips_per_session_floor": 6
+    },
+    {
+      "session_budget_seconds": 5400.0,
+      "share_of_budget": 0.0793,
+      "trip_seconds": 428.2,
+      "trips_per_session_floor": 12
+    },
+    {
+      "session_budget_seconds": 1350.0,
+      "share_of_budget": 0.3172,
+      "trip_seconds": 428.2,
+      "trips_per_session_floor": 3
+    },
+    {
+      "session_budget_seconds": 2700.0,
+      "share_of_budget": 0.0834,
+      "trip_seconds": 225.2,
+      "trips_per_session_floor": 11
+    },
+    {
+      "session_budget_seconds": 5400.0,
+      "share_of_budget": 0.0417,
+      "trip_seconds": 225.2,
+      "trips_per_session_floor": 23
+    },
+    {
+      "session_budget_seconds": 1350.0,
+      "share_of_budget": 0.1668,
+      "trip_seconds": 225.2,
+      "trips_per_session_floor": 5
+    }
+  ]
+}
