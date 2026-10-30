@@ -1,5 +1,7 @@
 # A3 Git/Docs Handoff — SURV-030A
 
+> **V3 update:** source-authoritative A1 world loot + complete source→research→output chain. See `WORLD_SOURCE_HANDOFF_V3.md` for the exact A0 mount step, canonical locker/cache/relay contracts, host receipt schema and pinned external reuse. Native cases 21–23 and Python binding oracles added; production world integration remains A0-pending.
+
 - Issue: #13
 - PR: https://github.com/Khanh-glitch/Soul-of-Hero/pull/19
 - Head: `arena/7a12b27e-soul-of-hero`; hardening code SHA `17e0358bf388680312789caecc7d26f3779aafb1` (final docs handoff SHA recorded in PR #19)
