@@ -2,6 +2,8 @@
 
 **DRAFT NOT USER-RATIFIED | 2026-10-30 | NO AGENT DISPATCH | NOT PRODUCTION ACCEPTANCE**
 
+**PARTIAL LOCK — D055 user-voted at 2026-10-30**: 14 real calendar days including offline for each SOH survival run. Only this rule is LOCKED; all other DRAFT and ASK_USER remain open. Old docs claiming no timed world run or '14-day-equivalent only' are superseded on this point. Exact reset/persistence scopes NOT YET CHOSEN.
+
 ## Định nghĩa trạng thái (TÁCH KHỎI LỊCH LẬP TRÌNH)
 - USER_WANTS: user đã thể hiện muốn đưa vào game cuối, không phải đã nghiệm thu triển khai hoặc cho phép tôi tự chốt toàn bộ tiểu tiết.
 - CT_PROPOSES: tôi chọn hướng đề xuất về tính logic/kỹ thuật, cần thông báo và user có thể phủ quyết.
@@ -11,7 +13,7 @@
 - PARKED_NOT_LOVED: chưa thấy hấp dẫn / không hợp hướng vào lúc này, giữ lưu hồ sơ để có thể xem lại; đúng nghĩa 'hàng chờ' theo user.
 - REJECTED: user không muốn hoặc mâu thuẫn pháp lý/logic; không mặc định hồi sinh.
 
-**57 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 35; CT_PROPOSES 5; ASK_USER 5; TASTE_REVIEW 2; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
+**57 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 37; CT_PROPOSES 5; ASK_USER 3; TASTE_REVIEW 2; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
 
 ## Insight trung tâm mới nhất
 **Một map có thể học thuộc, một run có điểm kết thúc, nhiều chiến lược không thể làm hết trong ~14 ngày trải nghiệm.** Nhà ở đâu quyết định đường tài nguyên/đánh quái/POI/Skill Core; vật liệu và thời gian là cơ hội phải hy sinh. Người chơi nhớ một cửa phòng chưa mở/Skill Core vừa thấy/biome chưa thăm và chủ động chọn mở đầu khác khi chơi lại trên cùng map. Map không cần procedural đảo hết địa lý; sáng tạo đến từ mục tiêu cạnh tranh, sinh vật/mùa thời tiết/loot động có lý và player knowledge/agency. Không khóa “≥3 mục tiêu” như một mục tiêu độ sâu; đó chỉ là một tầng gate test trước đây.
@@ -31,9 +33,9 @@
 ### Mùa chơi & replay
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
 |---|---|---|---|
-| FB07 | Một cuộc chơi hữu hạn, có điểm kết thúc rõ ràng | ASK_USER | Thời lượng/mốc kết thúc một run |
+| FB07 | Mỗi cuộc chơi có thời điểm kết thúc sau đúng 14 ngày lịch thực | USER_WANTS | **LOCKED D055**; 336 giờ kể cả khi thoát ứng dụng; chưa chốt luật giữ/mất đồ sau mùa |
 | FB08 | Quy tắc reset world, nhà, kho, Core và công thức | ASK_USER | Chưa có luật được user chốt |
-| FB09 | Đồng hồ 14 ngày theo lịch thực hay thời gian chơi | ASK_USER | Không lấy số 2019 làm số SOH |
+| FB09 | Đồng hồ ván chơi chạy theo 14 ngày lịch thực, kể cả offline | USER_WANTS | **LOCKED D055**; đồng hồ chạy offline không mặc định mô phỏng raid/farming khi app đóng |
 | FB10 | Các vị trí nhà khác dẫn đến chiến lược riêng | USER_WANTS | Thời gian/tài nguyên tạo chi phí cơ hội |
 | FB11 | Cùng map, học địa điểm/Core qua mỗi lần chơi lại | USER_WANTS | Tri thức người chơi có giá trị |
 | FB12 | Nguồn loot/địch/thời tiết biến thiên vừa đủ qua ván | CT_PROPOSES | Không xáo trộn lục địa vô cớ |
@@ -124,7 +126,7 @@
 | FB57 | Sao chép source không có license, parallel SaveManager | REJECTED | Phải chọn đúng nguồn và authority |
 
 ## Chốt đầu tiên cần hỏi user (không hỏi 57 ý một lượt)
-1. Một SOH **run** thật sự kết thúc theo luật nào? a/ 14 ngày lịch thực (kể cả thời gian tắt app); b/ 14 ngày active/chơi thực hoặc in-game cycles, pause ngoài game; c/ không ép lịch kết thúc, chỉ 14 ngày là cảm hứng và người chơi tự start next run. CT nghiêng về seasonal finite run nhưng chống offline calendar punishment; KHÔNG tự khóa.
+1. **CHỐT D055:** một SOH run kết thúc sau 14 ngày lịch thực (336 giờ) kể cả thời gian offline. **KHÔNG hỏi lại lựa chọn này**. Thời điểm kích hoạt clock đầu ván, UX đếm ngược và tính chính xác offline thuộc phương án kỹ thuật CT đề xuất, chưa chốt là thông số user.
 2. Nếu run reset: reset vật phẩm, nhà, Core, blueprint tri thức, khám phá, map events, achievements theo scope nào? Tôi nghiêng về nhà/kho/Core/tri thức công nghệ trong run đều reset, còn ghi chép kỷ lục/đạt thành tựu được giữ dưới meta không tăng power. CẦN user xem.
 3. Một map ổn định nên có spawn tự chọn/gần vùng ngẫu nhiên, loot/hazard thay đổi thế nào mỗi run? Tôi nghiêng về stable geography, reset điểm xây nhà, nguồn loot và sinh vật đổi có nguyên nhân, nhiều đường chơi; không nên ngẫu nhiên hóa vị trí các di tích trọng yếu.
 4. Lựa chọn muộn: mức phạt đói/khát/death, hiếm của Core và số lượng loại/slot, sau khi engine/audio/gameplay Gold có bằng chứng.
