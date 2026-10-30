@@ -1,0 +1,121 @@
+{
+ "schema": "hollow_marches_patch_report/v1",
+ "applied": [
+  {
+   "id": "camp_refuge_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    56,
+    216
+   ],
+   "touched": 2
+  },
+  {
+   "id": "camp_refuge_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    56,
+    216
+   ],
+   "touched": 3
+  },
+  {
+   "id": "camp_crossroads_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    152,
+    188
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_crossroads_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    152,
+    188
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_relay_base_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    248,
+    158
+   ],
+   "touched": 1
+  },
+  {
+   "id": "camp_relay_base_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    248,
+    158
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_ridge_no_grave_cross",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "grave_cross",
+   "at": [
+    208,
+    104
+   ],
+   "touched": 1
+  },
+  {
+   "id": "camp_ridge_no_gravestone",
+   "kind": "prop",
+   "op": "remove",
+   "frame": "gravestone",
+   "at": [
+    208,
+    104
+   ],
+   "touched": 0
+  },
+  {
+   "id": "camp_ridge_lamp",
+   "kind": "prop",
+   "op": "add",
+   "frame": "lamp",
+   "at": [
+    211,
+    102
+   ],
+   "touched": 1
+  },
+  {
+   "id": "camp_relay_base_lamp",
+   "kind": "prop",
+   "op": "add",
+   "frame": "lamp",
+   "at": [
+    251,
+    156
+   ],
+   "touched": 1
+  }
+ ],
+ "summary": {
+  "terrain_cells": 0,
+  "prop_edits": 9,
+  "patches": 10,
+  "hash": "a7fbd0a3a10cd361e5896e991527d62e153ee0edfef4f8a542df437633c726d9"
+ }
+}

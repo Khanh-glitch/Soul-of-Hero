@@ -718,41 +718,9 @@ func grant_inventory_item(
 	return transact_once(
 		transaction_key,
 		func(candidate: Dictionary) -> bool:
-			var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
-			var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
-			var remaining := quantity
-			var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
-			for stack_key: String in matching_keys:
-				var existing_value: Variant = stacks.get(stack_key, {})
-				if not existing_value is Dictionary:
-					return false
-				var existing := (existing_value as Dictionary).duplicate(true)
-				if String(existing.get("kind", "")).strip_edges().to_lower() != normalized_kind:
-					return false
-				var current_quantity := int(existing.get("quantity", 0))
-				if current_quantity < 0 or current_quantity > MAX_INVENTORY_STACK_QUANTITY:
-					return false
-				var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY - current_quantity)
-				if added <= 0:
-					continue
-				stacks[stack_key] = _with_inventory_stack_metadata(
-					existing, normalized_item, stack_key, normalized_kind, current_quantity + added, source_metadata,
-				)
-				remaining -= added
-				if remaining <= 0:
-					break
-			while remaining > 0:
-				if _candidate_inventory_slot_count_for_stacks(inventory, stacks) >= INVENTORY_SLOT_CAPACITY:
-					return false
-				var stack_key := _next_inventory_stack_key(stacks, normalized_item)
-				var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY)
-				stacks[stack_key] = _with_inventory_stack_metadata(
-					{}, normalized_item, stack_key, normalized_kind, added, source_metadata,
-				)
-				remaining -= added
-			inventory["item_stacks"] = stacks
-			candidate["inventory"] = inventory
-			return true,
+			return add_items_to_candidate(
+				candidate, normalized_item, normalized_kind, quantity, source_metadata,
+			),
 		{
 			"kind": "inventory_item_grant",
 			"item_id": normalized_item,
@@ -761,6 +729,119 @@ func grant_inventory_item(
 			"source": source_metadata.duplicate(true),
 		},
 	)
+
+
+## The inventory's stack map as committed, as a copy.
+##
+## Callers that only want to read the bag should use this rather than
+## `get_value(["inventory", "item_stacks"], {})`. That path works from GDScript
+## source, but [method Object.call] passes variants and then rejects an untyped
+## array where `get_value` expects `Array[String]` — the failure is a runtime
+## error inside the reader, which shows up as "the bag is empty" everywhere
+## downstream. One accessor with no array to type is one fewer way to get that
+## wrong.
+## Total quantity of every item in the committed bag, merged across stacks.
+##
+## A stack is keyed by its item id when it is the item's first stack, and the
+## record then omits `item_id` entirely (see `_with_inventory_stack_metadata`).
+## Anything that counts by reading `record.item_id` alone therefore reports zero
+## for the *most common* stack shape — so the base id is resolved here, through
+## the same helper the mutation path uses, and no caller has to know the rule.
+func inventory_totals() -> Dictionary:
+	var stacks := get_inventory_stacks()
+	var totals: Dictionary = {}
+	for raw_key: Variant in stacks.keys():
+		var stack_key := String(raw_key).strip_edges().to_lower()
+		var raw_record: Variant = stacks[raw_key]
+		if not raw_record is Dictionary:
+			continue
+		var record: Dictionary = raw_record
+		var item_id := _inventory_stack_base_id(stack_key, record)
+		var quantity := int(record.get("quantity", 0))
+		if item_id.is_empty() or quantity <= 0:
+			continue
+		totals[item_id] = int(totals.get(item_id, 0)) + quantity
+	return totals
+
+
+## Total quantity of one item in the committed bag.
+func inventory_total(item_id: String) -> int:
+	return int(inventory_totals().get(item_id.strip_edges().to_lower(), 0))
+
+
+func get_inventory_stacks() -> Dictionary:
+	_ensure_loaded()
+	var inventory: Variant = _data.get("inventory", {})
+	if not inventory is Dictionary:
+		return {}
+	var stacks: Variant = (inventory as Dictionary).get("item_stacks", {})
+	if not stacks is Dictionary:
+		return {}
+	return (stacks as Dictionary).duplicate(true)
+
+
+## Adds items to the inventory of a *candidate* save document.
+##
+## This is the body of [method grant_inventory_item] without the transaction
+## wrapper, and it exists so that a composite action can pay or grant items in the
+## same commit as its own state change. Survival construction is the first user:
+## "consume the timber and create the wall" must be one commit, or a crash between
+## them either destroys the materials or hands out a free wall. Systems that own
+## their state inside the save document (CT-02, CT-03, CT-07) call this from inside
+## their own `transact_once` mutator; nothing else should call it directly, because
+## a candidate that is never committed silently discards the grant.
+##
+## Returns false when the grant cannot be applied at all (unknown kind, bad stack
+## contents, or a full bag). A `false` return must be treated as "the whole
+## transaction is rejected" — the caller returns false from its mutator, which
+## leaves the committed document untouched.
+func add_items_to_candidate(
+		candidate: Dictionary,
+		item_id: String,
+		kind_id: String,
+		quantity: int,
+		source_metadata: Dictionary = {},
+) -> bool:
+	var normalized_item := String(item_id).strip_edges().to_lower()
+	var normalized_kind := String(kind_id).strip_edges().to_lower()
+	if not _is_valid_identifier(normalized_item) or normalized_kind not in INVENTORY_ITEM_KIND_IDS \
+			or quantity < 1:
+		return false
+	var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+	var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
+	var remaining := quantity
+	var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
+	for stack_key: String in matching_keys:
+		var existing_value: Variant = stacks.get(stack_key, {})
+		if not existing_value is Dictionary:
+			return false
+		var existing := (existing_value as Dictionary).duplicate(true)
+		if String(existing.get("kind", "")).strip_edges().to_lower() != normalized_kind:
+			return false
+		var current_quantity := int(existing.get("quantity", 0))
+		if current_quantity < 0 or current_quantity > MAX_INVENTORY_STACK_QUANTITY:
+			return false
+		var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY - current_quantity)
+		if added <= 0:
+			continue
+		stacks[stack_key] = _with_inventory_stack_metadata(
+			existing, normalized_item, stack_key, normalized_kind, current_quantity + added, source_metadata,
+		)
+		remaining -= added
+		if remaining <= 0:
+			break
+	while remaining > 0:
+		if _candidate_inventory_slot_count_for_stacks(inventory, stacks) >= INVENTORY_SLOT_CAPACITY:
+			return false
+		var stack_key := _next_inventory_stack_key(stacks, normalized_item)
+		var added := mini(remaining, MAX_INVENTORY_STACK_QUANTITY)
+		stacks[stack_key] = _with_inventory_stack_metadata(
+			{}, normalized_item, stack_key, normalized_kind, added, source_metadata,
+		)
+		remaining -= added
+	inventory["item_stacks"] = stacks
+	candidate["inventory"] = inventory
+	return true
 
 
 func consume_inventory_item(
@@ -775,39 +856,55 @@ func consume_inventory_item(
 	return transact_once(
 		transaction_key,
 		func(candidate: Dictionary) -> bool:
-			var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
-			var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
-			var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
-			var available := 0
-			for stack_key: String in matching_keys:
-				var raw_record: Variant = stacks.get(stack_key, {})
-				if not raw_record is Dictionary:
-					return false
-				available += int((raw_record as Dictionary).get("quantity", 0))
-			if available < quantity:
-				return false
-			var remaining := quantity
-			for stack_key: String in matching_keys:
-				if remaining <= 0:
-					break
-				var record := (stacks[stack_key] as Dictionary).duplicate(true)
-				var current_quantity := int(record.get("quantity", 0))
-				var consumed := mini(remaining, current_quantity)
-				remaining -= consumed
-				if consumed >= current_quantity:
-					stacks.erase(stack_key)
-				else:
-					record["quantity"] = current_quantity - consumed
-					stacks[stack_key] = record
-			inventory["item_stacks"] = stacks
-			candidate["inventory"] = inventory
-			return true,
+			return remove_items_from_candidate(candidate, normalized_item, quantity),
 		{
 			"kind": "inventory_item_consume",
 			"item_id": normalized_item,
 			"quantity": quantity,
 		},
 	)
+
+
+## Removes items from the inventory of a *candidate* save document.
+##
+## The counterpart to [method add_items_to_candidate]. All-or-nothing: when the
+## candidate cannot cover `quantity`, nothing is removed and the caller must abort
+## its transaction. That is what stops a partially paid construction.
+func remove_items_from_candidate(
+		candidate: Dictionary,
+		item_id: String,
+		quantity: int,
+) -> bool:
+	var normalized_item := String(item_id).strip_edges().to_lower()
+	if not _is_valid_identifier(normalized_item) or quantity < 1:
+		return false
+	var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+	var stacks: Dictionary = inventory.get("item_stacks", {}).duplicate(true)
+	var matching_keys := _matching_inventory_stack_keys(stacks, normalized_item)
+	var available := 0
+	for stack_key: String in matching_keys:
+		var raw_record: Variant = stacks.get(stack_key, {})
+		if not raw_record is Dictionary:
+			return false
+		available += int((raw_record as Dictionary).get("quantity", 0))
+	if available < quantity:
+		return false
+	var remaining := quantity
+	for stack_key: String in matching_keys:
+		if remaining <= 0:
+			break
+		var record := (stacks[stack_key] as Dictionary).duplicate(true)
+		var current_quantity := int(record.get("quantity", 0))
+		var consumed := mini(remaining, current_quantity)
+		remaining -= consumed
+		if consumed >= current_quantity:
+			stacks.erase(stack_key)
+		else:
+			record["quantity"] = current_quantity - consumed
+			stacks[stack_key] = record
+	inventory["item_stacks"] = stacks
+	candidate["inventory"] = inventory
+	return true
 
 
 ## Removes an entire visible stack after the UI has successfully materialized a
@@ -1092,6 +1189,37 @@ func get_legacy_audit() -> Dictionary:
 func save_now() -> bool:
 	_ensure_loaded()
 	return _commit_candidate(_data.duplicate(true))
+
+
+## Overwrites a nested state path with a deep-copied value WITHOUT appending a
+## transaction receipt. Intended for throttled auto-saves (e.g. overworld
+## position/provisions state) where content-hash transaction keys would grow
+## unbounded. IMPORTANT: do NOT use this for first-clear rewards or other
+## one-shot entitlements — those must continue to use transact_once for
+## idempotent delivery. Returns false if the path is invalid or commit fails.
+func patch_state_path(path: Array, value: Variant) -> bool:
+	_ensure_loaded()
+	if path.is_empty():
+		_push_failure("patch_state_path requires a non-empty path.")
+		return false
+	for segment in path:
+		if not (segment is String or segment is StringName):
+			_push_failure("patch_state_path path segments must be strings.")
+			return false
+		if String(segment).is_empty():
+			_push_failure("patch_state_path path segment is empty.")
+			return false
+	var candidate := _data.duplicate(true)
+	var target: Dictionary = candidate
+	for i in range(path.size() - 1):
+		var segment := String(path[i])
+		var child: Variant = target.get(segment, {})
+		if not child is Dictionary:
+			child = {}
+		target[segment] = child
+		target = child
+	target[String(path[-1])] = value if not value is Dictionary else (value as Dictionary).duplicate(true)
+	return _commit_candidate(candidate)
 
 
 func is_transaction_applied(transaction_key: String) -> bool:

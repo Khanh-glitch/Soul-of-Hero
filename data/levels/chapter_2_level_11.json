@@ -4588,36 +4588,6 @@
         "alternative": 0
       },
       {
-        "x": 24,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 20,
         "source": 0,
@@ -5070,66 +5040,6 @@
       {
         "x": 72,
         "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 20,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 21,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 21,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 21,
         "source": 0,
         "atlas": [
           1,
@@ -5598,66 +5508,6 @@
         "alternative": 0
       },
       {
-        "x": 73,
-        "y": 21,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 21,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 21,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          2,
-          6
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 22,
         "source": 0,
@@ -6110,66 +5960,6 @@
       {
         "x": 72,
         "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 22,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 23,
         "source": 0,
         "atlas": [
           1,
@@ -6638,66 +6428,6 @@
         "alternative": 0
       },
       {
-        "x": 73,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 23,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 24,
         "source": 0,
@@ -7069,36 +6799,6 @@
       },
       {
         "x": 72,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 24,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
         "y": 24,
         "source": 0,
         "atlas": [
@@ -12588,36 +12288,6 @@
         "alternative": 0
       },
       {
-        "x": 24,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          6
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 36,
         "source": 0,
@@ -13070,66 +12740,6 @@
       {
         "x": 72,
         "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 36,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 37,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 37,
-        "source": 0,
-        "atlas": [
-          1,
-          5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 37,
         "source": 0,
         "atlas": [
           1,
@@ -13598,66 +13208,6 @@
         "alternative": 0
       },
       {
-        "x": 73,
-        "y": 37,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 37,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 37,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 38,
         "source": 0,
@@ -14113,66 +13663,6 @@
         "source": 0,
         "atlas": [
           3,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 38,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
           4
         ],
         "alternative": 0
@@ -14638,66 +14128,6 @@
         "alternative": 0
       },
       {
-        "x": 73,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 39,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 24,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 25,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
-          5
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 26,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
         "x": 27,
         "y": 40,
         "source": 0,
@@ -15153,36 +14583,6 @@
         "source": 0,
         "atlas": [
           3,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 73,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 74,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
-          4
-        ],
-        "alternative": 0
-      },
-      {
-        "x": 75,
-        "y": 40,
-        "source": 0,
-        "atlas": [
-          1,
           4
         ],
         "alternative": 0
@@ -24975,7 +24375,67 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 73,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          3,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 20,
+        "source": 1,
+        "atlas": [
+          2,
+          2
         ],
         "alternative": 0
       },
@@ -24985,12 +24445,12 @@
         "source": 1,
         "atlas": [
           3,
-          1
+          2
         ],
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 21,
         "source": 1,
         "atlas": [
@@ -25000,7 +24460,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 21,
         "source": 1,
         "atlas": [
@@ -25010,7 +24470,7 @@
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 22,
         "source": 1,
         "atlas": [
@@ -25020,7 +24480,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 22,
         "source": 1,
         "atlas": [
@@ -25030,7 +24490,7 @@
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 23,
         "source": 1,
         "atlas": [
@@ -25040,7 +24500,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 23,
         "source": 1,
         "atlas": [
@@ -25055,7 +24515,37 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          1,
+          0
         ],
         "alternative": 0
       },
@@ -25140,12 +24630,42 @@
         "alternative": 0
       },
       {
+        "x": 73,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          3,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 24,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
         "x": 76,
         "y": 24,
         "source": 1,
         "atlas": [
           3,
-          1
+          0
         ],
         "alternative": 0
       },
@@ -25535,7 +25055,67 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          1,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 73,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          3,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          2,
+          2
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 36,
+        "source": 1,
+        "atlas": [
+          2,
+          2
         ],
         "alternative": 0
       },
@@ -25545,12 +25125,12 @@
         "source": 1,
         "atlas": [
           3,
-          1
+          2
         ],
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 37,
         "source": 1,
         "atlas": [
@@ -25560,7 +25140,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 37,
         "source": 1,
         "atlas": [
@@ -25570,7 +25150,7 @@
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 38,
         "source": 1,
         "atlas": [
@@ -25580,7 +25160,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 38,
         "source": 1,
         "atlas": [
@@ -25590,7 +25170,7 @@
         "alternative": 0
       },
       {
-        "x": 23,
+        "x": 26,
         "y": 39,
         "source": 1,
         "atlas": [
@@ -25600,7 +25180,7 @@
         "alternative": 0
       },
       {
-        "x": 76,
+        "x": 73,
         "y": 39,
         "source": 1,
         "atlas": [
@@ -25615,7 +25195,67 @@
         "source": 1,
         "atlas": [
           1,
-          1
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 24,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 25,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 26,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          1,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 73,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          3,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 74,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          2,
+          0
+        ],
+        "alternative": 0
+      },
+      {
+        "x": 75,
+        "y": 40,
+        "source": 1,
+        "atlas": [
+          2,
+          0
         ],
         "alternative": 0
       },
@@ -25625,7 +25265,7 @@
         "source": 1,
         "atlas": [
           3,
-          1
+          0
         ],
         "alternative": 0
       },
@@ -27908,6 +27548,8 @@
         ],
         "profile": "gatefall_recovery"
       }
-    ]
+    ],
+    "mapplay_signature": "Broken bridge bays and offset cover; two open approach angles.",
+    "map_design_revision": 2
   }
 }

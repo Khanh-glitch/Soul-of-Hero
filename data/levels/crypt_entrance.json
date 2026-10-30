@@ -48126,7 +48126,7 @@
     "required_sigils": 3,
     "camera_bounds": [
       0,
-      0,
+      -96,
       1664,
       1216
     ],

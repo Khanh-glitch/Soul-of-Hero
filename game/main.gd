@@ -73,6 +73,7 @@ func _ready() -> void:
 	_place_player_and_camera()
 	_spawn_level_entities()
 	_configure_special_level_runtime()
+	_report_web_level_readiness()
 	_entity_signature = _get_entity_signature()
 	if not GameEvents.map_changed.is_connected(_on_level_data_changed):
 		GameEvents.map_changed.connect(_on_level_data_changed)
@@ -81,37 +82,57 @@ func _ready() -> void:
 	GameEvents.player_registered.emit(player)
 	RealtimeBridge.publish_event("game_ready", get_runtime_snapshot())
 	if OS.get_cmdline_user_args().has("--smoke-test"):
-		var smoke_test := preload("res://tests/smoke_test.gd").new()
+		var smoke_test: Node = (load("res://tests/smoke_test.gd") as GDScript).new()
 		add_child(smoke_test)
 		smoke_test.start(self)
 	elif OS.get_cmdline_user_args().has("--living-arsenal-test"):
-		var arsenal_test := preload("res://tests/living_arsenal_runtime_test.gd").new()
+		var arsenal_test: Node = (load("res://tests/living_arsenal_runtime_test.gd") as GDScript).new()
 		add_child(arsenal_test)
 		arsenal_test.start(self)
 	elif OS.get_cmdline_user_args().has("--axe-knight-test"):
-		var axe_knight_test := preload("res://tests/axe_knight_integration_test.gd").new()
+		var axe_knight_test: Node = (load("res://tests/axe_knight_integration_test.gd") as GDScript).new()
 		add_child(axe_knight_test)
 		axe_knight_test.start(self)
 	elif OS.get_cmdline_user_args().has("--auxiliary-equipment-knight-test"):
-		var auxiliary_knight_test := preload("res://tests/auxiliary_equipment_knight_integration_test.gd").new()
+		var auxiliary_knight_test: Node = (load("res://tests/auxiliary_equipment_knight_integration_test.gd") as GDScript).new()
 		add_child(auxiliary_knight_test)
 		auxiliary_knight_test.start(self)
 	elif OS.get_cmdline_user_args().has("--axe-soul-team-test"):
-		var axe_soul_team_test := preload("res://tests/axe_soul_team_runtime_test.gd").new()
+		var axe_soul_team_test: Node = (load("res://tests/axe_soul_team_runtime_test.gd") as GDScript).new()
 		add_child(axe_soul_team_test)
 		axe_soul_team_test.start(self)
 	elif OS.get_cmdline_user_args().has("--hero-soul-instance-knight-test"):
-		var soul_instance_test: Node = preload("res://tests/hero_soul_instance_knight_runtime_test.gd").new()
+		var soul_instance_test: Node = (load("res://tests/hero_soul_instance_knight_runtime_test.gd") as GDScript).new()
 		add_child(soul_instance_test)
 		soul_instance_test.start(self)
 	elif OS.get_cmdline_user_args().has("--axe-form-capture"):
-		var axe_form_capture := preload("res://tests/axe_form_capture.gd").new()
+		var axe_form_capture: Node = (load("res://tests/axe_form_capture.gd") as GDScript).new()
 		add_child(axe_form_capture)
 		axe_form_capture.start(self)
 	elif OS.get_cmdline_user_args().has("--sword-combo-capture"):
-		var sword_combo_capture := preload("res://tests/sword_combo_capture.gd").new()
+		var sword_combo_capture: Node = (load("res://tests/sword_combo_capture.gd") as GDScript).new()
 		add_child(sword_combo_capture)
 		sword_combo_capture.start(self)
+
+
+## Browser playtest evidence: confirms that authored JSON entities became live
+## scene nodes. Kept strictly read-only; never changes spawn/save/gameplay.
+func _report_web_level_readiness() -> void:
+	if not OS.has_feature("web"):
+		return
+	var counts := {}
+	for child: Node in entity_root.get_children():
+		if not child.has_meta(ENTITY_TYPE_META):
+			continue
+		var entity_type := String(child.get_meta(ENTITY_TYPE_META, ""))
+		counts[entity_type] = int(counts.get(entity_type, 0)) + 1
+	var report := {
+		"layout": level.level_data_path,
+		"authored_count": level.get_entities().size(),
+		"instantiated_count": entity_root.get_child_count() - 1,
+		"types": counts,
+	}
+	JavaScriptBridge.eval("window.__soulHeroLevelReady = " + JSON.stringify(report) + ";")
 
 
 func _apply_active_run_level_source() -> void:
@@ -835,10 +856,16 @@ func _configure_encounter_runtime() -> void:
 	_active_content_registry = resolved.get("registry") as LevelRegistry
 	_enemy_authority_errors.clear()
 	_reported_enemy_authority_errors.clear()
+	# Registered sandbox runs use the same authored marker/death projection as
+	# campaign encounters. Their slot remains zero and AppFlow never commits a
+	# campaign completion or campaign reward for Training.
 	if (
 		_active_content_level == null
 		or _active_content_registry == null
-		or not _active_content_level.is_campaign_level()
+		or (
+			not _active_content_level.is_campaign_level()
+			and _active_content_level.content_status != LevelDefinition.ContentStatus.SANDBOX
+		)
 	):
 		_encounter_runtime.clear()
 		GameSession.update_encounter_objective(0, 0, true)

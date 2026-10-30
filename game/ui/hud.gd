@@ -217,6 +217,11 @@ func _sync_session_state() -> void:
 
 
 func _on_player_registered(player: Node) -> void:
+	# AppRoot keeps the outgoing route queued for deletion while the next Main
+	# initializes. Ignore that stale signal after this HUD has left the tree;
+	# child HUD refresh methods require active-SceneTree service lookups.
+	if not is_inside_tree():
+		return
 	_player = player
 	if is_instance_valid(_progression_focus_hud):
 		_progression_focus_hud.set_player(player)

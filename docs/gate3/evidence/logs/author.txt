@@ -1,0 +1,44 @@
+  PLACEMENT armarium_open at [29, 10]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_01_rubble_large: moved from [8, 15] to [13, 13] to keep its walk and sightlines clear
+  PLACEMENT gate3_03_scrolls_b: moved from [14, 15] to [14, 14] to keep its walk and sightlines clear
+  PLACEMENT gate3_05_desk: moved from [17, 16] to [18, 19] to keep its walk and sightlines clear
+  PLACEMENT shelf_full at [9, 19]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_09_shelf_partial: moved from [12, 19] to [18, 20] to keep its walk and sightlines clear
+  PLACEMENT gate3_10_shelf_closed: moved from [16, 19] to [19, 16] to keep its walk and sightlines clear
+  PLACEMENT gate3_11_shelf_full: moved from [20, 19] to [22, 16] to keep its walk and sightlines clear
+  PLACEMENT gate3_12_column: moved from [29, 17] to [28, 19] to keep its walk and sightlines clear
+  PLACEMENT gate3_14_rubble_mid: moved from [28, 20] to [28, 19] to keep its walk and sightlines clear
+  PLACEMENT gate3_15_rubble_chunk_a: moved from [32, 20] to [32, 19] to keep its walk and sightlines clear
+  PLACEMENT gate3_16_rubble_large: moved from [30, 20] to [30, 19] to keep its walk and sightlines clear
+  PLACEMENT gate3_17_beam: moved from [27, 20] to [28, 19] to keep its walk and sightlines clear
+  PLACEMENT gate3_18_candle_stand: moved from [38, 16] to [38, 18] to keep its walk and sightlines clear
+  PLACEMENT column at [43, 15]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_21_column: moved from [52, 15] to [58, 13] to keep its walk and sightlines clear
+  PLACEMENT gate3_24_long_table: moved from [58, 19] to [60, 22] to keep its walk and sightlines clear
+  PLACEMENT gate3_25_shelf_closed: moved from [63, 20] to [63, 21] to keep its walk and sightlines clear
+  PLACEMENT armarium_closed at [66, 21]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_28_shelf_full: moved from [28, 45] to [28, 51] to keep its walk and sightlines clear
+  PLACEMENT gate3_29_shelf_partial: moved from [32, 45] to [32, 51] to keep its walk and sightlines clear
+  PLACEMENT gate3_31_shelf_full: moved from [70, 42] to [74, 44] to keep its walk and sightlines clear
+  PLACEMENT gate3_32_long_table: moved from [48, 52] to [50, 53] to keep its walk and sightlines clear
+  PLACEMENT gate3_34_column: moved from [24, 48] to [20, 46] to keep its walk and sightlines clear
+  PLACEMENT gate3_35_candle_stand: moved from [56, 46] to [56, 52] to keep its walk and sightlines clear
+  PLACEMENT armarium_open at [30, 80]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_38_column: moved from [52, 84] to [56, 82] to keep its walk and sightlines clear
+  PLACEMENT long_table at [60, 84]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_41_candle_stand: moved from [66, 88] to [66, 89] to keep its walk and sightlines clear
+  PLACEMENT armarium_open at [67, 42]: dropped, no nearby cell satisfies the placement contract
+  PLACEMENT gate3_43_shelf_collapsed: moved from [70, 46] to [70, 52] to keep its walk and sightlines clear
+  PLACEMENT gate3_46_scrolls_a: moved from [58, 47] to [58, 42] to keep its walk and sightlines clear
+  PLACEMENT gate3_47_shelf_collapsed: moved from [40, 80] to [40, 79] to keep its walk and sightlines clear
+  PLACEMENT gate3_48_column: moved from [56, 86] to [56, 88] to keep its walk and sightlines clear
+  PLACEMENT gate3_49_lectern: moved from [62, 84] to [58, 82] to keep its walk and sightlines clear
+  PLACEMENT gate3_50_paternoster: moved from [44, 88] to [44, 89] to keep its walk and sightlines clear
+  PLACEMENT gate3_51_drying_rack: moved from [30, 88] to [35, 88] to keep its walk and sightlines clear
+GATE3 AUTHOR OK: 75 cell edits, 45 props, 10 lights, 79 entities unchanged
+  alcove       12
+  shaft_floor  37
+  shaft_seal   7
+  south_pier   6
+  garth_piers  4
+  garth_open   9

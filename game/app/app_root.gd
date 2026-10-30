@@ -13,6 +13,8 @@ const FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT := "--fresh-player-loop-accepta
 const HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT := "--hero-skill-live-runtime-test"
 const ARCHER_HERO_COMBAT_TEST_ARGUMENT := "--archer-hero-combat-test"
 const GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT := "--gameplay-click-auto-pickup-test"
+const OVERWORLD_ACCEPTANCE_TEST_ARGUMENT := "--overworld-acceptance-test"
+const OVERWORLD_ROUNDTRIP_TEST_ARGUMENT := "--overworld-roundtrip-test"
 const STARTUP_PROFILE_CHOICE_TEST_ARGUMENT := "--startup-profile-choice-test"
 const DIRECT_GAME_ARGUMENTS := [
 	"--smoke-test",
@@ -34,6 +36,9 @@ var _preloaded_home_scene: PackedScene
 
 
 func _ready() -> void:
+	# Browser-only boot visibility: a diagnostic marker, never an unlock/save action.
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroAppReady = true;")
 	_apply_persisted_runtime_settings()
 	var save_service := get_node_or_null("/root/SaveService")
 	if save_service != null and save_service.has_signal(&"settings_changed"):
@@ -44,42 +49,55 @@ func _ready() -> void:
 		_direct_load_game.call_deferred()
 		return
 	AppFlow.attach_app_root(self)
+	if _web_local_gameplay_smoke_requested():
+		show_route(DIRECT_GAME_SCENE, {}, &"game")
+		return
 	if OS.get_cmdline_user_args().has(STARTUP_PROFILE_CHOICE_TEST_ARGUMENT):
-		var startup_choice_test := preload("res://tests/startup_profile_choice_test.gd").new()
+		var startup_choice_test: Node = (load("res://tests/startup_profile_choice_test.gd") as GDScript).new()
 		add_child(startup_choice_test)
 		startup_choice_test.start(self)
 		AppFlow.open_boot()
 		_finish_boot.call_deferred()
 		return
 	if OS.get_cmdline_user_args().has(ARCHER_HERO_COMBAT_TEST_ARGUMENT):
-		var archer_combat_test := preload("res://tests/archer_hero_combat_test.gd").new()
+		var archer_combat_test: Node = (load("res://tests/archer_hero_combat_test.gd") as GDScript).new()
 		add_child(archer_combat_test)
 		archer_combat_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(GAMEPLAY_CLICK_AUTO_PICKUP_TEST_ARGUMENT):
-		var click_pickup_test := preload("res://tests/gameplay_click_auto_pickup_test.gd").new()
+		var click_pickup_test: Node = (load("res://tests/gameplay_click_auto_pickup_test.gd") as GDScript).new()
 		add_child(click_pickup_test)
 		click_pickup_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(HERO_SKILL_LIVE_RUNTIME_TEST_ARGUMENT):
-		var hero_skill_test := preload("res://tests/hero_skill_live_runtime_test.gd").new()
+		var hero_skill_test: Node = (load("res://tests/hero_skill_live_runtime_test.gd") as GDScript).new()
 		add_child(hero_skill_test)
 		hero_skill_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(VISIBLE_REWARD_RUNTIME_TEST_ARGUMENT):
-		var visible_reward_test := preload("res://tests/visible_progression_reward_runtime_test.gd").new()
+		var visible_reward_test: Node = (load("res://tests/visible_progression_reward_runtime_test.gd") as GDScript).new()
 		add_child(visible_reward_test)
 		visible_reward_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(FRESH_PLAYER_LOOP_ACCEPTANCE_TEST_ARGUMENT):
-		var fresh_loop_test := preload("res://tests/fresh_player_loop_acceptance_test.gd").new()
+		var fresh_loop_test: Node = (load("res://tests/fresh_player_loop_acceptance_test.gd") as GDScript).new()
 		add_child(fresh_loop_test)
 		fresh_loop_test.start(self)
 		return
 	if OS.get_cmdline_user_args().has(CAMPAIGN_ENTRY_RUNTIME_TEST_ARGUMENT):
-		var campaign_entry_test := preload("res://tests/campaign_entry_runtime_test.gd").new()
+		var campaign_entry_test: Node = (load("res://tests/campaign_entry_runtime_test.gd") as GDScript).new()
 		add_child(campaign_entry_test)
 		campaign_entry_test.start(self)
+		return
+	if OS.get_cmdline_user_args().has(OVERWORLD_ROUNDTRIP_TEST_ARGUMENT):
+		var roundtrip_test: Node = (load("res://tests/overworld_roundtrip_runtime_test.gd") as GDScript).new()
+		add_child(roundtrip_test)
+		roundtrip_test.start(self)
+		return
+	if OS.get_cmdline_user_args().has(OVERWORLD_ACCEPTANCE_TEST_ARGUMENT):
+		var overworld_test: Node = (load("res://tests/overworld_acceptance_test.gd") as GDScript).new()
+		add_child(overworld_test)
+		overworld_test.start(self)
 		return
 	if AppFlow.has_active_run():
 		AppFlow.retry_active_run()
@@ -88,6 +106,27 @@ func _ready() -> void:
 		_finish_boot.call_deferred()
 		if OS.get_cmdline_user_args().has("--ui-shell-capture"):
 			_capture_ui_shell.call_deferred()
+
+
+## CI-only local Web browser route. Public Pages cannot activate this mode.
+## This exercises the production game scene without mutating campaign unlocks.
+func _web_local_gameplay_smoke_requested() -> bool:
+	if not OS.has_feature("web"):
+		return false
+	# Godot's JavaScriptBridge.eval() may return null for a JS expression
+	# evaluated in its isolated context. Read location via the real JS interface.
+	var location: JavaScriptObject = JavaScriptBridge.get_interface("location")
+	if location == null:
+		return false
+	var host := String(location.get("hostname"))
+	var query := String(location.get("search"))
+	var enabled := host == "127.0.0.1" and query.contains("ci_gameplay=1")
+	JavaScriptBridge.eval("window.__soulHeroCiProbe = " + JSON.stringify({
+		"hostname": host,
+		"search": query,
+		"enabled": enabled,
+	}) + ";")
+	return enabled
 
 
 func _exit_tree() -> void:
@@ -120,6 +159,8 @@ func show_route(scene_path: String, payload: Dictionary, route_id: StringName) -
 	if screen.has_method(&"configure"):
 		screen.call("configure", payload.duplicate(true))
 	_current_route = route_id
+	if OS.has_feature("web"):
+		JavaScriptBridge.eval("window.__soulHeroRoute = " + JSON.stringify(String(route_id)) + ";")
 	_publish_route_state(route_id, payload)
 	_is_switching = false
 

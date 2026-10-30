@@ -1,0 +1,435 @@
+{
+  "schema_version": 1,
+  "project": "Soul of Hero — Survival RPG",
+  "issue": "https://github.com/Khanh-glitch/Soul-of-Hero/issues/9",
+  "branch": "feature/survival-rpg-foundation-20261029",
+  "base_branch": "arena/54306b59-soul-of-hero",
+  "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
+  "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
+  "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
+  "updated_date": "2026-10-29",
+  "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
+  "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
+  "code_claims": {
+    "survival_system_integrated": false,
+    "freeform_construction_integrated": false,
+    "gold_core_combat_integrated": false,
+    "native_playtest_passed": false,
+    "web_playtest_passed": false
+  },
+  "tasks": [
+    {
+      "id": "SURV-005",
+      "name": "2019–2020 Last Day Rules / Civilization Restart historical A–Z reconstruction, source catalog, replay design gates",
+      "status": "verified",
+      "evidence": [
+        "docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md",
+        "https://docs.google.com/document/d/1q8Vevy4qx_6AFyfJodmsWAhdSBBumtx31hxXnWPelqo/edit",
+        "official 2019-08/2019-11/2020-08 sources S01-S27"
+      ],
+      "next": "Research gate passed; original exact aggregate recipe count remains explicitly unverified and must not be claimed"
+    },
+    {
+      "id": "SURV-006",
+      "name": "Preserve full user research source, cross-index every atlas mechanism, approve systemic fusion architecture and multi-agent plan",
+      "status": "verified",
+      "evidence": [
+        "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+        "docs/survival/SOURCE_COVERAGE_TRACE.json",
+        "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
+        "docs/survival/ATLAS_RECONCILIATION_AND_DECISIONS.md",
+        "docs/survival/MULTI_AGENT_EXECUTION.md",
+        "docs/survival/ECONOMY_AND_14DAY_REPLAY_BALANCE.md",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40838554299"
+      ],
+      "next": "Assign A0..A8 real agents/branches; start SURV-010 implementation; these documents do not mean gameplay implemented"
+    },
+    {
+      "id": "SURV-000",
+      "name": "Persistent cross-agent state, audit source locks, acceptance and validation",
+      "status": "verified",
+      "evidence": [
+        "https://github.com/Khanh-glitch/Soul-of-Hero/commit/9816c8c8bfef8a78153a519fcbe8a40066b909c5",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40827332506",
+        "tools/survival/validate_handoff.py"
+      ],
+      "next": "Track SURV-010: harvest/store/place/persist real SOH gameplay"
+    },
+    {
+      "id": "SURV-010",
+      "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
+      "status": "verified",
+      "evidence": [
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 — Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
+        "tests/survival_foundation_test.gd",
+        "game/survival/survival_service.gd",
+        "game/survival/survival_build_system.gd",
+        "data/survival/hollow_marches_resources.json",
+        "docs/survival/WORKLOG.md (verified entry)"
+      ],
+      "next": "A0 slice verified on a real engine. NOT claimed: a human playthrough, balance, roofed rooms, beds, respawn, crafting or Skill Cores. Next is SURV-020 on the same contracts."
+    },
+    {
+      "id": "SURV-020",
+      "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
+      "status": "in_progress",
+      "evidence": [
+        "USER_REPORTED: agent started working on SURV-020; no SURV-020 code commit or runtime test verified at this checkpoint",
+        "docs/survival/tasks/SURV-020_WORK_ORDER.md"
+      ],
+      "next": "A0+A2 to deliver real Godot-native enclosed room/per-room roof fade/bed respawn/reload proof; update evidence only after pushed code and CI",
+      "assignment": {
+        "status": "USER_REPORTED_ACTIVE_NOT_CODE_VERIFIED",
+        "task_id": "SURV-020",
+        "owner": "A0+A2",
+        "assigned_date": "2026-10-29",
+        "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
+        "branch": "NOT_YET_VERIFIED",
+        "review": "NEXT_REQUIRES_ACTUAL_COMMIT_AND_NATIVE_TEST",
+        "user_reported": "Agent is working now; do not assume actual worktree/branch visibility"
+      }
+    },
+    {
+      "id": "SURV-030",
+      "name": "Smelting, workbench, recipe knowledge, loot with persistent container IDs",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Port selected permissively licensed contracts through SOH SaveService"
+    },
+    {
+      "id": "SURV-040",
+      "name": "Physical Skill Core instance + usage + research + recrafting",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Do not label VFX Gold-ready unless source verified; start independent economy schema"
+    },
+    {
+      "id": "SURV-050",
+      "name": "Full continent biome/resource/hazard/progression with initial quarter Chapter 1 cluster",
+      "status": "not_started",
+      "evidence": [],
+      "next": "World grammar masterplan, region data, route/topology tests, chunk viability"
+    },
+    {
+      "id": "SURV-060",
+      "name": "Real engine+browser full survival loop acceptance and human visual review",
+      "status": "not_started",
+      "evidence": [],
+      "next": "Run ACCEPTANCE.md with evidence across integrated systems"
+    }
+  ],
+  "next_action": {
+    "task_id": "SURV-020",
+    "owner": "A0+A2",
+    "entrypoints": [
+      "game/survival/survival_build_system.gd",
+      "game/survival/survival_service.gd",
+      "game/survival/survival_structure.gd",
+      "docs/survival/tasks/SURV-020_WORK_ORDER.md"
+    ],
+    "first_test": "Build enclosed two-room house, enter door, fade only occupied room's roof, activate bed, die/respawn, reload; preserve SURV-010 125 checks",
+    "parallel_start": "Other agents only on owned branches; no overwrite of in-flight A0/A2 work",
+    "design_gate": "Full Godot 4.7 native visual/physics/respawn evidence and regression CI required; user-reported working != Verified"
+  },
+  "blockers": [
+    {
+      "id": "GOLD-ZIP",
+      "scope": "Gold full-fidelity port only",
+      "status": "not_in_audited_git_tree",
+      "details": "Two SHA-locked archives must be supplied/verified at native port stage; general gameplay work not blocked"
+    },
+    {
+      "id": "BUILD-ART",
+      "scope": "final production building art only",
+      "status": "needs_asset_selection_and_license",
+      "details": "Cainos and existing packs need 2D modular fit review; use clearly labeled placeholders for mechanics"
+    }
+  ],
+  "cross_agent_rules": {
+    "source_of_truth": [
+      "AGENTS.md",
+      "docs/survival/STATE.json",
+      "docs/survival/WORKLOG.md",
+      "GitHub issue #9"
+    ],
+    "write_scope": "owned feature branch only",
+    "protect_branches": [
+      "main",
+      "arena/54306b59-soul-of-hero",
+      "feature/gold-93-skill-readiness-20261028"
+    ],
+    "advance_rule": "update state and append log after every verified commit; verify live GitHub HEAD"
+  },
+  "evidence": {
+    "bootstrap_ci": "passed_at_9816c8c8bfef8a78153a519fcbe8a40066b909c5_run_40827332506",
+    "native_gameplay": "not_run",
+    "web_gameplay": "not_run",
+    "gold_visual_parity": "not_run",
+    "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
+    "docs_sync": "Docs tab 04 needs follow-through for SURV-020 assignment; readback in this turn pending",
+    "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
+    "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+    "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
+    "google_docs_tab_06": "written+readback: original full uploaded research text, Git remains exact-bytes source",
+    "google_docs_tab_07": "written+readback: 4 full design documents",
+    "runtime_implementation": "A0_SLICE_VERIFIED_NATIVE_125_CHECKS",
+    "a0_foundation": {
+      "code": "game/survival/{survival_state,survival_service,survival_build_system,survival_resource_node,survival_structure}.gd; SurvivalService autoload in project.godot line 24",
+      "data": "data/survival/survival_catalog.json; data/survival/hollow_marches_resources.json (91 nodes, 5 kinds)",
+      "test": "tests/survival_foundation_test.gd (12 named cases, boots the production overworld scene)",
+      "ci": ".github/workflows/survival-runtime-validation.yml (static contracts + native Xvfb runtime)",
+      "status": "verified_natively",
+      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 at d3885226",
+      "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
+      "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
+    },
+    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it",
+    "pr10": {
+      "state": "MERGED",
+      "merge_commit": "2709b9f6bd0d1cc7a5b242e617184ddab0431470",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
+      "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
+    },
+    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification"
+  },
+  "design_authority": {
+    "user_delegated_binary_gates": true,
+    "policy": "Gate F0-F5 in LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md; approved design must never be reported as implemented gameplay",
+    "historical_scope": "2019–2020, H1/H2/H3 distinguished; 2025–2026 variants are not default",
+    "notable_new_user_requirement": "14 days of gameplay with only a few valuable abilities unlocked and many POIs/recipes undiscovered must make replay enticing, without padding meaningless grind"
+  },
+  "mechanic_coverage": [
+    {
+      "id": "MECH-01",
+      "name": "Historic 2019 whole-island+15-day session lifecycle",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G01",
+        "U-G13"
+      ],
+      "tests": [
+        "14day_replay_goals"
+      ]
+    },
+    {
+      "id": "MECH-02",
+      "name": "Permanent base plus opt-in repeatable expedition cycles",
+      "design": "APPROVED_BY_GATE",
+      "implementation": "not_started",
+      "requirement": [
+        "U-W01",
+        "U-G13",
+        "U-P01"
+      ],
+      "tests": [
+        "persistent_home_on_run_reset",
+        "expedition_second_run_changes"
+      ]
+    },
+    {
+      "id": "MECH-03",
+      "name": "Scavenging barrels, loot tiers, recycler and components",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G04"
+      ],
+      "tests": [
+        "loot_node_persistence",
+        "low_risk_nonboss_reward"
+      ]
+    },
+    {
+      "id": "MECH-04",
+      "name": "Physical Skill Core, uses, research, blueprint and recreation",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G05",
+        "U-G09",
+        "U-G10"
+      ],
+      "tests": [
+        "core_use_atomic",
+        "learn_recraft_save",
+        "gold_full_cast_parity"
+      ]
+    },
+    {
+      "id": "MECH-05",
+      "name": "Genuine freeform house/roof/storage/bed/farm",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G08",
+        "U-G11"
+      ],
+      "tests": [
+        "room_roof_per_room",
+        "collision_reload",
+        "inventory_chest_atomic"
+      ]
+    },
+    {
+      "id": "MECH-06",
+      "name": "Tiered environmental hazards and multistage keycard POI graph",
+      "design": "APPROVED",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G06",
+        "U-W02"
+      ],
+      "tests": [
+        "unsafe_poi_warning",
+        "tiered_ward_power_access"
+      ]
+    },
+    {
+      "id": "MECH-07",
+      "name": "Full world grammar + 10 dungeon exteriors in opening quarter",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-W01",
+        "U-W03",
+        "U-W05"
+      ],
+      "tests": [
+        "continent_regions_authored",
+        "ten_dungeons_starter_quarter",
+        "native_terrain_readability"
+      ]
+    },
+    {
+      "id": "MECH-08",
+      "name": "Death, bag recovery, durable learned blueprints",
+      "design": "APPROVED_BY_GATE",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G07"
+      ],
+      "tests": [
+        "death_no_dupe",
+        "recoverable_bag",
+        "knowledge_retained"
+      ]
+    },
+    {
+      "id": "MECH-09",
+      "name": "Historical exact total recipe count",
+      "design": "REJECT_EXACT_NUMBER_UNVERIFIED",
+      "implementation": "not_started",
+      "requirement": [],
+      "tests": [
+        "recipe_source_epoch_required"
+      ]
+    },
+    {
+      "id": "MECH-10",
+      "name": "Forced 15 day wipe and compulsory PvP",
+      "design": "REJECT_SOLO_DEFAULT",
+      "implementation": "not_applicable",
+      "requirement": [
+        "U-G01"
+      ],
+      "tests": [
+        "no_compulsory_reset",
+        "no_offline_raid"
+      ]
+    },
+    {
+      "id": "MECH-11",
+      "name": "Long-term early rare ability thrill and replay incentive",
+      "design": "LOCKED_USER",
+      "implementation": "not_started",
+      "requirement": [
+        "U-G13"
+      ],
+      "tests": [
+        "first_rare_core_value",
+        "14day_replay_goals"
+      ]
+    }
+  ],
+  "archived_full_original_research": {
+    "path": "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md",
+    "sha256": "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
+    "bytes": 148205,
+    "lines": 1355,
+    "source_kind": "user_uploaded_verbatim",
+    "readback": "GitHub bytes verified against original SHA-256",
+    "comparison": "docs/survival/ATLAS_RECONCILIATION_AND_DECISIONS.md"
+  },
+  "system_architecture": {
+    "status": "APPROVED_DESIGN_NOT_RUNTIME",
+    "contracts_file": "docs/survival/SYSTEM_FUSION_BLUEPRINT.md",
+    "agent_plan": "docs/survival/MULTI_AGENT_EXECUTION.md",
+    "balance": "docs/survival/ECONOMY_AND_14DAY_REPLAY_BALANCE.md",
+    "trace_file": "docs/survival/SOURCE_COVERAGE_TRACE.json",
+    "audit_validator": "tools/survival/validate_atlas_contract.py",
+    "counts": {
+      "subsystems": 44,
+      "poi": 21,
+      "dependencies": 31,
+      "journeys": 12,
+      "unknown_facts": 40,
+      "sources": 28
+    },
+    "agents": [
+      {
+        "id": "A0",
+        "owns": "integration_save_ci",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A1",
+        "owns": "world_ecology",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A2",
+        "owns": "construction",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A3",
+        "owns": "economy_research",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A4",
+        "owns": "skill_gold",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A5",
+        "owns": "poi_ai_hazards",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A6",
+        "owns": "ux_pixel",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A7",
+        "owns": "balance_qa",
+        "state": "NOT_ASSIGNED"
+      },
+      {
+        "id": "A8",
+        "owns": "licensing",
+        "state": "NOT_ASSIGNED"
+      }
+    ]
+  },
+  "research_policy": {
+    "status": "LOCKED_USER_CONTINUOUS",
+    "applies_to": "All A0-A8 roles and every material design, implementation, integration, testing or optimization decision",
+    "required_flow": "Inspect existing SOH and requirements -> independently discover newer relevant sources and repos -> source/license/compatibility review -> choose REUSE/ADAPT/BUILD/REJECT -> implement/test -> re-research on new evidence",
+    "ledger": "docs/survival/RESEARCH_LOG.md",
+    "preexisting_repo_list_is_exhaustive": false,
+    "does_not_claim_new_repositories_were_discovered": true
+  }
+}

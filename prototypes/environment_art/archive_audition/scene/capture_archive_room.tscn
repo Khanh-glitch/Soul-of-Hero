@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://prototypes/environment_art/archive_audition/scene/capture_archive_room.gd" id="1_capture"]
+
+[node name="ArchiveRoomCapture" type="Node"]
+script = ExtResource("1_capture")
