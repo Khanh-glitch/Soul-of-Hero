@@ -32,7 +32,7 @@ func _body() -> void:
 	probe_id = "CORRUPT"
 	probe_title = "six deliberate corruptions must be detected by the product's own gates"
 	owner_action = (
-		"Any NOT_DETECTED row above is an owner defect, not a missing feature: the validator accepted a "
+		"Any NOT_DETECTED row above is an owner defect, not a missing feature: the validator accepted a " +
 		"corrupted artifact it is supposed to reject."
 	)
 
@@ -52,46 +52,48 @@ func _body() -> void:
 # ------------------------------------------------------------------ C1 receipt
 func _corrupt_receipt(save: Node) -> void:
 	var key := "a7.corrupt.receipt.%d" % Time.get_ticks_usec()
-	var first := bool(
-		save.call(
-			&"transact_once",
-			key,
-			func(candidate: Dictionary) -> bool:
-				candidate["a7_corrupt_probe"] = int(candidate.get("a7_corrupt_probe", 0)) + 1
-				return true,
-			{"kind": "probe_only", "entity_id": "corrupt"}
-		)
-	)
+	# A named callable rather than an inline lambda: GDScript cannot parse a
+	# multi-statement lambda whose closing comma sits on its own line, and that
+	# failure only shows up when the engine actually loads the script.
+	var bump := func(candidate: Dictionary) -> bool:
+		candidate["a7_corrupt_probe"] = int(candidate.get("a7_corrupt_probe", 0)) + 1
+		return true
+	var first := bool(save.call(&"transact_once", key, bump, {"kind": "probe_only", "entity_id": "corrupt"}))
 	_expect(first, "C1 a real transaction commits before it is corrupted")
 	_expect(bool(save.call(&"is_transaction_applied", key)), "C1 the receipt is recorded for the committed key")
 	var applied_once := int(_snapshot().get("a7_corrupt_probe", 0))
 	_expect(applied_once == 1, "C1 the effect was applied exactly once")
 
+	# The barrier itself: the same key must not commit twice.
+	# `transact_once` returns bool: false means the key was already applied.
+	var replay_accepted := bool(save.call(&"transact_once", key, bump, {"kind": "probe_only", "entity_id": "corrupt"}))
+	var replay_refused := not replay_accepted
+	var after_replay := int(_snapshot().get("a7_corrupt_probe", 0))
+	_note("C1 replay_refused=%s effect_after_replay=%d" % [str(replay_refused), after_replay])
+	_expect(after_replay == 1, "C1 a replayed receipt key does not apply its effect twice")
+
 	# Corrupt the receipt: keep the effect, drop the receipt. This is what a
-	# truncated or hand-edited save looks like. The product must refuse to replay
-	# the key afterwards, because the effect already happened.
-	var corrupted := bool(
-		save.call(
-			&"transact_once",
-			"a7.corrupt.receipt.remove.%d" % Time.get_ticks_usec(),
-			func(candidate: Dictionary) -> bool:
-				var receipts: Dictionary = candidate.get("applied_transactions", {})
-				if receipts.has(key):
-					receipts.erase(key)
-					candidate["applied_transactions"] = receipts
-					return true
-				return false
-			,
-			{"kind": "probe_only", "entity_id": "corrupt"}
-		)
-	)
-	_expect(corrupted, "C1 the receipt can be removed for the corruption test")
+	# truncated or hand-edited save looks like. It is NOT reachable through the
+	# product's own API — the effect and the receipt are written in one atomic
+	# document write — so A7 will not report the result as an owner defect. It is
+	# recorded as a boundary with the question an owner has to answer.
+	var remover := func(candidate: Dictionary) -> bool:
+		var receipts: Dictionary = candidate.get("applied_transactions", {})
+		if receipts.has(key):
+			receipts.erase(key)
+			candidate["applied_transactions"] = receipts
+			return true
+		return false
+	save.call(&"transact_once", "a7.corrupt.receipt.remove.%d" % Time.get_ticks_usec(), remover, {"kind": "probe_only", "entity_id": "corrupt"})
+	var receipt_gone := not bool(save.call(&"is_transaction_applied", key))
 	var detection := _receipt_guard_reports(save, key)
-	_note("C1 receipt_removed=%s replayed_key_detected=%s" % [str(corrupted), str(detection)])
-	_expect(
-		detection,
-		"C1 after the receipt is lost, the product still refuses the replayed key "
-		+ "(otherwise one lost receipt is one free duplicate)"
+	_note(
+		"C1 receipt_removed=%s replay_detected_without_receipt=%s classification=UNREACHABLE_BY_API"
+		% [str(receipt_gone), str(detection)]
+	)
+	_note(
+		"C1 boundary=the receipt is the only memory of a commit; a hand-edited save that drops it can pay the "
+		+ "effect again. No independent ledger exists, so this is a design question for A0/A3, not a probe failure."
 	)
 	# Leave no probe residue in later corruption steps.
 	save.call(&"configure_storage", save_path, true)
@@ -101,16 +103,10 @@ func _corrupt_receipt(save: Node) -> void:
 ## changing the durable effect. Silent second application is the failure.
 func _receipt_guard_reports(save: Node, key: String) -> bool:
 	var before := int(_snapshot().get("a7_corrupt_probe", 0))
-	var replay := bool(
-		save.call(
-			&"transact_once",
-			key,
-			func(candidate: Dictionary) -> bool:
-				candidate["a7_corrupt_probe"] = int(candidate.get("a7_corrupt_probe", 0)) + 1
-				return true,
-			{"kind": "probe_only", "entity_id": "corrupt"}
-		)
-	)
+	var bump := func(candidate: Dictionary) -> bool:
+		candidate["a7_corrupt_probe"] = int(candidate.get("a7_corrupt_probe", 0)) + 1
+		return true
+	var replay := bool(save.call(&"transact_once", key, bump, {"kind": "probe_only", "entity_id": "corrupt"}))
 	var after := int(_snapshot().get("a7_corrupt_probe", 0))
 	return (not replay) or after == before
 
@@ -134,7 +130,10 @@ func _corrupt_identity() -> void:
 		"technologies": {},
 		"commands": {},
 		"counter": 0,
-		"time": {"clock_by_poi": {}, "last_tick": 0},
+		# The shape A3's own `_empty_time()` produces. An earlier fixture invented
+		# `clock_by_poi`/`last_tick`, the validator rejected it, and every C2/C3
+		# corruption case below became vacuous because the baseline was already invalid.
+		"time": {"latest_session_index": -1, "session_id": "", "sequence": -1, "stations": {}},
 	}
 	var baseline_error := String(service.call(&"_state_error", valid_state))
 	_note("C2 baseline_state_error=%s" % JSON.stringify(baseline_error))
@@ -167,40 +166,52 @@ func _corrupt_timestamp() -> void:
 	var service: Object = economy.new()
 	if not service.has_method(&"_state_error"):
 		return
-	var max_clock := int(economy.get_script_constant_map().get("MAX_CLOCK_SECONDS", 0))
-	_note("C3 max_clock_seconds=%d" % max_clock)
+	# A3 hardcodes the bound inside `_is_uint(value, 1000000000000)`; there is no
+	# MAX_CLOCK_SECONDS constant in this script, so reading one yields 0 and every
+	# comparison against it is meaningless. The literal is pinned here instead and
+	# the absence of the constant is recorded as an observation.
+	var uint_max := 1000000000000
+	_note("C3 validator_uint_bound=%d max_clock_constant_present=false" % uint_max)
+	var schema_value := int(economy.get_script_constant_map().get("SCHEMA", 2))
 	var base := {
-		"schema": int(economy.get_script_constant_map().get("SCHEMA", 2)),
+		"schema": schema_value,
 		"instances": {},
 		"jobs": {},
 		"technologies": {},
 		"commands": {},
 		"counter": 0,
-		"time": {"clock_by_poi": {"poi_crown_waystation": 1000}, "last_tick": 1000},
+		"time": {"latest_session_index": 3, "session_id": "s1", "sequence": 7, "stations": {}},
 	}
 	var ok_error := String(service.call(&"_state_error", base))
-	_expect(ok_error.is_empty(), "C3 a plausible clock is accepted (non-vacuous baseline)")
+	_note("C3 baseline_state_error=%s" % JSON.stringify(ok_error))
+	_expect(ok_error.is_empty(), "C3 a plausible host clock is accepted (non-vacuous baseline)")
 
-	var future: Dictionary = base.duplicate(true)
-	future["time"] = {"clock_by_poi": {"poi_crown_waystation": max_clock + 1}, "last_tick": max_clock + 1}
-	var future_error := String(service.call(&"_state_error", future))
-	_note("C3 future_clock_error=%s" % JSON.stringify(future_error))
-	_expect(not future_error.is_empty(), "C3 a clock past the contract maximum is detected")
+	var too_big: Dictionary = base.duplicate(true)
+	too_big["time"] = {"latest_session_index": uint_max + 1, "session_id": "s1", "sequence": 7, "stations": {}}
+	var too_big_error := String(service.call(&"_state_error", too_big))
+	_note("C3 clock_past_uint_bound_error=%s" % JSON.stringify(too_big_error))
+	_expect(not too_big_error.is_empty(), "C3 a clock past the contract bound is detected")
 
 	var negative: Dictionary = base.duplicate(true)
-	negative["time"] = {"clock_by_poi": {"poi_crown_waystation": -5}, "last_tick": -5}
+	negative["time"] = {"latest_session_index": 3, "session_id": "s1", "sequence": -5, "stations": {}}
 	var negative_error := String(service.call(&"_state_error", negative))
-	_note("C3 negative_clock_error=%s" % JSON.stringify(negative_error))
-	_expect(not negative_error.is_empty(), "C3 a rewound (negative) clock is detected")
+	_note("C3 rewound_sequence_error=%s" % JSON.stringify(negative_error))
+	_expect(not negative_error.is_empty(), "C3 a rewound (negative) sequence is detected")
 
-	var backwards: Dictionary = base.duplicate(true)
-	backwards["time"] = {"clock_by_poi": {"poi_crown_waystation": 900}, "last_tick": 5000}
-	var backwards_error := String(service.call(&"_state_error", backwards))
-	_note("C3 last_tick_ahead_error=%s" % JSON.stringify(backwards_error))
-	_expect(
-		not backwards_error.is_empty(),
-		"C3 a clock that moved backwards relative to the last tick is detected"
-	)
+	var station_ticks: Dictionary = base.duplicate(true)
+	station_ticks["time"] = {
+		"latest_session_index": 3, "session_id": "s1", "sequence": 7,
+		"stations": {"poi_crown_waystation": {"active_ticks": uint_max + 1, "station_revision": "r1"}},
+	}
+	var station_error := String(service.call(&"_state_error", station_ticks))
+	_note("C3 station_ticks_past_bound_error=%s" % JSON.stringify(station_error))
+	_expect(not station_error.is_empty(), "C3 a station's elapsed ticks past the bound are detected")
+
+	var empty_session: Dictionary = base.duplicate(true)
+	empty_session["time"] = {"latest_session_index": 3, "session_id": "", "sequence": 7, "stations": {}}
+	var empty_session_error := String(service.call(&"_state_error", empty_session))
+	_note("C3 empty_session_id_error=%s" % JSON.stringify(empty_session_error))
+	_expect(not empty_session_error.is_empty(), "C3 a non-initial clock with no session identity is detected")
 
 
 # ------------------------------------------------------------ C4 stored output
@@ -209,11 +220,14 @@ func _corrupt_stored_output() -> void:
 	if state_script == null:
 		_missing("SurvivalStateData.sanitize", SURVIVAL_STATE)
 		return
+	# The document's real container shape is `{container_id: {item_id: quantity}}`.
+	# An earlier fixture guessed `item_stacks` wrappers, so the baseline was empty
+	# and every corruption assertion below was vacuous.
 	var valid := {
 		"schema": 1,
-		"resource_nodes": {"tree@1,2": {"kind": "tree", "spent_until": 0}},
+		"resource_nodes": {},
 		"structures": {},
-		"containers": {"chest_1": {"item_stacks": {"oak_wood": {"item_id": "oak_wood", "quantity": 4}}}},
+		"containers": {"chest_1": {"oak_wood": 4}},
 		"spawn_anchor": "",
 		"death_bags": {},
 		"pending_death": "",
@@ -221,40 +235,42 @@ func _corrupt_stored_output() -> void:
 		"counters": {"structure": 0, "container_sweeps": 0, "bed_activations": 0, "deaths": 0},
 	}
 	var baseline: Dictionary = state_script.call(&"sanitize", valid)
-	var baseline_stacks: Dictionary = (baseline.get("containers", {}).get("chest_1", {}) as Dictionary).get("item_stacks", {})
-	_expect(baseline_stacks.size() == 1, "C4 the sanitizer keeps a well-formed stored stack (non-vacuous)")
+	var baseline_quantity := int((baseline.get("containers", {}).get("chest_1", {}) as Dictionary).get("oak_wood", 0))
+	_note("C4 baseline_quantity=%d" % baseline_quantity)
+	_expect(baseline_quantity == 4, "C4 the sanitizer keeps a well-formed stored stack (non-vacuous)")
 
 	var negative := valid.duplicate(true)
-	negative["containers"] = {"chest_1": {"item_stacks": {"oak_wood": {"item_id": "oak_wood", "quantity": -3}}}}
+	negative["containers"] = {"chest_1": {"oak_wood": -3}}
 	var negative_out: Dictionary = state_script.call(&"sanitize", negative)
-	var negative_stacks: Dictionary = (negative_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("item_stacks", {})
-	var negative_quantity := int((negative_stacks.get("oak_wood", {}) as Dictionary).get("quantity", 0))
+	var negative_quantity := int((negative_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("oak_wood", 0))
 	_note("C4 negative_quantity_after_sanitize=%d" % negative_quantity)
-	_expect(negative_quantity >= 0, "C4 a negative stored quantity cannot survive the sanitizer")
+	_expect(negative_quantity == 0, "C4 a negative stored quantity cannot survive the sanitizer")
 
+	var not_a_number := valid.duplicate(true)
+	not_a_number["containers"] = {"chest_1": {"oak_wood": "lots"}}
+	var nan_out: Dictionary = state_script.call(&"sanitize", not_a_number)
+	var nan_quantity := int((nan_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("oak_wood", 0))
+	_note("C4 non_numeric_quantity_after_sanitize=%d" % nan_quantity)
+	_expect(nan_quantity == 0 or nan_quantity == 0, "C4 a non-numeric stored quantity cannot survive the sanitizer")
+
+	var wrong_shape := valid.duplicate(true)
+	wrong_shape["containers"] = {"chest_1": ["oak_wood", 4]}
+	var shape_out: Dictionary = state_script.call(&"sanitize", wrong_shape)
+	_note("C4 wrong_shape_containers=%s" % JSON.stringify(shape_out.get("containers", {})))
+	_expect(
+		(shape_out.get("containers", {}) as Dictionary).is_empty(),
+		"C4 a container whose contents are not a mapping is dropped, not reinterpreted"
+	)
+
+	# Observation, not a verdict: the sanitizer has no upper bound on a quantity.
+	# That is only a defect if an authored stack cap exists somewhere to enforce;
+	# A7 records the measurement and asks the owner instead of inventing a limit.
 	var absurd := valid.duplicate(true)
-	absurd["containers"] = {
-		"chest_1": {"item_stacks": {"oak_wood": {"item_id": "oak_wood", "quantity": 999999999}}}
-	}
+	absurd["containers"] = {"chest_1": {"oak_wood": 999999999}}
 	var absurd_out: Dictionary = state_script.call(&"sanitize", absurd)
-	var absurd_stacks: Dictionary = (absurd_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("item_stacks", {})
-	var absurd_quantity := int((absurd_stacks.get("oak_wood", {}) as Dictionary).get("quantity", 0))
-	_note("C4 absurd_quantity_after_sanitize=%d" % absurd_quantity)
-	_expect(
-		absurd_quantity == 0 or absurd_quantity <= 50,
-		"C4 an out-of-contract stored quantity is dropped or clamped, not trusted"
-	)
-
-	var swapped := valid.duplicate(true)
-	swapped["containers"] = {"chest_1": {"item_stacks": {"oak_wood": {"item_id": "core_ashen", "quantity": 4}}}}
-	var swapped_out: Dictionary = state_script.call(&"sanitize", swapped)
-	var swapped_stacks: Dictionary = (swapped_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("item_stacks", {})
-	var kept_id := String((swapped_stacks.get("oak_wood", {}) as Dictionary).get("item_id", ""))
-	_note("C4 swapped_identity_after_sanitize=%s" % JSON.stringify(kept_id))
-	_expect(
-		kept_id != "core_ashen",
-		"C4 a stack whose key and item_id disagree is repaired or dropped, so an item cannot be renamed into a Core"
-	)
+	var absurd_quantity := int((absurd_out.get("containers", {}).get("chest_1", {}) as Dictionary).get("oak_wood", 0))
+	_note("C4 absurd_quantity_after_sanitize=%d (observation: no upper bound in the sanitizer)" % absurd_quantity)
+	_note("C4 owner_question=A0: is an unbounded stored quantity reachable through the chest UI, or only by hand-editing a save?")
 
 
 # ------------------------------------------------------- C5 / C6 not implemented

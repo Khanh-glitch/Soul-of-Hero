@@ -39,10 +39,10 @@ func _body() -> void:
 	probe_id = "D055"
 	probe_title = "14-day run boundary, full gameplay reset, achievements/run history, first-run guidance"
 	owner_action = (
-		"A0: add a durable run namespace to the authoritative save - run_id, run_started_at (UTC), "
-		"run_expires_at = run_started_at + 1209600 - plus profile.achievements and an immutable "
-		"profile.run_history, all outside the disposable run state; add a season-end entry point that "
-		"writes the result record BEFORE dropping run state. A3: scope quest reward receipts by "
+		"A0: add a durable run namespace to the authoritative save - run_id, run_started_at (UTC), " +
+		"run_expires_at = run_started_at + 1209600 - plus profile.achievements and an immutable " +
+		"profile.run_history, all outside the disposable run state; add a season-end entry point that " +
+		"writes the result record BEFORE dropping run state. A3: scope quest reward receipts by " +
 		"run_id + quest_id."
 	)
 

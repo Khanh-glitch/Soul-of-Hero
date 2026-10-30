@@ -35,8 +35,8 @@ func _body() -> void:
 	probe_id = "D060"
 	probe_title = "continuous world time, bounded prepared work, no double settlement at 2h/18h/48h"
 	owner_action = (
-		"A0: persist an absolute UTC anchor with the world clock and settle the elapsed interval exactly once on "
-		"return, capped at the run expiry; expose the interval as data so 2h/18h/48h returns are measurable. "
+		"A0: persist an absolute UTC anchor with the world clock and settle the elapsed interval exactly once on " +
+		"return, capped at the run expiry; expose the interval as data so 2h/18h/48h returns are measurable. " +
 		"A3: keep the queue's fuel/supply bound authoritative and make settlement idempotent per event id."
 	)
 

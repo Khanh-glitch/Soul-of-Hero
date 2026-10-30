@@ -102,7 +102,7 @@ func _pending_death() -> String:
 func _mounted_threats(ow: Node, hero: Node) -> Array:
 	var found: Array = []
 	for group: StringName in HAZARD_GROUPS:
-		for node: Node in get_tree().get_nodes_in_group(group):
+		for node: Node in get_nodes_in_group(group):
 			if node is Node2D and node != hero:
 				found.append(node)
 	for node: Node in ow.find_children("*", "CharacterBody2D", true, false):

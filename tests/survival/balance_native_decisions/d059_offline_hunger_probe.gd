@@ -35,9 +35,9 @@ func _body() -> void:
 	probe_id = "D059"
 	probe_title = "offline hunger floor in shelter, wilderness risk, one durable recovery bag"
 	owner_action = (
-		"A0: persist satiety/HP with a last_seen_at UTC stamp and settle elapsed offline time atomically once; "
-		"inside a valid owned shelter clamp HP at 1, outside shelter apply real starvation. A6: warn before "
-		"logout and report on return. A3: provision item debits. A1: shelter validity from the real "
+		"A0: persist satiety/HP with a last_seen_at UTC stamp and settle elapsed offline time atomically once; " +
+		"inside a valid owned shelter clamp HP at 1, outside shelter apply real starvation. A6: warn before " +
+		"logout and report on return. A3: provision item debits. A1: shelter validity from the real " +
 		"walls/door/roof/bed topology, not a test flag."
 	)
 

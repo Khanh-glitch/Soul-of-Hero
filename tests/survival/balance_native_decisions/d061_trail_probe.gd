@@ -26,7 +26,12 @@ extends "res://tests/survival/balance_native_decisions/d_harness.gd"
 
 const OW_SCENE_PATH := "res://game/overworld/chapter1_overworld.tscn"
 const ENEMY_ROOT := "res://game/characters/enemies"
-const TRAIL_SYMBOLS := ["footprint", "trail", "scent", "track", "home_target", "last_known_home"]
+#: Words that can only mean a player trail. A plain `footprint` is NOT here: in
+#: this composition it is a building's placement silhouette, and matching it made
+#: an earlier version of this probe report FAIL ("a trail exists and is broken")
+#: when no trail exists at all. The pattern runs over comment-stripped source, so
+#: a docstring that names a trail cannot summon one.
+const TRAIL_PATTERN := "\\b(footsteps?|scent_[a-z_]+|trail_points?|trail_segments?|player_trail|footprint_(trail|marker)|trail_fade|trail_decay)\\b"
 const SUSPECT_TRACKING := ["home", "player_position", "global_position", "target_position"]
 
 
@@ -35,17 +40,14 @@ func _body() -> void:
 	probe_id = "D061"
 	probe_title = "home discovery requires a real trail; no retroactive or omniscient targeting"
 	owner_action = (
-		"A0/A5: implement footprints as durable, timestamped trail segments written by real actor movement, with "
-		"weather/age decay evaluated chronologically; monster pursuit must consume a sensed segment and be "
+		"A0/A5: implement footprints as durable, timestamped trail segments written by real actor movement, with " +
+		"weather/age decay evaluated chronologically; monster pursuit must consume a sensed segment and be " +
 		"bounded per elapsed interval. Never persist or read a home coordinate on a monster."
 	)
 
 	# ---- 1. does any trail/pursuit concept exist? ------------------------
-	var trail_files: Array = []
-	for symbol: String in TRAIL_SYMBOLS:
-		if _any_source_has(_enemy_scripts(), symbol):
-			trail_files.append(symbol)
-	_note("trail_symbols_in_enemy_code=%s" % JSON.stringify(trail_files))
+	var trail_files: Array = _files_matching(_enemy_scripts(), TRAIL_PATTERN)
+	_note("enemy_files_with_a_trail=%s" % JSON.stringify(trail_files))
 
 	# ---- 2. does any enemy exist at all? ---------------------------------
 	var enemy_scripts := _enemy_scripts()
@@ -91,24 +93,15 @@ func _body() -> void:
 		return
 
 	# ---- 5. a trail exists: check the properties that make it legitimate --
-	var enemies := _enemy_scripts()
-	var persists := false
-	var decays := false
-	var chrono := false
-	for path: String in enemies:
-		var text := FileAccess.get_file_as_string(path)
-		if text.contains("footprint") or text.contains("trail") or text.contains("scent"):
-			persists = true
-			if text.contains("decay") or text.contains("fade") or text.contains("erase") or text.contains("wash"):
-				decays = true
-			if text.contains("elapsed") and (text.contains("order") or text.contains("last_update")):
-				chrono = true
+	var persists := not trail_files.is_empty()
+	var decays := not _files_matching(trail_files, "\\b(decay|decays|fade|fades|erase|erased|wash|washed)\\b").is_empty()
+	var chrono := not _files_matching(trail_files, "\\b(elapsed|age_seconds|timestamp)\\b").is_empty()
 	_expect(persists, "trail state is written from real movement")
 	_expect(decays, "trail state can decay or be erased by time and weather")
 	_expect(chrono, "decay and detection are evaluated in chronological order, not only at login")
 	# A monster holding the home coordinate directly is the exact mechanism D061
 	# forbids; it must never appear in enemy state.
-	for path: String in enemies:
+	for path: String in trail_files:
 		var text := FileAccess.get_file_as_string(path)
 		_expect(
 			not (text.contains("home_position") or text.contains("home_cell") or text.contains("player_home")),

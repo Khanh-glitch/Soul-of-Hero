@@ -155,7 +155,8 @@ Three Godot 4.7 probes ship in `tests/survival/balance_native/` and subclass A0'
   normal entry, see the D051 body with four facings and grade 0, keep it after a respawn, never fall
   back to the Knight. It fails at the first check because no production screen offers the choice.
 
-**A7 has no Godot binary, so none has been executed.** `sohbalance/probes.py` audits them
+**Round 7 built Godot 4.7 from source in the A7 sandbox and executed all nine probes; see §13.
+The static audit below is still what the *repository* can verify without an engine.** `sohbalance/probes.py` audits them
 instead: each must extend the shipped chain, contain none of the constructs that would fabricate
 its own result (teleport, injected node, forced death, granted item, direct inventory write), and
 name only symbols that exist in the pinned bytes. Artifact verdict:
@@ -242,7 +243,87 @@ appears turns the row into a stale expectation rather than a quiet pass.
 
 ### 12.4 What is still not proven
 
-Nothing native. The D-suite is `CONTRACT_ONLY`; every D row is a statement about source bytes. A
-local Godot 4.7 build was attempted inside the A7 sandbox (source from `codeload`, `scons` in a venv,
-`x11=no wayland=no`) and is recorded in §13 — a build that does not link is `NATIVE_BLOCKED_ENVIRONMENT`,
-not a result.
+Round 7 originally said this was all `CONTRACT_ONLY`. It is not any more: §13 records nine probes
+executed on a real Godot 4.7 build at composition `f3556747`. The D rows stay `RED_NOT_IMPLEMENTED`
+after execution, which is stronger than a contract reading — the rules do not exist, and the probes
+ran to prove it rather than to assume it.
+
+## 13. Round 7 — native execution, on a real engine build
+
+The round-7 instruction was explicit: do not stop at queued GitHub Actions. So the engine was built
+here, from `codeload` source, because every prebuilt download is network-blocked in this sandbox.
+
+| | |
+|---|---|
+| engine | `4.7.stable.custom_build`, built from `godot-4.7-stable` tarball (`sha256 5960084f…`) |
+| toolchain | `scons 4.11.1` in a venv, Python 3.11.2, gcc, 2 cores / 3 GB |
+| flags | `platform=linuxbsd target=editor production=no debug_symbols=no lto=none use_llvm=no x11=no wayland=no fontconfig=no dbus=no alsa=no pulseaudio=no` |
+| composition | `refs/arena/05e0328d-soul-of-hero` @ `f3556747` (detached worktree, imported by the engine) |
+| isolation | one OS process per probe, isolated `user://` save per probe, no owner file edited |
+
+Every probe ran through the normal entry of that composition. **0 PASS**, 3 `FAIL`, 6
+`RED_NOT_IMPLEMENTED`, 0 `BLOCKED` — recorded in `results/native_runs.v1.json`, and held to its exit
+codes by `tests/survival/balance/test_native_ledger.py`.
+
+| Probe | Verdict | Checks | What it measured |
+|---|---|---|---|
+| `first_hour_route_probe` | **FAIL** | 27 (1 failed) | the route works: profile → Home → overworld → walk → gather wood and reed → `C` opens the starter kit. The 27th check fails. |
+| `bed_death_bag_probe` | **FAIL** | 27 (1 failed) | same journey, same single failure |
+| `avatar_body_probe` | **FAIL** | 27 (1 failed) | same journey, same single failure |
+| `d055_d057_season_probe` | `RED` | 4 | no run key, no `1209600 s`, no achievements/run history, no season entry, no quest namespace |
+| `d058_random_spawn_probe` | `RED` | 2 | on the *real* map: 10 237 eligible cells across 10 authored regions, but 0 mounted hazards and 0 mounted survival sources, and no selector to choose among them |
+| `d059_offline_hunger_probe` | `RED` | 2 | no satiety/HP document field, no `last_seen_at`, no offline settlement |
+| `d060_world_time_probe` | `RED` | 7 | the world clock and bounded queue are real (`MAX_TICK_QUANTUM = 600`), but no elapsed-interval settlement exists |
+| `d061_trail_probe` | `RED` | 1 | no trail state in any of 14 enemy scripts and no mounted hostile at all |
+| `oracle_corruption_probe` | `RED` | 16 | every corruption it can express is caught (below); the two run-scope corruptions cannot even be expressed |
+
+### 13.1 The one native failure, stated precisely
+
+All three journey probes inherit one shared step from the composition's own
+`tests/survival_normal_input_gather_test.gd:288`:
+
+> `GUI reserves the resources gathered by ordinary input` — after clicking the `workbench_kit`
+> recipe in the economy panel, a job named `workbench_kit` must exist **and** the wood/iron counts
+> must be unchanged (reserved, not spent).
+
+It fails while the two steps before it pass (`ordinary C action exposes the starter kit`). Two causes
+fit the evidence and A7 will not guess between them, because doing so would mean editing an owner
+test:
+
+1. the injected click never becomes a real button press in a headless display, so no job is created; or
+2. the reservation is not atomic with the click — currency moves before the job exists, or the job is
+   created with the resources already spent.
+
+**A0 owns the disambiguation** (reproduce with a display, or log `jobs()` immediately after the
+click). Until then this is a genuine `FAIL` at `f3556747`, not a `BLOCKED`.
+
+### 13.2 What the corruption oracle proved, natively
+
+Every row has a **passing baseline first**, so a rejection cannot be an accept-nothing validator:
+
+| Case | Baseline (must be accepted) | Corruption | Detected as |
+|---|---|---|---|
+| `C1` duplicate payment | a real transaction commits, effect `= 1` | replay the same receipt key | effect stays `1`, replay refused |
+| `C1'` lost receipt | — | remove the receipt, keep the effect | `UNREACHABLE_BY_API` — classified as a design question, **not** an owner defect |
+| `C2` instance identity | a well-formed economy state is accepted | `instance_id` disagrees with its key / id outside `soh_i_` | `instance_id_mismatch` / `invalid_instance_token_id` |
+| `C3` clock | a plausible host clock is accepted | past the uint bound / rewound sequence / station ticks past bound / empty session | `invalid_time_number:latest_session_index` / `:sequence` / `invalid_time_station_ticks` / `invalid_time_session` |
+| `C4` stored output | a well-formed stack survives | negative / non-numeric / wrong-shaped container | dropped (`0` / `{}`) |
+| `C5`/`C6` run scope, monster knowledge | — | — | no representation exists at all |
+
+Two of those repairs were A7's own defects, found only because the engine ran: the C2/C3 fixtures
+invented a `clock_by_poi`/`last_tick` shape the validator rejects, so every C2/C3 rejection was
+vacuous until the baseline passed; and `MAX_CLOCK_SECONDS` does not exist in `a3_economy_service.gd`,
+so the bound was being compared against `0`. Both are fixed and both baselines now pass.
+
+One honest observation, not a verdict: the sanitizer keeps an absurd stored quantity
+(`999999999`) unchanged. Whether that is reachable through the chest UI is an A0 question, and A7
+will not invent a stack cap to make the number look like a defect.
+
+### 13.3 What is still not proven
+
+* No rendered frame: every run is `DisplayServerHeadless`. Nothing here speaks to visual quality,
+  animation or the D051 body — that remains `S5` and needs a human and a display.
+* The D-series rows are `RED`, so there is nothing to accept; a probe that starts passing after an
+  owner implements a rule must be re-run on a new composition SHA before any claim moves.
+* The native ledger is engine-specific: it says nothing about A0's own CI, only about this build at
+  this composition.

@@ -1,0 +1,218 @@
+{
+  "composition": {
+    "ref": "refs/arena/05e0328d-soul-of-hero",
+    "sha": "f3556747219a14b2c53867fbc08d0e611aedcefc"
+  },
+  "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
+  "engine": "4.7.stable.custom_build",
+  "engine_path": "/tmp/godot-4.7-stable/bin/godot.linuxbsd.editor.x86_64",
+  "engine_version_exact": "4.7.stable.custom_build",
+  "probe_source": {
+    "balance_native/avatar_body_probe.gd": "b910feccd40f87c71b3f822623ccf0b11c4359a9ec1be3c24bdb87be365db3cb",
+    "balance_native/bed_death_bag_probe.gd": "e9e8fa774c34642f603b17b8a89136071675b2e536417ace0c1a900ba5e5bb8b",
+    "balance_native/first_hour_route_probe.gd": "7c5b4250387a04ab388a23ad73c031e078e39701849d0a3d10aab888a86ecdc1",
+    "balance_native_decisions/d055_d057_season_probe.gd": "a6f37ed87686654e80acdda87b5aa0c18a64989be1a2995662715324ae8b58de",
+    "balance_native_decisions/d058_random_spawn_probe.gd": "4518906bff663a1b37840f1eed70106ebfdf31c7a5ebcf45543334f1de0ce80c",
+    "balance_native_decisions/d059_offline_hunger_probe.gd": "ef31b8d2ac7c4c333708f6dc94db92297fc8f437c6c22e93a5dac7a8c751c568",
+    "balance_native_decisions/d060_world_time_probe.gd": "86061b10dd7cf450db79a75ee474f3f49ed5b879213ecf6bb8ddd5a50e9224e6",
+    "balance_native_decisions/d061_trail_probe.gd": "331dd064d94f3a3eab88bd9185279db1a8acfa3b95983881da51e59e6e21eed0",
+    "balance_native_decisions/d_harness.gd": "b1aa8ab937c852eba3a0a5ed186ae76674c82f7b87a1f1187d2f35e01984f246",
+    "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb"
+  },
+  "results": [
+    {
+      "blocked_reason": "",
+      "checks": 27,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "- avatar contract: 27 checks, 1 failed"
+      ],
+      "family": "balance_native",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native__avatar_body_probe.gd.log",
+      "log_lines": 51,
+      "log_sha256": "605f11f07c5451b18590804d29cbc38e5b1bf82b7a0667e571ed9884de7b68de",
+      "mismatch": "",
+      "missing": [],
+      "probe": "avatar_body_probe.gd",
+      "verdict": "FAIL"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 27,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "- death/bag journey: 27 checks, 1 failed"
+      ],
+      "family": "balance_native",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native__bed_death_bag_probe.gd.log",
+      "log_lines": 51,
+      "log_sha256": "ebe864e035a2975ea3de18620c58c5191b30308c2c282c6964d412e1c0d5604d",
+      "mismatch": "",
+      "missing": [],
+      "probe": "bed_death_bag_probe.gd",
+      "verdict": "FAIL"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 27,
+      "claimed": "FAIL",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 1,
+      "failed": [
+        "- first-hour route: 27 checks, 1 failed"
+      ],
+      "family": "balance_native",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native__first_hour_route_probe.gd.log",
+      "log_lines": 51,
+      "log_sha256": "0ef39805dfb59ddb87961e0da14abeba234d112cb07b787a8ae1aeaab6e23c7f",
+      "mismatch": "",
+      "missing": [],
+      "probe": "first_hour_route_probe.gd",
+      "verdict": "FAIL"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 4,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d055_d057_season_probe.gd.log",
+      "log_lines": 16,
+      "log_sha256": "ee10d151e879a7ebc27c3aa3516ccd710f9b81b4bbe9830b65df786f5d59fb37",
+      "mismatch": "",
+      "missing": [
+        "run_id / run_started_at / run_expires_at (expected in res://game/autoload/save_service.gd)",
+        "profile.achievements + profile.run_history (expected in res://game/autoload/save_service.gd)",
+        "a season-end / run-start entry point on SaveService (expected in res://game/autoload/save_service.gd)",
+        "a per-run quest namespace with run-scoped receipts (expected in res://game/survival/survival_service.gd)"
+      ],
+      "probe": "d055_d057_season_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 2,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d058_random_spawn_probe.gd.log",
+      "log_lines": 21,
+      "log_sha256": "ffbcb6b69a655c8921cef0d176b4d85a226ae68f2035581e00f768e5365a5109",
+      "mismatch": "",
+      "missing": [
+        "a run-start selector (SaveService random/eligible start call) (expected in res://game/autoload/save_service.gd)",
+        "more than one possible start cell (a fixed authored spawn is not a random start) (expected in res://game/overworld/chapter1_overworld.tscn)"
+      ],
+      "probe": "d058_random_spawn_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 2,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d059_offline_hunger_probe.gd.log",
+      "log_lines": 11,
+      "log_sha256": "6da6fd6e1eb9bc9025f2ca9860cab52b291818d8b1613b78631bb5e664d5cd4c",
+      "mismatch": "",
+      "missing": [
+        "satiety/hunger/HP state and its settlement (expected in res://game/survival/survival_service.gd)",
+        "an offline elapsed-time settlement entry point with a durable last_seen timestamp (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "d059_offline_hunger_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 7,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d060_world_time_probe.gd.log",
+      "log_lines": 13,
+      "log_sha256": "f704064d3fd89959575f26cf5cb60551a351315b89a1ab55c16352b6015eefff",
+      "mismatch": "",
+      "missing": [
+        "a settlement entry point for the elapsed-closure interval (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "d060_world_time_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 1,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d061_trail_probe.gd.log",
+      "log_lines": 9,
+      "log_sha256": "0accf9089dc6f490b7e354247e91c1df954fd7de6e700cc1587df83dbba85740",
+      "mismatch": "",
+      "missing": [
+        "any trail/footprint state and any mounted hostile, so D061 has nothing to gate (expected in res://game/characters/enemies)"
+      ],
+      "probe": "d061_trail_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 16,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_decisions",
+      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__oracle_corruption_probe.gd.log",
+      "log_lines": 26,
+      "log_sha256": "565a82d36146a591cc7f859676d2e89140e450fba1b0013483864d73d44d9f7b",
+      "mismatch": "",
+      "missing": [
+        "a run namespace, so an old-run quest claim cannot even be represented (expected in res://game/autoload/save_service.gd)",
+        "profile.achievements / profile.run_history (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "oracle_corruption_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    }
+  ],
+  "rule": "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are recorded, never converted into a pass. A probe that exits 0 without its verdict line is BLOCKED_NO_VERDICT.",
+  "schema": "soh.balance.native_runs.v1",
+  "summary": {
+    "BLOCKED": 0,
+    "FAIL": 3,
+    "PASS": 0,
+    "RED_NOT_IMPLEMENTED": 6
+  }
+}

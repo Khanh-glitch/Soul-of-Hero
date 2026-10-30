@@ -52,7 +52,7 @@ func _after_home_continuation() -> void:
 	if not failures.is_empty() or not _body_complete:
 		return
 	var ow := _host.get_child(0)
-	var hero := ow.get(&"player") as Node2D
+	var hero: Variant = ow.get(&"player") as Node2D
 	if hero == null:
 		_blocked_reason = "no production Hero after normal entry"
 		return
@@ -68,7 +68,7 @@ func _after_home_continuation() -> void:
 
 	# ---- 2. is the chosen body the one that is mounted? ----------------------
 	var sheet := _body_sheet(hero)
-	var canonical_id := CANONICAL.get(String(chooser.get("gender", "male")), CANONICAL["male"])
+	var canonical_id := String(CANONICAL.get(String(chooser.get("gender", "male")), CANONICAL["male"]))
 	_expect(not sheet.to_lower().contains(KNIGHT),
 		"the mounted body is not the Knight (mounted sheet: %s)" % JSON.stringify(sheet))
 	_expect(sheet.contains(canonical_id),
@@ -166,7 +166,7 @@ func _armor_grade(actor: Node) -> String:
 
 func _respawn(ow: Node) -> Node:
 	# Prefer the world's own respawn path; never move the Hero by assignment.
-	var hero := ow.get(&"player")
+	var hero: Variant = ow.get(&"player")
 	if hero == null:
 		return null
 	var doc: Dictionary = _survival().call(&"document")

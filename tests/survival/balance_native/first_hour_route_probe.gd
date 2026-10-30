@@ -215,7 +215,7 @@ func _json(value: Variant) -> String:
 
 
 func _hud_prompt(ow: Node) -> String:
-	var hud := ow.get(&"hud")
+	var hud: Variant = ow.get(&"hud")
 	if hud == null or not hud.has_method(&"prompt_text"):
 		return ""
 	return String(hud.call(&"prompt_text"))
@@ -223,7 +223,7 @@ func _hud_prompt(ow: Node) -> String:
 
 ## A3's own refusal reason, for the message only. Reading it never makes a check pass.
 func _last_reason(ow: Node) -> Variant:
-	var session := ow.get(&"economy_session")
+	var session: Variant = ow.get(&"economy_session")
 	if session == null:
 		return null
 	var adapter: Variant = session.get(&"_adapter")

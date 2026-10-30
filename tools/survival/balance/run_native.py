@@ -75,6 +75,9 @@ def prepare_worktree(sha: str, root: Path) -> Path:
     work = root / sha[:12]
     if work.exists():
         shutil.rmtree(work)
+    # A previous run may have removed the directory without unregistering it; git
+    # then refuses to add the same path again. Prune first so a rerun is a rerun.
+    sh("git", "worktree", "prune", cwd=REPO)
     added = sh("git", "worktree", "add", "--detach", str(work), sha, cwd=REPO, timeout=900)
     if added.returncode != 0:
         raise SystemExit(f"git worktree add failed: {added.stderr.strip()}")
@@ -197,12 +200,15 @@ def run_probe(
 
     return {
         "probe": probe,
+        "family": family,
         "verdict": verdict,
+        "claimed": details["claimed"],
         "exit_code": code,
         "checks": checks,
         "failed": failed,
         "missing": missing,
         "blocked_reason": blocker,
+        "mismatch": details.get("mismatch", ""),
         "log": str(log_path.relative_to(REPO)) if log_path.is_relative_to(REPO) else str(log_path),
         "log_sha256": hashlib.sha256(output.encode("utf-8")).hexdigest(),
         "log_lines": len(output.splitlines()),
@@ -248,10 +254,13 @@ def main() -> int:
                 family = next((f for f, source in PROBE_FAMILIES if (source / probe).exists()), "")
             probes.append((family, probe))
     else:
+        # `*_probe.gd` only: the D family also contains the harness those probes
+        # extend, and running a harness as if it were a probe produces a verdict
+        # about nothing.
         probes = [
             (family, probe.name)
             for family, source in PROBE_FAMILIES
-            for probe in sorted(source.glob("*.gd"))
+            for probe in sorted(source.glob("*_probe.gd"))
         ]
     extra = args.probe_args.split() if args.probe_args else []
     results: List[Dict[str, object]] = []

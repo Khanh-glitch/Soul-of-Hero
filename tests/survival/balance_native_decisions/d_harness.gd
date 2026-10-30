@@ -103,6 +103,14 @@ func _finish() -> void:
 	quit(code)
 
 
+# --------------------------------------------------------------------- probe body
+## Each probe overrides this. The base declares the stub so the harness parses on
+## its own and so a probe that forgets to implement it reports the omission
+## instead of exiting 0 with zero checks.
+func _body() -> void:
+	_missing("the probe body (a D probe must override _body)", "d_harness.gd")
+
+
 # ------------------------------------------------------------------ assertions
 func _expect(ok: bool, label: String) -> bool:
 	checks += 1
@@ -193,6 +201,39 @@ func _any_source_has(paths: Array, needle: String) -> bool:
 		if _source_has(path, needle):
 			return true
 	return false
+
+
+## Source text with comments removed, so a docstring that names a trail cannot
+## make the probe believe one exists. Strings are preserved because a state key
+## is itself a string.
+func _code_text(path: String) -> String:
+	if not FileAccess.file_exists(path):
+		return ""
+	var kept: Array = []
+	for line: String in FileAccess.get_file_as_string(path).split("\n"):
+		var in_string := false
+		var cut := line
+		for index in line.length():
+			var character := line[index]
+			if character == "\"":
+				in_string = not in_string
+			elif character == "#" and not in_string:
+				cut = line.substr(0, index)
+				break
+		kept.append(cut)
+	return "\n".join(PackedStringArray(kept))
+
+
+## Files whose comment-stripped source matches `pattern`. Word-boundary patterns
+## are the point: matching the substring `trail` inside an unrelated identifier is
+## how a probe talks itself into a defect that is not there.
+func _files_matching(paths: Array, pattern: String) -> Array:
+	var regex := RegEx.create_from_string(pattern)
+	var found: Array = []
+	for path: String in paths:
+		if regex.search(_code_text(path)) != null:
+			found.append(path)
+	return found
 
 
 ## Depth-first collection of nodes by class name, so a probe can measure what the

@@ -35,8 +35,8 @@ func _body() -> void:
 	probe_id = "D058"
 	probe_title = "geographically broad safe random run starts on the real map"
 	owner_action = (
-		"A1: publish an eligible-start cell set (walkable, 3x3 clearance, hazard-free, reachable basic "
-		"survival source) per region. A0: choose one cell per run from that set, persist it with the run "
+		"A1: publish an eligible-start cell set (walkable, 3x3 clearance, hazard-free, reachable basic " +
+		"survival source) per region. A0: choose one cell per run from that set, persist it with the run " +
 		"record so a reload lands on the same cell, and never reuse it as the death/bed respawn."
 	)
 
