@@ -576,3 +576,12 @@ Profile, from the code paths (not measured here; no local Godot):
 - 021 wall-clock still open (~595s vs 180s bound, unchanged); candidate parity PASS with
   packed-byte fast paths. ARCANA 001 renderer port still not started.
 - No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED promotion anywhere.
+
+## Round close (2026-10-31, later): 21/21 parity + registration
+
+- 013 PASS (runtime run 41112546494 job 124265302143 @3dcf03a; cured by scheduler yield-0 + resolve hypot fixes, observed PASS) and REGISTERED (74afb30): host adapter v013, matrix, lifecycle 19->20, manifest 20 native_executable. Host lifecycle 013 SUCCESS (run 41130672080).
+- Host bug found by runtime matrix: venom_skills.run_factory lacked cases 7 and 20 (candidate-only), so module_for refused 007/020. Fixed 25dd773; host 7/13/20 SUCCESS in run 41130672080. Host 020 Lab also exposed wall-clock 267s (pre-perf).
+- 016 ROOT-CAUSED + FIXED (f8512b8): crystal-death tint composition order. Original drawEnemy: C = c => mix(b(c), P.y1, 0.75) wrapping the whole tint filter (flash included); native CF set ck=0.75 (applied before flash). Bisect: GOLD93_OBJ cumulative hashes (first divergent "draw" up.fx#9 at t192) -> enemy 13 (flash=1) died by crystal exactly at t192 between up.fx#8 and up.fx#9; all object states bit-identical, only the tint order differed. Fix: CF.crystal_fade applied after base filters. Candidate run 41141994780: 16 SUCCESS (all 8 candidate skills PASS). REGISTERED (9baa305): 21/21 host adapters, lifecycle count 21, manifest 21 native_executable.
+- 021 wall-clock: 537s -> 404.6s after perf round 1 (d5bad21: puff row-span/hoists, Field extents/reset-fill/disc-span, additive hline fast path; candidate 21 PASS = bit-identical). Round 2 (8755a11: GroundDecal packed arrays, Cloud packed sort) and round 3 (505a604: shade/vapor dict hoists) pushed; host re-measurement pending in their runtime runs. Bound stays 180s.
+- Native runtime contract still FAILING on ARCANA reference RNG (scattered mulberry32 steps: seed1/0 steps 1,3,4,10; seed7 0,7,14; seed12345 0,13,15). Python sim of the GDScript logic matches vectors, so a GDScript-semantics detail differs; debug print added (17fdedd) — read GOLD93_ARCANA_RNG got/exp from the next contract job.
+- Host lifecycle verdicts so far (run 41130672080 @d5bad21): SUCCESS 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,17,18,19,20; 21 FAIL (wall-clock only); 16 pending first run at 9baa305.
