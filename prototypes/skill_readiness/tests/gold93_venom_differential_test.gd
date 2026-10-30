@@ -384,7 +384,16 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		g["s"].reset()
 		g["l"].reset()
 		g["t"] = w.time
+		# Per-object raster diagnosis for 007 ticks 89-90 (compact GOLD93_OBJ
+		# lines; identical format from the Node reference `objhash` mode).
+		w.objhash_on = sid == 7 and (n == 89 or n == 90)
+		if w.objhash_on:
+			w.objhash_log.clear()
 		w.draw(g)
+		if w.objhash_on:
+			for i in range(w.objhash_log.size()):
+				print("GOLD93_OBJ t=%d i=%d %s" % [n, i, String(w.objhash_log[i])])
+			w.objhash_on = false
 		if _dump_tick == n:
 			_dump_rasters(g, sid, n)
 		if sid == 7 and n <= 92:

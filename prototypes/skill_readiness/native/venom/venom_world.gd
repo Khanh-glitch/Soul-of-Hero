@@ -1012,15 +1012,34 @@ static func prof_add(key: String, usec: int) -> void:
 	e[1] = int(e[1]) + 1
 
 
+## Per-object raster diagnosis (off by default, zero behaviour change when off):
+## when `objhash_on`, every fx hook call appends one compact line to
+## `objhash_log`: section.kind#index + cumulative scene/glow SHA-256 (12 hex).
+## The original Node reference emits the identical format (mode `objhash`), so
+## the first line that differs names the first divergent draw operation.
+var objhash_on: bool = false
+var objhash_log: Array = []
+
+
+func _objhash(g, label: String) -> void:
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_SHA256)
+	ctx.update(g.s.bytes)
+	ctx.update(g.l.bytes)
+	objhash_log.append("%s %s" % [label, ctx.finish().hex_encode().substr(0, 12)])
+
+
 ## Calls one fx hook (`gnd`, `shd`, `up`, `air`, `lit`, `upd`) and, when profiling,
 ## charges its wall time to "<section>.<kind>".
 func _fx_call(f, method: String, args: Array, section: String) -> void:
-	if not PROFILE_ON:
+	if PROFILE_ON:
+		var t0: int = Time.get_ticks_usec()
 		f.callv(method, args)
-		return
-	var t0: int = Time.get_ticks_usec()
-	f.callv(method, args)
-	prof_add(section + "." + String(f.get("kind")), Time.get_ticks_usec() - t0)
+		prof_add(section + "." + String(f.get("kind")), Time.get_ticks_usec() - t0)
+	else:
+		f.callv(method, args)
+	if objhash_on and args.size() > 0:
+		_objhash(args[0], "%s.%s#%d" % [method, String(f.get("kind")), fx.find(f)])
 
 
 func draw(g) -> void:
@@ -1068,8 +1087,12 @@ func draw(g) -> void:
 		match it["k"]:
 			"enemy":
 				ACT.draw_enemy(g, it["o"], self)
+				if objhash_on:
+					_objhash(g, "actor.enemy#%d" % int(it["o"].id))
 			"player":
 				ACT.draw_player(g, it["o"], self)
+				if objhash_on:
+					_objhash(g, "actor.player")
 			"fx":
 				_fx_call(it["o"], "up", [g, self], "draw.up")
 	if PROFILE_ON:

@@ -186,6 +186,33 @@ if (mode === 'hashes') {
   manifest.rules = Object.fromEntries(cps.map(c => [c.name, { tick: c.tick, rule: c.rule }]));
   writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
   console.log(JSON.stringify(manifest.rules));
+} else if (mode === 'objhash') {
+  // Per-object cumulative raster hashes at the requested ticks: wrap every fx
+  // hook so each draw call appends `method.kind#index <scene+glow sha256/12>`,
+  // the identical format the native differential prints as GOLD93_OBJ.
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  const want = new Set([89, 90]);
+  const { g, w, def } = setup(id);
+  const hash = () => createHash('sha256').update(Buffer.from(g.gfx.s.d.buffer, g.gfx.s.d.byteOffset, g.gfx.s.d.byteLength)).update(Buffer.from(g.gfx.l.d.buffer, g.gfx.l.d.byteOffset, g.gfx.l.d.byteLength)).digest('hex').slice(0, 12);
+  let log: string[] = [];
+  const wrap = () => {
+    for (const f of w.fx as any[]) {
+      if ((f as any).__oh) continue; (f as any).__oh = true;
+      for (const m of ['gnd', 'shd', 'up', 'air', 'lit']) {
+        const orig = (f as any)[m];
+        if (typeof orig !== 'function') continue;
+        (f as any)[m] = (...args: unknown[]) => { const r = orig.apply(f, args); log.push(`${m}.${String((f as any).kind)}#${(w.fx as any[]).indexOf(f)} ${hash()}`); return r; };
+      }
+    }
+  };
+  for (let t = 1; t <= maxTick; t++) {
+    w.step(F);
+    if (t === castTick) g.cast(def, g.autoAim(def), true);
+    log = [];
+    if (want.has(t)) wrap();
+    g.render();
+    if (want.has(t)) log.forEach((line, i) => console.log(`GOLD93_OBJ t=${t} i=${i} ${line}`));
+  }
 } else if (mode === 'state') {
   // Per-tick enemy positions, in the exact text format the native differential
   // prints as GOLD93_EN (two lines per tick), so the two logs can be diffed.

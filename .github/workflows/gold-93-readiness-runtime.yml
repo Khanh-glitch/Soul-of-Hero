@@ -186,8 +186,9 @@ jobs:
       fail-fast: false
       matrix:
         # Only ids with verified source parity AND a registered host adapter.
-        # 007, 008, 013, 015, 016 and 020 stay out until their parity resolves.
-        skill: [1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 14, 17, 18, 19, 21]
+        # 008 parity verified at 5023485 (candidate job 123884876907, PASS).
+        # 007, 013, 015, 016 and 020 stay out until their parity resolves.
+        skill: [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 17, 18, 19, 21]
     steps:
       - uses: actions/checkout@v4
         with:

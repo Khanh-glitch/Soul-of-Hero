@@ -352,15 +352,18 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			var gy: int = gcy + dy
 			var wx: float = float(gx) / k
 			var wy: float = float(gy) / k
-			var n: float = float(RNG.nz1(wx * 0.22 + float(seed) * 7 + t * 2.2,
-					wy * 0.22 + t * 1.3)) / 255.0
+			# `keep` depends only on n2, so evaluate n2 and the Bayer discard
+			# BEFORE nz1: discarded pixels never need n (pure table lookups,
+			# no RNG stream, so output is bit-identical).
 			var n2: float = float(RNG.nz2(wx * 0.5 - t * 3 + float(seed), wy * 0.5)) / 255.0
-			var s: float = -(float(dx) / R) * 0.55 - (float(dy) / R) * 0.65 \
-					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
-			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
 			var keep: float = dl * (1 - q * q * 0.75) + (n2 - 0.5) * 4
 			if M.BAYER[((gy & 3) << 2) | (gx & 3)] >= keep:
 				continue
+			var n: float = float(RNG.nz1(wx * 0.22 + float(seed) * 7 + t * 2.2,
+					wy * 0.22 + t * 1.3)) / 255.0
+			var s: float = -(float(dx) / R) * 0.55 - (float(dy) / R) * 0.65 \
+					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
+			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
 			L.dl = 16
 			L.raw_px(gx, gy, ramp[0] if outline and q > 0.8 else ramp[mini(idx, ramp.size() - 1)])
 	L.dl = sd
