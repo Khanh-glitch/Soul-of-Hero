@@ -206,6 +206,10 @@ func _present_now(force: bool) -> void:
 			"Licensed avatar clip '%s/%s' is unavailable." % [action, direction],
 		)
 		return
+	# Preserve A0's own visual feedback (damage flash, stealth, buffs) that the
+	# Knight would have shown on its now-hidden sprite.
+	_avatar_sprite.modulate = _host_sprite.modulate
+	_avatar_sprite.self_modulate = _host_sprite.self_modulate
 	_last_direction = direction
 	if _action != action or _direction != direction:
 		_action = action

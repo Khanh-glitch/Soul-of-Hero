@@ -155,7 +155,10 @@ func _check_knight_avatar() -> void:
 	# physics, input, combat, death and respawn here are the shipping ones.
 	AppFlow.open_overworld()
 	_expect(await _wait_for_route(&"overworld", 20000), "the overworld route loads the production player")
-	await _wait_frames(20)
+	var world := _current_screen()
+	if world != null and world.has_method(&"is_world_ready"):
+		await _wait_until(func() -> bool: return bool(world.call(&"is_world_ready")), 60000)
+	await _wait_frames(5)
 	_knight = _find_player()
 	_expect(_knight != null, "the overworld owns a live player actor")
 	if _knight == null:
@@ -329,6 +332,15 @@ func _wait_for_route(route_id: StringName, timeout_msec := 4000) -> bool:
 			return true
 		await get_tree().create_timer(0.02).timeout
 	return false
+
+
+func _wait_until(predicate: Callable, timeout_msec: int) -> bool:
+	var deadline := Time.get_ticks_msec() + timeout_msec
+	while Time.get_ticks_msec() < deadline:
+		if bool(predicate.call()):
+			return true
+		await get_tree().process_frame
+	return bool(predicate.call())
 
 
 func _wait_frames(count: int) -> void:
