@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      A0_SHA: 2b209b0c0b4f0b82f0a56a7b8903e2832a197eac
-      A1_SHA: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
-      A3_SHA: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+      A0_SHA: 5387bed6260cb7b9bd4d8229ee759dee08a0d918
+      A1_SHA: 2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b
+      A3_SHA: 2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0
       EVIDENCE_SHA: 1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7
       GODOT_SILENCE_ROOT_WARNING: 1
       LIBGL_ALWAYS_SOFTWARE: 1
@@ -44,7 +44,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Khanh-glitch/Soul-of-Hero
-          ref: 2b209b0c0b4f0b82f0a56a7b8903e2832a197eac
+          ref: 5387bed6260cb7b9bd4d8229ee759dee08a0d918
           path: a0-source
           fetch-depth: 1
           persist-credentials: false
@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Khanh-glitch/Soul-of-Hero
-          ref: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
+          ref: 2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b
           path: a1-source
           fetch-depth: 1
           persist-credentials: false
@@ -62,7 +62,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Khanh-glitch/Soul-of-Hero
-          ref: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+          ref: 2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0
           path: a3-source
           fetch-depth: 1
           persist-credentials: false

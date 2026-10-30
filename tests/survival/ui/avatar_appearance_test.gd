@@ -38,11 +38,13 @@ func _run() -> void:
 	)
 	_check(
 		male.get("archive_md5", "") == "b4910c4dd86a5193e5e0640751a20abd"
+		and male.get("archive_sha256", "") == "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
 		and male.get("png_crc_failures", -1) == 0,
 		"male archive bytes and inspected PNG integrity are recorded"
 	)
 	_check(
 		female.get("archive_md5", "") == "cf6ffa60ef922e4703dc6b27c3b5bac2"
+		and female.get("archive_sha256", "") == "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
 		and female.get("png_crc_failures", -1) == 0,
 		"female archive bytes and inspected PNG integrity are recorded"
 	)
@@ -51,17 +53,30 @@ func _run() -> void:
 		String(license_review.get("status", "")) == "NOT_VERIFIED",
 		"manifest does not overclaim license review"
 	)
+	var unverified_runtime_candidate: Dictionary = manifest.duplicate(true)
+	unverified_runtime_candidate.characters.male.armor_grades["0"].idle_sheet = MANIFEST_PATH
+	var license_blocked := ADAPTER.resolve(_owner("male", 0), unverified_runtime_candidate)
+	_check(
+		license_blocked.status == "SOURCE_BLOCKED" and String(license_blocked.reason).contains("license"),
+		"runtime source cannot be loaded before the game-use license is verified"
+	)
 	_check(
 		male.armor_grades["0"].idle_sheet == "" and female.armor_grades["0"].idle_sheet == "",
 		"inspected source previews are not misrepresented as installed runtime art"
 	)
+	var male_dimensions: Variant = male.armor_grades["0"].get("dimensions", null)
 	_check(
-		male.armor_grades["0"].dimensions == [768, 256],
+		male_dimensions is Array and male_dimensions.size() == 2 and int(male_dimensions[0]) == 768 and int(male_dimensions[1]) == 256,
 		"male bald unarmored idle sheet dimensions are documented"
 	)
+	var female_dimensions: Variant = female.armor_grades["0"].get("dimensions", null)
 	_check(
-		female.armor_grades["0"].dimensions == [768, 256],
+		female_dimensions is Array and female_dimensions.size() == 2 and int(female_dimensions[0]) == 768 and int(female_dimensions[1]) == 256,
 		"female bald unarmored idle sheet dimensions are documented"
+	)
+	_check(
+		male.armor_grades["0"].runtime_action_sheets == {} and female.armor_grades["0"].runtime_action_sheets == {},
+		"unlicensed identity-specific runtime sheets remain absent"
 	)
 	_check(
 		male.armor_grades["1"] == null and male.armor_grades["2"] == null,

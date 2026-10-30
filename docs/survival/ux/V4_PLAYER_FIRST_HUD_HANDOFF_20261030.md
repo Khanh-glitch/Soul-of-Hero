@@ -1,5 +1,7 @@
 # A6 V4 — player-first HUD, inventory and first-Core UX
 
+> **Continuation status supersession (2026-10-30):** the historical owner refs and CI summary below have been refreshed or superseded by [A6 V4 Continuation Review](A6_V4_CONTINUATION_REVIEW_20261030.md). Treat that record as the current source of truth for owner heads, native failures/fixes, avatar rights, and remaining gates.
+
 **Status:** `V3_V4_SCOPED_ENGINEERING_ACCEPTED`; live owner integration and human visual acceptance remain blocked pending an A0 mount and physical inspection of the rendered captures. This work extends the existing A6 V3 UI on the existing A6 branch; it is not a rebuild or disconnected demo. **No production UI is mounted and no human test or approval is claimed.** PR #24 remains Draft/Open; do not merge.
 
 **Dispatch source:** `docs/survival/tasks/A6_V4_PLAYER_FIRST_HUD_INVENTORY_CORE_UX_HANDOFF_20261030.md`, recovered from integration ref `feature/survival-rpg-foundation-20261029` at `303f39e7b824c807984ac87e7deb4947c25b2761`. The A6-owned files in this work remain limited to `game/survival/ui/**`, `tests/survival/ui/**`, `docs/survival/ux/**`, and the A6 workflow.

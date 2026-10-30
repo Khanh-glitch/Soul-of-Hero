@@ -11,9 +11,9 @@ import json
 import subprocess
 from pathlib import Path
 
-A0_SHA = "2b209b0c0b4f0b82f0a56a7b8903e2832a197eac"
-A1_SHA = "2951bf8559b2e289ce99fd4d394d44c46fdd91b1"
-A3_SHA = "18e7afcbd576bbd9bfbcc509b2ee13216186a522"
+A0_SHA = "5387bed6260cb7b9bd4d8229ee759dee08a0d918"
+A1_SHA = "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b"
+A3_SHA = "2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0"
 EVIDENCE_SHA = "1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7"
 ATLAS_SHA256 = "b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157"
 ACCEPTANCE_SHA256 = "b9afd6c22e47c1427346b2c8753e85b34ee5012d15e48934656189dd21ac7476"
@@ -199,9 +199,18 @@ def main() -> None:
     for gender, character in [("male", male), ("female", female)]:
         grades = character.get("armor_grades", {})
         require(grades.get("0", {}).get("dimensions") == [768, 256], f"{gender} source sheet dimensions changed")
+        require(grades.get("0", {}).get("runtime_action_sheets") == {}, f"unlicensed {gender} runtime sheets must remain absent")
         require(grades.get("1") is None and grades.get("2") is None, f"unverified {gender} armor tiers must remain blocked")
     rejected_sources = avatar_manifest.get("explicitly_rejected_substitutions", [])
     require(any(source.get("craftpix_id") == "180537" for source in rejected_sources), "different Swordsman fallback must remain rejected")
+    runtime_pipeline = avatar_manifest.get("runtime_presentation_pipeline", {})
+    require(runtime_pipeline.get("schema") == "soh.a6.avatar_sprite_pipeline.v1", "avatar pipeline schema changed without owner review")
+    require(runtime_pipeline.get("status") == "IMPLEMENTED; SOURCE_LICENSE_BLOCKED", "avatar pipeline must not overclaim source licensing")
+    require(runtime_pipeline.get("runtime_action_sheets") == {}, "unlicensed avatar source sheets must remain absent from runtime")
+    pipeline_path = args.a0_root / "game/survival/ui/avatar_sprite_pipeline.gd"
+    require(pipeline_path.is_file(), "tested A6 directional sprite pipeline is missing")
+    pipeline_text = pipeline_path.read_text(encoding="utf-8")
+    require("func build_sprite_frames" in pipeline_text and "func resolve_owner_appearance" in pipeline_text, "avatar pipeline must build only from explicit owner-resolved sources")
     avatar_adapter = (args.a0_root / "game/survival/ui/avatar_appearance_adapter.gd").read_text(encoding="utf-8")
     require("SOURCE_BLOCKED" in avatar_adapter and "A0_OWNER_PROJECTION" in avatar_adapter, "avatar presentation must fail closed on missing art and use A0 state")
 

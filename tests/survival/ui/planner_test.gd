@@ -126,7 +126,7 @@ func _run() -> void:
 	await process_frame
 	check(planner._selection == "poi_crown_waystation" and (planner._details.get_child(0) as Label).text.contains("Ashen Waystation"), "map selection updates place information")
 	planner.select_tab(3)
-	var recovery_buttons := planner._list.find_children("*", "Button", true, false)
+	var recovery_buttons: Array[Node] = planner._list.find_children("*", "Button", true, false)
 	check(recovery_buttons.size() == 1 and not (recovery_buttons[0] as Button).disabled and planner._details.get_child_count() >= 1, "only the available recovery action appears beside concise field notes")
 	planner.select_tab(4)
 	planner._select("soh_i_000000000012_deadbeef")
@@ -164,7 +164,7 @@ func _run() -> void:
 	unknown_equipment.cores[0].can_equip = true
 	planner.set_snapshot(unknown_equipment)
 	planner._select("soh_i_000000000011_a1c0ffee")
-	var unknown_equip_button := planner._details.find_child("Equip", true, false)
+	var unknown_equip_button: Node = planner._details.find_child("Equip", true, false)
 	check(unknown_equip_button == null, "unknown equipment state cannot offer a misleading Equip action")
 
 	# Production-shaped A0 owner lifecycle: correlated response, monotonically
@@ -200,7 +200,7 @@ func _run() -> void:
 	check(not planner.apply_host_response(rejected), "replayed response cannot resolve a later request")
 
 	planner._request("craft", "bandage", {})
-	var pending_request_id := planner._pending_id
+	var pending_request_id: String = planner._pending_id
 	var request_count_before_retry := requests.size()
 	check(not planner.retry_pending() and requests.size() == request_count_before_retry, "UI will not retry when owner deduplication is unconfirmed")
 	var retry_capable := rejected_fresh.duplicate(true)
@@ -213,12 +213,15 @@ func _run() -> void:
 	var accepted_fresh := retry_capable.duplicate(true)
 	accepted_fresh.sequence = 13
 	accepted_fresh.revision = "owner-13"
-	var accepted := {"schema":"soh.ui.response.v2", "request_id":pending_request_id, "status":"accepted", "message":"SOURCE_BLOCKED res://internal/path", "snapshot":accepted_fresh}
-	check(planner.apply_host_response(accepted), "accepted owner response resolves with a fresh authoritative snapshot")
-	check(planner._message == "Action complete.", "technical owner text is never echoed to the player")
+	var accepted_unreceipted := {"schema":"soh.ui.response.v2", "request_id":pending_request_id, "status":"accepted", "message":"SOURCE_BLOCKED res://internal/path", "snapshot":accepted_fresh}
+	check(not planner.apply_host_response(accepted_unreceipted) and planner._pending, "accepted status without an A0 SaveService receipt cannot resolve the action")
+	var accepted := {"schema":"soh.ui.response.v2", "request_id":pending_request_id, "status":"accepted", "receipt_owner":"A0_SAVE_SERVICE", "receipt_id":"survival.chest.ui.owner-test.4", "message":"SOURCE_BLOCKED res://internal/path", "snapshot":accepted_fresh}
+	check(planner.apply_host_response(accepted), "A0-receipted response resolves with a fresh authoritative snapshot")
+	check(planner._message == "Action complete.", "receipt IDs and technical owner text are never echoed to the player")
+	check(planner._response_copy({"reason":"stale_sequence"}, "rejected") == "Things changed. Review the latest details.", "stale sequence refusal has concise player copy")
 
 	planner._request("transfer", "oak_wood", {})
-	var unknown_denial_id := planner._pending_id
+	var unknown_denial_id: String = planner._pending_id
 	var unknown_denial_snapshot := accepted_fresh.duplicate(true)
 	unknown_denial_snapshot.sequence = 14
 	unknown_denial_snapshot.revision = "owner-14"
@@ -235,6 +238,20 @@ func _run() -> void:
 		planner._message == "Could not do that just now. Review your items and try again.",
 		"unknown owner reason and arbitrary technical text stay out of player-facing copy"
 	)
+	planner._request("transfer", "oak_wood", {})
+	var stale_request_id: String = planner._pending_id
+	var fresh_after_stale := unknown_denial_snapshot.duplicate(true)
+	fresh_after_stale.sequence = 15
+	fresh_after_stale.revision = "owner-15"
+	var stale_request_response := {
+		"schema": "soh.ui.response.v2",
+		"request_id": stale_request_id,
+		"status": "rejected",
+		"reason": "stale_sequence",
+		"snapshot": fresh_after_stale,
+	}
+	check(planner.apply_host_response(stale_request_response), "owner can reject a stale request with a fresh authoritative snapshot")
+	check(planner._message == "Things changed. Review the latest details.", "stale owner refusal is not reported as success")
 
 	planner.close_planner()
 	planner.close_planner()

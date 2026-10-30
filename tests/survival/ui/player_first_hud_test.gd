@@ -114,7 +114,7 @@ func _run() -> void:
 	_check(not hud._feedback.visible and not hud._core_panel.visible, "fixture transaction and Core stay out of release presentation")
 	hud.set_developer_diagnostics(true)
 	await process_frame
-	_check(hud._phase.text == "Scavenging", "use concise player-facing context")
+	_check(hud._phase.text == "In the field", "exploration context uses concise player-facing copy")
 	_check(hud._provenance.text == "DEV PREVIEW · FIXTURE PROJECTION", "fixture provenance appears only in opt-in diagnostics")
 	_check(hud._core_panel.visible and hud._core_title.text == "Ember Core", "physical Core appears for inspected developer preview")
 	_check(hud._core_icon.texture != null, "Core summary carries its item icon")
@@ -326,7 +326,7 @@ func _run() -> void:
 	_check(hud.set_projection(live_projection), "accept a newer owner-projection shape")
 	hud.set_developer_diagnostics(false)
 	await process_frame
-	_check(hud._status_panel.visible and hud._phase.text == "Scavenging", "owner-backed context is visible without developer diagnostics")
+	_check(hud._status_panel.visible and hud._phase.text == "In the field", "owner-backed context is visible without developer diagnostics")
 	_check(not hud._provenance.visible and hud._context.text.contains("Crown Waystation"), "owner provenance stays out of player copy")
 	_check(hud._core_panel.visible and hud._core_state.text == "In your pack", "owner-projected Core custody remains player-readable")
 	var rendered_labels := _visible_text(hud)

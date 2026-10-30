@@ -38,7 +38,7 @@ func _run() -> void:
 	check(p.name == "Wooden Door" and p.status.contains("water"), "real catalog and invalid placement reason")
 	check(p.costs.size() == 2 and p.costs[0].has("missing"), "all real costs projected")
 	check(p.costs[1].sources == ["Oak Tree"] and p.costs[0].sources.is_empty(), "source hints reveal only caller-known sources")
-	check(ADAPTER.placement(svc, "door_wood", "unexpected").status.contains("unexpected"), "unknown rejection is not falsely clear")
+	check(ADAPTER.placement(svc, "door_wood", "unexpected").status == "That spot will not work.", "unknown rejection remains a safe player-facing denial")
 	check(ADAPTER.core_status(0, 8).contains("Exhausted"), "zero-use core is visibly exhausted")
 	check(ADAPTER.core_status(9, 8).is_empty(), "invalid A3 use count is omitted instead of rendered as a technical state")
 	var a3_instance := {"instance_id":"soh_i_000000000004_1234abcd", "item_id":"core_ember", "location":"bag", "condition":61, "max_condition":100, "uses":3, "max_uses":8, "revision":2, "origin":"fixture"}

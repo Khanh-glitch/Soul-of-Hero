@@ -144,8 +144,9 @@ func apply_snapshot(snapshot: Dictionary) -> bool:
 	return true
 
 ## A response releases a request only when it correlates and carries a fresh
-## authoritative snapshot. Retried intents keep the same request ID; the owner
-## must explicitly advertise durable idempotency before the UI offers retry.
+## authoritative snapshot. A0 acceptances also require an opaque SaveService
+## receipt. Retried intents keep the same request ID; the owner must explicitly
+## advertise durable idempotency before the UI offers retry.
 func apply_host_response(response: Dictionary) -> bool:
 	if not _pending or response.get("schema", "") != "soh.ui.response.v2": return false
 	if String(response.get("request_id", "")) != _pending_id: return false
@@ -153,6 +154,19 @@ func apply_host_response(response: Dictionary) -> bool:
 	if status not in ["accepted", "rejected"]: return false
 	var next: Variant = response.get("snapshot", null)
 	if not next is Dictionary: return false
+	if status == "accepted":
+		var response_provenance := String(next.get("provenance", ""))
+		if response_provenance == "A0_OWNER_PROJECTION":
+			var receipt_value: Variant = response.get("receipt_id", null)
+			if (
+				not receipt_value is String
+				or String(receipt_value).strip_edges().is_empty()
+				or String(receipt_value).length() > 160
+				or response.get("receipt_owner", "") != "A0_SAVE_SERVICE"
+			):
+				return false
+		elif response_provenance != "FIXTURE_PROJECTION" or not _developer_diagnostics:
+			return false
 	var next_sequence: Variant = next.get("sequence", null)
 	var request_sequence: Variant = _pending_payload.get("sequence", null)
 	var next_revision := String(next.get("revision", "")).strip_edges()
@@ -576,11 +590,11 @@ func _has_action_host() -> bool:
 func _request(action: String, id: String, payload: Dictionary) -> void:
 	if _pending or id.is_empty() or not _has_action_host(): return
 	if action not in ["craft", "research", "transfer", "equip_core", "unequip_core", "select_respawn"]: return
-	var live_owner := (
+	var live_owner: bool = (
 		_snapshot.get("schema", "") == "soh.ui.snapshot.v2"
 		and _snapshot.get("provenance", "") == "A0_OWNER_PROJECTION"
 	)
-	var developer_fixture := (
+	var developer_fixture: bool = (
 		_developer_diagnostics
 		and _snapshot.get("provenance", "") == "FIXTURE_PROJECTION"
 	)
@@ -730,6 +744,7 @@ func _response_copy(response: Dictionary, status: String) -> String:
 		"missing_item": "That item is no longer available.",
 		"protected_unique": "Unique items cannot be moved here.",
 		"stale_revision": "Things changed. Review the latest details.",
+		"stale_sequence": "Things changed. Review the latest details.",
 		"stale_request": "Things changed. Review the latest details.",
 		"already_committed": "That action is already complete.",
 		"unknown_capability": "That action is not available here.",

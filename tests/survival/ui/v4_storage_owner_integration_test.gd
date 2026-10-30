@@ -80,6 +80,10 @@ func _intent(
 	}
 
 
+func _next_a0_receipt_id() -> String:
+	return "survival.chest.ui.%s.%d" % [String(panel.get("_session_id")), int(panel.get("_serial")) + 1]
+
+
 func _submit_owner_panel(command: Dictionary) -> bool:
 	if String(command.get("status", "")) != "validated_for_a0_host":
 		return false
@@ -184,6 +188,14 @@ func _run() -> void:
 	)
 	var deposit_intent := _intent("deposit-001", container_id, STONE, "deposit", 6)
 	var deposit := COMMAND.normalize_intent("transfer", STONE, deposit_intent)
+	var deposit_receipt_id := _next_a0_receipt_id()
+	_expect(
+		deposit.get("request_id", "") == "deposit-001"
+		and deposit.get("revision", "") == "owner-current"
+		and deposit.get("sequence", -1) == 0
+		and deposit.get("stack_key", "") == STONE,
+		"A6 forwards exact request correlation, owner revision/sequence and stack key to the A0 host"
+	)
 	var before_command: Dictionary = (save.call(&"get_snapshot") as Dictionary).duplicate(true)
 	_expect(
 		(
@@ -199,6 +211,10 @@ func _run() -> void:
 	_expect(
 		_submit_owner_panel(deposit),
 		"actual A0 chest-panel deposit commits the requested exact quantity"
+	)
+	_expect(
+		bool(save.call(&"is_transaction_applied", deposit_receipt_id)),
+		"only A0 SaveService's durable transaction ledger confirms the transfer receipt"
 	)
 	var after_deposit := VIEW.storage(save, survival, container_id)
 	_expect(
@@ -218,6 +234,7 @@ func _run() -> void:
 	var withdraw := COMMAND.normalize_intent(
 		"transfer", STONE, _intent("withdraw-001", container_id, STONE, "withdraw", 2)
 	)
+	var withdraw_receipt_id := _next_a0_receipt_id()
 	_expect(
 		(
 			_submit_owner_panel(withdraw)
@@ -225,6 +242,10 @@ func _run() -> void:
 			and int(_survival_count(survival, container_id, STONE)) == 4
 		),
 		"actual A0 chest-panel withdrawal commits exact quantity"
+	)
+	_expect(
+		bool(save.call(&"is_transaction_applied", withdraw_receipt_id)),
+		"A0 confirms a distinct durable receipt for the withdrawal"
 	)
 	var before_overdraw: Dictionary = (save.call(&"get_snapshot") as Dictionary).duplicate(true)
 	var overdraw_receipt := (

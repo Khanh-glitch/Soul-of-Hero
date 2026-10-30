@@ -9,7 +9,8 @@ const INSTANCE_PREFIX := "soh_i_"
 
 
 ## Canonicalizes the A6 planner's request for an A0-owned host. The accepted
-## result is a command description only; it is not permission to mutate.
+## result preserves request/revision/sequence/stack identity for owner checks;
+## it is a command description only, not permission to mutate.
 static func normalize_intent(action: String, target_id: String, intent: Dictionary) -> Dictionary:
 	if String(intent.get("schema", "")) != INTENT_SCHEMA or action != "transfer":
 		return _rejected("Unsupported storage request.")
@@ -22,13 +23,13 @@ static func normalize_intent(action: String, target_id: String, intent: Dictiona
 	var stack_key_value: Variant = intent.get("stack_key", null)
 	var revision_value: Variant = intent.get("revision", null)
 	var direction_value: Variant = intent.get("direction", null)
-	var container_id := String(container_value).strip_edges()
+	var container_id := String(container_value).strip_edges() if container_value is String else ""
 	var item_id := target_id.strip_edges().to_lower()
-	var projected_item_id := String(projected_item_value).strip_edges().to_lower()
-	var stack_key := String(stack_key_value).strip_edges()
-	var revision := String(revision_value).strip_edges()
+	var projected_item_id := String(projected_item_value).strip_edges().to_lower() if projected_item_value is String else ""
+	var stack_key := String(stack_key_value) if stack_key_value is String else ""
+	var revision := String(revision_value) if revision_value is String else ""
 	var sequence: Variant = intent.get("sequence", null)
-	var direction := String(direction_value)
+	var direction := String(direction_value) if direction_value is String else ""
 	var amount: Variant = intent.get("amount", null)
 	if (
 		not container_value is String
@@ -41,8 +42,10 @@ static func normalize_intent(action: String, target_id: String, intent: Dictiona
 		or not _valid_item_id(item_id)
 		or projected_item_id != item_id
 		or stack_key.is_empty()
+		or stack_key != stack_key.strip_edges()
 		or stack_key.length() > 128
 		or revision.is_empty()
+		or revision != revision.strip_edges()
 		or revision.length() > 128
 		or not sequence is int
 		or int(sequence) < 0
@@ -56,9 +59,13 @@ static func normalize_intent(action: String, target_id: String, intent: Dictiona
 		return _rejected("Choose a stackable item, exact item ID, and positive whole quantity.")
 	return {
 		"status": "validated_for_a0_host",
+		"schema": INTENT_SCHEMA,
 		"request_id": request_id,
+		"revision": revision,
+		"sequence": int(sequence),
 		"container_id": container_id,
 		"item_id": item_id,
+		"stack_key": stack_key,
 		"direction": direction,
 		"amount": int(amount),
 		"transaction_owner": "A0 SaveService / SurvivalService",
