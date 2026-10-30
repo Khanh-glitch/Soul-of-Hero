@@ -7,9 +7,9 @@
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
     },
     {
-      "bytes": 11961,
+      "bytes": 12601,
       "path": "data/survival/world/a1_world_placement_contract.v1.json",
-      "sha256": "ed5263e37dbbc40e8e9d3a293f9bf6a0420bca400314e46493c8455eae89b543"
+      "sha256": "b3ba37aa2dfe91b51689fdac0bab2ad44caa9059204332050c5322d6643f9969"
     },
     {
       "bytes": 14155,
@@ -1322,8 +1322,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "b6887ccee38877f12bf37996a4f197c5d6fad7e01f275028c49dd864918b71a5",
-  "compile_2_tree_sha256": "b6887ccee38877f12bf37996a4f197c5d6fad7e01f275028c49dd864918b71a5",
+  "compile_1_tree_sha256": "c354faef35e6cf79f8f0e1ecd5148aeb5edcc92d8c18b70662df307f3bf05134",
+  "compile_2_tree_sha256": "c354faef35e6cf79f8f0e1ecd5148aeb5edcc92d8c18b70662df307f3bf05134",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",
