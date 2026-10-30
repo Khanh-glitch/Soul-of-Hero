@@ -28,13 +28,13 @@ All fixture costs, yields, source quantities, and cooldowns remain non-live. The
 
 ## Scoped validation and evidence
 
-**Completed independent/static checks on pushed commit `f54d8f17`:**
+**Completed independent/static checks on pushed commit `d6f11728`:**
 
 - `python3 tools/survival/world_content/author_site.py --check` passed for all four site definitions and actual wrapper references.
 - Five adversarial path/identity tests and four atlas/layout/provenance tests passed; all nine A8 world-content JSON files parsed.
 - Scoped `gdformat --check`, `gdlint`, and `git diff --check` passed. Texture hashes match A1 PR #20's pinned atlas manifest.
 
-**Native status: `PENDING`; no native PASS is claimed.** The local workspace has no Godot executable. Current-head A8 run `41032553904`, runtime/headless/capture run `41032553840`, and handoff run `41032553871` were queued with no job steps at the last observation. Earlier A8 run `41024526858` on head `5ccf7b3f` failed in the native physics/interaction step; GitHub's signed log fetch returned EOF, so that failure's assertion remains unknown. No current-head scene execution, native physics result, interaction pass, or A8 capture has yet been reviewed. Static checks are not native acceptance; keep status pending until these runs execute and the A8 captures are visually inspected.
+**Native status: `PENDING`; no native PASS is claimed.** The local workspace has no Godot executable. Current-head A8 run `41033322405`, runtime/headless/capture run `41033322381`, and handoff run `41033322366` were queued with no job steps at the last observation. Earlier A8 run `41024526858` on head `5ccf7b3f` failed in the native physics/interaction step; GitHub's signed log fetch returned EOF, so that failure's assertion remains unknown. No current-head scene execution, native physics result, interaction pass, or A8 capture has yet been reviewed. Static checks are not native acceptance; keep status pending until these runs execute and the A8 captures are visually inspected.
 
 The PR-only workflow runs authoring and art-manifest checks, imports native resources with Godot 4.7, runs physical/interaction/transition suites, preserves failure logs as artifacts/step summaries, and captures the A8 harness at 1280×720, 2560×1440, and 3840×2160. Capture generation alone is not visual evidence.
 
