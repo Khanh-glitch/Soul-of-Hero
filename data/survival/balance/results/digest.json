@@ -3,10 +3,10 @@
     "access.json": "1eaa25b96e46ea11defab04d51226913528c79ba9e7779d06e3e7021f4dc810a",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
     "adversary.json": "f2cb58c7769da80c0632b676102453a37a5878a9b085c9f0e529c03dc6504fc3",
-    "blockers.json": "3c1689568bd501b763c870bb7fbbb6ab7a6bcf6de27a7ae4b56cdfa22a55b12b",
+    "blockers.json": "5ce495d9611ce844c06ebc8416a7b0b8d659ecd4a20d4400952a0d892ecd4ab7",
     "findings.json": "12e78380f8798748a5656d5ffa5074aafa40f30c8078c0ab93079b8305ad121b",
-    "gate.json": "ad3628d5e088260d378a532f13d4d8fb5fc66bae3fa87f717a6340961b3504a6",
-    "matrix.json": "5a9c797a8e89737942746d16714832316b4ebafa149bd5918b79e91ac8a0dbae",
+    "gate.json": "88b43abcd6d0896d2ebf53a63d8236f26ed445356d31cee415e4b715bc99af5c",
+    "matrix.json": "4c53b8e21745279f39e3ae146e76472d0266b3a2fdf7bfad3a1b08ab9fdbfe63",
     "native_probes.json": "4996313051e3f3225d975ee2ab48df083196195e8a069048f075450465ab4f7a",
     "opportunity.json": "e189d633e99212e8a331b6ad64c1cba71dfd27cc1004ea6587759fcc27a58a31",
     "oracle.json": "98e5a2903aeefa6349d1edf01f62e940ec374a71f09fdf93d43d56b7741b1603",
@@ -16,7 +16,7 @@
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
     "summary.json": "18bec486fa8722e5750515a39d07fe32f66c6359b999e9734708ef340a22e514"
   },
-  "combined_sha256": "cc05ea9ea5d35d804a69317274d7bafa434bb9da52c9285e50af903f08dbfe8f",
+  "combined_sha256": "5d15f30a734a40a807c57bf9be2ced5327c84157bf87108917d0e7fef717879d",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

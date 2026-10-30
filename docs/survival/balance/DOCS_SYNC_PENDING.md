@@ -71,7 +71,7 @@ rather than quietly fixed.
 ### 5. Numbers at this pin
 
 A0 `9269739e` · A1 `939720d5` · A3 `c5e80922` · A6 `08ccb834` · A8 `c8b4bc88`; 75 sha256-pinned
-files; 33 CI runs recorded (18 queued, 15 completed, all failed); every native state `STALE_HEAD`.
+files; 57 CI runs fetched with `--limit 10` (45 queued, 12 completed, all 12 failed); every native state `STALE_HEAD`.
 
 * **34 assertions** (`A01`–`A34`) hold; `A34` fails the build if any named spoof survives.
 * **269 tests** green; `run_analysis.py` green.

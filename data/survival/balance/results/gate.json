@@ -2138,6 +2138,30 @@
         "other_commit_runs": [
           {
             "conclusion": "",
+            "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+            "run_id": 41040890904,
+            "status": "queued"
+          },
+          {
+            "conclusion": "",
+            "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+            "run_id": 41034571991,
+            "status": "queued"
+          },
+          {
+            "conclusion": "",
+            "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+            "run_id": 41034207749,
+            "status": "queued"
+          },
+          {
+            "conclusion": "",
+            "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+            "run_id": 41033678046,
+            "status": "queued"
+          },
+          {
+            "conclusion": "",
             "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
             "run_id": 41029607430,
             "status": "queued"
@@ -2331,7 +2355,7 @@
       "completed/failure",
       "queued/-"
     ],
-    "runs_recorded": 33,
+    "runs_recorded": 57,
     "schema": "soh.balance.ci_evidence.v2"
   },
   "headline": "Normal menu entry to A0's world exists in source; the A1 cache and A8 scene are not mounted in it; the only committed rewards are campaign progression; no native run has verified any of it.",
@@ -2622,27 +2646,6 @@
   "native_outcome_ledger": [
     {
       "conclusion": "failure",
-      "failed_checks": [],
-      "failed_steps": [
-        "Pinned A6 V3/V4 suites (includes fixture-funded storage)"
-      ],
-      "head_sha": "594730ea15a3e6db8d620fb89aef94e97fd6db11",
-      "run_id": 41022975377,
-      "workflow": "a0-a6-v4-latest-composition.yml"
-    },
-    {
-      "conclusion": "failure",
-      "failed_checks": [],
-      "failed_steps": [
-        "Real A6 workspace on current A0 overworld",
-        "Pinned A6 V3/V4 suites (includes fixture-funded storage)"
-      ],
-      "head_sha": "bd27e2e635a59abf0523b4b0ac567f066e5d1e9b",
-      "run_id": 41023113778,
-      "workflow": "a0-a6-v4-latest-composition.yml"
-    },
-    {
-      "conclusion": "failure",
       "failed_checks": [
         "separate process restores exact ordinary and unique inventory",
         "separate process restores exact structures, chests and permanent knowledge",
@@ -2741,16 +2744,6 @@
       "failed_steps": [
         "Run native physics, intent and persistence contracts"
       ],
-      "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
-      "run_id": 41015986080,
-      "workflow": "a8-world-content-native.yml"
-    },
-    {
-      "conclusion": "failure",
-      "failed_checks": [],
-      "failed_steps": [
-        "Run native physics, intent and persistence contracts"
-      ],
       "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
       "run_id": 41019032228,
       "workflow": "a8-world-content-native.yml"
@@ -2801,6 +2794,30 @@
       "evidence_id": "a0_normal_entry_home",
       "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890904,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571991,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207749,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033678046,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
@@ -2855,6 +2872,30 @@
       "other_commit_runs": [
         {
           "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890950,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571757,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207772,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033677607,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
           "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
           "run_id": 41029607304,
           "status": "queued"
@@ -2897,8 +2938,44 @@
     },
     "a0_runtime_validation": {
       "evidence_id": "a0_runtime_validation",
-      "head_sha": null,
+      "head_sha": "9269739ebd35ed8ab83987b6bf53f560a59954af",
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890930,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "27ef93078d4af21bf25acaf8571cfa6f8685170e",
+          "run_id": 41040747759,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571559,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "4fbafec4aff1cc8684b7c6d21c91e57985ddbd76",
+          "run_id": 41034417288,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207865,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033677523,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
@@ -2916,35 +2993,41 @@
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
           "run_id": 41029252628,
           "status": "queued"
-        },
-        {
-          "conclusion": "",
-          "head_sha": "cdbcffcdeae2e1dced5e27b89d0d7e713158fbb9",
-          "run_id": 41029028375,
-          "status": "queued"
-        },
-        {
-          "conclusion": "",
-          "head_sha": "bd27e2e635a59abf0523b4b0ac567f066e5d1e9b",
-          "run_id": 41023113741,
-          "status": "queued"
-        },
-        {
-          "conclusion": "",
-          "head_sha": "594730ea15a3e6db8d620fb89aef94e97fd6db11",
-          "run_id": 41022975296,
-          "status": "queued"
         }
       ],
       "phrase_found": false,
       "proves": "the survival runtime scripts parse and run headless",
-      "run_id": null,
-      "state": "STALE_HEAD"
+      "run_id": 41034743993,
+      "state": "QUEUED"
     },
     "a0_save_precision": {
       "evidence_id": "a0_save_precision",
       "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "27ef93078d4af21bf25acaf8571cfa6f8685170e",
+          "run_id": 41040747812,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571755,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207682,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033677690,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
@@ -2967,6 +3050,30 @@
       "evidence_id": "a0_second_process_restart",
       "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890904,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571991,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207749,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033678046,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
@@ -3021,6 +3128,30 @@
       "other_commit_runs": [
         {
           "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890950,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571757,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207772,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033677607,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
           "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
           "run_id": 41029607304,
           "status": "queued"
@@ -3067,6 +3198,30 @@
       "other_commit_runs": [
         {
           "conclusion": "",
+          "head_sha": "7f3ca17e90948c20e0355622d3960bf31f5455c7",
+          "run_id": 41040890950,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "2203ea9ff33df2cba48f313355e31e4a43f87607",
+          "run_id": 41034571757,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7460f40f28b2d05a02d60389e7e6d6c5150cff6d",
+          "run_id": 41034207772,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "34f5e27ed5c144a7155c857990a5ff29d31fe24e",
+          "run_id": 41033677607,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
           "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
           "run_id": 41029607304,
           "status": "queued"
@@ -3109,8 +3264,32 @@
     },
     "a8_native_poi_contract": {
       "evidence_id": "a8_native_poi_contract",
-      "head_sha": null,
+      "head_sha": "c8b4bc881d6744bac0f0826a639624ee1434e534",
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "1426a0eb250a0a680081c2dfabfe4eb339f61f5d",
+          "run_id": 41040398338,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "6223a02ccb3822d5d397ed185af048f7159687fc",
+          "run_id": 41037830473,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "d6f1172846881b7d3992e5120350643eac53a8c3",
+          "run_id": 41033322405,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "f54d8f1776b091b6e7e0b9344c51f18e4330e711",
+          "run_id": 41032553904,
+          "status": "queued"
+        },
         {
           "conclusion": "failure",
           "head_sha": "5ccf7b3f9824daa138b5d98106b74a2899c7592b",
@@ -3140,18 +3319,12 @@
           "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
           "run_id": 41019032228,
           "status": "completed"
-        },
-        {
-          "conclusion": "failure",
-          "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
-          "run_id": 41015986080,
-          "status": "completed"
         }
       ],
       "phrase_found": false,
       "proves": "the native POI scene loads and its intent contract runs",
-      "run_id": null,
-      "state": "STALE_HEAD"
+      "run_id": 41033849972,
+      "state": "QUEUED"
     }
   },
   "oracle": {

@@ -212,6 +212,9 @@ def main(argv=None) -> int:
             "verbatim, so a passing step and a failing assertion cannot be confused."
         ),
         "workflows": list(WORKFLOWS),
+        # The count depends on the fetch window, so the window is recorded with it:
+        # "57 runs" without "--limit 10" would be a number nobody could reproduce.
+        "window": {"limit_per_workflow": args.limit, "runs_recorded": len(runs)},
         "runs": sorted(runs, key=lambda row: (str(row["workflow"]), -int(row["run_id"]))),
     }
     text = json.dumps(payload, indent=2, sort_keys=True) + "\n"

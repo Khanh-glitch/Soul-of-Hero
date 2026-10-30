@@ -56,9 +56,12 @@ manifest describes exactly the files on disk.
 
 ## 4. CI evidence, read honestly
 
-`data/survival/balance/evidence/ci_runs.v1.json` records **33** workflow runs: **18 queued,
-15 completed — all 15 completed runs failed.** Every native state the gate needs is
-`STALE_HEAD`; `any_native_verified` is `false`.
+`data/survival/balance/evidence/ci_runs.v1.json` records **57** workflow runs fetched with
+`--limit 10` (the window is stored in the file, because "57 runs" without the window is a
+number nobody could reproduce): **45 queued, 12 completed — all 12 completed runs failed.**
+Every native state the gate needs is `STALE_HEAD` or `QUEUED`; `any_native_verified` is
+`false`. The queue has grown, not drained: A0 keeps pushing and the runner has not caught up,
+so "wait for CI" is not a plan for this pin.
 
 A run counts only for the commit it ran on. Queued is `QUEUED`, never "probably fine". The two
 most useful failure labels remain `post-boot inventory` (run `41018366655`) and
