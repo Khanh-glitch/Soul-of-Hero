@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "project": "Soul of Hero — Survival RPG",
+  "project": "Soul of Hero \u2014 Survival RPG",
   "issue": "https://github.com/Khanh-glitch/Soul-of-Hero/issues/9",
   "branch": "feature/survival-rpg-foundation-20261029",
   "base_branch": "arena/54306b59-soul-of-hero",
@@ -20,7 +20,7 @@
   "tasks": [
     {
       "id": "SURV-005",
-      "name": "2019–2020 Last Day Rules / Civilization Restart historical A–Z reconstruction, source catalog, replay design gates",
+      "name": "2019\u20132020 Last Day Rules / Civilization Restart historical A\u2013Z reconstruction, source catalog, replay design gates",
       "status": "verified",
       "evidence": [
         "docs/survival/LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md",
@@ -60,7 +60,7 @@
       "name": "Harvest node -> real SOH inventory -> 2D build placement -> safe persistence slice",
       "status": "verified",
       "evidence": [
-        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 — Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213 \u2014 Survival A0 (Foundation) Runtime Validation, conclusion success: 125 checks, 12 named cases, exit 0",
         "tests/survival_foundation_test.gd",
         "game/survival/survival_service.gd",
         "game/survival/survival_build_system.gd",
@@ -211,6 +211,22 @@
         "tools/survival/worldgen/compile_region_coverage.py"
       ],
       "next": "Push 9e98ab6c+ when GitHub transport recovers; native CI inspect; A0 mount region bundle; A8 shell adoption; AVFX Gold parity; A6 body"
+    },
+    {
+      "id": "SURV-050A-A8-PLACEMENT",
+      "name": "A1 first-hour hash reconciliation and review of A8 existing six Elder/four endpoint placements",
+      "status": "in_progress",
+      "assigned_branch": "arena/e385312a-soul-of-hero",
+      "work_order": "docs/survival/tasks/A1_WORLD_INTEGRATION_HASH_AND_A8_PLACEMENT_WORK_ORDER.md",
+      "verification_scope": "source_contract_and_python_tests_complete_native_godot_pending",
+      "evidence": [
+        "data/survival/world/art/first_hour_asset_provenance.v1.json",
+        "data/survival/world/a1_world_placement_contract.v1.json",
+        "tools/survival/worldgen/compile_placement_review.py",
+        "tests/survival/world/placement_native_test.gd",
+        "docs/survival/world/A1_WORLD_INTEGRATION_HANDOFF.md"
+      ],
+      "next": "Run exact-head Godot/Xvfb placement fixture; inspect native captures; attach A0/A8/A3/A7 handoff without production repin"
     }
   ],
   "next_action": {
@@ -285,12 +301,19 @@
       "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
       "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
     },
-    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification"
+    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification",
+    "a1_world_integration": {
+      "status": "SOURCE_VERIFIED_NATIVE_PENDING",
+      "first_hour_crops": "181/181 raw RGBA match ad39bde6; 145 terrain + 36 props; 8 moved rects only",
+      "placement_contract": "data/survival/world/a1_world_placement_contract.v1.json",
+      "production_native_playable": false,
+      "a0_repin": "NO_BLIND_REPIN"
+    }
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
     "policy": "Gate F0-F5 in LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md; approved design must never be reported as implemented gameplay",
-    "historical_scope": "2019–2020, H1/H2/H3 distinguished; 2025–2026 variants are not default",
+    "historical_scope": "2019\u20132020, H1/H2/H3 distinguished; 2025\u20132026 variants are not default",
     "notable_new_user_requirement": "14 days of gameplay with only a few valuable abilities unlocked and many POIs/recipes undiscovered must make replay enticing, without padding meaningless grind"
   },
   "mechanic_coverage": [

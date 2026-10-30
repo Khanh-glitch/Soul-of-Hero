@@ -82,6 +82,8 @@ jobs:
         run: python tools/survival/worldgen/study_avfx_contrast.py | tee "$ARTIFACT_DIR/avfx_contrast.json"
       - name: Compile consumable A0/A8 mount bundle
         run: python tools/survival/worldgen/compile_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_compile.json"
+      - name: Compile A1 review of A8 territory + endpoint placements
+        run: python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json | tee "$ARTIFACT_DIR/placement_compile.json"
       - name: Validate world art grammar, atlas, presentations and A8 visual contract
         run: python tools/survival/worldgen/validate_world_art.py | tee "$ARTIFACT_DIR/world_art_validation.json"
       - name: A0/A8 consumer validation of mount bundle
@@ -311,6 +313,10 @@ jobs:
         run: |
           mkdir -p artifacts/a1-connector-art
           python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector-art --no-contract
+      - name: Compile A1 territory + endpoint placement native inputs
+        run: |
+          mkdir -p artifacts/a1-placement
+          python tools/survival/worldgen/compile_placement_review.py --out artifacts/a1-placement/placement_native_inputs.json
       - name: Import root project for real Knight / OverworldOcclusion fixture
         run: |
           mkdir -p artifacts/a1-world-art artifacts/ud_world_art_import
@@ -370,6 +376,35 @@ jobs:
             echo "::error::corridor art fixture gate failed (checks=${checks}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
             exit 1
           fi
+      - name: Drive A1 territory + endpoint placements with real Hero shape
+        if: always()
+        run: |
+          mkdir -p artifacts/a1-placement artifacts/ud_a1_placement
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_a1_placement --windowed \
+            --script res://tests/survival/world/placement_native_test.gd -- \
+            --inputs="$GITHUB_WORKSPACE/artifacts/a1-placement/placement_native_inputs.json" \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-placement" \
+            >artifacts/a1-placement/godot-placement.log 2>&1
+          rc=$?
+          echo "placement fixture exit_code=$rc"
+          cat artifacts/a1-placement/godot-placement.log
+          echo "$rc" >artifacts/a1-placement/placement-exit-code
+          exit $rc
+      - name: Placement native anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-placement/godot-placement.log
+          [ -f "$log" ] || { echo "::error::no placement fixture log"; exit 1; }
+          checks=$(grep -cE '^A1_PLACEMENT (PASS|FAIL): ' "$log" || true)
+          captures=$(grep -c 'native placement capture' "$log" || true)
+          echo "placement assertions reported: ${checks}; captures: ${captures}"
+          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 20 ] || ! grep -q 'A1_PLACEMENT SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'Godot RGBA crop hashes match all 181' "$log" || ! grep -q 'swept corner/edge probes are non-vacuous' "$log" || ! grep -q 'return existing-cell Hero route' "$log"; then
+            echo "::error::placement fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 2400 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
       - name: Upload world art native evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -378,6 +413,7 @@ jobs:
           path: |
             artifacts/a1-world-art/
             artifacts/a1-world-art-corridor/
+            artifacts/a1-placement/
           if-no-files-found: warn
           retention-days: 14
       - name: Mirror native evidence as Git blobs (artifact-host fallback)
@@ -388,4 +424,5 @@ jobs:
         run: |
           python tools/ci/mirror_native_evidence.py \
             --root artifacts/a1-world-art \
-            --root artifacts/a1-world-art-corridor
+            --root artifacts/a1-world-art-corridor \
+            --root artifacts/a1-placement

@@ -147,3 +147,11 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - Visual revisions from inspected 1x/5x panels: fixed wide boardwalk carpets, clipped camera edges, corduroy volcanic ground, over-bright salt (Gold contrast floor), and empty windows; added groves and calm material variants.
 - Added `compile_region_coverage.py` source-to-scene matrix + window BFS approach/retreat audit; `preview_region_review.py` 1x/5x proxy-footprint panels; expanded AVFX contrast study to 11 ground materials (worst 1.739:1, not Gold parity); mount bundle memory estimate.
 - Drive 668008/692491 byte+license verified and style-rejected; original art used. Gates: 121 tests, validators 0 errors, determinism 258 tree 776cfe4d. Native still pending; GitHub git transport TLS-failing at checkpoint, push retried.
+
+## 2026-10-30 — A1 world integration intake: first-hour hash + A8 placement review
+
+- Branch `arena/e385312a-soul-of-hero`, base `7d2b017c8a90b7d5e24ff85f065ff1b18548cd29`, PR20 OPEN/unmerged. Refreshed A0 `4b4b63f5`, A8 `02ad8b72`, current product D062–D074 and native CI.
+- Reconciled A0 comment `#issuecomment-6524971216`: payload-subset hashes were compared to whole presentation-file hashes. Added `first_hour_asset_provenance.v1.json` with both domains and exact raw-RGBA crop definitions. Verified 181/181 first-hour crops match `ad39bde6`; eight only moved atlas coordinates; `cache_notes`/`cache_closed` unchanged. No A0 repin.
+- Reviewed A8's existing six Elder and four endpoint IDs without creating another territory system. Added `a1_world_placement_contract.v1.json` with six canonical-location decisions, three safe-perimeter corrections, four relocated world socket/stand pairs, explicit hazard/production limits, and A0/A8/A3/A7 routing.
+- Added `compile_placement_review.py` (10 bounded source windows, 557 forward cells, zero ordinary-path hazards), `placement_native_test.gd` (real 12×16 Hero, ordinary Input forward/return, swept corner/edge probes, native captures), Python provenance/placement tests and CI anti-vacuity gate. Native exact-head result pending at intake.
+- Next runnable action: push source contract/tests, run Godot 4.7/Xvfb placement job on exact SHA, inspect captures and publish native report/artifact. No production mount, economy, boss, SaveService or Gold change.
