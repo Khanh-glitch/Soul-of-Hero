@@ -473,3 +473,58 @@ Profile, from the code paths (not measured here; no local Godot):
   pure table lookups in `RNG.nz1`/`nz2` mean the reorder is only a constant-factor win),
   006/010 views B–E and Lab darkening control, ARCANA 001, private vault retrieval (see the
   vault section above; access not re-attempted this round).
+
+## Round 2026-10-30 (later): 015 PASS + registered; 008 host gap root-caused; 007/020 narrowed to draw inputs
+
+### 015: PASS, registered (`ffb7bcb`)
+- Runtime run `41005700842` job `123913467489` (at `4bf0769`): `GOLD93_VENOM_DIFFERENTIAL: PASS`,
+  parity true, first_divergent_tick -1, hits 34/34, cues 38/38, ticks 315, seed 7.
+- Earlier event-32 knockback failure at `bec65d1` no longer reproduces. Recorded as observed PASS;
+  root cause of the earlier failure not isolated (Chain/hypot and serpent-lunge era fixes are
+  candidates, not claims).
+- Registered: `v015_source_native.gd`, `MODULE_PATHS venomwright:015`, host matrix now 17 skills,
+  lifecycle count 16→17, parity record in `parity/index.json`.
+
+### 008 host-adapter failure: root cause found and fixed (`87a85e2`)
+- Runtime run `41005700842` job `123913467294`: `module_for` returned Nil for `venomwright:008`.
+- Root cause: `venom_skills.gd run_factory` had NO case 8. The 008 generator (`S4.serpents`)
+  existed only in `venom_candidates.gd` (candidate lane). So `has_source_locked_generator(8)`
+  was false → fail-closed, despite the adapter + `MODULE_PATHS` entry existing since `5bd8967`.
+- The candidate-lane 008 PASS (`5023485`) was real source-parity evidence; it never implied
+  registry presence. Runtime-lane 008 "success" lines before this fix were `--skip-unported`
+  SKIP placeholders, not parity.
+- Fix: `S4` preload + `8: return func(c): return S4.serpents(c)` in `run_factory`. Host verdict
+  on the new SHA is still pending CI.
+
+### Native-contract failures at `4bf0769` (expected to clear with `87a85e2`)
+- Harness: "a blocked id must state its material blocker: venomwright:008" — 008's manifest
+  blocker was cleared in `438cf79` while the handle was still blocked (no generator). With the
+  generator present the handle is native, not blocked.
+- Host 021: `status=124` timeout in full-cast phase (known ~595 s vs bound; unchanged criterion).
+
+### 007: state proven identical; divergence is inside a Cocoon sub-draw
+- Native GOLD93_COCOON (candidate `4665721`, job `123913252811`) t90 matches the original exactly:
+  x=322.048055944 y=280.393521202 z=0 open=1 pulseY=0.958333333 glow=0.3 age=1.033333333
+  ruptured=[true,false,false]. Hatchling draws idx0–2 also exact; t89 scene identical.
+- Block-grid diagnostic committed (`2d310f5`): 12×10 scene block hashes t89–90 both engines
+  (original in `/tmp/blk7_ref.txt`, regenerate via `reference.ts blockhash 7 1 90`). Native
+  comparison pending candidate run `41010830347`. Suspect sub-draws: ball/seams/organisms/pulse.
+
+### 020: branch state proven identical; divergence is draw-time inputs
+- Native GOLD93_FLOW (candidate `e3bb8dd`, job `123910124738`) t180 matches original: br=12,
+  discs=12, same drawn/len/w, age=2.983333. Yet `gnd.flow#0` raster differs at t180 and matches
+  at t179 → difference is in draw-time inputs (g.t, disc radii, crust), not FlowNet state.
+- Original discs all r=2.0000 at t179/180. Disc radii added to both dumps (`639ef79`); native
+  radii pending candidate run `41010800184`.
+
+### 021 performance
+- Puff Bayer-noise skip when fully discarded (`4bf0769`) and packed-byte fast paths in `puff()`
+  + `Field.shade()` (`5edce88`, bit-identical opaque writes, COW assign-back once per call).
+  Parity + wall-clock re-measurement on the new SHA pending CI. 180 s bound unchanged.
+
+### Still open
+- 013 (t320) / 016 (t195): fail at `4bf0769` (jobs `123913467648`/`123913467474`); their
+  GOLD93_OBJ native data comes from the `ffb7bcb`+ runtime run (OBJ_TICKS postdates `4bf0769`).
+  Original objhash in `/tmp/obj13_ref.txt`, `/tmp/obj16_ref.txt`.
+- ARCANA III 001: RNG foundation + source audit in place; Pixi renderer port not started.
+- No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED promotion anywhere.
