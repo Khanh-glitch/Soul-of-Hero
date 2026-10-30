@@ -1,10 +1,10 @@
 {
   "format": "S6_LOCAL_SEMANTIC_GRAPH_1",
   "concept": "Whitewater Assay Works",
-  "unit": 2,
+  "unit": 3,
   "status": "DESIGN_ONLY",
   "native": "NATIVE_NOT_TESTED",
-  "review": "GRAPH_STRUCTURAL_REVIEW_PENDING",
+  "review": "UNIT3_DESIGN_BLOCKED_PENDING_INDEPENDENT_REVIEW",
   "unit1_commit": "1e67253675bba27c2b4b1901a7566e7060357d36",
   "scope": "All IDs are local design labels, never production item/world/skill IDs. Optional; no exclusive global progression gate. No Gold Core required.",
   "provenance": {
@@ -708,6 +708,31 @@
       "set": {},
       "rejection": "Route unavailable; return by marked service escape",
       "retreat": "Use node.retreat; egress has independent conditions"
+    },
+    {
+      "id": "e23",
+      "from": "ww_annex",
+      "to": "ww_distributor",
+      "credential": [],
+      "power_allocation": [
+        "none",
+        "drainage",
+        "ventilation"
+      ],
+      "exposure": "Graph-only zero debit; physical exposure bound remains NOT_PROVABLE",
+      "requires": {
+        "power": [
+          "none",
+          "drainage",
+          "ventilation"
+        ]
+      },
+      "min": {},
+      "debit": {},
+      "set": {},
+      "rejection": "Mechanical return corridor obstructed: use separately visible e18 if available",
+      "retreat": "e06/e02",
+      "geometry_contract": "Use the existing reception-entry corridor as an independent outward exit with a mechanical panic door. Interior operation must not unlatch exterior ingress. No stairs, swimming or invisible connector."
     }
   ],
   "actions": [
@@ -740,7 +765,9 @@
     {
       "id": "sign_out",
       "node": "ww_registry",
-      "requires": {},
+      "requires": {
+        "maintenance": false
+      },
       "min": {},
       "debit": {},
       "set": {
@@ -810,7 +837,8 @@
       "node": "ww_gallery",
       "requires": {
         "power": "drainage",
-        "maintenance": true
+        "maintenance": true,
+        "gallery_record": false
       },
       "min": {
         "protection": 2
@@ -851,7 +879,8 @@
       "requires": {
         "maintenance": true,
         "gallery_record": true,
-        "service_record": false
+        "service_record": false,
+        "assay": false
       },
       "min": {
         "service_supplies": 1
@@ -871,7 +900,8 @@
       "node": "ww_service",
       "requires": {
         "maintenance": true,
-        "service_record": true
+        "service_record": true,
+        "assay": false
       },
       "min": {
         "service_supplies": 1
@@ -1141,7 +1171,7 @@
         "e21",
         "e17"
       ],
-      "question": "Death bag retrieval with all portable credentials, protection, priming and unique specimen inside: no proven witness yet.",
+      "question": "FAIL full-loss with zero outside reserve; conditional finite pre-owned reserve witness only. See Unit3 model.",
       "next_unit": 3
     },
     {
@@ -1151,7 +1181,7 @@
         "e19",
         "e20"
       ],
-      "question": "Blocked emergency passage, combat body blocking and construction exclusion; single-exit guarantee currently a design assumption.",
+      "question": "CE-01 singly blocked e18 addressed by explicit e23; both exits blocked remains FAIL, admission/mutation guard needed and native unverified.",
       "next_unit": 3
     },
     {
@@ -1228,8 +1258,12 @@
       "blocked_edges": [
         "e18"
       ],
-      "escape_edges": [],
-      "result": "UNPROVEN. No guaranteed escape if sole emergency flap becomes inaccessible. Adoption must prohibit blocking it or add independent escape."
+      "escape_edges": [
+        "e23",
+        "e06",
+        "e02"
+      ],
+      "result": "PASS structural single-block witness with e23; simultaneous e18/e23 obstruction FAIL. Physical timing NOT_PROVABLE."
     },
     {
       "id": "F_death",
@@ -1289,5 +1323,14 @@
       },
       "reason": "No free toggle"
     }
-  ]
+  ],
+  "unit3_amendments": {
+    "provenance": "SOH_PROPOSAL; no historical fidelity claim",
+    "changes": [
+      "Fail closed on redundant calibrate, reissue_assay, certify and sign_out; no cost or effect when result already held.",
+      "Add e23 only: physical outward-opening personnel door from annex reception to distributor, reverse of the entrance corridor. Interior panic bar operates mechanically; exterior remains assay/power gated. Not a secret passage or teleport. Requires visible door art, collision and authoring proof before adoption."
+    ],
+    "scope": "11 nodes / 23 edges; Unit2 A/B traces unchanged.",
+    "rescue": "Full-loss recovery remains FAIL with exhausted outside supplies. See UNIT3_RECOVERY_MODEL.json. No free authorization used to claim rescue."
+  }
 }

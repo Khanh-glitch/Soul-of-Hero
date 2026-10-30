@@ -1,0 +1,226 @@
+{
+  "format": "S6_UNIT3_BOUNDED_RECOVERY_1",
+  "status": "UNIT3_DESIGN_BLOCKED",
+  "design": "DESIGN_ONLY",
+  "native": "NATIVE_NOT_TESTED",
+  "adoption": "NO_PRODUCTION_ADOPTION",
+  "baseline": "2ee3c5145c51e8e1d6e8c07a397d7f2849498484",
+  "sources": {
+    "historical": "Original Atlas POI-08/S08; DEP-03/04/05/31 and JOURNEY-11/12 are analytical/adaptation anchors already recorded in MISSION_GRAPH.",
+    "proposal": "All custody, reserve, transition, panic-door and transaction rules here are new SOH proposals. No production APIs, item IDs, source timers or Gold semantics."
+  },
+  "state_spec": {
+    "location": "One of graph node IDs; respawn is ww_boundary, a local abstraction of safe arrival, not a chosen A1 bed or teleport escape.",
+    "portable": "maintenance/assay booleans; priming/protection/service_supplies nonnegative integers; cargo_free abstract capacity; carrying_specimen boolean.",
+    "world": "Graph receipts and records persist independently from carried inventory. power has three modes. blocked is a set of directed edges.",
+    "custody": "specimen_owner = sealed | player | bag:<id> | lost. Exactly one physical specimen; specimen_taken never resets. bags retain unique id, physical node and payload across repeated deaths.",
+    "transaction": "receipts maps operation UUID to committed outcome. before_commit interruption leaves original state untouched; after_commit interruption restores committed snapshot. Replaying UUID is a no-op including all debits.",
+    "reserve": "Explicit finite pre-owned inventory at ww_boundary; withdraw transfers, never creates. No automatic regeneration or barter from nothing.",
+    "transit": "Atomic graph edges do not represent continuous Hero position. Mid-edge switching/expiry must retain origin and destination plus geometry; cannot be proven by node model."
+  },
+  "full_loss_fixture": {
+    "location": "ww_collection",
+    "maintenance": true,
+    "assay": true,
+    "power": "ventilation",
+    "priming": 1,
+    "protection": 3,
+    "service_supplies": 1,
+    "cargo_free": 1,
+    "specimen_taken": true,
+    "carrying_specimen": true,
+    "gallery_record": true,
+    "service_record": true,
+    "egress_open": true
+  },
+  "failure_trace": [
+    "Enter collection legitimately and take unique specimen; receipt committed.",
+    "Die: all portable credentials, supplies and specimen transfer to bag:death-1 at ww_collection.",
+    "Respawn empty at ww_boundary; power fails; external reserve is empty.",
+    "Even allowing the old free public sign_out, no transition increases priming or protection. e16/e17 cannot be crossed. e19 is outward only; e21 reaches refuge but cannot enter collection.",
+    "Specimen remains in death-1. No route reaches bag. Optional location remains unrecoverable; the wider game is not gated by it."
+  ],
+  "full_loss_verdict": "FAIL: universal recovery promise is not met. Unit3 analysis is complete with a concrete blocker, not a successful recovered specimen.",
+  "conditional_reserve": {
+    "provenance": "Already owned, deliberately stashed before expedition from ordinary external play. Availability NOT VERIFIED; this is a conditional counterfactual, not a free rescue grant or accepted economy.",
+    "inventory": {
+      "maintenance": true,
+      "assay": true,
+      "priming": 1,
+      "protection": 3,
+      "service_supplies": 0
+    },
+    "trace": [
+      "withdraw_reserve",
+      "e01",
+      "e05",
+      "start_ventilation",
+      "e16",
+      "e17",
+      "recover:death-1",
+      "e19",
+      "e20",
+      "e02"
+    ],
+    "verdict": "PASS only in finite abstract model when that actual reserve exists, bag is intact and passages available. Same identity bag specimen returned; no replacement specimen."
+  },
+  "obstruction": {
+    "CE01": "e18 blocked + power none + protection zero: e23/e06/e02 is now a structural escape.",
+    "double_block": "e18 and e23 blocked at annex: FAIL. Explicit counterexample, never silently unblocks.",
+    "proposed_guard": "Before admitting player or committing movable geometry/building/debris changes, verify a physically traversable unpowered exit, reserving door sweep and corridor width against placement/body blocking. Reject mutation BEFORE changing geometry if it removes last exit. Never claim this fixes a preexisting trapped save; reject invalid load as unsafe and retain original save for repair. Do not delete obstacles or teleport.",
+    "native": "NOT_PROVABLE: no authored geometry, hitbox or hazard-time data."
+  },
+  "temporal_safety": {
+    "required_inequality": "For every reachable occupied position x, minimum legal egress time T(x) plus reaction/door margin must be less than remaining tolerable exposure/flood time H(x).",
+    "zero_protection": "If H(x)=0 and T(x)>0, physical safety FAIL even when graph route exists. Need passive protected standing/retreat volume or proven nonlethal transition grace, not invented seconds.",
+    "mid_switch": "Actor on an edge must be able to complete or retreat to a physically safe endpoint. Freeze a switch request before spending priming if that cannot be established; spontaneous power loss still requires passive egress proof.",
+    "verdict": "NOT_PROVABLE without native geometry; no graph PASS upgrades this."
+  },
+  "transaction_rules": {
+    "redundant": "calibrate once; reissue/certify only while assay absent; sign_out only while maintenance absent; same-mode startup rejected. All rejections byte-preserve model state.",
+    "loot": "ordinary/residue/boss/sample receipts prevent repeat grants after reload. Sample grant changes owner sealed -> player; recovery transfers bag -> player, never invokes sample grant.",
+    "death": "Atomic all-carried-payload transfer to new bag id, then normal death respawn. Previously existing bags remain. Death before action commit sees old inventory; death after sees updated inventory. No partial state claimed safe.",
+    "lost_bag": "If marker is lost but bag remains, re-find physical bag by known room; no remote pickup. If bag record or geometry location is actually destroyed/unreachable, FAIL recovery; receipt stays spent. No fabricated restoration."
+  },
+  "bounded_tests": {
+    "escape_product": "All 11 node locations x 3 power modes x 2 maintenance x 2 assay x 2 protection (0/2) x 2 priming (0/1) x 4 obstruction sets (none/e18/e23/both). Movement reachability only; count passes and failures, not assume all pass.",
+    "rescue_search": "BFS all enabled graph actions/edges from full-loss respawn with empty finite reserve, receipt flags fixed, no supplied items. Conservative upper bound even permits free sign_out and successful boss action; still cannot power/protect entry. No depth cutoff.",
+    "interruptions": "before/after commit + reload + repeated UUID; death before/after specimen commit; bag retrieval repeated; power loss during request; finite reserve withdrawn twice.",
+    "exclusions": "Not all continuous states, arbitrary crashes, physics, enemies or economy. Explicit finite subsets only."
+  },
+  "owner_decision": {
+    "owner": "Control Tower design review; A0/A1/A3 consulted only if adoption is later requested",
+    "requested": "Choose deliberate optional specimen-loss policy OR approve an actually obtainable finite external replacement/reserve contract and conditions of its exhaustion. No universal recovery claim with zero remaining resources. Do not start Unit4 on this blocked design.",
+    "next_atomic_action": "Review P0 failure and choose recovery/loss policy; then amend only the selected rescue preconditions and rerun this validator."
+  },
+  "executed_results": {
+    "status": "UNIT3_DESIGN_BLOCKED",
+    "claims": [
+      {
+        "id": "route_A",
+        "verdict": "PASS"
+      },
+      {
+        "id": "route_B",
+        "verdict": "PASS"
+      },
+      {
+        "id": "P0_empty_external_stock",
+        "verdict": "FAIL",
+        "found": false,
+        "states": 72,
+        "bagReached": false,
+        "reason": "priming and protection cannot increase outside bag; collection unreachable"
+      },
+      {
+        "id": "preowned_finite_reserve",
+        "verdict": "PASS_CONDITIONAL",
+        "trace": [
+          {
+            "event": "withdraw_reserve",
+            "at": "ww_boundary",
+            "owner": "bag:death-1",
+            "priming": 1,
+            "protection": 3
+          },
+          {
+            "event": "e01",
+            "at": "ww_walk",
+            "owner": "bag:death-1",
+            "priming": 1,
+            "protection": 3
+          },
+          {
+            "event": "e05",
+            "at": "ww_distributor",
+            "owner": "bag:death-1",
+            "priming": 1,
+            "protection": 3
+          },
+          {
+            "event": "start_ventilation",
+            "at": "ww_distributor",
+            "owner": "bag:death-1",
+            "priming": 0,
+            "protection": 3
+          },
+          {
+            "event": "e16",
+            "at": "ww_annex",
+            "owner": "bag:death-1",
+            "priming": 0,
+            "protection": 2
+          },
+          {
+            "event": "e17",
+            "at": "ww_collection",
+            "owner": "bag:death-1",
+            "priming": 0,
+            "protection": 2
+          },
+          {
+            "event": "recover:death-1",
+            "at": "ww_collection",
+            "owner": "player",
+            "priming": 1,
+            "protection": 5
+          },
+          {
+            "event": "e19",
+            "at": "ww_refuge",
+            "owner": "player",
+            "priming": 1,
+            "protection": 5
+          },
+          {
+            "event": "e20",
+            "at": "ww_walk",
+            "owner": "player",
+            "priming": 1,
+            "protection": 5
+          },
+          {
+            "event": "e02",
+            "at": "ww_boundary",
+            "owner": "player",
+            "priming": 1,
+            "protection": 5
+          }
+        ]
+      },
+      {
+        "id": "lost_bag_record",
+        "verdict": "FAIL",
+        "reason": "No conserved physical item recoverable; receipt not reset"
+      },
+      {
+        "id": "repeat_and_interruptions",
+        "verdict": "PASS_MODEL_ONLY",
+        "reason": "Atomic JSON snapshots, repeated UUID and fresh redundant actions; not a real SaveService crash test"
+      },
+      {
+        "id": "mid_edge_switch_and_expiry",
+        "verdict": "NOT_PROVABLE",
+        "reason": "For every reachable occupied position x, minimum legal egress time T(x) plus reaction/door margin must be less than remaining tolerable exposure/flood time H(x)."
+      },
+      {
+        "id": "native_geometry_exposure",
+        "verdict": "NOT_PROVABLE"
+      },
+      {
+        "id": "external_economy_and_boss_balance",
+        "verdict": "NOT_PROVABLE"
+      }
+    ],
+    "native": "NATIVE_NOT_TESTED",
+    "escape_enumeration": {
+      "pass": 2068,
+      "fail": 44,
+      "total": 2112,
+      "scope": "Fixed state movement-only reachability (no time/debit along route). Failures retained, not suppressed."
+    },
+    "assertions": 551,
+    "unit4": "NOT_STARTED",
+    "exit_semantics": "Exit 0 means oracle expectations passed INCLUDING expected FAIL counterexamples; never means universal recovery PASS."
+  }
+}

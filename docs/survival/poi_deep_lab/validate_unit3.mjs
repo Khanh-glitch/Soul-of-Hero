@@ -1,0 +1,61 @@
+// Design oracle only. Run: node docs/survival/poi_deep_lab/validate_unit3.mjs
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const read=n=>JSON.parse(fs.readFileSync(new URL(n,import.meta.url),'utf8').replace(/^\uFEFF/,''));
+const g=read('MISSION_GRAPH.json'),m=read('UNIT3_RECOVERY_MODEL.json');
+const clone=x=>JSON.parse(JSON.stringify(x));
+const edges=Object.fromEntries(g.edges.map(e=>[e.id,e])),acts=Object.fromEntries(g.actions.map(a=>[a.id,a]));
+let checks=0;const ok=(v,msg)=>{assert(v,msg);checks++;};
+const report={status:m.status,claims:[],native:'NATIVE_NOT_TESTED'};
+const initial=()=>({...clone(g.initial_state),location:'ww_boundary',blocked:[],bags:[],specimen_owner:'sealed',receipts:{},reserve:{maintenance:false,assay:false,priming:0,protection:0,service_supplies:0}});
+const allowed=(x,s)=>Object.entries(x.requires||{}).every(([k,v])=>Array.isArray(v)?v.includes(s[k]):s[k]===v)&&Object.entries(x.min||{}).every(([k,v])=>s[k]>=v);
+function invariant(s){ok(['sealed','player','lost'].includes(s.specimen_owner)||s.specimen_owner.startsWith('bag:'),'owner domain');const n=Number(s.specimen_owner==='sealed')+Number(s.carrying_specimen)+s.bags.filter(b=>b.payload.carrying_specimen).length+Number(s.specimen_owner==='lost');ok(n===1,'one physical specimen');ok((s.specimen_owner==='player')===s.carrying_specimen,'player owner');if(s.specimen_owner.startsWith('bag:'))ok(s.bags.some(b=>b.id===s.specimen_owner.slice(4)&&b.payload.carrying_specimen),'bag identity');if(s.specimen_owner!=='sealed')ok(s.specimen_taken,'receipt stays spent');for(const k of ['priming','protection','service_supplies','cargo_free'])ok(s[k]>=0,'nonnegative '+k);}
+function perform(s,id,uuid,phase='commit'){
+ if(uuid in s.receipts)return clone(s);
+ let t=clone(s),x=edges[id]||acts[id];
+ if(x){if(s.location!==(x.from||x.node)||s.blocked.includes(id)||!allowed(x,s))return clone(s);for(const[k,v]of Object.entries(x.debit))t[k]-=v;Object.assign(t,x.set);if(x.from)t.location=x.to;if(id==='take_specimen'){if(s.specimen_owner!=='sealed')return clone(s);t.specimen_owner='player';}}
+ else if(id==='withdraw_reserve'){
+  if(s.location!=='ww_boundary'||!Object.values(s.reserve).some(Boolean))return clone(s);
+  // No overwrite of existing credentials; leave duplicates in reserve.
+  for(const k of ['maintenance','assay'])if(!t[k]){t[k]=t.reserve[k];t.reserve[k]=false;}
+  for(const k of ['priming','protection','service_supplies']){t[k]+=t.reserve[k];t.reserve[k]=0;}
+ }else if(id.startsWith('recover:')){
+  const b=t.bags.find(b=>b.id===id.slice(8));if(!b||b.node!==s.location||b.recovered)return clone(s);
+  if(b.payload.carrying_specimen&&s.cargo_free<1)return clone(s);
+  for(const k of ['priming','protection','service_supplies']){t[k]+=b.payload[k];b.payload[k]=0;}
+  for(const k of ['maintenance','assay'])if(!t[k]){t[k]=b.payload[k];b.payload[k]=false;}
+  if(b.payload.carrying_specimen){t.carrying_specimen=true;t.cargo_free--;b.payload.carrying_specimen=false;t.specimen_owner='player';}
+  b.recovered=!Object.values(b.payload).some(Boolean);
+ }else throw Error(id);
+ if(phase==='before_commit')return clone(s);
+ t.receipts[uuid]={id,committed:true};return t; // after_commit reload uses this exact snapshot
+}
+function die(s,id){if(s.bags.some(b=>b.id===id))return clone(s);const t=clone(s),payload={};for(const k of ['maintenance','assay','priming','protection','service_supplies','carrying_specimen']){payload[k]=t[k];t[k]=typeof t[k]==='boolean'?false:0;}t.bags.push({id,node:s.location,payload,recovered:false});if(payload.carrying_specimen)t.specimen_owner='bag:'+id;t.location='ww_boundary';t.cargo_free=1;return t;}
+const nodes=new Set(g.nodes.map(n=>n.id));ok(nodes.size===g.nodes.length&&nodes.size===11,'node IDs');ok(Object.keys(edges).length===23,'23 unique edges');ok(Object.keys(acts).length===g.actions.length,'action IDs');for(const e of g.edges)ok(nodes.has(e.from)&&nodes.has(e.to),'endpoints');for(const a of g.actions)ok(nodes.has(a.node),'action node');
+for(const c of g.rejection_cases){const x=edges[c.action]||acts[c.action],s={...initial(),...c.overrides,location:x.from||x.node};ok(!allowed(x,s),'independent rejection');assert.deepEqual(perform(s,c.action,'reject'),s);}
+for(const r of g.routes){let s={...initial(),...r.initial_overrides},visited=[s.location];let i=0;for(const st of r.steps){let before=s;s=perform(s,st.id,'route'+i++);ok(JSON.stringify(s)!==JSON.stringify(before),'route enabled '+st.id);if(st.kind==='edge')visited.push(s.location);invariant(s);}assert.deepEqual(visited,r.ordered_nodes);for(const[k,v]of Object.entries(r.expected))assert.deepEqual(s[k],v);ok(s.location===r.exit,'route exit');report.claims.push({id:'route_'+r.id,verdict:'PASS'});}
+function reachable(s,omit23=false){const q=[s.location],seen=new Set(q);for(let i=0;i<q.length;i++)for(const e of g.edges)if(e.from===q[i]&&!(omit23&&e.id==='e23')&&!s.blocked.includes(e.id)&&allowed(e,s)&&!seen.has(e.to)){seen.add(e.to);q.push(e.to);}return seen;}
+const ce={...initial(),location:'ww_annex',blocked:['e18']};ok(!reachable(ce,true).has('ww_boundary'),'reproduce old CE01');ok(reachable(ce).has('ww_boundary'),'new e23');ok(!reachable({...ce,blocked:['e18','e23']}).has('ww_boundary'),'double block remains FAIL');
+let pass=0,fail=0;for(const location of nodes)for(const power of ['none','drainage','ventilation'])for(const maintenance of [false,true])for(const assay of [false,true])for(const protection of [0,2])for(const priming of [0,1])for(const blocked of [[],['e18'],['e23'],['e18','e23']]){const s={...initial(),location,power,maintenance,assay,protection,priming,blocked};reachable(s).has('ww_boundary')?pass++:fail++;}
+report.escape_enumeration={pass,fail,total:pass+fail,scope:'Fixed state movement-only reachability (no time/debit along route). Failures retained, not suppressed.'};
+let deep={...initial(),...m.full_loss_fixture,specimen_owner:'player'};invariant(deep);let dead=die(deep,'death-1');dead.power='none';invariant(dead);assert.deepEqual(dead.bags[0].payload,{maintenance:true,assay:true,priming:1,protection:3,service_supplies:1,carrying_specimen:true});ok(dead.location==='ww_boundary','respawn');
+// BFS includes all graph actions and edges, even free sign_out/boss victory:
+// this over-approximates actual available resources; failure is stronger.
+function search(start){const q=[{s:start,trace:[]}],seen=new Set();let bagReached=false;for(let i=0;i<q.length;i++){const {s,trace}=q[i];const key=JSON.stringify({...s,receipts:{}});if(seen.has(key))continue;seen.add(key);if(s.location==='ww_collection')bagReached=true;if(s.location==='ww_boundary'&&s.carrying_specimen)return {found:true,trace,states:seen.size,bagReached};for(const id of [...Object.keys(edges),...Object.keys(acts),'recover:death-1']){const t=perform(s,id,'bfs');t.receipts={};if(JSON.stringify({...s,receipts:{}})!==JSON.stringify(t))q.push({s:t,trace:[...trace,id]});}}return {found:false,states:seen.size,bagReached};}
+const exhausted=search(dead);ok(!exhausted.found&&!exhausted.bagReached,'full-loss inaccessible even permissive search');report.claims.push({id:'P0_empty_external_stock',verdict:'FAIL',...exhausted,reason:'priming and protection cannot increase outside bag; collection unreachable'});
+let rescue=clone(dead);rescue.reserve=clone(m.conditional_reserve.inventory);const trace=[];for(const[idIndex,id]of m.conditional_reserve.trace.entries()){rescue=perform(rescue,id,'rescue'+idIndex);invariant(rescue);trace.push({event:id,at:rescue.location,owner:rescue.specimen_owner,priming:rescue.priming,protection:rescue.protection});}ok(rescue.location==='ww_boundary'&&rescue.carrying_specimen,'conditional recovered');ok(rescue.bags[0].payload.carrying_specimen===false,'bag emptied sample');ok(rescue.specimen_taken&&rescue.priming===1&&rescue.protection===5,'original bag supplies transferred with spent entry costs');report.claims.push({id:'preowned_finite_reserve',verdict:'PASS_CONDITIONAL',trace});
+const repeatCases=[['calibrate',{location:'ww_gallery',maintenance:true,power:'drainage',protection:4,gallery_record:true}],['reissue_assay',{location:'ww_service',maintenance:true,assay:true,service_record:true,service_supplies:2}],['certify',{location:'ww_service',maintenance:true,assay:true,gallery_record:true,service_supplies:2}],['start_ventilation',{location:'ww_distributor',maintenance:true,power:'ventilation',priming:2}],['take_specimen',{location:'ww_collection',assay:true,power:'ventilation',protection:3,specimen_taken:true}],['take_supplies',{location:'ww_walk',ordinary_taken:true}],['take_residue',{location:'ww_gallery',power:'drainage',residue_taken:true,protection:4,cargo_free:2}],['defeat_custodian',{location:'ww_custodian',boss_defeated:true}]];
+for(const[id,over]of repeatCases){const s={...initial(),...over};assert.deepEqual(perform(clone(s),id,'repeat'),s);checks++;}
+for(const id of ['calibrate','reissue_assay','start_ventilation','take_specimen','take_supplies','take_residue']){const x=acts[id];let s={...initial(),location:x.node,maintenance:true,assay:id==='reissue_assay'?false:true,service_record:true,power:id==='calibrate'||id==='take_residue'?'drainage':id==='start_ventilation'?'none':'ventilation',priming:3,protection:4,service_supplies:3,cargo_free:3};assert.deepEqual(perform(s,id,'txn','before_commit'),s);const committed=perform(s,id,'txn');ok('txn'in committed.receipts,'commit');assert.deepEqual(perform(clone(committed),id,'txn'),committed);invariant(committed);const d=die(committed,'after');invariant(d);invariant(die(s,'before'));}
+const again=perform(rescue,'withdraw_reserve','withdraw-again');assert.deepEqual(again,rescue);const secondDeath=die(rescue,'death-2');invariant(secondDeath);ok(secondDeath.bags.length===2,'old bags retained');assert.deepEqual(die(secondDeath,'death-2'),secondDeath);
+let atBag={...clone(rescue),location:'ww_collection'};const repeatRecovery=perform(atBag,'recover:death-1','recover-new');ok(!repeatRecovery.bags[0].payload.carrying_specimen&&repeatRecovery.carrying_specimen,'second recovery cannot grant specimen');ok(repeatRecovery.priming===atBag.priming&&repeatRecovery.protection===atBag.protection,'no repeated recovered supplies');invariant(repeatRecovery);
+// Proposed obstruction transaction rejects BEFORE changing geometry. A preexisting
+// corrupted/double-blocked state still fails; this is not a repair/teleport.
+function blockMutation(s,id){const t=clone(s);t.blocked=[...new Set([...t.blocked,id])];return reachable(t).has('ww_boundary')?t:clone(s);}
+const one=blockMutation({...initial(),location:'ww_annex'},'e18');ok(one.blocked.includes('e18'),'single obstruction allowed');assert.deepEqual(blockMutation(one,'e23'),one);ok(!reachable({...one,blocked:['e18','e23']}).has('ww_boundary'),'invalid existing save remains blocked');
+let lost=clone(dead);lost.bags=[];lost.specimen_owner='lost';invariant(lost);ok(!search(lost).found,'destroyed bag cannot respawn sample');report.claims.push({id:'lost_bag_record',verdict:'FAIL',reason:'No conserved physical item recoverable; receipt not reset'});
+// Forced failure during queued startup: validate again at commit, not at click.
+let request={...initial(),location:'ww_distributor',maintenance:true,priming:1};let before=perform(request,'start_ventilation','switch','before_commit');before.maintenance=false;assert.deepEqual(perform(before,'start_ventilation','switch'),before);let after=perform(request,'start_ventilation','switch');after.power='none';assert.deepEqual(perform(after,'start_ventilation','switch'),after);ok(after.priming===0,'post-commit power failure does not refund/duplicate debit');
+report.claims.push({id:'repeat_and_interruptions',verdict:'PASS_MODEL_ONLY',reason:'Atomic JSON snapshots, repeated UUID and fresh redundant actions; not a real SaveService crash test'},{id:'mid_edge_switch_and_expiry',verdict:'NOT_PROVABLE',reason:m.temporal_safety.required_inequality},{id:'native_geometry_exposure',verdict:'NOT_PROVABLE'},{id:'external_economy_and_boss_balance',verdict:'NOT_PROVABLE'});
+report.assertions=checks;report.unit4='NOT_STARTED';report.exit_semantics='Exit 0 means oracle expectations passed INCLUDING expected FAIL counterexamples; never means universal recovery PASS.';
+console.log(JSON.stringify(report,null,2));

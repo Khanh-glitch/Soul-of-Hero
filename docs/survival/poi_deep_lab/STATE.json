@@ -1,8 +1,8 @@
 {
   "task": "SURV-POI-DEEP-001",
   "branch": "feature/surv-s6-poi-depth-001",
-  "unit": 2,
-  "status": "UNIT_2_COMPLETE",
+  "unit": 3,
+  "status": "UNIT3_DESIGN_BLOCKED",
   "design_status": "DESIGN_ONLY",
   "runtime_status": "NATIVE_NOT_TESTED",
   "selected_concept": "Whitewater Assay Works",
@@ -21,38 +21,44 @@
     "JOURNEY-11",
     "JOURNEY-12"
   ],
-  "last_completed_action": "Authored 11-node directed conditional mission graph; evaluated both route witnesses, three scoped failure escapes and four rejection witnesses.",
-  "next_atomic_action": "After independent review and explicit Unit 3 assignment, formalize power/exposure/credential/death state transitions and seek counterexamples, starting with U2: retrieve the unique specimen death bag when all portable supplies and credentials are inside the collection.",
+  "last_completed_action": "Completed bounded adversarial model and reproducible validator; reproduced P0 full-loss FAIL, added conditional finite-reserve rescue, fixed redundant debits and single-block annex exit.",
+  "next_atomic_action": "Review P0 failure and choose recovery/loss policy; then amend only the selected rescue preconditions and rerun this validator.",
   "unresolved": [
-    "U1: physical egress before exposure/flood death",
-    "U2: deep death bag recovery with lost supplies and credentials",
-    "U3: sole emergency passage blocked",
-    "U4: exhaustive loss/depletion/reload and outside supply availability",
-    "U5: combat cost, shortcut geometry and readability"
+    "P0 FAIL: empty external reserve cannot reach deep bag; Control Tower must choose explicit optional-loss or obtainable replacement contract",
+    "U1/CE04 NOT_PROVABLE physical egress/flood/exposure and mid-edge safety",
+    "U3 both annex exits blocked FAIL; proposed mutation guard not native implementation",
+    "U4 destroyed bag FAIL and economy availability unverified",
+    "U5 balance/pixel/geometry not tested"
   ],
   "assumptions": [
-    "Emergency service spine is dry and traversable, physical safety unproven",
-    "Resource units are abstract route witnesses, not production balance",
-    "Outside preparation materials available without mandatory unique Core or this POI",
-    "Credential flags represent reusable carried authorization; replacement mechanics are proposals"
+    "All state/transaction code is a design reference oracle, not SaveService implementation",
+    "Finite pre-owned reserve witness is conditional, not a verified outside source",
+    "e23 needs visible mechanical door and actual corridor clearance; double blockage still fails",
+    "Zero-cost graph egress does not imply time-safe physical escape"
   ],
   "verification": {
-    "json": "PASS",
-    "node_ids": "PASS: 11 unique",
-    "edge_references": "PASS: 22 directed edges",
-    "routes": "PASS: A and B ordered nodes, predicates, debits, effects, exits and expected rewards",
-    "failure_witnesses": "PASS: F_power/F_lost_credentials/F_expired structural escapes only",
-    "rejections": "PASS: missing power, assay, protection and priming independently rejected",
-    "independent_review": "GRAPH_STRUCTURAL_REVIEW_PENDING",
-    "exhaustive_softlock": "NOT_TESTED; Unit 3",
+    "validator": "node docs/survival/poi_deep_lab/validate_unit3.mjs",
+    "result": "Oracle expectations pass, including expected design FAIL counterexamples",
+    "bounded_escape": {
+      "pass": 2068,
+      "fail": 44,
+      "total": 2112,
+      "scope": "Fixed state movement-only reachability (no time/debit along route). Failures retained, not suppressed."
+    },
+    "full_loss": "FAIL; 72 BFS states; no bag reachability even with permissive free sign_out/boss assumptions",
+    "conditional_recovery": "PASS_CONDITIONAL: finite pre-owned reserve only",
+    "novice_and_deep_routes": "PASS unchanged ordered Unit2 witnesses",
+    "transaction_model": "PASS repeated actions/UUID, death before/after commit, custody, reload snapshots, no free refill",
     "native": "NOT_TESTED",
-    "web": "NOT_TESTED",
-    "balance": "NOT_TESTED"
+    "physical_safety": "NOT_PROVABLE",
+    "independent_review": "PENDING"
   },
   "docs_sync": "DOCS_SYNC_PENDING; recovery scope prioritizes isolated Git checkpoint",
   "other_agents_blocked": false,
   "unit_2_started": true,
-  "unit_3_started": false,
-  "last_pushed_commit": "6823384a5fcbe9ce78aac90f4259bc2ac710955a",
-  "last_pushed_commit_scope": "Verified pushed Unit 2 graph commit. This metadata follow-up is identified by checkpoint_commit; final branch SHA is on issue #18."
+  "unit_3_started": true,
+  "last_pushed_commit": "2ee3c5145c51e8e1d6e8c07a397d7f2849498484",
+  "last_pushed_commit_scope": "Verified Unit2 baseline; this Unit3 checkpoint resolved by checkpoint_commit and final Issue18 publication.",
+  "unit_3_analysis_complete": true,
+  "unit_4_started": false
 }
