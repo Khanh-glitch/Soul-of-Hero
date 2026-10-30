@@ -37,7 +37,7 @@ class ArtifactBuildTests(unittest.TestCase):
     def test_summary_headline_is_honest(self) -> None:
         headline = self.artifacts["summary.json"]["headline"]
         self.assertEqual(headline["pois_authored"], 118)
-        self.assertEqual(headline["pois_loot_bearing_natively"], 0)
+        self.assertEqual(headline["pois_loot_bearing_in_authored_contract"], 0)
         self.assertEqual(headline["loot_tables_that_can_emit_a_core"], 0)
         self.assertEqual(headline["a3_loot_sources_with_unresolved_a1_poi"], 16)
         self.assertEqual(headline["resource_nodes_authored_not_crates"], 178)

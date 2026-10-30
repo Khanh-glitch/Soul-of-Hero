@@ -3,6 +3,22 @@
 Every item below is `NOT_TESTED` unless stated otherwise. Nothing in this list is "probably fine"; it is
 unknown, and no artifact in this repository should be read as claiming otherwise.
 
+## Where the player-readiness claims stop
+
+- **Static reads only.** `results/product.json` is computed from 18 sha256-pinned files plus a tree-wide index.
+  "Mounted" means a production scene references the file; it does **not** mean the scene runs, draws, accepts
+  input or survives a reload. Every such question is `NOT_TESTED`.
+- **The product snapshot can go stale.** It pins A0 `9d287f33` and A6 `8bc561df`; if either owner moves, the
+  audit describes the pinned commits, not their head. Re-run
+  `python3 tools/survival/balance/build_product_snapshot.py` to move the pin deliberately.
+- **Two blockers depend on assets A7 cannot see.** The locked avatar bodies (Craftpix 555940 / 419402) and the
+  gender-matched armour-1/armour-2 stages live in the user's Drive folder. Their absence from production code is
+  verified; their *existence and licensing* is not, and the armour stages are `SOURCE_BLOCKED` rather than
+  assumed.
+- **Five blockers are not a complete bug list.** They are the observations that stop a player today. Fixing them
+  makes the loop reachable, not good: feel, pacing, readability at 720p–4K and whether a Core is exciting stay
+  unmeasured until a human plays.
+
 ## Engine / native
 
 - **No Godot run.** No scene, no `SaveService`, no inventory, no death, no station, no POI interaction was

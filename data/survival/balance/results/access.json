@@ -1005,6 +1005,334 @@
       "status": "COVERED"
     }
   ],
+  "loot_identity": {
+    "a1_container_class_vocabulary": [],
+    "class_namespaced_targets": [
+      "poi:abandoned_institute",
+      "poi:blue_archive",
+      "poi:green_archive",
+      "poi:roadside_cache",
+      "poi:roadside_station",
+      "poi:sealed_archive",
+      "poi:specimen_vault_ember",
+      "poi:specimen_vault_frost",
+      "poi:specimen_vault_venom",
+      "poi:toxin_laboratory"
+    ],
+    "distinct_targets": 10,
+    "finding": "A3 loot records name class targets in a ':' namespace and regions in a bare vocabulary; A1 publishes 'poi_*' instance ids and 'r_*' regions. The gap is one missing shared identifier contract plus the physical instances it would imply - not 16 missing individual POIs.",
+    "instance_namespaced_targets": [],
+    "physical_container_instances_authored_by_a1": 0,
+    "record_count": 16,
+    "records": [
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_ember_core",
+        "source_id": "plan_drop_ember",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_frost_core",
+        "source_id": "plan_drop_frost",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:abandoned_institute",
+        "declared_region_id": "opening_marches",
+        "item_id": "plan_venom_core",
+        "source_id": "plan_drop_venom",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "grain_seed",
+        "source_id": "road_grain_seed",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "research_notes",
+        "source_id": "road_notes",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "iron_scrap",
+        "source_id": "road_scrap",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "moonleaf_seed",
+        "source_id": "road_seed",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi:roadside_cache",
+        "declared_region_id": "opening_marches",
+        "item_id": "knowledge_spares",
+        "source_id": "road_supplies",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      {
+        "declared_poi_id": "poi:green_archive",
+        "declared_region_id": "opening_marches",
+        "item_id": "blue_seal",
+        "source_id": "seal_blue_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "green_archive"
+      },
+      {
+        "declared_poi_id": "poi:roadside_station",
+        "declared_region_id": "opening_marches",
+        "item_id": "green_seal",
+        "source_id": "seal_green_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_station"
+      },
+      {
+        "declared_poi_id": "poi:blue_archive",
+        "declared_region_id": "opening_marches",
+        "item_id": "purple_seal",
+        "source_id": "seal_purple_seal",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "blue_archive"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_ember",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_ember",
+        "source_id": "specimen_ember",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_ember"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_frost",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_frost",
+        "source_id": "specimen_frost",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_frost"
+      },
+      {
+        "declared_poi_id": "poi:specimen_vault_venom",
+        "declared_region_id": "sealed_archive",
+        "item_id": "core_venom",
+        "source_id": "specimen_venom",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_venom"
+      },
+      {
+        "declared_poi_id": "poi:sealed_archive",
+        "declared_region_id": "sealed_archive",
+        "item_id": "ancient_catalyst",
+        "source_id": "vault_catalyst",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "sealed_archive"
+      },
+      {
+        "declared_poi_id": "poi:toxin_laboratory",
+        "declared_region_id": "mire_wetlands",
+        "item_id": "venom_spine",
+        "source_id": "venom_cache",
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "toxin_laboratory"
+      }
+    ],
+    "regions": [
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "mire_wetlands",
+        "resolves_to_a1_region": false
+      },
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "opening_marches",
+        "resolves_to_a1_region": false
+      },
+      {
+        "a1_region_example": "r_amberwood",
+        "declared_region_id": "sealed_archive",
+        "resolves_to_a1_region": false
+      }
+    ],
+    "regions_unresolved": [
+      "mire_wetlands",
+      "opening_marches",
+      "sealed_archive"
+    ],
+    "targets": {
+      "poi:abandoned_institute": {
+        "declared_poi_id": "poi:abandoned_institute",
+        "physical_instances_in_a1": 0,
+        "record_count": 3,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "plan_drop_ember",
+          "plan_drop_frost",
+          "plan_drop_venom"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "abandoned_institute"
+      },
+      "poi:blue_archive": {
+        "declared_poi_id": "poi:blue_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_purple_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "blue_archive"
+      },
+      "poi:green_archive": {
+        "declared_poi_id": "poi:green_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_blue_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "green_archive"
+      },
+      "poi:roadside_cache": {
+        "declared_poi_id": "poi:roadside_cache",
+        "physical_instances_in_a1": 0,
+        "record_count": 5,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "road_grain_seed",
+          "road_notes",
+          "road_scrap",
+          "road_seed",
+          "road_supplies"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_cache"
+      },
+      "poi:roadside_station": {
+        "declared_poi_id": "poi:roadside_station",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "opening_marches"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "seal_green_seal"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "roadside_station"
+      },
+      "poi:sealed_archive": {
+        "declared_poi_id": "poi:sealed_archive",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "vault_catalyst"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "sealed_archive"
+      },
+      "poi:specimen_vault_ember": {
+        "declared_poi_id": "poi:specimen_vault_ember",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_ember"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_ember"
+      },
+      "poi:specimen_vault_frost": {
+        "declared_poi_id": "poi:specimen_vault_frost",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_frost"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_frost"
+      },
+      "poi:specimen_vault_venom": {
+        "declared_poi_id": "poi:specimen_vault_venom",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "sealed_archive"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "specimen_venom"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "specimen_vault_venom"
+      },
+      "poi:toxin_laboratory": {
+        "declared_poi_id": "poi:toxin_laboratory",
+        "physical_instances_in_a1": 0,
+        "record_count": 1,
+        "regions": [
+          "mire_wetlands"
+        ],
+        "resolves_to_a1_instance": false,
+        "source_ids": [
+          "venom_cache"
+        ],
+        "target_kind": "CLASS_NAMESPACE",
+        "target_name": "toxin_laboratory"
+      }
+    },
+    "targets_resolving_to_a1_instance": []
+  },
+  "loot_identity_legend": {
+    "physical instance": "a placed copy of a class in the world (A1 authors 0)",
+    "poi id": "identifier scheme: A3 'poi:name' vs A1 'poi_name'",
+    "region": "A3 names 3 bare regions; A1 publishes 11 'r_*' regions, disjoint vocabularies",
+    "source class": "the kind of container that yields it, e.g. 'roadside_cache' (10 distinct)",
+    "source record": "one item-yield row in A3 sources.json (16 of them)"
+  },
   "loot_source_summary": {
     "loot_sources_total": 16,
     "loot_sources_unresolved": [
@@ -1077,7 +1405,7 @@
           "cap_seal_1"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
         "poi_id": "poi_crown_waystation",
         "requires": [],
@@ -1091,7 +1419,7 @@
           "cap_power_1"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
         "poi_id": "poi_crown_relay_shed",
         "requires": [
@@ -1105,7 +1433,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_quarry",
         "requires": [],
@@ -1117,7 +1445,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_orchard_gate",
         "requires": [],
@@ -1129,7 +1457,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_ferry_pile",
         "requires": [],
@@ -1141,7 +1469,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_barrow_field",
         "requires": [
@@ -1157,7 +1485,7 @@
           "cap_thermal"
         ],
         "hazard_id": "hz_frost_ridge",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_wardhouse",
         "requires": [
@@ -1171,7 +1499,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_frost_ridge",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_ice_cave",
         "requires": [
@@ -1185,7 +1513,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_frost_ridge",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_observatory",
         "requires": [
@@ -1200,7 +1528,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_goat_pass",
         "requires": [
@@ -1214,7 +1542,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_frost_ridge",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_miners_hut",
         "requires": [
@@ -1228,7 +1556,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_tarn_shrine",
         "requires": [
@@ -1244,7 +1572,7 @@
           "cap_stormward"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_light",
         "requires": [
@@ -1260,7 +1588,7 @@
           "cap_stormward"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_signal",
         "requires": [
@@ -1274,7 +1602,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_wreck",
         "requires": [
@@ -1288,7 +1616,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_smuggler",
         "requires": [
@@ -1302,7 +1630,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_gullery",
         "requires": [],
@@ -1314,7 +1642,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glasswind_watch",
         "requires": [
@@ -1330,7 +1658,7 @@
           "cap_seal_2"
         ],
         "hazard_id": "hz_ember_gas",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_old_forge",
         "requires": [
@@ -1348,7 +1676,7 @@
           "cap_climb"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_piton_works",
         "requires": [
@@ -1362,7 +1690,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_ember_gas",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_convict_mine",
         "requires": [
@@ -1377,7 +1705,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_cinder_camp",
         "requires": [
@@ -1391,7 +1719,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_ember_gas",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_fumarole",
         "requires": [
@@ -1405,7 +1733,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_basalt_gate",
         "requires": [
@@ -1419,7 +1747,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_caravan_serai",
         "requires": [
@@ -1435,7 +1763,7 @@
           "cap_boat"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_drydock",
         "requires": [
@@ -1449,7 +1777,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_saffron_heat",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_salt_pan",
         "requires": [
@@ -1463,7 +1791,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_caravan",
         "requires": [
@@ -1477,7 +1805,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_wadi_well",
         "requires": [],
@@ -1489,7 +1817,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_coral_tomb",
         "requires": [
@@ -1503,7 +1831,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_customs",
         "requires": [
@@ -1519,7 +1847,7 @@
           "cap_deepward"
         ],
         "hazard_id": "hz_verdant_spore",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_root_lift",
         "requires": [
@@ -1535,7 +1863,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_verdant_spore",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_canopy_temple",
         "requires": [
@@ -1551,7 +1879,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_verdant_spore",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_spore_hollow",
         "requires": [
@@ -1565,7 +1893,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_terraces",
         "requires": [
@@ -1579,7 +1907,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_hunter_camp",
         "requires": [
@@ -1593,7 +1921,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_river_gate",
         "requires": [
@@ -1610,7 +1938,7 @@
           "cap_seal_3"
         ],
         "hazard_id": "hz_pearl_tide",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_customs",
         "requires": [
@@ -1628,7 +1956,7 @@
           "cap_tide_ward"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_stilt_village",
         "requires": [
@@ -1642,7 +1970,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_pearl_tide",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_grotto",
         "requires": [
@@ -1657,7 +1985,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_smuggler",
         "requires": [
@@ -1672,7 +2000,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_beacon",
         "requires": [
@@ -1686,7 +2014,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_nursery",
         "requires": [
@@ -1700,7 +2028,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_mill",
         "requires": [
@@ -1716,7 +2044,7 @@
           "cap_filter"
         ],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_apothecary",
         "requires": [
@@ -1730,7 +2058,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_orchard",
         "requires": [],
@@ -1742,7 +2070,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_barrow",
         "requires": [
@@ -1756,7 +2084,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_ferry",
         "requires": [],
@@ -1768,7 +2096,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amberwood_watch",
         "requires": [],
@@ -1780,7 +2108,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_piles",
         "requires": [],
@@ -1792,7 +2120,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_causeway",
         "requires": [
@@ -1806,7 +2134,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_observatory",
         "requires": [
@@ -1820,7 +2148,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_reed_holt",
         "requires": [],
@@ -1832,7 +2160,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_ferry",
         "requires": [
@@ -1846,7 +2174,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mirrormere_smuggler",
         "requires": [
@@ -1860,7 +2188,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_sunken_pressure",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_cenote",
         "requires": [
@@ -1874,7 +2202,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_graft",
         "requires": [
@@ -1888,7 +2216,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_tower",
         "requires": [
@@ -1902,7 +2230,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_sunken_pressure",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_subspring",
         "requires": [
@@ -1916,7 +2244,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_watch",
         "requires": [
@@ -1930,7 +2258,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_wreck",
         "requires": [
@@ -1944,7 +2272,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_ashwater_miasma",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_pump",
         "requires": [
@@ -1960,7 +2288,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_ashwater_miasma",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_shrine",
         "requires": [
@@ -1975,7 +2303,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_boardwalk",
         "requires": [
@@ -1989,7 +2317,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_resurgence",
         "requires": [
@@ -2003,7 +2331,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": "hz_ashwater_miasma",
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_bog_camp",
         "requires": [
@@ -2018,7 +2346,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_watch",
         "requires": [
@@ -2032,7 +2360,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_north_watch",
         "requires": [],
@@ -2044,7 +2372,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_rim_shrine",
         "requires": [
@@ -2058,7 +2386,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_old_signal",
         "requires": [
@@ -2072,7 +2400,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_tuff_terrace",
         "requires": [],
@@ -2084,7 +2412,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_herder_camp",
         "requires": [],
@@ -2096,7 +2424,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_north_gate",
         "requires": [
@@ -2110,7 +2438,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_rime_cairn",
         "requires": [
@@ -2124,7 +2452,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_glacier_mill",
         "requires": [
@@ -2139,7 +2467,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_avalanche_hut",
         "requires": [
@@ -2153,7 +2481,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glass_north_cliff",
         "requires": [
@@ -2167,7 +2495,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glass_aukery",
         "requires": [],
@@ -2179,7 +2507,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_east_watch",
         "requires": [
@@ -2193,7 +2521,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_ash_quarry",
         "requires": [
@@ -2207,7 +2535,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_south_pan",
         "requires": [
@@ -2221,7 +2549,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_south_watch",
         "requires": [
@@ -2235,7 +2563,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amber_west_holt",
         "requires": [],
@@ -2247,7 +2575,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amber_west_barrow",
         "requires": [
@@ -2261,7 +2589,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mere_east_pile",
         "requires": [],
@@ -2273,7 +2601,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_south_gate",
         "requires": [
@@ -2288,7 +2616,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_south_shrine",
         "requires": [
@@ -2302,7 +2630,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_east_beacon",
         "requires": [
@@ -2316,7 +2644,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_east_nursery",
         "requires": [
@@ -2331,7 +2659,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_south_spring",
         "requires": [
@@ -2345,7 +2673,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_south_pump",
         "requires": [
@@ -2360,7 +2688,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_south_shrine",
         "requires": [
@@ -2374,7 +2702,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_west_boardwalk",
         "requires": [
@@ -2389,7 +2717,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_south_mill",
         "requires": [
@@ -2403,7 +2731,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_south_barrow",
         "requires": [
@@ -2417,7 +2745,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_south_watch",
         "requires": [],
@@ -2429,7 +2757,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_south_quarry",
         "requires": [],
@@ -2441,7 +2769,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_crown_south_orchard",
         "requires": [],
@@ -2453,7 +2781,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_glass_tide_watch",
         "requires": [
@@ -2467,7 +2795,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_saffron_tide_watch",
         "requires": [
@@ -2481,7 +2809,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_verdant_east_blind",
         "requires": [
@@ -2495,7 +2823,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_frost_south_watch",
         "requires": [
@@ -2509,7 +2837,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ember_south_watch",
         "requires": [
@@ -2523,7 +2851,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_ashwater_south_boardwalk",
         "requires": [
@@ -2538,7 +2866,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_amber_edge_watch",
         "requires": [],
@@ -2550,7 +2878,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_mere_south_pile",
         "requires": [],
@@ -2562,7 +2890,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_sunken_west_spring",
         "requires": [
@@ -2576,7 +2904,7 @@
         "content_readiness": "WORLD_SITE_CONTRACT_ONLY",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "CONTRACT_ONLY_NOT_PLAYABLE",
         "poi_id": "poi_pearl_north_beacon",
         "requires": [
@@ -2590,7 +2918,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_crypt",
         "requires": [],
@@ -2602,7 +2930,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_ossuary",
         "requires": [],
@@ -2614,7 +2942,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_archive",
         "requires": [],
@@ -2626,7 +2954,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_reliquary",
         "requires": [],
@@ -2638,7 +2966,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_crucible",
         "requires": [],
@@ -2650,7 +2978,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_relay",
         "requires": [],
@@ -2662,7 +2990,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_beacon",
         "requires": [],
@@ -2674,7 +3002,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_divided",
         "requires": [],
@@ -2686,7 +3014,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_gate",
         "requires": [],
@@ -2698,7 +3026,7 @@
         "content_readiness": "PRESERVED_BASELINE",
         "grants": [],
         "hazard_id": null,
-        "loot_bearing_natively": false,
+        "loot_bearing_in_authored_contract": false,
         "playability": "SHIPPED_LEGACY_SCENE_NO_A3_LOOT",
         "poi_id": "legacy_lm_throne",
         "requires": [],

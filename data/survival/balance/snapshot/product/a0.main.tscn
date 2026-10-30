@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://6vgqddldpmgr"]
+
+[ext_resource type="Script" uid="uid://cn22x33uns6pn" path="res://game/main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://game/levels/crypt_entrance.tscn" id="2_level"]
+[ext_resource type="PackedScene" path="res://game/characters/knight/knight.tscn" id="3_knight"]
+[ext_resource type="PackedScene" path="res://game/ui/HUD.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://game/tutorial/level_one_tutorial.tscn" id="5_tutorial"]
+[ext_resource type="PackedScene" path="res://game/feedback/combat_feedback.tscn" id="6_feedback"]
+
+[node name="Game" type="Node2D" unique_id=246770996 groups=["game_root"]]
+script = ExtResource("1_main")
+
+[node name="Background" type="Parallax2D" parent="." unique_id=619509543]
+z_index = -30
+scroll_scale = Vector2(0.08, 0.04)
+repeat_size = Vector2(640, 360)
+repeat_times = 4
+
+[node name="Color" type="Polygon2D" parent="Background" unique_id=916696396]
+color = Color(0.036, 0.021, 0.058, 1)
+polygon = PackedVector2Array(0, 0, 640, 0, 640, 360, 0, 360)
+
+[node name="Level" parent="." unique_id=111191861 instance=ExtResource("2_level")]
+
+[node name="WorldTint" type="CanvasModulate" parent="." unique_id=930425954]
+color = Color(1, 1, 1, 1)
+
+[node name="Knight" parent="." unique_id=1761150926 instance=ExtResource("3_knight")]
+position = Vector2(104, 104)
+
+[node name="CombatFeedback" parent="." unique_id=498391417 instance=ExtResource("6_feedback")]
+
+[node name="HUD" parent="." unique_id=1568423667 instance=ExtResource("4_hud")]
+
+[node name="LevelOneTutorial" parent="." unique_id=681610634 instance=ExtResource("5_tutorial")]

@@ -1,0 +1,348 @@
+{
+  "checks": [
+    {
+      "check_id": "PROD-01",
+      "closure_signal": "add one home-screen destination whose scene loads the A1 world/POI layer, then PROD-01 = PASS",
+      "evidence": [
+        {
+          "fact": "FUNCTION_SCENE_PATHS keys",
+          "file": "game/ui/screens/home/home_map_screen.gd",
+          "value": [
+            "bestiary",
+            "campaign",
+            "hero_roster",
+            "modes",
+            "settings",
+            "storage"
+          ]
+        },
+        {
+          "fact": "survival-like keys",
+          "file": "game/ui/screens/home/home_map_screen.gd",
+          "value": []
+        },
+        {
+          "fact": "mounted player/level refs",
+          "file": "game/main.tscn",
+          "value": [
+            "game/overworld/chapter1_overworld.gd"
+          ]
+        },
+        {
+          "fact": "survival UI scenes referenced by a production scene",
+          "value": []
+        }
+      ],
+      "owner": "A0 (mount) + A1 (scene)",
+      "player_impact": "No destination on the home screen opens survival, a world map, a POI or a container. The player can only choose ['bestiary', 'campaign', 'hero_roster', 'modes', 'settings', 'storage']. Everything A1/A3 authored is unreachable in the mounted build, so loot discovery cannot be experienced at all.",
+      "status": "FAIL",
+      "title": "Player can reach the survival / exploration loop"
+    },
+    {
+      "check_id": "PROD-02",
+      "closure_signal": "mount one container scene that calls an A3 table and grants through SaveService, then PROD-02 = PASS",
+      "evidence": [
+        {
+          "fact": "A3 loot tables",
+          "value": [
+            "roadside_cache",
+            "specimen_vault"
+          ]
+        },
+        {
+          "fact": "loot tables referenced by pinned production files",
+          "value": []
+        },
+        {
+          "fact": "files scanned",
+          "value": 18
+        },
+        {
+          "fact": "opened() signal",
+          "file": "game/world/interactables/chest.gd",
+          "value": [
+            "score_reward: int, contained_sigil: bool"
+          ]
+        },
+        {
+          "fact": "chest grants inventory items",
+          "value": false
+        }
+      ],
+      "owner": "A0 (mount) + A3 (table binding)",
+      "player_impact": "None of the 18 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
+      "status": "FAIL",
+      "title": "Something the player can open hands out authored loot"
+    },
+    {
+      "check_id": "PROD-03",
+      "closure_signal": "mount the chosen 555940/419402 body and one armour-stage layer per grade; PROD-03 = PASS only when a production scene references the canonical source",
+      "evidence": [
+        {
+          "fact": "mounted character scene",
+          "file": "game/main.tscn",
+          "value": "game/characters/knight/knight.tscn"
+        },
+        {
+          "fact": "overworld player scene",
+          "file": "game/overworld/chapter1_overworld.gd",
+          "value": [
+            "game/overworld/chapter1_overworld.gd"
+          ]
+        },
+        {
+          "fact": "production refs to canonical sources",
+          "value": {
+            "180537": 0,
+            "419402": 0,
+            "555940": 0
+          }
+        },
+        {
+          "fact": "production refs to swordsman 180537 (not a gender match)",
+          "value": 0
+        },
+        {
+          "fact": "armour-stage art referenced in production",
+          "value": []
+        }
+      ],
+      "owner": "A0 (mount) + art source (A6)",
+      "player_impact": "The mounted player body is `game/characters/knight/knight.tscn` (Knight art), not the bald Craftpix 555940/419402 adventurers the user locked. Zero production files reference either canonical source ({'555940': 0, '419402': 0, '180537': 0}), and no armour-stage sprite is referenced at all ([]). Any readiness note that presents the current body as the accepted avatar is therefore wrong; the armour-1/armour-2 frames remain SOURCE_BLOCKED.",
+      "status": "FAIL",
+      "title": "Mounted player body is the avatar the user locked (D051)"
+    },
+    {
+      "check_id": "PROD-04",
+      "closure_signal": "move provenance/fixture vocabulary behind an opt-in debug panel and keep only player words in the default HUD; PROD-04 = PASS when zero such literals remain on visible label paths",
+      "evidence": [
+        {
+          "file": "a6.a0_storage_command_adapter.gd",
+          "line": 14,
+          "text": "schema",
+          "token": "schema"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 71,
+          "text": "schema",
+          "token": "schema"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 71,
+          "text": "soh.ui.journey.fixture.v1",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 241,
+          "text": "A6 READ-ONLY SCENARIO FIXTURE \u00b7 NOT LIVE GAMEPLAY",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 340,
+          "text": "Fixture progress only \u00b7 no save, inventory, world or combat writes",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 387,
+          "text": "%s \u2192 %s  (%s)\\nPer hit: %d \u00b7 hits: %d \u00b7 authored restock: %d sec\\n\\nA0 catalog: %s\\nCounts are catalog values; this fixt",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 403,
+          "text": "%s \u00b7 A0 piece id: bed_wood\\nCost: %d Oak Wood + %d Iron Scrap\\nFixture satchel: %d / %d Oak Wood \u00b7 %d / %d Iron Scrap\\n\\",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 419,
+          "text": "Fixture bed: %s \u00b7 %s\\nA0 validator: placed bed identity \u2192 enclosed room \u2192 clear wake cell \u2192 safe exit; activation rechec",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 471,
+          "text": "Selected preview: %s\\n\\n%s\\n\\nThe user selects a consequence, not a transaction. The fixture keeps the specimen present ",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 501,
+          "text": "If recipe knowledge is owner-confirmed permanent, craft %s:\\n%s\\n\\n%s T%d \u00b7 %d active ticks \u00b7 requires %s.\\n\\nCurrent fi",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 511,
+          "text": "fixture_formula_learned",
+          "token": "FIXTURE"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 512,
+          "text": "learned (fixture)",
+          "token": "FIXTURE"
+        }
+      ],
+      "owner": "A6",
+      "player_impact": "93 player-visible strings still carry developer vocabulary (BLOCKED_PENDING, FIXTURE, NO OWNER SNAPSHOT, NOT NATIVE, NOT_NATIVE, OWNER_PROJECTION, PREVIEW  \u00b7, PROJECTION, schema): fixture/provenance labels and raw identifiers. Today these live in the unmounted A6 HUD, so no player sees them yet \u2014 but mounting that HUD as-is would put debug text on screen.",
+      "status": "FAIL",
+      "title": "No developer/debug text on a survival player surface"
+    },
+    {
+      "check_id": "PROD-05",
+      "closure_signal": "keep fixture-only journeys labelled and never mount them as the product loop; PROD-05 stays PASS",
+      "evidence": [
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 419,
+          "text": "Fixture bed: %s \u00b7 %s\\nA0 validator: placed bed identity \u2192 enclosed room \u2192 clear wake cell \u2192 safe exit; activation rechecks identity and comm"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 446,
+          "text": "%s \u00b7 %s\\n%s\\nUses: %d / %d \u00b7 Condition: %d / %d\\nLocation: %s \u00b7 revision %d\\n\\nA3 catalog readiness: %s. A4 Gold/skill attestation is not ve"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 469,
+          "text": "Research reserves this exact instance. If the A3 research job completes, the specimen is consumed and recipe knowledge becomes permanent; ca"
+        },
+        {
+          "file": "a6.acceptance_journeys.gd",
+          "line": 482,
+          "text": "IRREVERSIBLE ON SUCCESSFUL RESEARCH COMPLETION\\nExact specimen: %s\\nMethod: specimen \u00b7 target: craft_core_ember\\nCost: 5 knowledge_spares \u00b7 "
+        },
+        {
+          "file": "a6.expedition_planner.gd",
+          "line": 641,
+          "text": "Not verified"
+        },
+        {
+          "file": "a6.survival_journal.gd",
+          "line": 280,
+          "text": "Not verified"
+        },
+        {
+          "file": "a6.survival_view_adapter.gd",
+          "line": 133,
+          "text": "Consumes %s only if the A3 research owner validates the exact specimen instance and commits successfully."
+        },
+        {
+          "file": "a6.survival_view_adapter.gd",
+          "line": 216,
+          "text": "Not verified"
+        },
+        {
+          "file": "a6.survival_view_adapter.gd",
+          "line": 241,
+          "text": "Not verified"
+        }
+      ],
+      "owner": "A6",
+      "player_impact": "Every completion word found is either a warning to the player or explicitly qualified. The risk here is not a fake screen today but the fixture acceptance journeys (A6 acceptance_journeys.gd) being presented as the real loop: they run on fixture data and say so.",
+      "status": "PASS",
+      "title": "No surface claims success that has not happened"
+    },
+    {
+      "check_id": "PROD-06",
+      "closure_signal": "declare one owner for status/needs and make the other a child view; PROD-06 = PASS with one entry",
+      "evidence": [
+        {
+          "fact": "status surfaces",
+          "value": [
+            "a0.hud.gd",
+            "a0.overworld_hud.gd",
+            "a6.player_first_hud.gd"
+          ]
+        },
+        {
+          "fact": "navigation signals",
+          "value": {
+            "a6.expedition_planner.gd": 2,
+            "a6.expedition_workspace.gd": 0,
+            "a6.survival_journal.gd": 2
+          }
+        }
+      ],
+      "owner": "A0 + A6",
+      "player_impact": "3 surfaces render player status (a0.hud.gd, a0.overworld_hud.gd, a6.player_first_hud.gd) and the survival navigation signals overlap ({'a6.expedition_planner.gd': 2, 'a6.survival_journal.gd': 2, 'a6.expedition_workspace.gd': 0}). A0's HUD and A6's survival HUD are two implementations of one job; shipping both would be exactly the duplicate-UI failure D052 names.",
+      "status": "WARN",
+      "title": "One owner per player-facing HUD job"
+    },
+    {
+      "check_id": "PROD-07",
+      "closure_signal": "keep the catalog connected; PROD-07 fails as soon as an item has neither source nor sink",
+      "evidence": [
+        {
+          "fact": "items",
+          "value": 56
+        },
+        {
+          "fact": "items with a source",
+          "value": 33
+        },
+        {
+          "fact": "unconnected items",
+          "value": []
+        },
+        {
+          "fact": "authored stations (no mounted interaction today)",
+          "value": [
+            "advanced_furnace",
+            "advanced_workbench",
+            "furnace",
+            "garden",
+            "hand",
+            "research",
+            "workbench"
+          ]
+        }
+      ],
+      "owner": "A3",
+      "player_impact": "All 56 authored items have a source, a recipe output, or a recipe/technology input, so the catalog itself contains no dead item. Player-facing *actions* (crafting, research, stations) are still unreachable, but that is the mount gap in PROD-01/02, not an unconnected item.",
+      "status": "PASS",
+      "title": "Every authored item is connected to a source or a sink"
+    }
+  ],
+  "claim_scope": "STATIC READ of pinned bytes. 'Mounted' means a production scene references the file. Whether it RUNS is NOT_TESTED here.",
+  "player_surface_facts": {
+    "canonical_avatar_production_refs": {
+      "180537": 0,
+      "419402": 0,
+      "555940": 0
+    },
+    "home_destinations": [
+      "bestiary",
+      "campaign",
+      "hero_roster",
+      "modes",
+      "settings",
+      "storage"
+    ],
+    "mounted_player_scene": "game/characters/knight/knight.tscn",
+    "survival_ui_scenes_mounted": [],
+    "visible_debug_tokens": 93
+  },
+  "schema": "soh.balance.product.v1",
+  "snapshot": {
+    "a0_head": "9d287f3337af3874720d9444e8c258e26162f24c",
+    "a6_head": "8bc561dfbf86469b24429e20c6a5bff298acf307",
+    "files_verified": 18,
+    "manifest": "data/survival/balance/snapshot/product_manifest.json"
+  },
+  "unknown_evidence": [
+    "whether the mounted scenes run without error (native run required)",
+    "whether the two armour-stage sprite sets exist in the user's Drive folder"
+  ],
+  "verdict_counts": {
+    "FAIL": 4,
+    "PASS": 2,
+    "WARN": 1
+  }
+}

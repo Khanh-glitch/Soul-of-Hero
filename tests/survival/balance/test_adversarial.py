@@ -86,5 +86,46 @@ class AdversarialSuiteTests(unittest.TestCase):
         self.assertEqual(codes_in(findings), self.baseline_codes)
 
 
+class BootstrapClosureTests(unittest.TestCase):
+    """BLK-4 closure probe: the cycle must disappear from data alone.
+
+    The probe does not "fix" anything in the repo. It builds an in-memory copy of
+    the model with ONE non-loot LIVE source of knowledge_spares and requires the
+    existing detector to stop reporting the cycle. That is the acceptance
+    criterion A3 can meet without touching any loot table.
+    """
+
+    def test_cycle_clears_when_one_non_loot_spare_source_exists(self) -> None:
+        import copy as _copy
+
+        from sohbalance import access
+
+        model = support.model()
+        baseline = access.bootstrap_cycle_findings(model)
+        self.assertTrue(any(f.code == "BOOTSTRAP_DEPENDENCY_CYCLE" for f in baseline))
+
+        docs = _copy.deepcopy(model.docs)
+        docs["a3.sources"]["sources"]["live_reclaimed_spares"] = {
+            "id": "live_reclaimed_spares",
+            "item_id": "knowledge_spares",
+            "acquisition": "harvest",
+            "region_id": "opening_marches",
+            "poi_id": None,
+            "yield_per_claim": 1,
+            "replenishment_seconds": 600,
+            "risk": "low",
+            "requirements": [],
+            "integration_status": "LIVE_SURV_010",
+            "provenance": ["TEST_FIXTURE"],
+            "balance_status": "TEST_FIXTURE_NOT_GAMEPLAY",
+        }
+        patched = type(model).from_docs(docs)
+        after = access.bootstrap_cycle_findings(patched)
+        self.assertFalse(any(f.code == "BOOTSTRAP_DEPENDENCY_CYCLE" for f in after))
+
+        # The real model and the real loot table are untouched.
+        self.assertTrue(any(f.code == "BOOTSTRAP_DEPENDENCY_CYCLE" for f in access.bootstrap_cycle_findings(support.model())))
+
+
 if __name__ == "__main__":
     unittest.main()

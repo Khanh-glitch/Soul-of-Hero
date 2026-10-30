@@ -59,7 +59,14 @@ Derived quantities:
 - `mean(item)`, `variance`, `p_at_least_one`, `max` per claim;
 - `covariance(a, b)` — items are mutually exclusive within a draw, so this is negative and is reported as a
   structural property, not an error;
-- `expected_claims_to_reach(item, k)` via `E[T] = Σ_t P(T > t)` with the sub-target mass evolved exactly;
+- `expected_claims_to_reach(item, k)`: `T` counts whole claims, so `T ≥ 1` and
+  `E[T] = Σ_{t≥0} P(T > t) = 1 + Σ_{t≥1} P(T > t)`. The `t = 0` term is `P(T > 0) = 1`; omitting it
+  under-reports every non-empty hitting time by exactly one claim (the defect the 2026-10-30 CT review found,
+  fixed here). The reported value is solved exactly backwards from `E[target] = 0`:
+  `E[k] = (1 + Σ_{q≥1} p_q E[k+q]) / (1 - p_0)` over `Fraction`s — no truncation. Above 128 units the module
+  falls back to the survival sum and reports the bound `E ≤ value + P(T>t)·(target-1)/p_success` instead of
+  pretending the tail is zero. Two independent checks run in the suite: the analytic oracles (guaranteed → cost
+  equals the target; fair coin → `2·target`) and `Σ_t (1 - P(T ≤ t))` computed through `p_reach_by`;
 - `p_reach_by(item, k, n)`;
 - `p_none_of(items)` — the exact "nothing useful this claim" probability.
 

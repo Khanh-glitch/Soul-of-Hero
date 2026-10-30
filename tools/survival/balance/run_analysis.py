@@ -29,6 +29,11 @@ def main(argv=None) -> int:
     parser.add_argument("--check", action="store_true", help="verify committed artifacts are current")
     parser.add_argument("--print-summary", action="store_true", help="print headline results")
     parser.add_argument(
+        "--print-blockers",
+        action="store_true",
+        help="print the consolidated player-facing blockers (read this instead of the findings list)",
+    )
+    parser.add_argument(
         "--check-upstream",
         action="store_true",
         help="also compare snapshots with the pinned upstream commits (needs those refs fetched); "
@@ -39,6 +44,19 @@ def main(argv=None) -> int:
 
     artifacts = report.build(include_upstream=args.check_upstream)
     results_dir = Path(args.results_dir)
+
+    if args.print_blockers:
+        payload = artifacts["blockers.json"]
+        print(payload["reduction"])
+        print()
+        for row in payload["blockers"]:
+            print(f"{row['blocker_id']}  [{row['evidence_class']}]  owner: {row['owner']}")
+            print(f"  {row['title']}")
+            print(f"  impact: {row['player_impact']}")
+            print(f"  fix:    {row['minimal_safe_correction']}")
+            print(f"  closes: {row['closure_test']}")
+            print()
+        return 0
 
     if args.check_upstream:
         from sohbalance.provenance import verify_snapshots, verify_upstream

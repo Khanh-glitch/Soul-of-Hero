@@ -585,21 +585,21 @@
     "table_id": "roadside_cache"
   },
   "research_gate": {
-    "gating_expected_claims": 2.525,
+    "gating_expected_claims": 3.525,
     "gating_item": "knowledge_spares",
     "note": "Only the existing roadside_cache table is assumed; the table's A3 POI is unresolved.",
     "p_gated_item_covered_in_10_claims": 0.997437,
     "per_item": {
       "iron_scrap": {
         "authoritative_source": "this_table",
-        "expected_claims": 0.5098,
+        "expected_claims": 1.5098,
         "mean_units_per_claim": 3.6,
         "p_covered_in_10_claims": 0.999998,
         "required_units": 3
       },
       "knowledge_spares": {
         "authoritative_source": "this_table",
-        "expected_claims": 2.5253,
+        "expected_claims": 3.5253,
         "mean_units_per_claim": 1.35,
         "p_covered_in_10_claims": 0.997437,
         "required_units": 4

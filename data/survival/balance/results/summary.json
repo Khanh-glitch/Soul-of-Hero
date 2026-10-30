@@ -95,6 +95,32 @@
       "tags": [
         "routes"
       ]
+    },
+    {
+      "assertion_id": "A13_expected_claims_includes_the_t0_survival_term",
+      "detail": "E[T] for 4 knowledge_spares is 3.525289745 claims (was reported as 2.525289745 before the t=0 fix)",
+      "holds": true,
+      "tags": [
+        "loot",
+        "math_correction"
+      ]
+    },
+    {
+      "assertion_id": "A14_blockers_are_few_owned_and_closable",
+      "detail": "the raw observation list is consolidated into 5 owned blockers, each with an executable closure test",
+      "holds": true,
+      "tags": [
+        "blockers",
+        "delivery"
+      ]
+    },
+    {
+      "assertion_id": "A15_product_checks_read_only_pinned_bytes",
+      "detail": "the product audit runs on sha256-pinned copies and reproduces the missing survival entry point",
+      "holds": true,
+      "tags": [
+        "product"
+      ]
     }
   ],
   "assertions_all_hold": true,
@@ -110,6 +136,11 @@
     "a3_loot_sources_total": 16,
     "a3_loot_sources_with_unresolved_a1_poi": 16,
     "adversarial_cases_passed": "24/24",
+    "canonical_avatar_production_refs": {
+      "180537": 0,
+      "419402": 0,
+      "555940": 0
+    },
     "findings_by_severity": {
       "BLOCKER": 0,
       "INFO": 9,
@@ -118,13 +149,21 @@
     },
     "loot_tables_authored": 2,
     "loot_tables_that_can_emit_a_core": 0,
+    "mounted_survival_ui_scenes": 0,
+    "observation_reduction": "57 observations -> 5 blockers (3 observations are traceability/hypothesis only)",
+    "player_facing_blockers": 5,
     "poi_playability": {
       "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
       "CONTRACT_ONLY_NOT_PLAYABLE": 106,
       "SHIPPED_LEGACY_SCENE_NO_A3_LOOT": 10
     },
     "pois_authored": 118,
-    "pois_loot_bearing_natively": 0,
+    "pois_loot_bearing_in_authored_contract": 0,
+    "product_checks": {
+      "FAIL": 4,
+      "PASS": 2,
+      "WARN": 1
+    },
     "resource_nodes_authored_not_crates": 178
   },
   "schema": "soh.balance.summary.v1",

@@ -126,7 +126,7 @@ class UnluckyAndBudgetTests(unittest.TestCase):
         table = tables_from_model(model)["roadside_cache"]
         result = sensitivity.research_gate_claims(model, table, "tech_smelting")
         self.assertEqual(result["gating_item"], "knowledge_spares")
-        self.assertAlmostEqual(result["gating_expected_claims"], 2.525, places=3)
+        self.assertAlmostEqual(result["gating_expected_claims"], 3.525, places=3)
         self.assertGreater(result["p_gated_item_covered_in_10_claims"], 0.99)
 
 

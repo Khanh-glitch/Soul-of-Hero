@@ -581,7 +581,7 @@ def capability_reachability(model, network: RouteNetwork) -> Dict[str, object]:
                 1 for poi_id in reachable_pois if model.playability(model.poi_index()[poi_id]) == "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED"
             ),
             "loot_bearing_reachable_pois": sum(
-                1 for poi_id in reachable_pois if model.is_loot_bearing_natively(model.poi_index()[poi_id])
+                1 for poi_id in reachable_pois if model.loot_bearing_in_authored_contract(model.poi_index()[poi_id])
             ),
         }
     return rows

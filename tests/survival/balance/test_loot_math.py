@@ -50,9 +50,16 @@ class RoadsideTableTests(unittest.TestCase):
         self.assertLess(covariance, 0.0)
 
     def test_expected_claims_to_reach_a_sink(self) -> None:
+        # Corrected value: the old 2.525289745 dropped the t = 0 survival term.
         expected = self.table.expected_claims_to_reach(self.model.items, "knowledge_spares", 4)
         self.assertIsNotNone(expected)
-        self.assertAlmostEqual(expected, 2.525289745, places=6)
+        self.assertAlmostEqual(expected, 3.525289745, places=6)
+
+    def test_expected_claims_reproduce_the_control_tower_correction(self) -> None:
+        # Independent statement of the same number, from the review defect report.
+        detail = self.table.expected_claims_to_reach_detail(self.model.items, "knowledge_spares", 4)
+        self.assertEqual(detail["method"], "EXACT_LINEAR_SYSTEM")
+        self.assertAlmostEqual(1.0 + 2.525289745, detail["expectation"], places=9)
 
     def test_hitting_time_is_monotone_in_target(self) -> None:
         low = self.table.expected_claims_to_reach(self.model.items, "research_notes", 2)
@@ -82,7 +89,7 @@ class RoadsideTableTests(unittest.TestCase):
     def test_claims_needed_for_tech_smelting(self) -> None:
         row = claims_needed(self.model, "tech_smelting", self.table)
         self.assertEqual(row["per_item"]["knowledge_spares"]["required_units"], 4)
-        self.assertEqual(row["per_item"]["knowledge_spares"]["expected_claims"], 2.5253)
+        self.assertEqual(row["per_item"]["knowledge_spares"]["expected_claims"], 3.5253)
 
     def test_unknown_sink_raises(self) -> None:
         with self.assertRaises(KeyError):
@@ -146,6 +153,127 @@ class TableEdgeCaseTests(unittest.TestCase):
         self.assertIn("tech_smelting", targets)
         self.assertIn("research_kit", targets)
         self.assertEqual(targets["research_kit"]["knowledge_spares"], 3)
+
+
+class HittingTimeOracleTests(unittest.TestCase):
+    """Independent oracles for E[T]; these do not depend on any A3 authored table.
+
+    The synthetic tables below are *test fixtures*, not gameplay rates. Each one has
+    an analytically known answer, so a sign or off-by-one error cannot pass.
+    """
+
+    def setUp(self) -> None:
+        self.model = support.model()
+
+    def _table(self, entries):
+        return LootTable.from_json(
+            "oracle",
+            {
+                "source_id": None,
+                "risk": "low",
+                "rolls": 1,
+                "replenishment_seconds": 0,
+                "entries": entries,
+                "excluded_tags": [],
+            },
+        )
+
+    def test_guaranteed_success_costs_exactly_the_target(self) -> None:
+        # One guaranteed unit per claim: target 1 is the CT case (old code said 0),
+        # and target k costs k claims.
+        table = self._table([{"item_id": "iron_scrap", "weight": 1, "quantity": [1, 1]}])
+        for target in (1, 2, 5):
+            with self.subTest(target=target):
+                self.assertAlmostEqual(
+                    table.expected_claims_to_reach(self.model.items, "iron_scrap", target),
+                    float(target),
+                    places=12,
+                )
+
+    def test_guaranteed_two_units_per_claim_halves_the_cost(self) -> None:
+        table = self._table([{"item_id": "iron_scrap", "weight": 1, "quantity": [2, 2]}])
+        self.assertAlmostEqual(table.expected_claims_to_reach(self.model.items, "iron_scrap", 4), 2.0, places=12)
+
+    def test_fair_coin_single_unit_is_geometric_with_mean_two(self) -> None:
+        table = self._table(
+            [
+                {"item_id": "iron_scrap", "weight": 1, "quantity": [1, 1]},
+                {"item_id": "grain_seed", "weight": 1, "quantity": [0, 0]},
+            ]
+        )
+        self.assertAlmostEqual(table.expected_claims_to_reach(self.model.items, "iron_scrap", 1), 2.0, places=12)
+
+    def test_fair_coin_scales_linearly_with_target(self) -> None:
+        # T = sum of `target` independent Geometric(1/2) waits, so E[T] = 2 * target.
+        table = self._table(
+            [
+                {"item_id": "iron_scrap", "weight": 1, "quantity": [1, 1]},
+                {"item_id": "grain_seed", "weight": 1, "quantity": [0, 0]},
+            ]
+        )
+        for target in (2, 3, 7):
+            with self.subTest(target=target):
+                self.assertAlmostEqual(
+                    table.expected_claims_to_reach(self.model.items, "iron_scrap", target),
+                    2.0 * target,
+                    places=10,
+                )
+
+    def test_survival_sum_matches_linear_system_independently(self) -> None:
+        """E[T] = sum_{t>=0} (1 - P(T <= t)), evaluated through p_reach_by."""
+        table = tables_from_model(self.model)["roadside_cache"]
+        for item_id, target in (("knowledge_spares", 1), ("knowledge_spares", 4), ("iron_scrap", 2)):
+            with self.subTest(item=item_id, target=target):
+                expectation = table.expected_claims_to_reach(self.model.items, item_id, target)
+                survival_total = 1.0  # t = 0 term: P(T > 0) = 1
+                previous = 0.0
+                for claims in range(1, 400):
+                    reached = table.p_reach_by(self.model.items, item_id, target, claims)
+                    survival_total += 1.0 - reached
+                    if reached == previous and reached > 0.999999:
+                        break
+                    previous = reached
+                self.assertAlmostEqual(expectation, survival_total, places=5)
+
+    def test_monte_carlo_agrees_within_sampling_error(self) -> None:
+        import random
+
+        table = tables_from_model(self.model)["roadside_cache"]
+        pmf = table.increment_pmf(self.model.items, "knowledge_spares")
+        quantities = sorted(pmf)
+        weights = [float(pmf[q]) for q in quantities]
+        target = 4
+        rng = random.Random(20261030)
+        trials = 4000
+        total = 0
+        for _ in range(trials):
+            gained = 0
+            claims = 0
+            while gained < target:
+                gained += rng.choices(quantities, weights=weights, k=1)[0]
+                claims += 1
+            total += claims
+        simulated = total / trials
+        exact = table.expected_claims_to_reach(self.model.items, "knowledge_spares", target)
+        self.assertAlmostEqual(simulated, exact, delta=0.25)
+
+    def test_impossible_item_returns_none(self) -> None:
+        table = self._table([{"item_id": "grain_seed", "weight": 1, "quantity": [0, 0]}])
+        self.assertIsNone(table.expected_claims_to_reach(self.model.items, "iron_scrap", 1))
+
+    def test_truncated_survival_path_is_bounded_not_claimed_exact(self) -> None:
+        # Force the fallback branch and require an explicit tail bound.
+        table = tables_from_model(self.model)["roadside_cache"]
+        original = table.EXACT_TARGET_LIMIT
+        object.__setattr__(table, "EXACT_TARGET_LIMIT", 0)
+        try:
+            detail = table.expected_claims_to_reach_detail(self.model.items, "knowledge_spares", 4)
+        finally:
+            object.__setattr__(table, "EXACT_TARGET_LIMIT", original)
+        self.assertEqual(detail["method"], "SURVIVAL_SUM_TRUNCATED")
+        self.assertGreaterEqual(detail["upper_bound"], detail["expectation"])
+        exact = table.expected_claims_to_reach(self.model.items, "knowledge_spares", 4)
+        self.assertAlmostEqual(detail["expectation"], exact, places=6)
 
 
 if __name__ == "__main__":

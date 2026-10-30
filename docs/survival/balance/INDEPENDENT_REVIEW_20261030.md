@@ -5,6 +5,26 @@
 `python3 tools/survival/balance/run_analysis.py`, verify with `--check`, test with
 `python3 tools/survival/balance/run_tests.py`).
 
+> **CORRECTION v2 (2026-10-30, after CT independent review).** Three v1 statements were wrong or overstated.
+> They are corrected here rather than edited away:
+>
+> 1. **Hitting time was off by one.** `expected_claims_to_reach` summed `Σ_{t≥1}P(T>t)` and called it `E[T]`,
+>    dropping `P(T>0)=1`. Every non-empty expected claim count in v1 was one claim too low: 4
+>    `knowledge_spares` is **3.525289745** claims, not 2.525289745. The function now solves the system exactly
+>    (`E[k] = (1 + Σ_{q≥1}p_qE[k+q])/(1-p_0)` over `Fraction`s, no truncation) and is pinned by analytic
+>    oracles (guaranteed → `E = target`; fair coin → `E = 2·target`) plus an independent `Σ_t (1 - P(T ≤ t))`
+>    recomputation through `p_reach_by`. All downstream numbers below are the corrected ones.
+> 2. **"0 of 16 loot sources resolve to a POI" used the wrong unit.** A3 writes 16 *records* naming **10**
+>    class-style targets; A1 authors **no container vocabulary at all** and publishes `poi_*` instances and
+>    `r_*` regions. The real defect is one missing identifier contract plus unmounted instances — not 16
+>    missing POIs.
+> 3. **"0 native loot-bearing POIs" was scoped to A1's authored status field**, never to the running game. The
+>    live question is now answered separately by the product audit over pinned A0/A6 bytes; the runtime
+>    question remains `NOT_TESTED`.
+>
+> v2 also re-orders the deliverable: read `PLAYER_BLOCKERS.md` (five owned blockers with closure tests) first;
+> the finding list below is an appendix.
+
 ---
 
 ## 0. What this is, and what it is not
@@ -73,7 +93,7 @@ graph, and one of only four capabilities obtainable in the first hour.
 All **16/16** A3 `sources.json` entries with `acquisition: loot` reference a POI in a private vocabulary
 (`poi:roadside_cache`, `poi:sealed_archive`, `poi:toxin_laboratory`, `poi:specimen_vault_ember`,
 `poi:abandoned_institute`, …) and a region in a private vocabulary (`opening_marches`, `sealed_archive`,
-`mire_wetlands`, `frost_ridge`, `chapter_1_2`). **0 of 16** resolve to an A1 `poi_id`; **0 of 16** resolve to an
+`mire_wetlands`, `frost_ridge`, `chapter_1_2`). **0 of the 10 distinct targets** resolve to an A1 `poi_id`; **0 of 3** declared regions resolve to an
 A1 `region_id`. The 15 A3 text placeholders are not A1 places, and the names collide misleadingly —
 `poi:roadside_station` is *not* `poi_crown_waystation`, and `poi:sealed_archive` is not
 `poi_ember_convict_mine`.
@@ -271,7 +291,7 @@ rate.
 | `BOOTSTRAP_DEPENDENCY_CYCLE` | 1 | F-02 |
 | route-polyline endpoint gaps | 3 (A1) | `rt_ember_mere` 60.83, `rt_ember_coast` 156.20, `rt_sunken_fen` 44.72 tiles from the declared node cell — connector art or wrong endpoint, but it breaks distance realism on those three routes |
 
-Totals: **57 findings — 0 BLOCKER, 20 MAJOR, 28 MINOR, 9 INFO.** No blocker means nothing here forbids
+Totals: **57 observations — 0 BLOCKER, 20 MAJOR, 28 MINOR, 9 INFO** (an appendix; the player-facing deliverables are the five blockers in `PLAYER_BLOCKERS.md`). No blocker means nothing here forbids
 building; it means the *product* story is currently held together by proposals rather than by data.
 
 ---

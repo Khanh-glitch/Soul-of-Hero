@@ -3,16 +3,31 @@
 **Owner:** A7. **Owned paths only:** `docs/survival/balance/**`, `tools/survival/balance/**`,
 `tests/survival/balance/**`, `data/survival/balance/**`.
 **Status of this checkpoint:** executable analysis + deterministic tests + machine-readable results +
-independent review. `ANALYSIS_COMPLETE / NATIVE_NOT_TESTED / HUMAN_NOT_TESTED / NO_GAMEPLAY_EDIT`.
+independent review, corrected and triaged. `ANALYSIS_COMPLETE / NATIVE_NOT_TESTED / HUMAN_NOT_TESTED /
+NO_GAMEPLAY_EDIT`. The numerical gate that failed review (expected hitting time off by one) is fixed and
+oracle-proven; the deliverable is now **five player-facing blockers**, not a finding list.
 
 This is a *measurement and challenge* tool. It reads A1's authored world and A3's authored economy as
 pinned snapshots, recomputes what they imply, and refuses to state numbers the data does not contain.
 It changes no loot table, no rate, no world file and no other agent's code.
 
+## Read this first
+
+**[`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md)** — five owned blockers (entry point, loot identity/host, avatar
+sources, research bootstrap, developer-facing survival UI), each with the smallest safe correction and a test
+that flips from FAIL to PASS. Generated from `results/blockers.json`; 57 raw observations collapse into it.
+
+```bash
+python3 tools/survival/balance/run_analysis.py --print-blockers
+```
+
 ## What it answers
 
 1. **Which authored POIs can actually be played or looted today?** (Spoiler: 0 of 118 hand out A3 loot.)
-2. **Do A3's loot sources exist at A1's places?** (Spoiler: 0 of 16 loot sources resolve to an A1 POI id.)
+2. **Do A3's loot sources exist at A1's places?** A3 writes 16 loot *records* naming 10 class-style targets
+   (`poi:roadside_cache`); A1 publishes `poi_*` instances and `r_*` regions, and authors **no container
+   vocabulary at all**. So this is one missing identifier contract plus unmounted instances — not 10 missing
+   POIs and not 16 tickets. See `results/access.json → loot_identity`.
 3. **What is one expedition worth, split into travel / gathering / interaction time and non-Core loot?**
 4. **How do the authored material sinks (recipes, technologies) line up with what a trip actually yields?**
 5. **What would have to be true for a "first Core" to be a luck event, and is it one today?**
@@ -39,6 +54,9 @@ python3 tools/survival/balance/run_analysis.py --print-summary
 
 # 5. Live upstream drift check (needs the A1/A3 commits fetched; exits 1 on drift)
 python3 tools/survival/balance/run_analysis.py --check-upstream
+
+# 6. Print only the five player-facing blockers
+python3 tools/survival/balance/run_analysis.py --print-blockers
 ```
 
 Python 3.11+, standard library only. `pytest` also collects the test files if it is installed; it is not

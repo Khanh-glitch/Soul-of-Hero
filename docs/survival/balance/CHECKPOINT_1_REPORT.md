@@ -1,5 +1,9 @@
 # A7 checkpoint 1 — execution report (2026-10-30)
 
+> **Superseded by [`CHECKPOINT_2_REPORT.md`](CHECKPOINT_2_REPORT.md).** Kept for history. Two numbers here were
+> corrected after the CT review and must not be quoted: the research gate is **3.525** claims (not 2.525), and
+> the suite is **164 tests** (not 127). The 16 "unresolved sources" are 16 records over 10 class targets.
+
 Work order: `docs/survival/tasks/CT_A7_20261030_ACTIVATION_DELTA.md` (+ `SURV-060A_A7_WORK_ORDER.md`).
 Checkpoint state: **ANALYSIS_COMPLETE / NATIVE_NOT_TESTED / HUMAN_NOT_TESTED / NO_GAMEPLAY_EDIT**.
 
@@ -64,7 +68,7 @@ are stable across output directories (identical `digest.json`), have no timestam
   retention 0.97 / 0.985 / 1.00 at 0 / 50 / 100 % recovery.
 - **Sensitivity (`HYPOTHETICAL_NOT_A3_TUNING`):** containers needed for a 50 / 90 % first Core at p = 0.2 % →
   347 / 1151; 0.5 % → 139 / 460; 1 % → 69 / 230; 2 % → 35 / 114; p = 0 → `null`. Seeded 4000-run spread over 14
-  sessions × 3 claims: scrap p10 125 / p90 173, spares 47 / 68, notes 14 / 25, zero-runs 0. Research gate: 2.525
+  sessions × 3 claims: scrap p10 125 / p90 173, spares 47 / 68, notes 14 / 25, zero-runs 0. Research gate: 3.525 (corrected in checkpoint 2; this file said 2.525)
   claims, P(covered within 10 sessions) 0.997437.
 - **Adversarial: 24/24 pass** (12 injected data faults each detected; 12 behaviour cases: zero eligible crates,
   absent sources, inaccessible routes, unlucky player, capacity limits, repeated claims, roll exhaustion,

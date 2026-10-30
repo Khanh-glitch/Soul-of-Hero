@@ -202,17 +202,23 @@ class Model:
             return "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED"
         return "CONTRACT_ONLY_NOT_PLAYABLE"
 
-    def is_loot_bearing_natively(self, poi: Dict[str, Any]) -> bool:
-        """Whether this POI can hand out A3 loot in the current build.
+    def loot_bearing_in_authored_contract(self, poi: Dict[str, Any]) -> bool:
+        """Whether this POI could hand out A3 loot *according to its A1 record*.
 
-        No POI in the pinned snapshots is native-integrated (A1 status
-        AUTHORED_PLAN_NOT_NATIVE_INTEGRATED, both interaction specs
-        native_playable=false), so this is False for every POI. The function
-        exists so the claim is computed, not asserted in prose.
+        Scope warning (Control Tower review 2026-10-30): this reads the A1
+        authored status field only. It is **not** a measurement of the live A0
+        world, and a count of 0 here must not be reported as "the running game
+        has no loot". The live question is answered by
+        ``sohbalance.product`` against pinned production bytes
+        (``PROD-02``), and anything neither can settle is ``NOT_TESTED``.
         """
         if poi.get("status") != "NATIVE_INTEGRATED":
             return False
         return poi.get("content_readiness") != "WORLD_SITE_CONTRACT_ONLY"
+
+    def is_loot_bearing_natively(self, poi: Dict[str, Any]) -> bool:
+        """Deprecated alias. Prefer :meth:`loot_bearing_in_authored_contract`."""
+        return self.loot_bearing_in_authored_contract(poi)
 
     def clone_docs(self) -> Dict[str, Any]:
         return copy.deepcopy(self.docs)

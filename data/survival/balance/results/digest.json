@@ -1,14 +1,16 @@
 {
   "artifacts": {
-    "access.json": "770b78983cb322ac498abbdd747e6f382f1174879cef87ce5c9bf55b14b3d6d0",
+    "access.json": "f828793506b565894c94c8040d5be89ded8426186617634816567a938ccdf4ac",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
+    "blockers.json": "734aa4ee178dbe7be8a07bd35ee2193e0e1c7096ae9ee59225f5e1e18ddda8d4",
     "findings.json": "2e71ac9b7f656a3f9d6883fe77d8c6d172bbcba2dbdbd0c09cfe1b494c4256d1",
     "opportunity.json": "3b20600aba2a07361e80279aa404d28c3daaa23f212dca10ccf0e7c0742d1b72",
+    "product.json": "837d030f45a746c2be9eadbd5b4754e7d40efee0a33532385f5dba4d3ececf6d",
     "provenance.json": "af65b6d585453668fcaecf58318429c8692658bdc824ef6cf6e1a8605446d95e",
-    "sensitivity.json": "0f2ce8762925e19fd8af589b53e10d6302f209a076b3b87274115a8998d015b2",
-    "summary.json": "598dcd1d7c058f3f43bf79fb41143748fd28837abcc6dc363bb6896ed57c59b8"
+    "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
+    "summary.json": "57b53b3bdb1ef25f09bc4961bf8a4f90ba3a2ca0bf4ed895572d2a1e331f6c17"
   },
-  "combined_sha256": "f4acb101965f50035fa84a6561f57dcd3ce6cbe66393ca269f041f0ecdd227c3",
+  "combined_sha256": "b410bd505e871fc106ceb1a476be5b23c5946a4039016c3ad4d6ad9227a89d5a",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

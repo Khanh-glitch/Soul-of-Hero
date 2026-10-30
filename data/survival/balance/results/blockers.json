@@ -1,0 +1,894 @@
+{
+  "blockers": [
+    {
+      "blocker_id": "BLK-1",
+      "closure_probe": "product.PROD-01 must report PASS with a survival-like home destination key",
+      "closure_test": "tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk1_closes_when_one_survival_destination_exists",
+      "evidence": {
+        "home_destinations": [
+          "bestiary",
+          "campaign",
+          "hero_roster",
+          "modes",
+          "settings",
+          "storage"
+        ],
+        "mounted_survival_ui_scenes": [],
+        "note": "A1 records 118 POIs / 106 contract-only sites; none is reachable from a mounted screen",
+        "playable_pois_in_authored_contract": 0
+      },
+      "evidence_class": "RUNTIME_MOUNT_GAP",
+      "minimal_safe_correction": "A0 adds ONE home-screen destination whose scene instantiates the existing A1 world host, behind the existing gameplay input gate. No new gameplay system, no data change, no other owner's file.",
+      "not_proven_after_closure": "that the mounted scene runs, is reachable on foot and does not error (native run required)",
+      "observation_count": 4,
+      "observations": [
+        {
+          "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+          "kind": "finding",
+          "subject": "catalyst_vault"
+        },
+        {
+          "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+          "kind": "finding",
+          "subject": "specimen_frost"
+        },
+        {
+          "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+          "kind": "finding",
+          "subject": "specimen_venom"
+        },
+        {
+          "id": "PROD-01",
+          "kind": "product_check",
+          "status": "FAIL",
+          "title": "Player can reach the survival / exploration loop"
+        }
+      ],
+      "owner": "A0 (mount) with A1 (world scene)",
+      "player_impact": "From the home screen the player can only open campaign, hero roster, storage, modes, bestiary and settings. There is no world, POI, container or survival destination, so no exploring, gathering, looting or Core discovery can happen in the running game.",
+      "reproduce": [
+        "python3 tools/survival/balance/run_analysis.py --print-blockers",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][0]['evidence'])\""
+      ],
+      "status": "OPEN",
+      "title": "The player cannot enter the survival loop at all",
+      "verified_by": "static read of pinned bytes (A0 9d287f33, A6 8bc561df); no runtime executed"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "closure_probe": "product.PROD-02 PASS (a mounted container references an authored table) and identity.targets_resolving_to_a1_instance is non-empty",
+      "closure_test": "tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk2_closes_when_a_container_is_hosted_and_ids_join",
+      "evidence": {
+        "a1_container_vocabulary": [],
+        "distinct_targets": 10,
+        "loot_records": 16,
+        "loot_tables_referenced_by_production_code": [],
+        "regions_unresolved": [
+          "mire_wetlands",
+          "opening_marches",
+          "sealed_archive"
+        ],
+        "targets_resolving_to_a1_instance": []
+      },
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "minimal_safe_correction": "A1 publishes ONE identifier rule (class id + region id + instance id) and authors N container instances on existing POIs; A3 rewrites its 16 records to use that rule; A0 mounts one container scene. Start with a single class ('roadside_cache') at one already-reachable POI: it proves the contract without touching loot weights.",
+      "not_proven_after_closure": "drop behaviour in play, duplication across reload (A0 test required), Core rate (still absent)",
+      "observation_count": 48,
+      "observations": [
+        {
+          "code": "QUANTITY_OWNERSHIP_UNRESOLVED",
+          "kind": "finding",
+          "subject": "poi_crown_waystation"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_ember"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_frost"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_venom"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_grain_seed"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_notes"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_scrap"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_seed"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_supplies"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_blue_seal"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_green_seal"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_purple_seal"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_ember"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_frost"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_venom"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "vault_catalyst"
+        },
+        {
+          "code": "SOURCE_POI_UNRESOLVED",
+          "kind": "finding",
+          "subject": "venom_cache"
+        },
+        {
+          "code": "ITEM_OVEROWNED",
+          "kind": "finding",
+          "subject": "iron_scrap"
+        },
+        {
+          "code": "ITEM_OVEROWNED",
+          "kind": "finding",
+          "subject": "moonleaf_seed"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "ancient_catalyst"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "clay"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "iron_ore"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "moonleaf"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "reed_fibre"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "reed_fibre"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "stone_chunk"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "sulfur"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_ember"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_frost"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "plan_drop_venom"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_grain_seed"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_notes"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_scrap"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_seed"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "road_supplies"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_blue_seal"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_green_seal"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "seal_purple_seal"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_ember"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_frost"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "specimen_venom"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "vault_catalyst"
+        },
+        {
+          "code": "SOURCE_REGION_UNRESOLVED",
+          "kind": "finding",
+          "subject": "venom_cache"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "catalyst_vault"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_ember"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_frost"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_venom"
+        },
+        {
+          "id": "PROD-02",
+          "kind": "product_check",
+          "status": "FAIL",
+          "title": "Something the player can open hands out authored loot"
+        }
+      ],
+      "owner": "A1 (identifier contract + instances) with A3 (bindings) and A0 (container mount)",
+      "player_impact": "Even with a world on screen there would be nothing to open: no production script mentions any A3 loot table, and the 16 loot records address 10 class-style ids ('poi:roadside_cache') in a namespace A1 never uses. A1 authors no container vocabulary at all, so the whole loot layer has no counterpart in the world.",
+      "reproduce": [
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/access.json'));print(d['loot_identity'])\"",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][1]['evidence'])\""
+      ],
+      "status": "OPEN",
+      "title": "Authored loot has no host, and its identifiers do not join A1's world",
+      "verified_by": "static read of pinned A1/A3 data + pinned A0/A6 code; no runtime executed"
+    },
+    {
+      "blocker_id": "BLK-3",
+      "closure_probe": "product.PROD-03 PASS requires a production scene path matching the canonical source",
+      "closure_test": "tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk3_closes_when_the_mounted_body_is_canonical",
+      "evidence": {
+        "armor_stage_art_refs": [],
+        "canonical_source_doc_refs": {
+          "180537": 1,
+          "419402": 3,
+          "555940": 3
+        },
+        "canonical_source_production_refs": {
+          "180537": 0,
+          "419402": 0,
+          "555940": 0
+        },
+        "mounted_player_scene": "game/characters/knight/knight.tscn"
+      },
+      "evidence_class": "SOURCE_BLOCKED",
+      "minimal_safe_correction": "Mount the chosen gender body from the user's Drive ZIP and mark armour-1/armour-2 SOURCE_BLOCKED until the gender-matched frames are handed over. Do not draw a swordsman as the female body and do not report the current Knight body as accepted.",
+      "not_proven_after_closure": "animation fidelity, feet anchors, 720p-4K clarity, licence, armour reversal on unequip (native + human)",
+      "observation_count": 1,
+      "observations": [
+        {
+          "id": "PROD-03",
+          "kind": "product_check",
+          "status": "FAIL",
+          "title": "Mounted player body is the avatar the user locked (D051)"
+        }
+      ],
+      "owner": "A0 (mount) with A6 (art source)",
+      "player_impact": "The character on screen is the old Knight. The user locked exactly two bald unarmoured Craftpix bodies (male 555940, female 419402) with armour-1/armour-2 stages driven by equipped gear; zero production files reference either source, no armour stage exists, and the swordsman pack 180537 is not a valid substitute for either gender.",
+      "reproduce": [
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][2]['evidence'])\""
+      ],
+      "status": "OPEN",
+      "title": "The player body is still Knight art, and the locked avatar/armour sources are not in the build",
+      "verified_by": "static read of pinned A0/A6 bytes (18 captured files) + tree-wide art index"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "closure_probe": "the bootstrap-cycle finding disappears from findings.json while the loot table is unchanged",
+      "closure_test": "tests/survival/balance/test_adversarial.py::BootstrapClosureTests::test_cycle_clears_when_one_non_loot_spare_source_exists",
+      "evidence": {
+        "bootstrap_findings": 4,
+        "knowledge_spares_sources": [
+          "BOOTSTRAP_DEPENDENCY_CYCLE",
+          "SOURCE_REQUIREMENT_UNMAPPED",
+          "RESISTANCE_CHAIN_BLOCKED",
+          "RESISTANCE_CHAIN_BLOCKED"
+        ]
+      },
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "minimal_safe_correction": "A3 names ONE non-loot source of knowledge_spares (a native reward, a harvest node, or an explicit one-time Waystation cache quantity) and keeps the loot table unchanged. No rate is invented.",
+      "not_proven_after_closure": "that the player finds it, or that 3.53 claims feels acceptable",
+      "observation_count": 4,
+      "observations": [
+        {
+          "code": "BOOTSTRAP_DEPENDENCY_CYCLE",
+          "kind": "finding",
+          "subject": "knowledge_spares"
+        },
+        {
+          "code": "SOURCE_REQUIREMENT_UNMAPPED",
+          "kind": "finding",
+          "subject": "vault_catalyst:venom:60"
+        },
+        {
+          "code": "RESISTANCE_CHAIN_BLOCKED",
+          "kind": "finding",
+          "subject": "vault_catalyst"
+        },
+        {
+          "code": "RESISTANCE_CHAIN_BLOCKED",
+          "kind": "finding",
+          "subject": "venom_cache"
+        }
+      ],
+      "owner": "A3",
+      "player_impact": "knowledge_spares come only from loot that is not mounted, and the research station needs spares to be built: the player cannot take the first research step even in a perfect world with loot hosted. Expected claims for the smelting technology are now 3.53 (corrected from 2.53) of a container that does not exist.",
+      "reproduce": [
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/sensitivity.json'));print(d['research_gate'])\""
+      ],
+      "status": "OPEN",
+      "title": "First research is a bootstrap cycle, so the knowledge ladder cannot start",
+      "verified_by": "exact arithmetic over pinned A3 tables + static A1/A3 dependency read"
+    },
+    {
+      "blocker_id": "BLK-5",
+      "closure_probe": "product.PROD-04 PASS (zero debug literals on visible label paths) and PROD-06 PASS (one status surface)",
+      "closure_test": "tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk5_closes_when_debug_text_and_duplication_are_gone",
+      "evidence": {
+        "debug_token_count": 93,
+        "debug_tokens": [
+          "BLOCKED_PENDING",
+          "FIXTURE",
+          "NO OWNER SNAPSHOT",
+          "NOT NATIVE",
+          "NOT_NATIVE",
+          "OWNER_PROJECTION",
+          "PREVIEW  \u00b7",
+          "PROJECTION",
+          "schema"
+        ],
+        "product_checks": {
+          "PROD-04": "FAIL",
+          "PROD-06": "WARN"
+        },
+        "status_surfaces": [
+          "a0.hud.gd",
+          "a0.overworld_hud.gd",
+          "a6.player_first_hud.gd"
+        ],
+        "survival_ui_closed_island": [
+          "game/survival/ui/expedition_planner.tscn",
+          "game/survival/ui/survival_journal.tscn"
+        ]
+      },
+      "evidence_class": "PRODUCT_SURFACE_GAP",
+      "minimal_safe_correction": "A6 moves provenance/fixture vocabulary behind an opt-in debug panel and declares one owner for status/needs (A0), keeping its survival panel as a child view. No new UI system.",
+      "not_proven_after_closure": "readability at 720p/2K/4K and comprehension (human capture review)",
+      "observation_count": 3,
+      "observations": [
+        {
+          "id": "PROD-04",
+          "kind": "product_check",
+          "status": "FAIL",
+          "title": "No developer/debug text on a survival player surface"
+        },
+        {
+          "id": "PROD-05",
+          "kind": "product_check",
+          "status": "PASS",
+          "title": "No surface claims success that has not happened"
+        },
+        {
+          "id": "PROD-06",
+          "kind": "product_check",
+          "status": "WARN",
+          "title": "One owner per player-facing HUD job"
+        }
+      ],
+      "owner": "A6",
+      "player_impact": "93 player-visible strings in the survival UI carry developer vocabulary (FIXTURE, PROJECTION, BLOCKED_PENDING, raw ids). The survival UI also only preloads itself: no production scene references it, while A0's HUD and A0's overworld HUD already render health/provisions. Mounting it as-is would put debug text on screen and ship a second HUD.",
+      "reproduce": [
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/product.json'));print([c for c in d['checks'] if c['check_id'] in ('PROD-04','PROD-06')])\""
+      ],
+      "status": "OPEN",
+      "title": "The only survival UI is developer-facing and duplicates A0's HUD job",
+      "verified_by": "static read of pinned A6 bytes; no runtime executed"
+    }
+  ],
+  "counts": {
+    "player_facing_blockers": 5,
+    "product_checks": 7,
+    "raw_observations": 57,
+    "traceability_only": 3,
+    "unmapped_product_checks": 1
+  },
+  "markdown": "# Player-facing blockers (A7, consolidated)\n\n_Generated from `data/survival/balance/results/blockers.json` by `tools/survival/balance/run_analysis.py`. Do not edit by hand._\n\n**57 observations -> 5 blockers (3 observations are traceability/hypothesis only).** A finding list is not a deliverable; these are the only things that currently stop a player. Verification is a static read of pinned sources \u2014 no runtime was executed, so every native claim below stays `NOT_TESTED` until its owner runs it.\n\n| # | Blocker | Owner | Class | Closure probe |\n|---|---|---|---|---|\n| BLK-1 | The player cannot enter the survival loop at all | A0 (mount) with A1 (world scene) | RUNTIME_MOUNT_GAP | `product.PROD-01 must report PASS with a survival-like home destination key` |\n| BLK-2 | Authored loot has no host, and its identifiers do not join A1's world | A1 (identifier contract + instances) with A3 (bindings) and A0 (container mount) | STATIC_AUTHORING_GAP | `product.PROD-02 PASS (a mounted container references an authored table) and identity.targets_resolving_to_a1_instance is non-empty` |\n| BLK-3 | The player body is still Knight art, and the locked avatar/armour sources are not in the build | A0 (mount) with A6 (art source) | SOURCE_BLOCKED | `product.PROD-03 PASS requires a production scene path matching the canonical source` |\n| BLK-4 | First research is a bootstrap cycle, so the knowledge ladder cannot start | A3 | STATIC_AUTHORING_GAP | `the bootstrap-cycle finding disappears from findings.json while the loot table is unchanged` |\n| BLK-5 | The only survival UI is developer-facing and duplicates A0's HUD job | A6 | PRODUCT_SURFACE_GAP | `product.PROD-04 PASS (zero debug literals on visible label paths) and PROD-06 PASS (one status surface)` |\n\n## BLK-1 \u2014 The player cannot enter the survival loop at all\n\n**Player impact.** From the home screen the player can only open campaign, hero roster, storage, modes, bestiary and settings. There is no world, POI, container or survival destination, so no exploring, gathering, looting or Core discovery can happen in the running game.\n\n**Owner.** A0 (mount) with A1 (world scene)  \n**Evidence class.** RUNTIME_MOUNT_GAP  \n**Verified by.** static read of pinned bytes (A0 9d287f33, A6 8bc561df); no runtime executed\n\n**Reproduce.**\n\n```bash\npython3 tools/survival/balance/run_analysis.py --print-blockers\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][0]['evidence'])\"\n```\n\n**Minimal safe correction.** A0 adds ONE home-screen destination whose scene instantiates the existing A1 world host, behind the existing gameplay input gate. No new gameplay system, no data change, no other owner's file.\n\n**Test that proves closure.** `tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk1_closes_when_one_survival_destination_exists`\n\n**Still NOT_TESTED after closure.** that the mounted scene runs, is reachable on foot and does not error (native run required)\n\n**Evidence.**\n\n- `home_destinations` = `['bestiary', 'campaign', 'hero_roster', 'modes', 'settings', 'storage']`\n- `mounted_survival_ui_scenes` = `[]`\n- `note` = `A1 records 118 POIs / 106 contract-only sites; none is reachable from a mounted screen`\n- `playable_pois_in_authored_contract` = `0`\n\n**Absorbs** 4 observation(s).\n\n## BLK-2 \u2014 Authored loot has no host, and its identifiers do not join A1's world\n\n**Player impact.** Even with a world on screen there would be nothing to open: no production script mentions any A3 loot table, and the 16 loot records address 10 class-style ids ('poi:roadside_cache') in a namespace A1 never uses. A1 authors no container vocabulary at all, so the whole loot layer has no counterpart in the world.\n\n**Owner.** A1 (identifier contract + instances) with A3 (bindings) and A0 (container mount)  \n**Evidence class.** STATIC_AUTHORING_GAP  \n**Verified by.** static read of pinned A1/A3 data + pinned A0/A6 code; no runtime executed\n\n**Reproduce.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/access.json'));print(d['loot_identity'])\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][1]['evidence'])\"\n```\n\n**Minimal safe correction.** A1 publishes ONE identifier rule (class id + region id + instance id) and authors N container instances on existing POIs; A3 rewrites its 16 records to use that rule; A0 mounts one container scene. Start with a single class ('roadside_cache') at one already-reachable POI: it proves the contract without touching loot weights.\n\n**Test that proves closure.** `tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk2_closes_when_a_container_is_hosted_and_ids_join`\n\n**Still NOT_TESTED after closure.** drop behaviour in play, duplication across reload (A0 test required), Core rate (still absent)\n\n**Evidence.**\n\n- `a1_container_vocabulary` = `[]`\n- `distinct_targets` = `10`\n- `loot_records` = `16`\n- `loot_tables_referenced_by_production_code` = `[]`\n- `regions_unresolved` = `['mire_wetlands', 'opening_marches', 'sealed_archive']`\n- `targets_resolving_to_a1_instance` = `[]`\n\n**Absorbs** 48 observation(s).\n\n## BLK-3 \u2014 The player body is still Knight art, and the locked avatar/armour sources are not in the build\n\n**Player impact.** The character on screen is the old Knight. The user locked exactly two bald unarmoured Craftpix bodies (male 555940, female 419402) with armour-1/armour-2 stages driven by equipped gear; zero production files reference either source, no armour stage exists, and the swordsman pack 180537 is not a valid substitute for either gender.\n\n**Owner.** A0 (mount) with A6 (art source)  \n**Evidence class.** SOURCE_BLOCKED  \n**Verified by.** static read of pinned A0/A6 bytes (18 captured files) + tree-wide art index\n\n**Reproduce.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/blockers.json'));print(d['blockers'][2]['evidence'])\"\n```\n\n**Minimal safe correction.** Mount the chosen gender body from the user's Drive ZIP and mark armour-1/armour-2 SOURCE_BLOCKED until the gender-matched frames are handed over. Do not draw a swordsman as the female body and do not report the current Knight body as accepted.\n\n**Test that proves closure.** `tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk3_closes_when_the_mounted_body_is_canonical`\n\n**Still NOT_TESTED after closure.** animation fidelity, feet anchors, 720p-4K clarity, licence, armour reversal on unequip (native + human)\n\n**Evidence.**\n\n- `armor_stage_art_refs` = `[]`\n- `canonical_source_doc_refs` = `{'555940': 3, '419402': 3, '180537': 1}`\n- `canonical_source_production_refs` = `{'555940': 0, '419402': 0, '180537': 0}`\n- `mounted_player_scene` = `game/characters/knight/knight.tscn`\n\n**Absorbs** 1 observation(s).\n\n## BLK-4 \u2014 First research is a bootstrap cycle, so the knowledge ladder cannot start\n\n**Player impact.** knowledge_spares come only from loot that is not mounted, and the research station needs spares to be built: the player cannot take the first research step even in a perfect world with loot hosted. Expected claims for the smelting technology are now 3.53 (corrected from 2.53) of a container that does not exist.\n\n**Owner.** A3  \n**Evidence class.** STATIC_AUTHORING_GAP  \n**Verified by.** exact arithmetic over pinned A3 tables + static A1/A3 dependency read\n\n**Reproduce.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/sensitivity.json'));print(d['research_gate'])\"\n```\n\n**Minimal safe correction.** A3 names ONE non-loot source of knowledge_spares (a native reward, a harvest node, or an explicit one-time Waystation cache quantity) and keeps the loot table unchanged. No rate is invented.\n\n**Test that proves closure.** `tests/survival/balance/test_adversarial.py::BootstrapClosureTests::test_cycle_clears_when_one_non_loot_spare_source_exists`\n\n**Still NOT_TESTED after closure.** that the player finds it, or that 3.53 claims feels acceptable\n\n**Evidence.**\n\n- `bootstrap_findings` = `4`\n- `knowledge_spares_sources` = `['BOOTSTRAP_DEPENDENCY_CYCLE', 'SOURCE_REQUIREMENT_UNMAPPED', 'RESISTANCE_CHAIN_BLOCKED', 'RESISTANCE_CHAIN_BLOCKED']`\n\n**Absorbs** 4 observation(s).\n\n## BLK-5 \u2014 The only survival UI is developer-facing and duplicates A0's HUD job\n\n**Player impact.** 93 player-visible strings in the survival UI carry developer vocabulary (FIXTURE, PROJECTION, BLOCKED_PENDING, raw ids). The survival UI also only preloads itself: no production scene references it, while A0's HUD and A0's overworld HUD already render health/provisions. Mounting it as-is would put debug text on screen and ship a second HUD.\n\n**Owner.** A6  \n**Evidence class.** PRODUCT_SURFACE_GAP  \n**Verified by.** static read of pinned A6 bytes; no runtime executed\n\n**Reproduce.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/product.json'));print([c for c in d['checks'] if c['check_id'] in ('PROD-04','PROD-06')])\"\n```\n\n**Minimal safe correction.** A6 moves provenance/fixture vocabulary behind an opt-in debug panel and declares one owner for status/needs (A0), keeping its survival panel as a child view. No new UI system.\n\n**Test that proves closure.** `tests/survival/balance/test_product_audit.py::ProductClosureTests::test_blk5_closes_when_debug_text_and_duplication_are_gone`\n\n**Still NOT_TESTED after closure.** readability at 720p/2K/4K and comprehension (human capture review)\n\n**Evidence.**\n\n- `debug_token_count` = `93`\n- `debug_tokens` = `['BLOCKED_PENDING', 'FIXTURE', 'NO OWNER SNAPSHOT', 'NOT NATIVE', 'NOT_NATIVE', 'OWNER_PROJECTION', 'PREVIEW  \u00b7', 'PROJECTION', 'schema']`\n- `product_checks` = `{'PROD-04': 'FAIL', 'PROD-06': 'WARN'}`\n- `status_surfaces` = `['a0.hud.gd', 'a0.overworld_hud.gd', 'a6.player_first_hud.gd']`\n- `survival_ui_closed_island` = `['game/survival/ui/expedition_planner.tscn', 'game/survival/ui/survival_journal.tscn']`\n\n**Absorbs** 3 observation(s).\n",
+  "read_this_first": "Five player-facing blockers, not a findings list. Each has one owner, the smallest safe correction, and a closure test that flips from FAIL to PASS.",
+  "reduction": "57 observations -> 5 blockers (3 observations are traceability/hypothesis only)",
+  "schema": "soh.balance.blockers.v2",
+  "triage": [
+    {
+      "blocker_id": "BLK-4",
+      "code": "BOOTSTRAP_DEPENDENCY_CYCLE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "knowledge_spares"
+    },
+    {
+      "blocker_id": "NONE",
+      "code": "DEATH_CARGO_LOSS_UNMODELLED",
+      "evidence_class": "TRACEABILITY_OR_HYPOTHESIS",
+      "severity": "MAJOR",
+      "subject": "A1 route_graph.risk"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "QUANTITY_OWNERSHIP_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "poi_crown_waystation"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "plan_drop_ember"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "plan_drop_frost"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "plan_drop_venom"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "road_grain_seed"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "road_notes"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "road_scrap"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "road_seed"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "road_supplies"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "seal_blue_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "seal_green_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "seal_purple_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "specimen_ember"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "specimen_frost"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "specimen_venom"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_POI_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "venom_cache"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "code": "SOURCE_REQUIREMENT_UNMAPPED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MAJOR",
+      "subject": "vault_catalyst:venom:60"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "ITEM_OVEROWNED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "iron_scrap"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "ITEM_OVEROWNED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "moonleaf_seed"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "code": "RESISTANCE_CHAIN_BLOCKED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "code": "RESISTANCE_CHAIN_BLOCKED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "venom_cache"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "ancient_catalyst"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "clay"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "iron_ore"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "moonleaf"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "reed_fibre"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "reed_fibre"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "stone_chunk"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_ID_DIVERGENCE",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "sulfur"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "plan_drop_ember"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "plan_drop_frost"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "plan_drop_venom"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "road_grain_seed"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "road_notes"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "road_scrap"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "road_seed"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "road_supplies"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "seal_blue_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "seal_green_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "seal_purple_seal"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "specimen_ember"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "specimen_frost"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "specimen_venom"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "vault_catalyst"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "SOURCE_REGION_UNRESOLVED",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "MINOR",
+      "subject": "venom_cache"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "PROVISIONAL_BINDING",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "INFO",
+      "subject": "catalyst_vault"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "PROVISIONAL_BINDING",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "INFO",
+      "subject": "specimen_ember"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "PROVISIONAL_BINDING",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "INFO",
+      "subject": "specimen_frost"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "code": "PROVISIONAL_BINDING",
+      "evidence_class": "STATIC_AUTHORING_GAP",
+      "severity": "INFO",
+      "subject": "specimen_venom"
+    },
+    {
+      "blocker_id": "NONE",
+      "code": "RECIPE_CYCLE",
+      "evidence_class": "TRACEABILITY_OR_HYPOTHESIS",
+      "severity": "INFO",
+      "subject": "grain_seed -> grain_seed"
+    },
+    {
+      "blocker_id": "NONE",
+      "code": "RECIPE_CYCLE",
+      "evidence_class": "TRACEABILITY_OR_HYPOTHESIS",
+      "severity": "INFO",
+      "subject": "moonleaf_seed -> moonleaf_seed"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "evidence_class": "RUNTIME_MOUNT_GAP",
+      "severity": "INFO",
+      "subject": "catalyst_vault"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "evidence_class": "RUNTIME_MOUNT_GAP",
+      "severity": "INFO",
+      "subject": "specimen_frost"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "code": "ROUTE_LOCKED_FOR_CAPABILITIES",
+      "evidence_class": "RUNTIME_MOUNT_GAP",
+      "severity": "INFO",
+      "subject": "specimen_venom"
+    }
+  ]
+}

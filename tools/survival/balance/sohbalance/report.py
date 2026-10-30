@@ -16,6 +16,9 @@ from .checks import collect, codes_in
 from .findings import Assertion, Finding, severity_counts, sort_findings
 from .geo import RouteNetwork, travel_seconds
 from .hypotheses import load_hypotheses, patterns as pattern_payloads
+from . import blockers as blocker_module
+from . import product as product_module
+from .identity import loot_identity_map
 from .loot import claims_needed, sink_coverage, sink_demand, tables_from_model
 from .model import Model
 from .provenance import (
@@ -36,7 +39,12 @@ ARTIFACTS = (
     "sensitivity.json",
     "adversarial.json",
     "summary.json",
+    "product.json",
+    "blockers.json",
 )
+
+# Generated human-readable companion of blockers.json (owned doc path).
+BLOCKERS_DOC = Path("docs/survival/balance/PLAYER_BLOCKERS.md")
 
 
 def _dump(path: Path, payload: Dict[str, Any]) -> str:
@@ -181,6 +189,15 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             trip.loot_units,
         )
         pattern_results.append(row)
+    identity_map = loot_identity_map(model)
+    artifacts["access.json"]["loot_identity"] = identity_map
+    artifacts["access.json"]["loot_identity_legend"] = {
+        "source record": "one item-yield row in A3 sources.json (16 of them)",
+        "source class": "the kind of container that yields it, e.g. 'roadside_cache' (10 distinct)",
+        "physical instance": "a placed copy of a class in the world (A1 authors 0)",
+        "region": "A3 names 3 bare regions; A1 publishes 11 'r_*' regions, disjoint vocabularies",
+        "poi id": "identifier scheme: A3 'poi:name' vs A1 'poi_name'",
+    }
     artifacts["opportunity.json"] = {
         "schema": "soh.balance.opportunity.v1",
         "session_seconds": hypotheses["session"]["active_seconds"],
@@ -243,6 +260,50 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         ),
     }
 
+    # ------------------------------------------------------- product surface
+    repo_root = data_dir.parents[2]
+    product_texts, product_manifest = product_module.load_snapshot(repo_root)
+    product_facts = product_module.build_facts(
+        product_texts,
+        product_manifest,
+        loot_tables=sorted(model.loot_tables),
+        station_ids=sorted(model.stations),
+    )
+    product_facts.update(product_module.model_facts(model))
+    product_checks = product_module.run_checks(product_facts)
+    artifacts["product.json"] = {
+        "schema": "soh.balance.product.v1",
+        "snapshot": {
+            "manifest": "data/survival/balance/snapshot/product_manifest.json",
+            "a0_head": product_manifest.get("a0_head"),
+            "a6_head": product_manifest.get("a6_head"),
+            "files_verified": len(product_manifest.get("files", [])),
+        },
+        "claim_scope": (
+            "STATIC READ of pinned bytes. 'Mounted' means a production scene references the file. "
+            "Whether it RUNS is NOT_TESTED here."
+        ),
+        "checks": product_checks,
+        "verdict_counts": _counts(check["status"] for check in product_checks),
+        "unknown_evidence": product_module.data_gaps(product_facts)["unknown_evidence"],
+        "player_surface_facts": {
+            "home_destinations": product_facts["home_function_keys"],
+            "mounted_player_scene": product_facts["mounted_player_scene"],
+            "canonical_avatar_production_refs": product_facts["canonical_avatar_production_refs"],
+            "visible_debug_tokens": len(product_facts["visible_debug_tokens"]),
+            "survival_ui_scenes_mounted": product_facts["survival_ui_scenes_mounted"],
+        },
+    }
+
+    # -------------------------------------------------- consolidated blockers
+    blocker_payload = blocker_module.build(
+        [finding.as_dict() for finding in all_findings],
+        product_checks,
+        identity_map,
+        product_facts,
+    )
+    artifacts["blockers.json"] = blocker_payload
+
     # --------------------------------------------------------------- summary
     assertions = _assertions(
         model=model,
@@ -253,6 +314,8 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         owner_pins=owner_pins,
         cases=cases,
         road=road,
+        product_checks=product_checks,
+        blocker_payload=blocker_payload,
     )
     artifacts["summary.json"] = {
         "schema": "soh.balance.summary.v1",
@@ -266,8 +329,8 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         "headline": {
             "pois_authored": len(model.pois),
             "poi_playability": _counts(model.playability(poi) for poi in model.pois),
-            "pois_loot_bearing_natively": sum(
-                1 for poi in model.pois if model.is_loot_bearing_natively(poi)
+            "pois_loot_bearing_in_authored_contract": sum(
+                1 for poi in model.pois if model.loot_bearing_in_authored_contract(poi)
             ),
             "loot_tables_authored": len(model.loot_tables),
             "loot_tables_that_can_emit_a_core": sensitivity.core_capable_sources(model)[
@@ -279,6 +342,11 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             "a3_loot_sources_total": len(loot_sources),
             "resource_nodes_authored_not_crates": len(model.resource_nodes),
             "findings_by_severity": severity_counts(all_findings),
+            "player_facing_blockers": len(blocker_payload["blockers"]),
+            "observation_reduction": blocker_payload["reduction"],
+            "product_checks": _counts(check["status"] for check in product_checks),
+            "mounted_survival_ui_scenes": len(product_facts["survival_ui_scenes_mounted"]),
+            "canonical_avatar_production_refs": product_facts["canonical_avatar_production_refs"],
             "adversarial_cases_passed": f"{sum(1 for case in cases if case.passed)}/{len(cases)}",
         },
         "assertions": [assertion.as_dict() for assertion in assertions],
@@ -318,7 +386,7 @@ def _poi_readiness(model) -> Dict[str, Any]:
                 "archetype": poi.get("archetype"),
                 "content_readiness": poi.get("content_readiness"),
                 "playability": model.playability(poi),
-                "loot_bearing_natively": model.is_loot_bearing_natively(poi),
+                "loot_bearing_in_authored_contract": model.loot_bearing_in_authored_contract(poi),
                 "route_node": poi["poi_id"] in model.node_index(),
                 "hazard_id": poi.get("hazard_id"),
                 "requires": poi.get("required_capabilities", []),
@@ -381,6 +449,8 @@ def _assertions(
     owner_pins,
     cases,
     road,
+    product_checks=None,
+    blocker_payload=None,
 ) -> List[Assertion]:
     assertions: List[Assertion] = []
     counts = {}
@@ -411,7 +481,7 @@ def _assertions(
     assertions.append(
         Assertion(
             "A03_zero_native_loot_bearing_pois",
-            sum(1 for poi in model.pois if model.is_loot_bearing_natively(poi)) == 0
+            sum(1 for poi in model.pois if model.loot_bearing_in_authored_contract(poi)) == 0
             and len(model.pois) == 118,
             "118 authored POIs, 0 with native A3 loot",
             ["world"],
@@ -500,6 +570,39 @@ def _assertions(
             ["routes"],
         )
     )
+    # Corrected hitting time: the old value dropped P(T > 0).  The oracle in
+    # tests/survival/balance/test_loot_math.py proves both directions.
+    detail = road.expected_claims_to_reach_detail(model.items, "knowledge_spares", 4)
+    assertions.append(
+        Assertion(
+            "A13_expected_claims_includes_the_t0_survival_term",
+            detail["method"] == "EXACT_LINEAR_SYSTEM"
+            and abs(float(detail["expectation"]) - 3.525289745) < 1e-6,
+            "E[T] for 4 knowledge_spares is 3.525289745 claims (was reported as 2.525289745 before the t=0 fix)",
+            ["loot", "math_correction"],
+        )
+    )
+    checks = list(product_checks or [])
+    assertions.append(
+        Assertion(
+            "A14_blockers_are_few_owned_and_closable",
+            blocker_payload is not None
+            and 1 <= len(blocker_payload["blockers"]) <= 5
+            and all(row["owner"] and row["closure_test"] for row in blocker_payload["blockers"]),
+            "the raw observation list is consolidated into 5 owned blockers, each with an executable closure test",
+            ["blockers", "delivery"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A15_product_checks_read_only_pinned_bytes",
+            bool(checks)
+            and all(check["status"] in {"FAIL", "PASS", "WARN", "UNKNOWN"} for check in checks)
+            and any(check["check_id"] == "PROD-01" and check["status"] == "FAIL" for check in checks),
+            "the product audit runs on sha256-pinned copies and reproduces the missing survival entry point",
+            ["product"],
+        )
+    )
     return assertions
 
 
@@ -517,6 +620,12 @@ def write(artifacts: Dict[str, Any], results_dir: Path = RESULTS_DIR) -> Dict[st
         "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
     }
     _dump(results_dir / "digest.json", index)
+    markdown = (artifacts.get("blockers.json") or {}).get("markdown")
+    if markdown:
+        # Always the repo's owned doc path, never the (possibly temporary) results dir.
+        doc = Path(__file__).resolve().parents[4] / BLOCKERS_DOC
+        doc.parent.mkdir(parents=True, exist_ok=True)
+        doc.write_text(markdown, encoding="utf-8")
     return digests
 
 
