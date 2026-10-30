@@ -27,6 +27,7 @@ var collision_root: Node2D
 var props_root: Node2D
 var current_review: Dictionary = {}
 var total_corner_hits := 0
+var provenance_debug: Dictionary = {}
 
 func _initialize() -> void:
 	for arg: String in OS.get_cmdline_user_args():
@@ -104,11 +105,13 @@ func _verify_asset_provenance() -> void:
 	var atlas := _read_json(String(inputs.atlas_path))
 	var sheets: Dictionary = {}
 	for kind: String in ["terrain", "props"]:
-		var texture := load("res://assets/environment/survival_world/" + kind + ".png") as Texture2D
-		_expect(texture != null, "provenance atlas image loaded " + kind)
-		if texture != null:
-			sheets[kind] = texture.get_image()
+		var image := Image.new()
+		var error := image.load(ProjectSettings.globalize_path("res://assets/environment/survival_world/" + kind + ".png"))
+		_expect(error == OK, "provenance atlas image loaded " + kind)
+		if error == OK:
+			sheets[kind] = image
 	var matched := 0
+	var mismatches: Array[Dictionary] = []
 	for row: Dictionary in manifest.crop_compatibility:
 		var kind := String(row.kind)
 		if not sheets.has(kind):
@@ -121,9 +124,15 @@ func _verify_asset_provenance() -> void:
 		image.convert(Image.FORMAT_RGBA8)
 		var crop := image.get_region(Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])))
 		crop.convert(Image.FORMAT_RGBA8)
-		if _sha_bytes(crop.get_data()) == String(row.raw_rgba_sha256):
+		var actual := _sha_bytes(crop.get_data())
+		if actual == String(row.raw_rgba_sha256):
 			matched += 1
-	_expect(matched == 181, "Godot RGBA crop hashes match all 181 first-hour legacy crops")
+		elif mismatches.size() < 12:
+			mismatches.append({"kind": kind, "frame": frame, "expected": row.raw_rgba_sha256, "actual": actual, "format": crop.get_format(), "bytes": crop.get_data().size()})
+	provenance_debug = {"matched": matched, "mismatches": mismatches}
+	for mismatch: Dictionary in mismatches:
+		print("A1_PLACEMENT provenance mismatch: " + JSON.stringify(mismatch))
+	_expect(matched == 181, "Godot RGBA crop hashes match all 181 first-hour legacy crops (matched=%d, mismatches=%d)" % [matched, mismatches.size()])
 	var d: Dictionary = manifest.discrepancy_resolution
 	_expect(int(d.total_crop_count) == 181 and int(d.matched_crop_count) == 181 and not bool(d.pixel_drift_found),
 		"payload-subset versus whole-file discrepancy is explicitly resolved")
@@ -410,6 +419,7 @@ func _finish() -> void:
 		"ok": failures.is_empty(), "checks": checks, "failures": failures,
 		"reviews": report_rows, "trace": trace, "screenshots": screenshots,
 		"source_contract_sha256": inputs.get("source_contract_sha256", ""),
+		"provenance_debug": provenance_debug,
 		"a8_commit": inputs.get("a8_commit", ""),
 		"production_native_playable": false,
 		"production_world_traversable": false,
