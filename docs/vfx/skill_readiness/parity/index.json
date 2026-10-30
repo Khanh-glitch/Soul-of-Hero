@@ -254,6 +254,22 @@
    "status": "PASS",
    "ticks": 385
   },
+  "venomwright:007": {
+   "compared_ticks": 80,
+   "cue_mismatch": "",
+   "cues_native": 5,
+   "cues_original": 5,
+   "evidence": "CI candidate run 41110354328 job 124250865627 at commit 2d2855c: GOLD93_VENOM_DIFFERENTIAL PASS, parity true, first_divergent_tick -1, seed 7. Root cause chain of the former t90/t265 raster divergence: (a) M.mix did not clamp like the original for t>=1 (fixed 49b5800, divergence moved t90 -> t265); (b) venom_engine.resolve() and aim helpers used sqrt(x*x+y*y) where engine.ts uses Math.hypot - the cast target (Cocoon x) differed by 1 ulp (322.048055943973 vs ...294), and the error amplified through Cocoon push-out, Ring knockback and hatchling flock steering to ~1e-5 by t240, flipping the t265 raster. Fixed in 2d2855c (M.hypot throughout venom_engine.gd); supporting hypot conversions in venom_world.gd (bcdf9ee) and venom_fx.gd (0d4fd0b). Hits/cues counts from the immutable oracle venomwright_007.json; native counts matched (differential PASS requires exact event-stream equality).",
+   "first_divergent_tick": -1,
+   "first_mismatch": "",
+   "hit_mismatch": "",
+   "hits_native": 30,
+   "hits_original": 30,
+   "recorded_utc": "2026-10-30",
+   "seed": 7,
+   "skill": 7,
+   "status": "PASS"
+  },
   "venomwright:008": {
    "compared_ticks": 82,
    "cue_mismatch": "",
