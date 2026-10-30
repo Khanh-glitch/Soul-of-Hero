@@ -85,26 +85,44 @@ func _refresh() -> void:
 	if _host == null or not is_instance_valid(_host):
 		return
 	for child: Node in _list.get_children():
+		# Remove immediately so new rows keep stable names during this frame;
+		# freeing remains deferred until input dispatch has finished.
+		_list.remove_child(child)
 		child.queue_free()
+	var jobs: Dictionary = _host.call(&"jobs")
 	var stations: Array = _host.call(&"nearby_stations")
 	for raw: Variant in stations:
 		var station: Dictionary = raw
 		var id := String(station.get("station_id", ""))
+		var used := 0
+		for job: Variant in jobs.values():
+			if String(job.get("station_id", "")) == id and String(job.get("status", "")) in ["queued", "running", "paused", "ready", "cancelled"]:
+				used += 1
 		var label := Label.new()
-		label.text = "%s %s" % [String(station.get("kind", "")).capitalize(), "(offline)" if not bool(station.get("operational", true)) else ""]
+		label.text = "%s — queue %d/%d %s" % [String(station.get("kind", "")).capitalize(), used, int(station.get("queue_capacity", 1)), "(offline)" if not bool(station.get("operational", true)) else ""]
 		_list.add_child(label)
 		for value: Variant in (_host.call(&"available_recipes", id) as Array):
 			var recipe: Dictionary = value
 			var button := Button.new()
 			button.name = "Recipe_%s_%s" % [String(recipe.id), id]
-			button.text = "%s — %s — %ds" % [String(recipe.id).replace("_", " ").capitalize(), _format_items(recipe.inputs), int(recipe.duration_ticks)]
+			button.text = "%s — needs %s — fuel %s — makes %s — %ds active" % [String(recipe.id).replace("_", " ").capitalize(), _format_items(recipe.inputs), _format_items(recipe.fuel), _format_items(recipe.outputs), int(recipe.duration_ticks)]
 			# A long recipe must wrap within the scroll viewport instead of
 			# widening the list and pushing Collect beyond the right edge.
 			button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 			button.disabled = not bool(station.get("operational", true))
 			button.pressed.connect(_queue.bind(String(recipe.id), id))
 			_list.add_child(button)
-	var jobs: Dictionary = _host.call(&"jobs")
+		if String(station.get("kind", "")) == "research":
+			for value: Variant in (_host.call(&"available_technologies", id) as Array):
+				var tech: Dictionary = value
+				var button := Button.new()
+				button.name = "Technology_%s_%s" % [String(tech.id), id]
+				var required := ", ".join(PackedStringArray(tech.prerequisites)) if not (tech.prerequisites as Array).is_empty() else "none"
+				button.text = "%s — needs %s — requires %s — %ds active%s" % [String(tech.label), _format_items(tech.inputs), required, int(tech.duration_ticks), " — learned" if bool(tech.known) else ""]
+				button.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+				button.disabled = bool(tech.known) or not bool(station.get("operational", true))
+				button.pressed.connect(_research.bind(String(tech.id), id))
+				_list.add_child(button)
 	var ids: Array = jobs.keys()
 	ids.sort()
 	for raw_id: Variant in ids:
@@ -126,6 +144,11 @@ func _refresh() -> void:
 func _queue(recipe: String, station: String) -> void:
 	var result: Dictionary = _host.call(&"queue_recipe", recipe, station)
 	_notice.text = "Queued. Close the panel to work." if bool(result.get("ok", false)) else "Cannot queue: " + String(result.get("reason", "rejected"))
+	_refresh()
+
+func _research(technology: String, station: String) -> void:
+	var result: Dictionary = _host.call(&"queue_technology", technology, station)
+	_notice.text = "Research queued. Close the panel to work." if bool(result.get("ok", false)) else "Cannot research: " + String(result.get("reason", "rejected"))
 	_refresh()
 
 func _job_action(job: String, collect_item: bool) -> void:

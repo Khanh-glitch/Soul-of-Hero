@@ -92,6 +92,8 @@ func _discard_partial_steps() -> void:
 	_world_remainder_usec = 0
 	for value: Variant in _stations.values():
 		value["steps"] = 0
+		value["last_usec"] = 0
+		value["remainder_usec"] = 0
 
 
 func _new_session(snapshot: Dictionary) -> bool:
@@ -209,14 +211,18 @@ func _physics_process(_delta: float) -> void:
 		var resolved := {"operational": true, "station_revision": "hand"} if id == "hand" else _resolve_station(id)
 		var operational := bool(resolved.get("operational", false)) and int(resolved.get("condition", 100)) > 0
 		var revision := String(resolved.get("station_revision", ""))
-		var record: Dictionary = _stations.get(id, {"ticks": 0, "steps": 0, "ack": 0, "revision": revision, "was_operational": true})
+		var record: Dictionary = _stations.get(id, {"ticks": 0, "steps": 0, "ack": 0, "revision": revision, "was_operational": true, "last_usec": 0, "remainder_usec": 0})
 		if revision.is_empty():
 			revision = String(record.get("revision", "removed:" + id))
 		if String(record.get("revision", "")) != revision:
 			record["revision"] = revision
 			record["steps"] = 0
+			record["last_usec"] = 0
+			record["remainder_usec"] = 0
 		if not operational:
 			record["steps"] = 0
+			record["last_usec"] = 0
+			record["remainder_usec"] = 0
 			_stations[id] = record
 			if bool(record.get("was_operational", true)):
 				_sequence += 1
@@ -224,15 +230,30 @@ func _physics_process(_delta: float) -> void:
 			record["was_operational"] = false
 			continue
 		record["was_operational"] = true
-		if int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
-			record["steps"] = int(record.steps) + 1
-		if int(record.steps) >= TICKS_PER_SECOND:
-			record["steps"] = 0
+		# Fixed callback count is not elapsed time when the physics rate changes
+		# or a frame hitch reduces actual callbacks. Accumulate monotonic time
+		# only while this authoritative station is active. As for world sources,
+		# discard suspicious >250ms gaps rather than credit offline/focus time.
+		var now := Time.get_ticks_usec()
+		var last := int(record.get("last_usec", 0))
+		if last > 0:
+			var elapsed := now - last
+			if elapsed >= 0 and elapsed <= 250000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
+				record["remainder_usec"] = int(record.get("remainder_usec", 0)) + elapsed
+		record["last_usec"] = now
+		var remainder := int(record.get("remainder_usec", 0))
+		if remainder >= 1000000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
+			remainder -= 1000000
 			record["ticks"] = int(record.ticks) + 1
 			_sequence += 1
+			record["remainder_usec"] = remainder
+			record["steps"] = mini(59, int(remainder * TICKS_PER_SECOND / 1000000))
 			_stations[id] = record
 			_flush(id)
 		else:
+			# This observable fractional-step value is diagnostic only; the host
+			# receipt advances from monotonic microseconds, not callback count.
+			record["steps"] = mini(59, int(remainder * TICKS_PER_SECOND / 1000000))
 			_stations[id] = record
 
 
@@ -332,6 +353,44 @@ func queue_recipe(recipe_id: String, station_id: String) -> Dictionary:
 	return _adapter.call(&"enqueue", recipe_id, station_id, _event())
 
 
+## Research remains owned by A3. The player supplies only the technology ID;
+## A0 independently resolves the paid, reachable physical research station.
+func queue_technology(technology_id: String, station_id: String) -> Dictionary:
+	if not _commands_available():
+		return {"ok": false, "reason": "session_inactive"}
+	var station := _resolve_station(station_id)
+	var node: Node2D = _build.call(&"structure_node", station_id)
+	if station.is_empty() or node == null or _hero.global_position.distance_to(node.global_position + Vector2(16, 16)) > 64:
+		return {"ok": false, "reason": "station_not_reachable"}
+	if String(station.get("kind", "")) != "research":
+		return {"ok": false, "reason": "station_research_mismatch"}
+	return _adapter.call(&"research_technology", technology_id, station_id, _event())
+
+
+func available_technologies(station_id: String) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	if not _configured:
+		return result
+	var station := _resolve_station(station_id)
+	if station.is_empty() or String(station.get("kind", "")) != "research":
+		return result
+	var catalog: Dictionary = _adapter.get(&"catalog")
+	var technologies: Dictionary = catalog.get("technologies", {})
+	var ids: Array = technologies.keys()
+	ids.sort()
+	for value: Variant in ids:
+		var id := String(value)
+		var tech: Dictionary = technologies[id]
+		if int(tech.get("min_tier", 0)) > int(station.get("tier", 0)):
+			continue
+		result.append({"id": id, "label": String(tech.get("label", id)),
+			"inputs": (tech.get("inputs", {}) as Dictionary).duplicate(true),
+			"prerequisites": (tech.get("prerequisites", []) as Array).duplicate(true),
+			"duration_ticks": int(tech.get("duration_ticks", 0)),
+			"known": bool(_adapter.call(&"knows_technology", id))})
+	return result
+
+
 func jobs() -> Dictionary:
 	return _adapter.call(&"jobs") if _configured else {}
 
@@ -350,7 +409,7 @@ func cancel(job_id: String) -> Dictionary:
 
 ## Read-only player/A6 surfaces; never expose the adapter, facade or host receipt.
 func nearby_stations() -> Array[Dictionary]:
-	var result: Array[Dictionary] = [{"station_id": "hand", "kind": "hand", "tier": 0, "operational": true}]
+	var result: Array[Dictionary] = [{"station_id": "hand", "kind": "hand", "tier": 0, "queue_capacity": 1, "operational": true}]
 	if not _configured or not is_instance_valid(_hero):
 		return result
 	var structures: Dictionary = _survival.call(&"structures")
