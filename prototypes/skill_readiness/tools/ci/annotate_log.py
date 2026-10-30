@@ -44,7 +44,7 @@ def main() -> int:
     # Verdict/summary lines must land in the FIRST chunks: the platform keeps
     # only the first 10 annotations a step emits, so a flooded match list
     # would otherwise push the summary past the cut.
-    prio = re.compile(r"SUM|DIFFERENTIAL|first_|FAIL|PASS")
+    prio = re.compile(r"SUM|E12|DIFFERENTIAL|first_|FAIL|PASS")
     keep = [l for l in keep if prio.search(l)] + [l for l in keep if not prio.search(l)]
     # Keep the first matches as well as the last: early markers (setup, first
     # cast) must survive a flood of repeated per-tick SCRIPT ERROR lines.
