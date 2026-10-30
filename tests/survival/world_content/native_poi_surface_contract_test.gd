@@ -55,7 +55,13 @@ func _owner_projection_is_the_only_run_state_reset_path() -> void:
 	# neutral action; no route-distance or movement claim is made in this test.
 	actor.global_position = site.get_stand_position()
 	actor.set("facing", Vector2.UP)
-	_check(site.try_interact(actor), "Orchard choice prepares a run-local projection")
+	var interaction_feedback: Array[String] = []
+	site.player_feedback.connect(func(message: String): interaction_feedback.append(message))
+	var orchard_interaction_accepted := site.try_interact(actor)
+	_check(
+		orchard_interaction_accepted,
+		"Orchard choice prepares a run-local projection; feedback=%s" % str(interaction_feedback)
+	)
 	var intent: Dictionary = site._pending.duplicate(true)
 	var receipt: Dictionary = authority.submit_intent(intent)
 	_check(

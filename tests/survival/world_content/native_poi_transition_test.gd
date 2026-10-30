@@ -96,49 +96,49 @@ func _shell_definition_parse_schema_and_resource_negatives() -> void:
 				"%s accepts JSON integer-valued numeric pair %s" % [field, pair]
 			)
 
-		var bad_schema := definition.duplicate(true)
+		var bad_schema: Dictionary = definition.duplicate(true)
 		bad_schema.schema_version = 2
 		_check(
 			NativePoiShell.validate_definition(bad_schema) == "unsupported_schema_version",
 			"unsupported shell schema version is rejected"
 		)
-		var string_schema := definition.duplicate(true)
+		var string_schema: Dictionary = definition.duplicate(true)
 		string_schema.schema_version = "1"
 		_check(
 			NativePoiShell.validate_definition(string_schema) == "unsupported_schema_version",
 			"string-valued schema version is rejected"
 		)
-		var string_bounds := definition.duplicate(true)
+		var string_bounds: Dictionary = definition.duplicate(true)
 		string_bounds.overworld_shell.bounds_px = [128, "128"]
 		_check(
 			NativePoiShell.validate_definition(string_bounds) == "shell_bounds_invalid",
 			"string-valued bounds component is rejected"
 		)
-		var fractional_bounds := definition.duplicate(true)
+		var fractional_bounds: Dictionary = definition.duplicate(true)
 		fractional_bounds.overworld_shell.bounds_px = [128.5, 128]
 		_check(
 			NativePoiShell.validate_definition(fractional_bounds) == "shell_bounds_invalid",
 			"fractional bounds component is rejected"
 		)
-		var wrong_bounds := definition.duplicate(true)
+		var wrong_bounds: Dictionary = definition.duplicate(true)
 		wrong_bounds.overworld_shell.bounds_px = [960, 608]
 		_check(
 			NativePoiShell.validate_definition(wrong_bounds) == "shell_bounds_invalid",
 			"interior-size bounds cannot masquerade as a 128-pixel shell"
 		)
-		var malformed_socket := definition.duplicate(true)
+		var malformed_socket: Dictionary = definition.duplicate(true)
 		malformed_socket.overworld_shell.action_socket = [64]
 		_check(
 			NativePoiShell.validate_definition(malformed_socket) == "action_socket_invalid",
 			"malformed action socket is rejected"
 		)
-		var wrong_socket := definition.duplicate(true)
+		var wrong_socket: Dictionary = definition.duplicate(true)
 		wrong_socket.overworld_shell.action_socket = [63, 64]
 		_check(
 			NativePoiShell.validate_definition(wrong_socket) == "action_socket_invalid",
 			"off-center action socket is rejected"
 		)
-		var mismatched_scene := definition.duplicate(true)
+		var mismatched_scene: Dictionary = definition.duplicate(true)
 		mismatched_scene.local_transition.shell_scene = "res://missing_shell.tscn"
 		_check(
 			(
@@ -147,7 +147,7 @@ func _shell_definition_parse_schema_and_resource_negatives() -> void:
 			),
 			"split shell-scene references are rejected before scene loading"
 		)
-		var missing_worksite := definition.duplicate(true)
+		var missing_worksite: Dictionary = definition.duplicate(true)
 		missing_worksite.local_transition.worksite_scene = "res://missing_worksite.tscn"
 		_check(
 			(

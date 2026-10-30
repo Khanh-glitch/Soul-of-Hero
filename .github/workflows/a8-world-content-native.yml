@@ -119,7 +119,7 @@ jobs:
             label="$2"
             log_path="$3"
             if [ "$outcome" != success ] && [ -f "$log_path" ]; then
-              excerpt="$(tail -n 14 "$log_path" | tr '\n' ' ' | cut -c1-5000)"
+              excerpt="$(grep -E 'ERROR: Assertion failed:|SCRIPT ERROR:' "$log_path" | tail -n 24 | tr '\n' ' ' | cut -c1-5000)"
               echo "::warning title=A8 ${label} failure excerpt::${excerpt}"
             fi
           }

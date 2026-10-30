@@ -854,9 +854,15 @@ func _physical_mill_gate_and_retreat() -> void:
 		),
 		"mill outside inspection stand is reachable by a separate physical step"
 	)
+	var mill_feedback: Array[String] = []
+	site.player_feedback.connect(func(message: String): mill_feedback.append(message))
+	var mill_inspection_accepted := site.try_interact(actor, 0)
 	_check(
-		site.try_interact(actor, 0),
-		"mill race is inspectable from outside before salvage capability"
+		mill_inspection_accepted,
+		(
+			"mill race is inspectable from outside before salvage capability; feedback=%s"
+			% str(mill_feedback)
+		)
 	)
 	var observation: Dictionary = intents.back()
 	var observed: Dictionary = authority.submit_intent(observation)
