@@ -146,6 +146,7 @@ jobs:
             tests/survival/ui/v4_storage_owner_integration_test.gd
           )
           failures=0
+          failed_suites=()
           for test_path in "${tests[@]}"; do
             name=${test_path##*/}; name=${name%.gd}
             echo "Running $test_path"
@@ -156,9 +157,21 @@ jobs:
             result=${PIPESTATUS[0]}
             set -e
             echo "$test_path exit code: $result"
-            if [[ $result -ne 0 ]]; then failures=$((failures + 1)); fi
+            if [[ $result -ne 0 ]]; then
+              failures=$((failures + 1))
+              failed_suites+=("$test_path")
+              diagnostics=$(grep -E 'FAIL:|ERROR:|SCRIPT ERROR:|Parse Error|FAILED' "a0-source/.artifacts/a6-v4/${name}.log" | head -n 8 | tr '\n' '; ' | cut -c1-3000 || true)
+              printf '::error title=Failed A6 suite::%s (exit %s) %s\n' "$test_path" "$result" "$diagnostics"
+              {
+                echo "### Failed A6 suite: $test_path (exit $result)"
+                echo '```text'
+                tail -n 60 "a0-source/.artifacts/a6-v4/${name}.log"
+                echo '```'
+              } >> "$GITHUB_STEP_SUMMARY"
+            fi
           done
           echo "A6 V4 native suites: $(( ${#tests[@]} - failures ))/${#tests[@]} passed" >> "$GITHUB_STEP_SUMMARY"
+          echo "Failed suites: ${failed_suites[*]:-none}" >> "$GITHUB_STEP_SUMMARY"
           grep -E 'A6 PLAYER-FIRST HUD|A6 V4 A0 STORAGE OWNER INTEGRATION|A6 JOURNEYS:|A6 MODAL LIFECYCLE:|SURVIVAL UI:|EXPEDITION PLANNER:|WORKSPACE V1:' a0-source/.artifacts/a6-v4/*.log >> "$GITHUB_STEP_SUMMARY" || true
           exit "$failures"
 
