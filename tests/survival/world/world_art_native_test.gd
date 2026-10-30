@@ -247,6 +247,11 @@ func _run() -> void:
 			var shadow := hero.get_node_or_null("GroundShadow") as CanvasItem
 			if shadow != null:
 				shadow.visible = false
+			# Selective occlusion fade is a continuous alpha ramp, not static
+			# geometry. Restore opaque art for the strict hash pass; the lit pass
+			# and the dedicated fade assertion below still exercise occlusion.
+			var occlusion_was_enabled := pres.occlusion.enabled
+			pres.occlusion.enabled = false
 			pres.set_time_of_day(tod)
 			pres.snap_occlusion()
 			await physics_frame
@@ -270,6 +275,7 @@ func _run() -> void:
 			_set_fixture_lights(pres, true)
 			if shadow != null:
 				shadow.visible = true
+			pres.occlusion.enabled = occlusion_was_enabled
 			pres.set_time_of_day(tod)
 			pres.snap_occlusion()
 			await physics_frame
