@@ -528,3 +528,28 @@ Profile, from the code paths (not measured here; no local Godot):
   Original objhash in `/tmp/obj13_ref.txt`, `/tmp/obj16_ref.txt`.
 - ARCANA III 001: RNG foundation + source audit in place; Pixi renderer port not started.
 - No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED promotion anywhere.
+
+## Round 2026-10-30 (sync @4eb25b0 + b78eaa9): 020 registered; 007 frontier moved to actor steering
+
+- Candidate run `41023406811` (SHA `2f07831`): 008/018/019/020/021 SUCCESS, 007 FAIL.
+  **020 first-divergence root cause confirmed**: native task scheduler treated `yield 0` as
+  immediate re-resume; original JS `t.wait += (r.value) || 1/60` treats 0/NaN as falsy →
+  a full frame wait (`1eb6a10`). 020 disc-0 had grown one tick early (r=2.0593 vs 2.0000 @t180).
+- **007 Cocoon seam root cause** (`49b5800`, continuation session): `M.mix` did not clamp like
+  the original (t>=1 must return b). Fixed in `venom_math.gd`. First 007 divergence moved
+  t90 → t264 (Hatchling `up` draw).
+- **020 registered** (`49b5800`): `v020_source_native.gd`, runtime matrix + parity record.
+  Registered host adapters now 18 (001–006, 008–012, 014, 015, 017–020, 021 minus 007/013/016).
+- 007 current frontier (diag commits `2921891`→`4eb25b0`): hatchling h0/h2 state drift window
+  t120–264; h0 steering intermediates t201–211; now bisecting **enemy-12 drift t2–80**
+  (GOLD93_EN12/GOLD93_PL both engines; native re-print as GOLD93_EN12SUM in `b78eaa9`).
+  Original EN12: t2 x=333.584822983007 y=292.770073027199 (native matches @t2);
+  t30 320.223272315958/298.300786898264; t60 314.193659712156/315.894990023318
+  kx=-1.544914475346 ky=10.043383632193; t80 306.296055052192/310.028760745882.
+- Parse-error incident at `5edce88` (all candidate jobs failed): S4 preload half-edit missing
+  in `venom_skills.gd` + `Field.shade` sx/sy scope break from the fast-path edit. Fixed `2f07831`.
+  Lesson: gdparse does NOT resolve identifiers — grep-verify every declaration after edits.
+- Still open: 007 (above), 013 t320 / 016 t195 (runtime differential at newer SHA pending:
+  run `41076115355`), 008/015 host-lifecycle verdicts on fixed tree (same run), 021 host
+  wall-clock (595s vs 180s bound unchanged; fast paths parity-verified in candidate lane),
+  ARCANA 001 Pixi renderer port. No NATIVE_PORT_READY / OWNER_VISUAL_APPROVED anywhere.
