@@ -350,30 +350,74 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	var lb: PackedByteArray = L.bytes
 	var lw: int = L.W
 	var lh: int = L.H
+	# Per-column invariants hoisted out of the pixel loop (bit-identical:
+	# every expression below is the same float computation as the original
+	# per-pixel one, only evaluated once per column/row instead of per pixel).
+	var ncol: int = 2 * ri + 1
+	var col_n2x: PackedInt32Array = PackedInt32Array()
+	col_n2x.resize(ncol)
+	var col_n1x: PackedFloat64Array = PackedFloat64Array()
+	col_n1x.resize(ncol)
+	var col_sx: PackedFloat64Array = PackedFloat64Array()
+	col_sx.resize(ncol)
+	var col_qx: PackedFloat64Array = PackedFloat64Array()
+	col_qx.resize(ncol)
+	var col_bx: PackedInt32Array = PackedInt32Array()
+	col_bx.resize(ncol)
+	var rr2: float = R * R
+	for ci in range(ncol):
+		var dx0: int = ci - ri
+		var gx0: int = gcx + dx0
+		var wx0: float = float(gx0) / k
+		col_n2x[ci] = int(floor(wx0 * 0.5 - t * 3 + float(seed))) & 63
+		col_n1x[ci] = wx0 * 0.22 + float(seed) * 7 + t * 2.2
+		col_sx[ci] = -(float(dx0) / R) * 0.55
+		col_qx[ci] = float(dx0 * dx0)
+		col_bx[ci] = gx0 & 3
+	var ramp_n: int = ramp.size()
+	var ramp_i: PackedInt32Array = PackedInt32Array()
+	ramp_i.resize(maxi(ramp_n, 1))
+	for ri2 in range(ramp_n):
+		ramp_i[ri2] = int(ramp[ri2])
+	var nz2t = RNG.NZ2
+	var nz1t = RNG.NZ1
+	var bayer = M.BAYER
 	for dy in range(-ri, ri + 1):
-		for dx in range(-ri, ri + 1):
-			var q: float = (float(dx * dx) + float(dy * dy)) / (R * R)
+		var gy: int = gcy + dy
+		# Row span: q <= 1 requires dx*dx <= R*R - dy*dy (the q check inside
+		# the loop is kept, so this only narrows the scan, never the output).
+		var rem: float = rr2 - float(dy * dy)
+		if rem < 0.0:
+			continue
+		var span: int = int(floor(sqrt(rem))) + 1
+		if span > ri:
+			span = ri
+		var wy: float = float(gy) / k
+		var row_n2: int = (int(floor(wy * 0.5)) & 63) << 6
+		var row_n1y: float = wy * 0.22 + t * 1.3
+		var s_row: float = -(float(dy) / R) * 0.65
+		var q_row: float = float(dy * dy)
+		var b_row: int = (gy & 3) << 2
+		for dx in range(-span, span + 1):
+			var ci2: int = dx + ri
+			var q: float = (col_qx[ci2] + q_row) / rr2
 			if q > 1:
 				continue
 			var gx: int = gcx + dx
-			var gy: int = gcy + dy
-			var wx: float = float(gx) / k
-			var wy: float = float(gy) / k
 			# `keep` depends only on n2, so evaluate n2 and the Bayer discard
 			# BEFORE nz1: discarded pixels never need n (pure table lookups,
 			# no RNG stream, so output is bit-identical).
-			var n2: float = float(RNG.nz2(wx * 0.5 - t * 3 + float(seed), wy * 0.5)) / 255.0
+			var n2: float = float(nz2t[row_n2 | col_n2x[ci2]]) / 255.0
 			var keep: float = dl * (1 - q * q * 0.75) + (n2 - 0.5) * 4
-			if M.BAYER[((gy & 3) << 2) | (gx & 3)] >= keep:
+			if bayer[b_row | col_bx[ci2]] >= keep:
 				continue
-			var n: float = float(RNG.nz1(wx * 0.22 + float(seed) * 7 + t * 2.2,
-					wy * 0.22 + t * 1.3)) / 255.0
-			var s: float = -(float(dx) / R) * 0.55 - (float(dy) / R) * 0.65 \
+			var n: float = float(nz1t[((int(floor(row_n1y)) & 63) << 6) | (int(floor(col_n1x[ci2])) & 63)]) / 255.0
+			var s: float = col_sx[ci2] + s_row \
 					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
 			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
 			if fast:
 				if gx >= 0 and gy >= 0 and gx < lw and gy < lh:
-					var c: int = int(ramp[0]) if outline and q > 0.8 else int(ramp[mini(idx, ramp.size() - 1)])
+					var c: int = ramp_i[0] if outline and q > 0.8 else ramp_i[mini(idx, ramp_n - 1)]
 					var o: int = (gy * lw + gx) * 4
 					lb[o] = c & 255
 					lb[o + 1] = (c >> 8) & 255
@@ -381,7 +425,7 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 					lb[o + 3] = 255
 			else:
 				L.dl = 16
-				L.raw_px(gx, gy, ramp[0] if outline and q > 0.8 else ramp[mini(idx, ramp.size() - 1)])
+				L.raw_px(gx, gy, ramp_i[0] if outline and q > 0.8 else ramp_i[mini(idx, ramp_n - 1)])
 	if fast:
 		L.bytes = lb
 	L.dl = sd

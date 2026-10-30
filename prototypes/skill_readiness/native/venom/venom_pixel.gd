@@ -146,6 +146,24 @@ class Layer extends RefCounted:
 				bytes[o + 2] = b
 				bytes[o + 3] = 255
 			return
+		if add and not cov and dl >= 16:
+			# Bit-identical inline of raw_px's additive branch.
+			var cr: int = ((c & 255) * a) >> 8
+			var cg: int = (((c >> 8) & 255) * a) >> 8
+			var cb: int = (((c >> 16) & 255) * a) >> 8
+			var base2: int = (y * W + x0) * 4
+			var lb: PackedByteArray = bytes
+			for i in range(x1 - x0 + 1):
+				var o: int = base2 + i * 4
+				var r2: int = int(lb[o]) + cr
+				var g2: int = int(lb[o + 1]) + cg
+				var b2: int = int(lb[o + 2]) + cb
+				lb[o] = 255 if r2 > 255 else r2
+				lb[o + 1] = 255 if g2 > 255 else g2
+				lb[o + 2] = 255 if b2 > 255 else b2
+				lb[o + 3] = 255
+			bytes = lb
+			return
 		for x in range(x0, x1 + 1):
 			raw_px(x, y, c)
 
@@ -327,6 +345,12 @@ class Field extends RefCounted:
 	var y0: int = 1000000000
 	var x1: int = -1
 	var y1: int = -1
+	## Per-row written extents (inclusive); -1 lo = row untouched. Writers
+	## (disc/ellipse/capsule) maintain these so shade/vapor only scan rows'
+	## live spans instead of the whole bounding box. Bit-identical: pixels
+	## outside the extents always have h == 0 and are skipped either way.
+	var row_lo: PackedInt32Array
+	var row_hi: PackedInt32Array
 
 	func _init(w: int = 600, h_: int = 340, k_: float = 1.0) -> void:
 		W = w
@@ -334,18 +358,31 @@ class Field extends RefCounted:
 		k = k_
 		self.h = PackedFloat32Array()
 		self.h.resize(w * h_)
+		row_lo = PackedInt32Array()
+		row_lo.resize(h_)
+		row_lo.fill(-1)
+		row_hi = PackedInt32Array()
+		row_hi.resize(h_)
+		row_hi.fill(-1)
 
 	func reset() -> void:
 		if x1 < 0:
 			return
-		for y in range(y0, y1 + 1):
-			var base: int = y * W
-			for x in range(x0, x1 + 1):
-				self.h[base + x] = 0.0
+		# h is non-zero only inside the tracked bbox (all writers go through
+		# _box), so a whole-array native fill reaches the same end state.
+		self.h.fill(0.0)
+		row_lo.fill(-1)
+		row_hi.fill(-1)
 		x0 = 1000000000
 		y0 = 1000000000
 		x1 = -1
 		y1 = -1
+
+	func _touch_row(y: int, lo: int, hi: int) -> void:
+		if row_lo[y] < 0 or lo < row_lo[y]:
+			row_lo[y] = lo
+		if hi > row_hi[y]:
+			row_hi[y] = hi
 
 	func _box(a: float, b: float, c: float, d: float) -> bool:
 		a = maxf(2.0, floor(a))
@@ -378,14 +415,29 @@ class Field extends RefCounted:
 		var xb: int = mini(W - 3, int(ceil(gx + gr + 1.0)))
 		var ya: int = maxi(2, int(floor(gy - gr - 1.0)))
 		var yb: int = mini(H - 3, int(ceil(gy + gr + 1.0)))
+		var lim: float = gr + 0.5
 		for y in range(ya, yb + 1):
-			for x in range(xa, xb + 1):
+			var dy: float = float(y) + 0.5 - gy
+			var rem: float = lim * lim - dy * dy
+			if rem <= 0.0:
+				continue
+			# v > 0  <=>  dx*dx < lim*lim - dy*dy; scan only that span
+			# (same per-pixel v computation inside, so output is identical).
+			var span: float = sqrt(rem)
+			# +1px guard band: the exact v<=0 check inside decides, so the
+			# widened span can never change output, only the scan width.
+			var sxa: int = maxi(xa, int(ceil(gx - 0.5 - span)) - 1)
+			var sxb: int = mini(xb, int(floor(gx - 0.5 + span)) + 1)
+			if sxa > sxb:
+				continue
+			_touch_row(y, sxa, sxb)
+			var base: int = y * W
+			for x in range(sxa, sxb + 1):
 				var dx: float = float(x) + 0.5 - gx
-				var dy: float = float(y) + 0.5 - gy
 				var v: float = gr - sqrt(dx * dx + dy * dy) + 0.5
 				if v <= 0.0:
 					continue
-				var i: int = y * W + x
+				var i: int = base + x
 				var o: float = h[i]
 				if goo != 0.0 and o > 0.0:
 					h[i] = maxf(o, v) + goo * minf(o, v)
@@ -405,6 +457,7 @@ class Field extends RefCounted:
 		var ya: int = maxi(2, int(floor(gy - gry - 1.0)))
 		var yb: int = mini(H - 3, int(ceil(gy + gry + 1.0)))
 		for y in range(ya, yb + 1):
+			_touch_row(y, xa, xb)
 			for x in range(xa, xb + 1):
 				var nx: float = (float(x) + 0.5 - gx) / grx
 				var ny: float = (float(y) + 0.5 - gy) / gry
@@ -436,6 +489,7 @@ class Field extends RefCounted:
 		var ya: int = maxi(2, int(floor(minf(gay, gby) - mr - 1.0)))
 		var yb: int = mini(H - 3, int(ceil(maxf(gay, gby) + mr + 1.0)))
 		for y in range(ya, yb + 1):
+			_touch_row(y, xa, xb)
 			for x in range(xa, xb + 1):
 				var pxx: float = float(x) + 0.5 - gax
 				var pyy: float = float(y) + 0.5 - gay
@@ -474,7 +528,9 @@ class Field extends RefCounted:
 		var hi_t: float = float(m.get("hiT", 0.25))
 		var amp: float = float(m.get("amp", 0.5))
 		for y in range(self.y0, self.y1 + 1):
-			for x in range(self.x0, self.x1 + 1):
+			if row_lo[y] < 0:
+				continue
+			for x in range(row_lo[y], row_hi[y] + 1):
 				var i: int = y * W + x
 				var v: float = h[i]
 				if v <= 0.0:
@@ -540,7 +596,9 @@ class Field extends RefCounted:
 		var sdl: int = L.dl
 		var sc: float = float(m.get("sc", 1.0)) / rk
 		for y in range(self.y0, self.y1 + 1):
-			for x in range(self.x0, self.x1 + 1):
+			if row_lo[y] < 0:
+				continue
+			for x in range(row_lo[y], row_hi[y] + 1):
 				var i: int = y * W + x
 				var v: float = h[i]
 				if v <= 0.0:
