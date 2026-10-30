@@ -1,96 +1,95 @@
-# DOCS_SYNC_PENDING — Issue #16 status comment (A7 checkpoint 6)
+# DOCS_SYNC_PENDING — Issue #16 status comment (A7 checkpoint 6b, addendum)
 
 **State:** `DOCS_SYNC_PENDING`.
-**Blocker (verbatim, re-probed this round):** `gh issue comment 16` → `Resource not accessible by
-integration, Locations: [{Line:1 Column:49}]`. This session's GitHub integration can open and
-update pull requests but has **no issue-write permission**. Permission blocker, not a content
-blocker: the text below is final.
+**Blocker (re-probed):** `gh issue comment 16` → `Resource not accessible by integration`. This
+session's GitHub integration can read and update pull requests but has **no issue-write
+permission**. Permission blocker, not a content blocker: the text below is final.
 
-**Google Docs:** tab 04 (`t.h4haqfdoyzzn`, `04 · Nhật ký LIVE & bàn giao`) — checkpoint 6 is
-appended after checkpoints 1–5.
+**Why an addendum:** checkpoint 6 was already appended to the Google Doc tab and is accurate as far
+as it goes. Work continued after it was written (a third probe, two new player-facing checks, a
+seventh matrix row, and two more holes found in A7's own tooling). Rather than rewrite a posted
+checkpoint, the delta is recorded here.
 
-**Action required:** someone with issue-write access posts the text below on Issue #16, then
-deletes this file. Git — PR #25, `ACCEPTANCE_SCOREBOARD.md`, `PLAYER_BLOCKERS.md`,
-`B0_ACCEPTANCE_MATRIX.md` — stays authoritative meanwhile.
+**Action required:** someone with issue-write access posts this after the checkpoint-6 comment on
+Issue #16, then deletes this file. Git stays authoritative meanwhile — in particular
+`docs/survival/balance/B0_ACCEPTANCE_MATRIX.md`, which is generated and therefore cannot drift.
 
 ---
 
 ## Text to post on Issue #16
 
-A7 checkpoint 6 — **the gate was challenged and it failed once, in two different ways.** Branch
-`arena/353cf120-soul-of-hero`, PR #25 updated (**not** self-merged). No gameplay file, loot table,
-rate, price or owner code touched.
+A7 checkpoint 6b — **three more questions were asked of the owner code, and all three answers are
+"not for a player yet".** Branch `arena/353cf120-soul-of-hero`, PR #25 updated (never self-merged).
+No gameplay file, loot table, rate, price or owner code touched; A7 imported no art.
 
-### 1. Repin
+### 1. Two new player-facing checks, both FAIL, both one owner action away
 
-A0 `9269739e` · A1 `939720d5` · A3 `c5e80922` · A6 `08ccb834` · A8 `c8b4bc88` — 75 sha256-pinned
-files. Every native state is `STALE_HEAD`; 33 workflow runs recorded (18 queued, 15 completed, all
-15 failed). Nothing that ran on an older sha is quoted as current.
+**`Q-08` — every A8 site anchor lies outside the world A0 actually mounts.** The mounted world is
+`448 x 256` tiles and the only imported annex is `(384,192)-(448,256)`. The three A8 anchors are at
+`(30,280)`, `(140,300)` and `(140,360)`. A player cannot walk to an anchor past the map edge, so
+A8's scene quality cannot reach anyone until A1 moves the anchors or A0 mounts a contiguous
+extension. A8's own review already says `REJECT_FOOTPRINT_MISMATCH` for a 1:1 mount — this check
+turns that prose into a number that flips.
 
-### 2. What the challenge found
+**`Q-09` — the avatar seam A0 and A6 are being asked to accept does not exist.** No A0 production
+file references A6's `avatar_appearance_adapter` or `avatar_art_manifest`; no production UI offers a
+male/female choice; the mounted body is `knight.tscn`. A6's side is separately `SOURCE_BLOCKED`
+(grade-0 paths empty). So an avatar acceptance test would today be measuring an intention, and the
+native probe `avatar_body_probe.gd` says exactly that instead of passing.
 
-**Hole 1 — reachability by comment.** `gate.entry_content()` counted a scene name that appeared
-inside a `;` comment as an instanced scene, so an unmounted A8 site could read as `SOURCE_PRESENT`.
-Fixed: only live `instance=` / `path=` / `preload(` lines count, comments stripped. The spoof is
-now permanent as adversary probe `comment_mention`.
+### 2. Third native probe: the avatar interface, expressed as a contract
 
-**Hole 2 — a red check filed as closed.** `PROD-04` (developer text on a player surface) could be
-`FAIL` while the same payload mapped it to the closed bucket, so the failure was silently dropped;
-and the vocabulary list included the wire key `"schema"`, so `intent.get("schema")` counted as
-player prose. Fixed: display-sink literals are separated from unbound ones (2 vs 105 hits), the
-verdict is `FAIL` only when the surface is actually mounted and `WARN` when latent, and `"schema"`
-is off the list. Recorded as `CORR-13`.
+`tests/survival/balance_native/avatar_body_probe.gd` extends A0's own entry chain and asserts:
+a chooser exists at normal entry → the mounted sheet is D051 `555940`/`419402` → four facings →
+armour grade 0 → the same body after respawn → never the Knight. It stops at the first check
+because there is no chooser. This is the interface test A0/A6 can be held to, written before the
+work rather than after it.
 
-**Hole 3 — a catalog that loaded empty.** The test fixture resolved A3's binding table by guessing
-`a3.world_source_bindings.v3.json` while the writer stored `a3.world_source_bindings_v3.json`. The
-miss produced an empty catalog, and an empty catalog answers "no binding exists" to every question.
-Every oracle that needed A3 was quietly vacuous in the test path. Fixed: catalogs resolve through
-the manifest's `source_path`; a missing one raises. Guarded by `A32` and adversary probe
-`respelled_catalog_key`.
+### 3. The route probe got honest about coordinates
 
-### 3. What the gate now says, with the numbers
+`first_hour_route_probe.gd` no longer contains a single authored cell. It walks with ordinary
+movement input to whichever neighbour of the locker the **host's own** `matches_interaction()`
+accepts, presses `interact` once, requires exactly one receipt and the authored sentence, presses
+again and requires a refusal in words, then repeats at the cache. It has an opt-in
+`--force-branch` mode that sets the project flag at runtime; that mode is labelled
+`SOURCE_PRESENT_BEHIND_GUARD, not acceptance`, because setting a production flag from a test is not
+evidence that a shipped build reaches the branch.
 
-* **15/15 spoof probes rejected** (`adversary.json`) — `NO_KNOWN_SPOOF_SURVIVES`.
-* **33 assertions, 255 tests**, all holding.
-* Claim **C** is `SOURCE_PRESENT_BEHIND_DISABLED_FLAG`, `reachable_by_normal_input = false`: A0
-  `9269739e` really does mount the Waystation host and A1's slice geometry, behind
-  `survival/a0_waystation_candidate`, which the shipped `project.godot` never declares.
-* **BLK-2 is a one-file re-vendor, not an A3 change.** A0's host sends
-  `si:r_ashen_crown:waystation_cache:01`; A3 `c5e80922` authorises exactly that row
-  (`a1_waystation_roadside_cache_v3`); A0's vendored table still says `node_waystation_cache`, and
-  A0's lookup is exact string equality. A3's re-canonicalisation also reopened `Q-03`: A0's mirror
-  of `sources.json` diverges on `road_notes`, `road_scrap`, `road_supplies` (33/36 rows identical).
-* **BLK-3 is `SOURCE_FIXED_PENDING_NATIVE`**, not an open source defect: 0 unknown engine statics at
-  `c8b4bc88` (it was 15 at `5ccf7b3f`), and no native run has exercised the replacement.
+### 4. The adversary found two more holes — in A7's tooling
 
-### 4. Phase 3 — the first-hour probe that cannot lie
+* **`P08`.** A fixture-only evidence file could be credited toward S4's `C4_authorised_commit`
+  clause. Fixed structurally: the clause names `a0_waystation_player_input`, and a perfect green
+  authority fixture now demonstrably leaves `C4 = NOT_HOLDS`. Pinned by
+  `test_a_perfect_fixture_run_still_cannot_grant_s4`.
+* **`P09`.** `Q-07`'s overclaim pattern recognised `SAVE_VERIFIED`/`DUPLICATE_PROOF` but not a
+  `REWARD_VERIFIED` token, so a fixture could announce a reward nobody committed. The pattern now
+  covers reward/loot/economy/grant claims, with a liveness test per alternative.
 
-Two Godot 4.7 probes ship under `tests/survival/balance_native/`, subclassing A0's own
-menu → Home → paid-shelter chain. They teleport nothing, inject no node, force no death, grant no
-item, and take every coordinate from A0's own host (`matches_interaction()` decides the stand
-cell). On today's heads the first one exits **2 (blocked)** at `L2_MOUNT`, and the death one exits
-**2** because the composed overworld mounts nothing that can kill a player.
+Both are the kind of hole that makes a QA board look greener than the product; they are recorded
+rather than quietly fixed.
 
-A7 has no Godot binary, so neither has been run: the artifact says
-`PROBES_STATICALLY_SOUND_NOT_EXECUTED` / `NATIVE_UNEXECUTED`, and `A33` fails if that label is
-changed. What is proved is the part A7 can prove: each probe extends the shipped chain, contains no
-fabricating construct, and names only symbols present in the pinned bytes.
+### 5. Numbers at this pin
 
-### 5. Smallest next action per owner
+A0 `9269739e` · A1 `939720d5` · A3 `c5e80922` · A6 `08ccb834` · A8 `c8b4bc88`; 75 sha256-pinned
+files; 33 CI runs recorded (18 queued, 15 completed, all failed); every native state `STALE_HEAD`.
 
-* **A0 (one line):** declare `survival/a0_waystation_candidate=true` in `project.godot`, then run
-  `tests/survival/balance_native/first_hour_route_probe.gd` unchanged.
-* **A0 (one file):** re-vendor `data/survival/items/world_source_bindings.v3.json` from A3
-  `c5e80922` and re-sync `data/survival/items/sources.json`; that closes BLK-2 and Q-03 together.
-* **A8:** run `a8-world-content-native.yml` on `c8b4bc88`; the source defect is already gone.
-* **A6:** import one grade-0 idle sheet for one gender, and drop the two fixture labels at
-  `acceptance_journeys.gd:241,340` before that viewer is ever mounted.
-* **A5/A0:** give the overworld one authored hazard that calls `begin_overworld_death()`, so death
-  recovery stops being `RUNTIME_UNKNOWN`.
+* **34 assertions** (`A01`–`A34`) hold; `A34` fails the build if any named spoof survives.
+* **269 tests** green; `run_analysis.py` green.
+* **15/15** adversary probes rejected; **3/3** native probes statically sound, `NATIVE_UNEXECUTED`.
+* Matrix: **`B0_NOT_MET`**, 7 rows, strongest `SOURCE_FIXED_PENDING_NATIVE`, each row carrying an
+  exact SHA, a `verify_command` a reviewer can paste, the owner and the minimum fix.
+* S4 remains 0 of 5 clauses and S5 is not A7's to grant: no native run, no rendered frame, no human
+  review backs anything here.
 
-### 6. Standing limits
+### 6. Smallest next action per owner (unchanged, and now ordered)
 
-No native run, no rendered frame and no human review backs any claim here. S4 stays 0 of 5 clauses
-and S5 is not grantable by A7. The matrix at
-`docs/survival/balance/B0_ACCEPTANCE_MATRIX.md` is regenerated from the same payloads, so it cannot
-drift from the gate.
+1. **A0, one line:** `survival/a0_waystation_candidate=true` in `project.godot`; then run
+   `first_hour_route_probe.gd` unchanged.
+2. **A0, one file:** re-vendor A3's `world_source_bindings.v3.json` + `sources.json`; closes BLK-2
+   and `Q-03` together. Without it the locker pays and the cache answers `unknown_source_instance`.
+3. **A8:** run `a8-world-content-native.yml` on `c8b4bc88`.
+4. **A1/A0/A8:** put the three site anchors inside the mounted world (or declare the sites interior
+   instances entered from a canonical anchor) — `Q-08`.
+5. **A6 → A0:** import one grade-0 sheet, then a chooser plus `avatar_appearance_adapter` mount —
+   `Q-09` and `BLK-5` close in that order, not the reverse.
+6. **A5/A0:** one authored hazard that calls `begin_overworld_death()`.

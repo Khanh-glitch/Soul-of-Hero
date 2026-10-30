@@ -37,19 +37,21 @@ class QualityPinTests(unittest.TestCase):
         cls.model, cls.texts, cls.manifest, cls.facts = _inputs()
         cls.checks = quality.run_all(cls.model, cls.texts, cls.facts, cls.manifest)
 
-    def test_seven_checks_run(self) -> None:
+    def test_nine_checks_run(self) -> None:
         self.assertEqual(
             [check["check_id"] for check in self.checks],
-            ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07"],
+            ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07", "Q-08", "Q-09"],
         )
 
-    def test_two_checks_fail_at_this_pin(self) -> None:
+    def test_four_checks_fail_at_this_pin(self) -> None:
         failing = [check["check_id"] for check in self.checks if check["status"] == "FAIL"]
-        # Round 6: A3 c5e80922 recanonicalised three source rows to the si: identity
-        # and A0's mirror still carries the old names, so Q-03 reopened on its own
-        # evidence rather than by a test edit. Q-04 (Knight mounted instead of the
-        # D051 avatar) was never closed.
-        self.assertEqual(failing, ["Q-03", "Q-04"])
+        # Q-03 reopened on its own evidence: A3 c5e80922 recanonicalised three source
+        # rows to the si: identity and A0's mirror still carries the old names.
+        # Q-04 (Knight mounted instead of the D051 avatar) was never closed.
+        # Q-08 and Q-09 are round 6: every A8 site anchor sits past the mounted
+        # world edge, and the avatar seam A0/A6 are being asked to accept does not
+        # exist yet (no chooser, no adapter reference from A0).
+        self.assertEqual(failing, ["Q-03", "Q-04", "Q-08", "Q-09"])
 
     def test_every_verdict_names_an_owner_and_a_closure_signal(self) -> None:
         for check in self.checks:
@@ -184,6 +186,65 @@ class QualityClosureTests(unittest.TestCase):
         texts["a8.poi_pilot.gd"] += '\nconst CLAIM := "SAVE_VERIFIED_NO_DUPLICATE"\n'
         checks = quality.run_all(self.model, texts, self.facts, self.manifest)
         self.assertEqual(self._status(checks, "Q-07"), "FAIL")
+
+    # ---------------------------------------------------------------- Q-08
+    def _transforms_with(self, cells, decisions=None):
+        document = json.loads(self.texts["a1.a8_site_transforms.v1.json"])
+        for index, site in enumerate(document["sites"]):
+            site["canonical_cell"] = cells[index]
+            if decisions is not None:
+                site["direct_overworld_mount_decision"] = decisions[index]
+        texts = dict(self.texts)
+        texts["a1.a8_site_transforms.v1.json"] = json.dumps(document)
+        return texts
+
+    def test_q08_fails_because_all_three_anchors_are_past_the_world_edge(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "FAIL")
+        self.assertEqual(
+            [row["site_id"] for row in check["evidence"] if not row["inside_mounted_world"]],
+            ["crown_south_quarry", "crown_south_orchard", "crown_south_mill"],
+        )
+        # The world is 448x256; y=280 is not a corner of it, it is outside it.
+        self.assertEqual(check["world_bounds"], {"w": 448, "h": 256})
+
+    def test_q08_warns_when_anchors_are_inside_but_still_rejected_for_footprint(self) -> None:
+        texts = self._transforms_with([[30, 200], [140, 200], [120, 200]])
+        check = _by_id(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "WARN")
+
+    def test_q08_passes_when_anchors_are_inside_and_the_mount_decision_is_not_reject(self) -> None:
+        texts = self._transforms_with(
+            [[30, 200], [140, 200], [120, 200]], ["MOUNT", "MOUNT", "MOUNT"]
+        )
+        check = _by_id(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-08")
+        self.assertEqual(check["status"], "PASS")
+
+    # ---------------------------------------------------------------- Q-09
+    def test_q09_names_the_three_things_that_are_missing(self) -> None:
+        check = _by_id(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-09")
+        self.assertEqual(check["status"], "FAIL")
+        missing = " ; ".join(check["evidence"]["missing"])
+        self.assertIn("no A0 production file references", missing)
+        self.assertIn("no production UI offers", missing)
+        self.assertIn("knight.tscn", missing)
+        self.assertEqual(check["evidence"]["adapter_references_from_a0"], [])
+
+    def test_q09_passes_when_the_seam_exists_end_to_end(self) -> None:
+        texts = dict(self.texts)
+        texts["a0.profile_screen.gd"] = (
+            "extends Control\n"
+            "const ADAPTER := preload(\"res://game/avatar/avatar_appearance_adapter.gd\")\n"
+            "func _add_options() -> void:\n"
+            "\tfor gender in [\"male\", \"female\"]:\n"
+            "\t\tvar button := Button.new()\n"
+            "\t\tbutton.text = gender\n"
+        )
+        facts = dict(self.facts)
+        facts["mounted_player_scene"] = "res://game/avatar/555940_grade0.tscn"
+        check = _by_id(quality.run_all(self.model, texts, facts, self.manifest), "Q-09")
+        self.assertEqual(check["status"], "PASS")
+        self.assertEqual(len(check["evidence"]["adapter_references_from_a0"]), 1)
 
     # ---------------------------------------------------------------- Q-06
     def test_q06_fails_when_a_button_has_no_action_host(self) -> None:

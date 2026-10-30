@@ -97,6 +97,25 @@ PROBES: Dict[str, Dict[str, object]] = {
             "world_source_bindings.v3.json so the host's si: instance resolves. No A7 edit is needed."
         ),
     },
+    "avatar_body_probe.gd": {
+        "claim": "D_useful_reward_claimable",
+        "question": "can a player choose the locked body and keep it across entry, death and reload?",
+        "expected_today": "FAIL_NO_SELECTION_NO_MOUNTED_ADAPTER",
+        "board": "B0_NOT_MET",
+        "closes": ["BLK-5"],
+        "requires": [
+            "knight.tscn",
+            "get_facing_direction",
+            "armor_grades",
+            "avatar_appearance_adapter",
+            "pending_death",
+        ],
+        "a0_action": (
+            "A0/A6: add a male/female choice to the profile step, reference A6's avatar_appearance_adapter "
+            "from it, and mount the returned scene instead of knight.tscn. A6 must import one grade-0 sheet "
+            "first; until then the adapter can only answer SOURCE_BLOCKED."
+        ),
+    },
     "bed_death_bag_probe.gd": {
         "claim": "B_route_runs_in_native_godot",
         "question": "is there a mounted threat that can kill a player, and does the same bag survive a restart?",
@@ -191,7 +210,9 @@ def _requirements(name: str) -> List[str]:
 
 def run(texts: Dict[str, str], root: Path) -> Dict[str, object]:
     """Audit every probe in the probe directory against the pinned texts."""
-    symbols = "\n".join(texts.values())
+    # A symbol counts if it is in a pinned file's text *or* is the name of a pinned
+    # file: the adapter existing as `a6.avatar_appearance_adapter.gd` is the symbol.
+    symbols = "\n".join(list(texts.keys()) + list(texts.values()))
     directory = root / PROBE_DIR
     files = sorted(directory.glob("*.gd")) if directory.exists() else []
     probes = [audit_probe(path, symbols) for path in files]

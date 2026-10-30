@@ -14,7 +14,7 @@
     "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
   },
   "reproduce": "python3 tools/survival/balance/run_analysis.py && cat data/survival/balance/results/matrix.json",
-  "row_count": 6,
+  "row_count": 7,
   "rows": [
     {
       "allowed_claims": [
@@ -88,7 +88,8 @@
         "reproduce": "python3 tools/survival/balance/run_analysis.py"
       },
       "smallest_fix": "A0 decides the guard's default. Either set survival/a0_waystation_candidate=true in project.godot once the interaction is proven, or mount the host unconditionally and keep the flag for the annex geometry only. One line, no new system.",
-      "title": "The Waystation exists in production code but no normal player can reach it"
+      "title": "The Waystation exists in production code but no normal player can reach it",
+      "verify_command": "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/first_hour_route_probe.gd"
     },
     {
       "allowed_claims": [
@@ -128,7 +129,8 @@
         ]
       },
       "smallest_fix": "A0 re-vendors A3 c5e80922's world_source_bindings.v3.json byte-for-byte (three bindings, si ids, instance_id + interaction_node_id + identity), and changes its authority test to send the host's request instead of the alias. No quantity, cooldown or price changes.",
-      "title": "The cache reward cannot resolve even if the player enables the guard"
+      "title": "The cache reward cannot resolve even if the player enables the guard",
+      "verify_command": "python3 tools/survival/balance/run_analysis.py && python3 -c \"import json;print([r for r in json.load(open('data/survival/balance/results/oracle.json'))['instance_identity']['unresolved_host_requests']])\""
     },
     {
       "allowed_claims": [
@@ -192,7 +194,8 @@
         "unknown_engine_calls": 0
       },
       "smallest_fix": "A8 lands those two native steps green on a pushed sha and uploads the artifact. No code change is implied by this blocker any more.",
-      "title": "A8's native POI steps are fixed in source and unproven in the engine"
+      "title": "A8's native POI steps are fixed in source and unproven in the engine",
+      "verify_command": "gh run list --workflow a8-world-content-native.yml --commit c8b4bc88 && gh run view <run-id> --log"
     },
     {
       "allowed_claims": [
@@ -226,6 +229,7 @@
         "probe_evidence_class": "NATIVE_UNEXECUTED",
         "probe_verdict": "PROBES_STATICALLY_SOUND_NOT_EXECUTED",
         "probes": [
+          "/home/user/Soul-of-Hero/tests/survival/balance_native/avatar_body_probe.gd",
           "/home/user/Soul-of-Hero/tests/survival/balance_native/bed_death_bag_probe.gd",
           "/home/user/Soul-of-Hero/tests/survival/balance_native/first_hour_route_probe.gd"
         ],
@@ -233,7 +237,8 @@
         "save_fidelity": "ROUND_TRIP_EXACT"
       },
       "smallest_fix": "A0 runs the two halves on the pinned sha and cites the green runs. Nothing else in A7's scope can move this: S4 is owner-native evidence only.",
-      "title": "No native journey on the current sha: every required run is stale or queued"
+      "title": "No native journey on the current sha: every required run is stale or queued",
+      "verify_command": "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/bed_death_bag_probe.gd -- --verify-separate-process"
     },
     {
       "allowed_claims": [
@@ -247,11 +252,89 @@
       "owner": "A6 (import) + A0 (mount)",
       "player_now": "A player controls a Knight. The two user-locked bald bodies (555940 male, 419402 female) exist as inspected source archives, not as imported sheets, so nothing can be shown even if A0 swapped the scene today.",
       "proof": {
+        "adapter_referenced_from_a0": [],
         "mounted_scene": "game/characters/knight/knight.tscn",
-        "q04": "FAIL"
+        "q04": "FAIL",
+        "q09": "FAIL"
       },
       "smallest_fix": "Two A6 edits, neither of which needs A0: import the grade-0 idle sheet for ONE gender from the authorised archive and point the manifest at the installed file; and drop the two fixture labels from acceptance_journeys.gd before that viewer is mounted. A0 then mounts the scene behind the existing avatar seam. Grades 1-2 stay SOURCE_BLOCKED; no Knight substitution.",
-      "title": "The playable body is the Knight, not the locked bald adventurer"
+      "title": "The playable body is the Knight, not the locked bald adventurer",
+      "verify_command": "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/avatar_body_probe.gd"
+    },
+    {
+      "allowed_claims": [
+        "SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD"
+      ],
+      "closure_probe": "every site's canonical_cell satisfies 0 <= cell < world_bounds and its direct_overworld_mount_decision is not REJECT",
+      "closure_test": "tests/survival/balance/test_quality.py::QualityClosureTests::test_q08_passes_when_anchors_are_inside_and_the_mount_decision_is_not_reject",
+      "fix_state": "SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD",
+      "gap_id": "GAP-7",
+      "not_proven_after_closure": "that the composed surface has no seam the Hero can fall through (native walk required)",
+      "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+      "player_now": "No player can reach an A8 site, and enabling the Waystation flag would not change that: the mounted world is 448x256 tiles, its one imported annex is (384,192)-(448,256), and the three site anchors sit at y=280, 300 and 360. A scene cannot be walked to from outside the map.",
+      "proof": {
+        "annex": [
+          384,
+          192,
+          448,
+          256
+        ],
+        "q08": "FAIL",
+        "sites": [
+          {
+            "canonical_cell": [
+              30,
+              280
+            ],
+            "decision": "REJECT_FOOTPRINT_MISMATCH",
+            "fits_authored_footprint_1_to_1": false,
+            "inside_imported_annex": false,
+            "inside_mounted_world": false,
+            "site_id": "crown_south_quarry",
+            "site_root_position_px": [
+              -18,
+              4186
+            ]
+          },
+          {
+            "canonical_cell": [
+              140,
+              360
+            ],
+            "decision": "REJECT_FOOTPRINT_MISMATCH",
+            "fits_authored_footprint_1_to_1": false,
+            "inside_imported_annex": false,
+            "inside_mounted_world": false,
+            "site_id": "crown_south_orchard",
+            "site_root_position_px": [
+              1738,
+              5476
+            ]
+          },
+          {
+            "canonical_cell": [
+              120,
+              300
+            ],
+            "decision": "REJECT_FOOTPRINT_MISMATCH",
+            "fits_authored_footprint_1_to_1": false,
+            "inside_imported_annex": false,
+            "inside_mounted_world": false,
+            "site_id": "crown_south_mill",
+            "site_root_position_px": [
+              1400,
+              4514
+            ]
+          }
+        ],
+        "world_bounds": {
+          "h": 256,
+          "w": 448
+        }
+      },
+      "smallest_fix": "A1 must either move the anchors inside the mounted world or author the extension; A0 must then mount it as one contiguous surface (annex_build is disabled pending a composite validator) or declare the sites interior instances entered from a canonical anchor. A8 supplies a shell whose collision footprint fits the authored radius.",
+      "title": "Every A8 site anchor lies outside the world A0 actually mounts",
+      "verify_command": "python3 tools/survival/balance/run_analysis.py && python3 -c \"import json;print([c['status'] for c in json.load(open('data/survival/balance/results/quality.json'))['checks'] if c['check_id']=='Q-08'])\""
     },
     {
       "allowed_claims": [
@@ -273,7 +356,8 @@
         "verdict": "SEEDED_ONLY_BY_LOOT"
       },
       "smallest_fix": null,
-      "title": "The research ladder has exactly one seed, and that seed is behind GAP-1/GAP-2"
+      "title": "The research ladder has exactly one seed, and that seed is behind GAP-1/GAP-2",
+      "verify_command": ""
     }
   ],
   "rule": "A row may never claim more than its weakest column. SOURCE_FIXED_PENDING_NATIVE is not a native pass; NATIVE_VERIFIED requires a green owner run on this sha; VISUAL_INSPECTED requires frames a human looked at.",

@@ -7,8 +7,31 @@
     "1": "a real check failed",
     "2": "blocked before the first player action; never a pass"
   },
-  "probe_count": 2,
+  "probe_count": 3,
   "probes": [
+    {
+      "a0_action": "A0/A6: add a male/female choice to the profile step, reference A6's avatar_appearance_adapter from it, and mount the returned scene instead of knight.tscn. A6 must import one grade-0 sheet first; until then the adapter can only answer SOURCE_BLOCKED.",
+      "board": "B0_NOT_MET",
+      "claim": "D_useful_reward_claimable",
+      "closes": [
+        "BLK-5"
+      ],
+      "expected_today": "FAIL_NO_SELECTION_NO_MOUNTED_ADAPTER",
+      "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/avatar_body_probe.gd",
+      "forbidden": [],
+      "question": "can a player choose the locked body and keep it across entry, death and reload?",
+      "requires_found": [
+        "armor_grades",
+        "avatar_appearance_adapter",
+        "get_facing_direction",
+        "knight.tscn",
+        "pending_death"
+      ],
+      "requires_missing": [],
+      "sound": true
+    },
     {
       "a0_action": "A0/A5: mount one authored hazard or hostile with contact damage that calls begin_overworld_death(). SurvivalService has no environmental damage path at this pin, so death is fixture-only today.",
       "board": "B0_NOT_MET",

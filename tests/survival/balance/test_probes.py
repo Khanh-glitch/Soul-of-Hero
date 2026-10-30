@@ -29,9 +29,13 @@ class ShippedProbeTests(unittest.TestCase):
         self.texts, _manifest = _texts()
         self.payload = probes.run(self.texts, support.REPO_ROOT)
 
-    def test_the_two_probes_are_statically_sound(self) -> None:
+    def test_the_three_probes_are_statically_sound(self) -> None:
         self.assertEqual(self.payload["verdict"], "PROBES_STATICALLY_SOUND_NOT_EXECUTED")
-        self.assertEqual(self.payload["probe_count"], 2)
+        self.assertEqual(self.payload["probe_count"], 3)
+        self.assertEqual(
+            [Path(row["file"]).name for row in self.payload["probes"]],
+            ["avatar_body_probe.gd", "bed_death_bag_probe.gd", "first_hour_route_probe.gd"],
+        )
         self.assertEqual(self.payload["defects"], [])
         self.assertEqual(self.payload["undeclared"], [])
 

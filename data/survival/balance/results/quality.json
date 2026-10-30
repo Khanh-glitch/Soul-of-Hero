@@ -269,10 +269,103 @@
       "scope": "STATIC_READ_OF_PINNED_BYTES",
       "status": "PASS",
       "title": "Save/loot claims are honest about fixture authority"
+    },
+    {
+      "annex": [
+        384,
+        192,
+        448,
+        256
+      ],
+      "check_id": "Q-08",
+      "closure_signal": "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
+      "evidence": [
+        {
+          "canonical_cell": [
+            30,
+            280
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_quarry",
+          "site_root_position_px": [
+            -18,
+            4186
+          ]
+        },
+        {
+          "canonical_cell": [
+            140,
+            360
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_orchard",
+          "site_root_position_px": [
+            1738,
+            5476
+          ]
+        },
+        {
+          "canonical_cell": [
+            120,
+            300
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_mill",
+          "site_root_position_px": [
+            1400,
+            4514
+          ]
+        }
+      ],
+      "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A0 mounts a contiguous extension or an explicit interior transition.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every A8 site anchor is inside the world A0 mounts",
+      "world_bounds": {
+        "h": 256,
+        "w": 448
+      }
+    },
+    {
+      "check_id": "Q-09",
+      "closure_signal": "a production surface offers male/female, A0 references the adapter, and the mounted body is the canonical sheet",
+      "evidence": {
+        "adapter_references_from_a0": [],
+        "adapter_references_in_production": [
+          {
+            "file": "a6.avatar_appearance_adapter.gd",
+            "line": 5,
+            "path": "game/survival/ui/avatar_appearance_adapter.gd"
+          }
+        ],
+        "missing": [
+          "no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing)",
+          "no production UI offers a male/female choice",
+          "the mounted body is game/characters/knight/knight.tscn"
+        ],
+        "mounted_player_scene": "game/characters/knight/knight.tscn",
+        "selection_surfaces_in_production": []
+      },
+      "interface_contract": "tests/survival/balance_native/avatar_body_probe.gd",
+      "owner": "A0 (selection + mount) with A6 (adapter + art)",
+      "player_impact": "A player cannot choose a body and cannot see the locked one: no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing); no production UI offers a male/female choice; the mounted body is game/characters/knight/knight.tscn. The interface A0 and A6 are being asked to accept does not exist yet, so an avatar test would be measuring an intention.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "The locked avatar is a wired seam, not an intention"
     }
   ],
   "counts": {
-    "FAIL": 2,
+    "FAIL": 4,
     "PASS": 5
   },
   "failures": [
@@ -386,6 +479,99 @@
         "rendered frames at 1280x720 and 1920x1080 inspected by a human"
       ],
       "visual_state": "NOT_TESTED"
+    },
+    {
+      "annex": [
+        384,
+        192,
+        448,
+        256
+      ],
+      "check_id": "Q-08",
+      "closure_signal": "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
+      "evidence": [
+        {
+          "canonical_cell": [
+            30,
+            280
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_quarry",
+          "site_root_position_px": [
+            -18,
+            4186
+          ]
+        },
+        {
+          "canonical_cell": [
+            140,
+            360
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_orchard",
+          "site_root_position_px": [
+            1738,
+            5476
+          ]
+        },
+        {
+          "canonical_cell": [
+            120,
+            300
+          ],
+          "decision": "REJECT_FOOTPRINT_MISMATCH",
+          "fits_authored_footprint_1_to_1": false,
+          "inside_imported_annex": false,
+          "inside_mounted_world": false,
+          "site_id": "crown_south_mill",
+          "site_root_position_px": [
+            1400,
+            4514
+          ]
+        }
+      ],
+      "owner": "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+      "player_impact": "3 of 3 A8 site anchors sit outside the mounted world (448x256 tiles, annex (384, 192, 448, 256)): crown_south_quarry at [30, 280], crown_south_orchard at [140, 360], crown_south_mill at [120, 300]. A player cannot walk to an anchor past the world edge, so the site's local scene quality cannot reach them until A0 mounts a contiguous extension or an explicit interior transition.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every A8 site anchor is inside the world A0 mounts",
+      "world_bounds": {
+        "h": 256,
+        "w": 448
+      }
+    },
+    {
+      "check_id": "Q-09",
+      "closure_signal": "a production surface offers male/female, A0 references the adapter, and the mounted body is the canonical sheet",
+      "evidence": {
+        "adapter_references_from_a0": [],
+        "adapter_references_in_production": [
+          {
+            "file": "a6.avatar_appearance_adapter.gd",
+            "line": 5,
+            "path": "game/survival/ui/avatar_appearance_adapter.gd"
+          }
+        ],
+        "missing": [
+          "no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing)",
+          "no production UI offers a male/female choice",
+          "the mounted body is game/characters/knight/knight.tscn"
+        ],
+        "mounted_player_scene": "game/characters/knight/knight.tscn",
+        "selection_surfaces_in_production": []
+      },
+      "interface_contract": "tests/survival/balance_native/avatar_body_probe.gd",
+      "owner": "A0 (selection + mount) with A6 (adapter + art)",
+      "player_impact": "A player cannot choose a body and cannot see the locked one: no A0 production file references A6's avatar adapter or art manifest (1 reference(s) exist inside A6's own layer, which mounts nothing); no production UI offers a male/female choice; the mounted body is game/characters/knight/knight.tscn. The interface A0 and A6 are being asked to accept does not exist yet, so an avatar test would be measuring an intention.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "The locked avatar is a wired seam, not an intention"
     }
   ],
   "read_this_first": "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the feature runs.",

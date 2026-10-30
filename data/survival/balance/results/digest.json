@@ -2,21 +2,21 @@
   "artifacts": {
     "access.json": "1eaa25b96e46ea11defab04d51226913528c79ba9e7779d06e3e7021f4dc810a",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
-    "adversary.json": "2f65f9a66098836e08731fec8d866dfd2d388d2bb7f6cc538dfdd72117d09d8a",
-    "blockers.json": "60a135c31a7c5eb90eef6e62db89027b60163401465cd439886a09b4fdb00eae",
+    "adversary.json": "f2cb58c7769da80c0632b676102453a37a5878a9b085c9f0e529c03dc6504fc3",
+    "blockers.json": "3c1689568bd501b763c870bb7fbbb6ab7a6bcf6de27a7ae4b56cdfa22a55b12b",
     "findings.json": "12e78380f8798748a5656d5ffa5074aafa40f30c8078c0ab93079b8305ad121b",
     "gate.json": "ad3628d5e088260d378a532f13d4d8fb5fc66bae3fa87f717a6340961b3504a6",
-    "matrix.json": "f73c83804f8c337647e480e3097911b882fbb768877f7f4f38d5dbccbfe2c2ea",
-    "native_probes.json": "51fe388786e6984c64b81bfc2530a14b765b1fc2ec1acc94de6dc53a6cc29797",
+    "matrix.json": "5a9c797a8e89737942746d16714832316b4ebafa149bd5918b79e91ac8a0dbae",
+    "native_probes.json": "4996313051e3f3225d975ee2ab48df083196195e8a069048f075450465ab4f7a",
     "opportunity.json": "e189d633e99212e8a331b6ad64c1cba71dfd27cc1004ea6587759fcc27a58a31",
     "oracle.json": "98e5a2903aeefa6349d1edf01f62e940ec374a71f09fdf93d43d56b7741b1603",
     "product.json": "fc148349021c5d5dbf7bfd288823841feb7f09546da3d33b921666ebdb08c405",
     "provenance.json": "33ee9e624b9f204566997cc3662c86c4d066cc0c9688df7aa30fb413346b2674",
-    "quality.json": "53111410457a67bb688ef707213259fea6e94f8fd53c02b092d1c8760a5ea1b2",
+    "quality.json": "4f7c4d12df09fcaf3f970323f283ec167adf8896bb7bf01c2d9cfaca756583ff",
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
-    "summary.json": "023cf2f840658776820a8e9416b82b6acfe935669aaf12edd4fe41c1e1b4f394"
+    "summary.json": "18bec486fa8722e5750515a39d07fe32f66c6359b999e9734708ef340a22e514"
   },
-  "combined_sha256": "8641032057bff0e3ebe6191120469c85e8de8b35a74c0256e53f828741780531",
+  "combined_sha256": "2aa41bbac5eaa5fd31d71d0c5c93d9d4af2f1a292ed167648adc50e41485f7c4",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

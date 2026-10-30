@@ -407,6 +407,7 @@ def owner_action_check(texts: Dict[str, str]) -> Dict[str, object]:
 # may not claim them without a SaveService commit behind it.
 _OVERCLAIM_PATTERN = re.compile(
     r"SAVE_VERIFIED[A-Z_]*|PERSISTENCE_VERIFIED[A-Z_]*|NO_DUPLICATE_VERIFIED[A-Z_]*|DUPLICATE_PROOF[A-Z_]*"
+    r"|REWARD_VERIFIED[A-Z_]*|LOOT_VERIFIED[A-Z_]*|ECONOMY_VERIFIED[A-Z_]*|GRANT_VERIFIED[A-Z_]*"
 )
 def fixture_claim_check(texts: Dict[str, str]) -> Dict[str, object]:
     fixture = texts.get("a8.poi_authority_fixture.gd", "")
@@ -443,10 +444,156 @@ def fixture_claim_check(texts: Dict[str, str]) -> Dict[str, object]:
     )
 
 
+def site_mount_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[str, object]:
+    """Q-08: is every A8 site anchor inside the world A0 actually mounts?
+
+    The claim to test is not "A8 authored a site" but "a player can stand where the
+    site is". Three numbers decide it, all read from pinned bytes rather than from
+    prose: the mounted world's bounds, each site's canonical cell, and the annex
+    the connector actually imports. A site anchored past the world edge cannot be
+    walked to at all, however good its local scene is.
+    """
+    try:
+        transforms = json.loads(texts.get("a1.a8_site_transforms.v1.json", "{}") or "{}")
+    except Exception:
+        transforms = {}
+    try:
+        annex = json.loads(texts.get("a0.annex_world.v1.json", "{}") or "{}")
+    except Exception:
+        annex = {}
+    bounds = annex.get("world_bounds") or {}
+    connector = annex.get("canonical_connector") or {}
+    width = int(bounds.get("w") or 0)
+    height = int(bounds.get("h") or 0)
+    origin = connector.get("annex_origin") or [0, 0]
+    size = connector.get("annex_size") or [0, 0]
+    annex_rect = (
+        (int(origin[0]), int(origin[1]), int(origin[0]) + int(size[0]), int(origin[1]) + int(size[1]))
+        if origin and size
+        else None
+    )
+    rows: List[Dict[str, object]] = []
+    for site in transforms.get("sites", []) or []:
+        cell = site.get("canonical_cell") or [0, 0]
+        cell_x, cell_y = int(cell[0]), int(cell[1])
+        inside_world = bool(width and height) and 0 <= cell_x < width and 0 <= cell_y < height
+        inside_annex = bool(annex_rect) and annex_rect[0] <= cell_x < annex_rect[2] and annex_rect[1] <= cell_y < annex_rect[3]
+        rows.append(
+            {
+                "site_id": site.get("a8_site_id"),
+                "canonical_cell": [cell_x, cell_y],
+                "inside_mounted_world": inside_world,
+                "inside_imported_annex": inside_annex,
+                "decision": site.get("direct_overworld_mount_decision"),
+                "fits_authored_footprint_1_to_1": site.get("fits_authored_footprint_1_to_1"),
+                "site_root_position_px": (site.get("transform") or {}).get("site_root_position_px"),
+            }
+        )
+    off_world = [row for row in rows if not row["inside_mounted_world"]]
+    rejected = [row for row in rows if str(row["decision"]).startswith("REJECT")]
+    if not rows:
+        return _check(
+            "Q-08",
+            "Every A8 site anchor is inside the world A0 mounts",
+            UNKNOWN,
+            "No A1 site-transform review is pinned, so placement cannot be judged.",
+            [],
+            "A1 + A8",
+            "a pinned a8_site_transforms review covering every site",
+        )
+    status = FAIL if off_world else (WARN if rejected else PASS)
+    impact = (
+        f"{len(off_world)} of {len(rows)} A8 site anchors sit outside the mounted world "
+        f"({width}x{height} tiles, annex {annex_rect}): "
+        + ", ".join(f"{row['site_id']} at {row['canonical_cell']}" for row in off_world)
+        + ". A player cannot walk to an anchor past the world edge, so the site's local scene "
+        "quality cannot reach them until A0 mounts a contiguous extension or an explicit interior "
+        "transition."
+    ) if off_world else (
+        "Every anchor is inside the mounted world; "
+        f"{len(rejected)} site(s) still carry an explicit REJECT decision on 1:1 mounting."
+    )
+    return _check(
+        "Q-08",
+        "Every A8 site anchor is inside the world A0 mounts",
+        status,
+        impact,
+        rows,
+        "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+        "every site anchor satisfies 0 <= cell < world_bounds and its mount decision is not REJECT",
+        extra={"world_bounds": {"w": width, "h": height}, "annex": annex_rect},
+    )
+
+
+def avatar_seam_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[str, object]:
+    """Q-09: does the avatar layer exist as a seam, or only as an intention?
+
+    Q-04 asks whether the *mounted* body is the locked avatar. It cannot ask whether
+    a player could ever choose one: if no production file mentions A6's adapter, the
+    adapter is not "not yet correct", it is not wired at all. Three separate facts
+    are required before any body swap can be judged: a selection surface, a mounted
+    adapter, and a canonical sheet that exists on disk.
+    """
+    paths = facts.get("_paths") or {}
+    texts = facts.get("_texts") or texts
+    adapter_refs: List[Dict[str, object]] = []
+    a0_mounts: List[Dict[str, object]] = []
+    selection_refs: List[Dict[str, object]] = []
+    for key, text in sorted(texts.items()):
+        upstream = str(paths.get(key, ""))
+        if upstream.startswith("tests/") or "/tests/" in upstream:
+            continue
+        for number, line in enumerate(text.splitlines(), start=1):
+            if "avatar_appearance_adapter" in line or "avatar_art_manifest" in line:
+                record = {"file": key, "path": upstream, "line": number}
+                adapter_refs.append(record)
+                # A6 referring to its own adapter is not A0 mounting it.
+                if not key.startswith("a6."):
+                    a0_mounts.append(record)
+            lowered = line.lower()
+            if re.search(r"\b(gender|male|female)\b", lowered) and ("label" in lowered or "button" in lowered or "option" in lowered):
+                selection_refs.append({"file": key, "path": upstream, "line": number})
+    mounted_scene = facts.get("mounted_player_scene")
+    body_is_canonical = "knight" not in str(mounted_scene or "").lower()
+    missing = []
+    if not a0_mounts:
+        missing.append(
+            "no A0 production file references A6's avatar adapter or art manifest"
+            + (f" ({len(adapter_refs)} reference(s) exist inside A6's own layer, which mounts nothing)" if adapter_refs else "")
+        )
+    if not selection_refs:
+        missing.append("no production UI offers a male/female choice")
+    if not body_is_canonical:
+        missing.append(f"the mounted body is {mounted_scene}")
+    status = PASS if not missing else FAIL
+    impact = (
+        "A player cannot choose a body and cannot see the locked one: " + "; ".join(missing) + ". "
+        "The interface A0 and A6 are being asked to accept does not exist yet, so an avatar test would "
+        "be measuring an intention."
+    ) if missing else "The avatar seam exists: a selection surface, a mounted adapter and a canonical body."
+    return _check(
+        "Q-09",
+        "The locked avatar is a wired seam, not an intention",
+        status,
+        impact,
+        {
+            "mounted_player_scene": mounted_scene,
+            "adapter_references_in_production": adapter_refs,
+            "adapter_references_from_a0": a0_mounts,
+            "selection_surfaces_in_production": selection_refs,
+            "missing": missing,
+        },
+        "A0 (selection + mount) with A6 (adapter + art)",
+        "a production surface offers male/female, A0 references the adapter, and the mounted body is the canonical sheet",
+        extra={"interface_contract": "tests/survival/balance_native/avatar_body_probe.gd"},
+    )
+
+
 def run_all(model, texts: Dict[str, str], facts: Dict[str, object], manifest: Dict[str, object]) -> List[Dict[str, object]]:
     enriched = dict(facts)
     enriched["_texts"] = texts
     enriched["_tree"] = product_module.load_tree(manifest)
+    enriched["_paths"] = product_module.path_index(manifest)
     return [
         empty_poi_check(model, texts, enriched),
         duplicate_hud_check(texts, enriched),
@@ -455,4 +602,6 @@ def run_all(model, texts: Dict[str, str], facts: Dict[str, object], manifest: Di
         orphan_output_check(model),
         owner_action_check(texts),
         fixture_claim_check(texts),
+        site_mount_check(texts, enriched),
+        avatar_seam_check(texts, enriched),
     ]

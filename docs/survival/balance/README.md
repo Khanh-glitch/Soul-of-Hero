@@ -20,8 +20,9 @@ from FAIL to PASS. Generated from `results/blockers.json`; 54 raw observations c
 **[`B0_ACCEPTANCE_MATRIX.md`](B0_ACCEPTANCE_MATRIX.md)** — the living matrix: six gaps, each with the exact SHA,
 the owner, the minimum fix and the proof level it would reach. Generated from `results/matrix.json`.
 
-**[`NATIVE_ROUTE_PLAN.md`](NATIVE_ROUTE_PLAN.md)** — the Godot 4.7 probes for the first-hour route and for
-death recovery, with the exact commands, the exit-code contract, and what each probe refuses to fake.
+**[`NATIVE_ROUTE_PLAN.md`](NATIVE_ROUTE_PLAN.md)** — the three Godot 4.7 probes (first-hour route, death
+recovery, avatar interface), with the exact commands, the exit-code contract, the L0–L5 evidence ladder,
+and what each probe refuses to fake.
 Audited `NATIVE_UNEXECUTED`; A7 has no engine binary.
 
 ```bash

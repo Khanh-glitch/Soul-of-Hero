@@ -169,7 +169,7 @@
     },
     {
       "assertion_id": "A21_quality_fails_only_where_an_owner_has_not_acted",
-      "detail": "two checks fail and both name an owner action: Q-03 because A0's vendored catalog drifted when A3 canonicalised the instance id, Q-04 because the canonical avatar is still not imported",
+      "detail": "four checks fail and each names an owner action: Q-03 because A0's vendored catalog drifted when A3 canonicalised the instance id, Q-04 because the canonical avatar is still not imported, Q-08 because all three A8 site anchors sit past the mounted world edge, and Q-09 because the avatar seam A0 and A6 are being asked to accept does not exist yet",
       "holds": true,
       "tags": [
         "quality"
@@ -282,6 +282,15 @@
         "oracle",
         "native"
       ]
+    },
+    {
+      "assertion_id": "A34_the_adversary_must_not_pass_a_known_spoof",
+      "detail": "Fifteen named disguises (comment mounts, fixtures, phantom sheets, wrong-sha runs, mocked reach, empty artifacts, unbacked success claims) were executed against the real classifiers and every one was rejected; a surviving spoof would surface here as GATE_HOLE_FOUND",
+      "holds": true,
+      "tags": [
+        "gate",
+        "adversary"
+      ]
     }
   ],
   "assertions_all_hold": true,
@@ -333,7 +342,7 @@
       "WARN": 3
     },
     "quality_checks": {
-      "FAIL": 2,
+      "FAIL": 4,
       "PASS": 5
     },
     "resource_nodes_authored_not_crates": 178

@@ -15,6 +15,7 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 | `GAP-3` | Nothing about A8's sites is visible to a player: they are not in the mounted world. The scenes themselves no longer call a non-existent engine method, and their native contract step has not been green on this sha. | A8 | `SOURCE_FIXED_PENDING_NATIVE` | `SOURCE_FIXED_PENDING_NATIVE` |
 | `GAP-4` | A player on this build has no evidence-backed guarantee that a session survives a restart, because no run on this sha has executed entry, real input, a second process or a replay refusal. S4 is 0 of 5 clauses. | A0 | `RUNTIME_UNKNOWN` | `RUNTIME_UNKNOWN` |
 | `GAP-5` | A player controls a Knight. The two user-locked bald bodies (555940 male, 419402 female) exist as inspected source archives, not as imported sheets, so nothing can be shown even if A0 swapped the scene today. | A6 (import) + A0 (mount) | `SOURCE_ABSENT` | `SOURCE_ABSENT` |
+| `GAP-7` | No player can reach an A8 site, and enabling the Waystation flag would not change that: the mounted world is 448x256 tiles, its one imported annex is (384,192)-(448,256), and the three site anchors sit at y=280, 300 and 360. A scene cannot be walked to from outside the map. | A1 (anchors) + A0 (mount mode) + A8 (shell footprint) | `SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD` | `SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD` |
 | `GAP-6` | A player can harvest wood and stone all hour and still never build the first research station: every spare recipe needs a station, the kit costs 3 spares, and the only non-circular seed is the cache reward that cannot be paid yet. | A1 + A3 (data), A0 (mount) | `SOURCE_PRESENT_BEHIND_GUARD` | `SOURCE_PRESENT_BEHIND_GUARD` |
 
 ## GAP-1 — The Waystation exists in production code but no normal player can reach it
@@ -26,6 +27,8 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 **Closure probe.** claim C is MOUNTED_BY_DEFAULT and guard.enabled_by_default is true
 
 **Test that flips.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk1_needs_a_production_path_not_a_test_harness`
+
+**Reproduce.** `xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/first_hour_route_probe.gd`
 
 **Still unproven after closure.** that the branch boots and the points are interactable (native run)
 
@@ -48,6 +51,8 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 
 **Test that flips.** `tests/survival/balance/test_oracle.py::InstanceIdentityOracleTests::test_the_alias_cannot_stand_in_for_the_world_instance`
 
+**Reproduce.** `python3 tools/survival/balance/run_analysis.py && python3 -c "import json;print([r for r in json.load(open('data/survival/balance/results/oracle.json'))['instance_identity']['unresolved_host_requests']])"`
+
 **Still unproven after closure.** that the transaction commits durably (BLK-4)
 
 **Evidence.**
@@ -68,6 +73,8 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 
 **Test that flips.** `tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion`
 
+**Reproduce.** `gh run list --workflow a8-world-content-native.yml --commit c8b4bc88 && gh run view <run-id> --log`
+
 **Still unproven after closure.** that the scenes are reachable in A0's world (BLK-1)
 
 **Evidence.**
@@ -86,6 +93,8 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 
 **Test that flips.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses`
 
+**Reproduce.** `xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/bed_death_bag_probe.gd -- --verify-separate-process`
+
 **Still unproven after closure.** that a human finds the route and enjoys it (S5)
 
 **Evidence.**
@@ -94,7 +103,7 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 - `native_states` = `{'a0_normal_entry_home': 'STALE_HEAD', 'a0_second_process_restart': 'STALE_HEAD', 'a0_waystation_player_input': 'STALE_HEAD', 'a0_replay_negative': 'STALE_HEAD', 'a3_authority_fixture': 'STALE_HEAD', 'a0_save_precision': 'STALE_HEAD', 'a8_native_poi_contract': 'STALE_HEAD', 'a0_runtime_validation': 'STALE_HEAD'}`
 - `probe_evidence_class` = `NATIVE_UNEXECUTED`
 - `probe_verdict` = `PROBES_STATICALLY_SOUND_NOT_EXECUTED`
-- `probes` = `['/home/user/Soul-of-Hero/tests/survival/balance_native/bed_death_bag_probe.gd', '/home/user/Soul-of-Hero/tests/survival/balance_native/first_hour_route_probe.gd']`
+- `probes` = `['/home/user/Soul-of-Hero/tests/survival/balance_native/avatar_body_probe.gd', '/home/user/Soul-of-Hero/tests/survival/balance_native/bed_death_bag_probe.gd', '/home/user/Soul-of-Hero/tests/survival/balance_native/first_hour_route_probe.gd']`
 - `s4_granted` = `False`
 - `save_fidelity` = `ROUND_TRIP_EXACT`
 
@@ -108,12 +117,37 @@ _Generated from `data/survival/balance/results/matrix.json`. Do not edit by hand
 
 **Test that flips.** `tests/survival/balance/test_quality.py::QualityClosureTests::test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical`
 
+**Reproduce.** `xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/avatar_body_probe.gd`
+
 **Still unproven after closure.** 4-direction animation, armour swap and rendered frames (S5, human)
 
 **Evidence.**
 
+- `adapter_referenced_from_a0` = `[]`
 - `mounted_scene` = `game/characters/knight/knight.tscn`
 - `q04` = `FAIL`
+- `q09` = `FAIL`
+
+## GAP-7 — Every A8 site anchor lies outside the world A0 actually mounts
+
+**Now.** No player can reach an A8 site, and enabling the Waystation flag would not change that: the mounted world is 448x256 tiles, its one imported annex is (384,192)-(448,256), and the three site anchors sit at y=280, 300 and 360. A scene cannot be walked to from outside the map.
+
+**Smallest safe fix.** A1 must either move the anchors inside the mounted world or author the extension; A0 must then mount it as one contiguous surface (annex_build is disabled pending a composite validator) or declare the sites interior instances entered from a canonical anchor. A8 supplies a shell whose collision footprint fits the authored radius.
+
+**Closure probe.** every site's canonical_cell satisfies 0 <= cell < world_bounds and its direct_overworld_mount_decision is not REJECT
+
+**Test that flips.** `tests/survival/balance/test_quality.py::QualityClosureTests::test_q08_passes_when_anchors_are_inside_and_the_mount_decision_is_not_reject`
+
+**Reproduce.** `python3 tools/survival/balance/run_analysis.py && python3 -c "import json;print([c['status'] for c in json.load(open('data/survival/balance/results/quality.json'))['checks'] if c['check_id']=='Q-08'])"`
+
+**Still unproven after closure.** that the composed surface has no seam the Hero can fall through (native walk required)
+
+**Evidence.**
+
+- `annex` = `(384, 192, 448, 256)`
+- `q08` = `FAIL`
+- `sites` = `[{'site_id': 'crown_south_quarry', 'canonical_cell': [30, 280], 'inside_mounted_world': False, 'inside_imported_annex': False, 'decision': 'REJECT_FOOTPRINT_MISMATCH', 'fits_authored_footprint_1_to_1': False, 'site_root_position_px': [-18, 4186]}, {'site_id': 'crown_south_orchard', 'canonical_cell': [140, 360], 'inside_mounted_world': False, 'inside_imported_annex': False, 'decision': 'REJECT_FOOTPRINT_MISMATCH', 'fits_authored_footprint_1_to_1': False, 'site_root_position_px': [1738, 5476]}, {'site_id': 'crown_south_mill', 'canonical_cell': [120, 300], 'inside_mounted_world': False, 'inside_imported_annex': False, 'decision': 'REJECT_FOOTPRINT_MISMATCH', 'fits_authored_footprint_1_to_1': False, 'site_root_position_px': [1400, 4514]}]`
+- `world_bounds` = `{'w': 448, 'h': 256}`
 
 ## GAP-6 — The research ladder has exactly one seed, and that seed is behind GAP-1/GAP-2
 

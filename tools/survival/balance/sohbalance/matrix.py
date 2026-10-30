@@ -26,6 +26,7 @@ LEVELS = (
     "SOURCE_ABSENT",
     "SOURCE_PRESENT_BEHIND_GUARD",
     "SOURCE_PRESENT_UNRESOLVED",
+    "SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD",
     "SOURCE_FIXED_PENDING_NATIVE",
     "NATIVE_VERIFIED",
     "VISUAL_INSPECTED",
@@ -45,6 +46,7 @@ def _row(
     allowed_claims: Sequence[str],
     proof: Dict[str, object],
     blocker: Optional[Dict[str, object]] = None,
+    verify_command: str = "",
 ) -> Dict[str, object]:
     return {
         "gap_id": gap_id,
@@ -58,6 +60,7 @@ def _row(
         "closure_probe": (blocker or {}).get("closure_probe"),
         "closure_test": (blocker or {}).get("closure_test"),
         "not_proven_after_closure": (blocker or {}).get("not_proven_after_closure"),
+        "verify_command": verify_command,
     }
 
 
@@ -108,6 +111,10 @@ def build(
                 "reproduce": "python3 tools/survival/balance/run_analysis.py",
             },
             by_id.get("BLK-1"),
+            (
+                "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 "
+                "--script res://tests/survival/balance_native/first_hour_route_probe.gd"
+            ),
         )
     )
 
@@ -135,6 +142,11 @@ def build(
                 "fixture_ids_absent_from_host": identity.get("fixture_ids_absent_from_host"),
             },
             by_id.get("BLK-2"),
+            (
+                "python3 tools/survival/balance/run_analysis.py && python3 -c \"import json;"
+                "print([r for r in json.load(open('data/survival/balance/results/oracle.json'))"
+                "['instance_identity']['unresolved_host_requests']])\""
+            ),
         )
     )
 
@@ -156,6 +168,7 @@ def build(
                 "historical_pin": "5ccf7b3f had 15 unknown calls",
             },
             by_id.get("BLK-3"),
+            "gh run list --workflow a8-world-content-native.yml --commit c8b4bc88 && gh run view <run-id> --log",
         )
     )
 
@@ -181,6 +194,10 @@ def build(
                 "probes": probe_files,
             },
             by_id.get("BLK-4"),
+            (
+                "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 "
+                "--script res://tests/survival/balance_native/bed_death_bag_probe.gd -- --verify-separate-process"
+            ),
         )
     )
 
@@ -199,8 +216,59 @@ def build(
             {
                 "mounted_scene": "game/characters/knight/knight.tscn",
                 "q04": (quality.get("Q-04") or {}).get("status"),
+                "q09": (quality.get("Q-09") or {}).get("status"),
+                "adapter_referenced_from_a0": (
+                    ((quality.get("Q-09") or {}).get("evidence") or {}).get("adapter_references_from_a0")
+                ),
             },
             by_id.get("BLK-5"),
+            (
+                "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 "
+                "--script res://tests/survival/balance_native/avatar_body_probe.gd"
+            ),
+        )
+    )
+
+    site_check = quality.get("Q-08") or {}
+    rows.append(
+        _row(
+            "GAP-7",
+            "Every A8 site anchor lies outside the world A0 actually mounts",
+            (
+                "No player can reach an A8 site, and enabling the Waystation flag would not change that: the "
+                "mounted world is 448x256 tiles, its one imported annex is (384,192)-(448,256), and the three "
+                "site anchors sit at y=280, 300 and 360. A scene cannot be walked to from outside the map."
+            ),
+            "A1 (anchors) + A0 (mount mode) + A8 (shell footprint)",
+            "SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD",
+            ["SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD"],
+            {
+                "q08": site_check.get("status"),
+                "world_bounds": site_check.get("world_bounds"),
+                "annex": site_check.get("annex"),
+                "sites": site_check.get("evidence"),
+            },
+            {
+                "minimal_safe_correction": (
+                    "A1 must either move the anchors inside the mounted world or author the extension; A0 must "
+                    "then mount it as one contiguous surface (annex_build is disabled pending a composite "
+                    "validator) or declare the sites interior instances entered from a canonical anchor. A8 "
+                    "supplies a shell whose collision footprint fits the authored radius."
+                ),
+                "closure_probe": (
+                    "every site's canonical_cell satisfies 0 <= cell < world_bounds and its "
+                    "direct_overworld_mount_decision is not REJECT"
+                ),
+                "closure_test": "tests/survival/balance/test_quality.py::QualityClosureTests::test_q08_passes_when_anchors_are_inside_and_the_mount_decision_is_not_reject",
+                "not_proven_after_closure": (
+                    "that the composed surface has no seam the Hero can fall through (native walk required)"
+                ),
+            },
+            (
+                "python3 tools/survival/balance/run_analysis.py && python3 -c \"import json;"
+                "print([c['status'] for c in json.load(open('data/survival/balance/results/quality.json'))"
+                "['checks'] if c['check_id']=='Q-08'])\""
+            ),
         )
     )
 
@@ -238,13 +306,22 @@ def build(
         "strongest_row": LEVELS[strongest],
         "b0_verdict": (
             "B0_NOT_MET"
-            if any(row["fix_state"] in ("SOURCE_ABSENT", "SOURCE_PRESENT_UNRESOLVED", "RUNTIME_UNKNOWN") for row in rows)
+            if any(
+                row["fix_state"]
+                in (
+                    "SOURCE_ABSENT",
+                    "SOURCE_PRESENT_UNRESOLVED",
+                    "SOURCE_PRESENT_OUTSIDE_MOUNTED_WORLD",
+                    "RUNTIME_UNKNOWN",
+                )
+                for row in rows
+            )
             else "B0_CANDIDATE"
         ),
         "adversary": {
             "verdict": adversary.get("verdict"),
             "probes": adversary.get("probe_count"),
-            "rejected": adversary.get("rejected"),
+            "rejected": adversary.get("rejected_count"),
             "holes": adversary.get("holes"),
         },
         "rule": (
@@ -288,6 +365,8 @@ def as_markdown(payload: Dict[str, object]) -> str:
             lines.append(f"**Closure probe.** {row['closure_probe']}\n")
         if row.get("closure_test"):
             lines.append(f"**Test that flips.** `{row['closure_test']}`\n")
+        if row.get("verify_command"):
+            lines.append(f"**Reproduce.** `{row['verify_command']}`\n")
         if row.get("not_proven_after_closure"):
             lines.append(f"**Still unproven after closure.** {row['not_proven_after_closure']}\n")
         lines.append("**Evidence.**\n")

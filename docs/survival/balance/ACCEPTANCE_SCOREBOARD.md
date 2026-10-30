@@ -129,17 +129,23 @@ requires every one to be rejected. Verdict: **`NO_KNOWN_SPOOF_SURVIVES`, 15/15.*
 `data/survival/balance/results/matrix.json` and
 `docs/survival/balance/B0_ACCEPTANCE_MATRIX.md` are generated from the gate, the oracles, the
 adversary run and the blockers — never hand-written. Board state: **`B0_NOT_MET`**, strongest row
-`SOURCE_FIXED_PENDING_NATIVE`. Six rows, one per gap, each with the exact SHA, the owner, the
-minimum fix and the proof level it would reach.
+`SOURCE_FIXED_PENDING_NATIVE`. **Seven** rows, one per gap, each with the exact SHA, the owner, the
+minimum fix, a `verify_command` a reviewer can paste, and the proof level it would reach.
 
 ## 10. Native probes (Phase 3)
 
-Two Godot 4.7 probes ship in `tests/survival/balance_native/` and subclass A0's own entry chain:
+Three Godot 4.7 probes ship in `tests/survival/balance_native/` and subclass A0's own entry chain:
 
-* `first_hour_route_probe.gd` — menu → Home → paid shelter → walk to A0's own locker stand cell →
-  one ordinary click → A3 receipt → second process.
+* `first_hour_route_probe.gd` — menu → Home → paid shelter → walk (ordinary movement input) to
+  whichever neighbour cell the **host itself** accepts as the locker stand → one `interact` press →
+  one A3 receipt → a second press that must refuse → walk to the cache → press → second receipt.
+  It derives the stand cell from `matches_interaction`, so no coordinate is invented; it stops with
+  exit 2 while the Waystation mount stays behind an off project setting.
 * `bed_death_bag_probe.gd` — looks for a mounted threat, and reports **blocked** when the world
-  cannot kill the player (it cannot today).
+  cannot kill the player (it cannot today: nothing mounted calls `begin_overworld_death`).
+* `avatar_body_probe.gd` — the interface A0 and A6 are being asked to accept: choose male/female at
+  normal entry, see the D051 body with four facings and grade 0, keep it after a respawn, never fall
+  back to the Knight. It fails at the first check because no production screen offers the choice.
 
 **A7 has no Godot binary, so neither has been executed.** `sohbalance/probes.py` audits them
 instead: each must extend the shipped chain, contain none of the constructs that would fabricate
@@ -150,8 +156,12 @@ Commands and the exact owner action per rung: `docs/survival/balance/NATIVE_ROUT
 
 ## 11. Assurances
 
-* 33 assertions (`A01`–`A33`), all holding, in `data/survival/balance/results/summary.json`.
-* 255 unit tests green (`python3 tools/survival/balance/run_tests.py`).
-* 15/15 adversarial probes rejected; 2/2 native probes statically sound and unexecuted.
+* 34 assertions (`A01`–`A34`), all holding, in `data/survival/balance/results/summary.json`.
+* 269 unit tests green (`python3 tools/survival/balance/run_tests.py`).
+* 15/15 adversarial probes rejected; 3/3 native probes statically sound and unexecuted.
+* Two genuine holes found by the adversary **in this round's own tooling** and closed with tests:
+  `P08` (a fixture-only evidence file was being credited toward S4's C4) and `P09` (the Q-07
+  overclaim pattern did not recognise a `REWARD_VERIFIED` token, so a fixture could announce a
+  reward nobody had committed). Both are pinned by `test_adversary.py`.
 * Nothing in this repository claims a native or human result. `A30` asserts that a source fix is
   not a native pass; `A27` asserts S4 stays a five-clause conjunction that fails at this pin.

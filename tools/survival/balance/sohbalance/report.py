@@ -330,8 +330,27 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         set(a3_catalog_texts) == set(product_module.A3_CATALOG_SOURCES)
         and len(json.loads(a3_catalog_texts["a3.world_source_bindings.v3.json"]).get("bindings") or []) > 0
     )
-    # Attack the gate before trusting it: each probe is a live spoof attempt.
-    adversary_payload = adversary_module.run(product_texts, product_manifest, product_facts, model)
+    # Attack the gate before trusting it: each probe is a live spoof attempt, run
+    # against the same A3 catalog and CI recording the gate will read afterwards.
+    native_states = evidence_module.states_for(
+        evidence_payload,
+        {
+            "a0": str(product_manifest.get("a0_head") or ""),
+            "a8": str(product_manifest.get("a8_head") or ""),
+        },
+    )
+    adversary_payload = adversary_module.run(
+        product_texts,
+        product_manifest,
+        product_facts,
+        model,
+        a3_texts=a3_catalog_texts,
+        native_states=native_states,
+        heads={
+            "a0": str(product_manifest.get("a0_head") or ""),
+            "a8": str(product_manifest.get("a8_head") or ""),
+        },
+    )
     artifacts["adversary.json"] = adversary_payload
     gate_payload = gate_module.build(
         model,
@@ -418,6 +437,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         oracle_payload=oracle_payload,
         a3_catalog_loaded=a3_loaded,
         native_probes_payload=artifacts["native_probes.json"],
+        adversary_payload=adversary_payload,
     )
     artifacts["summary.json"] = {
         "schema": "soh.balance.summary.v1",
@@ -569,9 +589,11 @@ def _assertions(
     oracle_payload=None,
     a3_catalog_loaded: bool = False,
     native_probes_payload=None,
+    adversary_payload=None,
 ) -> List[Assertion]:
     assertions: List[Assertion] = []
     oracle_payload = oracle_payload or {}
+    adversary_payload = adversary_payload or {}
     counts = {}
     for finding in all_findings:
         counts[finding.code] = counts.get(finding.code, 0) + 1
@@ -805,9 +827,11 @@ def _assertions(
         Assertion(
             "A21_quality_fails_only_where_an_owner_has_not_acted",
             [row["check_id"] for row in (quality_payload.get("checks") or []) if row["status"] == "FAIL"]
-            == ["Q-03", "Q-04"],
-            "two checks fail and both name an owner action: Q-03 because A0's vendored catalog drifted when A3 "
-            "canonicalised the instance id, Q-04 because the canonical avatar is still not imported",
+            == ["Q-03", "Q-04", "Q-08", "Q-09"],
+            "four checks fail and each names an owner action: Q-03 because A0's vendored catalog drifted when "
+            "A3 canonicalised the instance id, Q-04 because the canonical avatar is still not imported, Q-08 "
+            "because all three A8 site anchors sit past the mounted world edge, and Q-09 because the avatar "
+            "seam A0 and A6 are being asked to accept does not exist yet",
             ["quality"],
         )
     )
@@ -949,6 +973,20 @@ def _assertions(
             "Phase-3 probes extend the shipped chain, name only symbols the owners ship, and are labelled "
             "NATIVE_UNEXECUTED rather than passed",
             ["oracle", "native"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A34_the_adversary_must_not_pass_a_known_spoof",
+            (adversary_payload.get("verdict") == "NO_KNOWN_SPOOF_SURVIVES")
+            and int(adversary_payload.get("probe_count") or 0) >= 15
+            and int(adversary_payload.get("rejected_count") or 0)
+            == int(adversary_payload.get("probe_count") or 0)
+            and not adversary_payload.get("holes"),
+            "Fifteen named disguises (comment mounts, fixtures, phantom sheets, wrong-sha runs, mocked "
+            "reach, empty artifacts, unbacked success claims) were executed against the real classifiers "
+            "and every one was rejected; a surviving spoof would surface here as GATE_HOLE_FOUND",
+            ["gate", "adversary"],
         )
     )
     s4_payload = gate_payload.get("s4") or {}
