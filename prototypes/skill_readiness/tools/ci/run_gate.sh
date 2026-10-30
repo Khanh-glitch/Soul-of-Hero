@@ -36,7 +36,7 @@ grep -vE '^Godot Engine v' "$LOG" | tail -400 || true
 
 if [ "$STATUS" = "0" ] && grep -Fq "$MARKER" "$LOG" && ! grep -Eq 'SCRIPT ERROR:|Parse Error:' "$LOG"; then
   python3 "$ANNOTATE" --level notice --title "[$LABEL] PASS" --log "$LOG" --tail 0 \
-    --pattern "$MARKER" --pattern 'PASS|FAIL|verdict|parity|first_divergent'
+    --pattern "$MARKER" --pattern 'PASS|FAIL|verdict|parity|first_divergent|GOLD93_HOST_ADAPTER_TIMING|GOLD93_VENOM_PROFILE'
   echo "GATE_PASS $LABEL"
   exit 0
 fi

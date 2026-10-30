@@ -219,6 +219,36 @@ jobs:
           if-no-files-found: warn
           retention-days: 14
 
+  venom-profile-021:
+    name: Venomwright 021 wall-clock profile (diagnosis, no verdict)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: path-ownership
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import base Godot project
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1200s godot --headless --editor --path . --import --quit > /tmp/gold93-import.log 2>&1 || true
+          if grep -E 'SCRIPT ERROR:|Parse Error:' /tmp/gold93-import.log; then
+            echo "::error::Godot import reported script errors"
+            exit 1
+          fi
+      - name: Profile Venomwright 021 host adapter (per section and per effect kind)
+        shell: bash
+        env:
+          GOLD93_PROFILE_TICKS: "240"
+        run: |
+          bash prototypes/skill_readiness/tools/ci/run_gate.sh profile-21 1500 'GOLD93_VENOM_PROFILE: DONE' res://prototypes/skill_readiness/tests/gold93_venom_profile_test.gd -- --skill=21
+
   disposable-real-map-overlay:
     name: Disposable immutable Level 2 overlay
     runs-on: ubuntu-latest

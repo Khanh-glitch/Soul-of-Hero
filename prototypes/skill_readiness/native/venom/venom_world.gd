@@ -612,6 +612,7 @@ func step(dt: float) -> void:
 	dim += (0.0 - dim) * minf(1.0, dt * 6)
 	time += dt
 	frame += 1
+	var st0: int = Time.get_ticks_usec() if PROFILE_ON else 0
 	for i in range(tasks.size() - 1, -1, -1):
 		var t: Dictionary = tasks[i]
 		t["wait"] = float(t["wait"]) - dt
@@ -628,17 +629,28 @@ func step(dt: float) -> void:
 				tasks.remove_at(i)
 				break
 			t["wait"] = float(t["wait"]) + (float(r) if r != null else 1.0 / 60.0)
+	if PROFILE_ON:
+		prof_add("step.tasks_resume", Time.get_ticks_usec() - st0)
+		st0 = Time.get_ticks_usec()
 	update_player(dt)
 	update_enemies(dt)
+	if PROFILE_ON:
+		prof_add("step.player_enemies", Time.get_ticks_usec() - st0)
+		st0 = Time.get_ticks_usec()
 	for f in fx:
 		f.age += dt
 		if f.hf:
 			f.hf = maxf(0.0, f.hf - dt)
-		f.upd(self, dt)
+		_fx_call(f, "upd", [self, dt], "step.upd")
+	if PROFILE_ON:
+		prof_add("step.fx_loop_total", Time.get_ticks_usec() - st0)
+		st0 = Time.get_ticks_usec()
 	for i in range(fx.size() - 1, -1, -1):
 		if fx[i].dead:
 			fx.remove_at(i)
 	parts.update(self, dt)
+	if PROFILE_ON:
+		prof_add("step.parts_update", Time.get_ticks_usec() - st0)
 	for n in nums:
 		n["t"] = float(n["t"]) - dt
 		n["y"] = float(n["y"]) + float(n["vy"]) * dt
@@ -986,12 +998,41 @@ func shake_off() -> Array:
 
 # ---------- drawing ----------
 
+## Profiling (CI diagnosis only). Off by default: every timed call below is the
+## same call as before, with a Time read on either side when PROFILE_ON is set.
+static var PROFILE_ON: bool = false
+static var prof: Dictionary = {}
+
+
+static func prof_add(key: String, usec: int) -> void:
+	if not prof.has(key):
+		prof[key] = [0, 0]
+	var e: Array = prof[key]
+	e[0] = int(e[0]) + usec
+	e[1] = int(e[1]) + 1
+
+
+## Calls one fx hook (`gnd`, `shd`, `up`, `air`, `lit`, `upd`) and, when profiling,
+## charges its wall time to "<section>.<kind>".
+func _fx_call(f, method: String, args: Array, section: String) -> void:
+	if not PROFILE_ON:
+		f.callv(method, args)
+		return
+	var t0: int = Time.get_ticks_usec()
+	f.callv(method, args)
+	prof_add(section + "." + String(f.get("kind")), Time.get_ticks_usec() - t0)
+
+
 func draw(g) -> void:
 	g.t = time
 	var L = g.s
+	var pt: int = Time.get_ticks_usec() if PROFILE_ON else 0
 	for f in fx:
 		if f.has_method("gnd"):
-			f.gnd(g, self)
+			_fx_call(f, "gnd", [g, self], "draw.gnd")
+	if PROFILE_ON:
+		prof_add("draw.section.gnd_loop", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	if overlay != null:
 		overlay.call(g)
 	for e in enemies:
@@ -1004,8 +1045,14 @@ func draw(g) -> void:
 	g.s.dl = 16
 	for f in fx:
 		if f.has_method("shd"):
-			f.shd(g, self)
+			_fx_call(f, "shd", [g, self], "draw.shd")
+	if PROFILE_ON:
+		prof_add("draw.section.shd_loop", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	parts.shadows(g)
+	if PROFILE_ON:
+		prof_add("draw.section.part_shadows", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	var items: Array = []
 	for e in enemies:
 		items.append({"y": e.y, "k": "enemy", "o": e})
@@ -1014,6 +1061,9 @@ func draw(g) -> void:
 		if f.has_method("up"):
 			items.append({"y": f.sy if f.sy != 0.0 else f.y, "k": "fx", "o": f})
 	M.stable_sort(items, func(a, b): return float(a["y"]) - float(b["y"]))
+	if PROFILE_ON:
+		prof_add("draw.section.sort_items", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	for it in items:
 		match it["k"]:
 			"enemy":
@@ -1021,11 +1071,17 @@ func draw(g) -> void:
 			"player":
 				ACT.draw_player(g, it["o"], self)
 			"fx":
-				it["o"].up(g, self)
+				_fx_call(it["o"], "up", [g, self], "draw.up")
+	if PROFILE_ON:
+		prof_add("draw.section.up_items", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	for f in fx:
 		if f.has_method("air"):
-			f.air(g, self)
+			_fx_call(f, "air", [g, self], "draw.air")
 	parts.draw(g)
+	if PROFILE_ON:
+		prof_add("draw.section.air_and_parts", Time.get_ticks_usec() - pt)
+		pt = Time.get_ticks_usec()
 	for e in enemies:
 		ACT.draw_enemy_bars(g, e, self)
 	for n in nums:
@@ -1037,10 +1093,12 @@ func draw(g) -> void:
 		L.dl = 16
 	for f in fx:
 		if f.has_method("lit"):
-			f.lit(g, self)
+			_fx_call(f, "lit", [g, self], "draw.lit")
 	parts.glows(g)
 	ACT.player_glow(g, player, self)
 	g.l.reset()
+	if PROFILE_ON:
+		prof_add("draw.section.lit_text_glow", Time.get_ticks_usec() - pt)
 
 
 func grade() -> Array:

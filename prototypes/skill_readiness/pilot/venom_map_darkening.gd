@@ -106,7 +106,7 @@ func restore() -> void:
 func _apply_level() -> void:
 	var m: float = multiplier()
 	for i in range(_targets.size()):
-		var item: Object = _targets[i]
+		var item = _targets[i]
 		if not is_instance_valid(item):
 			continue
 		var b: Color = _base[i]
@@ -118,7 +118,7 @@ func _apply_base() -> void:
 	if not _touched:
 		return
 	for i in range(_targets.size()):
-		var item: Object = _targets[i]
+		var item = _targets[i]
 		if is_instance_valid(item):
 			(item as CanvasItem).modulate = _base[i]
 	_touched = false
