@@ -22,6 +22,7 @@ const ADAPTER := preload("res://game/survival/ui/survival_view_adapter.gd")
 
 var show_workspace_navigation := false
 var show_journeys_navigation := false
+var _developer_diagnostics := false
 var _snapshot: Dictionary = {}
 var _tab := 0
 var _selection := ""
@@ -90,16 +91,25 @@ func _unhandled_input(event: InputEvent) -> void:
 		close_planner()
 		get_viewport().set_input_as_handled()
 
+func set_developer_diagnostics(enabled: bool) -> void:
+	_developer_diagnostics = enabled
+	if not enabled and String(_snapshot.get("provenance", "")) == "FIXTURE_PROJECTION":
+		_snapshot.clear()
+		_snapshot_sequence = -1
+		_selection = ""
+		_message = ""
+		_clear_pending()
+	if is_inside_tree(): _refresh()
+
 ## Replaces a view snapshot, never saves. Host must filter undiscovered information
-## before passing it; this component also rejects entries without revealed=true.
+## before passing it; fixture snapshots require explicit developer diagnostics.
 func set_snapshot(snapshot: Dictionary) -> void:
 	var schema := String(snapshot.get("schema", ""))
 	if schema == "soh.ui.snapshot.v2":
 		apply_snapshot(snapshot)
 		return
-	# Reject stale/unknown versioned contracts; only unversioned legacy fixtures
-	# may use this compatibility seam before a V2 stream starts.
 	if not schema.is_empty() or _snapshot_sequence >= 0: return
+	if String(snapshot.get("provenance", "")) == "FIXTURE_PROJECTION" and not _developer_diagnostics: return
 	_install_snapshot(snapshot)
 
 func _install_snapshot(snapshot: Dictionary) -> void:
@@ -119,6 +129,9 @@ func resolve_request(message: String) -> void:
 ## Versioned UI DTO, not a production API. Producer supplies monotonic sequence.
 func apply_snapshot(snapshot: Dictionary) -> bool:
 	if snapshot.get("schema", "") != "soh.ui.snapshot.v2": return false
+	var provenance := String(snapshot.get("provenance", ""))
+	if provenance not in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]: return false
+	if provenance == "FIXTURE_PROJECTION" and not _developer_diagnostics: return false
 	var sequence: Variant = snapshot.get("sequence", null)
 	if typeof(sequence) != TYPE_INT or int(sequence) < 0 or int(sequence) < _snapshot_sequence: return false
 	if int(sequence) == _snapshot_sequence and snapshot != _snapshot: return false
@@ -328,8 +341,10 @@ func _populate_recipes(query: String) -> void:
 			if ingredient is Dictionary: searchable += " " + String(ingredient.get("name", ""))
 		if not query.is_empty() and not searchable.to_lower().contains(query.to_lower()): continue
 		var formula_learned: Variant = rec.get("formula_learned", null)
-		var status := ADAPTER.recipe_status(String(rec.get("knowledge", "Unknown")), formula_learned)
-		var b := _button("%s  ·  %s" % [rec.get("name", "Unknown"), status])
+		var status := ADAPTER.recipe_status(String(rec.get("knowledge", "")), formula_learned)
+		var label := String(rec.get("name", "Formula"))
+		if not status.is_empty(): label += "  ·  " + status
+		var b := _button(label)
 		b.icon = PIXEL_UI.icon_texture({"id": rec.get("id", ""), "kind": "core" if String(rec.get("id", "")).contains("core") else "formula"})
 		b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.pressed.connect(_select.bind(String(rec.get("id", ""))))
@@ -369,7 +384,7 @@ func _populate_storage(query: String) -> void:
 		if not raw is Dictionary or int(raw.get("count", 0)) <= 0: continue
 		if not query.is_empty() and not String(raw.get("name", "")).to_lower().contains(query.to_lower()): continue
 		var protected := bool(raw.get("protected", false)) or String(raw.get("id", "")).begins_with("soh_i_")
-		var suffix := "   ·  UNIQUE / PROTECTED" if protected else ""
+		var suffix := "   ·  UNIQUE" if protected else ""
 		var b := _button("%s   ×%d%s" % [raw.get("name", "Unknown"), int(raw.get("count", 0)), suffix])
 		b.icon = PIXEL_UI.icon_texture(raw)
 		b.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
@@ -412,23 +427,21 @@ func _map_list() -> void:
 	if count == 0: _list.add_child(_label("No places discovered yet.", 10, MUTED))
 
 func _recovery_list() -> void:
-	_list.add_child(_label("PREPARATION  /  SAFE RETURN", 10, TEAL))
 	var recovery: Variant = _snapshot.get("recovery", {})
-	if not recovery is Dictionary: recovery = {}
-	_list.add_child(_label("Anchor: %s" % recovery.get("anchor", "Unknown"), 11))
-	_list.add_child(_label("Bed: %s" % recovery.get("bed_status", "Unavailable"), 10, MUTED))
-	_list.add_child(_label("Death bag: %s" % recovery.get("bag_status", "Unknown"), 10, CORAL))
-	_list.add_child(_label("Preserved: %s" % recovery.get("preserved", "Unknown"), 10, TEAL))
-	_list.add_child(_label("Dropped: %s" % recovery.get("dropped", "Unknown"), 10, CORAL))
-	if _records("respawns").is_empty(): _list.add_child(_label("Respawn choices unavailable.", 9, MUTED))
+	if recovery is Dictionary:
+		var anchor_label := String(recovery.get("anchor_label", "")).strip_edges()
+		if not anchor_label.is_empty(): _list.add_child(_label("Home · %s" % anchor_label, 11))
+		var bed_label := String(recovery.get("bed_label", "")).strip_edges()
+		if not bed_label.is_empty(): _list.add_child(_label(bed_label, 10, MUTED))
+		var bag_label := String(recovery.get("bag_label", "")).strip_edges()
+		if not bag_label.is_empty(): _list.add_child(_label(bag_label, 10, CORAL))
 	for raw: Variant in _records("respawns"):
-		if not raw is Dictionary: continue
-		var choice := _button("RESPAWN: %s" % raw.get("name", "Unknown"))
-		choice.disabled = _pending or not bool(raw.get("available", false))
-		choice.tooltip_text = String(raw.get("reason", "Availability determined by host."))
+		if not raw is Dictionary or not bool(raw.get("available", false)) or not _has_action_host() or _pending: continue
+		var name := String(raw.get("name", "")).strip_edges()
+		if name.is_empty(): continue
+		var choice := _button("Return to %s" % name)
 		choice.pressed.connect(_request.bind("select_respawn", String(raw.get("id", "")), {}))
 		_list.add_child(choice)
-		if choice.disabled: _list.add_child(_label(String(raw.get("reason", "Unavailable")), 9, CORAL))
 
 func _refresh_detail() -> void:
 	if _details == null: return
@@ -442,9 +455,9 @@ func _refresh_detail() -> void:
 		3: _hazard_detail()
 		4: _cores_detail()
 	if not _message.is_empty(): _details.add_child(_label(_message, 9, MUTED))
-	if _pending and _snapshot.get("schema", "") == "soh.ui.snapshot.v2":
+	if _pending and _snapshot.get("schema", "") == "soh.ui.snapshot.v2" and _has_action_host():
 		var retry := _button("RETRY SAME REQUEST")
-		retry.tooltip_text = "Reuses the request ID; host must deduplicate."
+		retry.tooltip_text = "Retry the same action."
 		retry.pressed.connect(retry_pending)
 		_details.add_child(retry)
 		if detail_had_focus and is_visible_in_tree(): retry.grab_focus()
@@ -456,40 +469,41 @@ func _workshop_detail() -> void:
 	if rec.is_empty() or not bool(rec.get("revealed", false)):
 		_details.add_child(_label("Select a discovered formula.", 10, MUTED)); return
 	_details.add_child(_label(String(rec.get("name", "Formula")), 14))
-	var knowledge := String(rec.get("knowledge", "Unknown"))
+	var knowledge := String(rec.get("knowledge", ""))
 	var formula_learned: Variant = rec.get("formula_learned", null)
 	var needs_research := knowledge == "recipe" and formula_learned is bool and not bool(formula_learned)
-	_details.add_child(_label(ADAPTER.recipe_status(knowledge, formula_learned), 10, TEAL if formula_learned == true or knowledge == "starter" else PIXEL_UI.GOLD))
-	_details.add_child(_label("Station: %s · tier %d+" % [rec.get("station", "Unknown"), int(rec.get("min_tier", 0))], 10, MUTED))
-	if rec.has("station_status"): _details.add_child(_label("Station status: %s" % rec.station_status, 10, MUTED))
-	if rec.has("queue_status"): _details.add_child(_label("Queue: %s" % rec.queue_status, 10, MUTED))
-	if rec.has("duration_ticks"): _details.add_child(_label("Work time: %s active ticks" % rec.duration_ticks, 9, MUTED))
+	var knowledge_text := ADAPTER.recipe_status(knowledge, formula_learned)
+	if not knowledge_text.is_empty(): _details.add_child(_label(knowledge_text, 10, TEAL if formula_learned == true or knowledge == "starter" else PIXEL_UI.GOLD))
+	var station_name := String(rec.get("station_label", ""))
+	if not station_name.is_empty(): _details.add_child(_label("Station · %s" % station_name, 10, MUTED))
 	for raw: Variant in _array(rec.get("ingredients", [])):
 		if not raw is Dictionary: continue
 		var have := int(raw.get("have", 0))
 		var need := int(raw.get("need", 0))
 		var label_prefix := "Fuel · " if String(raw.get("kind", "")) == "fuel" else ""
 		_details.add_child(_label("%s%s  %d / %d" % [label_prefix, raw.get("name", "Material"), have, need], 10, CORAL if have < need else TEAL))
-		if have < need and not String(raw.get("source", "")).is_empty():
-			_details.add_child(_label("Known source: %s" % raw.source, 9, MUTED))
+		if have < need and not String(raw.get("source_label", "")).is_empty():
+			_details.add_child(_label("Find · %s" % String(raw.source_label), 9, MUTED))
 	var raw_outputs: Variant = rec.get("outputs", {})
 	var outputs: Dictionary = raw_outputs if raw_outputs is Dictionary else {}
+	var output_names: Variant = rec.get("output_names", {})
 	var output_parts: Array[String] = []
-	for output_id: Variant in outputs.keys():
-		output_parts.append("%s ×%d" % [String(output_id), int(outputs[output_id])])
-	if not output_parts.is_empty(): _details.add_child(_label("Output: %s" % ", ".join(output_parts), 9, TEAL))
-	if rec.has("balance_status"): _details.add_child(_label("Catalog: %s" % rec.balance_status, 8, MUTED))
+	if output_names is Dictionary:
+		for output_id: Variant in outputs.keys():
+			var output_label := String(output_names.get(String(output_id), ""))
+			if not output_label.is_empty():
+				output_parts.append("%s ×%d" % [output_label, int(outputs[output_id])])
+	if not output_parts.is_empty(): _details.add_child(_label("Makes · %s" % ", ".join(output_parts), 9, TEAL))
 	var verb := "research" if needs_research else "craft"
 	var knowledge_resolved := knowledge == "starter" or (knowledge == "recipe" and formula_learned is bool)
 	var allowed := knowledge_resolved and bool(rec.get("can_" + verb, false))
-	var button := _button("RESEARCH" if needs_research else "CRAFT")
-	button.disabled = _pending or not allowed
-	if verb == "research":
-		button.pressed.connect(_confirm_research.bind(String(rec.get("id", ""))))
-	else:
-		button.pressed.connect(_request.bind(verb, String(rec.get("id", "")), {}))
-	_details.add_child(button)
-	if not allowed: _details.add_child(_label(String(rec.get("blocked_reason", "Requirements not confirmed.")), 9, CORAL))
+	if allowed and not _pending and _has_action_host():
+		var button := _button("RESEARCH" if needs_research else "CRAFT")
+		if verb == "research":
+			button.pressed.connect(_confirm_research.bind(String(rec.get("id", ""))))
+		else:
+			button.pressed.connect(_request.bind(verb, String(rec.get("id", "")), {}))
+		_details.add_child(button)
 
 func _storage_detail() -> void:
 	var record := _find("bag" if _direction == "deposit" else "chest", _selection)
@@ -500,12 +514,13 @@ func _storage_detail() -> void:
 	_details.add_child(_label("Available: %d" % count, 10, MUTED))
 	var protected := bool(record.get("protected", false)) or String(record.get("id", "")).begins_with("soh_i_")
 	if protected:
-		_details.add_child(_label("Unique A3 instance · generic chest transfer is not supported. Identity remains protected.", 9, CORAL))
+		_details.add_child(_label("Unique Core · transfer unavailable here.", 9, CORAL))
 		return
 	if record.has("transferable") and not bool(record.get("transferable", false)):
-		_details.add_child(_label("Owner has not confirmed this item is safe to transfer.", 9, CORAL))
+		_details.add_child(_label("This item cannot be moved here.", 9, CORAL))
 		return
-	if _snapshot.has("capacity_status"): _details.add_child(_label("Capacity: %s" % _snapshot.capacity_status, 10, MUTED))
+	if not _has_action_host() or not bool(_snapshot.get("transfer_enabled", false)) or String(_snapshot.get("container_id", "")).is_empty():
+		return
 	_amount = SpinBox.new()
 	_amount.min_value = 1
 	_amount.max_value = maxi(1, count)
@@ -520,10 +535,10 @@ func _storage_detail() -> void:
 	)
 	_details.add_child(all)
 	var button := _button("REQUEST TRANSFER")
-	button.disabled = _pending or count <= 0 or not bool(_snapshot.get("transfer_enabled", false)) or String(_snapshot.get("container_id", "")).is_empty()
+	button.disabled = _pending or count <= 0
 	button.pressed.connect(_request_transfer)
 	_details.add_child(button)
-	_details.add_child(_label("Transfer is confirmed by the storage service, not this view.", 9, MUTED))
+
 
 func _request_transfer() -> void:
 	var item := _find("bag" if _direction == "deposit" else "chest", _selection)
@@ -535,12 +550,15 @@ func _request_transfer() -> void:
 	if not bool(_snapshot.get("transfer_enabled", false)) or String(_snapshot.get("container_id", "")).is_empty() or count <= 0 or amount < 1 or amount > count: return
 	_request("transfer", item_id, {"direction": _direction, "container_id": String(_snapshot.get("container_id", "")), "item_id": item_id, "stack_key": String(item.get("stack_key", item.get("id", _selection))), "amount": amount})
 
+func _has_action_host() -> bool:
+	return not request_action.get_connections().is_empty()
+
 func _request(action: String, id: String, payload: Dictionary) -> void:
 	if _pending or id.is_empty(): return
 	_pending = true
 	_request_serial += 1
 	_pending_id = "%s-%d" % [_client_nonce, _request_serial]
-	_message = "Request sent; awaiting authoritative result."
+	_message = "Working…"
 	var request := payload.duplicate(true)
 	request["schema"] = "soh.ui.intent.v2"
 	request["request_id"] = _pending_id
@@ -557,46 +575,33 @@ func _map_detail() -> void:
 	if place.is_empty() or not bool(place.get("revealed", false)):
 		_details.add_child(_label("Select a discovered place.", 10, MUTED)); return
 	_details.add_child(_label(String(place.get("name", "Place")), 14))
-	if place.has("poi_id"): _details.add_child(_label("DISCOVERED POI  %s" % place.poi_id, 9, PIXEL_UI.GOLD))
-	_details.add_child(_label("Route: %s" % place.get("route", "Unknown"), 10, MUTED))
-	var hazard_text := String(place.get("hazard_id", place.get("hazard", "Unknown")))
-	_details.add_child(_label("Known hazard: %s" % ("None authored" if hazard_text.is_empty() else hazard_text), 10, CORAL))
-	_details.add_child(_label("Known activity: %s" % place.get("activity", "Unknown"), 10, TEAL))
-	if place.has("region_id"): _details.add_child(_label("Region: %s" % place.region_id, 9, MUTED))
-	var material_keys: Array = _array(place.get("material_keys", []))
-	if not material_keys.is_empty(): _details.add_child(_label("A1 source keys: %s / not A3 item IDs" % ", ".join(material_keys), 9, MUTED))
-	var capabilities: Array = _array(place.get("required_capabilities", []))
-	if not capabilities.is_empty(): _details.add_child(_label("Preparation: %s" % ", ".join(capabilities), 10, CORAL))
-	if place.has("content_readiness"): _details.add_child(_label("Content: %s" % place.content_readiness, 9, MUTED))
-	if place.has("status"): _details.add_child(_label("World status: %s" % place.status, 9, MUTED))
+	var route_label := String(place.get("route_label", "")).strip_edges()
+	if not route_label.is_empty(): _details.add_child(_label("Route · %s" % route_label, 10, MUTED))
+	var hazard_label := String(place.get("hazard_label", "")).strip_edges()
+	if not hazard_label.is_empty(): _details.add_child(_label("Field note · %s" % hazard_label, 10, CORAL))
+	var activity_label := String(place.get("activity_label", "")).strip_edges()
+	if not activity_label.is_empty(): _details.add_child(_label(activity_label, 10, TEAL))
+	var preparation: Array = _array(place.get("preparation_labels", []))
+	if not preparation.is_empty(): _details.add_child(_label("Prepare · %s" % ", ".join(preparation), 10, CORAL))
 
 func _hazard_detail() -> void:
-	_details.add_child(_label("ENVIRONMENT & PROTECTION", 11, TEAL))
-	var hazards := _records("hazards")
-	var revealed_count := 0
-	for raw: Variant in hazards:
+	var shown := 0
+	for raw: Variant in _records("hazards"):
 		if not raw is Dictionary or not bool(raw.get("revealed", false)): continue
-		revealed_count += 1
-		_details.add_child(_label(String(raw.get("name", "Hazard")), 12))
-		if raw.has("hazard_id"): _details.add_child(_label(String(raw.hazard_id), 9, PIXEL_UI.GOLD))
-		if raw.has("kind"): _details.add_child(_label("Hazard type: %s" % raw.kind, 10, CORAL))
-		if raw.has("severity"): _details.add_child(_label("Authored severity: %s" % raw.severity, 10, CORAL))
-		var required := String(raw.get("required_capability", raw.get("requires", raw.get("required_gear", "Unknown"))))
-		_details.add_child(_label("Prepare: %s" % required, 10, MUTED))
-		if raw.has("region_id"): _details.add_child(_label("Region: %s" % raw.region_id, 9, MUTED))
-		_details.add_child(_label("Exposure / protection: %s" % raw.get("exposure_status", raw.get("protection", "Runtime status not supplied")), 10, CORAL))
-		_details.add_child(_label("A1 hazard data is authored contract only; native damage is not asserted.", 9, MUTED))
-	if revealed_count == 0: _details.add_child(_label("No discovered hazard information available.", 10, MUTED))
-	var capabilities := _records("capabilities")
-	for raw_capability: Variant in capabilities:
-		if not raw_capability is Dictionary: continue
-		var capability_id := String(raw_capability.get("id", ""))
-		var state := "UNKNOWN"
-		if raw_capability.has("owned"):
-			state = "OWNED" if bool(raw_capability.owned) else "MISSING"
-		_details.add_child(_label("%s · %s" % [capability_id, state], 10, TEAL if state == "OWNED" else CORAL if state == "MISSING" else MUTED))
-		if state != "OWNED":
-			_details.add_child(_label(String(raw_capability.get("status_reason", "Runtime capability state not supplied")), 9, MUTED))
+		var name := String(raw.get("name", "")).strip_edges()
+		if name.is_empty(): continue
+		_details.add_child(_label(name, 12))
+		var field_note := String(raw.get("field_note", "")).strip_edges()
+		if not field_note.is_empty(): _details.add_child(_label(_short_player_text(field_note, 72), 10, MUTED))
+		var preparation := String(raw.get("preparation_label", "")).strip_edges()
+		if not preparation.is_empty(): _details.add_child(_label("Prepare · %s" % preparation, 10, CORAL))
+		shown += 1
+	if shown == 0: _details.add_child(_label("No field notes here yet.", 10, MUTED))
+	for raw_capability: Variant in _records("capabilities"):
+		if not raw_capability is Dictionary or not raw_capability.get("owned") is bool: continue
+		if not bool(raw_capability.owned):
+			var preparation_label := String(raw_capability.get("label", "Preparation needed"))
+			if not preparation_label.is_empty(): _details.add_child(_label(preparation_label, 10, CORAL))
 
 func _cores_list() -> void:
 	_list.add_child(_label("PHYSICAL SKILL CORES", 10, TEAL))
@@ -618,27 +623,24 @@ func _cores_detail() -> void:
 	_details.add_child(_label(String(core.get("name", "Core")), 14))
 	var uses := int(core.get("uses", -1))
 	var maximum := int(core.get("max_uses", 0))
-	_details.add_child(_label("INSTANCE  %s" % String(core.get("instance_id", core.get("id", "Unavailable"))), 9, PIXEL_UI.GOLD))
-	_details.add_child(_label(ADAPTER.core_status(uses, maximum), 11, TEAL if uses > 0 and uses <= maximum else CORAL))
-	var condition_text := "%s" % core.get("condition", "Unknown")
-	if core.has("max_condition"): condition_text = "%s / %s" % [core.condition, core.max_condition]
-	_details.add_child(_label("Condition: %s" % condition_text, 10, CORAL if core.get("condition", 100) is int and int(core.condition) < 35 else MUTED))
-	if core.has("equipped"):
-		_details.add_child(_label("Equipment: %s" % ("Equipped" if bool(core.equipped) else "Not equipped"), 10, MUTED))
-	else:
-		_details.add_child(_label("Equipment: owner state unavailable", 9, MUTED))
-	if core.has("location"): _details.add_child(_label("Owner location: %s" % core.location, 9, MUTED))
+	var charges := ADAPTER.core_status(uses, maximum)
+	if not charges.is_empty(): _details.add_child(_label(charges, 11, TEAL if uses > 0 and uses <= maximum else CORAL))
+	if core.has("condition") and core.has("max_condition"):
+		var condition := int(core.condition)
+		var max_condition := int(core.max_condition)
+		if max_condition > 0 and condition >= 0 and condition <= max_condition:
+			_details.add_child(_label("Condition · %d%%" % roundi(100.0 * condition / max_condition), 10, CORAL if condition * 100 / max_condition < 35 else MUTED))
+	if core.has("equipped") and core.equipped is bool:
+		_details.add_child(_label("Equipped" if bool(core.equipped) else "In your pack", 10, MUTED))
 	if core.has("formula_learned"):
 		var learned_label := "Learned" if bool(core.formula_learned) else "Not learned"
 		_details.add_child(_label("Permanent formula: %s" % learned_label, 10, TEAL if bool(core.formula_learned) else PAPER))
 	else:
-		_details.add_child(_label("Permanent formula: separate owner state not supplied", 9, MUTED))
-	_details.add_child(_label("Physical Core ownership does not grant the permanent recipe.", 9, MUTED))
-	var button := _button("REQUEST EQUIP")
-	button.disabled = _pending or not bool(core.get("can_equip", false)) or uses <= 0 or uses > maximum or bool(core.get("equipped", false))
-	button.pressed.connect(_request.bind("equip_core", String(core.get("id", "")), {}))
-	_details.add_child(button)
-	_details.add_child(_label("Skill readiness: %s" % core.get("readiness", "Not verified"), 9, MUTED))
+		_details.add_child(_label("Recipe knowledge · tracked separately", 9, MUTED))
+	if _has_action_host() and not _pending and bool(core.get("can_equip", false)) and uses > 0 and uses <= maximum and not bool(core.get("equipped", false)):
+		var button := _button("Equip")
+		button.pressed.connect(_request.bind("equip_core", String(core.get("id", "")), {}))
+		_details.add_child(button)
 
 func _confirm_research(id: String) -> void:
 	if _pending: return
@@ -658,6 +660,11 @@ func _confirm_research(id: String) -> void:
 
 func _array(value: Variant) -> Array:
 	return value if value is Array else []
+
+func _short_player_text(value: String, max_chars: int) -> String:
+	var clean := " ".join(value.strip_edges().split(" ", false))
+	if clean.length() <= max_chars: return clean
+	return clean.substr(0, max_chars - 1).strip_edges() + "…"
 
 ## Manual retry after lost response: exact same intent key and payload.
 ## Only safe with a host that durably deduplicates; there is no auto-timeout.

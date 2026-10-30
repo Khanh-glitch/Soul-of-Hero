@@ -66,6 +66,7 @@ func _run() -> void:
 	var fresh: Dictionary = replay_host.dispatch("transfer", "oak_wood", replay_payload)
 	check(original.status == "accepted" and fresh.status == "accepted" and fresh.snapshot.sequence > original.snapshot.sequence and replay_host.state.bag[0].count == 7, "deduplicated receipt carries current snapshot without repeating transaction")
 	var ui := WORKSPACE.instantiate()
+	ui.desk.set_developer_diagnostics(true)
 	root.add_child(ui)
 	ui.modal_state_changed.connect(func(v: bool): modal.append(v))
 	ui.request_action.connect(func(a: String, id: String, payload: Dictionary): intents.append({"action":a,"id":id,"payload":payload}))

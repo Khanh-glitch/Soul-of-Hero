@@ -1,0 +1,57 @@
+{
+  "schema": "soh.a6.avatar_art_sources.v1",
+  "status": "SOURCE_VERIFIED_BY_USER; ART_NOT_PRESENT_IN_ARENA",
+  "authority": "D051/D052, user-locked 2026-10-30; source correction commit 3adfa911",
+  "characters": {
+    "male": {
+      "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+      "craftpix_id": "555940",
+      "drive_file_id": "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb",
+      "base_description": "Bald, unarmored male; preserve this identity in all equipment appearances.",
+      "armor_grades": {
+        "0": {
+          "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
+          "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+          "dimensions": [768, 256],
+          "directions": 4,
+          "idle_sheet": ""
+        },
+        "1": null,
+        "2": null
+      }
+    },
+    "female": {
+      "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+      "craftpix_id": "419402",
+      "drive_file_id": "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o",
+      "base_description": "Bald, unarmored female; preserve this identity in all equipment appearances.",
+      "armor_grades": {
+        "0": {
+          "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
+          "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+          "dimensions": [768, 256],
+          "directions": 4,
+          "idle_sheet": ""
+        },
+        "1": null,
+        "2": null
+      }
+    }
+  },
+  "explicitly_rejected_substitutions": [
+    {
+      "craftpix_id": "180537",
+      "reason": "Three tiers of a different Swordsman character; not verified as matching male and female armor art."
+    },
+    {
+      "source": "Knight protagonist sprite",
+      "reason": "Not the D051 canonical player avatar."
+    }
+  ],
+  "release_gates": [
+    "Import only the user-approved original source files after an authorized private handoff; do not commit raw ZIPs or redistribute source sprites.",
+    "Verify license/attribution separately before release.",
+    "Acquire and inspect matching male and female armor grade 1 and grade 2 appearances; until then the adapter returns SOURCE_BLOCKED.",
+    "A0 supplies selected gender and saved equipped armor grade; the adapter never selects, equips, persists, or falls back to another character."
+  ]
+}

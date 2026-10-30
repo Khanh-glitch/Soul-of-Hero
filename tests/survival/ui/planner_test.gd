@@ -30,6 +30,9 @@ func _run() -> void:
 	planner.request_action.connect(func(action: String, id: String, payload: Dictionary): requests.append({"action": action, "id": id, "payload": payload}))
 	var original: Dictionary = FIXTURE.snapshot()
 	planner.set_snapshot(original)
+	check(planner._snapshot.is_empty(), "fixture state is rejected outside developer diagnostics")
+	planner.set_developer_diagnostics(true)
+	planner.set_snapshot(original)
 	var stale_v1 := original.duplicate(true)
 	stale_v1["schema"] = "soh.ui.snapshot.v1"
 	planner.set_snapshot(stale_v1)
@@ -49,7 +52,7 @@ func _run() -> void:
 	var missing_knowledge := FIXTURE.snapshot()
 	missing_knowledge.recipes.append({"id":"unknown_formula", "name":"Unknown Formula [fixture]", "revealed":true, "knowledge":"recipe"})
 	planner.set_snapshot(missing_knowledge)
-	check(planner._list.get_child_count() == 5 and (planner._list.get_child(4) as Button).text.contains("Knowledge state unavailable"), "missing permanent formula projection remains unknown in recipe list")
+	check(planner._list.get_child_count() == 5 and not (planner._list.get_child(4) as Button).text.contains("Knowledge state unavailable"), "missing permanent formula projection is omitted instead of showing a technical state")
 	planner.set_snapshot(original)
 	planner._search.text = "Reed Fibre"
 	planner._search.text_changed.emit("Reed Fibre")
@@ -63,8 +66,10 @@ func _run() -> void:
 	planner._search.text_changed.emit("")
 	planner._select("core_formula")
 	check((planner._details.get_child(1) as Label).text.to_lower().contains("research"), "research-gated formula remains distinct from a physical specimen")
-	var research := planner._details.get_child(planner._details.get_child_count() - 2) as Button
-	check(research != null and research.disabled, "blocked research disabled")
+	var research_visible := false
+	for child: Node in planner._details.get_children():
+		if child is Button and child.text == "RESEARCH": research_visible = true
+	check(not research_visible, "blocked research has no dummy control")
 	planner._select("bandage")
 	var craft := planner._details.get_child(planner._details.get_child_count() - 1) as Button
 	check(craft != null and not craft.disabled, "learned recipe explicit capability enables request")
@@ -97,7 +102,7 @@ func _run() -> void:
 	var has_quantity_control := false
 	for child: Node in planner._details.get_children():
 		if child is SpinBox or (child is Button and child.text == "REQUEST TRANSFER"): has_quantity_control = true
-	check(not has_quantity_control and (planner._details.get_child(2) as Label).text.contains("Unique A3 instance"), "protected Core row has no generic quantity-transfer affordance")
+	check(not has_quantity_control and (planner._details.get_child(2) as Label).text == "Unique Core · transfer unavailable here.", "protected Core row has no generic quantity-transfer affordance")
 	planner.set_snapshot(FIXTURE.snapshot())
 	planner.select_tab(2)
 	var map: Variant = planner._list.get_child(1)
@@ -117,16 +122,24 @@ func _run() -> void:
 	await process_frame
 	check(planner._selection == "poi_crown_waystation" and (planner._details.get_child(0) as Label).text.contains("Ashen Waystation"), "map selection updates place information")
 	planner.select_tab(3)
-	check(planner._list.get_child_count() == 7 and planner._details.get_child_count() >= 7, "recovery and revealed hazard displayed")
+	var recovery_buttons := planner._list.find_children("*", "Button", true, false)
+	check(recovery_buttons.size() == 1 and not (recovery_buttons[0] as Button).disabled and planner._details.get_child_count() >= 1, "only the available recovery action appears beside concise field notes")
 	planner.select_tab(4)
 	planner._select("soh_i_000000000012_deadbeef")
-	check((planner._details.get_child(2) as Label).text.contains("Exhausted") and (planner._details.get_child(8) as Button).disabled, "depleted core does not offer equip")
+	check((planner._details.get_child(1) as Label).text.contains("Exhausted"), "depleted Core state remains visible")
+	var depleted_equip_visible := false
+	for child: Node in planner._details.get_children():
+		if child is Button and child.text == "Equip": depleted_equip_visible = true
+	check(not depleted_equip_visible, "depleted Core has no dummy equip control")
 	planner._select("soh_i_000000000011_a1c0ffee")
-	var ember_uses_text := (planner._details.get_child(2) as Label).text
-	var ember_formula_text := (planner._details.get_child(6) as Label).text
+	var ember_uses_text := (planner._details.get_child(1) as Label).text
+	var ember_formula_text := (planner._details.get_child(4) as Label).text
 	check(ember_uses_text.contains("3/8"), "physical Ember uses remain finite: %s" % ember_uses_text)
 	check(ember_formula_text.contains("Not learned"), "physical Ember instance does not imply learned formula: %s" % ember_formula_text)
-	var equip := planner._details.get_child(8) as Button
+	var equip: Button
+	for child: Node in planner._details.get_children():
+		if child is Button and child.text == "Equip": equip = child as Button
+	check(equip != null, "valid physical Core exposes its available equip action")
 	equip.pressed.emit()
 	check(requests.size() == 3 and requests[2].action == "equip_core" and requests[2].id == "soh_i_000000000011_a1c0ffee", "equip request uses exact instance id")
 	planner.resolve_request("Fixture only")

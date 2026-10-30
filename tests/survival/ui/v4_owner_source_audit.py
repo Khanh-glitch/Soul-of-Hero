@@ -189,6 +189,22 @@ def main() -> None:
     require(rebuild["inputs"] == {"core_blank": 1, "knowledge_spares": 2, "soul_ember": 1}, "reconstruction inputs changed")
     require(technologies["tech_core_binding"]["scope"] == "permanent_profile", "permanent knowledge scope changed")
 
+    avatar_manifest_path = args.a0_root / "game/survival/ui/avatar_art_manifest.json"
+    avatar_manifest = read_json(avatar_manifest_path)
+    characters = avatar_manifest.get("characters", {})
+    male = characters.get("male", {})
+    female = characters.get("female", {})
+    require(male.get("craftpix_id") == "555940" and male.get("drive_file_id") == "1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb", "D051 male identity/source changed")
+    require(female.get("craftpix_id") == "419402" and female.get("drive_file_id") == "1o5hRVbPZjZxcPGwP5coPDHZARbAej75o", "D051 female identity/source changed")
+    for gender, character in [("male", male), ("female", female)]:
+        grades = character.get("armor_grades", {})
+        require(grades.get("0", {}).get("dimensions") == [768, 256], f"{gender} source sheet dimensions changed")
+        require(grades.get("1") is None and grades.get("2") is None, f"unverified {gender} armor tiers must remain blocked")
+    rejected_sources = avatar_manifest.get("explicitly_rejected_substitutions", [])
+    require(any(source.get("craftpix_id") == "180537" for source in rejected_sources), "different Swordsman fallback must remain rejected")
+    avatar_adapter = (args.a0_root / "game/survival/ui/avatar_appearance_adapter.gd").read_text(encoding="utf-8")
+    require("SOURCE_BLOCKED" in avatar_adapter and "A0_OWNER_PROJECTION" in avatar_adapter, "avatar presentation must fail closed on missing art and use A0 state")
+
     acceptance = args.a0_root / "docs/survival/ACCEPTANCE.md"
     atlas = args.evidence_root / "docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md"
     digest(acceptance, ACCEPTANCE_SHA256, "binding survival acceptance")

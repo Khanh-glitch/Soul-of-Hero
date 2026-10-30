@@ -13,6 +13,7 @@ func _ready() -> void:
 	DirAccess.make_dir_recursive_absolute(output)
 	_workspace = WORKSPACE.instantiate()
 	add_child(_workspace)
+	_workspace.desk.set_developer_diagnostics(true)
 	# Visual captures consume the same explicitly unversioned fixture used by
 	# planner_test.gd; it is not an owner-certified V2 snapshot.
 	_workspace.desk.set_snapshot(FIXTURE.snapshot())

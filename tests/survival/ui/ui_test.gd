@@ -38,7 +38,7 @@ func _run() -> void:
 	check(p.costs[1].sources == ["Oak Tree"] and p.costs[0].sources.is_empty(), "source hints reveal only caller-known sources")
 	check(ADAPTER.placement(svc, "door_wood", "unexpected").status.contains("unexpected"), "unknown rejection is not falsely clear")
 	check(ADAPTER.core_status(0, 8).contains("Exhausted"), "zero-use core is visibly exhausted")
-	check(ADAPTER.core_status(9, 8) == "Uses unavailable", "invalid A3 use count is not presented as valid")
+	check(ADAPTER.core_status(9, 8).is_empty(), "invalid A3 use count is omitted instead of rendered as a technical state")
 	var a3_instance := {"instance_id":"soh_i_000000000004_1234abcd", "item_id":"core_ember", "location":"bag", "condition":61, "max_condition":100, "uses":3, "max_uses":8, "revision":2, "origin":"fixture"}
 	var core_view: Dictionary = ADAPTER.core_instance(a3_instance, "Ember Core", false, false, false)
 	check(core_view.instance_id == a3_instance.instance_id and core_view.item_id == "core_ember" and core_view.uses == 3 and core_view.condition == 61, "A3 physical-instance schema projects without losing identity or state")
@@ -66,8 +66,8 @@ func _run() -> void:
 	var unspecified_core: Dictionary = ADAPTER.core_instance(a3_instance, "Ember Core")
 	check(not unspecified_core.has("equipped") and not unspecified_core.has("formula_learned") and not unspecified_core.has("can_equip"), "missing equipment and formula owners remain unknown, not false")
 	check(ADAPTER.recipe_status("recipe", false) == "Research required" and ADAPTER.recipe_status("recipe", true) == "Formula learned", "A3 recipe category and permanent profile knowledge are distinct")
-	check(ADAPTER.recipe_status("recipe", null) == "Knowledge state unavailable", "missing permanent formula projection stays unknown rather than not learned")
-	check(ADAPTER.recipe_status("starter", null) == "Starter catalog" and ADAPTER.recipe_status("recipe", null) == "Knowledge state unavailable", "missing formula authority is not displayed as unlearned")
+	check(ADAPTER.recipe_status("recipe", null).is_empty(), "missing permanent formula projection is not rendered as a technical state")
+	check(ADAPTER.recipe_status("starter", null) == "Available" and ADAPTER.recipe_status("recipe", null).is_empty(), "missing formula authority is not displayed as unlearned")
 	var a3_recipe := {"id":"smelt_ore", "category":"manufacture", "outputs":{"iron_ingot":2}, "inputs":{"iron_ore":4}, "station":"furnace", "min_tier":1, "duration_ticks":16, "knowledge":"recipe", "fuel":{"charcoal":1}, "required_technologies":["tech_smelting"], "balance_status":"SOH_PROPOSAL"}
 	var recipe_view: Dictionary = ADAPTER.recipe_presentation("smelt_ore", a3_recipe, {"iron_ore":{"have":2, "source":"A1 material source: not confirmed"}, "charcoal":{"have":0}}, false, true, "Unavailable", "No queue", "Requires active furnace")
 	check(recipe_view.ingredients.size() == 2 and recipe_view.ingredients[0].id == "iron_ore" and recipe_view.ingredients[0].need == 4 and recipe_view.ingredients[1].kind == "fuel", "A3 dictionary inputs and fuel map to visible ingredient requirements")

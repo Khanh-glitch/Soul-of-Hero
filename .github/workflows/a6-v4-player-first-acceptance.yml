@@ -160,6 +160,7 @@ jobs:
             tests/survival/ui/modal_lifecycle_test.gd
             tests/survival/ui/journey_test.gd
             tests/survival/ui/player_first_hud_test.gd
+            tests/survival/ui/avatar_appearance_test.gd
             tests/survival/ui/v4_storage_owner_integration_test.gd
           )
           failures=0
@@ -189,7 +190,7 @@ jobs:
           done
           echo "A6 V4 native suites: $(( ${#tests[@]} - failures ))/${#tests[@]} passed" >> "$GITHUB_STEP_SUMMARY"
           echo "Failed suites: ${failed_suites[*]:-none}" >> "$GITHUB_STEP_SUMMARY"
-          grep -E 'A6 PLAYER-FIRST HUD|A6 V4 A0 STORAGE OWNER INTEGRATION|A6 JOURNEYS:|A6 MODAL LIFECYCLE:|SURVIVAL UI:|EXPEDITION PLANNER:|WORKSPACE V1:' a0-source/.artifacts/a6-v4/*.log >> "$GITHUB_STEP_SUMMARY" || true
+          grep -E 'A6 PLAYER-FIRST HUD|A6 AVATAR SOURCE GATE|A6 V4 A0 STORAGE OWNER INTEGRATION|A6 JOURNEYS:|A6 MODAL LIFECYCLE:|SURVIVAL UI:|EXPEDITION PLANNER:|WORKSPACE V1:' a0-source/.artifacts/a6-v4/*.log >> "$GITHUB_STEP_SUMMARY" || true
           exit "$failures"
 
       - name: Re-run A0 native modal/input gate with the current A6 workspace

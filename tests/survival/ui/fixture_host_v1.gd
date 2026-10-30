@@ -8,6 +8,7 @@ var signatures: Dictionary = {}
 func _init(research_ready := false) -> void:
 	state = DATA.snapshot()
 	state["schema"] = "soh.ui.snapshot.v2"
+	state["provenance"] = "FIXTURE_PROJECTION"
 	state["sequence"] = 1
 	state["revision"] = "fixture-rev-1"
 	state["bag"] = [{"id":"oak_wood", "name":"Oak Wood [fixture]", "count":8, "kind":"material"}]

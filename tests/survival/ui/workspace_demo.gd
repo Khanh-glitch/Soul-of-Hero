@@ -5,6 +5,7 @@ const HOST := preload("res://tests/survival/ui/fixture_host_v1.gd")
 var host := HOST.new(true)
 func _ready() -> void:
 	var workspace := WORKSPACE.instantiate()
+	workspace.desk.set_developer_diagnostics(true)
 	add_child(workspace)
 	workspace.apply_snapshot(host.snapshot())
 	workspace.request_action.connect(func(action: String, id: String, payload: Dictionary):

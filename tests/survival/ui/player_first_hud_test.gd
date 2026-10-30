@@ -110,48 +110,20 @@ func _run() -> void:
 	}
 	_check(hud.set_projection(snapshot), "accept versioned fixture projection")
 	await process_frame
-	_check(hud._phase.text.contains("EXPLORING"), "use supplied exploration state")
-	_check(
-		hud._needs.get_child_count() == 1 and hud._needs.get_child(0).text == "Health  84 / 100",
-		"render only validated needs"
-	)
-	_check(not hud._risk.visible, "unknown danger is not converted into a hazard claim")
-	_check(
-		hud._bag.text.contains("PACK FULL") and hud._bag.text.contains("12 / 12"),
-		"full pack state is explicit and numeric"
-	)
-	_check(
-		hud._provenance.text == "FIXTURE PROJECTION", "fixture projection is visibly distinguished"
-	)
-	_check(
-		hud._core_panel.visible and hud._core_title.text.contains("EMBER CORE"),
-		"physical Core is visible as an owned object"
-	)
-	_check(hud._core_icon.texture != null, "Core status carries an icon beside identity and finite charges")
-	_check(
-		hud._context.text.contains("Crown Waystation") and hud._context.text.contains("AUTHORED PLAN NOT NATIVE INTEGRATED"),
-		"discovered POI clue is labeled as an authored, not native-integrated, plan"
-	)
-	_check(
-		hud._core_state.text == "In satchel · unequipped",
-		"satchel ownership is distinct from equipped state"
-	)
-	_check(
-		(
-			hud._core_details.text.contains("Charges 8 / 8")
-			and hud._core_details.text.contains("Condition 91 / 100")
-			and hud._core_details.text.contains("soh_i_")
-		),
-		"instance identity, finite charges and condition stay together"
-	)
-	_check(
-		hud._core_readiness.text.contains("BLOCKED_PENDING_A4"),
-		"readiness remains separate and owner supplied"
-	)
-	_check(
-		hud._feedback.text.contains("PREVIEW") and hud._feedback.text.contains("CORE SECURED"),
-		"committed fixture feedback is labeled preview and avoids rarity language"
-	)
+	_check(not hud._status_panel.visible, "fixture state is hidden by default in player-facing UI")
+	_check(not hud._feedback.visible and not hud._core_panel.visible, "fixture transaction and Core stay out of release presentation")
+	hud.set_developer_diagnostics(true)
+	await process_frame
+	_check(hud._phase.text == "Scavenging", "use concise player-facing context")
+	_check(hud._provenance.text == "DEV PREVIEW · FIXTURE PROJECTION", "fixture provenance appears only in opt-in diagnostics")
+	_check(hud._core_panel.visible and hud._core_title.text == "Ember Core", "physical Core appears for inspected developer preview")
+	_check(hud._core_icon.texture != null, "Core summary carries its item icon")
+	_check(hud._context.text.contains("Crown Waystation") and not hud._context.text.contains("AUTHORED"), "discovered focus stays concise")
+	_check(hud._core_state.text == "In your pack", "authoritative custody is expressed in player language")
+	_check(hud._core_details.text.contains("8 / 8 charges") and hud._core_details.text.contains("91% condition"), "finite charges and condition remain readable")
+	_check(not hud._core_details.text.contains("soh_i_"), "raw instance identifiers never enter player-facing status")
+	_check(not hud._core_details.text.contains("BLOCKED_PENDING_A4") and not hud._core_details.text.contains("UNKNOWN"), "technical readiness states are not presented")
+	_check(hud._feedback.text == "Ember Core found", "confirmed preview feedback uses natural player copy")
 	_check(
 		(
 			hud.find_children("*", "Button", true, false).is_empty()
@@ -176,7 +148,7 @@ func _run() -> void:
 	await process_frame
 	_check(not hud._feedback.visible, "pending action does not announce loot or commit")
 	_check(
-		hud._context.visible and hud._context.text == "POI clue withheld until discovery." and not hud._context.text.contains("Relay"),
+		not hud._context.visible and not hud._context.text.contains("Relay"),
 		"undiscovered identity, clue and private action metadata are absent from the rendered HUD"
 	)
 	var stale := pending.duplicate(true)
@@ -195,7 +167,7 @@ func _run() -> void:
 	wrong_readiness_source.core.readiness_source = "A3_OWNER_PROJECTION"
 	_check(hud.set_projection(wrong_readiness_source), "accept owner revision for readiness-source test")
 	await process_frame
-	_check(hud._core_readiness.text.ends_with("UNKNOWN"), "A3 catalog cannot assert A4 runtime cast readiness")
+	_check(not hud._core_details.text.contains("BLOCKED") and not hud._core_details.text.contains("READINESS"), "catalog state is not surfaced as a cast verdict")
 	var impostor_core := no_receipt.duplicate(true)
 	impostor_core.revision = "fixture-5"
 	impostor_core.sequence = 5
@@ -224,7 +196,7 @@ func _run() -> void:
 	}
 	_check(hud.set_projection(workshop), "accept workshop station and queue preview")
 	await process_frame
-	_check(hud._context.text.contains("QUEUE 1 / 4") and hud._context.text.contains("RESEARCH RUNNING"), "workshop queue is presented as owner-projected context")
+	_check(hud._context.text == "Precision Workbench · 1 / 4 jobs", "workshop queue uses concise player-facing context")
 	var recovery_focus := workshop.duplicate(true)
 	recovery_focus.revision = "fixture-7"
 	recovery_focus.sequence = 7
@@ -232,7 +204,7 @@ func _run() -> void:
 	recovery_focus.focus = {"kind": "recovery", "source": "FIXTURE_PROJECTION", "status": "recovery_available", "label": "Death bag"}
 	_check(hud.set_projection(recovery_focus), "accept recovery custody preview")
 	await process_frame
-	_check(hud._context.text.contains("DEATH BAG") and hud._context.text.contains("RECOVERY AVAILABLE"), "death-bag status is explicit without claiming a transfer")
+	_check(hud._context.text == "Death bag ready to retrieve", "death-bag status is explicit without claiming a transfer")
 	var recovery_rejected := recovery_focus.duplicate(true)
 	recovery_rejected.revision = "fixture-8"
 	recovery_rejected.sequence = 8
@@ -246,9 +218,9 @@ func _run() -> void:
 	_check(hud.set_projection(recovery_rejected), "accept A0 recovery capacity rejection")
 	await process_frame
 	_check(
-		hud._feedback.visible and hud._feedback.text == "Pack full; death bag remains."
-			and hud._context.text.contains("CAPACITY REJECTED") and hud._bag.text.contains("PACK FULL"),
-		"full-bag recovery rejection stays owner-reported and leaves the death bag visible"
+		hud._feedback.visible and hud._feedback.text == "No room. Make space and try again."
+			and hud._context.text == "Make room before retrieving the bag",
+		"full-bag recovery rejection is concise and leaves recovery context visible"
 	)
 	var equipped := ADAPTER.core_instance(
 		{
@@ -342,6 +314,23 @@ func _run() -> void:
 		),
 		"aggregated material quantity preserves exact owner stack identities"
 	)
+	var live_projection := snapshot.duplicate(true)
+	live_projection.provenance = "A0_OWNER_PROJECTION"
+	live_projection.revision = "owner-preview-9"
+	live_projection.sequence = 9
+	live_projection.focus.discovery_source = "A0_OWNER_PROJECTION"
+	live_projection.focus.clue = "A quiet road beyond the trees."
+	live_projection.core.instance_source = "A3_OWNER_PROJECTION"
+	live_projection.core.custody_source = "A0_OWNER_PROJECTION"
+	live_projection.core.readiness_source = "A4_OWNER_PROJECTION"
+	_check(hud.set_projection(live_projection), "accept a newer owner-projection shape")
+	hud.set_developer_diagnostics(false)
+	await process_frame
+	_check(hud._status_panel.visible and hud._phase.text == "Scavenging", "owner-backed context is visible without developer diagnostics")
+	_check(not hud._provenance.visible and hud._context.text.contains("Crown Waystation"), "owner provenance stays out of player copy")
+	_check(hud._core_panel.visible and hud._core_state.text == "In your pack", "owner-projected Core custody remains player-readable")
+	var rendered_labels := _visible_text(hud)
+	_check(not rendered_labels.contains("soh_i_") and not rendered_labels.contains("A0 OWNER") and not rendered_labels.contains("BLOCKED_PENDING_A4"), "release presentation excludes raw IDs, owner names and technical states")
 	var hud_source := FileAccess.get_file_as_string("res://game/survival/ui/player_first_hud.gd")
 	_check(
 		(
@@ -357,3 +346,11 @@ func _run() -> void:
 	else:
 		printerr("A6 PLAYER-FIRST HUD FAILED - %d/%d" % [failures.size(), checks])
 		quit(1)
+
+
+func _visible_text(node: Node) -> String:
+	var parts: Array[String] = []
+	for child: Node in node.find_children("*", "Label", true, false):
+		if child is Label and child.is_visible_in_tree():
+			parts.append((child as Label).text)
+	return " ".join(parts)

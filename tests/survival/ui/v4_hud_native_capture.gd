@@ -52,6 +52,7 @@ func _run() -> void:
 	root.add_child(layer)
 	var hud: Control = HUD.new()
 	hud.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	hud.set_developer_diagnostics(true)
 	layer.add_child(hud)
 	var projection := {
 		"schema": "soh.ui.player_hud.v1",
@@ -118,14 +119,20 @@ func _run() -> void:
 	var path := output.path_join(filename)
 	var image := viewport.get_texture().get_image()
 	var status_rect: Rect2 = hud.get_node("A6ContextStatus").get_global_rect()
-	var core_rect: Rect2 = hud.get_node("PhysicalCoreStatus").get_global_rect()
+	var diagnostic: Label = hud.get_node("A6ContextStatus/DeveloperDiagnostics")
 	var owner_hud: Node = overworld.get("hud")
 	var owner_plate := (
 		owner_hud.find_child("Plate", true, false) as Control if owner_hud != null else null
 	)
-	if status_rect.intersects(core_rect):
+	if not diagnostic.visible or not diagnostic.text.contains("DEV PREVIEW"):
 		failures += 1
-		push_error("HUD context and Core card overlap at %s" % str(size))
+		push_error("Fixture source is not disclosed in opt-in preview diagnostics at %s" % str(size))
+	if status_rect.size.x > 500.0 or status_rect.size.y > 270.0:
+		failures += 1
+		push_error("Single-card HUD exceeded its compact 2K/4K bounds: %s" % str(status_rect.size))
+	if hud.find_children("*", "Button", true, false).size() > 0:
+		failures += 1
+		push_error("Passive player HUD gained a nonfunctional button at %s" % str(size))
 	if owner_plate != null and status_rect.intersects(owner_plate.get_global_rect()):
 		failures += 1
 		push_error("A6 context extension overlaps A0's existing HUD plate at %s" % str(size))

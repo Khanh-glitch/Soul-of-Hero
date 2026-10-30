@@ -2,7 +2,7 @@ extends RefCounted
 ## Explicit illustrative data, not a definition of A0/A1/A3 APIs.
 static func snapshot() -> Dictionary:
 	return {
-		"revision": "fixture-1", "container_id": "fixture-chest", "transfer_enabled": true,
+		"revision": "fixture-1", "provenance": "FIXTURE_PROJECTION", "container_id": "fixture-chest", "transfer_enabled": true,
 		"recipes": [
 			{"id":"core_formula", "name":"Ember Core [fixture]", "revealed":true, "knowledge":"recipe", "formula_learned":false, "station":"Research table", "can_research":false, "blocked_reason":"Requires a specimen and research material.", "ingredients":[{"name":"Iron Scrap", "have":0, "need":2, "source":"Abandoned Supplies"}]},
 			{"id":"bandage", "name":"Field Bandage [fixture]", "revealed":true, "knowledge":"starter", "formula_learned":true, "station":"Worktable", "can_craft":true, "ingredients":[{"name":"Reed Fibre", "have":4, "need":2}]},
