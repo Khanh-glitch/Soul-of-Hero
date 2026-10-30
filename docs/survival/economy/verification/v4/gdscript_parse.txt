@@ -1,0 +1,5 @@
+tree-sitter-gdscript syntax only; NOT a Godot runtime/proof
+game/survival/economy/economy_service.gd ERROR_NODES 0
+game/survival/economy/world_source_adapter.gd ERROR_NODES 0
+tests/survival/catalog/economy_adapter_test.gd ERROR_NODES 0
+tests/survival/catalog/economy_world_restart_test.gd ERROR_NODES 0

@@ -16,6 +16,7 @@ var session_id := "restart-world-1"
 var active_seconds := 0
 var sequence := 0
 var revision := 1
+var hero_cell := Vector2i(408, 199)
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -30,7 +31,7 @@ func _expect(value: bool, label: String) -> void:
 
 func _world_host(poi_id: String) -> Dictionary:
 	return {"contract": WORLD_CONTRACT, "poi_id": poi_id, "discovered": true,
-		"hero_cell": Vector2i(406, 202), "active_seconds": active_seconds,
+		"hero_cell": hero_cell, "active_seconds": active_seconds,
 		"session_id": session_id, "session_index": session_index,
 		"sequence": sequence, "world_revision": revision}
 
@@ -71,8 +72,10 @@ func _phase_one() -> void:
 	session_id = "restart-world-1"
 	active_seconds = 0
 	sequence = 0
+	hero_cell = Vector2i(408, 199)
 	var locker: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "pry_locker"}, "restart.locker")
 	_expect(bool(locker.ok), "phase1 locker capability")
+	hero_cell = Vector2i(406, 202)
 	var claim: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "si:r_ashen_crown:waystation_cache:01"}, "restart.cache.1")
 	_expect(bool(claim.ok) and String(claim.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "phase1 canonical cache claim")
@@ -91,6 +94,7 @@ func _phase_two() -> void:
 	session_id = "restart-world-2"
 	active_seconds = 0
 	sequence = 0
+	hero_cell = Vector2i(406, 202)
 	var file := FileAccess.open(EXPECTED_PATH, FileAccess.READ)
 	_expect(file != null, "phase2 reads expected marker")
 	if file == null: return
