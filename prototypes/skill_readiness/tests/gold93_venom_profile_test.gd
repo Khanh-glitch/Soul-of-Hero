@@ -3,7 +3,9 @@ extends SceneTree
 ## Wall-clock profile of one Venomwright host adapter (diagnosis only, no verdict).
 ##
 ## usage: godot --headless --script .../gold93_venom_profile_test.gd -- --skill=NNN
-## env:   GOLD93_PROFILE_TICKS (default 240) source ticks to step with profiling on.
+## env:   GOLD93_PROFILE_START (default 0) source ticks stepped BEFORE profiling,
+##        so the profile can cover the busy phase of a cast, not only its start.
+##        GOLD93_PROFILE_TICKS (default 240) source ticks stepped with profiling on.
 ##
 ## Runs the registered host adapter exactly as the host test does, with the
 ## VenomWorld profiler switched on. It prints the wall time per section and per
@@ -20,12 +22,18 @@ const CAST_SEED: int = 20261028
 const TOP_ROWS: int = 40
 
 
+func _env_int(key: String, fallback: int) -> int:
+	var v: String = OS.get_environment(key)
+	return int(v) if not v.is_empty() else fallback
+
+
 func _initialize() -> void:
 	var skill: int = 0
 	for a in OS.get_cmdline_user_args():
 		if a.begins_with("--skill="):
 			skill = int(a.substr(8))
-	var ticks: int = int(OS.get_environment("GOLD93_PROFILE_TICKS")) if not OS.get_environment("GOLD93_PROFILE_TICKS").is_empty() else 240
+	var ticks: int = _env_int("GOLD93_PROFILE_TICKS", 240)
+	var start_ticks: int = _env_int("GOLD93_PROFILE_START", 0)
 	var id: String = "venomwright:%03d" % skill
 	var runtime = RUNTIME.new()
 	if skill <= 0 or not runtime.can_cast(id):
@@ -50,6 +58,10 @@ func _initialize() -> void:
 
 	var h = runtime.cast(StringName(id), ctx, PARAMS.diagnostic("venomwright"))
 	h.start()
+	var t_pre: int = Time.get_ticks_usec()
+	if start_ticks > 0:
+		h.tick_source(start_ticks)
+	print("GOLD93_VENOM_PROFILE: unprofiled prefix ticks=%d wall_ms=%d" % [start_ticks, int((Time.get_ticks_usec() - t_pre) / 1000)])
 	VENOM_WORLD.prof.clear()
 	VENOM_WORLD.PROFILE_ON = true
 	var t0: int = Time.get_ticks_usec()

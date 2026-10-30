@@ -245,7 +245,8 @@ jobs:
       - name: Profile Venomwright 021 host adapter (per section and per effect kind)
         shell: bash
         env:
-          GOLD93_PROFILE_TICKS: "240"
+          GOLD93_PROFILE_START: "560"
+          GOLD93_PROFILE_TICKS: "120"
         run: |
           bash prototypes/skill_readiness/tools/ci/run_gate.sh profile-21 1500 'GOLD93_VENOM_PROFILE: DONE' res://prototypes/skill_readiness/tests/gold93_venom_profile_test.gd -- --skill=21
 
