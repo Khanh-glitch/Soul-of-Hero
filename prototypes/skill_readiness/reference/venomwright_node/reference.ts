@@ -191,7 +191,7 @@ if (mode === 'hashes') {
   // hook so each draw call appends `method.kind#index <scene+glow sha256/12>`,
   // the identical format the native differential prints as GOLD93_OBJ.
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
-  const want = new Set([89, 90]);
+  const want = new Set((process.argv[6] ?? '89,90').split(',').map(Number));
   const { g, w, def } = setup(id);
   const hash = () => createHash('sha256').update(Buffer.from(g.gfx.s.d.buffer, g.gfx.s.d.byteOffset, g.gfx.s.d.byteLength)).update(Buffer.from(g.gfx.l.d.buffer, g.gfx.l.d.byteOffset, g.gfx.l.d.byteLength)).digest('hex').slice(0, 12);
   let log: string[] = [];

@@ -384,9 +384,10 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		g["s"].reset()
 		g["l"].reset()
 		g["t"] = w.time
-		# Per-object raster diagnosis for 007 ticks 89-90 (compact GOLD93_OBJ
-		# lines; identical format from the Node reference `objhash` mode).
-		w.objhash_on = sid == 7 and (n == 89 or n == 90)
+		# Per-object raster diagnosis at the known first-divergent ticks of the
+		# unresolved raster skills (compact GOLD93_OBJ lines; identical format
+		# from the Node reference `objhash` mode, tick list passed as argv 6).
+		w.objhash_on = OBJ_TICKS.has(sid) and n in OBJ_TICKS[sid]
 		if w.objhash_on:
 			w.objhash_log.clear()
 		w.draw(g)
