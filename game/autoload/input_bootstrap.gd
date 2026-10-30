@@ -27,6 +27,7 @@ const SEMANTIC_ACTIONS := [
 	# build modal can never fire a swing and combat input keeps its exact meaning.
 	&"build_toggle",
 	&"economy_toggle",
+	&"storage_toggle",
 	&"build_place",
 	&"build_slot_1",
 	&"build_slot_2",
@@ -88,6 +89,7 @@ const KEYBOARD_BINDINGS := {
 	# only while the modal is open.
 	&"build_toggle": [KEY_B],
 	&"economy_toggle": [KEY_C],
+	&"storage_toggle": [KEY_V],
 	&"build_slot_1": [KEY_1],
 	&"build_slot_2": [KEY_2],
 	&"build_slot_3": [KEY_3],

@@ -55,7 +55,7 @@ func _build_prompt() -> void:
 	_prompt.name = "Prompt"
 	_prompt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_prompt.position = Vector2(-70, -26) if piece_id == PIECE_BED else Vector2(-70, -6)
-	_prompt.size = Vector2(140, 14)
+	_prompt.size = Vector2(140, 28)
 	_prompt.add_theme_font_size_override("font_size", 9)
 	_prompt.add_theme_color_override("font_color", Color(0.94, 0.9, 0.74))
 	_prompt.add_theme_color_override("font_outline_color", Color(0.04, 0.03, 0.06))
@@ -120,11 +120,11 @@ func refresh_prompt() -> void:
 		total += int(contents[item_id])
 	match interaction_verb():
 		"stash":
-			_prompt.text = "[CLICK]  Stash items  (%d/%d)" % [contents.size(), capacity()]
+			_prompt.text = "[CLICK]  Stash items  (%d/%d)" % [contents.size(), capacity()] + "\n[V] Choose items"
 		"take":
-			_prompt.text = "[CLICK]  Take all  (%d stored)" % total
+			_prompt.text = "[CLICK]  Take all  (%d stored)" % total + "\n[V] Choose items"
 		_:
-			_prompt.text = "Chest — empty"
+			_prompt.text = "Chest — empty\n[V] Choose items"
 
 
 func capacity() -> int:

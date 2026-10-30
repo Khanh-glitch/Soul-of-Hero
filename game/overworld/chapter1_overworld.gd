@@ -47,6 +47,7 @@ const OCCLUSION_SCRIPT := preload("res://game/overworld/overworld_occlusion.gd")
 const SURVIVAL_BUILD_SCRIPT := preload("res://game/survival/survival_build_system.gd")
 const ECONOMY_SESSION_SCRIPT := preload("res://game/survival/economy/economy_session.gd")
 const ECONOMY_PANEL_SCRIPT := preload("res://game/survival/economy/economy_panel.gd")
+const CHEST_PANEL_SCRIPT := preload("res://game/survival/chest_inventory_panel.gd")
 const SURVIVAL_NODE_SCRIPT := preload("res://game/survival/survival_resource_node.gd")
 const DEATH_BAG_SCRIPT := preload("res://game/survival/survival_death_bag.gd")
 const SURVIVAL_RESOURCE_PLAN_PATH := "res://data/survival/hollow_marches_resources.json"
@@ -75,6 +76,7 @@ var traversability_failures: Array[Dictionary] = []
 var survival_build: SurvivalBuildSystem
 var economy_session: Node
 var economy_panel: CanvasLayer
+var chest_panel: CanvasLayer
 var _death_bags: Dictionary = {}
 var _death_bag_root: Node2D
 var survival_nodes: Dictionary = {}  # node_id:String -> SurvivalResourceNode
@@ -181,6 +183,9 @@ func _build_world() -> void:
 	_build_occlusion()
 	_build_hud()
 	_build_economy_panel()
+	chest_panel = CHEST_PANEL_SCRIPT.new()
+	chest_panel.name = "ChestInventoryPanel"
+	add_child(chest_panel)
 	_connect_run_events()
 	_apply_hud()
 	build_stage = BuildStage.READY
@@ -663,6 +668,28 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_echo():
 		return
+	if event.is_action_pressed(&"storage_toggle") and chest_panel != null and is_instance_valid(player) and not bool(player.get(&"dead")):
+		if bool(chest_panel.call(&"is_open")):
+			chest_panel.call(&"close_panel")
+		elif not _has_gameplay_modal() and _world_action_allowed(&"storage_toggle"):
+			var nearest: SurvivalStructure = null
+			var nearest_distance := SurvivalStructure.REACH
+			for value: Variant in survival_build._placed.values():
+				var candidate := value as SurvivalStructure
+				if not is_instance_valid(candidate) or candidate.piece_id != SurvivalStructure.PIECE_CHEST:
+					continue
+				var distance := candidate.global_position.distance_to(player.global_position)
+				if distance <= nearest_distance:
+					nearest = candidate
+					nearest_distance = distance
+			if nearest != null:
+				if survival_build.active:
+					survival_build.set_active(false)
+				chest_panel.call(&"open_chest", nearest, player, get_node_or_null("/root/SurvivalService"))
+			elif hud != null:
+				hud.show_prompt("Stand near a chest to choose items.", 2.0)
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed(&"economy_toggle") and economy_panel != null and not bool(player.get(&"dead")):
 		# A different visible modal owns input; do not stack a crafting panel on
 		# top of it. Closing our own panel remains available with the same key.
@@ -1025,6 +1052,8 @@ func _on_overworld_hero_died() -> void:
 		survival_build.set_active(false)
 	if economy_panel != null:
 		economy_panel.call(&"close_panel")
+	if chest_panel != null:
+		chest_panel.call(&"close_panel")
 	if state != null:
 		state.save_now()
 	var svc := get_node_or_null("/root/SurvivalService")

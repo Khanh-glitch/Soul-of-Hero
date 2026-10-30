@@ -467,4 +467,52 @@ func _body() -> void:
 	_expect(bool(_save().call(&"reload_save")) and _count(WOOD) == 2 and _count("binding_cloth") == 2 \
 		and (_survival().call(&"container_contents", chest_id) as Dictionary).is_empty(),
 		"recovered stacks survive disk reload without duplicate chest custody")
+	# Physical keyboard and GUI input, against the same home/chest and save.
+	var key_down := InputEventKey.new()
+	key_down.keycode = KEY_V
+	key_down.physical_keycode = KEY_V
+	key_down.pressed = true
+	Input.parse_input_event(key_down)
+	await physics_frame
+	await process_frame
+	var key_up := InputEventKey.new()
+	key_up.keycode = KEY_V
+	key_up.physical_keycode = KEY_V
+	key_up.pressed = false
+	Input.parse_input_event(key_up)
+	await physics_frame
+	await process_frame
+	var panel := fresh.get(&"chest_panel") as CanvasLayer
+	var opened := panel != null and bool(panel.call(&"is_open"))
+	_expect(opened, "V opens the nearby chest selective modal through keyboard input")
+	if not opened:
+		_body_complete = true
+		return
+	var deposit_wood := panel.find_child("Deposit_oak_wood", true, false) as Button
+	_expect(deposit_wood != null, "ordinary bag item has a selective deposit button")
+	if deposit_wood == null:
+		_body_complete = true
+		return
+	await _click_window(root.get_final_transform() * deposit_wood.get_global_rect().get_center())
+	_expect(_count(WOOD) == 1 and _count("binding_cloth") == 2 and int(fresh_chest.chest_contents().get(WOOD, 0)) == 1, "pointer deposits one oak without sweeping cloth")
+	var quantity := panel.find_child("Quantity", true, false) as SpinBox
+	if quantity != null:
+		await _click_window(root.get_final_transform() * (quantity.get_global_rect().position + Vector2(quantity.size.x - 8.0, quantity.size.y * 0.25)))
+	_expect(quantity != null and int(quantity.value) == 2, "pointer increases selective transfer quantity to two")
+	var deposit_cloth := panel.find_child("Deposit_binding_cloth", true, false) as Button
+	if deposit_cloth != null:
+		await _click_window(root.get_final_transform() * deposit_cloth.get_global_rect().get_center())
+	_expect(deposit_cloth != null and _count("binding_cloth") == 0 and int(fresh_chest.chest_contents().get("binding_cloth", 0)) == 2, "pointer deposits exactly two cloth")
+	# Reset to one with the corresponding lower SpinBox arrow.
+	if quantity != null:
+		await _click_window(root.get_final_transform() * (quantity.get_global_rect().position + Vector2(quantity.size.x - 8.0, quantity.size.y * 0.75)))
+	var take_wood := panel.find_child("Take_oak_wood", true, false) as Button
+	if take_wood != null:
+		await _click_window(root.get_final_transform() * take_wood.get_global_rect().get_center())
+	_expect(take_wood != null and _count(WOOD) == 2 and not fresh_chest.chest_contents().has(WOOD) and int(fresh_chest.chest_contents().get("binding_cloth", 0)) == 2, "pointer takes only the selected oak while cloth remains stored")
+	var close := panel.find_child("CloseChest", true, false) as Button
+	if close != null:
+		await _click_window(root.get_final_transform() * close.get_global_rect().get_center())
+	_expect(close != null and not bool(panel.call(&"is_open")), "pointer closes selective storage modal")
+	_expect(bool(_save().call(&"reload_save")) and _count(WOOD) == 2 and _count("binding_cloth") == 0 and int((_survival().call(&"container_contents", chest_id) as Dictionary).get("binding_cloth", 0)) == 2, "selective custody survives reload without duplication")
 	_body_complete = true

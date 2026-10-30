@@ -7,7 +7,7 @@ extends Node
 const ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"move_up", &"move_down", &"attack", &"skill",
 	&"ultimate", &"dash", &"soul_relay_1", &"soul_relay_2", &"interact",
-	&"pause", &"ui_cancel", &"build_toggle", &"build_place",
+	&"pause", &"ui_cancel", &"build_toggle", &"storage_toggle", &"build_place",
 	&"build_slot_1", &"build_slot_2", &"build_slot_3", &"build_slot_4", &"build_slot_5",
 	&"build_slot_6", &"build_slot_7", &"build_slot_8", &"build_slot_9",
 	&"jump", &"light_attack", &"heavy_attack", &"roll", &"slide", &"crouch", &"debug_hit",
