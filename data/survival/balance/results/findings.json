@@ -33,7 +33,7 @@
     {
       "code": "QUANTITY_OWNERSHIP_UNRESOLVED",
       "code_meaning": "one owner assigns a quantity to another owner's reward",
-      "detail": "A1 authors item hints and policy ONE_TIME,RENEWABLE_COOLDOWN with 0 quantities; A3 assigns a1_crown_salvage={'iron_scrap': 3, 'knowledge_spares': 1}; waystation_locker={'iron_scrap': 2, 'knowledge_spares': 2}",
+      "detail": "A1 authors item hints and policy ONE_TIME,RENEWABLE_COOLDOWN with 0 quantities; A3 assigns a1_crown_salvage={'iron_scrap': 3, 'knowledge_spares': 2}",
       "owner": "A3",
       "severity": "MAJOR",
       "subject": "poi_crown_waystation"
@@ -316,23 +316,7 @@
       "detail": "A3 region 'opening_marches' is not an A1 region_id",
       "owner": "A3",
       "severity": "MINOR",
-      "subject": "road_scrap"
-    },
-    {
-      "code": "SOURCE_REGION_UNRESOLVED",
-      "code_meaning": "source region id does not resolve to an A1 region",
-      "detail": "A3 region 'opening_marches' is not an A1 region_id",
-      "owner": "A3",
-      "severity": "MINOR",
       "subject": "road_seed"
-    },
-    {
-      "code": "SOURCE_REGION_UNRESOLVED",
-      "code_meaning": "source region id does not resolve to an A1 region",
-      "detail": "A3 region 'opening_marches' is not an A1 region_id",
-      "owner": "A3",
-      "severity": "MINOR",
-      "subject": "road_supplies"
     },
     {
       "code": "SOURCE_REGION_UNRESOLVED",
@@ -483,6 +467,6 @@
     "BLOCKER": 0,
     "INFO": 9,
     "MAJOR": 20,
-    "MINOR": 28
+    "MINOR": 26
   }
 }

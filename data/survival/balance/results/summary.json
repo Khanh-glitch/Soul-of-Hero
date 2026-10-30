@@ -123,8 +123,8 @@
       ]
     },
     {
-      "assertion_id": "A16_integration_gate_reports_only_static_levels",
-      "detail": "both chains report a level per link and never claim beyond S3 from static evidence",
+      "assertion_id": "A16_gate_separates_source_mount_native_and_visual",
+      "detail": "every link reports a source state, a native evidence state and a level; static evidence never exceeds S3",
       "holds": true,
       "tags": [
         "gate",
@@ -132,8 +132,17 @@
       ]
     },
     {
-      "assertion_id": "A17_no_chain_reaches_a_committed_player_action",
-      "detail": "no mounted path commits through SaveService, so no chain is claimed past S3",
+      "assertion_id": "A17_entry_claim_A_is_separated_from_B_C_D",
+      "detail": "the normal menu route exists in source, its native run is unverified, and no content is mounted in it",
+      "holds": true,
+      "tags": [
+        "gate",
+        "entry"
+      ]
+    },
+    {
+      "assertion_id": "A18_commit_seam_is_classified_not_substring_matched",
+      "detail": "raw transact_once tokens exceed the mounted callers, and every rejected match carries a reason",
       "holds": true,
       "tags": [
         "gate",
@@ -141,8 +150,17 @@
       ]
     },
     {
-      "assertion_id": "A18_first_hour_binding_needs_no_rate_change",
-      "detail": "A1's authorized cache yields already equal A3's rows (3 / 2 / 2); only the poi_id needs adopting",
+      "assertion_id": "A19_native_claims_require_a_green_run_on_the_pinned_commit",
+      "detail": "no pinned head has a verified native run, so no link is reported above S3",
+      "holds": true,
+      "tags": [
+        "gate",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A20_a1_bindings_adopted_without_any_rate_change",
+      "detail": "A3 adopted both instance rebinds with A1's own yields (3 iron_scrap / 2 knowledge_spares) and no rate moved",
       "holds": true,
       "tags": [
         "gate",
@@ -150,16 +168,16 @@
       ]
     },
     {
-      "assertion_id": "A19_quality_suite_flags_exactly_the_avatar_defect",
-      "detail": "of the seven half-built-feature checks only the avatar identity/armour check fails",
+      "assertion_id": "A21_quality_fails_only_the_avatar_and_stale_mirror",
+      "detail": "of seven checks only the avatar (Q-04) and the stale A0 catalog mirror (Q-03) fail",
       "holds": true,
       "tags": [
         "quality"
       ]
     },
     {
-      "assertion_id": "A20_closed_blockers_stay_closed_with_evidence",
-      "detail": "the bootstrap-cycle and debug-UI blockers are recorded closed with the measurement that closed them",
+      "assertion_id": "A22_self_corrections_are_recorded",
+      "detail": "the five round-3 claims that the owners' source contradicted are recorded with what is actually true",
       "holds": true,
       "tags": [
         "blockers",
@@ -180,25 +198,29 @@
     "a3_loot_sources_total": 16,
     "a3_loot_sources_with_unresolved_a1_poi": 16,
     "adversarial_cases_passed": "24/24",
-    "binding_adoption": "0/3 A1-authorized source bindings are adopted by A3. Each pending row is a one-field poi_id edit, not a new rate.",
+    "binding_adoption": "3/3 A1-authorized source bindings are adopted by A3 (2/2 instance rebinds, 1 live-source reuse).",
     "canonical_avatar_production_refs": {
       "180537": 0,
       "419402": 0,
       "555940": 0
     },
-    "closed_by_measurement": 2,
+    "closed_by_measurement": 3,
     "findings_by_severity": {
       "BLOCKER": 0,
       "INFO": 9,
       "MAJOR": 20,
-      "MINOR": 28
+      "MINOR": 26
     },
-    "integration_gate_level": "S0_ABSENT",
+    "integration_gate_levels": {
+      "a8_quarry": "S0_ABSENT",
+      "waystation_cache": "S1_AUTHORED_ONLY"
+    },
     "loot_tables_authored": 2,
     "loot_tables_that_can_emit_a_core": 0,
     "mounted_survival_ui_scenes": 0,
-    "observation_reduction": "57 observations -> 4 blockers (2 closed by measurement, 6 observations are traceability/hypothesis only)",
-    "player_facing_blockers": 4,
+    "native_verified": false,
+    "observation_reduction": "55 observations -> 5 blockers (3 closed, 5 A7 self-corrections, 6 observations traceability only)",
+    "player_facing_blockers": 5,
     "poi_playability": {
       "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
       "CONTRACT_ONLY_NOT_PLAYABLE": 106,
@@ -212,15 +234,15 @@
       "WARN": 2
     },
     "quality_checks": {
-      "FAIL": 1,
-      "PASS": 6
+      "FAIL": 2,
+      "PASS": 5
     },
     "resource_nodes_authored_not_crates": 178
   },
   "schema": "soh.balance.summary.v1",
   "source_basis": {
     "a1_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
-    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12",
     "hypothesis_file": "data/survival/balance/hypotheses.v1.json"
   },
   "status": "ANALYSIS_COMPLETE_NOT_NATIVE_NOT_HUMAN",

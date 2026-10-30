@@ -1,0 +1,154 @@
+{
+  "schema": "soh.a8.quarry.integration_candidate.v1",
+  "status": "S2_CANDIDATE_BLOCKED_ON_A1_A3_A0_OWNER_INTEGRATION",
+  "source_pins": {
+    "integration_base": {
+      "ref": "feature/survival-rpg-foundation-20261029",
+      "commit": "86831332324428c7623ad431a577d101b7af5c9c"
+    },
+    "a1_pr20": {
+      "head": "e16285ffbbf80829f07e056264751954cd16571a",
+      "source": "data/survival/world/world_plan.v1.json"
+    },
+    "a3_pr19": {
+      "head": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "items": "data/survival/items/items.json",
+      "sources": "data/survival/items/sources.json"
+    },
+    "a0_pr21": {
+      "head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
+      "owner": "SaveService + SurvivalService + production overworld mount"
+    },
+    "a6_pr24": {
+      "head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+      "owner": "player input and presentation"
+    },
+    "a8_head_at_candidate_creation": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+    "a8_work_order": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+    "a8_audit_snapshot": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+  },
+  "canonical_instance": {
+    "world_id": "world:soh_continent_v1",
+    "poi_id": "poi_crown_south_quarry",
+    "region_id": "r_ashen_crown",
+    "cell": [
+      30,
+      280
+    ],
+    "footprint_radius_tiles": 4,
+    "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+    "physical_instance_id": null,
+    "physical_instance_id_owner": "A0/A1",
+    "instance_rule": "Resolve the canonical world POI by world_id + poi_id + A1 cell; A0 supplies the persistent instance identity. A8 does not mint or persist a second identity."
+  },
+  "a8_scene": {
+    "packed_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+    "site_definition": "res://data/survival/world_content/sites/south_quarry.json",
+    "scene_source_id": "poi_crown_south_quarry",
+    "test_harness_only": true,
+    "mount_transform": "A0 resolves the A1 cell through the existing world transform; do not convert the cell to guessed pixels."
+  },
+  "actions": [
+    {
+      "action_id": "brace_east_shelf",
+      "object_id": "brace_oak",
+      "intent": "Commit the east route state only after A3 approves its oak_wood debit; collision/blocker projection follows committed owner state.",
+      "item_id": "oak_wood",
+      "a3_item_status": "SOH_PROPOSAL",
+      "cost_quantity": null,
+      "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action."
+    },
+    {
+      "action_id": "chock_west_ramp",
+      "object_id": "chock_stone",
+      "intent": "Commit the west route state only after A3 approves its stone_chunk debit; collision/blocker projection follows committed owner state.",
+      "item_id": "stone_chunk",
+      "a3_item_status": "SOH_PROPOSAL",
+      "cost_quantity": null,
+      "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action."
+    },
+    {
+      "action_id": "leave_seam_unworked",
+      "object_id": "south_seam",
+      "intent": "Persist the safe leave choice without an item transaction; it must not unlock extraction."
+    },
+    {
+      "action_id": "extract_outcrop",
+      "object_id": "south_seam_outcrop",
+      "intent": "A0-owned atomic source claim after the committed safe route; debit/claim/world-state/owner cooldown commit together.",
+      "item_id": "stone_chunk",
+      "source_id": "live_stone_chunk",
+      "a3_item_status": "SOH_PROPOSAL",
+      "a3_source_status": "SOH_PROPOSAL",
+      "a3_source_poi_id": null,
+      "reward_quantity": null,
+      "replenishment_seconds": null,
+      "authorization": "BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 must authorize its site mapping and balance before any grant."
+    }
+  ],
+  "owner_requests": {
+    "a0": {
+      "entrypoint": "A0-owned adapter using the existing SaveService.transact_once boundary; current A0 head has no A8 POI adapter.",
+      "request_identity_fields": [
+        "contract_id",
+        "contract_version",
+        "world_id",
+        "poi_id",
+        "a1_cell",
+        "object_id",
+        "action_id",
+        "claim_policy",
+        "owner_projection_revision"
+      ],
+      "owner_validates": [
+        "canonical physical instance resolves to one A1 POI",
+        "scene/harness source flags are not accepted as authority",
+        "actor remains in range, at the authored stand, and faces the socket at commit",
+        "A3 item/source definitions and explicit action authorization are current",
+        "capability and saved route preconditions",
+        "inventory affordability and bag capacity",
+        "once-only claim or owner-derived replenishment generation",
+        "transaction receipt and site state update atomically"
+      ],
+      "failure_semantics": "Reject with unchanged owner projection; interrupted pre-commit retry reuses the same owner-derived claim identity; no local Boolean may suppress a later valid claim."
+    },
+    "a3": {
+      "required_item_ids": [
+        "oak_wood",
+        "stone_chunk"
+      ],
+      "required_source_mapping": {
+        "stone_chunk": "live_stone_chunk -> poi_crown_south_quarry, subject to A3 approval"
+      },
+      "required_decisions": [
+        "approve or reject both route-action cost quantities",
+        "approve or reject the Quarry stone_chunk reward quantity and replenishment interval",
+        "set approved balance/source status and site binding in the A3-owned catalog"
+      ]
+    },
+    "a1_a0_mount": {
+      "required": "A0 mounts the single PackedScene at the exact A1 POI cell through the current world transform; A1/A0 confirm the native collision/route alignment before exposure."
+    }
+  },
+  "persistence_projection": {
+    "owner": "A0 SurvivalService + SaveService",
+    "required_save_domain": "save.survival.world_pois (A0-owned schema/migration required; not present in current A0 sanitize contract)",
+    "per_instance_fields": {
+      "schema_version": 1,
+      "site_state": {
+        "quarry_route": "east_braced | west_chocked | left_unworked"
+      },
+      "claims": "A0-authoritative once-only receipt ledger",
+      "claim_generation": {
+        "south_seam_outcrop": "owner-derived integer cycle"
+      },
+      "resource_ready_at": {
+        "south_seam_outcrop": "A0 owner clock/timestamp, set only on committed extraction"
+      },
+      "capabilities": "A0 player progression projection; never persisted by the scene",
+      "projection_revision": "A0-monotonic revision for stale intent rejection"
+    },
+    "atomicity": "A0 must mutate cost/reward, claim receipt, generation/cooldown, route state and projection revision in the same SaveService.transact_once candidate."
+  },
+  "fixture_values_policy": "Existing amounts and cooldowns in site JSON and PoiAuthorityFixture are test inputs only. They are not A3-approved prices, yields, loot rates, grants, or production state. Production adapters must ignore/reject provisional_test_only intents until A3 authorization exists."
+}

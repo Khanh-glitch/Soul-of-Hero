@@ -2077,12 +2077,15 @@
     },
     {
       "source_id": "a1_crown_salvage",
-      "binding_status": "A1_AUTHORED_PROPOSAL_A3_ITEM_RESOLUTION",
+      "binding_status": "A1_PINNED_A3_BOUND",
+      "world_binding_id": "a1_waystation_roadside_cache_v3",
+      "source_class": "roadside_cache",
+      "instance_id": "node_waystation_cache",
       "poi_id": "poi_crown_waystation",
       "a1_material_key": "salvage",
       "outputs": {
         "iron_scrap": 3,
-        "knowledge_spares": 1
+        "knowledge_spares": 2
       },
       "restock_active_seconds": 1800,
       "risk": "low",
@@ -2092,7 +2095,7 @@
       "requires_items": [],
       "one_time": false,
       "max_claims_per_session": 1,
-      "note": "A1 waystation cache renewable cooldown; reward hints iron_scrap and knowledge_spares. Quantities are A3 proposal; not a substitute for make_spares sustain."
+      "note": "Canonical A1 outside Waystation cache: deterministic 3 iron_scrap + 2 knowledge_spares per 1800 ACTIVE seconds. The locker itself grants cap_salvage and ZERO items. This is the no-Gold/no-Core bootstrap for relay, research_kit and make_spares; it does not replace make_spares sustain."
     },
     {
       "source_id": "a1_crown_tuff",
@@ -2256,18 +2259,15 @@
     },
     {
       "source_id": "waystation_locker",
-      "binding_status": "A3_DESIGN_PROPOSAL_A1_HINTS_ONLY",
+      "binding_status": "CANONICAL_A1_CAPABILITY_ONLY",
       "poi_id": "poi_crown_waystation",
       "a1_material_key": "salvage",
-      "outputs": {
-        "iron_scrap": 2,
-        "knowledge_spares": 2
-      },
+      "outputs": {},
       "risk": "low",
       "requires_capabilities": [],
       "requires_items": [],
       "one_time": true,
-      "note": "A1 locker reward hints iron_scrap/knowledge_spares; quantities are A3 proposal."
+      "note": "A1 canonical locker grants cap_salvage and ZERO physical items. The old A3 2 scrap + 2 spares hint is superseded; materials come from the distinct outside cache and approach deadfall."
     },
     {
       "source_id": "a1_crown_reed",
@@ -2634,12 +2634,9 @@
         "grants": [
           "cap_salvage"
         ],
-        "reward_proposal": {
-          "iron_scrap": 2,
-          "knowledge_spares": 2
-        },
+        "reward_proposal": {},
         "policy": "ONE_TIME",
-        "status": "A3_DESIGN_PROPOSAL_A1_HINTS_ONLY"
+        "status": "CANONICAL_A1_CAPABILITY_ONLY_ZERO_ITEMS"
       },
       "waystation_ledger": {
         "poi_id": "poi_crown_waystation",

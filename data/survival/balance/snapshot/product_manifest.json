@@ -1,8 +1,8 @@
 {
- "a0_head": "77e434a7046760d4660f8579c9ad0563b023e3c2",
- "a1_head": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+ "a0_head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
+ "a1_head": "7fd000e1c017830a088749b965e651fafb501b98",
  "a6_head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
- "a8_head": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+ "a8_head": "2d7f10d355cb57692a321f3ca633550d31385157",
  "a8_note": "A8 native POI scenes live on the PR26 branch; the A8 task branch carries docs only. Both heads are recorded so a reader cannot mistake the doc branch for the scene branch.",
  "a8_task_head": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
  "files": [
@@ -105,6 +105,55 @@
    "source_path": "game/survival/survival_resource_node.gd"
   },
   {
+   "key": "a0.app_flow.gd",
+   "owner": "a0",
+   "sha256": "0a787ddd8147c54d33718a81dce172c376b10a6d5a00130b51352ba3126d6114",
+   "size_bytes": 46709,
+   "source_path": "game/app/app_flow.gd"
+  },
+  {
+   "key": "a0.campaign_tab.gd",
+   "owner": "a0",
+   "sha256": "1e7faf23aacbc77e8b86382e8424847d4daa3cd128d777c60b5f6baee56f2609",
+   "size_bytes": 2620,
+   "source_path": "game/ui/screens/hub/tabs/campaign_tab.gd"
+  },
+  {
+   "key": "a0.campaign_tab.tscn",
+   "owner": "a0",
+   "sha256": "065ddfb9a06b1cdc904c570f4742cfa64d84c091515f1887c8306e891c2e1103",
+   "size_bytes": 3375,
+   "source_path": "game/ui/screens/hub/tabs/campaign_tab.tscn"
+  },
+  {
+   "key": "a0.home_map_screen.tscn",
+   "owner": "a0",
+   "sha256": "20c1d6e4b70ceb9000430ea4b7beacaca2d43e95197c810f41314dbe894b199f",
+   "size_bytes": 7572,
+   "source_path": "game/ui/screens/home/home_map_screen.tscn"
+  },
+  {
+   "key": "a0.survival_normal_entry_home_restart_test.gd",
+   "owner": "a0",
+   "sha256": "d077c8a474e9ab9011fc79f03180c26be2368c01e216effed0f2d6e7a949cf01",
+   "size_bytes": 9102,
+   "source_path": "tests/survival_normal_entry_home_restart_test.gd"
+  },
+  {
+   "key": "a0.survival_normal_home_journey_test.gd",
+   "owner": "a0",
+   "sha256": "c16c34ea396af673b03105ea821c5069ad0d14e3887a99d4a706af022bf11c62",
+   "size_bytes": 26739,
+   "source_path": "tests/survival_normal_home_journey_test.gd"
+  },
+  {
+   "key": "a0.a0-normal-entry-home-restart.yml",
+   "owner": "a0",
+   "sha256": "4578a9b9e23b2e5b4a011b9d16806c74dd4d4e0307de6f1bb4df105b7278a14a",
+   "size_bytes": 3078,
+   "source_path": ".github/workflows/a0-normal-entry-home-restart.yml"
+  },
+  {
    "key": "a6.player_first_hud.gd",
    "owner": "a6",
    "sha256": "3ed644a1d352bf30e38589ddeeca1e50193f88b7db1807607569f24ff8e5b0b1",
@@ -205,8 +254,8 @@
   {
    "key": "a8.native_poi_site.gd",
    "owner": "a8",
-   "sha256": "76dc7273f6e17ca8e7a0efcee1a488c2ca6f8e89321739374cbe501bd68fcbb3",
-   "size_bytes": 24657,
+   "sha256": "527f0e37cc713f74a3e58e4bab0b12fe4736c40d239bf3735c6d9549680c1c6d",
+   "size_bytes": 26268,
    "source_path": "game/survival/world_content/scripts/native_poi_site.gd"
   },
   {
@@ -226,22 +275,22 @@
   {
    "key": "a8.south_quarry.json",
    "owner": "a8",
-   "sha256": "dcc7bbf61675707d89acedfbaa0dcc80c1f61e65e120c5d455317db13c4875e1",
-   "size_bytes": 3814,
+   "sha256": "4485a0bdf09c2df3d099b2f66953675ecbd7aa993fdfbe047ebbe73b9209e13a",
+   "size_bytes": 4439,
    "source_path": "data/survival/world_content/sites/south_quarry.json"
   },
   {
    "key": "a8.south_orchard_ruin.json",
    "owner": "a8",
-   "sha256": "7bf9bd4552bf36649452add049ed6f865e57473cc05016345877d91241a03808",
-   "size_bytes": 3832,
+   "sha256": "bc353805e61dbdca396e9e1be5456c620f923f0f880e292342789eca86d32987",
+   "size_bytes": 4421,
    "source_path": "data/survival/world_content/sites/south_orchard_ruin.json"
   },
   {
    "key": "a8.south_crown_mill.json",
    "owner": "a8",
-   "sha256": "9c9af244ad79d13cf443235a5ed2141b867f05ed3d9e9cf3e8a1c90a10197c5f",
-   "size_bytes": 4543,
+   "sha256": "bfb17138031d13c68b640f2795e68d852517ac874345d31cb4365c0cca260a49",
+   "size_bytes": 5129,
    "source_path": "data/survival/world_content/sites/south_crown_mill.json"
   },
   {
@@ -250,6 +299,13 @@
    "sha256": "825d7faaf68fa416b71a3b112e4770f02af9718b4abc66210f98100bb6bee24b",
    "size_bytes": 2864,
    "source_path": "data/survival/world_content/interaction_contract.v1.json"
+  },
+  {
+   "key": "a8.quarry_integration_candidate.v1.json",
+   "owner": "a8",
+   "sha256": "806e56b434af10020b20058bc1f42f2c07fac63e1385c50435d5ba944cbe259e",
+   "size_bytes": 7054,
+   "source_path": "data/survival/world_content/quarry_integration_candidate.v1.json"
   },
   {
    "key": "a1.handoff_contracts.json",
@@ -1212,7 +1268,24 @@
  "sources": {
   "a0_ref": "refs/a0",
   "a6_ref": "refs/a6",
-  "a8_ref": "refs/x2d7"
+  "a8_ref": "refs/a8p26"
+ },
+ "tree_index": {
+  "lines": 6684,
+  "owners": [
+   "a0",
+   "a6"
+  ],
+  "path": "data/survival/balance/snapshot/product/tree_index.txt",
+  "sha256": "18434eaaf678472c00e483f1f7a1cc6afa4133740bf700c99984430daf7be13a",
+  "suffixes": [
+   ".tscn",
+   ".tres",
+   ".gd",
+   ".png",
+   ".import",
+   ".res"
+  ]
  },
  "ui_scenes": [
   "game/app/app_root.tscn",

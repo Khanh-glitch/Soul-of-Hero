@@ -1,0 +1,253 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="1_theme"]
+[ext_resource type="Script" path="res://game/ui/screens/home/home_map_screen.gd" id="2_screen"]
+[ext_resource type="Script" path="res://game/ui/screens/home/home_map_canvas.gd" id="3_map"]
+[ext_resource type="PackedScene" path="res://game/ui/screens/home/home_actor.tscn" id="4_actor"]
+[ext_resource type="Texture2D" path="res://assets/branding/soul_hero_emblem_imagen.png" id="5_emblem"]
+[ext_resource type="Texture2D" path="res://assets/environment/cainos_demo/cainos_demo_overview.png" id="6_map"]
+
+[node name="HomeMapScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+theme = ExtResource("1_theme")
+script = ExtResource("2_screen")
+
+[node name="Void" type="TextureRect" parent="."]
+modulate = Color(0.17, 0.16, 0.2, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture_filter = 1
+texture = ExtResource("6_map")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="WorldRoot" type="Node2D" parent="."]
+unique_name_in_owner = true
+
+[node name="MapWorld" type="Node2D" parent="WorldRoot"]
+unique_name_in_owner = true
+script = ExtResource("3_map")
+
+[node name="AuthoredOverview" type="Sprite2D" parent="WorldRoot/MapWorld"]
+texture_filter = 1
+centered = false
+texture = ExtResource("6_map")
+
+[node name="DestinationLayer" type="Node2D" parent="WorldRoot"]
+unique_name_in_owner = true
+y_sort_enabled = true
+
+[node name="Player" parent="WorldRoot/DestinationLayer" instance=ExtResource("4_actor")]
+unique_name_in_owner = true
+
+[node name="TopSafe" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 5.0
+offset_top = 4.0
+offset_right = -5.0
+offset_bottom = 31.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="Header" type="PanelContainer" parent="TopSafe"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Row" type="HBoxContainer" parent="TopSafe/Header"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 7
+
+[node name="Emblem" type="TextureRect" parent="TopSafe/Header/Row"]
+custom_minimum_size = Vector2(19, 19)
+layout_mode = 2
+mouse_filter = 2
+texture = ExtResource("5_emblem")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Location" type="VBoxContainer" parent="TopSafe/Header/Row"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = -2
+
+[node name="Title" type="Label" parent="TopSafe/Header/Row/Location"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(1, 0.8, 0.43, 1)
+theme_override_font_sizes/font_size = 9
+text = "THÁNH ĐỊA LINH HỒN"
+
+[node name="Subtitle" type="Label" parent="TopSafe/Header/Row/Location"]
+visible = false
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 8
+text = "THÁNH ĐỊA  •  CHẠM VÀO THẾ GIỚI ĐỂ KHÁM PHÁ"
+
+[node name="Spacer" type="Control" parent="TopSafe/Header/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ProfileLabel" type="Label" parent="TopSafe/Header/Row"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.81, 0.73, 0.59, 1)
+theme_override_font_sizes/font_size = 8
+text = "CHƯƠNG 01  •  0000 VÀNG"
+vertical_alignment = 1
+
+[node name="PromptSafe" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -27.0
+offset_right = -120.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+
+[node name="PromptPanel" type="PanelContainer" parent="PromptSafe"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"HudPanel"
+
+[node name="PromptRow" type="HBoxContainer" parent="PromptSafe/PromptPanel"]
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+theme_override_constants/separation = 8
+
+[node name="PromptKey" type="Label" parent="PromptSafe/PromptPanel/PromptRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.38, 0.88, 0.91, 1)
+theme_override_font_sizes/font_size = 8
+text = "WASD"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="PromptSafe/PromptPanel/PromptRow"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_colors/font_color = Color(0.86, 0.85, 0.81, 1)
+theme_override_font_sizes/font_size = 8
+text = "Di chuyển tự do • Nhấp vào địa điểm hoặc người quản chức để tới nơi"
+
+[node name="FunctionOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+z_index = 1000
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="Dim" type="TextureRect" parent="FunctionOverlay"]
+modulate = Color(0.04, 0.04, 0.06, 0.82)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+texture_filter = 1
+texture = ExtResource("6_map")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Safe" type="MarginContainer" parent="FunctionOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.0
+offset_top = 5.0
+offset_right = -1.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Card" type="PanelContainer" parent="FunctionOverlay/Safe"]
+layout_mode = 2
+theme_type_variation = &"HudPanel"
+
+[node name="Layout" type="VBoxContainer" parent="FunctionOverlay/Safe/Card"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="Header" type="HBoxContainer" parent="FunctionOverlay/Safe/Card/Layout"]
+z_index = 5
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BackToMapButton" type="Button" parent="FunctionOverlay/Safe/Card/Layout/Header"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(112, 32)
+layout_mode = 2
+text = "← VỀ BẢN ĐỒ"
+
+[node name="Copy" type="VBoxContainer" parent="FunctionOverlay/Safe/Card/Layout/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -2
+
+[node name="FunctionTitle" type="Label" parent="FunctionOverlay/Safe/Card/Layout/Header/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0.43, 1)
+theme_override_font_sizes/font_size = 14
+text = "ĐIỂM ĐẾN"
+
+[node name="FunctionSubtitle" type="Label" parent="FunctionOverlay/Safe/Card/Layout/Header/Copy"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+theme_override_font_sizes/font_size = 9
+text = "Tương tác với cư dân Thánh Địa."
+
+[node name="RouteBadge" type="Label" parent="FunctionOverlay/Safe/Card/Layout/Header"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+theme_override_colors/font_color = Color(0.42, 0.82, 0.82, 1)
+theme_override_font_sizes/font_size = 8
+text = "THÁNH ĐỊA  /  CHỨC NĂNG"
+vertical_alignment = 1
+
+[node name="Rule" type="HSeparator" parent="FunctionOverlay/Safe/Card/Layout"]
+layout_mode = 2
+
+[node name="ContentHost" type="Control" parent="FunctionOverlay/Safe/Card/Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+clip_contents = true

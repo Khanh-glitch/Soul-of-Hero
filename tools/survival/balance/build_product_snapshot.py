@@ -47,6 +47,15 @@ CAPTURE = {
         "data/survival/items/sources.json",
         "game/survival/survival_service.gd",
         "game/survival/survival_resource_node.gd",
+        # the ordinary menu route: Home hub -> campaign tab -> overworld
+        "game/app/app_flow.gd",
+        "game/ui/screens/hub/tabs/campaign_tab.gd",
+        "game/ui/screens/hub/tabs/campaign_tab.tscn",
+        "game/ui/screens/home/home_map_screen.tscn",
+        # A0's own native entry + separate-process test, and the workflow that runs it
+        "tests/survival_normal_entry_home_restart_test.gd",
+        "tests/survival_normal_home_journey_test.gd",
+        ".github/workflows/a0-normal-entry-home-restart.yml",
     ],
     "a6": [
         "game/survival/ui/player_first_hud.gd",
@@ -72,6 +81,8 @@ CAPTURE = {
         "data/survival/world_content/sites/south_orchard_ruin.json",
         "data/survival/world_content/sites/south_crown_mill.json",
         "data/survival/world_content/interaction_contract.v1.json",
+        # A8's explicit integration candidate: which actions still need A3 pricing
+        "data/survival/world_content/quarry_integration_candidate.v1.json",
     ],
     "a1": [
         # The vertical-slice handoff contract is where A1 states instance ids, reward
@@ -101,6 +112,11 @@ INDEX_PATTERNS = {
     ],
 }
 INDEX_SCOPE = ["game/", "docs/survival/ux/"]
+
+# Only code/asset paths are indexed: the audit needs to know whether a referenced
+# file exists, not to carry docs or CI configuration around.
+TREE_SUFFIXES = (".tscn", ".tres", ".gd", ".png", ".import", ".res")
+TREE_OWNERS = ("a0", "a6")
 
 
 def git_bytes(ref: str, path: str) -> bytes:
@@ -225,8 +241,27 @@ def main() -> int:
                 if origin not in scene_refs[target]:
                     scene_refs[target].append(origin)
 
+    # A path index of the owners' code/asset files. Existence checks (an avatar
+    # sheet, a scene, a script) are only honest if the tool can see the tree.
+    tree_lines: list[str] = []
+    for owner in TREE_OWNERS:
+        for path in git_ls(refs[owner], "."):
+            if path.endswith(TREE_SUFFIXES):
+                tree_lines.append(f"{owner}\t{path}")
+    tree_lines.sort()
+    tree_payload = ("\n".join(tree_lines) + "\n").encode("utf-8")
+    tree_target = SNAPSHOT_DIR / "tree_index.txt"
+    tree_target.write_bytes(tree_payload)
+
     manifest = {
         "schema": "soh.balance.product_snapshot.v1",
+        "tree_index": {
+            "path": "data/survival/balance/snapshot/product/tree_index.txt",
+            "sha256": hashlib.sha256(tree_payload).hexdigest(),
+            "lines": len(tree_lines),
+            "owners": list(TREE_OWNERS),
+            "suffixes": list(TREE_SUFFIXES),
+        },
         "sources": {"a0_ref": args.a0, "a6_ref": args.a6, "a8_ref": args.a8},
         "a0_head": subprocess.run(["git", "rev-parse", args.a0], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
         "a6_head": subprocess.run(["git", "rev-parse", args.a6], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),

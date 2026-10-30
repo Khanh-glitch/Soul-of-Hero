@@ -35,9 +35,13 @@ class SafeBootstrapLoopTests(unittest.TestCase):
         self.assertTrue(all(row["reason"] == "one_time_already_claimed" for row in blocked))
 
     def test_loot_is_not_double_counted(self) -> None:
-        # 2 scrap + 3 scrap from the renewable cache, not 4 + 3.
-        self.assertAlmostEqual(self.result.loot_units["iron_scrap"], 5.0, places=6)
-        self.assertAlmostEqual(self.result.loot_units["knowledge_spares"], 3.0, places=6)
+        # Round-4 repin: A3 adopted A1's binding, so road_scrap (3) and
+        # road_supplies (2) are two rows of ONE crown cache claim. Before the
+        # rebind road_scrap still sat in opening_marches and the loop collected
+        # 2 + 3 scrap; now one claim pays 3 scrap and 2 spares, and the same
+        # claim is never counted twice (not 6, not 4).
+        self.assertAlmostEqual(self.result.loot_units["iron_scrap"], 3.0, places=6)
+        self.assertAlmostEqual(self.result.loot_units["knowledge_spares"], 2.0, places=6)
 
     def test_unmodelled_time_is_declared(self) -> None:
         payload = self.result.as_dict()
@@ -131,17 +135,26 @@ class SinkCoverageTests(unittest.TestCase):
             sorted(coverage["covered"] + coverage["short"]), sorted(sink_targets(model))
         )
 
+    def result_loot_units(self):
+        return getattr(self, "_loot", {})
+
     def test_first_hour_loop_does_not_fund_a_research_kit_alone(self) -> None:
         from sohbalance.loot import sink_coverage
 
         result = support.run_pattern_by_id("P1_SAFE_BOOTSTRAP_LOOP")
+        self._loot = result.loot_units
         coverage = sink_coverage(support.model(), result.loot_units)
         self.assertIn("research_kit", coverage["short"])
         self.assertEqual(
-            coverage["detail"]["research_kit"]["shortfall"], {"iron_ingot": 2.0, "oak_wood": 4.0}
+            coverage["detail"]["research_kit"]["shortfall"],
+            {"iron_ingot": 2.0, "knowledge_spares": 1.0, "oak_wood": 4.0},
         )
-        # Spares are exactly enough for the kit: 3 of 3.
-        self.assertNotIn("knowledge_spares", coverage["detail"]["research_kit"]["shortfall"])
+        # One cache claim pays 2 spares and the kit needs 3, so the first research
+        # station needs a second claim after the 1800 s restock. That is a pacing
+        # consequence of A1's authored yields, not a rate A7 asked to change.
+        spares = self.result_loot_units()["knowledge_spares"]
+        self.assertEqual(spares, 2.0)
+        self.assertGreaterEqual(spares * 2, 3.0)
 
     def test_filtered_run_covers_weaving(self) -> None:
         from sohbalance.loot import sink_coverage

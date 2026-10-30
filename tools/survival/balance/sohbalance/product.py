@@ -83,7 +83,29 @@ def load_snapshot(root: Path) -> Tuple[Dict[str, str], Dict[str, object]]:
         if digest != entry["sha256"]:
             raise ValueError(f"product snapshot drift: {entry['key']} {digest} != {entry['sha256']}")
         texts[entry["key"]] = payload.decode("utf-8", "replace")
+    tree = manifest.get("tree_index") or {}
+    if tree.get("path"):
+        payload = (root / tree["path"]).read_bytes()
+        digest = hashlib.sha256(payload).hexdigest()
+        if digest != tree["sha256"]:
+            raise ValueError(f"product tree index drift: {digest} != {tree['sha256']}")
+        manifest["_tree"] = sorted(
+            line.split("\t", 1) for line in payload.decode("utf-8").splitlines() if "\t" in line
+        )
     return texts, manifest
+
+
+def load_tree(manifest: Dict[str, object]) -> Dict[str, set]:
+    """owner -> set of code/asset paths present in that owner's pinned tree."""
+    tree: Dict[str, set] = {}
+    for owner, path in manifest.get("_tree", []) or []:
+        tree.setdefault(str(owner), set()).add(str(path))
+    return tree
+
+
+def path_index(manifest: Dict[str, object]) -> Dict[str, str]:
+    """snapshot key -> upstream repository path."""
+    return {str(entry["key"]): str(entry["source_path"]) for entry in manifest.get("files", [])}
 
 
 def _lines(text: str) -> Iterable[Tuple[int, str]]:

@@ -43,9 +43,11 @@ class QualityPinTests(unittest.TestCase):
             ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07"],
         )
 
-    def test_only_the_avatar_check_fails(self) -> None:
+    def test_two_checks_fail_at_this_pin(self) -> None:
         failing = [check["check_id"] for check in self.checks if check["status"] == "FAIL"]
-        self.assertEqual(failing, ["Q-04"])
+        # Q-03 (A0's stale mirror) is a real second failure at this pin; it is
+        # reported as BLK-2, not folded into the avatar blocker.
+        self.assertEqual(failing, ["Q-03", "Q-04"])
 
     def test_every_verdict_names_an_owner_and_a_closure_signal(self) -> None:
         for check in self.checks:
@@ -85,10 +87,17 @@ class QualityClosureTests(unittest.TestCase):
         )
         texts["a6.avatar_art_manifest.json"] = json.dumps(manifest)
         facts = copy.deepcopy(self.facts)
+        # Round-4 rule: a sheet string only counts if the file is in the pinned
+        # tree, so the simulation installs the bytes rather than the path alone.
+        installed = manifest["characters"][gender]["armor_grades"]["0"]["idle_sheet"][len("res://") :]
+        patched_manifest = copy.deepcopy(self.manifest)
+        patched_manifest["_tree"] = list(patched_manifest.get("_tree", [])) + [["a6", installed]]
         facts["mounted_player_scene"] = (
             f"game/characters/{manifest['characters'][gender]['craftpix_id']}/adventurer_female.tscn"
         )
-        self.assertEqual(self._status(quality.run_all(self.model, texts, facts, self.manifest), "Q-04"), "PASS")
+        self.assertEqual(
+            self._status(quality.run_all(self.model, texts, facts, patched_manifest), "Q-04"), "PASS"
+        )
 
     def test_blk3_does_not_close_with_a_swordsman_or_knight_body(self) -> None:
         texts = dict(self.texts)
@@ -112,6 +121,34 @@ class QualityClosureTests(unittest.TestCase):
         texts["a6.avatar_appearance_adapter.gd"] += "\n# fallback: knight\n"
         checks = quality.run_all(self.model, texts, self.facts, self.manifest)
         self.assertEqual(self._status(checks, "Q-04"), "FAIL")
+
+    # ---------------------------------------------------------------- Q-03
+    def test_blk2_closes_when_the_a0_mirror_matches_a3(self) -> None:
+        checks = quality.run_all(self.model, self.texts, self.facts, self.manifest)
+        self.assertEqual(self._status(checks, "Q-03"), "FAIL")
+        drift = quality.mirror_drift(self.model, self.texts)
+        self.assertEqual(drift["status"], "DRIFT")
+        self.assertEqual(drift["divergent"], ["road_scrap", "road_supplies"])
+
+        # The owner's smallest safe fix: re-sync the two drifted rows. No quantity
+        # moves, because A1's yields and A3's yields already agree.
+        texts = dict(self.texts)
+        mirror = json.loads(texts["a0.sources.json"])
+        for source_id in drift["divergent"]:
+            mirror["sources"][source_id] = self.model.sources[source_id]
+        texts["a0.sources.json"] = json.dumps(mirror)
+        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "MATCH")
+        self.assertEqual(self._status(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-03"), "PASS")
+
+    def test_blk2_does_not_close_when_only_the_poi_id_is_renamed(self) -> None:
+        # Renaming the poi key without adopting the bound instance would leave the
+        # mirror disagreeing in a new way; the check compares whole rows.
+        texts = dict(self.texts)
+        mirror = json.loads(texts["a0.sources.json"])
+        row = mirror["sources"]["road_scrap"]
+        row["poi"] = "poi_crown_waystation"
+        texts["a0.sources.json"] = json.dumps(mirror)
+        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "DRIFT")
 
     # ---------------------------------------------------------------- Q-02
     def test_q02_fails_when_two_scripts_own_the_same_hud_job(self) -> None:

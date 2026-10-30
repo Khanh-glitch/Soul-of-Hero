@@ -1019,10 +1019,12 @@
       "poi:specimen_vault_venom",
       "poi:toxin_laboratory"
     ],
-    "distinct_targets": 10,
+    "distinct_targets": 11,
     "finding": "A3 loot records name class targets in a ':' namespace and regions in a bare vocabulary; A1 publishes 'poi_*' instance ids and 'r_*' regions. The gap is one missing shared identifier contract plus the physical instances it would imply - not 16 missing individual POIs.",
-    "instance_namespaced_targets": [],
-    "physical_container_instances_authored_by_a1": 0,
+    "instance_namespaced_targets": [
+      "poi_crown_waystation"
+    ],
+    "physical_container_instances_authored_by_a1": 1,
     "record_count": 16,
     "records": [
       {
@@ -1066,12 +1068,12 @@
         "target_name": "roadside_cache"
       },
       {
-        "declared_poi_id": "poi:roadside_cache",
-        "declared_region_id": "opening_marches",
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
         "item_id": "iron_scrap",
         "source_id": "road_scrap",
-        "target_kind": "CLASS_NAMESPACE",
-        "target_name": "roadside_cache"
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
       },
       {
         "declared_poi_id": "poi:roadside_cache",
@@ -1082,12 +1084,12 @@
         "target_name": "roadside_cache"
       },
       {
-        "declared_poi_id": "poi:roadside_cache",
-        "declared_region_id": "opening_marches",
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
         "item_id": "knowledge_spares",
         "source_id": "road_supplies",
-        "target_kind": "CLASS_NAMESPACE",
-        "target_name": "roadside_cache"
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
       },
       {
         "declared_poi_id": "poi:green_archive",
@@ -1167,6 +1169,11 @@
       },
       {
         "a1_region_example": "r_amberwood",
+        "declared_region_id": "r_ashen_crown",
+        "resolves_to_a1_region": true
+      },
+      {
+        "a1_region_example": "r_amberwood",
         "declared_region_id": "sealed_archive",
         "resolves_to_a1_region": false
       }
@@ -1224,7 +1231,7 @@
       "poi:roadside_cache": {
         "declared_poi_id": "poi:roadside_cache",
         "physical_instances_in_a1": 0,
-        "record_count": 5,
+        "record_count": 3,
         "regions": [
           "opening_marches"
         ],
@@ -1232,9 +1239,7 @@
         "source_ids": [
           "road_grain_seed",
           "road_notes",
-          "road_scrap",
-          "road_seed",
-          "road_supplies"
+          "road_seed"
         ],
         "target_kind": "CLASS_NAMESPACE",
         "target_name": "roadside_cache"
@@ -1322,9 +1327,26 @@
         ],
         "target_kind": "CLASS_NAMESPACE",
         "target_name": "toxin_laboratory"
+      },
+      "poi_crown_waystation": {
+        "declared_poi_id": "poi_crown_waystation",
+        "physical_instances_in_a1": 1,
+        "record_count": 2,
+        "regions": [
+          "r_ashen_crown"
+        ],
+        "resolves_to_a1_instance": true,
+        "source_ids": [
+          "road_scrap",
+          "road_supplies"
+        ],
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
       }
     },
-    "targets_resolving_to_a1_instance": []
+    "targets_resolving_to_a1_instance": [
+      "poi_crown_waystation"
+    ]
   },
   "loot_identity_legend": {
     "physical instance": "a placed copy of a class in the world (A1 authors 0)",
@@ -1354,7 +1376,7 @@
       "venom_cache"
     ],
     "loot_sources_with_resolved_a1_poi": 0,
-    "loot_sources_with_resolved_a1_region": 0
+    "loot_sources_with_resolved_a1_region": 2
   },
   "mitigation_craft_chain": [
     {
@@ -3050,10 +3072,10 @@
   "product_source_summary": {
     "binding_status_counts": {
       "A1_AUTHORED_PROPOSAL_A3_DIRECT_MAPPING": 5,
-      "A1_AUTHORED_PROPOSAL_A3_ITEM_RESOLUTION": 1,
-      "A3_DESIGN_PROPOSAL_A1_HINTS_ONLY": 1,
+      "A1_PINNED_A3_BOUND": 1,
       "ADOPTED_SOURCE_SPECIFIC": 1,
       "ADOPTED_SOURCE_SPECIFIC_CONDITIONAL_SINK_VERIFIED": 1,
+      "CANONICAL_A1_CAPABILITY_ONLY": 1,
       "CONFIRMED_LIVE_SURV_010": 4,
       "LIVE_EXISTING_REWARDS_PRODUCT_TIMING_PROPOSAL": 1,
       "PROVISIONAL_A3_BINDING_NOT_A1_APPROVED": 1,
@@ -3152,12 +3174,12 @@
     {
       "a1_poi_readiness": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
       "a1_poi_resolved": true,
-      "binding_status": "A1_AUTHORED_PROPOSAL_A3_ITEM_RESOLUTION",
+      "binding_status": "A1_PINNED_A3_BOUND",
       "item_id": null,
       "one_time": false,
       "outputs": {
         "iron_scrap": 3,
-        "knowledge_spares": 1
+        "knowledge_spares": 2
       },
       "path_seconds": 58.8,
       "path_tiles": 352.52,
@@ -3358,13 +3380,10 @@
     {
       "a1_poi_readiness": "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED",
       "a1_poi_resolved": true,
-      "binding_status": "A3_DESIGN_PROPOSAL_A1_HINTS_ONLY",
+      "binding_status": "CANONICAL_A1_CAPABILITY_ONLY",
       "item_id": null,
       "one_time": true,
-      "outputs": {
-        "iron_scrap": 2,
-        "knowledge_spares": 2
-      },
+      "outputs": {},
       "path_seconds": 58.8,
       "path_tiles": 352.52,
       "poi_id": "poi_crown_waystation",
@@ -4071,11 +4090,11 @@
     {
       "a1_poi_id": null,
       "a1_poi_resolved": false,
-      "a1_region_resolved": false,
+      "a1_region_resolved": true,
       "a3_poi_reference": null,
-      "a3_region_reference": "opening_marches",
+      "a3_region_reference": "r_ashen_crown",
       "acquisition": "loot",
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "item_id": "iron_scrap",
       "requirements": [],
       "source_id": "road_scrap"
@@ -4095,11 +4114,11 @@
     {
       "a1_poi_id": null,
       "a1_poi_resolved": false,
-      "a1_region_resolved": false,
+      "a1_region_resolved": true,
       "a3_poi_reference": null,
-      "a3_region_reference": "opening_marches",
+      "a3_region_reference": "r_ashen_crown",
       "acquisition": "loot",
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "item_id": "knowledge_spares",
       "requirements": [],
       "source_id": "road_supplies"

@@ -179,7 +179,13 @@ def binding_adoption(model, contract: Dict[str, object]) -> Dict[str, object]:
     exist" but "has A3 adopted the binding".
     """
     rows: List[Dict[str, object]] = []
-    for binding in contract.get("bindings", []) or []:  # type: ignore[union-attr]
+    for binding in contract.get("bindings", []) or []:
+        request = str(binding.get("binding_request") or "")
+        # A1 uses two different binding kinds and they must not be judged alike:
+        # a REBIND moves a provisional class id onto a physical instance, while a
+        # live-source reuse keeps A3's region-scoped identity by design.
+        rebind = request.startswith("REBIND_FROM_PROVISIONAL")
+        reuse_live = request.startswith("A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE")  # type: ignore[union-attr]
         source_id = str(binding.get("source_id"))
         source = model.sources.get(source_id, {})
         declared = source.get("poi_id")
@@ -195,19 +201,32 @@ def binding_adoption(model, contract: Dict[str, object]) -> Dict[str, object]:
                 "a3_declared_acquisition": source.get("acquisition"),
                 "a3_declared_yield": source.get("yield_per_claim"),
                 "a3_status": source.get("integration_status"),
-                "adopted": str(declared) == str(binding.get("poi_id")),
+                "binding_kind": "REBIND_TO_INSTANCE" if rebind else ("LIVE_SOURCE_REUSE" if reuse_live else "UNKNOWN"),
+                "adopted": (
+                    str(declared) == str(binding.get("poi_id"))
+                    if rebind
+                    else (bool(source) and source.get("item_id") == binding.get("item_id"))
+                ),
                 "yield_agrees": source.get("yield_per_claim") in (None, binding.get("yield_per_claim")),
-                "binding_request": binding.get("binding_request"),
+                "region_differs": bool(source.get("region_id")) and bool(binding.get("region_id")) and source.get("region_id") != binding.get("region_id"),
+                "binding_request": request,
             }
         )
     adopted = [row for row in rows if row["adopted"]]
+    pending = [row for row in rows if not row["adopted"]]
+    rebind_rows = [row for row in rows if row["binding_kind"] == "REBIND_TO_INSTANCE"]
+    rebind_adopted = [row for row in rebind_rows if row["adopted"]]
     return {
         "rows": rows,
         "authorized_bindings": len(rows),
         "adopted_by_a3": len(adopted),
-        "pending_rebind": [row for row in rows if not row["adopted"]],
+        "rebind_required": len(rebind_rows),
+        "rebind_adopted": len(rebind_adopted),
+        "pending_rebind": [row for row in pending if row["binding_kind"] == "REBIND_TO_INSTANCE"],
+        "pending_other": [row for row in pending if row["binding_kind"] != "REBIND_TO_INSTANCE"],
         "summary": (
-            f"{len(adopted)}/{len(rows)} A1-authorized source bindings are adopted by A3. "
-            "Each pending row is a one-field poi_id edit, not a new rate."
+            f"{len(adopted)}/{len(rows)} A1-authorized source bindings are adopted by A3 "
+            f"({len(rebind_adopted)}/{len(rebind_rows)} instance rebinds, "
+            f"{len(rows) - len(rebind_rows)} live-source reuse)."
         ),
     }

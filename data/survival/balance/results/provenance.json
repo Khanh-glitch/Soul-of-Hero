@@ -177,10 +177,10 @@
       "exists": true,
       "key": "a3.sources",
       "owner": "A3",
-      "sha256": "7c2cddcdbdb8f2dbb96564abf91fed7ff598a1c750d052302bef685bd112a602",
-      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "28ff818a406de7d53d2c0e3e2fd7295baef0fcec9c086ceb0206d5a2251fdb87",
+      "upstream_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
       "upstream_path": "data/survival/items/sources.json",
-      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_ref": "arena_a3",
       "verified": true
     },
     {
@@ -217,20 +217,20 @@
       "exists": true,
       "key": "a3.progression_model",
       "owner": "A3",
-      "sha256": "75dc5f01367dd49a964b2e4c620e32d96e8e7d200458e028a1c76ea05d3c60af",
-      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "12476af5ea564873dd5262184bd3e0ada514c4032e13afdc36da984011fa7bc5",
+      "upstream_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
       "upstream_path": "data/survival/recipes/progression_model.json",
-      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_ref": "arena_a3",
       "verified": true
     },
     {
       "exists": true,
       "key": "a3.a1_source_adoption_v2",
       "owner": "A3",
-      "sha256": "43ce9681a120be47274770e1c96f90fdc488cfc5f198627d807b9f1325718ed0",
-      "upstream_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+      "sha256": "9e9e99a96fde551f9701041219b1911de472a174a65911250f1d34f3fe159dfa",
+      "upstream_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
       "upstream_path": "data/survival/items/a1_source_adoption.v2.json",
-      "upstream_ref": "arena_7a12b27e-soul-of-hero",
+      "upstream_ref": "arena_a3",
       "verified": true
     }
   ],

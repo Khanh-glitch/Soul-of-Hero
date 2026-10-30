@@ -11,7 +11,10 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from . import access, adversarial, gate as gate_module, quality as quality_module, routes, sensitivity
+from . import access, adversarial, evidence as evidence_module
+from . import gate as gate_module
+from . import quality as quality_module
+from . import routes, sensitivity
 from .checks import collect, codes_in
 from .findings import Assertion, Finding, severity_counts, sort_findings
 from .geo import RouteNetwork, travel_seconds
@@ -298,9 +301,19 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
     }
 
     # ------------------------------------------------------- integration gate
-    gate_payload = gate_module.build(model, product_texts, product_facts, product_manifest)
+    evidence_payload = evidence_module.load()
+    gate_payload = gate_module.build(
+        model,
+        product_texts,
+        product_facts,
+        product_manifest,
+        evidence=evidence_payload,
+        paths=product_module.path_index(product_manifest),
+        tree=product_module.load_tree(product_manifest),
+    )
     adoption = binding_adoption(model, gate_payload["contract"])
     gate_payload["binding_adoption"] = adoption
+    product_facts["binding_adoption"] = adoption
     artifacts["gate.json"] = gate_payload
 
     # --------------------------------------------------------- quality checks
@@ -377,7 +390,10 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             "findings_by_severity": severity_counts(all_findings),
             "player_facing_blockers": len(blocker_payload["blockers"]),
             "closed_by_measurement": blocker_payload["counts"]["closed_blockers"],
-            "integration_gate_level": gate_payload["overall_level"],
+            "integration_gate_levels": {
+                chain["chain_id"]: chain["chain_level"] for chain in gate_payload["chains"]
+            },
+            "native_verified": gate_payload["any_native_verified"],
             "binding_adoption": adoption["summary"],
             "quality_checks": quality_counts,
             "observation_reduction": blocker_payload["reduction"],
@@ -644,59 +660,93 @@ def _assertions(
     )
     gate_payload = gate_payload or {}
     chains = gate_payload.get("chains") or []
+    level_names = {level["level"] for level in gate_payload["s_levels"]}
     assertions.append(
         Assertion(
-            "A16_integration_gate_reports_only_static_levels",
+            "A16_gate_separates_source_mount_native_and_visual",
             bool(chains)
             and all(
-                link["level"] in {level["level"] for level in gate_payload["s_levels"]}
+                link["level"] in level_names
+                and link["source_state"] in ("ABSENT", "AUTHORED_ONLY", "SCENE_FIXTURE", "PRODUCTION_SEAM")
                 and link["statically_verifiable"] == (link["rank"] <= 3)
                 for chain in chains
                 for link in chain["links"]
             ),
-            "both chains report a level per link and never claim beyond S3 from static evidence",
+            "every link reports a source state, a native evidence state and a level; static evidence never exceeds S3",
             ["gate", "delivery"],
+        )
+    )
+    claims = gate_payload.get("entry_claims") or {}
+    assertions.append(
+        Assertion(
+            "A17_entry_claim_A_is_separated_from_B_C_D",
+            set(claims) == {
+                "A_route_exists_in_source",
+                "B_route_runs_in_native_godot",
+                "C_content_is_mounted",
+                "D_useful_reward_claimable",
+            }
+            and claims["A_route_exists_in_source"]["state"] == "SOURCE_PRESENT"
+            and claims["B_route_runs_in_native_godot"]["level"] != "S4_NATIVE_VERIFIED"
+            and claims["C_content_is_mounted"]["state"] == "ABSENT",
+            "the normal menu route exists in source, its native run is unverified, and no content is mounted in it",
+            ["gate", "entry"],
+        )
+    )
+    seam = gate_payload.get("commit_seam") or {}
+    assertions.append(
+        Assertion(
+            "A18_commit_seam_is_classified_not_substring_matched",
+            seam.get("raw_token_occurrences", 0) >= seam.get("mounted_caller_count", 0) > 0
+            and seam.get("rejected_count", 0) > 0
+            and all(row.get("reason") for row in seam.get("rejected", [])),
+            "raw transact_once tokens exceed the mounted callers, and every rejected match carries a reason",
+            ["gate", "commit"],
         )
     )
     assertions.append(
         Assertion(
-            "A17_no_chain_reaches_a_committed_player_action",
-            all(chain["chain_level"] != "S4_NATIVE_COMMITTED" for chain in chains)
-            and (gate_payload.get("commit_seam") or {}).get("any_poi_calls_transact_once") is False,
-            "no mounted path commits through SaveService, so no chain is claimed past S3",
-            ["gate", "commit"],
+            "A19_native_claims_require_a_green_run_on_the_pinned_commit",
+            all(
+                row.get("state") != "VERIFIED"
+                for row in (gate_payload.get("native_states") or {}).values()
+            )
+            and not gate_payload.get("any_native_verified"),
+            "no pinned head has a verified native run, so no link is reported above S3",
+            ["gate", "native"],
         )
     )
     adoption = gate_payload.get("binding_adoption") or {}
     assertions.append(
         Assertion(
-            "A18_first_hour_binding_needs_no_rate_change",
-            adoption.get("authorized_bindings") == 3
-            and all(row["yield_agrees"] for row in adoption.get("rows", []) if row.get("yield_agrees") is not None)
+            "A20_a1_bindings_adopted_without_any_rate_change",
+            adoption.get("rebind_required") == 2
+            and adoption.get("rebind_adopted") == 2
             and all(
                 row["a1_authorized_yield"] == row["a3_declared_yield"]
                 for row in adoption.get("rows", [])
                 if row.get("a3_declared_yield") is not None
             ),
-            "A1's authorized cache yields already equal A3's rows (3 / 2 / 2); only the poi_id needs adopting",
+            "A3 adopted both instance rebinds with A1's own yields (3 iron_scrap / 2 knowledge_spares) and no rate moved",
             ["gate", "bindings"],
         )
     )
     quality_checks = (quality_payload or {}).get("checks") or []
     assertions.append(
         Assertion(
-            "A19_quality_suite_flags_exactly_the_avatar_defect",
-            len(quality_checks) == 7
-            and [check["check_id"] for check in quality_checks if check["status"] == "FAIL"] == ["Q-04"],
-            "of the seven half-built-feature checks only the avatar identity/armour check fails",
+            "A21_quality_fails_only_the_avatar_and_stale_mirror",
+            sorted(check["check_id"] for check in quality_checks if check["status"] == "FAIL") == ["Q-03", "Q-04"],
+            "of seven checks only the avatar (Q-04) and the stale A0 catalog mirror (Q-03) fail",
             ["quality"],
         )
     )
     assertions.append(
         Assertion(
-            "A20_closed_blockers_stay_closed_with_evidence",
-            all(row.get("disposition") and row.get("evidence") for row in (blocker_payload or {}).get("closed", [])),
-            "the bootstrap-cycle and debug-UI blockers are recorded closed with the measurement that closed them",
+            "A22_self_corrections_are_recorded",
+            blocker_payload is not None
+            and len(blocker_payload.get("corrections", [])) >= 4
+            and all(row.get("round3_claim") and row.get("what_is_actually_true") for row in blocker_payload["corrections"]),
+            "the five round-3 claims that the owners' source contradicted are recorded with what is actually true",
             ["blockers", "delivery"],
         )
     )

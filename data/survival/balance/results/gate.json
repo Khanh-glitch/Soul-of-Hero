@@ -1,4 +1,96 @@
 {
+  "a8_candidate": {
+    "actions": [
+      {
+        "action_id": "brace_east_shelf",
+        "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+        "cost_quantity": null,
+        "item_id": "oak_wood"
+      },
+      {
+        "action_id": "chock_west_ramp",
+        "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+        "cost_quantity": null,
+        "item_id": "stone_chunk"
+      },
+      {
+        "action_id": "leave_seam_unworked",
+        "authorization": null,
+        "cost_quantity": null,
+        "item_id": null
+      },
+      {
+        "action_id": "extract_outcrop",
+        "authorization": "BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 must authorize its site mapping and balance before any grant.",
+        "cost_quantity": null,
+        "item_id": "stone_chunk"
+      }
+    ],
+    "canonical_instance": {
+      "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "cell": [
+        30,
+        280
+      ],
+      "footprint_radius_tiles": 4,
+      "instance_rule": "Resolve the canonical world POI by world_id + poi_id + A1 cell; A0 supplies the persistent instance identity. A8 does not mint or persist a second identity.",
+      "physical_instance_id": null,
+      "physical_instance_id_owner": "A0/A1",
+      "poi_id": "poi_crown_south_quarry",
+      "region_id": "r_ashen_crown",
+      "world_id": "world:soh_continent_v1"
+    },
+    "source_pins": {
+      "a0_pr21": {
+        "head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
+        "owner": "SaveService + SurvivalService + production overworld mount"
+      },
+      "a1_pr20": {
+        "head": "e16285ffbbf80829f07e056264751954cd16571a",
+        "source": "data/survival/world/world_plan.v1.json"
+      },
+      "a3_pr19": {
+        "head": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+        "items": "data/survival/items/items.json",
+        "sources": "data/survival/items/sources.json"
+      },
+      "a6_pr24": {
+        "head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+        "owner": "player input and presentation"
+      },
+      "a8_audit_snapshot": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+      "a8_head_at_candidate_creation": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+      "a8_work_order": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
+      "integration_base": {
+        "commit": "86831332324428c7623ad431a577d101b7af5c9c",
+        "ref": "feature/survival-rpg-foundation-20261029"
+      }
+    },
+    "status": "S2_CANDIDATE_BLOCKED_ON_A1_A3_A0_OWNER_INTEGRATION",
+    "test_harness_only": true,
+    "unbound_source_actions": [
+      {
+        "action_id": "extract_outcrop",
+        "authorization": "BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 must authorize its site mapping and balance before any grant.",
+        "cost_quantity": null,
+        "item_id": "stone_chunk"
+      }
+    ],
+    "unpriced_actions": [
+      {
+        "action_id": "brace_east_shelf",
+        "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+        "cost_quantity": null,
+        "item_id": "oak_wood"
+      },
+      {
+        "action_id": "chock_west_ramp",
+        "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+        "cost_quantity": null,
+        "item_id": "stone_chunk"
+      }
+    ]
+  },
   "a8_sites": [
     {
       "actions": [
@@ -15,7 +107,7 @@
         {
           "a3_authorization_absent": false,
           "action_id": "recover_fastener",
-          "catalog_source": "data/survival/survival_catalog.json#resources.scrap_pile",
+          "catalog_source": "data/survival/items/sources.json#sources.live_iron_scrap @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; poi_id=null; not Mill-authorized)",
           "claim_policy": "replenishable",
           "cooldown_seconds": 90,
           "costs": {},
@@ -25,9 +117,9 @@
           }
         },
         {
-          "a3_authorization_absent": true,
+          "a3_authorization_absent": false,
           "action_id": "repair_waterwheel",
-          "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+          "catalog_source": "data/survival/items/items.json#items.oak_wood @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
           "claim_policy": "once",
           "cooldown_seconds": null,
           "costs": {
@@ -60,7 +152,7 @@
         {
           "a3_authorization_absent": false,
           "action_id": "gather_reeds",
-          "catalog_source": "data/survival/survival_catalog.json#resources.reed_clump",
+          "catalog_source": "data/survival/items/sources.json#sources.live_reed_fibre @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; poi_id=null; not Orchard-authorized)",
           "claim_policy": "replenishable",
           "cooldown_seconds": 30,
           "costs": {},
@@ -80,9 +172,9 @@
           "rewards": {}
         },
         {
-          "a3_authorization_absent": true,
+          "a3_authorization_absent": false,
           "action_id": "clear_irrigation",
-          "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+          "catalog_source": "data/survival/items/items.json#items.stone_chunk @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
           "claim_policy": "once",
           "cooldown_seconds": null,
           "costs": {
@@ -114,7 +206,7 @@
         {
           "a3_authorization_absent": false,
           "action_id": "extract_outcrop",
-          "catalog_source": "data/survival/survival_catalog.json#resources.stone_outcrop",
+          "catalog_source": "data/survival/items/sources.json#sources.live_stone_chunk @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; poi_id=null; not Quarry-authorized)",
           "claim_policy": "replenishable",
           "cooldown_seconds": 45,
           "costs": {},
@@ -124,9 +216,9 @@
           }
         },
         {
-          "a3_authorization_absent": true,
+          "a3_authorization_absent": false,
           "action_id": "brace_east_shelf",
-          "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+          "catalog_source": "data/survival/items/items.json#items.oak_wood @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
           "claim_policy": "once",
           "cooldown_seconds": null,
           "costs": {
@@ -136,9 +228,9 @@
           "rewards": {}
         },
         {
-          "a3_authorization_absent": true,
+          "a3_authorization_absent": false,
           "action_id": "chock_west_ramp",
-          "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+          "catalog_source": "data/survival/items/items.json#items.stone_chunk @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
           "claim_policy": "once",
           "cooldown_seconds": null,
           "costs": {
@@ -166,6 +258,7 @@
       "wall_segments": 6
     }
   ],
+  "any_native_verified": false,
   "authority_a8": {
     "fixture_declares_test_only": true,
     "fixture_keeps_state_in_memory": true,
@@ -176,55 +269,12 @@
     "site_emits_intent": true
   },
   "binding_adoption": {
-    "adopted_by_a3": 0,
+    "adopted_by_a3": 3,
     "authorized_bindings": 3,
-    "pending_rebind": [
-      {
-        "a1_authorized_poi": "poi_crown_waystation",
-        "a1_authorized_yield": 3,
-        "a1_cooldown_seconds": 1800,
-        "a1_renewable": true,
-        "a3_declared_acquisition": "loot",
-        "a3_declared_poi": "poi:roadside_cache",
-        "a3_declared_yield": 3,
-        "a3_status": "PROPOSED_A1",
-        "adopted": false,
-        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
-        "item_id": "iron_scrap",
-        "source_id": "road_scrap",
-        "yield_agrees": true
-      },
-      {
-        "a1_authorized_poi": "poi_crown_waystation",
-        "a1_authorized_yield": 2,
-        "a1_cooldown_seconds": 1800,
-        "a1_renewable": true,
-        "a3_declared_acquisition": "loot",
-        "a3_declared_poi": "poi:roadside_cache",
-        "a3_declared_yield": 2,
-        "a3_status": "PROPOSED_A1",
-        "adopted": false,
-        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
-        "item_id": "knowledge_spares",
-        "source_id": "road_supplies",
-        "yield_agrees": true
-      },
-      {
-        "a1_authorized_poi": "poi_crown_waystation",
-        "a1_authorized_yield": 2,
-        "a1_cooldown_seconds": 300,
-        "a1_renewable": true,
-        "a3_declared_acquisition": "harvest",
-        "a3_declared_poi": null,
-        "a3_declared_yield": 2,
-        "a3_status": "LIVE_SURV_010",
-        "adopted": false,
-        "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
-        "item_id": "oak_wood",
-        "source_id": "live_oak_wood",
-        "yield_agrees": true
-      }
-    ],
+    "pending_other": [],
+    "pending_rebind": [],
+    "rebind_adopted": 2,
+    "rebind_required": 2,
     "rows": [
       {
         "a1_authorized_poi": "poi_crown_waystation",
@@ -232,12 +282,14 @@
         "a1_cooldown_seconds": 1800,
         "a1_renewable": true,
         "a3_declared_acquisition": "loot",
-        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_poi": "poi_crown_waystation",
         "a3_declared_yield": 3,
-        "a3_status": "PROPOSED_A1",
-        "adopted": false,
+        "a3_status": "A1_PINNED_A3_BOUND",
+        "adopted": true,
+        "binding_kind": "REBIND_TO_INSTANCE",
         "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
         "item_id": "iron_scrap",
+        "region_differs": false,
         "source_id": "road_scrap",
         "yield_agrees": true
       },
@@ -247,12 +299,14 @@
         "a1_cooldown_seconds": 1800,
         "a1_renewable": true,
         "a3_declared_acquisition": "loot",
-        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_poi": "poi_crown_waystation",
         "a3_declared_yield": 2,
-        "a3_status": "PROPOSED_A1",
-        "adopted": false,
+        "a3_status": "A1_PINNED_A3_BOUND",
+        "adopted": true,
+        "binding_kind": "REBIND_TO_INSTANCE",
         "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
         "item_id": "knowledge_spares",
+        "region_differs": false,
         "source_id": "road_supplies",
         "yield_agrees": true
       },
@@ -265,51 +319,57 @@
         "a3_declared_poi": null,
         "a3_declared_yield": 2,
         "a3_status": "LIVE_SURV_010",
-        "adopted": false,
+        "adopted": true,
+        "binding_kind": "LIVE_SOURCE_REUSE",
         "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
         "item_id": "oak_wood",
+        "region_differs": false,
         "source_id": "live_oak_wood",
         "yield_agrees": true
       }
     ],
-    "summary": "0/3 A1-authorized source bindings are adopted by A3. Each pending row is a one-field poi_id edit, not a new rate."
+    "summary": "3/3 A1-authorized source bindings are adopted by A3 (2/2 instance rebinds, 1 live-source reuse)."
   },
-  "blocked_link_count": 14,
+  "blocked_link_count": 13,
   "blocked_links": [
     {
       "blocker_id": "BLK-1",
       "chain_id": "a8_quarry",
-      "level": "S0_ABSENT",
+      "level": "S3_PRODUCTION_SEAM",
       "link": "L1_ENTRY",
-      "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
-      "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "missing": "route exists in source; native run is STALE_HEAD",
+      "native_state": "STALE_HEAD",
+      "next_action": "A0 lands the queued native entry workflow green.",
       "owner": "A0"
     },
     {
       "blocker_id": "BLK-1",
       "chain_id": "a8_quarry",
-      "level": "S2_FIXTURE_ONLY",
+      "level": "S2_SCENE_FIXTURE",
       "link": "L2_ROUTE",
-      "missing": "walkable inside the scene, but the scene is not placed in the A1 world graph",
-      "next_action": "A1 places the scene at its anchor; A0 mounts it.",
+      "missing": "walkable inside its own harness scene only; not placed in the reachable world and it declares physical_instance_id = null",
+      "native_state": "NOT_TESTED",
+      "next_action": "A0/A1 resolve the instance identity and mount the scene at the A1 cell.",
       "owner": "A1 + A8"
     },
     {
       "blocker_id": "BLK-1",
       "chain_id": "a8_quarry",
-      "level": "S2_FIXTURE_ONLY",
+      "level": "S2_SCENE_FIXTURE",
       "link": "L3_INTERACTION",
-      "missing": "the interaction exists only in a test-harness scene",
+      "missing": "the interaction only runs inside a test-harness scene",
+      "native_state": "NOT_TESTED",
       "next_action": "A0 hosts the scene behind the real gameplay input gate.",
       "owner": "A8"
     },
     {
       "blocker_id": "BLK-1",
       "chain_id": "waystation_cache",
-      "level": "S0_ABSENT",
+      "level": "S3_PRODUCTION_SEAM",
       "link": "L1_ENTRY",
-      "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
-      "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "missing": "the route exists in source, but the native run that would prove it executes is STALE_HEAD",
+      "native_state": "STALE_HEAD",
+      "next_action": "A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
       "owner": "A0"
     },
     {
@@ -317,44 +377,29 @@
       "chain_id": "waystation_cache",
       "level": "S1_AUTHORED_ONLY",
       "link": "L2_ROUTE",
-      "missing": "the route is authored geometry; nothing native draws or collides it yet",
-      "next_action": "A0 mounts the A1 slice chunk; A1 confirms traversal with the native world probe.",
-      "owner": "A1"
+      "missing": "the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet",
+      "native_state": "NOT_TESTED",
+      "next_action": "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry scene into the existing overworld route; A1 supplies the cell, A8 supplies the scene.",
+      "owner": "A0 + A1 + A8"
     },
     {
       "blocker_id": "BLK-1",
       "chain_id": "waystation_cache",
       "level": "S1_AUTHORED_ONLY",
       "link": "L3_INTERACTION",
-      "missing": "the action exists only in authored data; no scene places the cache node",
-      "next_action": "A0 spawns the cache node at its authored cell and binds the interact input.",
+      "missing": "the action exists only in authored data; no mounted scene places the cache node",
+      "native_state": "NOT_TESTED",
+      "next_action": "the same mount as L2 also places the interaction node and its input.",
       "owner": "A1"
-    },
-    {
-      "blocker_id": "BLK-2",
-      "chain_id": "a8_quarry",
-      "level": "S0_ABSENT",
-      "link": "L4_AUTHORIZATION",
-      "missing": "the site pays fixed quantities it declares itself; A3 never authorized them",
-      "next_action": "A3 authorizes each cost/reward, or A8 defers to the authored table (roadside_cache already pays these items).",
-      "owner": "A3 + A8"
-    },
-    {
-      "blocker_id": "BLK-2",
-      "chain_id": "waystation_cache",
-      "level": "S1_AUTHORED_ONLY",
-      "link": "L4_AUTHORIZATION",
-      "missing": "A1 authorizes the reward and its quantity, but A3's source rows still name the provisional class id 'poi:roadside_cache', so the adopted binding count is 0",
-      "next_action": "A3 adopts the A1 rebind for the two rows (road_scrap, road_supplies): point poi_id at poi_crown_waystation and keep A1's 3/2 yields. This is a binding edit, not a rate change.",
-      "owner": "A3 + A1"
     },
     {
       "blocker_id": "BLK-4",
       "chain_id": "a8_quarry",
-      "level": "S3_OWNER_SEAM_UNWIRED",
+      "level": "S2_SCENE_FIXTURE",
       "link": "L5_COMMIT",
-      "missing": "a fake authority commits the reward; SaveService is never called",
-      "next_action": "A0 swaps the fixture for a SaveService adapter; the fixture stays in tests.",
+      "missing": "a fake authority commits the reward; SaveService is never called on this path",
+      "native_state": "STALE_HEAD",
+      "next_action": "A0/A8 swap the fixture for a SaveService adapter and key the claim on the instance id.",
       "owner": "A0 + A8"
     },
     {
@@ -363,53 +408,68 @@
       "level": "S0_ABSENT",
       "link": "L6_RELOAD",
       "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
-      "next_action": "after L5, run the two-process test.",
+      "native_state": "STALE_HEAD",
+      "next_action": "after L5.",
       "owner": "A0"
     },
     {
       "blocker_id": "BLK-4",
       "chain_id": "a8_quarry",
-      "level": "S2_FIXTURE_ONLY",
+      "level": "S2_SCENE_FIXTURE",
       "link": "L7_NO_DUPLICATE",
       "missing": "claims are deduplicated inside the fixture only",
-      "next_action": "key the production transaction on (site, action, claim generation).",
+      "native_state": "NOT_TESTED",
+      "next_action": "key the production transaction on (instance, action, claim generation).",
       "owner": "A8 + A0"
     },
     {
       "blocker_id": "BLK-4",
       "chain_id": "waystation_cache",
-      "level": "S3_OWNER_SEAM_UNWIRED",
+      "level": "S3_PRODUCTION_SEAM",
       "link": "L5_COMMIT",
-      "missing": "the owner API and the contract key exist, but no mounted path calls them, so the reward has never been committed by a player action",
-      "next_action": "A0 wires the cache claim to transact_once with the contract's transaction key.",
+      "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers)",
+      "native_state": "STALE_HEAD",
+      "next_action": "A0 adds ONE caller keyed on A1's transaction key ('a1slice:poi_crown_waystation:cache_restock:1') that pays the A1 binding through add_items_to_candidate inside transact_once.",
       "owner": "A0"
     },
     {
       "blocker_id": "BLK-4",
       "chain_id": "waystation_cache",
-      "level": "S3_OWNER_SEAM_UNWIRED",
+      "level": "S3_PRODUCTION_SEAM",
       "link": "L6_RELOAD",
-      "missing": "no evidence anywhere restarts the OS process; A0's existing reload check reuses one process, which cannot prove durable restore",
-      "next_action": "A0 adds the two-process test below; S4 requires both runs green.",
+      "missing": "a real two-process reload test exists in source, but its native run is STALE_HEAD",
+      "native_state": "STALE_HEAD",
+      "next_action": "the queued native-entry-restart job must go green; static text cannot substitute.",
       "owner": "A0"
     },
     {
       "blocker_id": "BLK-4",
       "chain_id": "waystation_cache",
-      "level": "S3_OWNER_SEAM_UNWIRED",
+      "level": "S3_PRODUCTION_SEAM",
       "link": "L7_NO_DUPLICATE",
-      "missing": "the pieces exist on both sides but are not joined, so nothing is protected at runtime yet",
-      "next_action": "A0 keys the claim on the contract transaction key and asserts ALREADY_APPLIED on replay.",
+      "missing": "the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay",
+      "native_state": "STALE_HEAD",
+      "next_action": "the same native run asserts applied_transactions equality across processes.",
       "owner": "A0 + A1"
+    },
+    {
+      "blocker_id": "BLK-5",
+      "chain_id": "a8_quarry",
+      "level": "S0_ABSENT",
+      "link": "L4_AUTHORIZATION",
+      "missing": "A8's two route actions have an item id but no authorized quantity, so neither can be paid",
+      "native_state": "NOT_TESTED",
+      "next_action": "A3 authorizes a quantity for the two route actions (a cost, not a loot rate).",
+      "owner": "A3"
     }
   ],
   "chains": [
     {
-      "blocked_links": 7,
-      "blocking_next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "blocked_links": 6,
+      "blocking_next_action": "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry scene into the existing overworld route; A1 supplies the cell, A8 supplies the scene.",
       "chain_id": "waystation_cache",
-      "chain_level": "S0_ABSENT",
-      "chain_meaning": "the link does not exist",
+      "chain_level": "S1_AUTHORED_ONLY",
+      "chain_meaning": "only authored data or a contract describes it; no code path",
       "description": "A1 vertical-slice cache claim at poi_crown_waystation",
       "links": [
         {
@@ -417,32 +477,59 @@
           "blocker_id": "BLK-1",
           "evidence": [
             {
-              "fact": "home destinations",
+              "fact": "home hub -> campaign -> EnterOverworldButton -> AppFlow.open_overworld",
               "value": [
-                "bestiary",
-                "campaign",
-                "hero_roster",
-                "modes",
-                "settings",
-                "storage"
+                {
+                  "file": "game/ui/screens/home/home_map_screen.gd",
+                  "line": 6,
+                  "step": "home hub destination 'campaign'"
+                },
+                {
+                  "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+                  "line": 17,
+                  "step": "campaign tab button"
+                },
+                {
+                  "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+                  "line": 18,
+                  "step": "button -> AppFlow.open_overworld"
+                },
+                {
+                  "file": "game/app/app_flow.gd",
+                  "line": 125,
+                  "step": "open_overworld implementation"
+                },
+                {
+                  "file": "game/ui/screens/hub/tabs/campaign_tab.tscn",
+                  "line": 99,
+                  "step": "button node in the shipped tab scene"
+                }
               ]
             },
             {
-              "fact": "survival-like keys",
-              "value": []
+              "fact": "route requires a test flag",
+              "value": false
             },
             {
-              "fact": "app root ships test-only entry flags",
-              "value": true
+              "fact": "native entry run",
+              "value": {
+                "head_sha": null,
+                "run_id": null,
+                "state": "STALE_HEAD"
+              }
             }
           ],
-          "level": "S0_ABSENT",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
-          "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+          "missing": "the route exists in source, but the native run that would prove it executes is STALE_HEAD",
+          "native_evidence_id": "a0_normal_entry_home",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
           "owner": "A0",
-          "rank": 0,
-          "requirement": "A normal player, with no test flag, can reach the survival world from the home screen.",
+          "rank": 3,
+          "requirement": "A normal player, with no test flag, can reach the world from the menus.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
@@ -450,27 +537,36 @@
           "blocker_id": "BLK-1",
           "evidence": [
             {
-              "fact": "authored safe routes to the waystation",
+              "fact": "A1 instance ids on the A0 surface",
               "value": []
             },
             {
-              "fact": "slice node ids for the cache",
-              "value": [
-                "node_waystation_cache"
-              ]
+              "fact": "A8 instance ids on the A0 surface",
+              "value": []
             },
             {
-              "fact": "world geography is native",
-              "value": false
+              "fact": "A8 site scenes inside the overworld",
+              "value": []
+            },
+            {
+              "fact": "A1 slice nodes",
+              "value": [
+                "node_waystation_cache",
+                "node_waystation_cache"
+              ]
             }
           ],
           "level": "S1_AUTHORED_ONLY",
           "link": "L2_ROUTE",
-          "missing": "the route is authored geometry; nothing native draws or collides it yet",
-          "next_action": "A0 mounts the A1 slice chunk; A1 confirms traversal with the native world probe.",
-          "owner": "A1",
+          "missing": "the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry scene into the existing overworld route; A1 supplies the cell, A8 supplies the scene.",
+          "owner": "A0 + A1 + A8",
           "rank": 1,
-          "requirement": "A physically walkable route connects the entry point to the interaction stand.",
+          "requirement": "The specific interaction is placed in that world and reachable on foot.",
+          "source_state": "AUTHORED_ONLY",
           "statically_verifiable": true
         },
         {
@@ -493,109 +589,341 @@
               }
             },
             {
-              "fact": "requires capability",
-              "value": [
-                "cap_salvage"
-              ]
-            },
-            {
-              "fact": "cooldown (active seconds)",
-              "value": 1800
-            },
-            {
               "fact": "spec native_playable",
               "value": false
             }
           ],
           "level": "S1_AUTHORED_ONLY",
           "link": "L3_INTERACTION",
-          "missing": "the action exists only in authored data; no scene places the cache node",
-          "next_action": "A0 spawns the cache node at its authored cell and binds the interact input.",
+          "missing": "the action exists only in authored data; no mounted scene places the cache node",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "the same mount as L2 also places the interaction node and its input.",
           "owner": "A1",
           "rank": 1,
-          "requirement": "The interaction is a real input on a placed object with player-facing text.",
+          "requirement": "The interaction is real input on a placed object with player-facing text.",
+          "source_state": "AUTHORED_ONLY",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": false,
+          "blocker_id": "BLK-2",
+          "evidence": [
+            {
+              "fact": "A1-authorized yields",
+              "value": [
+                [
+                  "road_scrap",
+                  3,
+                  1800
+                ],
+                [
+                  "road_supplies",
+                  2,
+                  1800
+                ]
+              ]
+            },
+            {
+              "fact": "A3 adoption",
+              "value": "3/3 A1-authorized source bindings are adopted by A3 (2/2 instance rebinds, 1 live-source reuse)."
+            },
+            {
+              "fact": "pending rebind",
+              "value": []
+            }
+          ],
+          "level": "S3_PRODUCTION_SEAM",
+          "link": "L4_AUTHORIZATION",
+          "missing": "",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "A3 adopts A1's rebind request (poi_id + instance id only; no quantity change).",
+          "owner": "A3 + A1",
+          "rank": 3,
+          "requirement": "Every cost and reward is an A3 item authorized once by the owning contract.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
           "blocked": true,
-          "blocker_id": "BLK-2",
+          "blocker_id": "BLK-4",
           "evidence": [
             {
-              "fact": "A1-authorized bindings",
+              "fact": "SaveService API",
+              "value": {
+                "mount_state": "MOUNTED",
+                "receipt_recorded": true,
+                "replay_rejected": true,
+                "transact_once_exists": true
+              }
+            },
+            {
+              "fact": "static seam state",
+              "value": "MOUNTED_SURVIVAL_SYSTEM_CALLER"
+            },
+            {
+              "fact": "mounted committers",
               "value": [
                 {
-                  "cooldown": 1800,
-                  "item_id": "iron_scrap",
-                  "renewable": true,
-                  "source_id": "road_scrap",
-                  "yield": 3
+                  "arguments": ".call(",
+                  "authorisation": [
+                    "CAMPAIGN_FALLBACK_KEY",
+                    "CAMPAIGN_REGISTRY"
+                  ],
+                  "authorisation_refs": [
+                    "CAMPAIGN_REGISTRY:completion_transaction_id",
+                    "CAMPAIGN_FALLBACK_KEY:campaign:%s:complete"
+                  ],
+                  "classification": "MOUNTED_CAMPAIGN_CALLER",
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_commit_campaign_completion",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 671,
+                  "mount_state": "MOUNTED",
+                  "path": "game/app/app_flow.gd"
                 },
                 {
-                  "cooldown": 1800,
-                  "item_id": "knowledge_spares",
-                  "renewable": true,
-                  "source_id": "road_supplies",
-                  "yield": 2
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_CAMPAIGN_CALLER",
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_commit_level_ten_replay_bounty",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 818,
+                  "mount_state": "MOUNTED",
+                  "path": "game/app/app_flow.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_CAMPAIGN_CALLER",
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_unlocks",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 861,
+                  "mount_state": "MOUNTED",
+                  "path": "game/app/app_flow.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_CAMPAIGN_CALLER",
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_visible_rewards",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 941,
+                  "mount_state": "MOUNTED",
+                  "path": "game/app/app_flow.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_CAMPAIGN_CALLER",
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_content_entitlements",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 1006,
+                  "mount_state": "MOUNTED",
+                  "path": "game/app/app_flow.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION",
+                    "SURVIVAL_ITEM_GRANT"
+                  ],
+                  "function": "harvest",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 229,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION",
+                    "SURVIVAL_ITEM_GRANT"
+                  ],
+                  "function": "_transfer",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 733,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION",
+                    "SURVIVAL_ITEM_GRANT"
+                  ],
+                  "function": "_transfer_all",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 876,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd"
                 }
               ]
             },
             {
-              "fact": "reward right",
-              "value": "rr_waystation_cache_claim"
-            },
-            {
-              "fact": "A3 source rows already pointing at the waystation",
-              "value": []
-            },
-            {
-              "fact": "atomic ownership statement",
-              "value": "A0 SaveService transaction is the sole commit boundary; A3 provides item/source catalog and candidate-document helpers but must not write a side journal or grant rewards outside the A0 mutator"
-            }
-          ],
-          "level": "S1_AUTHORED_ONLY",
-          "link": "L4_AUTHORIZATION",
-          "missing": "A1 authorizes the reward and its quantity, but A3's source rows still name the provisional class id 'poi:roadside_cache', so the adopted binding count is 0",
-          "next_action": "A3 adopts the A1 rebind for the two rows (road_scrap, road_supplies): point poi_id at poi_crown_waystation and keep A1's 3/2 yields. This is a binding edit, not a rate change.",
-          "owner": "A3 + A1",
-          "rank": 1,
-          "requirement": "Every cost and reward is an A3 item, authorized once by the owning contract.",
-          "statically_verifiable": true
-        },
-        {
-          "blocked": true,
-          "blocker_id": "BLK-4",
-          "evidence": [
-            {
-              "fact": "SaveService.transact_once exists",
-              "value": true
-            },
-            {
-              "fact": "receipt persisted in the save document",
-              "value": true
-            },
-            {
-              "fact": "A1 names the save service and its hash",
+              "fact": "rejected call sites",
               "value": [
-                "origin/arena/dea2428e-soul-of-hero@b3722585:game/survival/save_service.gd",
-                "5748dc9f2fdaf58ca254cd8111ed4132d45409dd6934f6699f878037747a73d0"
+                {
+                  "arguments": "has_method(&\"transact_once\"):",
+                  "authorisation_refs": [
+                    "CAMPAIGN_REGISTRY:completion_transaction_id",
+                    "CAMPAIGN_FALLBACK_KEY:campaign:%s:complete"
+                  ],
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_commit_campaign_completion",
+                  "kind": "has_method",
+                  "line": 647,
+                  "path": "game/app/app_flow.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
+                {
+                  "arguments": "has_method(&\"transact_once\"):",
+                  "authorisation_refs": [],
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_commit_level_ten_replay_bounty",
+                  "kind": "has_method",
+                  "line": 798,
+                  "path": "game/app/app_flow.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
+                {
+                  "arguments": "has_method(&\"transact_once\"):",
+                  "authorisation_refs": [],
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_unlocks",
+                  "kind": "has_method",
+                  "line": 859,
+                  "path": "game/app/app_flow.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
+                {
+                  "arguments": "has_method(&\"transact_once\"):",
+                  "authorisation_refs": [],
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_visible_rewards",
+                  "kind": "has_method",
+                  "line": 939,
+                  "path": "game/app/app_flow.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
+                {
+                  "arguments": "has_method(&\"transact_once\"):",
+                  "authorisation_refs": [],
+                  "context": [
+                    "CAMPAIGN_PROGRESSION_MUTATION"
+                  ],
+                  "function": "_reconcile_campaign_content_entitlements",
+                  "kind": "has_method",
+                  "line": 1004,
+                  "path": "game/app/app_flow.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
+                {
+                  "arguments": ".call(",
+                  "authorisation_refs": [],
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION"
+                  ],
+                  "function": "place_structure",
+                  "function_referenced": false,
+                  "kind": "call_method",
+                  "line": 377,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd",
+                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+                },
+                {
+                  "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+                  "authorisation_refs": [],
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION"
+                  ],
+                  "function": "begin_overworld_death",
+                  "function_referenced": false,
+                  "kind": "call_method",
+                  "line": 461,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd",
+                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+                },
+                {
+                  "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
+                  "authorisation_refs": [],
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION"
+                  ],
+                  "function": "finish_overworld_death",
+                  "function_referenced": false,
+                  "kind": "call_method",
+                  "line": 508,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd",
+                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+                }
               ]
             },
             {
-              "fact": "transaction key in the contract",
+              "fact": "A1 contract key",
               "value": "a1slice:poi_crown_waystation:cache_restock:1"
-            },
-            {
-              "fact": "any POI/A6 path calls transact_once",
-              "value": false
             }
           ],
-          "level": "S3_OWNER_SEAM_UNWIRED",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L5_COMMIT",
-          "missing": "the owner API and the contract key exist, but no mounted path calls them, so the reward has never been committed by a player action",
-          "next_action": "A0 wires the cache claim to transact_once with the contract's transaction key.",
+          "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers)",
+          "native_evidence_id": "a0_two_process_reload",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "A0 adds ONE caller keyed on A1's transaction key ('a1slice:poi_crown_waystation:cache_restock:1') that pays the A1 binding through add_items_to_candidate inside transact_once.",
           "owner": "A0",
           "rank": 3,
           "requirement": "The reward is committed through SaveService.transact_once with a receipt.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
@@ -603,25 +931,33 @@
           "blocker_id": "BLK-4",
           "evidence": [
             {
-              "fact": "receipts live inside the committed document",
-              "value": true
+              "fact": "two-process test in source",
+              "value": "tests/survival_normal_entry_home_restart_test.gd"
             },
             {
-              "fact": "documented reload behaviour",
-              "value": "cooldown is SaveService-keyed; reload does not duplicate restock"
+              "fact": "native state",
+              "value": {
+                "head_sha": null,
+                "run_id": null,
+                "state": "STALE_HEAD"
+              }
             },
             {
-              "fact": "two-process restart evidence",
-              "value": false
+              "fact": "phrase required",
+              "value": "NORMAL ENTRY HOME RESTART PASSED in both processes"
             }
           ],
-          "level": "S3_OWNER_SEAM_UNWIRED",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L6_RELOAD",
-          "missing": "no evidence anywhere restarts the OS process; A0's existing reload check reuses one process, which cannot prove durable restore",
-          "next_action": "A0 adds the two-process test below; S4 requires both runs green.",
+          "missing": "a real two-process reload test exists in source, but its native run is STALE_HEAD",
+          "native_evidence_id": "a0_two_process_reload",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "the queued native-entry-restart job must go green; static text cannot substitute.",
           "owner": "A0",
           "rank": 3,
-          "requirement": "The committed state survives a save/reload in a fresh OS process.",
+          "requirement": "The committed state survives save/reload in a fresh OS process.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
@@ -629,11 +965,11 @@
           "blocker_id": "BLK-4",
           "evidence": [
             {
-              "fact": "SaveService rejects an applied key",
+              "fact": "SaveService replay guard",
               "value": true
             },
             {
-              "fact": "contract duplicate payload",
+              "fact": "A1 duplicate payload",
               "value": {
                 "granted_items": {},
                 "receipt": "rr_waystation_cache_claim",
@@ -643,30 +979,7 @@
               }
             },
             {
-              "fact": "contract request payload",
-              "value": {
-                "active_tick": 600,
-                "poi_id": "poi_crown_waystation",
-                "reward_right_id": "rr_waystation_cache_claim",
-                "schema": "soh.world.slice.reward_grant.v1",
-                "session_id": "slice-session-1",
-                "source_bindings": [
-                  {
-                    "item_id": "iron_scrap",
-                    "quantity": 3,
-                    "source_id": "road_scrap"
-                  },
-                  {
-                    "item_id": "knowledge_spares",
-                    "quantity": 2,
-                    "source_id": "road_supplies"
-                  }
-                ],
-                "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
-              }
-            },
-            {
-              "fact": "one-time rights carry transaction keys",
+              "fact": "one-time rights keys",
               "value": [
                 "a1slice:poi_crown_relay_shed:hand_crank_bypass:1",
                 "a1slice:poi_crown_waystation:pry_locker:1",
@@ -674,13 +987,17 @@
               ]
             }
           ],
-          "level": "S3_OWNER_SEAM_UNWIRED",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L7_NO_DUPLICATE",
-          "missing": "the pieces exist on both sides but are not joined, so nothing is protected at runtime yet",
-          "next_action": "A0 keys the claim on the contract transaction key and asserts ALREADY_APPLIED on replay.",
+          "missing": "the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay",
+          "native_evidence_id": "a0_two_process_reload",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "the same native run asserts applied_transactions equality across processes.",
           "owner": "A0 + A1",
           "rank": 3,
           "requirement": "Replaying, reloading or re-entering cannot grant the reward twice.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
@@ -721,57 +1038,50 @@
               ]
             }
           ],
-          "level": "S1_AUTHORED_ONLY",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L8_OUTCOME",
           "missing": "",
-          "next_action": "A3 confirms the sinks are reachable in the first hour (research_kit is the natural one).",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "keep every reward pointed at an authored sink.",
           "owner": "A3",
-          "rank": 1,
+          "rank": 3,
           "requirement": "The reward feeds an authored sink (recipe, technology or station kit).",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         }
       ],
-      "weakest_link": "L1_ENTRY"
+      "weakest_link": "L2_ROUTE"
     },
     {
       "blocked_links": 7,
-      "blocking_next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "blocking_next_action": "A3 authorizes a quantity for the two route actions (a cost, not a loot rate).",
       "chain_id": "a8_quarry",
       "chain_level": "S0_ABSENT",
       "chain_meaning": "the link does not exist",
-      "description": "A8 native South Quarry PackedScene",
+      "description": "A8 native South Quarry scene",
       "links": [
         {
           "blocked": true,
           "blocker_id": "BLK-1",
           "evidence": [
             {
-              "fact": "home destinations",
-              "value": [
-                "bestiary",
-                "campaign",
-                "hero_roster",
-                "modes",
-                "settings",
-                "storage"
-              ]
-            },
-            {
-              "fact": "survival-like keys",
-              "value": []
-            },
-            {
-              "fact": "app root ships test-only entry flags",
+              "fact": "route",
               "value": true
             }
           ],
-          "level": "S0_ABSENT",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
-          "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+          "missing": "route exists in source; native run is STALE_HEAD",
+          "native_evidence_id": "a0_normal_entry_home",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "A0 lands the queued native entry workflow green.",
           "owner": "A0",
-          "rank": 0,
-          "requirement": "A normal player, with no test flag, can reach the survival world from the home screen.",
+          "rank": 3,
+          "requirement": "A normal player, with no test flag, can reach the world from the menus.",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         },
         {
@@ -783,25 +1093,29 @@
               "value": "crown_south_quarry"
             },
             {
-              "fact": "A1 poi anchor",
-              "value": "poi_crown_south_quarry"
+              "fact": "candidate status",
+              "value": "S2_CANDIDATE_BLOCKED_ON_A1_A3_A0_OWNER_INTEGRATION"
             },
             {
-              "fact": "spawn / approach stand / wall segments",
-              "value": [
-                true,
-                true,
-                6
-              ]
+              "fact": "scene is harness-only",
+              "value": true
+            },
+            {
+              "fact": "physical instance id",
+              "value": null
             }
           ],
-          "level": "S2_FIXTURE_ONLY",
+          "level": "S2_SCENE_FIXTURE",
           "link": "L2_ROUTE",
-          "missing": "walkable inside the scene, but the scene is not placed in the A1 world graph",
-          "next_action": "A1 places the scene at its anchor; A0 mounts it.",
+          "missing": "walkable inside its own harness scene only; not placed in the reachable world and it declares physical_instance_id = null",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "A0/A1 resolve the instance identity and mount the scene at the A1 cell.",
           "owner": "A1 + A8",
           "rank": 2,
-          "requirement": "A physically walkable route connects the entry point to the interaction stand.",
+          "requirement": "The specific interaction is placed in that world and reachable on foot.",
+          "source_state": "SCENE_FIXTURE",
           "statically_verifiable": true
         },
         {
@@ -817,7 +1131,7 @@
               "value": "soh.native_poi.intent.v1"
             },
             {
-              "fact": "harness-only by default",
+              "fact": "harness only",
               "value": true
             },
             {
@@ -830,42 +1144,97 @@
               ]
             }
           ],
-          "level": "S2_FIXTURE_ONLY",
+          "level": "S2_SCENE_FIXTURE",
           "link": "L3_INTERACTION",
-          "missing": "the interaction exists only in a test-harness scene",
+          "missing": "the interaction only runs inside a test-harness scene",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
           "next_action": "A0 hosts the scene behind the real gameplay input gate.",
           "owner": "A8",
           "rank": 2,
-          "requirement": "The interaction is a real input on a placed object with player-facing text.",
+          "requirement": "The interaction is real input on a placed object with player-facing text.",
+          "source_state": "SCENE_FIXTURE",
           "statically_verifiable": true
         },
         {
           "blocked": true,
-          "blocker_id": "BLK-2",
+          "blocker_id": "BLK-5",
           "evidence": [
             {
-              "fact": "actions without A3 authorization",
+              "fact": "actions with no A3 price",
               "value": [
-                "brace_east_shelf",
-                "chock_west_ramp"
+                {
+                  "action_id": "brace_east_shelf",
+                  "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+                  "cost_quantity": null,
+                  "item_id": "oak_wood"
+                },
+                {
+                  "action_id": "chock_west_ramp",
+                  "authorization": "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+                  "cost_quantity": null,
+                  "item_id": "stone_chunk"
+                }
               ]
             },
             {
-              "fact": "loot tables used by these sites",
-              "value": []
+              "fact": "actions whose A3 source is not bound to this POI",
+              "value": [
+                {
+                  "action_id": "extract_outcrop",
+                  "authorization": "BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 must authorize its site mapping and balance before any grant.",
+                  "cost_quantity": null,
+                  "item_id": "stone_chunk"
+                }
+              ]
             },
             {
-              "fact": "note",
-              "value": "site declares 'A3 cost authorization absent' in its own catalog_source"
+              "fact": "A8's own authorization note",
+              "value": [
+                "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+                "BLOCKED: item ID exists in current A3 PR19, but no approved price for this Quarry action.",
+                null,
+                "BLOCKED: A3 PR19 source is generic and not bound to poi_crown_south_quarry; A3 must authorize its site mapping and balance before any grant."
+              ]
+            },
+            {
+              "fact": "site-declared costs",
+              "value": [
+                [
+                  "extract_outcrop",
+                  {}
+                ],
+                [
+                  "brace_east_shelf",
+                  {
+                    "oak_wood": 2
+                  }
+                ],
+                [
+                  "chock_west_ramp",
+                  {
+                    "stone_chunk": 2
+                  }
+                ],
+                [
+                  "leave_seam_unworked",
+                  {}
+                ]
+              ]
             }
           ],
           "level": "S0_ABSENT",
           "link": "L4_AUTHORIZATION",
-          "missing": "the site pays fixed quantities it declares itself; A3 never authorized them",
-          "next_action": "A3 authorizes each cost/reward, or A8 defers to the authored table (roadside_cache already pays these items).",
-          "owner": "A3 + A8",
+          "missing": "A8's two route actions have an item id but no authorized quantity, so neither can be paid",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "A3 authorizes a quantity for the two route actions (a cost, not a loot rate).",
+          "owner": "A3",
           "rank": 0,
-          "requirement": "Every cost and reward is an A3 item, authorized once by the owning contract.",
+          "requirement": "Every cost and reward is an A3 item authorized once by the owning contract.",
+          "source_state": "ABSENT",
           "statically_verifiable": true
         },
         {
@@ -877,25 +1246,25 @@
               "value": true
             },
             {
-              "fact": "fixture declares itself test-only",
+              "fact": "fixture is test-only",
               "value": true
             },
             {
-              "fact": "fixture keeps state in memory",
-              "value": true
-            },
-            {
-              "fact": "SaveService.transact_once exists",
-              "value": true
+              "fact": "fixture uses SaveService",
+              "value": false
             }
           ],
-          "level": "S3_OWNER_SEAM_UNWIRED",
+          "level": "S2_SCENE_FIXTURE",
           "link": "L5_COMMIT",
-          "missing": "a fake authority commits the reward; SaveService is never called",
-          "next_action": "A0 swaps the fixture for a SaveService adapter; the fixture stays in tests.",
+          "missing": "a fake authority commits the reward; SaveService is never called on this path",
+          "native_evidence_id": "a0_two_process_reload",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "A0/A8 swap the fixture for a SaveService adapter and key the claim on the instance id.",
           "owner": "A0 + A8",
-          "rank": 3,
+          "rank": 2,
           "requirement": "The reward is committed through SaveService.transact_once with a receipt.",
+          "source_state": "SCENE_FIXTURE",
           "statically_verifiable": true
         },
         {
@@ -903,21 +1272,21 @@
           "blocker_id": "BLK-4",
           "evidence": [
             {
-              "fact": "fixture persists to disk",
-              "value": false
-            },
-            {
-              "fact": "two-process evidence",
+              "fact": "fixture persistence",
               "value": false
             }
           ],
           "level": "S0_ABSENT",
           "link": "L6_RELOAD",
           "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
-          "next_action": "after L5, run the two-process test.",
+          "native_evidence_id": "a0_two_process_reload",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
+          "next_action": "after L5.",
           "owner": "A0",
           "rank": 0,
-          "requirement": "The committed state survives a save/reload in a fresh OS process.",
+          "requirement": "The committed state survives save/reload in a fresh OS process.",
+          "source_state": "ABSENT",
           "statically_verifiable": true
         },
         {
@@ -936,19 +1305,19 @@
               "value": [
                 45
               ]
-            },
-            {
-              "fact": "fixture claim generation tracked",
-              "value": true
             }
           ],
-          "level": "S2_FIXTURE_ONLY",
+          "level": "S2_SCENE_FIXTURE",
           "link": "L7_NO_DUPLICATE",
           "missing": "claims are deduplicated inside the fixture only",
-          "next_action": "key the production transaction on (site, action, claim generation).",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
+          "next_action": "key the production transaction on (instance, action, claim generation).",
           "owner": "A8 + A0",
           "rank": 2,
           "requirement": "Replaying, reloading or re-entering cannot grant the reward twice.",
+          "source_state": "SCENE_FIXTURE",
           "statically_verifiable": true
         },
         {
@@ -970,37 +1339,466 @@
               ]
             }
           ],
-          "level": "S1_AUTHORED_ONLY",
+          "level": "S3_PRODUCTION_SEAM",
           "link": "L8_OUTCOME",
           "missing": "",
+          "native_evidence_id": null,
+          "native_run_id": null,
+          "native_state": "NOT_TESTED",
           "next_action": "keep rewards feeding an authored sink.",
           "owner": "A3",
-          "rank": 1,
+          "rank": 3,
           "requirement": "The reward feeds an authored sink (recipe, technology or station kit).",
+          "source_state": "PRODUCTION_SEAM",
           "statically_verifiable": true
         }
       ],
-      "weakest_link": "L1_ENTRY"
+      "weakest_link": "L4_AUTHORIZATION"
     }
   ],
+  "claim_rule": "A is source existence only. B needs a green native run on this commit. C needs the content inside the reachable world. D needs a mounted, committed, native-verified claim. No claim promotes another.",
   "commit_seam": {
-    "any_poi_calls_transact_once": false,
-    "receipt_recorded": true,
-    "replay_rejected": true,
-    "survival_service_uses_transact_once": true,
-    "transact_once_exists": true,
-    "two_process_reload_test": false
+    "api": {
+      "mount_state": "MOUNTED",
+      "receipt_recorded": true,
+      "replay_rejected": true,
+      "transact_once_exists": true
+    },
+    "classifications": [
+      "MOUNTED_CAMPAIGN_CALLER",
+      "MOUNTED_SURVIVAL_SYSTEM_CALLER"
+    ],
+    "mounted_caller_count": 8,
+    "mounted_callers": [
+      {
+        "arguments": ".call(",
+        "authorisation": [
+          "CAMPAIGN_FALLBACK_KEY",
+          "CAMPAIGN_REGISTRY"
+        ],
+        "authorisation_refs": [
+          "CAMPAIGN_REGISTRY:completion_transaction_id",
+          "CAMPAIGN_FALLBACK_KEY:campaign:%s:complete"
+        ],
+        "classification": "MOUNTED_CAMPAIGN_CALLER",
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_commit_campaign_completion",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 671,
+        "mount_state": "MOUNTED",
+        "path": "game/app/app_flow.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_CAMPAIGN_CALLER",
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_commit_level_ten_replay_bounty",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 818,
+        "mount_state": "MOUNTED",
+        "path": "game/app/app_flow.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_CAMPAIGN_CALLER",
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_unlocks",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 861,
+        "mount_state": "MOUNTED",
+        "path": "game/app/app_flow.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_CAMPAIGN_CALLER",
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_visible_rewards",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 941,
+        "mount_state": "MOUNTED",
+        "path": "game/app/app_flow.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_CAMPAIGN_CALLER",
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_content_entitlements",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 1006,
+        "mount_state": "MOUNTED",
+        "path": "game/app/app_flow.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION",
+          "SURVIVAL_ITEM_GRANT"
+        ],
+        "function": "harvest",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 229,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION",
+          "SURVIVAL_ITEM_GRANT"
+        ],
+        "function": "_transfer",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 733,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION",
+          "SURVIVAL_ITEM_GRANT"
+        ],
+        "function": "_transfer_all",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 876,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd"
+      }
+    ],
+    "raw_token_occurrences": 65,
+    "rejected": [
+      {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [
+          "CAMPAIGN_REGISTRY:completion_transaction_id",
+          "CAMPAIGN_FALLBACK_KEY:campaign:%s:complete"
+        ],
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_commit_campaign_completion",
+        "kind": "has_method",
+        "line": 647,
+        "path": "game/app/app_flow.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [],
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_commit_level_ten_replay_bounty",
+        "kind": "has_method",
+        "line": 798,
+        "path": "game/app/app_flow.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [],
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_unlocks",
+        "kind": "has_method",
+        "line": 859,
+        "path": "game/app/app_flow.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [],
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_visible_rewards",
+        "kind": "has_method",
+        "line": 939,
+        "path": "game/app/app_flow.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [],
+        "context": [
+          "CAMPAIGN_PROGRESSION_MUTATION"
+        ],
+        "function": "_reconcile_campaign_content_entitlements",
+        "kind": "has_method",
+        "line": 1004,
+        "path": "game/app/app_flow.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "place_structure",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 377,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "begin_overworld_death",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 461,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "finish_overworld_death",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 508,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.death.recover.\" + bag_id,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "recover_death_bag",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 533,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.bed.activation.%d\" % (revision + 1),",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "activate_bed",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 592,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "toggle_door",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 625,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "remove_structure",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 663,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "learn_recipe",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 940,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      }
+    ],
+    "rejected_count": 13,
+    "static_state": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+    "two_process_reload_test_in_source": true,
+    "two_process_test_file": "tests/survival_normal_entry_home_restart_test.gd",
+    "unproven_callers": [
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "place_structure",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 377,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "begin_overworld_death",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 461,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "finish_overworld_death",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 508,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.death.recover.\" + bag_id,",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "recover_death_bag",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 533,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.bed.activation.%d\" % (revision + 1),",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "activate_bed",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 592,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "toggle_door",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 625,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "remove_structure",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 663,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      },
+      {
+        "arguments": ".call(",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "learn_recipe",
+        "function_referenced": false,
+        "kind": "call_method",
+        "line": 940,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd",
+        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+      }
+    ],
+    "unproven_note": "Call sites whose enclosing function is not referenced anywhere in the 45 pinned files. They are not counted as integration and not called dead: the caller may live in an unpinned file."
   },
   "contract": {
-    "a0_activation_contract_present": true,
-    "a0_payload_examples": [
-      "action_rejected",
-      "action_request",
-      "action_success",
-      "activate_request",
-      "activate_response",
-      "save_state_example"
-    ],
     "a0_save_service_ref": "origin/arena/dea2428e-soul-of-hero@b3722585:game/survival/save_service.gd",
     "a0_save_service_sha256": "5748dc9f2fdaf58ca254cd8111ed4132d45409dd6934f6699f878037747a73d0",
     "atomic_ownership": "A0 SaveService transaction is the sole commit boundary; A3 provides item/source catalog and candidate-document helpers but must not write a side journal or grant rewards outside the A0 mutator",
@@ -1063,7 +1861,6 @@
       ],
       "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
     },
-    "items_pinned_by_a3": true,
     "native_playable": false,
     "rights": [
       {
@@ -1127,27 +1924,465 @@
     ]
   },
   "entry": {
-    "app_root_direct_game_scene": true,
-    "app_root_has_test_only_entries": true,
-    "home_keys": [
-      "bestiary",
-      "campaign",
-      "hero_roster",
-      "modes",
-      "settings",
-      "storage"
+    "claim": "a normal menu route reaches the world with no test flag",
+    "native_test_in_source": true,
+    "note": "The route is the A0 survival overworld (Hollow Marches), not the A1 continent slice: claim A only says a normal route to the world exists.",
+    "route_exists_in_source": true,
+    "steps": [
+      {
+        "file": "game/ui/screens/home/home_map_screen.gd",
+        "line": 6,
+        "step": "home hub destination 'campaign'"
+      },
+      {
+        "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+        "line": 17,
+        "step": "campaign tab button"
+      },
+      {
+        "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+        "line": 18,
+        "step": "button -> AppFlow.open_overworld"
+      },
+      {
+        "file": "game/app/app_flow.gd",
+        "line": 125,
+        "step": "open_overworld implementation"
+      },
+      {
+        "file": "game/ui/screens/hub/tabs/campaign_tab.tscn",
+        "line": 99,
+        "step": "button node in the shipped tab scene"
+      }
     ],
-    "survival_keys": []
+    "test_flag_required": false
   },
-  "headline": "Best real chain is waystation_cache at S0_ABSENT; no chain reaches a committed, reloadable, non-duplicating player action.",
-  "native_commands_for_owner": {
-    "a0_slice_mount": [
-      "# owner adds one scene that hosts the A1 slice nodes, then:",
-      "xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_slice --resolution 1280x720 --windowed --script res://tests/survival_slice_cache_claim_test.gd"
+  "entry_claims": {
+    "A_route_exists_in_source": {
+      "evidence": {
+        "claim": "a normal menu route reaches the world with no test flag",
+        "native_test_in_source": true,
+        "note": "The route is the A0 survival overworld (Hollow Marches), not the A1 continent slice: claim A only says a normal route to the world exists.",
+        "route_exists_in_source": true,
+        "steps": [
+          {
+            "file": "game/ui/screens/home/home_map_screen.gd",
+            "line": 6,
+            "step": "home hub destination 'campaign'"
+          },
+          {
+            "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+            "line": 17,
+            "step": "campaign tab button"
+          },
+          {
+            "file": "game/ui/screens/hub/tabs/campaign_tab.gd",
+            "line": 18,
+            "step": "button -> AppFlow.open_overworld"
+          },
+          {
+            "file": "game/app/app_flow.gd",
+            "line": 125,
+            "step": "open_overworld implementation"
+          },
+          {
+            "file": "game/ui/screens/hub/tabs/campaign_tab.tscn",
+            "line": 99,
+            "step": "button node in the shipped tab scene"
+          }
+        ],
+        "test_flag_required": false
+      },
+      "level": "S3_PRODUCTION_SEAM",
+      "state": "SOURCE_PRESENT"
+    },
+    "B_route_runs_in_native_godot": {
+      "evidence": {
+        "evidence_id": "a0_normal_entry_home",
+        "head_sha": null,
+        "other_commit_runs": [
+          {
+            "conclusion": "",
+            "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+            "run_id": 41018366655,
+            "status": "queued"
+          },
+          {
+            "conclusion": "",
+            "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+            "run_id": 41018227483,
+            "status": "queued"
+          }
+        ],
+        "phrase_found": false,
+        "proves": "a normal menu route reaches the overworld in native Godot",
+        "run_id": null,
+        "state": "STALE_HEAD"
+      },
+      "level": "NOT_CLAIMED",
+      "state": "STALE_HEAD"
+    },
+    "C_content_is_mounted": {
+      "evidence": {
+        "a1_instance_references_in_a0_surface": [],
+        "a8_instance_references_in_a0_surface": [],
+        "a8_site_scenes_in_overworld": [],
+        "claim": "the A1 cache and A8 POI are mounted inside the world the route reaches",
+        "mounted": false,
+        "note": "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 site scenes are placed in it."
+      },
+      "level": "S0_ABSENT",
+      "state": "ABSENT"
+    },
+    "D_useful_reward_claimable": {
+      "evidence": {
+        "mounted_callers": [
+          {
+            "arguments": ".call(",
+            "authorisation": [
+              "CAMPAIGN_FALLBACK_KEY",
+              "CAMPAIGN_REGISTRY"
+            ],
+            "authorisation_refs": [
+              "CAMPAIGN_REGISTRY:completion_transaction_id",
+              "CAMPAIGN_FALLBACK_KEY:campaign:%s:complete"
+            ],
+            "classification": "MOUNTED_CAMPAIGN_CALLER",
+            "context": [
+              "CAMPAIGN_PROGRESSION_MUTATION"
+            ],
+            "function": "_commit_campaign_completion",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 671,
+            "mount_state": "MOUNTED",
+            "path": "game/app/app_flow.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_CAMPAIGN_CALLER",
+            "context": [
+              "CAMPAIGN_PROGRESSION_MUTATION"
+            ],
+            "function": "_commit_level_ten_replay_bounty",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 818,
+            "mount_state": "MOUNTED",
+            "path": "game/app/app_flow.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_CAMPAIGN_CALLER",
+            "context": [
+              "CAMPAIGN_PROGRESSION_MUTATION"
+            ],
+            "function": "_reconcile_campaign_unlocks",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 861,
+            "mount_state": "MOUNTED",
+            "path": "game/app/app_flow.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_CAMPAIGN_CALLER",
+            "context": [
+              "CAMPAIGN_PROGRESSION_MUTATION"
+            ],
+            "function": "_reconcile_campaign_visible_rewards",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 941,
+            "mount_state": "MOUNTED",
+            "path": "game/app/app_flow.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_CAMPAIGN_CALLER",
+            "context": [
+              "CAMPAIGN_PROGRESSION_MUTATION"
+            ],
+            "function": "_reconcile_campaign_content_entitlements",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 1006,
+            "mount_state": "MOUNTED",
+            "path": "game/app/app_flow.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+            "context": [
+              "SURVIVAL_DOCUMENT_MUTATION",
+              "SURVIVAL_ITEM_GRANT"
+            ],
+            "function": "harvest",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 229,
+            "mount_state": "MOUNTED",
+            "path": "game/survival/survival_service.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+            "context": [
+              "SURVIVAL_DOCUMENT_MUTATION",
+              "SURVIVAL_ITEM_GRANT"
+            ],
+            "function": "_transfer",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 733,
+            "mount_state": "MOUNTED",
+            "path": "game/survival/survival_service.gd"
+          },
+          {
+            "arguments": ".call(",
+            "authorisation": [],
+            "authorisation_refs": [],
+            "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+            "context": [
+              "SURVIVAL_DOCUMENT_MUTATION",
+              "SURVIVAL_ITEM_GRANT"
+            ],
+            "function": "_transfer_all",
+            "function_referenced": true,
+            "kind": "call_method",
+            "line": 876,
+            "mount_state": "MOUNTED",
+            "path": "game/survival/survival_service.gd"
+          }
+        ],
+        "native_reload_state": "STALE_HEAD",
+        "static_seam_state": "MOUNTED_SURVIVAL_SYSTEM_CALLER"
+      },
+      "level": "S3_PRODUCTION_SEAM",
+      "state": "PARTIAL"
+    }
+  },
+  "entry_content": {
+    "a1_instance_references_in_a0_surface": [],
+    "a8_instance_references_in_a0_surface": [],
+    "a8_site_scenes_in_overworld": [],
+    "claim": "the A1 cache and A8 POI are mounted inside the world the route reaches",
+    "mounted": false,
+    "note": "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 site scenes are placed in it."
+  },
+  "evidence": {
+    "run_states": [
+      "completed/success",
+      "queued/-"
     ],
-    "a0_survival_runtime": [
+    "runs_recorded": 21,
+    "schema": "soh.balance.ci_evidence.v1"
+  },
+  "headline": "Normal menu entry to A0's world exists in source; the A1 cache and A8 scene are not mounted in it; the only committed rewards are campaign progression; no native run has verified any of it.",
+  "mount_graph": {
+    "gate_files": {
+      "a0.app_flow.gd": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/app/app_flow.gd"
+      },
+      "a0.app_root.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/app/app_root.gd"
+      },
+      "a0.campaign_tab.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/ui/screens/hub/tabs/campaign_tab.gd"
+      },
+      "a0.campaign_tab.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/ui/screens/hub/tabs/campaign_tab.tscn"
+      },
+      "a0.chapter1_overworld.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/overworld/chapter1_overworld.tscn"
+      },
+      "a0.chest.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/world/interactables/chest.gd"
+      },
+      "a0.chest_inventory_panel.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/chest_inventory_panel.gd"
+      },
+      "a0.home_map_screen.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/ui/screens/home/home_map_screen.gd"
+      },
+      "a0.home_map_screen.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/ui/screens/home/home_map_screen.tscn"
+      },
+      "a0.hud.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/ui/hud.gd"
+      },
+      "a0.knight.tscn": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/characters/knight/knight.tscn"
+      },
+      "a0.main.tscn": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/main.tscn"
+      },
+      "a0.overworld_hud.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/overworld/overworld_hud.gd"
+      },
+      "a0.save_service.gd": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/autoload/save_service.gd"
+      },
+      "a0.survival_normal_entry_home_restart_test.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "tests/survival_normal_entry_home_restart_test.gd"
+      },
+      "a0.survival_normal_home_journey_test.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "tests/survival_normal_home_journey_test.gd"
+      },
+      "a0.survival_resource_node.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/survival_resource_node.gd"
+      },
+      "a0.survival_service.gd": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/survival/survival_service.gd"
+      },
+      "a6.a0_storage_command_adapter.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/a0_storage_command_adapter.gd"
+      },
+      "a6.acceptance_journeys.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/acceptance_journeys.gd"
+      },
+      "a6.avatar_appearance_adapter.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/avatar_appearance_adapter.gd"
+      },
+      "a6.expedition_map.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/expedition_map.gd"
+      },
+      "a6.expedition_planner.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/expedition_planner.gd"
+      },
+      "a6.expedition_workspace.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/expedition_workspace.gd"
+      },
+      "a6.player_first_hud.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/player_first_hud.gd"
+      },
+      "a6.survival_journal.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/survival_journal.gd"
+      },
+      "a6.survival_view_adapter.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/ui/survival_view_adapter.gd"
+      },
+      "a8.native_poi_site.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scripts/native_poi_site.gd"
+      },
+      "a8.poi_authority_fixture.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scripts/poi_authority_fixture.gd"
+      },
+      "a8.poi_pilot.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scripts/poi_pilot.gd"
+      },
+      "a8.poi_pilot.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scenes/poi_pilot.tscn"
+      },
+      "a8.south_crown_mill.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scenes/south_crown_mill.tscn"
+      },
+      "a8.south_orchard_ruin.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scenes/south_orchard_ruin.tscn"
+      },
+      "a8.south_quarry.tscn": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scenes/south_quarry.tscn"
+      }
+    },
+    "pinned_files": 45,
+    "reachable": [
+      "game/app/app_flow.gd",
+      "game/autoload/save_service.gd",
+      "game/characters/knight/knight.tscn",
+      "game/main.tscn",
+      "game/survival/survival_service.gd"
+    ]
+  },
+  "native_commands_for_owner": {
+    "a0_normal_entry_home": [
+      "mkdir -p artifacts/ud_import artifacts/ud_entry",
       "godot --headless --path . --user-data-dir artifacts/ud_import --import",
-      "godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --script res://tests/survival_foundation_test.gd"
+      "xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_entry --resolution 1280x720 --windowed --script res://tests/survival_normal_entry_home_restart_test.gd"
+    ],
+    "a0_two_process_reload": [
+      "# same user-data dir, a genuinely separate OS process:",
+      "xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_entry --resolution 1280x720 --windowed --script res://tests/survival_normal_entry_home_restart_test.gd -- --verify-separate-process",
+      "# PASS requires the log line 'NORMAL ENTRY HOME RESTART PASSED' in BOTH processes"
     ],
     "a6_composition": [
       "xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_a6 --resolution 960x540 --windowed --script res://tests/survival_a6_modal_composition_test.gd"
@@ -1155,25 +2390,168 @@
     "a8_native_capture": [
       "xvfb-run -a godot --path . --resolution \"1280x720\" --rendering-method gl_compatibility --script tools/survival/world_content/capture_native_pilot.gd -- --width=1280 --height=720 --output=.artifacts/a8-world-content/pilot-1280x720.png"
     ],
-    "a8_native_contract": [
+    "a8_native_poi_contract": [
       "godot --headless --path . --editor --quit",
       "godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd"
-    ],
-    "process_restart_reload": [
-      "# the ONLY acceptable reload proof is two processes on one user-data dir:",
-      "godot --headless --path . --user-data-dir artifacts/ud_loot --script res://tests/survival_slice_claim_commit.gd",
-      "godot --headless --path . --user-data-dir artifacts/ud_loot --script res://tests/survival_slice_reload_no_duplicate.gd"
     ]
   },
-  "overall_level": "S0_ABSENT",
-  "overall_meaning": "the link does not exist",
+  "native_states": {
+    "a0_normal_entry_home": {
+      "evidence_id": "a0_normal_entry_home",
+      "head_sha": null,
+      "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+          "run_id": 41018366655,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+          "run_id": 41018227483,
+          "status": "queued"
+        }
+      ],
+      "phrase_found": false,
+      "proves": "a normal menu route reaches the overworld in native Godot",
+      "run_id": null,
+      "state": "STALE_HEAD"
+    },
+    "a0_runtime_validation": {
+      "evidence_id": "a0_runtime_validation",
+      "head_sha": null,
+      "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+          "run_id": 41018366731,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+          "run_id": 41018227367,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+          "run_id": 41017622318,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "cdd1b7f3055637882fb6b7b3ac0f168becbb7ec6",
+          "run_id": 41012744088,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "9d287f3337af3874720d9444e8c258e26162f24c",
+          "run_id": 41012438709,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "61ada9cfa0f0ad02bb6714628ee83a19e7fd65b9",
+          "run_id": 41010284056,
+          "status": "queued"
+        },
+        {
+          "conclusion": "success",
+          "head_sha": "1c5d4413685c8498be253c7b3cf50ef774f3053b",
+          "run_id": 41008847954,
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "head_sha": "bffb872d43a4c0e9e9b75a401c95d81f104213de",
+          "run_id": 41008469947,
+          "status": "completed"
+        }
+      ],
+      "phrase_found": false,
+      "proves": "the survival runtime scripts parse and run headless",
+      "run_id": null,
+      "state": "STALE_HEAD"
+    },
+    "a0_two_process_reload": {
+      "evidence_id": "a0_two_process_reload",
+      "head_sha": null,
+      "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+          "run_id": 41018366655,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+          "run_id": 41018227483,
+          "status": "queued"
+        }
+      ],
+      "phrase_found": false,
+      "proves": "an independent second Godot process restores the same save with no duplicates",
+      "run_id": null,
+      "state": "STALE_HEAD"
+    },
+    "a8_native_poi_contract": {
+      "evidence_id": "a8_native_poi_contract",
+      "head_sha": "2d7f10d355cb57692a321f3ca633550d31385157",
+      "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "2ad531f9e099cc3a29709da176e7a34b05a9a15b",
+          "run_id": 41019182407,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
+          "run_id": 41019032228,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+          "run_id": 41015986080,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+          "run_id": 41015980806,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "17d0692cc591f70b45818f73b75199e4969bd328",
+          "run_id": 41013849680,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "17d0692cc591f70b45818f73b75199e4969bd328",
+          "run_id": 41013834329,
+          "status": "queued"
+        }
+      ],
+      "phrase_found": false,
+      "proves": "the native POI scene loads and its intent contract runs",
+      "run_id": 41019689728,
+      "state": "QUEUED"
+    }
+  },
   "owner_assertions_for_S4": [
-    "entry: reaches the site with no test flag and no console error",
+    "entry: the log says NORMAL ENTRY HOME RESTART PASSED in the first process",
     "cost: the exact authorized items are removed once",
     "reward: the exact authorized items are added once",
-    "receipt: transact_once returned true and recorded exactly one key",
-    "reload: a second process reads the committed state",
-    "no duplicate: replaying the action leaves inventory unchanged",
+    "receipt: transact_once recorded exactly one new key",
+    "reload: a second process prints ENTRY_HOME_SECOND_PROCESS with equal receipts",
+    "no duplicate: replaying the action leaves inventory and receipts unchanged",
     "outcome: the reward is consumed by the named sink"
   ],
   "s_levels": [
@@ -1183,34 +2561,33 @@
     },
     {
       "level": "S1_AUTHORED_ONLY",
-      "meaning": "only authored data/contracts describe it"
+      "meaning": "only authored data or a contract describes it; no code path"
     },
     {
-      "level": "S2_FIXTURE_ONLY",
+      "level": "S2_SCENE_FIXTURE",
       "meaning": "a native scene demonstrates it with fake state"
     },
     {
-      "level": "S3_OWNER_SEAM_UNWIRED",
-      "meaning": "the production owner API exists but is not joined for this action"
+      "level": "S3_PRODUCTION_SEAM",
+      "meaning": "a mounted production seam exists; static proof only"
     },
     {
-      "level": "S4_NATIVE_COMMITTED",
-      "meaning": "native normal-input commit + reload proven by the owner"
+      "level": "S4_NATIVE_VERIFIED",
+      "meaning": "the owning workflow ran green on this commit with its assertion phrase"
     },
     {
-      "level": "S5_FULL_NORMAL_INPUT",
-      "meaning": "S4 + fresh OS process restart + inspected visual evidence"
+      "level": "S5_RELEASE_ACCEPTED",
+      "meaning": "S4 plus human visual and feel acceptance"
     }
   ],
-  "schema": "soh.balance.integration_gate.v2",
+  "schema": "soh.balance.integration_gate.v3",
   "snapshot_heads": {
-    "a0": "77e434a7046760d4660f8579c9ad0563b023e3c2",
-    "a1": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a0": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
+    "a1": "7fd000e1c017830a088749b965e651fafb501b98",
     "a6": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
-    "a8": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
-    "a8_task": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+    "a8": "2d7f10d355cb57692a321f3ca633550d31385157"
   },
-  "static_ceiling": "S3_OWNER_SEAM_UNWIRED",
+  "static_ceiling": "S3_PRODUCTION_SEAM",
   "waystation_spec": {
     "actions": [
       {
@@ -1283,7 +2660,8 @@
     ]
   },
   "what_static_cannot_claim": [
-    "S4/S5 require a native Godot run with normal input by the owning agent.",
-    "A7 runs no Godot here; nothing above S3 is reported and no native PASS is implied."
+    "S4/S5 require a native Godot run by the owning agent; A7 runs none.",
+    "A mounted call site proves the seam exists, not that it compiles or runs.",
+    "A native scene that demos with a fixture proves the scene, not the integration."
   ]
 }

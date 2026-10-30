@@ -15,13 +15,25 @@ import json
 import re
 from typing import Dict, List, Sequence
 
+from . import gdscan
+from . import product as product_module
+
 FAIL, WARN, PASS, UNKNOWN = "FAIL", "WARN", "PASS", "UNKNOWN"
 
 
-def _check(check_id: str, title: str, status: str, impact: str, evidence, owner: str, closure: str) -> Dict[str, object]:
+def _check(
+    check_id: str,
+    title: str,
+    status: str,
+    impact: str,
+    evidence,
+    owner: str,
+    closure: str,
+    extra: Dict[str, object] | None = None,
+) -> Dict[str, object]:
     if status not in {FAIL, WARN, PASS, UNKNOWN}:
         raise ValueError(status)
-    return {
+    payload: Dict[str, object] = {
         "check_id": check_id,
         "title": title,
         "status": status,
@@ -29,7 +41,10 @@ def _check(check_id: str, title: str, status: str, impact: str, evidence, owner:
         "owner": owner,
         "evidence": evidence,
         "closure_signal": closure,
+        "scope": "STATIC_READ_OF_PINNED_BYTES",
     }
+    payload.update(extra or {})
+    return payload
 
 
 def _site_payloads(texts: Dict[str, str]) -> List[Dict[str, object]]:
@@ -185,54 +200,115 @@ def item_mapping_check(model, facts: Dict[str, object]) -> Dict[str, object]:
 
 # ------------------------------------------------------ Q4 avatar identity/armor
 def avatar_check(texts: Dict[str, str], facts: Dict[str, object]) -> Dict[str, object]:
+    """Q-04: is the player body the locked avatar, and is any claimed art real?
+
+    Round 3 accepted a filled-in ``idle_sheet`` string plus a scene name. That was
+    false completion: an invented path is not an installed image. Three separate
+    questions are now answered separately:
+
+    * identity — does the mounted body resolve to Craftpix 555940 / 419402?
+    * reference reality — does every claimed sheet exist in the pinned tree?
+    * visual readiness — can a player actually see it (never provable statically)?
+    """
     manifest_raw = texts.get("a6.avatar_art_manifest.json", "{}")
     try:
         manifest = json.loads(manifest_raw)
     except Exception:
         manifest = {}
     characters = manifest.get("characters", {})
+    tree = facts.get("_tree") or {}
+    owners_tree = set()
+    for rows in tree.values():
+        owners_tree |= set(rows)
+
+    def _exists(res_path: str) -> bool:
+        if not res_path.startswith("res://"):
+            return False
+        return res_path[len("res://") :] in owners_tree
+
     grades: Dict[str, Dict[str, object]] = {}
+    claimed_sheets: List[Dict[str, object]] = []
     for gender, row in characters.items():
-        armor = row.get("armor_grades", {})
+        armor = row.get("armor_grades", {}) or {}
         grades[gender] = {
             grade: ("PRESENT" if isinstance(armor.get(grade), dict) else "NULL_SOURCE_BLOCKED")
             for grade in ("0", "1", "2")
         }
-    adapter = texts.get("a6.avatar_appearance_adapter.gd", "")
-    adapter_blocks_when_missing = bool(re.search(r"Matching armor appearance is not verified", adapter))
-    adapter_falls_back = bool(re.search(r"knight|180537|swordsman", adapter, re.IGNORECASE))
-    mounted = facts.get("mounted_player_scene")
-    identity_ok = isinstance(mounted, str) and bool(re.search(r"adventur|555940|419402", mounted))
-    # The grade-0 sheet has to be installed for the *mounted* body, not merely declared.
-    def _grade0_installed(gender: str) -> bool:
-        grade0 = ((characters.get(gender) or {}).get("armor_grades") or {}).get("0")
-        return isinstance(grade0, dict) and bool(str(grade0.get("idle_sheet") or "").strip())
+        for grade, entry in armor.items():
+            if not isinstance(entry, dict):
+                continue
+            sheet = str(entry.get("idle_sheet") or "").strip()
+            claimed_sheets.append(
+                {
+                    "gender": gender,
+                    "grade": grade,
+                    "sheet": sheet,
+                    "exists_in_tree": _exists(sheet) if sheet else False,
+                }
+            )
 
-    installed_for = sorted(gender for gender in characters if _grade0_installed(gender))
-    grade0_mounted = bool(installed_for) and any(
-        str(characters[gender].get("craftpix_id", "")) in str(mounted) for gender in installed_for
+    adapter_live = gdscan.strip_comments_and_strings(texts.get("a6.avatar_appearance_adapter.gd", ""))
+    adapter_mentions_substitute = bool(re.search(r"knight|180537|swordsman", adapter_live, re.IGNORECASE))
+    adapter_blocks = bool(re.search(r"Matching armor appearance is not verified", texts.get("a6.avatar_appearance_adapter.gd", "")))
+
+    mounted = facts.get("mounted_player_scene")
+    mounted_text = str(mounted or "")
+    identity_ok = bool(re.search(r"adventur|555940|419402", mounted_text)) and not re.search(
+        r"knight|180537|swordsman", mounted_text, re.IGNORECASE
     )
-    status = FAIL if (not identity_ok or not grade0_mounted or adapter_falls_back) else PASS
+    installed = [row for row in claimed_sheets if row["exists_in_tree"]]
+    invented = [row for row in claimed_sheets if row["sheet"] and not row["exists_in_tree"]]
+    empty_sheets = [row for row in claimed_sheets if not row["sheet"]]
+
+    if invented:
+        status = FAIL
+        verdict = "CLAIMED_SHEET_DOES_NOT_EXIST"
+    elif not identity_ok:
+        status = FAIL
+        verdict = "WRONG_MOUNTED_IDENTITY"
+    elif adapter_mentions_substitute:
+        status = FAIL
+        verdict = "ADAPTER_SUBSTITUTES_ANOTHER_CHARACTER"
+    elif not installed:
+        status = FAIL
+        verdict = "NO_INSTALLED_GRADE0_SHEET"
+    else:
+        status = PASS
+        verdict = "REFERENCE_CONSISTENT"
+
     return _check(
         "Q-04",
         "Player avatar identity and armour state are correct or explicitly blocked",
         status,
         (
-            f"Canonical bodies are declared (555940 male / 419402 female) with armour grades 1-2 NULL and the "
-            f"grade-0 sheet path empty, so the adapter returns SOURCE_BLOCKED rather than a wrong body: "
-            f"{adapter_blocks_when_missing}. It has no fallback to Knight/Swordsman: {not adapter_falls_back}. "
-            f"But the mounted body is still `{mounted}`, so a player sees the wrong character today."
+            f"The locked identities are Craftpix 555940 (male) and 419402 (female). The mounted body is "
+            f"`{mounted}`. Every claimed sheet is checked against the pinned tree: {len(installed)} installed, "
+            f"{len(invented)} invented, {len(empty_sheets)} empty. Armour grades 1-2 are allowed to stay "
+            f"NULL_SOURCE_BLOCKED (other armour art is the owner's choice, gender-matched) but a NULL grade is "
+            f"never counted as ready. Static state is `{verdict}`; a player still sees the wrong character today "
+            f"because the mounted body is not canonical."
         ),
         [
             {"fact": "armour grade availability", "value": grades},
-            {"fact": "grade-0 idle sheet installed", "value": grade0_mounted},
-            {"fact": "adapter blocks instead of substituting", "value": adapter_blocks_when_missing},
-            {"fact": "adapter fallback to Knight/Swordsman", "value": adapter_falls_back},
-            {"fact": "grade-0 sheet installed for", "value": installed_for},
+            {"fact": "claimed sheets", "value": claimed_sheets},
+            {"fact": "invented sheet claims", "value": invented},
+            {"fact": "adapter blocks instead of substituting", "value": adapter_blocks},
+            {"fact": "adapter substitutes Knight/Swordsman code path", "value": adapter_mentions_substitute},
             {"fact": "mounted player scene", "value": mounted},
         ],
-        "A0 (mount) + A6 (art import)",
-        "mounted scene path contains 555940/419402 and every grade either has an installed sheet or reports SOURCE_BLOCKED",
+        "A6 (art import + adapter) with A0 (mount)",
+        "mounted scene is canonical AND every claimed sheet exists in the tree AND no substitute code path",
+        extra={
+            "static_verdict": verdict,
+            "visual_state": "NOT_TESTED",
+            "visual_evidence_required": [
+                "the scene loads in native Godot and the sprite node has a texture",
+                "4-direction idle animation plays on the mounted body",
+                "equipping armour swaps to the matching grade, and unequipping reverses it",
+                "rendered frames at 1280x720 and 1920x1080 inspected by a human",
+            ],
+            "release_state": "NOT_ACCEPTED",
+        },
     )
 
 
@@ -370,6 +446,7 @@ def fixture_claim_check(texts: Dict[str, str]) -> Dict[str, object]:
 def run_all(model, texts: Dict[str, str], facts: Dict[str, object], manifest: Dict[str, object]) -> List[Dict[str, object]]:
     enriched = dict(facts)
     enriched["_texts"] = texts
+    enriched["_tree"] = product_module.load_tree(manifest)
     return [
         empty_poi_check(model, texts, enriched),
         duplicate_hud_check(texts, enriched),

@@ -83,6 +83,14 @@
       "death_chance_status": "UNMODELLED_NO_DEATH_MODEL_KEY",
       "findings": [
         {
+          "code": "NONE_ELIGIBLE",
+          "code_meaning": "no eligible container/source exists for the requested claim set",
+          "detail": "source has no pinned yield declaration; claim cannot be counted",
+          "owner": "A3",
+          "severity": "MAJOR",
+          "subject": "waystation_locker"
+        },
+        {
           "code": "DEATH_CARGO_LOSS_UNMODELLED",
           "code_meaning": "death risk applies to cargo that the model cannot recover",
           "detail": "A1 risk label 'early' has no A3 death-chance key; expected cargo survival is not computed",
@@ -144,8 +152,8 @@
       ],
       "loot_slots": 3,
       "loot_units": {
-        "iron_scrap": 5.0,
-        "knowledge_spares": 3.0,
+        "iron_scrap": 3.0,
+        "knowledge_spares": 2.0,
         "moonleaf": 2.0
       },
       "notes": "The duplicated locker claim is deliberate: it exercises the one-time policy and must be blocked, not counted twice.",
@@ -174,6 +182,7 @@
             },
             "shortfall": {
               "iron_ingot": 2.0,
+              "knowledge_spares": 1.0,
               "oak_wood": 4.0
             },
             "status": "SHORT"
@@ -220,7 +229,7 @@
             },
             "shortfall": {
               "iron_ingot": 2.0,
-              "knowledge_spares": 1.0
+              "knowledge_spares": 2.0
             },
             "status": "SHORT"
           },
@@ -230,7 +239,7 @@
               "knowledge_spares": 4
             },
             "shortfall": {
-              "knowledge_spares": 1.0
+              "knowledge_spares": 2.0
             },
             "status": "SHORT"
           },
@@ -289,7 +298,7 @@
         "UI frames",
         "death and recovery"
       ],
-      "useful_units": 10.0
+      "useful_units": 7.0
     },
     {
       "blocked_claims": [],
@@ -586,7 +595,7 @@
       "loot_slots": 2,
       "loot_units": {
         "iron_scrap": 3.0,
-        "knowledge_spares": 1.0
+        "knowledge_spares": 2.0
       },
       "notes": "The route requires cap_filter, so the intended trip is not passable; the model reports the lock and the fallback route instead of an invented unmitigated crossing.",
       "overflow_slots": 0,
@@ -614,7 +623,7 @@
             },
             "shortfall": {
               "iron_ingot": 2.0,
-              "knowledge_spares": 2.0,
+              "knowledge_spares": 1.0,
               "oak_wood": 4.0
             },
             "status": "SHORT"
@@ -661,7 +670,7 @@
             },
             "shortfall": {
               "iron_ingot": 2.0,
-              "knowledge_spares": 3.0
+              "knowledge_spares": 2.0
             },
             "status": "SHORT"
           },
@@ -671,7 +680,7 @@
               "knowledge_spares": 4
             },
             "shortfall": {
-              "knowledge_spares": 3.0
+              "knowledge_spares": 2.0
             },
             "status": "SHORT"
           },
@@ -730,7 +739,7 @@
         "UI frames",
         "death and recovery"
       ],
-      "useful_units": 4.0
+      "useful_units": 5.0
     },
     {
       "blocked_claims": [],

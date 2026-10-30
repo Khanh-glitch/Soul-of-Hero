@@ -1,18 +1,18 @@
 {
   "artifacts": {
-    "access.json": "f828793506b565894c94c8040d5be89ded8426186617634816567a938ccdf4ac",
+    "access.json": "a53fe9d27c05b5de6ee06042c9035109369d69bc8d21baf119e7e1280386e5c2",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
-    "blockers.json": "0909591ab31124ad68dc080253b3eba1df5592ec2b109833b5e74855d643a6ed",
-    "findings.json": "2e71ac9b7f656a3f9d6883fe77d8c6d172bbcba2dbdbd0c09cfe1b494c4256d1",
-    "gate.json": "e8648ef93e54b4bb2dc48ee5275e65ca7738645d44b285324d1c3068a5ffa800",
-    "opportunity.json": "3b20600aba2a07361e80279aa404d28c3daaa23f212dca10ccf0e7c0742d1b72",
-    "product.json": "ce17b5b8a4bc2cdae922d31361e6e93f9b5c2b5ddb01a9c3ab6699fb7c1a5302",
-    "provenance.json": "af65b6d585453668fcaecf58318429c8692658bdc824ef6cf6e1a8605446d95e",
-    "quality.json": "6574207ac21f0d4b7dd412f6d55053749085f2ca84673843d8c7e2debc32f7e0",
+    "blockers.json": "89f1fc7ca147ec0a5ba57dcdc181c2fc9c1d44c2e16e718e5b98a9c790ec2dbc",
+    "findings.json": "8f782aa47482bda09b4e6888f9a4fca45ee1c9c48410733011440a6e2c05afe2",
+    "gate.json": "2104c3823fcdb7ebf00a8ea731cbed986510b26e5abd0d3277ed8f9a73c9f1f6",
+    "opportunity.json": "e189d633e99212e8a331b6ad64c1cba71dfd27cc1004ea6587759fcc27a58a31",
+    "product.json": "29f1a3845a6e90b8d8b80408f533aa10da0d5b1a00217b41d0eced5ea837f386",
+    "provenance.json": "6b5b4988c03d66314ecb83acd0fd46f2071b42b6007d440544b6cc64f620a64e",
+    "quality.json": "4b836026ee0a528fd431bff4d5a9f33ead74229580b761a622e8ba2c4f7943a0",
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
-    "summary.json": "6bc621e8220b30c73f02c589cc2b26500307e52d10d1e19c73d6054a154f7f0e"
+    "summary.json": "ac61c305346c87e17139b72a18f5b2f2e3522fe13ae96426e7285ba68f376371"
   },
-  "combined_sha256": "7eb00ef2d1361167f522d84078d56f5a137dc136d139a1f718ab64cf4ba85688",
+  "combined_sha256": "308a0482fb01b986ce3f85c773a1db9f01859101808e9ca5a247527f6daf95c2",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

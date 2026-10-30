@@ -20,7 +20,7 @@ from pathlib import Path
 import _support as support
 
 from sohbalance import blockers as blocker_module
-from sohbalance import product
+from sohbalance import product, quality
 from sohbalance.identity import classify_target, loot_identity_map
 
 
@@ -57,7 +57,8 @@ class PinnedSurfaceTests(unittest.TestCase):
     def test_snapshot_hashes_are_verified_on_load(self) -> None:
         # load_snapshot raises on any byte drift; reaching here means all 18 matched.
         _texts, manifest = product.load_snapshot(ROOT)
-        self.assertEqual(len(manifest["files"]), 37)
+        self.assertEqual(len(manifest["files"]), 45)
+        self.assertEqual(manifest["tree_index"]["lines"] > 6000, True)
         self.assertEqual(manifest["schema"], "soh.balance.product_snapshot.v1")
 
     def test_home_screen_has_no_survival_destination(self) -> None:
@@ -129,20 +130,24 @@ class IdentityTaxonomyTests(unittest.TestCase):
 
     def test_one_record_is_not_one_poi(self) -> None:
         self.assertEqual(self.mapping["record_count"], 16)
-        self.assertEqual(self.mapping["distinct_targets"], 10)
+        # 11 since A3 adopted A1's instance binding; 10 class targets remain.
+        self.assertEqual(self.mapping["distinct_targets"], 11)
         self.assertEqual(
             sum(row["record_count"] for row in self.mapping["targets"].values()),
             self.mapping["record_count"],
         )
 
-    def test_all_targets_use_the_class_namespace(self) -> None:
+    def test_class_ids_and_instance_ids_stay_separate(self) -> None:
         kinds = {row["target_kind"] for row in self.mapping["targets"].values()}
-        self.assertEqual(kinds, {"CLASS_NAMESPACE"})
-        self.assertFalse(self.mapping["instance_namespaced_targets"])
+        self.assertEqual(kinds, {"CLASS_NAMESPACE", "INSTANCE_PREFIX"})
+        self.assertEqual(self.mapping["instance_namespaced_targets"], ["poi_crown_waystation"])
+        self.assertEqual(len(self.mapping["class_namespaced_targets"]), 10)
 
-    def test_no_target_resolves_and_no_instance_is_authored(self) -> None:
-        self.assertEqual(self.mapping["targets_resolving_to_a1_instance"], [])
-        self.assertEqual(self.mapping["physical_container_instances_authored_by_a1"], 0)
+    def test_one_target_resolves_after_a3_adopted_the_binding(self) -> None:
+        # Round 4: A3 adopted A1's rebind for the first-hour cache, so exactly one
+        # target is now a physical instance. The other ten are still class ids.
+        self.assertEqual(self.mapping["targets_resolving_to_a1_instance"], ["poi_crown_waystation"])
+        self.assertEqual(self.mapping["physical_container_instances_authored_by_a1"], 1)
 
     def test_a1_publishes_no_container_vocabulary(self) -> None:
         self.assertEqual(self.mapping["a1_container_class_vocabulary"], [])
@@ -159,6 +164,44 @@ class IdentityTaxonomyTests(unittest.TestCase):
         self.assertEqual(classify_target("Roadside Cache")["kind"], "UNKNOWN_SCHEME")
 
 
+class HeadlineFactsTests(unittest.TestCase):
+    """The single numbers quoted in the docs must be recomputed, not remembered."""
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.model = support.model()
+        texts, manifest = product.load_snapshot(support.REPO_ROOT)
+        cls.facts = product.build_facts(
+            texts, manifest, loot_tables=sorted(cls.model.loot_tables), station_ids=sorted(cls.model.stations)
+        )
+        cls.facts.update(product.model_facts(cls.model))
+        cls.checks = {
+            c["check_id"]: c for c in quality.run_all(cls.model, texts, cls.facts, manifest)
+        }
+
+    def test_avatar_assets_absent_and_body_wrong(self) -> None:
+        refs = self.facts["canonical_avatar_production_refs"]
+        self.assertEqual(set(refs), {"180537", "419402", "555940"})
+        self.assertEqual(sum(refs.values()), 0)
+        self.assertEqual(self.facts["mounted_player_scene"], "game/characters/knight/knight.tscn")
+
+    def test_no_survival_ui_scene_is_mounted(self) -> None:
+        self.assertEqual(self.facts["survival_ui_scenes_mounted"], [])
+
+    def test_debug_literals_exist_but_are_not_a_player_surface_defect(self) -> None:
+        # The raw file-level hits stay on the record, and PROD-04 keeps its broad
+        # FAIL as a hygiene warning. What the reclassification rests on is Q-02:
+        # no mounted production scene shows that vocabulary to a player.
+        self.assertTrue(self.facts["visible_debug_tokens"])
+        self.assertEqual(self.checks["Q-02"]["status"], "PASS")
+        self.assertEqual(self.facts["survival_ui_scenes_mounted"], [])
+
+    def test_visual_readiness_is_not_granted_statically(self) -> None:
+        self.assertEqual(self.checks["Q-04"]["status"], "FAIL")
+        self.assertIn("WRONG_MOUNTED_IDENTITY", json.dumps(self.checks["Q-04"]))
+        self.assertNotEqual(self.checks["Q-04"].get("native_status"), "PASS")
+
+
 class BlockerConsolidationTests(unittest.TestCase):
     def setUp(self) -> None:
         model = support.model()
@@ -173,8 +216,8 @@ class BlockerConsolidationTests(unittest.TestCase):
 
     def test_at_most_five_blockers(self) -> None:
         self.assertLessEqual(len(self.payload["blockers"]), 5)
-        self.assertEqual(len(self.payload["blockers"]), 4)
-        self.assertEqual(self.payload["counts"]["closed_blockers"], 2)
+        self.assertEqual(len(self.payload["blockers"]), 5)
+        self.assertEqual(self.payload["counts"]["closed_blockers"], 3)
 
     def test_every_blocker_is_owned_actionable_and_closable(self) -> None:
         for row in self.payload["blockers"]:
@@ -189,6 +232,7 @@ class BlockerConsolidationTests(unittest.TestCase):
                     "SOURCE_DATA_INCOMPATIBILITY",
                     "PLAYER_FACING_VISUAL_DEFECT",
                     "FIXTURE_ONLY_SUCCESS",
+                    "UNAUTHORIZED_COST",
                 })
                 self.assertTrue(row["closure_probe"])
                 self.assertTrue(row["not_proven_after_closure"])
@@ -210,7 +254,15 @@ class BlockerConsolidationTests(unittest.TestCase):
         for row in self.payload["blockers"]:
             self.assertTrue(row["evidence"], row["blocker_id"])
             if row["observation_count"] == 0:
-                self.assertEqual(row["evidence_class"], "FIXTURE_ONLY_SUCCESS", row["blocker_id"])
+                # Two blockers come from the gate layer only, because the audit
+                # findings never name them: the missing commit seam and the
+                # unpriced A8 actions. Their evidence is still a measured fact, not
+                # an opinion, so the class must say which kind.
+                self.assertIn(
+                    row["evidence_class"],
+                    {"FIXTURE_ONLY_SUCCESS", "UNAUTHORIZED_COST"},
+                    row["blocker_id"],
+                )
 
     def test_closure_tests_really_exist(self) -> None:
         for row in self.payload["blockers"]:
@@ -263,11 +315,12 @@ class ProductClosureTests(unittest.TestCase):
 
         model = support.model()
         mapping = loot_identity_map(model)
-        self.assertEqual(mapping["targets_resolving_to_a1_instance"], [])
-        # The identity criterion is data-driven: a resolved target would appear here.
-        simulated = copy.deepcopy(mapping)
-        simulated["targets_resolving_to_a1_instance"] = ["poi:crown_waystation_cache"]
-        self.assertTrue(simulated["targets_resolving_to_a1_instance"])
+        # A3 adopted A1's binding for the first-hour cache, so exactly one target is
+        # a physical instance now. The identity criterion is data-driven: the other
+        # ten class ids stay unresolved until A3 binds them or A1 authors instances.
+        self.assertEqual(mapping["targets_resolving_to_a1_instance"], ["poi_crown_waystation"])
+        self.assertEqual(len(mapping["class_namespaced_targets"]), 10)
+        self.assertEqual(len(mapping["regions_unresolved"]), 3)
 
     def test_blk3_closes_when_the_mounted_body_is_canonical(self) -> None:
         facts = copy.deepcopy(self.facts)

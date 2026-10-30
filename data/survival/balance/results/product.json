@@ -55,7 +55,7 @@
         },
         {
           "fact": "files scanned",
-          "value": 37
+          "value": 45
         },
         {
           "fact": "opened() signal",
@@ -70,7 +70,7 @@
         }
       ],
       "owner": "A0 (mount) + A3 (table binding)",
-      "player_impact": "None of the 37 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
+      "player_impact": "None of the 45 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
       "status": "FAIL",
       "title": "Something the player can open hands out authored loot"
     },
@@ -335,9 +335,9 @@
   },
   "schema": "soh.balance.product.v1",
   "snapshot": {
-    "a0_head": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+    "a0_head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
     "a6_head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
-    "files_verified": 37,
+    "files_verified": 45,
     "manifest": "data/survival/balance/snapshot/product_manifest.json"
   },
   "unknown_evidence": [

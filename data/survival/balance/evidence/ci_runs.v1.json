@@ -1,0 +1,415 @@
+{
+  "note": "Recorded from the GitHub API by tools/survival/balance/record_ci_evidence.py. A run only counts for the commit it ran on.",
+  "runs": [
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:47:12Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41022220203,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:09:39Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018366734,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:08:14Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018227447,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:02:26Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "composed-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41017622472,
+      "status": "queued",
+      "workflow": "a0-a6-v4-latest-composition.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:09:39Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018366655,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:08:14Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "native-entry-restart",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018227483,
+      "status": "queued",
+      "workflow": "a0-normal-entry-home-restart.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:22:28Z",
+      "event": "pull_request",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "2d7f10d355cb57692a321f3ca633550d31385157",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019689728,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:17:30Z",
+      "event": "pull_request",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "2ad531f9e099cc3a29709da176e7a34b05a9a15b",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019182407,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:16:02Z",
+      "event": "pull_request",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41019032228,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:45:48Z",
+      "event": "pull_request",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41015986080,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:45:45Z",
+      "event": "push",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41015980806,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:24:01Z",
+      "event": "pull_request",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "17d0692cc591f70b45818f73b75199e4969bd328",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41013849680,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:23:51Z",
+      "event": "push",
+      "head_branch": "arena/2d7e6d7a-soul-of-hero",
+      "head_sha": "17d0692cc591f70b45818f73b75199e4969bd328",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "godot-native",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41013834329,
+      "status": "queued",
+      "workflow": "a8-world-content-native.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:09:39Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "a3d0255ab09ba59ec5f9212243619f69d85d2948",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018366731,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:08:14Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "7e1f5b030425c85a37c8238afdef3499234a96ce",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41018227367,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T07:02:26Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+      "jobs": [
+        {
+          "conclusion": "",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41017622318,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:12:39Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "cdd1b7f3055637882fb6b7b3ac0f168becbb7ec6",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "SURVIVAL NATIVE RUNTIME",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41012744088,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T06:09:30Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "9d287f3337af3874720d9444e8c258e26162f24c",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "SURVIVAL NATIVE RUNTIME",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41012438709,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "",
+      "created_at": "2026-10-30T05:46:29Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "61ada9cfa0f0ad02bb6714628ee83a19e7fd65b9",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "completed"
+        },
+        {
+          "conclusion": "",
+          "name": "SURVIVAL NATIVE RUNTIME",
+          "status": "queued"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41010284056,
+      "status": "queued",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-30T05:30:52Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "1c5d4413685c8498be253c7b3cf50ef774f3053b",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL NATIVE RUNTIME",
+          "status": "completed"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41008847954,
+      "status": "completed",
+      "workflow": "survival-runtime-validation.yml"
+    },
+    {
+      "conclusion": "success",
+      "created_at": "2026-10-30T05:26:39Z",
+      "event": "push",
+      "head_branch": "arena/dea2428e-soul-of-hero",
+      "head_sha": "bffb872d43a4c0e9e9b75a401c95d81f104213de",
+      "jobs": [
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL STATIC CONTRACTS",
+          "status": "completed"
+        },
+        {
+          "conclusion": "success",
+          "name": "SURVIVAL NATIVE RUNTIME",
+          "status": "completed"
+        }
+      ],
+      "log_phrases": [],
+      "run_id": 41008469947,
+      "status": "completed",
+      "workflow": "survival-runtime-validation.yml"
+    }
+  ],
+  "schema": "soh.balance.ci_evidence.v1",
+  "workflows": [
+    "a0-normal-entry-home-restart.yml",
+    "a8-world-content-native.yml",
+    "survival-runtime-validation.yml",
+    "a0-a6-v4-latest-composition.yml"
+  ]
+}
