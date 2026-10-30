@@ -116,6 +116,19 @@ def validate(out_dir: Path | None = None) -> dict:
         return {r["item_id"]: r["quantity"] for r in action.get("reward_items", [])}
     def consumes(action: dict) -> dict:
         return {r["item_id"]: r["quantity"] for r in action.get("consumes_items", [])}
+    locker_obs = [o for o in way["immutable_geography"]["static_obstacles"] if o["obstacle_id"] == "obs_waystation_locker_bank"]
+    if len(locker_obs) != 1:
+        fail(errors, "locker bank obstacle missing")
+    else:
+        ob = locker_obs[0]
+        if ob.get("collision_size_px") != [16, 14] or ob.get("collision_offset_px") != [0, -1] or ob.get("visual_size_px") != [16, 16]:
+            fail(errors, "locker stand collision correction changed: expected 16x14 offset (0,-1), visual 16x16")
+        if ob.get("cells") != [[408, 198], [409, 198]] or not ob.get("blocks_nav"):
+            fail(errors, "locker bank cells/nav changed")
+    if way["immutable_geography"]["anchor_cell"] != [408, 200]:
+        fail(errors, "Waystation anchor moved")
+    if actions["pry_locker"].get("stand_cells") != [[408, 199]] or actions["pry_locker"].get("interaction_radius_px") != 24:
+        fail(errors, "locker stand/radius changed")
     if actions["pry_locker"].get("grants_capabilities") != ["cap_salvage"] or items(actions["pry_locker"]) != {}:
         fail(errors, "canonical reward changed: locker")
     if actions["seal_ledger"].get("grants_capabilities") != ["cap_seal_1"] or items(actions["seal_ledger"]) != {}:

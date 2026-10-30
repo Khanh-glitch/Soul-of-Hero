@@ -8,7 +8,7 @@ extends SceneTree
 ## live-shape-verified route Refuge -> Waystation -> Relay -> Refuge.
 ##
 ## Run from the ROOT project (not the isolated reader project):
-##   godot --headless --path . --script res://tests/survival/world/connector_native_test.gd -- --connector-root=artifacts/a1-connector
+##   xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --resolution 960x540 --windowed --script res://tests/survival/world/connector_native_test.gd -- --connector-root=artifacts/a1-connector
 
 const WAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_waystation.slice.json"
 const RELAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json"
@@ -90,6 +90,18 @@ func _shape_clear(cell: Vector2i, cache: Dictionary) -> bool:
 	var clear := hero.get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
 	cache[cell] = clear
 	return clear
+
+
+func _intersect_at(cell: Vector2i) -> Array[Dictionary]:
+	var body_shape := hero.get_node("BodyShape") as CollisionShape2D
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = body_shape.shape
+	query.transform = Transform2D(0.0, _foot(cell) + body_shape.position)
+	query.collision_mask = hero.collision_mask
+	query.collide_with_bodies = true
+	query.collide_with_areas = false
+	query.exclude = [hero.get_rid()]
+	return hero.get_world_2d().direct_space_state.intersect_shape(query, 8)
 
 
 func _grid_route(start: Vector2i, goal: Vector2i) -> Array[Vector2i]:
@@ -191,16 +203,18 @@ func _mount_slice_obstacles(slice_path: String) -> int:
 		var obstacle: Dictionary = raw
 		if not bool(obstacle.get("blocks_nav", false)):
 			continue
+		var size_arr: Array = obstacle.get("collision_size_px", [16, 16])
+		var off_arr: Array = obstacle.get("collision_offset_px", [0, 0])
 		for raw_cell: Variant in obstacle.get("cells", []):
 			var c: Array = raw_cell
 			var body := StaticBody2D.new()
 			body.name = String(obstacle.get("obstacle_id", "slice_obstacle")) + "_%d_%d" % [int(c[0]), int(c[1])]
 			body.collision_layer = 1
 			body.collision_mask = 0
-			body.position = Vector2(int(c[0]) * 16 + 8, int(c[1]) * 16 + 8)
+			body.position = Vector2(int(c[0]) * 16 + 8 + float(off_arr[0]), int(c[1]) * 16 + 8 + float(off_arr[1]))
 			var shape := CollisionShape2D.new()
 			var rect := RectangleShape2D.new()
-			rect.size = Vector2(16, 16)
+			rect.size = Vector2(float(size_arr[0]), float(size_arr[1]))
 			shape.shape = rect
 			body.add_child(shape)
 			world.blocker_root.add_child(body)
@@ -224,9 +238,6 @@ func _run() -> void:
 	var ok := world.build(data, _abs("annex_layers.v1.json"), _abs("annex_props.v1.json"), entities)
 	print("CONNECTOR TRACE world_build=%s bounds=%dx%d" % [str(ok), world.width, world.height])
 	_expect(ok and world.width == 448 and world.height == 256, "composed 448x256 world built from pinned legacy + one canonical chunk")
-	var obstacles := _mount_slice_obstacles(WAY_SLICE) + _mount_slice_obstacles(RELAY_SLICE)
-	print("CONNECTOR TRACE obstacles=%d" % obstacles)
-	_expect(obstacles == 12, "two canonical slice static obstacle sets mounted (%d cells)" % obstacles)
 	nav = OverworldTraversability.new()
 	nav.build(world)
 	await physics_frame
@@ -263,14 +274,68 @@ func _run() -> void:
 	var blocked := nav.unreachable_endpoints(data)
 	_expect(blocked.is_empty(), "all ten dungeon thresholds, camps and discoveries remain reachable (%d blocked)" % blocked.size())
 
-	# Drive to the canonical Waystation anchor/approach cell. Exact locker-stand
-	# micro-clearance against the slice obstacle is A0 POI-mount acceptance, not a
-	# reason to teleport or move the POI; the connector must reach the site on foot.
-	print("CONNECTOR TRACE pre_drive way_anchor_clear=%s relay_stand_clear=%s" % [str(_shape_clear(Vector2i(408, 200), {})), str(_shape_clear(Vector2i(442, 234), {}))])
-	var way_ok := await _drive("Refuge->Waystation", Vector2i(408, 200))
+	# Owner-specific locker-stand correction: first prove the ORIGINAL full-tile
+	# blocker really intersects the exact stand, then mount the repaired A1 slice
+	# collision footprint and prove the same stand is nav-free, live-shape clear,
+	# and inside the authored interaction radius. No anchor substitution.
+	var stand_cell := Vector2i(408, 199)
+	var adverse := StaticBody2D.new()
+	adverse.name = "obs_waystation_locker_bank_408_198_original_full_tile"
+	adverse.collision_layer = 1
+	adverse.collision_mask = 0
+	adverse.position = Vector2(408 * 16 + 8, 198 * 16 + 8)
+	var adverse_shape := CollisionShape2D.new()
+	var adverse_rect := RectangleShape2D.new()
+	adverse_rect.size = Vector2(16, 16)
+	adverse_shape.shape = adverse_rect
+	adverse.add_child(adverse_shape)
+	world.blocker_root.add_child(adverse)
+	await physics_frame
+	await physics_frame
+	var adverse_hits := _intersect_at(stand_cell)
+	var adverse_names: Array[String] = []
+	for hit: Dictionary in adverse_hits:
+		var collider := hit.get("collider") as Node
+		if collider != null:
+			adverse_names.append(String(collider.name))
+	var locker_adverse := false
+	for adverse_name: String in adverse_names:
+		if adverse_name.contains("original_full_tile"):
+			locker_adverse = true
+	_expect(locker_adverse, "adverse proof: original full-tile locker blocker intersects exact stand (408,199)")
+	adverse.queue_free()
+	await physics_frame
+	await physics_frame
+
+	var obstacles := _mount_slice_obstacles(WAY_SLICE) + _mount_slice_obstacles(RELAY_SLICE)
+	print("CONNECTOR TRACE obstacles=%d" % obstacles)
+	_expect(obstacles == 12, "two canonical slice static obstacle sets mounted with authored collision footprints (%d cells)" % obstacles)
+	await physics_frame
+	await physics_frame
+	var locker_clear := nav.is_free(stand_cell) and _shape_clear(stand_cell, {}) and _intersect_at(stand_cell).is_empty()
+	_expect(locker_clear, "exact Waystation locker stand (408,199) is nav-free and live-shape clear after repaired 16x14 locker collision")
+	var way_slice := _read_json(WAY_SLICE)
+	var locker_action: Dictionary = {}
+	for a: Variant in way_slice.get("actions", []):
+		var ad: Dictionary = a
+		if String(ad.get("action_id", "")) == "pry_locker":
+			locker_action = ad
+	var locker_node: Dictionary = {}
+	for n: Variant in way_slice.get("interaction_nodes", []):
+		var nd: Dictionary = n
+		if String(nd.get("node_id", "")) == "node_waystation_locker":
+			locker_node = nd
+	var locker_radius := float(locker_action.get("interaction_radius_px", 0))
+	var node_cell: Array = locker_node.get("cell", [408, 198])
+	var node_center := Vector2(int(node_cell[0]) * 16 + 8, int(node_cell[1]) * 16 + 8)
+	var locker_range := _foot(stand_cell).distance_to(node_center)
+	_expect(locker_radius == 24.0 and locker_range <= locker_radius, "exact locker stand is inside authored 24px interaction range (%.2fpx)" % locker_range)
+	print("CONNECTOR TRACE pre_drive locker_stand_clear=%s relay_stand_clear=%s range=%.2f" % [str(locker_clear), str(_shape_clear(Vector2i(442, 234), {})), locker_range])
+	var way_ok := await _drive("Refuge->WaystationLockerStand", stand_cell)
 	if way_ok:
 		camera.force_update_scroll()
 		_expect(hero.global_position.x > 6144.0, "Hero physically crossed canonical x384 boundary on foot")
+		_expect(hero.global_position.distance_to(_foot(stand_cell)) <= 5.0 and _intersect_at(stand_cell).is_empty(), "Hero physically stands at exact repaired locker stand (408,199), not the anchor")
 	var relay_ok := false
 	if way_ok:
 		relay_ok = await _drive("Waystation->Relay", Vector2i(442, 234))
@@ -291,6 +356,16 @@ func _run() -> void:
 		"trace": trace,
 		"composed_bounds": [world.width, world.height],
 		"slice_obstacle_cells": obstacles,
+		"locker_stand_correction": {
+			"stand_cell": [stand_cell.x, stand_cell.y],
+			"anchor_cell": [408, 200],
+			"original_full_tile_adverse_intersect": locker_adverse,
+			"repaired_live_shape_clear": locker_clear,
+			"interaction_radius_px": locker_radius,
+			"stand_to_node_px": locker_range,
+			"collision_size_px": [16, 14],
+			"collision_offset_px": [0, -1]
+		},
 		"hero_body_px": [rect.size.x, rect.size.y],
 		"camera_limit_right": camera.limit_right,
 		"method": "real Knight scene + live PhysicsShapeQueryParameters2D route verification + ordinary Input.action_press movement; isolated composed-world fixture, not production controller",

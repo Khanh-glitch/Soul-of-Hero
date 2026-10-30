@@ -958,8 +958,21 @@
             198
           ]
         ],
+        "collision_correction_id": "a1_locker_stand_toe_clearance_v1",
+        "collision_offset_px": [
+          0,
+          -1
+        ],
+        "collision_size_px": [
+          16,
+          14
+        ],
         "kind": "static_body",
-        "obstacle_id": "obs_waystation_locker_bank"
+        "obstacle_id": "obs_waystation_locker_bank",
+        "visual_size_px": [
+          16,
+          16
+        ]
       },
       {
         "blocks_nav": true,

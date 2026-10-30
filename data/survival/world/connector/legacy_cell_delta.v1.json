@@ -1137,7 +1137,7 @@
     },
     "a1_waystation_slice": {
       "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
-      "sha256": "8c8ca05c7384b0bc4766b68666fcb48d2094a829d178b87b36c9088b03c6ef0c"
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
     },
     "knight_scene": {
       "path": "game/characters/knight/knight.tscn",

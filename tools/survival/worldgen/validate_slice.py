@@ -9,6 +9,7 @@ presence of all required adversarial vectors.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 import jsonschema
@@ -154,6 +155,37 @@ def validate() -> dict:
                 errors.append(f"{pid}:{a['action_id']}: one-time action needs transaction key")
             if a["one_time"] and not a["reward_right_id"]:
                 errors.append(f"{pid}:{a['action_id']}: one-time action needs reward right")
+        # Owner-specific live-shape arithmetic gate: every contract stand must fit
+        # the real Hero body against the obstacle collision footprint (not just the
+        # tile-center nav grid) and remain inside the authored interaction radius.
+        tile = float(geo.get("tile_px", 16))
+        body = geo.get("hero_body_px", [12, 16])
+        offset = geo.get("hero_offset_px", [0, -8])
+        nodes = {n["node_id"]: n for n in c["interaction_nodes"]}
+        for a in c["actions"]:
+            node = nodes.get(a["trigger_node_id"])
+            radius = float(a.get("interaction_radius_px", 0))
+            for stand in a["stand_cells"]:
+                sx, sy = float(stand[0]), float(stand[1])
+                foot_x = sx * tile + tile / 2.0
+                foot_y = sy * tile + tile - 1.0
+                if node is not None:
+                    nx = float(node["cell"][0]) * tile + tile / 2.0
+                    ny = float(node["cell"][1]) * tile + tile / 2.0
+                    if math.hypot(foot_x - nx, foot_y - ny) > radius:
+                        errors.append(f"{pid}:{a['action_id']}: stand {stand} outside interaction radius {radius}")
+                hx = foot_x + float(offset[0])
+                hy = foot_y + float(offset[1])
+                hhx, hhy = float(body[0]) / 2.0, float(body[1]) / 2.0
+                for ob in geo["static_obstacles"]:
+                    size = ob.get("collision_size_px", [tile, tile])
+                    ooff = ob.get("collision_offset_px", [0, 0])
+                    ohx, ohy = float(size[0]) / 2.0, float(size[1]) / 2.0
+                    for oc in ob["cells"]:
+                        ox = float(oc[0]) * tile + tile / 2.0 + float(ooff[0])
+                        oy = float(oc[1]) * tile + tile / 2.0 + float(ooff[1])
+                        if abs(hx - ox) < hhx + ohx and abs(hy - oy) < hhy + ohy:
+                            errors.append(f"{pid}:{a['action_id']}: stand {stand} Hero body intersects obstacle {ob['obstacle_id']} cell {oc}")
         if c["persistence"]["owner"] != "A0":
             errors.append(f"{pid}: persistence owner must be A0")
         if c["persistence"]["atomic_commit"] != "SaveService.transact_once":

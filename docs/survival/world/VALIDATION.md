@@ -98,7 +98,14 @@ Native playable integration remains `false`.
 ## Canonical geography connector validation
 
 - `compile_connector.py` reads pinned legacy world/layers/props + unchanged A1 chunk6:3 and emits A1-owned contract/delta plus derived pilot inputs under `artifacts/a1-connector/`. It does not edit A0 legacy sources, controller, SaveService or A1 chunks.
-- `validate_connector.py` fail-closed checks source pins, exact 46 collision / 48 dressed / 14 prop delta, protected legacy content separation, composed legacy preservation outside the mouth, annex walk identity, fail-closed padding, one-chunk import, canonical reward lock and `native_playable=false`.
-- Local result: connector validation **0 errors**; `pytest tests/survival/world` **82 passed** (74 prior + 8 connector tests); world/slice validators pass; determinism **232 artifacts**, tree SHA `e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485`.
+- `validate_connector.py` fail-closed checks source pins, exact 46 collision / 48 dressed / 14 prop delta, locker-stand collision correction, protected legacy content separation, composed legacy preservation outside the mouth, annex walk identity, fail-closed padding, one-chunk import, canonical reward lock and `native_playable=false`.
+- Local result: connector validation **0 errors**; `pytest tests/survival/world` **82 passed** (74 prior + 8 connector tests); world/slice validators pass; determinism **232 artifacts**, tree SHA `39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2`.
 - CI adds `godot-connector-native`: root-project Godot 4.7 fixture with real Knight scene, live `PhysicsShapeQueryParameters2D` route verification and ordinary held movement Refuge → Waystation → Relay → Refuge, plus ten-endpoint reachability and camera-limit checks. It is an isolated composed-world fixture, **not** the production controller and **not** a native-playable claim. Result: **PASS** at `90c1d8bf` — push [40993737087](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993737087) and PR [40993742640](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40993742640), including the connector anti-vacuity gate. This remains an isolated composed-world fixture, not production integration.
 - A0 production acceptance (CN-07..10) remains pending: source-path injection, annex build guard, slice obstacle mount, fresh-save/reload global-pixel resume, exact rewards and rollback recovery.
+
+
+## Locker-stand owner correction (2026-10-30)
+
+- `validate_slice.py` now checks every action stand against the real 12×16 Hero body and authored obstacle collision footprints, plus interaction radius. It fails closed on the original full-tile locker overlap and passes the repaired 16×14 offset (0,-1) footprint.
+- `validate_connector.py` locks the locker correction, stand `(408,199)`, anchor `(408,200)`, radius 24 and canonical rewards.
+- Native fixture adds adverse original full-tile `intersect_shape` proof, repaired exact-stand clearance, interaction range, and ordinary-input Refuge → exact locker stand → Relay → Refuge. Result: **CI-PENDING**. Production remains A0-owned; `native_playable=false`.

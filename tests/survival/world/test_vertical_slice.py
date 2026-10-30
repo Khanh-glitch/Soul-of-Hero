@@ -214,3 +214,33 @@ def test_required_adversarial_vectors_present(slice_data):
     assert {"VS-01", "VS-02", "VS-03", "VS-04", "VS-05", "VS-06", "VS-07"} <= ids
     required = [v for v in slice_data["vectors"]["vectors"] if v["required"]]
     assert len(required) == 7
+
+
+def test_locker_stand_toe_clearance_correction_is_minimal_and_live_shape_honest(slice_data):
+    way = slice_data["contracts"]["poi_crown_waystation"]
+    geo = way["immutable_geography"]
+    assert geo["anchor_cell"] == [408, 200]
+    action = next(a for a in way["actions"] if a["action_id"] == "pry_locker")
+    assert action["stand_cells"] == [[408, 199]]
+    assert action["interaction_radius_px"] == 24
+    assert action["grants_capabilities"] == ["cap_salvage"] and action["reward_items"] == []
+    ob = next(o for o in geo["static_obstacles"] if o["obstacle_id"] == "obs_waystation_locker_bank")
+    assert ob["cells"] == [[408, 198], [409, 198]] and ob["blocks_nav"] is True
+    assert ob["collision_size_px"] == [16, 14]
+    assert ob["collision_offset_px"] == [0, -1]
+    assert ob["visual_size_px"] == [16, 16]
+    # Hero foot at the exact stand, real 12x16 body offset (0,-8).
+    hx, hy = 408 * 16 + 8, 199 * 16 + 15 - 8
+    # Original full-tile locker at (408,198) overlapped by 12x1 px.
+    ox, oy = 408 * 16 + 8, 198 * 16 + 8
+    assert abs(hx - ox) < 6 + 8 and abs(hy - oy) < 8 + 8
+    # Repaired 16x14 footprint offset (0,-1) leaves 1 px toe clearance.
+    ry = oy - 1
+    assert not (abs(hx - ox) < 6 + 8 and abs(hy - ry) < 8 + 7)
+    node = next(n for n in way["interaction_nodes"] if n["node_id"] == "node_waystation_locker")
+    nx, ny = node["cell"][0] * 16 + 8, node["cell"][1] * 16 + 8
+    assert ((hx - nx) ** 2 + ((199 * 16 + 15) - ny) ** 2) ** 0.5 <= 24
+    correction = slice_data["handoff"]["a0"]["locker_stand_collision_correction"]
+    assert correction["correction_id"] == "a1_locker_stand_toe_clearance_v1"
+    assert correction["original"]["hero_overlap_at_stand_px"] == [12, 1]
+    assert correction["repaired"]["stand_toe_clearance_px"] == 1

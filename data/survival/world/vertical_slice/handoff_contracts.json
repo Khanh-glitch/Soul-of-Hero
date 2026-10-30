@@ -41,6 +41,78 @@
         "map_status"
       ]
     },
+    "locker_stand_collision_correction": {
+      "a0_mount": "For each static obstacle cell: body.position = cell*16 + (8,8) + collision_offset_px; RectangleShape2D.size = collision_size_px; defaults are [16,16] and [0,0]. Render the locker visual at visual_size_px/full tile; the nav cell remains blocked. Do not resize the Hero or move the POI/anchor/stand.",
+      "anchor_cell": [
+        408,
+        200
+      ],
+      "authority": "CT narrow local POI collision/stand correction, 2026-10-30; A0 native counterexample run 40996028162",
+      "correction_id": "a1_locker_stand_toe_clearance_v1",
+      "inverse": "Remove collision_size_px/collision_offset_px/visual_size_px/collision_correction_id from obs_waystation_locker_bank, or set them to [16,16]/[0,0]/[16,16]; this restores the original full-tile blocker and the original 12x1 px stand overlap.",
+      "node_cell": [
+        408,
+        198
+      ],
+      "obstacle_cells": [
+        [
+          408,
+          198
+        ],
+        [
+          409,
+          198
+        ]
+      ],
+      "obstacle_id": "obs_waystation_locker_bank",
+      "original": {
+        "collision_offset_px": [
+          0,
+          0
+        ],
+        "collision_size_px": [
+          16,
+          16
+        ],
+        "hero_overlap_at_stand_px": [
+          12,
+          1
+        ]
+      },
+      "owner": "A1",
+      "poi_id": "poi_crown_waystation",
+      "repaired": {
+        "collision_offset_px": [
+          0,
+          -1
+        ],
+        "collision_size_px": [
+          16,
+          14
+        ],
+        "stand_toe_clearance_px": 1,
+        "visual_size_px": [
+          16,
+          16
+        ]
+      },
+      "stand_cell": [
+        408,
+        199
+      ],
+      "unchanged": [
+        "anchor_cell",
+        "stand_cell",
+        "node_cell",
+        "obstacle_cells",
+        "blocks_nav",
+        "interaction_radius_px",
+        "canonical_rewards",
+        "chunk6:3",
+        "ridge_connector_46_48_14",
+        "ten_dungeon_entrances"
+      ]
+    },
     "owner": "A0",
     "payload_examples": {
       "action_rejected": {
@@ -177,6 +249,7 @@
         "chunk seam hash",
         "required_nav_cells walk=1 hazard=0",
         "static_obstacles do not intersect required_nav_cells or entrance clearance",
+        "honor static_obstacle collision_size_px/collision_offset_px when present (default 16x16 centered); exact action stand cells must be live-shape clear and within interaction_radius_px",
         "spawn_forbidden_cells include Hero spawn, doorway clearance and required nav"
       ]
     },

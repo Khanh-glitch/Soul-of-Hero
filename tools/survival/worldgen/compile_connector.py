@@ -351,7 +351,7 @@ def contract(delta: dict) -> dict:
         "acceptance_vectors": [
             {"id": "CN-01", "gate": "source pins and exact 46-cell collision / 48-cell dressing / 14-prop delta validate; rollback restores hashes"},
             {"id": "CN-02", "gate": "A0 native blocker remains reproduced on unmodified legacy: Hero stops before x369; run 40931599594"},
-            {"id": "CN-03", "gate": "composed live-shape route Refuge -> border -> Waystation anchor/approach (408,200) without teleport; exact locker-stand micro-clearance is A0 POI-mount acceptance"},
+            {"id": "CN-03", "gate": "composed live-shape route Refuge -> border -> exact Waystation locker stand (408,199) without teleport; repaired locker-bank collision footprint, live-shape clearance and interaction range verified"},
             {"id": "CN-04", "gate": "composed live-shape route Waystation -> Relay stand around static slice obstacles"},
             {"id": "CN-05", "gate": "composed live-shape return Relay -> Refuge; camera right limit 7168 and Hero visible"},
             {"id": "CN-06", "gate": "all ten legacy dungeon thresholds, camps and discoveries remain reachable in composed nav"},

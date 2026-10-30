@@ -19,7 +19,7 @@
       "id": "CN-02"
     },
     {
-      "gate": "composed live-shape route Refuge -> border -> Waystation anchor/approach (408,200) without teleport; exact locker-stand micro-clearance is A0 POI-mount acceptance",
+      "gate": "composed live-shape route Refuge -> border -> exact Waystation locker stand (408,199) without teleport; repaired locker-bank collision footprint, live-shape clearance and interaction range verified",
       "id": "CN-03"
     },
     {
@@ -446,8 +446,8 @@
       ]
     },
     "relay_slice_sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad",
-    "slice_manifest_sha256": "0423c6971ed92d28b43b9b543de6b5da437076b9e7d029703627f34dc7410fed",
-    "waystation_slice_sha256": "8c8ca05c7384b0bc4766b68666fcb48d2094a829d178b87b36c9088b03c6ef0c"
+    "slice_manifest_sha256": "a6ba825fdc9cf6cbc977dbbe8f6a9768a98a9131879952f66bddee15d3ef06b4",
+    "waystation_slice_sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
   },
   "rollback": {
     "a0_bake": "restore pinned legacy world/layers/props hashes or apply inverse delta; no A1 chunk mutation",
@@ -483,7 +483,7 @@
     },
     "a1_waystation_slice": {
       "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
-      "sha256": "8c8ca05c7384b0bc4766b68666fcb48d2094a829d178b87b36c9088b03c6ef0c"
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
     },
     "knight_scene": {
       "path": "game/characters/knight/knight.tscn",

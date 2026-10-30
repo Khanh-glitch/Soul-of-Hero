@@ -28,6 +28,25 @@ PLAN_PATH = WORLD / "world_plan.v1.json"
 TILE = 16
 HERO_BODY_PX = [12, 16]
 HERO_OFFSET_PX = [0, -8]
+LOCKER_COLLISION_SIZE_PX = [16, 14]
+LOCKER_COLLISION_OFFSET_PX = [0, -1]
+LOCKER_VISUAL_SIZE_PX = [16, 16]
+LOCKER_STAND_CORRECTION = {
+    "correction_id": "a1_locker_stand_toe_clearance_v1",
+    "owner": "A1",
+    "authority": "CT narrow local POI collision/stand correction, 2026-10-30; A0 native counterexample run 40996028162",
+    "poi_id": "poi_crown_waystation",
+    "anchor_cell": [408, 200],
+    "stand_cell": [408, 199],
+    "node_cell": [408, 198],
+    "obstacle_id": "obs_waystation_locker_bank",
+    "obstacle_cells": [[408, 198], [409, 198]],
+    "original": {"collision_size_px": [16, 16], "collision_offset_px": [0, 0], "hero_overlap_at_stand_px": [12, 1]},
+    "repaired": {"collision_size_px": LOCKER_COLLISION_SIZE_PX, "collision_offset_px": LOCKER_COLLISION_OFFSET_PX, "visual_size_px": LOCKER_VISUAL_SIZE_PX, "stand_toe_clearance_px": 1},
+    "unchanged": ["anchor_cell", "stand_cell", "node_cell", "obstacle_cells", "blocks_nav", "interaction_radius_px", "canonical_rewards", "chunk6:3", "ridge_connector_46_48_14", "ten_dungeon_entrances"],
+    "inverse": "Remove collision_size_px/collision_offset_px/visual_size_px/collision_correction_id from obs_waystation_locker_bank, or set them to [16,16]/[0,0]/[16,16]; this restores the original full-tile blocker and the original 12x1 px stand overlap.",
+    "a0_mount": "For each static obstacle cell: body.position = cell*16 + (8,8) + collision_offset_px; RectangleShape2D.size = collision_size_px; defaults are [16,16] and [0,0]. Render the locker visual at visual_size_px/full tile; the nav cell remains blocked. Do not resize the Hero or move the POI/anchor/stand.",
+}
 MANIFEST_SCHEMA = "soh.world.vertical_slice_manifest.v1"
 POI_SCHEMA = "soh.world.poi_slice.v1"
 VECTORS_SCHEMA = "soh.world.slice_test_vectors.v1"
@@ -166,7 +185,8 @@ def waystation_contract(plan: dict, plan_sha: str, spec_sha: str) -> dict:
     stand_cache = [406, 202]
     stand_deadfall = [398, 201]
     obstacles = [
-        {"obstacle_id": "obs_waystation_locker_bank", "cells": [[408, 198], [409, 198]], "kind": "static_body", "blocks_nav": True},
+        {"obstacle_id": "obs_waystation_locker_bank", "cells": [[408, 198], [409, 198]], "kind": "static_body", "blocks_nav": True,
+         "collision_correction_id": "a1_locker_stand_toe_clearance_v1", "collision_size_px": LOCKER_COLLISION_SIZE_PX, "collision_offset_px": LOCKER_COLLISION_OFFSET_PX, "visual_size_px": LOCKER_VISUAL_SIZE_PX},
         {"obstacle_id": "obs_waystation_ledger_desk", "cells": [[411, 202]], "kind": "static_body", "blocks_nav": True},
         {"obstacle_id": "obs_waystation_cache_crate", "cells": [[406, 203]], "kind": "static_body", "blocks_nav": True},
         {"obstacle_id": "obs_waystation_deadfall", "cells": [[398, 202]], "kind": "static_body", "blocks_nav": True},
@@ -505,9 +525,10 @@ def handoff_contract(plan_sha: str) -> dict:
                 "migration_owner": "A0",
                 "note": "Top-level additive namespace; A0 must add sanitizer/migration before production use. Current SaveService preserves unknown top-level keys, but A1 does not edit A0 files.",
             },
+            "locker_stand_collision_correction": LOCKER_STAND_CORRECTION,
             "reader_contract": {
                 "inputs": ["vertical_slice/manifest.json", "vertical_slice/<poi_id>.slice.json", "chunks/<chunk_id>.json", "world_plan.v1.json"],
-                "must_validate": ["schema", "world_plan_sha256", "chunk seam hash", "required_nav_cells walk=1 hazard=0", "static_obstacles do not intersect required_nav_cells or entrance clearance", "spawn_forbidden_cells include Hero spawn, doorway clearance and required nav"],
+                "must_validate": ["schema", "world_plan_sha256", "chunk seam hash", "required_nav_cells walk=1 hazard=0", "static_obstacles do not intersect required_nav_cells or entrance clearance", "honor static_obstacle collision_size_px/collision_offset_px when present (default 16x16 centered); exact action stand cells must be live-shape clear and within interaction_radius_px", "spawn_forbidden_cells include Hero spawn, doorway clearance and required nav"],
                 "collision_layers": {"static_obstacle": 1, "hero": 2, "interaction_area_mask": 2},
                 "hero_body_px": HERO_BODY_PX,
                 "hero_offset_px": HERO_OFFSET_PX,

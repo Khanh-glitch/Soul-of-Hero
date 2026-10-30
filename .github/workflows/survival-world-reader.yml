@@ -207,8 +207,8 @@ jobs:
           [ -f "$log" ] || { echo "::error::no connector fixture log"; exit 1; }
           checks=$(grep -cE '^CONNECTOR (PASS|FAIL): ' "$log" || true)
           echo "connector fixture assertions reported: ${checks}"
-          if [ "${checks:-0}" -lt 12 ] || ! grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log"; then
-            echo "::error::connector fixture gate failed (checks=${checks}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+          if [ "${checks:-0}" -lt 20 ] || ! grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log" || ! grep -q 'exact Waystation locker stand (408,199)' "$log" || ! grep -q 'adverse proof: original full-tile' "$log"; then
+            echo "::error::connector fixture gate failed (checks=${checks}, need >=20 + exact locker stand + adverse proof); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
             exit 1
           fi
       - name: Upload connector native fixture evidence

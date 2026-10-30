@@ -977,14 +977,14 @@
       "sha256": "c3670dc3667e7917fa5c1d16bc54d4e48b5427d0478ff35d6800067785c5eefe"
     },
     {
-      "bytes": 13207,
+      "bytes": 13242,
       "path": "data/survival/world/connector/canonical_connector.v1.json",
-      "sha256": "7ebd09bb87f1adcb32e9e7d56fd1de65cc1371d5d8a5143e8d877c31cd8dff80"
+      "sha256": "1516e23bda93ba3fd6bb3b729699c08527e1addf2fac0706300940e566df620c"
     },
     {
       "bytes": 17768,
       "path": "data/survival/world/connector/legacy_cell_delta.v1.json",
-      "sha256": "3cb11f6b2d3123a5245cfa28beb107eef3662639012862fbacc0cf0a9f53dabe"
+      "sha256": "03acafe2f679c104312e7e4b66f911636e182b0cf42ce0b6743d1fae07b27eb3"
     },
     {
       "bytes": 6053,
@@ -1132,14 +1132,14 @@
       "sha256": "ee1214fcf6205fdbadbb5a9c487aa1c4cf905733893541f45b8d275bc070dad5"
     },
     {
-      "bytes": 13904,
+      "bytes": 16126,
       "path": "data/survival/world/vertical_slice/handoff_contracts.json",
-      "sha256": "263311faa7f5870ebccb6aaf5bb61e12dd9ad89ee2e86709e3223b05721e30c1"
+      "sha256": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1"
     },
     {
       "bytes": 1945,
       "path": "data/survival/world/vertical_slice/manifest.json",
-      "sha256": "0423c6971ed92d28b43b9b543de6b5da437076b9e7d029703627f34dc7410fed"
+      "sha256": "a6ba825fdc9cf6cbc977dbbe8f6a9768a98a9131879952f66bddee15d3ef06b4"
     },
     {
       "bytes": 23641,
@@ -1147,9 +1147,9 @@
       "sha256": "5ab0042980a43e64f05aa73870b0d99f906fb95f70492daf2a6b6f7b585b77ad"
     },
     {
-      "bytes": 17529,
+      "bytes": 17805,
       "path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
-      "sha256": "8c8ca05c7384b0bc4766b68666fcb48d2094a829d178b87b36c9088b03c6ef0c"
+      "sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f"
     },
     {
       "bytes": 13447,
@@ -1162,8 +1162,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485",
-  "compile_2_tree_sha256": "e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485",
+  "compile_1_tree_sha256": "39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2",
+  "compile_2_tree_sha256": "39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

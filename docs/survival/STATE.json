@@ -136,6 +136,20 @@
         "docs/survival/world/ci_evidence.json#connector_checkpoint"
       ],
       "next": "A0 apply owned world-source seam/delta/annex build guard and run production CN-07..10; CT accept/reject exact 46-solid-cell / 48-dressed-cell ridge-mouth tradeoff; A1 PAUSED_AWAITING_NATIVE_INTEGRATION; native_playable=false"
+    },
+    {
+      "id": "SURV-050A-LOCKER-STAND",
+      "name": "A1 exact Waystation locker stand native collision owner correction",
+      "status": "source_correction_authored_pending_ci_and_a0_native",
+      "evidence": [
+        "docs/survival/world/A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md",
+        "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+        "tools/survival/worldgen/compile_slice.py",
+        "tools/survival/worldgen/validate_slice.py",
+        "tests/survival/world/connector_native_test.gd",
+        "A0 native counterexample run 40996028162"
+      ],
+      "next": "Run A1 CI native exact-stand fixture; notify A0 PR21; A0 production retest genuine rewards/save; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false"
     }
   ],
   "next_action": {

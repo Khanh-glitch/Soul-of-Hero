@@ -151,3 +151,8 @@ imported and the world is not regenerated.
 Native integration remains an A0 gate: real scene mounting, collision, activation,
 SaveService migration/persistence, A3 reward adapter and A6 UI projection must be
 implemented and independently reviewed before `native_playable` can become true.
+
+
+### Locker stand collision correction (`a1_locker_stand_toe_clearance_v1`)
+
+The locker stand remains `[408,199]` and the anchor remains `[408,200]`. A0 native run 40996028162 proved the original full-tile `obs_waystation_locker_bank` at `[408,198]` overlapped the real 12×16 Hero by 12×1 px. The repaired locker-bank collision footprint is `collision_size_px=[16,14]`, `collision_offset_px=[0,-1]`, `visual_size_px=[16,16]`; nav cells remain blocked. A0 must mount these fields (default full-tile when absent) and re-test the exact stand, interaction range and genuine rewards. Inverse: remove the fields or restore `[16,16]`/`[0,0]`.

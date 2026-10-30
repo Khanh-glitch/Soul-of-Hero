@@ -161,3 +161,14 @@ def test_validator_gate_passes_and_does_not_claim_native(compiled):
     assert report["native_playable"] is False
     assert report["protected_legacy_cells_touched"] == 0
     assert report["canonical_rewards_unchanged"] is True
+
+
+def test_connector_preserves_ridge_and_points_to_repaired_locker_stand():
+    con = cc.load(cc.CONNECTOR / "canonical_connector.v1.json")
+    assert con["approach"]["waystation_locker_stand"] == [408, 199]
+    assert con["approach"]["waystation_anchor"] == [408, 200]
+    cn03 = next(v for v in con["acceptance_vectors"] if v["id"] == "CN-03")
+    assert "exact Waystation locker stand (408,199)" in cn03["gate"]
+    way = cc.load(cc.WORLD / "vertical_slice/poi_crown_waystation.slice.json")
+    ob = next(o for o in way["immutable_geography"]["static_obstacles"] if o["obstacle_id"] == "obs_waystation_locker_bank")
+    assert ob["collision_size_px"] == [16, 14] and ob["collision_offset_px"] == [0, -1]
