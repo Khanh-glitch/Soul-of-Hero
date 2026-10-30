@@ -26,9 +26,9 @@ LEGACY = ROOT / "data/overworld"
 DEFAULT_OUT = ROOT / "artifacts/a1-connector"
 
 CONNECTOR_ID = "a1_crown_canonical_seam_v1"
-CARVE_RECT = [369, 199, 15, 3]  # x, y, w, h; collision-changing cells
-ROAD_RECT = [368, 199, 16, 3]  # bounding mouth; only already-clear apron cells are dressed
-APRON_CELLS = [(368, 199), (368, 200)]  # x368,y201 remains legacy cliff; Hero enters on row 200
+CARVE_RECT = [368, 199, 16, 3]  # x, y, w, h; full three-row mouth, 46 actually-solid cells
+ROAD_RECT = [368, 199, 16, 3]  # same as carve; all 48 cells dressed as road
+APRON_CELLS: list[tuple[int, int]] = []  # native return trace proved x368,y201 corner catches the 12x16 body; mouth is fully cleared
 ANNEX_CHUNK = "chunk:6:3"
 ANNEX_PATH = "chunks/06_03.json"
 ANNEX_ORIGIN = [384, 192]
@@ -282,7 +282,7 @@ def contract(delta: dict) -> dict:
             "knight_collision_layer": 2,
             "knight_collision_mask": 5,
             "why_three_rows": "A0 live-shape probe uses foot anchor y*16+15 and BodyShape offset -8; the 12x16 body can overlap previous/current/next row. A one-tile centerline BFS is not sufficient.",
-            "tradeoff": "Removes 45 solid cells in a 15x3 eastern-ridge cut and dresses two already-clear mouth cells (47 dressed total); x368,y201 stays cliff. Inside the already-authored A1 road allowance; does not move landmarks, dungeons, camps, shortcuts, POIs or rewards.",
+            "tradeoff": "Removes 46 solid cells in a 16x3 eastern-ridge mouth (x368..383,y199..201) and dresses all 48 cells; x368,y199/200 were already clear. Native return trace proved the leftover x368,y201 cliff corner catches the 12x16 body. Inside the already-authored A1 road allowance; does not move landmarks, dungeons, camps, shortcuts, POIs or rewards.",
         },
         "annex": {
             "chunk_id": ANNEX_CHUNK,
@@ -349,7 +349,7 @@ def contract(delta: dict) -> dict:
             "A6": "discovered-only connector/POI clues after A0 activation",
         },
         "acceptance_vectors": [
-            {"id": "CN-01", "gate": "source pins and exact 45-cell collision / 47-cell dressing / 13-prop delta validate; rollback restores hashes"},
+            {"id": "CN-01", "gate": "source pins and exact 46-cell collision / 48-cell dressing / 14-prop delta validate; rollback restores hashes"},
             {"id": "CN-02", "gate": "A0 native blocker remains reproduced on unmodified legacy: Hero stops before x369; run 40931599594"},
             {"id": "CN-03", "gate": "composed live-shape route Refuge -> border -> Waystation anchor/approach (408,200) without teleport; exact locker-stand micro-clearance is A0 POI-mount acceptance"},
             {"id": "CN-04", "gate": "composed live-shape route Waystation -> Relay stand around static slice obstacles"},

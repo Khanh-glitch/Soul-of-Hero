@@ -11,7 +11,7 @@
   },
   "acceptance_vectors": [
     {
-      "gate": "source pins and exact 45-cell collision / 47-cell dressing / 13-prop delta validate; rollback restores hashes",
+      "gate": "source pins and exact 46-cell collision / 48-cell dressing / 14-prop delta validate; rollback restores hashes",
       "id": "CN-01"
     },
     {
@@ -161,14 +161,14 @@
       200,
       201
     ],
-    "collision_cells": 45,
+    "collision_cells": 46,
     "collision_rect": [
-      369,
+      368,
       199,
-      15,
+      16,
       3
     ],
-    "dressed_cells": 47,
+    "dressed_cells": 48,
     "hero_body_offset_px": [
       0,
       -8
@@ -309,6 +309,10 @@
         200
       ],
       [
+        368,
+        201
+      ],
+      [
         369,
         201
       ],
@@ -375,8 +379,8 @@
       16,
       3
     ],
-    "suppressed_flat_cliff_props": 13,
-    "tradeoff": "Removes 45 solid cells in a 15x3 eastern-ridge cut and dresses two already-clear mouth cells (47 dressed total); x368,y201 stays cliff. Inside the already-authored A1 road allowance; does not move landmarks, dungeons, camps, shortcuts, POIs or rewards.",
+    "suppressed_flat_cliff_props": 14,
+    "tradeoff": "Removes 46 solid cells in a 16x3 eastern-ridge mouth (x368..383,y199..201) and dresses all 48 cells; x368,y199/200 were already clear. Native return trace proved the leftover x368,y201 cliff corner catches the 12x16 body. Inside the already-authored A1 road allowance; does not move landmarks, dungeons, camps, shortcuts, POIs or rewards.",
     "why_three_rows": "A0 live-shape probe uses foot anchor y*16+15 and BodyShape offset -8; the 12x16 body can overlap previous/current/next row. A one-tile centerline BFS is not sufficient."
   },
   "native_playable": false,

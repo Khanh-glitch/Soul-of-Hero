@@ -37,20 +37,20 @@ def test_committed_contract_and_delta_are_deterministic(compiled):
 
 def test_exact_footprint_and_apron_are_not_overclaimed():
     delta = cc.load(cc.CONNECTOR / "legacy_cell_delta.v1.json")
-    assert delta["collision_cell_count"] == 45
-    assert delta["dressed_cell_count"] == 47
-    assert len(delta["prop_suppressions"]) == 13
+    assert delta["collision_cell_count"] == 46
+    assert delta["dressed_cell_count"] == 48
+    assert len(delta["prop_suppressions"]) == 14
     cells = {tuple(r["cell"]) for r in delta["cell_deltas"]}
-    assert (368, 201) not in cells  # legacy cliff corner stays; Hero enters on row 200
+    assert (368, 201) in cells  # native return trace proved this corner must be cleared
     assert (368, 199) in cells and (368, 200) in cells
     for record in delta["cell_deltas"]:
         x, y = record["cell"]
-        if 369 <= x <= 383 and 199 <= y <= 201:
-            assert record["before"]["solid"] != "."
-            assert record["after"]["solid"] == "."
-        else:
+        assert 368 <= x <= 383 and 199 <= y <= 201
+        assert record["after"]["solid"] == "."
+        if (x, y) in [(368, 199), (368, 200)]:
             assert record["before"]["solid"] == "."
-            assert record["after"]["solid"] == "."
+        else:
+            assert record["before"]["solid"] != "."
         assert record["after"]["ground"] == "d"
         assert record["after"]["detail"].startswith("=")
 

@@ -977,14 +977,14 @@
       "sha256": "c3670dc3667e7917fa5c1d16bc54d4e48b5427d0478ff35d6800067785c5eefe"
     },
     {
-      "bytes": 13079,
+      "bytes": 13207,
       "path": "data/survival/world/connector/canonical_connector.v1.json",
-      "sha256": "f3a5d0066d1db36cbbb1363dbde75e3bfb282b81136c1364d1e394ff7f2c8fe0"
+      "sha256": "7ebd09bb87f1adcb32e9e7d56fd1de65cc1371d5d8a5143e8d877c31cd8dff80"
     },
     {
-      "bytes": 17329,
+      "bytes": 17768,
       "path": "data/survival/world/connector/legacy_cell_delta.v1.json",
-      "sha256": "5bfe2704f48e6c9a3cacf39e813f878b482671765e010968698611fa4ff84d23"
+      "sha256": "3cb11f6b2d3123a5245cfa28beb107eef3662639012862fbacc0cf0a9f53dabe"
     },
     {
       "bytes": 6053,
@@ -1162,8 +1162,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "ee05a41f4076f655678cf33bc9569b3e4f72ef18a4e1f2a885149fdf392fe831",
-  "compile_2_tree_sha256": "ee05a41f4076f655678cf33bc9569b3e4f72ef18a4e1f2a885149fdf392fe831",
+  "compile_1_tree_sha256": "e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485",
+  "compile_2_tree_sha256": "e74cd6853be2d3df6fe4cb12f05b2552515770f5a84bf60910571d236002c485",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

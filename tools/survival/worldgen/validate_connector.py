@@ -43,9 +43,9 @@ def validate(out_dir: Path | None = None) -> dict:
     # Exact footprint and protected-content separation.
     carve = set(cc.rect_cells(cc.CARVE_RECT))
     dressed = {tuple(c) for c in delta["road_dressing_cells"]}
-    if delta["collision_cell_count"] != 45 or delta["dressed_cell_count"] != 47:
-        fail(errors, "connector footprint changed: expected 45 collision / 47 dressed cells")
-    if len(delta["cell_deltas"]) != 47 or len(delta["prop_suppressions"]) != 13:
+    if delta["collision_cell_count"] != 46 or delta["dressed_cell_count"] != 48:
+        fail(errors, "connector footprint changed: expected 46 collision / 48 dressed cells")
+    if len(delta["cell_deltas"]) != 48 or len(delta["prop_suppressions"]) != 14:
         fail(errors, "connector delta counts changed")
     protected: set[tuple[int, int]] = set()
     for lm in legacy_world["landmarks"]:
@@ -65,11 +65,10 @@ def validate(out_dir: Path | None = None) -> dict:
     for record in delta["cell_deltas"]:
         x, y = record["cell"]
         if (x, y) in carve:
-            if record["before"]["solid"] == "." or record["after"]["solid"] != ".":
-                fail(errors, f"carve cell {x},{y} is not an exact solid->clear delta")
+            if record["after"]["solid"] != ".":
+                fail(errors, f"carve cell {x},{y} is not clear after delta")
         else:
-            if record["before"]["solid"] != "." or record["after"]["solid"] != ".":
-                fail(errors, f"apron cell {x},{y} must remain already-clear")
+            fail(errors, f"dressed cell {x},{y} outside carve rect")
         if record["after"]["ground"] != "d" or not record["after"]["detail"].startswith("="):
             fail(errors, f"cell {x},{y} not dressed as protected road")
 
@@ -102,7 +101,7 @@ def validate(out_dir: Path | None = None) -> dict:
             if new["solid"][y * cw + x] == ".":
                 fail(errors, f"unsupported annex padding is walkable at {x},{y}")
                 break
-    if len(props["props"]) != len(legacy_props["props"]) - 13:
+    if len(props["props"]) != len(legacy_props["props"]) - 14:
         fail(errors, "prop suppression count mismatch")
     if world["landmarks"] != legacy_world["landmarks"] or world["camps"] != legacy_world["camps"] or world["shortcuts"] != legacy_world["shortcuts"]:
         fail(errors, "legacy landmarks/camps/shortcuts changed")

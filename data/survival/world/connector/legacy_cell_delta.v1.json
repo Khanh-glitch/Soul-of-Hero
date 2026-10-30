@@ -1,8 +1,8 @@
 {
   "carve_rect": [
-    369,
+    368,
     199,
-    15,
+    16,
     3
   ],
   "cell_deltas": [
@@ -264,7 +264,7 @@
     },
     {
       "after": {
-        "detail": "=3",
+        "detail": "=7",
         "ground": "d",
         "solid": "."
       },
@@ -525,6 +525,22 @@
         "solid": "."
       },
       "before": {
+        "detail": ".",
+        "ground": ";",
+        "solid": "#6"
+      },
+      "cell": [
+        368,
+        201
+      ]
+    },
+    {
+      "after": {
+        "detail": "=b",
+        "ground": "d",
+        "solid": "."
+      },
+      "before": {
         "detail": "1",
         "ground": ";",
         "solid": "#f"
@@ -759,9 +775,9 @@
       ]
     }
   ],
-  "collision_cell_count": 45,
+  "collision_cell_count": 46,
   "connector_id": "a1_crown_canonical_seam_v1",
-  "dressed_cell_count": 47,
+  "dressed_cell_count": 48,
   "prop_suppressions": [
     {
       "cell": [
@@ -892,6 +908,16 @@
       "index": 9551,
       "x": 5992.0,
       "y": 3224.0
+    },
+    {
+      "cell": [
+        368,
+        199
+      ],
+      "frame": "cliff_ledge_a",
+      "index": 13155,
+      "x": 5896.0,
+      "y": 3191.0
     }
   ],
   "road_dressing_cells": [
@@ -1022,6 +1048,10 @@
     [
       383,
       200
+    ],
+    [
+      368,
+      201
     ],
     [
       369,
