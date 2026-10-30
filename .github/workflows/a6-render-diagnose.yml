@@ -1,0 +1,130 @@
+name: A6 render diagnosis
+
+## Temporary probe. Each step answers one question and reports the tail as an
+## annotation, because the job-log host is not reachable from the review
+## environment. Deleted once the render job is green.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/05e0328d-soul-of-hero
+    paths:
+      - ".github/workflows/a6-render-diagnose.yml"
+
+permissions:
+  contents: read
+
+env:
+  GODOT_ARCHIVE_SHA256: "0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c"
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          A="$RUNNER_TEMP/godot/g.zip"
+          curl -L --fail --retry 3 -o "$A" \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${A}" | sha256sum -c -
+          unzip -q -o "$A" -d "$RUNNER_TEMP/godot"
+          E="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          chmod +x "$E"; ln -sf "$E" "$RUNNER_TEMP/godot/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+
+      - name: Install Xvfb and software GL
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 libegl1 mesa-utils
+
+      - name: Import project
+        run: |
+          timeout 1200s godot --headless --editor --path . --import --quit > import.log 2>&1 || true
+          tail -3 import.log
+
+      - name: Q1 environment
+        run: |
+          {
+            echo "pwd=$(pwd)"
+            echo "godot=$(command -v godot)"
+            echo "xvfb=$(command -v xvfb-run)"
+            ls -la | head -5
+          } > q1.txt 2>&1
+          cat q1.txt
+          grep -q "godot=" q1.txt
+
+      - name: Q2 xvfb runs a program
+        run: |
+          set +e
+          timeout 60 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" godot --version > q2.txt 2>&1
+          s=$?
+          echo "exit=$s" >> q2.txt
+          cat q2.txt
+          if [ $s -ne 0 ]; then tail -6 q2.txt | sed 's/^/::error::/'; exit 1; fi
+
+      - name: Q3 windowed engine boots the project and quits
+        run: |
+          set +e
+          timeout 180 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --quit-after 60 --verbose --rendering-driver opengl3 --audio-driver Dummy \
+            > q3.txt 2>&1
+          s=$?
+          echo "exit=$s" >> q3.txt
+          tail -25 q3.txt
+          if [ $s -ne 0 ]; then tail -8 q3.txt | sed 's/^/::error::/'; exit 1; fi
+
+      - name: Q4 capture scene with a frame cap
+        run: |
+          set +e
+          mkdir -p /tmp/cap4
+          timeout 180 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --quit-after 60 --verbose --rendering-driver opengl3 --audio-driver Dummy \
+            res://tests/survival/ui/a6_return_ui_capture.tscn -- \
+            --a6-ui-capture --capture-dir=/tmp/cap4 --capture-tag=probe \
+            > q4.txt 2>&1
+          s=$?
+          echo "exit=$s" >> q4.txt
+          ls -la /tmp/cap4 >> q4.txt 2>&1
+          tail -30 q4.txt
+          if [ $s -ne 0 ]; then tail -8 q4.txt | sed 's/^/::error::/'; exit 1; fi
+
+      - name: Q5 full capture, no frame cap
+        run: |
+          set +e
+          mkdir -p /tmp/cap5
+          timeout 240 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+            res://tests/survival/ui/a6_return_ui_capture.tscn -- \
+            --a6-ui-capture --capture-dir=/tmp/cap5 --capture-tag=probe \
+            > q5.txt 2>&1
+          s=$?
+          echo "exit=$s" >> q5.txt
+          ls -la /tmp/cap5 >> q5.txt 2>&1
+          tail -20 q5.txt
+          if [ $s -ne 0 ]; then tail -8 q5.txt | sed 's/^/::error::/'; exit 1; fi
+
+      - name: Q6 capture at 2560x1440
+        run: |
+          set +e
+          mkdir -p /tmp/cap6
+          timeout 240 xvfb-run --auto-servernum -s "-screen 0 2560x1440x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 2560x1440 --rendering-driver opengl3 --audio-driver Dummy \
+            res://tests/survival/ui/a6_return_ui_capture.tscn -- \
+            --a6-ui-capture --capture-dir=/tmp/cap6 --capture-tag=probe \
+            > q6.txt 2>&1
+          s=$?
+          echo "exit=$s" >> q6.txt
+          ls -la /tmp/cap6 >> q6.txt 2>&1
+          tail -20 q6.txt
+          if [ $s -ne 0 ]; then tail -8 q6.txt | sed 's/^/::error::/'; exit 1; fi
