@@ -54,3 +54,6 @@ The validator rejects: canonical cell drift, anchor/root/bounds formula drift, a
 ## 2026-10-30 follow-up — compact shells exist; visual skin is not a mount
 
 A8 PR #26 head `5ccf7b3f` now provides `south_*_overworld.tscn` compact 128×128 shells with action socket `(64,64)` and entry portal `(64,108)`. This resolves the *footprint* objection for an overworld shell, but it does **not** authorize production mounting. A1 supplies `data/survival/world/art/a8_shell_visuals.v1.json`: shared-atlas ground/road overlays/unscaled props and a clear doorway rect for Quarry, Orchard and Mill. A8 keeps shell collision, entry area, transition requests and local worksite art; A0 must still approve mount mode, inject the world-source seam, and preserve global-pixel SaveService coordinates. The 960×600 `south_*.tscn` scenes remain interior/local worksites, not overworld geometry.
+
+### 2026-10-30 PR26 closeout observation
+Latest observed PR26 head `0e22d5f0` requests **no A1 source change** and reports exact RGBA crop compatibility against A1 `ad39bde6`, preserving 128×128 shell / doorway / canonical geometry. A1 keeps the existing shell visual standard; file-level diff re-verification is pending GitHub git transport recovery. A8-VIS-07 remains an art handoff, not a quiet PASS.

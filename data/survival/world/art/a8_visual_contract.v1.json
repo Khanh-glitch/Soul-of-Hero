@@ -15,7 +15,9 @@
       "south_quarry.json",
       "south_orchard_ruin.json",
       "south_crown_mill.json"
-    ]
+    ],
+    "latest_observed_pr26_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
+    "latest_observation": "PR26 closeout states no A1 source change requested; 128x128 shell / doorway / canonical geometry preserved; exact RGBA crop compatibility reported against ad39bde6. File-level diff re-verification pending GitHub git transport recovery."
   },
   "requirements": {
     "tile_px": 16,
