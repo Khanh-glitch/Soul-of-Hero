@@ -412,7 +412,7 @@ class Ring extends Fx:
 					continue
 				var dx: float = en.x - x
 				var dy: float = en.y - y
-				var d: float = sqrt(dx * dx + dy * dy)
+				var d: float = M.hypot(dx, dy)
 				if (d - en.r <= cur and d + en.r >= prev - 4) or (d - en.r <= cur and o.get("fill", false)):
 					var cd = h.get("cd", 1e18)
 					var mx = h.get("max", 1e18)
@@ -514,7 +514,7 @@ class Pool extends Fx:
 						continue
 					var dx: float = e.x - x
 					var dy: float = (e.y - y) * 1.1
-					if sqrt(dx * dx + dy * dy) < rad * 0.85 * gs + e.r * 0.6 \
+					if M.hypot(dx, dy) < rad * 0.85 * gs + e.r * 0.6 \
 							and tick["h"].ok(e, w.time, float(tick["every"]) * 0.8,
 									float(tick.get("max", 1e18))):
 						var opts: Dictionary = tick["opts"].duplicate()
@@ -600,7 +600,7 @@ class GroundDecal extends Fx:
 				var qy: float = V8M.v8_sin(a) * d * 0.9
 				for dy in range(-2, 3):
 					for dx in range(-3, 4):
-						var q: float = sqrt(V8M.v8_pow(float(dx) / 1.3, 2.0) + V8M.v8_pow(float(dy), 2.0))
+						var q: float = M.hypot(float(dx) / 1.3, float(dy))
 						if q < pr:
 							_push(qx + dx, qy + dy, cols_["a"])
 						elif q < pr + 1:
@@ -776,7 +776,7 @@ class Cloud extends Fx:
 			var q: Array = pos(p, t)
 			var ddx: float = cx - q[0]
 			var ddy: float = cy - q[1]
-			if sqrt(ddx * ddx + ddy * ddy) < float(p["r"]) * shrink * 0.85 * fade + pad:
+			if M.hypot(ddx, ddy) < float(p["r"]) * shrink * 0.85 * fade + pad:
 				return true
 		return false
 
@@ -804,7 +804,7 @@ class Cloud extends Fx:
 		var rem: float = life - age
 		var m: float = 10.0
 		for p in puffs:
-			m = maxf(m, sqrt(V8M.v8_pow(float(p["x"]), 2.0) + V8M.v8_pow(float(p["y"]), 2.0)) + float(p["r"]))
+			m = maxf(m, M.hypot(float(p["x"]), float(p["y"])) + float(p["r"]))
 		DRAW.glow(g.l, x, y, m * 0.8, ramp[3], 0.1 * M.clampf(rem, 0.0, 1.0), 2)
 
 
@@ -929,7 +929,7 @@ class Shot extends Fx:
 					continue
 				var dx: float = e.x - x
 				var dy: float = e.y - y
-				if sqrt(dx * dx + dy * dy) < e.r + hr:
+				if M.hypot(dx, dy) < e.r + hr:
 					hits_done[e.id] = true
 					if on_hit.call(w, self, e):
 						dead = true
