@@ -157,7 +157,7 @@ func _body() -> void:
 		if not engage.is_empty():
 			await _walk_path(hero, engage)
 			break
-	await _engage_until_death(hero, encounter, start, 300000)
+	await _engage_until_death(hero, encounter, nav, start, 300000)
 	var last_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 	print("OPTIONAL_THREAT_TRACE lethal_wait_end hp=%s dead=%s hero=%s enemy=%s enemy_pos=%s state=%s distance=%s" % [str(hero.get("health")), str(hero.get("dead")), str(hero.global_position), str(last_enemy), str(last_enemy.global_position if last_enemy != null else Vector2.ZERO), str(last_enemy.get("_state") if last_enemy != null else "missing"), str(hero.global_position.distance_to(last_enemy.global_position) if last_enemy != null else -1)])
 	var doc: Dictionary = _survival().call(&"document")
@@ -260,16 +260,38 @@ func _body() -> void:
 # Use real movement to re-engage after knockback. A leashed enemy may despawn;
 # in that case physically retreat beyond its safe spawn radius and wait for the
 # real cooldown rather than teleporting, changing the enemy or inflicting hits.
-func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, home_cell: Vector2i, max_msec: int) -> void:
+func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, nav: OverworldTraversability, home_cell: Vector2i, max_msec: int) -> void:
 	var deadline := Time.get_ticks_msec() + max_msec
-	var home_point := Vector2(home_cell.x * 16 + 8, home_cell.y * 16 + 15)
+	var last_phase := ""
 	while not bool(hero.get("dead")) and Time.get_ticks_msec() < deadline:
 		var live := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
-		if is_instance_valid(live) and not live.is_queued_for_deletion():
+		var phase := "engage" if is_instance_valid(live) and not live.is_queued_for_deletion() else "cooldown"
+		if phase != last_phase:
+			print("OPTIONAL_THREAT_ENGAGE phase=%s pos=%s hp=%s distance=%s" % [phase, str(hero.global_position), str(hero.get("health")), str(hero.global_position.distance_to(encounter.global_position))])
+			last_phase = phase
+		if phase == "engage":
 			var delta := live.global_position - hero.global_position
 			_set_direction(delta if delta.length() > 28.0 else Vector2.ZERO)
 		elif hero.global_position.distance_to(encounter.global_position) < 350.0:
-			_set_direction(home_point - hero.global_position)
+			# A straight vector to home can press the real Hero forever into a
+			# blocker, preventing the 350px spawn-safety condition. Follow the
+			# production live-shape route with ordinary movement instead.
+			var path := _route(nav.cell_of(hero.global_position), home_cell, nav, hero)
+			print("OPTIONAL_THREAT_ENGAGE safe_route=%d pos=%s" % [path.size(), str(hero.global_position)])
+			for cell: Vector2i in path:
+				var target := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
+				var cell_deadline := mini(deadline, Time.get_ticks_msec() + 3500)
+				while hero.global_position.distance_to(target) > 4.5 and hero.global_position.distance_to(encounter.global_position) < 350.0 and Time.get_ticks_msec() < cell_deadline and not bool(hero.get("dead")):
+					_set_direction(target - hero.global_position)
+					await physics_frame
+				if hero.global_position.distance_to(encounter.global_position) >= 350.0 or Time.get_ticks_msec() >= deadline or bool(hero.get("dead")):
+					break
+				if hero.global_position.distance_to(target) > 4.5:
+					print("OPTIONAL_THREAT_ENGAGE safe_route_blocked target=%s actual=%s" % [str(cell), str(hero.global_position)])
+					break
+			_set_direction(Vector2.ZERO)
+			if path.is_empty():
+				await create_timer(1.0).timeout
 		else:
 			_set_direction(Vector2.ZERO)
 		await physics_frame
@@ -357,7 +379,7 @@ func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vecto
 		if not engage.is_empty():
 			await _walk_path(hero, engage)
 			break
-	await _engage_until_death(hero, encounter, home_cell, 300000)
+	await _engage_until_death(hero, encounter, nav, home_cell, 300000)
 	var doc: Dictionary = _survival().call(&"document")
 	var second_id := String(doc.get("pending_death", ""))
 	var second_created := bool(hero.get("dead")) and not second_id.is_empty() and second_id != previous_bag and (doc.get("death_bags", {}) as Dictionary).has(second_id) and not (doc.get("death_bags", {}) as Dictionary).has(previous_bag)
