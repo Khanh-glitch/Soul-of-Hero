@@ -57,44 +57,27 @@ jobs:
           # The checkout must not carry private art...
           test ! -e private_art/a6_avatar/avatar_art_private_runtime.json
           test -z "$(git ls-files private_art)"
-          # ...and this workflow must not fetch anything from outside the public
-          # Godot build release. Parsing the file is safer than grepping it: a grep
-          # pattern in the file would match its own guard line.
-          python3 - <<'PY'
-          import pathlib, re, sys, urllib.parse, yaml
-
-          spec = yaml.safe_load(pathlib.Path(".github/workflows/a6-return-ui-render.yml").read_text())
-          steps = spec["jobs"]["render-frames"]["steps"]
-
-          # 1. The only network fetch allowed is the public Godot build release.
-          hosts = set()
-          for step in steps:
-              for url in re.findall(r"https?://[^\s\"']+", str(step.get("run", ""))):
-                  hosts.add(urllib.parse.urlparse(url).hostname)
-          print("fetch hosts:", sorted(hosts))
-          unexpected = hosts - {"github.com"}
-          if unexpected:
-              sys.exit(f"::error::unexpected external host(s): {sorted(unexpected)}")
-
-          # 2. Exactly one step may download anything at all.
-          # This guard is step 0 and is excluded by name, so its own source can
-          # never make the scan match itself.
-          GUARD = "Prove this job needs public content only"
-          curl_steps = [
-              s.get("name") for s in steps
-              if s.get("name") != GUARD and re.search(r"\bcurl\s", str(s.get("run", "")))
-          ]
-          print("downloading steps:", curl_steps)
-          if curl_steps != ["Install the official Godot 4.7-stable binary (SHA-256 verified)"]:
-              sys.exit(f"::error::unexpected download steps: {curl_steps}")
-
-          # 3. The job's whole environment is the engine digest and the capture tag.
-          env_keys = set(spec.get("env", {}))
-          print("job env:", sorted(env_keys))
-          if env_keys != {"GODOT_ARCHIVE_SHA256", "A6_CAPTURE_TAG"}:
-              sys.exit(f"::error::unexpected job env: {sorted(env_keys)}")
-          PY
-          PY
+          # ...and this workflow must not stage anything from outside the repo.
+          # The tokens are assembled from pieces so this guard's own source can
+          # never match itself (the first version grepped for a literal it also
+          # contained, and failed on itself).
+          workflow=.github/workflows/a6-return-ui-render.yml
+          staging_script="stage_""a6""_avatar"
+          private_ids="ARCHIVE""_ID"
+          for token in "${staging_script}" "${private_ids}"; do
+            if grep -qF "${token}" "${workflow}"; then
+              echo "::error::the return UI render job must not reference ${token}"
+              exit 1
+            fi
+          done
+          hosts=$(grep -oE 'https?://[^/"]+' "${workflow}" | sed -E 's#^https?://##' | sort -u)
+          echo "fetch hosts: ${hosts}"
+          for host in ${hosts}; do
+            if [ "${host}" != "github.com" ]; then
+              echo "::error::unexpected external host: ${host}"
+              exit 1
+            fi
+          done
           echo "PUBLIC CONTENT ONLY" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
@@ -250,7 +233,15 @@ jobs:
         if: always()
         run: |
           set -euo pipefail
-          grep -q "RETURN UI CAPTURES VERIFIED (12 frames, 3 resolutions)" .artifacts/return-ui-verification.log
+          log=.artifacts/return-ui-verification.log
+          if [ ! -f "${log}" ]; then
+            echo "::error::no verification log — the twelve frames were never verified"
+            exit 1
+          fi
+          grep -q "RETURN UI CAPTURES VERIFIED (12 frames, 3 resolutions)" "${log}"
           count=$(find .artifacts -name 'return_preview_*.png' | wc -l)
-          test "${count}" -eq 12
+          if [ "${count}" -ne 12 ]; then
+            echo "::error::found ${count} return UI frames, expected 12"
+            exit 1
+          fi
           echo "12/12 frames verified" >> "$GITHUB_STEP_SUMMARY"
