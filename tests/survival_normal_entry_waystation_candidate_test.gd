@@ -37,7 +37,7 @@ func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: V
 			print("A0_STAND_ROUTE_MISSING %s start=%s target=%s attempt=%d" % [label, str(here), str(destination), attempts])
 			break
 		planned_ok = true
-		walked = await _walk_axis(hero, path)
+		walked = await _walk_with_unstick(hero, path)
 		var deadline := Time.get_ticks_msec() + 2500
 		while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < deadline:
 			_set_direction(target - hero.global_position)
@@ -58,25 +58,39 @@ func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: V
 	_expect(arrived, label)
 	return arrived
 
-## Cardinal, one-axis-at-a-time stepping. The inherited helper aims diagonally at
-## the next cell centre, which a wide body can wedge on a solid corner; a player
-## simply steps right, then up. Same cells, same ordinary input.
-func _walk_axis(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
+## Diagonal walking toward each cell centre, with an ordinary player's escape when
+## a wide body wedges on a solid corner: sidestep perpendicular for a few frames,
+## then keep going. The inherited helper wedged at the same corner in both legs.
+func _walk_with_unstick(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
 	for cell: Vector2i in path:
 		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
-		var deadline := Time.get_ticks_msec() + 3500
+		var deadline := Time.get_ticks_msec() + 6000
+		var stuck := 0
+		var nudges := 0
+		var nudge_frames := 0
+		var nudge := Vector2.ZERO
 		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline and not bool(hero.get(&"dead")):
+			if nudge_frames > 0:
+				nudge_frames -= 1
+				_set_direction(nudge)
+				await physics_frame
+				continue
 			var delta := point - hero.global_position
-			var direction := Vector2.ZERO
-			if absf(delta.x) > 2.0 and absf(delta.x) >= absf(delta.y):
-				direction = Vector2(signf(delta.x), 0.0)
-			elif absf(delta.y) > 2.0:
-				direction = Vector2(0.0, signf(delta.y))
-			_set_direction(direction)
+			var before := hero.global_position
+			_set_direction(delta)
 			await physics_frame
+			stuck = stuck + 1 if hero.global_position.distance_to(before) < 0.4 else 0
+			if stuck >= 6:
+				nudges += 1
+				if nudges > 10:
+					break
+				nudge = Vector2(signf(delta.y), -signf(delta.x)) if absf(delta.x) >= absf(delta.y) else Vector2(-signf(delta.y), signf(delta.x))
+				nudge_frames = 18
+				stuck = 0
+				print("A0_UNSTICK %s actor=%s target=%s nudge=%d" % [str(cell), str(hero.global_position), str(point), nudges])
 		if hero.global_position.distance_to(point) > 4.5:
 			_set_direction(Vector2.ZERO)
-			print("A0_AXIS_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
+			print("A0_UNSTICK_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
 			return false
 	_set_direction(Vector2.ZERO)
 	return true
