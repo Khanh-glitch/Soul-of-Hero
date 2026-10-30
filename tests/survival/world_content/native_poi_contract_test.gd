@@ -485,8 +485,11 @@ func _intent_boundary_adversarial_tests() -> void:
 		fixture.submit_intent(stale).status == "rejected",
 		"owner fixture rejects a valid identity carrying a stale observed projection revision"
 	)
+	_check(
+		site.set_projection(fixture.project_state(site.get_source_id())),
+		"scene receives the newer owner revision before retrying its neutral choice"
+	)
 	var fresh := site._make_intent(site.definition.choices[0])
-	fresh.observed_projection_revision = int(fixture.snapshot().projection_revision)
 	var accepted := fixture.submit_intent(fresh)
 	_check(
 		accepted.status == "committed",
@@ -601,8 +604,7 @@ func _authority_failures_and_retry() -> void:
 	var saved_once: Variant = JSON.parse_string(JSON.stringify(authority.snapshot()))
 	var replay_fixture := FIXTURE_SCRIPT.new()
 	replay_fixture.configure(saved_once if saved_once is Dictionary else {})
-	var replay := original.duplicate(true)
-	replay.observed_projection_revision = int(replay_fixture.snapshot().projection_revision)
+	var replay := _with_owner_revision(original, int(replay_fixture.snapshot().projection_revision))
 	var duplicate: Dictionary = replay_fixture.submit_intent(replay)
 	_check(
 		(
@@ -674,9 +676,8 @@ func _candidate_claims_capacity_and_reload() -> void:
 		),
 		"serialized owner projection preserves canonical identity and monotonic revision"
 	)
-	var replayed_candidate := candidate.duplicate(true)
-	replayed_candidate.observed_projection_revision = int(
-		reload_fixture.snapshot().projection_revision
+	var replayed_candidate := _with_owner_revision(
+		candidate, int(reload_fixture.snapshot().projection_revision)
 	)
 	var replay_result: Dictionary = reload_fixture.submit_intent(replayed_candidate)
 	_check(
@@ -1078,6 +1079,27 @@ func _clone_claim_with_generation(
 	var copy := intent.duplicate(true)
 	var base := "%s/%s/%s" % [copy.source_id, copy.object_id, copy.action_id]
 	copy.claim_id = "%s/g%d" % [base, generation]
+	copy.observed_projection_revision = projection_revision
+	copy.intent_id = (
+		"%s|%s|%s|%s|%s|%s|%d|%s|%d|%d"
+		% [
+			copy.source_id,
+			copy.object_id,
+			copy.action_id,
+			copy.claim_id,
+			copy.run_id,
+			copy.site_instance_id,
+			copy.run_epoch,
+			copy.phase_id,
+			copy.observed_phase_projection_revision,
+			copy.observed_projection_revision
+		]
+	)
+	return copy
+
+
+func _with_owner_revision(intent: Dictionary, projection_revision: int) -> Dictionary:
+	var copy := intent.duplicate(true)
 	copy.observed_projection_revision = projection_revision
 	copy.intent_id = (
 		"%s|%s|%s|%s|%s|%s|%d|%s|%d|%d"

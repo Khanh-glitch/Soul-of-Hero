@@ -589,6 +589,10 @@ func _physical_quarry_route_choices() -> void:
 		root.add_child(site)
 		await process_frame
 		site.set_projection(authority.project_state(site.get_source_id()))
+		_check(
+			site.apply_run_phase_projection(PHASE_FIXTURE.project(site.definition)),
+			"Quarry route fixture requires an explicit owner-projected ordinary phase"
+		)
 		var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
 		actor.collision_layer = 2
 		actor.collision_mask = 1
