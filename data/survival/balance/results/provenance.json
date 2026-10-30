@@ -232,6 +232,16 @@
       "upstream_path": "data/survival/items/a1_source_adoption.v2.json",
       "upstream_ref": "arena_a3",
       "verified": true
+    },
+    {
+      "exists": true,
+      "key": "a3.world_source_bindings_v3",
+      "owner": "A3",
+      "sha256": "b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353",
+      "upstream_commit": "100b3406ef4e09e3b7ccc8b5910dffc6b6d0dfcd",
+      "upstream_path": "data/survival/items/world_source_bindings.v3.json",
+      "upstream_ref": "arena_a3",
+      "verified": true
     }
   ],
   "upstream_drift_check": {

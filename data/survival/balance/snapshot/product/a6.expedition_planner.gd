@@ -108,8 +108,10 @@ func set_snapshot(snapshot: Dictionary) -> void:
 	if schema == "soh.ui.snapshot.v2":
 		apply_snapshot(snapshot)
 		return
-	if not schema.is_empty() or _snapshot_sequence >= 0: return
-	if String(snapshot.get("provenance", "")) == "FIXTURE_PROJECTION" and not _developer_diagnostics: return
+	# Unversioned snapshots are a legacy fixture-only path. Release views accept
+	# only the current owner DTO; diagnostics never become a production bridge.
+	if not _developer_diagnostics or not schema.is_empty() or _snapshot_sequence >= 0: return
+	if String(snapshot.get("provenance", "")) != "FIXTURE_PROJECTION": return
 	_install_snapshot(snapshot)
 
 func _install_snapshot(snapshot: Dictionary) -> void:
@@ -119,11 +121,12 @@ func _install_snapshot(snapshot: Dictionary) -> void:
 
 ## Called by host when request is completed or rejected. No local item/recipe update.
 func resolve_request(message: String) -> void:
-	# Compatibility only for old unversioned fixtures. V1 must correlate IDs.
-	if not String(_snapshot.get("schema", "")).is_empty(): return
+	# Compatibility only for explicit developer fixtures. Production responses
+	# must use soh.ui.response.v2 and correlate to the pending request ID.
+	if not _developer_diagnostics or not String(_snapshot.get("schema", "")).is_empty(): return
 	_pending = false
 	_clear_pending()
-	_message = message
+	_message = _safe_response_copy(message, false)
 	if is_inside_tree(): _refresh_detail()
 
 ## Versioned UI DTO, not a production API. Producer supplies monotonic sequence.
@@ -132,23 +135,40 @@ func apply_snapshot(snapshot: Dictionary) -> bool:
 	var provenance := String(snapshot.get("provenance", ""))
 	if provenance not in ["A0_OWNER_PROJECTION", "FIXTURE_PROJECTION"]: return false
 	if provenance == "FIXTURE_PROJECTION" and not _developer_diagnostics: return false
+	var revision := String(snapshot.get("revision", "")).strip_edges()
 	var sequence: Variant = snapshot.get("sequence", null)
-	if typeof(sequence) != TYPE_INT or int(sequence) < 0 or int(sequence) < _snapshot_sequence: return false
+	if revision.is_empty() or typeof(sequence) != TYPE_INT or int(sequence) < 0 or int(sequence) < _snapshot_sequence: return false
 	if int(sequence) == _snapshot_sequence and snapshot != _snapshot: return false
 	_snapshot_sequence = int(sequence)
 	_install_snapshot(snapshot)
 	return true
 
-## Requires both the active request ID and a current authoritative snapshot.
-## Invalid, stale, or replayed replies never release a different pending request.
+## A response releases a request only when it correlates and carries a fresh
+## authoritative snapshot. Retried intents keep the same request ID; the owner
+## must explicitly advertise durable idempotency before the UI offers retry.
 func apply_host_response(response: Dictionary) -> bool:
 	if not _pending or response.get("schema", "") != "soh.ui.response.v2": return false
 	if String(response.get("request_id", "")) != _pending_id: return false
-	if not String(response.get("status", "")) in ["accepted", "rejected"]: return false
+	var status := String(response.get("status", ""))
+	if status not in ["accepted", "rejected"]: return false
 	var next: Variant = response.get("snapshot", null)
-	if not next is Dictionary or not apply_snapshot(next): return false
+	if not next is Dictionary: return false
+	var next_sequence: Variant = next.get("sequence", null)
+	var request_sequence: Variant = _pending_payload.get("sequence", null)
+	var next_revision := String(next.get("revision", "")).strip_edges()
+	var request_revision := String(_pending_payload.get("revision", "")).strip_edges()
+	if (
+		not next_sequence is int
+		or not request_sequence is int
+		or int(next_sequence) <= int(request_sequence)
+		or int(next_sequence) <= _snapshot_sequence
+		or next_revision.is_empty()
+		or next_revision == request_revision
+	):
+		return false
+	if not apply_snapshot(next): return false
 	_clear_pending()
-	_message = String(response.get("message", "Request resolved."))
+	_message = _response_copy(response, status)
 	if is_inside_tree(): _refresh_detail()
 	return true
 
@@ -455,9 +475,9 @@ func _refresh_detail() -> void:
 		3: _hazard_detail()
 		4: _cores_detail()
 	if not _message.is_empty(): _details.add_child(_label(_message, 9, MUTED))
-	if _pending and _snapshot.get("schema", "") == "soh.ui.snapshot.v2" and _has_action_host():
-		var retry := _button("RETRY SAME REQUEST")
-		retry.tooltip_text = "Retry the same action."
+	if _pending and _retry_is_owner_authorized() and _has_action_host():
+		var retry := _button("CHECK AGAIN")
+		retry.tooltip_text = "Check this action again without creating a second one."
 		retry.pressed.connect(retry_pending)
 		_details.add_child(retry)
 		if detail_had_focus and is_visible_in_tree(): retry.grab_focus()
@@ -554,7 +574,17 @@ func _has_action_host() -> bool:
 	return not request_action.get_connections().is_empty()
 
 func _request(action: String, id: String, payload: Dictionary) -> void:
-	if _pending or id.is_empty(): return
+	if _pending or id.is_empty() or not _has_action_host(): return
+	if action not in ["craft", "research", "transfer", "equip_core", "unequip_core", "select_respawn"]: return
+	var live_owner := (
+		_snapshot.get("schema", "") == "soh.ui.snapshot.v2"
+		and _snapshot.get("provenance", "") == "A0_OWNER_PROJECTION"
+	)
+	var developer_fixture := (
+		_developer_diagnostics
+		and _snapshot.get("provenance", "") == "FIXTURE_PROJECTION"
+	)
+	if not live_owner and not developer_fixture: return
 	_pending = true
 	_request_serial += 1
 	_pending_id = "%s-%d" % [_client_nonce, _request_serial]
@@ -637,10 +667,18 @@ func _cores_detail() -> void:
 		_details.add_child(_label("Permanent formula: %s" % learned_label, 10, TEAL if bool(core.formula_learned) else PAPER))
 	else:
 		_details.add_child(_label("Recipe knowledge · tracked separately", 9, MUTED))
-	if _has_action_host() and not _pending and bool(core.get("can_equip", false)) and uses > 0 and uses <= maximum and not bool(core.get("equipped", false)):
-		var button := _button("Equip")
-		button.pressed.connect(_request.bind("equip_core", String(core.get("id", "")), {}))
-		_details.add_child(button)
+	var instance_id := String(core.get("instance_id", ""))
+	var has_physical_identity := instance_id.begins_with("soh_i_") and not String(core.get("item_id", "")).is_empty()
+	var equipped: Variant = core.get("equipped", null)
+	if has_physical_identity and equipped is bool and _has_action_host() and not _pending:
+		if not bool(equipped) and core.get("can_equip", null) is bool and bool(core.get("can_equip", false)) and uses > 0 and uses <= maximum:
+			var equip := _button("Equip")
+			equip.pressed.connect(_request.bind("equip_core", instance_id, {}))
+			_details.add_child(equip)
+		elif bool(equipped) and core.get("can_unequip", null) is bool and bool(core.get("can_unequip", false)):
+			var unequip := _button("Unequip")
+			unequip.pressed.connect(_request.bind("unequip_core", instance_id, {}))
+			_details.add_child(unequip)
 
 func _confirm_research(id: String) -> void:
 	if _pending: return
@@ -666,12 +704,56 @@ func _short_player_text(value: String, max_chars: int) -> String:
 	if clean.length() <= max_chars: return clean
 	return clean.substr(0, max_chars - 1).strip_edges() + "…"
 
-## Manual retry after lost response: exact same intent key and payload.
-## Only safe with a host that durably deduplicates; there is no auto-timeout.
+func _retry_is_owner_authorized() -> bool:
+	if _snapshot.get("schema", "") != "soh.ui.snapshot.v2" or _snapshot.get("provenance", "") != "A0_OWNER_PROJECTION":
+		return false
+	var capabilities: Variant = _snapshot.get("capabilities", {})
+	return capabilities is Dictionary and capabilities.get("retry_same_request", false) is bool and bool(capabilities.get("retry_same_request", false))
+
+
 func retry_pending() -> bool:
-	if not _pending or _pending_id.is_empty() or _snapshot.get("schema", "") != "soh.ui.snapshot.v2": return false
+	if not _pending or _pending_id.is_empty() or not _retry_is_owner_authorized() or not _has_action_host(): return false
 	request_action.emit(_pending_action, _pending_target, _pending_payload.duplicate(true))
 	return true
+
+
+func _response_copy(response: Dictionary, status: String) -> String:
+	var reason := String(response.get("reason", "")).strip_edges().to_lower()
+	var copy := {
+		"out_of_range": "Move closer and try again.",
+		"dead": "You cannot do that right now.",
+		"not_alive": "You cannot do that right now.",
+		"chest_full": "No room there. Make space and try again.",
+		"bag_full": "Make room in your pack and try again.",
+		"insufficient_quantity": "You do not have enough for that.",
+		"insufficient_materials": "You need more materials.",
+		"missing_item": "That item is no longer available.",
+		"protected_unique": "Unique items cannot be moved here.",
+		"stale_revision": "Things changed. Review the latest details.",
+		"stale_request": "Things changed. Review the latest details.",
+		"already_committed": "That action is already complete.",
+		"unknown_capability": "That action is not available here.",
+		"unsupported": "That action is not available here.",
+		"station_unavailable": "This station is not ready.",
+		"not_learned": "Learn this formula first.",
+	}
+	if status == "accepted": return "Action complete."
+	if copy.has(reason): return String(copy[reason])
+	# Never echo arbitrary host text to release UI. Even a short message can carry
+	# a stack key, file path, raw identifier, internal status, or debug detail.
+	return "Could not do that just now. Review your items and try again."
+
+
+func _safe_response_copy(message: String, accepted: bool) -> String:
+	var normalized := message.strip_edges().replace("\r", " ").replace("\n", " ").replace("\t", " ")
+	var clean := " ".join(normalized.split(" ", false))
+	var lower := clean.to_lower()
+	for internal in ["soh_i_", "res://", "file://", "fixture", "not_native", "authored_plan", "blocked_pending", "source_blocked", "schema", "revision", "sequence", "owner_projection", "traceback", "exception", "stack_id"]:
+		if lower.contains(internal):
+			return "Action complete." if accepted else "Could not do that just now. Review your items and try again."
+	if clean.is_empty():
+		return "Action complete." if accepted else "Could not do that just now. Review your items and try again."
+	return _short_player_text(clean, 72)
 
 func _clear_pending() -> void:
 	_pending = false

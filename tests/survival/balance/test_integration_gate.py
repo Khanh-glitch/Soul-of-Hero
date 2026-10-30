@@ -31,14 +31,14 @@ def _inputs():
     return model, texts, manifest, facts
 
 
-def _build(texts, facts, manifest, evidence_payload=None):
+def _build(texts, facts, manifest, evidence_payload=None, paths=None):
     return gate.build(
         support.model(),
         texts,
         facts,
         manifest,
         evidence=evidence_payload or {"schema": evidence.SCHEMA, "runs": []},
-        paths=product.path_index(manifest),
+        paths=paths or product.path_index(manifest),
         tree=product.load_tree(manifest),
     )
 
@@ -255,7 +255,10 @@ class NativeEvidenceTests(unittest.TestCase):
         self.manifest = self.manifest
         self.head = str(self.manifest["a0_head"])
 
-    def _evidence(self, head: str, status: str, conclusion: str, phrases, run_id=1):
+    STEP = "New profile through actual menus and full home journey"
+
+    def _evidence(self, head: str, status: str, conclusion: str, phrases, run_id=1, step_state="success"):
+        step = {"name": self.STEP, "status": "completed", "conclusion": step_state}
         return {
             "schema": evidence.SCHEMA,
             "runs": [
@@ -265,11 +268,39 @@ class NativeEvidenceTests(unittest.TestCase):
                     "head_sha": head,
                     "status": status,
                     "conclusion": conclusion,
-                    "jobs": [{"name": "native-entry-restart", "status": status, "conclusion": conclusion}],
+                    "jobs": [
+                        {
+                            "name": "native-entry-restart",
+                            "status": status,
+                            "conclusion": conclusion,
+                            "steps": [step],
+                        }
+                    ],
                     "log_phrases": list(phrases),
                 }
             ],
         }
+
+    def test_a_green_workflow_whose_proving_step_failed_is_not_evidence(self) -> None:
+        # The trap round 4 fell into: the workflow is green, the step that proves the
+        # claim is red, so nothing is proven.
+        state = self._resolve(
+            self._evidence(
+                self.head,
+                "completed",
+                "success",
+                ["NORMAL ENTRY HOME RESTART PASSED"],
+                step_state="failure",
+            )
+        )
+        self.assertEqual(state["state"], evidence.FAILED)
+
+    def test_a_green_workflow_without_the_step_recorded_is_not_evidence(self) -> None:
+        payload = self._evidence(self.head, "completed", "success", ["NORMAL ENTRY HOME RESTART PASSED"])
+        payload["runs"][0]["jobs"][0].pop("steps")
+        state = self._resolve(payload)
+        self.assertEqual(state["state"], evidence.NOT_TESTED)
+        self.assertIn("not captured", str(state.get("note")))
 
     def _resolve(self, payload):
         return evidence.state(payload, "a0_normal_entry_home", self.head)
@@ -344,6 +375,22 @@ class GateClosureTests(unittest.TestCase):
         self.assertEqual(link["source_state"], "PRODUCTION_SEAM")
         self.assertEqual(after["entry_claims"]["C_content_is_mounted"]["state"], "SOURCE_PRESENT")
 
+    def test_blk1_needs_a_production_path_not_a_test_harness(self) -> None:
+        # The genuine round-5 false positive: A0's own test harness names the node.
+        # If a test file could satisfy claim C, the claim would prove nothing.
+        _model, texts, manifest, facts = _inputs()
+        texts = dict(texts)
+        texts["a0.survival_waystation_authority_test.gd"] += (
+            '\nconst NODE := "node_waystation_cache"\nconst POI := "poi_crown_waystation"\n'
+        )
+        paths = product.path_index(manifest)
+        paths["a0.survival_waystation_authority_test.gd"] = "tests/survival_waystation_authority_test.gd"
+        harness_only = _build(texts, facts, manifest, paths=paths)
+        claim_c = harness_only["entry_claims"]["C_content_is_mounted"]
+        self.assertNotEqual(claim_c["state"], "SOURCE_PRESENT")
+        self.assertTrue(harness_only["entry_content"]["non_production_references"])
+        self.assertTrue(_link(harness_only, "waystation_cache", "L2_ROUTE")["blocked"])
+
     def test_blk1_does_not_close_for_a_comment_mentioning_the_node(self) -> None:
         _model, texts, manifest, facts = _inputs()
         texts = dict(texts)
@@ -351,10 +398,10 @@ class GateClosureTests(unittest.TestCase):
         after = _build(texts, facts, manifest)
         self.assertTrue(_link(after, "waystation_cache", "L2_ROUTE")["blocked"])
 
-    def test_blk4_needs_both_a_contract_caller_and_native_evidence(self) -> None:
-        _model, texts, manifest, facts = _inputs()
-        head = str(manifest["a0_head"])
-        verified = {
+    @staticmethod
+    def _five_clause_evidence(head: str):
+        """The only thing that may grant S4: five clauses, on the pinned sha."""
+        return {
             "schema": evidence.SCHEMA,
             "runs": [
                 {
@@ -363,16 +410,61 @@ class GateClosureTests(unittest.TestCase):
                     "head_sha": head,
                     "status": "completed",
                     "conclusion": "success",
-                    "jobs": [{"name": "native-entry-restart", "status": "completed", "conclusion": "success"}],
-                    "log_phrases": ["NORMAL ENTRY HOME RESTART PASSED"],
-                }
+                    "jobs": [
+                        {
+                            "name": "native-entry-restart",
+                            "status": "completed",
+                            "conclusion": "success",
+                            "steps": [
+                                {
+                                    "name": "New profile through actual menus and full home journey",
+                                    "status": "completed",
+                                    "conclusion": "success",
+                                },
+                                {
+                                    "name": "Independent new Godot process and actual save recovery",
+                                    "status": "completed",
+                                    "conclusion": "success",
+                                },
+                            ],
+                        }
+                    ],
+                    "log_phrases": [
+                        "NORMAL ENTRY HOME RESTART PASSED",
+                        "ENTRY_HOME_SECOND_PROCESS restored",
+                    ],
+                },
+                {
+                    "run_id": 12,
+                    "workflow": "a0-waystation-input-restart.yml",
+                    "head_sha": head,
+                    "status": "completed",
+                    "conclusion": "success",
+                    "jobs": [
+                        {
+                            "name": "waystation-input-restart",
+                            "status": "completed",
+                            "conclusion": "success",
+                            "steps": [
+                                {
+                                    "name": "Real Hero input, canonical receipt, and separate process replay",
+                                    "status": "completed",
+                                    "conclusion": "success",
+                                }
+                            ],
+                        }
+                    ],
+                    "log_phrases": [
+                        "A0 WAYSTATION INPUT RESTART PASSED",
+                        "independent-process cache replay during cooldown grants nothing",
+                    ],
+                },
             ],
         }
-        # Native proof alone does not close it: there is still no A1-keyed caller.
-        proof_only = _build(texts, facts, manifest, verified)
-        self.assertTrue(_link(proof_only, "waystation_cache", "L5_COMMIT")["blocked"])
 
-        # A caller alone does not close it either: nothing has run.
+    def test_blk4_needs_all_five_s4_clauses(self) -> None:
+        _model, texts, manifest, facts = _inputs()
+        head = str(manifest["a0_head"])
         texts = dict(texts)
         texts["a0.survival_service.gd"] += (
             "\n\nfunc _ready() -> void:\n"
@@ -384,14 +476,42 @@ class GateClosureTests(unittest.TestCase):
             "\t\tcandidate[\"survival\"] = candidate.get(\"survival\", {})\n"
             "\t\treturn true)\n"
         )
-        caller_only = _build(texts, facts, manifest)
-        self.assertEqual(caller_only["commit_seam"]["static_state"], "MOUNTED_A1_CONTRACT_CALLER")
+
+        # One green run is not S4: it proves C2 only, and C3/C4/C5 still do not hold.
+        partial = self._five_clause_evidence(head)
+        partial["runs"] = partial["runs"][:1]
+        partial["runs"][0]["jobs"][0]["steps"] = partial["runs"][0]["jobs"][0]["steps"][:1]
+        partial["runs"][0]["log_phrases"] = ["NORMAL ENTRY HOME RESTART PASSED"]
+        one_run = _build(texts, facts, manifest, partial)
+        self.assertEqual(one_run["commit_seam"]["static_state"], "MOUNTED_A1_CONTRACT_CALLER")
+        self.assertFalse(one_run["s4"]["s4_granted"])
+        self.assertTrue(_link(one_run, "waystation_cache", "L5_COMMIT")["blocked"])
+
+        # A caller alone does not close it either: nothing has run.
+        caller_only = _build(texts, facts, manifest, {"schema": evidence.SCHEMA, "runs": []})
         self.assertTrue(_link(caller_only, "waystation_cache", "L5_COMMIT")["blocked"])
 
-        both = _build(texts, facts, manifest, verified)
+        # All five clauses, each proved by its own step and phrase, on the pinned sha.
+        both = _build(texts, facts, manifest, self._five_clause_evidence(head))
+        self.assertTrue(both["s4"]["s4_granted"])
+        self.assertEqual({name for name, clause in both["s4"]["clauses"].items() if clause["state"] == "HOLDS"}, {
+            "C1_exact_source_identity",
+            "C2_normal_entry",
+            "C3_independent_process",
+            "C4_authorised_commit",
+            "C5_negative_replay",
+        })
         link = _link(both, "waystation_cache", "L5_COMMIT")
         self.assertFalse(link["blocked"], link["missing"])
         self.assertEqual(link["level"], "S4_NATIVE_VERIFIED")
+        self.assertFalse(both["s4"]["s5_granted"])
+
+    def test_s4_is_never_granted_by_a_fixture_or_this_repository(self) -> None:
+        # A7's own artifacts must never claim S4.
+        payload = json.loads((support.DATA_DIR / "results" / "gate.json").read_text(encoding="utf-8"))
+        self.assertFalse(payload["s4"]["s4_granted"])
+        self.assertFalse(payload["s4"]["s5_granted"])
+        self.assertNotIn("VERIFIED", {row["state"] for row in payload["native_states"].values()})
 
     def test_blk5_closes_when_a3_prices_the_two_route_actions(self) -> None:
         _model, texts, manifest, facts = _inputs()

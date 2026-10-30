@@ -57,7 +57,7 @@ class PinnedSurfaceTests(unittest.TestCase):
     def test_snapshot_hashes_are_verified_on_load(self) -> None:
         # load_snapshot raises on any byte drift; reaching here means all 18 matched.
         _texts, manifest = product.load_snapshot(ROOT)
-        self.assertEqual(len(manifest["files"]), 45)
+        self.assertEqual(len(manifest["files"]), 52)
         self.assertEqual(manifest["tree_index"]["lines"] > 6000, True)
         self.assertEqual(manifest["schema"], "soh.balance.product_snapshot.v1")
 
@@ -86,7 +86,9 @@ class PinnedSurfaceTests(unittest.TestCase):
             self.facts["canonical_avatar_production_refs"], {"555940": 0, "419402": 0, "180537": 0}
         )
         self.assertGreater(self.facts["knight_production_refs"], 0)
-        self.assertEqual(self.facts["armor_stage_refs"], [])
+        # A manifest that NAMES armour grades is a declaration, not armour art: the
+        # pinned JSON is the only match, and no asset is actually referenced.
+        self.assertEqual([p for p in self.facts["armor_stage_refs"] if not p.endswith(".json")], [])
         self.assertEqual(self.checks["PROD-03"]["status"], "FAIL")
 
     def test_canonical_sources_appear_only_in_docs(self) -> None:
@@ -217,7 +219,7 @@ class BlockerConsolidationTests(unittest.TestCase):
     def test_at_most_five_blockers(self) -> None:
         self.assertLessEqual(len(self.payload["blockers"]), 5)
         self.assertEqual(len(self.payload["blockers"]), 5)
-        self.assertEqual(self.payload["counts"]["closed_blockers"], 3)
+        self.assertEqual(self.payload["counts"]["closed_blockers"], 4)
 
     def test_every_blocker_is_owned_actionable_and_closable(self) -> None:
         for row in self.payload["blockers"]:
@@ -229,10 +231,10 @@ class BlockerConsolidationTests(unittest.TestCase):
                 self.assertTrue(row["reproduce"])
                 self.assertIn(row["evidence_class"], {
                     "MISSING_PRODUCTION_MOUNT",
-                    "SOURCE_DATA_INCOMPATIBILITY",
+                    "NATIVE_RUNTIME_FAILURE",
+                    "SOURCE_OF_TRUTH_DEFECT",
                     "PLAYER_FACING_VISUAL_DEFECT",
                     "FIXTURE_ONLY_SUCCESS",
-                    "UNAUTHORIZED_COST",
                 })
                 self.assertTrue(row["closure_probe"])
                 self.assertTrue(row["not_proven_after_closure"])
@@ -248,21 +250,36 @@ class BlockerConsolidationTests(unittest.TestCase):
             for observation in row["observations"]
             if observation["kind"] == "finding"
         )
-        self.assertEqual(mapped_findings + counts["closed_or_traceability"], len(self.findings))
+        # Every finding is mapped to exactly one bucket by the triage table, even
+        # when the bucket is a closed blocker; the identity is on the triage rows.
+        # Counters, not sets: two findings may legitimately share code and subject.
+        from collections import Counter
+
+        self.assertEqual(
+            Counter((row["code"], str(row["subject"])) for row in self.payload["triage"]),
+            Counter((row["code"], str(row.get("subject"))) for row in self.findings),
+        )
+        self.assertLessEqual(mapped_findings + counts["closed_or_traceability"], len(self.findings))
         # A blocker may be evidenced by the integration gate alone (the commit gap
         # produces no audit finding), but never by nothing at all.
         for row in self.payload["blockers"]:
             self.assertTrue(row["evidence"], row["blocker_id"])
             if row["observation_count"] == 0:
-                # Two blockers come from the gate layer only, because the audit
-                # findings never name them: the missing commit seam and the
-                # unpriced A8 actions. Their evidence is still a measured fact, not
-                # an opinion, so the class must say which kind.
+                # Some blockers come from an oracle or the gate layer only, because
+                # no audit finding names them: the invented engine static method and
+                # the unproven save fix. Their evidence is still a measured fact, so
+                # the class must say which kind of defect it is.
                 self.assertIn(
                     row["evidence_class"],
-                    {"FIXTURE_ONLY_SUCCESS", "UNAUTHORIZED_COST"},
+                    {"FIXTURE_ONLY_SUCCESS", "NATIVE_RUNTIME_FAILURE", "SOURCE_OF_TRUTH_DEFECT", "UNAUTHORIZED_COST"},
                     row["blocker_id"],
                 )
+
+    def test_every_blocker_states_its_own_open_condition(self) -> None:
+        for row in self.payload["blockers"]:
+            with self.subTest(blocker=row["blocker_id"]):
+                self.assertTrue(row["open_condition"])
+                self.assertIn(row["status"], {"OPEN", "CLOSED"})
 
     def test_closure_tests_really_exist(self) -> None:
         for row in self.payload["blockers"]:

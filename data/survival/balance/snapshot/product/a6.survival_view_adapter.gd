@@ -34,15 +34,20 @@ static func bag(save: Object, survival: Object) -> Array[Dictionary]:
 		if id.is_empty() or count <= 0:
 			continue
 		var def: Dictionary = _dict(survival.call(&"item_definition", id))
-		entries.append({"id": id, "stack_key": String(key), "name": String(def.get("label", id.replace("_", " ").capitalize())), "count": count, "kind": String(def.get("kind", record.get("kind", "item")))})
+		var label := String(def.get("label", "")).strip_edges()
+		# Never turn a private catalog key into player-facing text. Unknown rows
+		# stay absent until A0/A3 supplies a human label.
+		if label.is_empty():
+			continue
+		entries.append({"id": id, "stack_key": String(key), "name": label, "count": count, "kind": String(def.get("kind", record.get("kind", "item")))})
 	return entries
 
 static func placement(survival: Object, piece_id: String, reason: String, known_sources: Array = []) -> Dictionary:
 	if survival == null:
-		return {"name": piece_id, "status": "Construction service is unavailable.", "costs": []}
+		return {"name": "Building", "status": "Construction is unavailable right now.", "costs": []}
 	var piece: Dictionary = _dict(survival.call(&"piece_definition", piece_id))
 	if piece.is_empty():
-		return {"name": piece_id, "status": "Construction definition unavailable.", "costs": []}
+		return {"name": "Building", "status": "That building is unavailable.", "costs": []}
 	var cost: Dictionary = _dict(piece.get("cost", {}))
 	var rows: Array[Dictionary] = []
 	var keys := cost.keys()
@@ -60,8 +65,10 @@ static func placement(survival: Object, piece_id: String, reason: String, known_
 		rows.append({"id": id, "name": String(def.get("label", id)), "have": have, "required": required, "missing": maxi(0, required - have), "sources": hints})
 	var message := "Location clear."
 	if not reason.is_empty():
-		message = String(PLACEMENT_REASONS.get(reason, "Placement unavailable (%s)." % reason))
-	return {"name": String(piece.get("label", piece_id)), "status": message, "costs": rows}
+		message = String(PLACEMENT_REASONS.get(reason, "That spot will not work."))
+	var label := String(piece.get("label", "")).strip_edges()
+	if label.is_empty(): label = "Building"
+	return {"name": label, "status": message, "costs": rows}
 
 ## A3 catalogs use `knowledge: starter|recipe`; saved formula ownership is a
 ## separate host projection. Never treat a physical Core instance as knowledge.
@@ -307,9 +314,10 @@ static func _totals_as_rows(totals: Dictionary, survival: Object, location: Stri
 		var transferable := false
 		if not protected and survival.has_method(&"is_sweepable_item"):
 			transferable = bool(survival.call(&"is_sweepable_item", id))
-		var label := String(catalog.get("label", definition.get("label", "")))
-		if protected and label.is_empty(): label = "Unique physical item · details unavailable"
-		if label.is_empty(): label = id
+		var label := String(catalog.get("label", definition.get("label", ""))).strip_edges()
+		if protected and label.is_empty(): label = "Unique item"
+		if label.is_empty():
+			continue
 		rows.append({
 			"id": id,
 			"name": label,

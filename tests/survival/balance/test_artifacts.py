@@ -66,7 +66,7 @@ class ArtifactBuildTests(unittest.TestCase):
 
     def test_provenance_is_reproducible_from_committed_bytes(self) -> None:
         payload = self.artifacts["provenance.json"]
-        self.assertEqual(len(payload["snapshots"]), 16)
+        self.assertEqual(len(payload["snapshots"]), 17)
         for snapshot in payload["snapshots"]:
             self.assertTrue(snapshot["verified"], snapshot["key"])
         # The live upstream comparison is environment-dependent, so the artifact

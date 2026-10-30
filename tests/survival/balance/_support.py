@@ -1,6 +1,7 @@
 """Shared fixtures for the A7 balance tests (stdlib unittest only)."""
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -25,6 +26,24 @@ def model() -> Model:
     if "model" not in _CACHE:
         _CACHE["model"] = Model.load(DATA_DIR)
     return _CACHE["model"]
+
+
+def oracle_payload():
+    """The committed oracle verdicts, rebuilt from the same bytes report.py uses."""
+    if "oracle" not in _CACHE:
+        from sohbalance import oracle as oracle_module
+        from sohbalance import product
+
+        texts, _manifest = product.load_snapshot(REPO_ROOT)
+        a3 = {}
+        for name in ("sources.json", "world_source_bindings.v3.json"):
+            path = DATA_DIR / "snapshot" / f"a3.{name}"
+            if path.exists():
+                a3[f"a3.{name}"] = path.read_text(encoding="utf-8")
+        _CACHE["oracle"] = oracle_module.audit(
+            texts, a3, model(), json.loads(texts.get("a0.survival_catalog.json", "{}") or "{}")
+        )
+    return _CACHE["oracle"]
 
 
 def network() -> RouteNetwork:

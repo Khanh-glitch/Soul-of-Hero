@@ -12,6 +12,9 @@ static func resolve(owner_snapshot: Dictionary, manifest: Dictionary = {}) -> Di
 		return _blocked("", -1, "Invalid appearance snapshot.")
 	if String(owner_snapshot.get("provenance", "")) != OWNER_SOURCE:
 		return _blocked("", -1, "Appearance requires A0 owner state.")
+	var revision := String(owner_snapshot.get("revision", "")).strip_edges()
+	if revision.is_empty():
+		return _blocked("", -1, "Appearance requires a current saved owner revision.")
 	var gender := String(owner_snapshot.get("gender", ""))
 	if gender not in ["male", "female"]:
 		return _blocked(gender, -1, "Unsupported player identity.")

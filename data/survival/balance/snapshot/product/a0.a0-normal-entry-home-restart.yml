@@ -2,7 +2,7 @@ name: A0 normal entry, home and separate-process restart
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['tests/survival_normal_entry_home_restart_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', 'game/app/**', 'game/ui/screens/home/**', 'game/ui/screens/title/**', 'game/ui/screens/hub/**', 'game/survival/**', 'game/overworld/**', 'game/characters/knight/**', 'game/autoload/**', '.github/workflows/a0-normal-entry-home-restart.yml']
+    paths: ['tests/fixtures/a0_save_diff.gd', 'tests/survival_save_diff_test.gd', 'tests/survival_normal_entry_home_restart_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', 'game/app/**', 'game/ui/screens/home/**', 'game/ui/screens/title/**', 'game/ui/screens/hub/**', 'game/survival/**', 'game/overworld/**', 'game/characters/knight/**', 'game/autoload/**', '.github/workflows/a0-normal-entry-home-restart.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -21,6 +21,12 @@ jobs:
         run: |
           mkdir -p artifacts/ud_import artifacts/ud_entry
           timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/entry-import.log 2>&1
+      - name: Validate field-diff oracle
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --user-data-dir artifacts/ud_import --script res://tests/survival_save_diff_test.gd > artifacts/save-diff-oracle.log 2>&1
+          cat artifacts/save-diff-oracle.log
+          bash tools/ci/gate_log.sh artifacts/save-diff-oracle.log 'Save diff oracle' 'A0 SAVE DIFF ORACLE PASSED'
       - name: New profile through actual menus and full home journey
         shell: bash
         run: |
@@ -29,6 +35,7 @@ jobs:
           rc=$?
           cat artifacts/entry-first.log
           echo "::notice::entry process 1 exit=$rc $(grep -E '^ENTRY_HOME_|^NORMAL ENTRY|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/entry-first.log | tail -16 | tr '\n' '~')"
+          grep "^A0_SAVE_DIFF " artifacts/entry-first.log | while IFS= read -r line; do echo "::notice::$line"; done
           bash tools/ci/gate_log.sh artifacts/entry-first.log 'A0 entry home' 'NORMAL ENTRY HOME RESTART PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
@@ -40,6 +47,7 @@ jobs:
           rc=$?
           cat artifacts/entry-second.log
           echo "::notice::entry process 2 exit=$rc $(grep -E '^ENTRY_HOME_|^NORMAL ENTRY|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/entry-second.log | tail -16 | tr '\n' '~')"
+          grep "^A0_SAVE_DIFF " artifacts/entry-second.log | while IFS= read -r line; do echo "::notice::$line"; done
           bash tools/ci/gate_log.sh artifacts/entry-second.log 'A0 independent restart' 'NORMAL ENTRY HOME RESTART PASSED'
           gate=$?
           [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]

@@ -43,11 +43,11 @@ class QualityPinTests(unittest.TestCase):
             ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07"],
         )
 
-    def test_two_checks_fail_at_this_pin(self) -> None:
+    def test_one_check_fails_at_this_pin(self) -> None:
         failing = [check["check_id"] for check in self.checks if check["status"] == "FAIL"]
-        # Q-03 (A0's stale mirror) is a real second failure at this pin; it is
-        # reported as BLK-2, not folded into the avatar blocker.
-        self.assertEqual(failing, ["Q-03", "Q-04"])
+        # Q-03 (A0's stale mirror of A3's catalog) is genuinely closed: the pinned
+        # bytes match on all 36 rows. Only the avatar check remains red.
+        self.assertEqual(failing, ["Q-04"])
 
     def test_every_verdict_names_an_owner_and_a_closure_signal(self) -> None:
         for check in self.checks:
@@ -76,7 +76,7 @@ class QualityClosureTests(unittest.TestCase):
         return _by_id(checks, check_id)["status"]
 
     # ---------------------------------------------------------------- Q-04
-    def test_blk3_closes_when_the_mounted_body_and_grade0_sheet_are_canonical(self) -> None:
+    def test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical(self) -> None:
         self.assertEqual(self._status(quality.run_all(self.model, self.texts, self.facts, self.manifest), "Q-04"), "FAIL")
 
         texts = dict(self.texts)
@@ -99,7 +99,7 @@ class QualityClosureTests(unittest.TestCase):
             self._status(quality.run_all(self.model, texts, facts, patched_manifest), "Q-04"), "PASS"
         )
 
-    def test_blk3_does_not_close_with_a_swordsman_or_knight_body(self) -> None:
+    def test_blk5_does_not_close_with_a_swordsman_or_knight_body(self) -> None:
         texts = dict(self.texts)
         manifest = json.loads(texts["a6.avatar_art_manifest.json"])
         manifest["characters"]["male"]["armor_grades"]["0"]["idle_sheet"] = "res://art/male_idle.png"
@@ -116,29 +116,28 @@ class QualityClosureTests(unittest.TestCase):
                 wrong,
             )
 
-    def test_blk3_fails_when_the_adapter_silently_falls_back(self) -> None:
+    def test_blk5_fails_when_the_adapter_silently_falls_back(self) -> None:
         texts = dict(self.texts)
         texts["a6.avatar_appearance_adapter.gd"] += "\n# fallback: knight\n"
         checks = quality.run_all(self.model, texts, self.facts, self.manifest)
         self.assertEqual(self._status(checks, "Q-04"), "FAIL")
 
     # ---------------------------------------------------------------- Q-03
-    def test_blk2_closes_when_the_a0_mirror_matches_a3(self) -> None:
+    def test_q03_is_match_at_this_pin_and_still_detects_drift(self) -> None:
+        # Round 5: A0 re-synced the mirror, so the pin is MATCH. The check keeps its
+        # teeth because the drift injection below still turns it red.
         checks = quality.run_all(self.model, self.texts, self.facts, self.manifest)
-        self.assertEqual(self._status(checks, "Q-03"), "FAIL")
+        self.assertEqual(self._status(checks, "Q-03"), "PASS")
         drift = quality.mirror_drift(self.model, self.texts)
-        self.assertEqual(drift["status"], "DRIFT")
-        self.assertEqual(drift["divergent"], ["road_scrap", "road_supplies"])
+        self.assertEqual(drift["status"], "MATCH")
+        self.assertEqual(drift["divergent"], [])
 
-        # The owner's smallest safe fix: re-sync the two drifted rows. No quantity
-        # moves, because A1's yields and A3's yields already agree.
         texts = dict(self.texts)
         mirror = json.loads(texts["a0.sources.json"])
-        for source_id in drift["divergent"]:
-            mirror["sources"][source_id] = self.model.sources[source_id]
+        mirror["sources"]["road_scrap"] = dict(mirror["sources"]["road_scrap"], yield_per_claim=99)
         texts["a0.sources.json"] = json.dumps(mirror)
-        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "MATCH")
-        self.assertEqual(self._status(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-03"), "PASS")
+        self.assertEqual(quality.mirror_drift(self.model, texts)["status"], "DRIFT")
+        self.assertEqual(self._status(quality.run_all(self.model, texts, self.facts, self.manifest), "Q-03"), "FAIL")
 
     def test_blk2_does_not_close_when_only_the_poi_id_is_renamed(self) -> None:
         # Renaming the poi key without adopting the bound instance would leave the

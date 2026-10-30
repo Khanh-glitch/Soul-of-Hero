@@ -29,9 +29,11 @@ const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
+const PINNED_A3_SCRIPT_SHA256 := "4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c"
+# The independently pinned 86dc2195 regression adapter remains supported.
+const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
-const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "703a8baa741ca6c4ad1e21ddd43b05c48af887dbfef7ed00d78117838e947ec3"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "3a96960fd1a531241df3d63613585d15e119194520410ff769790c4ee64b55b7"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -1345,7 +1347,7 @@ func _is_pinned_economy_adapter(adapter: RefCounted) -> bool:
 	if source.is_empty() and base_source.is_empty():
 		return script == PRODUCTION_ECONOMY_ADAPTER and parent == PRODUCTION_ECONOMY_BASE
 	return source.sha256_text() in [PINNED_A0_ADAPTER_SHA256, PINNED_A0_PRODUCTION_ADAPTER_SHA256] \
-		and base_source.sha256_text() == PINNED_A3_SCRIPT_SHA256
+		and base_source.sha256_text() in [PINNED_A3_SCRIPT_SHA256, PINNED_A3_FIXTURE_SHA256]
 
 
 func _economy_transact_once(capability: RefCounted, adapter: RefCounted, key: String, mutator: Callable, metadata: Dictionary) -> bool:
@@ -2451,7 +2453,10 @@ func _commit_snapshot(snapshot: Dictionary, rotate_primary_to_backup: bool, capa
 		_commit_in_progress = false
 		return false
 
-	var payload := JSON.stringify(snapshot, "\t") + "\n"
+	# JSON's default truncates floats to ~14 significant digits. Player position,
+	# settings and item attributes are save data too; request round-trip precision
+	# while retaining the existing JSON schema and sorted keys.
+	var payload := JSON.stringify(snapshot, "\t", true, true) + "\n"
 	if not _write_text(_temporary_path, payload):
 		_push_failure("Could not write the temporary save file.")
 		_commit_in_progress = false

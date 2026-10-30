@@ -21,11 +21,11 @@ class ProvenanceTests(unittest.TestCase):
 
     def test_manifest_schema_and_size(self) -> None:
         self.assertEqual(self.manifest["schema"], "soh.balance.snapshot_manifest.v1")
-        self.assertEqual(len(self.manifest["snapshots"]), 16)
+        self.assertEqual(len(self.manifest["snapshots"]), 17)
 
     def test_every_snapshot_hash_matches(self) -> None:
         self.assertEqual([f.as_dict() for f in self.findings], [])
-        self.assertEqual(len(self.snapshots), 16)
+        self.assertEqual(len(self.snapshots), 17)
 
     def test_every_snapshot_is_readable_json(self) -> None:
         for snapshot in self.snapshots:

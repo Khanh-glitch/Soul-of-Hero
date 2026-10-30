@@ -56,6 +56,18 @@ CAPTURE = {
         "tests/survival_normal_entry_home_restart_test.gd",
         "tests/survival_normal_home_journey_test.gd",
         ".github/workflows/a0-normal-entry-home-restart.yml",
+        # The only path that has ever paid an A3-authorized cache reward, plus the
+        # player-input half of the same pilot. Both are pinned so their own headers
+        # ("fixture", "isolated connector") can be quoted instead of paraphrased.
+        "tests/survival_waystation_authority_test.gd",
+        "tests/survival_waystation_input_restart_test.gd",
+        ".github/workflows/a0-waystation-input-restart.yml",
+        # The survival catalog decides which physical harvest nodes exist; the
+        # first-hour material chain cannot be computed without it.
+        "data/survival/survival_catalog.json",
+        # The world-slice custody guard is what stops a generic transaction from
+        # manufacturing world rights, so it belongs to the commit seam.
+        "game/survival/economy/unique_ownership_guard.gd",
     ],
     "a6": [
         "game/survival/ui/player_first_hud.gd",
@@ -75,6 +87,7 @@ CAPTURE = {
         "game/survival/world_content/scenes/south_crown_mill.tscn",
         "game/survival/world_content/scenes/poi_pilot.tscn",
         "game/survival/world_content/scripts/native_poi_site.gd",
+        "game/survival/world_content/scripts/native_poi_shell.gd",
         "game/survival/world_content/scripts/poi_authority_fixture.gd",
         "game/survival/world_content/scripts/poi_pilot.gd",
         "data/survival/world_content/sites/south_quarry.json",
@@ -89,6 +102,9 @@ CAPTURE = {
         # rights, transaction keys and the A3 source bindings for the first hour.
         "data/survival/world/vertical_slice/handoff_contracts.json",
         "data/survival/world/poi_authoring/poi_crown_waystation.v1.json",
+        # A1's own statement of whether the first-hour corridor is production
+        # playable, and which mount it is waiting for.
+        "data/survival/world/corridor/crown_roadside.corridor.v1.json",
     ],
     "a3": [],  # A3 authored data already comes from the data snapshots; nothing to copy here
 }

@@ -360,13 +360,16 @@
       "id": "road_supplies",
       "item_id": "knowledge_spares",
       "acquisition": "loot",
-      "region_id": "opening_marches",
-      "poi_id": "poi:roadside_cache",
+      "region_id": "r_ashen_crown",
+      "poi_id": "poi_crown_waystation",
+      "source_class": "roadside_cache",
+      "instance_id": "node_waystation_cache",
+      "world_binding_id": "a1_waystation_roadside_cache_v3",
       "yield_per_claim": 2,
       "replenishment_seconds": 1800,
       "risk": "low",
       "requirements": [],
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "provenance": [
         "SYS-03",
         "SYS-04"
@@ -394,13 +397,16 @@
       "id": "road_scrap",
       "item_id": "iron_scrap",
       "acquisition": "loot",
-      "region_id": "opening_marches",
-      "poi_id": "poi:roadside_cache",
+      "region_id": "r_ashen_crown",
+      "poi_id": "poi_crown_waystation",
+      "source_class": "roadside_cache",
+      "instance_id": "node_waystation_cache",
+      "world_binding_id": "a1_waystation_roadside_cache_v3",
       "yield_per_claim": 3,
       "replenishment_seconds": 1800,
       "risk": "low",
       "requirements": [],
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "provenance": [
         "SYS-03",
         "SYS-04"
@@ -699,7 +705,7 @@
       "balance_status": "SOH_PROPOSAL"
     }
   },
-  "world_contract_status": "A1_NOT_INTEGRATED",
+  "world_contract_status": "A1_TWO_POI_SLICE_PINNED_A3_BOUND_PENDING_A0_MOUNT",
   "live_harvest_authority": "res://game/survival/survival_service.gd",
-  "note": "Proposed sources are requirements, not spawned loot. Existing reward sources do not imply renewable world nodes."
+  "note": "road_scrap/road_supplies are bound to the canonical A1 Waystation outside cache (3 scrap + 2 spares / 1800 active seconds); the locker is capability-only. Other PROPOSED_A1 sources remain requirements, not spawned loot. Existing reward sources do not imply renewable world nodes. See world_source_bindings.v3.json."
 }

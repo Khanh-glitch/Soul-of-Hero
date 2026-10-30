@@ -55,7 +55,7 @@
         },
         {
           "fact": "files scanned",
-          "value": 45
+          "value": 52
         },
         {
           "fact": "opened() signal",
@@ -70,7 +70,7 @@
         }
       ],
       "owner": "A0 (mount) + A3 (table binding)",
-      "player_impact": "None of the 45 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
+      "player_impact": "None of the 52 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
       "status": "FAIL",
       "title": "Something the player can open hands out authored loot"
     },
@@ -104,11 +104,13 @@
         },
         {
           "fact": "armour-stage art referenced in production",
-          "value": []
+          "value": [
+            "game/survival/ui/avatar_art_manifest.json"
+          ]
         }
       ],
       "owner": "A0 (mount) + art source (A6)",
-      "player_impact": "The mounted player body is `game/characters/knight/knight.tscn` (Knight art), not the bald Craftpix 555940/419402 adventurers the user locked. Zero production files reference either canonical source ({'555940': 0, '419402': 0, '180537': 0}), and no armour-stage sprite is referenced at all ([]). Any readiness note that presents the current body as the accepted avatar is therefore wrong; the armour-1/armour-2 frames remain SOURCE_BLOCKED.",
+      "player_impact": "The mounted player body is `game/characters/knight/knight.tscn` (Knight art), not the bald Craftpix 555940/419402 adventurers the user locked. Zero production files reference either canonical source ({'555940': 0, '419402': 0, '180537': 0}), and no armour-stage sprite is referenced at all (['game/survival/ui/avatar_art_manifest.json']). Any readiness note that presents the current body as the accepted avatar is therefore wrong; the armour-1/armour-2 frames remain SOURCE_BLOCKED.",
       "status": "FAIL",
       "title": "Mounted player body is the avatar the user locked (D051)"
     },
@@ -190,7 +192,7 @@
         }
       ],
       "owner": "A6",
-      "player_impact": "104 player-visible strings still carry developer vocabulary (BLOCKED_PENDING, FIXTURE, NOT NATIVE, NOT_NATIVE, OWNER_PROJECTION, PROJECTION, schema): fixture/provenance labels and raw identifiers. Today these live in the unmounted A6 HUD, so no player sees them yet \u2014 but mounting that HUD as-is would put debug text on screen.",
+      "player_impact": "116 player-visible strings still carry developer vocabulary (BLOCKED_PENDING, FIXTURE, NOT NATIVE, NOT_NATIVE, OWNER_PROJECTION, PROJECTION, schema): fixture/provenance labels and raw identifiers. Today these live in the unmounted A6 HUD, so no player sees them yet \u2014 but mounting that HUD as-is would put debug text on screen.",
       "status": "FAIL",
       "title": "No developer/debug text on a survival player surface"
     },
@@ -220,37 +222,37 @@
         },
         {
           "file": "a6.avatar_appearance_adapter.gd",
-          "line": 24,
+          "line": 27,
           "text": "Verified avatar art manifest is missing."
         },
         {
           "file": "a6.avatar_appearance_adapter.gd",
-          "line": 31,
+          "line": 34,
           "text": "No verified art for this player identity."
         },
         {
           "file": "a6.avatar_appearance_adapter.gd",
-          "line": 37,
+          "line": 40,
           "text": "Character appearance sources are incomplete."
         },
         {
           "file": "a6.avatar_appearance_adapter.gd",
-          "line": 40,
+          "line": 43,
           "text": "Matching armor appearance is not verified."
         },
         {
           "file": "a6.avatar_art_manifest.json",
-          "line": 3,
-          "text": "SOURCE_VERIFIED_BY_USER; ART_NOT_PRESENT_IN_ARENA"
+          "line": 7,
+          "text": "NOT_VERIFIED"
         },
         {
           "file": "a6.avatar_art_manifest.json",
-          "line": 44,
+          "line": 70,
           "text": "Three tiers of a different Swordsman character; not verified as matching male and female armor art."
         }
       ],
       "owner": "A6",
-      "player_impact": "3 completion word(s) appear without a qualifier. Honest BLOCKED/fixture wording elsewhere is the reason this is not a failure.",
+      "player_impact": "7 completion word(s) appear without a qualifier. Honest BLOCKED/fixture wording elsewhere is the reason this is not a failure.",
       "status": "WARN",
       "title": "No surface claims success that has not happened"
     },
@@ -331,13 +333,13 @@
     ],
     "mounted_player_scene": "game/characters/knight/knight.tscn",
     "survival_ui_scenes_mounted": [],
-    "visible_debug_tokens": 104
+    "visible_debug_tokens": 116
   },
   "schema": "soh.balance.product.v1",
   "snapshot": {
-    "a0_head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
-    "a6_head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
-    "files_verified": 45,
+    "a0_head": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+    "a6_head": "8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e",
+    "files_verified": 52,
     "manifest": "data/survival/balance/snapshot/product_manifest.json"
   },
   "unknown_evidence": [

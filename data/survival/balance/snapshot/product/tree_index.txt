@@ -3276,6 +3276,7 @@ a0	game/survival/economy/economy_save_facade.gd
 a0	game/survival/economy/economy_session.gd
 a0	game/survival/economy/unique_ownership_guard.gd
 a0	game/survival/economy/vendor/a3_economy_service.gd
+a0	game/survival/economy/world_source_adapter.gd
 a0	game/survival/gameplay_input_gate.gd
 a0	game/survival/optional_skeleton_encounter.gd
 a0	game/survival/survival_build_system.gd
@@ -3286,6 +3287,9 @@ a0	game/survival/survival_room_topology.gd
 a0	game/survival/survival_service.gd
 a0	game/survival/survival_state.gd
 a0	game/survival/survival_structure.gd
+a0	game/survival/waystation_geometry.gd
+a0	game/survival/waystation_host.gd
+a0	game/survival/waystation_interactable.gd
 a0	game/tutorial/level_one_tutorial.gd
 a0	game/tutorial/level_one_tutorial.tscn
 a0	game/ui/HUD.tscn
@@ -3554,6 +3558,7 @@ a0	tests/enemy_roster_test.gd
 a0	tests/field_codex_drag_release_test.gd
 a0	tests/fixtures/a0_connector_pilot_world.gd
 a0	tests/fixtures/a0_connector_reach_probe.gd
+a0	tests/fixtures/a0_save_diff.gd
 a0	tests/fixtures/a3_86dc2195/adapter/a0_authorized_economy.gd
 a0	tests/fixtures/a3_86dc2195/adapter/economy_service.gd
 a0	tests/fixtures/intentionally_broken_parse_error.gd
@@ -3635,9 +3640,13 @@ a0	tests/survival_normal_input_gather_test.gd
 a0	tests/survival_optional_threat_fault_test.gd
 a0	tests/survival_optional_threat_journey_test.gd
 a0	tests/survival_room_topology_test.gd
+a0	tests/survival_save_diff_test.gd
 a0	tests/survival_save_interruption_test.gd
+a0	tests/survival_save_precision_test.gd
 a0	tests/survival_station_placement_test.gd
 a0	tests/survival_visual_resolutions_test.gd
+a0	tests/survival_waystation_authority_test.gd
+a0	tests/survival_waystation_input_restart_test.gd
 a0	tests/sword_combo_capture.gd
 a0	tests/training_sandbox_live_route_test.gd
 a0	tests/training_sandbox_live_route_test.tscn

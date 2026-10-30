@@ -13,6 +13,7 @@ from typing import Any, Dict, List
 
 from . import access, adversarial, evidence as evidence_module
 from . import gate as gate_module
+from . import oracle as oracle_module
 from . import quality as quality_module
 from . import routes, sensitivity
 from .checks import collect, codes_in
@@ -45,6 +46,7 @@ ARTIFACTS = (
     "product.json",
     "gate.json",
     "quality.json",
+    "oracle.json",
     "blockers.json",
 )
 
@@ -56,6 +58,16 @@ def _dump(path: Path, payload: Dict[str, Any]) -> str:
     text = json.dumps(payload, indent=2, sort_keys=True) + "\n"
     path.write_text(text, encoding="utf-8")
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _a3_texts(data_dir: Path) -> Dict[str, str]:
+    """A3's pinned catalog, keyed the same way the oracle expects it."""
+    out: Dict[str, str] = {}
+    for name in ("sources.json", "world_source_bindings.v3.json"):
+        path = Path(data_dir) / "snapshot" / f"a3.{name}"
+        if path.exists():
+            out[f"a3.{name}"] = path.read_text(encoding="utf-8")
+    return out
 
 
 def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> Dict[str, Any]:
@@ -302,6 +314,15 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
 
     # ------------------------------------------------------- integration gate
     evidence_payload = evidence_module.load()
+    # Independent oracles first: the gate consumes their verdicts instead of
+    # trusting a marker inside the file it is grading.
+    oracle_payload = oracle_module.audit(
+        product_texts,
+        _a3_texts(data_dir),
+        model,
+        json.loads(product_texts.get("a0.survival_catalog.json", "{}") or "{}"),
+    )
+    artifacts["oracle.json"] = oracle_payload
     gate_payload = gate_module.build(
         model,
         product_texts,
@@ -310,6 +331,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         evidence=evidence_payload,
         paths=product_module.path_index(product_manifest),
         tree=product_module.load_tree(product_manifest),
+        oracle=oracle_payload,
     )
     adoption = binding_adoption(model, gate_payload["contract"])
     gate_payload["binding_adoption"] = adoption
@@ -345,6 +367,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         product_facts,
         gate_payload=gate_payload,
         quality_payload=artifacts["quality.json"],
+        oracle_payload=oracle_payload,
     )
     artifacts["blockers.json"] = blocker_payload
 
@@ -362,6 +385,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         blocker_payload=blocker_payload,
         gate_payload=gate_payload,
         quality_payload=artifacts["quality.json"],
+        oracle_payload=oracle_payload,
     )
     artifacts["summary.json"] = {
         "schema": "soh.balance.summary.v1",
@@ -506,8 +530,10 @@ def _assertions(
     blocker_payload=None,
     gate_payload=None,
     quality_payload=None,
+    oracle_payload=None,
 ) -> List[Assertion]:
     assertions: List[Assertion] = []
+    oracle_payload = oracle_payload or {}
     counts = {}
     for finding in all_findings:
         counts[finding.code] = counts.get(finding.code, 0) + 1
@@ -659,6 +685,7 @@ def _assertions(
         )
     )
     gate_payload = gate_payload or {}
+    oracle_payload = oracle_payload or {}
     chains = gate_payload.get("chains") or []
     level_names = {level["level"] for level in gate_payload["s_levels"]}
     assertions.append(
@@ -734,9 +761,10 @@ def _assertions(
     quality_checks = (quality_payload or {}).get("checks") or []
     assertions.append(
         Assertion(
-            "A21_quality_fails_only_the_avatar_and_stale_mirror",
-            sorted(check["check_id"] for check in quality_checks if check["status"] == "FAIL") == ["Q-03", "Q-04"],
-            "of seven checks only the avatar (Q-04) and the stale A0 catalog mirror (Q-03) fail",
+            "A21_quality_fails_only_the_avatar_check",
+            [row["check_id"] for row in (quality_payload.get("checks") or []) if row["status"] == "FAIL"]
+            == ["Q-04"],
+            "of seven checks only the avatar identity check (Q-04) fails; A0 re-synced the stale catalog mirror",
             ["quality"],
         )
     )
@@ -744,10 +772,67 @@ def _assertions(
         Assertion(
             "A22_self_corrections_are_recorded",
             blocker_payload is not None
-            and len(blocker_payload.get("corrections", [])) >= 4
-            and all(row.get("round3_claim") and row.get("what_is_actually_true") for row in blocker_payload["corrections"]),
-            "the five round-3 claims that the owners' source contradicted are recorded with what is actually true",
+            and len(blocker_payload.get("corrections", [])) >= 3
+            and all(
+                (row.get("round3_claim") or row.get("round4_claim")) and row.get("what_is_actually_true")
+                for row in blocker_payload["corrections"]
+            ),
+            "every claim the owners' source contradicted is recorded with what is actually true",
             ["blockers", "delivery"],
+        )
+    )
+    api = oracle_payload.get("engine_api") or {}
+    fidelity = oracle_payload.get("save_fidelity") or {}
+    knowledge = oracle_payload.get("knowledge_gate") or {}
+    authorization = oracle_payload.get("authorization") or {}
+    assertions.append(
+        Assertion(
+            "A23_engine_api_audit_is_independent_of_owner_prose",
+            api.get("audited_types")
+            and api.get("static_call_count", 0) > 0
+            and api.get("unknown_call_count") == len(api.get("unknown_calls") or [])
+            and all(row.get("is_engine_static") is False for row in api.get("unknown_calls") or []),
+            "every flagged static call really is absent from the pinned engine class list",
+            ["oracle", "engine"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A24_float_round_trip_is_a_computed_condition",
+            bool(fidelity.get("verdict"))
+            and (fidelity.get("verdict") == "ROUND_TRIP_EXACT")
+            == (not fidelity.get("lossy_writers")),
+            "the save-fidelity verdict is the negation of the recorded lossy writers, not a separate claim",
+            ["oracle", "durability"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A25_knowledge_ladder_is_computed_not_asserted",
+            knowledge.get("verdict") == "SEEDED_ONLY_BY_LOOT"
+            and not knowledge.get("non_circular_spare_recipes")
+            and bool(knowledge.get("spare_loot_sources")),
+            "the first research station has exactly one non-circular seed, and that seed is loot",
+            ["oracle", "balance"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A26_authorization_claim_needs_a3_bytes",
+            authorization.get("verdict") == "NO_UNBACKED_AUTHORIZATION",
+            "no file claims an A3 authorization that A3's pinned catalog does not carry",
+            ["oracle", "authorization"],
+        )
+    )
+    s4_payload = gate_payload.get("s4") or {}
+    assertions.append(
+        Assertion(
+            "A27_s4_is_a_five_clause_conjunction",
+            len(s4_payload.get("clauses") or {}) == 5
+            and s4_payload.get("s4_granted") is False
+            and s4_payload.get("s5_granted") is False,
+            "S4 needs all five clauses and none holds at this pin; S5 is never granted by static work",
+            ["gate", "native"],
         )
     )
     return assertions

@@ -168,8 +168,8 @@
       ]
     },
     {
-      "assertion_id": "A21_quality_fails_only_the_avatar_and_stale_mirror",
-      "detail": "of seven checks only the avatar (Q-04) and the stale A0 catalog mirror (Q-03) fail",
+      "assertion_id": "A21_quality_fails_only_the_avatar_check",
+      "detail": "of seven checks only the avatar identity check (Q-04) fails; A0 re-synced the stale catalog mirror",
       "holds": true,
       "tags": [
         "quality"
@@ -177,11 +177,56 @@
     },
     {
       "assertion_id": "A22_self_corrections_are_recorded",
-      "detail": "the five round-3 claims that the owners' source contradicted are recorded with what is actually true",
+      "detail": "every claim the owners' source contradicted is recorded with what is actually true",
       "holds": true,
       "tags": [
         "blockers",
         "delivery"
+      ]
+    },
+    {
+      "assertion_id": "A23_engine_api_audit_is_independent_of_owner_prose",
+      "detail": "every flagged static call really is absent from the pinned engine class list",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "engine"
+      ]
+    },
+    {
+      "assertion_id": "A24_float_round_trip_is_a_computed_condition",
+      "detail": "the save-fidelity verdict is the negation of the recorded lossy writers, not a separate claim",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "durability"
+      ]
+    },
+    {
+      "assertion_id": "A25_knowledge_ladder_is_computed_not_asserted",
+      "detail": "the first research station has exactly one non-circular seed, and that seed is loot",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "balance"
+      ]
+    },
+    {
+      "assertion_id": "A26_authorization_claim_needs_a3_bytes",
+      "detail": "no file claims an A3 authorization that A3's pinned catalog does not carry",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "authorization"
+      ]
+    },
+    {
+      "assertion_id": "A27_s4_is_a_five_clause_conjunction",
+      "detail": "S4 needs all five clauses and none holds at this pin; S5 is never granted by static work",
+      "holds": true,
+      "tags": [
+        "gate",
+        "native"
       ]
     }
   ],
@@ -204,7 +249,7 @@
       "419402": 0,
       "555940": 0
     },
-    "closed_by_measurement": 3,
+    "closed_by_measurement": 4,
     "findings_by_severity": {
       "BLOCKER": 0,
       "INFO": 9,
@@ -219,7 +264,7 @@
     "loot_tables_that_can_emit_a_core": 0,
     "mounted_survival_ui_scenes": 0,
     "native_verified": false,
-    "observation_reduction": "55 observations -> 5 blockers (3 closed, 5 A7 self-corrections, 6 observations traceability only)",
+    "observation_reduction": "55 observations -> 5 blockers (4 closed, 3 A7 self-corrections, 6 observations traceability only)",
     "player_facing_blockers": 5,
     "poi_playability": {
       "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
@@ -234,15 +279,15 @@
       "WARN": 2
     },
     "quality_checks": {
-      "FAIL": 2,
-      "PASS": 5
+      "FAIL": 1,
+      "PASS": 6
     },
     "resource_nodes_authored_not_crates": 178
   },
   "schema": "soh.balance.summary.v1",
   "source_basis": {
     "a1_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
-    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a3_commit": "100b3406ef4e09e3b7ccc8b5910dffc6b6d0dfcd,18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12",
     "hypothesis_file": "data/survival/balance/hypotheses.v1.json"
   },
   "status": "ANALYSIS_COMPLETE_NOT_NATIVE_NOT_HUMAN",

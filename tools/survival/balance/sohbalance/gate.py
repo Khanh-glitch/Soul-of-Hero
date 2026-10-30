@@ -84,13 +84,22 @@ NATIVE_COMMANDS = {
         "--rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_entry "
         "--resolution 1280x720 --windowed --script res://tests/survival_normal_entry_home_restart_test.gd",
     ],
-    "a0_two_process_reload": [
+    "a0_second_process_restart": [
         "# same user-data dir, a genuinely separate OS process:",
         "xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility "
         "--rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_entry "
         "--resolution 1280x720 --windowed --script res://tests/survival_normal_entry_home_restart_test.gd "
         "-- --verify-separate-process",
         "# PASS requires the log line 'NORMAL ENTRY HOME RESTART PASSED' in BOTH processes",
+    ],
+    "a8_native_poi_engine_api": [
+        "# A8's scenes call Vector2.from_array, which no Godot release exposes.",
+        "# Reproduce without Godot by reading the pinned engine API list:",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/engine_api.v1.json'));"
+        "print(sorted(d['static_methods']['Vector2']))\"",
+        "# After the fix, A8 re-runs its own workflow and this list must be empty:",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
+        "print(d['engine_api']['unknown_calls'])\"",
     ],
     "a8_native_poi_contract": [
         "godot --headless --path . --editor --quit",
@@ -201,11 +210,42 @@ def entry_routes(texts: Dict[str, str], paths: Dict[str, str]) -> Dict[str, obje
     }
 
 
-def entry_content(texts: Dict[str, str], tree: Dict[str, set], model) -> Dict[str, object]:
-    """Claim C: is the A1 cache / A8 POI actually placed in the reached world?"""
+# A reference inside the owner's own test harness says nothing about the world a
+# player enters. Only production paths may satisfy claim C.
+_NON_PRODUCTION_PREFIXES = ("tests/", ".github/", "tools/")
+
+
+def production_keys(paths: Dict[str, str], owner: str) -> List[str]:
+    return sorted(
+        key
+        for key, path in paths.items()
+        if key.split(".", 1)[0] == owner
+        and not str(path).startswith(_NON_PRODUCTION_PREFIXES)
+    )
+
+
+def entry_content(
+    texts: Dict[str, str], tree: Dict[str, set], model, paths: Optional[Dict[str, str]] = None
+) -> Dict[str, object]:
+    """Claim C: is the A1 cache / A8 POI actually placed in the reached world?
+
+    Round 5 pinned A0's own test harness as well, and the harness names
+    ``node_waystation_cache``. Counting that as a mount would be exactly the
+    false positive this claim exists to prevent, so only production paths count
+    and the excluded references are reported instead of hidden.
+    """
     a1_ids = ("poi_crown_waystation", "node_waystation_cache")
     a8_ids = ("crown_south_quarry", "poi_crown_south_quarry")
-    haystacks = {key: text for key, text in texts.items() if key.startswith("a0.")}
+    paths = paths or {}
+    allowed = set(production_keys(paths, "a0")) if paths else {
+        key for key in texts if key.startswith("a0.") and not key.startswith("a0.tests")
+    }
+    haystacks = {key: text for key, text in texts.items() if key in allowed}
+    excluded = {
+        key: _content_hits({key: texts[key]}, a1_ids + a8_ids)
+        for key in sorted(set(texts) - allowed)
+        if _content_hits({key: texts[key]}, a1_ids + a8_ids)
+    }
     a1_hits = _content_hits(haystacks, a1_ids)
     a8_hits = _content_hits(haystacks, a8_ids)
     overworld = texts.get("a0.chapter1_overworld.tscn", "")
@@ -219,6 +259,8 @@ def entry_content(texts: Dict[str, str], tree: Dict[str, set], model) -> Dict[st
         "a1_instance_references_in_a0_surface": a1_hits,
         "a8_instance_references_in_a0_surface": a8_hits,
         "a8_site_scenes_in_overworld": site_scenes_in_overworld,
+        "non_production_references": excluded,
+        "production_surface_files": len(allowed),
         "mounted": bool(a1_hits or a8_hits or site_scenes_in_overworld),
         "note": (
             "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 "
@@ -681,7 +723,7 @@ def waystation_chain(
             "A0",
             "BLK-4",
             "PRODUCTION_SEAM" if seam["mounted_caller_count"] else "ABSENT",
-            native["a0_two_process_reload"],
+            native["a0_second_process_restart"],
             [
                 {"fact": "SaveService API", "value": seam["api"]},
                 {"fact": "static seam state", "value": seam["static_state"]},
@@ -712,17 +754,17 @@ def waystation_chain(
             "A0",
             "BLK-4",
             "PRODUCTION_SEAM" if seam["two_process_reload_test_in_source"] else "AUTHORED_ONLY",
-            native["a0_two_process_reload"],
+            native["a0_second_process_restart"],
             [
                 {"fact": "two-process test in source", "value": seam["two_process_test_file"]},
-                {"fact": "native state", "value": {k: native["a0_two_process_reload"].get(k) for k in ("state", "run_id", "head_sha")}},
+                {"fact": "native state", "value": {k: native["a0_second_process_restart"].get(k) for k in ("state", "run_id", "head_sha")}},
                 {"fact": "phrase required", "value": "NORMAL ENTRY HOME RESTART PASSED in both processes"},
             ],
             missing=(
                 ""
-                if native["a0_two_process_reload"].get("state") == evidence_module.VERIFIED
+                if native["a0_second_process_restart"].get("state") == evidence_module.VERIFIED
                 else "a real two-process reload test exists in source, but its native run is "
-                + str(native["a0_two_process_reload"].get("state"))
+                + str(native["a0_second_process_restart"].get("state"))
             ),
             next_action="the queued native-entry-restart job must go green; static text cannot substitute.",
         )
@@ -734,7 +776,7 @@ def waystation_chain(
             "A0 + A1",
             "BLK-4",
             "PRODUCTION_SEAM" if seam["api"]["replay_rejected"] else "ABSENT",
-            native["a0_two_process_reload"],
+            native["a0_second_process_restart"],
             [
                 {"fact": "SaveService replay guard", "value": seam["api"]["replay_rejected"]},
                 {"fact": "A1 duplicate payload", "value": contract.get("cache_duplicate")},
@@ -742,7 +784,7 @@ def waystation_chain(
             ],
             missing=(
                 ""
-                if native["a0_two_process_reload"].get("state") == evidence_module.VERIFIED
+                if native["a0_second_process_restart"].get("state") == evidence_module.VERIFIED
                 else "the guard exists and A1 defines the duplicate outcome, but no native run proves a "
                 "second process refuses the replay"
             ),
@@ -870,7 +912,7 @@ def quarry_chain(
             "A0 + A8",
             "BLK-4",
             "SCENE_FIXTURE" if authority["pilot_installs_fixture"] else "ABSENT",
-            native["a0_two_process_reload"],
+            native["a0_second_process_restart"],
             [
                 {"fact": "pilot installs the fake authority", "value": authority["pilot_installs_fixture"]},
                 {"fact": "fixture is test-only", "value": authority["fixture_declares_test_only"]},
@@ -886,7 +928,7 @@ def quarry_chain(
             "A0",
             "BLK-4",
             "ABSENT",
-            native["a0_two_process_reload"],
+            native["a0_second_process_restart"],
             [{"fact": "fixture persistence", "value": False}],
             missing="site state lives only in fixture memory, so reload cannot preserve anything",
             next_action="after L5.",
@@ -952,12 +994,14 @@ def build(
     evidence: Optional[Dict[str, object]] = None,
     paths: Optional[Dict[str, str]] = None,
     tree: Optional[Dict[str, set]] = None,
+    oracle: Optional[Dict[str, object]] = None,
 ) -> Dict[str, object]:
     from . import product as product_module
 
     paths = paths or product_module.path_index(manifest)
     tree = tree or product_module.load_tree(manifest)
     evidence = evidence or {"runs": []}
+    oracle = oracle or {}
     heads = {
         "a0": str(manifest.get("a0_head")),
         "a1": str(manifest.get("a1_head")),
@@ -975,7 +1019,7 @@ def build(
         facts["binding_adoption"] = _adoption(model, slice_contract(texts))
 
     entry = entry_routes(texts, paths)
-    content = entry_content(texts, tree, model)
+    content = entry_content(texts, tree, model, paths)
     native = native_entry_claims(evidence, heads)
     seam = a0_commit_seam(texts, paths, mount)
 
@@ -985,6 +1029,8 @@ def build(
     ]
     native_states = dict(native)
     any_verified = any(row.get("state") == evidence_module.VERIFIED for row in native_states.values())
+    s4 = evidence_module.s4_clauses(native_states, {**heads, "a8": heads["a8"]})
+    outcome_ledger = evidence_module.outcome_ledger(evidence)
 
     claims = {
         "A_route_exists_in_source": {
@@ -1005,12 +1051,28 @@ def build(
             "evidence": content,
         },
         "D_useful_reward_claimable": {
-            "state": "SOURCE_PRESENT" if seam["static_state"] == "MOUNTED_A1_CONTRACT_CALLER" else "PARTIAL",
-            "level": "S3_PRODUCTION_SEAM" if seam["static_state"] != "API_ONLY" else "S0_ABSENT",
+            "state": (
+                "S4_GRANTED"
+                if s4["s4_granted"]
+                else "SOURCE_PRESENT"
+                if seam["static_state"] == "MOUNTED_A1_CONTRACT_CALLER"
+                else "PARTIAL"
+            ),
+            "level": (
+                "S4_NATIVE_COMMITTED"
+                if s4["s4_granted"]
+                else "S3_PRODUCTION_SEAM"
+                if seam["static_state"] == "MOUNTED_A1_CONTRACT_CALLER"
+                else "S2_SCENE_FIXTURE"
+                if seam["mounted_caller_count"]
+                else "S0_ABSENT"
+            ),
             "evidence": {
                 "static_seam_state": seam["static_state"],
-                "mounted_callers": seam["mounted_callers"],
-                "native_reload_state": native["a0_two_process_reload"]["state"],
+                "mounted_caller_count": seam["mounted_caller_count"],
+                "s4_clauses": s4["clauses"],
+                "s4_granted": s4["s4_granted"],
+                "knowledge_gate": (oracle.get("knowledge_gate") or {}).get("verdict"),
             },
         },
     }
@@ -1049,6 +1111,9 @@ def build(
             "outcome: the reward is consumed by the named sink",
         ],
         "snapshot_heads": heads,
+        "s4": s4,
+        "native_outcome_ledger": outcome_ledger,
+        "oracle": oracle,
         "entry": entry,
         "entry_content": content,
         "mount_graph": {

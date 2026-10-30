@@ -87,22 +87,19 @@
           "fact": "A0 mirror of the A3 catalog",
           "value": {
             "a3_rows": 36,
-            "divergent": [
-              "road_scrap",
-              "road_supplies"
-            ],
-            "identical_rows": 34,
+            "divergent": [],
+            "identical_rows": 36,
             "mirror_rows": 36,
             "only_in_a3": [],
             "only_in_mirror": [],
-            "status": "DRIFT"
+            "status": "MATCH"
           }
         }
       ],
       "owner": "A3 + A8",
-      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (34/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `MATCH` (36/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
       "scope": "STATIC_READ_OF_PINNED_BYTES",
-      "status": "FAIL",
+      "status": "PASS",
       "title": "Every authored cost, reward and source points at a real item"
     },
     {
@@ -209,7 +206,7 @@
       "evidence": [
         {
           "fact": "action-host guards",
-          "value": 6
+          "value": 8
         },
         {
           "fact": "intent emissions",
@@ -229,7 +226,7 @@
         }
       ],
       "owner": "A6 + A0",
-      "player_impact": "The planner guards actions on a connected host (6 guard site(s)) and the workspace forwards intent upward (True). The storage adapter normalises intent and explicitly does not call SaveService (True), so nothing is silently faked. Until A0 connects a host, the controls are unavailable rather than pretending to work.",
+      "player_impact": "The planner guards actions on a connected host (8 guard site(s)) and the workspace forwards intent upward (True). The storage adapter normalises intent and explicitly does not call SaveService (True), so nothing is silently faked. Until A0 connects a host, the controls are unavailable rather than pretending to work.",
       "scope": "STATIC_READ_OF_PINNED_BYTES",
       "status": "PASS",
       "title": "Every actionable control is either backed by an owner action or plainly unavailable"
@@ -271,52 +268,10 @@
     }
   ],
   "counts": {
-    "FAIL": 2,
-    "PASS": 5
+    "FAIL": 1,
+    "PASS": 6
   },
   "failures": [
-    {
-      "check_id": "Q-03",
-      "closure_signal": "no cost, reward or source names an item outside items.json",
-      "evidence": [
-        {
-          "fact": "sources naming unknown items",
-          "value": []
-        },
-        {
-          "fact": "site costs/rewards outside the catalog",
-          "value": []
-        },
-        {
-          "fact": "items in catalog",
-          "value": 56
-        },
-        {
-          "fact": "unmapped source rows (traceability)",
-          "value": []
-        },
-        {
-          "fact": "A0 mirror of the A3 catalog",
-          "value": {
-            "a3_rows": 36,
-            "divergent": [
-              "road_scrap",
-              "road_supplies"
-            ],
-            "identical_rows": 34,
-            "mirror_rows": 36,
-            "only_in_a3": [],
-            "only_in_mirror": [],
-            "status": "DRIFT"
-          }
-        }
-      ],
-      "owner": "A3 + A8",
-      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (34/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
-      "scope": "STATIC_READ_OF_PINNED_BYTES",
-      "status": "FAIL",
-      "title": "Every authored cost, reward and source points at a real item"
-    },
     {
       "check_id": "Q-04",
       "closure_signal": "mounted scene is canonical AND every claimed sheet exists in the tree AND no substitute code path",
@@ -389,9 +344,9 @@
   "read_this_first": "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the feature runs.",
   "schema": "soh.balance.quality.v1",
   "snapshot_heads": {
-    "a0": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
-    "a1": "7fd000e1c017830a088749b965e651fafb501b98",
-    "a6": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
-    "a8": "2d7f10d355cb57692a321f3ca633550d31385157"
+    "a0": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+    "a1": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+    "a6": "8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e",
+    "a8": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
   }
 }
