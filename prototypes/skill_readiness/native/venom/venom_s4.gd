@@ -356,9 +356,11 @@ static func _serpents(c, g) -> void:
 						s.x += V8M.v8_cos(s.hd) * 120.0 * GEN.F
 						s.y += V8M.v8_sin(s.hd) * 120.0 * GEN.F
 					if s.auxT > 1.0:
-						s.mode = "seek"
+						# ORIGINAL: `s.tgt = tg[(s.si++) % 3]` reads the OLD si, then increments.
+						var lunge_idx: int = s.si
 						s.si += 1
-						s.tgt = tg[s.si % 3] if tg.size() > 0 else null
+						s.mode = "seek"
+						s.tgt = tg[lunge_idx % 3] if tg.size() > 0 else null
 				elif s.mode == "visit":
 					s.auxT += GEN.F
 					s.hd += 6.0 * GEN.F
@@ -381,7 +383,7 @@ static func _serpents(c, g) -> void:
 					s.x += V8M.v8_cos(s.hd) * 60.0 * GEN.F
 					s.y += V8M.v8_sin(s.hd) * 60.0 * GEN.F
 				s.x = clampf(s.x, 8.0, w.W - 8.0)
-				s.y = clampf(s.y, 10.0, w.H - 10.0)
+				s.y = clampf(s.y, 10.0, w.H - 8.0)
 				if int(floor(tm * 60.0)) % 5 == 0 and s.reveal > 0.2:
 					w.parts.add({"k": "drop", "x": s.x, "y": s.y, "z": 3,
 							"vx": c.rng.range(-10, 10),
