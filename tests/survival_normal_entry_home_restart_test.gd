@@ -160,6 +160,17 @@ func _run_from_menu() -> void:
 		file.close()
 	print("ENTRY_HOME_FIRST_PROCESS inventory=%s receipts=%d structures=%d" % [str(_save().call(&"inventory_totals")), (audit.transactions as Dictionary).size(), (document.get("structures", {}) as Dictionary).size()])
 
+## The disk audit is JSON, so its integers return as doubles. Comparing a
+## JSON-parsed baseline against live in-memory ints reports type noise, not
+## custody. Both sides therefore pass through the same JSON round trip, which
+## unifies int/float typing while preserving every value a JSON document holds;
+## the declared integer slots are separately re-asserted by the decoder above.
+func _json_typed(value: Variant) -> Variant:
+	var text := JSON.stringify(value)
+	if text.is_empty():
+		return value
+	return JSON.parse_string(text)
+
 func _verify_restart() -> void:
 	var file := FileAccess.open(ENTRY_AUDIT, FileAccess.READ)
 	_expect(file != null, "separate process reads baseline from first process")
@@ -176,11 +187,11 @@ func _verify_restart() -> void:
 	var document: Dictionary = _survival().call(&"document")
 	var disk: Variant = SaveDiff.read_json(ENTRY_SAVE)
 	SaveDiff.report("entry-restart-baseline-vs-reloaded.inventory", baseline.get("inventory", {}), snapshot.get("inventory", {}))
-	SaveDiff.report("entry-restart-baseline-vs-reloaded.survival", baseline.get("survival", {}), document)
 	SaveDiff.report("entry-restart-disk-vs-reloaded.inventory", disk.get("inventory", {}) if disk is Dictionary else disk, snapshot.get("inventory", {}))
 	SaveDiff.report("entry-restart-disk-vs-reloaded.receipts", disk.get("applied_transactions", {}) if disk is Dictionary else disk, snapshot.get("applied_transactions", {}))
-	_expect((snapshot.get("inventory", {}) as Dictionary) == (baseline.get("inventory", {}) as Dictionary), "separate process restores exact ordinary and unique inventory")
-	_expect(document == (baseline.get("survival", {}) as Dictionary), "separate process restores exact structures, chests and permanent knowledge")
+	_expect(_json_typed(snapshot.get("inventory", {})) == _json_typed(baseline.get("inventory", {})), "separate process restores exact ordinary and unique inventory")
+	SaveDiff.report("entry-restart-baseline-vs-reloaded.survival", baseline.get("survival", {}), document)
+	_expect(_json_typed(document) == _json_typed(baseline.get("survival", {})), "separate process restores exact structures, chests and permanent knowledge")
 	# A relaunched process legitimately advances the pausable world clock and
 	# records that as world_time receipts. Custody must be untouchable: every
 	# baseline receipt survives byte-identical, and a receipt that did not exist
@@ -193,7 +204,7 @@ func _verify_restart() -> void:
 	for key: Variant in base_receipts.keys():
 		if not live_receipts.has(key):
 			missing.append(String(key))
-		elif live_receipts[key] != base_receipts[key]:
+		elif _json_typed(live_receipts[key]) != _json_typed(base_receipts[key]):
 			rewritten.append(String(key))
 	for key: Variant in live_receipts.keys():
 		if base_receipts.has(key):
@@ -215,7 +226,7 @@ func _verify_restart() -> void:
 	base_world.erase("clock")
 	live_world.erase("clock")
 	_expect(int(live_clock.get("active_seconds", -1)) >= int(base_clock.get("active_seconds", 0)), "restart clock never runs backwards")
-	_expect(live_world == base_world, "separate process preserves exact POI state and capabilities")
+	_expect(_json_typed(live_world) == _json_typed(base_world), "separate process preserves exact POI state and capabilities")
 	var world := await _boot()
 	_expect(world != null, "separate process reconstructs the actual production overworld")
 	if world == null:
@@ -231,5 +242,5 @@ func _verify_restart() -> void:
 	SaveDiff.report("entry-restart-reloaded-vs-rebuild.inventory", snapshot.get("inventory", {}), rebuilt.get("inventory", {}))
 	SaveDiff.report("entry-restart-reloaded-vs-rebuild.survival", document, _survival().call(&"document"))
 	SaveDiff.report("entry-restart-reloaded-vs-rebuild.receipts", snapshot.get("applied_transactions", {}), rebuilt.get("applied_transactions", {}))
-	_expect(rebuilt.get("inventory", {}) == baseline.get("inventory", {}), "world reconstruction does not duplicate carried items")
+	_expect(_json_typed(rebuilt.get("inventory", {})) == _json_typed(baseline.get("inventory", {})), "world reconstruction does not duplicate carried items")
 	print("ENTRY_HOME_SECOND_PROCESS inventory=%s receipts=%d structures=%d" % [str(_save().call(&"inventory_totals")), (snapshot.get("applied_transactions", {}) as Dictionary).size(), structures.size()])
