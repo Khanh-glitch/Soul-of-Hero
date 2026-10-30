@@ -546,6 +546,14 @@ class Pool extends Fx:
 ## veins / pits never crawl) and replayed with a travelling highlight.
 class GroundDecal extends Fx:
 	var pxs: Array = []
+	# Packed mirrors of pxs (same order/values) for the per-tick draw loops;
+	# Dictionary access per pixel per tick was a top-3 wall-clock cost.
+	var _dxs: PackedFloat64Array = PackedFloat64Array()
+	var _dys: PackedFloat64Array = PackedFloat64Array()
+	var _dcs: PackedInt32Array = PackedInt32Array()
+	var _dgs: PackedInt32Array = PackedInt32Array()
+	var _dh1: PackedFloat64Array = PackedFloat64Array()
+	var _dh2: PackedFloat64Array = PackedFloat64Array()
 	var glowCol: int = 0
 	var size: float = 0.0
 	var life: float = 0.0
@@ -574,6 +582,7 @@ class GroundDecal extends Fx:
 			# V8's Array#sort is stable and the comparator returns 0 for equal
 			# keys, so the authored halo-before-core order survives.
 			M.stable_sort(pxs, func(p, q): return float((0 if p["g"] < 0 else 1) - (0 if q["g"] < 0 else 1)))
+			_rebuild_packed()
 		elif kind_ == "cracks":
 			var n: int = 5 + int(floor(size / 10))
 			for i in range(n):
@@ -642,8 +651,32 @@ class GroundDecal extends Fx:
 				_push(V8M.v8_cos(sa) * sd, V8M.v8_sin(sa) * sd * 0.85,
 						cols_["b"] if i % 9 == 0 else cols_["a"])
 
+	# pxs order can change after generation (veins stable-sorts halo before
+	# core); rebuild the packed mirrors from the final order.
+	func _rebuild_packed() -> void:
+		_dxs.resize(pxs.size())
+		_dys.resize(pxs.size())
+		_dcs.resize(pxs.size())
+		_dgs.resize(pxs.size())
+		_dh1.resize(pxs.size())
+		_dh2.resize(pxs.size())
+		for i in range(pxs.size()):
+			var p: Dictionary = pxs[i]
+			_dxs[i] = float(p["x"])
+			_dys[i] = float(p["y"])
+			_dcs[i] = int(p["c"])
+			_dgs[i] = int(p["g"])
+			_dh1[i] = M.hash_n(i * 3 + 7)
+			_dh2[i] = M.hash_n(i * 5 + 1)
+
 	func _push(px: float, py: float, c: int, g: int = -1) -> void:
 		pxs.append({"x": px, "y": py, "c": c, "g": g})
+		_dxs.append(px)
+		_dys.append(py)
+		_dcs.append(c)
+		_dgs.append(g)
+		_dh1.append(M.hash_n((pxs.size() - 1) * 3 + 7))
+		_dh2.append(M.hash_n((pxs.size() - 1) * 5 + 1))
 
 	# veins: the ORIGINAL builds them with a recursive closure that branches
 	# *inside* the segment loop, so a child branch consumes RNG before the
@@ -679,18 +712,19 @@ class GroundDecal extends Fx:
 		var L = g.s
 		var fade: float = rem / 1.2 if rem < 1.2 else 1.0
 		var t: float = g.t * 22 * pulse
-		for i in range(pxs.size()):
-			var p: Dictionary = pxs[i]
-			if fade < 1 and M.hash_n(i * 3 + 7) > fade:
+		var pw: int = int(M.P["w"])
+		var cb: int = int(cols["b"])
+		for i in range(_dxs.size()):
+			if fade < 1 and _dh1[i] > fade:
 				continue
-			if vis < 1 and M.hash_n(i * 5 + 1) > vis:
+			if vis < 1 and _dh2[i] > vis:
 				continue
-			var c: int = p["c"]
-			if p["g"] >= 0:
-				var ph: float = fmod(fmod(t - float(p["g"]), 44.0) + 44.0, 44.0)
+			var c: int = _dcs[i]
+			if _dgs[i] >= 0:
+				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
-					c = int(M.P["w"]) if ph < 2.5 else M.mix(cols["b"], int(M.P["w"]), 0.5)
-			L.dot(x + p["x"], y + p["y"], c)
+					c = pw if ph < 2.5 else M.mix(cb, pw, 0.5)
+			L.dot(x + _dxs[i], y + _dys[i], c)
 
 	func lit(g, _w) -> void:
 		var rem: float = life - age
@@ -700,12 +734,11 @@ class GroundDecal extends Fx:
 		L.a = M.js_round(60 * fade)
 		var t: float = g.t * 22 * pulse
 		var i: int = 0
-		while i < pxs.size():
-			var p: Dictionary = pxs[i]
-			if p["g"] >= 0:
-				var ph: float = fmod(fmod(t - float(p["g"]), 44.0) + 44.0, 44.0)
+		while i < _dxs.size():
+			if _dgs[i] >= 0:
+				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
-					L.dot(x + p["x"], y + p["y"], glowCol)
+					L.dot(x + _dxs[i], y + _dys[i], glowCol)
 			i += 2
 		L.add = false
 		L.a = 255
@@ -783,22 +816,43 @@ class Cloud extends Fx:
 	func air(g, _w) -> void:
 		var L = g.s
 		var t: float = age
-		var list: Array = []
-		for i in range(puffs.size()):
+		# Packed-array stable sort by depth key (was: Dictionary list +
+		# comparator lambda per comparison). Insertion sort is stable, so
+		# equal keys keep puff order exactly as the original stable sort.
+		var n: int = puffs.size()
+		var qxs: PackedFloat64Array = PackedFloat64Array()
+		qxs.resize(n)
+		var qys: PackedFloat64Array = PackedFloat64Array()
+		qys.resize(n)
+		var ds: PackedFloat64Array = PackedFloat64Array()
+		ds.resize(n)
+		var ord: PackedInt32Array = PackedInt32Array()
+		ord.resize(n)
+		for i in range(n):
 			var p: Dictionary = puffs[i]
-			list.append({"p": p, "q": pos(p, t), "i": i,
-					"d": V8M.v8_sin(float(p["ph"]) + t * float(p["sp"])) * 0.5 + float(p.get("lay", 0.0))})
-		M.stable_sort(list, func(a, b): return float(a["d"]) - float(b["d"]))
+			var q: Array = pos(p, t)
+			qxs[i] = float(q[0])
+			qys[i] = float(q[1])
+			ds[i] = V8M.v8_sin(float(p["ph"]) + t * float(p["sp"])) * 0.5 + float(p.get("lay", 0.0))
+			ord[i] = i
+		for a in range(1, n):
+			var oi: int = ord[a]
+			var dk: float = ds[oi]
+			var b: int = a - 1
+			while b >= 0 and ds[ord[b]] > dk:
+				ord[b + 1] = ord[b]
+				b -= 1
+			ord[b + 1] = oi
 		var rem: float = life - age
 		var f: float = rem / 1.2 if rem < 1.2 else 1.0
-		for o in list:
-			var p2: Dictionary = o["p"]
-			var rr: float = float(p2["r"]) * shrink * (0.9 + 0.1 * V8M.v8_sin(t * 2 + float(o["i"]))) \
+		for oi2 in range(n):
+			var i2: int = ord[oi2]
+			var p2: Dictionary = puffs[i2]
+			var rr: float = float(p2["r"]) * shrink * (0.9 + 0.1 * V8M.v8_sin(t * 2 + float(i2))) \
 					* (0.4 + 0.6 * f) * minf(1.0, age * 2.2 + 0.2)
 			if rr < 1.5:
 				continue
-			var q: Array = o["q"]
-			DRAW.puff(L, q[0], q[1] - heightOff, rr, ramp, dens * f * fade, g.t, seed + int(o["i"]))
+			DRAW.puff(L, qxs[i2], qys[i2] - heightOff, rr, ramp, dens * f * fade, g.t, seed + i2)
 
 	func lit(g, _w) -> void:
 		var rem: float = life - age
