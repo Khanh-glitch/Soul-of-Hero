@@ -1,0 +1,44 @@
+{
+  "atlas_sha256": "b1219025d5755a89e65b877279ec9860a5f0ad7d490e4c8944b88354605c91b8",
+  "grammar_sha256": "d146e86df82bfd4dca482d2923de69a8a4a0c2151212571258dc9a4ffc76ef17",
+  "owner": "A1",
+  "presentations": [
+    {
+      "counts": {
+        "ground_cells": 2688,
+        "lights": 2,
+        "overlays": 0,
+        "props": 28,
+        "road_cells": 33
+      },
+      "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
+      "sha256": "dabe10a88e4a8fa2c5c8ad65f7aa3df8925d0a59c402d0939852bfc96f6aa8ea",
+      "treatment_id": "crown_roadside_visual_treatment"
+    },
+    {
+      "counts": {
+        "ground_cells": 2688,
+        "lights": 1,
+        "overlays": 0,
+        "props": 22,
+        "road_cells": 45
+      },
+      "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
+      "sha256": "4e79362b494de8874bad9b8dd1d2b867ace35bca5b486e429a8a753928c8898d",
+      "treatment_id": "amberwood_apothecary_herb_margin"
+    },
+    {
+      "counts": {
+        "ground_cells": 3840,
+        "lights": 0,
+        "overlays": 0,
+        "props": 16,
+        "road_cells": 431
+      },
+      "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
+      "sha256": "6a85c07409cb352fedf21484c3f8479f38efce7c9dd804f03e79d88adaa56428",
+      "treatment_id": "frost_crown_shrine_skarn"
+    }
+  ],
+  "schema": "soh.world.art_presentations_index.v1"
+}

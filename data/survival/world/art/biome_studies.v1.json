@@ -1,0 +1,436 @@
+{
+  "schema": "SOH_WORLD_ART_BIOME_STUDIES_V1",
+  "owner": "A1",
+  "authority": "VISUAL_ONLY_EXISTING_REGION_WINDOWS_NO_NEW_POI",
+  "studies": [
+    {
+      "study_id": "amberwood_apothecary_herb_margin",
+      "region_id": "r_amberwood",
+      "biome_profile": "amberwood",
+      "lighting_profile": "amber_morning",
+      "window": {
+        "origin_cell": [
+          64,
+          468
+        ],
+        "size_cells": [
+          56,
+          48
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_amberwood_apothecary",
+        "resource_site_id": "src_amber_herb"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "garden_rects": [
+          {
+            "rect": [
+              77,
+              477,
+              8,
+              7
+            ],
+            "material": "soil"
+          }
+        ],
+        "blend_radius_cells": 2
+      },
+      "add_props": [
+        {
+          "frame": "lm_amber_apothecary",
+          "cell": [
+            80,
+            480
+          ],
+          "role": "authored_landmark"
+        },
+        {
+          "frame": "lamp",
+          "cell": [
+            81,
+            481
+          ],
+          "role": "major_waystation",
+          "light": "warm"
+        },
+        {
+          "frame": "tree_amber",
+          "cell": [
+            74,
+            476
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_amber",
+          "cell": [
+            76,
+            486
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_amber",
+          "cell": [
+            88,
+            478
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_amber",
+          "cell": [
+            92,
+            486
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_amber",
+          "cell": [
+            108,
+            492
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            84,
+            474
+          ],
+          "role": "ordinary_harvestable"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            86,
+            482
+          ],
+          "role": "ordinary_harvestable"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            90,
+            492
+          ],
+          "role": "ordinary_harvestable"
+        },
+        {
+          "frame": "fern",
+          "cell": [
+            78,
+            490
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fern",
+          "cell": [
+            94,
+            494
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fern",
+          "cell": [
+            104,
+            506
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "log_pile",
+          "cell": [
+            78,
+            482
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fence_h",
+          "cell": [
+            82,
+            484
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "fence_h",
+          "cell": [
+            85,
+            484
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            102,
+            500
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:01"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            97,
+            502
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:02"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            100,
+            496
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:03"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            103,
+            504
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:04"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            95,
+            499
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:05"
+        },
+        {
+          "frame": "herb_moonleaf",
+          "cell": [
+            105,
+            497
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_amber_herb:06"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "amber_apothecary",
+          "center_cell": [
+            84,
+            484
+          ],
+          "time_of_day": 0.3
+        },
+        {
+          "id": "amber_herb_margin",
+          "center_cell": [
+            100,
+            500
+          ],
+          "time_of_day": 0.3
+        }
+      ]
+    },
+    {
+      "study_id": "frost_crown_shrine_skarn",
+      "region_id": "r_frost_crown",
+      "biome_profile": "frost_crown",
+      "lighting_profile": "frost_blue_hour",
+      "window": {
+        "origin_cell": [
+          580,
+          112
+        ],
+        "size_cells": [
+          64,
+          60
+        ]
+      },
+      "canonical_anchors": {
+        "poi_id": "poi_frost_tarn_shrine",
+        "resource_site_id": "src_frost_skarn"
+      },
+      "ground_rules": {
+        "base_from_source_surface": true,
+        "road_from_source_road": true,
+        "shrine_court_rects": [
+          {
+            "rect": [
+              616,
+              127,
+              9,
+              7
+            ],
+            "material": "basalt"
+          }
+        ],
+        "blend_radius_cells": 2
+      },
+      "add_props": [
+        {
+          "frame": "lm_frost_shrine",
+          "cell": [
+            620,
+            130
+          ],
+          "role": "authored_landmark"
+        },
+        {
+          "frame": "tree_frost",
+          "cell": [
+            612,
+            126
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost",
+          "cell": [
+            626,
+            124
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost",
+          "cell": [
+            628,
+            136
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            616,
+            134
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            624,
+            140
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            608,
+            146
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cairn_warning",
+          "cell": [
+            610,
+            150
+          ],
+          "role": "physical_danger"
+        },
+        {
+          "frame": "wall_stub",
+          "cell": [
+            614,
+            146
+          ],
+          "role": "restricted_access"
+        },
+        {
+          "frame": "cairn",
+          "cell": [
+            622,
+            148
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            602,
+            160
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:01"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            600,
+            156
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:02"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            603,
+            164
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:03"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            605,
+            157
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:04"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            598,
+            166
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:05"
+        },
+        {
+          "frame": "ore_skarn",
+          "cell": [
+            606,
+            162
+          ],
+          "role": "ordinary_harvestable",
+          "node_id": "res:src_frost_skarn:06"
+        }
+      ],
+      "capture_views": [
+        {
+          "id": "frost_shrine",
+          "center_cell": [
+            620,
+            132
+          ],
+          "time_of_day": 0.4
+        },
+        {
+          "id": "frost_skarn",
+          "center_cell": [
+            602,
+            160
+          ],
+          "time_of_day": 0.85
+        }
+      ]
+    }
+  ]
+}

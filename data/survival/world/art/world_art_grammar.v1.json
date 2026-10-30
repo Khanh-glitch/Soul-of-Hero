@@ -1,0 +1,265 @@
+{
+  "schema": "SOH_WORLD_ART_GRAMMAR_V1",
+  "title": "Shared world art grammar for readable survival environments",
+  "owner": "A1",
+  "pixel_grid": {
+    "tile_px": 16,
+    "viewport_px": [
+      640,
+      360
+    ],
+    "camera_zoom": 1,
+    "filter": "nearest",
+    "prop_scale": 1.0
+  },
+  "palette": {
+    "shared_ramp": true,
+    "ground_luminance_target": [
+      0.3,
+      0.42
+    ],
+    "prop_luminance_target": [
+      0.45,
+      0.85
+    ],
+    "reserved_accents": {
+      "fire_warm": "shelter / worked heat",
+      "soul_cyan": "soul / relic / exceptional mineral",
+      "rust_red": "warning / old cloth",
+      "moss_green": "living growth / safe herb"
+    },
+    "outline": "one pixel dark shared outline; no black sticker borders",
+    "minimum_readable_feature_px": 4
+  },
+  "semantic_roles": {
+    "supply_cache": {
+      "frames": [
+        "cache_closed",
+        "cache_open",
+        "cache_spent"
+      ],
+      "read": "worked iron + cloth latch + plank body; state changes are art-only until A3 binds reward authority",
+      "glow": false,
+      "collision": "unchanged from authored instance"
+    },
+    "ordinary_harvestable": {
+      "frames": [
+        "deadfall",
+        "stump",
+        "fern",
+        "herb_moonleaf",
+        "ore_skarn",
+        "tree_amber",
+        "tree_orchard",
+        "tree_frost"
+      ],
+      "read": "natural material, repeated clusters, no container latch and no shelter roof",
+      "glow": "only exceptional mineral may use reserved soul accent",
+      "collision": "unchanged from source node / decor"
+    },
+    "major_waystation": {
+      "frames": [
+        "lm_waystation",
+        "banner",
+        "lamp",
+        "whetstone",
+        "log_pile"
+      ],
+      "read": "large open awning + counter + warm lamp + maintained court + banner; visually larger than any container",
+      "glow": "warm light, not loot glow",
+      "collision": "visual overlay only; canonical stands and bodies remain authoritative"
+    },
+    "background_scenery": {
+      "frames": [
+        "tree_dead",
+        "tree_pine",
+        "bush",
+        "rock_a",
+        "rock_c",
+        "cairn",
+        "reeds",
+        "tarp_shelter",
+        "fence_h",
+        "fence_v",
+        "handcart",
+        "tree_amber",
+        "tree_frost",
+        "tree_frost_small",
+        "fern",
+        "log_pile"
+      ],
+      "read": "lower contrast, smaller silhouettes, no latch / lamp / counter",
+      "glow": false,
+      "collision": "source collision only"
+    },
+    "physical_danger": {
+      "frames": [
+        "cairn_warning",
+        "rock_e",
+        "wall_stub",
+        "column_broken"
+      ],
+      "read": "broken stone + rust warning cap + impassable mass beside the route; no arbitrary red border",
+      "glow": false,
+      "collision": "source walk/solid cells only"
+    },
+    "restricted_access": {
+      "frames": [
+        "wall_stub",
+        "column_broken",
+        "cairn_warning"
+      ],
+      "read": "ruin mass and warning cairn communicate old closure; never a fake interactable gate",
+      "glow": false,
+      "collision": "source walk/solid cells only"
+    },
+    "return_route": {
+      "frames": [
+        "signpost",
+        "banner",
+        "lamp",
+        "handcart",
+        "handcart"
+      ],
+      "read": "maintained road, repeated warm markers and shelter silhouette leading back to the postern",
+      "glow": "warm light only",
+      "collision": "unchanged"
+    },
+    "authored_landmark": {
+      "frames": [
+        "lm_amber_apothecary",
+        "lm_amber_watch",
+        "lm_frost_shrine",
+        "mill_wheel"
+      ],
+      "read": "canonical POI silhouette with worked material and local culture; not a new POI and not a loot container",
+      "glow": "only shrine soul accent",
+      "collision": "visual overlay only; canonical POI anchor/obstacle remains authoritative"
+    }
+  },
+  "biome_profiles": {
+    "ashen_crown": {
+      "ground": [
+        "ash",
+        "moor",
+        "soil"
+      ],
+      "road": "dirt_road",
+      "vegetation": [
+        "tree_dead",
+        "tree_pine",
+        "bush",
+        "fern"
+      ],
+      "structures": [
+        "lm_waystation",
+        "wall_stub",
+        "column_broken"
+      ],
+      "lighting": "overcast_frontier",
+      "transition": "ash -> moor -> soil; road wear and court gravel mark maintained ground"
+    },
+    "amberwood": {
+      "ground": [
+        "grass",
+        "forest_floor",
+        "soil"
+      ],
+      "road": "dirt_road",
+      "vegetation": [
+        "tree_amber",
+        "tree_orchard",
+        "fern",
+        "reeds",
+        "herb_moonleaf"
+      ],
+      "structures": [
+        "lm_amber_apothecary",
+        "lm_amber_watch",
+        "fence_h",
+        "tarp_shelter"
+      ],
+      "lighting": "amber_morning",
+      "transition": "grass -> forest floor -> bog/moor; orchard rows and herb clusters mark tended ground"
+    },
+    "frost_crown": {
+      "ground": [
+        "snow",
+        "tundra",
+        "basalt",
+        "ice"
+      ],
+      "road": "stone_road",
+      "vegetation": [
+        "tree_frost",
+        "tree_frost_small",
+        "ore_skarn"
+      ],
+      "structures": [
+        "lm_frost_shrine",
+        "cairn",
+        "cairn_warning",
+        "wall_stub"
+      ],
+      "lighting": "frost_blue_hour",
+      "transition": "snow -> tundra -> basalt; wind-packed snow edges and exposed ore mark the cold frontier"
+    }
+  },
+  "lighting_profiles": {
+    "overcast_frontier": {
+      "ambient_day": [
+        0.78,
+        0.78,
+        0.82,
+        1.0
+      ],
+      "ambient_night": [
+        0.24,
+        0.25,
+        0.34,
+        1.0
+      ],
+      "warm_lamp_energy": 0.85,
+      "notes": "neutral grey-violet daylight; warm shelter pockets at night"
+    },
+    "amber_morning": {
+      "ambient_day": [
+        0.9,
+        0.86,
+        0.74,
+        1.0
+      ],
+      "ambient_night": [
+        0.22,
+        0.27,
+        0.3,
+        1.0
+      ],
+      "warm_lamp_energy": 0.75,
+      "notes": "living green/amber canopy; warm worked windows"
+    },
+    "frost_blue_hour": {
+      "ambient_day": [
+        0.76,
+        0.84,
+        0.96,
+        1.0
+      ],
+      "ambient_night": [
+        0.26,
+        0.32,
+        0.46,
+        1.0
+      ],
+      "warm_lamp_energy": 0.95,
+      "notes": "cold snow/basalt; soul-cyan shrine accent and rare warm refuge"
+    }
+  },
+  "production_rules": [
+    "A1 presentation is a visual overlay. It never changes walk, collision, stands, instance ids, cache ids, rewards, saves or A8 interaction state.",
+    "All sprites are unscaled atlas frames on the 16 px grid. No per-site palette swaps and no non-integer scaling.",
+    "Use OverworldOcclusion.configure_sprites for tall vegetation / architecture so the Hero remains readable.",
+    "Lighting uses only A1-owned CanvasItemMaterials / Light2D nodes in isolated presentation; AVFX original Gold and A0 production lighting remain untouched.",
+    "A0 alone mounts production scenes. A8 keeps local interaction art/engine; this grammar is a conformance target, not a takeover."
+  ]
+}

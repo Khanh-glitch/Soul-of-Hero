@@ -1,10 +1,55 @@
 {
-  "artifact_count": 236,
+  "artifact_count": 245,
   "artifacts": [
     {
       "bytes": 9443,
       "path": "data/survival/world/a1_a3_material_decisions.json",
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
+    },
+    {
+      "bytes": 3151,
+      "path": "data/survival/world/art/a8_visual_contract.v1.json",
+      "sha256": "6fa93880d405584712d9068dfe48d887faeeb02961bd2fd6933390a3ef594990"
+    },
+    {
+      "bytes": 22398,
+      "path": "data/survival/world/art/atlas.v1.json",
+      "sha256": "b1219025d5755a89e65b877279ec9860a5f0ad7d490e4c8944b88354605c91b8"
+    },
+    {
+      "bytes": 9166,
+      "path": "data/survival/world/art/biome_studies.v1.json",
+      "sha256": "995e8411054a520987e7a1766d325b8420f496e3856090715c42b52323ac32ca"
+    },
+    {
+      "bytes": 66483,
+      "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
+      "sha256": "4e79362b494de8874bad9b8dd1d2b867ace35bca5b486e429a8a753928c8898d"
+    },
+    {
+      "bytes": 65776,
+      "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
+      "sha256": "dabe10a88e4a8fa2c5c8ad65f7aa3df8925d0a59c402d0939852bfc96f6aa8ea"
+    },
+    {
+      "bytes": 89898,
+      "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
+      "sha256": "6a85c07409cb352fedf21484c3f8479f38efce7c9dd804f03e79d88adaa56428"
+    },
+    {
+      "bytes": 4532,
+      "path": "data/survival/world/art/crown_roadside.treatment.v1.json",
+      "sha256": "5fc6650ed4797eb93eb2b27febc5f544feb0720520fa2d581a2b104b28ab66cb"
+    },
+    {
+      "bytes": 1469,
+      "path": "data/survival/world/art/presentations.v1.json",
+      "sha256": "5ceabf3b087b0ce8eea8862bb760573e3c9078fe117eb1528b55ab45072da3f3"
+    },
+    {
+      "bytes": 7114,
+      "path": "data/survival/world/art/world_art_grammar.v1.json",
+      "sha256": "d146e86df82bfd4dca482d2923de69a8a4a0c2151212571258dc9a4ffc76ef17"
     },
     {
       "bytes": 3901,
@@ -1182,8 +1227,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "54cc776b9ca22ec6b98987231b5e400610ccb325fe1caa8a0251d4262566715b",
-  "compile_2_tree_sha256": "54cc776b9ca22ec6b98987231b5e400610ccb325fe1caa8a0251d4262566715b",
+  "compile_1_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
+  "compile_2_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

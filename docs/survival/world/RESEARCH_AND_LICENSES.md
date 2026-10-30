@@ -70,3 +70,12 @@ No third-party source code, textures, audio, or generated art from the researche
 SOURCE_HOLD packs 351300/654184/749505 remain unusable until individually confirmed. Inherited `treasure_chests_1_2a` was not admitted because its bundled readme does not contain a standalone license grant; Cainos demo art was not imported because the archive lacked a standalone license document and the official terms need re-check before shipping.
 
 **Streaming OSS reference:** `gdquest-demos/godot-procedural-generation` @ `19c98cee16ed18e642b3ce178f4c649d56b334b2`. Actual `LICENSE` read: source MIT ©2020 GDQuest; art/audio CC-BY 4.0. `godot4/infinite_space/persistent_world_generator.gd` inspected for separate modification dictionary + sector regeneration. Decision: **REFERENCE** the static-truth/mutation/active-window separation; **REJECT** importing GDQuest art or rewriting SOH into infinite procedural generation. See `STREAMING_EVALUATION.md`.
+
+## 2026-10-30 world art production decisions
+
+- **ADOPT / ORIGINAL:** `tools/survival/worldgen/build_world_art.py` bakes a shared SOH material-culture atlas (238 terrain / 38 prop frames). Palette, outline weight, 16 px grid, feet-anchor perspective and reserved accents are authored data in `world_art_grammar.v1.json`. File and pixel SHA-256 pinned in `atlas.v1.json`.
+- **REUSE_UNSCALED:** nine inherited original frames from `assets/environment/overworld/overworld_props.png` (`tree_dead`, `tree_pine`, `bush`, `rock_a/c/e`, `signpost`, `wall_stub`, `column_broken`). No perspective/scale change; provenance recorded per frame.
+- **REJECT:** Cainos demo art. Bright fantasy palette diverges from grey-violet SOH culture; A8 prototype resamples a 132×160 tree to 122×153 (~0.92×/0.96×); standalone license unproven. No bytes imported.
+- **REFERENCE_ONLY:** GDQuest persistent-sector pattern (MIT code / CC-BY art) and Godot demo `2d/dynamic_tilemap_layers` @ `b761b4cd…` (MIT) for runtime tile update / per-layer collision disable. No art imported.
+- **NOT_IMPORTED / UNAVAILABLE:** CT 43-pack Drive registry `SOH_ASSET_LIBRARY_43_DRIVE_REGISTRY_20261030.json` (43 ZIPs, 180.9 MB). Google Drive connector disconnected in Arena; no public mirror verified. Proceeded with approved accessible project art; no fabricated import. User-fixed bald avatars 555940 / 419402 untouched.
+- **A8 VISUAL CONTRACT:** `a8_visual_contract.v1.json` records executable requirements and PR #26 divergences A8-VIS-01..06. A8 keeps creative control and interaction engine; A0 alone mounts production.

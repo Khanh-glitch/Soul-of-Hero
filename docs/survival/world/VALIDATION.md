@@ -124,3 +124,35 @@ python tools/survival/worldgen/check_determinism.py
 The corridor gate checks durable class/region/instance/POI identity, multi-instance class semantics, zero new POIs, exact existing resource-node cells, walk/hazard/water clearance, live-shape stand clearance, adverse full-tile container overlap, return/revisit cells, A1 economy-field absence, inherited original art, valid detail masks, decor collision clearance, deferred-node preservation, and exact A8 transform/footprint/capability review. Negative tests mutate identity, cells, stands, economy fields, art, decor placement and A8 root transforms.
 
 Native fixture: `corridor_native_test.gd` under Xvfb with the real Knight and ordinary input. It is isolated engineering evidence, not A3 loot integration, not SaveService production acceptance, and not human playtest. CI anti-vacuity requires at least 25 corridor assertions plus adverse-container and three-instance markers.
+
+## 2026-10-30 world art visual production gate
+
+Commands (local, branch `arena/e385312a-soul-of-hero`):
+
+```bash
+.venv/bin/python tools/survival/worldgen/build_world_art.py
+.venv/bin/python tools/survival/worldgen/compile_world_art.py
+.venv/bin/python tools/survival/worldgen/validate_world_art.py
+.venv/bin/python tools/survival/worldgen/preview_world_art.py
+.venv/bin/python -m pytest tests/survival/world -q
+.venv/bin/python tools/survival/worldgen/validate_world.py
+.venv/bin/python tools/survival/worldgen/validate_slice.py
+.venv/bin/python tools/survival/worldgen/validate_connector.py --out artifacts/a1-connector
+.venv/bin/python tools/survival/worldgen/validate_corridor.py
+.venv/bin/python tools/survival/validate_handoff.py
+.venv/bin/python tools/survival/validate_atlas_contract.py
+.venv/bin/python tools/survival/worldgen/check_determinism.py
+.venv/bin/gdparse game/world_art/world_art_presentation.gd tests/survival/world/world_art_native_test.gd
+```
+
+Results:
+
+- Atlas bake: 238 terrain frames, 38 prop frames, 9 inherited original frames; file/pixel SHA pinned.
+- Art validator: 3 presentations, profiles `amberwood`, `ashen_crown`, `frost_crown`, 0 errors.
+- Pytest: **109 passed** (101 prior + 8 world-art).
+- World/slice/connector/corridor validators: 0 errors; canonical rewards unchanged; 118 POI rows / 108 authored preserved.
+- Handoff: PASS, 13 tracked tasks. Atlas contract: PASS, source SHA `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`.
+- Determinism: ok, **245 artifacts**, tree SHA `d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37`.
+- gdparse: clean.
+- Pillow/atlas previews: rendered and personally inspected; **not native evidence**.
+- Native: CI job `godot-world-art-native` added (Xvfb 3840×2160, captures 720p/1440p/2160p, anti-vacuity ≥30 assertions / ≥12 captures / failures=0 / zero collision bodies). Specified runs 41020340273 / 41020347365 still queued at authoring time; native captures **NOT_TESTED**. No production mount.

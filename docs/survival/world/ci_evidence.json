@@ -1695,5 +1695,38 @@
       "production_controller": false
     },
     "limitation": "Isolated composed-world fixture, not production chapter1_overworld/SaveService integration. A0 PR21 must mount collision_size_px/collision_offset_px, repeat exact stand and genuine reward/save/reload vectors before native_playable can become true."
+  },
+  "world_art_checkpoint": {
+    "status": "PENDING_CI_NATIVE",
+    "branch": "arena/e385312a-soul-of-hero",
+    "specified_world_reader_runs": {
+      "push": 41020340273,
+      "pr": 41020347365,
+      "state_at_authoring": "queued"
+    },
+    "local": {
+      "pytest_passed": 109,
+      "art_presentations": 3,
+      "terrain_frames": 238,
+      "prop_frames": 38,
+      "inherited_frames": 9,
+      "determinism_artifacts": 245,
+      "determinism_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
+      "validators": "0 errors",
+      "gdparse": "clean",
+      "pillow_previews": "inspected_not_native"
+    },
+    "native": {
+      "fixture": "tests/survival/world/world_art_native_test.gd",
+      "ci_job": "A1 GODOT 4.7 WORLD ART NATIVE VISUAL FIXTURE (NOT PRODUCTION)",
+      "resolutions": [
+        "1280x720",
+        "2560x1440",
+        "3840x2160"
+      ],
+      "state": "NOT_TESTED",
+      "production_native_playable": false
+    },
+    "handoff": "docs/survival/world/WORLD_ART_HANDOFF.md"
   }
 }
