@@ -1,6 +1,6 @@
 # A1 → A0: exact Waystation locker stand collision correction
 
-**Status:** `SOURCE_CORRECTION_AUTHORED_PENDING_CI_AND_A0_NATIVE`  
+**Status:** `SOURCE_AND_ISOLATED_NATIVE_FIXTURE_PASS_PENDING_A0_PRODUCTION`  
 **A1 branch / PR:** `arena/e385312a-soul-of-hero` / PR #20, open/unmerged  
 **Authority:** CT narrow local POI collision/stand correction after A0 native counterexample run [40996028162](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40996028162).  
 **Correction id:** `a1_locker_stand_toe_clearance_v1`
@@ -63,13 +63,26 @@ Inverse / rollback: remove `collision_size_px`, `collision_offset_px`, `visual_s
 | ID | Gate | Status |
 |---|---|---|
 | LS-01 | Source diff preserves anchor `(408,200)`, stand `(408,199)`, obstacle cells, rewards, chunk6:3, 46/48/14 ridge, ten entrances. | PASS source gate / pytest |
-| LS-02 | Adverse proof: original full-tile locker body intersects exact stand via live `intersect_shape`. | CI-PENDING |
-| LS-03 | Repaired stand is nav-free and live-shape clear; no Hero resize. | CI-PENDING |
-| LS-04 | Exact stand is inside authored 24 px interaction range. | CI-PENDING |
-| LS-05 | Ordinary input walks Refuge → exact locker stand → Relay crank stand → Refuge. | CI-PENDING |
-| LS-06 | Camera, border, padding, ten endpoints and one-size/collision constraints remain valid. | CI-PENDING |
+| LS-02 | Adverse proof: original full-tile locker body intersects exact stand via live `intersect_shape`. | **PASS CI** `bc71b536` |
+| LS-03 | Repaired stand is nav-free and live-shape clear; no Hero resize. | **PASS CI** `bc71b536` |
+| LS-04 | Exact stand is inside authored 24 px interaction range. | **PASS CI** `bc71b536` (23 px foot distance) |
+| LS-05 | Ordinary input walks Refuge → exact locker stand → Relay crank stand → Refuge. | **PASS CI** `bc71b536` |
+| LS-06 | Camera, border, padding, ten endpoints and one-size/collision constraints remain valid. | **PASS CI** `bc71b536` |
 | LS-07 | A0 production controller fresh-save/reload, genuine rewards, inverse route, downgrade/protected endpoints and B0. | **A0 PENDING** |
 
 ## Limits
 
 This is an A1 isolated composed-world fixture correction, not production integration. `native_playable=false`. A0 must mount the authored collision fields, re-run the exact stand through the production Knight/controller, and validate genuine SaveService rewards before any native-playable claim.
+
+
+## CI evidence
+
+Code checkpoint `bc71b53695e8c913fa5d00f954ebf4b0f95540e8`:
+
+- Push [40999023888](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888) **SUCCESS**: Python authoring/schemas/determinism; isolated chunk+slice reader; connector native fixture 3m49s.
+- PR [40999029445](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445) **SUCCESS**: same three jobs; connector native fixture 3m46s.
+- Anti-vacuity gate required ≥20 assertions, exact locker stand `(408,199)`, adverse original full-tile proof, PASS phrase and production-integration caveat.
+- Local: pytest **84 passed**; connector/slice/world validators 0 errors; determinism **232 artifacts**, tree `39b9f2535519f0080cf5809d073eb159f33ccdc3126603906fee6456192225c2`.
+- Docs tab04 marker `A1_LOCKER_STAND_CORRECTION_bc71b536` read back at 133869–133904.
+
+A1 stops at `PAUSED_AWAITING_A0_NATIVE`. No merge, no continent expansion.

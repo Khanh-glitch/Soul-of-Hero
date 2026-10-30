@@ -77,10 +77,10 @@ A0 PR21 compatibility pins are recorded in the contract. PR21 diff does not touc
 |---|---|---|
 | CN-01 | Exact 46 collision / 48 dressed / 14 prop delta; source pins; inverse rollback restores legacy grids/props. | **PASS source** (`validate_connector.py`, pytest). |
 | CN-02 | Unmodified legacy blocker reproduced: Hero stops before x369. | **PASS A0 native negative** run 40931599594. |
-| CN-03 | Composed live-shape route Refuge → border → exact Waystation locker stand `(408,199)` without teleport; repaired locker-bank collision footprint and interaction range. | **PENDING LOCKER-CORRECTION CI** (see `A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md`). |
-| CN-04 | Waystation → Relay crank stand `(442,234)` around static slice obstacles. | **PENDING LOCKER-CORRECTION CI re-run** (isolated composed world; production repetition A0-owned). |
-| CN-05 | Relay → Refuge return; camera right limit 7168; Hero visible. | **PENDING LOCKER-CORRECTION CI re-run** (isolated composed world; production repetition A0-owned). |
-| CN-06 | Ten dungeon thresholds, camps, discoveries remain reachable in composed nav. | **PENDING LOCKER-CORRECTION CI re-run** (isolated composed world; production repetition A0-owned). |
+| CN-03 | Composed live-shape route Refuge → border → exact Waystation locker stand `(408,199)` without teleport; repaired locker-bank collision footprint and interaction range. | **PASS CI** `bc71b536` (exact stand; see `A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md`). |
+| CN-04 | Waystation → Relay crank stand `(442,234)` around static slice obstacles. | **PASS CI** `bc71b536` (isolated composed world; production repetition A0-owned). |
+| CN-05 | Relay → Refuge return; camera right limit 7168; Hero visible. | **PASS CI** `bc71b536` (isolated composed world; production repetition A0-owned). |
+| CN-06 | Ten dungeon thresholds, camps, discoveries remain reachable in composed nav. | **PASS CI** `bc71b536` (isolated composed world; production repetition A0-owned). |
 | CN-07 | A0 production controller with source overrides repeats CN-03..06 on fresh save/reload; SaveService global pixels round-trip. | **PENDING A0**. |
 | CN-08 | Build rejected on connector road and disabled annex; legacy home/build tests unchanged. | **SOURCE contract**; native A0 pending. |
 | CN-09 | Canonical rewards byte-locked; no A3 hypothetical locker/cache rewards; one receipt per entitlement. | **PASS source**; production A0/A3 pending. |

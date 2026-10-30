@@ -140,16 +140,19 @@
     {
       "id": "SURV-050A-LOCKER-STAND",
       "name": "A1 exact Waystation locker stand native collision owner correction",
-      "status": "source_correction_authored_pending_ci_and_a0_native",
+      "status": "source_and_isolated_native_fixture_pass_pending_a0_production",
       "evidence": [
         "docs/survival/world/A1_TO_A0_LOCKER_STAND_COLLISION_CORRECTION_20261030.md",
         "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
         "tools/survival/worldgen/compile_slice.py",
         "tools/survival/worldgen/validate_slice.py",
         "tests/survival/world/connector_native_test.gd",
-        "A0 native counterexample run 40996028162"
+        "A0 native counterexample run 40996028162",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445",
+        "docs/survival/world/ci_evidence.json#locker_stand_checkpoint"
       ],
-      "next": "Run A1 CI native exact-stand fixture; notify A0 PR21; A0 production retest genuine rewards/save; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false"
+      "next": "A0 PR21 mount collision_size_px/collision_offset_px and run production exact-stand/genuine-reward/save vectors; A1 PAUSED_AWAITING_A0_NATIVE; native_playable=false"
     }
   ],
   "next_action": {

@@ -1041,5 +1041,659 @@
       "production_controller": false
     },
     "limitation": "Isolated composed-world fixture, not production chapter1_overworld/SaveService integration. Raw CI log/artifact ZIP hosts remain egress-blocked; GitHub job/step conclusions, anti-vacuity gates and artifact digests are authoritative. A0 PR21 must repeat CN-03..CN-10 through the production controller on fresh save/reload before native_playable can become true."
+  },
+  "locker_stand_checkpoint": {
+    "head_sha": "bc71b53695e8c913fa5d00f954ebf4b0f95540e8",
+    "correction_id": "a1_locker_stand_toe_clearance_v1",
+    "native_playable": false,
+    "status": "SOURCE_AND_ISOLATED_NATIVE_FIXTURE_PASS_PENDING_A0_PRODUCTION",
+    "docs_sync": {
+      "status": "DONE",
+      "tab_id": "t.h4haqfdoyzzn",
+      "marker": "A1_LOCKER_STAND_CORRECTION_bc71b536",
+      "readback_start_index": 133869,
+      "readback_end_index": 133904
+    },
+    "push_run": {
+      "run_id": 40999023888,
+      "event": "push",
+      "head_sha": "bc71b53695e8c913fa5d00f954ebf4b0f95540e8",
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888",
+      "jobs": [
+        {
+          "completedAt": "2026-10-30T03:51:13Z",
+          "conclusion": "success",
+          "databaseId": 123878821257,
+          "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+          "startedAt": "2026-10-30T03:44:33Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install authoring dependencies",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile authored world",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile native-ready two-POI vertical slice contracts",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Render vertical-slice inspection diagram",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Pacing / scale audit (estimates, not playtime)",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate world + schemas",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate vertical-slice handoff",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile canonical geography connector contract + bounded annex pilot",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate connector evidence gate (source-verified, not native playable)",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Negative / acceptance tests",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Double-compile determinism",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Python evidence",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 29,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 30,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 31,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888/job/123878821257"
+        },
+        {
+          "completedAt": "2026-10-30T03:51:13Z",
+          "conclusion": "success",
+          "databaseId": 123879510140,
+          "name": "A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER",
+          "startedAt": "2026-10-30T03:46:50Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import isolated reader fixture only",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run read-only chunk/RLE/build-contract tests",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Anti-vacuity gate",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run isolated vertical-slice contract vectors",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Slice anti-vacuity gate",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Godot reader evidence",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888/job/123879510140"
+        },
+        {
+          "completedAt": "2026-10-30T03:51:13Z",
+          "conclusion": "success",
+          "databaseId": 123879510192,
+          "name": "A1 GODOT 4.7 CONNECTOR NATIVE FIXTURE (NOT PRODUCTION)",
+          "startedAt": "2026-10-30T03:47:24Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Derive bounded annex pilot inputs (read-only legacy sources)",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import root project for real Knight / OverworldWorld fixture",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run live-shape Refuge -> Waystation -> Relay -> Refuge fixture",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Connector fixture anti-vacuity gate",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload connector native fixture evidence",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999023888/job/123879510192"
+        }
+      ],
+      "artifact_digests": {
+        "a1-connector-native-fixture-evidence": "sha256:fd82cb2c1b70c953aad85c2eed90256a641f1ed4a6a89118d20bb11acb1a20e0",
+        "a1-world-godot-reader-evidence": "sha256:fa8344dbb8a01cb67f994bb2d91fbd2c623364bfe0e419e7583e469de5be5f3f",
+        "a1-world-python-evidence": "sha256:325eae57fc70bb47cf699653290d3dd06223ebfdb4594b1531200f043c99bea5"
+      }
+    },
+    "pr_run": {
+      "run_id": 40999029445,
+      "event": "pull_request",
+      "head_sha": "bc71b53695e8c913fa5d00f954ebf4b0f95540e8",
+      "conclusion": "success",
+      "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445",
+      "jobs": [
+        {
+          "completedAt": "2026-10-30T03:46:49Z",
+          "conclusion": "success",
+          "databaseId": 123878839211,
+          "name": "A1 PYTHON AUTHORING / SCHEMAS / DETERMINISM",
+          "startedAt": "2026-10-30T03:44:29Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Install authoring dependencies",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile authored world",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile native-ready two-POI vertical slice contracts",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Render vertical-slice inspection diagram",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Pacing / scale audit (estimates, not playtime)",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate world + schemas",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate vertical-slice handoff",
+              "number": 10,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Compile canonical geography connector contract + bounded annex pilot",
+              "number": 11,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Validate connector evidence gate (source-verified, not native playable)",
+              "number": 12,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Negative / acceptance tests",
+              "number": 13,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Double-compile determinism",
+              "number": 14,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Python evidence",
+              "number": 15,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 29,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 30,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 31,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445/job/123878839211"
+        },
+        {
+          "completedAt": "2026-10-30T03:46:49Z",
+          "conclusion": "success",
+          "databaseId": 123879220383,
+          "name": "A1 GODOT 4.7 CONNECTOR NATIVE FIXTURE (NOT PRODUCTION)",
+          "startedAt": "2026-10-30T03:45:54Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/setup-python@v5",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Derive bounded annex pilot inputs (read-only legacy sources)",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import root project for real Knight / OverworldWorld fixture",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run live-shape Refuge -> Waystation -> Relay -> Refuge fixture",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Connector fixture anti-vacuity gate",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload connector native fixture evidence",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/setup-python@v5",
+              "number": 17,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445/job/123879220383"
+        },
+        {
+          "completedAt": "2026-10-30T03:46:49Z",
+          "conclusion": "success",
+          "databaseId": 123879220398,
+          "name": "A1 GODOT 4.7 ISOLATED CHUNK + SLICE READER",
+          "startedAt": "2026-10-30T03:46:26Z",
+          "status": "completed",
+          "steps": [
+            {
+              "conclusion": "success",
+              "name": "Set up job",
+              "number": 1,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run actions/checkout@v4",
+              "number": 2,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run chickensoft-games/setup-godot@v2",
+              "number": 3,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Import isolated reader fixture only",
+              "number": 4,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run read-only chunk/RLE/build-contract tests",
+              "number": 5,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Anti-vacuity gate",
+              "number": 6,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Run isolated vertical-slice contract vectors",
+              "number": 7,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Slice anti-vacuity gate",
+              "number": 8,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Upload Godot reader evidence",
+              "number": 9,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Post Run actions/checkout@v4",
+              "number": 18,
+              "status": "completed"
+            },
+            {
+              "conclusion": "success",
+              "name": "Complete job",
+              "number": 19,
+              "status": "completed"
+            }
+          ],
+          "url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40999029445/job/123879220398"
+        }
+      ],
+      "artifact_digests": {
+        "a1-connector-native-fixture-evidence": "sha256:5fc8ebb36a0049e73cb04fd0c734d99db7126fbcc3ca24f5084ff74ceeba36a5",
+        "a1-world-godot-reader-evidence": "sha256:390b58f3a3898f6531f00c4fbfc23e2d808b28e43741d6a79634f70d255705be",
+        "a1-world-python-evidence": "sha256:c27154903df35efebc3bac55024b0f09b0b607cd614c72685d7d88271a4a26ec"
+      }
+    },
+    "correction": {
+      "stand_cell": [
+        408,
+        199
+      ],
+      "anchor_cell": [
+        408,
+        200
+      ],
+      "obstacle_id": "obs_waystation_locker_bank",
+      "obstacle_cells": [
+        [
+          408,
+          198
+        ],
+        [
+          409,
+          198
+        ]
+      ],
+      "original_collision_size_px": [
+        16,
+        16
+      ],
+      "original_overlap_px": [
+        12,
+        1
+      ],
+      "repaired_collision_size_px": [
+        16,
+        14
+      ],
+      "repaired_collision_offset_px": [
+        0,
+        -1
+      ],
+      "visual_size_px": [
+        16,
+        16
+      ],
+      "toe_clearance_px": 1,
+      "interaction_radius_px": 24,
+      "stand_to_node_foot_px": 23
+    },
+    "native_fixture": {
+      "engine": "Godot 4.7",
+      "boot": "Xvfb + GL compatibility, real Knight scene after autoloads",
+      "anti_vacuity": "passed (>=20 assertions + exact locker stand + adverse original full-tile proof + PASS phrase + production caveat)",
+      "adverse_original_intersect": true,
+      "repaired_stand_nav_and_shape_clear": true,
+      "interaction_range_verified": true,
+      "ordinary_input_round_trip": "Refuge -> exact locker stand (408,199) -> Relay crank stand (442,234) -> Refuge",
+      "production_controller": false
+    },
+    "limitation": "Isolated composed-world fixture, not production chapter1_overworld/SaveService integration. A0 PR21 must mount collision_size_px/collision_offset_px, repeat exact stand and genuine reward/save/reload vectors before native_playable can become true."
   }
 }
