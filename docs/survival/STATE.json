@@ -148,16 +148,16 @@
         "Fresh journey and scene reconstruction 0914edf https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40939080582 passed 81: paid home, activated bed, chest cloth/oak source return, fresh production world reconstructs same room/structures/anchor/chest, real input recovers both stacks and reload preserves exactly bag custody. Automated not human, genuine threat/death and canonical POIs remain open.",
         "06e00e5: 81 home passes 40939424247; topology 14/94 fails 40939424391 and A6 bed 4/33 fails 40939424339 after d13f960. Fixture safety hypothesis under native test; no waiver. Continuation order docs/survival/tasks/A0_SURV020_COHESIVE_PHASE_20261030.md."
       ],
-      "next": "At corrected fixture SHA inspect native topology/bed/exit/unique/A3/station plus A6 and 81-check normal home all at same SHA. Distinguish d13f960 unsafe overlapping bed and sole-door obstructing-chest fixture setups from legitimate production regression; retain anti-softlock. Investigate true threat/death and A1 seam without fabricating either; B0 NOT ACCEPTED, PR21 HOLD.",
+      "next": "Inspect actual field/type save diagnostics, SIGKILL and post-rename stale-write adversary; secure A3 V4 source/identity/migration and exact-SHA native results. Continue default-off production candidate, paid research, full route and adversarial work without inventing loot; see next_action.",
       "assignment": {
         "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
         "task_id": "SURV-020",
-        "owner": "A0+A2",
+        "owner": "A0",
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
         "branch": "arena/dea2428e-soul-of-hero",
         "review": "Independent review on control-tower base: docs/survival/reviews/A0_SURV020_PR21_D561_E01_AUTHORITY_GUI_REVIEW_20261029.md; E-01 trusted-fixture accepted, E-02 and full SURV-020 held.",
-        "user_reported": "Draft PR #21 WIP; E-01 fixture and bed technical subgates accepted; production composition tested with fixtures; E-02 full acceptance and SURV-020 remain open; PERF_VARIABILITY_UNEXPLAINED; DOCS_SYNC_PENDING.",
+        "user_reported": "PR21 DRAFT, B0 HOLD. Guarded default-off production Waystation candidate and A0 research UI/monotonic clock added; all new native and product gates pending. Docs tab04 checkpoints verified; no complete normal route.",
         "continuation_work_order": "docs/survival/tasks/SURV-020_GUI_E02_CONTINUATION_20261029.md",
         "sustained_work_order": "docs/survival/tasks/A0_SURV020_E02_FULL_PRODUCTION_JOURNEY_SUSTAINED_20261029.md (integration branch)"
       }
@@ -193,24 +193,24 @@
   ],
   "next_action": {
     "task_id": "SURV-020",
-    "owner": "A0+A2",
+    "owner": "A0",
     "entrypoints": [
       "game/survival/survival_build_system.gd",
       "game/survival/survival_service.gd",
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "Inspect latest-SHA A0 Waystation input and two-process pilot, normal entry, foundation, overworld, Web, updated threat and fault workflows; A3 c232 41020738991. SURV-020/B0 NOT ACCEPTED.",
+    "first_test": "Inspect field-level native runs 41029252684/41029252575, SIGKILL 41030089074, post-rename stale-write 41034744018 and candidate/research/threat gates; queued is not success.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
-    "description": "NEXT_ATOMIC_ACTION: inspect latest-SHA Waystation, normal-entry/restart, full foundation/overworld and threat/fault native + Web CI; do not claim PASS when queued. User requests Waystation first (cache 3 scrap+2 spares/1800 active seconds, locker zero items). A3 c232 V3 exact source integrated into A0 shim/SaveService guard, physical A0 host exists but is NOT mounted by normal production world; pilot only. A1 7fd corridor si physical identity vs A3 node instance ID awaits owner alignment, no roadside rewards. f61afa23 41022547962 separate-process pilot QUEUED. 9d287f33 41012438725 FAILED 1/106 before death (HP652/leash), d1851355 real-input inward route unverified. cdd1b7f3 41012744202 FAILED 1/2 before write fault, 7468bb38 replan unverified; failed first-hit persistence remains anti-farm blocker. f61afa23 Web 41022547924 failed pre-import due old SHA; a3f7bfbb pins V3, rerun required. Complete safe normal-controller mounting, native physical route, receipt/replay/full-bag/restart + real sink/death, both home/explore orders; no Quarry dependence, no fake rewards. PR21 DRAFT/HOLD.",
+    "description": "NEXT_ATOMIC_ACTION: inspect actual native memory/disk/reload/rebuild field diffs and post-rename→unrelated-write custody; resolve A3-owned physical cache identity, float stand validation, additive migration and receipt key before enabling default production. Continue real normal-input paid home→Waystation/Relay→useful station/research→return→real damage/death→GUI bed→same bag→independent restart, plus explore-first/prepared alternatives, no test grants or artificial time. Run exact-SHA full regressions, 720p/2K/4K visual review and investigate historical +120% perf. PR21 draft/HOLD.",
     "last_verified_code": "1c5d4413 threat 41008848008 failed 2/125: two real deaths/bag recoveries/home/real kill/receipt, no rearm, stable score 200 and unchanged progression after real cooldown; unexpected extra soul_ember 1 failed exact custody, no disk reload. Same-SHA foundation/overworld/A6 passed, perf +17%, general failed. e9662df3 endpoint walk passed 25; 2b209b0c exact connector passed 33. Historic +120% perf failure unexplained.",
-    "working_code": "a3f7bfbb includes A3 c23292be V3 binding + A0 save guard/clock/physical host and f61afa23 source-pinned geometry. Host only mounted in isolated connector test, not actual normal world. f61afa23 41022547962 queued; d1851355 real threat inward strategy and 7468bb38 fault route replan unproven; a3f7bfbb fixes Web fixture old-vendor hash pre-import failure.",
-    "docs_sync": "Docs tab04 persistence/fault checkpoint read back at index 225295; update after native results.",
-    "mergeability": "PR21 base cfa1c5f: merge-tree reports ACCEPTANCE.md and WORKLOG.md conflicts; no merge made, preserve both histories in later reviewed resolution.",
-    "a6_latest": "A6 8bc0af5a native composition 41023113778 failed parser/multiple suites, owner notified; no production mount or advertised retry.",
-    "persistence_diagnosis": "PR21 code 55c2cc8d. Old entry 41018366655 FAIL 3/9; Waystation 41022547962 FAIL 2/35. Field-level annotated diagnostics cdbcffcd / 8a0dbd49 queued; determine VALUE vs TYPE before changing assertions. SaveService full_precision and SIGKILL crash/restart suite run 41030089074 queued; no native proof.",
-    "threat": "41022975254 proves failed-write rearm and score farming 200 to 400; keep optional threat unmounted until pre-effect durable design and native verification."
+    "working_code": "2203ea9f gameplay: actual Chapter 1 controller has explicit default-OFF A1 939720d5 46/48/14 candidate; A0 physical host uses canonical si cache and exposes ledger/deadfall/Relay; A3 V3 rejects si, V4 requires owner fixes. Existing A0 panel exposes genuine A3 paid research/fuel/capacity, sampled monotonic active work; unmounted threat uses pre-spawn receipt. All native/product evidence pending.",
+    "docs_sync": "Docs tab04 read back A0 34f5e27e at 243820, 7460f40f at 245022, base merge 4fbafec4 at 245997, persistence continuation 2203ea9f/9269739e at 249556.",
+    "mergeability": "Base 86831332 merged into A0 branch at 4fbafec4, both documentation histories preserved; GitHub MERGEABLE/UNSTABLE, PR21 DRAFT/HOLD, no PR merge.",
+    "a6_latest": "A6 HEAD 08ccb834; earlier 8bc0af5a composition 41023113778 failed parser/multiple suites; owner notified; no production A6 mount or advertised retry.",
+    "persistence_diagnosis": "Old normal entry 41018366655 FAIL 3/9, Waystation 41022547962 FAIL 2/35; actual VALUE/TYPE still unknown, 41029252684/41029252575 queued. SaveService full_precision and SIGKILL run 41030089074 queued. New post-rename→unrelated-write adversary 41034744018 queued; source indicates possible stale overwrite, not yet native-proven. No assertion weakened.",
+    "threat": "Prior 41022975254 proved score 0→200→400 after failed first-hit save. New unmounted candidate reserves before enemy exposure; real-input 3-process test pending; pre-hit restart can consume encounter, fairness HOLD."
   },
   "blockers": [
     {
