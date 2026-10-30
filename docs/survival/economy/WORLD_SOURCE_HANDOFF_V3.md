@@ -1,7 +1,9 @@
 # A3 V3 — Source-authoritative world loot / production handoff
 
-Status: **A3-scoped implementation + native-fixture proof; production world mount pending A0.**
+Status: **A3-scoped implementation; native-fixture CI queued (GitHub hosted-runner backlog); production world mount pending A0.**
 This is not a documentation-only completion and not a claim of S3+ world integration.
+
+Verification at the V3 code SHA: Python 39 tests OK; catalog validator PASS; independent tree-sitter-gdscript syntax oracle reports 0 errors for `economy_service.gd`, `world_source_adapter.gd` and `economy_adapter_test.gd` (syntax only, not runtime). Godot 4.7 native cases 21–23 are authored and wired into `.github/workflows/survival-a3-economy.yml`; the native run must be confirmed green when runners recover. Logs: `docs/survival/economy/verification/v3/`.
 
 ## Canonical A1/A3 contracts (pinned A1 PR #20 @ 2951bf85)
 

@@ -1,0 +1,4 @@
+game/survival/economy/economy_service.gd ERRORS 0 []
+game/survival/economy/world_source_adapter.gd ERRORS 0 []
+tests/survival/catalog/economy_adapter_test.gd ERRORS 0 []
+NOTE: tree-sitter-gdscript syntax oracle only; not a Godot runtime execution.
