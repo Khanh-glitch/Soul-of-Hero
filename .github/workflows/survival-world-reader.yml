@@ -195,6 +195,9 @@ jobs:
           echo "connector fixture exit_code=$rc"
           cat artifacts/a1-connector/godot-connector.log
           echo "$rc" >artifacts/a1-connector/connector-exit-code
+          if [ "$rc" -ne 0 ]; then
+            echo "::error::connector fixture tail: $(tail -c 1800 artifacts/a1-connector/godot-connector.log | paste -sd' ' -)"
+          fi
           exit $rc
       - name: Connector fixture anti-vacuity gate
         if: always()

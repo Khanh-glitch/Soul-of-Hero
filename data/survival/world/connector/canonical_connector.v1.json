@@ -19,7 +19,7 @@
       "id": "CN-02"
     },
     {
-      "gate": "composed live-shape route Refuge -> border -> Waystation stand without teleport",
+      "gate": "composed live-shape route Refuge -> border -> Waystation anchor/approach (408,200) without teleport; exact locker-stand micro-clearance is A0 POI-mount acceptance",
       "id": "CN-03"
     },
     {

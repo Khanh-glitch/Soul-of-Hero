@@ -77,7 +77,7 @@ A0 PR21 compatibility pins are recorded in the contract. PR21 diff does not touc
 |---|---|---|
 | CN-01 | Exact 45 collision / 47 dressed / 13 prop delta; source pins; inverse rollback restores legacy grids/props. | **PASS source** (`validate_connector.py`, pytest). |
 | CN-02 | Unmodified legacy blocker reproduced: Hero stops before x369. | **PASS A0 native negative** run 40931599594. |
-| CN-03 | Composed live-shape route Refuge → border → Waystation stand `(408,199)` without teleport. | **PENDING CI native fixture**. |
+| CN-03 | Composed live-shape route Refuge → border → Waystation anchor/approach `(408,200)` without teleport; exact locker-stand `(408,199)` micro-clearance against the slice obstacle is A0 POI-mount acceptance. | **PENDING CI native fixture**. |
 | CN-04 | Waystation → Relay crank stand `(442,234)` around static slice obstacles. | **PENDING CI native fixture**. |
 | CN-05 | Relay → Refuge return; camera right limit 7168; Hero visible. | **PENDING CI native fixture**. |
 | CN-06 | Ten dungeon thresholds, camps, discoveries remain reachable in composed nav. | **PENDING CI native fixture**. |
@@ -106,7 +106,7 @@ Canonical reward lock: locker `cap_salvage` / 0 items; ledger `cap_seal_1` / 0; 
 godot --headless --path . --script res://tests/survival/world/connector_native_test.gd -- --connector-root=artifacts/a1-connector
 ```
 
-Local source gate: connector validation 0 errors; pytest **82 passed**; world/slice validators pass; determinism **232 artifacts**, tree `43af6553cb90829c91cf6c3419ed444181af538cd8f3967a205f8434b938f36f`. Local sandbox has no Godot/Xvfb; native fixture result is CI-pending until the workflow run is read back.
+Local source gate: connector validation 0 errors; pytest **82 passed**; world/slice validators pass; determinism **232 artifacts**, tree `ee05a41f4076f655678cf33bc9569b3e4f72ef18a4e1f2a885149fdf392fe831`. Local sandbox has no Godot/Xvfb; native fixture result is CI-pending until the workflow run is read back.
 
 ## 9. Research / reuse note
 

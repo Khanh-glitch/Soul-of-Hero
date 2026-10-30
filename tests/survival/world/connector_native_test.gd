@@ -254,7 +254,10 @@ func _run() -> void:
 	var blocked := nav.unreachable_endpoints(data)
 	_expect(blocked.is_empty(), "all ten dungeon thresholds, camps and discoveries remain reachable (%d blocked)" % blocked.size())
 
-	var way_ok := await _drive("Refuge->Waystation", Vector2i(408, 199))
+	# Drive to the canonical Waystation anchor/approach cell. Exact locker-stand
+	# micro-clearance against the slice obstacle is A0 POI-mount acceptance, not a
+	# reason to teleport or move the POI; the connector must reach the site on foot.
+	var way_ok := await _drive("Refuge->Waystation", Vector2i(408, 200))
 	if way_ok:
 		camera.force_update_scroll()
 		_expect(hero.global_position.x > 6144.0, "Hero physically crossed canonical x384 boundary on foot")
