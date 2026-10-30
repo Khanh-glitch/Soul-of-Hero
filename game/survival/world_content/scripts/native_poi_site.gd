@@ -10,28 +10,14 @@ signal player_feedback(message: String)
 signal projection_applied(projection: Dictionary)
 signal transition_requested(request: Dictionary)
 
+const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
 const CONTRACT_ID := "soh.native_poi.intent.v1"
 const CONTRACT_VERSION := 1
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
-const WORLD_PROP_FRAMES: Dictionary = {
-	"rock_a": Rect2(2, 424, 26, 20),
-	"rock_b": Rect2(94, 396, 34, 26),
-	"rock_c": Rect2(195, 429, 20, 15),
-	"rock_d": Rect2(296, 400, 30, 22),
-	"rock_e": Rect2(2, 392, 40, 30),
-	"rock_f": Rect2(78, 426, 23, 18),
-	"cart": Rect2(170, 396, 38, 26),
-	"barrel": Rect2(30, 424, 16, 20),
-	"camp_crate": Rect2(175, 428, 18, 16),
-	"short_bridge_broken": Rect2(56, 350, 80, 40),
-	"short_bridge_fixed": Rect2(138, 350, 80, 40),
-	"fence": Rect2(139, 426, 34, 18)
-}
-const CAINOS_TREE_FRAME := Rect2(12, 8, 132, 160)
-
 @export_file("*.json") var definition_path := ""
-@export var test_harness_only := true
+@export var test_harness_only := false
 
 var definition: Dictionary = {}
 var site_id := ""
@@ -50,29 +36,25 @@ var _pending: Dictionary = {}
 var _choice_index := 0
 var _interaction_area: Area2D
 var _exit_area: Area2D
-var _elapsed := 0.0
-var _world_props_atlas: Texture2D
-var _cainos_plant_atlas: Texture2D
+var _art: Node2D
 
 
 func _ready() -> void:
 	if not _load_definition():
 		push_error("NativePoiSite has no valid definition: %s" % definition_path)
 		return
-	_world_props_atlas = load("res://assets/environment/overworld/overworld_props.png") as Texture2D
-	_cainos_plant_atlas = load("res://assets/environment/cainos_demo/cainos_plant.png") as Texture2D
+	if not definition.has("visual_layout") and bool(definition.get("test_only", false)):
+		_build_physics()
+		return
+	_art = ART_SCRIPT.new() as Node2D
+	_art.name = "SourceBackedWorldArt"
+	add_child(_art)
+	if not _art.call("configure", definition, false):
+		push_error("NativePoiSite art layout or source-cleared atlas failed to load: %s" % site_id)
+		remove_child(_art)
+		_art.queue_free()
+		_art = null
 	_build_physics()
-	queue_redraw()
-
-
-func _process(delta: float) -> void:
-	_elapsed += delta
-	var profile := str(definition.get("visual_profile", ""))
-	if (
-		profile == "mill"
-		or (profile == "orchard" and get_site_state().get("orchard_channel", "") == "flowing")
-	):
-		queue_redraw()
 
 
 func _load_definition() -> bool:
@@ -97,27 +79,28 @@ func set_projection(owner_projection: Dictionary) -> void:
 		player_feedback.emit("This place cannot read that state version.")
 		return
 	projection = owner_projection.duplicate(true)
+	if is_instance_valid(_art):
+		_art.call("set_site_state", projection.get("site_state", {}))
 	_refresh_gate()
 	_rebuild_choice_blockers()
-	queue_redraw()
 	projection_applied.emit(projection)
 
 
 func get_spawn_position() -> Vector2:
-	return Vector2.from_array(definition.get("spawn", [90, 510]))
+	return VECTOR_UTIL.from_pair(definition.get("spawn", [90, 510]))
 
 
 func get_stand_position() -> Vector2:
-	return Vector2.from_array(definition.get("approach_stand", [0, 0]))
+	return VECTOR_UTIL.from_pair(definition.get("approach_stand", [0, 0]))
 
 
 func get_action_socket() -> Vector2:
-	return Vector2.from_array(definition.get("action_socket", [0, 0]))
+	return VECTOR_UTIL.from_pair(definition.get("action_socket", [0, 0]))
 
 
 func get_exit_position() -> Vector2:
-	return Vector2.from_array(
-		definition.get("local_transition", {}).get("exit_portal", [-INF, -INF])
+	return VECTOR_UTIL.from_pair(
+		definition.get("local_transition", {}).get("exit_portal", [-1, -1]), Vector2(-1, -1)
 	)
 
 
@@ -140,7 +123,9 @@ func try_exit(actor: Node2D) -> bool:
 		return false
 	var transition: Dictionary = definition.get("local_transition", {})
 	var anchor: Dictionary = transition.get("return_anchor", {}).duplicate(true)
-	var canonical_cell: Array = definition.get("source", {}).get("canonical_cell", [0, 0])
+	var canonical_cell: Vector2i = VECTOR_UTIL.from_int_pair(
+		definition.get("source", {}).get("canonical_cell", [0, 0])
+	)
 	var request := {
 		"contract_id": "soh.native_poi.transition.v1",
 		"contract_version": 1,
@@ -148,7 +133,7 @@ func try_exit(actor: Node2D) -> bool:
 		"direction": "exit",
 		"world_id": str(definition.get("source", {}).get("world_id", "")),
 		"poi_id": get_source_id(),
-		"canonical_cell": Vector2i(int(canonical_cell[0]), int(canonical_cell[1])),
+		"canonical_cell": canonical_cell,
 		"from_scene": str(transition.get("worksite_scene", "")),
 		"to_scene": str(transition.get("shell_scene", "")),
 		"actor_local_position": to_local(actor.global_position),
@@ -200,10 +185,10 @@ func get_context_hint(actor: Node2D) -> String:
 	var actions: Array = definition.get("actions", [])
 	for index: int in range(actions.size()):
 		var action: Dictionary = actions[index]
-		var stand := Vector2.from_array(
+		var stand := VECTOR_UTIL.from_pair(
 			action.get("stand_position", definition.get("approach_stand", [0, 0]))
 		)
-		var socket := Vector2.from_array(
+		var socket := VECTOR_UTIL.from_pair(
 			action.get("socket_position", definition.get("action_socket", [0, 0]))
 		)
 		if is_inside_interaction_radius(actor, stand, socket):
@@ -226,7 +211,6 @@ func cycle_choice(direction: int) -> void:
 	if choices.size() < 2:
 		return
 	_choice_index = posmod(_choice_index + direction, choices.size())
-	queue_redraw()
 	player_feedback.emit(str(choices[_choice_index].get("label", "")))
 
 
@@ -251,10 +235,10 @@ func try_interact(actor: Node2D, action_index: int = -1) -> bool:
 		if action_index >= actions.size():
 			return false
 		selected = actions[action_index]
-	var action_stand := Vector2.from_array(
+	var action_stand := VECTOR_UTIL.from_pair(
 		selected.get("stand_position", definition.get("approach_stand", [0, 0]))
 	)
-	var action_socket := Vector2.from_array(
+	var action_socket := VECTOR_UTIL.from_pair(
 		selected.get("socket_position", definition.get("action_socket", [0, 0]))
 	)
 	if not is_inside_interaction_radius(actor, action_stand, action_socket):
@@ -410,7 +394,7 @@ func _build_physics() -> void:
 	_build_choice_blockers()
 	var socket_positions: Array[Vector2] = [get_action_socket()]
 	for action: Dictionary in definition.get("actions", []):
-		var point := Vector2.from_array(
+		var point := VECTOR_UTIL.from_pair(
 			action.get("socket_position", definition.get("action_socket", [0, 0]))
 		)
 		if not socket_positions.has(point):
@@ -526,292 +510,3 @@ func _refresh_gate() -> void:
 		var closed := _gate_is_blocked(gates[index])
 		gate_body.set_deferred("collision_layer", WORLD_LAYER if closed else 0)
 		gate_body.set_deferred("collision_mask", PLAYER_LAYER if closed else 0)
-
-
-func _draw() -> void:
-	if definition.is_empty():
-		return
-	var bounds := Vector2.from_array(definition.get("world_bounds", [960, 600]))
-	var palette: Dictionary = definition.get("palette", {})
-	var ground := Color.from_string(str(palette.get("ground", "#303631")), Color.DARK_SLATE_GRAY)
-	var alt := Color.from_string(str(palette.get("ground_alt", "#434943")), ground.lightened(0.1))
-	var ink := Color.from_string(str(palette.get("ink", "#171c1b")), Color.BLACK)
-	var stone := Color.from_string(str(palette.get("stone", "#988d78")), Color.GRAY)
-	var accent := Color.from_string(str(palette.get("accent", "#d4a866")), Color.GOLD)
-	var water := Color.from_string(str(palette.get("water", "#65b8c9")), Color.CYAN)
-	draw_rect(Rect2(Vector2.ZERO, bounds), ground)
-	for y in range(34, int(bounds.y) - 25, 48):
-		for x in range(34 + (int(y / 48) % 2) * 24, int(bounds.x) - 25, 48):
-			draw_rect(Rect2(Vector2(x), Vector2(16, 2)), alt.darkened(0.13))
-	for wall: Array in definition.get("walls", []):
-		var r := Rect2(
-			Vector2(float(wall[0]), float(wall[1])), Vector2(float(wall[2]), float(wall[3]))
-		)
-		draw_rect(r.grow(3), ink)
-		draw_rect(r, stone.darkened(0.18))
-		draw_line(
-			r.position + Vector2(3, 4),
-			r.position + Vector2(r.size.x - 4, 4),
-			stone.lightened(0.18),
-			3.0
-		)
-	var profile := str(definition.get("visual_profile", ""))
-	match profile:
-		"quarry":
-			_draw_quarry(stone, accent, ink, water)
-		"orchard":
-			_draw_orchard(stone, accent, ink, water, alt)
-		"mill":
-			_draw_mill(accent, ink, water)
-		"salt_lookout":
-			_draw_salt_lookout(stone, accent, ink, water, alt)
-	_draw_socket(accent, ink)
-	for action: Dictionary in definition.get("actions", []):
-		if action.has("socket_position"):
-			_draw_socket_at(Vector2.from_array(action.socket_position), water, ink)
-	_draw_gate()
-	_draw_local_exit(accent, ink)
-
-
-func _draw_local_exit(accent: Color, ink: Color) -> void:
-	var exit_position := get_exit_position()
-	if exit_position.x < 0.0:
-		return
-	draw_rect(Rect2(exit_position - Vector2(15, 7), Vector2(30, 14)), ink)
-	draw_rect(Rect2(exit_position - Vector2(11, 4), Vector2(22, 8)), accent.darkened(0.2))
-	draw_line(exit_position + Vector2(-8, -4), exit_position + Vector2(-8, 4), ink, 2.0)
-	draw_line(exit_position + Vector2(8, -4), exit_position + Vector2(8, 4), ink, 2.0)
-
-
-func _draw_world_prop(frame: String, destination: Rect2, tint := Color.WHITE) -> void:
-	if _world_props_atlas == null or not WORLD_PROP_FRAMES.has(frame):
-		return
-	var source_rect: Rect2 = WORLD_PROP_FRAMES[frame]
-	draw_texture_rect_region(_world_props_atlas, destination, source_rect, tint, false, true)
-
-
-func _draw_cainos_tree(destination: Rect2) -> void:
-	if _cainos_plant_atlas == null:
-		return
-	draw_texture_rect_region(
-		_cainos_plant_atlas, destination, CAINOS_TREE_FRAME, Color.WHITE, false, true
-	)
-
-
-func _draw_quarry(stone: Color, accent: Color, ink: Color, water: Color) -> void:
-	# Layered cut faces, a live split seam, hand-set wedges and quarry haul line.
-	for i: int in range(5):
-		var y := 116.0 + float(i) * 63.0
-		draw_line(Vector2(92, y), Vector2(206, y - 14), stone.darkened(0.24), 11.0)
-		draw_line(Vector2(92, y - 2), Vector2(206, y - 16), stone.lightened(0.12), 2.0)
-		for j: int in range(3):
-			var x := 112.0 + float(j) * 38.0
-			_draw_world_prop(
-				["rock_a", "rock_c", "rock_f"][(i + j) % 3],
-				Rect2(x, y - 12.0, 42.0, 32.0),
-				stone.lightened(0.1 * float(j))
-			)
-	_draw_world_prop("rock_e", Rect2(244, 112, 96, 72))
-	_draw_world_prop("rock_b", Rect2(174, 304, 80, 62))
-	_draw_world_prop("rock_d", Rect2(288, 386, 72, 54))
-	_draw_world_prop("short_bridge_broken", Rect2(340, 230, 160, 80))
-	_draw_world_prop("cart", Rect2(204, 454, 114, 78))
-	draw_line(Vector2(310, 92), Vector2(612, 92), accent.darkened(0.35), 4.0)
-	for x: float in [330, 410, 490, 570]:
-		draw_line(Vector2(x, 92), Vector2(x, 122), ink, 3.0)
-	var route: String = str(get_site_state().get("quarry_route", ""))
-	for option_id: String in definition.get("choice_blockers", {}):
-		if (
-			(option_id == "brace_oak" and route == "east_braced")
-			or (option_id == "chock_stone" and route == "west_chocked")
-		):
-			continue
-		for rect: Array in definition["choice_blockers"][option_id]:
-			draw_rect(
-				Rect2(
-					Vector2(float(rect[0]), float(rect[1])), Vector2(float(rect[2]), float(rect[3]))
-				),
-				Color("#665f55")
-			)
-			draw_line(
-				Vector2(float(rect[0]), float(rect[1]) + float(rect[3])),
-				Vector2(float(rect[0]) + float(rect[2]), float(rect[1])),
-				accent,
-				3.0
-			)
-	var spent_until := float(projection.get("resource_ready_at", {}).get("south_seam_outcrop", 0.0))
-	var available := float(projection.get("clock_seconds", 0.0)) >= spent_until
-	var work_color := (
-		(water if int(Time.get_ticks_msec() / 380) % 2 == 0 else accent)
-		if available
-		else stone.darkened(0.45)
-	)
-	draw_circle(Vector2(505, 302), 13, ink)
-	draw_circle(Vector2(505, 302), 7, work_color)
-
-
-func _draw_orchard(stone: Color, accent: Color, ink: Color, water: Color, foliage: Color) -> void:
-	# Four distinct old grafted fruit trees and an exposed irrigation run.
-	var tree_points: Array[Vector2] = [
-		Vector2(316, 190), Vector2(656, 190), Vector2(316, 390), Vector2(656, 390)
-	]
-	for index: int in range(tree_points.size()):
-		var point := tree_points[index]
-		_draw_ellipse(point + Vector2(0, 24), Vector2(39, 13), ink.darkened(0.24))
-		_draw_cainos_tree(Rect2(point + Vector2(-61, -145), Vector2(122, 153)))
-	_draw_world_prop("rock_a", Rect2(270, 302, 52, 40), stone)
-	_draw_world_prop("rock_c", Rect2(610, 311, 42, 30), stone.lightened(0.08))
-	_draw_world_prop("barrel", Rect2(756, 278, 44, 54), Color.WHITE)
-	var flowing := get_site_state().get("orchard_channel", "") == "flowing"
-	var grafts_ready := projection.get("ready_actions", []).has("read_water_marks")
-	var channel_color := water if flowing else stone.darkened(0.35)
-	var reeds_ready := (
-		float(projection.get("clock_seconds", 0.0))
-		>= float(projection.get("resource_ready_at", {}).get("sluice_reeds", 0.0))
-	)
-	for reed_x: float in [282.0, 724.0]:
-		var reed_color := foliage.lightened(0.12) if reeds_ready else stone.darkened(0.45)
-		for reed_index: int in range(3):
-			draw_line(
-				Vector2(reed_x + float(reed_index) * 5.0, 315),
-				Vector2(reed_x + float(reed_index) * 5.0 - 3.0, 299),
-				reed_color,
-				2.0
-			)
-	draw_line(Vector2(273, 292), Vector2(714, 292), channel_color, 15.0)
-	draw_line(Vector2(273, 286), Vector2(714, 286), stone, 3.0)
-	if flowing:
-		for offset: float in [0.0, 58.0, 116.0, 174.0, 232.0, 290.0, 348.0]:
-			var x := 280.0 + fposmod(offset + _elapsed * 50.0, 420.0)
-			draw_line(Vector2(x, 292), Vector2(x + 18, 292), Color("#d1f3e8"), 2.0)
-	else:
-		draw_line(Vector2(455, 275), Vector2(475, 307), accent, 8.0)
-		draw_line(Vector2(464, 274), Vector2(487, 303), ink, 3.0)
-	for mark_x: float in [500.0, 518.0, 537.0, 555.0]:
-		draw_line(
-			Vector2(mark_x, 265),
-			Vector2(mark_x + 2, 276),
-			accent if get_site_state().get("cultivation_known", false) else stone,
-			2.0
-		)
-
-
-func _draw_mill(accent: Color, ink: Color, water: Color) -> void:
-	# Mill race is visible from outside; wheel and timber walk make repair legible.
-	_draw_world_prop("barrel", Rect2(720, 392, 48, 60))
-	_draw_world_prop("camp_crate", Rect2(654, 425, 54, 48))
-	draw_rect(Rect2(Vector2(140, 266), Vector2(650, 25)), water.darkened(0.18))
-	for x: float in [160.0, 216.0, 272.0, 328.0, 384.0, 440.0, 496.0, 552.0, 608.0, 664.0, 720.0]:
-		var offset := fposmod(_elapsed * 22.0, 56.0)
-		draw_line(Vector2(x - offset, 272), Vector2(x + 12 - offset, 272), Color("#b0e2d8"), 2.0)
-	_draw_world_prop("short_bridge_fixed", Rect2(306, 250, 160, 80))
-	draw_rect(Rect2(Vector2(410, 150), Vector2(236, 98)), ink)
-	draw_rect(Rect2(Vector2(418, 158), Vector2(220, 82)), Color("#72563e"))
-	draw_rect(Rect2(Vector2(430, 170), Vector2(196, 10)), Color("#aa8051"))
-	draw_rect(Rect2(Vector2(430, 218), Vector2(196, 10)), Color("#aa8051"))
-	var wheel_turning := get_site_state().get("mill_wheel", "") == "turning"
-	var wheel_center := Vector2(530, 204)
-	var wheel_angle := _elapsed * 0.45 if wheel_turning else 0.0
-	draw_circle(wheel_center, 50, ink)
-	draw_circle(wheel_center, 43, Color("#926943"))
-	for i: int in range(8):
-		var angle := wheel_angle + TAU * float(i) / 8.0
-		var tip := wheel_center + Vector2(cos(angle), sin(angle)) * 43.0
-		draw_line(wheel_center, tip, accent, 6.0)
-	draw_circle(wheel_center, 8, Color("#d4c49a"))
-	var gates: Array = definition.get("gates", [])
-	if gates.is_empty() and definition.has("gate"):
-		gates = [definition.gate]
-	# The candidate fastener stack has a visibly finite ready/spent state.
-	var fastener_ready := (
-		float(projection.get("clock_seconds", 0.0))
-		>= float(projection.get("resource_ready_at", {}).get("mill_scrap_pile", 0.0))
-	)
-	var fastener_color := Color("#b6a77c") if fastener_ready else Color("#555d58")
-	draw_rect(Rect2(Vector2(664, 222), Vector2(29, 18)), ink)
-	draw_rect(Rect2(Vector2(667, 225), Vector2(23, 12)), fastener_color)
-	for bolt_x: float in [671.0, 679.0, 687.0]:
-		draw_circle(
-			Vector2(bolt_x, 231), 2.0, Color("#d7d2b9") if fastener_ready else Color("#727973")
-		)
-	for gate: Dictionary in gates:
-		var gate_rect: Array = gate.get("rect", [488, 314, 76, 14])
-		var blocked := _gate_is_blocked(gate)
-		var gate_color := Color("#c2764e") if blocked else Color("#7b583d")
-		draw_rect(
-			Rect2(
-				Vector2(float(gate_rect[0]), float(gate_rect[1])),
-				Vector2(float(gate_rect[2]), float(gate_rect[3]))
-			),
-			gate_color
-		)
-		draw_line(
-			Vector2(float(gate_rect[0]), float(gate_rect[1]) - 5),
-			Vector2(float(gate_rect[0]) + float(gate_rect[2]), float(gate_rect[1]) - 5),
-			Color("#eac47b") if blocked else Color("#98d29c"),
-			3.0
-		)
-
-
-func _draw_salt_lookout(
-	stone: Color, accent: Color, ink: Color, water: Color, ground: Color
-) -> void:
-	# Fourth authored type from the same worksite template, with no new engine code.
-	for i: int in range(7):
-		var x := 110.0 + float(i) * 110.0
-		draw_line(Vector2(x, 110), Vector2(x + 28, 168), stone, 7.0)
-		draw_circle(Vector2(x + 36, 176), 10.0, ground.lightened(0.18))
-	draw_polyline(
-		PackedVector2Array(
-			[
-				Vector2(130, 430),
-				Vector2(245, 386),
-				Vector2(368, 394),
-				Vector2(492, 328),
-				Vector2(622, 338),
-				Vector2(810, 262)
-			]
-		),
-		accent.darkened(0.2),
-		9.0,
-		true
-	)
-	draw_circle(Vector2(500, 328), 33, water.darkened(0.15))
-	draw_circle(Vector2(500, 328), 21, water)
-	draw_line(Vector2(465, 328), Vector2(535, 328), ink, 4.0)
-
-
-func _draw_socket(accent: Color, ink: Color) -> void:
-	_draw_socket_at(get_action_socket(), accent, ink)
-
-
-func _draw_socket_at(point: Vector2, accent: Color, ink: Color) -> void:
-	draw_circle(point, 21, Color(ink, 0.86))
-	draw_circle(point, 15, Color(accent, 0.3))
-	draw_arc(point, 16.0, 0.0, TAU, 24, accent, 2.0)
-	draw_line(point + Vector2(-7, 0), point + Vector2(7, 0), accent, 2.0)
-	draw_line(point + Vector2(0, -7), point + Vector2(0, 7), accent, 2.0)
-
-
-func _draw_gate() -> void:
-	var gates: Array = definition.get("gates", [])
-	if gates.is_empty() and definition.has("gate"):
-		gates = [definition.gate]
-	for gate: Dictionary in gates:
-		var rect: Array = gate.get("rect", [0, 0, 1, 1])
-		var blocked := _gate_is_blocked(gate)
-		var color := Color("#d47e52") if blocked else Color("#8bc895")
-		draw_line(
-			Vector2(float(rect[0]), float(rect[1]) - 8),
-			Vector2(float(rect[0]) + float(rect[2]), float(rect[1]) - 8),
-			color,
-			3.0
-		)
-
-
-func _draw_ellipse(center: Vector2, radius: Vector2, color: Color) -> void:
-	var points := PackedVector2Array()
-	for i: int in range(17):
-		var angle := TAU * float(i) / 16.0
-		points.append(center + Vector2(cos(angle) * radius.x, sin(angle) * radius.y))
-	draw_colored_polygon(points, color)

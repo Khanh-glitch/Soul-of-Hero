@@ -26,7 +26,7 @@
   "visual_profile": "mill",
   "world_bounds": [
     960,
-    600
+    608
   ],
   "spawn": [
     526,
@@ -49,14 +49,6 @@
       "cap_salvage"
     ]
   },
-  "palette": {
-    "ground": "#394545",
-    "ground_alt": "#485251",
-    "stone": "#9e9a83",
-    "accent": "#d6ad66",
-    "water": "#69bbca",
-    "ink": "#20292a"
-  },
   "walls": [
     [
       0,
@@ -66,13 +58,13 @@
     ],
     [
       0,
-      578,
+      586,
       486,
       22
     ],
     [
       566,
-      578,
+      586,
       394,
       22
     ],
@@ -80,13 +72,13 @@
       0,
       22,
       22,
-      556
+      564
     ],
     [
       938,
       22,
       22,
-      556
+      564
     ],
     [
       246,
@@ -113,16 +105,16 @@
       94
     ],
     [
-      384,
+      376,
       132,
-      22,
+      36,
       66
     ],
     [
-      640,
-      400,
-      22,
-      66
+      632,
+      394,
+      36,
+      72
     ],
     [
       22,
@@ -154,7 +146,7 @@
     {
       "action_id": "repair_waterwheel",
       "option_id": "repair",
-      "label": "Re-seat the wheel · 1 Oak Wood + 1 Iron Scrap",
+      "label": "Re-seat the wheel \u00b7 1 Oak Wood + 1 Iron Scrap",
       "requires_capabilities": [
         "cap_salvage"
       ],
@@ -214,7 +206,7 @@
     {
       "action_id": "recover_fastener",
       "object_id": "mill_scrap_pile",
-      "label": "Recover a sound fastener · 1 Iron Scrap",
+      "label": "Recover a sound fastener \u00b7 1 Iron Scrap",
       "requires_capabilities": [
         "cap_salvage"
       ],
@@ -325,6 +317,364 @@
       64,
       108
     ],
-    "profile": "mill"
+    "profile": "mill",
+    "visual_layout": {
+      "ground_family": "ash",
+      "ground_areas": [
+        {
+          "center": [
+            4,
+            1
+          ],
+          "radius": [
+            4,
+            2
+          ],
+          "family": "moor"
+        }
+      ],
+      "paths": [
+        {
+          "family": "gravel",
+          "width": 2,
+          "points": [
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        }
+      ],
+      "props": [
+        {
+          "frame": "mill_wheel",
+          "cell": [
+            5,
+            3
+          ],
+          "id": "waterwheel"
+        },
+        {
+          "frame": "wall_stub",
+          "cell": [
+            1,
+            4
+          ],
+          "id": "race_wall"
+        },
+        {
+          "frame": "wall_stub",
+          "cell": [
+            6,
+            4
+          ],
+          "id": "race_wall_east"
+        },
+        {
+          "frame": "handcart",
+          "cell": [
+            3,
+            6
+          ],
+          "id": "haul_cart"
+        }
+      ],
+      "lighting_profile": "overcast_frontier"
+    },
+    "obstacles_px": [
+      [
+        8,
+        68,
+        32,
+        12
+      ],
+      [
+        88,
+        68,
+        32,
+        12
+      ],
+      [
+        80,
+        52,
+        16,
+        14
+      ]
+    ]
+  },
+  "visual_layout": {
+    "ground_family": "ash",
+    "ground_areas": [
+      {
+        "center": [
+          1,
+          13
+        ],
+        "radius": [
+          2,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          58,
+          13
+        ],
+        "radius": [
+          2,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          31,
+          18
+        ],
+        "radius": [
+          12,
+          8
+        ],
+        "family": "gravel"
+      },
+      {
+        "center": [
+          44,
+          9
+        ],
+        "radius": [
+          8,
+          5
+        ],
+        "family": "soil"
+      }
+    ],
+    "paths": [
+      {
+        "family": "gravel",
+        "width": 3,
+        "points": [
+          [
+            32,
+            37
+          ],
+          [
+            32,
+            33
+          ],
+          [
+            32,
+            29
+          ],
+          [
+            33,
+            24
+          ],
+          [
+            33,
+            20
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            33,
+            24
+          ],
+          [
+            26,
+            22
+          ],
+          [
+            20,
+            20
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            33,
+            24
+          ],
+          [
+            40,
+            22
+          ],
+          [
+            46,
+            20
+          ]
+        ]
+      }
+    ],
+    "state_paths": {
+      "mill_wheel": {
+        "turning": [
+          {
+            "family": "water",
+            "width": 2,
+            "points": [
+              [
+                18,
+                18
+              ],
+              [
+                24,
+                18
+              ],
+              [
+                31,
+                18
+              ],
+              [
+                38,
+                18
+              ],
+              [
+                46,
+                18
+              ]
+            ]
+          }
+        ],
+        "seized": []
+      }
+    },
+    "props": [
+      {
+        "frame": "mill_wheel",
+        "cell": [
+          33,
+          14
+        ],
+        "id": "race_wheel"
+      },
+      {
+        "frame": "wall_stub",
+        "cell": [
+          24,
+          11
+        ],
+        "id": "race_wall_west"
+      },
+      {
+        "frame": "wall_stub",
+        "cell": [
+          40,
+          25
+        ],
+        "id": "race_wall_east"
+      },
+      {
+        "frame": "handcart",
+        "cell": [
+          13,
+          31
+        ],
+        "id": "fastener_haul_cart"
+      },
+      {
+        "frame": "log_pile",
+        "cell": [
+          17,
+          27
+        ],
+        "id": "maintenance_timber"
+      },
+      {
+        "frame": "lamp",
+        "cell": [
+          35,
+          12
+        ],
+        "id": "race_work_lamp"
+      },
+      {
+        "frame": "signpost",
+        "cell": [
+          32,
+          34
+        ],
+        "id": "mill_return_marker"
+      },
+      {
+        "frame": "rock_a",
+        "cell": [
+          4,
+          9
+        ],
+        "id": "west_quarry_rim"
+      },
+      {
+        "frame": "rock_a",
+        "cell": [
+          55,
+          9
+        ],
+        "id": "east_quarry_rim"
+      },
+      {
+        "frame": "whetstone",
+        "cell": [
+          43,
+          24
+        ],
+        "id": "maintenance_stone"
+      }
+    ],
+    "state_props": [
+      {
+        "key": "mill_wheel",
+        "equals": "turning",
+        "props": [
+          {
+            "frame": "lamp",
+            "cell": [
+              34,
+              12
+            ],
+            "id": "lit_race_lamp"
+          },
+          {
+            "frame": "log_pile",
+            "cell": [
+              30,
+              20
+            ],
+            "id": "repaired_race_bearing"
+          }
+        ]
+      },
+      {
+        "key": "mill_wheel",
+        "equals": "seized",
+        "props": [
+          {
+            "frame": "cairn_warning",
+            "cell": [
+              31,
+              20
+            ],
+            "id": "seized_race_warning"
+          }
+        ]
+      }
+    ],
+    "lighting_profile": "overcast_frontier"
   }
 }

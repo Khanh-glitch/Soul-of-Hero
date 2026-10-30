@@ -1,5 +1,7 @@
 extends Node2D
 
+const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+
 ## Isolated S2 harness. It is not mounted in the release overworld and its
 ## authority fixture is explicitly not SaveService, inventory, or A3 economy.
 
@@ -221,7 +223,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 		add_child(_shell)
 		_shell.transition_requested.connect(_on_transition_requested)
 		_shell.player_feedback.connect(_on_player_feedback)
-		var shell_return_position := Vector2.from_array(
+		var shell_return_position := VECTOR_UTIL.from_pair(
 			return_to.get("shell_local_position", [64, 108])
 		)
 		_probe.global_position = _shell.global_position + shell_return_position

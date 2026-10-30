@@ -26,7 +26,7 @@
   "visual_profile": "orchard",
   "world_bounds": [
     960,
-    600
+    608
   ],
   "spawn": [
     480,
@@ -45,14 +45,6 @@
     "outer_requires": [],
     "inner_requires": []
   },
-  "palette": {
-    "ground": "#344238",
-    "ground_alt": "#405341",
-    "stone": "#998d70",
-    "accent": "#93c971",
-    "water": "#75bed0",
-    "ink": "#1c2923"
-  },
   "walls": [
     [
       0,
@@ -62,13 +54,13 @@
     ],
     [
       0,
-      578,
+      586,
       440,
       22
     ],
     [
       520,
-      578,
+      586,
       440,
       22
     ],
@@ -76,13 +68,13 @@
       0,
       22,
       22,
-      556
+      564
     ],
     [
       938,
       22,
       22,
-      556
+      564
     ],
     [
       230,
@@ -119,6 +111,54 @@
       368,
       22,
       74
+    ],
+    [
+      162,
+      146,
+      12,
+      14
+    ],
+    [
+      354,
+      146,
+      12,
+      14
+    ],
+    [
+      626,
+      146,
+      12,
+      14
+    ],
+    [
+      818,
+      146,
+      12,
+      14
+    ],
+    [
+      162,
+      418,
+      12,
+      14
+    ],
+    [
+      354,
+      418,
+      12,
+      14
+    ],
+    [
+      626,
+      418,
+      12,
+      14
+    ],
+    [
+      818,
+      418,
+      12,
+      14
     ]
   ],
   "choice_blockers": {},
@@ -126,7 +166,7 @@
     {
       "action_id": "clear_irrigation",
       "option_id": "water",
-      "label": "Clear the fallen sluice · 1 Stone Chunk",
+      "label": "Clear the fallen sluice \u00b7 1 Stone Chunk",
       "requires_state": [],
       "costs": {
         "stone_chunk": 1
@@ -161,7 +201,7 @@
     {
       "action_id": "gather_reeds",
       "object_id": "sluice_reeds",
-      "label": "Cut the bank reeds · 1 Reed Fibre",
+      "label": "Cut the bank reeds \u00b7 1 Reed Fibre",
       "requires_state": [],
       "costs": {},
       "rewards": {
@@ -248,6 +288,382 @@
       64,
       108
     ],
-    "profile": "orchard"
+    "profile": "orchard",
+    "visual_layout": {
+      "ground_family": "forest",
+      "ground_areas": [
+        {
+          "center": [
+            4,
+            3
+          ],
+          "radius": [
+            4,
+            3
+          ],
+          "family": "soil"
+        }
+      ],
+      "paths": [
+        {
+          "family": "gravel",
+          "width": 2,
+          "points": [
+            [
+              3,
+              7
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              5
+            ]
+          ]
+        }
+      ],
+      "props": [
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            1,
+            4
+          ],
+          "id": "graft_tree_west"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            6,
+            4
+          ],
+          "id": "graft_tree_east"
+        },
+        {
+          "frame": "reeds",
+          "cell": [
+            4,
+            5
+          ],
+          "id": "sluice_reeds"
+        },
+        {
+          "frame": "signpost",
+          "cell": [
+            3,
+            6
+          ],
+          "id": "return_sign"
+        }
+      ],
+      "lighting_profile": "amber_morning"
+    },
+    "obstacles_px": [
+      [
+        18,
+        68,
+        12,
+        12
+      ],
+      [
+        98,
+        68,
+        12,
+        12
+      ]
+    ]
+  },
+  "visual_layout": {
+    "ground_family": "forest",
+    "ground_areas": [
+      {
+        "center": [
+          2,
+          12
+        ],
+        "radius": [
+          3,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          58,
+          12
+        ],
+        "radius": [
+          3,
+          20
+        ],
+        "family": "moor"
+      },
+      {
+        "center": [
+          17,
+          12
+        ],
+        "radius": [
+          7,
+          11
+        ],
+        "family": "soil"
+      },
+      {
+        "center": [
+          42,
+          12
+        ],
+        "radius": [
+          7,
+          11
+        ],
+        "family": "soil"
+      }
+    ],
+    "paths": [
+      {
+        "family": "gravel",
+        "width": 3,
+        "points": [
+          [
+            30,
+            37
+          ],
+          [
+            30,
+            33
+          ],
+          [
+            30,
+            28
+          ],
+          [
+            31,
+            24
+          ],
+          [
+            31,
+            19
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            31,
+            24
+          ],
+          [
+            24,
+            23
+          ],
+          [
+            18,
+            21
+          ]
+        ]
+      },
+      {
+        "family": "gravel",
+        "width": 2,
+        "points": [
+          [
+            31,
+            24
+          ],
+          [
+            38,
+            23
+          ],
+          [
+            44,
+            21
+          ]
+        ]
+      }
+    ],
+    "state_paths": {
+      "orchard_channel": {
+        "flowing": [
+          {
+            "family": "water",
+            "width": 2,
+            "points": [
+              [
+                14,
+                17
+              ],
+              [
+                21,
+                17
+              ],
+              [
+                30,
+                17
+              ],
+              [
+                39,
+                17
+              ],
+              [
+                46,
+                17
+              ]
+            ]
+          }
+        ],
+        "stagnant": []
+      }
+    },
+    "props": [
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          10,
+          9
+        ],
+        "id": "old_graft_northwest"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          22,
+          9
+        ],
+        "id": "old_graft_north"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          39,
+          9
+        ],
+        "id": "old_graft_northeast"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          51,
+          9
+        ],
+        "id": "old_graft_east"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          10,
+          26
+        ],
+        "id": "old_graft_southwest"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          22,
+          26
+        ],
+        "id": "old_graft_south"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          39,
+          26
+        ],
+        "id": "old_graft_southeast"
+      },
+      {
+        "frame": "tree_orchard",
+        "cell": [
+          51,
+          26
+        ],
+        "id": "old_graft_south_east"
+      },
+      {
+        "frame": "reeds",
+        "cell": [
+          15,
+          17
+        ],
+        "id": "sluice_reeds_west"
+      },
+      {
+        "frame": "reeds",
+        "cell": [
+          46,
+          17
+        ],
+        "id": "sluice_reeds_east"
+      },
+      {
+        "frame": "signpost",
+        "cell": [
+          30,
+          34
+        ],
+        "id": "garden_return_marker"
+      },
+      {
+        "frame": "handcart",
+        "cell": [
+          8,
+          32
+        ],
+        "id": "harvest_cart"
+      },
+      {
+        "frame": "bush",
+        "cell": [
+          4,
+          22
+        ],
+        "id": "wild_edge"
+      },
+      {
+        "frame": "bush",
+        "cell": [
+          55,
+          21
+        ],
+        "id": "wild_edge_east"
+      }
+    ],
+    "state_props": [
+      {
+        "key": "orchard_channel",
+        "equals": "flowing",
+        "props": [
+          {
+            "frame": "reeds",
+            "cell": [
+              29,
+              16
+            ],
+            "id": "flowing_channel_reeds"
+          }
+        ]
+      },
+      {
+        "key": "graft_marks_read",
+        "equals": "true",
+        "props": [
+          {
+            "frame": "herb_moonleaf",
+            "cell": [
+              44,
+              21
+            ],
+            "id": "graft_mark_herb"
+          }
+        ]
+      }
+    ],
+    "lighting_profile": "amber_morning"
   }
 }

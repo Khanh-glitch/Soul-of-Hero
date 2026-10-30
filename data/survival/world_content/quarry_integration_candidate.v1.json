@@ -7,21 +7,21 @@
       "commit": "86831332324428c7623ad431a577d101b7af5c9c"
     },
     "a1_pr20": {
-      "head": "7fd000e1c017830a088749b965e651fafb501b98",
+      "head": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
       "source": "data/survival/world/world_plan.v1.json"
     },
     "a3_pr19": {
-      "head": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+      "head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
       "items": "data/survival/items/items.json",
       "sources": "data/survival/items/sources.json",
       "world_source_bindings_v3": "data/survival/items/world_source_bindings.v3.json"
     },
     "a0_pr21": {
-      "head": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+      "head": "5387bed6260cb7b9bd4d8229ee759dee08a0d918",
       "owner": "SaveService + SurvivalService + production overworld mount"
     },
     "a6_pr24": {
-      "head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+      "head": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
       "owner": "player input and presentation"
     },
     "a8_head_at_candidate_creation": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
@@ -59,7 +59,7 @@
     "canonical_transform": "root = canonical_cell*16 + (8,8) - action_socket; rotation 0; scale [1,1]",
     "local_transition_contract": "data/survival/world_content/transition_contract.v1.json",
     "test_harness_only": true,
-    "mount_transform": "A0 resolves and mounts the compact shell from the A1 cell; the 960x600 worksite is entered only through the typed doorway request and its local spawn is never a world position."
+    "mount_transform": "A0 resolves and mounts the compact shell from the A1 cell; the 960x608 worksite is entered only through the typed doorway request and its local spawn is never a world position."
   },
   "actions": [
     {
@@ -166,13 +166,19 @@
   "fixture_values_policy": "Existing amounts and cooldowns in site JSON and PoiAuthorityFixture are test inputs only. They are not A3-approved prices, yields, loot rates, grants, or production state. Production adapters must ignore/reject provisional_test_only intents until A3 authorization exists.",
   "a3_binding_review": {
     "schema": "soh.economy.world_source_bindings.v3",
-    "inspected_head": "c23292be095903c67e3d6e6e4fbd310b6649da12",
-    "status": "A3_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
+    "inspected_head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+    "status": "A3_V4_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT",
     "bound_poi_ids": [
       "poi_crown_waystation",
       "poi_crown_relay_shed"
     ],
     "quarry_orchard_mill_bound": false,
-    "source_identity_and_prices": "No A8 site binding or action price exists; all A8 candidate costs, yields and cooldowns remain proposal-only fixture inputs."
+    "source_identity_and_prices": "No A8 site binding or action price exists; all A8 candidate costs, yields and cooldowns remain proposal-only fixture inputs.",
+    "quarry_authorization": {
+      "source": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json",
+      "status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+      "a3_head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+      "decision": "No Quarry east brace cost, west chock cost, outcrop reward, source mapping, cooldown, or capability grant is approved."
+    }
   }
 }

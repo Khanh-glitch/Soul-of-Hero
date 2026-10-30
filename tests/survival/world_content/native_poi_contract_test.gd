@@ -4,6 +4,7 @@ const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
 const ACTOR_SCRIPT := preload("res://tests/survival/world_content/test_actor.gd")
+const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 const SCENES := [
 	"res://game/survival/world_content/scenes/south_quarry.tscn",
 	"res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
@@ -28,6 +29,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_vector_pair_compatibility()
 	await _scene_and_data_contracts()
 	await _interaction_eligibility_and_choice()
 	await _physical_access_and_retreat_basic()
@@ -42,6 +44,27 @@ func _run() -> void:
 			push_error(failure)
 		print("A8_NATIVE_POI_TEST_FAIL failures=%d assertions=%d" % [_failures.size(), _assertions])
 		quit(1)
+
+
+func _vector_pair_compatibility() -> void:
+	var fallback := Vector2(9, 11)
+	_check(VECTOR_UTIL.from_pair([4, 8]) == Vector2(4, 8), "valid JSON pair becomes Vector2")
+	_check(VECTOR_UTIL.from_pair([4], fallback) == fallback, "short pair safely uses fallback")
+	_check(
+		VECTOR_UTIL.from_pair([4, 8, 12], fallback) == fallback, "long pair safely uses fallback"
+	)
+	_check(VECTOR_UTIL.from_pair(["4", 8], fallback) == fallback, "string component is rejected")
+	_check(
+		VECTOR_UTIL.from_pair([INF, 8], fallback) == fallback, "non-finite component is rejected"
+	)
+	_check(
+		VECTOR_UTIL.from_int_pair([30, 280]) == Vector2i(30, 280),
+		"valid canonical cell becomes Vector2i"
+	)
+	_check(
+		VECTOR_UTIL.from_int_pair([30.5, 280], Vector2i(-1, -1)) == Vector2i(-1, -1),
+		"fractional canonical cell is rejected without truncation"
+	)
 
 
 func _scene_and_data_contracts() -> void:
@@ -73,8 +96,45 @@ func _scene_and_data_contracts() -> void:
 			site.definition.get("source", {}).has("poi_id"),
 			"site source / anchor identity exists: %s" % site.get_source_id()
 		)
+		if site.definition.has("visual_layout"):
+			_assert_site_art(site)
 		site.queue_free()
 		await process_frame
+
+
+func _assert_site_art(site: NativePoiSite) -> void:
+	var ground := site.get_node_or_null("SourceBackedWorldArt/A8_16px_Ground") as TileMapLayer
+	_check(ground != null, "local worksite renders a real 16 px atlas-backed TileMapLayer")
+	if ground != null:
+		_check(
+			ground.tile_set.tile_size == Vector2i(16, 16),
+			"local terrain uses the A1 16 px tile size"
+		)
+		_check(
+			ground.get_used_cells().size() == 60 * 38,
+			"local terrain fills the aligned 960-by-608 canvas"
+		)
+	var props := site.get_node_or_null("SourceBackedWorldArt/A8_SourceSized_Props")
+	_check(
+		props != null and props.get_child_count() > 0,
+		"local worksite renders source-cleared atlas props"
+	)
+	if props != null:
+		for child: Node in props.get_children():
+			if not child is Sprite2D:
+				continue
+			_check(child.scale == Vector2.ONE, "prop uses its source frame at one-to-one scale")
+			_check(
+				child.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST,
+				"prop uses nearest filtering"
+			)
+			_check(
+				(
+					is_equal_approx(child.position.x, roundf(child.position.x))
+					and is_equal_approx(child.position.y, roundf(child.position.y))
+				),
+				"prop uses an integer-pixel bottom anchor"
+			)
 
 
 func _interaction_eligibility_and_choice() -> void:
@@ -121,6 +181,10 @@ func _interaction_eligibility_and_choice() -> void:
 		_check(
 			site.get_site_state().get("quarry_route", "") == "west_chocked",
 			"environmental projection only changes after owner commit"
+		)
+		_check(
+			site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/west_ramp_chock"),
+			"owner-projected west route adds its corresponding source-backed visual"
 		)
 		_check(
 			(
@@ -410,6 +474,10 @@ func _candidate_claims_capacity_and_reload() -> void:
 		"water feedback has an owner-projected state"
 	)
 	_check(
+		cultivated_site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/flowing_channel_reeds"),
+		"accepted irrigation projects a distinct source-backed return-route prop"
+	)
+	_check(
 		not cultivated_site.try_interact(cultivator, 1),
 		"graft knowledge is not prematurely available"
 	)
@@ -436,6 +504,10 @@ func _candidate_claims_capacity_and_reload() -> void:
 	_check(
 		cultivated_site.get_site_state().graft_marks_read,
 		"return state persists through the owner projection"
+	)
+	_check(
+		cultivated_site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/graft_mark_herb"),
+		"owner-projected graft knowledge adds the source-sized herb marker"
 	)
 	_cleanup(cultivated)
 
@@ -526,6 +598,14 @@ func _physical_mill_gate_and_retreat() -> void:
 	_check(
 		site.get_site_state().get("mill_wheel", "") == "turning",
 		"owner projection visibly turns the repaired wheel"
+	)
+	_check(
+		site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/lit_race_lamp"),
+		"owner-projected wheel repair adds the distinct worked-race visual"
+	)
+	_check(
+		not site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/seized_race_warning"),
+		"owner-projected repair removes the seized-wheel warning visual"
 	)
 	await physics_frame
 	actor.request_test_motion(Vector2(0, -160))

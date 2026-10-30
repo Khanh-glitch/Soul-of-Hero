@@ -16,6 +16,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare A8 evidence directory
+        run: mkdir -p .artifacts/a8-world-content
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -24,13 +26,42 @@ jobs:
       - name: Validate authoring data and adversarial path cases
         run: |
           python3 tools/survival/world_content/author_site.py --check
-          python3 -m unittest tests/survival/world_content/test_author_site.py
+          python3 -m unittest \
+            tests/survival/world_content/test_author_site.py \
+            tests/survival/world_content/test_art_manifest.py
       - name: Import native project resources
-        run: godot --headless --path . --editor --quit
+        run: |
+          set +e
+          godot --headless --path . --editor --quit > .artifacts/a8-world-content/import.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/a8-world-content/import.log
+          if [ "$status" -ne 0 ]; then
+            { echo '### A8 Godot import failure'; echo '```text'; tail -n 100 .artifacts/a8-world-content/import.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
       - name: Run native physics and interaction contracts
-        run: godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd
+        run: |
+          set +e
+          godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd > .artifacts/a8-world-content/native-contract.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/a8-world-content/native-contract.log
+          if [ "$status" -ne 0 ]; then
+            { echo '### A8 native contract failure'; echo '```text'; tail -n 100 .artifacts/a8-world-content/native-contract.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
       - name: Run exterior entry, return and revisit physics
-        run: godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd
+        run: |
+          set +e
+          godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd > .artifacts/a8-world-content/native-transition.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/a8-world-content/native-transition.log
+          if [ "$status" -ne 0 ]; then
+            { echo '### A8 transition failure'; echo '```text'; tail -n 100 .artifacts/a8-world-content/native-transition.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
       - name: Capture native scenes at 720p, 2K and 4K
         run: |
           mkdir -p .artifacts/a8-world-content

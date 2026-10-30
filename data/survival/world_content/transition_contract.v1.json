@@ -23,7 +23,7 @@
   "directions": ["enter", "exit"],
   "rules": [
     "An enter request is emitted only from the physically reached exterior doorway in the compact canonical shell.",
-    "The worksite is a separately entered local scene; its 960x600 bounds and local spawn are never a world transform or SaveService position.",
+    "The worksite is a separately entered local scene; its 960x608 bounds and local spawn are never a world transform or SaveService position.",
     "The exit request returns to the shell doorway and canonical A1 anchor; A0 derives and persists global coordinates.",
     "A8 emits intent only. It does not load production scenes, move the authoritative actor, claim the POI, or persist a position.",
     "Production callers must validate the actual Hero actor, source identity, current transition eligibility, destination scene and return anchor."

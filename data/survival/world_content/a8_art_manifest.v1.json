@@ -1,0 +1,513 @@
+{
+  "schema": "soh.a8.local_art_manifest.v1",
+  "owner": "A8",
+  "source_policy": "selected original SOH project art from A1-curated shared world atlas; no Drive ZIP, third-party raw asset, Cainos art, or avatar art copied",
+  "a1_visual_contract": "data/survival/world/art/a8_visual_contract.v1.json",
+  "a1_pr": 20,
+  "a1_head": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+  "source_atlas": "data/survival/world/art/atlas.v1.json",
+  "source_atlas_sha256": {
+    "props": "36505528776568e398b5770493407b5706b4a102bc03e1b50b436277d500d9d4",
+    "terrain": "59eb49569e6ac7d4493749318e3511564db695c3840a5dd7a32e53f96d280384"
+  },
+  "textures": {
+    "terrain": {
+      "path": "res://game/survival/world_content/art/terrain.png",
+      "sha256": "59eb49569e6ac7d4493749318e3511564db695c3840a5dd7a32e53f96d280384",
+      "license": "original SOH art; source manifest license original"
+    },
+    "props": {
+      "path": "res://game/survival/world_content/art/props.png",
+      "sha256": "36505528776568e398b5770493407b5706b4a102bc03e1b50b436277d500d9d4",
+      "license": "original SOH art; inherited frames license original"
+    }
+  },
+  "tile_px": 16,
+  "terrain_frames": {
+    "ash_0": [
+      0,
+      0,
+      16,
+      16
+    ],
+    "ash_1": [
+      16,
+      0,
+      16,
+      16
+    ],
+    "ash_2": [
+      32,
+      0,
+      16,
+      16
+    ],
+    "ash_3": [
+      48,
+      0,
+      16,
+      16
+    ],
+    "moor_0": [
+      64,
+      0,
+      16,
+      16
+    ],
+    "moor_1": [
+      80,
+      0,
+      16,
+      16
+    ],
+    "moor_2": [
+      96,
+      0,
+      16,
+      16
+    ],
+    "moor_3": [
+      112,
+      0,
+      16,
+      16
+    ],
+    "soil_0": [
+      128,
+      0,
+      16,
+      16
+    ],
+    "soil_1": [
+      144,
+      0,
+      16,
+      16
+    ],
+    "soil_2": [
+      160,
+      0,
+      16,
+      16
+    ],
+    "soil_3": [
+      176,
+      0,
+      16,
+      16
+    ],
+    "gravel_0": [
+      0,
+      16,
+      16,
+      16
+    ],
+    "gravel_1": [
+      16,
+      16,
+      16,
+      16
+    ],
+    "gravel_2": [
+      32,
+      16,
+      16,
+      16
+    ],
+    "gravel_3": [
+      48,
+      16,
+      16,
+      16
+    ],
+    "grass_0": [
+      192,
+      0,
+      16,
+      16
+    ],
+    "grass_1": [
+      208,
+      0,
+      16,
+      16
+    ],
+    "grass_2": [
+      224,
+      0,
+      16,
+      16
+    ],
+    "grass_3": [
+      240,
+      0,
+      16,
+      16
+    ],
+    "forest_0": [
+      256,
+      0,
+      16,
+      16
+    ],
+    "forest_1": [
+      272,
+      0,
+      16,
+      16
+    ],
+    "forest_2": [
+      288,
+      0,
+      16,
+      16
+    ],
+    "forest_3": [
+      304,
+      0,
+      16,
+      16
+    ],
+    "water_0": [
+      64,
+      16,
+      16,
+      16
+    ],
+    "water_1": [
+      80,
+      16,
+      16,
+      16
+    ],
+    "water_2": [
+      96,
+      16,
+      16,
+      16
+    ],
+    "bank_0": [
+      448,
+      80,
+      16,
+      16
+    ],
+    "bank_1": [
+      496,
+      80,
+      16,
+      16
+    ],
+    "bank_2": [
+      32,
+      96,
+      16,
+      16
+    ],
+    "bank_3": [
+      80,
+      96,
+      16,
+      16
+    ],
+    "bank_4": [
+      128,
+      96,
+      16,
+      16
+    ],
+    "bank_5": [
+      176,
+      96,
+      16,
+      16
+    ],
+    "bank_6": [
+      224,
+      96,
+      16,
+      16
+    ],
+    "bank_7": [
+      272,
+      96,
+      16,
+      16
+    ],
+    "bank_8": [
+      320,
+      96,
+      16,
+      16
+    ],
+    "bank_9": [
+      368,
+      96,
+      16,
+      16
+    ],
+    "bank_10": [
+      416,
+      96,
+      16,
+      16
+    ],
+    "bank_11": [
+      464,
+      96,
+      16,
+      16
+    ],
+    "bank_12": [
+      0,
+      112,
+      16,
+      16
+    ],
+    "bank_13": [
+      48,
+      112,
+      16,
+      16
+    ],
+    "bank_14": [
+      96,
+      112,
+      16,
+      16
+    ],
+    "bank_15": [
+      144,
+      112,
+      16,
+      16
+    ]
+  },
+  "props_frames": {
+    "bush": [
+      286,
+      108,
+      26,
+      22
+    ],
+    "cairn": [
+      734,
+      2,
+      24,
+      30
+    ],
+    "cairn_warning": [
+      760,
+      2,
+      24,
+      30
+    ],
+    "column_broken": [
+      472,
+      108,
+      20,
+      22
+    ],
+    "deadfall": [
+      304,
+      2,
+      34,
+      22
+    ],
+    "fence_h": [
+      676,
+      2,
+      34,
+      20
+    ],
+    "fence_v": [
+      712,
+      2,
+      20,
+      34
+    ],
+    "fern": [
+      174,
+      2,
+      20,
+      14
+    ],
+    "handcart": [
+      362,
+      2,
+      46,
+      30
+    ],
+    "herb_moonleaf": [
+      820,
+      2,
+      18,
+      16
+    ],
+    "lamp": [
+      658,
+      2,
+      16,
+      34
+    ],
+    "log_pile": [
+      840,
+      2,
+      30,
+      20
+    ],
+    "mill_wheel": [
+      60,
+      108,
+      56,
+      56
+    ],
+    "ore_skarn": [
+      786,
+      2,
+      32,
+      26
+    ],
+    "reeds": [
+      196,
+      2,
+      22,
+      24
+    ],
+    "rock_a": [
+      314,
+      108,
+      26,
+      20
+    ],
+    "rock_c": [
+      342,
+      108,
+      20,
+      15
+    ],
+    "rock_e": [
+      364,
+      108,
+      40,
+      30
+    ],
+    "signpost": [
+      406,
+      108,
+      26,
+      26
+    ],
+    "stump": [
+      340,
+      2,
+      20,
+      18
+    ],
+    "tarp_shelter": [
+      410,
+      2,
+      64,
+      46
+    ],
+    "tree_amber": [
+      2,
+      2,
+      48,
+      64
+    ],
+    "tree_dead": [
+      208,
+      108,
+      40,
+      58
+    ],
+    "tree_frost": [
+      102,
+      2,
+      40,
+      64
+    ],
+    "tree_frost_small": [
+      144,
+      2,
+      28,
+      44
+    ],
+    "tree_orchard": [
+      52,
+      2,
+      48,
+      64
+    ],
+    "tree_pine": [
+      250,
+      108,
+      34,
+      58
+    ],
+    "wall_stub": [
+      434,
+      108,
+      36,
+      22
+    ],
+    "whetstone": [
+      118,
+      108,
+      22,
+      18
+    ]
+  },
+  "transform_policy": "terrain tiles are exactly 16x16; prop frames render at source pixel dimensions with feet anchor bottom-center; nearest filtering; no fractional scaling",
+  "source_visual_grammar": "data/survival/world/art/world_art_grammar.v1.json",
+  "lighting_profiles": {
+    "overcast_frontier": {
+      "ambient_day": [
+        0.78,
+        0.78,
+        0.82,
+        1.0
+      ],
+      "ambient_night": [
+        0.24,
+        0.25,
+        0.34,
+        1.0
+      ],
+      "warm_lamp_energy": 0.85
+    },
+    "amber_morning": {
+      "ambient_day": [
+        0.9,
+        0.86,
+        0.74,
+        1.0
+      ],
+      "ambient_night": [
+        0.22,
+        0.27,
+        0.3,
+        1.0
+      ],
+      "warm_lamp_energy": 0.75
+    }
+  },
+  "visual_contract_summary": {
+    "tile_px": 16,
+    "viewport_px": [
+      640,
+      360
+    ],
+    "camera_zoom": 1.0,
+    "texture_filter": "nearest",
+    "prop_scale": 1.0,
+    "integer_scale_only": true,
+    "perspective": "top-down three-quarter; props feet-anchored at bottom-center on integer pixels",
+    "shared_palette_ramp": true,
+    "per_site_palette_swaps_allowed": false,
+    "minimum_readable_feature_px": 4,
+    "collision_readability": "art creates no collision; physical mass uses authored A8 collision geometry",
+    "lighting": "A1 ambient profiles overcast_frontier and amber_morning are applied as shared day ambient tints; lamp is source art only, no A0 clock/Light2D integration is claimed"
+  }
+}

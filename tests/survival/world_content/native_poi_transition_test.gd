@@ -1,5 +1,7 @@
 extends SceneTree
 
+const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+
 const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
@@ -53,6 +55,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		root.add_child(shell)
 		await process_frame
 		var shell_data: Dictionary = shell.definition.get("overworld_shell", {})
+		_assert_shell_art(shell)
 		_check(
 			shell_data.get("bounds_px", []) == [128, 128],
 			"shell bounds stay inside four-tile footprint"
@@ -82,10 +85,19 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 			"shell root uses the exact integer 1:1 A1 transform and accepted footprint bound"
 		)
 		var shell_walls := 0
+		var shell_obstacles := 0
 		for child: Node in shell.get_children():
-			if child is StaticBody2D:
+			if not child is StaticBody2D:
+				continue
+			if str(child.name).begins_with("ShellWall"):
 				shell_walls += 1
+			elif str(child.name).begins_with("ShellPropObstacle_"):
+				shell_obstacles += 1
 		_check(shell_walls == 5, "shell keeps five collidable boundary segments and a real doorway")
+		_check(
+			shell_obstacles == shell_data.get("obstacles_px", []).size(),
+			"visually substantial shell props have matching authored collision"
+		)
 
 		var shell_actor := ACTOR_SCRIPT.new() as WorldContentTestActor
 		shell_actor.collision_layer = 2
@@ -151,6 +163,14 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 			shell_actor.last_collision != null and shell_actor.global_position.x >= 18,
 			"shell west boundary still blocks ordinary traversal"
 		)
+		if index == 1:
+			shell_actor.global_position = Vector2(24, 96)
+			shell_actor.request_test_motion(Vector2(0, -40))
+			await physics_frame
+			_check(
+				shell_actor.last_collision != null and shell_actor.global_position.y >= 88,
+				"orchard shell tree trunk is a real obstacle beneath its visual canopy"
+			)
 		shell_actor.queue_free()
 		shell.queue_free()
 		await process_frame
@@ -296,7 +316,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				root.add_child(returned_shell)
 				await process_frame
 				var anchor: Dictionary = return_request.get("return_anchor", {})
-				var doorway := Vector2.from_array(anchor.get("shell_local_position", []))
+				var doorway := VECTOR_UTIL.from_pair(anchor.get("shell_local_position", []))
 				actor.global_position = doorway
 				_check(
 					actor.global_position.distance_to(returned_shell.get_entry_position()) <= 0.1,
@@ -354,6 +374,39 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				revisit_site.queue_free()
 				returned_shell.queue_free()
 		_cleanup(pair)
+
+
+func _assert_shell_art(shell: NativePoiShell) -> void:
+	var ground := shell.get_node_or_null("CanonicalFootprintArt/A8_16px_Ground") as TileMapLayer
+	_check(ground != null, "compact shell has a real 16 px atlas-backed ground layer")
+	if ground != null:
+		_check(
+			ground.tile_set.tile_size == Vector2i(16, 16), "shell terrain uses the A1 16 px grid"
+		)
+		_check(
+			ground.get_used_cells().size() == 64,
+			"shell terrain stays within its eight-by-eight footprint"
+		)
+	var props := shell.get_node_or_null("CanonicalFootprintArt/A8_SourceSized_Props")
+	_check(
+		props != null and props.get_child_count() > 0,
+		"shell draws source-backed native-size POI props"
+	)
+	if props != null:
+		for child: Node in props.get_children():
+			if child is Sprite2D:
+				_check(child.scale == Vector2.ONE, "shell prop remains at native one-to-one scale")
+				_check(
+					child.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST,
+					"shell prop uses nearest filtering"
+				)
+				_check(
+					(
+						is_equal_approx(child.position.x, roundf(child.position.x))
+						and is_equal_approx(child.position.y, roundf(child.position.y))
+					),
+					"shell prop anchor remains on integer pixels"
+				)
 
 
 func _make_site(index: int) -> Dictionary:
