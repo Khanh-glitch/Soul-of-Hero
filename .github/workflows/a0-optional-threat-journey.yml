@@ -1,0 +1,39 @@
+name: A0 optional threat journey experimental
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/characters/enemies/**', 'game/autoload/**', 'tests/survival_optional_threat_journey_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-optional-threat-journey.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-threat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import
+        run: |
+          mkdir -p artifacts/ud_import artifacts/ud_threat
+          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/threat-import.log 2>&1
+      - name: Fresh home and optional autonomous threat journey
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_threat --resolution 960x540 --windowed --script res://tests/survival_optional_threat_journey_test.gd > artifacts/threat.log 2>&1
+          rc=$?
+          cat artifacts/threat.log
+          echo "::notice::threat exit=$rc $(grep -E 'OPTIONAL_THREAT_|OPTIONAL THREAT|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/threat.log | tail -20 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/threat.log 'A0 optional threat' 'OPTIONAL THREAT JOURNEY PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-optional-threat-logs
+          path: artifacts/*threat*.log

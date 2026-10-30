@@ -83,7 +83,20 @@ func _body() -> void:
 	_expect(not bool(denied.get("ok", true)) and before == (_save().call(&"get_snapshot") as Dictionary), "annex refusal spends nothing and leaves no receipt")
 	await physics_frame
 	var locker_clear := _shape_clear(Vector2i(408, 199), nav, hero, {})
-	print("A0_CONNECTOR_LOCKER exact_stand=(408,199) shape_clear=%s" % str(locker_clear))
+	var locker_shape := hero.get_node("BodyShape") as CollisionShape2D
+	var locker_query := PhysicsShapeQueryParameters2D.new()
+	locker_query.shape = locker_shape.shape
+	locker_query.transform = Transform2D(0.0, Vector2(408 * 16 + 8, 199 * 16 + 15) + locker_shape.position)
+	locker_query.collision_mask = hero.collision_mask
+	locker_query.exclude = [hero.get_rid()]
+	locker_query.collide_with_bodies = true
+	locker_query.collide_with_areas = false
+	var collider_names: Array[String] = []
+	for hit: Dictionary in hero.get_world_2d().direct_space_state.intersect_shape(locker_query, 128):
+		var collider := hit.get("collider") as Node
+		if collider != null:
+			collider_names.append(String(collider.get_path()))
+	print("A0_CONNECTOR_LOCKER exact_stand=(408,199) shape_clear=%s colliders=%s" % [str(locker_clear), str(collider_names)])
 	# This is a REQUIRED positive gate, not an expected-negative pass. Continue
 	# other diagnostics when it fails, but never label the pilot accepted.
 	_expect(locker_clear, "original locker stand (408,199) clears actual Hero shape against authored blockers")

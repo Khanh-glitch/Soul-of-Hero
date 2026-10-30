@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 40
     env:
-      A1_SHA: 90c1d8bf37b65009686532a29e166329150f2367
+      A1_SHA: 965a0b03830fb5866d08c0d5a877135bf2f8c83f
       LIBGL_ALWAYS_SOFTWARE: 1
       GODOT_SILENCE_ROOT_WARNING: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
-          ref: 90c1d8bf37b65009686532a29e166329150f2367
+          ref: 965a0b03830fb5866d08c0d5a877135bf2f8c83f
           path: .a1-connector-source
           persist-credentials: false
       - uses: actions/setup-python@v5

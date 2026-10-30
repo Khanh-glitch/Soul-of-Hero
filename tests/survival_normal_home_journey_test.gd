@@ -483,9 +483,9 @@ func _body() -> void:
 	await physics_frame
 	await process_frame
 	var panel := fresh.get(&"chest_panel") as CanvasLayer
-	var opened := panel != null and bool(panel.call(&"is_open"))
-	_expect(opened, "V opens the nearby chest selective modal through keyboard input")
-	if not opened:
+	var storage_opened := panel != null and bool(panel.call(&"is_open"))
+	_expect(storage_opened, "V opens the nearby chest selective modal through keyboard input")
+	if not storage_opened:
 		_body_complete = true
 		return
 	var deposit_wood := panel.find_child("Deposit_oak_wood", true, false) as Button

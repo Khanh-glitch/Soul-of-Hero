@@ -47,6 +47,8 @@ var state: OverworldState
 ## Optional composition guard. Negative means ordinary legacy world; a bounded
 ## annex pilot sets the first excluded column before accepting placement input.
 var annex_disabled_from_x := -1
+## Explicit optional encounter reservations. Empty in the default world.
+var encounter_exclusions: Array[Rect2i] = []
 
 var _structures_root: Node2D
 var _preview: Sprite2D
@@ -493,6 +495,9 @@ func _validate_footprint_cell(cell: Vector2i) -> String:
 		return "outside_world"
 	if annex_disabled_from_x >= 0 and cell.x >= annex_disabled_from_x:
 		return "annex_build_not_enabled"
+	for excluded: Rect2i in encounter_exclusions:
+		if excluded.has_point(cell):
+			return "encounter_exclusion"
 	if world.is_solid_cell(cell.x, cell.y):
 		return "solid_terrain"
 	if world.is_water_cell(cell.x, cell.y):
