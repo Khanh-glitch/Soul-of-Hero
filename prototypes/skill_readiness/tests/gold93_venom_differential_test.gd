@@ -35,7 +35,7 @@ const CANDIDATES = preload("res://prototypes/skill_readiness/native/venom/venom_
 const ORACLE_DIR := "res://docs/vfx/skill_readiness/oracle"
 ## Ticks emitting the per-object GOLD93_OBJ diagnosis (divergent tick and its
 ## predecessor) per unresolved raster skill.
-const OBJ_TICKS: Dictionary = {7: [89, 90, 264, 265], 13: [319, 320], 16: [194, 195], 20: [179, 180]}
+const OBJ_TICKS: Dictionary = {7: [89, 90, 264, 265], 13: [319, 320], 16: [40, 80, 120, 150, 170, 180, 185, 188, 190, 192, 193, 194, 195], 20: [179, 180]}
 const DIAG_DIR := "res://docs/vfx/skill_readiness/diagnostics"
 const F: float = 1.0 / 60.0
 
