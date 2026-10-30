@@ -432,7 +432,7 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			_dump_rasters(g, sid, n)
 		if sid == 7 and n <= 92:
 			_dump_summon_state(w, n)
-		if sid == 7 and n in [100, 120, 140, 150]:
+		if sid == 7 and n in [2, 30, 60, 80]:
 			print("GOLD93_PL t=%d px=%.12f py=%.12f" % [n, float(w.player.x), float(w.player.y)])
 			var ee2 = w.enemies[12]
 			print("GOLD93_EN12 t=%d e%d x=%.12f y=%.12f kx=%.12f ky=%.12f face=%.12f" % [n, 12, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
