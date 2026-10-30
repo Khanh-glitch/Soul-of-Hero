@@ -131,9 +131,18 @@ func _body() -> void:
 	if not returned_to_danger:
 		_body_complete = true
 		return
+	# Re-enter close combat through ordinary movement, as on the first visit;
+	# stopping at the warning boundary alone need not trigger enemy detection.
+	for offset: Vector2i in [Vector2i(-3, 0), Vector2i(3, 0), Vector2i(0, -3), Vector2i(0, 3)]:
+		var engage := _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
+		if not engage.is_empty():
+			await _walk_path(hero, engage)
+			break
 	until = Time.get_ticks_msec() + 300000
 	while not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
 		await physics_frame
+	var last_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+	print("OPTIONAL_THREAT_TRACE lethal_wait_end hp=%s dead=%s hero=%s enemy=%s enemy_pos=%s state=%s distance=%s" % [str(hero.get("health")), str(hero.get("dead")), str(hero.global_position), str(last_enemy), str(last_enemy.global_position if last_enemy != null else Vector2.ZERO), str(last_enemy.get("_state") if last_enemy != null else "missing"), str(hero.global_position.distance_to(last_enemy.global_position) if last_enemy != null else -1)])
 	var doc: Dictionary = _survival().call(&"document")
 	var bag_id := String(doc.get("pending_death", ""))
 	_expect(bool(hero.get("dead")) and not bag_id.is_empty() and (doc.get("death_bags", {}) as Dictionary).has(bag_id), "real autonomous lethal combat commits the actual death bag")
