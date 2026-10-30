@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        route: [controller, normal-entry, roadside]
+        route: [controller, normal-entry, roadside, normal-entry-roadside]
     env:
       LIBGL_ALWAYS_SOFTWARE: 1
       GODOT_SILENCE_ROOT_WARNING: 1
@@ -98,6 +98,10 @@ jobs:
             script=res://tests/survival_production_waystation_candidate_test.gd
             marker='A0 WAYSTATION INPUT RESTART PASSED'
             restart=--restart
+          elif [ '${{ matrix.route }}' = normal-entry-roadside ]; then
+            script=res://tests/survival_normal_entry_roadside_v5_test.gd
+            marker='NORMAL ENTRY HOME RESTART PASSED'
+            restart=--verify-separate-process
           elif [ '${{ matrix.route }}' = roadside ]; then
             script=res://tests/survival_roadside_v5_input_test.gd
             marker='A0 WAYSTATION INPUT RESTART PASSED'

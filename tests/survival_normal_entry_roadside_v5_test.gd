@@ -31,7 +31,11 @@ func _after_home_continuation() -> void:
 		for item: String in source.items:
 			_expect(int(after.get(item, 0)) == int(prior.get(item, 0)) + int(source.items[item]), "exact A3 item " + item + " from " + String(source.id))
 		var snapshot: Dictionary = _save().call(&"get_snapshot")
-		_expect((((snapshot.get("world_slice", {}) as Dictionary).get("pois", {}) as Dictionary).get("poi_crown_waystation", {}) as Dictionary).get("reward_receipts", {}) as Dictionary).has(source.key), "canonical receipt for " + String(source.id))
+		var world: Dictionary = snapshot.get("world_slice", {})
+		var pois: Dictionary = world.get("pois", {})
+		var waystation: Dictionary = pois.get("poi_crown_waystation", {})
+		var receipts: Dictionary = waystation.get("reward_receipts", {})
+		_expect(receipts.has(source.key), "canonical receipt for " + String(source.id))
 		await _use(ow, hero, point)
 		_expect((_save().call(&"inventory_totals") as Dictionary) == after, "second activation cannot duplicate " + String(source.id))
 	if await _walk_to(hero, nav, home, "ordinary input returns to the same paid home"):
