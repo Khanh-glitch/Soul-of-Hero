@@ -65,6 +65,11 @@ func _body() -> void:
 	_expect(build.validate_cell(site) == "encounter_exclusion" and encounter.get_node_or_null("OptionalEncounterWarning") != null, "validated encounter reserves building and presents a warning")
 	var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one existing skeleton spawned without score rewards")
+	var session := root.get_node("GameSession")
+	var score_before := int(session.get("score"))
+	var safe_health := int(hero.get("health"))
+	await create_timer(3.0).timeout
+	_expect(int(hero.get("health")) == safe_health and int(session.get("score")) == score_before, "avoiding the distant optional encounter leaves Hero and score unchanged")
 	var goal := Vector2i(-1, -1)
 	var path: Array[Vector2i] = []
 	for offset: Vector2i in [Vector2i(-8, 0), Vector2i(8, 0), Vector2i(0, -8), Vector2i(0, 8)]:
@@ -80,6 +85,10 @@ func _body() -> void:
 		_body_complete = true
 		return
 	var before: Dictionary = _save().call(&"inventory_totals")
+	var home_doc: Dictionary = _survival().call(&"document")
+	var home_structures: Dictionary = (home_doc.get("structures", {}) as Dictionary).duplicate(true)
+	var home_containers: Dictionary = (home_doc.get("containers", {}) as Dictionary).duplicate(true)
+	var home_bed := String(home_doc.get("spawn_anchor", ""))
 	var health_before := int(hero.get("health"))
 	_expect(health_before > 0, "fresh actual Hero begins the encounter alive")
 	var approached := await _walk_path(hero, path)
@@ -206,6 +215,12 @@ func _body() -> void:
 	if not home_again:
 		_body_complete = true
 		return
+	var repeated := await _repeat_real_death(ow, encounter, site, goal, start, home_room, bag_id, before)
+	_expect(repeated, "second real death and distinct bag recovery return to the original home without duplication")
+	_expect(int(session.get("score")) == score_before, "damage, death and cleanup grant no encounter score")
+	if not repeated:
+		_body_complete = true
+		return
 	(ow.get(&"state") as OverworldState).save_now()
 	ow.queue_free()
 	await process_frame
@@ -215,4 +230,89 @@ func _body() -> void:
 	var loaded := bool(_save().call(&"reload_save"))
 	var fresh := await _boot()
 	_expect(loaded and fresh != null and (_save().call(&"inventory_totals") as Dictionary) == before and not ((_survival().call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).has(bag_id), "disk and fresh overworld preserve recovered custody without a duplicate bag")
+	if fresh != null:
+		var fresh_doc: Dictionary = _survival().call(&"document")
+		var fresh_build := fresh.get(&"survival_build") as SurvivalBuildSystem
+		var fresh_records: Dictionary = fresh_doc.get("structures", {})
+		var same_structures := fresh_records.size() == home_structures.size()
+		for id: Variant in home_structures.keys():
+			if not fresh_records.has(id) or fresh_build.structure_node(String(id)) == null:
+				same_structures = false
+		_expect(same_structures and String(fresh_doc.get("spawn_anchor", "")) == home_bed and (fresh_doc.get("containers", {}) as Dictionary) == home_containers, "fresh overworld reconstructs all original home identities, active bed and exact stored contents")
 	_body_complete = true
+
+func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vector2i,
+		home_cell: Vector2i, home_room: String, previous_bag: String, before: Dictionary) -> bool:
+	var hero := ow.get(&"player") as CharacterBody2D
+	var nav := ow.get(&"traversability") as OverworldTraversability
+	var build := ow.get(&"survival_build") as SurvivalBuildSystem
+	# Real active time, not a manipulated timer. The Hero remains at the home.
+	await create_timer(62.0).timeout
+	var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
+	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one no-score skeleton re-arms after active cooldown")
+	var enemy_count := 0
+	for child: Node in encounter.get_children():
+		if child is CharacterBody2D:
+			enemy_count += 1
+	_expect(enemy_count == 1, "cooldown re-arm never duplicates the encounter enemy")
+	if enemy == null:
+		return false
+	var path := _route(nav.cell_of(hero.global_position), goal, nav, hero)
+	if path.is_empty() or not await _walk_path(hero, path):
+		return false
+	for offset: Vector2i in [Vector2i(-3, 0), Vector2i(3, 0), Vector2i(0, -3), Vector2i(0, 3)]:
+		var engage := _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
+		if not engage.is_empty():
+			await _walk_path(hero, engage)
+			break
+	var deadline := Time.get_ticks_msec() + 300000
+	while not bool(hero.get("dead")) and Time.get_ticks_msec() < deadline:
+		await physics_frame
+	var doc: Dictionary = _survival().call(&"document")
+	var second_id := String(doc.get("pending_death", ""))
+	var second_created := bool(hero.get("dead")) and not second_id.is_empty() and second_id != previous_bag and (doc.get("death_bags", {}) as Dictionary).has(second_id) and not (doc.get("death_bags", {}) as Dictionary).has(previous_bag)
+	print("OPTIONAL_THREAT_TRACE second_death hp=%s id=%s first=%s" % [str(hero.get("health")), second_id, previous_bag])
+	_expect(second_created, "second autonomous death creates a distinct bag without resurrecting the first")
+	if not second_created:
+		return false
+	var hud := ow.get(&"hud") as Node
+	var button := hud.find_child("Respawn", true, false) as Button
+	if button == null or not button.is_visible_in_tree():
+		return false
+	await _click_window(root.get_final_transform() * button.get_global_rect().get_center())
+	await physics_frame
+	var bag := (ow.get(&"_death_bags") as Dictionary).get(second_id, null) as Node2D
+	var clean := not bool(hero.get("dead")) and bag != null and encounter.get_node_or_null("BoundedSkeleton") == null
+	_expect(clean, "second GUI bed respawn retains the distinct bag and cleans the enemy")
+	if not clean:
+		return false
+	var bag_cell := nav.cell_of(bag.global_position)
+	var current := nav.cell_of(hero.global_position)
+	var route: Array[Vector2i] = []
+	var destination := Vector2i(-1, -1)
+	for offset: Vector2i in [Vector2i.ZERO, Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN, Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1), Vector2i(-2, 0), Vector2i(2, 0), Vector2i(0, -2), Vector2i(0, 2)]:
+		var candidate := bag_cell + offset
+		var point := Vector2(candidate.x * 16 + 8, candidate.y * 16 + 15)
+		if point.distance_to(bag.global_position) > 44.0:
+			continue
+		var trial := _route(current, candidate, nav, hero)
+		if current == candidate or not trial.is_empty():
+			destination = candidate
+			route = trial
+			break
+	var walked := (current == destination) or (not route.is_empty() and await _walk_path(hero, route))
+	if not walked or hero.global_position.distance_to(bag.global_position) > 44.0:
+		return false
+	var camera := ow.get(&"camera") as Camera2D
+	camera.reset_smoothing()
+	camera.force_update_scroll()
+	await process_frame
+	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * bag.global_position))
+	var recovered := (_save().call(&"inventory_totals") as Dictionary) == before and not ((_survival().call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).has(second_id)
+	_expect(recovered, "second physical bag recovery restores exactly the same possessions")
+	if not recovered:
+		return false
+	var home_path := _route(nav.cell_of(hero.global_position), home_cell, nav, hero)
+	if not home_path.is_empty():
+		await _walk_path(hero, home_path)
+	return not bool(hero.get("dead")) and build.room_topology.room_at(nav.cell_of(hero.global_position)) == home_room
