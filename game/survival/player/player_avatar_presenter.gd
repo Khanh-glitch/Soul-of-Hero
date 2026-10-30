@@ -72,14 +72,24 @@ func _ready() -> void:
 		return
 	refresh()
 	var save_service := get_node_or_null(SAVE_SERVICE_PATH)
+	# Both A0 signals carry a payload (the avatar record / the loaded snapshot),
+	# so they must land on handlers rather than on the zero-argument refresh().
 	if save_service != null and save_service.has_signal(&"player_avatar_changed"):
-		var avatar_changed := Callable(self, "refresh")
+		var avatar_changed := Callable(self, "_on_player_avatar_changed")
 		if not save_service.is_connected(&"player_avatar_changed", avatar_changed):
 			save_service.connect(&"player_avatar_changed", avatar_changed)
 	if save_service != null and save_service.has_signal(&"save_loaded"):
-		var save_loaded := Callable(self, "refresh")
+		var save_loaded := Callable(self, "_on_save_loaded")
 		if not save_service.is_connected(&"save_loaded", save_loaded):
 			save_service.connect(&"save_loaded", save_loaded)
+
+
+func _on_player_avatar_changed(_avatar: Dictionary) -> void:
+	refresh()
+
+
+func _on_save_loaded(_snapshot: Dictionary) -> void:
+	refresh()
 
 
 func _exit_tree() -> void:
@@ -209,6 +219,10 @@ func _present_now(force: bool) -> void:
 	var direction := _direction_for(_host_velocity())
 	var host_frame := _host_sprite.frame
 	var restart := force or _detect_host_restart(_host_sprite.animation, host_frame)
+	if action == "death" and _action == "death":
+		# The hidden host may loop its own death strip; the presented character
+		# must play its death once and hold the final pose until respawn.
+		restart = false
 	_last_host_animation = _host_sprite.animation
 	_last_host_frame = host_frame
 	var presented := PIPELINE.present(_avatar_sprite, _appearance, action, direction, 1.0, restart)
@@ -239,7 +253,7 @@ func _action_for_host(host_animation: String, moving: bool, host_speed: float) -
 		return "death"
 	if animation_name.contains("hit") or animation_name.contains("hurt"):
 		return "hurt"
-	if animation_name.contains("attack"):
+	if _is_attack_animation(animation_name):
 		if moving:
 			return "run_attack" if host_speed >= RUN_SPEED_THRESHOLD else "walk_attack"
 		return "attack"
@@ -253,6 +267,17 @@ func _action_for_host(host_animation: String, moving: bool, host_speed: float) -
 	if moving:
 		return "run" if host_speed >= RUN_SPEED_THRESHOLD else "walk"
 	return "idle"
+
+
+## A0 authors its swings as `attack*`, `sword_combo_1..4`, `heavy_attack`,
+## `bow_attack` and `axe_cleave`. Matching only the literal word "attack" let a
+## real sword combo fall through to the idle clip, so the whole authored combat
+## family is recognised here.
+func _is_attack_animation(animation_name: String) -> bool:
+	for token: String in ["attack", "combo", "cleave", "slash", "shot", "swing"]:
+		if animation_name.contains(token):
+			return true
+	return animation_name.begins_with("sword_")
 
 
 func _direction_for(velocity: Vector2) -> String:

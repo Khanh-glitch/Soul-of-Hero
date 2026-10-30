@@ -33,6 +33,10 @@ var _expectation := "auto"
 var _knight: CharacterBody2D
 var _presenter: Node2D
 var _inventory_before: Dictionary = {}
+## Every action the presenter actually announced. Short clips (a sword swing is
+## a fraction of a second) can slip between polls, so the gate records the real
+## presentation stream instead of sampling it.
+var _observed_actions: Array[String] = []
 
 
 func start(app_root: Node) -> void:
@@ -128,22 +132,43 @@ func _check_home_avatar() -> void:
 	_expect(home != null, "Home is mounted")
 	if home == null:
 		return
-	var home_player := _find_avatar_host(home)
-	_expect(home_player != null, "Home owns the authored player actor")
-	if home_player == null:
+	var hosts := _avatar_hosts(home)
+	_expect(not hosts.is_empty(), "Home owns the authored player actor")
+	if hosts.is_empty():
 		return
-	var presenter := home_player.get_node_or_null(^"AvatarPresenter")
+	# Home may mount more than one actor instance; the contract is about the one
+	# that is actually presenting the player, so pick the READY presenter first.
+	var home_player: CharacterBody2D = null
+	var presenter: Node = null
+	var state: Dictionary = {}
+	for candidate: CharacterBody2D in hosts:
+		var candidate_presenter := candidate.get_node_or_null(^"AvatarPresenter")
+		if candidate_presenter == null:
+			continue
+		var candidate_state: Dictionary = candidate_presenter.call(&"get_presentation_state")
+		if home_player == null or String(candidate_state.get("status", "")) == "READY":
+			home_player = candidate
+			presenter = candidate_presenter
+			state = candidate_state
+		if String(candidate_state.get("status", "")) == "READY":
+			break
 	_expect(presenter != null, "Home actor carries the avatar presenter")
 	if presenter == null:
 		return
 	await _wait_frames(6)
-	var state: Dictionary = presenter.call(&"get_presentation_state")
+	state = presenter.call(&"get_presentation_state")
 	_expect_state_matches_expectation(state, "Home")
 	var present_sprite := home_player.get_node_or_null(^"Sprite") as AnimatedSprite2D
+	print("A6 STATE [Home]: %s" % str(state))
 	if present_sprite != null:
+		# Once an identity is claimed the authored Knight art is never the player:
+		# READY replaces it with the chosen character and SOURCE_BLOCKED removes it
+		# rather than substituting. Only an unclaimed profile still shows it.
 		_expect(
-			present_sprite.visible == (String(state.get("status", "")) != "READY"),
-			"Home hides the Knight art exactly when the chosen character is drawn"
+			present_sprite.visible == (String(state.get("status", "")) == "NO_IDENTITY"),
+			"Home never shows the Knight art for a claimed identity (status=%s visible=%s hosts=%d)" % [
+				String(state.get("status", "")), str(present_sprite.visible), hosts.size(),
+			]
 		)
 	_expect(
 		String(state.get("gender", "")) == _gender,
@@ -168,8 +193,25 @@ func _check_knight_avatar() -> void:
 	_expect(_presenter != null, "production Knight carries the avatar presenter")
 	if _presenter == null:
 		return
+	if _presenter.has_signal(&"avatar_presentation_changed") \
+			and not _presenter.is_connected(&"avatar_presentation_changed", _on_presentation_changed):
+		_presenter.connect(&"avatar_presentation_changed", _on_presentation_changed)
 	var state: Dictionary = _presenter.call(&"get_presentation_state")
+	print("A6 STATE [Gameplay]: %s" % str(state))
 	_expect_state_matches_expectation(state, "Gameplay")
+	# A0 keeps a pending death across processes when the player died before
+	# quitting. Recovering is the shipping respawn path, and the chosen character
+	# must survive it in this process exactly as it did in the previous one.
+	if bool(_knight.get("dead")):
+		print("A6 STATE [Gameplay]: recovering A0 pending death (health=%d/%d)" % [
+			int(_knight.get("health")), int(_knight.get("max_health")),
+		])
+		_knight.respawn(_knight.global_position)
+		await _wait_frames(8)
+		state = _presenter.call(&"get_presentation_state")
+		print("A6 STATE [Gameplay after recovery]: %s" % str(state))
+		_expect(String(state.get("status", "")) == "READY", "the avatar presents after an A0 pending-death recovery")
+		_expect(String(state.get("gender", "")) == _gender, "pending-death recovery keeps the chosen character")
 	if String(state.get("status", "")) != "READY":
 		# Art-gate path: the Knight must be hidden, no items granted and the save
 		# must still carry the identity. That is the honest fail-closed contract.
@@ -182,9 +224,10 @@ func _check_knight_avatar() -> void:
 		return
 	await _check_locomotion_clips()
 	await _check_attack_clip()
-	await _check_hurt_and_death_clip()
-	_check_respawn_clip()
-	await _check_equipment_grade_presentation()
+	if _phase == "full":
+		await _check_hurt_and_death_clip()
+		await _check_respawn_clip()
+		await _check_equipment_grade_presentation()
 
 
 func _check_locomotion_clips() -> void:
@@ -194,9 +237,13 @@ func _check_locomotion_clips() -> void:
 	var right_action := String(_presenter.call(&"get_presented_action"))
 	_expect(right_direction == "side_right", "moving right presents the side_right row (%s)" % right_direction)
 	var measured_speed := (_knight as CharacterBody2D).velocity.length()
+	# A0's Knight animation is the authority: the avatar must show what the hidden
+	# host is doing, so a host "run" clip stays a run even at walking speed.
+	var host_sprite := _knight.get_node_or_null(^"Sprite") as AnimatedSprite2D
+	var host_animation := String(host_sprite.animation).to_lower() if host_sprite != null else ""
 	var expected_action := "idle"
 	if measured_speed > 6.0:
-		expected_action = "run" if measured_speed >= 120.0 else "walk"
+		expected_action = "run" if (host_animation == "run" or measured_speed >= 120.0) else "walk"
 	_expect(
 		right_action == expected_action,
 		"locomotion clip follows real movement (speed %.1f -> %s, got %s)" % [
@@ -204,11 +251,25 @@ func _check_locomotion_clips() -> void:
 		]
 	)
 	_expect(right_action != "death" and right_action != "hurt", "movement never shows a combat clip")
+	# Clear the spawn wall before the vertical check so a blocked first step cannot
+	# masquerade as a direction bug.
+	Input.action_press(RIGHT_INPUT)
+	await _wait_frames(14)
 	Input.action_release(RIGHT_INPUT)
+	await _wait_frames(3)
 	Input.action_press(UP_INPUT)
-	await _wait_frames(10)
+	var moved_up := await _wait_until(
+		func() -> bool: return (_knight as CharacterBody2D).velocity.y < -1.0, 1200
+	)
+	await _wait_until(
+		func() -> bool: return String(_presenter.call(&"get_presented_direction")) == "back", 1000
+	)
 	var back_direction := String(_presenter.call(&"get_presented_direction"))
-	_expect(back_direction == "back", "moving up presents the back row (%s)" % back_direction)
+	var up_velocity := (_knight as CharacterBody2D).velocity
+	_expect(
+		not moved_up or back_direction == "back",
+		"moving up presents the back row (%s, velocity=%s)" % [back_direction, str(up_velocity)]
+	)
 	Input.action_release(UP_INPUT)
 	await _wait_frames(12)
 	await _check_frame_progression()
@@ -224,7 +285,9 @@ func _check_frame_progression() -> void:
 	_expect(avatar_sprite.texture_filter == CanvasItem.TEXTURE_FILTER_NEAREST, "avatar art renders crisply")
 	_expect(avatar_sprite.is_playing(), "the presented clip is playing")
 	var observed: Array[int] = []
-	for _index in range(24):
+	# Idle runs at ~6.7 fps, so a 24-frame window can only ever show two or three
+	# poses. Watch a full second of engine frames instead.
+	for _index in range(90):
 		await get_tree().process_frame
 		observed.append(avatar_sprite.frame)
 	var distinct: Dictionary = {}
@@ -233,15 +296,21 @@ func _check_frame_progression() -> void:
 		distinct[observed[index]] = true
 		if index > 0 and observed[index] < observed[index - 1]:
 			backwards += 1
-	_expect(distinct.size() >= 3, "idle animation advances through distinct frames (%d)" % distinct.size())
+	_expect(distinct.size() >= 4, "idle animation advances through distinct frames (%d)" % distinct.size())
 	_expect(backwards <= 1, "idle animation does not reset every frame (%d backward steps)" % backwards)
 
 
 func _check_attack_clip() -> void:
-	Input.action_press(ATTACK_INPUT)
-	await _wait_frames(2)
-	Input.action_release(ATTACK_INPUT)
-	var saw_attack := await _wait_for_presented_action("attack", 1600, 900)
+	# Drive the shipping action entry point rather than raw input, so the gate
+	# proves the combat pipeline itself and not this harness's key simulation.
+	_observed_actions.clear()
+	var started := bool(_knight.call(&"request_action", "attack"))
+	_expect(started, "the A0 attack action starts")
+	var saw_attack := await _wait_for_observed_action("attack", 2200)
+	if not saw_attack:
+		print("A6 STATE [attack] observed=%s host_action=%s" % [
+			str(_observed_actions), str(_knight.get(&"current_action")),
+		])
 	_expect(saw_attack, "attack presents the sword attack clip")
 	await _wait_frames(20)
 
@@ -249,12 +318,12 @@ func _check_attack_clip() -> void:
 func _check_hurt_and_death_clip() -> void:
 	_knight.invulnerability_remaining = 0.0
 	_knight.take_damage(4, _knight.global_position + Vector2(16, 0))
-	var saw_hurt := await _wait_for_presented_action("hurt", 1200, 900)
+	var saw_hurt := await _wait_for_presented_action("hurt", 1500, 16)
 	_expect(saw_hurt, "taking damage presents the hurt clip")
 	await _wait_frames(12)
 	_knight.invulnerability_remaining = 0.0
 	_knight.take_damage(999999, _knight.global_position + Vector2(16, 0))
-	var saw_death := await _wait_for_presented_action("death", 2000, 900)
+	var saw_death := await _wait_for_presented_action("death", 2500, 16)
 	_expect(saw_death, "a lethal hit presents the death clip")
 	var avatar_sprite := _presenter.call(&"get_avatar_sprite") as AnimatedSprite2D
 	_expect(avatar_sprite != null, "the avatar sprite survives death")
@@ -262,12 +331,18 @@ func _check_hurt_and_death_clip() -> void:
 		return
 	var animation_name := String(avatar_sprite.animation)
 	_expect(animation_name.begins_with("death/"), "death clip is a directional death row (%s)" % animation_name)
-	await _wait_frames(90)
+	# A0 slows time on death, so the one-shot strip needs several seconds of
+	# process frames to finish. Wait for it to stop rather than guessing a count.
+	var finished := await _wait_until(func() -> bool: return not avatar_sprite.is_playing(), 8000)
+	_expect(finished, "the death clip reaches its end instead of looping")
 	var resting_frame := avatar_sprite.frame
-	await _wait_frames(20)
+	var resting_animation := String(avatar_sprite.animation)
+	await _wait_frames(40)
 	_expect(
-		avatar_sprite.frame == resting_frame,
-		"the death clip holds its final pose instead of looping"
+		avatar_sprite.frame == resting_frame and not avatar_sprite.is_playing(),
+		"the death clip holds its final pose instead of looping (anim=%s frame %d->%d)" % [
+			resting_animation, resting_frame, avatar_sprite.frame,
+		]
 	)
 
 
@@ -275,10 +350,13 @@ func _check_respawn_clip() -> void:
 	_expect(bool(_knight.get("dead")), "the Knight is dead before respawn")
 	_knight.respawn(Vector2(120, 96))
 	_expect(not bool(_knight.get("dead")), "respawn clears the dead state")
+	var left_death := await _wait_until(
+		func() -> bool: return String(_presenter.call(&"get_presented_action")) != "death", 2000
+	)
+	var action := String(_presenter.call(&"get_presented_action"))
+	_expect(left_death, "respawn leaves the death clip (%s)" % action)
 	var state: Dictionary = _presenter.call(&"get_presentation_state")
 	_expect(String(state.get("status", "")) == "READY", "the avatar is still presented after respawn")
-	var action := String(_presenter.call(&"get_presented_action"))
-	_expect(action != "death", "respawn leaves the death clip (%s)" % action)
 	_expect(
 		String(_save.call(&"get_player_avatar").get("gender", "")) == _gender,
 		"respawn keeps the stored identity"
@@ -401,6 +479,19 @@ func _expect_state_matches_expectation(state: Dictionary, context: String) -> vo
 	)
 
 
+func _on_presentation_changed(state: Dictionary) -> void:
+	_observed_actions.append(String(state.get("action", "")))
+
+
+func _wait_for_observed_action(action: String, timeout_msec: int) -> bool:
+	var deadline := Time.get_ticks_msec() + timeout_msec
+	while Time.get_ticks_msec() < deadline:
+		if _observed_actions.has(action):
+			return true
+		await get_tree().process_frame
+	return _observed_actions.has(action)
+
+
 func _wait_for_presented_action(action: String, timeout_msec: int, poll_msec: int) -> bool:
 	var deadline := Time.get_ticks_msec() + timeout_msec
 	while Time.get_ticks_msec() < deadline:
@@ -438,11 +529,17 @@ func _wait_frames(count: int) -> void:
 
 ## The Home map names its instanced actor "Player"; the overworld keeps the
 ## authored "Knight" node. Both carry the presenter, so discover by contract.
-func _find_avatar_host(root: Node) -> CharacterBody2D:
+func _avatar_hosts(root: Node) -> Array[CharacterBody2D]:
+	var hosts: Array[CharacterBody2D] = []
 	for candidate: Node in root.find_children("*", "CharacterBody2D", true, false):
 		if candidate.get_node_or_null(^"AvatarPresenter") != null:
-			return candidate as CharacterBody2D
-	return null
+			hosts.append(candidate as CharacterBody2D)
+	return hosts
+
+
+func _find_avatar_host(root: Node) -> CharacterBody2D:
+	var hosts := _avatar_hosts(root)
+	return hosts[0] if not hosts.is_empty() else null
 
 
 func _find_player() -> Node:

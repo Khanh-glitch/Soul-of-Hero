@@ -333,7 +333,7 @@ func get_player_appearance_projection() -> Dictionary:
 	var avatar := get_player_avatar()
 	var gender := String(avatar.get("gender", ""))
 	var grade := get_player_equipment_grade_request()
-	var revision := String(avatar.get("revision", 0))
+	var revision := str(avatar.get("revision", 0))
 	return {
 		"schema": PLAYER_AVATAR_APPEARANCE_SCHEMA,
 		"provenance": "A0_OWNER_PROJECTION",
@@ -387,7 +387,7 @@ func _appearance_identity_of(document: Dictionary) -> String:
 			grade = 2
 		elif equipped >= 1:
 			grade = 1
-	return "%s:g%d:r%s" % [gender, grade, String(avatar.get("revision", 0))]
+	return "%s:g%d:r%s" % [gender, grade, str(avatar.get("revision", 0))]
 
 
 func get_player_avatar() -> Dictionary:

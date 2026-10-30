@@ -165,7 +165,11 @@ static func build_sprite_frames(action_sheets: Dictionary) -> Dictionary:
 		var frame_size_value: Variant = record.get("frame_size", null)
 		if not frame_size_value is Array or frame_size_value.size() != 2:
 			return _blocked("Sprite frame size is invalid.")
-		var frame_size := Vector2i(int(frame_size_value[0]), int(frame_size_value[1]))
+		var frame_size := Vector2i(
+			whole_number(frame_size_value[0]), whole_number(frame_size_value[1])
+		)
+		if frame_size.x <= 0 or frame_size.y <= 0:
+			return _blocked("Sprite frame size is invalid.")
 		var texture_size := texture.get_size()
 		if (
 			frame_size.x <= 0
@@ -189,28 +193,29 @@ static func build_sprite_frames(action_sheets: Dictionary) -> Dictionary:
 			if not spec_value is Dictionary:
 				return _blocked("A required directional row is missing.")
 			var spec: Dictionary = spec_value
-			var row_value: Variant = spec.get("row", null)
-			var count_value: Variant = spec.get("frames", null)
+			# JSON numbers arrive as floats in Godot 4 (12 -> 12.0), so a strict
+			# `is int` test rejects every real manifest. Accept whole numbers and
+			# keep rejecting anything fractional or out of bounds.
+			var row_index := whole_number(spec.get("row", null))
+			var frame_count := whole_number(spec.get("frames", null))
 			var columns := int(texture_size.x) / frame_size.x
 			var rows := int(texture_size.y) / frame_size.y
 			if (
-				not row_value is int
-				or not count_value is int
-				or int(row_value) < 0
-				or int(row_value) >= rows
-				or int(count_value) < 1
-				or int(count_value) > columns
+				row_index < 0
+				or frame_count < 1
+				or row_index >= rows
+				or frame_count > columns
 			):
 				return _blocked("Directional sprite frame bounds are invalid.")
 			var animation_name := StringName(action + "/" + direction)
 			output.add_animation(animation_name)
 			output.set_animation_speed(animation_name, float(fps_value))
 			output.set_animation_loop(animation_name, bool(loop_value))
-			for frame_index in int(count_value):
+			for frame_index in frame_count:
 				var atlas_frame := AtlasTexture.new()
 				atlas_frame.atlas = texture
 				atlas_frame.region = Rect2(
-					Vector2(frame_index * frame_size.x, int(row_value) * frame_size.y),
+					Vector2(frame_index * frame_size.x, row_index * frame_size.y),
 					Vector2(frame_size.x, frame_size.y)
 				)
 				output.add_frame(animation_name, atlas_frame)
@@ -218,7 +223,7 @@ static func build_sprite_frames(action_sheets: Dictionary) -> Dictionary:
 				var final_frame := AtlasTexture.new()
 				final_frame.atlas = texture
 				final_frame.region = Rect2(
-					Vector2((int(count_value) - 1) * frame_size.x, int(row_value) * frame_size.y),
+					Vector2((frame_count - 1) * frame_size.x, row_index * frame_size.y),
 					Vector2(frame_size.x, frame_size.y)
 				)
 				output.add_frame(animation_name, final_frame)
@@ -250,7 +255,14 @@ static func present(
 	if frames_changed:
 		sprite.sprite_frames = frames
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	if frames_changed or sprite.animation != animation_name or restart:
+	# A finished one-shot clip (death) holds its final pose. The hidden host may
+	# loop its own strip underneath, which looks like a "restart" every cycle.
+	var held_one_shot := (
+		not frames.get_animation_loop(animation_name)
+		and sprite.animation == animation_name
+		and not sprite.is_playing()
+	)
+	if frames_changed or sprite.animation != animation_name or (restart and not held_one_shot):
 		sprite.stop()
 		sprite.animation = animation_name
 		sprite.set_frame_and_progress(0, 0.0)
@@ -258,6 +270,19 @@ static func present(
 	elif frames.get_animation_loop(animation_name) and not sprite.is_playing():
 		sprite.play(animation_name, maxf(playback_speed, 0.01))
 	return true
+
+
+## Manifest JSON stores every number as a float, so sprite grids are described by
+## whole numbers that are not `int` at runtime. This accepts 12 and 12.0 alike and
+## rejects anything fractional with -1, which every caller treats as invalid.
+static func whole_number(value: Variant) -> int:
+	if value is int:
+		return value
+	if value is float:
+		var number := float(value)
+		if is_finite(number) and number == floorf(number):
+			return int(number)
+	return -1
 
 
 static func _resolve_texture(record: Dictionary) -> Texture2D:
