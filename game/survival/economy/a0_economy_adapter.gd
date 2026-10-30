@@ -1,5 +1,5 @@
 extends "res://game/survival/economy/vendor/a3_economy_service.gd"
-## A0-owned production composition shim over the unmodified A3 86dc2195 source. A3's generic
+## A0-owned production composition shim over the unmodified A3 c23292be V3 source. A3's generic
 ## _transact accepts an arbitrary callable. Only callbacks authored by the
 ## pinned adapter itself may cross into the SaveService capability port.
 const PINNED_BASE = preload("res://game/survival/economy/vendor/a3_economy_service.gd")
