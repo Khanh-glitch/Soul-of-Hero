@@ -413,6 +413,13 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			_dump_rasters(g, sid, n)
 		if sid == 7 and n <= 92:
 			_dump_summon_state(w, n)
+		if sid == 20 and (n == 179 or n == 180):
+			for f in w.fx:
+				if String(_fx(f, "kind", "")) == "flow":
+					var bs: Array = []
+					for b in f.br:
+						bs.append("d%.3f/l%.3f/w%.3f" % [float(b["drawn"]), float(b["len"]), float(b["w"])])
+					print("GOLD93_FLOW t=%d age=%.6f br=%d discs=%d %s" % [n, float(f.age), f.br.size(), f.discs.size(), " ".join(bs)])
 		if want.has(n):
 			var exp: Dictionary = want[n]
 			var got := {

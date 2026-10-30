@@ -213,6 +213,16 @@ if (mode === 'hashes') {
     g.render();
     if (want.has(t)) log.forEach((line, i) => console.log(`GOLD93_OBJ t=${t} i=${i} ${line}`));
   }
+} else if (mode === 'flowstate') {
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, _g, w) => {
+    if (t !== 179 && t !== 180) return;
+    for (const f of w.fx as any[]) {
+      if (f.kind !== 'flow') continue;
+      const bs = f.br.map((b: any) => `d${b.drawn.toFixed(3)}/l${b.len.toFixed(3)}/w${b.w.toFixed(3)}`);
+      console.log(`GOLD93_FLOW t=${t} age=${f.age.toFixed(6)} br=${f.br.length} discs=${f.discs.length} ${bs.join(' ')}`);
+    }
+  });
 } else if (mode === 'state') {
   // Per-tick enemy positions, in the exact text format the native differential
   // prints as GOLD93_EN (two lines per tick), so the two logs can be diffed.
