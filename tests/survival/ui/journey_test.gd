@@ -219,7 +219,7 @@ func _run() -> void:
 		"shortcut remains an authored risk label, not fabricated damage"
 	)
 	view.select_step(3)
-	var reward_preview := view._detail_text()
+	var reward_preview: String = view._detail_text()
 	check(
 		reward_preview.contains("native_playable=false")
 			and reward_preview.contains("rr_waystation_cache_claim")

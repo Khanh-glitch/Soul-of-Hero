@@ -257,7 +257,7 @@ func _refresh() -> void:
 	if _core_panel.visible:
 		var custody_source := String(core.get("custody_source", ""))
 		_core_title.text = "PHYSICAL CORE  /  %s" % String(core.get("name", item_id)).to_upper()
-		var icon_record := core.duplicate(true)
+		var icon_record: Dictionary = core.duplicate(true)
 		icon_record["id"] = item_id
 		icon_record["kind"] = "core"
 		icon_record["equipped"] = (
