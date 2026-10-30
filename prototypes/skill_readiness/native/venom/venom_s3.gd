@@ -412,6 +412,8 @@ static func _hatchery(c, g) -> void:
 					* (1 + 0.1 * V8M.v8_sin(h.ph))
 			h.vx += (vx / vl * spd - h.vx) * 0.14
 			h.vy += (vy / vl * spd - h.vy) * 0.14
+			if w.get("hatch_trace") and h.idx == 0:
+				print("GOLD93_HTR t=%d tm=%.12f tx=%.12f ty=%.12f d=%.12f sw=%.12f vx=%.12f vy=%.12f vl=%.12f spd=%.12f nvx=%.12f nvy=%.12f" % [w.frame, tm, tx, ty, d, sw, vx, vy, vl, spd, h.vx, h.vy])
 			h.x += h.vx * GEN.F
 			h.y += h.vy * GEN.F
 			h.hd += M.ang_diff(h.hd, V8M.v8_atan2(h.vy, h.vx)) * 0.25 \

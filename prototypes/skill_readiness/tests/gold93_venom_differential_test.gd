@@ -391,6 +391,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		# unresolved raster skills (compact GOLD93_OBJ lines; identical format
 		# from the Node reference `objhash` mode, tick list passed as argv 6).
 		w.objhash_on = OBJ_TICKS.has(sid) and n in OBJ_TICKS[sid]
+		if sid == 7:
+			w.hatch_trace = n >= 200 and n <= 210
 		if w.objhash_on:
 			w.objhash_log.clear()
 		w.draw(g)

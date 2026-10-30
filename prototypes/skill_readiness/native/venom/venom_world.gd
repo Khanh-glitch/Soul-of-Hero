@@ -1020,6 +1020,7 @@ static func prof_add(key: String, usec: int) -> void:
 ## `objhash_log`: section.kind#index + cumulative scene/glow SHA-256 (12 hex).
 ## The original Node reference emits the identical format (mode `objhash`), so
 ## the first line that differs names the first divergent draw operation.
+var hatch_trace: bool = false
 var objhash_on: bool = false
 var objhash_log: Array = []
 
