@@ -12,9 +12,9 @@
       "sha256": "f9aae1428639465abd6d4116dde60da341979d57c3bdb1944a06041bf21ff03e"
     },
     {
-      "bytes": 4234,
+      "bytes": 4576,
       "path": "data/survival/world/art/a8_visual_contract.v1.json",
-      "sha256": "8290c7cb0ee64305ff810d07340ecc302a301fd2eba9f50b8e38bb8a14270fe7"
+      "sha256": "a8857293678f7ef97732c3c47bfb331b9e616c277fc9cf2707c8070ab0fc8123"
     },
     {
       "bytes": 115684,
@@ -1292,8 +1292,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "776cfe4d3cc415a3fe91109e6212d4bc36d9299c167c8566b7898f23182ec385",
-  "compile_2_tree_sha256": "776cfe4d3cc415a3fe91109e6212d4bc36d9299c167c8566b7898f23182ec385",
+  "compile_1_tree_sha256": "7239721da7e147ac80d9950e77f65d99997f13d58614c21bdf767d206fb9e0a3",
+  "compile_2_tree_sha256": "7239721da7e147ac80d9950e77f65d99997f13d58614c21bdf767d206fb9e0a3",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

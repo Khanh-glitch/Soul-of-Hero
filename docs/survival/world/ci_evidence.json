@@ -1711,7 +1711,7 @@
       "prop_frames": 111,
       "inherited_frames": 9,
       "determinism_artifacts": 258,
-      "determinism_tree_sha256": "776cfe4d3cc415a3fe91109e6212d4bc36d9299c167c8566b7898f23182ec385",
+      "determinism_tree_sha256": "7239721da7e147ac80d9950e77f65d99997f13d58614c21bdf767d206fb9e0a3",
       "validators": "0 errors",
       "mount_bundle_consumer_validation": "ok",
       "gdparse": "clean",
@@ -1769,6 +1769,7 @@
       ],
       "coverage_matrix": "data/survival/world/art/region_coverage_matrix.v1.json",
       "review_panel": "docs/survival/world/evidence/region_art_review_1x_5x.png"
-    }
+    },
+    "github_push": "BLOCKED_TLS_GNUTLS_HANDSHAKE; local commits 9e98ab6c/1f1a8fbe/7d08d3e0 ready; retry required"
   }
 }
