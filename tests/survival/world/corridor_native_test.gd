@@ -349,21 +349,32 @@ func _run() -> void:
 		quit(1)
 
 func _revisit_path(start: Vector2i, goal: Vector2i) -> Array:
-	var distances := nav.reachable_from(start)
-	if distances[goal.y * nav.width + goal.x] < 0:
+	# The source nav grid predates the fixture's mounted physical containers and
+	# slice obstacles. Revisit routing must use live Hero shape queries so a
+	# shortest nav path does not walk through a newly mounted container body.
+	if not nav.in_bounds(goal) or not _hits_at(goal).is_empty():
+		return []
+	var queue: Array[Vector2i] = [start]
+	var previous: Dictionary = {start: start}
+	var head := 0
+	while head < queue.size():
+		var cursor: Vector2i = queue[head]
+		head += 1
+		if cursor == goal:
+			break
+		for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
+			var n := cursor + step
+			if not nav.in_bounds(n) or previous.has(n):
+				continue
+			if n != goal and not _hits_at(n).is_empty():
+				continue
+			previous[n] = cursor
+			queue.append(n)
+	if not previous.has(goal):
 		return []
 	var path: Array = []
 	var cursor := goal
 	while cursor != start:
 		path.push_front([cursor.x, cursor.y])
-		var here := distances[cursor.y * nav.width + cursor.x]
-		var previous := cursor
-		for step: Vector2i in [Vector2i.RIGHT, Vector2i.LEFT, Vector2i.DOWN, Vector2i.UP]:
-			var n := cursor + step
-			if nav.in_bounds(n) and distances[n.y * nav.width + n.x] == here - 1:
-				previous = n
-				break
-		if previous == cursor:
-			return []
-		cursor = previous
+		cursor = previous[cursor]
 	return path
