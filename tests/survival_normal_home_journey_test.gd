@@ -53,7 +53,23 @@ func _gather_until(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability
 			return true
 		var node := await _walk_to_kind(ow, hero, nav, kind)
 		if node == null:
-			print("HOME_GATHER_FAIL item=%s count=%d reason=no_reachable_node position=%s" % [item, _count(item), str(hero.global_position)])
+			var cell := nav.cell_of(hero.global_position)
+			var reachable := nav.reachable_from(cell)
+			var open_cells := 0
+			for value: int in reachable:
+				if value >= 0:
+					open_cells += 1
+			var same_kind := 0
+			var harvestable := 0
+			for raw: Variant in (ow.get(&"survival_nodes") as Dictionary).values():
+				var candidate := raw as SurvivalResourceNode
+				if candidate != null and candidate.resource_kind == kind:
+					same_kind += 1
+					if bool(_survival().call(&"is_node_harvestable", candidate.node_id, kind)):
+						harvestable += 1
+			print("HOME_GATHER_FAIL item=%s count=%d reason=no_reachable_node attempt=%d position=%s cell=%s free=%s reachable_cells=%d kind_nodes=%d harvestable=%d" % [
+				item, _count(item), attempt, str(hero.global_position), str(cell), str(nav.is_free(cell)),
+				open_cells, same_kind, harvestable])
 			return false
 		camera.reset_smoothing()
 		camera.force_update_scroll()

@@ -96,7 +96,23 @@ func _walk_to_kind(ow: Node, hero: CharacterBody2D, navigation: OverworldTravers
 			print("NORMAL_GATHER_TRACE stuck at %s target %s" % [str(hero.global_position), str(point)])
 			return null
 	_set_direction(Vector2.ZERO)
+	if not selected.can_interact(hero):
+		# The planned stand is a nav cell, the node has its own reach. A player
+		# keeps walking toward what they want to hit instead of giving up, so close
+		# the gap with ordinary input before declaring the node out of reach.
+		var close := Time.get_ticks_msec() + 2000
+		while not selected.can_interact(hero) and Time.get_ticks_msec() < close and not bool(hero.get(&"dead")):
+			_set_direction(selected.global_position - hero.global_position)
+			await physics_frame
+		_set_direction(Vector2.ZERO)
+		print("NORMAL_GATHER_TRACE approach node=%s hero=%s node_pos=%s distance=%.2f interact=%s harvestable=%s" % [
+			selected.node_id, str(hero.global_position), str(selected.global_position),
+			hero.global_position.distance_to(selected.global_position),
+			str(_within(hero, selected)), str(bool(_survival().call(&"is_node_harvestable", selected.node_id, kind)))])
 	return selected if selected.can_interact(hero) else null
+
+func _within(hero: CharacterBody2D, node: SurvivalResourceNode) -> bool:
+	return hero.global_position.distance_to(node.global_position) <= SurvivalResourceNode.REACH
 
 func _click_window(position: Vector2) -> void:
 	var motion := InputEventMouseMotion.new()
