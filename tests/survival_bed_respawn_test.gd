@@ -236,7 +236,14 @@ func _body() -> void:
 	_expect(bool(hero.get(&"dead")) and String((svc.call(&"document") as Dictionary).get("pending_death", "")) == bag_id,
 		"restart restores death and does not create a duplicate bag")
 	_expect(_count(token) == 1, "protected A3 token survives death and reload exactly once")
-	_expect(int((svc.call(&"container_contents", chest_id) as Dictionary).get(STONE, 0)) == 1 and _count(STONE) == 0 and bool(economy_adapter.ownership_audit().get("ok", false)), "re-stashed material and coupled instance persist independently across death reload")
+	_expect(int((svc.call(&"container_contents", chest_id) as Dictionary).get(STONE, 0)) == 1, "re-stashed material persists in the chest after death reload")
+	_expect(_count(STONE) == 0, "carried material remains in the death bag rather than duplicating on reload")
+	# A newly reconstructed production world owns a new economy session/port;
+	# its creation invalidates the old fixture adapter's facade. Audit through
+	# the new actual pinned session rather than a stale port.
+	var fresh_session := ow.get(&"economy_session") as Node
+	var fresh_adapter: RefCounted = fresh_session.get(&"_adapter") if fresh_session != null else null
+	_expect(fresh_adapter != null and bool((fresh_adapter.call(&"ownership_audit") as Dictionary).get("ok", false)), "reconstructed production A3 session audits the reloaded unique instance")
 	var economy: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("survival_economy", {})
 	var attributes: Dictionary = (economy.get("instances", {}) as Dictionary).get(token, {})
 	_expect(int(attributes.get("condition", 0)) == 70 and String(attributes.get("location", "")) == "bag", "A3 token attributes remain coupled through death and reload")
