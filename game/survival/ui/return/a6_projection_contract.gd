@@ -224,33 +224,107 @@ static func action_state(facts: Dictionary, action: String) -> String:
 	return STATE_DONE if bool(value) else STATE_OPEN
 
 
+## Correlates the durable ledger with the run the owner clock says is active.
+##
+## D056 resets all gameplay progression per run, so a valid season-01 ledger must
+## never tick season-02 chores. The rule is fail-closed:
+##   * with a clock, a ledger must carry the same run id (and the same run number
+##     when it also declares one); data with no binding is unverified and ignored;
+##   * without a clock the ledger is the only run identity source and must carry at
+##     least a run id or a run number.
+## An unbound ledger is displayed as unknown steps, never as imported checkmarks.
+static func bind_run_facts(facts: Dictionary, clock: Dictionary) -> Dictionary:
+	if not bool(facts.get("available", false)):
+		return {"bound": false, "reason": "run_facts_unavailable"}
+	var facts_run_id := String(facts.get("run_id", ""))
+	var facts_run_number := int(facts.get("run_number", 0))
+	if bool(clock.get("available", false)):
+		var clock_run_id := String(clock.get("run_id", ""))
+		var clock_run_number := maxi(1, int(clock.get("run_number", 1)))
+		if not facts_run_id.is_empty():
+			if facts_run_id != clock_run_id:
+				return {"bound": false, "reason": "run_facts_run_id_mismatch"}
+			if facts_run_number > 0 and facts_run_number != clock_run_number:
+				return {"bound": false, "reason": "run_facts_run_number_mismatch"}
+			return {"bound": true, "reason": ""}
+		if facts_run_number > 0:
+			if facts_run_number != clock_run_number:
+				return {"bound": false, "reason": "run_facts_run_number_mismatch"}
+			return {"bound": true, "reason": ""}
+		return {"bound": false, "reason": "run_facts_unverified"}
+	if not facts_run_id.is_empty() or facts_run_number > 0:
+		return {"bound": true, "reason": ""}
+	return {"bound": false, "reason": "run_facts_unverified"}
+
+
 # --- digest acknowledgement (cross-process) ---------------------------------
 
 
 static func make_unavailable_digest_ack(reason: String) -> Dictionary:
-	return {"available": false, "reason": reason, "acknowledged": []}
+	return {"available": false, "reason": reason, "entries": [], "global_ids": []}
 
 
-## Owner memory of which return digests were already shown. A6 only reads it: the
-## player's "Continue" is reported through the layer's `digest_dismissed` signal,
-## and A0 decides whether to persist it. That keeps acknowledgement out of A6's
-## hands without a second save.
+## Owner memory of which return digests were already shown.
+##
+## A6 only reads it: the player's "Continue" is reported through the layer's
+## `digest_dismissed` signal, and A0 decides whether to persist it. That keeps
+## acknowledgement out of A6's hands without a second save.
+##
+## Two forms are accepted, and the owner must pick one deliberately:
+##   * `{"run_id": "run-02", "digest_id": "settle-a"}` — run-scoped, the safe form
+##     for a reused digest id;
+##   * `"globally-unique-id"` — only when the owner guarantees the id is unique
+##     across every season.
+## A bare id is never treated as implicit per-run scope.
 static func sanitize_digest_ack(raw: Variant) -> Dictionary:
 	if not raw is Dictionary:
 		return make_unavailable_digest_ack("digest_ack_missing")
 	var source: Dictionary = raw
 	if String(source.get("contract", "")) != DIGEST_ACK_CONTRACT:
 		return make_unavailable_digest_ack("digest_ack_contract_mismatch")
-	var acknowledged: Array[String] = []
+	var entries: Array[Dictionary] = []
+	var global_ids: Array[String] = []
 	var raw_list: Variant = source.get("acknowledged", [])
 	if raw_list is Array:
-		for entry: Variant in raw_list:
-			var id := String(entry).strip_edges()
-			if _is_short_token(id) and not acknowledged.has(id):
-				acknowledged.append(id)
-			if acknowledged.size() >= 64:
+		for entry_value: Variant in raw_list:
+			if entry_value is Dictionary:
+				var run_id := String((entry_value as Dictionary).get("run_id", "")).strip_edges()
+				var digest_id := String((entry_value as Dictionary).get("digest_id", "")).strip_edges()
+				if not _is_short_token(run_id) or not _is_short_token(digest_id):
+					continue
+				entries.append({"run_id": run_id, "digest_id": digest_id})
+			elif entry_value is String:
+				var global_id := String(entry_value).strip_edges()
+				if _is_short_token(global_id) and not global_ids.has(global_id):
+					global_ids.append(global_id)
+			if entries.size() + global_ids.size() >= 64:
 				break
-	return {"available": true, "reason": "", "acknowledged": acknowledged}
+	return {"available": true, "reason": "", "entries": entries, "global_ids": global_ids}
+
+
+## Stable per-season identity. Two runs may legitimately reuse a digest id, so the
+## pair — not the id alone — is what the layer remembers and what A0 acknowledges.
+## The separator is a control character so no opaque id can spell a pair by hand.
+static func digest_identity(run_id: String, digest_id: String) -> String:
+	return "%s\u001f%s" % [run_id, digest_id]
+
+
+static func is_acknowledged(ack: Dictionary, run_id: String, digest_id: String) -> bool:
+	if not bool(ack.get("available", false)):
+		return false
+	var global_ids: Variant = ack.get("global_ids", [])
+	# A bare string is a *globally unique id*, nothing else: it must never be read as
+	# a run-scoped pair, or an owner typo would silently acknowledge the wrong season.
+	if global_ids is Array:
+		if (global_ids as Array).has(digest_id):
+			return true
+	for entry_value: Variant in ack.get("entries", []):
+		if not entry_value is Dictionary:
+			continue
+		var entry: Dictionary = entry_value
+		if String(entry.get("run_id", "")) == run_id and String(entry.get("digest_id", "")) == digest_id:
+			return true
+	return false
 
 
 # --- return digest ----------------------------------------------------------
@@ -261,6 +335,8 @@ static func make_unavailable_digest(reason: String) -> Dictionary:
 		"available": false,
 		"reason": reason,
 		"digest_id": "",
+		"run_id": "",
+		"identity": "",
 		"away_seconds": 0,
 		"production": [],
 		"provisions": {},
@@ -280,6 +356,11 @@ static func sanitize_return_digest(raw: Variant) -> Dictionary:
 	var digest_id := String(source.get("digest_id", "")).strip_edges()
 	if not _is_short_token(digest_id):
 		return make_unavailable_digest("return_digest_id_invalid")
+	# A digest without a run binding cannot be attributed to a season, so a reused
+	# id from an older run could be suppressed (or replayed) by mistake. Fail closed.
+	var run_id := String(source.get("run_id", "")).strip_edges()
+	if not _is_short_token(run_id):
+		return make_unavailable_digest("return_digest_run_unbound")
 	var away := _as_non_negative_int(source.get("away_seconds", 0), 0)
 	var production: Array[Dictionary] = []
 	var raw_production: Variant = source.get("production", [])
@@ -304,7 +385,9 @@ static func sanitize_return_digest(raw: Variant) -> Dictionary:
 	return {
 		"available": true,
 		"reason": "",
+		"run_id": run_id,
 		"digest_id": digest_id,
+		"identity": digest_identity(run_id, digest_id),
 		"away_seconds": away,
 		"production": production,
 		"provisions": provisions,
@@ -522,10 +605,14 @@ static func _sanitize_cue(raw: Variant) -> Dictionary:
 ## Only ages forward: A6 never makes an observation look younger than it was.
 static func cue_age_at(cue: Dictionary, observed_at: int, now_unix: int) -> int:
 	var age := int(cue.get("age_seconds", -1))
-	if age < 0:
+	if age < 0 or observed_at <= 0:
 		return -1
-	var elapsed := maxi(0, now_unix - observed_at)
-	var current := age + elapsed
+	# A sign observed after "now" is impossible chronology, not a fresh sign. The
+	# previous clamp to zero made a future timestamp look brand new, so it fails
+	# closed until the clocks agree.
+	if now_unix < observed_at:
+		return -1
+	var current := age + (now_unix - observed_at)
 	if current > int(cue.get("ttl_seconds", 0)):
 		return -1
 	return current

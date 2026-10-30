@@ -1,0 +1,221 @@
+name: A6 return UI renderer captures
+
+## Real pixels for the A6 survival return UI, with no private art in the loop.
+##
+## The avatar workflow's capture job is gated behind the licensed CraftPix sheets,
+## which are staged from a private Drive folder on the runner. When that download
+## fails the whole job stops before a single frame is drawn, so the return UI's
+## visual state was never actually rendered anywhere. This workflow is deliberately
+## separate and A6-owned: it needs nothing but this repository, and it renders the
+## four return cards at three resolutions under Xvfb with a software GL driver.
+##
+## What a green run proves:
+##   * the four states really render on the OpenGL compatibility renderer, at
+##     1280x720, 2560x1440 and 3840x2160, twelve PNGs in total;
+##   * every file is individually checked — exact dimensions, chunk structure,
+##     non-blank, the card the state is named after, and text that stays inside its
+##     own box;
+##   * a headless binary cannot fake it (`RENDERER REQUIRED`, exit 2).
+##
+## What a green run does NOT prove: that offline farming/forging settled for real
+## (the projections are `preview_fixture`), that the layer composes with the A0 HUD
+## (these frames are `layer_only`), or anything about the CraftPix avatars.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - arena/05e0328d-soul-of-hero
+    paths:
+      - "game/survival/ui/return/**"
+      - "tests/survival/ui/**"
+      - "tools/verify_a6_return_ui_captures.py"
+      - ".github/workflows/a6-return-ui-render.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a6-return-ui-render-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_ARCHIVE_SHA256: "0b1a6c54c2c619c12e169fe9241edda4b81080b519451cec2984bf0d2c6cb73c"
+  A6_CAPTURE_TAG: "return_preview"
+
+jobs:
+  render-frames:
+    name: Render and verify twelve frames (Xvfb, llvmpipe)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prove this job needs public content only
+        run: |
+          set -euo pipefail
+          test ! -e private_art/a6_avatar/avatar_art_private_runtime.json
+          test -z "$(git ls-files private_art)"
+          if grep -q "drive.google.com" .github/workflows/a6-return-ui-render.yml; then
+            echo "::error::the return UI render job must not depend on private staging"
+            exit 1
+          fi
+          echo "PUBLIC CONTENT ONLY" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          ARCHIVE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64.zip"
+          curl -L --fail --retry 3 --max-time 900 -o "$ARCHIVE" \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${ARCHIVE}" | sha256sum -c -
+          unzip -q -o "$ARCHIVE" -d "$RUNNER_TEMP/godot"
+          ENGINE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          chmod +x "$ENGINE"
+          ln -sf "$ENGINE" "$RUNNER_TEMP/godot/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          "$ENGINE" --version | tee "$RUNNER_TEMP/godot-version.txt"
+          echo "engine: $("$ENGINE" --version)" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Install a display server and a software GL driver
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends xvfb libgl1-mesa-dri libglx-mesa0 libegl1
+          xvfb-run --help > /dev/null
+          ls /usr/lib/x86_64-linux-gnu/dri/ | tee "$RUNNER_TEMP/dri-drivers.txt"
+          grep -Eq "swrast|llvmpipe" "$RUNNER_TEMP/dri-drivers.txt"
+          echo "software GL drivers present" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Import the project
+        run: |
+          set -uo pipefail
+          mkdir -p .artifacts
+          timeout --signal=TERM --kill-after=30s 1200s godot --headless --editor --path . --import --quit \
+            2>&1 | tee .artifacts/import.log | tail -30
+          echo "import done"
+
+      - name: Negative control — a headless binary must refuse to fake a capture
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 120s godot --headless --path . \
+            res://tests/survival/ui/a6_return_ui_capture.tscn > .artifacts/headless-capture.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/headless-capture.log
+          test "${status}" -eq 2
+          grep -q "RENDERER REQUIRED" .artifacts/headless-capture.log
+          echo "headless capture refused with exit 2, as designed" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Render the four return cards at three resolutions
+        run: |
+          set -uo pipefail
+          for res in 1280x720 2560x1440 3840x2160; do
+            mkdir -p ".artifacts/captures-${res}"
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_render_${res}.json"
+            timeout --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
+              env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+              godot --path . --resolution "${res}" --rendering-driver opengl3 -- \
+              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" \
+              --capture-tag="${A6_CAPTURE_TAG}" \
+              2>&1 | tee ".artifacts/render-${res}.log"
+            status=${PIPESTATUS[0]}
+            echo "return UI render ${res} exit: ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+            if [ "${status}" -ne 0 ]; then
+              echo "::error::return UI render failed at ${res}"
+              exit "${status}"
+            fi
+          done
+
+      - name: Verify each required frame individually
+        run: |
+          set -euo pipefail
+          python3 tools/verify_a6_return_ui_captures.py .artifacts \
+            2>&1 | tee .artifacts/return-ui-verification.log
+
+      - name: Assert exactly twelve files at the twelve exact sizes
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import pathlib, struct, sys
+          expected = {"1280x720": (1280, 720), "2560x1440": (2560, 1440), "3840x2160": (3840, 2160)}
+          root = pathlib.Path(".artifacts")
+          problems = []
+          seen = 0
+          for folder, want in expected.items():
+              files = sorted((root / f"captures-{folder}").glob("return_preview_*.png"))
+              if len(files) != 4:
+                  problems.append(f"{folder}: {len(files)} frames, expected 4")
+              for png in files:
+                  if "manifest" in png.name:
+                      problems.append(f"{png.name}: a manifest is not a frame")
+                      continue
+                  head = png.read_bytes()[:24]
+                  if head[:8] != b"\x89PNG\r\n\x1a\n":
+                      problems.append(f"{png}: not a PNG")
+                      continue
+                  size = struct.unpack(">II", head[16:24])
+                  seen += 1
+                  if size != want:
+                      problems.append(f"{png}: {size[0]}x{size[1]} != {want[0]}x{want[1]}")
+          if seen != 12:
+              problems.append(f"{seen} frames, expected 12")
+          for problem in problems:
+              print(f"FAIL {problem}")
+          print(f"checked {seen} frames")
+          sys.exit(1 if problems else 0)
+          PY
+
+      - name: Publish the evidence table
+        if: always()
+        run: |
+          set -uo pipefail
+          python3 - <<'PY' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, pathlib, struct
+          root = pathlib.Path(".artifacts")
+          print("\n### A6 return UI renderer frames (`preview_fixture`, `layer_only`)\n")
+          print("| frame | pixels | bytes | state confirmed |")
+          print("| --- | --- | --- | --- |")
+          for png in sorted(root.rglob("return_preview_*.png")):
+              head = png.read_bytes()[:24]
+              size = struct.unpack(">II", head[16:24]) if head[:8] == b"\x89PNG\r\n\x1a\n" else (0, 0)
+              print(f"| `{png.relative_to(root)}` | {size[0]}x{size[1]} | {png.stat().st_size} | see manifest |")
+          for manifest in sorted(root.rglob("return_preview_manifest_*.json")):
+              data = json.loads(manifest.read_text())
+              frames = data.get("frames", [])
+              print(
+                  f"\n`{manifest.name}`: renderer={data.get('renderer')} "
+                  f"saved={data.get('saved_count')}/{len(frames)} "
+                  f"overflows={len(data.get('overflows', []))} "
+                  f"state_errors={len(data.get('state_errors', []))}"
+              )
+          PY
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Artifacts: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-return-ui-frames-${{ github.run_id }}
+          path: .artifacts/captures-*/*
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-return-ui-render-logs-${{ github.run_id }}
+          path: |
+            .artifacts/*.log
+          if-no-files-found: warn
+
+      # Runs even after a failure so the job can never be read as "no news is
+      # good news": without a verified twelve-frame set the outcome is red.
+      - name: Fail unless all twelve frames verified
+        if: always()
+        run: |
+          set -euo pipefail
+          grep -q "RETURN UI CAPTURES VERIFIED (12 frames, 3 resolutions)" .artifacts/return-ui-verification.log
+          count=$(find .artifacts -name 'return_preview_*.png' | wc -l)
+          test "${count}" -eq 12
+          echo "12/12 frames verified" >> "$GITHUB_STEP_SUMMARY"

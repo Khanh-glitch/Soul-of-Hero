@@ -42,8 +42,12 @@ static func countdown(seconds: int) -> String:
 ## Time spent away while the app was closed.
 static func away(seconds: int) -> String:
 	var total := maxi(0, seconds)
+	# Sub-minute absences are reported in seconds. "Vắng 1 phút" for a 20-second
+	# absence is the same overstatement the countdown had.
+	if total < MINUTE_SECONDS:
+		return "%d giây" % total
 	if total < HOUR_SECONDS:
-		return "%d phút" % maxi(1, total / MINUTE_SECONDS)
+		return "%d phút" % (total / MINUTE_SECONDS)
 	if total < DAY_SECONDS:
 		return "%d giờ" % (total / HOUR_SECONDS)
 	var days := total / DAY_SECONDS

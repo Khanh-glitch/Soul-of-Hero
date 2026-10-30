@@ -35,6 +35,13 @@ const STATE_UNKNOWN := "unknown"
 static func build(inputs: Dictionary, clock: Dictionary = {}) -> Dictionary:
 	var facts: Dictionary = inputs.get("run_facts", {})
 	var current: Dictionary = inputs.get("current", {})
+	# D056: a ledger that cannot be tied to the active run is not evidence. It is
+	# replaced with an unavailable ledger so every step falls back to UNKNOWN,
+	# rather than importing last season's checkmarks or claiming they are open.
+	var binding := A6ProjectionContract.bind_run_facts(facts, clock)
+	var facts_bound := bool(binding.get("bound", false))
+	if not facts_bound and bool(facts.get("available", false)):
+		facts = A6ProjectionContract.make_unavailable_run_facts(String(binding.get("reason", "")))
 	var facts_available := bool(facts.get("available", false))
 	var current_available := bool(current.get("available", false))
 	if not facts_available and not current_available:
@@ -49,6 +56,8 @@ static func build(inputs: Dictionary, clock: Dictionary = {}) -> Dictionary:
 			"provisional": true,
 			"run_number": 1,
 			"run_number_known": false,
+			"facts_bound": facts_bound,
+			"facts_reason": String(binding.get("reason", "")),
 		}
 	var materials := int(current.get("materials", -1))
 	if materials < 0:
@@ -120,6 +129,8 @@ static func build(inputs: Dictionary, clock: Dictionary = {}) -> Dictionary:
 		"provisional": unknown > 0,
 		"run_number": run_number,
 		"run_number_known": run_number_known,
+		"facts_bound": facts_bound,
+		"facts_reason": String(binding.get("reason", "")),
 	}
 
 

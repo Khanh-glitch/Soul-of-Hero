@@ -16,7 +16,9 @@ extends CanvasLayer
 ## callables and a clock, which is how the headless gate drives 2 h / 18 h / 48 h
 ## returns and the "owner has no data" case without a save file.
 
-signal digest_dismissed(digest_id: String)
+## Emitted with the owner's run binding so A0 can persist a run-scoped
+## acknowledgement. A6 itself never writes it.
+signal digest_dismissed(run_id: String, digest_id: String)
 signal record_opened
 
 const RUN_CARD_SCENE: PackedScene = preload("res://game/survival/ui/return/a6_run_card.tscn")
@@ -39,7 +41,8 @@ var _source := A6OwnerProjectionSource.new()
 var _now_provider: Callable = Callable()
 var _guidance_dismissed := false
 var _seen_digests: Dictionary = {}
-var _active_digest_id := ""
+var _active_digest: Dictionary = {}
+var _run_key := ""
 var _tick := 0.0
 var _configured := false
 var _last_clock: Dictionary = {}
@@ -72,37 +75,79 @@ func configure(tree: SceneTree, overrides: Dictionary = {}, now_provider: Callab
 func refresh() -> void:
 	var now := now_seconds()
 	var clock := _source.season_clock()
+	var facts := _source.run_facts()
+	var binding := A6ProjectionContract.bind_run_facts(facts, clock)
+	var bound_facts := facts if bool(binding.get("bound", false)) else A6ProjectionContract.make_unavailable_run_facts(String(binding.get("reason", "")))
+	_sync_run_identity(clock, bound_facts)
 	_last_clock = clock
 	run_card.present(clock, now)
-	var inputs := _source.guidance_inputs()
+	var inputs := {"run_facts": facts, "current": _source.current_survival_state()}
 	guidance_panel.present(A6GuidanceModel.build(inputs, clock), _guidance_dismissed)
 	_last_cues = _source.site_cues()
 	site_cue_chip.present(_last_cues, now)
 	var digest := _source.return_digest()
-	if bool(digest.get("available", false)):
-		var digest_id := String(digest.get("digest_id", ""))
-		var acknowledged := _is_digest_acknowledged(digest_id)
-		if not _seen_digests.has(digest_id) and not acknowledged:
-			_active_digest_id = digest_id
+	if bool(digest.get("available", false)) and _digest_belongs_to_active_run(digest, clock, bound_facts):
+		var identity := String(digest.get("identity", ""))
+		var acknowledged := A6ProjectionContract.is_acknowledged(
+			_source.digest_ack(), String(digest.get("run_id", "")), String(digest.get("digest_id", "")),
+		)
+		if not _seen_digests.has(identity) and not acknowledged:
+			_active_digest = {
+				"identity": identity,
+				"run_id": String(digest.get("run_id", "")),
+				"digest_id": String(digest.get("digest_id", "")),
+			}
 			return_digest.present(digest)
 		else:
 			return_digest.clear()
 	else:
-		_active_digest_id = ""
+		_active_digest = {}
 		return_digest.clear()
 	if record_panel.visible:
 		record_panel.present(_source.run_history(), clock, now)
 	_place_cards()
 
 
-## Owner-side memory of an already-shown digest. A6 only reads it, which is how a
-## "Continue" survives a process restart without A6 owning a second save file.
-func _is_digest_acknowledged(digest_id: String) -> bool:
-	if digest_id.is_empty():
+## A run change inside one Godot process is a real D056 boundary. The layer keeps
+## no run-local player state across it: a guide dismissed last season reopens, and
+## old digest memory cannot suppress (or replay) the new season's digest. Historic
+## runs and account achievements stay readable because they are owner projections,
+## not layer state.
+func _sync_run_identity(clock: Dictionary, bound_facts: Dictionary) -> void:
+	var key := ""
+	if bool(clock.get("available", false)):
+		key = String(clock.get("run_id", ""))
+	elif bool(bound_facts.get("available", false)):
+		var facts_run_id := String(bound_facts.get("run_id", ""))
+		key = facts_run_id if not facts_run_id.is_empty() else "run-number:%d" % int(bound_facts.get("run_number", 0))
+	if key.is_empty():
+		return
+	if not _run_key.is_empty() and key != _run_key:
+		_reset_for_new_run()
+	_run_key = key
+
+
+func _reset_for_new_run() -> void:
+	_guidance_dismissed = false
+	_seen_digests.clear()
+	_active_digest = {}
+	return_digest.clear()
+
+
+## A return digest is only current when its owner run binding agrees with the run
+## the clock (or the bound ledger) says is active. A reused id from last season is
+## a different identity, not a duplicate.
+func _digest_belongs_to_active_run(digest: Dictionary, clock: Dictionary, bound_facts: Dictionary) -> bool:
+	var digest_run := String(digest.get("run_id", ""))
+	if digest_run.is_empty():
 		return false
-	var ack := _source.digest_ack()
-	var list: Variant = ack.get("acknowledged", [])
-	return list is Array and (list as Array).has(digest_id)
+	if bool(clock.get("available", false)) and digest_run != String(clock.get("run_id", "")):
+		return false
+	if bool(bound_facts.get("available", false)):
+		var facts_run := String(bound_facts.get("run_id", ""))
+		if not facts_run.is_empty() and digest_run != facts_run:
+			return false
+	return true
 
 
 func now_seconds() -> int:
@@ -149,13 +194,13 @@ func _on_record_closed() -> void:
 
 
 func _on_digest_dismissed() -> void:
-	if _active_digest_id.is_empty():
+	if _active_digest.is_empty():
 		return
-	var dismissed_id := _active_digest_id
-	_seen_digests[dismissed_id] = true
-	_active_digest_id = ""
+	var dismissed := _active_digest
+	_seen_digests[String(dismissed.get("identity", ""))] = true
+	_active_digest = {}
 	return_digest.clear()
-	digest_dismissed.emit(dismissed_id)
+	digest_dismissed.emit(String(dismissed.get("run_id", "")), String(dismissed.get("digest_id", "")))
 
 
 # --- layout -----------------------------------------------------------------

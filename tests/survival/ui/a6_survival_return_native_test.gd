@@ -54,8 +54,10 @@ func _run() -> void:
 	_test_ack_contract()
 	_test_cue_contract()
 	_test_guidance_model()
+	_test_run_binding()
 	await _test_layer_states()
 	await _test_guidance_panel_states()
+	await _test_layer_run_transition()
 	await _test_record_panel()
 	await _test_layout()
 	await _test_read_only()
@@ -142,7 +144,7 @@ func _test_guidance_model() -> void:
 
 	# With no readable bag, the owner's current snapshot is still shown as current.
 	var snapshot_only := A6GuidanceModel.build({
-		"run_facts": CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "holds": {"materials": 4}}),
+		"run_facts": CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "run_number": 1, "holds": {"materials": 4}}),
 		"current": {"available": false, "materials": -1, "structures": 0, "bed": false, "storage": false, "recipes": 0},
 	}, {})
 	_equals(_step_evidence(snapshot_only, "gather"), "Đang mang 4 nguyên liệu", "an owner snapshot fills the current-state line")
@@ -151,6 +153,7 @@ func _test_guidance_model() -> void:
 	# A first-run player who does one thing must not become a returning player.
 	var one_action := CONTRACT.sanitize_run_facts({
 		"contract": "soh.a6.run_facts.v1",
+		"run_number": 1,
 		"performed": {"gather_materials": true},
 	})
 	var first_run := A6GuidanceModel.build({"run_facts": one_action, "current": rich_current}, {})
@@ -168,7 +171,7 @@ func _test_guidance_model() -> void:
 	# Lone wall / foundation: never a home, even when the owner explicitly says the
 	# current structure set is not a valid shelter.
 	var lone_wall := A6GuidanceModel.build({
-		"run_facts": CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "shelter": {"validated": false}}),
+		"run_facts": CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "run_number": 1, "shelter": {"validated": false}}),
 		"current": {"available": true, "materials": 2, "structures": 1, "bed": false, "storage": false, "recipes": 0},
 	}, {})
 	_equals(_step_state(lone_wall, "shelter"), "open", "a lone wall is an open step, never a sheltered home")
@@ -177,14 +180,64 @@ func _test_guidance_model() -> void:
 	# Gather -> spend -> stash: the durable record survives an empty bag.
 	var gathered := CONTRACT.sanitize_run_facts({
 		"contract": "soh.a6.run_facts.v1",
+		"run_number": 1,
 		"performed": {"gather_materials": true},
 	})
 	var spent_bag := {"available": true, "materials": 0, "structures": 2, "bed": false, "storage": true, "recipes": 0}
 	_equals(_step_state(A6GuidanceModel.build({"run_facts": gathered, "current": spent_bag}, {}), "gather"), "done", "spending and stashing do not un-gather a completed step")
 
 	# Validated shelter is durable proof even before the owner records the action.
-	var validated := CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "shelter": {"validated": true}})
+	var validated := CONTRACT.sanitize_run_facts({"contract": "soh.a6.run_facts.v1", "run_number": 1, "shelter": {"validated": true}})
 	_equals(_step_state(A6GuidanceModel.build({"run_facts": validated, "current": rich_current}, {}), "shelter"), "done", "a physically validated room completes the shelter step")
+
+
+# --- D056 run binding -------------------------------------------------------
+
+
+func _test_run_binding() -> void:
+	var clock2 := CONTRACT.sanitize_season_clock(_clock(NOW, 2))
+	var current := {"available": true, "materials": 99, "structures": 6, "bed": true, "storage": true, "recipes": 0}
+	var stale := CONTRACT.sanitize_run_facts({
+		"contract": "soh.a6.run_facts.v1",
+		"run_id": "run-01",
+		"run_number": 1,
+		"performed": {"gather_materials": true, "valid_shelter": true},
+	})
+	var binding := CONTRACT.bind_run_facts(stale, clock2)
+	_expect(not bool(binding.get("bound", true)), "stale season-01 facts do not bind to a season-02 clock")
+	_equals(String(binding.get("reason", "")), "run_facts_run_id_mismatch", "the mismatch names the run id")
+	var stale_model := A6GuidanceModel.build({"run_facts": stale, "current": current}, clock2)
+	_expect(not bool(stale_model.get("facts_bound", true)), "the model reports the ledger as unbound")
+	_equals(_step_state(stale_model, "gather"), "unknown", "a stale ledger never ticks gathering in the new run")
+	_equals(_step_state(stale_model, "shelter"), "unknown", "a stale ledger never ticks shelter in the new run")
+	_equals(String(stale_model.get("mode", "")), "returning", "the clock still identifies a later run")
+
+	var wrong_number := CONTRACT.sanitize_run_facts({
+		"contract": "soh.a6.run_facts.v1",
+		"run_number": 1,
+		"performed": {"gather_materials": true},
+	})
+	_equals(String(CONTRACT.bind_run_facts(wrong_number, clock2).get("reason", "")), "run_facts_run_number_mismatch", "a conflicting run number is refused")
+
+	var fresh := CONTRACT.sanitize_run_facts({
+		"contract": "soh.a6.run_facts.v1",
+		"run_id": "run-02",
+		"run_number": 2,
+		"performed": {"gather_materials": true},
+	})
+	_expect(bool(CONTRACT.bind_run_facts(fresh, clock2).get("bound", false)), "matching season facts bind")
+	_equals(_step_state(A6GuidanceModel.build({"run_facts": fresh, "current": current}, clock2), "gather"), "done", "matching facts tick their own season")
+
+	var unverified := CONTRACT.sanitize_run_facts({
+		"contract": "soh.a6.run_facts.v1",
+		"performed": {"gather_materials": true},
+	})
+	_equals(String(CONTRACT.bind_run_facts(unverified, clock2).get("reason", "")), "run_facts_unverified", "facts without any run identity are unverified under a clock")
+
+	var no_clock := {}
+	_expect(bool(CONTRACT.bind_run_facts(fresh, no_clock).get("bound", false)), "without a clock the owner ledger's own identity is authoritative")
+	_expect(not bool(CONTRACT.bind_run_facts(unverified, no_clock).get("bound", true)), "without a clock an unbound ledger stays unknown")
+	_equals(_step_state(A6GuidanceModel.build({"run_facts": unverified, "current": current}, no_clock), "gather"), "unknown", "an unbound ledger is unknown even when it claims an action")
 
 
 # --- history / digest / ack / cues -----------------------------------------
@@ -252,6 +305,10 @@ func _test_digest_contract() -> void:
 	wilderness["provisions"] = {"consumed": 3, "shelter": "wilderness", "shelter_validated": true, "hp_floor": true}
 	_expect(not bool((CONTRACT.sanitize_return_digest(wilderness).get("provisions", {}) as Dictionary).get("hp_floor", true)), "validation cannot move the 1 HP floor into the wilderness")
 
+	var unbound := _digest(NOW, 2 * 3600, [{"kind": "forge", "completed_units": 2, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"}])
+	unbound.erase("run_id")
+	_expect(not bool(CONTRACT.sanitize_return_digest(unbound).get("available", true)), "a digest without a run binding is rejected")
+
 	var labeled := _digest(NOW, 2 * 3600, [])
 	labeled["world_changes"] = ["res://game/survival/thing.gd was rebuilt"]
 	_expect(not bool(CONTRACT.sanitize_return_digest(labeled).get("available", true)), "a technical world-change string is dropped")
@@ -260,11 +317,25 @@ func _test_digest_contract() -> void:
 func _test_ack_contract() -> void:
 	var ack := CONTRACT.sanitize_digest_ack({
 		"contract": "soh.a6.digest_ack.v1",
-		"acknowledged": ["settle-a", "settle-b", "settle-a"],
+		"acknowledged": [
+			{"run_id": "run-01", "digest_id": "settle-a"},
+			{"run_id": "run-02", "digest_id": "settle-b"},
+			"globally-unique-id",
+			"globally-unique-id",
+		],
 	})
 	_expect(bool(ack.get("available", false)), "an acknowledgement projection is accepted")
-	_equals((ack.get("acknowledged", []) as Array).size(), 2, "duplicate acknowledgements collapse")
+	_equals((ack.get("entries", []) as Array).size(), 2, "run-scoped acknowledgements are kept separately")
+	_equals((ack.get("global_ids", []) as Array).size(), 1, "repeated global ids collapse")
+	_expect(CONTRACT.is_acknowledged(ack, "run-01", "settle-a"), "a run-scoped acknowledgement matches its own run")
+	_expect(CONTRACT.is_acknowledged(ack, "run-02", "settle-b"), "each run keeps its own acknowledgement")
+	_expect(not CONTRACT.is_acknowledged(ack, "run-02", "settle-a"), "an old acknowledgement does not cover a reused id in a new run")
+	_expect(not CONTRACT.is_acknowledged(ack, "run-03", "settle-a"), "an old acknowledgement does not cover a third run")
+	_expect(CONTRACT.is_acknowledged(ack, "run-09", "globally-unique-id"), "a globally unique id covers any run")
+	_expect(not CONTRACT.is_acknowledged(ack, "run-01", "settle-b"), "an unlisted digest stays unacknowledged")
 	_expect(not bool(CONTRACT.sanitize_digest_ack("nope").get("available", true)), "a malformed acknowledgement is ignored")
+	_equals(CONTRACT.digest_identity("run-01", "d"), "run-01\u001fd", "the identity is the run/digest pair")
+	_expect(not CONTRACT.is_acknowledged(ack, "run-01", "run-01\u001fd"), "a bare id can never spell a run-scoped pair")
 
 
 func _test_cue_contract() -> void:
@@ -307,6 +378,19 @@ func _test_cue_contract() -> void:
 		"cues": [{"channel": "sound", "age_seconds": 800, "ttl_seconds": 900}],
 	}
 	_expect(not bool(A6SiteCueChip.build_view(CONTRACT.sanitize_site_cues(only_stale), NOW + 200).get("visible", true)), "a cue that aged out during the absence is hidden")
+	var future := {
+		"contract": "soh.a6.site_cues.v2",
+		"observed_at_unix": NOW + 120,
+		"cues": [{"channel": "sound", "age_seconds": 0, "ttl_seconds": 900}],
+	}
+	_expect(not bool(A6SiteCueChip.build_view(CONTRACT.sanitize_site_cues(future), NOW).get("visible", true)), "an observation dated in the future is impossible chronology, not fresh")
+	var before_observation := {
+		"contract": "soh.a6.site_cues.v2",
+		"observed_at_unix": NOW,
+		"cues": [{"channel": "trace", "age_seconds": 10, "ttl_seconds": 900}],
+	}
+	_expect(not bool(A6SiteCueChip.build_view(CONTRACT.sanitize_site_cues(before_observation), NOW - 30).get("visible", true)), "a clock earlier than the observation also fails closed")
+	_equals(A6TimeFormat.away(20), "20 giây", "a 20-second absence is not called a minute")
 	_equals(A6TimeFormat.ago(30), "vừa xong", "a sign younger than a minute reads as just now")
 	_equals(A6TimeFormat.ago(7200), "2 giờ trước", "an older sign reads in hours")
 
@@ -340,7 +424,7 @@ func _test_layer_states() -> void:
 	_equals(_layer.return_digest.row_list.get_child_count(), 3, "output, rations and the shelter collapse are all reported")
 
 	var dismissals := [0]
-	_layer.digest_dismissed.connect(func(_id: String) -> void: dismissals[0] += 1)
+	_layer.digest_dismissed.connect(func(_run_id: String, _digest_id: String) -> void: dismissals[0] += 1)
 	_layer.dismiss_digest()
 	_layer.dismiss_digest()
 	_expect(not _layer.return_digest.visible, "Continue closes the digest")
@@ -353,7 +437,9 @@ func _test_layer_states() -> void:
 	var acked := _digest(NOW, 18 * 3600, [{"kind": "forge", "completed_units": 4, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"}])
 	await _mount({
 		"return_digest": acked,
-		"digest_ack": {"contract": "soh.a6.digest_ack.v1", "acknowledged": [String(acked["digest_id"])]},
+		"digest_ack": {"contract": "soh.a6.digest_ack.v1", "acknowledged": [
+			{"run_id": String(acked["run_id"]), "digest_id": String(acked["digest_id"])},
+		]},
 	})
 	_expect(not _layer.return_digest.visible, "an owner acknowledgement keeps the digest closed in a new process")
 	await _mount({"return_digest": acked, "digest_ack": {"contract": "soh.a6.digest_ack.v1", "acknowledged": []}})
@@ -373,7 +459,7 @@ func _test_guidance_panel_states() -> void:
 	_equals(_layer.guidance_panel.progress_label.text, "—/5", "unknown progress is not printed as zero of five")
 	_expect(_layer.guidance_panel.footnote_label.text.contains("Chưa ghi nhận"), "the panel says the progress is unrecorded")
 
-	var gather_fact := {"contract": "soh.a6.run_facts.v1", "performed": {"gather_materials": true}}
+	var gather_fact := {"contract": "soh.a6.run_facts.v1", "run_number": 1, "performed": {"gather_materials": true}}
 	await _mount({"current": unknown_current, "run_facts": gather_fact})
 	var rows := _layer.guidance_panel.view().get("rows", []) as Array
 	_equals(rows.size(), 5, "first-run guidance keeps the whole chain")
@@ -387,7 +473,7 @@ func _test_guidance_panel_states() -> void:
 	_equals(_layer.guidance_panel.kicker_label.text, "GỢI Ý", "the second run is a suggestion, not a tutorial")
 
 	# Out-of-order: bed and chest before gathering.
-	var out_of_order := {"contract": "soh.a6.run_facts.v1", "performed": {"place_bed": true, "place_storage": true}}
+	var out_of_order := {"contract": "soh.a6.run_facts.v1", "run_number": 1, "performed": {"place_bed": true, "place_storage": true}}
 	await _mount({"current": unknown_current, "run_facts": out_of_order})
 	var ordered_rows := _layer.guidance_panel.view().get("rows", []) as Array
 	_equals(ordered_rows.size(), 5, "out-of-order progress still shows the whole chain on run one")
@@ -402,6 +488,93 @@ func _test_guidance_panel_states() -> void:
 	_layer.dismiss_guidance()
 	_layer.refresh()
 	_expect(not _layer.guidance_panel.visible, "dismissed guidance stays closed for this session")
+
+
+## One process, two seasons. A D056 boundary must reset the layer's run-local view
+## state while leaving owner-provided history readable.
+func _test_layer_run_transition() -> void:
+	var run1_clock := _clock(NOW - 3600, 1)
+	var run2_clock := _clock(NOW - 60, 2)
+	var facts1 := {
+		"contract": "soh.a6.run_facts.v1",
+		"run_id": "run-01",
+		"run_number": 1,
+		"performed": {"gather_materials": true},
+	}
+	var facts2 := {"contract": "soh.a6.run_facts.v1", "run_id": "run-02", "run_number": 2, "performed": {}}
+	var empty_current := {"available": true, "materials": 0, "structures": 0, "bed": false, "storage": false, "recipes": 0}
+
+	await _mount({"season_clock": run1_clock, "run_facts": facts1, "current": empty_current})
+	_expect(_layer.guidance_panel.visible, "season 01 shows its guide")
+	_expect(_panel_row_done(_layer, 0), "season-01 facts tick their own season")
+	_layer.dismiss_guidance()
+	_layer.refresh()
+	_expect(not _layer.guidance_panel.visible, "a dismissal persists inside the same run")
+
+	await _reconfigure({"season_clock": run2_clock, "run_facts": facts2, "current": empty_current})
+	_expect(_layer.guidance_panel.visible, "a new season reopens the guide even when last season dismissed it")
+	_expect(not _panel_row_done(_layer, 0), "season-01 checkmarks do not carry into season 02")
+	_equals(_layer.guidance_panel.progress_label.text, "—/5", "new-season progress is unrecorded, not inherited")
+
+	# First run's digest, dismissed inside its own season.
+	var digest1 := _digest(NOW, 6 * 3600, [
+		{"kind": "forge", "completed_units": 2, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"},
+	], "run-01")
+	await _mount({"season_clock": run1_clock, "return_digest": digest1, "current": empty_current})
+	_expect(_layer.return_digest.visible, "the season-01 digest shows in season 01")
+	_layer.dismiss_digest()
+	_layer.refresh()
+	_expect(not _layer.return_digest.visible, "a dismissed digest stays dismissed inside its own run")
+
+	# Same digest id, new season: a different identity, so it must appear.
+	var digest2 := _digest(NOW, 8 * 3600, [
+		{"kind": "crop", "completed_units": 3, "unit_label": "củ cải", "stop_reason": "queue_empty"},
+	], "run-02")
+	digest2["digest_id"] = String(digest1["digest_id"])
+	await _reconfigure({"season_clock": run2_clock, "return_digest": digest2, "current": empty_current})
+	_expect(_layer.return_digest.visible, "a reused digest id in a new season is not suppressed by last season's dismissal")
+
+	# The old season's digest itself is stale under the new clock.
+	await _reconfigure({"season_clock": run2_clock, "return_digest": digest1, "current": empty_current})
+	_expect(not _layer.return_digest.visible, "a season-01 digest is refused under a season-02 clock")
+
+	# An acknowledgement from season 01 does not silence season 02.
+	await _mount({
+		"season_clock": run2_clock,
+		"return_digest": digest2,
+		"current": empty_current,
+		"digest_ack": {"contract": "soh.a6.digest_ack.v1", "acknowledged": [
+			{"run_id": "run-01", "digest_id": String(digest2["digest_id"])},
+		]},
+	})
+	_expect(_layer.return_digest.visible, "an old season acknowledgement does not hide the new season's digest")
+
+	# The current season's acknowledgement does, across a process boundary.
+	await _mount({
+		"season_clock": run2_clock,
+		"return_digest": digest2,
+		"current": empty_current,
+		"digest_ack": {"contract": "soh.a6.digest_ack.v1", "acknowledged": [
+			{"run_id": "run-02", "digest_id": String(digest2["digest_id"])},
+		]},
+	})
+	_expect(not _layer.return_digest.visible, "a season-02 acknowledgement keeps its own digest closed after restart")
+
+	# Historic seasons stay readable while the new run's steps reset.
+	var history := {
+		"contract": "soh.a6.run_history.v1",
+		"runs": [
+			{"started_at_unix": NOW - 30 * 86400, "ended_at_unix": NOW - 16 * 86400, "end_reason": "deadline", "milestones": ["Giường đầu tiên"]},
+		],
+		"achievements": [
+			{"title": "Qua mùa đầu", "detail": "Sống trọn 14 ngày", "earned_at_unix": NOW - 16 * 86400},
+		],
+	}
+	await _mount({"season_clock": run2_clock, "run_facts": facts2, "current": empty_current, "run_history": history})
+	_layer.open_record()
+	_equals(_layer.record_panel.run_list.get_child_count(), 1, "historic seasons remain readable in a new run")
+	_equals(_layer.record_panel.achievement_list.get_child_count(), 1, "account achievements remain readable in a new run")
+	_layer.close_record()
 
 
 func _test_record_panel() -> void:
@@ -565,6 +738,7 @@ func _test_real_owner_state() -> void:
 
 	var durable := CONTRACT.sanitize_run_facts({
 		"contract": "soh.a6.run_facts.v1",
+		"run_number": 1,
 		"performed": {"gather_materials": true, "valid_shelter": true},
 	})
 	var with_owner := A6GuidanceModel.build({"run_facts": durable, "current": after["current"]}, {})
@@ -582,6 +756,19 @@ func _place_piece(survival: Node, piece: String, base: Vector2i, key: String) ->
 		if bool(result.get("ok", false)):
 			return result
 	return {}
+
+
+func _reconfigure(overrides: Dictionary) -> void:
+	_layer.configure(get_tree(), overrides, func() -> int: return NOW)
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+
+func _panel_row_done(layer: A6SurvivalReturnLayer, index: int) -> bool:
+	var rows: Array = layer.guidance_panel.view().get("rows", [])
+	if index >= rows.size():
+		return false
+	return bool((rows[index] as Dictionary).get("done", false))
 
 
 func _mount(overrides: Dictionary) -> void:
@@ -608,9 +795,10 @@ func _clock(start: int, run_number: int) -> Dictionary:
 	}
 
 
-func _digest(observed: int, away_seconds: int, production: Array) -> Dictionary:
+func _digest(observed: int, away_seconds: int, production: Array, run_id := "run-01") -> Dictionary:
 	return {
 		"contract": "soh.a6.return_digest.v1",
+		"run_id": run_id,
 		"digest_id": "digest-%d" % away_seconds,
 		"away_seconds": away_seconds,
 		"production": production,

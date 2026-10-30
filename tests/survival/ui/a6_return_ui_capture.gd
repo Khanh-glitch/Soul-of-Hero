@@ -13,8 +13,9 @@ extends Node
 ## `empty`. The driver writes a manifest next to the PNGs with each frame's
 ## dimensions, non-blank check and every visible string with its measured
 ## rectangle and overflow verdict. It **fails** (exit 1) if fewer than four frames
-## were saved or if any text overflows its box, so a silent `save_png` failure can
-## never be reported as a capture.
+## were saved, if any text overflows its box, or if a state does not actually show
+## the card it is named after — a screenshot of a refused projection (an unbound
+## digest, a stale ledger) is a failed capture, not a preview.
 ##
 ## The projections below are **preview fixtures**. They exist so layout, clipping
 ## and Vietnamese wrapping can be inspected, and they must never be quoted as
@@ -32,7 +33,9 @@ var _capture_dir := "user://a6_ui_captures"
 var _tag := "return_preview"
 var _saved: Array[String] = []
 var _entries: Array[Dictionary] = []
+var _frame_pixels := Vector2i.ZERO
 var _overflows: Array[String] = []
+var _state_errors: Array[String] = []
 
 
 func _ready() -> void:
@@ -49,22 +52,27 @@ func _run() -> void:
 	await _settle(4)
 	await _capture("digest", {
 		"season_clock": _clock(2),
-		"return_digest": _digest(),
+		"return_digest": _digest(2),
 		"current": _current(2, 1),
-		"run_facts": _facts(1),
+		"run_facts": _facts(2),
 		"site_cues": _cues(),
 	})
 	await _capture("guidance", {
 		"season_clock": _clock(1),
 		"current": _current(7, 1),
+		"run_facts": _facts(1),
 	})
 	await _capture("history", {
 		"season_clock": _clock(2),
 		"run_history": _history(),
 		"current": _current(40, 3),
-		"run_facts": _facts(3),
+		"run_facts": _facts(2),
 	}, true)
-	await _capture("empty", {})
+	await _capture("empty", {
+		"season_clock": _clock(3),
+		"run_facts": _complete_facts(3),
+		"current": {"available": true, "materials": 40, "structures": 3, "bed": true, "storage": true, "recipes": 2},
+	})
 	_write_manifest()
 	var size := get_viewport().get_visible_rect().size
 	if _saved.size() < REQUIRED_STATES.size():
@@ -77,10 +85,14 @@ func _run() -> void:
 		printerr("A6 UI CAPTURE: FAILED — text overflow: " + ", ".join(_overflows))
 		get_tree().quit(1)
 		return
+	if not _state_errors.is_empty():
+		printerr("A6 UI CAPTURE: FAILED — wrong card for the named state: " + ", ".join(_state_errors))
+		get_tree().quit(1)
+		return
 	for path: String in _saved:
 		print("A6 UI CAPTURE: ", path)
-	print("A6 UI CAPTURE OK (%d frames, %s, %dx%d, preview data)" % [
-		_saved.size(), DisplayServer.get_name(), int(size.x), int(size.y),
+	print("A6 UI CAPTURE OK (%d frames, %s, %dx%d px, preview data)" % [
+		_saved.size(), DisplayServer.get_name(), _frame_pixels.x, _frame_pixels.y,
 	])
 	get_tree().quit(0)
 
@@ -111,7 +123,21 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 	await _settle(6)
 	var viewport_size := get_viewport().get_visible_rect().size
 	var frame := get_viewport().get_texture().get_image()
-	var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, int(viewport_size.x), int(viewport_size.y)]
+	# `canvas_items` stretch means the layout is authored in 640x360 units while the
+	# framebuffer holds the window's real pixels. The file name, the manifest and the
+	# verification gate all speak about pixels, so ask the image itself.
+	var pixels := Vector2i(int(viewport_size.x), int(viewport_size.y))
+	if frame != null and not frame.is_empty():
+		pixels = Vector2i(frame.get_width(), frame.get_height())
+	if _frame_pixels == Vector2i.ZERO:
+		_frame_pixels = pixels
+	var window := DisplayServer.window_get_size()
+	var state_errors := _audit_state(layer, state)
+	if pixels != window:
+		var mismatch := "%s: frame is %dx%d but the window is %dx%d" % [state, pixels.x, pixels.y, window.x, window.y]
+		state_errors.append(mismatch)
+		_state_errors.append(mismatch)
+	var file := "%s/%s_%s_%dx%d.png" % [_capture_dir, _tag, state, pixels.x, pixels.y]
 	var saved := false
 	if frame == null or frame.is_empty():
 		printerr("A6 UI CAPTURE: %s produced no image" % state)
@@ -126,10 +152,12 @@ func _capture(state: String, overrides: Dictionary, open_record := false) -> voi
 		"state": state,
 		"file": file,
 		"saved": saved,
-		"width": int(viewport_size.x),
-		"height": int(viewport_size.y),
+		"width": pixels.x,
+		"height": pixels.y,
+		"layout_units": "%dx%d" % [int(viewport_size.x), int(viewport_size.y)],
 		"non_blank": _is_non_blank(frame) if frame != null and not frame.is_empty() else false,
 		"texts": _audit_texts(layer, state),
+		"state_ok": state_errors.is_empty(),
 	})
 	layer.queue_free()
 	await _settle(2)
@@ -146,6 +174,57 @@ func _is_non_blank(frame: Image) -> bool:
 			if seen.size() > 8:
 				return true
 	return seen.size() > 3
+
+
+## A frame is only evidence of the state it names. A refused projection renders an
+## empty card, so "the file exists and is not blank" would happily bless a broken
+## preview. These checks make the render job assert the card, not just the pixels.
+func _audit_state(layer: Node, state: String) -> Array[String]:
+	var errors: Array[String] = []
+	var guidance := layer.get("guidance_panel") as Control
+	var digest_card := layer.get("return_digest") as Control
+	var record := layer.get("record_panel") as Control
+	match state:
+		"digest":
+			if digest_card == null or not digest_card.visible:
+				errors.append("digest: the digest card is not visible")
+			else:
+				var view: Dictionary = layer.return_digest.view()
+				var rows: Array = view.get("rows", [])
+				if not bool(view.get("visible", false)) or rows.size() < 3:
+					errors.append("digest: only %d rows, reason '%s'" % [rows.size(), String(view.get("reason", ""))])
+		"guidance":
+			if guidance == null or not guidance.visible:
+				errors.append("guidance: the guidance card is not visible")
+			else:
+				var view: Dictionary = layer.guidance_panel.view()
+				var rows: Array = view.get("rows", [])
+				var any_done := false
+				for row_value: Variant in rows:
+					if bool((row_value as Dictionary).get("done", false)):
+						any_done = true
+						break
+				if rows.is_empty():
+					errors.append("guidance: no steps rendered")
+				elif not any_done:
+					errors.append("guidance: every step is unknown, so the preview shows no work at all")
+		"history":
+			if record == null or not record.visible:
+				errors.append("history: the record card is not visible")
+			else:
+				if layer.record_panel.run_list.get_child_count() < 2:
+					errors.append("history: fewer than two historic seasons")
+				if layer.record_panel.achievement_list.get_child_count() < 1:
+					errors.append("history: no achievements")
+		"empty":
+			for pair in [["guidance", guidance], ["digest", digest_card], ["record", record]]:
+				var control := pair[1] as Control
+				if control != null and control.visible:
+					errors.append("empty: the %s card is visible" % String(pair[0]))
+		_:
+			errors.append("%s: unknown state" % state)
+	_state_errors.append_array(errors)
+	return errors
 
 
 ## Every visible string with the box it was drawn into. Clipping is a layout bug a
@@ -189,19 +268,20 @@ func _audit_texts(layer: Node, state: String) -> Array[Dictionary]:
 
 
 func _write_manifest() -> void:
-	var viewport_size := get_viewport().get_visible_rect().size
 	var manifest := {
 		"renderer": DisplayServer.get_name(),
-		"resolution": "%dx%d" % [int(viewport_size.x), int(viewport_size.y)],
+		"resolution": "%dx%d" % [_frame_pixels.x, _frame_pixels.y],
+		"window": "%dx%d" % [DisplayServer.window_get_size().x, DisplayServer.window_get_size().y],
 		"data": "preview_fixture",
 		"note": "Synthetic projections for layout review; not evidence of offline settlement.",
 		"backdrop": "layer_only",
 		"required_states": REQUIRED_STATES,
 		"saved_count": _saved.size(),
 		"overflows": _overflows,
+		"state_errors": _state_errors,
 		"frames": _entries,
 	}
-	var file := "%s/%s_manifest_%dx%d.json" % [_capture_dir, _tag, int(viewport_size.x), int(viewport_size.y)]
+	var file := "%s/%s_manifest_%dx%d.json" % [_capture_dir, _tag, _frame_pixels.x, _frame_pixels.y]
 	var handle := FileAccess.open(file, FileAccess.WRITE)
 	if handle == null:
 		printerr("A6 UI CAPTURE: cannot write %s" % file)
@@ -233,10 +313,11 @@ func _clock(run_number: int) -> Dictionary:
 	}
 
 
-func _digest() -> Dictionary:
+func _digest(run_number: int) -> Dictionary:
 	return {
 		"contract": "soh.a6.return_digest.v1",
 		"digest_id": "preview-digest",
+		"run_id": "preview-%d" % run_number,
 		"away_seconds": 18 * 3600,
 		"production": [
 			{"kind": "forge", "completed_units": 6, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty"},
@@ -264,6 +345,24 @@ func _facts(run_number: int) -> Dictionary:
 		"run_number": run_number,
 		"performed": {"gather_materials": true},
 		"holds": {"materials": 2},
+		"shelter": {"validated": true},
+	}
+
+
+## Every starter step performed, so the guide retires itself and the frame shows
+## what a settled player actually sees: the season card and nothing to nag about.
+func _complete_facts(run_number: int) -> Dictionary:
+	return {
+		"contract": "soh.a6.run_facts.v1",
+		"run_number": run_number,
+		"performed": {
+			"gather_materials": true,
+			"valid_shelter": true,
+			"place_bed": true,
+			"place_storage": true,
+			"learn_recipe": true,
+		},
+		"holds": {"materials": 40},
 		"shelter": {"validated": true},
 	}
 

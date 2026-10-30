@@ -9,8 +9,12 @@ name: A6 native avatar validation
 ##     runner only (never committed), then proves both identities through the
 ##     real menu -> New Game -> identity choice -> Home -> overworld journey,
 ##     including death/respawn and a second-process reload.
-##   * `visual-captures` renders real 720p/1440p/2160p frames under Xvfb with a
-##     software GL driver and uploads them for human inspection.
+##   * `visual-captures` renders real 720p/1440p/2160p avatar frames under Xvfb with
+##     a software GL driver and uploads them for human inspection.
+##
+## The survival return UI frames used to be rendered here too, which meant a blocked
+## CraftPix download also blocked the only real render of that UI. They now live in
+## `a6-return-ui-render.yml`, which needs public content only.
 
 on:
   workflow_dispatch:
@@ -411,30 +415,6 @@ jobs:
           echo "2160p capture exit: ${result}"
           exit "${result}"
 
-      - name: Render the survival return UI previews (720p / 1440p / 2160p)
-        run: |
-          set -uo pipefail
-          for res in 1280x720 2560x1440 3840x2160; do
-            mkdir -p ".artifacts/captures-${res}"
-            export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_preview_${res}.json"
-            timeout --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
-              env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-              godot --path . --resolution "${res}" --rendering-driver opengl3 -- \
-              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" --capture-tag=return_preview \
-              2>&1 | tee ".artifacts/capture-return-${res}.log"
-            status=${PIPESTATUS[0]}
-            echo "return UI capture ${res} exit: ${status}"
-            if [ "${status}" -ne 0 ]; then
-              echo "::error::return UI capture failed at ${res} (a headless engine exits 2 on purpose)"
-              exit "${status}"
-            fi
-          done
-
-      - name: Verify each required return UI frame individually
-        run: |
-          set -euo pipefail
-          python3 tools/verify_a6_return_ui_captures.py .artifacts | tee .artifacts/return-ui-capture-verification.log
-
       - name: Assert every capture has the resolution it claims
         run: |
           python3 - <<'PY'
@@ -464,7 +444,10 @@ jobs:
           python3 - <<'PY'
           import pathlib, struct
           root = pathlib.Path(".artifacts")
-          for png in sorted(root.glob("captures-*/**.png")):
+          # `captures-*/**.png` is not a glob: `**` may only stand in for a whole
+          # path component, and Python raises ValueError on it. The captures sit one
+          # level down, so a single-level pattern is both correct and precise.
+          for png in sorted(root.glob("captures-*/*.png")):
               data = png.read_bytes()[:24]
               w, h = struct.unpack(">II", data[16:24]) if data[:8] == b"\x89PNG\r\n\x1a\n" else (0, 0)
               print(f"{png} {w}x{h} {png.stat().st_size} bytes")

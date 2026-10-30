@@ -146,17 +146,52 @@ complete the research step without an owner ledger.
 Run mode (first run teaches / later runs compact) is derived **only** from an owner
 run number — the season clock first, then `run_facts.run_number`. With neither, the
 guide stays in first-run mode forever; one completed action never promotes a
-novice. There is no hard quest gate, no A6 reward and no ordering requirement.
+novice.
+
+**D056 binding.** A ledger is only evidence for the run it belongs to. Before a
+single step is read, `bind_run_facts(facts, clock)` correlates the two owner
+projections and returns a reason when they disagree:
+
+| Situation | `reason` | Result |
+| --- | --- | --- |
+| `facts.run_id` ≠ `clock.run_id` | `run_facts_run_id_mismatch` | every step UNKNOWN |
+| `facts.run_number` ≠ `clock.run_number` | `run_facts_run_number_mismatch` | every step UNKNOWN |
+| both identities inside one ledger disagree | `run_facts_conflict` | every step UNKNOWN |
+| facts carry no `run_id`/`run_number` while a clock exists | `run_facts_unverified` | every step UNKNOWN |
+| no clock at all, facts carry their own id | bound | normal tri-state |
+| no clock and no identity in the ledger | `run_facts_unverified` | UNKNOWN, never DONE or FALSE |
+
+A refused ledger is replaced with an *unavailable* one, so the new season can never
+inherit last season's checkmarks, and it is never reported as "not done" either.
+The model reports `facts_bound` and `facts_reason` in its output so A0 can log the
+refusal instead of silently showing a blank guide. There is no hard quest gate, no A6 reward and no ordering requirement.
 
 ### 3.3 `soh.a6.digest_ack.v1` — once across processes
 
 ```jsonc
-{ "contract": "soh.a6.digest_ack.v1", "acknowledged": ["settle-20261030T0410"] }
+{
+  "contract": "soh.a6.digest_ack.v1",
+  "acknowledged": [
+    { "run_id": "run-0007", "digest_id": "settle-20261030T0410" },  // preferred
+    "a-globally-unique-digest-id"                                   // accepted form
+  ]
+}
 ```
 
+Two accepted shapes, because a digest id alone is only unambiguous if A0 promises
+it is globally unique:
+
+* an **entry** `{run_id, digest_id}` — the identity is `run_id + digest_id`;
+* a bare **string** — accepted only as a globally unique id (e.g. a timestamp), and
+  it silences that digest in whichever run presents it.
+
+An entry from a previous run does **not** acknowledge a digest with the same id in
+the current run: a reused id is a different identity, not a duplicate. Entries with
+a missing field, or a bare string that later collides, are simply not matched.
+
 A6 only reads this list. The player's "Continue" is reported through the layer's
-`digest_dismissed(digest_id)` signal; A0 may persist it under its own transaction
-and publish the projection on the next launch. Without the projection, the digest
+`digest_dismissed(run_id, digest_id)` signal; A0 may persist it under its own
+transaction and publish the projection on the next launch. Without the projection, the digest
 is remembered for the session only — that limitation is explicit rather than
 papered over with a second save file.
 
@@ -166,6 +201,7 @@ papered over with a second save file.
 {
   "contract": "soh.a6.return_digest.v1",
   "digest_id": "settle-20261030T0410",
+  "run_id": "run-0007",                // REQUIRED: the season it settled in
   "away_seconds": 64800,
   "production": [
     { "kind": "forge", "completed_units": 8, "unit_label": "thỏi sắt", "stop_reason": "fuel_empty" }
@@ -179,6 +215,12 @@ papered over with a second save file.
   "world_changes": ["Cây cầu đã sập"]
 }
 ```
+
+A digest without `run_id` is refused (`return_digest_run_unbound`) and renders
+nothing: an unattributable settlement card could otherwise be replayed into a new
+season, or suppressed because a previous season used the same id. When the clock
+names a different run (`digest.run_id` ≠ `clock.run_id`), the card is refused as
+well — history, not a return.
 
 `stop_reason` ∈ `fuel_empty`, `input_empty`, `output_full`, `no_water`,
 `queue_empty`, `capacity_full`, `season_ended`, `unknown`. Rows with
@@ -235,6 +277,10 @@ does not claim.
 
 Each cue ages forward from `observed_at_unix` (`age + now - observed`), is dropped
 once it passes `ttl_seconds`, and the chip disappears when nothing fresh remains.
+An observation dated in the future, or a missing/zero `observed_at_unix`, is
+impossible chronology: the age resolves to `-1` and the cue is dropped rather than
+clamped to "just now", so a bad clock cannot manufacture a fresh sign. A local
+clock that is *behind* the observation behaves the same way.
 Expired evidence therefore cannot keep looking current. An empty projection renders
 nothing — silence, never "your base is safe".
 
@@ -244,7 +290,7 @@ nothing — silence, never "your base is safe".
 | --- | --- |
 | D052 no clutter | Every visible Label/Button text and tooltip is screened against `res://`, `user://`, `soh.`, `schema`, `contract`, `_v1`, `_v2`, `BLOCKED`, `NATIVE`, `FIXTURE`, `TEST ONLY`, `TODO`, `null`. Corner cards only; diagnostics never reach release UI. |
 | D055 14 real days | exact 1,209,600 s window; countdown floors, seconds under a minute; `Đã khép` at expiry. |
-| D056 reset + history | only completed runs and achievements are read; record says achievements carry no strength into the next season. |
+| D056 reset + history | only completed runs and achievements are read; record says achievements carry no strength into the next season. A run change *inside one Godot process* is a real boundary: the dismissed guide, the seen-digest set and the active digest are dropped, while owner-published history and achievements stay readable. |
 | D057 guidance | durable owner facts, tri-state unknown/false/done; out-of-order and pre-completion count; first run/later run from owner run identity; no A6 rewards or gates. |
 | D059 sheltered starvation | 1 HP floor only with `shelter: "home"` **and** `shelter_validated: true`. |
 | D061 traces | perceived cues only, aged and expired; no omniscient safety. |
@@ -263,28 +309,43 @@ nothing — silence, never "your base is safe".
 
 ## 6. Visual evidence gate (Phase 3)
 
+Rendering is owned by `.github/workflows/a6-return-ui-render.yml`, a separate A6
+job that needs **public repository content only**. It is deliberately not part of
+the avatar workflow: those captures sit behind the licensed CraftPix staging step
+in a private Drive folder, so a failed download would also mean the return UI was
+never drawn anywhere.
+
 `tests/survival/ui/a6_return_ui_capture.tscn` renders four states — `digest`,
 `guidance`, `history`, `empty` — at 1280x720, 2560x1440 and 3840x2160 under
-`xvfb-run` with software GL. It:
+`xvfb-run` with `LIBGL_ALWAYS_SOFTWARE=1` and llvmpipe. It:
 
 * refuses to run on a headless binary (`RENDERER REQUIRED`, exit 2);
-* writes a per-resolution manifest with each frame's dimensions, a non-blank
-  verdict computed from the framebuffer, and every visible string with its measured
-  rectangle and overflow verdict;
-* **exits 1** when fewer than four frames were saved or when any text overflows its
-  box, so a `save_png` failure can never be reported as a capture;
-* tags every file `return_preview_` and declares `"data": "preview_fixture"` in the
-  manifest.
+* writes a per-resolution manifest with the renderer, the window size, each
+  frame's real pixel size, the 640x360 layout units it was authored in, a
+  non-blank verdict computed from the framebuffer, every visible string with its
+  measured rectangle and overflow verdict, and `state_ok` per state;
+* **exits 1** when fewer than four frames were saved, when any text overflows its
+  box, or when a state does not show the card it is named after — a refused
+  projection renders an empty card, and a screenshot of that is a failed capture,
+  not a preview;
+* names files by the **framebuffer** size, not the stretch-unit viewport, and
+  fails if those disagree with the requested window;
+* tags every file `return_preview_` and declares `"data": "preview_fixture"` and
+  `"backdrop": "layer_only"`.
 
-`tools/verify_a6_return_ui_captures.py` then checks all twelve files individually
-(dimensions, saved flag, non-blank, screen containment, minimum audited text
-boxes). A directory full of avatar frames fails: without the return tag and the
-manifest the count stays at zero.
+`tools/verify_a6_return_ui_captures.py` then checks all twelve files individually:
+exact dimensions, PNG chunk structure with CRC and a full inflate of the pixel
+data (a header-only or truncated file is rejected), `saved`, `non_blank`,
+`state_ok`, at least three audited text boxes, screen containment, per-string
+overflow, and four byte-distinct frames per resolution. It requires a real
+display-server name in the manifest, so a `headless` run can never satisfy it. The
+workflow fails the job unless the log says
+`RETURN UI CAPTURES VERIFIED (12 frames, 3 resolutions)`; the artifact steps carry
+`if: always()` so a failure still leaves the frames for inspection.
 
-**No frame has been rendered or inspected in this sandbox.** Human review of
-Vietnamese wrapping, focus, hierarchy, overlap with the real A0 HUD and Gold
-contrast remains open, and hostility between this layer and the live HUD can only
-be judged once A0 mounts it.
+These frames are `preview_fixture` + `layer_only` evidence. They say nothing about
+offline production being real, nothing about the live A0 HUD or Gold contrast, and
+nothing about the CraftPix avatars.
 
 ## 7. Evidence
 
@@ -292,7 +353,7 @@ be judged once A0 mounts it.
 bash tools/run_a6_return_ui_gate.sh /path/to/godot
 → import exit 0
 → no save/mint/unlock call in game/survival/ui/return/
-→ A6 RETURN UI NATIVE PASSED (165 checks)
+→ A6 RETURN UI NATIVE PASSED (204 checks)
 → A6 RETURN UI GATE PASSED
 ```
 
@@ -323,6 +384,30 @@ Positive and negative coverage:
   notice;
 * 720p/1440p/2160p geometry, text hygiene, and A0's save document and save file
   unchanged byte-for-byte.
+* **D056 run isolation** — a season-01 ledger under a season-02 clock is refused by
+  id mismatch and by number mismatch, stays UNKNOWN for both gathering and shelter,
+  and still reports `mode: returning`; a ledger with no identity at all is
+  `run_facts_unverified`; a matching ledger ticks only its own season; without a
+  clock the ledger's own id is authoritative;
+* **in-process run change** — one layer instance goes from season 01 to season 02:
+  the guide reopens after last season's dismissal, checkmarks reset to `—/5`,
+  progress never inherits, a dismissed digest does not silence the new season, a
+  *reused* digest id in the new season reappears, the old season's digest is
+  refused under the new clock, and an old-season acknowledgement does not hide the
+  new season's digest while the current-season one does (cross-process reload).
+  Historic runs and achievements stay readable throughout;
+* **digest binding** — a digest without `run_id` is rejected with
+  `return_digest_run_unbound`; the acknowledgement identity is `run + digest`, so
+  the same id in another run is neither suppressed nor matched, and a bare string
+  still works as a globally unique id;
+* **impossible chronology** — a cue observed in the future, or a clock behind the
+  observation, resolves to age `-1` and is dropped instead of clamped to fresh;
+* `away(20)` reads "20 giây", not "1 phút".
+
+The isolation tests are mutation-checked: removing the run-change reset fails
+`a new season reopens the guide…`; trusting an unbound ledger fails four
+assertions including `a stale ledger never ticks gathering`; dropping the digest
+run gate fails `a digest without a run binding is rejected`.
 
 The avatar gates are re-run separately (see the hand-off report); they are a
 regression check, not part of this gate.
@@ -334,6 +419,18 @@ regression check, not part of this gate.
    guide is honest but static.
 3. Offline settlement digest, including `shelter_validated` from A1 topology.
 4. Account history/achievements and a run identity for the second-run mode.
-5. Digest acknowledgement persistence (A0 connects `digest_dismissed`).
+5. Digest acknowledgement persistence (A0 connects `digest_dismissed(run_id, digest_id)`).
 6. D061 perceptual cue projection from the world/ecology owner.
 7. Production mount, and the human visual pass over real frames with the A0 HUD.
+
+`tools/verify_a6_return_ui_captures.py` is itself tested with a synthetic tree
+(logic only — never quoted as render evidence): a complete set passes 12/12, and
+nine wrong ones are rejected — `headless` in the manifest, an engine
+`state_errors` entry, a frame the engine did not confirm, four identical frames
+(stuck framebuffer), an overflowing string, a missing state, a header-only PNG,
+and corrupted pixel data (bad IDAT CRC).
+
+**Status of the twelve real frames:** produced by
+`.github/workflows/a6-return-ui-render.yml` on a hosted runner; this document is
+updated with the run id and the human inspection verdict when that job is green,
+and not before.
