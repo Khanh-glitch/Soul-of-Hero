@@ -366,6 +366,30 @@ func get_player_equipment_grade_request() -> int:
 	return PLAYER_AVATAR_GRADE_ZERO
 
 
+## Appearance identity of a save document: chosen character, the equipment grade
+## the loadout requests and the identity revision. Two documents with the same
+## key must present the same character, so a commit that does not change the key
+## must not disturb a playing animation.
+func _appearance_identity_of(document: Dictionary) -> String:
+	var avatar_value: Variant = document.get("player_avatar", {})
+	var avatar: Dictionary = avatar_value if avatar_value is Dictionary else {}
+	var gender := String(avatar.get("gender", ""))
+	if not PLAYER_AVATAR_GENDERS.has(gender):
+		return ""
+	var grade := PLAYER_AVATAR_GRADE_ZERO
+	var loadout_value: Variant = document.get("auxiliary_loadout", {})
+	if loadout_value is Dictionary:
+		var equipped := 0
+		for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+			if not String((loadout_value as Dictionary).get(slot_id, "")).strip_edges().is_empty():
+				equipped += 1
+		if equipped >= 3:
+			grade = 2
+		elif equipped >= 1:
+			grade = 1
+	return "%s:g%d:r%s" % [gender, grade, String(avatar.get("revision", 0))]
+
+
 func get_player_avatar() -> Dictionary:
 	_ensure_loaded()
 	var raw: Variant = _data.get("player_avatar", {})
@@ -399,7 +423,6 @@ func set_player_avatar(gender: String, source: String = "menu") -> bool:
 	}
 	if not _commit_candidate(candidate):
 		return false
-	player_avatar_changed.emit(get_player_avatar())
 	return true
 
 
@@ -2484,6 +2507,9 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	if _commit_in_progress or _transaction_mutation_active:
 		_push_failure("Rejected a re-entrant save commit.")
 		return false
+	# Captured before anything is prepared so it describes what the player is
+	# currently being shown, not the candidate that is about to replace it.
+	var previous_appearance := _appearance_identity_of(_data)
 	var original_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(_data)
 	var candidate_error: String = UNIQUE_OWNERSHIP_GUARD.inspect(candidate)
 	if not original_error.is_empty() or not candidate_error.is_empty():
@@ -2505,6 +2531,11 @@ func _commit_candidate(candidate: Dictionary, capability: RefCounted = null) -> 
 	_data = snapshot
 	_is_loaded = true
 	save_committed.emit(get_snapshot())
+	# Equipping, unequipping or changing character happens outside the avatar
+	# screens as well, so the notification lives on the single commit path: a
+	# mutation that cannot change what the player looks like stays silent.
+	if _appearance_identity_of(snapshot) != previous_appearance:
+		player_avatar_changed.emit(get_player_avatar())
 	return true
 
 

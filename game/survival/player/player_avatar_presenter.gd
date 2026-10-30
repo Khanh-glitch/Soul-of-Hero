@@ -54,6 +54,10 @@ var _last_host_animation := &""
 var _last_host_frame := -1
 var _pipeline_ready := false
 var _appearance_gate := ""
+## Projection revision already resolved and mounted. A commit that cannot change
+## the character (gold, quests, unrelated items) keeps this key, so the running
+## clip is never restarted for cosmetic reasons.
+var _resolved_revision := ""
 var _requested_grade := 0
 
 
@@ -109,6 +113,10 @@ func refresh() -> void:
 		_host_sprite.visible = true
 		_emit_state()
 		return
+	if _status == STATUS_READY and is_instance_valid(_avatar_sprite) \
+			and String(projection.get("revision", "")) == _resolved_revision:
+		_emit_state()
+		return
 	_appearance_gate = ""
 	var manifest := _load_manifest()
 	var requested_grade := int(projection.get("armor_grade", 0))
@@ -135,6 +143,7 @@ func refresh() -> void:
 		return
 	_appearance = resolved
 	_pipeline_ready = true
+	_resolved_revision = String(projection.get("revision", ""))
 	_status = STATUS_READY
 	_gender = gender
 	_armor_grade = int(resolved.get("armor_grade", 0))
@@ -164,6 +173,12 @@ func get_presentation_state() -> Dictionary:
 		"private_art": _has_private_manifest(),
 		"has_avatar_sprite": is_instance_valid(_avatar_sprite),
 	}
+
+
+## Revision the currently mounted avatar was resolved from; empty when nothing
+## is mounted. Native gates assert a cosmetic-only commit leaves it untouched.
+func get_resolved_revision() -> String:
+	return _resolved_revision
 
 
 func get_presented_action() -> String:
@@ -312,6 +327,7 @@ func _mount_avatar_sprite() -> void:
 
 func _teardown_avatar_sprite() -> void:
 	_pipeline_ready = false
+	_resolved_revision = ""
 	if is_instance_valid(_avatar_sprite):
 		_avatar_sprite.queue_free()
 	_avatar_sprite = null

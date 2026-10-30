@@ -17,6 +17,7 @@ extends Node
 ##   [--avatar-gender=male|female] [--avatar-expectation=auto|ready|blocked]
 
 const PRIVATE_MANIFEST_PATH := "res://private_art/a6_avatar/avatar_art_private_runtime.json"
+const AUX_RULES := preload("res://game/meta/equipment/auxiliary_equipment_rules.gd")
 const SOURCE_FRAME_COUNT_IDLE := 12
 const ATTACK_INPUT := &"attack"
 const RIGHT_INPUT := &"move_right"
@@ -183,6 +184,7 @@ func _check_knight_avatar() -> void:
 	await _check_attack_clip()
 	await _check_hurt_and_death_clip()
 	_check_respawn_clip()
+	await _check_equipment_grade_presentation()
 
 
 func _check_locomotion_clips() -> void:
@@ -281,6 +283,92 @@ func _check_respawn_clip() -> void:
 		String(_save.call(&"get_player_avatar").get("gender", "")) == _gender,
 		"respawn keeps the stored identity"
 	)
+
+
+## What the player wears is A0 state, never art state. Equipping real gear must
+## keep the same chosen character on screen and unequipping must restore the base
+## look; a commit that cannot change appearance must not restart the clip.
+func _check_equipment_grade_presentation() -> void:
+	var sprite_before := _presenter.call(&"get_avatar_sprite") as AnimatedSprite2D
+	_expect(sprite_before != null, "equipment checks start from a mounted avatar")
+	if sprite_before == null:
+		return
+	var revision_before_grant := String(_save.call(&"get_player_appearance_projection").get("revision", ""))
+	var vessel: Dictionary = AUX_RULES.generate_item(&"soul_vessel", &"normal", 2, 71001, &"a6_native")
+	_expect(
+		bool(_save.call(&"grant_auxiliary_equipment", vessel, "a6:fixture:grant_vessel")),
+		"the gate grants one real Soul Vessel as a fixture"
+	)
+	_expect(
+		bool(_save.call(&"grant_player_levels", 1, "a6:fixture:level_two")),
+		"the gate reaches the Vessel unlock level through A0 progression"
+	)
+	_expect(
+		bool(_save.call(&"equip_auxiliary_equipment", String(vessel.get("uuid", "")), "a6:fixture:equip_vessel")),
+		"the Vessel equips through the A0 transaction path"
+	)
+	await _wait_frames(4)
+	var equipped_projection: Dictionary = _save.call(&"get_player_appearance_projection")
+	_expect(int(equipped_projection.get("armor_grade", -1)) == 1, "A0 requests grade 1 for one equipped Vessel")
+	_expect(
+		String(equipped_projection.get("revision", "")) != revision_before_grant,
+		"equipment changes the projection revision"
+	)
+	var equipped_state: Dictionary = _presenter.call(&"get_presentation_state")
+	_expect(String(equipped_state.get("gender", "")) == _gender, "equipping keeps the chosen character")
+	_expect(bool(equipped_state.get("has_avatar_sprite", false)), "equipping keeps a real avatar on screen")
+	var gate := String(equipped_state.get("appearance_gate", ""))
+	var presented_grade := int(equipped_state.get("armor_grade", -1))
+	_expect(
+		(gate == "GRADE_1_APPEARANCE_SOURCE_BLOCKED" and presented_grade == 0)
+			or (gate.is_empty() and presented_grade == 1),
+		"grade 1 either presents verified art or reports the explicit gate (gate=%s grade=%d)" % [
+			gate, presented_grade,
+		]
+	)
+	_expect(
+		bool(_save.call(&"unequip_auxiliary_slot", &"soul_vessel", "a6:fixture:unequip_vessel")),
+		"the Vessel unequips through the A0 transaction path"
+	)
+	await _wait_frames(4)
+	var restored_state: Dictionary = _presenter.call(&"get_presentation_state")
+	_expect(String(restored_state.get("status", "")) == "READY", "removing gear keeps the avatar presented")
+	_expect(String(restored_state.get("appearance_gate", "")).is_empty(), "the grade gate clears when the gear is removed")
+	_expect(int(restored_state.get("armor_grade", -1)) == 0, "removing gear restores the base appearance")
+	_expect(String(restored_state.get("gender", "")) == _gender, "unequipping keeps the same character")
+	var sprite_after := _presenter.call(&"get_avatar_sprite") as AnimatedSprite2D
+	_expect(sprite_after != null and sprite_after.is_playing(), "the avatar still animates after the gear round trip")
+	var resolved_after := String(_presenter.call(&"get_resolved_revision"))
+	_expect(not resolved_after.is_empty(), "the mounted avatar records the revision it was built from")
+	_expect(
+		bool(_save.call(&"set_tutorial_completed", &"a6_native_cosmetic", "a6:fixture:cosmetic_commit")),
+		"an unrelated A0 commit succeeds"
+	)
+	await _wait_frames(3)
+	_expect(
+		String(_presenter.call(&"get_resolved_revision")) == resolved_after,
+		"an unrelated commit does not rebuild the avatar"
+	)
+	_expect(
+		_presenter.call(&"get_avatar_sprite") == sprite_after,
+		"an unrelated commit keeps the same sprite node instead of restarting the clip"
+	)
+	_expect(
+		not bool(_save.call(&"grant_auxiliary_equipment", vessel, "a6:fixture:grant_vessel")),
+		"the fixture grant receipt cannot replay, so the round trip duplicated nothing"
+	)
+	_expect(
+		bool(_save.call(&"equip_auxiliary_equipment", String(vessel.get("uuid", "")), "a6:fixture:reequip_vessel")),
+		"the same Vessel instance can be equipped again after unequipping"
+	)
+	_expect(
+		bool(_save.call(&"unequip_auxiliary_slot", &"soul_vessel", "a6:fixture:final_unequip")),
+		"the final unequip leaves the profile on the base appearance"
+	)
+	await _wait_frames(2)
+	# From here on the profile legitimately owns one fixture Vessel, so the
+	# "identity work grants nothing" check measures only the remaining work.
+	_inventory_before = _save.call(&"inventory_totals")
 
 
 func _check_persistence_and_inventory() -> void:
