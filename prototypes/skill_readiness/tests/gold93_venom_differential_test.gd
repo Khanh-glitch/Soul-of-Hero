@@ -397,7 +397,7 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		if sid == 16 and (n == 191 or n == 192):
 			var fi: int = 0
 			for f in w.fx:
-				print("GOLD93_FXL t=%d %d kind=%s age=%0.17f x=%0.17f y=%0.17f sz=%0.17f life=%0.17f dead=%s" % [n, fi, String(f.get("kind")), float(f.get("age")), float(f.get("x")), float(f.get("y")), float(f.get("sz")) if f.get("sz") != null else -1.0, float(f.get("life")) if f.get("life") != null else -1.0, str(bool(f.get("dead")))])
+				print("GOLD93_FXL t=%d %d kind=%s age=%0.17f x=%0.17f y=%0.17f sz=%0.17f life=%0.17f dead=%s litC=%d dark=%d edge=%d" % [n, fi, String(f.get("kind")), float(f.get("age")), float(f.get("x")), float(f.get("y")), float(f.get("sz")) if f.get("sz") != null else -1.0, float(f.get("life")) if f.get("life") != null else -1.0, str(bool(f.get("dead"))), int(f.get("litC")) if f.get("litC") != null else -1, int(f.get("dark")) if f.get("dark") != null else -1, int(f.get("edge")) if f.get("edge") != null else -1])
 				fi += 1
 		if sid == 7:
 			w.hatch_trace = n >= 110 and n <= 210
