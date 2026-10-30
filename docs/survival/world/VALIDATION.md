@@ -94,3 +94,11 @@ Native playable integration remains `false`.
 - `check_determinism.py` now double-compiles plan + slice: **230 artifacts**, tree SHA `429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123`.
 - CI runs the isolated Godot 4.7 slice reader/reducer (`slice_test.gd`) with PASS phrase `SURVIVAL SLICE CONTRACT PASSED` and an anti-vacuity gate of ≥120 assertions. Push run **40903943412** and PR run **40903953241** @ `ec9edecbc7fbf10b43753502cd6f56977fb09800` are **success**, including slice compile/validate, Python 74 tests, determinism, Godot chunk reader, Godot slice vectors and both anti-vacuity gates. Local sandbox has no Godot; CI job/step conclusions are authoritative.
 - The slice fixture does not claim Hero movement, combat, damage, production SaveService persistence, A3 EconomyService integration or A6 UI mounting.
+
+## Canonical geography connector validation
+
+- `compile_connector.py` reads pinned legacy world/layers/props + unchanged A1 chunk6:3 and emits A1-owned contract/delta plus derived pilot inputs under `artifacts/a1-connector/`. It does not edit A0 legacy sources, controller, SaveService or A1 chunks.
+- `validate_connector.py` fail-closed checks source pins, exact 45 collision / 47 dressed / 13 prop delta, protected legacy content separation, composed legacy preservation outside the mouth, annex walk identity, fail-closed padding, one-chunk import, canonical reward lock and `native_playable=false`.
+- Local result: connector validation **0 errors**; `pytest tests/survival/world` **82 passed** (74 prior + 8 connector tests); world/slice validators pass; determinism **232 artifacts**, tree SHA `43af6553cb90829c91cf6c3419ed444181af538cd8f3967a205f8434b938f36f`.
+- CI adds `godot-connector-native`: root-project Godot 4.7 fixture with real Knight scene, live `PhysicsShapeQueryParameters2D` route verification and ordinary held movement Refuge → Waystation → Relay → Refuge, plus ten-endpoint reachability and camera-limit checks. It is an isolated composed-world fixture, **not** the production controller and **not** a native-playable claim. Result: **CI-PENDING** until run readback.
+- A0 production acceptance (CN-07..10) remains pending: source-path injection, annex build guard, slice obstacle mount, fresh-save/reload global-pixel resume, exact rewards and rollback recovery.

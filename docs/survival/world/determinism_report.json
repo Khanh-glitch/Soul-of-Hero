@@ -1,5 +1,5 @@
 {
-  "artifact_count": 230,
+  "artifact_count": 232,
   "artifacts": [
     {
       "bytes": 9443,
@@ -977,6 +977,16 @@
       "sha256": "c3670dc3667e7917fa5c1d16bc54d4e48b5427d0478ff35d6800067785c5eefe"
     },
     {
+      "bytes": 12996,
+      "path": "data/survival/world/connector/canonical_connector.v1.json",
+      "sha256": "ea871b98a340be11070f361ec78087c14f7e67d7b7a87cca01219ca52b4c8b74"
+    },
+    {
+      "bytes": 17329,
+      "path": "data/survival/world/connector/legacy_cell_delta.v1.json",
+      "sha256": "5bfe2704f48e6c9a3cacf39e813f878b482671765e010968698611fa4ff84d23"
+    },
+    {
       "bytes": 6053,
       "path": "data/survival/world/hazard_capability_contracts.json",
       "sha256": "88ffbc7cbfd3573b34f32f27af527b7a33c4b6b08b1bddacd064ba9988c8edf2"
@@ -1152,8 +1162,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123",
-  "compile_2_tree_sha256": "429f0fabe8ff950918b32ff97e358a3eb8e68106d92a64cc64e40e57ca64c123",
+  "compile_1_tree_sha256": "43af6553cb90829c91cf6c3419ed444181af538cd8f3967a205f8434b938f36f",
+  "compile_2_tree_sha256": "43af6553cb90829c91cf6c3419ed444181af538cd8f3967a205f8434b938f36f",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

@@ -116,6 +116,23 @@
       "status": "not_started",
       "evidence": [],
       "next": "Run ACCEPTANCE.md with evidence across integrated systems"
+    },
+    {
+      "id": "SURV-050A-CONNECTOR",
+      "name": "A1 canonical geography connector blocker: exact legacy carve + bounded one-chunk annex contract for PR21",
+      "status": "source_gate_pass_pending_a0_production_native",
+      "evidence": [
+        "docs/survival/world/CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md",
+        "data/survival/world/connector/canonical_connector.v1.json",
+        "data/survival/world/connector/legacy_cell_delta.v1.json",
+        "tools/survival/worldgen/compile_connector.py",
+        "tools/survival/worldgen/validate_connector.py",
+        "tests/survival/world/test_connector.py",
+        "tests/survival/world/connector_native_test.gd",
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20",
+        "A0 negative prerequisite native run 40931599594"
+      ],
+      "next": "A0 apply owned world-source seam/delta/annex build guard and run production CN-07..10; CT accept/reject exact 45-cell ridge tradeoff; A1 PAUSED_AWAITING_NATIVE_INTEGRATION; native_playable=false"
     }
   ],
   "next_action": {

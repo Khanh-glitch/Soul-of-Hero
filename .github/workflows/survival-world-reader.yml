@@ -56,6 +56,10 @@ jobs:
         run: python tools/survival/worldgen/validate_world.py | tee "$ARTIFACT_DIR/validation.json"
       - name: Validate vertical-slice handoff
         run: python tools/survival/worldgen/validate_slice.py | tee "$ARTIFACT_DIR/slice_validation.json"
+      - name: Compile canonical geography connector contract + bounded annex pilot
+        run: python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector | tee "$ARTIFACT_DIR/connector_compile.json"
+      - name: Validate connector evidence gate (source-verified, not native playable)
+        run: python tools/survival/worldgen/validate_connector.py --out artifacts/a1-connector | tee "$ARTIFACT_DIR/connector_validation.json"
       - name: Negative / acceptance tests
         run: python -m pytest tests/survival/world -q | tee "$ARTIFACT_DIR/pytest.txt"
       - name: Double-compile determinism
@@ -65,7 +69,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: a1-world-python-evidence
-          path: artifacts/a1-world/
+          path: |
+            artifacts/a1-world/
+            artifacts/a1-connector/
           if-no-files-found: warn
           retention-days: 14
 
@@ -145,5 +151,66 @@ jobs:
         with:
           name: a1-world-godot-reader-evidence
           path: artifacts/a1-world/
+          if-no-files-found: warn
+          retention-days: 14
+
+  godot-connector-native:
+    name: A1 GODOT 4.7 CONNECTOR NATIVE FIXTURE (NOT PRODUCTION)
+    needs: python-authoring
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Derive bounded annex pilot inputs (read-only legacy sources)
+        run: |
+          mkdir -p artifacts/a1-connector
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector --no-contract
+      - name: Import root project for real Knight / OverworldWorld fixture
+        run: |
+          mkdir -p artifacts/ud_connector_import
+          timeout --signal=TERM --kill-after=10s 300s godot --headless \
+            --path . --user-data-dir artifacts/ud_connector_import \
+            --import >artifacts/a1-connector/godot-import.log 2>&1
+          rc=$?
+          echo "connector import exit_code=$rc"
+          tail -40 artifacts/a1-connector/godot-import.log
+          exit $rc
+      - name: Run live-shape Refuge -> Waystation -> Relay -> Refuge fixture
+        run: |
+          mkdir -p artifacts/ud_connector_native
+          timeout --signal=TERM --kill-after=15s 360s godot --headless \
+            --path . --user-data-dir artifacts/ud_connector_native \
+            --script res://tests/survival/world/connector_native_test.gd -- \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector" \
+            --report=artifacts/a1-connector/connector_native_report.json \
+            >artifacts/a1-connector/godot-connector.log 2>&1
+          rc=$?
+          echo "connector fixture exit_code=$rc"
+          cat artifacts/a1-connector/godot-connector.log
+          echo "$rc" >artifacts/a1-connector/connector-exit-code
+          exit $rc
+      - name: Connector fixture anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-connector/godot-connector.log
+          [ -f "$log" ] || { echo "::error::no connector fixture log"; exit 1; }
+          checks=$(grep -cE '^CONNECTOR (PASS|FAIL): ' "$log" || true)
+          echo "connector fixture assertions reported: ${checks}"
+          [ "${checks:-0}" -ge 12 ] || { echo "::error::connector fixture ran fewer than 12 assertions"; exit 1; }
+          grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || { echo "::error::connector fixture did not reach PASS summary"; exit 1; }
+          grep -q 'production integration still A0-owned' "$log" || { echo "::error::connector fixture overclaimed production integration"; exit 1; }
+      - name: Upload connector native fixture evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a1-connector-native-fixture-evidence
+          path: artifacts/a1-connector/
           if-no-files-found: warn
           retention-days: 14

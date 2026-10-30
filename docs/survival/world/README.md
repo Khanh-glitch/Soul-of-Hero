@@ -15,6 +15,7 @@ This directory contains the review package for the complete authored continent. 
 5. [`PACING_ANALYSIS.md`](PACING_ANALYSIS.md) — concrete journey/travel/preparation/logistics estimates; playtime NOT_TESTED.
 6. [`PRODUCT_CORRECTIONS.md`](PRODUCT_CORRECTIONS.md) — novice hazard bootstrap, A1/A3 material decisions, truthful POI readiness and two early exemplars.
 7. [`RESEARCH_AND_LICENSES.md`](RESEARCH_AND_LICENSES.md) — required source reading, pinned external research, license/reuse decisions.
+8. [`CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md`](CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md) — single canonical seam blocker: exact legacy carve + one-chunk annex contract, A0 owners, acceptance vectors, rollback; production native still false.
 
 ## Machine-readable artifacts
 
@@ -28,6 +29,7 @@ This directory contains the review package for the complete authored continent. 
 - `data/survival/world/a1_a3_material_decisions.json` — explicit A1 decisions for PR #19 aliases and 12 missing items.
 - `data/survival/world/poi_authoring/*.v1.json` — two early interaction specs; 106 other new POIs remain `WORLD_SITE_CONTRACT_ONLY`.
 - `data/survival/world/vertical_slice/` — native-ready two-POI handoff for Ashen Waystation + Crown Relay Shed: exact cell contracts, A0/A3/A6 payloads, 10 adversarial vectors; `native_playable=false`.
+- `data/survival/world/connector/` — canonical geography connector contract + exact 45-cell legacy collision delta / 47-cell road dressing / 13-prop suppression; bounded one-chunk annex pilot inputs are derived to `artifacts/a1-connector/`, not committed as replacement legacy sources.
 - `data/survival/world/poi_route_graph.json` — POI/route/capability graph for A3/A5/A6.
 - `data/survival/world/material_source_contracts.json` — material source/consumer contracts for A3.
 - `data/survival/world/baseline_lock.json` — read-only production baseline hashes and entrance oracle.
@@ -46,6 +48,8 @@ python3 tools/survival/worldgen/preview_slice.py
 python3 tools/survival/worldgen/analyze_pacing.py
 .venv/bin/python tools/survival/worldgen/validate_world.py
 .venv/bin/python tools/survival/worldgen/validate_slice.py
+.venv/bin/python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector
+.venv/bin/python tools/survival/worldgen/validate_connector.py --out artifacts/a1-connector
 .venv/bin/python -m pytest tests/survival/world -q
 python3 tools/survival/worldgen/check_determinism.py
 .venv/bin/python tools/survival/worldgen/preview.py
@@ -60,3 +64,7 @@ Isolated Godot 4.7 reader fixture: `tests/survival/world/godot/`; CI: `.github/w
 ## Native-ready two-POI vertical slice
 
 See `VERTICAL_SLICE_HANDOFF.md`. The slice makes only `poi_crown_waystation` and `poi_crown_relay_shed` implementation-ready for A0 native integration. It adds exact footprints, required nav, obstacles, entrances, retreat paths, action/state transitions, A0 save/transaction identities, exact A3 item/source IDs, discovered-only A6 projections and 10 executable adversarial vectors. It does not regenerate the world, add POIs, import prototype TypeScript, implement P1–P3 research mechanics, or claim native playability.
+
+## Canonical geography connector blocker
+
+See `CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md`. A1 selected a bounded static one-chunk annex: exact 45-cell legacy ridge cut at `x369..383,y199..201`, 47 dressed road cells, 13 flat cliff decal suppressions, and unchanged chunk `6:3` composed at canonical `(384,192)` into `448×256`. It preserves global coordinates, ten dungeon entrances, canonical POI identities and exact rewards; it does not import all 192 chunks or spawn the 106 unmounted POIs. A0 owns the production world-source seam, annex build guard, slice obstacle mount and production Hero/save acceptance. Local source gate passes; native fixture is CI-pending; production `native_playable=false`. A1 state: `PAUSED_AWAITING_NATIVE_INTEGRATION`.
