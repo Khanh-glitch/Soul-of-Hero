@@ -6,6 +6,7 @@ extends Node
 ## on reload/exit. A4 attestation is deliberately not configured.
 
 const ADAPTER = preload("res://game/survival/economy/a0_economy_adapter.gd")
+const WAYSTATION_HOST = preload("res://game/survival/waystation_host.gd")
 const CONTRACT := "soh.economy.active_tick.v1"
 const TICKS_PER_SECOND := 60
 const MAX_UNCOMMITTED_TICKS := 600
@@ -26,6 +27,14 @@ var _jobs: Dictionary = {}
 var _jobs_dirty := true
 var _focused := true
 var _configured := false
+# World sources share this pausable physical session, not wall-clock or UI time.
+var _world_seconds := 0
+var _world_steps := 0
+var _world_sequence := 0
+var _world_last_ack := 0
+var _world_armed := false
+var _world_baseline_pending := false
+var _world_active_point: Node
 
 
 func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2D) -> bool:
@@ -41,6 +50,7 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 	if _port == null or not bool(_adapter.call(&"configure", _port, Callable(self, "_resolve_station"))):
 		return false
 	_adapter.call(&"configure_time_host", Callable(self, "_snapshot"))
+	_adapter.call(&"configure_world_host", Callable(self, "_world_snapshot"))
 	_save.connect(&"save_loaded", _on_save_loaded)
 	_save.connect(&"save_committed", _on_save_committed)
 	_save.connect(&"save_reset", _on_save_reset)
@@ -71,6 +81,7 @@ func _notification(what: int) -> void:
 
 
 func _discard_partial_steps() -> void:
+	_world_steps = 0
 	for value: Variant in _stations.values():
 		value["steps"] = 0
 
@@ -78,13 +89,24 @@ func _discard_partial_steps() -> void:
 func _new_session(snapshot: Dictionary) -> bool:
 	var data: Dictionary = snapshot.get("survival_economy", {})
 	var saved_time: Dictionary = data.get("time", {})
-	var prior := int(saved_time.get("latest_session_index", -1))
+	var saved_world: Dictionary = snapshot.get("world_slice", {}) if snapshot.get("world_slice", {}) is Dictionary else {}
+	var saved_clock: Dictionary = saved_world.get("clock", {}) if saved_world.get("clock", {}) is Dictionary else {}
+	# World-only play may have never written the station clock. Reusing its old
+	# index with a new random session id would permanently conflict on restart.
+	var prior := maxi(int(saved_time.get("latest_session_index", -1)), int(saved_clock.get("latest_session_index", -1)))
 	if prior >= 1000000000:
 		return false
 	_session_index = prior + 1
 	_session_id = Crypto.new().generate_random_bytes(16).hex_encode()
 	_sequence = 0
 	_command_serial = 0
+	_world_seconds = 0
+	_world_steps = 0
+	_world_sequence = 0
+	_world_last_ack = 0
+	_world_armed = not saved_world.is_empty()
+	_world_baseline_pending = _world_armed
+	_world_active_point = null
 	_stations.clear()
 	_jobs.clear()
 	_jobs_dirty = true
@@ -142,6 +164,19 @@ func _physics_process(_delta: float) -> void:
 		# Discard partial ticks when interrupted; never credit paused/modal time.
 		_discard_partial_steps()
 		return
+	# Only a physically mounted, A0-owned host activates the world clock.
+	# Legacy worlds incur no extra saves. No offline or modal time is credited.
+	if _waystation_host() != null:
+		if _world_baseline_pending:
+			_flush_world_clock()
+		_world_steps += 1
+		if _world_steps >= TICKS_PER_SECOND:
+			_world_steps = 0
+			if _world_seconds - _world_last_ack < 3000:
+				_world_seconds += 1
+				_world_sequence += 1
+			if _world_armed and _world_seconds - _world_last_ack >= 300:
+				_flush_world_clock()
 	if _jobs_dirty:
 		_jobs = _adapter.call(&"jobs")
 		_jobs_dirty = false
@@ -193,6 +228,62 @@ func _flush(id: String) -> void:
 		var record: Dictionary = _stations.get(id, {})
 		record["ack"] = int(record.get("ticks", 0))
 		_stations[id] = record
+
+
+# The A0 world host creates this exact node as part of the physical world. A UI
+# cannot choose rewards, clock values, discovery, actor or target cells.
+func _waystation_host() -> Node:
+	if not is_instance_valid(_world):
+		return null
+	var host := _world.get_node_or_null("WaystationRuntime")
+	if host == null or host.get_script() != WAYSTATION_HOST:
+		return null
+	return host
+
+
+func _world_snapshot(poi_id: String) -> Dictionary:
+	if not _gameplay_active() or poi_id != "poi_crown_waystation" or _waystation_host() == null:
+		return {}
+	var nav := _world.get(&"traversability") as OverworldTraversability
+	if nav == null:
+		return {}
+	var cell := nav.cell_of(_hero.global_position)
+	var host := _waystation_host()
+	var discovered := is_instance_valid(_world_active_point) and bool(host.call(&"matches_interaction", _world_active_point, _hero))
+	return {"contract": "soh.economy.world_host.v1", "poi_id": poi_id,
+		"discovered": discovered, "hero_cell": [cell.x, cell.y],
+		"session_id": _session_id, "session_index": _session_index,
+		"sequence": _world_sequence, "active_seconds": _world_seconds,
+		"world_revision": "a1-waystation-2951bf85"}
+
+
+func _flush_world_clock() -> void:
+	if not _world_armed or not _gameplay_active() or _waystation_host() == null:
+		return
+	var result: Dictionary = _adapter.call(&"advance_world_time", "poi_crown_waystation", _event())
+	if bool(result.get("ok", false)):
+		_world_last_ack = _world_seconds
+		_world_baseline_pending = false
+
+
+## Called only by the mounted A0 host after an actual Knight interaction.
+## The host resolves a fixed A1 action and checks point identity, range and stand.
+func try_waystation_interaction(point: Node, actor: Node) -> Dictionary:
+	var host := _waystation_host()
+	if not _gameplay_active() or host == null or actor != _hero or not is_instance_valid(point) \
+			or not bool(host.call(&"owns_point", point)) or not bool(host.call(&"matches_interaction", point, actor)):
+		return {"ok": false, "reason": "OUT_OF_RANGE"}
+	var request: Dictionary = host.call(&"request_for", point)
+	if request.is_empty():
+		return {"ok": false, "reason": "unknown_world_action"}
+	_world_active_point = point
+	var result: Dictionary = _adapter.call(&"world_action", request, _event())
+	_world_active_point = null
+	if bool(result.get("ok", false)):
+		_world_armed = true
+		_world_last_ack = _world_seconds
+		_world_baseline_pending = false
+	return result
 
 
 func _event() -> String:

@@ -12,7 +12,9 @@ extends RefCounted
 ## - Cast: only an injected A4 attestor bound to a verified catalog skill binding
 ##   may authorize charge debit at the gameplay commit boundary.
 
+const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
 const ROOT := "survival_economy"
+const WORLD_ROOT := "world_slice"
 const SCHEMA := 2
 const CATALOG_ROOT := "res://data/survival/"
 const MAX_EVENT_LENGTH := 96
@@ -27,6 +29,7 @@ var _save: Node
 var _station_resolver: Callable
 var _time_host: Callable
 var _skill_attestor: Callable
+var _world_host: Callable
 var catalog: Dictionary = {}
 var last_error := ""
 
@@ -41,6 +44,7 @@ func configure(save_service: Node, station_resolver: Callable = Callable()) -> b
 	_station_resolver = station_resolver
 	_time_host = Callable()
 	_skill_attestor = Callable()
+	_world_host = Callable()
 	return load_catalog()
 
 ## A0 composition root only. The host must be a pure read of authoritative
@@ -53,6 +57,14 @@ func configure_time_host(host: Callable) -> bool:
 ## production safety depends on this producer being trusted and source-verified.
 func configure_skill_attestor(attestor: Callable) -> bool:
 	_skill_attestor = attestor if attestor.is_valid() else Callable()
+	return true
+
+## A0 composition root only. The world host is a pure read of authoritative
+## active-session time, discovery and hero stand cell. It is not a UI flag and
+## not a second clock; A0 derives it from the same pausable gameplay clock that
+## drives EconomySession. Caller-supplied active seconds are never trusted.
+func configure_world_host(host: Callable) -> bool:
+	_world_host = host if host.is_valid() else Callable()
 	return true
 
 func load_catalog() -> bool:
@@ -70,6 +82,20 @@ func load_catalog() -> bool:
 			last_error = "invalid_catalog:" + pair[1]
 			return false
 		catalog[pair[0]] = parsed[pair[0]]
+	var world_file := FileAccess.open(CATALOG_ROOT + "items/world_source_bindings.v3.json", FileAccess.READ)
+	if world_file == null:
+		last_error = "missing_catalog:items/world_source_bindings.v3.json"
+		return false
+	var world_parsed: Variant = JSON.parse_string(world_file.get_as_text())
+	world_file.close()
+	if not world_parsed is Dictionary:
+		last_error = "invalid_catalog:items/world_source_bindings.v3.json"
+		return false
+	var binding_errors := WorldSources.validate_catalog(world_parsed, catalog.get("items", {}), catalog.get("sources", {}))
+	if not binding_errors.is_empty():
+		last_error = "invalid_world_bindings:" + ",".join(binding_errors)
+		return false
+	catalog["world_bindings"] = world_parsed
 	last_error = ""
 	return true
 
@@ -82,6 +108,10 @@ func document() -> Dictionary:
 	return _state(raw)
 
 func _candidate_state_error(candidate: Dictionary) -> String:
+	if candidate.has(WORLD_ROOT):
+		var world_error := WorldSources.state_error(candidate[WORLD_ROOT], catalog.get("world_bindings", {}))
+		if not world_error.is_empty():
+			return world_error
 	if not candidate.has(ROOT):
 		return ""
 	return _state_error(candidate[ROOT])
@@ -239,6 +269,271 @@ func instance(instance_id: String) -> Dictionary:
 
 func jobs() -> Dictionary:
 	return document().get("jobs", {}).duplicate(true)
+
+# ---------------------------------------------------------------------------
+# A1 world sources / capabilities. One SaveService candidate, no side journal.
+# ---------------------------------------------------------------------------
+func world_bindings() -> Dictionary:
+	return catalog.get("world_bindings", {})
+
+func world_document() -> Dictionary:
+	if _save == null:
+		return {}
+	var candidate: Dictionary = _save.call(&"get_snapshot")
+	if not _candidate_state_error(candidate).is_empty():
+		return {}
+	return _world_read(candidate)
+
+func _world_read(candidate: Dictionary) -> Dictionary:
+	if candidate.has(WORLD_ROOT):
+		return (candidate[WORLD_ROOT] as Dictionary).duplicate(true)
+	return WorldSources.empty_state(world_bindings())
+
+func _world_mut(candidate: Dictionary) -> Dictionary:
+	if not candidate.has(WORLD_ROOT):
+		candidate[WORLD_ROOT] = WorldSources.empty_state(world_bindings())
+	return candidate[WORLD_ROOT]
+
+func has_capability(capability_id: String) -> bool:
+	return (world_document().get("capabilities", []) as Array).has(capability_id)
+
+## Read-only A6/A0 projection. Never exposes the mutator or host receipt.
+func world_projection(poi_id: String) -> Dictionary:
+	var world := world_document()
+	var poi: Dictionary = (world.get("pois", {}) as Dictionary).get(poi_id, {})
+	if poi.is_empty():
+		return {}
+	var clock: Dictionary = world.get("clock", {})
+	var active := int(clock.get("active_seconds", 0))
+	var sources: Array[Dictionary] = []
+	for raw: Variant in world_bindings().get("bindings", []):
+		var b: Dictionary = raw
+		if String(b.get("poi_id", "")) != poi_id:
+			continue
+		var next_ready := int(poi.get(String(b.get("next_ready_field", "")), 0))
+		sources.append({
+			"binding_id": String(b.get("binding_id", "")),
+			"identity": String(b.get("identity", "")),
+			"instance_id": String(b.get("instance_id", "")),
+			"action_id": String(b.get("action_id", "")),
+			"claim_count": int(poi.get(String(b.get("claim_index_field", "")), 0)),
+			"ready": active >= next_ready,
+			"remaining_active_seconds": maxi(0, next_ready - active),
+			"rewards": (b.get("rewards", []) as Array).duplicate(true),
+		})
+	return {"poi_id": poi_id, "state": poi.duplicate(true), "capabilities": (world.get("capabilities", []) as Array).duplicate(true),
+		"active_seconds": active, "sources": sources}
+
+func _world_host_receipt(poi_id: String) -> Dictionary:
+	if not _world_host.is_valid():
+		return {}
+	var value: Variant = _world_host.call(poi_id)
+	if not WorldSources.host_receipt_error(value, poi_id).is_empty():
+		return {}
+	return value
+
+## Monotonic cumulative ACTIVE seconds. New sessions baseline the host instead
+## of crediting offline time; remaining cooldowns survive because next_ready is
+## stored against the cumulative counter, not the per-session host counter.
+func _advance_world_clock(world: Dictionary, host: Dictionary) -> String:
+	var clock: Dictionary = world.get("clock", {})
+	var index := int(host.session_index)
+	var host_seconds := int(host.active_seconds)
+	var latest := int(clock.get("latest_session_index", -1))
+	if latest == -1:
+		clock = {"latest_session_index": index, "session_id": String(host.session_id), "sequence": int(host.sequence),
+			"active_seconds": 0, "host_active_seconds": host_seconds}
+	elif index < latest:
+		return "stale_world_session"
+	elif index == latest:
+		if String(host.session_id) != String(clock.get("session_id", "")):
+			return "world_session_conflict"
+		if int(host.sequence) < int(clock.get("sequence", -1)):
+			return "stale_world_sequence"
+		var delta := host_seconds - int(clock.get("host_active_seconds", 0))
+		if delta < 0:
+			return "world_clock_regressed"
+		if delta > WorldSources.MAX_HOST_QUANTUM:
+			return "world_time_quantum_exceeded"
+		clock["active_seconds"] = int(clock.get("active_seconds", 0)) + delta
+		clock["host_active_seconds"] = host_seconds
+		clock["sequence"] = int(host.sequence)
+	else:
+		clock = {"latest_session_index": index, "session_id": String(host.session_id), "sequence": int(host.sequence),
+			"active_seconds": int(clock.get("active_seconds", 0)), "host_active_seconds": host_seconds}
+	world["clock"] = clock
+	return ""
+
+func _candidate_bag_totals(candidate: Dictionary) -> Dictionary:
+	var totals := {}
+	for key: Variant in _bag_stacks(candidate).keys():
+		var record: Variant = _bag_stacks(candidate)[key]
+		if not record is Dictionary:
+			continue
+		var id := _stack_base_id(String(key), record)
+		if id.begins_with(TOKEN_PREFIX):
+			continue
+		totals[id] = int(totals.get(id, 0)) + int(record.get("quantity", 0))
+	return totals
+
+func _add_source_reward(candidate: Dictionary, reward: Dictionary, context: Dictionary) -> bool:
+	var item_id := String(reward.get("item_id", ""))
+	var definition := item(item_id)
+	if definition.is_empty() or String(definition.get("storage", "")) != "stack":
+		return false
+	var kind := String(definition.get("kind", "material"))
+	if kind == "station_kit":
+		kind = "material"
+	var metadata := {"source": "survival_economy", "display_name": String(definition.get("label", item_id)),
+		"source_id": String(reward.get("source_id", "")), "provenance": (reward.get("provenance", []) as Array).duplicate(true)}
+	metadata.merge(context, true)
+	return bool(_save.call(&"add_items_to_candidate", candidate, item_id, kind, int(reward.get("quantity", 0)), metadata))
+
+func _world_plan(world: Dictionary, request: Dictionary) -> Dictionary:
+	var poi_id := String(request.get("poi_id", ""))
+	var action_id := String(request.get("action_id", ""))
+	var instance_id := String(request.get("instance_id", ""))
+	var poi: Dictionary = (world.get("pois", {}) as Dictionary).get(poi_id, {})
+	if poi.is_empty():
+		return {"reason": "unknown_world_poi"}
+	if not instance_id.is_empty():
+		var binding := WorldSources.binding_for(world_bindings(), poi_id, action_id, instance_id)
+		if binding.is_empty():
+			return {"reason": "unknown_source_instance"}
+		var generation := int(poi.get(String(binding.get("claim_index_field", "")), 0)) + 1
+		return {"kind": "source", "binding": binding, "generation": generation,
+			"key": WorldSources.transaction_key(String(binding.transaction_key_template), generation)}
+	var action := WorldSources.action_for(world_bindings(), poi_id, action_id)
+	if action.is_empty():
+		return {"reason": "unknown_world_action"}
+	return {"kind": "action", "action": action, "generation": 1, "key": String(action.transaction_key_template)}
+
+## A0 calls this from the pausable world clock (or immediately before an
+## interaction) so cooldowns accrue only while gameplay is active.
+func advance_world_time(poi_id: String, event_id: String) -> Dictionary:
+	if not (_world_read(_save.call(&"get_snapshot") if _save != null else {}).get("pois", {}) as Dictionary).has(poi_id):
+		return _fail("unknown_world_poi")
+	return _transact("world_time", event_id, {"poi_id": poi_id},
+		func(candidate: Dictionary, _state: Dictionary, result: Dictionary) -> bool:
+			var host := _world_host_receipt(poi_id)
+			if host.is_empty():
+				result["reason"] = "world_host_unavailable"; return false
+			var world := _world_mut(candidate)
+			var clock_error := _advance_world_clock(world, host)
+			if not clock_error.is_empty():
+				result["reason"] = clock_error; return false
+			result["active_seconds"] = int(world["clock"].active_seconds)
+			return true)
+
+## Atomic A1 world action / source claim. request may contain ONLY poi_id,
+## action_id and (for a physical source) instance_id. Costs, rewards, cooldown,
+## generation, capability and receipt are derived from the pinned A3 binding and
+## the authoritative host, never from the caller.
+func world_action(request: Dictionary, event_id: String) -> Dictionary:
+	for key: Variant in request.keys():
+		if not String(key) in ["poi_id", "action_id", "instance_id"]:
+			return _fail("invalid_world_request_field:" + String(key))
+	var poi_id := String(request.get("poi_id", ""))
+	var action_id := String(request.get("action_id", ""))
+	if poi_id.is_empty() or action_id.is_empty():
+		return _fail("invalid_world_request")
+	var snapshot: Dictionary = _save.call(&"get_snapshot") if _save != null else {}
+	var preflight := _world_plan(_world_read(snapshot), request)
+	if preflight.has("reason"):
+		return _fail(String(preflight.reason))
+	var canonical_key := String(preflight.key)
+	var preflight_definition: Dictionary = preflight.get("binding", preflight.get("action", {}))
+	var payload := {"request": request.duplicate(true), "receipt_metadata": {
+		"a1_transaction_key": canonical_key, "poi_id": poi_id, "action_id": action_id,
+		"instance_id": String(request.get("instance_id", "")), "reward_right_id": String(preflight_definition.get("reward_right_id", ""))}}
+	var outcome := _transact("world_action", event_id, payload,
+		func(candidate: Dictionary, _state: Dictionary, result: Dictionary) -> bool:
+			var host := _world_host_receipt(poi_id)
+			if host.is_empty():
+				result["reason"] = "world_host_unavailable"; return false
+			if not bool(host.discovered):
+				result["reason"] = "NOT_DISCOVERED"; return false
+			var world := _world_mut(candidate)
+			var clock_error := _advance_world_clock(world, host)
+			if not clock_error.is_empty():
+				result["reason"] = clock_error; return false
+			var plan := _world_plan(world, request)
+			if plan.has("reason") or String(plan.key) != canonical_key:
+				result["reason"] = String(plan.get("reason", "stale_world_generation")); return false
+			var poi: Dictionary = world["pois"][poi_id]
+			var active := int(world["clock"].active_seconds)
+			var definition: Dictionary = plan.get("binding", plan.get("action", {}))
+			if not WorldSources.cell_matches(host.hero_cell, definition.get("stand_cells", [])):
+				result["reason"] = "OUT_OF_RANGE"; return false
+			for cap: Variant in definition.get("requires_capabilities", []):
+				if not (world["capabilities"] as Array).has(String(cap)):
+					result["reason"] = "MISSING_CAPABILITY:" + String(cap); return false
+			var receipts: Dictionary = poi.get("reward_receipts", {})
+			if receipts.has(canonical_key):
+				result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
+			var rewards: Array = []
+			var costs: Array = []
+			var grants: Array = []
+			var state_writes: Dictionary = {}
+			if String(plan.kind) == "source":
+				var next_ready := int(poi.get(String(definition.next_ready_field), 0))
+				if active < next_ready:
+					result["reason"] = "COOLDOWN"; result["remaining_active_seconds"] = next_ready - active; return false
+				rewards = definition.get("rewards", [])
+			else:
+				if bool(definition.get("one_time", false)) and bool(poi.get(String(definition.get("one_time_flag", "")), false)):
+					result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
+				costs = definition.get("consumes_items", [])
+				rewards = definition.get("reward_items", [])
+				grants = definition.get("grants_capabilities", [])
+				state_writes = definition.get("state_writes", {})
+			var totals := _candidate_bag_totals(candidate)
+			for cost: Variant in costs:
+				var c: Dictionary = cost
+				if int(totals.get(String(c.item_id), 0)) < int(c.quantity):
+					result["reason"] = "MISSING_ITEM:" + String(c.item_id); return false
+			var context := {"binding_id": String(definition.get("binding_id", definition.get("reward_right_id", ""))),
+				"instance_id": String(request.get("instance_id", "")), "a1_transaction_key": canonical_key}
+			var trial: Dictionary = candidate.duplicate(true)
+			for reward: Variant in rewards:
+				if not _add_source_reward(trial, reward, context):
+					result["reason"] = "inventory_full"; return false
+			for cost: Variant in costs:
+				var c: Dictionary = cost
+				if not _remove(candidate, String(c.item_id), int(c.quantity)):
+					result["reason"] = "MISSING_ITEM:" + String(c.item_id); return false
+			var granted_items := {}
+			for reward: Variant in rewards:
+				var r: Dictionary = reward
+				if not _add_source_reward(candidate, r, context):
+					result["reason"] = "inventory_full"; return false
+				granted_items[String(r.item_id)] = int(granted_items.get(String(r.item_id), 0)) + int(r.quantity)
+			var granted_caps: Array[String] = []
+			for cap: Variant in grants:
+				if not (world["capabilities"] as Array).has(String(cap)):
+					world["capabilities"].append(String(cap))
+					granted_caps.append(String(cap))
+			for field: Variant in state_writes.keys():
+				poi[String(field)] = state_writes[field]
+			if String(plan.kind) == "source":
+				poi[String(definition.claim_index_field)] = int(plan.generation)
+				poi[String(definition.next_ready_field)] = active + int(definition.cooldown_active_seconds)
+			poi["discovered"] = true
+			poi["last_transaction_key"] = canonical_key
+			receipts[canonical_key] = String(definition.get("reward_right_id", ""))
+			poi["reward_receipts"] = receipts
+			candidate[WORLD_ROOT] = world
+			result["result"] = "SUCCESS"
+			result["transaction_key"] = canonical_key
+			result["consumed_items"] = WorldSources.cost_totals(costs)
+			result["granted_items"] = granted_items
+			result["granted_capabilities"] = granted_caps
+			result["state_patch"] = state_writes.duplicate(true)
+			result["active_seconds"] = active
+			return true)
+	if bool(outcome.get("duplicate", false)) or String(outcome.get("reason", "")) == "ALREADY_APPLIED":
+		return _ok({"duplicate": true, "result": "ALREADY_APPLIED", "transaction_key": canonical_key})
+	return outcome
 
 func _bag_stacks(candidate: Dictionary) -> Dictionary:
 	var inventory: Dictionary = candidate.get("inventory", {})
@@ -421,6 +716,10 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 			return _ok({"duplicate": true})
 		return _fail("event_id_conflict")
 	var result := {"ok": false, "reason": "rejected"}
+	var receipt_metadata := {"kind": "survival_economy", "operation": operation, "event_id": event_id, "payload_sha256": signature}
+	var extra_metadata: Variant = payload.get("receipt_metadata", {})
+	if extra_metadata is Dictionary:
+		receipt_metadata.merge(extra_metadata, true)
 	var applied := bool(_save.call(&"transact_once", key, func(candidate: Dictionary) -> bool:
 		var state_error := _candidate_state_error(candidate)
 		if not state_error.is_empty():
@@ -449,7 +748,7 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 		state["schema"] = SCHEMA
 		candidate[ROOT] = state
 		return true
-	, {"kind": "survival_economy", "operation": operation, "event_id": event_id, "payload_sha256": signature}))
+	, receipt_metadata))
 	if not applied:
 		return _fail(String(result.get("reason", "commit_failed")))
 	result["ok"] = true

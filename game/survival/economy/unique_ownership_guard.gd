@@ -180,6 +180,12 @@ static func inspect(document: Dictionary) -> String:
 
 
 static func changed_by_generic(before: Dictionary, after: Dictionary) -> bool:
+	# A1 rights, claim generations and cooldowns are coupled to A3 rewards.
+	# Generic transactions cannot erase or manufacture them.
+	if before.has("world_slice") != after.has("world_slice"):
+		return true
+	if before.get("world_slice", {}) != after.get("world_slice", {}):
+		return true
 	if before.has("survival_economy") != after.has("survival_economy"):
 		return true
 	if before.get("survival_economy", {}) != after.get("survival_economy", {}):
