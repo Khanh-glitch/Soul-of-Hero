@@ -2,6 +2,7 @@ name: A8 native world-content pilot
 
 on:
   pull_request:
+    branches: ['feature/survival-rpg-foundation-20261029']
     paths:
       - 'game/survival/world_content/**'
       - 'data/survival/world_content/**'
@@ -9,16 +10,6 @@ on:
       - 'tools/survival/world_content/**'
       - 'docs/survival/world_content/**'
       - '.github/workflows/a8-world-content-native.yml'
-  push:
-    branches: ['arena/2d7e6d7a-soul-of-hero']
-    paths:
-      - 'game/survival/world_content/**'
-      - 'data/survival/world_content/**'
-      - 'tests/survival/world_content/**'
-      - 'tools/survival/world_content/**'
-      - 'docs/survival/world_content/**'
-      - '.github/workflows/a8-world-content-native.yml'
-
 jobs:
   godot-native:
     runs-on: ubuntu-latest

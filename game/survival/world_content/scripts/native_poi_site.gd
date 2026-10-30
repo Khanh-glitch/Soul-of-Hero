@@ -13,6 +13,21 @@ const CONTRACT_ID := "soh.native_poi.intent.v1"
 const CONTRACT_VERSION := 1
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
+const WORLD_PROP_FRAMES: Dictionary = {
+	"rock_a": Rect2(2, 424, 26, 20),
+	"rock_b": Rect2(94, 396, 34, 26),
+	"rock_c": Rect2(195, 429, 20, 15),
+	"rock_d": Rect2(296, 400, 30, 22),
+	"rock_e": Rect2(2, 392, 40, 30),
+	"rock_f": Rect2(78, 426, 23, 18),
+	"cart": Rect2(170, 396, 38, 26),
+	"barrel": Rect2(30, 424, 16, 20),
+	"camp_crate": Rect2(175, 428, 18, 16),
+	"short_bridge_broken": Rect2(56, 350, 80, 40),
+	"short_bridge_fixed": Rect2(138, 350, 80, 40),
+	"fence": Rect2(139, 426, 34, 18)
+}
+const CAINOS_TREE_FRAME := Rect2(12, 8, 132, 160)
 
 @export_file("*.json") var definition_path := ""
 @export var test_harness_only := true
@@ -34,12 +49,16 @@ var _pending: Dictionary = {}
 var _choice_index := 0
 var _interaction_area: Area2D
 var _elapsed := 0.0
+var _world_props_atlas: Texture2D
+var _cainos_plant_atlas: Texture2D
 
 
 func _ready() -> void:
 	if not _load_definition():
 		push_error("NativePoiSite has no valid definition: %s" % definition_path)
 		return
+	_world_props_atlas = load("res://assets/environment/overworld/overworld_props.png") as Texture2D
+	_cainos_plant_atlas = load("res://assets/environment/cainos_demo/cainos_plant.png") as Texture2D
 	_build_physics()
 	queue_redraw()
 
@@ -453,6 +472,21 @@ func _draw() -> void:
 	_draw_gate()
 
 
+func _draw_world_prop(frame: String, destination: Rect2, tint := Color.WHITE) -> void:
+	if _world_props_atlas == null or not WORLD_PROP_FRAMES.has(frame):
+		return
+	var source_rect: Rect2 = WORLD_PROP_FRAMES[frame]
+	draw_texture_rect_region(_world_props_atlas, destination, source_rect, tint, false, true)
+
+
+func _draw_cainos_tree(destination: Rect2) -> void:
+	if _cainos_plant_atlas == null:
+		return
+	draw_texture_rect_region(
+		_cainos_plant_atlas, destination, CAINOS_TREE_FRAME, Color.WHITE, false, true
+	)
+
+
 func _draw_quarry(stone: Color, accent: Color, ink: Color, water: Color) -> void:
 	# Layered cut faces, a live split seam, hand-set wedges and quarry haul line.
 	for i: int in range(5):
@@ -461,12 +495,16 @@ func _draw_quarry(stone: Color, accent: Color, ink: Color, water: Color) -> void
 		draw_line(Vector2(92, y - 2), Vector2(206, y - 16), stone.lightened(0.12), 2.0)
 		for j: int in range(3):
 			var x := 112.0 + float(j) * 38.0
-			draw_colored_polygon(
-				PackedVector2Array(
-					[Vector2(x, y + 5), Vector2(x + 15, y - 6), Vector2(x + 29, y + 9)]
-				),
-				stone.darkened(0.12 + 0.04 * j)
+			_draw_world_prop(
+				["rock_a", "rock_c", "rock_f"][(i + j) % 3],
+				Rect2(x, y - 12.0, 42.0, 32.0),
+				stone.lightened(0.1 * float(j))
 			)
+	_draw_world_prop("rock_e", Rect2(244, 112, 96, 72))
+	_draw_world_prop("rock_b", Rect2(174, 304, 80, 62))
+	_draw_world_prop("rock_d", Rect2(288, 386, 72, 54))
+	_draw_world_prop("short_bridge_broken", Rect2(340, 230, 160, 80))
+	_draw_world_prop("cart", Rect2(204, 454, 114, 78))
 	draw_line(Vector2(310, 92), Vector2(612, 92), accent.darkened(0.35), 4.0)
 	for x: float in [330, 410, 490, 570]:
 		draw_line(Vector2(x, 92), Vector2(x, 122), ink, 3.0)
@@ -503,17 +541,16 @@ func _draw_quarry(stone: Color, accent: Color, ink: Color, water: Color) -> void
 
 func _draw_orchard(stone: Color, accent: Color, ink: Color, water: Color, foliage: Color) -> void:
 	# Four distinct old grafted fruit trees and an exposed irrigation run.
-	for point: Vector2 in [
+	var tree_points: Array[Vector2] = [
 		Vector2(316, 190), Vector2(656, 190), Vector2(316, 390), Vector2(656, 390)
-	]:
-		_draw_ellipse(point + Vector2(2, 28), Vector2(27, 10), ink.darkened(0.24))
-		draw_rect(Rect2(point + Vector2(-6, -2), Vector2(12, 47)), Color("#695341"))
-		draw_line(point + Vector2(-3, 11), point + Vector2(-28, -5), Color("#795c43"), 4.0)
-		draw_line(point + Vector2(3, 7), point + Vector2(25, -10), Color("#795c43"), 4.0)
-		draw_circle(point + Vector2(-16, -10), 18, foliage.darkened(0.15))
-		draw_circle(point + Vector2(11, -18), 20, foliage)
-		draw_circle(point + Vector2(23, -2), 15, foliage.lightened(0.1))
-		draw_line(point + Vector2(-4, -25), point + Vector2(4, -22), accent, 3.0)
+	]
+	for index: int in range(tree_points.size()):
+		var point := tree_points[index]
+		_draw_ellipse(point + Vector2(0, 24), Vector2(39, 13), ink.darkened(0.24))
+		_draw_cainos_tree(Rect2(point + Vector2(-61, -145), Vector2(122, 153)))
+	_draw_world_prop("rock_a", Rect2(270, 302, 52, 40), stone)
+	_draw_world_prop("rock_c", Rect2(610, 311, 42, 30), stone.lightened(0.08))
+	_draw_world_prop("barrel", Rect2(756, 278, 44, 54), Color.WHITE)
 	var flowing := get_site_state().get("orchard_channel", "") == "flowing"
 	var grafts_ready := projection.get("ready_actions", []).has("read_water_marks")
 	var channel_color := water if flowing else stone.darkened(0.35)
@@ -522,7 +559,7 @@ func _draw_orchard(stone: Color, accent: Color, ink: Color, water: Color, foliag
 		>= float(projection.get("resource_ready_at", {}).get("sluice_reeds", 0.0))
 	)
 	for reed_x: float in [282.0, 724.0]:
-		var reed_color := Color("#93c971") if reeds_ready else stone.darkened(0.45)
+		var reed_color := foliage.lightened(0.12) if reeds_ready else stone.darkened(0.45)
 		for reed_index: int in range(3):
 			draw_line(
 				Vector2(reed_x + float(reed_index) * 5.0, 315),
@@ -550,10 +587,13 @@ func _draw_orchard(stone: Color, accent: Color, ink: Color, water: Color, foliag
 
 func _draw_mill(accent: Color, ink: Color, water: Color) -> void:
 	# Mill race is visible from outside; wheel and timber walk make repair legible.
+	_draw_world_prop("barrel", Rect2(720, 392, 48, 60))
+	_draw_world_prop("camp_crate", Rect2(654, 425, 54, 48))
 	draw_rect(Rect2(Vector2(140, 266), Vector2(650, 25)), water.darkened(0.18))
 	for x: float in [160.0, 216.0, 272.0, 328.0, 384.0, 440.0, 496.0, 552.0, 608.0, 664.0, 720.0]:
 		var offset := fposmod(_elapsed * 22.0, 56.0)
 		draw_line(Vector2(x - offset, 272), Vector2(x + 12 - offset, 272), Color("#b0e2d8"), 2.0)
+	_draw_world_prop("short_bridge_fixed", Rect2(306, 250, 160, 80))
 	draw_rect(Rect2(Vector2(410, 150), Vector2(236, 98)), ink)
 	draw_rect(Rect2(Vector2(418, 158), Vector2(220, 82)), Color("#72563e"))
 	draw_rect(Rect2(Vector2(430, 170), Vector2(196, 10)), Color("#aa8051"))

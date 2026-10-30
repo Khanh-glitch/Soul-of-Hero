@@ -8,7 +8,14 @@
       280
     ],
     "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
-    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+    "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+    "world_id": "world:soh_continent_v1",
+    "a1_source_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a3_source_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
+    "a0_source_commit": "35d33355b524675b13ef4c0b650e36e4a274f90c",
+    "a6_source_commit": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "integration_base_commit": "86831332324428c7623ad431a577d101b7af5c9c",
+    "fixture_policy": "S2_ONLY_NOT_A3_PRICE_OR_REWARD_AUTHORIZATION"
   },
   "site_id": "crown_south_quarry",
   "display_name": "South Quarry",
@@ -103,7 +110,7 @@
     {
       "action_id": "brace_east_shelf",
       "option_id": "brace_oak",
-      "label": "Brace east shelf \u00b7 2 Oak Wood",
+      "label": "Brace east shelf · 2 Oak Wood",
       "requires_state": [],
       "costs": {
         "oak_wood": 2
@@ -113,13 +120,13 @@
         "quarry_route": "east_braced"
       },
       "claim_policy": "once",
-      "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+      "catalog_source": "data/survival/items/items.json#items.oak_wood @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
       "choice_group": "quarry_route"
     },
     {
       "action_id": "chock_west_ramp",
       "option_id": "chock_stone",
-      "label": "Chock west ramp \u00b7 2 Stone Chunk",
+      "label": "Chock west ramp · 2 Stone Chunk",
       "requires_state": [],
       "costs": {
         "stone_chunk": 2
@@ -129,7 +136,7 @@
         "quarry_route": "west_chocked"
       },
       "claim_policy": "once",
-      "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+      "catalog_source": "data/survival/items/items.json#items.stone_chunk @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
       "choice_group": "quarry_route"
     },
     {
@@ -152,7 +159,7 @@
     {
       "action_id": "extract_outcrop",
       "object_id": "south_seam_outcrop",
-      "label": "Work the seam \u00b7 2 Stone Chunk",
+      "label": "Work the seam · 2 Stone Chunk",
       "requires_state": [
         "quarry_route"
       ],
@@ -163,7 +170,7 @@
       "set_state": {},
       "claim_policy": "replenishable",
       "cooldown_seconds": 45,
-      "catalog_source": "data/survival/survival_catalog.json#resources.stone_outcrop",
+      "catalog_source": "data/survival/items/sources.json#sources.live_stone_chunk @ 18e7afcbd576bbd9bfbcc509b2ee13216186a522 (SOH_PROPOSAL; poi_id=null; not Quarry-authorized)",
       "requires_state_values": {
         "quarry_route": [
           "east_braced",
