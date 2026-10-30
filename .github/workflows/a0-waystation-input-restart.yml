@@ -2,7 +2,7 @@ name: A0 Waystation input and separate-process pilot
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'tests/survival_connector_pilot_test.gd', 'tests/survival_waystation_input_restart_test.gd', 'tests/survival_waystation_authority_test.gd', 'tests/fixtures/a0_connector*', 'data/survival/items/**', '.github/workflows/a0-waystation-input-restart.yml']
+    paths: ['tests/fixtures/a0_save_diff.gd', 'tests/survival_save_diff_test.gd', 'game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'tests/survival_connector_pilot_test.gd', 'tests/survival_waystation_input_restart_test.gd', 'tests/survival_waystation_authority_test.gd', 'tests/fixtures/a0_connector*', 'data/survival/items/**', '.github/workflows/a0-waystation-input-restart.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -57,6 +57,12 @@ jobs:
           include-templates: false
       - name: Import exact A0 project
         run: timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/connector-import.log 2>&1
+      - name: Validate field-diff oracle
+        run: |
+          set -euo pipefail
+          timeout 60s godot --headless --path . --user-data-dir artifacts/ud_import --script res://tests/survival_save_diff_test.gd > artifacts/save-diff-oracle.log 2>&1
+          cat artifacts/save-diff-oracle.log
+          bash tools/ci/gate_log.sh artifacts/save-diff-oracle.log 'Save diff oracle' 'A0 SAVE DIFF ORACLE PASSED'
       - name: A3 V3 authority and anti-replay fixture on real SaveService
         shell: bash
         run: |

@@ -5,8 +5,7 @@ extends RefCounted
 const MAX_LINES := 16
 
 static func report(label: String, before: Variant, after: Variant) -> void:
-	var differences: Array[String] = []
-	_walk("$", before, after, differences)
+	var differences := collect(before, after)
 	var value_count := 0
 	var type_count := 0
 	for item: String in differences:
@@ -23,6 +22,11 @@ static func report(label: String, before: Variant, after: Variant) -> void:
 			if item.begins_with(kind) and emitted < MAX_LINES:
 				print("A0_SAVE_DIFF %s %s" % [label, item])
 				emitted += 1
+
+static func collect(before: Variant, after: Variant) -> Array[String]:
+	var differences: Array[String] = []
+	_walk("$", before, after, differences)
+	return differences
 
 static func _walk(path: String, before: Variant, after: Variant, out: Array[String]) -> void:
 	if before is Dictionary and after is Dictionary:
@@ -50,7 +54,9 @@ static func _walk(path: String, before: Variant, after: Variant, out: Array[Stri
 		if (before is int and after is float) or (before is float and after is int):
 			# Equality is exact, not an approximate comparison. Godot JSON loses
 			# integer precision past 2^53, so label those as values, not type-only.
-			if absf(float(before)) <= 9007199254740992.0 and absf(float(after)) <= 9007199254740992.0 and before == after:
+			var integer: int = before if before is int else after
+			var number: float = after if after is float else before
+			if integer >= -9007199254740992 and integer <= 9007199254740992 and is_finite(number) and number == float(integer):
 				out.append("TYPE %s %s:%s -> %s:%s" % [path, type_string(typeof(before)), var_to_str(before), type_string(typeof(after)), var_to_str(after)])
 				return
 		out.append("VALUE %s %s:%s -> %s:%s" % [path, type_string(typeof(before)), var_to_str(before), type_string(typeof(after)), var_to_str(after)])
