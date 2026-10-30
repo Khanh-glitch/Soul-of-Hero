@@ -38,6 +38,17 @@ func _body() -> void:
 		_expect(_give(item, 1) and bool(svc.call(&"transfer_to_container", chest_id, item, 1, "capacity.deposit.%02d" % index)), "fill real chest slot %d" % index)
 	var stored: Dictionary = svc.call(&"container_contents", chest_id)
 	_expect(stored.size() == 12, "all chest slots occupied")
+	# Per-item transfers and whole-bag sweeps must enforce the same 50-item
+	# physical chest-stack limit. A rejected transfer must not spend or receipt.
+	var stack_item := "capacity_chest_00"
+	_expect(_give(stack_item, 49) and bool(svc.call(&"transfer_to_container", chest_id, stack_item, 49, "capacity.stack.fill")), "fill existing chest stack to its exact 50-item limit")
+	_expect(_give(stack_item, 2), "fund over-limit selective transfer adversary")
+	var stack_snapshot: Dictionary = save.call(&"get_snapshot")
+	_expect(not bool(svc.call(&"transfer_to_container", chest_id, stack_item, 2, "capacity.stack.overflow")), "selective deposit rejects over-limit stack")
+	_expect((save.call(&"get_snapshot") as Dictionary) == stack_snapshot and not bool(save.call(&"is_transaction_applied", "capacity.stack.overflow")), "overflow leaves bag, chest and receipt unchanged")
+	_expect(bool(save.call(&"reload_save")) and _count(stack_item) == 2 and int((svc.call(&"container_contents", chest_id) as Dictionary).get(stack_item, 0)) == 50, "rejected selective deposit preserves exact custody after reload")
+	_expect(bool(save.call(&"consume_inventory_item", stack_item, 2, "capacity.stack.cleanup")), "fixture clears overflow adversary before full bag test")
+	stored = svc.call(&"container_contents", chest_id)
 	var fillers: Array[String] = []
 	for index in range(35):
 		var item := "capacity_bag_%02d" % index

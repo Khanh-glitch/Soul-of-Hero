@@ -2,7 +2,6 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ## Isolated CT-authorized pilot, not production enablement or POI gameplay.
 ## A1-derived inputs are staged by CI from an exact source SHA. Ordinary input
 ## walks the real A0 controller; the locker assertion remains an actual gate.
-const PILOT_SCRIPT = preload("res://tests/fixtures/a0_connector_pilot_world.gd")
 const REACH_PROBE = preload("res://tests/fixtures/a0_connector_reach_probe.gd")
 
 func _boot() -> Node:
@@ -13,7 +12,13 @@ func _boot() -> Node:
 	_host = Node2D.new()
 	root.add_child(_host)
 	var ow := scene.instantiate()
-	ow.set_script(PILOT_SCRIPT)
+	# Load after autoload initialization: preloading the derived controller from
+	# a SceneTree script can compile Knight before GameEvents is registered.
+	var pilot_script := load("res://tests/fixtures/a0_connector_pilot_world.gd") as Script
+	if pilot_script == null:
+		_expect(false, "pilot controller script loads after autoload boot")
+		return null
+	ow.set_script(pilot_script)
 	_host.add_child(ow)
 	ow.configure({})
 	var deadline := Time.get_ticks_msec() + BUILD_TIMEOUT_MS
@@ -89,8 +94,14 @@ func _body() -> void:
 		probe.position = Vector2(408 * 16 + 8, 198 * 16 + 8)
 		world.add_child(probe)
 		_expect(hero.global_position.distance_to(probe.global_position) <= 44.0, "approach is in diagnostic interaction reach, not proof of specified stand")
-		await _tap_action(&"interact")
-		_expect(probe.activations == 1, "ordinary interact input reaches diagnostic marker without granting rewards")
+		camera.reset_smoothing()
+		camera.force_update_scroll()
+		await process_frame
+		var click_position := root.get_final_transform() * (camera.get_canvas_transform() * probe.global_position)
+		Input.warp_mouse(click_position)
+		await process_frame
+		await _click_window(click_position)
+		_expect(probe.activations == 1, "ordinary pointer input reaches diagnostic marker without granting rewards")
 		probe.queue_free()
 		await process_frame
 		var relay := await _leg(hero, nav, Vector2i(442, 234), "Waystation to Relay")

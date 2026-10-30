@@ -750,7 +750,7 @@ func _transfer(
 				var capacity := int(piece_definition("chest_wood").get("slots", 12))
 				var would_be := contents.duplicate(true)
 				would_be[normalized] = int(would_be.get(normalized, 0)) + quantity
-				if would_be.size() > capacity:
+				if would_be.size() > capacity or int(would_be[normalized]) > MAX_STACK_PER_SLOT:
 					return false
 				contents = would_be
 			else:
