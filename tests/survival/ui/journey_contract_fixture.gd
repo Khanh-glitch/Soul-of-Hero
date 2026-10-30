@@ -2,9 +2,6 @@ extends RefCounted
 ## Read-only fixture assembly from pinned owner source inputs in the temporary CI composition.
 ## Counts, discovery, bed activation and inventory are scenario fixtures, never runtime outcomes.
 
-const A0_SOURCE_SHA := "aaee29339aca7e953af1b96d5bcc06b0fb7527bc"
-const A1_SOURCE_SHA := "2cb1a3c5f093724eb9fecbdf45909ccb611f7b32"
-const A3_SOURCE_SHA := "18e7afcbd576bbd9bfbcc509b2ee13216186a522"
 const A1_ROOT := "res://.a6-contract-inputs/a1/world/"
 const A3_ROOT := "res://.a6-contract-inputs/a3/"
 
@@ -41,6 +38,9 @@ static func snapshot() -> Dictionary:
 	var recipe_catalog: Dictionary = a3_recipes.get("recipes", {})
 	var research_catalog: Dictionary = a3_research.get("technologies", {})
 	var station_catalog: Dictionary = a3_stations.get("stations", {})
+	var source_refs := _source_refs()
+	if source_refs.is_empty():
+		return {}
 	if waystation.is_empty() or relay.is_empty() or safe_route.is_empty() or shortcut.is_empty():
 		return {}
 	if core_item.is_empty() or not recipe_catalog.has("craft_core_ember"):
@@ -64,7 +64,7 @@ static func snapshot() -> Dictionary:
 	return {
 		"schema": "soh.ui.journey.fixture.v1",
 		"fixture_label": "A6 READ-ONLY SCENARIO FIXTURE — NOT LIVE GAMEPLAY",
-		"source_refs": {"a0": A0_SOURCE_SHA, "a1": A1_SOURCE_SHA, "a3": A3_SOURCE_SHA},
+		"source_refs": {"a0": source_refs.get("A0", ""), "a1": source_refs.get("A1", ""), "a3": source_refs.get("A3", "")},
 		"a0":
 		{
 			"catalog_status": String(a0.get("status", "Unknown")),
@@ -140,6 +140,18 @@ static func hidden_relay_snapshot(source: Dictionary) -> Dictionary:
 	a1["discovery_fixture"] = discovery
 	result["a1"] = a1
 	return result
+
+
+static func _source_refs() -> Dictionary:
+	var pins: Dictionary = {}
+	for line in FileAccess.get_file_as_string("res://.a6-contract-inputs/source-pins.txt").split("\n"):
+		var separator := line.find("=")
+		if separator > 0:
+			pins[line.substr(0, separator)] = line.substr(separator + 1).strip_edges()
+	for owner in ["A0", "A1", "A3"]:
+		if String(pins.get(owner, "")).is_empty():
+			return {}
+	return pins
 
 
 static func _json(path: String) -> Dictionary:

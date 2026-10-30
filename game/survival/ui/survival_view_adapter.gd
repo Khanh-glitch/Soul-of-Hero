@@ -309,7 +309,7 @@ static func _totals_as_rows(totals: Dictionary, survival: Object, location: Stri
 			transferable = bool(survival.call(&"is_sweepable_item", id))
 		var label := String(catalog.get("label", definition.get("label", "")))
 		if protected and label.is_empty(): label = "Unique physical item · details unavailable"
-		if label.is_empty(): label = id.replace("_", " ").capitalize()
+		if label.is_empty(): label = id
 		rows.append({
 			"id": id,
 			"name": label,

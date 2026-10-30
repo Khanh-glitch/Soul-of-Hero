@@ -349,8 +349,11 @@ func _run() -> void:
 	var chest_before_withdraw: Dictionary = (
 		(survival.call(&"container_contents", container_id) as Dictionary).duplicate(true)
 	)
+	var bag_slot_item := "v4_chest_slot_00"
 	var full_bag_withdraw := COMMAND.normalize_intent(
-		"transfer", STONE, _intent("full-bag-take", container_id, STONE, "withdraw", 1)
+		"transfer",
+		bag_slot_item,
+		_intent("full-bag-take", container_id, bag_slot_item, "withdraw", 1)
 	)
 	_expect(
 		(

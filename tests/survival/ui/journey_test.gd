@@ -21,6 +21,13 @@ func _initialize() -> void:
 	call_deferred("_run")
 
 
+func _source_pin(owner: String) -> String:
+	for line in FileAccess.get_file_as_string("res://.a6-contract-inputs/source-pins.txt").split("\n"):
+		if line.begins_with(owner + "="):
+			return line.substr(owner.length() + 1).strip_edges()
+	return ""
+
+
 func _run() -> void:
 	var fixture: Dictionary = FIXTURE.snapshot()
 	check(
@@ -28,16 +35,19 @@ func _run() -> void:
 		"fixture loads versioned source-backed journey DTO"
 	)
 	check(
-		fixture.get("source_refs", {}).get("a0", "") == "aaee29339aca7e953af1b96d5bcc06b0fb7527bc",
-		"fixture pins current reviewed A0 source SHA"
+		fixture.get("source_refs", {}).get("a0", "") == _source_pin("A0")
+			and not _source_pin("A0").is_empty(),
+		"fixture uses the exact composed A0 source pin"
 	)
 	check(
-		fixture.get("source_refs", {}).get("a1", "") == "2cb1a3c5f093724eb9fecbdf45909ccb611f7b32",
-		"fixture pins A1 route/source contract SHA"
+		fixture.get("source_refs", {}).get("a1", "") == _source_pin("A1")
+			and not _source_pin("A1").is_empty(),
+		"fixture uses the exact composed A1 route/source pin"
 	)
 	check(
-		fixture.get("source_refs", {}).get("a3", "") == "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
-		"fixture pins A3 economy catalog SHA"
+		fixture.get("source_refs", {}).get("a3", "") == _source_pin("A3")
+			and not _source_pin("A3").is_empty(),
+		"fixture uses the exact composed A3 economy/catalog pin"
 	)
 	check(
 		(

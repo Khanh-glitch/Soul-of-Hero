@@ -90,9 +90,22 @@ jobs:
           cp -a "$GITHUB_WORKSPACE/game/survival/ui/." a0-source/game/survival/ui/
           cp -a "$GITHUB_WORKSPACE/tests/survival/ui/." a0-source/tests/survival/ui/
           cp -a "$GITHUB_WORKSPACE/docs/survival/ux/." a0-source/docs/survival/ux/
+          mkdir -p a0-source/.a6-contract-inputs/a1/world/poi_authoring
+          cp a1-source/data/survival/world/poi_route_graph.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/hazard_capability_contracts.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/material_source_contracts.json a0-source/.a6-contract-inputs/a1/world/
+          cp a1-source/data/survival/world/poi_authoring/poi_crown_waystation.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
+          cp a1-source/data/survival/world/poi_authoring/poi_crown_relay_shed.v1.json a0-source/.a6-contract-inputs/a1/world/poi_authoring/
+          mkdir -p a0-source/.a6-contract-inputs/a3/items a0-source/.a6-contract-inputs/a3/recipes a0-source/.a6-contract-inputs/a3/source
+          cp a3-source/game/survival/economy/economy_service.gd a0-source/.a6-contract-inputs/a3/source/
+          cp a3-source/data/survival/items/items.json a0-source/.a6-contract-inputs/a3/items/
+          cp a3-source/data/survival/recipes/recipes.json a0-source/.a6-contract-inputs/a3/recipes/
+          cp a3-source/data/survival/recipes/research.json a0-source/.a6-contract-inputs/a3/recipes/
+          cp a3-source/data/survival/recipes/stations.json a0-source/.a6-contract-inputs/a3/recipes/
+          printf 'A0=%s\nA1=%s\nA3=%s\nATLAS_EVIDENCE=%s\n' "$A0_SHA" "$A1_SHA" "$A3_SHA" "$EVIDENCE_SHA" | tee a0-source/.a6-contract-inputs/source-pins.txt
           python3 - <<'PY'
           import subprocess
-          allowed = ("game/survival/ui/", "tests/survival/ui/", "docs/survival/ux/", "docs/survival/SOURCE_COVERAGE_TRACE.json", "docs/survival/source_archive/")
+          allowed = ("game/survival/ui/", "tests/survival/ui/", "docs/survival/ux/", "docs/survival/SOURCE_COVERAGE_TRACE.json", "docs/survival/source_archive/", ".a6-contract-inputs/")
           paths = subprocess.check_output(["git", "-C", "a0-source", "status", "--porcelain", "--untracked-files=all"], text=True).splitlines()
           unexpected = [line for line in paths if not line[3:].startswith(allowed)]
           if unexpected:
