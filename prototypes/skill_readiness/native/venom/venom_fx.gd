@@ -1140,7 +1140,10 @@ class Chain extends RefCounted:
 			var b: Dictionary = s[i]
 			var dx: float = float(b["x"]) - float(a["x"])
 			var dy: float = float(b["y"]) - float(a["y"])
-			var d: float = sqrt(dx * dx + dy * dy)
+			# ORIGINAL: `Math.hypot(dx, dy) || 1`. Not sqrt(dx*dx+dy*dy): V8's
+			# hypot scales and Kahan-sums, which differs by ulps; the chain
+			# compounds them every tick (serpent divergence, skill 8).
+			var d: float = M.hypot(dx, dy)
 			if d == 0.0:
 				d = 1.0
 			b["x"] = float(a["x"]) + (dx / d) * gap
