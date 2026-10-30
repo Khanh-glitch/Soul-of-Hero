@@ -1,4 +1,20 @@
-# GOLD93 private original source access (handoff, 2026-10-30)
+# GOLD93 source access — CURRENT: files are in this Arena branch
+
+**Status 2026-10-30: UNBLOCKED for any agent that can fetch this Soul-of-Hero branch.** The owner explicitly authorized uploading the exact original GOLD93 archives into the VFX working branch, even though the repository was public at upload time.
+
+**Authoritative same-repository location:** `prototypes/skill_readiness/original_sources/README.md`.
+
+Archives (original bytes, SHA-256 verified):
+- `prototypes/skill_readiness/original_sources/ARCANA_III_V2_72_SKILLS_FULLFX_2X.zip`
+- `prototypes/skill_readiness/original_sources/venomwright-combat-vfx-design (4).zip`
+
+**Arena:** Fetch latest `arena/c7b0c4e8-soul-of-hero`, follow the README in `original_sources/`, verify SHA-256, and extract into `/tmp/gold93-original-sources`. You no longer need to clone the separate private vault or request `GOLD93_ARCHIVE_KEY` for this branch.
+
+Visibility caveat: Git history containing these ZIPs was committed while the repository was PUBLIC. Later making the repository private does not revoke copies previously downloaded.
+
+## Historical access attempt (superseded)
+
+Previously the archives lived only in a private asset vault, which Arena could not read (403). That is NO LONGER the active blocker while these archives are available in this branch.
 
 The project owner has already supplied both exact original source ZIPs, and they are now saved in a separate PRIVATE GitHub asset vault. The plaintext sources were NOT committed into Soul-of-Hero.
 
