@@ -663,11 +663,11 @@
       "lighting_profile": "mere_mist",
       "window": {
         "origin_cell": [
-          352,
+          336,
           452
         ],
         "size_cells": [
-          64,
+          80,
           56
         ]
       },
@@ -688,7 +688,7 @@
         "preserve_source_water": true,
         "use_source_legend": true,
         "use_region_mix": true,
-        "road_style": "boardwalk",
+        "road_style": "causeway",
         "blend_radius_cells": 0,
         "landforms": [
           {
@@ -814,7 +814,7 @@
         {
           "id": "mere_causeway_day",
           "center_cell": [
-            372,
+            362,
             496
           ],
           "time_of_day": 0.3

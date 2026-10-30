@@ -84,6 +84,8 @@ jobs:
         run: python tools/survival/worldgen/validate_world_art.py | tee "$ARTIFACT_DIR/world_art_validation.json"
       - name: A0/A8 consumer validation of mount bundle
         run: python tools/survival/worldgen/validate_mount_bundle.py | tee "$ARTIFACT_DIR/mount_bundle_validation.json"
+      - name: Source-to-scene region coverage + window navigation audit
+        run: python tools/survival/worldgen/compile_region_coverage.py | tee "$ARTIFACT_DIR/region_coverage.json"
       - name: Render Pillow/atlas composition previews (not native evidence)
         run: python tools/survival/worldgen/preview_world_art.py | tee "$ARTIFACT_DIR/world_art_preview.json"
       - name: Render A8 shell + AVFX contrast previews (not native evidence)

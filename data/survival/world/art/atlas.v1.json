@@ -1,7 +1,7 @@
 {
   "file_sha256": {
-    "props": "89c581ceaf434cec03abf66fbf312521cbd297d57d30771abacabb8fb1008523",
-    "terrain": "85e860d5f9deba6a390f3db65421435d4427c278aadd05f921dbfb25f56587c6"
+    "props": "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27",
+    "terrain": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1"
   },
   "inherited_frames": {
     "bush": {
@@ -776,8 +776,8 @@
   },
   "schema": "soh.world.art_atlas.v1",
   "sha256": {
-    "props": "a372a0f0f84fc5c8f9b747192e05e7d09924d604f905e48af8aa2da9a525e090",
-    "terrain": "6800fe199fb1855d282b1f415533cdff7e582edaf6119524ae7a019c599b0574"
+    "props": "bc2cfd84c5e7cdd7f84ef4b63f84618f9b6c890ee64712e593d4f85be3c1cb1d",
+    "terrain": "3aabbd597507ed2e4c2caa3c6b891193cc8094bd277a32e76457b8490010e5dd"
   },
   "terrain": {
     "ash_0": [

@@ -1,0 +1,467 @@
+{
+  "schema": "soh.world.region_coverage_matrix.v1",
+  "owner": "A1",
+  "status": "SOURCE_TO_SCENE_DATA_AUDIT_NOT_NATIVE",
+  "regions": [
+    {
+      "region_id": "r_ashen_crown",
+      "name": "The Ashen Crown",
+      "band": "early",
+      "biomes": [
+        "temperate_mixed",
+        "moorland",
+        "riverine",
+        "ruin_field",
+        "freshwater_marsh",
+        "peat_bog",
+        "volcanic_steppe",
+        "lake"
+      ],
+      "entry_capabilities": [],
+      "resource_sites": [
+        "src_crown_tuff",
+        "src_crown_iron",
+        "src_crown_reed",
+        "src_crown_salvage"
+      ],
+      "resource_node_count": 23,
+      "hazards": [
+        {
+          "id": "hz_crown_heat",
+          "kind": "heat",
+          "clue": "legacy crucible basin",
+          "requires": "cap_filter"
+        },
+        {
+          "id": "hz_crown_rot",
+          "kind": "poison",
+          "clue": "legacy fen rot",
+          "requires": "cap_filter"
+        },
+        {
+          "id": "hz_crown_cold",
+          "kind": "cold",
+          "clue": "legacy conduit bleed",
+          "requires": "cap_thermal"
+        }
+      ],
+      "poi_count": 26,
+      "presentation": "crown_roadside_visual_treatment",
+      "presentation_sha256": "cb8fff7ded7acd3123de31e3b1c0d3a370e43fed890a21d65149b91cf7146baf",
+      "player_decisions": [
+        "read notes crate vs scrap cache",
+        "return to Waystation before dark"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0
+      }
+    },
+    {
+      "region_id": "r_frost_crown",
+      "name": "Frostcrown Reach",
+      "band": "mid",
+      "biomes": [
+        "alpine_snow",
+        "boreal_forest",
+        "frost_steppe",
+        "riverine"
+      ],
+      "entry_capabilities": [
+        "cap_thermal"
+      ],
+      "resource_sites": [
+        "src_frost_skarn",
+        "src_frost_resin",
+        "src_frost_vug"
+      ],
+      "resource_node_count": 16,
+      "hazards": [
+        {
+          "id": "hz_frost_ridge",
+          "kind": "cold",
+          "clue": "exposed ar\u00eate whiteout",
+          "requires": "cap_thermal"
+        }
+      ],
+      "poi_count": 11,
+      "presentation": "frost_crown_shrine_skarn",
+      "presentation_sha256": "23852ba7cfe97a910db47c71b4df50b6afc2acdb0b4019e47b7dc3fcbda9e9bb",
+      "player_decisions": [
+        "cold ridge vs sheltered shrine court",
+        "skarn ore rewards thermal prep"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0
+      }
+    },
+    {
+      "region_id": "r_glasswind_coast",
+      "name": "Glasswind Coast",
+      "band": "mid",
+      "biomes": [
+        "boreal_forest",
+        "coastal_scrub",
+        "riverine",
+        "ocean"
+      ],
+      "entry_capabilities": [
+        "cap_thermal"
+      ],
+      "resource_sites": [
+        "src_glass_silica",
+        "src_glass_storm",
+        "src_glass_timber"
+      ],
+      "resource_node_count": 16,
+      "hazards": [],
+      "poi_count": 9,
+      "presentation": "glasswind_coast_region_window",
+      "presentation_sha256": "e0c4fbc8f8a1a57eb7043ad0d4bfcf03014eb58f380783e36b510845f082c432",
+      "player_decisions": [
+        "sheltered dune approach vs exposed cliff",
+        "silica placer after storm"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 15,
+        "landmark_to_retreat_cells": 8,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_ember_steppe",
+      "name": "Embersteppe",
+      "band": "mid",
+      "biomes": [
+        "volcanic_steppe",
+        "ash_badland",
+        "riverine",
+        "oasis"
+      ],
+      "entry_capabilities": [
+        "cap_filter"
+      ],
+      "resource_sites": [
+        "src_ember_sulfur",
+        "src_ember_copper",
+        "src_ember_obsidian",
+        "src_ember_basalt"
+      ],
+      "resource_node_count": 22,
+      "hazards": [
+        {
+          "id": "hz_ember_gas",
+          "kind": "acid_gas",
+          "clue": "fumarole field, dead vegetation and yellow crust",
+          "requires": "cap_filter"
+        }
+      ],
+      "poi_count": 10,
+      "presentation": "ember_steppe_region_window",
+      "presentation_sha256": "3b1124ca327acb64441c410abc67c13ae4b1830376970e0b2c413a6a555ca1e4",
+      "player_decisions": [
+        "lee road vs fumarole gas",
+        "forge salvage requires filter/power"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 7,
+        "landmark_to_retreat_cells": 17,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_saffron_coast",
+      "name": "Saffron Coast",
+      "band": "mid",
+      "biomes": [
+        "arid_coast",
+        "salt_flat",
+        "oasis",
+        "riverine",
+        "ocean"
+      ],
+      "entry_capabilities": [
+        "cap_thermal"
+      ],
+      "resource_sites": [
+        "src_saffron_salt",
+        "src_saffron_copper",
+        "src_saffron_fibre"
+      ],
+      "resource_node_count": 16,
+      "hazards": [
+        {
+          "id": "hz_saffron_heat",
+          "kind": "heat",
+          "clue": "dry wadi, no shade, salt crust",
+          "requires": "cap_thermal"
+        }
+      ],
+      "poi_count": 9,
+      "presentation": "saffron_coast_region_window",
+      "presentation_sha256": "7c5579459ce182dff433c08a01eaa395e2043f383d6e90a6e9828ea09240efac",
+      "player_decisions": [
+        "shade/well route vs open salt glare",
+        "dry-wind salt harvest timing"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 5,
+        "landmark_to_retreat_cells": 20,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_verdant_fold",
+      "name": "The Verdant Fold",
+      "band": "late",
+      "biomes": [
+        "tropical_forest",
+        "karst_orchard",
+        "riverine",
+        "freshwater_marsh"
+      ],
+      "entry_capabilities": [
+        "cap_filter",
+        "cap_climb"
+      ],
+      "resource_sites": [
+        "src_verdant_hardwood",
+        "src_verdant_venom",
+        "src_verdant_sap"
+      ],
+      "resource_node_count": 16,
+      "hazards": [
+        {
+          "id": "hz_verdant_spore",
+          "kind": "poison",
+          "clue": "spore hollow, discoloured leaves",
+          "requires": "cap_filter"
+        }
+      ],
+      "poi_count": 9,
+      "presentation": "verdant_fold_region_window",
+      "presentation_sha256": "59cfbde84adc0cb17eedacfff9937bb807c6d5f272b08576db9025b40addbb22",
+      "player_decisions": [
+        "canopy terrace vs spore hollow",
+        "climb/filter before temple vault"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 1,
+        "landmark_to_retreat_cells": 24,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_pearl_mangroves",
+      "name": "Pearl Mangroves",
+      "band": "late",
+      "biomes": [
+        "mangrove",
+        "tidal_flat",
+        "ocean",
+        "freshwater_marsh"
+      ],
+      "entry_capabilities": [
+        "cap_boat"
+      ],
+      "resource_sites": [
+        "src_pearl_bed",
+        "src_pearl_abyss"
+      ],
+      "resource_node_count": 9,
+      "hazards": [
+        {
+          "id": "hz_pearl_tide",
+          "kind": "tide",
+          "clue": "tidal channels, barnacle lines, drift wrack",
+          "requires": "cap_boat"
+        }
+      ],
+      "poi_count": 9,
+      "presentation": "pearl_mangroves_region_window",
+      "presentation_sha256": "7cbaa2d631a644b796fca3bc808528ea628e517836c04aea19f8fb7878df0193",
+      "player_decisions": [
+        "stilt walk vs tidal channel",
+        "tide gauge before boat-dependent customs"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 1,
+        "landmark_to_retreat_cells": 34,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_amberwood",
+      "name": "Amberwood March",
+      "band": "early",
+      "biomes": [
+        "temperate_mixed",
+        "orchard",
+        "riverine",
+        "moorland"
+      ],
+      "entry_capabilities": [],
+      "resource_sites": [
+        "src_amber_timber",
+        "src_amber_herb",
+        "src_amber_honey"
+      ],
+      "resource_node_count": 17,
+      "hazards": [],
+      "poi_count": 9,
+      "presentation": "amberwood_apothecary_herb_margin",
+      "presentation_sha256": "76864d9ece3f7f1ddb85985c615370a5ab54725a64df8db7df79788e7df61449",
+      "player_decisions": [
+        "tended garden vs wild herb margin",
+        "orchard rows mark safe foraging"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0
+      }
+    },
+    {
+      "region_id": "r_mirrormere",
+      "name": "Mirrormere Basin",
+      "band": "early",
+      "biomes": [
+        "freshwater_marsh",
+        "riverine",
+        "temperate_mixed",
+        "lake"
+      ],
+      "entry_capabilities": [],
+      "resource_sites": [
+        "src_mere_reed",
+        "src_mere_clay",
+        "src_mere_pearl"
+      ],
+      "resource_node_count": 16,
+      "hazards": [],
+      "poi_count": 8,
+      "presentation": "mirrormere_region_window",
+      "presentation_sha256": "fe6ef357b69e631fc1951fb0104bf2f8ddbd51bb8b17a24b390005b4b3d22437",
+      "player_decisions": [
+        "boardwalk/causeway vs open water",
+        "reed/clay shallows vs ferry shortcut"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 7,
+        "landmark_to_retreat_cells": 8,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_sunken_orchard",
+      "name": "Sunken Orchard",
+      "band": "late",
+      "biomes": [
+        "karst_orchard",
+        "tropical_forest",
+        "coastal_scrub",
+        "ocean"
+      ],
+      "entry_capabilities": [
+        "cap_deepward"
+      ],
+      "resource_sites": [
+        "src_sunken_lime",
+        "src_sunken_herb"
+      ],
+      "resource_node_count": 11,
+      "hazards": [
+        {
+          "id": "hz_sunken_pressure",
+          "kind": "pressure",
+          "clue": "cenote depth, cold water, no surface exit",
+          "requires": "cap_deepward"
+        }
+      ],
+      "poi_count": 8,
+      "presentation": "sunken_orchard_region_window",
+      "presentation_sha256": "1bf04b4b304059b43fe6423dda1bc39232a9282faec45f18cfeb3b834f79916c",
+      "player_decisions": [
+        "karst terrace vs cenote rim",
+        "surface orchard vs deepward conduit"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 1,
+        "landmark_to_retreat_cells": 32,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    },
+    {
+      "region_id": "r_ashwater_fen",
+      "name": "Ashwater Fen",
+      "band": "late",
+      "biomes": [
+        "peat_bog",
+        "freshwater_marsh",
+        "riverine",
+        "ruin_field"
+      ],
+      "entry_capabilities": [
+        "cap_filter"
+      ],
+      "resource_sites": [
+        "src_fen_peat",
+        "src_fen_bogiron",
+        "src_fen_venom"
+      ],
+      "resource_node_count": 16,
+      "hazards": [
+        {
+          "id": "hz_ashwater_miasma",
+          "kind": "poison",
+          "clue": "gas bubbles, bleached reeds, still water",
+          "requires": "cap_filter"
+        }
+      ],
+      "poi_count": 10,
+      "presentation": "ashwater_fen_region_window",
+      "presentation_sha256": "cdc20ddbe186297e9f00465e31cd29cc94cad9ade97f12a91d289cdac14f7568",
+      "player_decisions": [
+        "boardwalk vs toxic pool",
+        "pump station requires filter; bleached reeds warn"
+      ],
+      "status": "VISUAL_WINDOW_AUTHORED_NOT_192_CHUNK_FILL",
+      "window_navigation": {
+        "water_walkable_cells": 0,
+        "approach_to_landmark_cells": 5,
+        "landmark_to_retreat_cells": 29,
+        "approach_reachable": true,
+        "retreat_reachable": true
+      }
+    }
+  ],
+  "coverage": {
+    "planned_regions": 11,
+    "visual_windows": 11,
+    "biome_ids": 22,
+    "chunk_fill_claimed": false
+  },
+  "errors": [],
+  "ok": true
+}

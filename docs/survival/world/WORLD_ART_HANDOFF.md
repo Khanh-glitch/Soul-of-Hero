@@ -9,8 +9,8 @@ Production native playable: **false**. A0 alone mounts production scenes.
 
 This is a reusable visual-only world art system, not a moodboard: baked atlas, causal macro-terrain treatments, hardened Godot presentation node, driven-corridor overlay proof, A8 compact-shell visual skins, validators/tests, and native capture fixtures.
 
-- `assets/environment/survival_world/terrain.png` — **318** 16×16 terrain frames: ash, moor, soil, grass, forest, snow, tundra, basalt, gravel, water, ice; stepped 2 px blends; dirt/stone road overlays; shore banks; maintained court. Ground marks are low-contrast material clusters, not per-pixel static.
-- `assets/environment/survival_world/props.png` — **47** unscaled prop/structure frames: supply caches, deadfall/stump, handcart, tarp shelter, open Ashen Waystation awning, banners/lamps, fences, cairns, skarn ore, moonleaf herb, log pile, Amber watch/apothecary, Frost shrine, mill wheel/house, quarry workface, orchard shed, drying rack, beehive, snow drift, split rail, whetstone, light pool, plus **9 pinned inherited original SOH frames** reused without scaling.
+- `assets/environment/survival_world/terrain.png` — **1415** 16×16 terrain frames: ash, moor, soil, grass, forest, snow, tundra, basalt, gravel, water, ice; stepped 2 px blends; dirt/stone road overlays; shore banks; maintained court. Ground marks are low-contrast material clusters, not per-pixel static.
+- `assets/environment/survival_world/props.png` — **111** unscaled prop/structure frames: supply caches, deadfall/stump, handcart, tarp shelter, open Ashen Waystation awning, banners/lamps, fences, cairns, skarn ore, moonleaf herb, log pile, Amber watch/apothecary, Frost shrine, mill wheel/house, quarry workface, orchard shed, drying rack, beehive, snow drift, split rail, whetstone, light pool, plus **9 pinned inherited original SOH frames** reused without scaling.
 - `data/survival/world/art/atlas.v1.json` — grid-aligned terrain atlas, prop rects, inherited-frame provenance, pixel/file SHA-256.
 - `data/survival/world/art/world_art_grammar.v1.json` — shared material culture, semantic roles, biome profiles, lighting profiles, production rules. Macro-terrain boundaries are authored causal landforms; tile hash only selects a texture variant inside an already-authored material.
 - `data/survival/world/art/crown_roadside.treatment.v1.json` — visual-only overlay pinned to the accepted corridor (`9d3909b0…`). It replaces corridor decor visuals, dresses the three canonical roadside caches and Waystation forecourt, and adds warm return-route markers, deadfall/stump/reeds/rail scenery. **No collision, stand, cache identity, reward or save change.**
@@ -118,3 +118,24 @@ Native was demonstrated to be a hard external dependency (no linux-x64 Godot on 
 - **Consumable A0/A8 bundle:** `compile_mount_bundle.py` + `validate_mount_bundle.py` (exact paths/SHA/placement origin/light mask/zero-collision/baseline/commands) and `compile_a8_shell_visuals.py` (derived atlas pin). A0 alone mounts; A8 keeps shell collision/entry.
 
 Gates: 119 pytest; all validators 0 errors; determinism 249 artifacts tree `26ace820…`; gdparse + YAML clean. Pillow previews inspected. **Native / exact-Gold / A6-body / A0-mount remain PENDING.** PR20 open/unmerged.
+
+## Full-world region visual system (pause reversal, 2026-10-30)
+
+The first-hour pilot is preserved as a consumable A0 handoff; its compiled pixel payload (ground/overlays/props/lights/views) is byte-identical to `ad39bde6`. Atlas/grammar pins migrated only because the shared atlas was extended.
+
+**Coverage:** all 11 planned regions now have a dedicated visual profile and a compiled, loadable presentation. Eight new regional windows were authored around canonical POIs/resource nodes—not 192 chunk fills and not 106 empty shells:
+
+| Region | Window anchor | Player-visible identity | Hazard / decision |
+|---|---|---|---|
+| Mirrormere Basin | Drowned Causeway + Mirror Ferry | stone causeway over lake, reed peat, silt flats, boathouse | open water vs maintained crossing; clay/reed shallows |
+| Glasswind Coast | Glasswind Light | shell bench, dune ridge, lighthouse, silica placer | sheltered approach vs exposed cliff; storm glass |
+| Embersteppe | The Old Forge | cooled lava/cinder, sawtooth forge, chimney, sulfur crust | lee road vs fumarole gas; filter/power prep |
+| Saffron Coast | White Pan Rakes | salt pan, dune margin, plaster shade, rakes | shade/well route vs glare; dry-wind harvest |
+| Verdant Fold | Canopy Temple | jungle litter, karst terraces, lianas, stepped temple | canopy terrace vs spore hollow; climb/filter |
+| Pearl Mangroves | Drowned Customs House | tidal channels, mudflat, stilt customs, mangrove roots | stilt walk vs tide; boat/tide-ward |
+| Sunken Orchard | Great Cenote | karst pinnacles, orchard terrace, cenote basin | terrace vs sinkhole; deepward conduit |
+| Ashwater Fen | Buried Pump Station | fen peat, toxic pools, bleached reeds, pump/stilt walk | boardwalk vs miasma; filter before pump |
+
+**Consumer path:** `mount_bundle.v1.json` now lists 11 treatments with exact SHA/paths, atlas memory estimate, light mask 2 / Gold mask 1, zero-collision contract and A0 mount steps. `validate_mount_bundle.py` is the A0/A8 data gate. `region_coverage_matrix.v1.json` ties regions/biomes/resources/hazards to windows and runs a data-level BFS approach/retreat audit (not Godot physics). `preview_region_review.py` emits 1x logical + 5x nearest panels with a marked 12×16 Knight proxy and HUD-safe guide.
+
+**Native / release status:** SOURCE + Pillow self-inspected; NATIVE pending (CI queued / GitHub transport intermittent); A0-PRODUCTION false; exact Gold parity and D051 human-body composition PENDING. PR20 remains open/unmerged.

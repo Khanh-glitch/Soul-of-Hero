@@ -157,6 +157,9 @@ func _run() -> void:
 			"collision count excludes bound Hero and remains zero " + String(entry.treatment_id))
 		st["resolution_scope"] = "all"
 		stats_rows.append(st)
+		if String(entry.treatment_id).ends_with("_region_window"):
+			_expect(int(st.props) >= 20 and not String(pres.data.get("region_id", "")).is_empty(),
+				"region window has authored density and canonical region " + String(entry.treatment_id))
 		_expect(int(st.props) > 0 and int(st.ground_cells) > 0 and int(st.overlays) > 0,
 			"art is non-empty with road/bank overlays " + String(entry.treatment_id))
 		# Rebuild guard: a second build must not duplicate children.

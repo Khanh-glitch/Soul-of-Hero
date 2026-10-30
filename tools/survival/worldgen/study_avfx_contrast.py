@@ -61,7 +61,7 @@ def main() -> dict:
     grammar = load(ART / "world_art_grammar.v1.json")
     terrain = Image.open(ROOT / "assets/environment/survival_world/terrain.png").convert("RGBA")
     grounds = {}
-    for name in ("snow_0", "basalt_0", "ash_0", "grass_0", "soil_0", "gravel_0"):
+    for name in ("snow_0", "basalt_0", "ash_0", "grass_0", "soil_0", "gravel_0", "salt_0", "lava_0", "jungle_0", "fen_0", "tidal_0"):
         r = atlas["terrain"][name]
         grounds[name] = terrain.crop((r[0], r[1], r[0] + r[2], r[1] + r[3]))
     effects = {

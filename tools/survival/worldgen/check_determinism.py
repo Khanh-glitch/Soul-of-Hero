@@ -13,6 +13,11 @@ import compile_corridor
 import build_world_art
 import build_region_art
 import compile_world_art
+import compile_a8_shell_visuals
+import compile_first_hour_route
+import study_avfx_contrast
+import compile_mount_bundle
+import compile_region_coverage
 from baseline import ROOT
 
 OUT = ROOT / "data" / "survival" / "world"
@@ -34,6 +39,11 @@ def run():
         compile_corridor.compile_all()
         build_region_art.build()
         compile_world_art.compile_all()
+        compile_a8_shell_visuals.compile_all()
+        compile_first_hour_route.compile_all()
+        study_avfx_contrast.main()
+        compile_mount_bundle.compile_all()
+        compile_region_coverage.main()
     return tree_hash()
 
 

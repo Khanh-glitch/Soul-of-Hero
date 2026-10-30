@@ -178,7 +178,7 @@
       "id": "SURV-050A-WORLD-ART",
       "name": "A1 reusable survival world art system, first-hour visual treatment, two contrasting biome studies, and executable A8 visual contract",
       "status": "implemented_unverified",
-      "verification_scope": "source_pillow_and_consumer_bundle_validated_local_119_tests_native_hard_blocked_pending_ci_and_a0_mount",
+      "verification_scope": "full_world_region_art_source_pillow_self_inspected_121_tests_native_pending_github_push_retry",
       "evidence": [
         "assets/environment/survival_world/terrain.png",
         "assets/environment/survival_world/props.png",
@@ -204,9 +204,13 @@
         "data/survival/world/art/mount_bundle.v1.json",
         "data/survival/world/art/avfx_lighting_contract.v1.json",
         "data/survival/world/corridor/first_hour_route.v1.json",
-        "tools/survival/worldgen/validate_mount_bundle.py"
+        "tools/survival/worldgen/validate_mount_bundle.py",
+        "data/survival/world/art/region_coverage_matrix.v1.json",
+        "docs/survival/world/evidence/region_art_review_1x_5x.png",
+        "tools/survival/worldgen/build_region_art.py",
+        "tools/survival/worldgen/compile_region_coverage.py"
       ],
-      "next": "Native runner/GL unavailable (demonstrated); CI queued. A0 mount via mount_bundle.v1.json + validate_mount_bundle; A8 adopt shells; A3 bind notes crate; native inspection + Gold parity + A6 body pending; native_playable=false"
+      "next": "Push 9e98ab6c+ when GitHub transport recovers; native CI inspect; A0 mount region bundle; A8 shell adoption; AVFX Gold parity; A6 body"
     }
   ],
   "next_action": {

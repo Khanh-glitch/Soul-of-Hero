@@ -613,9 +613,9 @@
     },
     "saffron_glare": {
       "ambient_day": [
-        1.0,
         0.95,
-        0.82,
+        0.9,
+        0.8,
         1
       ],
       "ambient_night": [

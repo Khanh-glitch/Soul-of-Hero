@@ -29,7 +29,7 @@ EXTRA_PALETTE = {
     "mud_d": "#4c4234", "mud": "#6d5f48", "mud_l": "#91805f",
     "shell_d": "#8d8268", "shell": "#b3a684", "shell_l": "#d8cba4",
     "dune_d": "#9a7c4e", "dune": "#c0a066", "dune_l": "#ddc28a",
-    "salt_d": "#9a9484", "salt": "#c9c3ae", "salt_l": "#ece6d2",
+    "salt_d": "#8f897a", "salt": "#b8b29d", "salt_l": "#ded8c4",
     "sulfur_d": "#8a7a2e", "sulfur": "#c2ad45", "sulfur_l": "#e6d67a",
     "cinder_d": "#3a2f2c", "cinder": "#5a463f", "cinder_l": "#7d6052",
     "lava_d": "#2c2729", "lava": "#453c40", "lava_l": "#655459",
@@ -56,7 +56,7 @@ def mat_tile(style: str, v: int) -> Image.Image:
     im = new(T, T)
     dk, md, hi = C(style + "_d"), C(style), C(style + "_l")
     rect(im, 0, 0, T, T, md)
-    if v > 0 and style not in WATER_STYLES:
+    if v > 0:
         # Most tiles are calm fields; only variant 0 carries a readable mark.
         if v == 1:
             px(im, 5, 6, hi)

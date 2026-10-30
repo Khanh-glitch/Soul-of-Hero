@@ -1705,18 +1705,20 @@
       "state_at_authoring": "queued"
     },
     "local": {
-      "pytest_passed": 119,
+      "pytest_passed": 121,
       "art_presentations": 3,
-      "terrain_frames": 318,
-      "prop_frames": 47,
+      "terrain_frames": 1415,
+      "prop_frames": 111,
       "inherited_frames": 9,
-      "determinism_artifacts": 249,
-      "determinism_tree_sha256": "26ace820b6201f203d590551e4c5a4e020f9d577f5d8fe92bb76fd22d764776c",
+      "determinism_artifacts": 258,
+      "determinism_tree_sha256": "776cfe4d3cc415a3fe91109e6212d4bc36d9299c167c8566b7898f23182ec385",
       "validators": "0 errors",
       "mount_bundle_consumer_validation": "ok",
       "gdparse": "clean",
       "pillow_previews": "inspected_not_native",
-      "a8_shell_visuals": 3
+      "a8_shell_visuals": 3,
+      "region_profiles": 11,
+      "region_windows": 8
     },
     "native": {
       "fixture": "tests/survival/world/world_art_native_test.gd",
@@ -1757,6 +1759,16 @@
       "no_gl_stack": "no libEGL/GLX/X11/mesa/Xvfb; apt-get permission denied + blocked egress",
       "ci": "World Reader 41032153753/41032145662 queued on external Actions backlog",
       "conclusion": "HARD_EXTERNAL_DEPENDENCY; all owner-independent art/logic/bundle work completed"
+    },
+    "full_world_region_system": {
+      "status": "SOURCE_AND_PILLOW_SELF_INSPECTED_NATIVE_PENDING",
+      "legacy_pixel_payload": "unchanged",
+      "drive_rejections": [
+        "668008",
+        "692491"
+      ],
+      "coverage_matrix": "data/survival/world/art/region_coverage_matrix.v1.json",
+      "review_panel": "docs/survival/world/evidence/region_art_review_1x_5x.png"
     }
   }
 }

@@ -1,4 +1,23 @@
 {
+  "memory_estimate": {
+    "scope": "RGBA8 atlas textures only; excludes TileMap/sprite instances",
+    "terrain": {
+      "size_px": [
+        512,
+        720
+      ],
+      "rgba8_bytes": 1474560,
+      "gpu_estimate_bytes": 1474560
+    },
+    "props": {
+      "size_px": [
+        1024,
+        376
+      ],
+      "rgba8_bytes": 1540096,
+      "gpu_estimate_bytes": 1540096
+    }
+  },
   "schema": "soh.world.art_mount_bundle.v1",
   "owner": "A1",
   "status": "MOUNT_READY_DATA_A0_ALONE_MOUNTS_PRODUCTION",
@@ -9,21 +28,21 @@
   },
   "atlas": {
     "manifest": "data/survival/world/art/atlas.v1.json",
-    "manifest_sha256": "355f33687fb20b202ece0aacc61445e5ecd603397a0f5413efdb9fb7e7202e85",
+    "manifest_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
     "terrain": "res://assets/environment/survival_world/terrain.png",
     "props": "res://assets/environment/survival_world/props.png",
-    "terrain_sha256": "85e860d5f9deba6a390f3db65421435d4427c278aadd05f921dbfb25f56587c6",
-    "props_sha256": "89c581ceaf434cec03abf66fbf312521cbd297d57d30771abacabb8fb1008523"
+    "terrain_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "props_sha256": "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27"
   },
   "presentations_index": {
     "path": "data/survival/world/art/presentations.v1.json",
-    "sha256": "ad7d8727dc13cc00aae03fdd21ef952237d1d20e9ddfa000ec8298447a595185"
+    "sha256": "f081425f4677a88d6e289a3ff26dd8f77519f01bd02c9411fcf1c954ed248a42"
   },
   "treatments": [
     {
       "treatment_id": "crown_roadside_visual_treatment",
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "75d74c11f14e9ab35f3bd5ef1038eaaae2fb174a1de04ecaf64d3f279b18d653",
+      "sha256": "cb8fff7ded7acd3123de31e3b1c0d3a370e43fed890a21d65149b91cf7146baf",
       "biome_profile": "ashen_crown",
       "window_origin_cell": [
         374,
@@ -42,7 +61,7 @@
     {
       "treatment_id": "amberwood_apothecary_herb_margin",
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "a3c8b3b8aedc371edb19cff45e56c2612cc56fff62d29313f5bac7fc778e6a2c",
+      "sha256": "76864d9ece3f7f1ddb85985c615370a5ab54725a64df8db7df79788e7df61449",
       "biome_profile": "amberwood",
       "window_origin_cell": [
         64,
@@ -61,7 +80,7 @@
     {
       "treatment_id": "frost_crown_shrine_skarn",
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "0d330f2a3fa2e63b6ea18db1d41550b4392b364b88f1719263fcc012da1b78b4",
+      "sha256": "23852ba7cfe97a910db47c71b4df50b6afc2acdb0b4019e47b7dc3fcbda9e9bb",
       "biome_profile": "frost_crown",
       "window_origin_cell": [
         580,
@@ -80,14 +99,14 @@
     {
       "treatment_id": "mirrormere_region_window",
       "path": "data/survival/world/art/compiled/mirrormere_region_window.presentation.v1.json",
-      "sha256": "fa640ef37a2a8d9ee74ac743cad0faf31550c76aff677ed63857cd6ac919aeec",
+      "sha256": "fe6ef357b69e631fc1951fb0104bf2f8ddbd51bb8b17a24b390005b4b3d22437",
       "biome_profile": "mirrormere",
       "window_origin_cell": [
-        352,
+        336,
         452
       ],
       "window_size_cells": [
-        64,
+        80,
         56
       ],
       "placement_origin_px": [
@@ -99,7 +118,7 @@
     {
       "treatment_id": "glasswind_coast_region_window",
       "path": "data/survival/world/art/compiled/glasswind_coast_region_window.presentation.v1.json",
-      "sha256": "86f399d86c6e79e1d331dffbb4073221c35df7aa6846e69eb2cc68e2f763869c",
+      "sha256": "e0c4fbc8f8a1a57eb7043ad0d4bfcf03014eb58f380783e36b510845f082c432",
       "biome_profile": "glasswind_coast",
       "window_origin_cell": [
         880,
@@ -118,7 +137,7 @@
     {
       "treatment_id": "ember_steppe_region_window",
       "path": "data/survival/world/art/compiled/ember_steppe_region_window.presentation.v1.json",
-      "sha256": "f78f1a66a78959929c371a66af31a1fd9c512d4772fd260ec2a1bcbe512b7fba",
+      "sha256": "3b1124ca327acb64441c410abc67c13ae4b1830376970e0b2c413a6a555ca1e4",
       "biome_profile": "ember_steppe",
       "window_origin_cell": [
         560,
@@ -137,7 +156,7 @@
     {
       "treatment_id": "saffron_coast_region_window",
       "path": "data/survival/world/art/compiled/saffron_coast_region_window.presentation.v1.json",
-      "sha256": "072f7a49a17b08392faccd86300c8a095b7f8cdbc741e69d6f07121fe762778a",
+      "sha256": "7c5579459ce182dff433c08a01eaa395e2043f383d6e90a6e9828ea09240efac",
       "biome_profile": "saffron_coast",
       "window_origin_cell": [
         848,
@@ -156,7 +175,7 @@
     {
       "treatment_id": "verdant_fold_region_window",
       "path": "data/survival/world/art/compiled/verdant_fold_region_window.presentation.v1.json",
-      "sha256": "7c0d664e1be4d2bc55ac10a263a0294e82481609d5d110555cedaf4726145fa6",
+      "sha256": "59cfbde84adc0cb17eedacfff9937bb807c6d5f272b08576db9025b40addbb22",
       "biome_profile": "verdant_fold",
       "window_origin_cell": [
         584,
@@ -175,7 +194,7 @@
     {
       "treatment_id": "pearl_mangroves_region_window",
       "path": "data/survival/world/art/compiled/pearl_mangroves_region_window.presentation.v1.json",
-      "sha256": "64232e5dca6e19015f85021596b26f238563578f565517ab5cd1a3bb569c34d3",
+      "sha256": "7cbaa2d631a644b796fca3bc808528ea628e517836c04aea19f8fb7878df0193",
       "biome_profile": "pearl_mangroves",
       "window_origin_cell": [
         800,
@@ -194,7 +213,7 @@
     {
       "treatment_id": "sunken_orchard_region_window",
       "path": "data/survival/world/art/compiled/sunken_orchard_region_window.presentation.v1.json",
-      "sha256": "10dd3f1b75b4e045ef4b17bffad4ba0d27b0ff19d0e97d760c01975e49aee0ea",
+      "sha256": "1bf04b4b304059b43fe6423dda1bc39232a9282faec45f18cfeb3b834f79916c",
       "biome_profile": "sunken_orchard",
       "window_origin_cell": [
         72,
@@ -213,7 +232,7 @@
     {
       "treatment_id": "ashwater_fen_region_window",
       "path": "data/survival/world/art/compiled/ashwater_fen_region_window.presentation.v1.json",
-      "sha256": "01712d93e60dfff5d01519789a40209e30d9d8e7ef6933ce1afa7070db3ec88a",
+      "sha256": "cdc20ddbe186297e9f00465e31cd29cc94cad9ade97f12a91d289cdac14f7568",
       "biome_profile": "ashwater_fen",
       "window_origin_cell": [
         304,
@@ -232,11 +251,11 @@
   ],
   "a8_shells": {
     "path": "data/survival/world/art/a8_shell_visuals.v1.json",
-    "sha256": "bdd587902361394a28c6fbdbcbb3912e538ab99518adacb3425203157442e6a6"
+    "sha256": "f9aae1428639465abd6d4116dde60da341979d57c3bdb1944a06041bf21ff03e"
   },
   "avfx_lighting_contract": {
     "path": "data/survival/world/art/avfx_lighting_contract.v1.json",
-    "sha256": "57b06825fa8a6c2c30e631a6d80abaa9862ed1a3a10eb36f977d6e88730ed2b6"
+    "sha256": "25f88a9978f8e2e48de6505376389bbd1f0be1862e78bf0d4d11908860e57ca5"
   },
   "first_hour_route": {
     "path": "data/survival/world/corridor/first_hour_route.v1.json",
@@ -244,7 +263,7 @@
   },
   "grammar": {
     "path": "data/survival/world/art/world_art_grammar.v1.json",
-    "sha256": "f9118a9bfe669a2d11a6373cd31a27eb655976d52665ef26454fc667cbff711a"
+    "sha256": "5112e317f523c52426974e04dba203ac1b3ea89eb55918cced4e7ed896b44eb1"
   },
   "lighting": {
     "world_light_mask": 2,

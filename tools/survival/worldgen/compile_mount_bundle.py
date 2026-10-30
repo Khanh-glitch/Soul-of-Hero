@@ -37,7 +37,14 @@ def compile_all() -> dict:
             "placement_origin_px": [0, 0],
             "note": "Cells are absolute overworld cells; add the node at global (0,0).",
         })
+    from PIL import Image
+    mem = {}
+    for sheet in ("terrain", "props"):
+        im = Image.open(ROOT / "assets/environment/survival_world" / f"{sheet}.png")
+        mem[sheet] = {"size_px": list(im.size), "rgba8_bytes": im.width * im.height * 4,
+                      "gpu_estimate_bytes": im.width * im.height * 4}
     bundle = {
+        "memory_estimate": {"scope": "RGBA8 atlas textures only; excludes TileMap/sprite instances", **mem},
         "schema": "soh.world.art_mount_bundle.v1", "owner": "A1",
         "status": "MOUNT_READY_DATA_A0_ALONE_MOUNTS_PRODUCTION",
         "renderer": {"script": "res://game/world_art/world_art_presentation.gd",
