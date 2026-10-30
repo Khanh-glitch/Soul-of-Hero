@@ -1,0 +1,129 @@
+{
+  "schema": "soh.balance.ragnarok_tuning.v1",
+  "note": "A7-owned test configuration. It is NOT game data and the game never reads it. Every value states whether it is a creator-locked rule, arithmetic derived from a locked rule, or an AI-chosen tunable that any owner may change without a new product decision. Probes read this file so a test can name the rule it is enforcing instead of hard-coding a number.",
+  "status": "AI_TUNABLE_VALUES_ARE_NOT_USER_AUTHORED",
+  "values": {
+    "max_run_hours": {
+      "value": 336,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D055 '14 real calendar days including offline'; PLAYER_INTENT rule 1",
+      "editable": false
+    },
+    "ragnarok_hours": {
+      "value": 72,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'final 72 real hours'; PLAYER_INTENT rule 3",
+      "editable": false
+    },
+    "catastrophe_hours": {
+      "value": 24,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'island-scale crisis on the last day'",
+      "editable": false
+    },
+    "ragnarok_starts_at_hours": {
+      "value": 264,
+      "class": "DERIVED_ARITHMETIC",
+      "derivation": "max_run_hours - ragnarok_hours = 336 - 72",
+      "source": "arithmetic over two locked values, not a separate product decision",
+      "editable": false
+    },
+    "catastrophe_starts_at_hours": {
+      "value": 312,
+      "class": "DERIVED_ARITHMETIC",
+      "derivation": "max_run_hours - catastrophe_hours = 336 - 24",
+      "source": "arithmetic over two locked values",
+      "editable": false
+    },
+    "awakened_elders": {
+      "value": 6,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'six distinct awakened elder bosses'; PLAYER_INTENT rule 3",
+      "editable": false
+    },
+    "achievement_stones": {
+      "value": 6,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'Each elder has one unique achievement stone'",
+      "editable": false
+    },
+    "stone_milestones_meaningful": {
+      "value": [1, 2, 3, 4, 5, 6],
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'One to six stones each meaningful; six optional exceptional culmination'",
+      "editable": false
+    },
+    "sealed_manifestations_before_ragnarok": {
+      "value": true,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D062 'earlier sealed/weaker manifestations can be encountered'",
+      "editable": false
+    },
+    "home_knowledge_requires_track": {
+      "value": true,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D061 no omniscient home targeting; D062 repeats it for Ragnarok",
+      "editable": false
+    },
+    "evacuation_is_a_distinct_outcome": {
+      "value": true,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D065 evacuation and manual abandonment are not equivalent",
+      "editable": false
+    },
+    "evacuation_finalizes_run": {
+      "value": null,
+      "class": "OPEN_NARROW",
+      "source": "D065 leaves this narrow consequence unconfirmed; A7 must not assume either way",
+      "editable": true
+    },
+    "banking_requires_physical_endpoint": {
+      "value": true,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D063 currency is only durable after a physical deposit",
+      "editable": false
+    },
+    "unbanked_currency_survives_run": {
+      "value": false,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D063 'ONLY genuinely secured amount survives run reset'",
+      "editable": false
+    },
+    "vendor_is_physical_and_fixed": {
+      "value": true,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D064 fixed-position vending machines",
+      "editable": false
+    },
+    "recycler_can_mint_currency": {
+      "value": false,
+      "class": "LOCKED_USER",
+      "source": "DECISIONS D064 no free cash conversion; PLAYER_INTENT rule 5",
+      "editable": false
+    },
+    "auto_victory_or_score": {
+      "value": false,
+      "class": "LOCKED_USER",
+      "source": "ACCEPTANCE withdraws the aggregate journey score; D066 no manufactured victory",
+      "editable": false
+    },
+    "danger_pressure_curve": {
+      "value": {"calm": 1.0, "roaming": 1.6, "catastrophe": 2.4},
+      "class": "AI_TUNABLE",
+      "source": "AI-selected starting multipliers for native scenario tests; no creator quote",
+      "editable": true
+    },
+    "late_currency_drop_weight": {
+      "value": {"boss_territory": 0.85, "late_ruin": 0.35, "mid_ruin": 0.0, "early_roadside": 0.0},
+      "class": "AI_TUNABLE",
+      "source": "AI-selected weights to keep currency out of early and mid play; tune with played evidence",
+      "editable": true
+    },
+    "bank_trip_danger_minutes": {
+      "value": {"nearest": 6, "typical": 11, "far": 18},
+      "class": "AI_TUNABLE",
+      "source": "AI-selected travel estimates for counterfactual scoring, not a measured route",
+      "editable": true
+    }
+  }
+}

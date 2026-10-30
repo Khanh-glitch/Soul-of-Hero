@@ -35,6 +35,7 @@ Omit ``--probe`` to run every probe in the directory. The artifact is written to
 from __future__ import annotations
 
 import argparse
+import re
 import hashlib
 import json
 import os
@@ -52,7 +53,18 @@ REPO = Path(__file__).resolve().parents[3]
 PROBE_FAMILIES = (
     ("balance_native", REPO / "tests" / "survival" / "balance_native"),
     ("balance_native_decisions", REPO / "tests" / "survival" / "balance_native_decisions"),
+    # Round 8. These probes judge the *system* (14-day run, Ragnarok, two
+    # economies) rather than one module, so they are a family of their own: their
+    # results are only comparable across the same composition, and mixing them
+    # into the D055-D061 family would make the older ledger look like it covered
+    # rules it never touched.
+    ("balance_native_ragnarok", REPO / "tests" / "survival" / "balance_native_ragnarok"),
 )
+#: A7-owned data the round-8 probes read. These are test configuration, not game
+#: data: the game never loads them. They are copied into the worktree next to the
+#: probes and hashed into the artifact, because a probe that silently fell back to
+#: a missing tuning file would report on numbers nobody can reproduce.
+SUPPORT_FILES = ("data/survival/balance/ragnarok_tuning.v1.json",)
 OUT = REPO / "data" / "survival" / "balance" / "results" / "native_runs.v1.json"
 LOG_ROOT = REPO / ".artifacts" / "native_runs"
 
@@ -86,6 +98,13 @@ def prepare_worktree(sha: str, root: Path) -> Path:
         target.mkdir(parents=True, exist_ok=True)
         for probe in sorted(source.glob("*.gd")):
             shutil.copy2(probe, target / probe.name)
+    for relative in SUPPORT_FILES:
+        source_file = REPO / relative
+        if not source_file.exists():
+            continue
+        destination = work / relative
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source_file, destination)
     return work
 
 
@@ -94,6 +113,15 @@ def probe_hashes() -> Dict[str, str]:
     for family, source in PROBE_FAMILIES:
         for probe in sorted(source.glob("*.gd")):
             hashes[f"{family}/{probe.name}"] = hashlib.sha256(probe.read_bytes()).hexdigest()
+    return hashes
+
+
+def support_hashes() -> Dict[str, str]:
+    hashes: Dict[str, str] = {}
+    for relative in SUPPORT_FILES:
+        path = REPO / relative
+        if path.exists():
+            hashes[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     return hashes
 
 
@@ -118,12 +146,19 @@ def classify(output: str, code: int, timed_out: bool, timeout: int) -> tuple:
         if line.startswith("A7 ") and " BLOCKED " in line:
             blocker = line.split(" BLOCKED ", 1)[1].strip()
         parts = line.split()
-        if len(parts) >= 4 and parts[0] == "A7" and parts[2] in VERDICTS:
-            if not claimed:
-                claimed = parts[2]
-                for token in parts:
-                    if token.isdigit() and checks == 0:
-                        checks = int(token)
+        # The *last* verdict line wins. A probe may report an individual failure
+        # ("A7 R055 FAIL <label>") before its closing verdict, and taking the first
+        # match made the ledger attribute the verdict to that FAIL line and read its
+        # check count as zero — a reporting bug in the collector, not in the probe.
+        if len(parts) >= 4 and parts[0] == "A7" and parts[2] in VERDICTS and " - " in line:
+            claimed = parts[2]
+            # The counts are written by the harness as "<n> checks, <n> failed,
+            # <n> missing". Reading digits by position picked up numbers from the
+            # probe's own title ("336 real hours" -> checks=336), so the shape is
+            # matched explicitly and a line that does not match leaves checks at 0.
+            counted = re.search(r"(\d+) checks, (\d+) failed(?:, (\d+) missing)?", line)
+            if counted:
+                checks = int(counted.group(1))
     details = {
         "checks": checks,
         "missing": missing,
@@ -278,6 +313,7 @@ def main() -> int:
         "engine_version_exact": engine,
         "composition": {"ref": args.composition, "sha": sha},
         "probe_source": probe_hashes(),
+        "support_source": support_hashes(),
         "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
         "rule": (
             "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are "

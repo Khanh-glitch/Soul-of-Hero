@@ -1,3 +1,32 @@
+# A7 acceptance scoreboard — round 8 (system acceptance on a real engine)
+
+_2026-10-30. Supersedes round 6/7 for status questions; round 8 ran a real Godot
+`4.7.stable.custom_build` against composition `03887d9bebf4` (A0 `8750fd8a` +
+A1 `178a5ba2` + A3 `a5d11141` + A6 `63d3fae5` + A8 `54c66b89`). Full report:
+[`ROUND8_SYSTEM_ACCEPTANCE.md`](ROUND8_SYSTEM_ACCEPTANCE.md). Ledger:
+`data/survival/balance/results/native_runs.v1.json`._
+
+| verdict | count |
+|---|---|
+| PASS | 2 |
+| FAIL | 3 |
+| BLOCKED | 0 |
+| RED_NOT_IMPLEMENTED | 10 |
+
+* **B0 `first_hour` remains `NOT_CLAIMED`**, for a sharper reason than round 7:
+  three journeys pass 33 of 34 checks and fail the same one — the placement ray
+  hits a HUD `ClickBlocker` and is rejected as `solid_terrain`.
+* A save **does** survive a genuine second OS process (int `987` returns as
+  `987.0`, accepted as lossless; a replayed transaction key is refused).
+* The 14-day arithmetic exists and is enforced in A3 (`1209600`, refuses 13- and
+  15-day projections by name), but **cannot reach the runtime**: A0 vendors an
+  older economy service missing `plan_offline_operations`, `forecast_offline_food`
+  and `apply_offline_operation_plan`. That is recorded as FAIL, twice.
+* Ragnarok, elders, stones, evacuation and the two economies do not exist at this
+  pin; each RED row names the missing symbol.
+
+---
+
 # A7 acceptance scoreboard — round 6 (gatekeeper of integrated player value)
 
 _Pinned 2026-10-30 against A0 `9269739e`, A1 `939720d5`, A3 `c5e80922`, A6 `08ccb834`,

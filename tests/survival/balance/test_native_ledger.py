@@ -45,11 +45,43 @@ class NativeRunLedgerTests(unittest.TestCase):
                 self.assertEqual(row.get("mismatch", ""), "", row.get("mismatch"))
 
     def test_the_ledger_never_claims_a_pass_the_source_gate_cannot_support(self) -> None:
-        self.assertEqual(self.payload["summary"]["PASS"], 0)
+        """A pass must be an executed probe that asserted something real.
+
+        Round 7 could write `PASS == 0` as a flat assertion because that pin had no
+        engine evidence at all. Round 8 ran a real Godot 4.7 build against a pinned
+        composition, so a flat zero would now be a false statement in the other
+        direction. What is kept is the *rule*, not the number:
+
+        * a pass must carry assertions (`checks > 0`), an empty defect list, a
+          matching exit code and a hashed log — a probe that printed PASS after
+          crashing on its fourth line is exactly what this refuses;
+        * a pass may not appear in the contract families whose symbols the source
+          gate still reports as absent. Those are D055-D061 and the round-8 R055 /
+          R060 / R062 / R063 probes: if one of them passes, the absence list in
+          this ledger is stale and has to be re-audited before the pass is trusted.
+        """
         for row in self.results:
-            if row["verdict"] == "PASS":
+            if row["verdict"] != "PASS":
+                continue
+            with self.subTest(probe=row["probe"]):
+                self.assertGreater(row["checks"], 0, row["probe"])
                 self.assertEqual(row["failed"], [], row["probe"])
                 self.assertEqual(row["missing"], [], row["probe"])
+                self.assertEqual(row["exit_code"], EXIT_FOR["PASS"], row["probe"])
+                self.assertTrue(row["log_sha256"], row["probe"])
+                self.assertTrue(row["engine_lines"], row["probe"])
+                if row["family"] == "balance_native_decisions":
+                    self.fail(
+                        f"{row['probe']} passed in a family whose rules the source gate reports as absent; "
+                        "re-audit the absence list before trusting this pass"
+                    )
+                if row["probe"] in {
+                    "r055_season_probe.gd",
+                    "r060_offline_time_probe.gd",
+                    "r062_stones_probe.gd",
+                    "r063_currency_custody_probe.gd",
+                }:
+                    self.fail(f"{row['probe']} reported missing symbols elsewhere; the ledger is inconsistent")
 
     def test_a_blocked_probe_is_never_recorded_as_a_pass(self) -> None:
         for row in self.results:

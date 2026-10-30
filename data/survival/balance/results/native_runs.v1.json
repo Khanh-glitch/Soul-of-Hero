@@ -1,7 +1,7 @@
 {
   "composition": {
-    "ref": "refs/arena/05e0328d-soul-of-hero",
-    "sha": "f3556747219a14b2c53867fbc08d0e611aedcefc"
+    "ref": "refs/comp/full",
+    "sha": "03887d9bebf4d5095d62bdf992806641409f5618"
   },
   "display": "headless (DisplayServerHeadless): no GPU, no rendered frame, no human review",
   "engine": "4.7.stable.custom_build",
@@ -17,24 +17,31 @@
     "balance_native_decisions/d060_world_time_probe.gd": "86061b10dd7cf450db79a75ee474f3f49ed5b879213ecf6bb8ddd5a50e9224e6",
     "balance_native_decisions/d061_trail_probe.gd": "331dd064d94f3a3eab88bd9185279db1a8acfa3b95983881da51e59e6e21eed0",
     "balance_native_decisions/d_harness.gd": "b1aa8ab937c852eba3a0a5ed186ae76674c82f7b87a1f1187d2f35e01984f246",
-    "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb"
+    "balance_native_decisions/oracle_corruption_probe.gd": "c11488558f27e6b1f9da5fc2cf66bd6cdda539652a880f559dfb8c69d84d56cb",
+    "balance_native_ragnarok/r055_season_probe.gd": "6bf481de682e68a9bdd5d4171662a479b44e027adef778acef41211d97f28819",
+    "balance_native_ragnarok/r060_offline_time_probe.gd": "d41ca86cf873e5e8687de4e1a991d1fcce00b80faaaf140a3beda524f0656170",
+    "balance_native_ragnarok/r062_stones_probe.gd": "d91b009ec44b8c26ad1ac4b9e99f573f350d09979056956c68a0d146f84af2f6",
+    "balance_native_ragnarok/r063_currency_custody_probe.gd": "8a204c98590d4a50d7d9a1d8858ed3a5259c2a4cd6f9c36d20fcdb193f859878",
+    "balance_native_ragnarok/r_goals_counterfactuals_probe.gd": "d57a3883453d47610e186b06e0b50960b73a9d2873c7a2f4d698820a0663fc0a",
+    "balance_native_ragnarok/r_harness.gd": "d7cd12029148df537c1acfad2c607474eeaf264842ade1d827a4f34a053ed8dc",
+    "balance_native_ragnarok/r_persistence_probe.gd": "6d4cc9dd8f2a86b533ece4325f69bf363bb07f52156ebfa9ff694d879ffe841a"
   },
   "results": [
     {
       "blocked_reason": "",
-      "checks": 27,
+      "checks": 34,
       "claimed": "FAIL",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 1,
       "failed": [
-        "- avatar contract: 27 checks, 1 failed"
+        "- avatar contract: 34 checks, 1 failed"
       ],
       "family": "balance_native",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native__avatar_body_probe.gd.log",
-      "log_lines": 51,
-      "log_sha256": "605f11f07c5451b18590804d29cbc38e5b1bf82b7a0667e571ed9884de7b68de",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native__avatar_body_probe.gd.log",
+      "log_lines": 41,
+      "log_sha256": "1792fb703c3ddf7391c3a3e4ae5e0fa392c53cdfcf6f7725d51a37e458fea652",
       "mismatch": "",
       "missing": [],
       "probe": "avatar_body_probe.gd",
@@ -42,19 +49,19 @@
     },
     {
       "blocked_reason": "",
-      "checks": 27,
+      "checks": 34,
       "claimed": "FAIL",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 1,
       "failed": [
-        "- death/bag journey: 27 checks, 1 failed"
+        "- death/bag journey: 34 checks, 1 failed"
       ],
       "family": "balance_native",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native__bed_death_bag_probe.gd.log",
-      "log_lines": 51,
-      "log_sha256": "ebe864e035a2975ea3de18620c58c5191b30308c2c282c6964d412e1c0d5604d",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native__bed_death_bag_probe.gd.log",
+      "log_lines": 41,
+      "log_sha256": "e044586e451d9344377f2d3662f7d8a8516c961da42ecc6f94f6732cae2acd43",
       "mismatch": "",
       "missing": [],
       "probe": "bed_death_bag_probe.gd",
@@ -62,19 +69,19 @@
     },
     {
       "blocked_reason": "",
-      "checks": 27,
+      "checks": 34,
       "claimed": "FAIL",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
       ],
       "exit_code": 1,
       "failed": [
-        "- first-hour route: 27 checks, 1 failed"
+        "- first-hour route: 34 checks, 1 failed"
       ],
       "family": "balance_native",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native__first_hour_route_probe.gd.log",
-      "log_lines": 51,
-      "log_sha256": "0ef39805dfb59ddb87961e0da14abeba234d112cb07b787a8ae1aeaab6e23c7f",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native__first_hour_route_probe.gd.log",
+      "log_lines": 41,
+      "log_sha256": "8396126462a9099573da3f7fb15ba0a3f2d466297823bc0f2b3e5e2c09b6dce8",
       "mismatch": "",
       "missing": [],
       "probe": "first_hour_route_probe.gd",
@@ -82,7 +89,7 @@
     },
     {
       "blocked_reason": "",
-      "checks": 4,
+      "checks": 0,
       "claimed": "RED_NOT_IMPLEMENTED",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
@@ -90,9 +97,9 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d055_d057_season_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__d055_d057_season_probe.gd.log",
       "log_lines": 16,
-      "log_sha256": "ee10d151e879a7ebc27c3aa3516ccd710f9b81b4bbe9830b65df786f5d59fb37",
+      "log_sha256": "d98f80852deb52f081792bd94d1bb2423e00098da8874b12de4f5e3557678889",
       "mismatch": "",
       "missing": [
         "run_id / run_started_at / run_expires_at (expected in res://game/autoload/save_service.gd)",
@@ -113,7 +120,7 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d058_random_spawn_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__d058_random_spawn_probe.gd.log",
       "log_lines": 21,
       "log_sha256": "ffbcb6b69a655c8921cef0d176b4d85a226ae68f2035581e00f768e5365a5109",
       "mismatch": "",
@@ -126,7 +133,7 @@
     },
     {
       "blocked_reason": "",
-      "checks": 2,
+      "checks": 0,
       "claimed": "RED_NOT_IMPLEMENTED",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
@@ -134,7 +141,7 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d059_offline_hunger_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__d059_offline_hunger_probe.gd.log",
       "log_lines": 11,
       "log_sha256": "6da6fd6e1eb9bc9025f2ca9860cab52b291818d8b1613b78631bb5e664d5cd4c",
       "mismatch": "",
@@ -155,7 +162,7 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d060_world_time_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__d060_world_time_probe.gd.log",
       "log_lines": 13,
       "log_sha256": "f704064d3fd89959575f26cf5cb60551a351315b89a1ab55c16352b6015eefff",
       "mismatch": "",
@@ -167,7 +174,7 @@
     },
     {
       "blocked_reason": "",
-      "checks": 1,
+      "checks": 0,
       "claimed": "RED_NOT_IMPLEMENTED",
       "engine_lines": [
         "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
@@ -175,7 +182,7 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__d061_trail_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__d061_trail_probe.gd.log",
       "log_lines": 9,
       "log_sha256": "0accf9089dc6f490b7e354247e91c1df954fd7de6e700cc1587df83dbba85740",
       "mismatch": "",
@@ -195,7 +202,7 @@
       "exit_code": 3,
       "failed": [],
       "family": "balance_native_decisions",
-      "log": ".artifacts/native_runs/f3556747219a/balance_native_decisions__oracle_corruption_probe.gd.log",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_decisions__oracle_corruption_probe.gd.log",
       "log_lines": 26,
       "log_sha256": "565a82d36146a591cc7f859676d2e89140e450fba1b0013483864d73d44d9f7b",
       "mismatch": "",
@@ -205,6 +212,131 @@
       ],
       "probe": "oracle_corruption_probe.gd",
       "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 13,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [
+        "the adapter the runtime actually loads exposes A3's offline API (absent: [\"plan_offline_operations\",\"forecast_offline_food\",\"apply_offline_operation_plan\"])"
+      ],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r055_season_probe.gd.log",
+      "log_lines": 33,
+      "log_sha256": "ef5dfc54332574775d2f0a42a981daea207799792817e3ae948125411cdb57bb",
+      "mismatch": "",
+      "missing": [
+        "a durable run record on SaveService (run_id + run_started_at_unix + run_expires_at_unix) (expected in res://game/autoload/save_service.gd)",
+        "a run start/finalize/abandon entry point on SaveService (expected in res://game/autoload/save_service.gd)",
+        "the 14 x 24 x 3600 = 1209600 s expiry constant in the runtime save (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "r055_season_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 24,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [
+        "the runtime's vendored adapter can plan offline operations (absent: [\"plan_offline_operations\",\"forecast_offline_food\"])"
+      ],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r060_offline_time_probe.gd.log",
+      "log_lines": 28,
+      "log_sha256": "81638dee934d8952f0926ad2d165191856ffe2d36f6864cdbb5f58841ea7e55b",
+      "mismatch": "",
+      "missing": [
+        "satiety/HP and last_seen_at_unix in the authoritative save (D059 settlement target) (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "r060_offline_time_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 21,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r062_stones_probe.gd.log",
+      "log_lines": 19,
+      "log_sha256": "ccdb8b4f8b872167faa6fe08f450af9b30e9b267e9c331bb54f7025a9add9e77",
+      "mismatch": "",
+      "missing": [
+        "any awakened-elder, achievement-stone or evacuation symbol in game/ or data/ (expected in res://game/, res://data/)",
+        "a Ragnarok phase field driven by the clock (264 h roaming, 312 h catastrophe) (expected in any runtime script)",
+        "six elder territories anchored to real regions (A1's 11 regions name no elder region) (expected in data/survival/world/world_plan.v1.json)"
+      ],
+      "probe": "r062_stones_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 29,
+      "claimed": "RED_NOT_IMPLEMENTED",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 3,
+      "failed": [],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r063_currency_custody_probe.gd.log",
+      "log_lines": 10,
+      "log_sha256": "073abc3d79a4863fecee250e394a13a44ee8a12cc5f5cf1f881161b911f6ff55",
+      "mismatch": "",
+      "missing": [
+        "any currency custody symbol (deposit endpoint, token id, vending, recycler) in runtime code (expected in res://game/)",
+        "profile.secured_ragnarok_currency as a permitted persistent category (D063) (expected in res://game/autoload/save_service.gd)"
+      ],
+      "probe": "r063_currency_custody_probe.gd",
+      "verdict": "RED_NOT_IMPLEMENTED"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 15,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r_goals_counterfactuals_probe.gd.log",
+      "log_lines": 29,
+      "log_sha256": "a3cc9696761f8263c8bfbf90e4bf95fa195a2dbc40f2387e30ec442ec3837d81",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r_goals_counterfactuals_probe.gd",
+      "verdict": "PASS"
+    },
+    {
+      "blocked_reason": "",
+      "checks": 13,
+      "claimed": "PASS",
+      "engine_lines": [
+        "Godot Engine v4.7.stable.custom_build - https://godotengine.org"
+      ],
+      "exit_code": 0,
+      "failed": [],
+      "family": "balance_native_ragnarok",
+      "log": ".artifacts/native_runs/03887d9bebf4/balance_native_ragnarok__r_persistence_probe.gd.log",
+      "log_lines": 12,
+      "log_sha256": "d1f56f8a222a922ed8ec6e678f91f46f1673837e403023ea227bd277b4818c4a",
+      "mismatch": "",
+      "missing": [],
+      "probe": "r_persistence_probe.gd",
+      "verdict": "PASS"
     }
   ],
   "rule": "A probe counts only for the composition SHA it ran on. BLOCKED and RED_NOT_IMPLEMENTED are recorded, never converted into a pass. A probe that exits 0 without its verdict line is BLOCKED_NO_VERDICT.",
@@ -212,7 +344,10 @@
   "summary": {
     "BLOCKED": 0,
     "FAIL": 3,
-    "PASS": 0,
-    "RED_NOT_IMPLEMENTED": 6
+    "PASS": 2,
+    "RED_NOT_IMPLEMENTED": 10
+  },
+  "support_source": {
+    "data/survival/balance/ragnarok_tuning.v1.json": "28ca40544d9de36411caf77cc30b81f54f9a64071f97d4e36d6b1447714fd94b"
   }
 }
