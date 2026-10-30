@@ -37,6 +37,25 @@ func _run() -> void:
 		"female source points to user-verified Drive file"
 	)
 	_check(
+		male.get("archive_md5", "") == "b4910c4dd86a5193e5e0640751a20abd"
+		and male.get("png_crc_failures", -1) == 0,
+		"male archive bytes and inspected PNG integrity are recorded"
+	)
+	_check(
+		female.get("archive_md5", "") == "cf6ffa60ef922e4703dc6b27c3b5bac2"
+		and female.get("png_crc_failures", -1) == 0,
+		"female archive bytes and inspected PNG integrity are recorded"
+	)
+	var license_review: Dictionary = manifest.get("license_review", {})
+	_check(
+		String(license_review.get("status", "")) == "NOT_VERIFIED",
+		"manifest does not overclaim license review"
+	)
+	_check(
+		male.armor_grades["0"].idle_sheet == "" and female.armor_grades["0"].idle_sheet == "",
+		"inspected source previews are not misrepresented as installed runtime art"
+	)
+	_check(
 		male.armor_grades["0"].dimensions == [768, 256],
 		"male bald unarmored idle sheet dimensions are documented"
 	)
@@ -65,6 +84,12 @@ func _run() -> void:
 	_check(
 		blocked_female.status == "SOURCE_BLOCKED" and blocked_female.gender == "female",
 		"missing installed female source fails closed without changing identity"
+	)
+	var unversioned_owner := _owner("male", 0)
+	unversioned_owner.erase("revision")
+	_check(
+		ADAPTER.resolve(unversioned_owner, manifest).status == "SOURCE_BLOCKED",
+		"avatar appearance requires a non-empty owner revision"
 	)
 	var male_grade_one := ADAPTER.resolve(_owner("male", 1), manifest)
 	var female_grade_two := ADAPTER.resolve(_owner("female", 2), manifest)

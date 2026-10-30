@@ -6,10 +6,10 @@
 
 | A0 player identity | User-verified source | User-provided Drive file | Base sheet source member | Arena checkout |
 |---|---|---|---|---|
-| Bald, unarmored male | Craftpix 555940, `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | ZIP and sprite bytes absent; not imported |
-| Bald, unarmored female | Craftpix 419402, `craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip` | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | ZIP and sprite bytes absent; not imported |
+| Bald, unarmored male | Craftpix 555940, `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | Downloaded from the user-provided Drive folder; 6,439,805 bytes, MD5 `b4910c4dd86a5193e5e0640751a20abd`; all 350 PNG members CRC-clean. Idle/walk/run direction sheets inspected from extracted temporary previews. No runtime asset imported or source sprite included in Git. |
+| Bald, unarmored female | Craftpix 419402, `craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip` | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | Downloaded from the user-provided Drive folder; 6,419,098 bytes, MD5 `cf6ffa60ef922e4703dc6b27c3b5bac2`; all 316 PNG members CRC-clean. Idle/walk/run direction sheets inspected from extracted temporary previews. No runtime asset imported or source sprite included in Git. |
 
-The user has directly inspected both original ZIPs and the sheets; that evidence is recorded here as user-supplied source verification. It is not local byte verification, local import, license/attribution review, or a production animation test. These sources supersede prior source assumptions. Do not redistribute raw source art in this public repository.
+The connected Drive handoff made actual source bytes available in this session. Each archive's `License.txt` contains only `https://craftpix.net/file-licenses/`; the terms/attribution and permission to redistribute in this repository were **not** independently verified. The source ZIPs and extracted inspection previews were kept out of the project/Git. This verifies archive identity, PNG integrity and appearance content, but not license clearance, runtime import, or production animation. Do not redistribute raw source art in this public repository.
 
 ## Equipment appearance state
 
@@ -24,7 +24,7 @@ The owner-supplied appearance tuple is selected gender × authoritative equipped
 
 ## Exact unresolved art blocker
 
-The source verification currently available in the Arena package establishes only the unarmored idle sheet from each of the two ZIPs. It does **not** establish compatible male and female grade-1/grade-2 armor sprites, armor layers, or a validated runtime compositing method. The Craftpix 180537 `Swordsman_lvl1/lvl2/lvl3` is a different character and is explicitly rejected as the matching pair—especially as female armor. The Knight protagonist is also not a permitted visual fallback. Until authorized bytes are handed off and all four armor-stage sources are inspected, these appearance stages remain `SOURCE_BLOCKED`.
+Source-byte inspection confirms the two bald/unarmored canonical sets and their four-direction idle, walk and run sheets. It does **not** establish compatible male and female grade-1/grade-2 armor sprites, armor layers, or a validated runtime compositing method. Targeted Drive filename searches found no assets named for armor, humans or heroes; the only five character-named results include the canonical bases plus the explicitly rejected 180537 Swordsman, Orc and Vampire packs. This is not a broad archive-content audit, so it is not evidence that all other packs lack compatible armor. No armor candidate has been selected or inspected; grades 1/2 remain `SOURCE_BLOCKED` until a real approved source is found and tested. The 180537 `Swordsman_lvl1/lvl2/lvl3` is a different character and is not the matching pair—especially not female armor. The Knight protagonist is also not a permitted fallback.
 
 ## Owner integration contract
 

@@ -10,7 +10,7 @@ var selections: Array[String] = []
 class FakeSave:
 	extends RefCounted
 	func get_inventory_stacks() -> Dictionary:
-		return {"oak_wood": {"quantity": 12}, "oak_wood#2": {"item_id": "oak_wood", "quantity": 3}, "bad": {"quantity": 0}}
+		return {"oak_wood": {"quantity": 12}, "oak_wood#2": {"item_id": "oak_wood", "quantity": 3}, "bad": {"quantity": 0}, "private_unknown_42": {"item_id": "private_unknown_42", "quantity": 1}}
 
 func check(value: bool, message: String) -> void:
 	checks += 1
@@ -29,8 +29,10 @@ func _run() -> void:
 		return
 	var fake := FakeSave.new()
 	var bag: Array[Dictionary] = ADAPTER.bag(fake, svc)
-	check(bag.size() == 2, "each valid stack preserved; empty skipped")
+	check(bag.size() == 2, "known stacks are preserved while empty and unlabeled private keys stay hidden")
 	check(bag[0].name == "Oak Wood" and bag[1].id == "oak_wood", "catalog name and secondary stack item id")
+	var unknown_row := ADAPTER._totals_as_rows({"private_unknown_42": 1}, svc, "chest", {}, {}, {})
+	check(unknown_row.is_empty(), "unlabeled unknown item key is not exposed as player text")
 	check(ADAPTER.bag(null, svc).is_empty(), "missing save is empty")
 	var p: Dictionary = ADAPTER.placement(svc, "door_wood", "water", ["oak_tree"])
 	check(p.name == "Wooden Door" and p.status.contains("water"), "real catalog and invalid placement reason")

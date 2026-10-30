@@ -31,6 +31,10 @@ func _run() -> void:
 	var original: Dictionary = FIXTURE.snapshot()
 	planner.set_snapshot(original)
 	check(planner._snapshot.is_empty(), "fixture state is rejected outside developer diagnostics")
+	var unversioned_owner := original.duplicate(true)
+	unversioned_owner["provenance"] = "A0_OWNER_PROJECTION"
+	planner.set_snapshot(unversioned_owner)
+	check(planner._snapshot.is_empty(), "unversioned owner data cannot enter the release view")
 	planner.set_developer_diagnostics(true)
 	planner.set_snapshot(original)
 	var stale_v1 := original.duplicate(true)
@@ -143,6 +147,95 @@ func _run() -> void:
 	equip.pressed.emit()
 	check(requests.size() == 3 and requests[2].action == "equip_core" and requests[2].id == "soh_i_000000000011_a1c0ffee", "equip request uses exact instance id")
 	planner.resolve_request("Fixture only")
+	var equipped_snapshot := FIXTURE.snapshot()
+	equipped_snapshot.cores[0].equipped = true
+	equipped_snapshot.cores[0].can_unequip = true
+	planner.set_snapshot(equipped_snapshot)
+	planner._select("soh_i_000000000011_a1c0ffee")
+	var unequip_button: Button
+	for child: Node in planner._details.get_children():
+		if child is Button and child.text == "Unequip": unequip_button = child as Button
+	check(unequip_button != null, "owner-authorized equipped Core exposes its real unequip action")
+	if unequip_button != null: unequip_button.pressed.emit()
+	check(requests[-1].action == "unequip_core" and requests[-1].id == "soh_i_000000000011_a1c0ffee", "unequip intent keeps exact physical instance identity")
+	planner.resolve_request("Fixture only")
+	var unknown_equipment := FIXTURE.snapshot()
+	unknown_equipment.cores[0].erase("equipped")
+	unknown_equipment.cores[0].can_equip = true
+	planner.set_snapshot(unknown_equipment)
+	planner._select("soh_i_000000000011_a1c0ffee")
+	var unknown_equip_button := planner._details.find_child("Equip", true, false)
+	check(unknown_equip_button == null, "unknown equipment state cannot offer a misleading Equip action")
+
+	# Production-shaped A0 owner lifecycle: correlated response, monotonically
+	# newer snapshot, sanitized feedback, and retry only after durable dedupe opt-in.
+	planner.set_developer_diagnostics(false)
+	var owner := FIXTURE.snapshot()
+	owner["schema"] = "soh.ui.snapshot.v2"
+	owner["provenance"] = "A0_OWNER_PROJECTION"
+	owner["sequence"] = 10
+	owner["revision"] = "owner-10"
+	owner["capabilities"] = {}
+	check(planner.apply_snapshot(owner), "accept versioned A0 owner snapshot")
+	planner._request("transfer", "oak_wood", {"item_id": "oak_wood"})
+	var owner_request: Dictionary = requests[requests.size() - 1].payload
+	check(owner_request.sequence == 10 and owner_request.revision == "owner-10", "owner action carries the exact source revision and sequence")
+	var request_id := String(owner_request.request_id)
+	planner._request("transfer", "oak_wood", {"item_id": "oak_wood"})
+	check(String(requests[requests.size() - 1].payload.request_id) == request_id and planner._pending, "duplicate action cannot create a second in-flight request")
+	var rejected_fresh := owner.duplicate(true)
+	rejected_fresh.sequence = 11
+	rejected_fresh.revision = "owner-11"
+	var wrong_request := {"schema":"soh.ui.response.v2", "request_id":"not-the-current-request", "status":"rejected", "snapshot":rejected_fresh}
+	check(not planner.apply_host_response(wrong_request) and planner._pending, "mismatched response cannot release the pending action")
+	var stale_response := {"schema":"soh.ui.response.v2", "request_id":request_id, "status":"rejected", "snapshot":owner}
+	check(not planner.apply_host_response(stale_response) and planner._pending, "stale authoritative snapshot cannot resolve the request")
+	var same_revision := rejected_fresh.duplicate(true)
+	same_revision.revision = owner.revision
+	var same_revision_response := {"schema":"soh.ui.response.v2", "request_id":request_id, "status":"rejected", "snapshot":same_revision}
+	check(not planner.apply_host_response(same_revision_response) and planner._pending, "response must advance both owner sequence and revision")
+	var rejected := {"schema":"soh.ui.response.v2", "request_id":request_id, "status":"rejected", "reason":"chest_full", "message":"chest_full A0_OWNER_PROJECTION", "snapshot":rejected_fresh}
+	check(planner.apply_host_response(rejected), "matching fresh owner rejection resolves the request")
+	check(planner._message == "No room there. Make space and try again.", "denial maps to concise player copy rather than owner/debug text")
+	check(not planner.apply_host_response(rejected), "replayed response cannot resolve a later request")
+
+	planner._request("craft", "bandage", {})
+	var pending_request_id := planner._pending_id
+	var request_count_before_retry := requests.size()
+	check(not planner.retry_pending() and requests.size() == request_count_before_retry, "UI will not retry when owner deduplication is unconfirmed")
+	var retry_capable := rejected_fresh.duplicate(true)
+	retry_capable.sequence = 12
+	retry_capable.revision = "owner-12"
+	retry_capable.capabilities = {"retry_same_request": true}
+	check(planner.apply_snapshot(retry_capable) and planner._pending, "new owner snapshot can advertise safe same-key retries without releasing pending work")
+	check(planner.retry_pending(), "durable owner dedupe opt-in enables a same-key retry")
+	check(requests.size() == request_count_before_retry + 1 and requests[-1].payload.request_id == pending_request_id, "retry reuses the exact request ID")
+	var accepted_fresh := retry_capable.duplicate(true)
+	accepted_fresh.sequence = 13
+	accepted_fresh.revision = "owner-13"
+	var accepted := {"schema":"soh.ui.response.v2", "request_id":pending_request_id, "status":"accepted", "message":"SOURCE_BLOCKED res://internal/path", "snapshot":accepted_fresh}
+	check(planner.apply_host_response(accepted), "accepted owner response resolves with a fresh authoritative snapshot")
+	check(planner._message == "Action complete.", "technical owner text is never echoed to the player")
+
+	planner._request("transfer", "oak_wood", {})
+	var unknown_denial_id := planner._pending_id
+	var unknown_denial_snapshot := accepted_fresh.duplicate(true)
+	unknown_denial_snapshot.sequence = 14
+	unknown_denial_snapshot.revision = "owner-14"
+	var unknown_denial := {
+		"schema": "soh.ui.response.v2",
+		"request_id": unknown_denial_id,
+		"status": "rejected",
+		"reason": "unrecognized_internal_reason",
+		"message": "Stack_ID=private_unknown_42\\nres://internal/path",
+		"snapshot": unknown_denial_snapshot,
+	}
+	check(planner.apply_host_response(unknown_denial), "fresh owner rejection resolves without an allowlisted reason")
+	check(
+		planner._message == "Could not do that just now. Review your items and try again.",
+		"unknown owner reason and arbitrary technical text stay out of player-facing copy"
+	)
+
 	planner.close_planner()
 	planner.close_planner()
 	check(states == [true, false], "modal close emitted once")

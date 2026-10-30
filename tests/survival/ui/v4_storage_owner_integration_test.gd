@@ -72,6 +72,7 @@ func _intent(
 		"request_id": request_id,
 		"container_id": container_id,
 		"item_id": item_id,
+		"stack_key": item_id,
 		"direction": direction,
 		"amount": amount,
 		"sequence": 0,
@@ -285,6 +286,24 @@ func _run() -> void:
 	_expect(
 		String(fractional.get("status", "")) == "rejected",
 		"fractional quantity fails closed instead of silently rounding"
+	)
+	var missing_revision_intent := _intent("missing-revision", container_id, STONE, "deposit", 1)
+	missing_revision_intent.erase("revision")
+	_expect(
+		String(COMMAND.normalize_intent("transfer", STONE, missing_revision_intent).get("status", "")) == "rejected",
+		"storage intent without its source revision fails closed"
+	)
+	var malformed_item := COMMAND.normalize_intent(
+		"transfer", "private item id", _intent("malformed-item", container_id, "private item id", "deposit", 1)
+	)
+	_expect(
+		String(malformed_item.get("status", "")) == "rejected",
+		"noncanonical internal item key is rejected before reaching A0"
+	)
+	var malformed_request := _intent("bad request id", container_id, STONE, "deposit", 1)
+	_expect(
+		String(COMMAND.normalize_intent("transfer", STONE, malformed_request).get("status", "")) == "rejected",
+		"malformed request correlation key fails closed"
 	)
 	# Fill the A0 chest to its real slot limit through its actual current panel.
 	for index in range(11):
