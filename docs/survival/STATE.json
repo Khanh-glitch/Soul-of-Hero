@@ -203,10 +203,10 @@
     "first_test": "Run exact A1 90c1d8 46/48/14 isolated A0 controller pilot, required locker stand, actual input and reload; diagnose CI, then develop authorized bounded optional skeleton encounter with actual combat/death/bed/bag journey. Same-SHA regression gates; B0 NOT ACCEPTED PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
-    "description": "NEXT_ATOMIC_ACTION: inspect threat 40997515288 at 2926650c (real initial health), and connector inverse/legacy downgrade 40996661054 at 0c1a33de. Diagnose failures without fabricated combat or weakening checks. Request A1 correction to exact locker collision using PR20 comment 6514108933. Continue real continuous home→threat→death/bag→GUI bed→recovery→home/reload, repeated death, avoidance, no-farming, then same-SHA native/A6/perf regressions. Investigate +120% performance failure without changing +45% gate. SURV-020/B0 NOT ACCEPTED; PR21 draft HOLD.",
+    "description": "NEXT_ATOMIC_ACTION: inspect threat 40997860492 and connector inverse/legacy downgrade 40997860384 at d63852fa. Threat 2926650c proved real autonomous damage 1100→1086 but retreat failed; diagnose physical movement and continue real home→danger→death/bag→GUI bed→recovery→home/reload, repeated death, avoidance and no farming without fabrication. Connector exact locker shape collision reported to A1 via PR20 comment 6514108933; do not move POI/shrink Hero. Revalidate all same SHA, investigate +120% performance failure without weakening +45% gate. SURV-020/B0 NOT ACCEPTED, draft PR HOLD.",
     "last_verified_code": "71f359c7dda4b3efec73cbd96c87f38d468577be: home92, foundation and A6 passed; overworld perf FAILED +120%; threat not passed.",
-    "working_code": "2926650ca62e79f0b107b2cd36a13c536db06409; threat 40997515288 pending; latest A1 965a0b03830fb5866d08c0d5a877135bf2f8c83f.",
-    "docs_sync": "tab04 readback index 126901 documents this checkpoint; sync subsequent CI results"
+    "working_code": "d63852fa17053cc7084ed96cda592041f0a663d7; threat 40997860492 and connector 40997860384 pending; A1 965a0b03830fb5866d08c0d5a877135bf2f8c83f.",
+    "docs_sync": "tab04 readback index 129617 covers d63852fa and actual threat/downgrade findings; sync future results."
   },
   "blockers": [
     {
