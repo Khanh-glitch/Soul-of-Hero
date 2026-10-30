@@ -3,6 +3,7 @@ extends Node2D
 ## It is inert until the actual composed world mounts it and supplies its real
 ## Knight and EconomySession. It does not own inventory, time or reward data.
 const POINT = preload("res://game/survival/waystation_interactable.gd")
+const INTERACT_REACH := 40.0
 const POI := "poi_crown_waystation"
 const RELAY_POI := "poi_crown_relay_shed"
 const A1_TREATMENT := "res://data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json"
@@ -126,9 +127,11 @@ func matches_interaction(point: Node, actor: Node) -> bool:
 		var data: Dictionary = POINTS[id]
 		var cell: Vector2i = data.cell
 		var expected := Vector2(cell.x * 16 + 8, cell.y * 16 + 8)
+		# The stand cell stays mandatory; only the radius around the prop is
+		# generous enough for a real body standing anywhere on that cell.
 		return (point as Node2D).global_position.distance_to(expected) < 0.01 \
 			and nav.cell_of(_hero.global_position) == data.stand \
-			and _hero.global_position.distance_to(expected) <= 24.0
+			and _hero.global_position.distance_to(expected) <= INTERACT_REACH
 	return false
 
 func request_for(point: Node) -> Dictionary:

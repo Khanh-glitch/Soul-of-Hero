@@ -13,6 +13,14 @@ extends "res://tests/survival_production_waystation_candidate_test.gd"
 func _test_label() -> String:
 	return "A0 WALKER RIDGE PROBE"
 
+func _finish() -> void:
+	for action: String in ["move_left", "move_right", "move_up", "move_down"]:
+		Input.action_release(action)
+	if FileAccess.file_exists(save_path):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(save_path))
+	print("A0 WALKER RIDGE PROBE %s - %d checks" % ["PASSED" if failures.is_empty() else "FAILED", checks])
+	quit(0 if failures.is_empty() else 1)
+
 func _journey(ow: Node, hero: CharacterBody2D, host: Node, second: bool) -> void:
 	var nav := ow.get(&"traversability") as OverworldTraversability
 	if second:
