@@ -343,17 +343,30 @@ func _consume_encounter_by_real_attack(ow: Node, encounter: Node2D, goal: Vector
 	if not applied or not _observed_input_kill or bool(hero.get("dead")):
 		return false
 	var home_path := _route(nav.cell_of(hero.global_position), base, nav, hero)
+	var walked_home := false
 	if not home_path.is_empty():
-		await _walk_path(hero, home_path)
+		walked_home = await _walk_path(hero, home_path)
 	var build := ow.get(&"survival_build") as SurvivalBuildSystem
-	if bool(hero.get("dead")) or build.room_topology.room_at(nav.cell_of(hero.global_position)) != home_room:
+	var room_now: String = build.room_topology.room_at(nav.cell_of(hero.global_position))
+	var returned := not bool(hero.get("dead")) and room_now == home_room
+	print("FARM_PROBE return path=%d walked=%s pos=%s room=%s expected_room=%s hp=%s" % [home_path.size(), walked_home, str(hero.global_position), room_now, home_room, str(hero.get("health"))])
+	_expect(returned, "after real kill ordinary movement returns to the original room alive")
+	if not returned:
 		return false
 	var score_after_attack := int(session.get("score"))
 	await create_timer(62.0).timeout
-	return encounter.get_node_or_null("BoundedSkeleton") == null \
-		and int(session.get("score")) == score_after_attack \
-		and (_save().call(&"inventory_totals") as Dictionary) == expected \
-		and (_save().call(&"get_snapshot") as Dictionary).get("progression", {}) == progression_before
+	var no_enemy := encounter.get_node_or_null("BoundedSkeleton") == null
+	var no_extra_score := int(session.get("score")) == score_after_attack
+	var inventory_after: Dictionary = _save().call(&"inventory_totals")
+	var progression_after: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("progression", {})
+	var custody_ok := inventory_after == expected
+	var progression_ok := progression_after == progression_before
+	print("FARM_PROBE after_cooldown no_enemy=%s score_before=%s score_after=%s custody=%s progression=%s inventory_before=%s inventory_after=%s progression_before=%s progression_after=%s" % [no_enemy, score_after_attack, int(session.get("score")), custody_ok, progression_ok, str(expected), str(inventory_after), str(progression_before), str(progression_after)])
+	_expect(no_enemy, "a consumed skeleton does not rearm after active cooldown")
+	_expect(no_extra_score, "score does not increase after the real kill without another enemy")
+	_expect(custody_ok, "the real kill and cooldown preserve exact item custody")
+	_expect(progression_ok, "the real kill and cooldown do not grant experience or progression")
+	return no_enemy and no_extra_score and custody_ok and progression_ok
 
 func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vector2i,
 		home_cell: Vector2i, home_room: String, previous_bag: String, before: Dictionary) -> bool:
