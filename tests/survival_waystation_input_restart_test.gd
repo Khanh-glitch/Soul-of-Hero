@@ -3,6 +3,7 @@ extends "res://tests/survival_connector_pilot_test.gd"
 ## Hero, controller and A1 connector. Synthetic ordinary inputs; NOT production
 ## mount, human validation or the complete home/danger journey.
 const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
+const Integers = preload("res://game/survival/economy/a0_world_slice_v5_migration.gd")
 const HOST = preload("res://game/survival/waystation_host.gd")
 const GEOMETRY = preload("res://game/survival/waystation_geometry.gd")
 const PATH := "user://tests/waystation_input_restart.json"
@@ -26,6 +27,12 @@ func _console() -> void:
 			_finish(); return
 		var expected: Variant = JSON.parse_string(f.get_as_text())
 		_expect(expected is Dictionary, "first process audit parses")
+		if expected is Dictionary:
+			# The audit is JSON, so its integers reparse as whole floats; restore
+			# the declared integer slots with the same decoder SaveService uses,
+			# and fail closed if that document is not integer-clean.
+			var restore: String = Integers.normalize_numbers(expected)
+			_expect(restore.is_empty(), "first process audit restores exact integer types (%s)" % restore)
 		if not expected is Dictionary:
 			_finish(); return
 		var actual: Dictionary = _save().call(&"get_snapshot")

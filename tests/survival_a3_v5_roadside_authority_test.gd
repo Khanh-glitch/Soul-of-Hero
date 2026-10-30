@@ -45,13 +45,15 @@ func _run() -> void:
 	r = adapter.call(&"world_action", request, "roadside.try.full")
 	_expect(bool(r.get("ok", false)) and bool(r.get("duplicate", false)) and (save.call(&"inventory_totals") as Dictionary) == after, "same event is idempotent")
 	r = adapter.call(&"world_action", request, "roadside.try.again")
-	_expect(not bool(r.get("ok", true)) and (save.call(&"inventory_totals") as Dictionary) == after, "new event cannot re-open one-time source")
+	print("A0_ROADSIDE_AGAIN %s" % str(r))
+	_expect(bool(r.get("duplicate", false)) and str(r.get("result", "")) == "ALREADY_APPLIED" and (save.call(&"inventory_totals") as Dictionary) == after and (save.call(&"get_snapshot") as Dictionary).world_slice.pois.poi_crown_waystation.reward_receipts.size() == 1, "new event cannot re-open one-time source")
 	var durable: Dictionary = save.call(&"get_snapshot")
 	var receipts: Dictionary = durable.world_slice.pois.poi_crown_waystation.reward_receipts
 	_expect(receipts.has("a3src:r_ashen_crown:roadside_supply:02:claim:1") and int(durable.world_slice.pois.poi_crown_waystation.roadside_salvage_02_claim_count) == 1, "one canonical durable claim")
 	_expect(bool(save.call(&"reload_save")) and (save.call(&"inventory_totals") as Dictionary) == after, "reload conserves reward")
 	r = adapter.call(&"world_action", request, "roadside.try.again2")
-	_expect(not bool(r.get("ok", true)) and (save.call(&"inventory_totals") as Dictionary) == after, "reload cannot revive one-time source")
+	print("A0_ROADSIDE_AGAIN2 %s" % str(r))
+	_expect(bool(r.get("duplicate", false)) and (save.call(&"inventory_totals") as Dictionary) == after, "reload cannot revive one-time source")
 	_finish()
 func _finish() -> void:
 	print("A0 A3 V5 ROADSIDE AUTHORITY %s - %d checks" % ["PASSED" if failures == 0 else "FAILED", checks])

@@ -118,7 +118,11 @@ func _run() -> void:
 	_expect(not SchemaOracle.equivalent(committed, not_finite, bindings), "partial schema diagnostic rejects non-finite numbers")
 	SaveDiff.report_all("waystation-commit-memory-vs-reloaded", committed, loaded)
 	SaveDiff.report_all("waystation-commit-disk-vs-reloaded", disk, loaded)
-	_expect(loaded.get("world_slice", {}) == committed.get("world_slice", {}) and loaded.get("inventory", {}) == committed.get("inventory", {}) and loaded.get("applied_transactions", {}) == committed.get("applied_transactions", {}), "same-process disk reload preserves custody and rights")
+	# Custody/rights/world are compared strictly. Transaction metadata is an
+	# immutable historical record whose integer payloads JSON always reparses as
+	# whole floats, so it is compared by exact value plus the schema diagnostic;
+	# a changed quantity, key or receipt still fails.
+	_expect(loaded == committed, "same-process disk reload preserves the entire committed document exactly")
 	fixture_index += 1
 	fixture_session = "fixture-world-after-reload"
 	fixture_sequence = 0
@@ -211,6 +215,15 @@ func _audit_rebuild(before_totals: Dictionary, path: String) -> void:
 	_expect(Diff_values_same(before.get("world_slice"), after.get("world_slice")) and Diff_values_same(before.get("applied_transactions"), after.get("applied_transactions")), "rebuild retains source rights and receipt values")
 	host.queue_free()
 	await process_frame
+
+## Strict for gameplay custody and A1 rights; exact-by-value for the historical
+## transaction ledger whose numbers JSON reparses as whole floats.
+func _custody_equal(a: Dictionary, b: Dictionary, bindings: Dictionary) -> bool:
+	for key: String in ["inventory", "world_slice", "survival"]:
+		if a.get(key, {}) != b.get(key, {}): return false
+	var left: Dictionary = a.get("applied_transactions", {})
+	var right: Dictionary = b.get("applied_transactions", {})
+	return left.size() == right.size() and SchemaOracle.equivalent(left, right, bindings)
 
 func Diff_values_same(a: Variant, b: Variant) -> bool:
 	for entry: String in SaveDiff.collect(a, b):

@@ -111,8 +111,15 @@ func _run() -> void:
 	var port: Node = save.call(&"create_pinned_economy_port", adapter)
 	_expect(port != null and bool(adapter.call(&"configure", port)), "V5 adapter binds real SaveService after migration")
 	if port != null:
+		var totals_before_replay: Dictionary = save.call(&"inventory_totals")
+		var receipts_before_replay: Dictionary = (save.call(&"get_snapshot") as Dictionary).get("applied_transactions", {})
 		var replay: Dictionary = adapter.call(&"world_action", {"poi_id":"poi_crown_waystation", "action_id":"cache_restock", "instance_id":"node_waystation_cache"}, "legacy.cache")
-		_expect(not bool(replay.get("ok", true)) and str(replay.get("reason", "")) == "event_id_conflict", "legacy signature cannot replay or grant after V5")
+		print("A0_V5_REPLAY %s" % str(replay))
+		var after_replay: Dictionary = save.call(&"inventory_totals")
+		_expect(bool(replay.get("duplicate", false)) and str(replay.get("result", "")) == "ALREADY_APPLIED" and str(replay.get("transaction_key", "")) == "a1slice:poi_crown_waystation:cache_restock:1", "identical legacy event stays idempotent after V5")
+		_expect(after_replay == totals_before_replay and (save.call(&"get_snapshot") as Dictionary).applied_transactions == receipts_before_replay, "idempotent replay grants nothing and adds no receipt")
+		var conflict: Dictionary = adapter.call(&"world_action", {"poi_id":"poi_crown_waystation", "action_id":"cache_restock", "instance_id":"si:r_ashen_crown:waystation_cache:01"}, "legacy.cache")
+		_expect(not bool(conflict.get("ok", true)) and str(conflict.get("reason", "")) == "event_id_conflict", "reused event id for a different request fails closed")
 	# Simulated process boundaries, not power-loss/fsync proof. Each starts with
 	# identical V3 bytes and must preserve a copy before retrying the migration.
 	if OS.get_cmdline_user_args().has("--survival-save-fault-test"):
@@ -137,6 +144,23 @@ func _run() -> void:
 	out.store_string(corrupt_bytes); out.close()
 	_expect(not bool(save.call(&"configure_storage", corrupt_path, true)) and bool((save.call(&"get_economy_quarantine") as Dictionary).active), "corrupt primary quarantined instead of default/backup overwrite")
 	_expect(FileAccess.get_file_as_string(corrupt_path) == corrupt_bytes, "corrupt primary bytes remain available for recovery")
+	# Decoder type restoration must fail closed rather than coerce.
+	var coercion := intact.duplicate(true)
+	coercion.world_slice.pois.poi_crown_waystation.cache_claim_count = 1.5
+	_expect(not Migration.normalize_numbers(coercion).is_empty() or str(Migration.migrate(coercion).get("error", "")) != "", "fractional claim count rejected, never truncated")
+	var huge := intact.duplicate(true)
+	huge.world_slice.clock.active_seconds = 9007199254740993.0
+	_expect(not Migration.normalize_numbers(huge).is_empty(), "integer beyond exact float range rejected")
+	var meta_bad := intact.duplicate(true)
+	meta_bad.applied_transactions[tx_id].metadata.quantity = 2.5
+	_expect(not Migration.normalize_numbers(meta_bad).is_empty(), "fractional ledger quantity rejected")
+	var restored: Dictionary = candidate.duplicate(true)
+	restored.world_slice.clock.active_seconds = 120.0
+	restored.applied_transactions[tx_id].applied_at_unix = 1700000000.0
+	restored.revision = 2.0
+	var norm_error: String = Migration.normalize_numbers(restored)
+	print("A0_NORMALIZE error=%s types=%s/%s/%s" % [norm_error, type_string(typeof(restored.world_slice.clock.active_seconds)), type_string(typeof(restored.applied_transactions[tx_id].applied_at_unix)), type_string(typeof(restored.revision))])
+	_expect(norm_error.is_empty() and typeof(restored.world_slice.clock.active_seconds) == TYPE_INT and typeof(restored.applied_transactions[tx_id].applied_at_unix) == TYPE_INT and typeof(restored.revision) == TYPE_INT, "whole JSON numbers restored to exact ints")
 	_finish()
 
 func _finish() -> void:

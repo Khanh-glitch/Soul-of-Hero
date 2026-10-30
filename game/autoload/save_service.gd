@@ -2593,6 +2593,9 @@ func _prepare_document(raw_document: Dictionary) -> Dictionary:
 	var validation_error := _sanitize_and_validate(normalized)
 	if not validation_error.is_empty():
 		return {"ok": false, "error": validation_error}
+	var integer_error: String = A0_WORLD_V5_MIGRATION.normalize_numbers(normalized)
+	if not integer_error.is_empty():
+		return {"ok": false, "error": "non_integer_save_field:" + integer_error, "economy_quarantine": true}
 	var serialization_error := _validate_json_value(normalized, "save")
 	if not serialization_error.is_empty():
 		return {"ok": false, "error": serialization_error}
