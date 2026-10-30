@@ -94,7 +94,7 @@
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
 |---|---|---|---|
 | FB39 | AI biết đi vòng, phá tường/cửa, người chơi sửa lại | USER_WANTS | User yêu cầu rõ |
-| FB40 | Dấu chân/mùi phân rã, quái truy theo về nhà | USER_WANTS | Có dấu hiệu và phản chế, chỉ mô phỏng offline app khi có luật |
+| FB40 | Quái tìm đến nhà qua dấu vết hiện hữu; người chơi kiểm tra dấu chân và quái gần nhà trước khi offline | USER_WANTS D061 LOCKED | Không biết sẵn vị trí nhà; dấu chân phai theo thời gian/địa hình/thời tiết, kiểm thử khi offline |
 | FB41 | Chủ động dụ quái quanh vùng để farm/thủ thành | USER_WANTS | Chống score/loot farming, rõ rủi ro |
 
 ### Phương tiện
