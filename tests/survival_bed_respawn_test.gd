@@ -79,6 +79,15 @@ func _body() -> void:
 	build.select_piece("bed_wood")
 	var paid_before := _count(WOOD)
 	var iron_before := _count(IRON)
+	# Site setup put the Hero directly on the proposed bed. Prove the new
+	# safety check prevents trapping that Hero, then use an adjacent legal
+	# standing position for the original purchase/respawn assertions.
+	var before_overlap: Dictionary = _save().call(&"get_snapshot")
+	var overlap: Dictionary = build.try_place(origin + Vector2i(3, 3), "survival.test.bed.overlap")
+	_expect(not bool(overlap.get("ok", true)) and overlap.get("reason", "") == "hero_in_footprint" \
+		and before_overlap == (_save().call(&"get_snapshot") as Dictionary),
+		"bed on actual Hero is rejected without inventory or receipt mutation")
+	hero.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 3) * 16 + 15)
 	var bed_result: Dictionary = build.try_place(origin + Vector2i(3, 3), "survival.test.bed.purchase")
 	var bed_id := String(bed_result.get("entity_id", ""))
 	_expect(bool(bed_result.get("ok", false)) and _count(WOOD) == paid_before - 4 and _count(IRON) == iron_before - 1,
@@ -89,6 +98,9 @@ func _body() -> void:
 	await physics_frame
 	var bed := build.structure_node(bed_id)
 	_expect(bed != null and bed.get_node_or_null("Solid") != null, "bed projects live collision")
+	if bed == null:
+		_body_complete = true
+		return
 	hero.global_position = Vector2((origin.x + 2) * 16 + 8, (origin.y + 3) * 16 + 15)
 	var far := Node2D.new()
 	_host.add_child(far)

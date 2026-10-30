@@ -260,6 +260,17 @@ func _body() -> void:
 	build.select_piece("foundation_wood")
 	var floor_result: Dictionary = build.try_place(interior_cell)
 	build.select_piece("chest_wood")
+	# This tiny room has exactly one door, immediately above interior_cell.
+	# Placing a solid chest there while the Hero is inside would cut off its
+	# only exit. Reject without mutation, then stage the original obstruction
+	# and custody/reload checks with the Hero safely outside the room.
+	var before_trap: Dictionary = _save().call(&"get_snapshot")
+	var trapped: Dictionary = build.try_place(interior_cell, "survival.test.topology.trapping.chest")
+	print("[topology] occupied-room chest refusal=%s" % str(trapped))
+	_expect(not bool(trapped.get("ok", true)) and String(trapped.get("reason", "")) == "no_hero_exit" \
+		and before_trap == (_save().call(&"get_snapshot") as Dictionary),
+		"chest blocking the Hero's only door is rejected without save mutation")
+	player.global_position = door_node.global_position + Vector2(8, -20)
 	var chest_result: Dictionary = build.try_place(interior_cell)
 	_expect(bool(floor_result.get("ok", false)) and bool(chest_result.get("ok", false)),
 		"floor and chest occupy separate layers of one cell")
