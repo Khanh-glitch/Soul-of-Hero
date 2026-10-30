@@ -200,7 +200,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "At 03a39f3f same-SHA native suite, A6 composition and home journey pass. Await bounded A1 seam and CT threat contracts; continue independent player-agency/authorized selective storage work with existing save/A3 authority, then real input death/return/reload and human/visual/Web gates. Preserve +45%. B0 NOT ACCEPTED, PR21 HOLD.",
+    "first_test": "A1 connector contract arrived at 96447d7; source counts reproduced but native fixture 40991448243 FAILED (<12 assertions) and exact locker stand 408,199 deferred. Obtain actual failure log and CT ridge/rollback decision, then isolated production-controller geometry/return/save/guard verification before any mount. Continue independent storage and CT threat work. B0 NOT ACCEPTED; PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -239,7 +239,7 @@
     "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "tab04 d775 failure and 03a39f3f pending checkpoint appended and read back at index 111413; final pass pending sync",
+    "docs_sync": "tab04 03a39f3f result synced/readback at index 112454; new A1 contract review pending sync",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -305,6 +305,14 @@
       "general": "FAIL 40990690225 original-main baseline; rendered job in progress at checkpoint",
       "product_review": "docs/survival/reviews/A0_SURV020_PLAYER_EXPERIENCE_REVIEW_20261030.md",
       "status": "PARTIAL_AUTOMATED_PASS_SURV020_B0_NOT_ACCEPTED"
+    },
+    "a1_connector_96447d7": {
+      "head": "96447d7a2549372c70db29f36c470d91e4171268",
+      "handoff": "docs/survival/handoffs/A0_A1_CONNECTOR_CONTRACT_REVIEW_20261030.md",
+      "source": "compiler and validator passed read-only at exact A1 SHA; independent comparison confirms 45 collision/47 dressing/13 props; legacy protected world metadata unchanged",
+      "native": "40991448243 Python+isolated reader pass; connector native and anti-vacuity FAIL (<12 checks), root cause unknown, shell -e hides log tail; new target anchor 408,200 does not prove required locker stand 408,199",
+      "scope": "45-cell legacy ridge carve awaits explicit CT decision; no A0 production carve/mount; one static chunk, no streaming",
+      "pin_caveat": "A0 Knight .tscn matches pin but A0 knight.gd changed; test production controller"
     }
   },
   "design_authority": {
