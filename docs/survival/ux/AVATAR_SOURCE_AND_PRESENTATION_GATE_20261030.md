@@ -28,7 +28,9 @@ python3 tools/stage_a6_avatar_art.py --male-zip /private/path/male.zip --female-
 python3 tools/run_a6_avatar_native_preview.py --godot godot
 ```
 
-The runner checks out A0 SHA `5387bed6260cb7b9bd4d8229ee759dee08a0d918` into a temporary detached clone, overlays only A6-owned scripts/tests and ignored local art, runs Godot import, and captures a 720p/2K/4K set. Native screenshots go under ignored `.artifacts/a6-avatar/`; they require subsequent human visual review. The runner does not alter the A0 source or mount into production.
+The runner checks out live-reviewed A0 PR #21 SHA `69070a1138730536050053c5aa47334b7b2c3836` into a temporary detached clone, preflights owner/autoload/input/Sprite APIs against the prior `5387bed6260cb7b9bd4d8229ee759dee08a0d918` comparison, overlays only A6-owned scripts/tests and ignored local art, runs Godot import, and captures a 720p/2K/4K set. Native screenshots go under ignored `.artifacts/a6-avatar/`; they require subsequent human visual review. The runner does not alter the A0 source or mount into production. Its CLI gender argument is a preview fixture, not A0's selected/persisted identity; it simulates semantic Input actions, and source preflight checks bindings without establishing physical-device or fresh-player acceptance. V3/V4 acceptance workflows and their exact source audit remain pinned to historical A0 `5387bed6260cb7b9bd4d8229ee759dee08a0d918`; that historical pin is not evidence for current A0 `69070a1138730536050053c5aa47334b7b2c3836`.
+
+**Static operator-package check, 2026-10-30:** GDScript parsing and Python compilation pass; the A0 path/API/input preflight passes against fetched PR #21 SHA `69070a1138730536050053c5aa47334b7b2c3836`, and private staged-sheet manifest paths/hashes pass. Invoking the runner produces an explicit `BLOCKED_OR_FAILED` report because native Godot 4.7 is unavailable. It stops before clone/import/capture, so there are no native screenshots or animation/visual acceptance results. The local report is ignored at `.artifacts/a6-avatar/native-preview-report.json`.
 
 ## Remaining blockers
 

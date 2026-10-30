@@ -6,16 +6,16 @@
 
 | Source | Current exact ref | Review performed |
 |---|---|---|
-| A6 working branch | `arena/443f004f-soul-of-hero`, tracked head `08ccb8348f2e7a75e09af47a1741c158fc46e794` before this continuation's uncommitted changes | Existing planner, adapters, HUD, source gate and workflows; no V3/V4 rebuild |
-| A0 PR #21 | `5387bed6260cb7b9bd4d8229ee759dee08a0d918` | Re-read the complete current `chest_inventory_panel.gd`; reviewed `SurvivalService` transfer transaction and `SaveService.transact_once` receipt/dedupe semantics; checked the production overworld mounts the existing A0 chest panel and owns its reach/input path |
+| A6 working branch | `arena/443f004f-soul-of-hero`, baseline head `632dc60e9314f534e9802d30cf602a200ae0f25b` at this continuation's review start | Existing planner, adapters, HUD, source gate and workflows; no V3/V4 rebuild |
+| A0 PR #21 | `69070a1138730536050053c5aa47334b7b2c3836` | Live-refreshed PR21 and compared KnightController, Knight scene, input bootstrap, SaveService, gameplay input gate, overworld scene and project autoloads against `5387bed6260cb7b9bd4d8229ee759dee08a0d918`; all were unchanged. `chapter1_overworld.gd` only added an opt-in Waystation candidate, default off. A0 chest panel/transaction remains authoritative. |
 | A1 PR #20 | `2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b` | Rechecked the current slice/handoff contracts: A1 authors discovery/action data; it does not grant A6 reward or persistence authority |
 | A3 PR #19 | `2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0` | Rechecked the current head and confirmed the V4-audited item catalog, recipe and research data are unchanged; a physical Core is not learned knowledge and does not imply A4 readiness |
-| CT decision/contract branch | `575ae0608b8f35deee9c1a96b8af9a225d71f622` | Read D051–D054, CT contracts and A6 work order |
+| Control Tower R0–R5 review | `docs/ct-loot-discovery-gate-20261030` at `37b31254232f94bc039840bce77f6e313c2c9769` | Read independent review `CT_A6_632DC60E_INDEPENDENT_R0_R5_PRODUCT_AND_NATIVE_GATE_20261030.md`; findings reaffirm no production avatar, require revision-safe rebinding/source-backed actions, current A0 pin/preflight, no native/CI evidence claim, and strict A0-only mount/storage authority |
 | Original Atlas + coverage trace | `1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7` | Reopened the relevant 2019–2020 identity, resource/knowledge graph, POI, building/storage, survival/death, combat, 14-day replay and acceptance sections. The trace's SYS/POI/DEP/JOURNEY IDs are not R0–R5. |
 | Review protocol | CT branch above | Read `INDEPENDENT_DEEP_REVIEW_PROTOCOL.md` and its R0–R5 requirements |
 | Acceptance | A0 PR #21 at the current ref above | Re-read the fresh-save/normal-input/native/Web, persistence, death/recovery, license, screenshot and human-review gates |
 
-A0 advanced to `5387bed6…` and A3 to `2b18bb25…` while this continuation was underway. The A0 diff from `51f2cce8…` is empty; the earlier diff from `2faf005b…` shows the chest panel, SurvivalService and production overworld unchanged while SaveService added float round-trip JSON precision. A3's latest diffs include world-source/economy work and an economy-restart test, but the exact V4-audited item catalog, recipes and research data are unchanged. Both A6 workflow owner pins and the V4 source-audit constants now use the latest A0/A1/A3 heads.
+At this live refresh, PR21 is open at A0 `69070a1138730536050053c5aa47334b7b2c3836`; PR19 remains A3 `2b18bb25dd3b0425c6b5d5ed1617a545e5e1bca0`. The 5387→69070 comparison shows the Knight scene/controller/input/SaveService/gate/overworld scene/project autoloads unchanged. `chapter1_overworld.gd` adds only an opt-in Waystation candidate with default false; the capture preflight rejects it if enabled. A3's latest diffs include world-source/economy work and an economy-restart test, but the exact V4-audited item catalog, recipes and research data are unchanged. V3/V4 workflows and `v4_owner_source_audit.py` intentionally retain their historical A0 source pin `5387bed6260cb7b9bd4d8229ee759dee08a0d918`; the new private avatar composition runner independently pins and preflights current A0 `69070a1138730536050053c5aa47334b7b2c3836`. Neither pin establishes an A0 production avatar mount.
 
 ## Avatar bytes, visual check and legal boundary
 
@@ -51,18 +51,18 @@ The annotations revealed:
 - Avatar dimension tests used strict array equality across JSON numeric types. They now assert two numeric dimensions explicitly.
 - The V3 capture failures in the old run followed the planner parse/mount errors; new bounded captures still need to execute and then be inspected.
 
-The repository working tree has been parsed with `gdparse` (gdtoolkit) for the changed driver, pipeline, native harness, and avatar/storage tests; Python scripts compile, and the private staging validator runs successfully. This is syntax/static evidence only. No local Godot executable or display server is available here, so **no local native runtime/capture is claimed**. V3 run `41031682756` and V4 run `41031682730` are still queued at exact source SHA `08ccb8348f2e7a75e09af47a1741c158fc46e794`; neither is native pass evidence until it completes. The new local native capture runner is written but cannot run in this environment.
+Static checks on the current dirty working tree now pass: `gdparse` for the revised driver, pipeline, preview harness and listed avatar/storage tests; `py_compile` for the staging tool and runner; `git diff --check`; exact A0 `69070a1138730536050053c5aa47334b7b2c3836` path/API/input preflight; and private staged-manifest path/SHA-256 checks. This is static evidence only. Running the composition runner exits blocked (2) before clone/import because native Godot 4.7 is unavailable; its ignored report records `native_capture: false`. No screenshot, Godot runtime, visual or player acceptance is claimed. At this refresh, V3 run `41036134505` and V4 run `41036134339` are both still queued at exact A6 SHA `632dc60e9314f534e9802d30cf602a200ae0f25b`; queued is not pass evidence, and these runs do not exercise this dirty diff.
 
 ## R0–R5 disposition (not an approval)
 
 | Layer | Current status | Evidence / remaining work |
 |---|---|---|
-| R0 — primary intent | **PARTIAL** | Atlas, trace, D051–D054, A0 acceptance and CT contracts rechecked. Complete requirement→owner code→player action→persistence→test→visual mapping is not finished. |
-| R1 — patch/dependency forensics | **PARTIAL** | Current owner refs and asset-license provenance reviewed; selected SHA-locked source staged privately. Production A0 avatar mount and compatible grade-1/2 layers are absent. |
-| R2 — test oracle | **CORRECTIONS MADE; RERUN REQUIRED** | Earlier native failures exposed real parser/runtime defects and stale expectations. Updated tests are not yet executed on the corrected A6 SHA. |
-| R3 — Godot and visual truth | **NOT TESTED** | No corrected native run or visually inspected 720p/2K/4K artifacts yet. Earlier test/capture failures are not visual acceptance. No human input/readability or Gold-overlay review. |
-| R4 — system/value/replay | **NOT TESTED** | Atlas establishes source→process→knowledge and long-run discovery intent; no 14-day-equivalent or human journey has been run here. |
-| R5 — binary integration decision | **HOLD** | PR #24 remains Draft/Open. A0 is the sole production/save authority; grade-zero art staging is private-only, grade-1/2 sourcing, native visual evidence and human review remain required. |
+| R0 — primary intent | **PARTIAL** | CT R0–R5 refreshed; owner-to-action/identity/persistence/mount requirements are documented. Complete requirement→owner code→player action→persistence→test→visual evidence mapping is still unfinished. |
+| R1 — patch/dependency forensics | **PARTIAL** | Current A0 preview pin and required path/API/input preflight pass; A0 source, SaveService, inventory and panel remain unchanged. Production avatar mount and compatible grade-1/2 layers are absent. |
+| R2 — test oracle | **STATIC CORRECTIONS PASS; NATIVE RERUN REQUIRED** | Revision watermark/rebind, source-backed action allowlist, frame continuity and actual pinned-A0 damage/death test cases are parser-checked, not executed in Godot. V3/V4 jobs at 632dc60 remain queued and do not cover this dirty diff. |
+| R3 — Godot and visual truth | **BLOCKED / NOT TESTED** | Runner emitted a dependency-blocked report: Godot 4.7 unavailable, no clone/import/capture. No 720p/2K/4K images, human input/readability, or Gold-overlay review. |
+| R4 — system/value/replay | **NOT TESTED** | Atlas establishes source→process→knowledge and long-run discovery intent; no 14-day-equivalent, fresh-player journey, replay, or human acceptance has been run here. |
+| R5 — binary integration decision | **HOLD** | PR #24 remains Draft/Open. A0 is the sole production/save/transfer authority; Grade 1/2, production mounting, native visual evidence and human review remain required. |
 
 ## Next executable gates
 

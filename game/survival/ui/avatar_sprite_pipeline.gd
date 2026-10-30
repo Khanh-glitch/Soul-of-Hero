@@ -11,7 +11,9 @@ const APPEARANCE_ADAPTER := preload("res://game/survival/ui/avatar_appearance_ad
 
 ## Looks up only the source record selected by A0. This returns manifest metadata,
 ## not a playable texture; the license gate is enforced before any runtime load.
-static func lookup_appearance_record(owner_snapshot: Dictionary, manifest: Dictionary) -> Dictionary:
+static func lookup_appearance_record(
+	owner_snapshot: Dictionary, manifest: Dictionary
+) -> Dictionary:
 	var gender_value: Variant = owner_snapshot.get("gender", null)
 	var gender := String(gender_value) if gender_value is String else ""
 	var grade_value: Variant = owner_snapshot.get("armor_grade", null)
@@ -28,16 +30,27 @@ static func lookup_appearance_record(owner_snapshot: Dictionary, manifest: Dicti
 		return _blocked_for_owner(gender, -1, revision, "A0 appearance snapshot is invalid.")
 	var people_value: Variant = manifest.get("characters", {})
 	if not people_value is Dictionary:
-		return _blocked_for_owner(gender, int(grade_value), revision, "Identity-specific avatar sources are missing.")
+		return _blocked_for_owner(
+			gender, int(grade_value), revision, "Identity-specific avatar sources are missing."
+		)
 	var person_value: Variant = people_value.get(gender, null)
 	if not person_value is Dictionary:
-		return _blocked_for_owner(gender, int(grade_value), revision, "Matching player identity has no avatar record.")
+		return _blocked_for_owner(
+			gender, int(grade_value), revision, "Matching player identity has no avatar record."
+		)
 	var grades_value: Variant = person_value.get("armor_grades", {})
 	if not grades_value is Dictionary:
-		return _blocked_for_owner(gender, int(grade_value), revision, "Matching equipment appearance has no source record.")
+		return _blocked_for_owner(
+			gender,
+			int(grade_value),
+			revision,
+			"Matching equipment appearance has no source record."
+		)
 	var record_value: Variant = grades_value.get(str(int(grade_value)), null)
 	if not record_value is Dictionary:
-		return _blocked_for_owner(gender, int(grade_value), revision, "Matching equipment appearance is not verified.")
+		return _blocked_for_owner(
+			gender, int(grade_value), revision, "Matching equipment appearance is not verified."
+		)
 	return {
 		"status": "RECORD_FOUND",
 		"gender": gender,
@@ -51,7 +64,9 @@ static func lookup_appearance_record(owner_snapshot: Dictionary, manifest: Dicti
 
 ## Resolves the saved identity/equipment through A0, then builds only authorized
 ## runtime frames. No source record or texture is fabricated on a blocked result.
-static func resolve_owner_appearance(owner_snapshot: Dictionary, manifest: Dictionary = {}) -> Dictionary:
+static func resolve_owner_appearance(
+	owner_snapshot: Dictionary, manifest: Dictionary = {}
+) -> Dictionary:
 	var selected_manifest := manifest
 	if selected_manifest.is_empty():
 		var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(MANIFEST_PATH))
@@ -59,7 +74,10 @@ static func resolve_owner_appearance(owner_snapshot: Dictionary, manifest: Dicti
 			return _blocked("Avatar art manifest is invalid.")
 		selected_manifest = parsed
 	var pipeline_value: Variant = selected_manifest.get("runtime_presentation_pipeline", {})
-	if not pipeline_value is Dictionary or pipeline_value.get("schema", "") != "soh.a6.avatar_sprite_pipeline.v1":
+	if (
+		not pipeline_value is Dictionary
+		or pipeline_value.get("schema", "") != "soh.a6.avatar_sprite_pipeline.v1"
+	):
 		return _blocked("Runtime avatar pipeline manifest is missing or unsupported.")
 	var sources := action_sources_for_owner(owner_snapshot, selected_manifest)
 	if sources.get("status", "") != "READY":
@@ -76,8 +94,10 @@ static func resolve_owner_appearance(owner_snapshot: Dictionary, manifest: Dicti
 	var action_sheets_value: Variant = sources.get("action_sheets", null)
 	if not action_sheets_value is Dictionary:
 		return _blocked_for_owner(
-			String(sources.get("gender", "")), int(sources.get("armor_grade", -1)),
-			String(sources.get("owner_revision", "")), "Resolved avatar action sheets are invalid."
+			String(sources.get("gender", "")),
+			int(sources.get("armor_grade", -1)),
+			String(sources.get("owner_revision", "")),
+			"Resolved avatar action sheets are invalid."
 		)
 	var action_sheets: Dictionary = action_sheets_value
 	var built := build_sprite_frames(action_sheets)
@@ -89,20 +109,26 @@ static func resolve_owner_appearance(owner_snapshot: Dictionary, manifest: Dicti
 
 ## Converts the A0-selected record into runtime sources only after the explicit
 ## game-use license gate passes. Each record is scoped to one gender and grade.
-static func action_sources_for_owner(owner_snapshot: Dictionary, manifest: Dictionary) -> Dictionary:
+static func action_sources_for_owner(
+	owner_snapshot: Dictionary, manifest: Dictionary
+) -> Dictionary:
 	var selected := lookup_appearance_record(owner_snapshot, manifest)
 	if selected.get("status", "") != "RECORD_FOUND":
 		return selected
 	var license_value: Variant = manifest.get("license_review", {})
 	if not license_value is Dictionary or license_value.get("status", "") != "VERIFIED_GAME_USE":
 		return _blocked_for_owner(
-			String(selected.gender), int(selected.armor_grade), String(selected.owner_revision),
+			String(selected.gender),
+			int(selected.armor_grade),
+			String(selected.owner_revision),
 			"Avatar source license is not verified for game use."
 		)
 	var sources_value: Variant = selected.record.get("runtime_action_sheets", null)
 	if not sources_value is Dictionary or sources_value.is_empty():
 		return _blocked_for_owner(
-			String(selected.gender), int(selected.armor_grade), String(selected.owner_revision),
+			String(selected.gender),
+			int(selected.armor_grade),
+			String(selected.owner_revision),
 			"Identity-specific runtime action sheets are not installed."
 		)
 	return {
@@ -202,10 +228,12 @@ static func build_sprite_frames(action_sheets: Dictionary) -> Dictionary:
 ## Applies only a previously resolved A0-owned appearance. The game host must
 ## supply its own action/direction; this adapter does not poll gameplay input.
 static func present(
-		sprite: AnimatedSprite2D,
-		appearance: Dictionary,
-		action: String,
-		direction: String,
+	sprite: AnimatedSprite2D,
+	appearance: Dictionary,
+	action: String,
+	direction: String,
+	playback_speed: float = 1.0,
+	restart: bool = false,
 ) -> bool:
 	if not is_instance_valid(sprite) or appearance.get("status", "") != "READY":
 		return false
@@ -218,12 +246,17 @@ static func present(
 	var animation_name := StringName(action + "/" + direction)
 	if not frames.has_animation(animation_name):
 		return false
-	sprite.sprite_frames = frames
+	var frames_changed := sprite.sprite_frames != frames
+	if frames_changed:
+		sprite.sprite_frames = frames
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	if sprite.animation != animation_name:
-		sprite.play(animation_name)
+	if frames_changed or sprite.animation != animation_name or restart:
+		sprite.stop()
+		sprite.animation = animation_name
+		sprite.set_frame_and_progress(0, 0.0)
+		sprite.play(animation_name, maxf(playback_speed, 0.01))
 	elif frames.get_animation_loop(animation_name) and not sprite.is_playing():
-		sprite.play(animation_name)
+		sprite.play(animation_name, maxf(playback_speed, 0.01))
 	return true
 
 
@@ -240,7 +273,9 @@ static func _resolve_texture(record: Dictionary) -> Texture2D:
 	return load(path) as Texture2D
 
 
-static func _blocked_for_owner(gender: String, grade: int, revision: String, reason: String) -> Dictionary:
+static func _blocked_for_owner(
+	gender: String, grade: int, revision: String, reason: String
+) -> Dictionary:
 	return {
 		"status": "SOURCE_BLOCKED",
 		"gender": gender,

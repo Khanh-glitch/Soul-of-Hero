@@ -28,7 +28,8 @@ func _directional_sheet() -> Dictionary:
 		"frame_size": [2, 2],
 		"fps": 8.0,
 		"loop": true,
-		"directions": {
+		"directions":
+		{
 			"front": {"row": 0, "frames": 2},
 			"side_left": {"row": 1, "frames": 2},
 			"side_right": {"row": 2, "frames": 2},
@@ -43,13 +44,18 @@ func _run() -> void:
 	if manifest is Dictionary:
 		var gate: Dictionary = manifest.get("runtime_presentation_pipeline", {})
 		_check(
-			gate.get("schema", "") == "soh.a6.avatar_sprite_pipeline.v1"
-			and gate.get("status", "") == "IMPLEMENTED; GAME_USE_LICENSE_VERIFIED; PRIVATE_RUNTIME_STAGING_REQUIRED",
+			(
+				gate.get("schema", "") == "soh.a6.avatar_sprite_pipeline.v1"
+				and (
+					gate.get("status", "")
+					== "IMPLEMENTED; GAME_USE_LICENSE_VERIFIED; PRIVATE_RUNTIME_STAGING_REQUIRED"
+				)
+			),
 			"manifest distinguishes license-supported game use from private runtime installation"
 		)
 		_check(
 			gate.get("runtime_action_sheets", {}) == {},
-			"unlicensed source sheets are not exposed as runtime resources"
+			"public manifest exposes no private raw sheets as runtime resources"
 		)
 	_check(
 		PIPELINE.build_sprite_frames({}).status == "SOURCE_BLOCKED",
@@ -65,37 +71,48 @@ func _run() -> void:
 		}
 		var selected_record := PIPELINE.lookup_appearance_record(owner, manifest)
 		_check(
-			selected_record.get("status", "") == "RECORD_FOUND"
-			and selected_record.get("gender", "") == "female"
-			and selected_record.get("craftpix_id", "") == "419402"
-			and selected_record.get("armor_grade", -1) == 0,
+			(
+				selected_record.get("status", "") == "RECORD_FOUND"
+				and selected_record.get("gender", "") == "female"
+				and selected_record.get("craftpix_id", "") == "419402"
+				and selected_record.get("armor_grade", -1) == 0
+			),
 			"A0 appearance lookup retains the exact selected identity and equipped grade"
 		)
 		var blocked_sources := PIPELINE.action_sources_for_owner(owner, manifest)
 		_check(
-			blocked_sources.get("status", "") == "SOURCE_BLOCKED"
-			and String(blocked_sources.get("reason", "")).contains("not installed"),
+			(
+				blocked_sources.get("status", "") == "SOURCE_BLOCKED"
+				and String(blocked_sources.get("reason", "")).contains("not installed")
+			),
 			"the public checkout blocks runtime sheets until the verified source is privately staged"
 		)
 		var blocked_owner := PIPELINE.resolve_owner_appearance(owner, manifest)
 		_check(
-			blocked_owner.get("status", "") == "SOURCE_BLOCKED"
-			and blocked_owner.get("gender", "") == "female",
-			"owner-to-manifest pipeline preserves identity and blocks licensed runtime art"
+			(
+				blocked_owner.get("status", "") == "SOURCE_BLOCKED"
+				and blocked_owner.get("gender", "") == "female"
+			),
+			"owner-to-manifest pipeline preserves identity and fails closed without private runtime sheets"
 		)
 		var male_owner := owner.duplicate(true)
 		male_owner.gender = "male"
 		var male_record := PIPELINE.lookup_appearance_record(male_owner, manifest)
 		_check(
-			male_record.get("status", "") == "RECORD_FOUND"
-			and male_record.gender == "male"
-			and male_record.get("craftpix_id", "") == "555940",
+			(
+				male_record.get("status", "") == "RECORD_FOUND"
+				and male_record.gender == "male"
+				and male_record.get("craftpix_id", "") == "555940"
+			),
 			"male owner cannot select the female or substituted character record"
 		)
 		var unsupported_grade := owner.duplicate(true)
 		unsupported_grade.armor_grade = 1
 		_check(
-			PIPELINE.lookup_appearance_record(unsupported_grade, manifest).status == "SOURCE_BLOCKED",
+			(
+				PIPELINE.lookup_appearance_record(unsupported_grade, manifest).status
+				== "SOURCE_BLOCKED"
+			),
 			"unverified armor grade cannot borrow the base or another tier's frames"
 		)
 	var built: Dictionary = PIPELINE.build_sprite_frames({"idle": _directional_sheet()})
@@ -106,7 +123,10 @@ func _run() -> void:
 			var direction: String = PIPELINE.DIRECTIONS[index]
 			var animation := StringName("idle/" + direction)
 			_check(frames.has_animation(animation), "built animation exists for " + direction)
-			_check(frames.get_frame_count(animation) == 2, "animation frame count is preserved for " + direction)
+			_check(
+				frames.get_frame_count(animation) == 2,
+				"animation frame count is preserved for " + direction
+			)
 			var first_frame := frames.get_frame_texture(animation, 0) as AtlasTexture
 			_check(
 				first_frame != null and first_frame.region.position == Vector2(0, index * 2),
@@ -114,11 +134,50 @@ func _run() -> void:
 			)
 		var sprite := AnimatedSprite2D.new()
 		var appearance := {"status": "READY", "sprite_frames": frames}
-		_check(PIPELINE.present(sprite, appearance, "idle", "side_left"), "host-supplied movement state selects a real directional animation")
-		_check(sprite.animation == &"idle/side_left", "selected direction reaches AnimatedSprite2D without inference")
-		_check(not PIPELINE.present(sprite, appearance, "attack", "side_left"), "missing combat sheet blocks rather than faking or substituting an attack")
-		_check(sprite.animation == &"idle/side_left", "blocked action does not alter the last valid presentation")
+		_check(
+			PIPELINE.present(sprite, appearance, "idle", "side_left"),
+			"host-supplied movement state selects a real directional animation"
+		)
+		_check(
+			sprite.animation == &"idle/side_left",
+			"selected direction reaches AnimatedSprite2D without inference"
+		)
+		var frames_reference := sprite.sprite_frames
+		sprite.frame = 1
+		_check(
+			(
+				PIPELINE.present(sprite, appearance, "idle", "side_left")
+				and sprite.sprite_frames == frames_reference
+			),
+			"same-frame presentation does not replace SpriteFrames on every owner update"
+		)
+		_check(
+			(
+				PIPELINE.present(sprite, appearance, "idle", "side_left", 1.0, true)
+				and sprite.frame == 0
+			),
+			"a new owner action can explicitly restart a one-shot without rebuilding frames"
+		)
+		_check(
+			not PIPELINE.present(sprite, appearance, "attack", "side_left"),
+			"missing combat sheet blocks rather than faking or substituting an attack"
+		)
+		_check(
+			sprite.animation == &"idle/side_left",
+			"blocked action does not alter the last valid presentation"
+		)
 		sprite.free()
+	var death_sheet := _directional_sheet()
+	death_sheet["loop"] = false
+	death_sheet["directions"]["front"]["repeat_last_frame"] = true
+	var death_built: Dictionary = PIPELINE.build_sprite_frames({"death": death_sheet})
+	_check(
+		(
+			death_built.get("status", "") == "READY"
+			and death_built.sprite_frames.get_frame_count(&"death/front") == 3
+		),
+		"source-authored terminal death hold is represented as a repeated final frame"
+	)
 	var malformed := _directional_sheet()
 	malformed.frame_size = [3, 2]
 	_check(
