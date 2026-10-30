@@ -21,6 +21,27 @@ func _walk_to(hero: CharacterBody2D, nav: OverworldTraversability, cell: Vector2
 	_expect(ok, label)
 	return ok
 
+## Stricter than _walk_to: assert the live shape really has a route, walk it with
+## ordinary movement, then refine into the exact destination cell and trace it.
+func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: Vector2i, label: String) -> bool:
+	var start := nav.cell_of(hero.global_position)
+	var path := _route(start, destination, nav, hero)
+	_expect(start == destination or not path.is_empty(), label + " live-shape route exists")
+	if start != destination and path.is_empty():
+		print("A0_STAND_ROUTE_MISSING %s start=%s target=%s" % [label, str(start), str(destination)])
+		return false
+	var walked := await _walk_path(hero, path)
+	var deadline := Time.get_ticks_msec() + 2500
+	var target := Vector2(destination.x * 16 + 8, destination.y * 16 + 15)
+	while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < deadline:
+		_set_direction(target - hero.global_position)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	var arrived := walked and nav.cell_of(hero.global_position) == destination
+	print("A0_STAND_TRACE %s start=%s target=%s actual=%s cell=%s walked=%s arrived=%s" % [label, str(start), str(destination), str(hero.global_position), str(nav.cell_of(hero.global_position)), str(walked), str(arrived)])
+	_expect(arrived, label)
+	return arrived
+
 func _use(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
 	var end := Time.get_ticks_msec() + 2500
 	while hero.global_position.distance_to(point.global_position) > 24.0 and Time.get_ticks_msec() < end:
@@ -34,6 +55,44 @@ func _use(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
 	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * point.global_position))
 	await process_frame
 
+## The inherited journeys finish inside the paid room. A closed door really does
+## block the route planner, so the player has to walk to it and open it before any
+## outside stand is reachable -- ordinary movement and pointer input only.
+func _open_closed_doors(ow: Node, hero: CharacterBody2D, nav: OverworldTraversability) -> bool:
+	var build := ow.get(&"survival_build") as SurvivalBuildSystem
+	if build == null:
+		return true
+	var structures: Dictionary = _survival().call(&"structures")
+	var ids: Array = structures.keys()
+	ids.sort()
+	for value: Variant in ids:
+		var id := String(value)
+		var record: Dictionary = structures[id]
+		if String(record.get("piece", "")) != "door_wood" or bool(record.get("door_open", false)):
+			continue
+		var node: Node2D = build.structure_node(id)
+		if node == null:
+			continue
+		var door_cell := nav.cell_of(node.global_position + Vector2(8, 8))
+		var approach := Vector2i(-9999, -9999)
+		for step: Vector2i in [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]:
+			var candidate: Vector2i = door_cell + step
+			if not _route(nav.cell_of(hero.global_position), candidate, nav, hero).is_empty():
+				approach = candidate
+				break
+		if approach.x == -9999:
+			print("HOME_DOOR_UNREACHABLE door=%s cell=%s hero=%s" % [id, str(door_cell), str(nav.cell_of(hero.global_position))])
+			continue
+		if not await _walk_to(hero, nav, approach, "ordinary input approaches the closed home door"):
+			return false
+		await _use(ow, hero, node)
+		var opened := bool(((_survival().call(&"structures") as Dictionary).get(id, {}) as Dictionary).get("door_open", false))
+		_expect(opened, "ordinary pointer opens the home door before leaving the room")
+		if not opened:
+			return false
+		print("HOME_DOOR_OPENED door=%s cell=%s" % [id, str(door_cell)])
+	return true
+
 func _after_home_continuation() -> void:
 	if not is_instance_valid(_host) or _host.get_child_count() == 0:
 		_expect(false, "paid-home continuation has a production world")
@@ -46,6 +105,8 @@ func _after_home_continuation() -> void:
 	if host == null or hero == null or nav == null:
 		return
 	var home := nav.cell_of(hero.global_position)
+	if not await _open_closed_doors(ow, hero, nav):
+		return
 	var before: Dictionary = _save().call(&"inventory_totals")
 	if not await _walk_to(hero, nav, Vector2i(408, 199), "ordinary input walks from paid home to Waystation locker"):
 		return
