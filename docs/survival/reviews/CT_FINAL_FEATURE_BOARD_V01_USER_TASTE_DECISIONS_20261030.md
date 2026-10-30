@@ -2,6 +2,8 @@
 
 **DRAFT NOT USER-RATIFIED | 2026-10-30 | NO AGENT DISPATCH | NOT PRODUCTION ACCEPTANCE**
 
+**ADDITIONAL LOCK D056/D057 (same date):** Next 14-day season is a clean gameplay restart (all in-run world/home/inventory/Core/recipes/progression/quests cleared), keeping account-wide achievements and per-run historical result/stat records only; repeatable starter-guide quests are optional on later runs and give once-per-run authorized rewards. Exact Last Island end-score metric remains unverified and must not be invented.
+
 **PARTIAL LOCK — D055 user-voted at 2026-10-30**: 14 real calendar days including offline for each SOH survival run. Only this rule is LOCKED; all other DRAFT and ASK_USER remain open. Old docs claiming no timed world run or '14-day-equivalent only' are superseded on this point. Exact reset/persistence scopes NOT YET CHOSEN.
 
 ## Định nghĩa trạng thái (TÁCH KHỎI LỊCH LẬP TRÌNH)
@@ -13,7 +15,7 @@
 - PARKED_NOT_LOVED: chưa thấy hấp dẫn / không hợp hướng vào lúc này, giữ lưu hồ sơ để có thể xem lại; đúng nghĩa 'hàng chờ' theo user.
 - REJECTED: user không muốn hoặc mâu thuẫn pháp lý/logic; không mặc định hồi sinh.
 
-**57 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 37; CT_PROPOSES 5; ASK_USER 3; TASTE_REVIEW 2; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
+**58 nhóm đầu mục biên tập** (không phải 54 D quyết định hay 44 SYS/26 package): USER_WANTS 39; CT_PROPOSES 5; ASK_USER 2; TASTE_REVIEW 2; ASK_USER_LATER 1; PARKED_NOT_LOVED 3; REJECTED 6. Số nhóm có thể thay đổi khi tách/gộp tính năng, tuyệt đối không coi là số lượng feature code/gameplay pass.
 
 ## Insight trung tâm mới nhất
 **Một map có thể học thuộc, một run có điểm kết thúc, nhiều chiến lược không thể làm hết trong ~14 ngày trải nghiệm.** Nhà ở đâu quyết định đường tài nguyên/đánh quái/POI/Skill Core; vật liệu và thời gian là cơ hội phải hy sinh. Người chơi nhớ một cửa phòng chưa mở/Skill Core vừa thấy/biome chưa thăm và chủ động chọn mở đầu khác khi chơi lại trên cùng map. Map không cần procedural đảo hết địa lý; sáng tạo đến từ mục tiêu cạnh tranh, sinh vật/mùa thời tiết/loot động có lý và player knowledge/agency. Không khóa “≥3 mục tiêu” như một mục tiêu độ sâu; đó chỉ là một tầng gate test trước đây.
@@ -34,12 +36,13 @@
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
 |---|---|---|---|
 | FB07 | Mỗi cuộc chơi có thời điểm kết thúc sau đúng 14 ngày lịch thực | USER_WANTS | **LOCKED D055**; 336 giờ kể cả khi thoát ứng dụng; chưa chốt luật giữ/mất đồ sau mùa |
-| FB08 | Quy tắc reset world, nhà, kho, Core và công thức | ASK_USER | Chưa có luật được user chốt |
+| FB08 | **Hết mùa reset TOÀN BỘ gameplay** (nhà, kho, Core, vật phẩm, học công thức, world/POI, quest), chỉ giữ thành tựu toàn game và hồ sơ kết quả các ván | USER_WANTS | **LOCKED D056**; không mang bất cứ power/recipe/unique item nào sang mùa mới |
 | FB09 | Đồng hồ ván chơi chạy theo 14 ngày lịch thực, kể cả offline | USER_WANTS | **LOCKED D055**; đồng hồ chạy offline không mặc định mô phỏng raid/farming khi app đóng |
 | FB10 | Các vị trí nhà khác dẫn đến chiến lược riêng | USER_WANTS | Thời gian/tài nguyên tạo chi phí cơ hội |
 | FB11 | Cùng map, học địa điểm/Core qua mỗi lần chơi lại | USER_WANTS | Tri thức người chơi có giá trị |
 | FB12 | Nguồn loot/địch/thời tiết biến thiên vừa đủ qua ván | CT_PROPOSES | Không xáo trộn lục địa vô cớ |
 | FB13 | Khởi đầu cố định, ngẫu nhiên hay lựa chọn vị trí | ASK_USER | Chi phối replay và độ khó |
+| FB58 | **Chuỗi nhiệm vụ hướng dẫn người mới, nhưng mỗi ván reset; ván sau tự do làm nhiệm vụ ngoài thứ tự để nhận thưởng** | USER_WANTS | **LOCKED D057**; nhận hành động thật đã làm trước quest, thưởng mỗi quest tối đa một lần/mùa; không khóa đường chơi |
 
 ### Nhà & xưởng
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
@@ -127,9 +130,9 @@
 
 ## Chốt đầu tiên cần hỏi user (không hỏi 57 ý một lượt)
 1. **CHỐT D055:** một SOH run kết thúc sau 14 ngày lịch thực (336 giờ) kể cả thời gian offline. **KHÔNG hỏi lại lựa chọn này**. Thời điểm kích hoạt clock đầu ván, UX đếm ngược và tính chính xác offline thuộc phương án kỹ thuật CT đề xuất, chưa chốt là thông số user.
-2. Nếu run reset: reset vật phẩm, nhà, Core, blueprint tri thức, khám phá, map events, achievements theo scope nào? Tôi nghiêng về nhà/kho/Core/tri thức công nghệ trong run đều reset, còn ghi chép kỷ lục/đạt thành tựu được giữ dưới meta không tăng power. CẦN user xem.
+2. **CHỐT D056–D057:** reset toàn bộ gameplay kể cả quest/tutorial; chỉ `profile.achievements` toàn game và `profile.run_history` (thành tích/kết quả của từng ván) tồn tại xuyên mùa. Guide có thể làm lại tự do để nhận thưởng hợp lệ từng mùa. **KHÔNG hỏi lại reset này.** Điểm kết quả dùng công thức nào là chi tiết để CT đề xuất/test, không tự bịa con số của game gốc.
 3. Một map ổn định nên có spawn tự chọn/gần vùng ngẫu nhiên, loot/hazard thay đổi thế nào mỗi run? Tôi nghiêng về stable geography, reset điểm xây nhà, nguồn loot và sinh vật đổi có nguyên nhân, nhiều đường chơi; không nên ngẫu nhiên hóa vị trí các di tích trọng yếu.
 4. Lựa chọn muộn: mức phạt đói/khát/death, hiếm của Core và số lượng loại/slot, sau khi engine/audio/gameplay Gold có bằng chứng.
 
 ## Nguồn & tránh false lock
-Từ lúc chuyển hướng 2026-10-29: tài liệu gốc trong Google Docs tabs 01/02/03; Atlas 1.355 dòng, 44 SYS/21 POI/31 DEP/12 JOURNEY; DECISIONS D001-D054, bản hậu kiểm, 26-package, user round1 correction (dungeon reuse, 1-floor roof, weather/cart/pets/tracking/Gold dimming, reset reconsideration, engineering updateability). Prototype issue23 P1–P8, development4 safety and S6 POI design. Sources có lời trợ lý trong tab 01 nên không phải mọi câu được ghi ở đó đều là quyết định user. Cấm tự đổi trạng thái bản final từ DRAFT sang LOCKED; cần user rà soát và chốt. B0/B1/B2 là progress gate riêng, không được dùng như nhãn hàng chờ. Next: ask Q1, then Q2, then review all user taste exceptions before marking FINAL. Source of truth: docs/survival/CHAT_REENTRY_HANDOFF_CURRENT.md; before any future agent prompt refresh Git and this ledger.
+Từ lúc chuyển hướng 2026-10-29: tài liệu gốc trong Google Docs tabs 01/02/03; Atlas 1.355 dòng, 44 SYS/21 POI/31 DEP/12 JOURNEY; DECISIONS D001-D054, bản hậu kiểm, 26-package, user round1 correction (dungeon reuse, 1-floor roof, weather/cart/pets/tracking/Gold dimming, reset reconsideration, engineering updateability). Prototype issue23 P1–P8, development4 safety and S6 POI design. Sources có lời trợ lý trong tab 01 nên không phải mọi câu được ghi ở đó đều là quyết định user. Cấm tự đổi trạng thái bản final từ DRAFT sang LOCKED; cần user rà soát và chốt. B0/B1/B2 là progress gate riêng, không được dùng như nhãn hàng chờ. Next: D055–D057 all locked; ask **spawn/start-location variation** or another outstanding true feeling choice, not length/wipe/quest guide again. Board remains DRAFT otherwise. Source of truth: docs/survival/CHAT_REENTRY_HANDOFF_CURRENT.md; before any future agent prompt refresh Git and this ledger.
