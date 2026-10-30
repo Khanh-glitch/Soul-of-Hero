@@ -465,6 +465,10 @@ class Field extends RefCounted:
 		var dep: float = float(o.get("dep", m.get("dep", 1.0))) * rk
 		var sdl: int = L.dl
 		L.dl = int(o.get("dl", m.get("dl", 16)))
+		# Fast path (bit-identical): opaque non-additive full-density writes go
+		# straight to the packed bytes; assigned back once (copy-on-write).
+		var fast: bool = L.dl >= 16 and not L.add and L.a == 255 and not L.cov
+		var lb: PackedByteArray = L.bytes
 		var sc: float = float(m.get("sc", 1.0)) / rk
 		var hi_w: float = float(m.get("hiW", 0.0)) * rk
 		var hi_t: float = float(m.get("hiT", 0.25))
@@ -504,11 +508,20 @@ class Field extends RefCounted:
 								c = int(m["hi"])
 							elif lit < -hi_t:
 								c = int(m["sh"])
-						if float(m.get("vw", 0.0)) > 0.0:
-							var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
-							if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
-								c = int(m["vein"])
-				L.raw_px(x, y, c)
+					if float(m.get("vw", 0.0)) > 0.0:
+						var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
+						if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
+							c = int(m["vein"])
+				if fast:
+					var o2: int = i * 4
+					lb[o2] = c & 255
+					lb[o2 + 1] = (c >> 8) & 255
+					lb[o2 + 2] = (c >> 16) & 255
+					lb[o2 + 3] = 255
+				else:
+					L.raw_px(x, y, c)
+		if fast:
+			L.bytes = lb
 		L.dl = sdl
 
 

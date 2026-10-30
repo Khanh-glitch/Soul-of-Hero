@@ -343,6 +343,13 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	var ri: int = int(ceil(gr))
 	var R: float = gr + 0.4
 	var sd: int = L.dl
+	# Fast path (bit-identical): opaque non-additive writes go straight to the
+	# packed bytes instead of a GDScript call per pixel; assigned back once at
+	# the end (PackedByteArray is copy-on-write).
+	var fast: bool = not L.add and L.a == 255 and not L.cov
+	var lb: PackedByteArray = L.bytes
+	var lw: int = L.W
+	var lh: int = L.H
 	for dy in range(-ri, ri + 1):
 		for dx in range(-ri, ri + 1):
 			var q: float = (float(dx * dx) + float(dy * dy)) / (R * R)
@@ -364,6 +371,17 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			var s: float = -(float(dx) / R) * 0.55 - (float(dy) / R) * 0.65 \
 					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
 			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))
-			L.dl = 16
-			L.raw_px(gx, gy, ramp[0] if outline and q > 0.8 else ramp[mini(idx, ramp.size() - 1)])
+			if fast:
+				if gx >= 0 and gy >= 0 and gx < lw and gy < lh:
+					var c: int = int(ramp[0]) if outline and q > 0.8 else int(ramp[mini(idx, ramp.size() - 1)])
+					var o: int = (gy * lw + gx) * 4
+					lb[o] = c & 255
+					lb[o + 1] = (c >> 8) & 255
+					lb[o + 2] = (c >> 16) & 255
+					lb[o + 3] = 255
+			else:
+				L.dl = 16
+				L.raw_px(gx, gy, ramp[0] if outline and q > 0.8 else ramp[mini(idx, ramp.size() - 1)])
+	if fast:
+		L.bytes = lb
 	L.dl = sd
