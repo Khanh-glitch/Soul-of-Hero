@@ -336,6 +336,28 @@ func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, nav: Overworl
 			progress_at = Time.get_ticks_msec()
 			progress_position = hero.global_position
 		if phase == "engage":
+			# Consecutive knockbacks previously dragged both combatants out of
+			# the 160px leash, despawning the Skeleton every few hits. Before
+			# that happens, physically move back toward the warned site. This
+			# uses the same live-shape route and ordinary input; the autonomous
+			# enemy must still pursue and inflict every point of lethal damage.
+			if live.global_position.distance_to(encounter.global_position) > 105.0 \
+					and hero.global_position.distance_to(encounter.global_position) > 105.0:
+				var center := nav.cell_of(encounter.global_position)
+				var moved_inward := false
+				for offset: Vector2i in [Vector2i.ZERO, Vector2i.UP * 2, Vector2i.DOWN * 2, Vector2i.LEFT * 2, Vector2i.RIGHT * 2]:
+					var inward := _route(nav.cell_of(hero.global_position), center + offset, nav, hero)
+					if inward.is_empty():
+						continue
+					var segment: Array[Vector2i] = []
+					for i in mini(inward.size(), 4):
+						segment.append(inward[i])
+					print("OPTIONAL_THREAT_ENGAGE inward hero=%s enemy=%s steps=%d" % [str(hero.global_position), str(live.global_position), segment.size()])
+					await _walk_path(hero, segment)
+					moved_inward = true
+					break
+				if moved_inward:
+					continue
 			var delta := live.global_position - hero.global_position
 			_set_direction(delta if delta.length() > 28.0 else Vector2.ZERO)
 			if Time.get_ticks_msec() - progress_at >= 4000:
