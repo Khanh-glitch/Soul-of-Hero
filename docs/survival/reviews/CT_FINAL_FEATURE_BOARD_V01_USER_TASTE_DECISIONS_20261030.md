@@ -39,6 +39,7 @@
 |---|---|---|---|
 | FB07 | Mỗi cuộc chơi có thời điểm kết thúc sau đúng 14 ngày lịch thực | USER_WANTS | **LOCKED D055**; 336 giờ kể cả khi thoát ứng dụng; chưa chốt luật giữ/mất đồ sau mùa |
 | FB08 | **Hết mùa reset TOÀN BỘ gameplay** (nhà, kho, Core, vật phẩm, học công thức, world/POI, quest), chỉ giữ thành tựu toàn game và hồ sơ kết quả các ván | USER_WANTS | **LOCKED D056**; không mang bất cứ power/recipe/unique item nào sang mùa mới |
+| FB59 | **Điểm/cấp độ/tổng kết chiến cuộc chính xác** | TASTE_REVIEW | **CHƯA CHỐT công thức**: CT rút lại 8.420 Điểm hành trình giả và 4 chỉ số cộng điểm; tài liệu 2019 phân biệt huy hiệu/cuối chiến cuộc, xếp hạng công trình chế độ riêng, battle level; 2020 miner/challenge/scavenger weekly, 2025 S2 rank không phải 2019. Thành tựu chung + run history vẫn LOCKED D056 |
 | FB09 | Đồng hồ ván chơi chạy theo 14 ngày lịch thực, kể cả offline | USER_WANTS | **LOCKED D055**; đồng hồ chạy offline không mặc định mô phỏng raid/farming khi app đóng |
 | FB10 | Các vị trí nhà khác dẫn đến chiến lược riêng | USER_WANTS | Thời gian/tài nguyên tạo chi phí cơ hội |
 | FB11 | Cùng map, học địa điểm/Core qua mỗi lần chơi lại | USER_WANTS | Tri thức người chơi có giá trị |
@@ -112,8 +113,6 @@
 |---|---|---|---|
 | FB47 | Single SaveService, receipts, migration, typed domain interfaces | CT_PROPOSES | Chọn chuẩn cập nhật dài hạn |
 | FB48 | Repository-first và giấy phép nguồn đúng | USER_WANTS | Công khai không luôn có quyền redistrib |
-
-| FB59 | **Điểm/cấp độ/tổng kết chiến cuộc chính xác** | TASTE_REVIEW | **CHƯA CHỐT công thức**: CT rút lại 8.420 Điểm hành trình giả và 4 chỉ số cộng điểm; tài liệu 2019 phân biệt huy hiệu/cuối chiến cuộc, xếp hạng công trình chế độ riêng, battle level; 2020 miner/challenge/scavenger weekly, 2025 S2 rank không phải 2019. Thành tựu chung + run history vẫn LOCKED D056 |
 
 ### Kho ý tưởng
 | ID | Nội dung | Trạng thái | Lý do/hàng rào |
