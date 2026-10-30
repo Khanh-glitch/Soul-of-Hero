@@ -70,6 +70,12 @@ func _body() -> void:
 	_expect(build.validate_cell(site) == "encounter_exclusion" and encounter.get_node_or_null("OptionalEncounterWarning") != null, "validated encounter reserves building and presents a warning")
 	var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one existing skeleton spawned without a kill bonus")
+	# Anti-vacuity: the real global director must observe this source, while
+	# the isolated source carries its existing no-duplicate-drop guard.
+	await process_frame
+	await process_frame
+	var director := root.get_node_or_null("LootDirector")
+	_expect(enemy != null and director != null and enemy.has_meta(&"loot_drop_processed") and enemy.is_connected(&"died", Callable(director, "_on_enemy_died")), "global LootDirector observes the source but its existing drop guard is set")
 	var session := root.get_node("GameSession")
 	var score_before := int(session.get("score"))
 	var safe_health := int(hero.get("health"))

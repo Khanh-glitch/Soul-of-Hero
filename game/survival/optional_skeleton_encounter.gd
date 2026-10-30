@@ -120,6 +120,12 @@ func _spawn() -> void:
 		return
 	_enemy.name = "BoundedSkeleton"
 	_enemy.set("score_reward", 0)
+	# The global LootDirector observes every node in the enemies group. Mark
+	# only this experimental source as already processed before it enters the
+	# tree; otherwise its generic death handler can grant unapproved random loot.
+	# This uses the director's existing per-source idempotency guard and leaves
+	# all dungeon enemies and the shared loot pipeline unchanged.
+	_enemy.set_meta(&"loot_drop_processed", true)
 	add_child(_enemy)
 	_enemy.set("global_position", global_position)
 	_enemy.connect("health_changed", _on_enemy_health_changed)
