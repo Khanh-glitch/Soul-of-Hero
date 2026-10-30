@@ -206,9 +206,10 @@ jobs:
           [ -f "$log" ] || { echo "::error::no connector fixture log"; exit 1; }
           checks=$(grep -cE '^CONNECTOR (PASS|FAIL): ' "$log" || true)
           echo "connector fixture assertions reported: ${checks}"
-          [ "${checks:-0}" -ge 12 ] || { echo "::error::connector fixture ran fewer than 12 assertions"; exit 1; }
-          grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || { echo "::error::connector fixture did not reach PASS summary"; exit 1; }
-          grep -q 'production integration still A0-owned' "$log" || { echo "::error::connector fixture overclaimed production integration"; exit 1; }
+          if [ "${checks:-0}" -lt 12 ] || ! grep -q 'A1 CONNECTOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log"; then
+            echo "::error::connector fixture gate failed (checks=${checks}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
       - name: Upload connector native fixture evidence
         if: always()
         uses: actions/upload-artifact@v4

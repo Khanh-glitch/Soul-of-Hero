@@ -210,6 +210,7 @@ func _mount_slice_obstacles(slice_path: String) -> int:
 
 
 func _run() -> void:
+	print("CONNECTOR TRACE boot root=" + connector_root)
 	var save := root.get_node_or_null("SaveService")
 	if save != null and save.has_method("configure_storage"):
 		save.call("configure_storage", "user://tests/a1_connector_native.json", true)
@@ -222,8 +223,10 @@ func _run() -> void:
 	host.add_child(world)
 	var data := _read_json(_abs("annex_world.v1.json"))
 	var ok := world.build(data, _abs("annex_layers.v1.json"), _abs("annex_props.v1.json"), entities)
+	print("CONNECTOR TRACE world_build=%s bounds=%dx%d" % [str(ok), world.width, world.height])
 	_expect(ok and world.width == 448 and world.height == 256, "composed 448x256 world built from pinned legacy + one canonical chunk")
 	var obstacles := _mount_slice_obstacles(WAY_SLICE) + _mount_slice_obstacles(RELAY_SLICE)
+	print("CONNECTOR TRACE obstacles=%d" % obstacles)
 	_expect(obstacles == 12, "two canonical slice static obstacle sets mounted (%d cells)" % obstacles)
 	nav = OverworldTraversability.new()
 	nav.build(world)
@@ -232,11 +235,13 @@ func _run() -> void:
 
 	hero = KNIGHT.instantiate() as CharacterBody2D
 	entities.add_child(hero)
+	print("CONNECTOR TRACE knight_added")
 	var body_shape := hero.get_node("BodyShape") as CollisionShape2D
 	var rect := body_shape.shape as RectangleShape2D
 	_expect(rect.size == Vector2(12, 16) and body_shape.position == Vector2(0, -8) and hero.collision_layer == 2 and hero.collision_mask == 5, "real pinned Knight 12x16 body, offset, layer and mask")
 	var start := nav.origin_cell()
 	hero.global_position = _foot(start)
+	print("CONNECTOR TRACE start=%s foot=%s" % [str(start), str(hero.global_position)])
 	await physics_frame
 	await physics_frame
 	_expect(start == Vector2i(56, 218), "fixture initializes at resolved authored Refuge ground, not at the seam")
@@ -257,6 +262,7 @@ func _run() -> void:
 	# Drive to the canonical Waystation anchor/approach cell. Exact locker-stand
 	# micro-clearance against the slice obstacle is A0 POI-mount acceptance, not a
 	# reason to teleport or move the POI; the connector must reach the site on foot.
+	print("CONNECTOR TRACE pre_drive way_anchor_clear=%s relay_stand_clear=%s" % [str(_shape_clear(Vector2i(408, 200), {})), str(_shape_clear(Vector2i(442, 234), {}))])
 	var way_ok := await _drive("Refuge->Waystation", Vector2i(408, 200))
 	if way_ok:
 		camera.force_update_scroll()
