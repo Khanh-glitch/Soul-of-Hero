@@ -4,9 +4,19 @@ extends "res://tests/survival_normal_home_journey_test.gd"
 ## paused GUI and real SaveService. It never teleports, grants or injects damage.
 
 var _observed_input_kill := false
+var _probe_loot_spawns: Array[Dictionary] = []
+var _probe_loot_pickups: Array[Dictionary] = []
+var _post_kill_inventory: Dictionary = {}
 
 func _on_probe_enemy_died(_enemy: Node) -> void:
 	_observed_input_kill = true
+
+func _on_probe_loot_spawned(_loot: Node, payload: Dictionary) -> void:
+	_probe_loot_spawns.append(payload.duplicate(true))
+
+func _on_probe_loot_pickup(payload: Dictionary, newly_granted: bool) -> void:
+	if newly_granted:
+		_probe_loot_pickups.append(payload.duplicate(true))
 
 func _finish() -> void:
 	paused = false
@@ -270,6 +280,8 @@ func _body() -> void:
 			if not fresh_records.has(id) or fresh_build.structure_node(String(id)) == null:
 				same_structures = false
 		_expect(same_structures and String(fresh_doc.get("spawn_anchor", "")) == home_bed and (fresh_doc.get("containers", {}) as Dictionary) == home_containers, "fresh overworld reconstructs all original home identities, active bed and exact stored contents")
+		var reloaded_snapshot: Dictionary = _save().call(&"get_snapshot")
+		_expect((reloaded_snapshot.get("inventory", {}) as Dictionary) == _post_kill_inventory, "fresh save preserves the entire pre-kill inventory, including unique identities")
 		var restored_encounter := Node2D.new()
 		restored_encounter.name = "OptionalSkeletonEncounter"
 		restored_encounter.set_script(encounter_script)
@@ -380,6 +392,20 @@ func _consume_encounter_by_real_attack(ow: Node, encounter: Node2D, goal: Vector
 		return false
 	_observed_input_kill = false
 	probe_enemy.connect(&"died", _on_probe_enemy_died)
+	# Observe the existing loot pipeline without calling it or inventing a drop.
+	# This distinguishes no spawn/no pickup from a lucky inventory snapshot.
+	_probe_loot_spawns.clear()
+	_probe_loot_pickups.clear()
+	var events := root.get_node_or_null("GameEvents")
+	if events == null or not events.has_signal(&"loot_spawned") or not events.has_signal(&"loot_pickup_resolved"):
+		_expect(false, "real loot spawn and pickup observation signals exist")
+		return false
+	events.connect(&"loot_spawned", _on_probe_loot_spawned)
+	events.connect(&"loot_pickup_resolved", _on_probe_loot_pickup)
+	var snapshot_before: Dictionary = _save().call(&"get_snapshot")
+	var receipts_before: Dictionary = (snapshot_before.get("applied_transactions", {}) as Dictionary).duplicate(true)
+	var inventory_before: Dictionary = (snapshot_before.get("inventory", {}) as Dictionary).duplicate(true)
+	_post_kill_inventory = inventory_before.duplicate(true)
 	var clock := 0.0
 	while clock < 35.0 and not _observed_input_kill and not bool(hero.get("dead")):
 		var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
@@ -420,15 +446,31 @@ func _consume_encounter_by_real_attack(ow: Node, encounter: Node2D, goal: Vector
 	var no_enemy := encounter.get_node_or_null("BoundedSkeleton") == null
 	var no_extra_score := int(session.get("score")) == score_after_attack
 	var inventory_after: Dictionary = _save().call(&"inventory_totals")
-	var progression_after: Dictionary = (_save().call(&"get_snapshot") as Dictionary).get("progression", {})
-	var custody_ok := inventory_after == expected
+	var snapshot_after: Dictionary = _save().call(&"get_snapshot")
+	var progression_after: Dictionary = snapshot_after.get("progression", {})
+	var inventory_exact := (snapshot_after.get("inventory", {}) as Dictionary) == inventory_before
+	var receipts_after: Dictionary = snapshot_after.get("applied_transactions", {})
+	var new_loot_receipts: Array[String] = []
+	for receipt: Variant in receipts_after.keys():
+		if receipts_before.has(receipt):
+			continue
+		var record: Dictionary = receipts_after.get(receipt, {})
+		var metadata: Dictionary = record.get("metadata", {})
+		var source: Variant = metadata.get("source", {})
+		if String(receipt).begins_with("loot_pickup:") or (source is Dictionary and String((source as Dictionary).get("source_id", "")) == "BoundedSkeleton"):
+			new_loot_receipts.append(String(receipt))
+	var no_loot_events := _probe_loot_spawns.is_empty() and _probe_loot_pickups.is_empty()
+	var no_loot_receipts := new_loot_receipts.is_empty()
+	var custody_ok := inventory_after == expected and inventory_exact
 	var progression_ok := progression_after == progression_before
-	print("FARM_PROBE after_cooldown no_enemy=%s score_before=%s score_after=%s custody=%s progression=%s inventory_before=%s inventory_after=%s progression_before=%s progression_after=%s" % [no_enemy, score_after_attack, int(session.get("score")), custody_ok, progression_ok, str(expected), str(inventory_after), str(progression_before), str(progression_after)])
+	print("FARM_PROBE after_cooldown no_enemy=%s score_before=%s score_after=%s custody=%s full_inventory=%s progression=%s loot_spawns=%s loot_pickups=%s loot_receipts=%s inventory_before=%s inventory_after=%s" % [no_enemy, score_after_attack, int(session.get("score")), custody_ok, inventory_exact, progression_ok, str(_probe_loot_spawns), str(_probe_loot_pickups), str(new_loot_receipts), str(expected), str(inventory_after)])
 	_expect(no_enemy, "a consumed skeleton does not rearm after active cooldown")
 	_expect(no_extra_score, "score does not increase after the real kill without another enemy")
-	_expect(custody_ok, "the real kill and cooldown preserve exact item custody")
+	_expect(no_loot_events, "the real kill emits no global loot spawn or committed pickup event")
+	_expect(no_loot_receipts, "the real kill creates no loot pickup receipt")
+	_expect(custody_ok, "the real kill and cooldown preserve the complete inventory including unique items")
 	_expect(progression_ok, "the real kill and cooldown do not grant experience or progression")
-	return no_enemy and no_extra_score and custody_ok and progression_ok
+	return no_enemy and no_extra_score and no_loot_events and no_loot_receipts and custody_ok and progression_ok
 
 func _repeat_real_death(ow: Node, encounter: Node2D, site: Vector2i, goal: Vector2i,
 		home_cell: Vector2i, home_room: String, previous_bag: String, before: Dictionary) -> bool:
