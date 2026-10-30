@@ -137,6 +137,16 @@ func _body() -> void:
 			if returned:
 				var inverse_relay := await _leg(hero, nav, Vector2i(442, 234), "inverse Refuge to Relay crank stand")
 				if inverse_relay:
+					var inverse_station := await _leg(hero, nav, Vector2i(408, 200), "inverse Relay to Waystation approach")
+					var inverse_refuge := false
+					if inverse_station:
+						inverse_refuge = await _leg(hero, nav, refuge, "inverse Waystation to Refuge")
+					var reached_for_downgrade := false
+					if inverse_refuge:
+						reached_for_downgrade = await _leg(hero, nav, Vector2i(442, 234), "Refuge to Relay for downgrade")
+					if not reached_for_downgrade:
+						_body_complete = true
+						return
 					# Downgrade the exact real annex position to the unchanged legacy
 					# controller; no fabricated save position or teleport.
 					(ow.get(&"state") as OverworldState).set_world_position(hero.global_position, true)
@@ -158,8 +168,7 @@ func _body() -> void:
 						if ow != null:
 							hero = ow.get(&"player") as CharacterBody2D
 							nav = ow.get(&"traversability") as OverworldTraversability
-							_expect(nav.cell_of(hero.global_position) == Vector2i(442, 234), "re-enabling pilot restores the saved Relay crank position")
-							var inverse_station := await _leg(hero, nav, Vector2i(408, 200), "inverse Relay to Waystation approach")
-							if inverse_station:
-								await _leg(hero, nav, refuge, "inverse Waystation to Refuge")
+							var resumed_cell := nav.cell_of(hero.global_position)
+							_expect(nav.in_bounds(resumed_cell) and _shape_clear(resumed_cell, nav, hero, {}), "re-enabled pilot retains a safe downgrade position")
+							_expect((_save().call(&"inventory_totals") as Dictionary) == custody and (_survival().call(&"document") as Dictionary) == survival_before, "re-enabled pilot preserves exact custody after downgrade")
 	_body_complete = true

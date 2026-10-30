@@ -104,8 +104,19 @@ func _body() -> void:
 	if not damaged:
 		_body_complete = true
 		return
+	# Escape the live enemy's collision footprint with ordinary movement before
+	# requesting a static shape-aware path. Otherwise the path query may have
+	# no free first neighbour while the two bodies are in melee contact.
+	var home_point := Vector2(start.x * 16 + 8, start.y * 16 + 15)
+	var escape_deadline := Time.get_ticks_msec() + 4000
+	while is_instance_valid(current_enemy) and hero.global_position.distance_to(current_enemy.global_position) < 48.0 and not bool(hero.get("dead")) and Time.get_ticks_msec() < escape_deadline:
+		_set_direction(home_point - hero.global_position)
+		await physics_frame
+	_set_direction(Vector2.ZERO)
+	var retreat_start := hero.global_position
 	var back := _route(nav.cell_of(hero.global_position), start, nav, hero)
 	var retreated := not back.is_empty() and await _walk_path(hero, back)
+	print("OPTIONAL_THREAT_TRACE retreat_start=%s path=%d end=%s hp=%s dead=%s walked=%s" % [str(retreat_start), back.size(), str(hero.global_position), str(hero.get("health")), str(hero.get("dead")), str(retreated)])
 	_expect(retreated and not bool(hero.get("dead")), "ordinary movement retreats alive to the original home")
 	_expect((_save().call(&"inventory_totals") as Dictionary) == before, "retreat does not duplicate or lose carried possessions")
 	if not retreated:
