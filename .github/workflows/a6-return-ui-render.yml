@@ -135,14 +135,19 @@ jobs:
 
       - name: Render the four return cards at three resolutions
         run: |
+          # The runner's default `run` shell is `bash -e`, so a non-zero exit from
+          # `timeout` ended the step before it could report anything - which is why
+          # three attempts produced nothing but a bare 124.
           set -uo pipefail
+          set +e
           for res in 1280x720 2560x1440 3840x2160; do
             mkdir -p ".artifacts/captures-${res}"
             export SOUL_OF_HERO_SAVE_PATH="user://a6_render_${res}.json"
             log=".artifacts/render-${res}.log"
             # The capture script has its own 120 s watchdog and exits with a verdict,
             # so this outer limit only exists for a wedged X server.
-            timeout --foreground --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum \
+            started=$(date +%s)
+            timeout --foreground --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum \
               -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
               godot --path . --rendering-driver opengl3 --audio-driver Dummy -- \
@@ -150,7 +155,7 @@ jobs:
               --capture-dir="$PWD/.artifacts/captures-${res}" \
               --capture-tag="${A6_CAPTURE_TAG}" > "${log}" 2>&1
             status=$?
-            echo "return UI render ${res} exit: ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
+            echo "return UI render ${res} exit: ${status} after $(( $(date +%s) - started ))s" | tee -a "$GITHUB_STEP_SUMMARY"
             tail -12 "${log}"
             if [ "${status}" -ne 0 ]; then
               {
@@ -163,6 +168,7 @@ jobs:
               echo "::error::return UI render failed at ${res} (exit ${status})"
               exit "${status}"
             fi
+            find ".artifacts/captures-${res}" -type f | sed 's/^/::notice::/'
           done
 
       - name: Verify each required frame individually
