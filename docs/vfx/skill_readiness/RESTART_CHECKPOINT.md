@@ -403,10 +403,10 @@ Profile, from the code paths (not measured here; no local Godot):
 | Commit | Run | Result |
 |---|---|---|
 | `0c78212` | pilot `40990378225` | real map PASS (4 modes × 006/010, 6 frames each); headless 010 PASS; headless 006 gate failed on the unit step (freed-instance bug in the darkening controller, fixed in `2c4877b`). |
-| `0c78212` | runtime `40990378239` | host adapters 14/15 PASS. 021 FAIL on the new wall-clock bounds (see below). Runtime differential 15 and 16 still fail (known). |
+| `0c78212` | runtime `40990378239` | host adapters 14/15 PASS. 021 FAIL on the new wall-clock bounds (see below). Runtime differential 13, 15, 16 fail (known). |
 | `0c78212` | candidate `40990378276` | 7, 8, 20 fail (known). 18, 19, 21 pass. |
 | `2c4877b` | pilot `40993279908` | success: 006 PASS 93/93 rows, 25/25 hits, 30/30 cues; 010 PASS 184/184 rows, 82/82 hits, 89/89 cues; unit 24/24; real map success for all 4 modes × 2 skills. GOLD hashes unchanged. |
-| `2c4877b` | runtime `40993279898` | host adapters 14/15 success; 021 failure (wall-clock). |
+| `2c4877b` | runtime `40993279898` | completed failure, only from host 021 (wall-clock). Host 14/15 success. Native contract success. Runtime differential 1–12, 14, 17–21 success; 13, 15, 16 fail (known). Profile job success. Read with paging (`per_page=100`); the default listing shows 30 of 41 jobs. |
 | `2c4877b` | candidate `40993279862` | 7, 8, 20 fail (known). 18, 19, 21 pass. |
 | `9456c35` | runtime `40995391922` | profile job success (diagnosis). |
 
