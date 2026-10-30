@@ -420,6 +420,9 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 				i0 += 10
 			w.objhash_on = false
 		if sid == 16 and n == 192:
+			for e in w.enemies:
+				if int(e.get("id")) == 7 or int(e.get("id")) == 13:
+					print("GOLD93_ENY id=%d x=%0.17f y=%0.17f kx=%0.17f ky=%0.17f hp=%0.17f dying=%0.17f dyT=%0.17f dyKind=%s stag=%0.17f squash=%0.17f walk=%0.17f face=%0.17f lunge=%0.17f spawn=%0.17f poison=%d kind=%s variant=%d flash=%0.17f" % [int(e.get("id")), float(e.get("x")), float(e.get("y")), float(e.get("kx")), float(e.get("ky")), float(e.get("hp")), float(e.get("dying")), float(e.get("dyT")), String(e.get("dyKind")), float(e.get("stagger")), float(e.get("squash")), float(e.get("walk")), float(e.get("face")), float(e.get("lunge")), float(e.get("spawn")), (e.get("poison") as Array).size(), String(e.get("kind")), int(e.get("variant")), float(e.get("flash"))])
 			var sb: PackedByteArray = g["s"].bytes
 			for gy in range(536, 568):
 				var ctx := HashingContext.new()
