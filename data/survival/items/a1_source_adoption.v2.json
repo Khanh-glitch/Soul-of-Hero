@@ -430,12 +430,9 @@
         "grants": [
           "cap_salvage"
         ],
-        "reward_proposal": {
-          "iron_scrap": 2,
-          "knowledge_spares": 2
-        },
+        "reward_proposal": {},
         "policy": "ONE_TIME",
-        "status": "A3_DESIGN_PROPOSAL_A1_HINTS_ONLY"
+        "status": "CANONICAL_A1_CAPABILITY_ONLY_ZERO_ITEMS"
       },
       "waystation_ledger": {
         "poi_id": "poi_crown_waystation",

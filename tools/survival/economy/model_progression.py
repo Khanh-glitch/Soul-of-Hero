@@ -895,12 +895,17 @@ class ProgressionModel:
         # Reconciled A1 authored first hour: safe approach -> waystation locker/ledger -> relay hand-crank ->
         # Refuge resupply -> Orchard Apothecary filter lesson. No free bootstrap grant, no unmitigated shortcut.
         if 'cap_salvage' not in self.caps:
+            # Safe approach live harvest still pays real travel/time. The locker
+            # itself teaches salvage and grants ZERO items (A1 canonical).
             self.gather_until('oak_wood', 2, 'live_oak_wood', 4)
             self.gather_until('iron_scrap', 2, 'live_iron_scrap', 4)
             self.novice_action('waystation_locker')
             self.novice_action('waystation_ledger')
-            self.gather('a1_crown_salvage', 1)
+            # The distinct outside cache owns the canonical 3 scrap + 2 spares.
+            self._claim_source('a1_crown_salvage', 'poi_crown_waystation')
         if 'cap_salvage' in self.caps and 'cap_power_1' not in self.caps:
+            # Approach deadfall / live oak supplies the relay timber; the cache
+            # already supplied enough scrap. No free locker materials.
             self.gather_until('oak_wood', 1, 'live_oak_wood', 4)
             self.gather_until('iron_scrap', 2, 'live_iron_scrap', 4)
             self.novice_action('relay_hand_crank')
@@ -908,6 +913,11 @@ class ProgressionModel:
             self.gather_until('reed_fibre', 1, 'live_reed_fibre', 4)
             self.gather_until('moonleaf', 1, 'a1_amber_herb', 2)
             self.novice_action('apothecary_filter_lesson')
+        # The outside Waystation cache is renewable, not a one-time locker grant.
+        # A return trip each session keeps the canonical Spares bootstrap alive
+        # without inventing a free grant or increasing the per-claim quantity.
+        if 'cap_salvage' in self.caps and self.claims_this_session.get('a1_crown_salvage', 0) < 1:
+            self.gather('a1_crown_salvage', 1)
         # Fresh-player shelter still pays the real A0 shelter cost before station access.
         if not self.home_built:
             self.gather_until('oak_wood', 36, 'live_oak_wood', 8)

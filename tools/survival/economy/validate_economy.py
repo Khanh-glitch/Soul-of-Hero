@@ -160,9 +160,15 @@ def main():
     atlas=ROOT/'docs/survival/source_archive/Soul_of_Heroes_Atlas_Last_Day_Rules_Research_2026.md'
     digest=hashlib.sha256(atlas.read_bytes()).hexdigest()
     if digest!='b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157': errors.append('original Atlas hash changed')
+    # A1 pinned physical source bindings (V3). Deterministic canonical rewards;
+    # no loot-rate invention, no Core, no capability-only locker material grant.
+    from world_binding_contract import validate as validate_world_bindings
+    bindings_doc=load(DATA/'items/world_source_bindings.v3.json')
+    bindings=bindings_doc.get('bindings',[]); world_actions=bindings_doc.get('world_actions',[])
+    errors.extend(validate_world_bindings(bindings_doc, items, sources))
     index={'schema':'soh.economy.index.v1','items':{i:{'sources':items[i]['source_ids'],'used_in':sorted(used_in[i]),'produced_by':sorted(produced_by[i]),'sinks':sorted(sink_ids[i])} for i in sorted(items)}}
     report={'schema':'soh.economy.validation.v1','technical_status':'FAIL' if errors else 'PASS','scope':'catalog contract feasibility; not production-world integration','errors':errors,
-        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations)},
+        'counts':{'items':len(items),'recipes':len(recipes),'technologies':len(techs),'sources':len(sources),'stations':len(stations),'world_source_bindings':len(bindings),'world_actions':len(world_actions)},
         'contract_reachable_items':len(reachable),'live_source_items':sorted(live),'production_cycles':cycles,
         'atlas_sha256':digest,'gameplay_design_status':'NOT_HUMAN_PLAYTESTED','integration_status':'A0_A1_A4_PENDING'}
     if args.index: args.index.write_text(json.dumps(index,indent=2)+'\n')

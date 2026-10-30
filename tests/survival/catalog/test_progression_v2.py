@@ -92,7 +92,15 @@ class ProgressionV2Contracts(unittest.TestCase):
         decisions = [d for d in fallback['core_decisions'] if d['decision'] == 'TARGETED_RESEARCH_AFTER_LOSS']
         self.assertTrue(decisions)
         self.assertEqual(decisions[0]['cost'], {'knowledge_spares': 6, 'research_notes': 2})
-        self.assertEqual(fallback['summary']['cores_manufactured']['core_ember'], 0)
+        # V3 canonical cache is renewable (2 Spares / 1800 active s), so the paid
+        # targeted fallback can now fund a real manufacture. It is still not a
+        # free Core: require the physical blank/charge path and zero native casts.
+        manufactured = fallback['summary']['cores_manufactured']['core_ember']
+        self.assertLessEqual(manufactured, 1)
+        if manufactured:
+            self.assertGreaterEqual(fallback['summary']['crafted'].get('core_blank', 0), 1)
+            self.assertGreaterEqual(fallback['summary']['crafted'].get('charge_blank', 0), 1)
+        self.assertEqual(fallback['summary']['native_casts_executed'], 0)
         self.assertGreaterEqual(fallback['summary']['deaths'], 1)
 
     def test_blocked_safe_route_forces_longer_path_not_invented_permission(self):

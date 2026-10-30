@@ -60,6 +60,15 @@
               "null"
             ]
           },
+          "source_class": {
+            "type": "string"
+          },
+          "instance_id": {
+            "type": "string"
+          },
+          "world_binding_id": {
+            "type": "string"
+          },
           "yield_per_claim": {
             "type": "integer",
             "minimum": 1,
@@ -111,7 +120,8 @@
             "enum": [
               "LIVE_SURV_010",
               "LIVE_EXISTING_REWARDS",
-              "PROPOSED_A1"
+              "PROPOSED_A1",
+              "A1_PINNED_A3_BOUND"
             ]
           },
           "provenance": {
