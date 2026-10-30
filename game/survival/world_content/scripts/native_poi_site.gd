@@ -11,6 +11,9 @@ signal projection_applied(projection: Dictionary)
 signal transition_requested(request: Dictionary)
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+const SURFACE_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/native_poi_surface_contract.gd"
+)
 const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
 const CONTRACT_ID := "soh.native_poi.intent.v2"
 const CONTRACT_VERSION := 2
@@ -36,6 +39,10 @@ var _projection_revision := -1
 var _projection_initialized := false
 var _gate_bodies: Array[StaticBody2D] = []
 var _pending: Dictionary = {}
+var _surface_contract: Dictionary = {}
+var _surface_blockers: Array[Dictionary] = []
+var _environment_projection: Dictionary = {}
+var _environment_projection_revision := -1
 var _choice_index := 0
 var _interaction_area: Area2D
 var _exit_area: Area2D
@@ -46,6 +53,8 @@ func _ready() -> void:
 	if not _load_definition():
 		push_error("NativePoiSite has no valid definition: %s" % definition_path)
 		return
+	_surface_contract = SURFACE_SCRIPT.site_surface(get_source_id())
+	_environment_projection = SURFACE_SCRIPT.unknown_environment(get_source_id())
 	if not definition.has("visual_layout") and bool(definition.get("test_only", false)):
 		_build_physics()
 		return
@@ -57,6 +66,9 @@ func _ready() -> void:
 		remove_child(_art)
 		_art.queue_free()
 		_art = null
+		_build_physics()
+		return
+	_art.call("set_environment_projection", _environment_projection)
 	_build_physics()
 
 
@@ -124,6 +136,7 @@ func set_projection(owner_projection: Dictionary) -> bool:
 		_art.call("set_site_state", projection.get("site_state", {}))
 	_refresh_gate()
 	_rebuild_choice_blockers()
+	_refresh_surface_blockers()
 	projection_applied.emit(projection)
 	return true
 
@@ -207,6 +220,28 @@ func get_source_id() -> String:
 
 func get_site_state() -> Dictionary:
 	return projection.get("site_state", {}).duplicate(true)
+
+
+func apply_environment_projection(owner_context: Dictionary) -> bool:
+	var normalized: Dictionary = SURFACE_SCRIPT.normalize_environment_projection(
+		owner_context, get_source_id()
+	)
+	if normalized.is_empty():
+		return false
+	var revision := int(normalized.get("projection_revision", -1))
+	if revision < _environment_projection_revision:
+		return false
+	if revision == _environment_projection_revision:
+		return normalized == _environment_projection
+	_environment_projection_revision = revision
+	_environment_projection = normalized
+	if is_instance_valid(_art):
+		_art.call("set_environment_projection", _environment_projection)
+	return true
+
+
+func get_environment_presentation() -> Dictionary:
+	return _environment_projection.duplicate(true)
 
 
 func is_inside_interaction_radius(
@@ -447,6 +482,7 @@ func _build_physics() -> void:
 			Vector2(float(rect_data[2]), float(rect_data[3])),
 			"Wall"
 		)
+	_build_surface_blockers()
 	_build_choice_blockers()
 	var socket_positions: Array[Vector2] = [get_action_socket()]
 	for action: Dictionary in definition.get("actions", []):
@@ -511,6 +547,38 @@ func _build_physics() -> void:
 		add_child(_exit_area)
 
 
+func _build_surface_blockers() -> void:
+	_surface_blockers.clear()
+	for blocker: Dictionary in _surface_contract.get("physical_blockers", []):
+		var rect: Array = blocker.get("rect_px", [])
+		if rect.size() != 4 or float(rect[2]) <= 0.0 or float(rect[3]) <= 0.0:
+			continue
+		var body := _add_solid_rect(
+			Vector2(float(rect[0]), float(rect[1])),
+			Vector2(float(rect[2]), float(rect[3])),
+			"SurfaceBlocker_%s" % str(blocker.get("blocker_id", "unknown"))
+		)
+		_surface_blockers.append({"body": body, "definition": blocker.duplicate(true)})
+	_refresh_surface_blockers()
+
+
+func _refresh_surface_blockers() -> void:
+	var site_state: Dictionary = projection.get("site_state", {})
+	for entry: Dictionary in _surface_blockers:
+		var body := entry.get("body") as StaticBody2D
+		if not is_instance_valid(body):
+			continue
+		var blocker: Dictionary = entry.get("definition", {})
+		var enabled := true
+		var disabled_states: Dictionary = blocker.get("when_site_state_not", {})
+		for state_key: String in disabled_states:
+			var allowed: Array = disabled_states[state_key]
+			if allowed.has(site_state.get(state_key, null)):
+				enabled = false
+		body.set_deferred("collision_layer", WORLD_LAYER if enabled else 0)
+		body.set_deferred("collision_mask", PLAYER_LAYER if enabled else 0)
+
+
 func _build_choice_blockers() -> void:
 	for option_id: String in definition.get("choice_blockers", {}):
 		var expected_route := "east_braced" if option_id == "brace_oak" else "west_chocked"
@@ -532,7 +600,7 @@ func _rebuild_choice_blockers() -> void:
 	_build_choice_blockers()
 
 
-func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> void:
+func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> StaticBody2D:
 	var body := StaticBody2D.new()
 	body.name = label
 	body.collision_layer = WORLD_LAYER
@@ -544,6 +612,7 @@ func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> void:
 	body.add_child(collision)
 	body.position = at + size * 0.5
 	add_child(body)
+	return body
 
 
 func _gate_is_blocked(gate: Dictionary) -> bool:

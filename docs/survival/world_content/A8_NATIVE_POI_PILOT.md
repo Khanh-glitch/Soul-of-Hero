@@ -22,9 +22,19 @@ The real GDScript contract test now exercises the default scene's exact neutral 
 
 ## A1 atlas comparison and exact disposition
 
-A8 retains its complete pinned A1 PR #20 texture set at `939720d50a0b822ff9042d4104dc69ba78ffe0f8`; comparison target is current A1 head `ad39bde6780c92169032246898c145c568f36e6e`. `data/survival/world_content/a1_atlas_compatibility.v1.json` plus `test_a1_atlas_compatibility.py` compare decoded RGBA bytes for every used site frame against current A1 coordinates. Exact crops match for all 23 used terrain frames and 25 used prop frames.
+A8 retains its complete pinned A1 PR #20 texture set at `939720d50a0b822ff9042d4104dc69ba78ffe0f8`; comparison target is current A1 head `dabf7bf516a80b112821b51d07e4dfe5fcb9a765`. `data/survival/world_content/a1_atlas_compatibility.v1.json` plus `test_a1_atlas_compatibility.py` compare decoded RGBA bytes for every used site frame against current A1 coordinates. Exact crops match for all 23 used terrain frames and 25 used prop frames, although 23 used prop rectangles moved between the A8 and current A1 atlases.
 
-Decision: preserve the complete A8 pin, current coordinates, source-sized props and A8 original Gold. Do not wholesale-copy or repin the newer atlas. Current A1 adds 80 candidate land-transition masks and two notes-crate props; the A8 renderer has no neighbor-aware compositor, and the notes crates are unrelated. Those unused candidates are explicitly not adopted. Shell/interior sizes, A1 canonical cells and identities, actual route/blocker/doorway geometry, and the original ten dungeons remain unchanged. No source provenance change is proposed.
+Decision: preserve the complete A8 base pin, current coordinates, source-sized props, and exact A8 original Gold; do not wholesale-copy or repin the newer atlas. A8 adopts only five exact current-A1 crops into an 80×16 local derivative strip: four mud variants and the north-south boardwalk tile required by authored Orchard surface zones. The 80 shore-transition masks and two unrelated notes-crate props remain unadopted. `surface_affordances.v1.json` records mud/snow/stone/plank/water classes, unknown water depth and weather inputs, local exposure routes, and non-simulation boundaries. Orchard and Mill water are now visible and physically blocked except at their fixed boardwalks; Orchard's sluice deadfall opens only through owner projection. Shell/interior sizes, canonical cells/identity, existing walls and doorways, and the original ten dungeons remain unchanged.
+
+## D055–D061 boundaries preserved (source: docs branch `f12469f397e132d1c810e832db28fa304222df4a`)
+
+- **D055:** the run lasts 14 real-calendar days including offline time. A8 introduces no duration logic.
+- **D056:** only A0 owner authority resets run-local gameplay; general achievements and historic run records remain. A8 has no local reset API.
+- **D057:** quests reset without forcing a completion order. A8 adds no quest order.
+- **D058:** broad random valid safe-spawn behavior stays with A0; A8's interior entrance spawn is only a local scene entry point.
+- **D059:** sheltered offline hunger alone bottoms at 1 HP, not death. A8 adds no hunger, shelter survival, or offline consequence.
+- **D060:** online/offline chronology is one continuous world timeline, but no unapproved rate or consequence is inferred. A8 adds no clock or elapsed-time simulation.
+- **D061:** home discovery requires real, detectable, unexpired player traces. A8's material labels emit no footprints and perform no discovery or targeting.
 
 ## Quarry evidence and direct A3 request
 
@@ -34,14 +44,14 @@ A3 decision requested: approve one explicit Quarry binding/source/action with it
 
 ## A0 production request
 
-The owner insertion request is `A0_QUARRY_REACHABLE_WORLD_INSERTION_SPEC.v1.md`; concise machine-readable scope is `quarry_integration_candidate.v2.json`. Quarry shell transform is root `[424,4424]`, local socket `[64,64]`, canonical center `[488,4488]`; only the 128 px shell may be mounted in the overworld. The 960×608 worksite is entered separately. A1's route is not proof that current A0 world streaming/host makes cell `[30,280]` reachable.
+The focused owner insertion request is `A0_QUARRY_REACHABLE_WORLD_INSERTION_SPEC.v1.md`; the three-site machine-readable mount/transition handoff is `a0_mount_transition_package.v1.json`, with full notes in `A0_SITE_MOUNT_TRANSITION_PACKAGE.v1.md`. It records exact canonical anchors/shell roots, approved scene paths, the 960×608 local interiors, the current 448×256 A0 candidate-host mismatch, and explicit A0/A1/A3 seams. Only compact shells can mount in the overworld; A1 routes do not prove current A0 world bounds make any of these cells reachable.
 
-A0 must own live world reachability and physical transitions, canonical instance identity, A1/A3 resolution, projection, atomic SaveService changes, durable receipt, and separate-process restart/idempotency. A0 PR #21 current inspected head is `51225718f3d9b15e508da633060270a4221e6a09` (OPEN); no A8 production mount or SaveService integration is present.
+A0 must own live world reachability and physical transitions, canonical instance identity, A1/A3 resolution, projection, atomic SaveService changes, durable receipt, and separate-process restart/idempotency. A0 PR #21 current inspected head is `28f2d578a71e0ce48df8ec267485d35500fab14e` (OPEN); it still does not mount these A8 sites or prove their SaveService/restart path.
 
 ## Evidence status — separate categories
 
-- **A8 source/static:** `python3 tools/survival/world_content/author_site.py --check` passed; all 17 Python world-content tests passed, including exact-pixel A1 compatibility and dimensioned evidence checks; `gdformat --check` and `gdlint` passed for changed GDScript. This establishes serialized/source structure and static GDScript parsing/lint only.
-- **Godot native:** HOLD. No local Godot 4 executable is available. The last queried A8 exact head was `1426a0eb250a0a680081c2dfabfe4eb339f61f5d`; its action/import/capture workflows (`41040398338`, `41040398206`, `41040398163`) were queued at the review. They are not a pass, and new source requires exact-head CI. No native import, physics, route interaction, restart, or inspected 720p/1440p/2160p captures are claimed.
+- **A8 source/static:** `python3 tools/survival/world_content/author_site.py --check` passed; all 23 Python world-content tests passed, including current-head A1 pixel evidence, adopted surface crops, and A0 mount geometry; `gdformat` and `gdlint` passed for changed GDScript. This establishes source/data checks only.
+- **Godot native:** HOLD pending execution. An official Godot 4.7 source build is running locally because no executable is installed; no native scene import, physics, route, or owner-reset result has been observed yet. The last existing workflows are for an older A8 head and do not validate this patch. No 720p/1440p/2160p captures or visual acceptance are claimed.
 - **A0 production:** HOLD. A0 mount/reachability, live actor transitions, existing SaveService integration, durable receipts, and separate-process restart remain unproven.
 - **A3 economics:** HOLD. No Quarry/Orchard/Mill binding, cost, yield, cooldown, capability grant, or source allocation is authorized.
 - **Human play:** HOLD. No human playthrough establishes a recognizable strategic choice, safe retreat, or revisit acceptance.

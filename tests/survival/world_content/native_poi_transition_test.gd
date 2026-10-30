@@ -1,5 +1,10 @@
 extends SceneTree
 
+# Test-only setup teleports are direct global_position assignments below; they
+# model an owner-restored spawn or position an actor for an isolated collision
+# check. They are not traversal evidence. Traversal assertions follow
+# request_test_motion + physics_frame, including doorway and water-route checks.
+
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 
 const FIXTURE_SCRIPT := preload(
@@ -31,6 +36,7 @@ func _initialize() -> void:
 func _run() -> void:
 	await _physical_exterior_entry_exit_all_sites()
 	await _physical_quarry_route_choices()
+	await _physical_water_routes_and_weather_non_stranding()
 	if _failures.is_empty():
 		print("A8_NATIVE_POI_TRANSITION_PASS assertions=%d" % _assertions)
 		quit(0)
@@ -486,6 +492,154 @@ func _physical_quarry_route_choices() -> void:
 			actor.last_collision != null, "unchosen Quarry passage remains a real collision blocker"
 		)
 		_cleanup({"site": site, "actor": actor, "authority": authority})
+
+
+func _physical_water_routes_and_weather_non_stranding() -> void:
+	var orchard_pair := await _make_site(1)
+	var orchard: NativePoiSite = orchard_pair.site
+	var orchard_actor: WorldContentTestActor = orchard_pair.actor
+	var orchard_authority: PoiAuthorityFixture = orchard_pair.authority
+
+	# Setup-only placement on the safe west bank; the next move is real physics.
+	orchard_actor.global_position = Vector2(200, 288)
+	orchard_actor.request_test_motion(Vector2(100, 0))
+	await physics_frame
+	_check(
+		orchard_actor.last_collision != null and orchard_actor.global_position.x < 214,
+		"Orchard's visible unknown-depth water blocks traversal away from its boardwalk"
+	)
+
+	# Setup-only placement at the authored approach. Commit the existing neutral
+	# sluice choice through the test-only authority fixture, not scene-local state.
+	orchard_actor.global_position = orchard.get_stand_position()
+	orchard_actor.set("facing", Vector2.UP)
+	_check(
+		orchard.try_interact(orchard_actor),
+		"Orchard sluice choice is reachable from the south bank"
+	)
+	var orchard_intent: Dictionary = orchard._pending.duplicate(true)
+	var orchard_receipt: Dictionary = orchard_authority.submit_intent(orchard_intent)
+	_check(
+		orchard_receipt.get("status") == "committed",
+		"fixture owner commits Orchard's existing sluice choice"
+	)
+	orchard.receive_authoritative_result(
+		orchard_intent.intent_id,
+		orchard_receipt,
+		orchard_authority.project_state(orchard.get_source_id())
+	)
+	await physics_frame
+	_check(
+		orchard.get_site_state().get("orchard_channel") == "flowing",
+		"Orchard deadfall opens only after the owner-projected channel state"
+	)
+	orchard_actor.global_position = Vector2(496, 350)
+	orchard_actor.request_test_motion(Vector2(0, -120))
+	await physics_frame
+	_check(
+		orchard_actor.last_collision == null and orchard_actor.global_position.y < 240,
+		"Orchard boardwalk physically crosses the channel after sluice clearance"
+	)
+	orchard_actor.request_test_motion(Vector2(0, 120))
+	await physics_frame
+	_check(
+		orchard_actor.last_collision == null and orchard_actor.global_position.y > 349,
+		"Orchard boardwalk remains a physical retreat to the south bank"
+	)
+
+	var unknown_context := {
+		"contract_id": "soh.a8.environment_presentation_input.v1",
+		"site_id": orchard.get_source_id(),
+		"projection_revision": 1,
+		"world_time": null,
+		"weather": null,
+		"tide": null,
+	}
+	_check(
+		orchard.apply_environment_projection(unknown_context),
+		"A0-shaped unknown environment is accepted for presentation"
+	)
+	var presented: Dictionary = orchard.get_environment_presentation()
+	_check(
+		(
+			presented.world_time == "UNKNOWN"
+			and presented.weather == "UNKNOWN"
+			and presented.tide == "UNKNOWN"
+		),
+		"missing owner time/weather/tide remain UNKNOWN"
+	)
+	orchard_actor.request_test_motion(Vector2(0, -120))
+	await physics_frame
+	_check(
+		orchard_actor.last_collision == null,
+		"unknown weather cannot strand the player or close the authored Orchard retreat"
+	)
+	_cleanup(orchard_pair)
+
+	var mill_pair := await _make_site(2)
+	var mill: NativePoiSite = mill_pair.site
+	var mill_actor: WorldContentTestActor = mill_pair.actor
+	var mill_authority: PoiAuthorityFixture = mill_pair.authority
+	mill_actor.global_position = Vector2(260, 304)
+	mill_actor.request_test_motion(Vector2(100, 0))
+	await physics_frame
+	_check(
+		mill_actor.last_collision != null and mill_actor.global_position.x < 278,
+		"Mill's visible wheel-race water blocks ordinary cross-channel walking"
+	)
+	_check(
+		(
+			mill
+			. apply_environment_projection(
+				{
+					"contract_id": "soh.a8.environment_presentation_input.v1",
+					"site_id": mill.get_source_id(),
+					"projection_revision": 1,
+					"world_time": null,
+					"weather": null,
+					"tide": null,
+				}
+			)
+		),
+		"Mill accepts only site-scoped owner environment presentation"
+	)
+	mill_authority.set_capabilities(["cap_salvage"])
+	_check(
+		mill.set_projection(mill_authority.project_state(mill.get_source_id())),
+		"Mill accepts current owner capability projection"
+	)
+	mill_actor.global_position = mill.get_stand_position()
+	mill_actor.set("facing", Vector2.UP)
+	_check(
+		mill.try_interact(mill_actor), "Mill repair choice is physically available at its approach"
+	)
+	var mill_intent: Dictionary = mill._pending.duplicate(true)
+	var mill_receipt: Dictionary = mill_authority.submit_intent(mill_intent)
+	_check(
+		mill_receipt.get("status") == "committed",
+		"fixture owner commits the existing waterwheel repair choice"
+	)
+	mill.receive_authoritative_result(
+		mill_intent.intent_id, mill_receipt, mill_authority.project_state(mill.get_source_id())
+	)
+	await physics_frame
+	_check(
+		mill.get_site_state().get("mill_wheel") == "turning",
+		"Mill power state remains owner-projected"
+	)
+	mill_actor.request_test_motion(Vector2(0, -140))
+	await physics_frame
+	_check(
+		mill_actor.last_collision == null and mill_actor.global_position.y < 280,
+		"powered Mill opens its existing maintenance gate and the fixed plank race crossing"
+	)
+	mill_actor.request_test_motion(Vector2(0, 140))
+	await physics_frame
+	_check(
+		mill_actor.last_collision == null and mill_actor.global_position.y > 409,
+		"Mill's authored plank/entry route supports a physical retreat after repair"
+	)
+	_cleanup(mill_pair)
 
 
 func _assert_shell_art(shell: NativePoiShell) -> void:

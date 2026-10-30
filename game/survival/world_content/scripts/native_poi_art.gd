@@ -5,6 +5,9 @@ extends Node2D
 ## feet-anchored sprites from the pinned SOH atlas. It creates no collision.
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+const SURFACE_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/native_poi_surface_contract.gd"
+)
 const ART_MANIFEST := "res://data/survival/world_content/a8_art_manifest.v1.json"
 const TILE_PX := 16
 
@@ -15,11 +18,16 @@ var _columns := 0
 var _rows := 0
 var _manifest: Dictionary = {}
 var _site_state: Dictionary = {}
+var _environment_projection: Dictionary = {}
+var _surface_contract: Dictionary = {}
 var _terrain_texture: Texture2D
 var _props_texture: Texture2D
+var _surface_texture: Texture2D
 var _terrain_layer: TileMapLayer
+var _surface_layer: TileMapLayer
 var _props_root: Node2D
 var _terrain_ids: Dictionary = {}
+var _surface_ids: Dictionary = {}
 
 
 func configure(definition: Dictionary, shell_role: bool = false) -> bool:
@@ -47,7 +55,11 @@ func configure(definition: Dictionary, shell_role: bool = false) -> bool:
 	var textures: Dictionary = _manifest.get("textures", {})
 	_terrain_texture = load(str(textures.get("terrain", {}).get("path", ""))) as Texture2D
 	_props_texture = load(str(textures.get("props", {}).get("path", ""))) as Texture2D
-	if _terrain_texture == null or _props_texture == null:
+	_surface_texture = load(str(textures.get("surface", {}).get("path", ""))) as Texture2D
+	_surface_contract = SURFACE_SCRIPT.site_surface(
+		str(definition.get("source", {}).get("poi_id", ""))
+	)
+	if _terrain_texture == null or _props_texture == null or _surface_texture == null:
 		return false
 	_build_ground()
 	_build_props()
@@ -72,12 +84,24 @@ func set_site_state(state: Dictionary) -> void:
 		_build_props()
 
 
+func set_environment_projection(projection: Dictionary) -> void:
+	# Owner values are retained for truthful inspection only. No time/weather/tide
+	# behavior is inferred until A0 supplies an approved, site-scoped mapping.
+	_environment_projection = projection.duplicate(true)
+
+
+func get_environment_projection() -> Dictionary:
+	return _environment_projection.duplicate(true)
+
+
 func _build_ground() -> void:
-	if is_instance_valid(_terrain_layer):
-		if _terrain_layer.get_parent() == self:
-			remove_child(_terrain_layer)
-		_terrain_layer.queue_free()
+	for layer: TileMapLayer in [_terrain_layer, _surface_layer]:
+		if is_instance_valid(layer):
+			if layer.get_parent() == self:
+				remove_child(layer)
+			layer.queue_free()
 	_terrain_ids.clear()
+	_surface_ids.clear()
 	var tile_px := int(_manifest.get("tile_px", TILE_PX))
 	if tile_px != TILE_PX:
 		push_error("A8 art atlas tile size must remain 16 px")
@@ -105,12 +129,35 @@ func _build_ground() -> void:
 			source.create_tile(atlas_cell)
 		_terrain_ids[frame_name] = atlas_cell
 	var source_id := tile_set.add_source(source)
+	var surface_source_id := -1
+	var surface_frames: Dictionary = _manifest.get("surface_frames", {})
+	if not surface_frames.is_empty():
+		var surface_source := TileSetAtlasSource.new()
+		surface_source.texture = _surface_texture
+		surface_source.texture_region_size = Vector2i(TILE_PX, TILE_PX)
+		for frame_name: String in surface_frames:
+			var frame: Array = surface_frames[frame_name]
+			if frame.size() != 4 or int(frame[2]) != TILE_PX or int(frame[3]) != TILE_PX:
+				continue
+			var atlas_cell := Vector2i(
+				floori(float(frame[0]) / TILE_PX), floori(float(frame[1]) / TILE_PX)
+			)
+			if not surface_source.has_tile(atlas_cell):
+				surface_source.create_tile(atlas_cell)
+			_surface_ids[frame_name] = atlas_cell
+		surface_source_id = tile_set.add_source(surface_source)
 	_terrain_layer = TileMapLayer.new()
 	_terrain_layer.name = "A8_16px_Ground"
 	_terrain_layer.z_index = -10
 	_terrain_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	_terrain_layer.tile_set = tile_set
 	add_child(_terrain_layer)
+	_surface_layer = TileMapLayer.new()
+	_surface_layer.name = "A8_Surface_Affordances"
+	_surface_layer.z_index = -9
+	_surface_layer.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_surface_layer.tile_set = tile_set
+	add_child(_surface_layer)
 	var ground_rows: Array = _layout.get("ground_rows", [])
 	if not ground_rows.is_empty():
 		for y: int in range(mini(ground_rows.size(), _rows)):
@@ -143,6 +190,35 @@ func _build_ground() -> void:
 		var state_value := str(_site_state.get(state_key, ""))
 		for path: Dictionary in values.get(state_value, []):
 			_paint_path(path, source_id)
+	_paint_surface_contract(source_id, surface_source_id)
+
+
+func _paint_surface_contract(terrain_source_id: int, surface_source_id: int) -> void:
+	if surface_source_id < 0 or _surface_contract.is_empty():
+		return
+	var classes: Dictionary = SURFACE_SCRIPT.load_contract().get("surface_classes", {})
+	for zone: Dictionary in _surface_contract.get("zones", []):
+		var surface_class := str(zone.get("surface_class", ""))
+		var class_data: Dictionary = classes.get(surface_class, {})
+		var frames: Array = class_data.get("presentation_frames", [])
+		var cells: Array = zone.get("tile_overlay_cells", [])
+		if frames.is_empty():
+			continue
+		for cell_pair: Variant in cells:
+			var cell := VECTOR_UTIL.from_int_pair(cell_pair, Vector2i(-1, -1))
+			if cell.x < 0 or cell.y < 0 or cell.x >= _columns or cell.y >= _rows:
+				continue
+			var pick := posmod(cell.x * 17 + cell.y * 31 + cell.x * cell.y * 3, frames.size())
+			_paint_surface_cell(cell, str(frames[pick]), terrain_source_id, surface_source_id)
+
+
+func _paint_surface_cell(
+	cell: Vector2i, frame_name: String, terrain_source_id: int, surface_source_id: int
+) -> void:
+	if _surface_ids.has(frame_name):
+		_surface_layer.set_cell(cell, surface_source_id, _surface_ids[frame_name])
+	elif _terrain_ids.has(frame_name):
+		_surface_layer.set_cell(cell, terrain_source_id, _terrain_ids[frame_name])
 
 
 func _paint_cell(cell: Vector2i, frame_name: String, source_id: int) -> void:

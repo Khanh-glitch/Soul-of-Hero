@@ -4,10 +4,10 @@
 
 ## Exact review pins and target
 
-- PR #26 source base being closed out: `1426a0eb250a0a680081c2dfabfe4eb339f61f5d`; final implementation SHA is the current PR head, not this base.
-- A1 PR #20 inspected head: `ad39bde6780c92169032246898c145c568f36e6e`.
+- PR #26 source base before the current physical-quality package: `0e22d5f00532cf5e079b540e30a54281606fc757`; the final implementation SHA is the current PR head after this package is pushed.
+- A1 PR #20 current inspected head: `dabf7bf516a80b112821b51d07e4dfe5fcb9a765`.
 - A3 PR #19 inspected head: `4bfba38d87bb2b6529745bf4a3caf2ba0ca07947`; Quarry remains `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`.
-- A0 PR #21 inspected head: `51225718f3d9b15e508da633060270a4221e6a09`; A0 alone owns production mount, transitions, durable identity, projection adapter, and SaveService.
+- A0 PR #21 inspected head: `28f2d578a71e0ce48df8ec267485d35500fab14e`; A0 alone owns production mount, transitions, durable identity, projection adapter, and SaveService.
 - Canonical Quarry: `world:soh_continent_v1` / `poi_crown_south_quarry` / `r_ashen_crown` / `[30,280]`; A1 foot spur `sp_poi_crown_south_quarry` is early/no-capability.
 - Preserve shell `128×128` at root `[424,4424]` with local socket `[64,64]`; local worksite is a separate `960×608` interior with spawn `[480,548]`, stand `[506,378]`, socket `[506,302]`, exit `[480,560]`. A0 mount/reachability/transition is unproven; do not treat the transform as a production mount.
 
@@ -23,7 +23,7 @@ A3: decide whether the Quarry can be approved as **one explicitly bound source a
 
 ## A1 atlas compatibility: exact helpful frames only
 
-The A8 complete texture pin remains at A1 `939720d50a0b822ff9042d4104dc69ba78ffe0f8`; current A1 PR #20 head is `ad39bde6780c92169032246898c145c568f36e6e`. `data/survival/world_content/a1_atlas_compatibility.v1.json` and `tests/survival/world_content/test_a1_atlas_compatibility.py` compare exact per-frame RGBA crop pixels for every terrain/prop frame referenced by the three sites. All 23 terrain and 25 prop used-frame crops match. A8 retains its complete older pin and exact original Gold; it does not blindly copy A1's new art. Current A1 added 80 transition candidates and two notes-crate props: not adopted because the A8 renderer has no neighbor compositor and notes crates are unrelated. They remain explicit unadopted candidates, not a compatibility claim for unused frames. Preserve canonical cells/identity, real path/blocker/doorway geometry, original ten dungeons, and shell/interior split. No A1 edit or source provenance change is proposed.
+The A8 complete texture pin remains at A1 `939720d50a0b822ff9042d4104dc69ba78ffe0f8`; current A1 PR #20 head is `dabf7bf516a80b112821b51d07e4dfe5fcb9a765`. `data/survival/world_content/a1_atlas_compatibility.v1.json` and `tests/survival/world_content/test_a1_atlas_compatibility.py` compare exact per-frame RGBA crop pixels for every terrain/prop frame referenced by the three sites. All 23 terrain and 25 prop crops match; 23 used prop rectangles moved in A1 but the pixels remain identical. A8 retains its complete older pin and exact original Gold; it does not repin its own local coordinates. Current A1 has 80 shore-transition masks, of which 40 are in the three sites’ candidate-family union, plus two unrelated notes-crate props; none of those is adopted because A8 has no neighbor compositor and the crates are unrelated. Separately, A8 adopts only five exact current-A1 crops into its small local surface strip (mud variants and one boardwalk tile) for the authored Orchard bank/bridge; its existing four snow frames are also pixel-verified but remain unapplied while weather is UNKNOWN. Preserve canonical cells/identity, real path/blocker/doorway geometry, original ten dungeons, and shell/interior split. No A1 edit or source provenance change is proposed.
 
 State-linked low-risk cues: Quarry seam warning hides only after owner-projected brace/chock; Orchard deadfall warning hides only after owner-projected flowing channel; Mill seized-race warning remains visible at baseline. These cues indicate authored state only; no invented hazards, damage, or loot.
 
@@ -36,8 +36,8 @@ State-linked low-risk cues: Quarry seam warning hides only after owner-projected
 
 ## Evidence status — do not conflate
 
-- **A8 source/static:** `author_site.py --check`, all 17 Python tests, `gdformat --check`, and `gdlint` passed locally. These verify source/static behavior only. Exact-head CI remains pending the push of this closeout; the GDScript runtime suite has not been executed locally.
-- **Godot native:** HOLD. No local Godot 4 binary is available; the latest exact A8 head `1426a0eb…` had queued CI runs `41040398338`, `41040398206`, `41040398163` at review. They are not a native pass, and changes after that SHA need new exact-head CI. No import/physics/transition/restart test or inspected 720p/1440p/2160p captures are claimed.
+- **A8 source/static:** `author_site.py --check`, all 23 Python world-content tests, `gdformat`, and `gdlint` pass locally. These verify source/data and static syntax only. Exact-head CI for this patch starts after push.
+- **Godot native:** HOLD pending execution. Godot 4.7 is being built from the official source because no executable is preinstalled; the native interaction/transition/surface tests have not yet run. Older exact-head CI is not evidence for this patch. No 720p/1440p/2160p captures or visual acceptance are claimed.
 - **A0 production:** HOLD. Current-world reachability, mount, actor entry/exit, persistent world position, SaveService restart and durable owner receipt are not demonstrated. See `A0_QUARRY_REACHABLE_WORLD_INSERTION_SPEC.v1.md`.
 - **A3 economics:** HOLD. No Quarry binding, item cost/yield, cooldown, capability grant, source allocation or route opportunity value is approved. `quarry_economics_evidence.v2.json` is a fail-closed decision request only.
 - **Human play:** HOLD. No native inspected playthrough proves a recognizable strategic choice or safe retreat/revisit.

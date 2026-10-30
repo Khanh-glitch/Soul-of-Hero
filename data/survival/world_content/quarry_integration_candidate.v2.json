@@ -2,10 +2,10 @@
   "schema": "soh.a8.quarry.integration_candidate.v2",
   "status": "A8_SOURCE_READY_A0_A3_INTEGRATION_HOLD",
   "source_pins_at_review": {
-    "a8_pr26": {"review_base": "1426a0eb250a0a680081c2dfabfe4eb339f61f5d", "branch": "arena/2d7e6d7a-soul-of-hero"},
-    "a1_pr20_current": {"head": "ad39bde6780c92169032246898c145c568f36e6e", "status": "OPEN", "source_contract": "A1 canonical authored cells and 128x128 shell context"},
+    "a8_pr26": {"review_base": "0e22d5f00532cf5e079b540e30a54281606fc757", "branch": "arena/2d7e6d7a-soul-of-hero"},
+    "a1_pr20_current": {"head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765", "status": "OPEN", "source_contract": "A1 canonical authored cells and 128x128 shell context"},
     "a3_pr19_current": {"head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947", "status": "OPEN", "quarry_authorization": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED"},
-    "a0_pr21_current_at_review": {"head": "51225718f3d9b15e508da633060270a4221e6a09", "status": "OPEN", "owner": "A0 production overworld mount, scene transitions, SaveService and durable reload"}
+    "a0_pr21_current_at_review": {"head": "28f2d578a71e0ce48df8ec267485d35500fab14e", "status": "OPEN", "owner": "A0 production overworld mount, scene transitions, SaveService and durable reload"}
   },
   "canonical_quarry_instance_request": {
     "world_id": "world:soh_continent_v1",

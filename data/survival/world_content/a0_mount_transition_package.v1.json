@@ -1,0 +1,83 @@
+{
+  "schema": "soh.a8.a0_mount_transition_package.v1",
+  "package_status": "READY_FOR_A0_REVIEW_NOT_MOUNTED",
+  "source_pins_reviewed": {
+    "a8_pr26_pre_package_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
+    "a1_pr20_current_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "a0_pr21_current_head": "28f2d578a71e0ce48df8ec267485d35500fab14e",
+    "a3_pr19_current_head": "4bfba38d87bb2b6529745bf4a3caf2ba0ca07947"
+  },
+  "world_id": "world:soh_continent_v1",
+  "geometry": {
+    "tile_size_px": 16,
+    "shell_bounds_px": [128, 128],
+    "shell_action_socket_local_px": [64, 64],
+    "shell_return_doorway_local_px": [64, 108],
+    "shell_root_formula": "canonical_cell*16+[8,8]-[64,64]",
+    "interior_bounds_px": [960, 608],
+    "interior_is_local_instance_not_overworld_footprint": true
+  },
+  "a0_current_candidate_bounds": {
+    "host_world_cells": [448, 256],
+    "annex_origin_cells": [384, 192],
+    "annex_size_cells": [64, 64],
+    "annex_build_policy": "ANNEX_BUILD_DISABLED_PENDING_COMPOSITE_VALIDATOR",
+    "production_mounted": false,
+    "all_a8_targets_fit_current_host": false,
+    "all_a8_targets_fit_current_annex": false,
+    "reason": "All three canonical y cells (280, 300, 360) exceed the 256-cell host height and are outside the 64x64 annex. A0 must resolve the full A1-owned world extent before mounting."
+  },
+  "owner_seam": {
+    "a0_owns": ["full-world mounting", "world transitions", "global return position", "SaveService", "durable reload/idempotency", "owner receipts", "environment/site projections"],
+    "a1_owns": ["canonical cells", "global geography", "world routes", "source transforms"],
+    "a3_owns": ["Quarry authorization", "item-vector costs", "bounded source/sink", "cooldown/cadence", "capability effects", "route/risk valuation"],
+    "a8_emits": ["neutral soh.native_poi.intent.v2 interaction identity", "soh.native_poi.transition.v1 enter/exit request", "local surface presentation metadata"],
+    "a8_authority": false,
+    "fixture_data_live": false,
+    "transition_scene_paths_must_be_resolved_by_a0_allowlist": true
+  },
+  "sites": [
+    {
+      "site_id": "crown_south_quarry",
+      "poi_id": "poi_crown_south_quarry",
+      "canonical_cell": [30, 280],
+      "canonical_anchor_px": [488, 4488],
+      "shell_root_px": [424, 4424],
+      "shell_scene": "res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
+      "interior_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+      "interior_spawn_local_px": [480, 548],
+      "interior_exit_local_px": [480, 560],
+      "a3_binding_status": "NO_A8_SITE_BINDING; FAIL_CLOSED"
+    },
+    {
+      "site_id": "crown_south_orchard",
+      "poi_id": "poi_crown_south_orchard",
+      "canonical_cell": [140, 360],
+      "canonical_anchor_px": [2248, 5768],
+      "shell_root_px": [2184, 5704],
+      "shell_scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
+      "interior_scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
+      "interior_spawn_local_px": [480, 548],
+      "interior_exit_local_px": [480, 560],
+      "a3_binding_status": "A3 economics not inferred; A0 owner projections only"
+    },
+    {
+      "site_id": "crown_south_mill",
+      "poi_id": "poi_crown_south_mill",
+      "canonical_cell": [120, 300],
+      "canonical_anchor_px": [1928, 4808],
+      "shell_root_px": [1864, 4744],
+      "shell_scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+      "interior_scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn",
+      "interior_spawn_local_px": [526, 548],
+      "interior_exit_local_px": [526, 560],
+      "a3_binding_status": "A3 economics not inferred; A0 owner projections only"
+    }
+  ],
+  "save_acceptance": {
+    "required": "A0 two-process SaveService write, process restart, durable reload, and idempotency proof",
+    "not_equivalent": "A8 fixture JSON.stringify/parse in one Godot SceneTree process",
+    "d056": "Reset run-local gameplay only via A0 owner projection; retain general achievements and historic run records.",
+    "a8_claim": "NOT_RUN_BY_A8"
+  }
+}

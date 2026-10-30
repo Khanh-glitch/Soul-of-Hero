@@ -1,5 +1,8 @@
 extends SceneTree
 
+# Direct global_position assignments below are setup teleports; only
+# request_test_motion followed by physics_frame counts as traversal.
+
 const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
@@ -93,6 +96,19 @@ func _scene_and_data_contracts() -> void:
 			colliders >= 4,
 			"solid traversal / retreat collision boundaries exist: %s" % site.get_source_id()
 		)
+		var surface_blocker_count := 0
+		for child: Node in site.get_children():
+			if str(child.name).begins_with("SurfaceBlocker_"):
+				surface_blocker_count += 1
+		var expected_surface_blockers := 0
+		if site.get_source_id() == "poi_crown_south_orchard":
+			expected_surface_blockers = 3
+		elif site.get_source_id() == "poi_crown_south_mill":
+			expected_surface_blockers = 2
+		_check(
+			surface_blocker_count == expected_surface_blockers,
+			"water/deadfall blockers are explicit local physical geometry"
+		)
 		_check(
 			site.definition.get("source", {}).has("poi_id"),
 			"site source / anchor identity exists: %s" % site.get_source_id()
@@ -136,6 +152,25 @@ func _assert_site_art(site: NativePoiSite) -> void:
 		_check(
 			ground.get_used_cells().size() == 60 * 38,
 			"local terrain fills the aligned 960-by-608 canvas"
+		)
+	var surface_layer := (
+		site.get_node_or_null("SourceBackedWorldArt/A8_Surface_Affordances") as TileMapLayer
+	)
+	_check(surface_layer != null, "local surface affordances use a real source-atlas layer")
+	if surface_layer != null:
+		_check(
+			surface_layer.tile_set.tile_size == Vector2i(16, 16),
+			"surface overlay preserves the 16 px source grid"
+		)
+		var expected_surface_cells := 0
+		match site.get_source_id():
+			"poi_crown_south_orchard":
+				expected_surface_cells = 20
+			"poi_crown_south_mill":
+				expected_surface_cells = 8
+		_check(
+			surface_layer.get_used_cells().size() == expected_surface_cells,
+			"only authored mud/plank surface overlay cells are rendered"
 		)
 	var props := site.get_node_or_null("SourceBackedWorldArt/A8_SourceSized_Props")
 	_check(

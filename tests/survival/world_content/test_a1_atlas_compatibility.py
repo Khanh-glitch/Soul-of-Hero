@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[3]
 EVIDENCE = ROOT / "data/survival/world_content/a1_atlas_compatibility.v1.json"
 A8_MANIFEST = ROOT / "data/survival/world_content/a8_art_manifest.v1.json"
+SURFACE_CONTRACT = ROOT / "data/survival/world_content/surface_affordances.v1.json"
 
 
 def decode_rgba_png(path: Path) -> tuple[int, int, list[bytes]]:
@@ -87,12 +88,17 @@ class A1AtlasCompatibilityTests(unittest.TestCase):
     def setUpClass(cls) -> None:
         cls.evidence = json.loads(EVIDENCE.read_text(encoding="utf-8"))
         cls.a8_manifest = json.loads(A8_MANIFEST.read_text(encoding="utf-8"))
+        cls.surface_contract = json.loads(SURFACE_CONTRACT.read_text(encoding="utf-8"))
 
     def test_pinned_site_frames_match_current_a1_source_pixels(self) -> None:
         evidence = self.evidence
         current = evidence["a1_current"]
-        self.assertEqual(current["head"], "ad39bde6780c92169032246898c145c568f36e6e")
-        self.assertEqual(current["frame_counts"], {"terrain": 318, "props": 47})
+        self.assertEqual(current["head"], "dabf7bf516a80b112821b51d07e4dfe5fcb9a765")
+        self.assertEqual(current["atlas_sha256"], "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c")
+        self.assertEqual(current["terrain_sha256"], "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1")
+        self.assertEqual(current["props_sha256"], "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27")
+        self.assertEqual(current["texture_dimensions"], {"terrain": [512, 720], "props": [1024, 376]})
+        self.assertEqual(current["frame_counts"], {"terrain": 1415, "props": 111})
         for kind, file_name in (("terrain", "terrain.png"), ("props", "props.png")):
             a8_record = self.a8_manifest["textures"][kind]
             a8_path = ROOT / a8_record["path"].removeprefix("res://")
@@ -112,6 +118,73 @@ class A1AtlasCompatibilityTests(unittest.TestCase):
                     frame["rgba_crop_sha256"],
                     (kind, name),
                 )
+
+    def test_existing_snow_frames_match_current_a1_without_claiming_weather_support(self) -> None:
+        frames = self.evidence["existing_surface_frames"]["frames"]
+        width, height, rows = decode_rgba_png(
+            ROOT / self.a8_manifest["textures"]["terrain"]["path"].removeprefix("res://")
+        )
+        self.assertEqual([width, height], [512, 128])
+        for name, frame in frames.items():
+            self.assertEqual(self.a8_manifest["terrain_frames"][name], frame["a8_rect"])
+            self.assertEqual(frame["a8_rect"], frame["a1_rect"])
+            self.assertEqual(crop_rgba_digest(rows, frame["a8_rect"]), frame["rgba_crop_sha256"], name)
+
+    def test_targeted_surface_derivative_matches_current_a1_source_pixels(self) -> None:
+        evidence = self.evidence["adopted_surface_frames"]
+        source = self.a8_manifest["surface_derivative_source"]
+        self.assertEqual(source["a1_head"], evidence["source_a1_head"])
+        self.assertEqual(source["terrain_sha256"], evidence["source_texture_sha256"])
+        self.assertEqual(set(source["frames"]), set(evidence["frames"]))
+        texture = self.a8_manifest["textures"]["surface"]
+        path = ROOT / texture["path"].removeprefix("res://")
+        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), evidence["a8_surface_texture_sha256"])
+        width, height, rows = decode_rgba_png(path)
+        self.assertEqual([width, height], evidence["a8_surface_dimensions"])
+        for name, frame in evidence["frames"].items():
+            self.assertEqual(self.a8_manifest["surface_frames"][name], frame["a8_rect"])
+            self.assertEqual(crop_rgba_digest(rows, frame["a8_rect"]), frame["rgba_crop_sha256"], name)
+
+    def test_surface_contract_keeps_unprovided_environment_and_depth_unknown(self) -> None:
+        self.assertEqual(self.surface_contract["schema"], "soh.a8.local_surface_affordance.v1")
+        self.assertTrue(self.surface_contract["environment_projection"]["appearance_only"])
+        self.assertTrue(self.surface_contract["environment_projection"]["may_change_collision_or_route_access"] is False)
+        self.assertIn("UNKNOWN", self.surface_contract["environment_projection"]["current_a0_source_support"]["weather"])
+        for site in self.surface_contract["site_surfaces"].values():
+            self.assertTrue(site["authored_exposure_routes"])
+            for zone in site["zones"]:
+                if "water" in zone["surface_class"]:
+                    self.assertIsNone(zone["depth_value"])
+        self.assertIn("No A8 global footprints", self.surface_contract["non_features"][0])
+        orchard = self.surface_contract["site_surfaces"]["poi_crown_south_orchard"]
+        orchard_water = next(zone for zone in orchard["zones"] if zone["zone_id"] == "orchard_irrigation_channel")
+        self.assertIsNone(orchard_water["depth_value"])
+        self.assertEqual(
+            [blocker["rect_px"] for blocker in orchard["physical_blockers"][:2]],
+            [[224, 272, 256, 32], [512, 272, 240, 32]],
+        )
+        self.assertEqual(
+            orchard["physical_blockers"][2]["when_site_state_not"],
+            {"orchard_channel": ["flowing"]},
+        )
+        mill = self.surface_contract["site_surfaces"]["poi_crown_south_mill"]
+        self.assertTrue(all(item["when"] == "always" for item in mill["physical_blockers"]))
+        self.assertTrue(self.surface_contract["environment_projection"]["weather_must_not_close_an_authored_retreat_route"])
+
+    def test_current_a1_prop_coordinates_are_reconciled_without_repinning_a8(self) -> None:
+        moved_props = [
+            frame
+            for frame in self.evidence["matched_frames"]["props"].values()
+            if frame["a8_rect"] != frame["a1_current_rect"]
+        ]
+        moved_terrain = [
+            frame
+            for frame in self.evidence["matched_frames"]["terrain"].values()
+            if frame["a8_rect"] != frame["a1_current_rect"]
+        ]
+        self.assertEqual(len(moved_props), 23)
+        self.assertEqual(moved_terrain, [])
+        self.assertTrue(all(frame["rgba_crop_sha256"] for frame in moved_props))
 
     def test_compatibility_set_is_the_nonvacuous_union_used_by_all_three_sites(self) -> None:
         used_props: set[str] = set()

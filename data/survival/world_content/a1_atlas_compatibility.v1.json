@@ -1,6 +1,6 @@
 {
   "schema": "soh.a8.a1_atlas_compatibility.v1",
-  "decision": "MAINTAIN_A8_PINNED_939720D5_ATLAS_FOR_THIS_CLOSEOUT",
+  "decision": "KEEP_BASE_A8_PIN_AND_ADOPT_FIVE_SOURCE_VERIFIED_LOCAL_SURFACE_CROPS",
   "a8_pin": {
     "pr": 20,
     "head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
@@ -19,26 +19,27 @@
   },
   "a1_current": {
     "pr": 20,
-    "head": "ad39bde6780c92169032246898c145c568f36e6e",
+    "head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
     "atlas_path": "data/survival/world/art/atlas.v1.json",
-    "terrain_sha256": "fa8fb59c82ba7958d19aabeac66c04403b78bd1e9e9fb84fef312c657ad53c8f",
-    "props_sha256": "ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279",
+    "terrain_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "props_sha256": "633a82a6b6c71ab50ed8b076aed40cb778dbfab93c18b3d0e9717066f31c1a27",
     "texture_dimensions": {
       "terrain": [
         512,
-        160
+        720
       ],
       "props": [
         1024,
-        186
+        376
       ]
     },
     "frame_counts": {
-      "terrain": 318,
-      "props": 47
-    }
+      "terrain": 1415,
+      "props": 111
+    },
+    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c"
   },
-  "compatibility_test_method": "For every terrain/prop frame actually used by the three A8 sites and shells, decoded RGBA crop bytes from the pinned A8 PNG equal the frame crop at the exact coordinate in the current A1 ad39bde6 atlas. Test stores SHA-256 of those decoded crop bytes and verifies them without requiring Pillow or downloading A1 files.",
+  "compatibility_test_method": "For every terrain/prop frame actually used by the three A8 sites and shells, decode the pinned A8 PNG and compare the RGBA crop digest with the exact current A1 dabf7bf5 atlas frame at its current coordinate. The five adopted Orchard surface frames are separately cropped into A8's 80x16 derivative strip and checked against current-A1 source-derived RGBA digests. The source atlas/texture hashes, dimensions, coordinates, and per-crop digests are recorded here; the stdlib test verifies non-vacuous site coverage and both retained/adopted crops.",
   "matched_frame_counts": {
     "terrain": 23,
     "props": 25
@@ -437,8 +438,8 @@
           22
         ],
         "a1_current_rect": [
-          750,
-          108,
+          2,
+          344,
           26,
           22
         ],
@@ -677,8 +678,8 @@
           20
         ],
         "a1_current_rect": [
-          778,
-          108,
+          30,
+          344,
           26,
           20
         ],
@@ -692,8 +693,8 @@
           15
         ],
         "a1_current_rect": [
-          806,
-          108,
+          58,
+          344,
           20,
           15
         ],
@@ -707,8 +708,8 @@
           26
         ],
         "a1_current_rect": [
-          870,
-          108,
+          122,
+          344,
           26,
           26
         ],
@@ -752,8 +753,8 @@
           58
         ],
         "a1_current_rect": [
-          714,
-          108,
+          986,
+          284,
           34,
           58
         ],
@@ -767,8 +768,8 @@
           22
         ],
         "a1_current_rect": [
-          898,
-          108,
+          150,
+          344,
           36,
           22
         ],
@@ -1341,10 +1342,33 @@
       24
     ]
   },
+  "existing_surface_frames": {
+    "purpose": "A8 already-pinned snow frames available to the local surface contract; not currently applied to these three interiors because no A0 weather projection exists.",
+    "a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "frames": {
+      "snow_0": {"a8_rect": [320, 0, 16, 16], "a1_rect": [320, 0, 16, 16], "rgba_crop_sha256": "019e34ab6ea0c0ae27518058e4fc35e85fa2bd10bb92dee2ef93e2589e8882bb"},
+      "snow_1": {"a8_rect": [336, 0, 16, 16], "a1_rect": [336, 0, 16, 16], "rgba_crop_sha256": "126efb02f9211763677c14550b311b0bac3c65af81cd0522d1b073cf8fbc388b"},
+      "snow_2": {"a8_rect": [352, 0, 16, 16], "a1_rect": [352, 0, 16, 16], "rgba_crop_sha256": "96e571c367f8b4168e204a87c8348a06ea12a7c2eae24f77f289cacfd323f07d"},
+      "snow_3": {"a8_rect": [368, 0, 16, 16], "a1_rect": [368, 0, 16, 16], "rgba_crop_sha256": "b0f2b4656c885e689da3ea25e3915d619d1afc6b52b689867673da14d9c52ffd"}
+    }
+  },
+  "adopted_surface_frames": {
+    "source_a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "source_texture_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "a8_surface_texture_sha256": "01c9a855d8da4d331333909fb4fd52b4a0da1c25c5f4f7c28b5fbf76c7eb202a",
+    "a8_surface_dimensions": [80, 16],
+    "frames": {
+      "mud_0": {"a1_rect": [288, 160, 16, 16], "a8_rect": [0, 0, 16, 16], "rgba_crop_sha256": "bb1321663acf6537d38988fff6a31c6dc6fa1d06a1e32cf8d657c95e9b38827c"},
+      "mud_1": {"a1_rect": [304, 160, 16, 16], "a8_rect": [16, 0, 16, 16], "rgba_crop_sha256": "b562e4a0c8781ceeefe49510940c1e47925096d21035c825c688b0ed32956087"},
+      "mud_2": {"a1_rect": [320, 160, 16, 16], "a8_rect": [32, 0, 16, 16], "rgba_crop_sha256": "bf83dfe960c06b2a5e67c016f2bd920fbed6fe5fd51282ba5d1d2c61a8209790"},
+      "mud_3": {"a1_rect": [336, 160, 16, 16], "a8_rect": [48, 0, 16, 16], "rgba_crop_sha256": "bf83dfe960c06b2a5e67c016f2bd920fbed6fe5fd51282ba5d1d2c61a8209790"},
+      "boardwalk_ns": {"a1_rect": [32, 704, 16, 16], "a8_rect": [64, 0, 16, 16], "rgba_crop_sha256": "7891e3313e16d560f0005c972365cdb0619b2f02390adc5bb8a522873c533c06"}
+    }
+  },
   "decision_rationale": [
     "All frames actually referenced by the three site shells/interiors remain pixel-identical at A1 current coordinates; the old A8 texture pin is internally compatible for those consumers.",
     "The new land-to-land shore masks may improve ellipse/path transitions: ash\u2194gravel/moor and gravel/soil for Quarry/Mill; forest\u2194soil/moor and gravel\u2194soil for Orchard. No current A8 renderer composes neighbor-aware edge masks, so changing only atlas bytes/coords would not make these visible.",
-    "Adopting shore masks safely requires a new edge-compositor plus native-size visual review; current exact-head Godot/render jobs are queued. Do not perform a blind atlas repin in this bounded closeout.",
+    "Adopting shore masks safely requires a neighbor-aware edge compositor plus native-size visual review; that is outside this local surface task. Do not perform a blind atlas repin or claim visual acceptance.",
     "The two notes-crate prop frames do not serve the three site identities and would imply unrelated research-note rewards; do not add them."
   ],
   "not_equivalent_frames": {
@@ -1352,5 +1376,13 @@
       "lm_waystation"
     ]
   },
-  "native_visual_acceptance": "HOLD; this is a source-pixel compatibility check, not native render acceptance."
+  "native_visual_acceptance": "HOLD; this is a source-pixel compatibility check, not native render acceptance.",
+  "potential_new_transitions_source": {
+    "a1_head": "dabf7bf516a80b112821b51d07e4dfe5fcb9a765",
+    "atlas_sha256": "a2b7d35da814438957fdf8433aeff633e71f392bb6696faa3ef07c894536ea9c",
+    "terrain_png_sha256": "e222e9778d44cfe1f31d67684abd59b0db53e2e869e8f489299efeb550ba02a1",
+    "frame_count": 80,
+    "unique_candidate_count": 40,
+    "decision": "NOT_ADOPTED; A8 has no neighbor-aware edge compositor; source frames remain candidates only."
+  }
 }
