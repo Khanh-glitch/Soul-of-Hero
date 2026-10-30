@@ -227,7 +227,7 @@ if (mode === 'hashes') {
     for (const f of w.fx as any[]) {
       if (f.kind !== 'flow') continue;
       const bs = f.br.map((b: any) => `d${b.drawn.toFixed(3)}/l${b.len.toFixed(3)}/w${b.w.toFixed(3)}`);
-      console.log(`GOLD93_FLOW t=${t} age=${f.age.toFixed(6)} br=${f.br.length} discs=${f.discs.length} ${bs.join(' ')}`);
+      console.log(`GOLD93_FLOW t=${t} age=${f.age.toFixed(6)} br=${f.br.length} discs=${f.discs.length} ${bs.join(' ')} | discs ${f.discs.map((d: any) => d.r.toFixed(4)).join(' ')}`);
     }
   });
 } else if (mode === 'state') {

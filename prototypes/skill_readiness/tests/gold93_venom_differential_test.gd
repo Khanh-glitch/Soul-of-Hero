@@ -422,7 +422,10 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 					var bs: Array = []
 					for b in f.br:
 						bs.append("d%.3f/l%.3f/w%.3f" % [float(b["drawn"]), float(b["len"]), float(b["w"])])
-					print("GOLD93_FLOW t=%d age=%.6f br=%d discs=%d %s" % [n, float(f.age), f.br.size(), f.discs.size(), " ".join(bs)])
+					var ds: Array = []
+					for d in f.discs:
+						ds.append("%.4f" % float(d["r"]))
+					print("GOLD93_FLOW t=%d age=%.6f br=%d discs=%d %s | discs %s" % [n, float(f.age), f.br.size(), f.discs.size(), " ".join(bs), " ".join(ds)])
 		if want.has(n):
 			var exp: Dictionary = want[n]
 			var got := {
