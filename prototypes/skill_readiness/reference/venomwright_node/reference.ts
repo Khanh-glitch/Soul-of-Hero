@@ -236,10 +236,10 @@ if (mode === 'hashes') {
 } else if (mode === 'en12state') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
-    if (![2, 30, 40, 50, 55, 60, 80].includes(t)) return;
+    if (t < 28 || t > 40) return;
     console.log(`GOLD93_PL t=${t} px=${w.player.x.toFixed(12)} py=${w.player.y.toFixed(12)}`);
     const e = w.enemies[12];
-    console.log(`GOLD93_EN12 t=${t} e12 x=${e.x.toFixed(12)} y=${e.y.toFixed(12)} kx=${e.kx.toFixed(12)} ky=${e.ky.toFixed(12)} face=${e.face.toFixed(12)}`);
+    console.log(`GOLD93_EN12 t=${t} e12 x=${e.x} y=${e.y} kx=${e.kx} ky=${e.ky} face=${e.face}`);
   });
 } else if (mode === 'enstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);

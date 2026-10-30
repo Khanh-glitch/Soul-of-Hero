@@ -435,11 +435,11 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			_dump_rasters(g, sid, n)
 		if sid == 7 and n <= 92:
 			_dump_summon_state(w, n)
-		if sid == 7 and n in [2, 30, 40, 50, 55, 60, 80]:
+		if sid == 7 and n >= 28 and n <= 40:
 			print("GOLD93_PL t=%d px=%.12f py=%.12f" % [n, float(w.player.x), float(w.player.y)])
 			var ee2 = w.enemies[12]
-			print("GOLD93_EN12 t=%d e%d x=%.12f y=%.12f kx=%.12f ky=%.12f face=%.12f" % [n, 12, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
-			_en12_log.append("t=%d x=%.12f y=%.12f kx=%.12f ky=%.12f face=%.12f" % [n, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
+			print("GOLD93_EN12 t=%d e%d x=%.17g y=%.17g kx=%.17g ky=%.17g face=%.17g" % [n, 12, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
+			_en12_log.append("t=%d x=%.17g y=%.17g kx=%.17g ky=%.17g face=%.17g" % [n, float(ee2.x), float(ee2.y), float(ee2.kx), float(ee2.ky), float(ee2.face)])
 		if sid == 7 and n in [185, 190, 195, 200, 205, 210]:
 			var es: Array = []
 			for ei in range(w.enemies.size()):
