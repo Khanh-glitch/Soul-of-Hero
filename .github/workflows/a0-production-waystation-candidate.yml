@@ -120,6 +120,10 @@ jobs:
             cat "artifacts/candidate-$mode.log"
             echo "::notice::Candidate ${{ matrix.route }} $mode exit=$rc $(grep -E 'PASSED|FAILED|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/candidate-$mode.log" | tail -15 | tr '\n' '~')"
             while IFS= read -r line; do echo "::notice::$line"; done < <(grep '^A0_SAVE_DIFF ' "artifacts/candidate-$mode.log" || true)
+            # Job logs live behind a blob store this owner cannot read from every
+            # sandbox, so every failed check and engine error is also emitted as an
+            # annotation that the GitHub API can always return.
+            while IFS= read -r line; do echo "::error title=candidate-${{ matrix.route }}-$mode::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error|^ERROR: ' "artifacts/candidate-$mode.log" | head -12 || true)
             bash tools/ci/gate_log.sh "artifacts/candidate-$mode.log" "candidate $mode" "$marker" || failed=1
             [ "$rc" -eq 0 ] || failed=1
           done

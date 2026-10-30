@@ -277,6 +277,14 @@ func _body() -> void:
 	if recipe_button == null or not recipe_button.is_visible_in_tree():
 		_body_complete = true
 		return
+	# The starter list is longer than one 640x360 panel page on a fresh save, so
+	# an ordinary player has to wheel the row into view before it can be clicked.
+	var recipe_scroll := _owning_scroll(recipe_button)
+	var revealed := recipe_scroll != null and await _scroll_to(recipe_scroll, recipe_button)
+	_expect(revealed, "ordinary wheel input reveals the starter kit recipe")
+	if not revealed:
+		_body_complete = true
+		return
 	var button_position := root.get_final_transform() * (recipe_button.get_global_transform_with_canvas() * (recipe_button.size * 0.5))
 	await _click_window(button_position)
 	var host: Node = ow.get(&"economy_session")
