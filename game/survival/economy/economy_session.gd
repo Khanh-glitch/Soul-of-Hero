@@ -29,7 +29,8 @@ var _focused := true
 var _configured := false
 # World sources share this pausable physical session, not wall-clock or UI time.
 var _world_seconds := 0
-var _world_steps := 0
+var _world_last_usec := 0
+var _world_remainder_usec := 0
 var _world_sequence := 0
 var _world_last_ack := 0
 var _world_armed := false
@@ -61,6 +62,10 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 
 
 func _exit_tree() -> void:
+	# Persist an active partial interval on ordinary scene exit. Crash/focus or
+	# paused exits can conservatively lose at most the unflushed interval.
+	if _world_armed and _world_seconds > _world_last_ack:
+		_flush_world_clock()
 	if _save != null and is_instance_valid(_save):
 		for pair in [[&"save_loaded", _on_save_loaded], [&"save_committed", _on_save_committed], [&"save_reset", _on_save_reset]]:
 			if _save.is_connected(pair[0], pair[1]):
@@ -69,6 +74,8 @@ func _exit_tree() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if _world_armed and _world_seconds > _world_last_ack:
+			_flush_world_clock()
 		_focused = false
 		_discard_partial_steps()
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN:
@@ -81,7 +88,8 @@ func _notification(what: int) -> void:
 
 
 func _discard_partial_steps() -> void:
-	_world_steps = 0
+	_world_last_usec = 0
+	_world_remainder_usec = 0
 	for value: Variant in _stations.values():
 		value["steps"] = 0
 
@@ -101,7 +109,8 @@ func _new_session(snapshot: Dictionary) -> bool:
 	_sequence = 0
 	_command_serial = 0
 	_world_seconds = 0
-	_world_steps = 0
+	_world_last_usec = 0
+	_world_remainder_usec = 0
 	_world_sequence = 0
 	_world_last_ack = 0
 	_world_armed = not saved_world.is_empty()
@@ -169,13 +178,22 @@ func _physics_process(_delta: float) -> void:
 	if _waystation_host() != null:
 		if _world_baseline_pending:
 			_flush_world_clock()
-		_world_steps += 1
-		if _world_steps >= TICKS_PER_SECOND:
-			_world_steps = 0
+		# Monotonic wall time sampled only while gameplay is active. A large
+		# scheduling gap may be suspension/focus loss; discard it rather than
+		# invent offline progress. Short gaps and ordinary physics frame rates
+		# accumulate correctly even if physics_ticks_per_second changes.
+		var now := Time.get_ticks_usec()
+		if _world_last_usec > 0:
+			var elapsed := now - _world_last_usec
+			if elapsed >= 0 and elapsed <= 250000:
+				_world_remainder_usec += elapsed
+		_world_last_usec = now
+		if _world_remainder_usec >= 1000000:
+			_world_remainder_usec -= 1000000
 			if _world_seconds - _world_last_ack < 3000:
 				_world_seconds += 1
 				_world_sequence += 1
-			if _world_armed and _world_seconds - _world_last_ack >= 300:
+			if _world_armed and _world_seconds - _world_last_ack >= 30:
 				_flush_world_clock()
 	if _jobs_dirty:
 		_jobs = _adapter.call(&"jobs")

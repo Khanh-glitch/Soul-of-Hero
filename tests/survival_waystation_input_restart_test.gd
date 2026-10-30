@@ -3,6 +3,7 @@ extends "res://tests/survival_connector_pilot_test.gd"
 ## Hero, controller and A1 connector. Synthetic ordinary inputs; NOT production
 ## mount, human validation or the complete home/danger journey.
 const HOST = preload("res://game/survival/waystation_host.gd")
+const GEOMETRY = preload("res://game/survival/waystation_geometry.gd")
 const PATH := "user://tests/waystation_input_restart.json"
 const AUDIT := "user://tests/waystation_input_restart_audit.json"
 
@@ -26,6 +27,10 @@ func _console() -> void:
 	var ow := await _boot()
 	if ow == null:
 		_finish(); return
+	var physical_world := ow.get(&"world") as OverworldWorld
+	var body_count := physical_world.blocker_root.get_child_count()
+	var duplicate_mount: Dictionary = GEOMETRY.mount(physical_world, "res://artifacts/a0-connector/slices/")
+	_expect(not bool(duplicate_mount.get("ok", true)) and physical_world.blocker_root.get_child_count() == body_count, "duplicate source mount fails without adding any collider")
 	var host := HOST.new()
 	host.name = "WaystationRuntime"
 	ow.add_child(host)
@@ -33,10 +38,31 @@ func _console() -> void:
 	var session := ow.get(&"economy_session") as Node
 	_expect(session != null and host.configure(ow, hero, session), "real A0 host binds to the actual pilot Hero and EconomySession")
 	if session != null:
+		var before_clock := int(session.get("_world_seconds"))
+		await create_timer(1.5).timeout
+		_expect(int(session.get("_world_seconds")) >= before_clock + 1, "active world clock advances in real time")
+		var modal := Control.new()
+		modal.add_to_group(&"gameplay_modal")
+		root.add_child(modal)
+		await physics_frame
+		var modal_clock := int(session.get("_world_seconds"))
+		await create_timer(1.2).timeout
+		_expect(int(session.get("_world_seconds")) == modal_clock, "visible gameplay modal accrues no active time")
+		modal.queue_free()
+		await process_frame
 		await _journey(ow, hero, host, second)
 	if is_instance_valid(_host):
 		_host.queue_free()
 	await process_frame
+	if not second and _body_complete:
+		var snapshot: Dictionary = _save().call(&"get_snapshot")
+		var record := {}
+		for section: String in ["inventory", "survival", "world_slice", "applied_transactions"]:
+			record[section] = snapshot.get(section, {})
+		var file := FileAccess.open(AUDIT, FileAccess.WRITE)
+		_expect(file != null, "first process creates separate audit after scene exit")
+		if file != null:
+			file.store_string(JSON.stringify(record)); file.close()
 	_finish()
 
 func _click_point(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
@@ -89,14 +115,6 @@ func _journey(ow: Node, hero: CharacterBody2D, host: Node, second: bool) -> void
 		return
 	if not second:
 		(ow.get(&"state") as OverworldState).set_world_position(hero.global_position, true)
-		var snapshot: Dictionary = _save().call(&"get_snapshot")
-		var record := {}
-		for section: String in ["inventory", "survival", "world_slice", "applied_transactions"]:
-			record[section] = snapshot.get(section, {})
-		var file := FileAccess.open(AUDIT, FileAccess.WRITE)
-		_expect(file != null, "first process creates separate audit")
-		if file != null:
-			file.store_string(JSON.stringify(record)); file.close()
 	_body_complete = true
 
 func _finish() -> void:

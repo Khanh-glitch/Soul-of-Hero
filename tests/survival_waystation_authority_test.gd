@@ -80,6 +80,49 @@ func _run() -> void:
 	fixture_seconds = 0
 	r = adapter.call(&"world_action", cache, "fixture.restart")
 	_expect(not bool(r.get("ok", false)) and String(r.get("reason", "")) == "COOLDOWN" and (save.call(&"inventory_totals") as Dictionary) == totals, "new session grants no offline cooldown")
+	# Adversarial fixture clock; this is NOT claimed as ordinary player time.
+	r = adapter.call(&"advance_world_time", "poi_crown_waystation", "fixture.clock.baseline")
+	_expect(bool(r.get("ok", false)), "new fixture session establishes non-retroactive baseline")
+	fixture_seconds = 1800
+	fixture_sequence += 1
+	r = adapter.call(&"advance_world_time", "poi_crown_waystation", "fixture.clock.ready")
+	_expect(bool(r.get("ok", false)), "fixture advances exactly one canonical cooldown")
+	_expect(bool(save.call(&"grant_inventory_item", "iron_scrap", "material", 47, "fixture.fill.scrap")), "fixture fills partial scrap stack")
+	_expect(bool(save.call(&"grant_inventory_item", "knowledge_spares", "material", 48, "fixture.fill.spares")), "fixture fills partial spares stack")
+	var added := 0
+	for n in range(35):
+		if not bool(save.call(&"grant_inventory_item", "stone_chunk", "material", 50, "fixture.fill.%d" % n)):
+			break
+		added += 1
+	_expect(added >= 2, "fixture fills remaining bag slots")
+	var full: Dictionary = save.call(&"get_snapshot")
+	r = adapter.call(&"world_action", cache, "fixture.full")
+	_expect(not bool(r.get("ok", false)) and String(r.get("reason", "")) == "inventory_full" and (save.call(&"get_snapshot") as Dictionary) == full, "full bag refuses entire reward without cooldown or receipt")
+	_expect(bool(save.call(&"consume_inventory_item", "stone_chunk", 100, "fixture.free.two")), "fixture frees two complete stack slots")
+	var before_fault: Dictionary = save.call(&"get_snapshot")
+	_expect(bool(save.call(&"configure_test_save_interruption", "after_temporary")), "debug-only temporary-write interruption armed")
+	r = adapter.call(&"world_action", cache, "fixture.interrupted")
+	_expect(not bool(r.get("ok", false)) and (save.call(&"get_snapshot") as Dictionary) == before_fault, "interrupted candidate leaves memory unchanged")
+	_expect(bool(save.call(&"reload_save")) and (save.call(&"get_snapshot") as Dictionary) == before_fault, "interrupted candidate leaves disk unchanged")
+	r = adapter.call(&"world_action", cache, "fixture.interrupted")
+	_expect(bool(r.get("ok", false)), "same event safely succeeds after interrupted write")
+	var after_retry: Dictionary = save.call(&"inventory_totals")
+	_expect(int(after_retry.get("iron_scrap", 0)) == 53 and int(after_retry.get("knowledge_spares", 0)) == 52, "retry grants each reward exactly once")
+	fixture_seconds = 3600
+	fixture_sequence += 1
+	r = adapter.call(&"advance_world_time", "poi_crown_waystation", "fixture.clock.second.ready")
+	_expect(bool(r.get("ok", false)), "fixture advances second canonical cooldown")
+	# Free the partially filled newly granted stacks and two more slots before
+	# the ambiguous rename test; this is deliberately test-funded, not gameplay.
+	_expect(bool(save.call(&"consume_inventory_item", "stone_chunk", 100, "fixture.free.more")), "fixture leaves enough capacity for next claim")
+	_expect(bool(save.call(&"configure_test_save_interruption", "after_primary_renamed")), "debug-only post-rename interruption armed")
+	r = adapter.call(&"world_action", cache, "fixture.renamed")
+	_expect(not bool(r.get("ok", false)), "ambiguous post-rename call does not report success")
+	_expect(bool(save.call(&"reload_save")), "authoritative disk reload resolves post-rename result")
+	var durable: Dictionary = save.call(&"inventory_totals")
+	_expect(int(durable.get("iron_scrap", 0)) == 56 and int(durable.get("knowledge_spares", 0)) == 54, "post-rename disk contains exactly one committed reward")
+	r = adapter.call(&"world_action", cache, "fixture.renamed")
+	_expect((save.call(&"inventory_totals") as Dictionary) == durable, "post-rename retry cannot grant the same reward twice")
 	_finish()
 
 func _finish() -> void:

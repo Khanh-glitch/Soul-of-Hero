@@ -16,6 +16,17 @@ var _points := {}
 func configure(world: Node, hero: Node2D, session: Node) -> bool:
 	if world == null or hero == null or session == null or get_parent() != world or not _points.is_empty():
 		return false
+	if world.get(&"player") != hero or world.get(&"economy_session") != session:
+		return false
+	var mounted_world := world.get(&"world") as OverworldWorld
+	if mounted_world == null or mounted_world.width != 448 or mounted_world.height != 256 or mounted_world.blocker_root == null:
+		return false
+	# The source and its cache body must already exist in the same live physics
+	# projection; a caller-provided position or UI label is not authority.
+	for name: String in ["obs_waystation_locker_bank_408_198", "obs_waystation_cache_crate_406_203"]:
+		var body := mounted_world.blocker_root.get_node_or_null(name) as StaticBody2D
+		if body == null or body.collision_layer != 1 or body.is_queued_for_deletion():
+			return false
 	_world = world
 	_hero = hero
 	_session = session
@@ -37,7 +48,8 @@ func configure(world: Node, hero: Node2D, session: Node) -> bool:
 	return true
 
 func owns_point(point: Node) -> bool:
-	return is_instance_valid(point) and point.get_parent() == self and _points.values().has(point)
+	return is_instance_valid(point) and point.is_inside_tree() and not point.is_queued_for_deletion() \
+		and is_inside_tree() and point.get_parent() == self and _points.values().has(point)
 
 func matches_interaction(point: Node, actor: Node) -> bool:
 	if not owns_point(point) or actor != _hero or not is_instance_valid(_hero) or bool(_hero.get(&"dead")):
