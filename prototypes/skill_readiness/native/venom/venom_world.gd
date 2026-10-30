@@ -628,7 +628,10 @@ func step(dt: float) -> void:
 				_end_task(t)
 				tasks.remove_at(i)
 				break
-			t["wait"] = float(t["wait"]) + (float(r) if r != null else 1.0 / 60.0)
+			# ORIGINAL: `t.wait += (r.value as number) || 1/60` — JS `||`
+			# treats 0 and NaN as falsy, so `yield 0` waits a full frame.
+			var rv: float = float(r) if r != null else 0.0
+			t["wait"] = float(t["wait"]) + (rv if rv != 0.0 and not is_nan(rv) else 1.0 / 60.0)
 	if PROFILE_ON:
 		prof_add("step.tasks_resume", Time.get_ticks_usec() - st0)
 		st0 = Time.get_ticks_usec()
