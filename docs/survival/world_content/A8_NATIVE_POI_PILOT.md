@@ -53,7 +53,7 @@ godot --headless --path . --script tests/survival/world_content/native_poi_contr
 
 ## Evidence and status
 
-The data validator and prior `gdtoolkit` parser/style checks passed before this continuation; targeted static checks must be rerun after the latest changes. The sandbox still has no Godot executable. The earlier 4.7 download redirected to `release-assets.githubusercontent.com`, outside the available hosts. GitHub's A8 native workflow has remained queued; last observed current-head run was `41015986080`. Therefore **no native Godot test, capture, or 720p/2K/4K visual inspection is claimed**. Check current workflow state and inspect real capture artifacts before raising this status. A green Python validator is not native acceptance.
+Static verification passed on code-bearing head `2ad531f9e099cc3a29709da176e7a34b05a9a15b`: A8 authoring validator, gdformat parser/format, gdlint, JSON parsing and `git diff --check`. The sandbox still has no Godot executable. The earlier 4.7 download redirected to `release-assets.githubusercontent.com`, outside the available hosts. Current code-bearing A8 native run `41019182407` remained queued after a 180-second `gh run watch`; no job steps started. Other PR-native runtime/capture jobs are likewise pending. Therefore **no native Godot test, capture, or 720p/2K/4K visual inspection is claimed**. Inspect the actual workflow results and captured artifacts before raising this status. A green static validator is not native acceptance.
 
 ## Non-goals / unresolved blockers
 
