@@ -1705,19 +1705,21 @@
       "state_at_authoring": "queued"
     },
     "local": {
-      "pytest_passed": 109,
+      "pytest_passed": 113,
       "art_presentations": 3,
       "terrain_frames": 238,
-      "prop_frames": 38,
+      "prop_frames": 45,
       "inherited_frames": 9,
-      "determinism_artifacts": 245,
-      "determinism_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
+      "determinism_artifacts": 246,
+      "determinism_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
       "validators": "0 errors",
       "gdparse": "clean",
-      "pillow_previews": "inspected_not_native"
+      "pillow_previews": "inspected_not_native",
+      "a8_shell_visuals": 3
     },
     "native": {
       "fixture": "tests/survival/world/world_art_native_test.gd",
+      "corridor_art_fixture": "tests/survival/world/corridor_native_test.gd --world-art",
       "ci_job": "A1 GODOT 4.7 WORLD ART NATIVE VISUAL FIXTURE (NOT PRODUCTION)",
       "resolutions": [
         "1280x720",
@@ -1725,8 +1727,20 @@
         "3840x2160"
       ],
       "state": "NOT_TESTED",
-      "production_native_playable": false
+      "production_native_playable": false,
+      "gold_probe": "inherited VFX light-mask/tint isolation; not full A4 Gold acceptance"
     },
-    "handoff": "docs/survival/world/WORLD_ART_HANDOFF.md"
+    "handoff": "docs/survival/world/WORLD_ART_HANDOFF.md",
+    "followup_refresh": {
+      "head_sha": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+      "world_reader_runs": {
+        "pr": 41026150160,
+        "push": 41026143600
+      },
+      "python_job": "SUCCESS",
+      "native_jobs": "queued",
+      "artifacts": "python evidence only at refresh",
+      "drive_candidate_verified": "574220 REJECT_IMPORT_STYLE_MISMATCH"
+    }
   }
 }

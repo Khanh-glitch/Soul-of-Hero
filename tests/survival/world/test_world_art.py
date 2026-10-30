@@ -128,3 +128,65 @@ def test_compile_is_deterministic(art):
     cwa.compile_all()
     after = {e["treatment_id"]: e["sha256"] for e in cwa.load(cwa.ART / "presentations.v1.json")["presentations"]}
     assert before == after
+
+
+def test_causal_landforms_and_road_overlays(art):
+    for doc in art["docs"].values():
+        assert doc["terrain_method"] == "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES"
+        assert doc["landforms"] and all(lf["reason"] and lf["cells"] > 0 for lf in doc["landforms"])
+        assert doc["counts"]["road_overlays"] == doc["counts"]["road_cells"]
+        assert not any(frame.startswith("road_") for row in doc["ground"]["rows"] for frame in row)
+        for overlay in doc["overlays"]:
+            assert overlay["layer"] in {"road", "bank"}
+            assert overlay["frame"] in art["atlas"]["terrain"]
+    compiler = (cwa.ROOT / "tools/survival/worldgen/compile_world_art.py").read_text()
+    assert "h01(x // 6" not in compiler and "h01(x // 5" not in compiler
+
+
+def test_runtime_hardening_and_gold_light_isolation(art):
+    runtime = (cwa.ROOT / "game/world_art/world_art_presentation.gd").read_text()
+    for token in ("func bind_focus", "func _process", "occlusion.step(delta)", 'set_meta("frame_name"',
+                  "WORLD_LIGHT_MASK", "_count_collisions", "return _fail", "func clear"):
+        assert token in runtime
+    assert '"collision_bodies": 0' not in runtime
+    fixture = (cwa.ROOT / "tests/survival/world/world_art_native_test.gd").read_text()
+    for token in ("bind_focus", "logical_sha256", "world_sparkle", "inherited VFX keeps default light mask",
+                  "rebuild is idempotent", "invalid presentation rejected atomically"):
+        assert token in fixture
+    corridor_fixture = (cwa.ROOT / "tests/survival/world/corridor_native_test.gd").read_text()
+    assert "--world-art" in corridor_fixture and "world-art overlay adds zero collision bodies" in corridor_fixture
+
+
+def test_a8_shell_visuals_are_compact_shared_and_doorway_clear(art):
+    shells = cwa.load(cwa.ART / "a8_shell_visuals.v1.json")
+    assert shells["atlas_sha256"] == hashlib.sha256((cwa.ART / "atlas.v1.json").read_bytes()).hexdigest()
+    assert {s["poi_id"] for s in shells["sites"]} == {"poi_crown_south_quarry", "poi_crown_south_orchard", "poi_crown_south_mill"}
+    for site in shells["sites"]:
+        assert site["bounds_px"] == [128, 128] and site["tile_px"] == 16
+        assert site["collision_change"] is False and site["new_poi_count"] == 0
+        assert len(site["ground_rows"]) == 8 and all(len(r) == 8 for r in site["ground_rows"])
+        door = site["doorway_clear_rect_px"]
+        for prop in site["props"]:
+            assert prop["frame"] in art["atlas"]["props"]
+            x, y = prop["local_px"]
+            assert not (door[0] <= x < door[0] + door[2] and door[1] <= y < door[1] + door[3])
+    assert "A8-VIS-07" in {d["id"] for d in art["contract"]["observed_divergences"]}
+    assert art["contract"]["source_review"]["head_sha"] == "5ccf7b3f"
+
+
+def test_art_compile_does_not_touch_navigation_chunks_or_ten_entrances(art):
+    plan_path = cwa.WORLD / "world_plan.v1.json"
+    lock_path = cwa.WORLD / "baseline_lock.json"
+    plan = cwa.load(plan_path)
+    lock = cwa.load(lock_path)
+    protected = [plan_path, lock_path] + [cwa.WORLD / m["path"] for m in plan["chunk_manifest"]]
+    before = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in protected}
+    cwa.compile_all()
+    after = {str(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in protected}
+    assert before == after
+    assert len(lock["landmarks"]) == 10
+    assert all(lm["reachable_closed_shortcuts"] for lm in lock["landmarks"])
+    corridor = cwa.load(cwa.WORLD / "corridor/crown_roadside.corridor.v1.json")
+    assert corridor["route"]["required_nav_cells"]
+    for doc in art["docs"].values():
+        assert doc["collision_change"] is False and doc["stand_change"] is False and doc["new_poi_count"] == 0

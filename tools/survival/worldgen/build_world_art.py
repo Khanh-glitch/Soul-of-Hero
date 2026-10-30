@@ -33,7 +33,7 @@ P = {
     "grass_d": "#405638", "grass": "#5b7544", "grass_l": "#7f9857", "grass_h": "#a7b873",
     "leaf_d": "#33492e", "leaf": "#4f6d3a", "leaf_l": "#71914b", "leaf_h": "#9db464",
     "fruit": "#c9783f", "fruit_l": "#e8a75c",
-    "snow_d": "#8fa0ab", "snow": "#b9c7cd", "snow_l": "#e2ebee", "snow_h": "#f7fbfc",
+    "snow_d": "#7f93a0", "snow": "#a8bac4", "snow_l": "#d3e0e6", "snow_h": "#eef6f8",
     "ice_d": "#4b7d96", "ice": "#78a9bd", "ice_l": "#b6dde6",
     "basalt_d": "#3b3f4a", "basalt": "#565c69", "basalt_l": "#767e8c",
     "water_d": "#274557", "water": "#38657c", "water_l": "#5d93a8", "water_h": "#9ccbd4",
@@ -99,34 +99,45 @@ def ground(style: str, variant: int) -> Image.Image:
         "ice": ("ice_d", "ice", "ice_l"),
     }
     dk, md, hi = pal[style]
+    # Calm material fields: variant marks are low-contrast clusters, not static.
+    def mix(a: str, b: str, t: float) -> tuple:
+        ca, cb = C(a), C(b)
+        return tuple(int(ca[i] + (cb[i] - ca[i]) * t) for i in range(3)) + (255,)
+    if style in ("ash", "gravel", "basalt", "soil"):
+        hi_c, dk_c = mix(md, hi, 0.30), mix(md, dk, 0.35)
+    elif style == "snow":
+        hi_c, dk_c = mix(md, hi, 0.45), mix(md, dk, 0.35)
+    elif style in ("grass", "moor", "forest"):
+        hi_c, dk_c = mix(md, hi, 0.55), mix(md, dk, 0.45)
+    else:
+        hi_c, dk_c = C(hi), C(dk)
     rect(im, 0, 0, T, T, C(md))
-    # Hand-placed macro marks, not per-pixel static. Four variants are enough at 16 px.
-    marks = [(2, 3), (9, 2), (5, 9), (12, 11), (1, 13), (13, 6)]
+    marks = [(4, 5), (11, 4), (7, 11)]
     for i, (x, y) in enumerate(marks):
-        x = (x + variant * 3) % 14
-        y = (y + variant * 5) % 14
-        if style in ("grass", "moor", "forest"):
-            line(im, [(x, y + 2), (x, y)], C(hi))
-            line(im, [(x + 1, y + 2), (x + 2, y)], C(dk))
-            if i % 2 == 0:
-                px(im, x + 2, y + 1, C(hi))
-        elif style in ("snow", "tundra"):
-            poly(im, [(x, y), (x + 3, y - 1), (x + 5, y + 1), (x + 2, y + 2)], C(hi))
-            if style == "tundra" and i % 2 == 0:
-                rect(im, x, y + 2, 3, 1, C(dk))
+        x = (x + variant * 4) % 13
+        y = (y + variant * 5) % 13
+        if style == "forest":
+            poly(im, [(x, y + 1), (x + 2, y), (x + 3, y + 2), (x + 1, y + 3)], hi_c)
+            px(im, x + 1, y + 1, dk_c)
+        elif style in ("grass", "moor"):
+            line(im, [(x, y + 2), (x + 1, y)], hi_c)
+            line(im, [(x + 2, y + 2), (x + 2, y + 1)], dk_c)
+        elif style == "snow":
+            line(im, [(x, y + 1), (x + 4, y)], hi_c)
+            if i == 0:
+                line(im, [(x + 1, y + 3), (x + 5, y + 2)], dk_c)
+        elif style == "tundra":
+            poly(im, [(x, y), (x + 3, y), (x + 4, y + 1), (x + 1, y + 2)], hi_c)
+            px(im, x + 1, y + 1, dk_c)
         elif style == "water":
             if i % 2 == 0:
-                line(im, [(x, y), (x + 4, y)], C(hi))
-                px(im, x + 5, y + 1, C(dk))
+                line(im, [(x, y), (x + 4, y)], hi_c)
         elif style == "ice":
-            line(im, [(x, y), (x + 3, y + 2), (x + 5, y + 1)], C(hi))
+            line(im, [(x, y), (x + 3, y + 2), (x + 5, y + 1)], hi_c)
         elif style in ("basalt", "gravel"):
-            poly(im, [(x, y), (x + 3, y), (x + 4, y + 2), (x + 1, y + 3)], C(hi if i % 3 else dk))
-            px(im, x + 1, y + 1, C(md))
+            poly(im, [(x, y), (x + 3, y), (x + 4, y + 2), (x + 1, y + 3)], hi_c if i % 2 else dk_c)
         else:
-            rect(im, x, y, 2, 1, C(hi if i % 2 else dk))
-            if i % 3 == 0:
-                px(im, x + 2, y + 1, C(dk))
+            rect(im, x, y, 3, 1, hi_c if i % 2 else dk_c)
     return im
 
 
@@ -446,6 +457,86 @@ def light_pool() -> Image.Image:
     return im
 
 
+
+def drying_rack() -> Image.Image:
+    im = new(28, 30); shadow(im, 24, 5)
+    for x in (4, 22): rect(im, x, 6, 3, 22, C("wood_d"))
+    rect(im, 3, 7, 23, 3, C("wood")); rect(im, 3, 16, 23, 2, C("wood_d"))
+    for x, y in [(7, 10), (13, 9), (19, 11), (9, 19), (17, 18)]:
+        line(im, [(x, y), (x, y + 6)], C("herb"))
+        ell(im, x - 2, y + 4, 4, 4, C("herb_l"))
+    return im
+
+
+def beehive() -> Image.Image:
+    im = new(22, 24); shadow(im, 18, 5)
+    rect(im, 5, 18, 12, 4, C("wood_d"))
+    for y, w in [(6, 12), (10, 16), (14, 14)]:
+        ell(im, 11 - w // 2, y, w, 6, C("canvas_d")); ell(im, 12 - w // 2, y, w - 2, 4, C("canvas"))
+    rect(im, 9, 16, 4, 3, C("ink")); px(im, 10, 17, C("fire"))
+    return im
+
+
+def snow_drift() -> Image.Image:
+    im = new(36, 16)
+    poly(im, [(1, 14), (6, 8), (14, 5), (24, 7), (34, 13), (30, 15), (4, 15)], C("snow_d"))
+    poly(im, [(3, 13), (8, 8), (15, 6), (24, 8), (31, 13)], C("snow"))
+    line(im, [(8, 9), (16, 7), (24, 9)], C("snow_l"))
+    return im
+
+
+def split_rail() -> Image.Image:
+    im = new(34, 18); shadow(im, 30, 4)
+    for x in (3, 28): rect(im, x, 3, 3, 13, C("wood_d"))
+    poly(im, [(2, 7), (32, 5), (32, 8), (2, 10)], C("wood"))
+    poly(im, [(2, 12), (32, 10), (32, 13), (2, 15)], C("wood_l"))
+    return im
+
+
+def quarry_workface() -> Image.Image:
+    im = new(88, 64); shadow(im, 78, 9)
+    poly(im, [(4, 56), (8, 24), (24, 10), (58, 8), (80, 22), (84, 56)], C("basalt_d"))
+    poly(im, [(10, 52), (14, 26), (28, 15), (56, 13), (74, 25), (78, 52)], C("stone_d"))
+    poly(im, [(16, 48), (20, 28), (32, 19), (54, 18), (68, 28), (72, 48)], C("stone"))
+    for x, y in [(24, 26), (40, 22), (56, 30), (32, 38), (50, 42)]:
+        line(im, [(x, y), (x + 8, y + 3)], C("stone_l")); px(im, x + 2, y + 1, C("stone_h"))
+    # timber brace and worked seam, not a loot glow
+    rect(im, 18, 34, 5, 22, C("wood_d")); rect(im, 64, 32, 5, 24, C("wood_d"))
+    rect(im, 18, 32, 51, 5, C("wood")); line(im, [(22, 36), (64, 36)], C("wood_l"))
+    rect(im, 38, 44, 14, 8, C("ink_soft")); line(im, [(40, 48), (50, 46)], C("ore"), 2)
+    return im
+
+
+def orchard_shed() -> Image.Image:
+    im = new(72, 60); shadow(im, 62, 8)
+    rect(im, 10, 30, 52, 26, C("wood_d")); rect(im, 12, 30, 48, 22, C("wood"))
+    for x in range(14, 60, 8): line(im, [(x, 31), (x, 51)], C("wood_d"))
+    poly(im, [(4, 32), (22, 10), (50, 10), (68, 32)], C("ink")); poly(im, [(8, 30), (24, 14), (48, 14), (64, 30)], C("cloth_d"))
+    poly(im, [(12, 28), (26, 16), (46, 16), (60, 28)], C("canvas"))
+    rect(im, 28, 38, 16, 18, C("ink")); rect(im, 30, 40, 12, 16, C("wood_l"))
+    rect(im, 14, 36, 10, 8, C("ink")); rect(im, 16, 38, 6, 4, C("herb"))
+    rect(im, 48, 36, 10, 8, C("ink")); rect(im, 50, 38, 6, 4, C("fruit"))
+    # graft rack: human tending, not a reward marker
+    rect(im, 58, 20, 3, 34, C("wood_d")); line(im, [(58, 24), (68, 20)], C("wood_l"), 2)
+    rect(im, 64, 18, 5, 3, C("canvas_l"))
+    return im
+
+
+def mill_house() -> Image.Image:
+    im = new(88, 76); shadow(im, 78, 9)
+    rect(im, 12, 34, 64, 38, C("stone_d")); rect(im, 14, 34, 60, 34, C("stone"))
+    for x in range(16, 74, 12): line(im, [(x, 36), (x, 66)], C("stone_d"))
+    poly(im, [(6, 36), (28, 10), (60, 10), (82, 36)], C("ink")); poly(im, [(10, 34), (30, 14), (58, 14), (78, 34)], C("wood_d"))
+    poly(im, [(14, 32), (32, 17), (56, 17), (74, 32)], C("wood"))
+    rect(im, 36, 48, 16, 24, C("wood_d")); rect(im, 38, 50, 12, 22, C("wood_l"))
+    rect(im, 18, 42, 12, 10, C("ink")); rect(im, 20, 44, 8, 6, C("canvas_d"))
+    rect(im, 58, 42, 12, 10, C("ink")); rect(im, 60, 44, 8, 6, C("fire"))
+    # wheel axle and race stones; wheel itself is a separate unscaled frame
+    rect(im, 74, 50, 10, 6, C("wood_d")); ell(im, 78, 48, 8, 8, C("iron_d"))
+    for x in (8, 76): rect(im, x, 68, 8, 5, C("stone_d"))
+    return im
+
+
 def build() -> dict:
     OUT.mkdir(parents=True, exist_ok=True); DATA.mkdir(parents=True, exist_ok=True)
     terrain: dict[str, Image.Image] = {}
@@ -473,6 +564,8 @@ def build() -> dict:
         "ore_skarn": ore(), "herb_moonleaf": herb(), "log_pile": log_pile(),
         "lm_amber_watch": watchtower(), "lm_amber_apothecary": apothecary(), "lm_frost_shrine": frost_shrine(),
         "mill_wheel": mill_wheel(), "whetstone": whetstone(), "light_pool": light_pool(),
+        "drying_rack": drying_rack(), "beehive": beehive(), "snow_drift": snow_drift(), "split_rail": split_rail(),
+        "lm_quarry_workface": quarry_workface(), "lm_orchard_shed": orchard_shed(), "lm_mill_house": mill_house(),
     }
     # Pinned inherited original frames, reused without perspective/scale changes.
     legacy = Image.open(ROOT / "assets/environment/overworld/overworld_props.png").convert("RGBA")

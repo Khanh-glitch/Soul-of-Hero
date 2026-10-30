@@ -274,11 +274,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
           use-dotnet: false
           include-templates: false
+      - name: Derive bounded annex inputs for driven corridor + art proof
+        run: |
+          mkdir -p artifacts/a1-connector-art
+          python tools/survival/worldgen/compile_connector.py --out artifacts/a1-connector-art --no-contract
       - name: Import root project for real Knight / OverworldOcclusion fixture
         run: |
           mkdir -p artifacts/a1-world-art artifacts/ud_world_art_import
@@ -307,8 +314,35 @@ jobs:
           checks=$(grep -cE '^WORLD_ART (PASS|FAIL): ' "$log" || true)
           captures=$(grep -c 'native capture' "$log" || true)
           echo "world art assertions reported: ${checks}; captures: ${captures}"
-          if [ "${checks:-0}" -lt 30 ] || [ "${captures:-0}" -lt 12 ] || ! grep -q 'WORLD_ART SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'zero collision bodies' "$log"; then
+          if [ "${checks:-0}" -lt 60 ] || [ "${captures:-0}" -lt 24 ] || ! grep -q 'WORLD_ART SUMMARY' "$log" || ! grep -q 'failures=0' "$log" || ! grep -q 'zero collision bodies' "$log" || ! grep -q 'integer-downscaled logical pixels match' "$log" || ! grep -q 'inherited VFX keeps default light mask' "$log"; then
             echo "::error::world art fixture gate failed (checks=${checks}, captures=${captures}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+            exit 1
+          fi
+      - name: Drive real corridor collision with world-art overlay and capture 720p / 1440p / 2160p
+        run: |
+          mkdir -p artifacts/a1-world-art-corridor artifacts/ud_world_art_corridor
+          timeout --signal=TERM --kill-after=15s 420s xvfb-run -a -s "-screen 0 3840x2160x24" env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_world_art_corridor --windowed \
+            --script res://tests/survival/world/corridor_native_test.gd -- \
+            --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector-art" \
+            --out-root="$GITHUB_WORKSPACE/artifacts/a1-world-art-corridor" \
+            --world-art --art-resolutions=1280x720,2560x1440,3840x2160 \
+            >artifacts/a1-world-art-corridor/godot-corridor-art.log 2>&1
+          rc=$?
+          echo "corridor art fixture exit_code=$rc"
+          cat artifacts/a1-world-art-corridor/godot-corridor-art.log
+          echo "$rc" >artifacts/a1-world-art-corridor/corridor-art-exit-code
+          exit $rc
+      - name: Corridor + art anti-vacuity gate
+        if: always()
+        run: |
+          log=artifacts/a1-world-art-corridor/godot-corridor-art.log
+          [ -f "$log" ] || { echo "::error::no corridor art fixture log"; exit 1; }
+          checks=$(grep -cE '^CORRIDOR (PASS|FAIL): ' "$log" || true)
+          echo "corridor art assertions reported: ${checks}"
+          if [ "${checks:-0}" -lt 30 ] || ! grep -q 'A1 CORRIDOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'world-art overlay adds zero collision bodies' "$log" || ! grep -q 'driven-position world-art capture' "$log"; then
+            echo "::error::corridor art fixture gate failed (checks=${checks}); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
             exit 1
           fi
       - name: Upload world art native evidence
@@ -316,6 +350,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: a1-world-art-native-fixture-evidence
-          path: artifacts/a1-world-art/
+          path: |
+            artifacts/a1-world-art/
+            artifacts/a1-world-art-corridor/
           if-no-files-found: warn
           retention-days: 14

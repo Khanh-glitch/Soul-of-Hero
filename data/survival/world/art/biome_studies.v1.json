@@ -36,7 +36,67 @@
             "material": "soil"
           }
         ],
-        "blend_radius_cells": 2
+        "blend_radius_cells": 2,
+        "landforms": [
+          {
+            "id": "moraine_terrace",
+            "material": "grass",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                86,
+                486
+              ],
+              "radii": [
+                26,
+                18
+              ]
+            },
+            "reason": "Gentle old-moraine terrace above the stream; orchard rows and apothecary garden sit on worked brown earth.",
+            "source_refs": [
+              "world_plan:r_amberwood.geology",
+              "world_plan:r_amberwood.soils"
+            ]
+          },
+          {
+            "id": "apothecary_garden",
+            "material": "soil",
+            "shape": {
+              "type": "rect",
+              "rect": [
+                77,
+                477,
+                8,
+                7
+              ]
+            },
+            "reason": "Tended herb/fruit garden beside the canonical apothecary anchor; fences and drying rack mark human care, not loot.",
+            "source_refs": [
+              "world_plan:poi_crown_south_orchard",
+              "world_plan:r_amberwood.material_keys"
+            ]
+          },
+          {
+            "id": "moonleaf_margin",
+            "material": "forest",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                100,
+                500
+              ],
+              "radii": [
+                11,
+                9
+              ]
+            },
+            "reason": "Shaded forest-floor margin where the canonical moonleaf nodes cluster; ferns and leaf litter explain the herb source.",
+            "source_refs": [
+              "world_plan:src_amber_herb",
+              "world_plan:r_amberwood.primary_biomes"
+            ]
+          }
+        ]
       },
       "add_props": [
         {
@@ -221,6 +281,46 @@
           ],
           "role": "ordinary_harvestable",
           "node_id": "res:src_amber_herb:06"
+        },
+        {
+          "frame": "drying_rack",
+          "cell": [
+            82,
+            482
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "beehive",
+          "cell": [
+            88,
+            484
+          ],
+          "role": "ordinary_harvestable"
+        },
+        {
+          "frame": "split_rail",
+          "cell": [
+            78,
+            486
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_orchard",
+          "cell": [
+            82,
+            478
+          ],
+          "role": "ordinary_harvestable"
+        },
+        {
+          "frame": "fern",
+          "cell": [
+            96,
+            498
+          ],
+          "role": "background_scenery"
         }
       ],
       "capture_views": [
@@ -275,7 +375,83 @@
             "material": "basalt"
           }
         ],
-        "blend_radius_cells": 2
+        "blend_radius_cells": 2,
+        "landforms": [
+          {
+            "id": "cirque_snowfield",
+            "material": "snow",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                616,
+                136
+              ],
+              "radii": [
+                30,
+                26
+              ]
+            },
+            "reason": "Glacial cirque holds wind-packed snow around the shrine; the stone road is the maintained crossing.",
+            "source_refs": [
+              "world_plan:r_frost_crown.geology"
+            ]
+          },
+          {
+            "id": "wind_scoured_arete",
+            "material": "basalt",
+            "shape": {
+              "type": "polygon",
+              "points": [
+                [
+                  596,
+                  112
+                ],
+                [
+                  640,
+                  112
+                ],
+                [
+                  640,
+                  126
+                ],
+                [
+                  624,
+                  130
+                ],
+                [
+                  606,
+                  124
+                ]
+              ]
+            },
+            "reason": "Exposed arête is scoured to granite; warning cairns and sparse lee-side pines communicate cold exposure before the ridge.",
+            "source_refs": [
+              "world_plan:hz_frost_ridge",
+              "world_plan:r_frost_crown.identity"
+            ]
+          },
+          {
+            "id": "skarn_exposure",
+            "material": "basalt",
+            "shape": {
+              "type": "ellipse",
+              "center": [
+                602,
+                160
+              ],
+              "radii": [
+                11,
+                9
+              ]
+            },
+            "reason": "Contact-metamorphic skarn exposes the canonical ore nodes; dark host rock makes the mineral veins readable without loot glow.",
+            "source_refs": [
+              "world_plan:src_frost_skarn",
+              "world_plan:r_frost_crown.material_keys"
+            ]
+          }
+        ],
+        "impassable_mass_material": "basalt"
       },
       "add_props": [
         {
@@ -411,6 +587,54 @@
           ],
           "role": "ordinary_harvestable",
           "node_id": "res:src_frost_skarn:06"
+        },
+        {
+          "frame": "snow_drift",
+          "cell": [
+            614,
+            138
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "snow_drift",
+          "cell": [
+            626,
+            132
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "snow_drift",
+          "cell": [
+            606,
+            154
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "tree_frost_small",
+          "cell": [
+            630,
+            128
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "cairn",
+          "cell": [
+            616,
+            152
+          ],
+          "role": "background_scenery"
+        },
+        {
+          "frame": "rock_e",
+          "cell": [
+            600,
+            150
+          ],
+          "role": "physical_danger"
         }
       ],
       "capture_views": [

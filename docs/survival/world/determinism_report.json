@@ -1,5 +1,5 @@
 {
-  "artifact_count": 245,
+  "artifact_count": 246,
   "artifacts": [
     {
       "bytes": 9443,
@@ -7,49 +7,54 @@
       "sha256": "28b94d48a2fb9eade4b9aca29478bac3d6212f4862441fe83cc61c82de5a15a0"
     },
     {
-      "bytes": 3151,
+      "bytes": 14708,
+      "path": "data/survival/world/art/a8_shell_visuals.v1.json",
+      "sha256": "96ef8ada5eb78a7b025f6018ddaf0a2a8464639a0b7574cae58b956eff01dfd8"
+    },
+    {
+      "bytes": 4234,
       "path": "data/survival/world/art/a8_visual_contract.v1.json",
-      "sha256": "6fa93880d405584712d9068dfe48d887faeeb02961bd2fd6933390a3ef594990"
+      "sha256": "8290c7cb0ee64305ff810d07340ecc302a301fd2eba9f50b8e38bb8a14270fe7"
     },
     {
-      "bytes": 22398,
+      "bytes": 22888,
       "path": "data/survival/world/art/atlas.v1.json",
-      "sha256": "b1219025d5755a89e65b877279ec9860a5f0ad7d490e4c8944b88354605c91b8"
+      "sha256": "0de810de2aa04a645a7ec82991da48542559f3336eff804cf21baa99dd959b74"
     },
     {
-      "bytes": 9166,
+      "bytes": 14868,
       "path": "data/survival/world/art/biome_studies.v1.json",
-      "sha256": "995e8411054a520987e7a1766d325b8420f496e3856090715c42b52323ac32ca"
+      "sha256": "5dca6f1ed5f3a426543de3e749dceed94c49cc250beeca8d71f5bc89b0767c76"
     },
     {
-      "bytes": 66483,
+      "bytes": 70000,
       "path": "data/survival/world/art/compiled/amberwood_apothecary_herb_margin.presentation.v1.json",
-      "sha256": "4e79362b494de8874bad9b8dd1d2b867ace35bca5b486e429a8a753928c8898d"
+      "sha256": "a7356188798114a1ba707fe2c2320cf8e5f2459d9b8edd6a532f7c375a22f1f1"
     },
     {
-      "bytes": 65776,
+      "bytes": 68436,
       "path": "data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json",
-      "sha256": "dabe10a88e4a8fa2c5c8ad65f7aa3df8925d0a59c402d0939852bfc96f6aa8ea"
+      "sha256": "139395bd2646a85674fb658a86a159683713eed4fc99ed47d5f5e4b958f182cd"
     },
     {
-      "bytes": 89898,
+      "bytes": 134851,
       "path": "data/survival/world/art/compiled/frost_crown_shrine_skarn.presentation.v1.json",
-      "sha256": "6a85c07409cb352fedf21484c3f8479f38efce7c9dd804f03e79d88adaa56428"
+      "sha256": "bdc5267c05da2407c4662bc70a6888ce65d99bdf7f2432ba89b9a044348c4d84"
     },
     {
-      "bytes": 4532,
+      "bytes": 7226,
       "path": "data/survival/world/art/crown_roadside.treatment.v1.json",
-      "sha256": "5fc6650ed4797eb93eb2b27febc5f544feb0720520fa2d581a2b104b28ab66cb"
+      "sha256": "82b10201007531d129c62f5f7c48c599ca8bf27d937130b56f9f1898d59e7472"
     },
     {
-      "bytes": 1469,
+      "bytes": 1645,
       "path": "data/survival/world/art/presentations.v1.json",
-      "sha256": "5ceabf3b087b0ce8eea8862bb760573e3c9078fe117eb1528b55ab45072da3f3"
+      "sha256": "a220f6637e73cd8d3d02991c81d43b8f408596eec06f67d15dd9fdbff0ccbe4c"
     },
     {
-      "bytes": 7114,
+      "bytes": 7627,
       "path": "data/survival/world/art/world_art_grammar.v1.json",
-      "sha256": "d146e86df82bfd4dca482d2923de69a8a4a0c2151212571258dc9a4ffc76ef17"
+      "sha256": "d54b1c9885bcf75b401f6b6f5a3158839cd9b357162961a5ec713aba4252e506"
     },
     {
       "bytes": 3901,
@@ -1227,8 +1232,8 @@
       "sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4"
     }
   ],
-  "compile_1_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
-  "compile_2_tree_sha256": "d50f4f900b7564235caba58491102b9b70d16110781c4d2fa0e606e97ecd3a37",
+  "compile_1_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
+  "compile_2_tree_sha256": "a833e5f93e88667ce8521d6afb5b29a8cf96dd0beb6693122139961e6d7997cd",
   "ok": true,
   "plan_sha256": "fc5412dfd9651e0b73f65159d686a39b9ec9a3eebac6fb92c9cedd1984175af4",
   "schema": "soh.world.determinism.v1",

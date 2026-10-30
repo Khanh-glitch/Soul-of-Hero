@@ -160,7 +160,7 @@
       "id": "SURV-050A-CORRIDOR",
       "name": "A1 first-hour roadside supply corridor, durable source-instance identity, art-backed native fixture, and A8 cell-to-native transform review",
       "status": "in_progress",
-      "verification_scope": "source_validated_local_109_tests_pending_ci_native_and_a0_a3_binding",
+      "verification_scope": "source_validated_local_113_tests_pending_ci_native_and_a0_a3_binding",
       "evidence": [
         "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
         "data/survival/world/corridor/crown_roadside.corridor.v1.json",
@@ -178,7 +178,7 @@
       "id": "SURV-050A-WORLD-ART",
       "name": "A1 reusable survival world art system, first-hour visual treatment, two contrasting biome studies, and executable A8 visual contract",
       "status": "implemented_unverified",
-      "verification_scope": "source_and_pillow_preview_validated_local_109_tests_pending_ci_native_720p_1440p_2160p_and_a0_mount",
+      "verification_scope": "source_and_pillow_preview_validated_local_113_tests_pending_ci_native_720p_1440p_2160p_and_a0_mount",
       "evidence": [
         "assets/environment/survival_world/terrain.png",
         "assets/environment/survival_world/props.png",
@@ -196,9 +196,13 @@
         "tests/survival/world/test_world_art.py",
         "tests/survival/world/world_art_native_test.gd",
         "docs/survival/world/WORLD_ART_HANDOFF.md",
-        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20"
+        "https://github.com/Khanh-glitch/Soul-of-Hero/pull/20",
+        "data/survival/world/art/a8_shell_visuals.v1.json",
+        "tools/survival/worldgen/preview_a8_shells.py",
+        "docs/survival/world/evidence/a8_shells_contact.png",
+        "docs/survival/world/ci_evidence.json#world_art_checkpoint"
       ],
-      "next": "Run world-art native CI at 1280x720/2560x1440/3840x2160 and personally inspect captures; A0 alone mounts production presentation; A8 adopts/rejects visual conformance without losing interaction engine; A3 binds cache economics; native_playable=false"
+      "next": "Run hardened world-art + driven-corridor art native CI at 720p/1440p/2160p and personally inspect captures; A0 alone mounts production; A8 adopts/rejects compact-shell visual skins; A3 binds cache economics; Drive 574220 byte/license verified but rejected for style; native_playable=false"
     }
   ],
   "next_action": {

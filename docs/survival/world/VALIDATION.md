@@ -156,3 +156,9 @@ Results:
 - gdparse: clean.
 - Pillow/atlas previews: rendered and personally inspected; **not native evidence**.
 - Native: CI job `godot-world-art-native` added (Xvfb 3840×2160, captures 720p/1440p/2160p, anti-vacuity ≥30 assertions / ≥12 captures / failures=0 / zero collision bodies). Specified runs 41020340273 / 41020347365 still queued at authoring time; native captures **NOT_TESTED**. No production mount.
+
+## World art follow-up gates
+
+- `validate_world_art.py` now checks causal landform reasons/cells, road overlay counts, overlay layers, runtime hardening tokens, real collision-count code, and A8 shell doorway clearance/atlas pin.
+- `tests/survival/world/test_world_art.py` adds causal terrain, runtime/Gold isolation, A8 shell, and navigation/chunk/ten-entrance preservation tests (113 total world tests).
+- Native anti-vacuity: world-art fixture ≥60 assertions / ≥24 captures, logical-hash crispness, inherited VFX mask/tint isolation; corridor+art fixture ≥30 assertions and driven-position captures.

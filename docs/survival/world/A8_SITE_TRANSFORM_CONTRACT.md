@@ -50,3 +50,7 @@ These are southern expedition sites, not part of the first-hour postern crate lo
 ## Negative gates
 
 The validator rejects: canonical cell drift, anchor/root/bounds formula drift, a false footprint-fit claim, capability mismatch, or a production-mount claim. Tests mutate the root transform and assert failure.
+
+## 2026-10-30 follow-up — compact shells exist; visual skin is not a mount
+
+A8 PR #26 head `5ccf7b3f` now provides `south_*_overworld.tscn` compact 128×128 shells with action socket `(64,64)` and entry portal `(64,108)`. This resolves the *footprint* objection for an overworld shell, but it does **not** authorize production mounting. A1 supplies `data/survival/world/art/a8_shell_visuals.v1.json`: shared-atlas ground/road overlays/unscaled props and a clear doorway rect for Quarry, Orchard and Mill. A8 keeps shell collision, entry area, transition requests and local worksite art; A0 must still approve mount mode, inject the world-source seam, and preserve global-pixel SaveService coordinates. The 960×600 `south_*.tscn` scenes remain interior/local worksites, not overworld geometry.

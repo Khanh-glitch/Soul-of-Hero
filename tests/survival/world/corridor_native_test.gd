@@ -8,6 +8,8 @@ const CORRIDOR := "res://data/survival/world/corridor/crown_roadside.corridor.v1
 const WAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_waystation.slice.json"
 const RELAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json"
 const MOVE_ACTIONS: Array[String] = ["move_left", "move_right", "move_up", "move_down"]
+const ART_PRESENTATION := "res://data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json"
+const ART_ATLAS := "res://data/survival/world/art/atlas.v1.json"
 
 var failures: Array[String] = []
 var checks := 0
@@ -20,6 +22,10 @@ var world: OverworldWorld
 var nav: OverworldTraversability
 var corridor: Dictionary
 var screenshots: Array[String] = []
+var world_art := false
+var art: WorldArtPresentation
+var art_resolutions: Array[Vector2i] = [Vector2i(1280, 720), Vector2i(2560, 1440), Vector2i(3840, 2160)]
+var art_screenshots: Array[String] = []
 
 func _initialize() -> void:
 	for arg: String in OS.get_cmdline_user_args():
@@ -27,6 +33,14 @@ func _initialize() -> void:
 			connector_root = arg.trim_prefix("--connector-root=")
 		elif arg.begins_with("--out-root="):
 			out_root = arg.trim_prefix("--out-root=")
+		elif arg == "--world-art":
+			world_art = true
+		elif arg.begins_with("--art-resolutions="):
+			art_resolutions.clear()
+			for part: String in arg.trim_prefix("--art-resolutions=").split(","):
+				var wh: PackedStringArray = part.split("x")
+				if wh.size() == 2:
+					art_resolutions.append(Vector2i(int(wh[0]), int(wh[1])))
 	call_deferred("_run")
 
 func _expect(ok: bool, label: String) -> void:
@@ -135,9 +149,29 @@ func _capture(name: String) -> void:
 		_expect(true, "player-scale native capture " + name)
 	else:
 		_expect(false, "player-scale native capture " + name)
+	if world_art and art != null:
+		art.set_time_of_day(0.35)
+		art.snap_occlusion()
+		for res: Vector2i in art_resolutions:
+			root.size = res
+			camera.force_update_scroll()
+			await process_frame
+			await process_frame
+			var art_image := root.get_texture().get_image()
+			var art_name := name.get_basename() + "_art_%dx%d.png" % [res.x, res.y]
+			var art_path := _out(art_name)
+			if art_image != null and art_image.get_size() == res and art_image.save_png(art_path) == OK:
+				art_screenshots.append(art_path)
+				_expect(true, "driven-position world-art capture %s (%dx%d)" % [art_name, res.x, res.y])
+			else:
+				_expect(false, "driven-position world-art capture " + art_name)
 
 func _run() -> void:
 	DirAccess.make_dir_recursive_absolute(_out(""))
+	if world_art:
+		root.content_scale_size = Vector2i(640, 360)
+		root.content_scale_mode = Window.CONTENT_SCALE_MODE_CANVAS_ITEMS
+		root.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 	corridor = _read_json(CORRIDOR)
 	_expect(not corridor.is_empty() and corridor.get("production_native_playable") == false, "corridor contract loaded and scoped non-production")
 	var save := root.get_node_or_null("SaveService")
@@ -153,9 +187,10 @@ func _run() -> void:
 	var data := _read_json(_abs("annex_world.v1.json"))
 	var props := _read_json(_abs("annex_props.v1.json"))
 	var prop_list: Array = props.get("props", [])
-	for raw: Variant in corridor.get("decor", []):
-		var d: Dictionary = raw
-		prop_list.append({"frame": d.frame, "x": d.x, "y": d.y, "z": 0, "flags": "", "lit": false})
+	if not world_art:
+		for raw: Variant in corridor.get("decor", []):
+			var d: Dictionary = raw
+			prop_list.append({"frame": d.frame, "x": d.x, "y": d.y, "z": 0, "flags": "", "lit": false})
 	var props_path := _out("corridor_props.v1.json")
 	var pf := FileAccess.open(props_path, FileAccess.WRITE)
 	pf.store_string(JSON.stringify({"schema": props.get("schema", ""), "props": prop_list}))
@@ -192,6 +227,14 @@ func _run() -> void:
 	camera.force_update_scroll()
 	await physics_frame
 	await physics_frame
+	if world_art:
+		art = WorldArtPresentation.new()
+		host.add_child(art)
+		_expect(art.load_presentation(ART_PRESENTATION, ART_ATLAS), "world-art presentation loaded over real corridor collision")
+		_expect(art.build(hero), "world-art presentation built over real corridor collision")
+		hero.reparent(art.props_root)
+		_expect(art.bind_focus(hero), "world-art focus bound to driven Knight")
+		_expect(int(art.stats().collision_bodies) == 0 and int(art.stats().interactive_areas) == 0, "world-art overlay adds zero collision bodies or interactive areas")
 	_expect(nav.unreachable_endpoints(data).is_empty(), "all legacy dungeon/camp/discovery endpoints remain nav-reachable")
 	# Adverse full-tile container proof at the first roadside stand.
 	var first: Dictionary = {}
@@ -219,10 +262,11 @@ func _run() -> void:
 	for raw: Variant in corridor.get("instances", []):
 		var inst: Dictionary = raw
 		var c: Array = inst.cell
-		var sprite := world._make_sprite(String(inst.visual_frame))
-		sprite.position = Vector2(int(c[0]) * 16 + 8, int(c[1]) * 16 + 16)
-		sprite.name = "Source_" + String(inst.instance_id).replace(":", "_")
-		world.props_root.add_child(sprite)
+		if not world_art:
+			var sprite := world._make_sprite(String(inst.visual_frame))
+			sprite.position = Vector2(int(c[0]) * 16 + 8, int(c[1]) * 16 + 16)
+			sprite.name = "Source_" + String(inst.instance_id).replace(":", "_")
+			world.props_root.add_child(sprite)
 		if inst.get("poi_binding", {}).get("kind") == "non_poi_roadside_instance":
 			var col: Dictionary = inst.get("collision", {})
 			var sz: Array = col.get("size_px", [16, 6])
@@ -285,6 +329,9 @@ func _run() -> void:
 		"screenshots": screenshots,
 		"detail_cells_painted": painted,
 		"container_bodies": container_bodies,
+		"world_art_overlay": world_art,
+		"art_collision_bodies": int(art.stats().collision_bodies) if art != null else -1,
+		"art_screenshots": art_screenshots,
 		"slice_obstacle_cells": slice_bodies,
 		"adverse_full_tile_container_intersect": adverse_hit,
 		"method": "real Knight + ordinary Input.action_press along authored corridor cells; isolated fixture, not production economy/save"

@@ -38,6 +38,9 @@ FRAME_ROLE = {
     "herb_moonleaf": "ordinary_harvestable", "ore_skarn": "ordinary_harvestable", "cairn": "background_scenery",
     "lm_amber_apothecary": "authored_landmark", "lm_amber_watch": "authored_landmark", "lm_frost_shrine": "authored_landmark",
     "mill_wheel": "authored_landmark", "deadfall": "ordinary_harvestable", "stump": "ordinary_harvestable",
+    "lm_quarry_workface": "authored_landmark", "lm_orchard_shed": "authored_landmark", "lm_mill_house": "authored_landmark",
+    "drying_rack": "background_scenery", "beehive": "ordinary_harvestable", "snow_drift": "background_scenery",
+    "split_rail": "background_scenery",
 }
 
 
@@ -102,11 +105,56 @@ def in_rect(cell: list[int], r: list[int]) -> bool:
     return r[0] <= cell[0] < r[0] + r[2] and r[1] <= cell[1] < r[1] + r[3]
 
 
-def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None) -> tuple[dict, list[dict], set[tuple[int, int]]]:
+def in_shape(cell: tuple[int, int], shape: dict) -> bool:
+    """Authored macro-terrain footprint. No noise decides material boundaries."""
+    x, y = cell
+    kind = shape["type"]
+    if kind == "rect":
+        return in_rect([x, y], shape["rect"])
+    if kind == "ellipse":
+        cx, cy = shape["center"]
+        rx, ry = shape["radii"]
+        if rx <= 0 or ry <= 0:
+            return False
+        return ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 <= 1.0
+    if kind == "polygon":
+        pts = shape["points"]
+        inside = False
+        j = len(pts) - 1
+        for i in range(len(pts)):
+            xi, yi = pts[i]
+            xj, yj = pts[j]
+            if (yi > y + 0.5) != (yj > y + 0.5):
+                slope = (xj - xi) * (y + 0.5 - yi) / (yj - yi) + xi
+                if x + 0.5 < slope:
+                    inside = not inside
+            j = i
+        return inside
+    raise ValueError(f"unknown landform shape {kind}")
+
+
+def base_material(profile: str, surf: int) -> str:
+    mat = SURFACE_MATERIAL.get(surf, "moor")
+    if profile == "ashen_crown":
+        return "ash" if mat in ("moor", "grass", "forest") else mat
+    if profile == "amberwood":
+        return "grass" if mat == "moor" else mat
+    if profile == "frost_crown":
+        if mat in ("forest", "grass", "moor"):
+            return "snow"
+        if mat == "ash":
+            return "basalt"
+    return mat
+
+
+def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None) -> tuple[dict, list[dict], set[tuple[int, int]], list[dict]]:
     ox, oy = src["window"]["origin_cell"]
     w, h = src["window"]["size_cells"]
     rules = src["ground_rules"]
     profile = src["biome_profile"]
+    landforms = rules.get("landforms", [])
+    if not landforms:
+        raise ValueError(f"{src.get('treatment_id', src.get('study_id'))} has no causal landforms")
     road_cells: set[tuple[int, int]] = set()
     if corridor is not None:
         for d in corridor["detail_overlay"]:
@@ -120,31 +168,45 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
     mats: dict[tuple[int, int], str] = {}
     for y in range(oy, oy + h):
         for x in range(ox, ox + w):
-            c = (x, y)
-            surf = layers.value([x, y], "surface")
-            mat = SURFACE_MATERIAL.get(surf, "moor")
-            # Biome identity is authored, not a generic recolor: the same source
-            # surface reads as ash in the Crown and snow in the Frost Crown.
-            if profile == "ashen_crown" and mat in ("moor", "grass", "forest"):
-                mat = "ash" if h01(x // 6, y // 6, 11) < 0.78 else "moor"
-            elif profile == "amberwood" and mat in ("moor", "grass"):
-                mat = "forest" if h01(x // 6, y // 6, 17) < 0.35 else "grass"
-            elif profile == "frost_crown":
-                if mat in ("forest", "grass", "moor"):
-                    mat = "snow" if h01(x // 5, y // 5, 13) < 0.72 else "tundra"
-                elif mat == "ash":
-                    mat = "basalt"
-            for key in ("court_rects", "layby_rects", "garden_rects", "shrine_court_rects"):
-                for rr in rules.get(key, []):
+            mats[(x, y)] = base_material(profile, layers.value([x, y], "surface"))
+    # Causal macro-terrain: each patch is an authored landform with a reason and
+    # source reference (caldera fan, drainage, terrace, cirque, skarn, court...).
+    report: list[dict] = []
+    for lf in landforms:
+        mat = {"stone_court": "court"}.get(lf["material"], lf["material"])
+        count = 0
+        for y in range(oy, oy + h):
+            for x in range(ox, ox + w):
+                if in_shape((x, y), lf["shape"]):
+                    mats[(x, y)] = mat
+                    count += 1
+        if count == 0:
+            raise ValueError(f"landform {lf['id']} paints no cells in window")
+        report.append({"id": lf["id"], "material": mat, "cells": count,
+                       "reason": lf["reason"], "source_refs": lf.get("source_refs", [])})
+    # Legacy rect rules remain supported, but are now just explicit landforms.
+    for key in ("court_rects", "layby_rects", "garden_rects", "shrine_court_rects"):
+        for rr in rules.get(key, []):
+            mat = {"stone_court": "court"}.get(rr["material"], rr["material"])
+            count = 0
+            for y in range(oy, oy + h):
+                for x in range(ox, ox + w):
                     if in_rect([x, y], rr["rect"]):
-                        mat = {"stone_court": "court"}.get(rr["material"], rr["material"])
-            if c in road_cells:
-                mat = "road"
-            mats[c] = mat
+                        mats[(x, y)] = mat
+                        count += 1
+            report.append({"id": f"{key}:{rr['rect']}", "material": mat, "cells": count,
+                           "reason": "authored maintained surface", "source_refs": []})
+    # Impassable source mass reads as rock, never as a new invisible wall.
+    mass = rules.get("impassable_mass_material")
+    if mass:
+        for y in range(oy, oy + h):
+            for x in range(ox, ox + w):
+                if layers.value([x, y], "walk") == 0 and mats[(x, y)] != "water":
+                    mats[(x, y)] = mass
     radius = int(rules.get("blend_radius_cells", 0))
     if radius:
         for c, mat in list(mats.items()):
-            if mat in ("road", "court", "water"):
+            if mat in ("court", "water"):
                 continue
             near = any(abs(c[0] - r[0]) <= radius and abs(c[1] - r[1]) <= radius for r in road_cells)
             if near and mat not in ("snow", "basalt", "ice"):
@@ -163,17 +225,20 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
             c = (x, y)
             mat = mats[c]
             v = int(h01(x, y, 7) * 4) % 4
-            if mat == "road":
-                frame = f"road_{'stone' if stone else 'dirt'}_{road_mask(road_cells, c)}"
+            if c in road_cells:
+                # Roads are transparent overlays on an opaque base, not black-cornered replacements.
+                base = "gravel" if stone else "soil"
+                frame = f"{base}_{v}"
+                overlays.append({"frame": f"road_{'stone' if stone else 'dirt'}_{road_mask(road_cells, c)}",
+                                 "cell": [x, y], "layer": "road"})
             elif mat == "court":
                 frame = f"court_{v}"
             else:
                 frame = f"{mat}_{v if mat not in ('water', 'ice') else v % 3}"
-                # corner blend toward a supported neighbouring material
                 neighbours = [mats.get((x + dx, y + dy), mat) for dx, dy in ((-1, -1), (1, -1), (1, 1), (-1, 1))]
                 counts: dict[str, int] = {}
                 for n in neighbours:
-                    if n != mat and n not in ("road", "court"):
+                    if n != mat and n not in ("court",):
                         counts[n] = counts.get(n, 0) + 1
                 if counts:
                     other = max(counts, key=lambda k: counts[k])
@@ -187,12 +252,12 @@ def compile_ground(src: dict, layers: Layers, atlas: dict, corridor: dict | None
                     if layers.value([x, y + 1], "surface") != 8: land |= 4
                     if layers.value([x - 1, y], "surface") != 8: land |= 8
                     if land:
-                        overlays.append({"frame": f"bank_{land}", "cell": [x, y]})
+                        overlays.append({"frame": f"bank_{land}", "cell": [x, y], "layer": "bank"})
             if frame not in atlas["terrain"]:
                 raise ValueError(f"missing terrain frame {frame}")
             row.append(frame)
         rows.append(row)
-    return {"origin_cell": [ox, oy], "size_cells": [w, h], "rows": rows}, overlays, road_cells
+    return {"origin_cell": [ox, oy], "size_cells": [w, h], "rows": rows}, overlays, road_cells, report
 
 
 def frame_role(frame: str, grammar: dict) -> str:
@@ -287,7 +352,7 @@ def compile_one(src: dict, kind: str, plan: dict, layers: Layers, atlas: dict, g
         if corridor["chunk_id"] != src["pins"]["chunk_id"]:
             raise ValueError("corridor chunk mismatch")
         pins["corridor_sha256"] = sha(cp)
-    ground, overlays, road_cells = compile_ground(src, layers, atlas, corridor)
+    ground, overlays, road_cells, landform_report = compile_ground(src, layers, atlas, corridor)
     props = compile_props(src, atlas, grammar, layers, corridor, plan)
     lights = []
     profile = grammar["lighting_profiles"][src["lighting_profile"]]
@@ -304,10 +369,13 @@ def compile_one(src: dict, kind: str, plan: dict, layers: Layers, atlas: dict, g
         "biome_profile": src["biome_profile"], "lighting_profile": src["lighting_profile"],
         "authority": src.get("authority", "VISUAL_ONLY_NO_COLLISION_STAND_ECONOMY_CHANGE"),
         "pins": pins, "window": src["window"], "ground": ground, "overlays": overlays,
+        "landforms": landform_report, "terrain_method": "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES",
         "props": props, "lights": lights, "capture_views": src["capture_views"],
         "ambient_day": profile["ambient_day"], "ambient_night": profile["ambient_night"],
         "counts": {"ground_cells": ground["size_cells"][0] * ground["size_cells"][1], "props": len(props),
-                   "lights": len(lights), "overlays": len(overlays), "road_cells": len(road_cells)},
+                   "lights": len(lights), "overlays": len(overlays), "road_cells": len(road_cells),
+                   "road_overlays": sum(1 for o in overlays if o.get("layer") == "road"),
+                   "bank_overlays": sum(1 for o in overlays if o.get("layer") == "bank")},
         "collision_change": False, "stand_change": False, "economy_change": False, "new_poi_count": 0,
     }
 

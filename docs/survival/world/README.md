@@ -92,3 +92,10 @@ See `CANONICAL_GEOGRAPHY_CONNECTOR_HANDOFF.md`. A1 selected a bounded static one
 - `game/world_art/world_art_presentation.gd` + `world_art_ambient.gdshader`: TileMapLayer ground, unscaled y-sorted props, warm pocket lights, OverworldOcclusion reuse; **zero collision bodies**, no stand/reward/save/A8 gameplay change.
 - Local source gate: **109 pytest cases**, world/slice/connector/corridor/art validators 0 errors, determinism 245 artifacts tree `d50f4f90…`, gdparse clean. Pillow/atlas previews inspected (`evidence/world_art_*.png`).
 - Native: `world_art_native_test.gd` + CI job capture 1280×720 / 2560×1440 / 3840×2160 under Xvfb 3840×2160. Specified World Reader runs 41020340273 / 41020347365 still queued at authoring time; native captures **NOT_TESTED** until CI runs and captures are personally inspected. Production `native_playable=false`; A0 alone mounts.
+
+## World art follow-up
+
+- Causal macro-terrain landforms and road overlays: `compile_world_art.py`, `validate_world_art.py`.
+- Hardened visual-only runtime: `game/world_art/world_art_presentation.gd` (atomic load, rebuild guard, occlusion stepping, real collision counts, private light mask).
+- A8 compact-shell visual skins: `data/survival/world/art/a8_shell_visuals.v1.json`, preview `tools/survival/worldgen/preview_a8_shells.py`.
+- Native proof: `world_art_native_test.gd` and `corridor_native_test.gd --world-art`; CI job `godot-world-art-native`. Pillow previews are not native acceptance.

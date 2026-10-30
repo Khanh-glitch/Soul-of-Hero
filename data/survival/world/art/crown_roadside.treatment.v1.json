@@ -46,7 +46,83 @@
         "material": "soil"
       }
     ],
-    "blend_radius_cells": 2
+    "blend_radius_cells": 2,
+    "landforms": [
+      {
+        "id": "caldera_ash_fan",
+        "material": "ash",
+        "shape": {
+          "type": "ellipse",
+          "center": [
+            402,
+            208
+          ],
+          "radii": [
+            28,
+            22
+          ]
+        },
+        "reason": "Well-drained ash loam on the caldera rim; the maintained road and court cut through the fan.",
+        "source_refs": [
+          "world_plan:r_ashen_crown.geology",
+          "world_plan:r_ashen_crown.soils"
+        ]
+      },
+      {
+        "id": "southwest_moor_drainage",
+        "material": "moor",
+        "shape": {
+          "type": "ellipse",
+          "center": [
+            384,
+            224
+          ],
+          "radii": [
+            10,
+            8
+          ]
+        },
+        "reason": "Rain-shadow drainage collects south-west of the supply layby; softer ground and reeds mark the wet margin.",
+        "source_refs": [
+          "world_plan:r_ashen_crown.climate"
+        ]
+      },
+      {
+        "id": "postern_ruin_shoulder",
+        "material": "basalt",
+        "shape": {
+          "type": "polygon",
+          "points": [
+            [
+              384,
+              188
+            ],
+            [
+              398,
+              188
+            ],
+            [
+              400,
+              198
+            ],
+            [
+              392,
+              204
+            ],
+            [
+              384,
+              200
+            ]
+          ]
+        },
+        "reason": "Broken caldera stone beside the postern return route; warning cairn and rock mass explain the old closure without a new blocker.",
+        "source_refs": [
+          "corridor:decor",
+          "world_plan:r_ashen_crown.identity"
+        ]
+      }
+    ],
+    "impassable_mass_material": "basalt"
   },
   "replace_corridor_decor": {
     "393,201": "signpost",
@@ -223,6 +299,62 @@
       ],
       "role": "supply_cache",
       "instance_id": "si:r_ashen_crown:roadside_supply:03"
+    },
+    {
+      "frame": "deadfall",
+      "cell": [
+        398,
+        222
+      ],
+      "role": "ordinary_harvestable"
+    },
+    {
+      "frame": "stump",
+      "cell": [
+        404,
+        222
+      ],
+      "role": "ordinary_harvestable"
+    },
+    {
+      "frame": "bush",
+      "cell": [
+        410,
+        214
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "tree_dead",
+      "cell": [
+        418,
+        202
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "rock_c",
+      "cell": [
+        388,
+        210
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "reeds",
+      "cell": [
+        384,
+        224
+      ],
+      "role": "background_scenery"
+    },
+    {
+      "frame": "split_rail",
+      "cell": [
+        396,
+        226
+      ],
+      "role": "background_scenery"
     }
   ],
   "capture_views": [

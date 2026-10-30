@@ -92,6 +92,43 @@ def validate() -> dict:
             errors.append("corridor visual pin stale")
     if len(profiles) < 3:
         errors.append("expected ashen + amberwood + frost presentation profiles")
+    for entry in index["presentations"]:
+        doc = load(ROOT / entry["path"])
+        if doc.get("terrain_method") != "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES":
+            errors.append(f"presentation lacks causal terrain method: {doc['treatment_id']}")
+        if not doc.get("landforms"):
+            errors.append(f"presentation has no authored landforms: {doc['treatment_id']}")
+        for lf in doc.get("landforms", []):
+            if not lf.get("reason") or lf.get("cells", 0) <= 0:
+                errors.append(f"landform lacks causal reason/cells: {lf.get('id')}")
+        for o in doc.get("overlays", []):
+            if o.get("layer") not in ("road", "bank") or o["frame"] not in atlas["terrain"]:
+                errors.append(f"overlay invalid: {o}")
+        if doc["counts"].get("road_overlays", 0) != doc["counts"].get("road_cells", 0):
+            errors.append(f"road overlay count mismatch: {doc['treatment_id']}")
+    runtime = (ROOT / "game/world_art/world_art_presentation.gd").read_text(encoding="utf-8")
+    for token in ("func bind_focus", "func _process", "occlusion.step(delta)", 'set_meta("frame_name"', "WORLD_LIGHT_MASK", "_count_collisions", "return _fail"):
+        if token not in runtime:
+            errors.append(f"runtime missing hardening token: {token}")
+    if '"collision_bodies": 0' in runtime:
+        errors.append("runtime still hardcodes collision_bodies=0")
+    shells_path = ART / "a8_shell_visuals.v1.json"
+    if not shells_path.exists():
+        errors.append("missing A8 shell visuals")
+    else:
+        shells = load(shells_path)
+        if shells.get("atlas_sha256") != sha(ART / "atlas.v1.json"):
+            errors.append("A8 shell visuals pin stale atlas")
+        for site in shells.get("sites", []):
+            if site.get("bounds_px") != [128, 128] or site.get("tile_px") != 16 or site.get("collision_change") is not False:
+                errors.append(f"A8 shell visual invalid scope: {site.get('poi_id')}")
+            door = site["doorway_clear_rect_px"]
+            for prop in site["props"]:
+                if prop["frame"] not in atlas["props"]:
+                    errors.append(f"A8 shell unknown frame {prop['frame']}")
+                x, y = prop["local_px"]
+                if door[0] <= x < door[0] + door[2] and door[1] <= y < door[1] + door[3]:
+                    errors.append(f"A8 shell prop blocks doorway: {site['poi_id']} {prop['frame']}")
     return {"ok": not errors, "errors": errors, "presentations": len(index["presentations"]), "profiles": sorted(profiles)}
 
 

@@ -59,7 +59,7 @@ No third-party source code, textures, audio, or generated art from the researche
 
 | Need | CT pack candidate | Decision now |
 |---|---:|---|
-| road/path edges | 574220 | PENDING_LOCAL_BYTES; inherited SOH road/detail used now |
+| road/path edges | 574220 | BYTES+LICENSE VERIFIED; REJECT_IMPORT_STYLE_MISMATCH; original SOH road overlays used |
 | trees | 385863 | PENDING_LOCAL_BYTES; inherited `tree_dead` used now |
 | bushes/forest objects | 141354 / 505052 | PENDING_LOCAL_BYTES; inherited `bush` used now |
 | ruins | 934618 | PENDING_LOCAL_BYTES; inherited `wall_stub`/`column_broken` used now |
@@ -73,9 +73,9 @@ SOURCE_HOLD packs 351300/654184/749505 remain unusable until individually confir
 
 ## 2026-10-30 world art production decisions
 
-- **ADOPT / ORIGINAL:** `tools/survival/worldgen/build_world_art.py` bakes a shared SOH material-culture atlas (238 terrain / 38 prop frames). Palette, outline weight, 16 px grid, feet-anchor perspective and reserved accents are authored data in `world_art_grammar.v1.json`. File and pixel SHA-256 pinned in `atlas.v1.json`.
+- **ADOPT / ORIGINAL:** `tools/survival/worldgen/build_world_art.py` bakes a shared SOH material-culture atlas (238 terrain / 45 prop frames). Palette, outline weight, 16 px grid, feet-anchor perspective and reserved accents are authored data in `world_art_grammar.v1.json`. File and pixel SHA-256 pinned in `atlas.v1.json`.
 - **REUSE_UNSCALED:** nine inherited original frames from `assets/environment/overworld/overworld_props.png` (`tree_dead`, `tree_pine`, `bush`, `rock_a/c/e`, `signpost`, `wall_stub`, `column_broken`). No perspective/scale change; provenance recorded per frame.
 - **REJECT:** Cainos demo art. Bright fantasy palette diverges from grey-violet SOH culture; A8 prototype resamples a 132×160 tree to 122×153 (~0.92×/0.96×); standalone license unproven. No bytes imported.
 - **REFERENCE_ONLY:** GDQuest persistent-sector pattern (MIT code / CC-BY art) and Godot demo `2d/dynamic_tilemap_layers` @ `b761b4cd…` (MIT) for runtime tile update / per-layer collision disable. No art imported.
-- **NOT_IMPORTED / UNAVAILABLE:** CT 43-pack Drive registry `SOH_ASSET_LIBRARY_43_DRIVE_REGISTRY_20261030.json` (43 ZIPs, 180.9 MB). Google Drive connector disconnected in Arena; no public mirror verified. Proceeded with approved accessible project art; no fabricated import. User-fixed bald avatars 555940 / 419402 untouched.
-- **A8 VISUAL CONTRACT:** `a8_visual_contract.v1.json` records executable requirements and PR #26 divergences A8-VIS-01..06. A8 keeps creative control and interaction engine; A0 alone mounts production.
+- **DRIVE VERIFIED / NOT_IMPORTED:** Google Drive connector enabled this turn; folder `1pRNobw2FrKWQmelMdGpGnh3PUHPijjA0` metadata lists 43 CraftPix ZIPs. Candidate 574220 path/road pack downloaded privately and byte-verified (size 1,205,980; MD5 `ff7fe573a16faf9e8fca62ad703527ff`; SHA-256 `302e8fa1da79163d2cd9da5ddfd7610bb0186b16de7f959b7d9a09ee4763e43c`). `license.txt` → https://craftpix.net/file-licenses/; Freebie terms permit game use/modification, forbid source redistribution. Actual PNG contact sheet inspected: **REJECT_IMPORT_STYLE_MISMATCH** (bright cartoon cobble/grass, outline density). Raw ZIP/extracts remain in excluded `.arena/drive_verify/`; no CraftPix bytes committed. Remaining 42 entries stay NOT_IMPORTED until individually verified. User-fixed bald avatars 555940 / 419402 untouched.
+- **A8 VISUAL CONTRACT:** `a8_visual_contract.v1.json` records executable requirements and PR #26 divergences A8-VIS-01..07. A8 keeps creative control and interaction engine; A0 alone mounts production.

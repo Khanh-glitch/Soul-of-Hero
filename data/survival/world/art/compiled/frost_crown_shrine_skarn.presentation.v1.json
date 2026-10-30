@@ -33,11 +33,13 @@
   ],
   "collision_change": false,
   "counts": {
+    "bank_overlays": 0,
     "ground_cells": 3840,
     "lights": 0,
-    "overlays": 0,
-    "props": 16,
-    "road_cells": 431
+    "overlays": 431,
+    "props": 22,
+    "road_cells": 431,
+    "road_overlays": 431
   },
   "economy_change": false,
   "ground": {
@@ -56,16 +58,16 @@
         "snow_2",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_4",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_8",
-        "snow_1",
+        "snow_3",
+        "snow_0",
         "snow_2",
-        "blend_snow_basalt_4",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_3",
         "basalt_0",
         "basalt_3",
         "basalt_2",
@@ -93,11 +95,11 @@
         "basalt_3",
         "basalt_0",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_14",
-        "road_stone_14",
-        "road_stone_8",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
         "basalt_3",
         "basalt_3",
         "basalt_2",
@@ -122,16 +124,16 @@
         "snow_0",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_1",
+        "snow_3",
         "snow_1",
         "snow_2",
-        "blend_snow_basalt_6",
+        "snow_0",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_2",
+        "basalt_2",
         "basalt_2",
         "basalt_3",
         "basalt_1",
@@ -158,11 +160,11 @@
         "basalt_2",
         "basalt_1",
         "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
         "basalt_0",
         "basalt_0",
         "basalt_3",
@@ -179,25 +181,25 @@
         "snow_3"
       ],
       [
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_2",
         "snow_1",
         "snow_2",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_13",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_2",
         "basalt_1",
         "basalt_2",
         "basalt_1",
@@ -223,11 +225,11 @@
         "basalt_2",
         "basalt_2",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
+        "gravel_1",
         "basalt_1",
         "basalt_2",
         "basalt_2",
@@ -245,26 +247,26 @@
         "snow_0"
       ],
       [
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_8",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_1",
         "snow_0",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_3",
         "basalt_1",
         "basalt_0",
         "basalt_0",
@@ -288,11 +290,11 @@
         "basalt_3",
         "basalt_0",
         "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
         "basalt_1",
         "basalt_2",
         "basalt_3",
@@ -311,27 +313,27 @@
         "snow_2"
       ],
       [
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_0",
         "snow_1",
         "snow_2",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_0",
         "basalt_0",
         "basalt_1",
         "basalt_0",
@@ -353,11 +355,11 @@
         "basalt_1",
         "basalt_0",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
         "basalt_2",
         "basalt_3",
         "basalt_1",
@@ -377,27 +379,27 @@
         "snow_0"
       ],
       [
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_2",
         "snow_2",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_6",
         "basalt_2",
         "basalt_2",
         "basalt_3",
@@ -418,11 +420,11 @@
         "basalt_0",
         "basalt_3",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
         "basalt_3",
         "basalt_3",
         "basalt_3",
@@ -437,34 +439,34 @@
         "basalt_0",
         "basalt_1",
         "basalt_0",
-        "blend_snow_basalt_1",
+        "blend_snow_basalt_9",
         "snow_0",
         "snow_1",
         "snow_1"
       ],
       [
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_0",
         "snow_1",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "blend_snow_basalt_2",
+        "basalt_0",
         "basalt_0",
         "basalt_3",
         "basalt_2",
@@ -483,11 +485,11 @@
         "basalt_2",
         "basalt_2",
         "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_2",
+        "gravel_3",
         "basalt_1",
         "basalt_1",
         "basalt_1",
@@ -502,172 +504,172 @@
         "basalt_0",
         "basalt_0",
         "basalt_1",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
+        "basalt_0",
+        "blend_snow_basalt_9",
         "snow_1",
         "snow_2",
         "snow_0"
       ],
       [
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_13",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_10",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "basalt_0",
-        "basalt_3",
-        "basalt_2",
-        "basalt_0",
-        "basalt_1",
-        "basalt_1",
-        "basalt_0",
-        "basalt_0",
-        "basalt_0",
-        "basalt_1",
-        "basalt_0",
-        "basalt_3",
-        "basalt_1",
-        "basalt_2",
-        "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_3",
-        "basalt_0",
-        "basalt_0",
-        "basalt_1",
-        "basalt_0",
-        "basalt_1",
-        "basalt_0",
-        "basalt_1",
-        "basalt_0",
-        "basalt_2",
-        "basalt_2",
-        "basalt_3",
-        "basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
+        "snow_3",
         "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "basalt_0",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_3",
+        "basalt_0",
+        "basalt_2",
+        "blend_snow_basalt_9",
         "snow_1",
         "snow_3",
         "snow_1"
       ],
       [
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_7",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_11",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
-        "basalt_1",
-        "basalt_0",
-        "basalt_2",
-        "basalt_3",
-        "basalt_3",
-        "basalt_2",
-        "basalt_1",
-        "basalt_0",
-        "basalt_2",
-        "basalt_0",
-        "basalt_1",
-        "basalt_3",
-        "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_1",
-        "basalt_3",
-        "basalt_0",
-        "basalt_1",
-        "basalt_3",
-        "basalt_0",
-        "basalt_0",
-        "basalt_1",
-        "basalt_1",
-        "basalt_1",
-        "basalt_0",
-        "basalt_1",
-        "basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_0",
         "snow_1",
         "snow_0",
         "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "blend_snow_basalt_9",
         "snow_3",
         "snow_3",
         "snow_2"
       ],
       [
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_0",
         "snow_0",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_0",
         "snow_1",
-        "snow_3",
-        "snow_3",
         "blend_snow_basalt_2",
         "blend_snow_basalt_2",
-        "blend_snow_basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
         "basalt_0",
         "basalt_1",
         "basalt_0",
@@ -678,11 +680,11 @@
         "basalt_3",
         "basalt_3",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
         "basalt_3",
         "basalt_1",
         "basalt_1",
@@ -695,277 +697,277 @@
         "basalt_2",
         "basalt_3",
         "basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
-        "snow_0",
-        "snow_1",
-        "snow_3",
-        "snow_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "blend_snow_basalt_9",
         "snow_3",
         "snow_2",
         "snow_2"
       ],
       [
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_1",
         "snow_3",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_3",
         "snow_2",
         "snow_3",
         "snow_3",
         "snow_1",
+        "snow_2",
+        "snow_2",
         "blend_snow_basalt_2",
         "blend_snow_basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "blend_snow_basalt_9",
+        "snow_1",
+        "snow_0",
+        "snow_2"
+      ],
+      [
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_2",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "blend_snow_basalt_9",
+        "snow_2",
+        "snow_3",
+        "snow_1"
+      ],
+      [
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_0",
+        "basalt_1",
+        "basalt_2",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_2",
+        "basalt_0",
+        "basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "blend_snow_basalt_9",
+        "snow_0",
+        "snow_2",
+        "snow_2"
+      ],
+      [
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_6",
         "blend_snow_basalt_7",
         "basalt_0",
-        "basalt_3",
-        "basalt_2",
-        "basalt_1",
-        "basalt_3",
-        "basalt_2",
-        "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_3",
-        "basalt_1",
-        "basalt_0",
-        "basalt_0",
-        "basalt_0",
-        "basalt_1",
-        "basalt_3",
-        "basalt_1",
-        "basalt_0",
-        "basalt_0",
-        "basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
-        "snow_2",
-        "snow_0",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "snow_2"
-      ],
-      [
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "snow_0",
-        "snow_0",
-        "snow_3",
-        "blend_snow_basalt_6",
-        "basalt_1",
-        "basalt_3",
-        "basalt_0",
-        "basalt_0",
-        "basalt_0",
-        "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_3",
-        "basalt_1",
-        "basalt_1",
-        "basalt_0",
-        "basalt_0",
-        "basalt_3",
-        "basalt_1",
-        "basalt_1",
-        "basalt_0",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
-        "snow_0",
-        "snow_1",
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "snow_2",
-        "snow_3",
-        "snow_1"
-      ],
-      [
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_3",
-        "snow_1",
-        "snow_2",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_basalt_6",
-        "basalt_3",
-        "basalt_2",
-        "basalt_0",
-        "basalt_1",
-        "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_2",
-        "basalt_1",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_3",
-        "blend_snow_basalt_1",
-        "blend_snow_basalt_1",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_2",
-        "snow_1",
-        "snow_2",
-        "snow_1",
-        "snow_0",
-        "snow_2",
-        "snow_2"
-      ],
-      [
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_7",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_0",
-        "snow_0",
-        "blend_snow_tundra_4",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "basalt_0",
         "basalt_1",
         "basalt_2",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "snow_3",
-        "blend_snow_basalt_2",
-        "snow_1",
+        "gravel_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_2",
+        "gravel_2",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
         "blend_snow_basalt_1",
-        "snow_2",
-        "snow_2",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_2",
         "snow_3",
         "snow_3",
         "snow_2"
@@ -975,63 +977,63 @@
         "snow_1",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
         "snow_3",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_2",
         "snow_1",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_0",
-        "tundra_2",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "blend_snow_basalt_4",
         "basalt_3",
         "basalt_0",
         "basalt_3",
         "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_12",
-        "blend_snow_basalt_8",
-        "blend_snow_basalt_8",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_2",
-        "snow_2",
-        "snow_1",
-        "snow_2",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_2",
+        "basalt_2",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_1",
         "snow_0",
         "snow_3"
@@ -1041,38 +1043,38 @@
         "snow_2",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_1",
-        "snow_1",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_2",
         "snow_0",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "soil_2",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "blend_snow_basalt_4",
+        "blend_snow_basalt_6",
         "basalt_0",
         "basalt_0",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
         "basalt_3",
         "basalt_1",
         "basalt_2",
@@ -1082,20 +1084,20 @@
         "basalt_0",
         "basalt_3",
         "basalt_0",
-        "blend_snow_basalt_8",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_1",
+        "basalt_3",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_2",
         "snow_0",
         "snow_0",
@@ -1107,37 +1109,37 @@
         "snow_3",
         "snow_2",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_2",
         "snow_0",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
         "snow_0",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_2",
-        "tundra_3",
-        "soil_2",
+        "snow_0",
+        "blend_snow_basalt_4",
+        "blend_snow_basalt_4",
         "basalt_1",
         "basalt_3",
         "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
         "blend_snow_basalt_6",
         "basalt_3",
         "basalt_2",
@@ -1148,16 +1150,16 @@
         "basalt_1",
         "basalt_3",
         "basalt_2",
-        "blend_snow_basalt_9",
-        "snow_1",
-        "snow_0",
-        "snow_3",
-        "snow_2",
-        "snow_0",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_0",
+        "basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_0",
         "snow_0",
         "snow_3",
@@ -1169,62 +1171,62 @@
         "snow_3"
       ],
       [
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_14",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_3",
         "snow_1",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_2",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_1",
         "snow_0",
         "snow_0",
         "snow_1",
-        "blend_snow_tundra_2",
-        "soil_2",
+        "snow_1",
+        "blend_snow_basalt_4",
         "basalt_3",
         "basalt_3",
         "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
         "snow_2",
         "blend_snow_basalt_6",
         "basalt_3",
         "basalt_0",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_12",
+        "gravel_3",
+        "gravel_0",
+        "gravel_2",
         "basalt_2",
         "basalt_0",
         "basalt_2",
-        "blend_snow_basalt_9",
-        "snow_1",
+        "basalt_1",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
+        "snow_0",
         "snow_2",
-        "snow_2",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_3",
+        "snow_3",
+        "snow_3",
         "snow_0",
         "snow_0",
         "snow_0",
@@ -1235,62 +1237,62 @@
         "snow_0"
       ],
       [
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_0",
         "snow_2",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_2",
         "snow_0",
         "snow_3",
         "snow_1",
-        "snow_2",
-        "soil_0",
+        "blend_snow_basalt_4",
+        "blend_snow_basalt_6",
         "basalt_2",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
         "snow_0",
         "snow_1",
-        "blend_snow_basalt_2",
+        "blend_snow_basalt_6",
         "basalt_1",
         "basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_13",
+        "gravel_2",
+        "gravel_3",
+        "gravel_1",
+        "gravel_0",
         "basalt_2",
         "basalt_2",
         "basalt_2",
         "blend_snow_basalt_9",
-        "snow_2",
+        "blend_snow_basalt_1",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_4",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_8",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
         "snow_3",
         "snow_0",
         "snow_1",
@@ -1301,17 +1303,17 @@
         "snow_0"
       ],
       [
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_2",
         "snow_2",
         "snow_1",
         "snow_0",
@@ -1325,24 +1327,24 @@
         "snow_1",
         "snow_1",
         "snow_2",
-        "snow_2",
+        "blend_snow_basalt_4",
         "basalt_2",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_0",
         "snow_3",
         "snow_3",
         "snow_1",
-        "blend_snow_basalt_2",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "blend_snow_basalt_6",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "gravel_2",
+        "gravel_0",
+        "gravel_0",
         "basalt_1",
         "basalt_1",
         "basalt_1",
@@ -1350,13 +1352,13 @@
         "snow_3",
         "snow_0",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_2",
         "snow_2",
         "snow_2",
         "snow_3",
@@ -1367,17 +1369,17 @@
         "snow_1"
       ],
       [
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_1",
         "snow_1",
         "snow_1",
         "snow_1",
@@ -1393,21 +1395,21 @@
         "blend_snow_basalt_4",
         "blend_snow_basalt_2",
         "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
         "snow_0",
         "snow_3",
         "snow_0",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
         "basalt_1",
         "basalt_0",
         "basalt_0",
@@ -1416,13 +1418,13 @@
         "snow_2",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_1",
         "snow_1",
         "snow_1",
         "snow_1",
@@ -1433,17 +1435,17 @@
         "snow_2"
       ],
       [
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_2",
         "snow_2",
         "snow_1",
         "snow_1",
@@ -1458,21 +1460,21 @@
         "snow_1",
         "snow_1",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
         "snow_1",
         "snow_0",
         "snow_0",
         "snow_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
         "basalt_2",
         "basalt_0",
         "basalt_1",
@@ -1482,13 +1484,13 @@
         "snow_3",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_0",
         "snow_3",
         "snow_3",
         "snow_2",
@@ -1499,22 +1501,22 @@
         "snow_0"
       ],
       [
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "blend_snow_tundra_5",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
         "snow_3",
         "snow_1",
         "snow_0",
@@ -1523,23 +1525,23 @@
         "snow_3",
         "snow_3",
         "blend_snow_basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_1",
+        "gravel_1",
+        "gravel_0",
+        "gravel_0",
+        "gravel_3",
+        "gravel_0",
+        "blend_snow_basalt_8",
         "snow_2",
         "snow_1",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "snow_3",
-        "blend_snow_basalt_2",
-        "blend_snow_basalt_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_3",
+        "gravel_1",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
         "blend_snow_basalt_3",
         "blend_snow_basalt_3",
         "blend_snow_basalt_3",
@@ -1548,60 +1550,60 @@
         "snow_0",
         "snow_1",
         "snow_2",
-        "blend_snow_tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_1",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
         "snow_2",
         "snow_1",
         "snow_3",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8"
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_2"
       ],
       [
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_5",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_8",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_1",
         "snow_3",
         "snow_1",
         "snow_2",
         "snow_2",
-        "soil_3",
-        "soil_2",
-        "soil_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
+        "gravel_2",
         "basalt_1",
-        "soil_1",
-        "soil_2",
-        "soil_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
         "snow_3",
         "snow_3",
         "snow_3",
@@ -1614,21 +1616,21 @@
         "snow_2",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
         "snow_0",
         "snow_2",
         "snow_1",
-        "blend_snow_tundra_4",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0"
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0"
       ],
       [
         "snow_3",
@@ -1640,33 +1642,33 @@
         "snow_3",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
         "snow_3",
         "snow_1",
         "snow_1",
         "snow_0",
-        "soil_2",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_2",
+        "snow_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_2",
+        "gravel_1",
         "basalt_2",
-        "soil_3",
-        "soil_3",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_1",
+        "snow_3",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
         "snow_3",
         "snow_3",
         "snow_2",
@@ -1690,11 +1692,11 @@
         "snow_3",
         "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3"
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_3"
       ],
       [
         "snow_1",
@@ -1706,32 +1708,32 @@
         "snow_2",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
         "snow_0",
         "snow_2",
         "snow_0",
         "snow_2",
-        "soil_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_2",
         "basalt_2",
         "basalt_2",
-        "soil_2",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "blend_snow_basalt_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_0",
         "snow_2",
         "snow_3",
         "snow_3",
@@ -1756,11 +1758,11 @@
         "snow_3",
         "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3"
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_3"
       ],
       [
         "snow_1",
@@ -1772,32 +1774,32 @@
         "snow_3",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_3",
         "snow_0",
         "snow_1",
         "snow_2",
         "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
         "basalt_1",
         "basalt_1",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_3",
+        "blend_snow_basalt_9",
+        "gravel_0",
+        "gravel_0",
+        "gravel_1",
+        "gravel_2",
+        "gravel_1",
+        "gravel_0",
+        "snow_3",
         "snow_1",
         "snow_2",
         "snow_1",
@@ -1822,201 +1824,201 @@
         "snow_3",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1"
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1"
       ],
       [
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_0",
         "snow_3",
         "snow_1",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2",
-        "blend_snow_tundra_1",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_1",
         "snow_2",
         "snow_2",
         "snow_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
         "basalt_0",
         "basalt_1",
         "basalt_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
-        "soil_2",
-        "soil_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
+        "gravel_2",
+        "gravel_0",
         "snow_2",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_2",
         "snow_3",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
         "snow_1",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2"
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_2"
       ],
       [
-        "tundra_0",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_8",
-        "snow_0",
-        "snow_2",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "soil_1",
-        "blend_snow_tundra_1",
         "snow_0",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "gravel_3",
+        "gravel_1",
+        "gravel_3",
+        "gravel_1",
+        "gravel_2",
         "basalt_3",
         "basalt_1",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
         "snow_3",
         "snow_1",
         "snow_2",
         "snow_2",
-        "soil_1",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_8",
         "snow_1",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_4",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_8",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_2",
         "snow_0",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1"
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_2"
       ],
       [
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
         "snow_2",
         "snow_1",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "soil_3",
-        "soil_3",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
         "snow_1",
         "snow_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_0",
         "basalt_1",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_1",
+        "gravel_0",
+        "gravel_0",
+        "gravel_1",
+        "gravel_1",
         "snow_0",
         "snow_2",
         "snow_2",
         "snow_0",
         "snow_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
         "snow_3",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
         "snow_1",
         "snow_0",
         "snow_0",
@@ -2027,62 +2029,62 @@
         "snow_2"
       ],
       [
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_3",
         "snow_2",
         "snow_0",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "soil_3",
-        "soil_3",
-        "soil_3",
         "snow_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "gravel_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
         "basalt_3",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_0",
+        "gravel_2",
+        "gravel_2",
         "snow_2",
         "snow_1",
         "snow_3",
         "snow_2",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_1",
         "snow_0",
         "snow_2",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_0",
         "snow_1",
         "snow_0",
         "snow_0",
@@ -2093,62 +2095,62 @@
         "snow_1"
       ],
       [
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_0",
         "snow_2",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_2",
-        "tundra_1",
-        "soil_0",
-        "soil_2",
-        "soil_0",
-        "soil_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
         "basalt_3",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
         "snow_1",
         "snow_1",
         "snow_0",
         "snow_0",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_0",
         "snow_2",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_2",
         "snow_1",
         "snow_2",
         "snow_1",
@@ -2159,32 +2161,32 @@
         "snow_3"
       ],
       [
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_1",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
         "snow_3",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_2",
-        "soil_3",
-        "soil_3",
-        "soil_1",
-        "soil_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "gravel_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
         "basalt_3",
         "basalt_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
         "snow_3",
         "snow_0",
         "snow_3",
@@ -2193,63 +2195,63 @@
         "snow_2",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "blend_snow_tundra_5",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_10",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_1",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_3",
         "snow_0",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8"
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_3"
       ],
       [
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_2",
         "snow_2",
         "snow_2",
         "snow_1",
         "snow_2",
-        "soil_0",
-        "soil_1",
-        "soil_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_2",
         "blend_snow_basalt_2",
         "basalt_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_1",
         "snow_1",
         "snow_1",
         "snow_1",
@@ -2259,36 +2261,36 @@
         "snow_2",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_11",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_5",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_2",
         "snow_3",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_4",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1"
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_1"
       ],
       [
         "snow_1",
@@ -2301,20 +2303,20 @@
         "snow_0",
         "snow_1",
         "snow_2",
-        "soil_3",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "snow_3",
+        "snow_3",
+        "gravel_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
         "snow_0",
         "blend_snow_basalt_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_1",
         "blend_snow_basalt_8",
         "snow_0",
         "snow_1",
@@ -2325,23 +2327,23 @@
         "snow_0",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
         "snow_0",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_0",
         "snow_3",
         "snow_1",
         "snow_3",
@@ -2350,11 +2352,11 @@
         "snow_0",
         "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1"
+        "snow_0",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_1"
       ],
       [
         "snow_2",
@@ -2367,19 +2369,19 @@
         "snow_1",
         "snow_0",
         "snow_2",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
         "snow_3",
-        "road_stone_6",
-        "road_stone_14",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "snow_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_3",
         "basalt_1",
         "blend_snow_basalt_8",
         "snow_2",
@@ -2391,23 +2393,23 @@
         "snow_0",
         "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
         "snow_3",
         "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_3",
         "snow_3",
         "snow_0",
         "snow_3",
@@ -2416,11 +2418,11 @@
         "snow_3",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0"
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0"
       ],
       [
         "snow_0",
@@ -2433,18 +2435,18 @@
         "snow_1",
         "snow_1",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_0",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
         "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
+        "gravel_3",
         "basalt_3",
         "basalt_2",
         "blend_snow_basalt_1",
@@ -2457,23 +2459,23 @@
         "snow_1",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
         "snow_0",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_3",
         "snow_1",
         "snow_2",
         "snow_0",
@@ -2482,11 +2484,11 @@
         "snow_3",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1"
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_1"
       ],
       [
         "snow_2",
@@ -2498,18 +2500,18 @@
         "snow_1",
         "snow_3",
         "snow_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_3",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "snow_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_1",
+        "gravel_0",
+        "gravel_2",
+        "gravel_2",
         "basalt_2",
         "basalt_2",
         "blend_snow_basalt_9",
@@ -2523,23 +2525,23 @@
         "snow_3",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1",
-        "blend_snow_tundra_5",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_10",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_3",
         "snow_2",
         "snow_2",
         "snow_3",
@@ -2548,11 +2550,11 @@
         "snow_2",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1"
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1"
       ],
       [
         "snow_2",
@@ -2563,770 +2565,770 @@
         "snow_3",
         "snow_2",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_13",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "gravel_1",
+        "gravel_0",
         "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_1",
+        "gravel_3",
         "basalt_1",
         "basalt_3",
+        "basalt_3",
+        "basalt_0",
+        "blend_snow_basalt_13",
+        "blend_snow_basalt_12",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_8",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_2"
+      ],
+      [
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "gravel_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_2",
+        "blend_snow_basalt_12",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_8",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_3"
+      ],
+      [
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "blend_snow_basalt_12",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_8",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_3"
+      ],
+      [
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "gravel_1",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_0",
+        "gravel_2",
+        "gravel_1",
+        "gravel_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_8",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3"
+      ],
+      [
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_2",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "blend_snow_basalt_8",
+        "blend_snow_basalt_8",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_0"
+      ],
+      [
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_2",
+        "blend_snow_basalt_8",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_2"
+      ],
+      [
+        "snow_0",
+        "snow_0",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_2",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
         "basalt_3",
         "basalt_0",
         "blend_snow_basalt_9",
-        "snow_0",
-        "snow_3",
-        "snow_3",
-        "snow_0",
+        "blend_snow_basalt_8",
+        "snow_1",
         "snow_0",
         "snow_0",
         "snow_2",
-        "snow_0",
+        "snow_1",
         "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_1",
         "snow_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_5",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_2",
+        "snow_0",
         "snow_3",
         "snow_3",
         "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_3",
         "snow_1",
         "snow_2",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2"
+        "snow_1"
       ],
       [
         "snow_0",
-        "snow_1",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "snow_1",
-        "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_14",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_1",
-        "basalt_2",
-        "basalt_1",
-        "basalt_2",
-        "basalt_2",
-        "blend_snow_basalt_1",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_0",
-        "snow_3",
-        "snow_0",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_2",
-        "snow_1",
-        "snow_2",
-        "snow_3",
-        "snow_0",
-        "snow_2",
-        "snow_0",
-        "snow_3",
-        "snow_2",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3"
-      ],
-      [
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "basalt_1",
-        "basalt_0",
-        "basalt_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_3",
+        "gravel_2",
+        "gravel_1",
+        "gravel_0",
+        "gravel_3",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
         "basalt_0",
         "basalt_3",
-        "blend_snow_basalt_9",
-        "blend_snow_basalt_1",
-        "snow_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_0",
+        "basalt_2",
+        "basalt_1",
+        "blend_snow_basalt_8",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_0",
         "snow_3",
         "snow_0",
         "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_1",
         "snow_1",
         "snow_3",
+        "snow_1",
+        "snow_1",
         "snow_1",
         "snow_2",
         "snow_3",
-        "snow_1",
         "snow_3",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_3",
         "snow_0",
         "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_0",
         "snow_1",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_2",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3"
+        "snow_2"
       ],
       [
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "snow_0",
-        "snow_2",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
+        "gravel_0",
+        "gravel_2",
+        "gravel_1",
+        "gravel_1",
+        "gravel_0",
+        "gravel_2",
+        "gravel_3",
+        "gravel_1",
+        "blend_snow_basalt_6",
+        "basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
         "basalt_1",
         "basalt_0",
         "basalt_1",
         "basalt_2",
         "basalt_1",
-        "basalt_0",
-        "blend_snow_basalt_1",
-        "snow_2",
-        "snow_1",
-        "snow_2",
-        "snow_0",
-        "snow_0",
-        "snow_3",
-        "snow_0",
-        "snow_1",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_2",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_3",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_3",
+        "blend_snow_basalt_9",
         "snow_1",
         "snow_1",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3"
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_0"
       ],
       [
-        "snow_2",
-        "snow_1",
-        "snow_3",
+        "gravel_3",
+        "gravel_3",
+        "gravel_1",
+        "gravel_2",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
         "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "blend_snow_basalt_4",
         "blend_snow_basalt_6",
         "basalt_2",
         "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_2",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
         "basalt_2",
         "basalt_3",
         "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
         "blend_snow_basalt_9",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_1",
         "snow_2",
         "snow_2",
-        "snow_1",
+        "snow_0",
         "snow_2",
         "snow_2",
+        "snow_2",
+        "snow_0",
         "snow_1",
-        "snow_3",
-        "blend_snow_tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "blend_snow_tundra_5",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_0",
         "snow_0",
         "snow_3",
-        "snow_2",
         "snow_1",
-        "snow_2",
-        "snow_2",
+        "snow_1",
         "snow_3",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0"
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
+        "snow_2"
       ],
       [
-        "snow_3",
+        "gravel_0",
+        "gravel_0",
+        "gravel_0",
+        "gravel_2",
+        "gravel_3",
+        "gravel_2",
+        "gravel_3",
+        "snow_1",
         "snow_2",
         "snow_1",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_1",
-        "soil_2",
+        "blend_snow_basalt_6",
+        "basalt_0",
         "basalt_2",
         "basalt_1",
         "basalt_1",
         "basalt_1",
-        "basalt_1",
-        "basalt_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_8",
-        "snow_2",
-        "snow_0",
-        "snow_0",
-        "snow_3",
-        "snow_0",
-        "snow_2",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_3",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_5",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_8",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2"
-      ],
-      [
-        "snow_0",
-        "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_3",
-        "soil_0",
-        "soil_2",
+        "basalt_0",
+        "basalt_0",
         "basalt_0",
         "basalt_0",
         "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
         "basalt_0",
-        "basalt_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_0",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_0",
-        "snow_1",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_0",
-        "snow_1",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_1",
-        "snow_0",
-        "snow_0",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1"
-      ],
-      [
-        "snow_0",
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_0",
-        "soil_3",
-        "soil_1",
-        "basalt_3",
-        "basalt_3",
         "basalt_1",
-        "basalt_3",
-        "basalt_1",
-        "basalt_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_2",
-        "snow_3",
-        "snow_1",
-        "snow_2",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_3",
-        "snow_0",
-        "snow_0",
-        "snow_3",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_1",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "snow_1",
-        "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2"
-      ],
-      [
-        "road_stone_6",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "soil_1",
-        "soil_2",
-        "soil_2",
-        "soil_2",
         "basalt_0",
-        "basalt_3",
         "basalt_0",
-        "basalt_3",
+        "basalt_0",
         "basalt_1",
-        "blend_snow_basalt_9",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_3",
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_1",
-        "snow_0",
-        "snow_3",
-        "snow_2",
-        "snow_1",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0"
-      ],
-      [
-        "road_stone_7",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
-        "snow_0",
-        "soil_1",
-        "soil_2",
-        "soil_3",
-        "tundra_3",
-        "basalt_1",
-        "basalt_1",
-        "basalt_1",
-        "basalt_3",
+        "basalt_0",
+        "basalt_2",
         "basalt_3",
         "blend_snow_basalt_9",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_1",
         "snow_0",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_10",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "blend_snow_tundra_1",
         "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_0",
         "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
         "snow_1",
         "snow_0",
-        "snow_0",
         "snow_1",
         "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_2",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2"
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2"
       ],
       [
-        "road_stone_7",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
-        "snow_1",
-        "snow_2",
-        "snow_1",
-        "snow_2",
-        "snow_0",
-        "snow_2",
-        "basalt_1",
-        "basalt_1",
-        "basalt_1",
-        "basalt_0",
-        "basalt_0",
-        "basalt_0",
-        "tundra_0",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
-        "snow_0",
-        "snow_0",
-        "snow_0",
-        "blend_snow_tundra_4",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
-        "snow_2",
-        "snow_0",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2"
-      ],
-      [
-        "road_stone_7",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_1",
+        "gravel_2",
+        "gravel_3",
+        "gravel_0",
+        "gravel_0",
+        "gravel_1",
         "snow_1",
         "snow_2",
         "snow_1",
         "snow_1",
-        "snow_3",
-        "blend_snow_basalt_4",
         "blend_snow_basalt_6",
         "basalt_0",
         "basalt_0",
+        "basalt_0",
+        "basalt_0",
         "basalt_1",
         "basalt_0",
         "basalt_2",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_0",
+        "basalt_0",
+        "basalt_2",
+        "basalt_0",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "blend_snow_basalt_9",
+        "snow_1",
+        "snow_3",
+        "snow_3",
         "snow_2",
+        "snow_0",
         "snow_0",
         "snow_1",
         "snow_2",
         "snow_1",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_0",
+        "snow_3",
         "snow_3",
         "snow_0",
         "snow_3",
@@ -3340,59 +3342,59 @@
         "snow_2",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2"
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_2"
       ],
       [
-        "road_stone_7",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_15",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
+        "gravel_3",
+        "gravel_1",
+        "gravel_1",
         "snow_0",
         "snow_2",
         "snow_1",
         "snow_0",
         "snow_0",
-        "snow_2",
-        "blend_snow_basalt_4",
+        "blend_snow_basalt_2",
+        "basalt_2",
         "basalt_1",
         "basalt_2",
         "basalt_0",
         "basalt_1",
         "basalt_3",
         "basalt_3",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_3",
+        "basalt_3",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_0",
+        "blend_snow_basalt_1",
+        "snow_1",
         "snow_3",
+        "snow_2",
         "snow_3",
-        "snow_0",
+        "snow_1",
+        "snow_2",
         "snow_3",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_1",
+        "snow_2",
         "snow_3",
         "snow_3",
         "snow_0",
@@ -3406,59 +3408,59 @@
         "snow_3",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1"
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_1"
       ],
       [
-        "road_stone_7",
-        "road_stone_15",
-        "road_stone_11",
-        "road_stone_9",
+        "gravel_2",
+        "gravel_1",
+        "gravel_3",
+        "gravel_0",
         "snow_1",
         "snow_3",
         "snow_3",
         "snow_2",
         "snow_2",
         "snow_3",
-        "snow_0",
+        "blend_snow_basalt_2",
         "blend_snow_basalt_6",
         "basalt_1",
         "basalt_2",
         "basalt_0",
         "basalt_1",
         "basalt_2",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "blend_snow_basalt_9",
+        "blend_snow_basalt_1",
         "snow_1",
-        "snow_3",
+        "snow_0",
+        "snow_2",
         "snow_1",
+        "snow_0",
         "snow_1",
-        "snow_3",
+        "snow_0",
+        "snow_0",
         "snow_1",
-        "snow_3",
-        "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_0",
+        "snow_2",
         "snow_1",
         "snow_1",
         "snow_3",
@@ -3472,23 +3474,23 @@
         "snow_3",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_2"
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_2"
       ],
       [
-        "road_stone_7",
-        "road_stone_9",
+        "gravel_0",
+        "gravel_1",
         "snow_3",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_3",
         "blend_snow_basalt_4",
         "blend_snow_basalt_6",
         "basalt_3",
@@ -3496,65 +3498,65 @@
         "basalt_3",
         "basalt_2",
         "basalt_3",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_1",
-        "snow_2",
-        "snow_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "blend_snow_basalt_1",
         "snow_3",
         "snow_3",
-        "snow_1",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_1",
         "snow_1",
         "snow_2",
         "snow_1",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_2",
         "snow_3",
         "snow_1",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_2",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0"
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_0",
+        "snow_0"
       ],
       [
-        "road_stone_1",
+        "gravel_0",
         "snow_3",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_4",
-        "soil_2",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_2",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_2",
         "blend_snow_basalt_4",
         "basalt_0",
         "basalt_0",
@@ -3562,53 +3564,53 @@
         "basalt_0",
         "basalt_3",
         "basalt_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_1",
+        "basalt_0",
+        "basalt_0",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_1",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_1",
         "snow_0",
-        "snow_3",
+        "snow_2",
         "snow_1",
-        "snow_3",
+        "snow_0",
         "snow_1",
         "snow_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_2",
         "snow_1",
         "snow_0",
         "snow_1",
-        "blend_snow_tundra_4",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_0",
-        "tundra_1",
-        "blend_snow_tundra_8",
         "snow_1",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0"
+        "snow_3",
+        "snow_0",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_0"
       ],
       [
         "snow_1",
@@ -3616,37 +3618,37 @@
         "snow_2",
         "snow_1",
         "snow_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_1",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "blend_snow_basalt_6",
         "basalt_2",
         "basalt_0",
         "basalt_2",
         "basalt_2",
         "basalt_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "blend_snow_tundra_9",
-        "snow_3",
-        "snow_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_1",
+        "basalt_3",
+        "basalt_3",
+        "basalt_2",
+        "basalt_0",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "basalt_0",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_0",
-        "snow_3",
+        "snow_2",
         "snow_1",
         "snow_2",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "snow_0",
-        "snow_2",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_2",
         "snow_3",
         "snow_2",
         "snow_1",
@@ -3660,126 +3662,126 @@
         "snow_3",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_9",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_0",
         "snow_2",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2"
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_2"
       ],
       [
         "snow_0",
         "snow_0",
         "snow_0",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "blend_snow_basalt_6",
         "basalt_2",
         "basalt_1",
         "basalt_3",
         "basalt_3",
         "basalt_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_2",
-        "snow_2",
-        "snow_0",
-        "snow_2",
-        "snow_1",
-        "snow_0",
-        "snow_1",
-        "snow_2",
-        "snow_1",
-        "snow_1",
-        "snow_3",
-        "snow_2",
-        "snow_3",
-        "snow_1",
+        "basalt_3",
+        "basalt_1",
+        "basalt_3",
+        "basalt_0",
+        "basalt_1",
+        "basalt_0",
+        "basalt_2",
+        "basalt_3",
+        "basalt_3",
+        "basalt_1",
+        "basalt_2",
+        "basalt_2",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_0",
         "snow_1",
         "snow_2",
         "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_1",
         "snow_0",
         "snow_1",
         "snow_1",
         "snow_3",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
         "snow_3",
         "snow_2",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_3"
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_3"
       ],
       [
         "snow_3",
         "snow_2",
         "snow_0",
         "snow_3",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "blend_snow_tundra_9",
+        "snow_2",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "blend_snow_basalt_6",
         "basalt_0",
         "basalt_2",
         "basalt_2",
         "basalt_0",
         "basalt_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "blend_snow_tundra_9",
-        "snow_0",
-        "snow_2",
-        "snow_2",
-        "snow_2",
-        "snow_2",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_3",
-        "snow_1",
-        "snow_3",
-        "snow_0",
-        "snow_0",
+        "blend_snow_basalt_11",
+        "blend_snow_basalt_3",
+        "basalt_2",
+        "basalt_3",
+        "basalt_0",
+        "basalt_0",
+        "basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "basalt_2",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
         "snow_3",
         "snow_1",
         "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_3",
         "snow_2",
         "snow_0",
         "snow_2",
@@ -3792,110 +3794,110 @@
         "snow_1",
         "snow_0",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_9",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_0",
         "snow_2",
         "snow_2",
         "snow_2",
-        "blend_snow_tundra_6",
-        "tundra_0",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1"
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_0",
+        "snow_1"
       ],
       [
         "snow_1",
         "snow_0",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_0",
-        "tundra_1",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_0",
+        "snow_1",
         "blend_snow_basalt_6",
         "basalt_2",
         "basalt_1",
         "basalt_0",
         "basalt_2",
         "basalt_2",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "tundra_0",
-        "blend_snow_tundra_1",
+        "blend_snow_basalt_9",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_2",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_3",
+        "blend_snow_basalt_1",
+        "blend_snow_basalt_1",
+        "snow_2",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_3",
         "snow_0",
-        "snow_0",
+        "snow_3",
+        "snow_1",
         "snow_1",
         "snow_2",
         "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_0",
         "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_0",
+        "snow_3",
+        "snow_0",
         "snow_2",
         "snow_3",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_4",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_8",
-        "blend_snow_tundra_8",
-        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_3",
+        "snow_3",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_6",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_2",
-        "blend_snow_tundra_13",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_12",
-        "blend_snow_tundra_10",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0"
+        "snow_3",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0"
       ],
       [
         "snow_2",
         "snow_3",
         "snow_3",
         "snow_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_2",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_5",
-        "tundra_2",
+        "snow_1",
+        "snow_3",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "snow_2",
+        "blend_snow_basalt_6",
         "basalt_3",
         "basalt_2",
         "basalt_0",
         "basalt_3",
         "basalt_0",
         "blend_snow_basalt_9",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1",
-        "blend_snow_tundra_1",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_1",
         "snow_1",
         "snow_2",
         "snow_1",
@@ -3904,41 +3906,41 @@
         "snow_3",
         "snow_3",
         "snow_2",
-        "blend_snow_tundra_4",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_3",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_3",
-        "tundra_1",
-        "tundra_2",
-        "blend_snow_tundra_8",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_2",
         "snow_2",
         "snow_0",
         "snow_1",
-        "blend_snow_tundra_6",
-        "tundra_1",
-        "tundra_1",
-        "tundra_1",
-        "tundra_0",
-        "tundra_0",
-        "tundra_2",
-        "tundra_1",
-        "tundra_3",
-        "tundra_3",
-        "tundra_3",
-        "blend_snow_tundra_10",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_3",
-        "blend_snow_tundra_1"
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_1",
+        "snow_0",
+        "snow_0",
+        "snow_2",
+        "snow_1",
+        "snow_3",
+        "snow_3",
+        "snow_3",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2"
       ],
       [
         "snow_1",
@@ -3950,8 +3952,8 @@
         "snow_2",
         "snow_3",
         "snow_1",
-        "blend_snow_tundra_2",
-        "tundra_3",
+        "snow_3",
+        "blend_snow_basalt_2",
         "basalt_0",
         "basalt_1",
         "basalt_2",
@@ -3970,38 +3972,38 @@
         "snow_2",
         "snow_3",
         "snow_0",
-        "blend_snow_tundra_2",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_0",
-        "tundra_1",
-        "tundra_0",
-        "tundra_2",
-        "tundra_3",
-        "tundra_2",
-        "tundra_0",
-        "tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_1",
-        "tundra_3",
-        "blend_snow_tundra_1",
+        "snow_1",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_0",
+        "snow_1",
+        "snow_0",
+        "snow_2",
+        "snow_3",
+        "snow_2",
+        "snow_0",
+        "snow_2",
+        "snow_2",
+        "snow_1",
+        "snow_1",
+        "snow_3",
+        "snow_1",
         "snow_3",
         "snow_1",
         "snow_0",
-        "blend_snow_tundra_2",
-        "tundra_2",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "tundra_0",
-        "tundra_1",
-        "tundra_2",
-        "tundra_3",
-        "tundra_0",
-        "blend_snow_tundra_1",
+        "snow_3",
+        "snow_2",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_0",
+        "snow_1",
+        "snow_2",
+        "snow_3",
+        "snow_0",
+        "snow_0",
         "snow_3",
         "snow_2",
         "snow_3"
@@ -4013,15 +4015,3502 @@
     ]
   },
   "kind": "biome_study",
+  "landforms": [
+    {
+      "cells": 2394,
+      "id": "cirque_snowfield",
+      "material": "snow",
+      "reason": "Glacial cirque holds wind-packed snow around the shrine; the stone road is the maintained crossing.",
+      "source_refs": [
+        "world_plan:r_frost_crown.geology"
+      ]
+    },
+    {
+      "cells": 589,
+      "id": "wind_scoured_arete",
+      "material": "basalt",
+      "reason": "Exposed arête is scoured to granite; warning cairns and sparse lee-side pines communicate cold exposure before the ridge.",
+      "source_refs": [
+        "world_plan:hz_frost_ridge",
+        "world_plan:r_frost_crown.identity"
+      ]
+    },
+    {
+      "cells": 320,
+      "id": "skarn_exposure",
+      "material": "basalt",
+      "reason": "Contact-metamorphic skarn exposes the canonical ore nodes; dark host rock makes the mineral veins readable without loot glow.",
+      "source_refs": [
+        "world_plan:src_frost_skarn",
+        "world_plan:r_frost_crown.material_keys"
+      ]
+    },
+    {
+      "cells": 63,
+      "id": "shrine_court_rects:[616, 127, 9, 7]",
+      "material": "basalt",
+      "reason": "authored maintained surface",
+      "source_refs": []
+    }
+  ],
   "lighting_profile": "frost_blue_hour",
   "lights": [],
   "new_poi_count": 0,
-  "overlays": [],
+  "overlays": [
+    {
+      "cell": [
+        626,
+        112
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        627,
+        112
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        628,
+        112
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        629,
+        112
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        630,
+        112
+      ],
+      "frame": "road_stone_8",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        625,
+        113
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        626,
+        113
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        627,
+        113
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        628,
+        113
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        629,
+        113
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        624,
+        114
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        625,
+        114
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        626,
+        114
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        627,
+        114
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        628,
+        114
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        623,
+        115
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        624,
+        115
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        625,
+        115
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        626,
+        115
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        627,
+        115
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        622,
+        116
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        623,
+        116
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        624,
+        116
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        625,
+        116
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        626,
+        116
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        117
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        622,
+        117
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        623,
+        117
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        624,
+        117
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        625,
+        117
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        118
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        118
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        622,
+        118
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        623,
+        118
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        624,
+        118
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        119
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        119
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        119
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        622,
+        119
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        623,
+        119
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        120
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        120
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        120
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        120
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        622,
+        120
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        121
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        121
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        121
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        121
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        121
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        122
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        122
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        122
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        122
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        122
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        123
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        123
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        123
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        123
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        123
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        124
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        124
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        124
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        124
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        124
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        125
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        125
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        125
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        125
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        125
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        126
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        126
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        126
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        126
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        126
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        127
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        127
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        127
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        127
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        127
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        128
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        128
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        128
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        128
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        128
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        129
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        129
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        129
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        129
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        129
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        129
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        129
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        129
+      ],
+      "frame": "road_stone_12",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        130
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        130
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        130
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        130
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        130
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        130
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        130
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        130
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        130
+      ],
+      "frame": "road_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        131
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        131
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        131
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        131
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        131
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        621,
+        131
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        132
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        132
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        132
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        132
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        620,
+        132
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        133
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        133
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        133
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        133
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        618,
+        133
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        619,
+        133
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        134
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        134
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        134
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        134
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        617,
+        134
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        135
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        135
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        135
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        135
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        616,
+        135
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        136
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        136
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        136
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        136
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        615,
+        136
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        137
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        137
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        137
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        137
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        137
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        614,
+        137
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        138
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        138
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        138
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        138
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        613,
+        138
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        139
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        139
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        139
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        139
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        611,
+        139
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        612,
+        139
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        140
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        140
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        140
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        140
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        610,
+        140
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        141
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        141
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        141
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        141
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        141
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        609,
+        141
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        142
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        142
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        142
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        142
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        608,
+        142
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        143
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        143
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        143
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        143
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        606,
+        143
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        607,
+        143
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        144
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        144
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        144
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        144
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        605,
+        144
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        145
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        145
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        145
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        145
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        604,
+        145
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        146
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        146
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        146
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        146
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        603,
+        146
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        147
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        147
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        147
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        147
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        147
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        602,
+        147
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        148
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        148
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        148
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        148
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        601,
+        148
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        149
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        149
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        149
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        149
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        599,
+        149
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        600,
+        149
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        150
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        150
+      ],
+      "frame": "road_stone_13",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        150
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        150
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        598,
+        150
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        151
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        151
+      ],
+      "frame": "road_stone_14",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        151
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        597,
+        151
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        152
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        152
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        596,
+        152
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        153
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        153
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        594,
+        153
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        595,
+        153
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        154
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        154
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        593,
+        154
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        155
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        155
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        592,
+        155
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        156
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        156
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        591,
+        156
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        157
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        157
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        590,
+        157
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        158
+      ],
+      "frame": "road_stone_6",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        158
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        589,
+        158
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        159
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        159
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        587,
+        159
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        588,
+        159
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        160
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        160
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        160
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        160
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        160
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        160
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        586,
+        160
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        161
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        161
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        161
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        161
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        161
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        585,
+        161
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        162
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        162
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        162
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        162
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        584,
+        162
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        163
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        163
+      ],
+      "frame": "road_stone_15",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        582,
+        163
+      ],
+      "frame": "road_stone_11",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        583,
+        163
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        164
+      ],
+      "frame": "road_stone_7",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        581,
+        164
+      ],
+      "frame": "road_stone_9",
+      "layer": "road"
+    },
+    {
+      "cell": [
+        580,
+        165
+      ],
+      "frame": "road_stone_1",
+      "layer": "road"
+    }
+  ],
   "owner": "A1",
   "pins": {
-    "atlas_sha256": "b1219025d5755a89e65b877279ec9860a5f0ad7d490e4c8944b88354605c91b8",
-    "grammar_sha256": "d146e86df82bfd4dca482d2923de69a8a4a0c2151212571258dc9a4ffc76ef17",
-    "source_sha256": "995e8411054a520987e7a1766d325b8420f496e3856090715c42b52323ac32ca"
+    "atlas_sha256": "0de810de2aa04a645a7ec82991da48542559f3336eff804cf21baa99dd959b74",
+    "grammar_sha256": "d54b1c9885bcf75b401f6b6f5a3158839cd9b357162961a5ec713aba4252e506",
+    "source_sha256": "5dca6f1ed5f3a426543de3e749dceed94c49cc250beeca8d71f5bc89b0767c76"
   },
   "production_native_playable": false,
   "props": [
@@ -4270,12 +7759,103 @@
         9704,
         2608
       ]
+    },
+    {
+      "cell": [
+        614,
+        138
+      ],
+      "collision_change": false,
+      "frame": "snow_drift",
+      "id": "study:614,138:snow_drift",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        9832,
+        2224
+      ]
+    },
+    {
+      "cell": [
+        626,
+        132
+      ],
+      "collision_change": false,
+      "frame": "snow_drift",
+      "id": "study:626,132:snow_drift",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        10024,
+        2128
+      ]
+    },
+    {
+      "cell": [
+        606,
+        154
+      ],
+      "collision_change": false,
+      "frame": "snow_drift",
+      "id": "study:606,154:snow_drift",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        9704,
+        2480
+      ]
+    },
+    {
+      "cell": [
+        630,
+        128
+      ],
+      "collision_change": false,
+      "frame": "tree_frost_small",
+      "id": "study:630,128:tree_frost_small",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        10088,
+        2064
+      ]
+    },
+    {
+      "cell": [
+        616,
+        152
+      ],
+      "collision_change": false,
+      "frame": "cairn",
+      "id": "study:616,152:cairn",
+      "role": "background_scenery",
+      "source": "biome_study",
+      "world_px": [
+        9864,
+        2448
+      ]
+    },
+    {
+      "cell": [
+        600,
+        150
+      ],
+      "collision_change": false,
+      "frame": "rock_e",
+      "id": "study:600,150:rock_e",
+      "role": "physical_danger",
+      "source": "biome_study",
+      "world_px": [
+        9608,
+        2416
+      ]
     }
   ],
   "region_id": "r_frost_crown",
   "schema": "soh.world.art_presentation.v1",
   "stand_change": false,
   "status": "VISUAL_ONLY_ISOLATED_PRESENTATION_NOT_PRODUCTION_MOUNT",
+  "terrain_method": "AUTHORED_LANDFORMS_ON_SOURCE_SURFACES_NO_NOISE_BOUNDARIES",
   "tile_px": 16,
   "treatment_id": "frost_crown_shrine_skarn",
   "window": {

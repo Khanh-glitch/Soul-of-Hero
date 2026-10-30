@@ -44,14 +44,15 @@
     },
     "ordinary_harvestable": {
       "frames": [
+        "beehive",
         "deadfall",
-        "stump",
         "fern",
         "herb_moonleaf",
         "ore_skarn",
+        "stump",
         "tree_amber",
-        "tree_orchard",
-        "tree_frost"
+        "tree_frost",
+        "tree_orchard"
       ],
       "read": "natural material, repeated clusters, no container latch and no shelter roof",
       "glow": "only exceptional mineral may use reserved soul accent",
@@ -71,22 +72,25 @@
     },
     "background_scenery": {
       "frames": [
-        "tree_dead",
-        "tree_pine",
         "bush",
-        "rock_a",
-        "rock_c",
         "cairn",
-        "reeds",
-        "tarp_shelter",
+        "drying_rack",
         "fence_h",
         "fence_v",
+        "fern",
         "handcart",
+        "log_pile",
+        "reeds",
+        "rock_a",
+        "rock_c",
+        "snow_drift",
+        "split_rail",
+        "tarp_shelter",
         "tree_amber",
+        "tree_dead",
         "tree_frost",
         "tree_frost_small",
-        "fern",
-        "log_pile"
+        "tree_pine"
       ],
       "read": "lower contrast, smaller silhouettes, no latch / lamp / counter",
       "glow": false,
@@ -130,6 +134,9 @@
         "lm_amber_apothecary",
         "lm_amber_watch",
         "lm_frost_shrine",
+        "lm_mill_house",
+        "lm_orchard_shed",
+        "lm_quarry_workface",
         "mill_wheel"
       ],
       "read": "canonical POI silhouette with worked material and local culture; not a new POI and not a loot container",
@@ -260,6 +267,8 @@
     "All sprites are unscaled atlas frames on the 16 px grid. No per-site palette swaps and no non-integer scaling.",
     "Use OverworldOcclusion.configure_sprites for tall vegetation / architecture so the Hero remains readable.",
     "Lighting uses only A1-owned CanvasItemMaterials / Light2D nodes in isolated presentation; AVFX original Gold and A0 production lighting remain untouched.",
-    "A0 alone mounts production scenes. A8 keeps local interaction art/engine; this grammar is a conformance target, not a takeover."
+    "A0 alone mounts production scenes. A8 keeps local interaction art/engine; this grammar is a conformance target, not a takeover.",
+    "Macro-terrain boundaries are authored causal landforms (geology/drainage/terrace/court/exposure), not random noise. Tile variant hash only selects texture inside an already-authored material.",
+    "A1 world lights use a private CanvasItem cull mask; inherited Gold/Hero VFX remain on the default mask and are never ambient-tinted by A1."
   ]
 }
