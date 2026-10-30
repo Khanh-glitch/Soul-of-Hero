@@ -26,9 +26,28 @@ const MIN_STRENGTH: float = 0.0
 const MAX_STRENGTH: float = 0.25
 const FADE_IN_SECONDS: float = 0.12
 const FADE_OUT_SECONDS: float = 0.20
+## Gate 8 baseline-aware adaptive policy (docs/vfx/GATE8...md): attenuation is
+## derived from the map's OWN pre-FX baseline linear luminance, never from the
+## current frame (Gold glow must not trigger its own dimming). Dark maps get 0.
+const ADAPTIVE_THRESHOLD: float = 0.23
+const ADAPTIVE_TARGET: float = 0.16
+const ADAPTIVE_MAX_ATTENUATION: float = 0.42
+const ADAPTIVE_FADE_IN_SECONDS: float = 0.18
+const ADAPTIVE_FADE_OUT_SECONDS: float = 0.30
+## Authored scenery node names bound by `attach_by_names`: the three
+## TileMapLayers plus the CrucibleArt facade root and an optional parallax
+## background. `Level` itself and `Level/Entities` are NEVER bound.
+const MAP_NODE_NAMES: Array = ["Backdrop", "Geometry", "Decor", "CrucibleArt"]
 
 var enabled: bool = true
 var strength: float = DEFAULT_STRENGTH
+## When true, `effective_strength()` comes from the Gate 8 policy applied to
+## `baseline_luminance` (capped by `adaptive_cap`), not the fixed `strength`.
+var adaptive: bool = false
+var adaptive_cap: float = ADAPTIVE_MAX_ATTENUATION
+## Pre-FX baseline linear luminance of the map; -1 = not sampled yet.
+var baseline_luminance: float = -1.0
+var baseline_samples: int = 0
 var fade_in_seconds: float = FADE_IN_SECONDS
 var fade_out_seconds: float = FADE_OUT_SECONDS
 ## 0 = original, 1 = fully darkened by `strength`.

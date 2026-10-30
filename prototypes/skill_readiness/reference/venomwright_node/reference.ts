@@ -213,6 +213,13 @@ if (mode === 'hashes') {
     g.render();
     if (want.has(t)) log.forEach((line, i) => console.log(`GOLD93_OBJ t=${t} i=${i} ${line}`));
   }
+} else if (mode === 'cocoonstate') {
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, _g, w) => {
+    if (t !== 89 && t !== 90) return;
+    const co: any = w.fx[0];
+    console.log(`GOLD93_COCOON t=${t} x=${co.x.toFixed(9)} y=${co.y.toFixed(9)} z=${co.z.toFixed(9)} open=${co.open.toFixed(9)} pulseY=${co.pulseY.toFixed(9)} glow=${co.glowAdd.toFixed(9)} age=${co.age.toFixed(9)} rup=${JSON.stringify(co.ruptured)}`);
+  });
 } else if (mode === 'flowstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
