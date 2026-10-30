@@ -18,6 +18,10 @@ const DEATH_HOLD_SECONDS := 1.6
 
 var _app_root: Node
 var _phase := "full"
+## Exercise the whole capture journey without a renderer. CI has a display, so
+## this mode exists to prove the driving flow (routes, clips, death, respawn)
+## on a headless machine before looking at pixels.
+var _dry_run := false
 var _frames: Array[Dictionary] = []
 var _gender := "male"
 var _capture_dir := ""
@@ -38,6 +42,7 @@ func _run() -> void:
 	_capture_dir = _argument_value(args, "--capture-dir", "user://captures")
 	_tag = _argument_value(args, "--capture-tag", "%s" % _gender)
 	_phase = _argument_value(args, "--avatar-phase", "full")
+	_dry_run = args.has("--capture-dry-run")
 	var absolute_dir := _capture_dir if _capture_dir.is_absolute_path() else ProjectSettings.globalize_path(_capture_dir)
 	DirAccess.make_dir_recursive_absolute(absolute_dir)
 	print("A6 CAPTURE: dir=%s tag=%s gender=%s viewport=%s" % [
@@ -151,12 +156,22 @@ func _run_continue_phase() -> void:
 	if _knight == null:
 		_fail("restored overworld player")
 		return
+	# A0 keeps a pending death across processes. Recover before capturing so the
+	# reload frames show the restored character standing, not the corpse of the
+	# previous process's death test.
+	if bool(_knight.get("dead")):
+		print("A6 CAPTURE: reload restored an A0 pending death; recovering first")
+		var survival := get_tree().root.get_node_or_null(^"SurvivalService")
+		if survival != null and survival.has_method(&"finish_overworld_death"):
+			survival.call(&"finish_overworld_death", _knight.get(&"global_position"))
+		_knight.call(&"respawn", _knight.get(&"global_position"))
+		await _wait_frames(14)
 	var player_state := _presenter_state(_knight)
 	await _capture("22_continue_overworld_idle")
-	Input.action_press(&"move_up")
-	await _wait_frames(12)
+	Input.action_press(&"move_right")
+	await _wait_frames(14)
 	await _capture("23_continue_overworld_walk")
-	Input.action_release(&"move_up")
+	Input.action_release(&"move_right")
 	await _wait_frames(30)
 	await _capture("24_continue_overworld_idle_after_walk")
 	var restored_gender := String(player_state.get("gender", ""))
@@ -204,6 +219,15 @@ func _find_player() -> Node:
 
 func _capture(label: String) -> void:
 	await _wait_frames(2)
+	if _dry_run:
+		_index += 1
+		var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+		var dry_state := _presenter_state(host) if host != null else {}
+		print("A6 CAPTURE(dry): %02d %s status=%s action=%s/%s" % [
+			_index, label, String(dry_state.get("status", "n/a")),
+			String(dry_state.get("action", "n/a")), String(dry_state.get("direction", "n/a")),
+		])
+		return
 	await RenderingServer.frame_post_draw
 	var image := get_viewport().get_texture().get_image()
 	_index += 1

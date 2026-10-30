@@ -206,7 +206,7 @@ func _check_knight_avatar() -> void:
 		print("A6 STATE [Gameplay]: recovering A0 pending death (health=%d/%d)" % [
 			int(_knight.get("health")), int(_knight.get("max_health")),
 		])
-		_knight.respawn(_knight.global_position)
+		_complete_death_recovery()
 		await _wait_frames(8)
 		state = _presenter.call(&"get_presentation_state")
 		print("A6 STATE [Gameplay after recovery]: %s" % str(state))
@@ -349,6 +349,7 @@ func _check_hurt_and_death_clip() -> void:
 func _check_respawn_clip() -> void:
 	_expect(bool(_knight.get("dead")), "the Knight is dead before respawn")
 	_knight.respawn(Vector2(120, 96))
+	_complete_death_recovery()
 	_expect(not bool(_knight.get("dead")), "respawn clears the dead state")
 	var left_death := await _wait_until(
 		func() -> bool: return String(_presenter.call(&"get_presented_action")) != "death", 2000
@@ -447,6 +448,18 @@ func _check_equipment_grade_presentation() -> void:
 	# From here on the profile legitimately owns one fixture Vessel, so the
 	# "identity work grants nothing" check measures only the remaining work.
 	_inventory_before = _save.call(&"inventory_totals")
+
+
+## A0's shipping recovery commits the pending death away and records the safe
+## spawn before the actor is allowed to live again. Using the same entry point
+## keeps the gate on the product's own death loop instead of privately reviving
+## the Knight.
+func _complete_death_recovery() -> void:
+	var survival := get_tree().root.get_node_or_null(^"SurvivalService")
+	if survival != null and survival.has_method(&"finish_overworld_death"):
+		var committed := bool(survival.call(&"finish_overworld_death", _knight.global_position))
+		_expect(committed, "A0 commits the pending-death recovery")
+	_knight.respawn(_knight.global_position)
 
 
 func _check_persistence_and_inventory() -> void:
