@@ -1,4 +1,4 @@
-"""V3 physical source-binding contracts and independent negative oracles."""
+"""V3/V4 physical source-binding contracts and independent negative oracles."""
 from __future__ import annotations
 
 import copy
@@ -25,16 +25,19 @@ class WorldSourceBindingContracts(unittest.TestCase):
         cls.sources = load("data/survival/items/sources.json")["sources"]
         cls.adoption = load("data/survival/items/a1_source_adoption.v2.json")
         cls.config = load("data/survival/recipes/progression_model.json")
+        cls.quarry = load("docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json")
 
     def test_current_bindings_pass_oracle(self):
         self.assertEqual(validate(self.bindings, self.items, self.sources), [])
 
     def test_identity_is_class_region_poi_instance(self):
-        cache = next(b for b in self.bindings["bindings"] if b["instance_id"] == "node_waystation_cache")
+        cache = next(b for b in self.bindings["bindings"] if b["binding_id"] == "a1_waystation_roadside_cache_v3")
         self.assertEqual(cache["source_class"], "roadside_cache")
         self.assertEqual(cache["region_id"], "r_ashen_crown")
         self.assertEqual(cache["poi_id"], "poi_crown_waystation")
-        self.assertEqual(cache["identity"], "roadside_cache|r_ashen_crown|poi_crown_waystation|node_waystation_cache")
+        self.assertEqual(cache["instance_id"], "si:r_ashen_crown:waystation_cache:01")
+        self.assertEqual(cache["interaction_node_id"], "node_waystation_cache")
+        self.assertEqual(cache["identity"], "roadside_cache|r_ashen_crown|poi_crown_waystation|si:r_ashen_crown:waystation_cache:01")
         self.assertIsNone(cache["loot_table"])
         self.assertEqual({r["source_id"]: r["quantity"] for r in cache["rewards"]}, {"road_scrap": 3, "road_supplies": 2})
         self.assertEqual(cache["cooldown_active_seconds"], 1800)
@@ -65,19 +68,50 @@ class WorldSourceBindingContracts(unittest.TestCase):
             self.assertEqual(src["integration_status"], "A1_PINNED_A3_BOUND")
             self.assertEqual(src["region_id"], "r_ashen_crown")
             self.assertEqual(src["poi_id"], "poi_crown_waystation")
+            self.assertEqual(src["instance_id"], "si:r_ashen_crown:waystation_cache:01")
+            self.assertEqual(src["interaction_node_id"], "node_waystation_cache")
             self.assertEqual(src["world_binding_id"], "a1_waystation_roadside_cache_v3")
         self.assertEqual(self.sources["road_scrap"]["yield_per_claim"], 3)
         self.assertEqual(self.sources["road_supplies"]["yield_per_claim"], 2)
 
+    def test_roadside_notes_crate_is_bound_without_abundance_inflation(self):
+        notes = next(b for b in self.bindings["bindings"] if b["binding_id"] == "a1_roadside_notes_01_v4")
+        self.assertEqual(notes["instance_id"], "si:r_ashen_crown:roadside_supply:01")
+        self.assertIsNone(notes["canonical_poi_id"])
+        self.assertEqual(notes["context_poi_id"], "poi_crown_waystation")
+        self.assertEqual(notes["stand_cells"], [[395, 220]])
+        self.assertEqual({r["item_id"]: r["quantity"] for r in notes["rewards"]}, {"research_notes": 1})
+        self.assertEqual(notes["cooldown_active_seconds"], 1800)
+        src = self.sources["road_notes"]
+        self.assertEqual(src["world_binding_id"], "a1_roadside_notes_01_v4")
+        self.assertEqual(src["yield_per_claim"], 1)
+        self.assertEqual(src["replenishment_seconds"], 1800)
+        # Only one of the three A1 roadside crates is bound; no extra scrap/spares.
+        bound_instances = {b["instance_id"] for b in self.bindings["bindings"]}
+        self.assertNotIn("si:r_ashen_crown:roadside_supply:02", bound_instances)
+        self.assertNotIn("si:r_ashen_crown:roadside_supply:03", bound_instances)
+
+    def test_a8_quarry_is_fail_closed_not_guess_priced(self):
+        self.assertEqual(self.quarry["status"], "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED")
+        for action in self.quarry["actions"].values():
+            self.assertEqual(action["verdict"], "REJECT_PENDING_EVIDENCE")
+            self.assertIsNone(action.get("authorized_cost_quantity", action.get("authorized_reward_quantity")))
+        self.assertIsNone(self.quarry["actions"]["extract_outcrop"]["authorized_replenishment_seconds"])
+        errors = validate(self.bindings, self.items, self.sources)
+        self.assertFalse(any("Quarry" in e for e in errors))
+        bad = copy.deepcopy(self.bindings)
+        bad["world_actions"].append({"poi_id": "poi_crown_south_quarry", "action_id": "brace_east_shelf", "transaction_key_template": "x:{claim_index}"})
+        self.assertTrue(any("Quarry world_action present" in e for e in validate(bad, self.items, self.sources)))
+
     def test_negative_oracle_rejects_abundance_core_and_identity_drift(self):
         bad = copy.deepcopy(self.bindings)
-        cache = next(b for b in bad["bindings"] if b["instance_id"] == "node_waystation_cache")
+        cache = next(b for b in bad["bindings"] if b["binding_id"] == "a1_waystation_roadside_cache_v3")
         cache["rewards"][0]["quantity"] = 4
         errors = validate(bad, self.items, self.sources)
         self.assertTrue(any("canonical yield/cooldown drift" in e or "canonical Waystation cache" in e for e in errors))
 
         bad = copy.deepcopy(self.bindings)
-        cache = next(b for b in bad["bindings"] if b["instance_id"] == "node_waystation_cache")
+        cache = next(b for b in bad["bindings"] if b["binding_id"] == "a1_waystation_roadside_cache_v3")
         cache["rewards"].append({"source_id": "specimen_ember", "item_id": "core_ember", "quantity": 1})
         errors = validate(bad, self.items, self.sources)
         self.assertTrue(any("Core reward forbidden" in e for e in errors))
@@ -93,7 +127,7 @@ class WorldSourceBindingContracts(unittest.TestCase):
         errors = validate(bad, self.items, self.sources)
         self.assertTrue(any("locker must grant cap_salvage and ZERO items" in e for e in errors))
 
-    def test_negative_oracle_rejects_missing_backlink_and_random_table(self):
+    def test_negative_oracle_rejects_missing_backlink_random_table_and_alias_collision(self):
         bad_sources = copy.deepcopy(self.sources)
         bad_sources["road_scrap"].pop("world_binding_id")
         errors = validate(self.bindings, self.items, bad_sources)
@@ -103,6 +137,11 @@ class WorldSourceBindingContracts(unittest.TestCase):
         bad["bindings"][0]["loot_table"] = "roadside_cache"
         errors = validate(bad, self.items, self.sources)
         self.assertTrue(any("must not use a random loot table" in e for e in errors))
+
+        bad = copy.deepcopy(self.bindings)
+        bad["bindings"][1]["interaction_node_id"] = "node_waystation_cache"
+        errors = validate(bad, self.items, self.sources)
+        self.assertTrue(any("alias collision" in e for e in errors))
 
 
 class WorldSourceProgressionRegression(unittest.TestCase):

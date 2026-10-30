@@ -298,11 +298,14 @@ func has_capability(capability_id: String) -> bool:
 	return (world_document().get("capabilities", []) as Array).has(capability_id)
 
 ## Read-only A6/A0 projection. Never exposes the mutator or host receipt.
+## Undiscovered POIs expose no private action/reward/prerequisite metadata.
 func world_projection(poi_id: String) -> Dictionary:
 	var world := world_document()
 	var poi: Dictionary = (world.get("pois", {}) as Dictionary).get(poi_id, {})
 	if poi.is_empty():
 		return {}
+	if not bool(poi.get("discovered", false)):
+		return {"poi_id": poi_id, "visibility": "HIDDEN", "sources": [], "actions": []}
 	var clock: Dictionary = world.get("clock", {})
 	var active := int(clock.get("active_seconds", 0))
 	var sources: Array[Dictionary] = []
@@ -311,18 +314,36 @@ func world_projection(poi_id: String) -> Dictionary:
 		if String(b.get("poi_id", "")) != poi_id:
 			continue
 		var next_ready := int(poi.get(String(b.get("next_ready_field", "")), 0))
-		sources.append({
+		var entry := WorldSources.source_identity(b)
+		entry.merge({
 			"binding_id": String(b.get("binding_id", "")),
 			"identity": String(b.get("identity", "")),
-			"instance_id": String(b.get("instance_id", "")),
 			"action_id": String(b.get("action_id", "")),
 			"claim_count": int(poi.get(String(b.get("claim_index_field", "")), 0)),
 			"ready": active >= next_ready,
 			"remaining_active_seconds": maxi(0, next_ready - active),
+			"cooldown_active_seconds": int(b.get("cooldown_active_seconds", 0)),
+			"requires_capabilities": (b.get("requires_capabilities", []) as Array).duplicate(true),
 			"rewards": (b.get("rewards", []) as Array).duplicate(true),
-		})
-	return {"poi_id": poi_id, "state": poi.duplicate(true), "capabilities": (world.get("capabilities", []) as Array).duplicate(true),
-		"active_seconds": active, "sources": sources}
+		}, true)
+		sources.append(entry)
+	var actions: Array[Dictionary] = []
+	for raw: Variant in world_bindings().get("world_actions", []):
+		var a: Dictionary = raw
+		if String(a.get("poi_id", "")) != poi_id:
+			continue
+		var flag := String(a.get("one_time_flag", ""))
+		var done := not flag.is_empty() and bool(poi.get(flag, false))
+		actions.append({"action_id": String(a.get("action_id", "")),
+			"reward_right_id": String(a.get("reward_right_id", "")),
+			"one_time": bool(a.get("one_time", false)), "already_applied": done,
+			"requires_capabilities": (a.get("requires_capabilities", []) as Array).duplicate(true),
+			"consumes_items": (a.get("consumes_items", []) as Array).duplicate(true),
+			"reward_items": (a.get("reward_items", []) as Array).duplicate(true),
+			"grants_capabilities": (a.get("grants_capabilities", []) as Array).duplicate(true)})
+	return {"poi_id": poi_id, "visibility": "DISCOVERED", "state": poi.duplicate(true),
+		"capabilities": (world.get("capabilities", []) as Array).duplicate(true),
+		"active_seconds": active, "sources": sources, "actions": actions}
 
 func _world_host_receipt(poi_id: String) -> Dictionary:
 	if not _world_host.is_valid():
@@ -437,15 +458,28 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 	var action_id := String(request.get("action_id", ""))
 	if poi_id.is_empty() or action_id.is_empty():
 		return _fail("invalid_world_request")
+	# The signed payload is the REQUEST ONLY. The canonical A1 transaction key
+	# is generation-derived and is written into mutable receipt metadata inside
+	# the mutator. If it were signed here, replaying the same event_id after the
+	# claim generation advances would hash differently and become a false
+	# event_id_conflict instead of ALREADY_APPLIED.
+	var payload := {"request": request.duplicate(true), "receipt_metadata": {
+		"poi_id": poi_id, "action_id": action_id,
+		"instance_id": String(request.get("instance_id", ""))}}
+	var event_key := _event_key("world_action", event_id)
+	var signature := JSON.stringify(payload).sha256_text()
+	if _save != null and bool(_save.call(&"is_transaction_applied", event_key)):
+		if _receipt_signature(event_key, signature):
+			var snapshot: Dictionary = _save.call(&"get_snapshot")
+			var meta: Dictionary = (snapshot.get("applied_transactions", {}) as Dictionary).get(event_key, {})
+			return _ok({"duplicate": true, "result": "ALREADY_APPLIED",
+				"transaction_key": String(meta.get("a1_transaction_key", ""))})
+		return _fail("event_id_conflict")
 	var snapshot: Dictionary = _save.call(&"get_snapshot") if _save != null else {}
 	var preflight := _world_plan(_world_read(snapshot), request)
 	if preflight.has("reason"):
 		return _fail(String(preflight.reason))
 	var canonical_key := String(preflight.key)
-	var preflight_definition: Dictionary = preflight.get("binding", preflight.get("action", {}))
-	var payload := {"request": request.duplicate(true), "receipt_metadata": {
-		"a1_transaction_key": canonical_key, "poi_id": poi_id, "action_id": action_id,
-		"instance_id": String(request.get("instance_id", "")), "reward_right_id": String(preflight_definition.get("reward_right_id", ""))}}
 	var outcome := _transact("world_action", event_id, payload,
 		func(candidate: Dictionary, _state: Dictionary, result: Dictionary) -> bool:
 			var host := _world_host_receipt(poi_id)
@@ -463,6 +497,9 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			var poi: Dictionary = world["pois"][poi_id]
 			var active := int(world["clock"].active_seconds)
 			var definition: Dictionary = plan.get("binding", plan.get("action", {}))
+			var identity_error := WorldSources.host_identity_error(host, definition)
+			if not identity_error.is_empty():
+				result["reason"] = identity_error; return false
 			if not WorldSources.cell_matches(host.hero_cell, definition.get("stand_cells", [])):
 				result["reason"] = "OUT_OF_RANGE"; return false
 			for cap: Variant in definition.get("requires_capabilities", []):
@@ -530,6 +567,9 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			result["granted_capabilities"] = granted_caps
 			result["state_patch"] = state_writes.duplicate(true)
 			result["active_seconds"] = active
+			result["receipt_metadata"] = {"a1_transaction_key": String(plan.key),
+				"reward_right_id": String(definition.get("reward_right_id", "")),
+				"binding_id": String(definition.get("binding_id", ""))}
 			return true)
 	if bool(outcome.get("duplicate", false)) or String(outcome.get("reason", "")) == "ALREADY_APPLIED":
 		return _ok({"duplicate": true, "result": "ALREADY_APPLIED", "transaction_key": canonical_key})
@@ -732,6 +772,14 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 			return false
 		if not bool(mutator.call(candidate, state, result)):
 			return false
+		# Mutator-derived receipt metadata is merged AFTER the request signature
+		# is fixed. This lets world_action bind the canonical generation key to
+		# the durable receipt without making replay depend on the current
+		# generation/cooldown state.
+		var result_metadata: Variant = result.get("receipt_metadata", {})
+		if result_metadata is Dictionary:
+			receipt_metadata.merge(result_metadata, true)
+			result.erase("receipt_metadata")
 		# Compact only terminal legacy jobs with no remaining escrow. Active,
 		# ready-refund, and output-bearing jobs are never silently discarded.
 		for job_id: Variant in (state.get("jobs", {}) as Dictionary).keys():

@@ -106,6 +106,25 @@ jobs:
             grep 'A3_NATIVE_SAVE_GROWTH' "$ARTIFACT_DIR/adapter.log" | tail -1 >> "$GITHUB_STEP_SUMMARY" || true
           fi
           exit $rc
+      - name: World cooldown / receipt across two OS processes
+        run: |
+          set +e
+          A3_RESTART_PHASE=1 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_world_restart_test.gd \
+            >"$ARTIFACT_DIR/restart_phase1.log" 2>&1
+          rc1=$?
+          A3_RESTART_PHASE=2 timeout --signal=TERM --kill-after=10s 120s godot --headless --path . \
+            --user-data-dir artifacts/a3-runtime \
+            --script res://tests/survival/catalog/economy_world_restart_test.gd \
+            >"$ARTIFACT_DIR/restart_phase2.log" 2>&1
+          rc2=$?
+          set -e
+          cat "$ARTIFACT_DIR/restart_phase1.log" "$ARTIFACT_DIR/restart_phase2.log"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase1.log" "A3 restart phase1" "A3 WORLD RESTART PHASE 1 PASSED"
+          bash tools/ci/gate_log.sh "$ARTIFACT_DIR/restart_phase2.log" "A3 restart phase2" "A3 WORLD RESTART PHASE 2 PASSED"
+          if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ]; then exit 1; fi
+          echo "A3 two-process world restart PASSED" >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

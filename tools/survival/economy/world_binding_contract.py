@@ -16,11 +16,23 @@ def validate(bindings_doc: dict, items: dict, sources: dict) -> list[str]:
     if bindings_doc.get("schema") != SCHEMA:
         errors.append("world bindings: bad schema")
     seen = set()
+    alias_owner = {}
     for b in bindings:
         bid = b.get("binding_id", "")
         if not bid or bid in seen:
             errors.append(f"world binding duplicate/empty id {bid}")
         seen.add(bid)
+        for field in ("instance_id", "interaction_node_id", "world_instance_id", "a1_source_instance_id"):
+            alias = b.get(field)
+            if not alias:
+                continue
+            if alias in alias_owner and alias_owner[alias] != bid:
+                errors.append(f"world binding alias collision {alias} -> {bid}")
+            alias_owner[alias] = bid
+        if b.get("canonical_poi_id") is not None and b.get("canonical_poi_id") != b.get("poi_id"):
+            errors.append(f"world binding {bid} canonical poi mismatch")
+        if b.get("context_poi_id") is not None and b.get("context_poi_id") != b.get("poi_id"):
+            errors.append(f"world binding {bid} context poi mismatch")
         identity = "|".join(str(b.get(k, "")) for k in IDENTITY_FIELDS)
         if b.get("identity") != identity:
             errors.append(f"world binding identity mismatch {bid}")
@@ -68,8 +80,23 @@ def validate(bindings_doc: dict, items: dict, sources: dict) -> list[str]:
     relay_costs = {c["item_id"]: c["quantity"] for c in relay.get("consumes_items", [])}
     if relay_costs != {"iron_scrap": 2, "oak_wood": 1} or relay.get("grants_capabilities") != ["cap_power_1"]:
         errors.append("canonical relay must consume 2 scrap + 1 oak and grant cap_power_1")
-    cache = next((b for b in bindings if b.get("instance_id") == "node_waystation_cache"), {})
+    cache = next((b for b in bindings if b.get("binding_id") == "a1_waystation_roadside_cache_v3"), {})
     cache_rewards = {r["item_id"]: r["quantity"] for r in cache.get("rewards", [])}
     if cache_rewards != {"iron_scrap": 3, "knowledge_spares": 2} or cache.get("cooldown_active_seconds") != 1800:
         errors.append("canonical Waystation cache must be 3 scrap + 2 spares / 1800 active seconds")
+    if cache.get("instance_id") != "si:r_ashen_crown:waystation_cache:01" or cache.get("interaction_node_id") != "node_waystation_cache":
+        errors.append("canonical cache must pin si:* world instance and node_* interaction alias")
+    notes = next((b for b in bindings if b.get("binding_id") == "a1_roadside_notes_01_v4"), {})
+    notes_rewards = {r["item_id"]: r["quantity"] for r in notes.get("rewards", [])}
+    if notes_rewards != {"research_notes": 1} or notes.get("cooldown_active_seconds") != 1800:
+        errors.append("roadside notes crate must be exactly 1 research_notes / 1800 active seconds")
+    if notes.get("instance_id") != "si:r_ashen_crown:roadside_supply:01" or notes.get("canonical_poi_id") is not None:
+        errors.append("roadside notes crate must bind the A1 non-POI si:* instance, not a new POI")
+    # A8 Quarry must remain fail-closed until A3 issues a real authorization.
+    for b in bindings:
+        if "quarry" in str(b.get("poi_id", "")) or "quarry" in str(b.get("instance_id", "")):
+            errors.append("Quarry binding present without A3 authorization")
+    for a in world_actions:
+        if "quarry" in str(a.get("poi_id", "")):
+            errors.append("Quarry world_action present without A3 authorization")
     return errors

@@ -4,6 +4,7 @@ extends SceneTree
 ## not A0 production placement, not an authoritative wall-clock, and not A4 Gold
 ## verification. Production catalog Cores remain BLOCKED_PENDING_A4.
 const Economy = preload("res://game/survival/economy/economy_service.gd")
+const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
 const Survival = preload("res://game/survival/survival_service.gd")
 const TIME_CONTRACT := "soh.economy.active_tick.v1"
 const SKILL_CONTRACT := "soh.economy.skill_attestation.v1"
@@ -559,6 +560,8 @@ func _run() -> void:
 	_case_21_canonical_world_sources()
 	_case_22_world_atomicity_and_failed_save()
 	_case_23_source_to_research_to_output_chain()
+	_case_24_world_adversarial_clock_identity_and_conservation()
+	_case_25_quarry_fail_closed_and_hidden_projection()
 	# End-to-end report.
 	if failures.is_empty():
 		print("A3 ECONOMY ADAPTER PASSED - %d checks / %d cases" % [checks, case_id])
@@ -668,25 +671,31 @@ func _case_21_canonical_world_sources() -> void:
 	_expect(_count("iron_scrap") == scrap_before_relay and not eco.has_capability("cap_power_1"), "missing-cost relay is atomic")
 	# Outside renewable cache owns the canonical materials.
 	_move("poi_crown_waystation", Vector2i(406, 202))
-	var cache1: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.1")
-	_expect(bool(cache1.ok) and String(cache1.result) == "SUCCESS", "cache claim 1")
+	var cache1: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.1")
+	_expect(bool(cache1.ok) and String(cache1.result) == "SUCCESS", "cache claim 1 by canonical si:* world instance")
 	_expect(int((cache1.granted_items as Dictionary).get("iron_scrap", 0)) == 3, "cache grants canonical 3 scrap")
 	_expect(int((cache1.granted_items as Dictionary).get("knowledge_spares", 0)) == 2, "cache grants canonical 2 spares")
 	_expect(String(cache1.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "canonical A1 transaction key")
 	var projection: Dictionary = eco.world_projection("poi_crown_waystation")
 	var cache_projection: Dictionary = {}
 	for raw: Variant in projection.get("sources", []):
-		if String((raw as Dictionary).instance_id) == "node_waystation_cache":
+		if String((raw as Dictionary).instance_id) == "si:r_ashen_crown:waystation_cache:01":
 			cache_projection = raw
 	_expect(int(cache_projection.get("claim_count", 0)) == 1 and not bool(cache_projection.get("ready", true)), "cache cooldown projected read-only")
-	var early: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.early")
+	_expect(String(cache_projection.get("interaction_node_id", "")) == "node_waystation_cache", "projection exposes pinned node alias")
+	var alias_early: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.alias")
+	_expect(not bool(alias_early.ok) and String(alias_early.reason) == "COOLDOWN", "node_* alias resolves to the same physical cache, not a second source")
+	var early: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.early")
 	_expect(not bool(early.ok) and String(early.reason) == "COOLDOWN", "cache rejects before active-time cooldown")
 	_world_tick(1799, "w21.time.1799")
 	var still: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.still")
 	_expect(not bool(still.ok) and int(still.get("remaining_active_seconds", 0)) == 1, "cooldown uses cumulative ACTIVE seconds")
 	_world_tick(1, "w21.time.1")
 	var cache2: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.2")
-	_expect(bool(cache2.ok) and String(cache2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "cache generation 2 after 1800 active seconds")
+	_expect(bool(cache2.ok) and String(cache2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "cache generation 2 after 1800 active seconds via node alias")
+	var replay_after_generation: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.1")
+	_expect(bool(replay_after_generation.ok) and String(replay_after_generation.result) == "ALREADY_APPLIED", "same event_id replay stays idempotent after generation advances")
+	_expect(String(replay_after_generation.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "replay returns the original canonical key, not the current generation")
 	# Offline / new session must not credit wall-clock time.
 	world_session_index += 1
 	world_session_id = "fixture-world-2"
@@ -762,69 +771,73 @@ func _case_22_world_atomicity_and_failed_save() -> void:
 	_expect(bool(retry_dup.ok) and String(retry_dup.result) == "ALREADY_APPLIED", "retry receipt is idempotent")
 
 func _case_23_source_to_research_to_output_chain() -> void:
-	_begin_live("complete source -> storage -> production -> research -> iron_pick -> reload")
-	# 1. Canonical capability bootstrap: zero-item locker + ledger.
+	_begin_live("no-Core source -> loot -> research -> processing -> iron_pick -> reload")
+	# This chain deliberately uses NO legacy bone/ember grant and NO Skill Core.
+	# Ordinary tool research is funded by the canonical Waystation cache plus
+	# exactly one A3-authorized A1 roadside notes crate. It is a native fixture,
+	# not a human playtest and not a production A0 mount.
 	_move("poi_crown_waystation", Vector2i(408, 199))
 	_expect(bool(_world_act("pry_locker", "", "w23.locker").ok), "chain locker")
 	_move("poi_crown_waystation", Vector2i(410, 202))
 	_expect(bool(_world_act("seal_ledger", "", "w23.ledger").ok), "chain ledger")
-	# 2. Four canonical outside-cache claims fund the Spares bootstrap. Each
-	#    claim is 3 scrap + 2 spares and waits 1800 ACTIVE seconds.
+	# One early roadside crate supplies the first research note without a Core.
+	_move("poi_crown_waystation", Vector2i(395, 220))
+	var note1: Dictionary = _world_act("salvage_roadside_notes", "si:r_ashen_crown:roadside_supply:01", "w23.notes.0")
+	_expect(bool(note1.ok) and int((note1.granted_items as Dictionary).get("research_notes", 0)) == 1, "roadside crate grants 1 research note")
+	# Seven canonical cache claims fund scrap/spares. Each is 3 scrap + 2 spares
+	# and waits 1800 ACTIVE seconds; the notes crate cools down on the same clock.
 	_move("poi_crown_waystation", Vector2i(406, 202))
-	for i in range(4):
+	for i in range(7):
 		if i > 0:
 			_world_tick(1800, "w23.cache.wait.%d" % i)
-		var claim: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w23.cache.%d" % i)
+		var claim: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w23.cache.%d" % i)
 		_expect(bool(claim.ok), "chain cache claim %d" % i)
-	_expect(_count("iron_scrap") == 12 and _count("knowledge_spares") == 8, "canonical cache totals 12 scrap / 8 spares")
-	# 3. Approach deadfall + relay: real materials buy permanent power.
+		if i == 1:
+			_move("poi_crown_waystation", Vector2i(395, 220))
+			var note2: Dictionary = _world_act("salvage_roadside_notes", "si:r_ashen_crown:roadside_supply:01", "w23.notes.1")
+			_expect(bool(note2.ok), "second roadside note after active cooldown")
+			_move("poi_crown_waystation", Vector2i(406, 202))
+	_expect(_count("iron_scrap") == 21 and _count("knowledge_spares") == 14, "canonical cache totals 21 scrap / 14 spares")
+	_expect(_count("research_notes") == 2, "two real roadside notes, no legacy ember")
+	_expect(_count("soul_ember") == 0 and _count("crypt_bone_shard") == 0, "no legacy catalyst grant in the no-Core chain")
+	# Deadfall + relay: real materials buy permanent power.
 	_move("poi_crown_waystation", Vector2i(398, 201))
 	_expect(bool(_world_act("gather_deadfall", "node_waystation_approach_deadfall", "w23.deadfall").ok), "chain deadfall")
 	_move("poi_crown_relay_shed", Vector2i(442, 234))
 	_expect(bool(_world_act("hand_crank_bypass", "", "w23.relay").ok), "chain relay")
-	_expect(_count("iron_scrap") == 10 and _count("oak_wood") == 1, "relay paid 2 scrap + 1 oak")
-	# 4. Existing live SurvivalService harvests supply the remaining bulk materials.
+	# Live SurvivalService harvests supply bulk materials through existing nodes.
 	var stamp := 1700000000
 	_harvest("a3_oak_1", "oak_tree", 3, stamp); _harvest("a3_oak_2", "oak_tree", 3, stamp + 10)
 	_harvest("a3_oak_3", "oak_tree", 3, stamp + 20)
 	_harvest("a3_stone_1", "stone_outcrop", 3, stamp + 30); _harvest("a3_stone_2", "stone_outcrop", 3, stamp + 40)
 	_harvest("a3_reed_1", "reed_clump", 2, stamp + 50); _harvest("a3_reed_2", "reed_clump", 2, stamp + 60)
-	for i in range(7):
-		_harvest("a3_iron_%d" % i, "iron_vein", 2, stamp + 70 + i * 10)
-	# 5. Existing legacy chapter_1_2 rewards are the ONLY source of bone/ember
-	#    catalysts in this fixture. This is explicit legacy-reward setup, not a
-	#    new A3 free grant and not a claimed renewable world node.
-	_expect(bool(save.call(&"grant_inventory_item", "crypt_bone_shard", "material", 3, "w23.legacy.bone",
-		{"source": "legacy_chapter1_2", "fixture": "existing_reward_not_new_world_grant"})), "legacy bone catalyst setup")
-	_expect(bool(save.call(&"grant_inventory_item", "soul_ember", "material", 2, "w23.legacy.ember",
-		{"source": "legacy_chapter1_2", "fixture": "existing_reward_not_new_world_grant"})), "legacy ember catalyst setup")
-	# 6. Physical home storage round trip through the real SaveService API.
+	_harvest("a3_iron_0", "iron_vein", 2, stamp + 70); _harvest("a3_iron_1", "iron_vein", 2, stamp + 80)
+	# Physical home storage round trip through the real SaveService API.
 	var oak_before_storage := _count("oak_wood")
 	_expect(bool(save.call(&"home_transfer_to_storage", &"item_stack", "oak_wood", "w23.store.oak")), "store oak in home storage")
 	_expect(_count("oak_wood") == 0, "oak physically leaves bag")
 	_expect(bool(save.call(&"home_transfer_to_bag", &"item_stack", "oak_wood", "w23.withdraw.oak")), "withdraw oak from home storage")
 	_expect(_count("oak_wood") == oak_before_storage, "storage round trip conserves oak")
-	# 7. Hand-craft and install workbench + furnace, then smelt real ingots.
+	# Hand-craft stations, bootstrap ingots from scrap, then research smelting.
 	_craft("workbench_kit", "hand", "w23.workbench_kit")
 	_station("bench", "workbench")
 	_craft("furnace_kit", "hand", "w23.furnace_kit")
 	_station("furnace", "furnace")
 	for i in range(2):
 		_craft("burn_charcoal", "furnace", "w23.charcoal.%d" % i)
-	for i in range(4):
-		_craft("smelt_iron", "furnace", "w23.ingot.%d" % i)
-	_expect(_count("iron_ingot") == 4, "furnace produces 4 real ingots")
-	_craft("weave_cloth", "bench", "w23.cloth")
-	# 8. Research kit consumes canonical Spares; research station enables the loop.
+	for i in range(2):
+		_craft("smelt_iron", "furnace", "w23.ingot.bootstrap.%d" % i)
+	_expect(_count("iron_ingot") == 2, "scrap smelting bootstraps 2 ingots without a Core")
 	_craft("research_kit", "bench", "w23.research_kit")
 	_station("lab", "research")
-	for i in range(2):
-		_craft("make_notes", "lab", "w23.notes.%d" % i)
-	for i in range(3):
-		_craft("make_spares", "lab", "w23.spares.%d" % i)
-	_expect(_count("research_notes") == 2, "legacy ember -> 2 research notes")
-	_expect(_count("knowledge_spares") >= 7, "make_spares sustain after research_kit/notes")
-	# 9. Targeted research pays Spares + notes and permanently learns iron_pick.
+	var tech: Dictionary = eco.research_technology("tech_smelting", "lab", "w23.tech.smelting")
+	_expect(bool(tech.ok), "smelting technology researched with canonical spares/scrap")
+	if bool(tech.ok):
+		_finish_job(String(tech.job_id), "lab")
+	_craft("smelt_ore", "furnace", "w23.ingot.ore")
+	_expect(_count("iron_ingot") == 2, "ore smelting produces the tool ingots")
+	_craft("weave_cloth", "bench", "w23.cloth")
+	# Targeted research pays real spares + roadside notes and permanently learns.
 	var research: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w23.research.pick")
 	_expect(bool(research.ok), "targeted research enqueued: " + String(research.get("reason", "")))
 	if bool(research.ok):
@@ -832,13 +845,13 @@ func _case_23_source_to_research_to_output_chain() -> void:
 	_expect(eco.known("iron_pick"), "iron_pick recipe permanently learned")
 	var repeat: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w23.research.pick.again")
 	_expect(not bool(repeat.ok) and String(repeat.reason) == "already_known", "learned knowledge is not consumed/repeated")
-	# 10. Craft the actual useful output and reload.
 	_craft("iron_pick", "bench", "w23.craft.pick")
 	var picks := 0
 	for raw: Variant in (eco.document().get("instances", {}) as Dictionary).values():
 		if String((raw as Dictionary).get("item_id", "")) == "iron_pick":
 			picks += 1
 	_expect(picks == 1, "one physical iron_pick output")
+	_expect(_count("core_ember") == 0 and _count("core_frost") == 0 and _count("core_venom") == 0, "no Skill Core was required or granted")
 	var learned_before := eco.known("iron_pick")
 	var world_before: Dictionary = eco.world_document()
 	_reload()
@@ -850,3 +863,92 @@ func _case_23_source_to_research_to_output_chain() -> void:
 			picks_after += 1
 	_expect(picks_after == 1, "physical output survives reload without duplication")
 	_expect(int((world_before.get("clock", {}) as Dictionary).get("active_seconds", -1)) == int((eco.world_document().get("clock", {}) as Dictionary).get("active_seconds", -2)), "cumulative active world clock survives reload")
+
+func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
+	_begin("adversarial world clock / session / identity / conservation")
+	# Pure host validators accept native Vector2i and JSON integer cells, but
+	# reject float/bool/string spoofing that could round into a stand cell.
+	_expect(WorldSources.is_cell(Vector2i(408, 199)), "Vector2i host cell accepted")
+	_expect(WorldSources.is_cell([408, 199]), "integer array host cell accepted")
+	_expect(not WorldSources.is_cell([408.0, 199.0]), "float cell rejected")
+	_expect(not WorldSources.is_cell([true, 199]), "bool cell rejected")
+	_expect(not WorldSources.is_cell("408,199"), "string cell rejected")
+	_expect(WorldSources.cell_matches(Vector2i(406, 202), [[406, 202]]), "Vector2i matches authored stand")
+	_expect(not WorldSources.cell_matches(Vector2i(406, 203), [[406, 202]]), "adjacent cell is out of range")
+	_move("poi_crown_waystation", Vector2i(408, 199))
+	_expect(bool(_world_act("pry_locker", "", "w24.locker").ok), "locker before adversarial cache")
+	_move("poi_crown_waystation", Vector2i(406, 202))
+	var first: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w24.cache.1")
+	_expect(bool(first.ok), "first cache claim")
+	var before := JSON.stringify(_snapshot())
+	# Caller cannot inject UI authorization flags or rewards.
+	var spoof_request := eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
+		"instance_id": "si:r_ashen_crown:waystation_cache:01", "ready": true, "rewards": {"core_ember": 1}}, "w24.ui.spoof")
+	_expect(not bool(spoof_request.ok) and String(spoof_request.reason).begins_with("invalid_world_request_field"), "UI flags/rewards cannot authorize a claim")
+	_expect(JSON.stringify(_snapshot()) == before, "UI spoof changes no state")
+	# Same event id with a different physical request is a conflict, not a replay.
+	var conflict: Dictionary = _world_act("cache_restock", "node_waystation_approach_deadfall", "w24.cache.1")
+	_expect(not bool(conflict.ok) and String(conflict.reason) == "event_id_conflict", "event id cannot be reused for a different source")
+	# Active-time quantum spoof: a huge jump is rejected without consuming cooldown.
+	world_active_seconds += 3601
+	world_sequence += 1
+	var quantum: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.quantum")
+	_expect(not bool(quantum.ok) and String(quantum.reason) == "world_time_quantum_exceeded", "host time quantum spoof rejected")
+	_expect(JSON.stringify(_snapshot()) == before, "quantum spoof leaves save unchanged")
+	world_active_seconds -= 3601
+	world_sequence -= 1
+	# Sequence rollback and clock regression are rejected.
+	_world_tick(10, "w24.tick10")
+	var after_tick := JSON.stringify(_snapshot())
+	world_sequence -= 1
+	var stale_seq: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.staleseq")
+	_expect(not bool(stale_seq.ok) and String(stale_seq.reason) == "stale_world_sequence", "stale host sequence rejected")
+	world_sequence += 1
+	world_active_seconds -= 1
+	var regress: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.regress")
+	_expect(not bool(regress.ok) and String(regress.reason) == "world_clock_regressed", "host clock regression rejected")
+	world_active_seconds += 1
+	_expect(JSON.stringify(_snapshot()) == after_tick, "clock attacks conserve the committed snapshot")
+	# A new session may baseline a large host counter, but it cannot credit that
+	# counter as elapsed active time or skip the remaining cooldown.
+	world_session_index += 1
+	world_session_id = "fixture-world-spoof-session"
+	world_active_seconds = 999999
+	world_sequence = 0
+	var baseline: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.newsession.baseline")
+	_expect(bool(baseline.ok), "new session baselines host counter")
+	var offline: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w24.newsession.claim")
+	_expect(not bool(offline.ok) and String(offline.reason) == "COOLDOWN", "spoofed session counter does not skip cooldown")
+	# Partial relay cost must not consume the affordable material.
+	_move("poi_crown_relay_shed", Vector2i(442, 234))
+	_give("iron_scrap", 2)
+	var scrap_before := _count("iron_scrap")
+	var partial: Dictionary = _world_act("hand_crank_bypass", "", "w24.relay.partial")
+	_expect(not bool(partial.ok) and String(partial.reason) == "MISSING_ITEM:oak_wood", "relay rejects partial cost")
+	_expect(_count("iron_scrap") == scrap_before and not eco.has_capability("cap_power_1"), "partial cost consumes nothing and grants no capability")
+	# Permanent knowledge is not revoked by a failed craft or world attack.
+	_station("lab", "research")
+	_give("knowledge_spares", 6); _give("research_notes", 2)
+	var research: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w24.research")
+	_expect(bool(research.ok), "research enqueued for conservation check")
+	if bool(research.ok):
+		_finish_job(String(research.job_id), "lab")
+	_expect(eco.known("iron_pick"), "knowledge learned")
+	var failed_craft: Dictionary = eco.enqueue("iron_pick", "bench", "w24.craft.missing")
+	_expect(not bool(failed_craft.ok), "craft without inputs fails")
+	_expect(eco.known("iron_pick"), "failed craft does not erase permanent recipe knowledge")
+
+func _case_25_quarry_fail_closed_and_hidden_projection() -> void:
+	_begin("A8 Quarry fail-closed + undiscovered projection privacy")
+	var hidden: Dictionary = eco.world_projection("poi_crown_waystation")
+	_expect(String(hidden.get("visibility", "")) == "HIDDEN" and (hidden.get("sources", []) as Array).is_empty(), "undiscovered POI hides private source/reward metadata")
+	var quarry: Dictionary = eco.world_action({"poi_id": "poi_crown_south_quarry", "action_id": "brace_east_shelf"}, "w25.quarry.brace")
+	_expect(not bool(quarry.ok) and String(quarry.reason) == "unknown_world_poi", "unauthorized Quarry POI is rejected")
+	var quarry_cost: Dictionary = eco.world_action({"poi_id": "poi_crown_south_quarry", "action_id": "extract_outcrop", "cost_quantity": 1, "reward_quantity": 2}, "w25.quarry.extract")
+	_expect(not bool(quarry_cost.ok) and String(quarry_cost.reason).begins_with("invalid_world_request_field"), "caller cannot price/authorize Quarry through request fields")
+	var quarry_projection: Dictionary = eco.world_projection("poi_crown_south_quarry")
+	_expect(quarry_projection.is_empty(), "Quarry has no read-only economy projection until authorized")
+	_move("poi_crown_waystation", Vector2i(408, 199))
+	_expect(bool(_world_act("pry_locker", "", "w25.locker").ok), "locker discovers Waystation")
+	var discovered: Dictionary = eco.world_projection("poi_crown_waystation")
+	_expect(String(discovered.get("visibility", "")) == "DISCOVERED" and not (discovered.get("sources", []) as Array).is_empty(), "discovered POI exposes actionable read-only sources")
