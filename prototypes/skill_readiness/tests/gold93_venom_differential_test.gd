@@ -422,11 +422,10 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		if sid == 16 and n == 192:
 			var sb: PackedByteArray = g["s"].bytes
 			for gy in range(536, 568):
-				var row: String = ""
-				for gx in range(688, 716):
-					var o: int = (gy * 1200 + gx) * 4
-					row += "%02x%02x%02x" % [sb[o], sb[o + 1], sb[o + 2]]
-				print("GOLD93_PXD %d %s" % [gy, row])
+				var ctx := HashingContext.new()
+				ctx.start(HashingContext.HASH_SHA256)
+				ctx.update(sb.slice((gy * 1200 + 688) * 4, (gy * 1200 + 716) * 4))
+				print("GOLD93_PXD %d %s" % [gy, ctx.finish().hex_encode().substr(0, 12)])
 		if sid == 7 and (n == 89 or n == 90 or n == 264 or n == 265):
 			# 12x10 block grid (100x68 px each) scene hashes, chunked per line.
 			var blks: Array = []
