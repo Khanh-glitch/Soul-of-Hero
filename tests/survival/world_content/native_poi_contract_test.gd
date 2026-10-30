@@ -1,12 +1,16 @@
 extends SceneTree
 
+# gdlint: disable=max-file-lines
 # Direct global_position assignments below are setup teleports; only
-# request_test_motion followed by physics_frame counts as traversal.
+# request_test_motion followed by the actor's completion signal counts as traversal.
 
 const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
 const ACTOR_SCRIPT := preload("res://tests/survival/world_content/test_actor.gd")
+const PHASE_FIXTURE := preload(
+	"res://tests/survival/world_content/a8_run_phase_projection_fixture.gd"
+)
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 const SCENES := [
 	"res://game/survival/world_content/scenes/south_quarry.tscn",
@@ -34,6 +38,7 @@ func _initialize() -> void:
 func _run() -> void:
 	_vector_pair_compatibility()
 	await _scene_and_data_contracts()
+	await _type_aware_owner_state_gates()
 	await _interaction_eligibility_and_choice()
 	await _intent_boundary_adversarial_tests()
 	await _physical_access_and_retreat_basic()
@@ -195,6 +200,62 @@ func _assert_site_art(site: NativePoiSite) -> void:
 			)
 
 
+func _type_aware_owner_state_gates() -> void:
+	var pair := await _make_site(0)
+	var site: NativePoiSite = pair.site
+	var authority: PoiAuthorityFixture = pair.authority
+	var meaningful_action := {
+		"action_id": "typed_state_probe",
+		"object_id": "typed_state_probe",
+		"requires_state": ["gate_state"]
+	}
+	var open_only_action: Dictionary = meaningful_action.duplicate(true)
+	open_only_action["requires_state_values"] = {"gate_state": ["open"]}
+	var cases: Array[Dictionary] = [
+		{"label": "meaningful String", "present": true, "value": "open", "meaningful": true},
+		{"label": "other nonempty String", "present": true, "value": "closed", "meaningful": true},
+		{"label": "true Boolean", "present": true, "value": true, "meaningful": true},
+		{"label": "false Boolean", "present": true, "value": false, "meaningful": false},
+		{"label": "empty String", "present": true, "value": "", "meaningful": false},
+		{"label": "whitespace String", "present": true, "value": "  \t", "meaningful": false},
+		{"label": "null", "present": true, "value": null, "meaningful": false},
+		{"label": "integer", "present": true, "value": 1, "meaningful": false},
+		{"label": "array", "present": true, "value": ["open"], "meaningful": false},
+		{"label": "object", "present": true, "value": {"state": "open"}, "meaningful": false},
+		{"label": "absent", "present": false, "meaningful": false},
+	]
+	var next_revision := 1
+	for case: Dictionary in cases:
+		var snapshot: Dictionary = authority.snapshot()
+		var projected_states: Dictionary = snapshot.get("site_state", {}).duplicate(true)
+		var local_state: Dictionary = {}
+		if bool(case.present):
+			local_state["gate_state"] = case.get("value", null)
+		projected_states[site.get_source_id()] = local_state
+		snapshot["site_state"] = projected_states
+		snapshot["projection_revision"] = next_revision
+		var state_fixture := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
+		state_fixture.configure(snapshot)
+		var owner_projection: Dictionary = state_fixture.project_state(site.get_source_id())
+		_check(
+			site.set_projection(owner_projection),
+			"owner fixture supplies %s at a fresh revision" % str(case.label)
+		)
+		var meaningful: bool = site._action_is_available(meaningful_action)
+		_check(
+			meaningful == bool(case.meaningful),
+			"%s state has the expected type-aware prerequisite result" % str(case.label)
+		)
+		var authorized_value := str(case.get("value", "")) == "open" and bool(case.present)
+		_check(
+			site._action_is_available(open_only_action) == authorized_value,
+			"%s cannot bypass the exact authorized value gate" % str(case.label)
+		)
+		state_fixture.free()
+		next_revision += 1
+	_cleanup(pair)
+
+
 func _interaction_eligibility_and_choice() -> void:
 	var pair := await _make_site(0)
 	var site: NativePoiSite = pair.site
@@ -212,7 +273,7 @@ func _interaction_eligibility_and_choice() -> void:
 	site.intent_requested.connect(func(intent: Dictionary): intents.append(intent))
 	actor.global_position = site.get_spawn_position()
 	_check(not site.try_interact(actor), "out-of-range action is denied")
-	actor.global_position = site.get_stand_position() + Vector2(20, 0)
+	actor.global_position = site.get_stand_position() + Vector2(31, 0)
 	_check(not site.try_interact(actor), "standpoint tolerance is enforced")
 	actor.global_position = site.get_stand_position()
 	actor.set("facing", Vector2.RIGHT)
@@ -229,19 +290,25 @@ func _interaction_eligibility_and_choice() -> void:
 		)
 		_check(intent.action_id == "chock_west_ramp", "selected route choice survives in identity")
 		_check(
-			intent.contract_id == "soh.native_poi.intent.v2" and intent.contract_version == 2,
-			"neutral identity uses the unapproved v2 boundary"
+			intent.contract_id == "soh.native_poi.intent.v3" and intent.contract_version == 3,
+			"neutral identity and owner context use the unapproved v3 boundary"
 		)
 		_check(
 			(
-				intent.keys().size() == 8
+				intent.keys().size() == 16
+				and intent.run_id == "fixture-run-1"
+				and intent.phase_id == "ordinary"
+				and intent.source_id == "poi_crown_south_quarry"
+				and intent.site_instance_id == "poi_crown_south_quarry@fixture-run-1"
+				and intent.actor_local_position is Vector2
+				and intent.actor_facing is Vector2
 				and not intent.has("costs")
 				and not intent.has("rewards")
 				and not intent.has("cooldown_seconds")
 				and not intent.has("catalog_source")
 				and not intent.has("provisional_test_only")
 			),
-			"default scene emits only the eight neutral identity/revision fields"
+			"default scene emits only neutral identity, owner phase and physical approach"
 		)
 		var result: Dictionary = authority.submit_intent(intent)
 		_check(result.status == "committed", "fixture accepts affordable candidate route")
@@ -307,8 +374,8 @@ func _interaction_eligibility_and_choice() -> void:
 	var extracted: Dictionary = authority.submit_intent(extraction)
 	_check(extracted.status == "committed", "safe quarry extraction uses the shared owner boundary")
 	_check(
-		authority.snapshot().inventory.stone_chunk == 4,
-		"extraction reward is applied once by the fixture owner"
+		authority.snapshot().inventory.stone_chunk == 2,
+		"fixture-only extraction applies its configured net item delta exactly once"
 	)
 	_cleanup(pair)
 
@@ -348,15 +415,23 @@ func _intent_boundary_adversarial_tests() -> void:
 		"contract_id",
 		"contract_version",
 		"intent_id",
+		"world_id",
+		"run_id",
+		"run_epoch",
+		"phase_id",
+		"observed_phase_projection_revision",
 		"source_id",
+		"site_instance_id",
 		"object_id",
 		"action_id",
 		"claim_id",
-		"observed_projection_revision"
+		"observed_projection_revision",
+		"actor_local_position",
+		"actor_facing"
 	]
 	_check(
 		neutral.size() == expected_fields.size(),
-		"default canonical scene emits exactly the neutral v2 field set"
+		"default canonical scene emits exactly the neutral v3 field set"
 	)
 	for field: String in expected_fields:
 		_check(neutral.has(field), "neutral action request includes %s" % field)
@@ -389,7 +464,7 @@ func _intent_boundary_adversarial_tests() -> void:
 	injected_cost["costs"] = {"oak_wood": 0}
 	_check(
 		fixture.submit_intent(injected_cost).status == "rejected",
-		"even a zero or forged amount cannot be added to the neutral v2 request"
+		"even a zero or forged amount cannot be added to the neutral v3 request"
 	)
 
 	var no_approval := FIXTURE_SCRIPT.new()
@@ -402,6 +477,7 @@ func _intent_boundary_adversarial_tests() -> void:
 		no_approval.snapshot().inventory.oak_wood == 2,
 		"no-approval rejection has no debit or receipt side effect"
 	)
+	no_approval.free()
 
 	var stale := neutral.duplicate(true)
 	fixture.set_capabilities(["cap_salvage"])
@@ -433,21 +509,21 @@ func _physical_access_and_retreat_basic() -> void:
 		var stand := site.get_stand_position()
 		actor.global_position = spawn
 		actor.request_test_motion(Vector2(stand.x - spawn.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.motion_finished and actor.last_collision == null,
 			"outer access route traverses without collision: %s" % site.get_source_id()
 		)
 		actor.request_test_motion(Vector2(0.0, stand.y - actor.global_position.y))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.motion_finished and actor.last_collision == null,
 			"approach stand is physically reachable: %s" % site.get_source_id()
 		)
 		actor.set("facing", Vector2.UP)
 		_check(
-			site.try_interact(actor, 0),
-			"reachable stand accepts its authored action: %s" % site.get_source_id()
+			site.try_interact(actor),
+			"reachable stand accepts its authored route choice: %s" % site.get_source_id()
 		)
 		var pending: Dictionary = site._pending.duplicate(true)
 		var rejection := authority.submit_intent(pending)
@@ -455,9 +531,9 @@ func _physical_access_and_retreat_basic() -> void:
 			pending.intent_id, rejection, authority.project_state(site.get_source_id())
 		)
 		actor.request_test_motion(Vector2(0.0, spawn.y - actor.global_position.y))
-		await physics_frame
+		await actor.await_test_motion()
 		actor.request_test_motion(Vector2(spawn.x - actor.global_position.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.global_position.distance_to(spawn) < 35.0,
 			"same approach allows a safe physical retreat: %s" % site.get_source_id()
@@ -489,6 +565,7 @@ func _authority_failures_and_retry() -> void:
 		broke_authority.snapshot().inventory.oak_wood == 0,
 		"failed debit is atomic and changes nothing"
 	)
+	broke_authority.free()
 
 	authority.interrupt_next_commit = true
 	_check(site.try_interact(actor), "first submit accepted into the pending intent lane")
@@ -538,6 +615,7 @@ func _authority_failures_and_retry() -> void:
 		replay_fixture.snapshot().inventory.oak_wood == 0,
 		"replayed claim cannot debit a second time after JSON reload"
 	)
+	replay_fixture.free()
 	var invalid_claim: Dictionary = original.duplicate(true)
 	invalid_claim.source_id = "forged_site"
 	_check(
@@ -645,6 +723,7 @@ func _candidate_claims_capacity_and_reload() -> void:
 		reload_fixture.snapshot().inventory.reed_fibre == 3,
 		"new cycle receives one item through authority, not scene code"
 	)
+	reload_fixture.free()
 	_cleanup(pair)
 
 	var orchard := await _make_site(1)
@@ -760,11 +839,20 @@ func _physical_mill_gate_and_retreat() -> void:
 	actor.set("facing", Vector2.UP)
 	await physics_frame
 	actor.request_test_motion(Vector2(0, -140))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(actor.motion_finished, "mill negative traversal ran inside a physics frame")
 	_check(
 		actor.last_collision != null and actor.global_position.y > 480.0,
 		"mill outer gate blocks physical entry without cap_salvage"
+	)
+	actor.request_test_motion(Vector2(0, 16))
+	await actor.await_test_motion()
+	_check(
+		(
+			actor.last_collision == null
+			and actor.global_position.distance_to(Vector2(528, 536)) <= 30.0
+		),
+		"mill outside inspection stand is reachable by a separate physical step"
 	)
 	_check(
 		site.try_interact(actor, 0),
@@ -793,19 +881,19 @@ func _physical_mill_gate_and_retreat() -> void:
 	await physics_frame
 	actor.global_position = Vector2(528, 536)
 	actor.request_test_motion(Vector2(0, -140))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.global_position.y < 400.0 and actor.global_position.y > 314.0,
 		"salvage capability opens the outer gate but not the un-repaired maintenance walk"
 	)
 	actor.request_test_motion(Vector2(0, -120))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.last_collision != null and actor.global_position.y > 314.0,
 		"inner maintenance gate remains physically closed until the wheel is repaired"
 	)
 	actor.request_test_motion(repair_stand - actor.global_position)
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.last_collision == null and actor.global_position.distance_to(repair_stand) <= 30.0,
 		"repair workstation is physically reachable on the near side of the inner gate"
@@ -820,13 +908,15 @@ func _physical_mill_gate_and_retreat() -> void:
 	var poor_snapshot: Dictionary = authority.snapshot()
 	poor_snapshot.inventory["oak_wood"] = 0
 	poor_snapshot.inventory["iron_scrap"] = 1
+	var state_before_failed_repair: Dictionary = poor_snapshot.get("site_state", {}).duplicate(true)
 	insufficient_fixture.configure(poor_snapshot)
 	var failure: Dictionary = insufficient_fixture.submit_intent(repair)
 	_check(failure.status == "rejected", "mill repair requires its non-free material cost")
 	_check(
-		insufficient_fixture.snapshot().site_state.get(site.get_source_id(), {}).is_empty(),
+		insufficient_fixture.snapshot().site_state == state_before_failed_repair,
 		"failed mill repair leaves machinery and route unchanged"
 	)
+	insufficient_fixture.free()
 	var repaired: Dictionary = authority.submit_intent(repair)
 	_check(repaired.status == "committed", "affordable mill repair commits through the owner")
 	site.receive_authoritative_result(
@@ -846,14 +936,14 @@ func _physical_mill_gate_and_retreat() -> void:
 	)
 	await physics_frame
 	actor.request_test_motion(Vector2(0, -160))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.last_collision == null and actor.global_position.y < 270.0,
 		"accepted repair opens the physical inner gate"
 	)
 	var salvage_stand := Vector2(678, 278)
 	actor.request_test_motion(salvage_stand - actor.global_position)
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.global_position.distance_to(salvage_stand) <= 30.0,
 		"the separate fastener workstation is physically reachable beyond the repaired gate"
@@ -878,11 +968,11 @@ func _physical_mill_gate_and_retreat() -> void:
 	)
 
 	actor.request_test_motion(Vector2(528 - actor.global_position.x, 0))
-	await physics_frame
+	await actor.await_test_motion()
 	actor.request_test_motion(Vector2(0, 410 - actor.global_position.y))
-	await physics_frame
+	await actor.await_test_motion()
 	actor.request_test_motion(Vector2(0, 536 - actor.global_position.y))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.last_collision == null and actor.global_position.y >= 520.0,
 		"player can retreat through both repaired access gates to the safe outer walk"
@@ -891,7 +981,7 @@ func _physical_mill_gate_and_retreat() -> void:
 	site.set_projection(authority.project_state(site.get_source_id()))
 	await physics_frame
 	actor.request_test_motion(Vector2(0, -140))
-	await physics_frame
+	await actor.await_test_motion()
 	_check(
 		actor.last_collision != null and actor.global_position.y > 480.0,
 		"removing the owner-projected capability recloses the outer gate"
@@ -922,21 +1012,21 @@ func _physical_mill_gate_and_retreat() -> void:
 	)
 	leave_actor.global_position = Vector2(528, 410)
 	leave_actor.request_test_motion(Vector2(0, -160))
-	await physics_frame
+	await leave_actor.await_test_motion()
 	_check(
 		leave_actor.last_collision != null and leave_actor.global_position.y > 314.0,
 		"leaving the wheel seized keeps the inner salvage gate closed"
 	)
 	leave_actor.request_test_motion(Vector2(0, 126))
-	await physics_frame
+	await leave_actor.await_test_motion()
 	leave_actor.request_test_motion(Vector2(0, 96))
-	await physics_frame
+	await leave_actor.await_test_motion()
 	leave_actor.set("facing", Vector2.DOWN)
 	_check(
 		leave_site.try_exit(leave_actor), "safe no-repair branch keeps the return doorway usable"
 	)
 	leave_actor.request_test_motion(Vector2(0, 66))
-	await physics_frame
+	await leave_actor.await_test_motion()
 	_check(
 		leave_actor.last_collision == null and leave_actor.global_position.y > 600.0,
 		"unrepaired Mill route permits a physical retreat to the exterior"
@@ -953,6 +1043,7 @@ func _make_site(index: int) -> Dictionary:
 	root.add_child(site)
 	await process_frame
 	site.set_projection(fixture.project_state(site.get_source_id()))
+	site.apply_run_phase_projection(PHASE_FIXTURE.project(site.definition))
 	var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
 	actor.collision_layer = 2
 	actor.collision_mask = 1
@@ -981,8 +1072,22 @@ func _clone_claim_with_generation(
 	var copy := intent.duplicate(true)
 	var base := "%s/%s/%s" % [copy.source_id, copy.object_id, copy.action_id]
 	copy.claim_id = "%s/g%d" % [base, generation]
-	copy.intent_id = "%s|%s|%s|%s" % [copy.source_id, copy.object_id, copy.action_id, copy.claim_id]
 	copy.observed_projection_revision = projection_revision
+	copy.intent_id = (
+		"%s|%s|%s|%s|%s|%s|%d|%s|%d|%d"
+		% [
+			copy.source_id,
+			copy.object_id,
+			copy.action_id,
+			copy.claim_id,
+			copy.run_id,
+			copy.site_instance_id,
+			copy.run_epoch,
+			copy.phase_id,
+			copy.observed_phase_projection_revision,
+			copy.observed_projection_revision
+		]
+	)
 	return copy
 
 

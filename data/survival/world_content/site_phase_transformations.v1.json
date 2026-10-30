@@ -1,0 +1,392 @@
+{
+  "schema": "soh.a8.site_phase_transformations.v1",
+  "schema_version": 1,
+  "document_status": "A8_AUTHORED_OWNER_PROJECTION_REQUIRED_NOT_PRODUCTION_MOUNTED",
+  "source_pins": {
+    "a0_pr": 21,
+    "a0_head": "5b932fd4bc6ae5966cd9662f262f70aa384c2f99",
+    "a0_role": "clock_run_phase_and_save_authority_ONLY",
+    "a1_pr": 20,
+    "a1_head": "61cd8d3730cef91fe061ac9cd7cfee9f6e013193",
+    "a1_world_plan_sha256": "fc5412822a12b4bed7be0954d9bc64e0abbca890e6a0e6ec0891610d7a198001",
+    "a1_route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+    "a1_site_transform_contract_sha256": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e",
+    "a1_art_manifest_sha256": "83d69373ca6c1258e8727800d0aa0c288851c34d25539c69c21ec9f5fc9d769a",
+    "a1_terrain_sha256": "6128d8f41abe6962fe705431db20e762e0cca613ffc3eca29065727422737d1c",
+    "a1_props_sha256": "8d4acf4028e0e065b901e78c59c65e5a68677fb75d46c04c7e5a029a76d27324",
+    "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+    "a3_pr": 19,
+    "a3_head": "a5d11141b12be16cc8d63957d0409169dbb79213",
+    "a3_quarry_authorization": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+    "avfx_gold_authority": "UNCHANGED_AVFX_OWNS_EXACT_GOLD",
+    "a8_base_commit": "54c66b89b839d773f93c023afb13f0f9295ec9a"
+  },
+  "tuning_profile_id": "ragnarok_site_presentation.v1",
+  "authority_boundary": {
+    "clock_and_phase": "A0_ONLY",
+    "run_and_save_lifecycle": "A0_ONLY",
+    "canonical_geography_and_world_spawn": "A1_ONLY",
+    "reward_cost_currency_and_transaction_authorization": "A3_AND_A0_ONLY",
+    "exact_gold_production": "AVFX_ONLY",
+    "physical_scene_presentation_and_neutral_intent": "A8_ONLY",
+    "phase_projection_is_not_a_clock": true,
+    "site_phase_effects_are_not_rewards_or_combat": true,
+    "a8_may_not_finalize_a_run_or_write_save_data": true
+  },
+  "phase_projection_contract": {
+    "contract_id": "soh.a0.run_phase_projection.v1",
+    "owner": "A0.RunLifecycle",
+    "required_fields": [
+      "contract_id",
+      "projection_authority",
+      "world_id",
+      "poi_id",
+      "site_instance_id",
+      "run_id",
+      "run_epoch",
+      "projection_revision",
+      "elapsed_real_hours",
+      "phase_id",
+      "active_effect_ids",
+      "environment"
+    ],
+    "valid_authority_label": "A0.RunLifecycle",
+    "elapsed_hours_are_observed_not_advanced_by_a8": true,
+    "unknown_or_missing_projection": "KEEP_BASELINE_GEOMETRY_AND_DO_NOT_EMIT_PHASE_ACTIONS",
+    "malformed_or_stale_projection": "REJECT_WITHOUT_MUTATING_SITE_OR_RUN",
+    "phase_effects_require_explicit_a0_active_effect_id": true,
+    "environment_values_may_be_unknown": true,
+    "unknown_weather_or_tide": "PRESERVE_UNKNOWN_AND_NEVER_STRAND_ACTOR"
+  },
+  "phase_schedule": [
+    {
+      "phase_id": "ordinary",
+      "minimum_elapsed_real_hours_inclusive": 0,
+      "maximum_elapsed_real_hours_exclusive": 264,
+      "day_label": "days_1_to_11",
+      "phase_effect_id": null,
+      "mutating_a8_intents_allowed": true
+    },
+    {
+      "phase_id": "ragnarok_day12",
+      "minimum_elapsed_real_hours_inclusive": 264,
+      "maximum_elapsed_real_hours_exclusive": 288,
+      "day_label": "day_12",
+      "phase_effect_id": "a0.phase.ragnarok.day12",
+      "mutating_a8_intents_allowed": true
+    },
+    {
+      "phase_id": "ragnarok_day13",
+      "minimum_elapsed_real_hours_inclusive": 288,
+      "maximum_elapsed_real_hours_exclusive": 312,
+      "day_label": "day_13",
+      "phase_effect_id": "a0.phase.ragnarok.day13",
+      "mutating_a8_intents_allowed": true
+    },
+    {
+      "phase_id": "ragnarok_day14",
+      "minimum_elapsed_real_hours_inclusive": 312,
+      "maximum_elapsed_real_hours_exclusive": 336,
+      "day_label": "day_14",
+      "phase_effect_id": "a0.phase.ragnarok.day14",
+      "mutating_a8_intents_allowed": true
+    },
+    {
+      "phase_id": "run_expired",
+      "minimum_elapsed_real_hours_inclusive": 336,
+      "maximum_elapsed_real_hours_exclusive": 1000000,
+      "day_label": "terminal",
+      "phase_effect_id": null,
+      "mutating_a8_intents_allowed": false
+    }
+  ],
+  "physical_site_profiles": [
+    {
+      "poi_id": "poi_crown_south_quarry",
+      "site_instance_id_policy": "SUPPLIED_BY_A0_AT_MOUNT; NEVER_DERIVE_OR_PERSIST_IN_A8",
+      "region_id": "r_ashen_crown",
+      "canonical_cell": [
+        30,
+        280
+      ],
+      "a1_entry_route_id": "sp_poi_crown_south_quarry",
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "a8_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
+      "transformation_identity": "same_quarry_site_and_owner_state_across_all_phases",
+      "phase_profiles": {
+        "ordinary": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_quarry.phase.ordinary",
+          "disabled_choice_blockers": [],
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "safe_local_route": "owner_projected_quarry_choice",
+          "retreat_route_remains_open": true,
+          "changes": [
+            "ambient_dust_only"
+          ]
+        },
+        "ragnarok_day12": {
+          "effect_id": "a0.site_effect.ragnarok.quarry.day12",
+          "presentation_key": "world.poi.crown_south_quarry.phase.day12",
+          "disabled_choice_blockers": [
+            "chock_stone"
+          ],
+          "temporary_blockers": [
+            {
+              "id": "ash_fall_east",
+              "rect_px": [
+                534,
+                226,
+                26,
+                124
+              ],
+              "lane": "east"
+            }
+          ],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            520,
+            216
+          ],
+          "safe_local_route": "west",
+          "retreat_route_remains_open": true,
+          "changes": [
+            "ash_fall_cue",
+            "west_route_opens",
+            "east_route_physically_closes"
+          ]
+        },
+        "ragnarok_day13": {
+          "effect_id": "a0.site_effect.ragnarok.quarry.day13",
+          "presentation_key": "world.poi.crown_south_quarry.phase.day13",
+          "disabled_choice_blockers": [
+            "brace_oak"
+          ],
+          "temporary_blockers": [
+            {
+              "id": "shelf_shear_west",
+              "rect_px": [
+                436,
+                226,
+                26,
+                124
+              ],
+              "lane": "west"
+            }
+          ],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            462,
+            216
+          ],
+          "safe_local_route": "east",
+          "retreat_route_remains_open": true,
+          "changes": [
+            "shelf_shear_cue",
+            "east_route_opens",
+            "west_route_physically_closes"
+          ]
+        },
+        "ragnarok_day14": {
+          "effect_id": "a0.site_effect.ragnarok.quarry.day14",
+          "presentation_key": "world.poi.crown_south_quarry.phase.day14",
+          "disabled_choice_blockers": [
+            "chock_stone"
+          ],
+          "temporary_blockers": [
+            {
+              "id": "tuff_collapse_east",
+              "rect_px": [
+                534,
+                226,
+                26,
+                124
+              ],
+              "lane": "east"
+            }
+          ],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            520,
+            216
+          ],
+          "safe_local_route": "west",
+          "retreat_route_remains_open": true,
+          "changes": [
+            "tuff_collapse_cue",
+            "west_route_opens",
+            "east_route_physically_closes"
+          ]
+        },
+        "run_expired": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_quarry.phase.expired",
+          "disabled_choice_blockers": [],
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "safe_local_route": "retreat_only",
+          "retreat_route_remains_open": true,
+          "changes": [
+            "a8_mutating_interactions_disabled"
+          ]
+        }
+      }
+    },
+    {
+      "poi_id": "poi_crown_south_orchard",
+      "site_instance_id_policy": "SUPPLIED_BY_A0_AT_MOUNT; NEVER_DERIVE_OR_PERSIST_IN_A8",
+      "region_id": "r_ashen_crown",
+      "canonical_cell": [
+        140,
+        360
+      ],
+      "a1_entry_route_id": "sp_poi_crown_south_orchard",
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "a8_scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
+      "transformation_identity": "same_orchard_ruin_and_owner_projected_irrigation_state_across_all_phases",
+      "environment_policy": "unknown_water_depth_remains_blocking; phase_cues_never_change_or_bypass_it",
+      "phase_profiles": {
+        "ordinary": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_orchard.phase.ordinary",
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "changes": [
+            "ordinary_boardwalk_and_owner_projected_sluice"
+          ]
+        },
+        "ragnarok_day12": {
+          "effect_id": "a0.site_effect.ragnarok.orchard.day12",
+          "presentation_key": "world.poi.crown_south_orchard.phase.day12",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            700,
+            216
+          ],
+          "changes": [
+            "sluice_pressure_warning_cue_only"
+          ]
+        },
+        "ragnarok_day13": {
+          "effect_id": "a0.site_effect.ragnarok.orchard.day13",
+          "presentation_key": "world.poi.crown_south_orchard.phase.day13",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            672,
+            196
+          ],
+          "changes": [
+            "graft_channel_echo_cue_only"
+          ]
+        },
+        "ragnarok_day14": {
+          "effect_id": "a0.site_effect.ragnarok.orchard.day14",
+          "presentation_key": "world.poi.crown_south_orchard.phase.day14",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            700,
+            216
+          ],
+          "changes": [
+            "boardwalk_visibility_cue_only"
+          ]
+        },
+        "run_expired": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_orchard.phase.expired",
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "changes": [
+            "a8_mutating_interactions_disabled"
+          ]
+        }
+      }
+    },
+    {
+      "poi_id": "poi_crown_south_mill",
+      "site_instance_id_policy": "SUPPLIED_BY_A0_AT_MOUNT; NEVER_DERIVE_OR_PERSIST_IN_A8",
+      "region_id": "r_ashen_crown",
+      "canonical_cell": [
+        120,
+        300
+      ],
+      "a1_entry_route_id": "sp_poi_crown_south_mill",
+      "a1_geography_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
+      "a8_scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn",
+      "transformation_identity": "same_south_crown_mill_and_owner_projected_repair_state_across_all_phases",
+      "phase_profiles": {
+        "ordinary": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_mill.phase.ordinary",
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "changes": [
+            "owner_projected_mill_repair_and_inspection"
+          ]
+        },
+        "ragnarok_day12": {
+          "effect_id": "a0.site_effect.ragnarok.south_mill.day12",
+          "presentation_key": "world.poi.crown_south_mill.phase.day12",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            556,
+            184
+          ],
+          "changes": [
+            "wheel_vibration_cue_only"
+          ]
+        },
+        "ragnarok_day13": {
+          "effect_id": "a0.site_effect.ragnarok.south_mill.day13",
+          "presentation_key": "world.poi.crown_south_mill.phase.day13",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            556,
+            184
+          ],
+          "changes": [
+            "bearing_squeal_cue_only"
+          ]
+        },
+        "ragnarok_day14": {
+          "effect_id": "a0.site_effect.ragnarok.south_mill.day14",
+          "presentation_key": "world.poi.crown_south_mill.phase.day14",
+          "temporary_blockers": [],
+          "warning_art_frame": "cairn_warning",
+          "warning_position_px": [
+            556,
+            184
+          ],
+          "changes": [
+            "race_pressure_cue_only"
+          ]
+        },
+        "run_expired": {
+          "effect_id": null,
+          "presentation_key": "world.poi.crown_south_mill.phase.expired",
+          "temporary_blockers": [],
+          "warning_art_frame": null,
+          "changes": [
+            "a8_mutating_interactions_disabled"
+          ]
+        }
+      }
+    }
+  ],
+  "prohibitions": [
+    "no_local_clock_or_phase_advance",
+    "no_save_service_or_run_record_write",
+    "no_currency_balance_or_transaction",
+    "no_reward_or_cost_or_source_cooldown_authority",
+    "no_boss_or_combat_entity_or_fake_completion",
+    "no_weather_or_tide_guess",
+    "no_actor_teleport_for_acceptance",
+    "no_new_canonical_poi_or_geography_edit"
+  ]
+}

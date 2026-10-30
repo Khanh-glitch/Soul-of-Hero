@@ -215,8 +215,8 @@
   "visual_notes": "Four old grafted trees, broken low stone channels, windfallen limbs and a wet irrigation cut; orchard is a traversable garden, not a fetch-quest stage.",
   "scene_role": "local_worksite",
   "local_transition": {
-    "contract_id": "soh.native_poi.transition.v1",
-    "contract_version": 1,
+    "contract_id": "soh.native_poi.transition.v2",
+    "contract_version": 2,
     "worksite_scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
     "shell_scene": "res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
     "interior_entry": [
@@ -617,7 +617,28 @@
       {
         "family": "water",
         "width": 2,
-        "points": [[14, 17], [21, 17], [30, 17], [39, 17], [46, 17]]
+        "points": [
+          [
+            14,
+            17
+          ],
+          [
+            21,
+            17
+          ],
+          [
+            30,
+            17
+          ],
+          [
+            39,
+            17
+          ],
+          [
+            46,
+            17
+          ]
+        ]
       }
     ],
     "state_paths": {

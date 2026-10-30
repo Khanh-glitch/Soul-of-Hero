@@ -1,7 +1,7 @@
 {
   "contract_id": "soh.native_poi.intent.v2",
   "contract_version": 2,
-  "status": "A8 neutral-identity proposal; A0 approval required before production; no A3 action bindings currently approved",
+  "status": "SUPERSEDED_BY_V3; preserved for historical review only; never use for new A8 production requests",
   "authority": {
     "intent_sender": "NativePoiSite sends neutral canonical source/object/action identity and the revision it observed; it has no transaction authority",
     "commit_owner": "A0 transaction boundary independently resolves canonical A1 identity and the exact A3-approved binding, then commits through the existing SaveService",

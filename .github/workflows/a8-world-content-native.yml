@@ -76,6 +76,20 @@ jobs:
           set -e
           cat .artifacts/a8-world-content/native-surface.log
           exit "$status"
+      - name: Run owner-projected Ragnarok route and endpoint physics contracts
+        id: native_ragnarok
+        if: always()
+        continue-on-error: true
+        run: |
+          set +e
+          godot --headless --path . --script tests/survival/world_content/native_poi_ragnarok_test.gd > .artifacts/a8-world-content/native-ragnarok.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/a8-world-content/native-ragnarok.log
+          if [ "$status" -ne 0 ]; then
+            { echo '### A8 Ragnarok phase/endpoint failure'; echo '```text'; tail -n 120 .artifacts/a8-world-content/native-ragnarok.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit "$status"
       - name: Capture native scenes at 720p, 2K and 4K
         id: native_capture
         if: always()
@@ -97,9 +111,10 @@ jobs:
           NATIVE_CONTRACT_OUTCOME: ${{ steps.native_contract.outcome }}
           NATIVE_TRANSITION_OUTCOME: ${{ steps.native_transition.outcome }}
           NATIVE_SURFACE_OUTCOME: ${{ steps.native_surface.outcome }}
+          NATIVE_RAGNAROK_OUTCOME: ${{ steps.native_ragnarok.outcome }}
           NATIVE_CAPTURE_OUTCOME: ${{ steps.native_capture.outcome }}
         run: |
-          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
+          outcome_report="contract=$NATIVE_CONTRACT_OUTCOME transition=$NATIVE_TRANSITION_OUTCOME surface=$NATIVE_SURFACE_OUTCOME ragnarok=$NATIVE_RAGNAROK_OUTCOME capture=$NATIVE_CAPTURE_OUTCOME"
           printf '%s\n' "$outcome_report" | tee .artifacts/a8-world-content/outcomes.txt
           {
             echo '### A8 native evidence outcomes'
@@ -111,12 +126,14 @@ jobs:
           if [ "$NATIVE_CONTRACT_OUTCOME" != success ] || \
             [ "$NATIVE_TRANSITION_OUTCOME" != success ] || \
             [ "$NATIVE_SURFACE_OUTCOME" != success ] || \
+            [ "$NATIVE_RAGNAROK_OUTCOME" != success ] || \
             [ "$NATIVE_CAPTURE_OUTCOME" != success ]; then
             echo "::error title=A8 native evidence outcomes::$outcome_report"
           fi
           test "$NATIVE_CONTRACT_OUTCOME" = success
           test "$NATIVE_TRANSITION_OUTCOME" = success
           test "$NATIVE_SURFACE_OUTCOME" = success
+          test "$NATIVE_RAGNAROK_OUTCOME" = success
           test "$NATIVE_CAPTURE_OUTCOME" = success
       - uses: actions/upload-artifact@v4
         if: always()

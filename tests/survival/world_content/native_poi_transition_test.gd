@@ -3,7 +3,7 @@ extends SceneTree
 # Test-only setup teleports are direct global_position assignments below; they
 # model an owner-restored spawn or position an actor for an isolated collision
 # check. They are not traversal evidence. Traversal assertions follow
-# request_test_motion + physics_frame, including doorway and water-route checks.
+# request_test_motion + the actor completion signal, including doorway and water-route checks.
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 
@@ -11,6 +11,9 @@ const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
 const ACTOR_SCRIPT := preload("res://tests/survival/world_content/test_actor.gd")
+const PHASE_FIXTURE := preload(
+	"res://tests/survival/world_content/a8_run_phase_projection_fixture.gd"
+)
 const SITE_SCENES := [
 	"res://game/survival/world_content/scenes/south_quarry.tscn",
 	"res://game/survival/world_content/scenes/south_orchard_ruin.tscn",
@@ -20,6 +23,11 @@ const SHELL_SCENES := [
 	"res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
 	"res://game/survival/world_content/scenes/south_orchard_ruin_overworld.tscn",
 	"res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
+]
+const SITE_DEFINITIONS := [
+	"res://data/survival/world_content/sites/south_quarry.json",
+	"res://data/survival/world_content/sites/south_orchard_ruin.json",
+	"res://data/survival/world_content/sites/south_crown_mill.json",
 ]
 const TRANSFORM_CELLS := [Vector2i(30, 280), Vector2i(140, 360), Vector2i(120, 300)]
 const TRANSFORM_ROOTS := [Vector2(424, 4424), Vector2(2184, 5704), Vector2(1864, 4744)]
@@ -34,6 +42,7 @@ func _initialize() -> void:
 
 
 func _run() -> void:
+	_shell_definition_parse_schema_and_resource_negatives()
 	await _physical_exterior_entry_exit_all_sites()
 	await _physical_quarry_route_choices()
 	await _physical_water_routes_and_weather_non_stranding()
@@ -52,6 +61,107 @@ func _run() -> void:
 		quit(1)
 
 
+func _shell_definition_parse_schema_and_resource_negatives() -> void:
+	var invalid_json := JSON.new()
+	_check(invalid_json.parse("{ broken") != OK, "invalid source JSON fails to parse")
+	for index: int in range(SITE_DEFINITIONS.size()):
+		var source_path: String = SITE_DEFINITIONS[index]
+		var parser := JSON.new()
+		_check(
+			parser.parse(FileAccess.get_file_as_string(source_path)) == OK,
+			"South-site JSON parses: %s" % source_path
+		)
+		var definition: Variant = parser.data
+		_check(definition is Dictionary, "South-site JSON root is an object")
+		if not definition is Dictionary:
+			continue
+		_check(
+			NativePoiShell.validate_definition(definition).is_empty(),
+			"source schema, shell bounds, socket and scene references validate: %s" % source_path
+		)
+		var shell: Dictionary = definition.get("overworld_shell", {})
+		for field: String in ["bounds_px", "action_socket", "canonical_cell"]:
+			var pair: Variant = (
+				shell.get(field, [])
+				if field != "canonical_cell"
+				else definition.source.get(field, [])
+			)
+			_check(
+				(
+					pair is Array
+					and pair.size() == 2
+					and (typeof(pair[0]) == TYPE_INT or typeof(pair[0]) == TYPE_FLOAT)
+					and (typeof(pair[1]) == TYPE_INT or typeof(pair[1]) == TYPE_FLOAT)
+				),
+				"%s accepts JSON integer-valued numeric pair %s" % [field, pair]
+			)
+
+		var bad_schema := definition.duplicate(true)
+		bad_schema.schema_version = 2
+		_check(
+			NativePoiShell.validate_definition(bad_schema) == "unsupported_schema_version",
+			"unsupported shell schema version is rejected"
+		)
+		var string_schema := definition.duplicate(true)
+		string_schema.schema_version = "1"
+		_check(
+			NativePoiShell.validate_definition(string_schema) == "unsupported_schema_version",
+			"string-valued schema version is rejected"
+		)
+		var string_bounds := definition.duplicate(true)
+		string_bounds.overworld_shell.bounds_px = [128, "128"]
+		_check(
+			NativePoiShell.validate_definition(string_bounds) == "shell_bounds_invalid",
+			"string-valued bounds component is rejected"
+		)
+		var fractional_bounds := definition.duplicate(true)
+		fractional_bounds.overworld_shell.bounds_px = [128.5, 128]
+		_check(
+			NativePoiShell.validate_definition(fractional_bounds) == "shell_bounds_invalid",
+			"fractional bounds component is rejected"
+		)
+		var wrong_bounds := definition.duplicate(true)
+		wrong_bounds.overworld_shell.bounds_px = [960, 608]
+		_check(
+			NativePoiShell.validate_definition(wrong_bounds) == "shell_bounds_invalid",
+			"interior-size bounds cannot masquerade as a 128-pixel shell"
+		)
+		var malformed_socket := definition.duplicate(true)
+		malformed_socket.overworld_shell.action_socket = [64]
+		_check(
+			NativePoiShell.validate_definition(malformed_socket) == "action_socket_invalid",
+			"malformed action socket is rejected"
+		)
+		var wrong_socket := definition.duplicate(true)
+		wrong_socket.overworld_shell.action_socket = [63, 64]
+		_check(
+			NativePoiShell.validate_definition(wrong_socket) == "action_socket_invalid",
+			"off-center action socket is rejected"
+		)
+		var mismatched_scene := definition.duplicate(true)
+		mismatched_scene.local_transition.shell_scene = "res://missing_shell.tscn"
+		_check(
+			(
+				NativePoiShell.validate_definition(mismatched_scene)
+				== "shell_scene_reference_mismatch"
+			),
+			"split shell-scene references are rejected before scene loading"
+		)
+		var missing_worksite := definition.duplicate(true)
+		missing_worksite.local_transition.worksite_scene = "res://missing_worksite.tscn"
+		_check(
+			(
+				NativePoiShell.validate_definition(missing_worksite)
+				== "worksite_scene_resource_missing"
+			),
+			"missing referenced worksite scene is rejected"
+		)
+		var packed_shell := load(SHELL_SCENES[index]) as PackedScene
+		var packed_worksite := load(str(definition.local_transition.worksite_scene)) as PackedScene
+		_check(packed_shell != null, "referenced shell resource loads as PackedScene")
+		_check(packed_worksite != null, "referenced worksite resource loads as PackedScene")
+
+
 func _physical_exterior_entry_exit_all_sites() -> void:
 	for index: int in range(SHELL_SCENES.size()):
 		var shell_scene: PackedScene = load(SHELL_SCENES[index]) as PackedScene
@@ -61,14 +171,24 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		var shell := shell_scene.instantiate() as NativePoiShell
 		root.add_child(shell)
 		await process_frame
+		_check(
+			shell.definition_error.is_empty(), "shell loader accepts its exact authored definition"
+		)
+		_check(not shell.definition.is_empty(), "shell loaded the South-site source definition")
 		var shell_data: Dictionary = shell.definition.get("overworld_shell", {})
 		_assert_shell_art(shell)
 		_check(
-			shell_data.get("bounds_px", []) == [128, 128],
+			(
+				VECTOR_UTIL.from_int_pair(shell_data.get("bounds_px", []), Vector2i(-1, -1))
+				== Vector2i(128, 128)
+			),
 			"shell bounds stay inside four-tile footprint"
 		)
 		_check(
-			shell_data.get("action_socket", []) == [64, 64],
+			(
+				VECTOR_UTIL.from_int_pair(shell_data.get("action_socket", []), Vector2i(-1, -1))
+				== Vector2i(64, 64)
+			),
 			"A1 action socket remains shell-centered"
 		)
 		_check(
@@ -122,14 +242,31 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		shell_actor.global_position = Vector2(64, 148)
 		shell_actor.set("facing", Vector2.UP)
 		_check(
-			not shell.try_enter(shell_actor), "shell cannot be entered from beyond physical reach"
+			not shell.try_enter(shell_actor),
+			"shell entry fails closed without an A0 run projection"
 		)
 		shell_actor.request_test_motion(Vector2(0, -42))
-		await physics_frame
+		await shell_actor.await_test_motion()
 		_check(
 			shell_actor.motion_finished and shell_actor.last_collision == null,
 			"exterior actor physically passes through the shell doorway: %s" % shell.get_source_id()
 		)
+		_check(
+			not shell.try_enter(shell_actor),
+			"physically reached doorway still fails closed while A0 projection is missing"
+		)
+		_check(
+			shell.apply_run_phase_projection(PHASE_FIXTURE.project(shell.definition)),
+			"test-only owner phase projection enables the physically tested transition"
+		)
+		shell_actor.request_test_motion(Vector2(0, 50))
+		await shell_actor.await_test_motion()
+		_check(
+			not shell.try_enter(shell_actor),
+			"valid A0 context still enforces physical doorway reach"
+		)
+		shell_actor.request_test_motion(Vector2(0, -50))
+		await shell_actor.await_test_motion()
 		_check(
 			shell.get_context_hint(shell_actor).contains("Enter"),
 			"doorway presents a concise contextual entry affordance"
@@ -145,6 +282,15 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 			var entry: Dictionary = entry_requests[0]
 			_check(entry.direction == "enter", "shell request has explicit enter direction")
 			_check(
+				(
+					entry.contract_id == "soh.native_poi.transition.v2"
+					and entry.run_id == "fixture-run-1"
+					and entry.phase_id == "ordinary"
+					and entry.site_instance_id == "%s@fixture-run-1" % shell.get_source_id()
+				),
+				"transition carries A0-owned run, phase and site-instance identity"
+			)
+			_check(
 				entry.poi_id == shell.get_source_id(),
 				"shell transition identity matches its source data"
 			)
@@ -154,18 +300,21 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				"entry targets only the local worksite"
 			)
 			_check(
-				entry.return_anchor.shell_local_position == [64, 108],
+				(
+					VECTOR_UTIL.from_pair(entry.return_anchor.shell_local_position, Vector2(-1, -1))
+					== Vector2(64, 108)
+				),
 				"entry preserves the real exterior return doorway"
 			)
 		shell_actor.request_test_motion(Vector2(0, 50))
-		await physics_frame
+		await shell_actor.await_test_motion()
 		_check(
 			shell_actor.last_collision == null and shell_actor.global_position.y > 128,
 			"shell doorway remains a physical egress path with side collision retained"
 		)
 		shell_actor.global_position = Vector2(48, 64)
 		shell_actor.request_test_motion(Vector2(-40, 0))
-		await physics_frame
+		await shell_actor.await_test_motion()
 		_check(
 			shell_actor.last_collision != null and shell_actor.global_position.x >= 18,
 			"shell west boundary still blocks ordinary traversal"
@@ -173,7 +322,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		if index == 1:
 			shell_actor.global_position = Vector2(24, 96)
 			shell_actor.request_test_motion(Vector2(0, -40))
-			await physics_frame
+			await shell_actor.await_test_motion()
 			_check(
 				shell_actor.last_collision != null and shell_actor.global_position.y >= 88,
 				"orchard shell tree trunk is a real obstacle beneath its visual canopy"
@@ -193,7 +342,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		site.transition_requested.connect(func(request: Dictionary): local_requests.append(request))
 		actor.global_position = Vector2(entry_x, 626)
 		actor.request_test_motion(Vector2(0, -80))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.motion_finished and actor.last_collision == null,
 			(
@@ -207,7 +356,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		)
 		var boundary_count := 0
 		for child: Node in site.get_children():
-			if child is StaticBody2D and str(child.name) == "Wall":
+			if child is StaticBody2D and str(child.name).begins_with("PerimeterWall_"):
 				boundary_count += 1
 		_check(
 			boundary_count >= 5, "local worksite retains solid wall segments around an actual door"
@@ -217,13 +366,13 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 		if index < 2:
 			stand = site.get_stand_position()
 			actor.request_test_motion(Vector2(stand.x - actor.global_position.x, 0))
-			await physics_frame
+			await actor.await_test_motion()
 			actor.request_test_motion(Vector2(0, stand.y - actor.global_position.y))
-			await physics_frame
+			await actor.await_test_motion()
 		else:
 			stand = Vector2(528, 536)
 			actor.request_test_motion(stand - actor.global_position)
-			await physics_frame
+			await actor.await_test_motion()
 		_check(
 			actor.global_position.distance_to(stand) <= 30.0,
 			(
@@ -264,9 +413,9 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 
 		var spawn := site.get_spawn_position()
 		actor.request_test_motion(Vector2(spawn.x - actor.global_position.x, 0))
-		await physics_frame
+		await actor.await_test_motion()
 		actor.request_test_motion(Vector2(0, spawn.y - actor.global_position.y))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.global_position.distance_to(spawn) <= 18.0,
 			"the same site path supports safe retreat to its doorway"
@@ -296,18 +445,23 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				"exit targets the compact shell"
 			)
 			_check(
-				exit_request.return_anchor.shell_local_position == [64, 108],
+				(
+					VECTOR_UTIL.from_pair(
+						exit_request.return_anchor.shell_local_position, Vector2(-1, -1)
+					)
+					== Vector2(64, 108)
+				),
 				"exit returns to the shell doorway, not local spawn"
 			)
 		actor.request_test_motion(Vector2(0, 78))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.last_collision == null and actor.global_position.y > 600,
 			"worksite egress remains physically open after interaction"
 		)
 		actor.global_position = Vector2(48, 300)
 		actor.request_test_motion(Vector2(-40, 0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.last_collision != null and actor.global_position.x >= 32,
 			"local worksite keeps its meaningful west perimeter collision"
@@ -322,6 +476,12 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				var returned_shell := returned_shell_scene.instantiate() as NativePoiShell
 				root.add_child(returned_shell)
 				await process_frame
+				_check(
+					returned_shell.apply_run_phase_projection(
+						PHASE_FIXTURE.project(returned_shell.definition)
+					),
+					"return shell receives owner run context before revisit"
+				)
 				var anchor: Dictionary = return_request.get("return_anchor", {})
 				var doorway := VECTOR_UTIL.from_pair(anchor.get("shell_local_position", []))
 				actor.global_position = doorway
@@ -331,14 +491,14 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				)
 				actor.set("facing", Vector2.DOWN)
 				actor.request_test_motion(Vector2(0, 50))
-				await physics_frame
+				await actor.await_test_motion()
 				_check(
 					actor.last_collision == null and actor.global_position.y > 128,
 					"returned actor can physically leave the same shell doorway"
 				)
 				actor.set("facing", Vector2.UP)
 				actor.request_test_motion(Vector2(0, -50))
-				await physics_frame
+				await actor.await_test_motion()
 				var revisit_requests: Array[Dictionary] = []
 				returned_shell.transition_requested.connect(
 					func(request: Dictionary): revisit_requests.append(request)
@@ -352,11 +512,17 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 					"revisit reuses the canonical shell identity without creating a new POI"
 				)
 				var revisit_site := (
-					(load(str(return_request.to_scene)) as PackedScene).instantiate()
+					(load(str(return_request.from_scene)) as PackedScene).instantiate()
 					as NativePoiSite
 				)
 				root.add_child(revisit_site)
 				await process_frame
+				_check(
+					revisit_site.apply_run_phase_projection(
+						PHASE_FIXTURE.project(revisit_site.definition)
+					),
+					"revisited worksite receives the same owner run context"
+				)
 				var serialized_owner_snapshot := JSON.stringify(authority.snapshot())
 				var restarted_snapshot: Variant = JSON.parse_string(serialized_owner_snapshot)
 				var restarted_authority := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
@@ -366,6 +532,7 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				var restored_projection := restarted_authority.project_state(
 					revisit_site.get_source_id()
 				)
+				restarted_authority.free()
 				_check(
 					revisit_site.set_projection(restored_projection),
 					"site revisit accepts its serialized owner projection after fixture restart"
@@ -435,12 +602,12 @@ func _physical_quarry_route_choices() -> void:
 		var stand := site.get_stand_position()
 		actor.global_position = spawn
 		actor.request_test_motion(Vector2(stand.x - spawn.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.last_collision == null, "Quarry actor reaches the work area without a shortcut"
 		)
 		actor.request_test_motion(Vector2(0.0, stand.y - actor.global_position.y))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.last_collision == null and actor.global_position.distance_to(stand) <= 30.0,
 			"Quarry actor physically reaches the ordinary interaction stand"
@@ -470,14 +637,14 @@ func _physical_quarry_route_choices() -> void:
 
 		var route_side_x := 600.0 if route_index == 0 else 360.0
 		actor.request_test_motion(Vector2(route_side_x - actor.global_position.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(actor.last_collision == null, "route approach stays walkable below the shelf")
 		actor.request_test_motion(Vector2(0.0, 280.0 - actor.global_position.y))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(actor.last_collision == null, "route approach reaches the authored shelf height")
 		var route_crossing_x := 506.0
 		actor.request_test_motion(Vector2(route_crossing_x - actor.global_position.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			(
 				actor.last_collision == null
@@ -487,7 +654,7 @@ func _physical_quarry_route_choices() -> void:
 		)
 		var blocked_target := 420.0 if route_index == 0 else 592.0
 		actor.request_test_motion(Vector2(blocked_target - actor.global_position.x, 0.0))
-		await physics_frame
+		await actor.await_test_motion()
 		_check(
 			actor.last_collision != null, "unchosen Quarry passage remains a real collision blocker"
 		)
@@ -503,7 +670,7 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 	# Setup-only placement on the safe west bank; the next move is real physics.
 	orchard_actor.global_position = Vector2(200, 288)
 	orchard_actor.request_test_motion(Vector2(100, 0))
-	await physics_frame
+	await orchard_actor.await_test_motion()
 	_check(
 		orchard_actor.last_collision != null and orchard_actor.global_position.x < 214,
 		"Orchard's visible unknown-depth water blocks traversal away from its boardwalk"
@@ -535,13 +702,13 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 	)
 	orchard_actor.global_position = Vector2(496, 350)
 	orchard_actor.request_test_motion(Vector2(0, -120))
-	await physics_frame
+	await orchard_actor.await_test_motion()
 	_check(
 		orchard_actor.last_collision == null and orchard_actor.global_position.y < 240,
 		"Orchard boardwalk physically crosses the channel after sluice clearance"
 	)
 	orchard_actor.request_test_motion(Vector2(0, 120))
-	await physics_frame
+	await orchard_actor.await_test_motion()
 	_check(
 		orchard_actor.last_collision == null and orchard_actor.global_position.y > 349,
 		"Orchard boardwalk remains a physical retreat to the south bank"
@@ -569,7 +736,7 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 		"missing owner time/weather/tide remain UNKNOWN"
 	)
 	orchard_actor.request_test_motion(Vector2(0, -120))
-	await physics_frame
+	await orchard_actor.await_test_motion()
 	_check(
 		orchard_actor.last_collision == null,
 		"unknown weather cannot strand the player or close the authored Orchard retreat"
@@ -582,7 +749,7 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 	var mill_authority: PoiAuthorityFixture = mill_pair.authority
 	mill_actor.global_position = Vector2(260, 304)
 	mill_actor.request_test_motion(Vector2(100, 0))
-	await physics_frame
+	await mill_actor.await_test_motion()
 	_check(
 		mill_actor.last_collision != null and mill_actor.global_position.x < 278,
 		"Mill's visible wheel-race water blocks ordinary cross-channel walking"
@@ -628,13 +795,13 @@ func _physical_water_routes_and_weather_non_stranding() -> void:
 		"Mill power state remains owner-projected"
 	)
 	mill_actor.request_test_motion(Vector2(0, -140))
-	await physics_frame
+	await mill_actor.await_test_motion()
 	_check(
 		mill_actor.last_collision == null and mill_actor.global_position.y < 280,
 		"powered Mill opens its existing maintenance gate and the fixed plank race crossing"
 	)
 	mill_actor.request_test_motion(Vector2(0, 140))
-	await physics_frame
+	await mill_actor.await_test_motion()
 	_check(
 		mill_actor.last_collision == null and mill_actor.global_position.y > 409,
 		"Mill's authored plank/entry route supports a physical retreat after repair"
@@ -684,6 +851,7 @@ func _make_site(index: int) -> Dictionary:
 	root.add_child(site)
 	await process_frame
 	site.set_projection(fixture.project_state(site.get_source_id()))
+	site.apply_run_phase_projection(PHASE_FIXTURE.project(site.definition))
 	var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
 	actor.collision_layer = 2
 	actor.collision_mask = 1
@@ -700,9 +868,9 @@ func _make_site(index: int) -> Dictionary:
 
 func _cleanup(pair: Dictionary) -> void:
 	for key: String in ["site", "actor", "authority"]:
-		var node: Node = pair.get(key)
-		if is_instance_valid(node):
-			node.queue_free()
+		var node: Variant = pair.get(key)
+		if is_instance_valid(node) and node is Node:
+			(node as Node).queue_free()
 	await process_frame
 
 

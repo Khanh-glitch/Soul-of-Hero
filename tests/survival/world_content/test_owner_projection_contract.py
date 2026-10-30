@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[3]
 class OwnerProjectionContractTests(unittest.TestCase):
     def test_projection_identity_revision_and_owner_clock_are_required(self) -> None:
         contract = json.loads(
-            (ROOT / "data/survival/world_content/interaction_contract.v2.json").read_text(
+            (ROOT / "data/survival/world_content/interaction_contract.v3.json").read_text(
                 encoding="utf-8"
             )
         )
@@ -29,9 +29,20 @@ class OwnerProjectionContractTests(unittest.TestCase):
                 "clock_seconds",
             }.issubset(required)
         )
-        self.assertEqual(contract["contract_id"], "soh.native_poi.intent.v2")
+        self.assertEqual(contract["contract_id"], "soh.native_poi.intent.v3")
         self.assertEqual(contract["intent_required_fields"], contract["intent_allowed_fields"])
-        self.assertEqual(len(contract["intent_allowed_fields"]), 8)
+        self.assertEqual(len(contract["intent_allowed_fields"]), 16)
+        intent_required = set(contract["intent_required_fields"])
+        self.assertIn("run_id", intent_required)
+        self.assertIn("site_instance_id", intent_required)
+        self.assertIn("observed_phase_projection_revision", intent_required)
+        self.assertIn("actor_local_position", intent_required)
+        superseded = json.loads(
+            (ROOT / "data/survival/world_content/interaction_contract.v2.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertIn("SUPERSEDED_BY_V3", superseded["status"])
         self.assertTrue(any("no a3-approved" in rule.lower() for rule in contract["request_rules"]))
         retired = json.loads(
             (ROOT / "data/survival/world_content/interaction_contract.v1.json").read_text(

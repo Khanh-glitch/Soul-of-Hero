@@ -6,6 +6,9 @@ const FIXTURE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/poi_authority_fixture.gd"
 )
 const ACTOR_SCRIPT := preload("res://tests/survival/world_content/test_actor.gd")
+const PHASE_FIXTURE := preload(
+	"res://tests/survival/world_content/a8_run_phase_projection_fixture.gd"
+)
 const SITE_SCENE := "res://game/survival/world_content/scenes/south_orchard_ruin.tscn"
 
 var _failures: Array[String] = []
@@ -40,6 +43,10 @@ func _owner_projection_is_the_only_run_state_reset_path() -> void:
 	_check(
 		site.set_projection(authority.project_state(site.get_source_id())),
 		"site accepts initial test-fixture projection"
+	)
+	_check(
+		site.apply_run_phase_projection(PHASE_FIXTURE.project(site.definition)),
+		"test-only run phase projection enables the owner-gated interaction"
 	)
 
 	var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
@@ -104,8 +111,10 @@ func _owner_projection_is_the_only_run_state_reset_path() -> void:
 	reset_snapshot["site_state"] = reset_states
 	var reset_authority := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
 	reset_authority.configure(reset_snapshot)
+	var reset_projection: Dictionary = reset_authority.project_state(site.get_source_id())
+	reset_authority.free()
 	_check(
-		site.set_projection(reset_authority.project_state(site.get_source_id())),
+		site.set_projection(reset_projection),
 		"new-run reset is accepted only through a newer owner projection"
 	)
 	_check(

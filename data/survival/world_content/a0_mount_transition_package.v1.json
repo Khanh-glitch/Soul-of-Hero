@@ -1,6 +1,6 @@
 {
   "schema": "soh.a8.a0_mount_transition_package.v1",
-  "package_status": "READY_FOR_A0_REVIEW_NOT_MOUNTED",
+  "package_status": "HISTORICAL_SUPERSEDED_BY_V2; DO_NOT_USE_ITS_STALE_OWNER_PINS",
   "source_pins_reviewed": {
     "a8_pr26_pre_package_head": "0e22d5f00532cf5e079b540e30a54281606fc757",
     "a1_pr20_current_head": "5aed8e8647c896e9a79ea812735ec237342462c4",

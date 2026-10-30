@@ -1,7 +1,8 @@
 {
   "contract_id": "soh.native_poi.transition.v1",
   "contract_version": 1,
-  "status": "A8 scene-to-owner transition request; A0 approval and production adapter required",
+  "status": "SUPERSEDED_BY_V2_HISTORICAL_ONLY; A0 approval and production adapter still required",
+  "superseded_by": {"contract_id": "soh.native_poi.transition.v2", "path": "data/survival/world_content/transition_contract.v2.json"},
   "authority": {
     "request_sender": "A8 physical shell/worksite scene",
     "production_transition_owner": "A0 overworld mount and scene-transition integration",

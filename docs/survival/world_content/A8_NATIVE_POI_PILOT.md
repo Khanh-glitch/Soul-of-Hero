@@ -1,63 +1,89 @@
-# A8 native world-content pilot — source, native, visual, and production status
+# A8 native world-content pilot — current PR #26 continuation status
 
-**Scope:** A8-owned scenes/scripts/data/tests for the existing South Quarry, South Orchard Ruin, and South Crown Mill. This closeout remains on PR #26. No new PR, merge, POI expansion, or production claim.
+**Status as of 2026-10-30:** working on the existing `arena/2d7e6d7a-soul-of-hero` branch / PR #26. The new edits are not committed and the Godot native suite has not run yet. This file supersedes earlier A8 pilot status text for the current continuation; historical test counts and owner pins from earlier revisions do not apply to these edits.
 
-## Player-facing intent
+## Scope and owner boundaries
 
-The intended loop is physical approach → inspect/choose in the local worksite → see an owner-projected route/site-state change → retreat → return and observe persistence.
+Continue the existing South Quarry, South Orchard Ruin, and South Crown Mill identities. Do not add or move canonical POIs. New authored data represents phase profiles and endpoint sockets at existing A1 anchors; sockets remain proposals until A1 approves their placement.
 
-- **Quarry:** two real preparation branches, east brace or west chock, plus a safe leave-unworked choice. East path is 286 px; west is 390 px (104 px / 6.5 tiles). Only the selected owner-projected blocker changes and the opposite stays closed. A visible seam warning hides after a committed brace/chock. Route distance is physical geometry, not proof of a meaningful strategic difference, danger, damage, reward, or economic value.
-- **Orchard:** clear irrigation or leave the channel blocked. Owner-projected flow removes the deadfall cue; delayed graft marks are a return hook. No honey/herb grant is authorized.
-- **Mill:** inspect the stopped race, repair or leave the wheel seized, then retreat/return. The seized-race cue is visible at baseline; only owner-projected state changes it. No fastener grant is authorized.
+- **A0** alone owns the active run clock, phase/run projection, `run_id`, `run_epoch`, unique physical `site_instance_id`, scene mount/transitions, SaveService, durable receipts, evacuation, death and run finalization.
+- **A1** alone owns canonical geography, source transforms and approved world/socket placement. Current PR #20 head is `61cd8d3730cef91fe061ac9cd7cfee9f6e013193`; the authored world plan is 1024×768 cells but is not evidence of a production-mounted world.
+- **A3** alone authorizes source/actions, costs, rewards, currency custody/prices, vending stock, recycling, cooldowns and capability effects; A0 commits an authorized transaction through the existing SaveService. Current PR #19 head is `a5d11141b12be16cc8d63957d0409169dbb79213`. Quarry authorization remains `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`; no Quarry price, yield, cooldown or capability grant is approved.
+- **AVFX** owns exact Gold. A8 makes no Gold changes.
+- **A8** owns local physical scene presentation, collision, approach affordances and neutral request emission only. The test authority remains under `tests/fixtures` and is not A0, A3, or SaveService.
 
-Each site retains its separate 128×128 exterior shell and 960×608 local interior, original authored paths, collision blockers, doorway/exit geometry, and canonical A1 identity/cell. A0 owns production mounting, reachability, actor relocation, transitions, persistence, and SaveService. A8 local scene tests are not A0 gameplay evidence.
+No A0 SaveService, A1 master geography, A3 economy/reward implementation, AVFX timeline, parallel clock, second save authority, direct currency credit, free item/Core, forced run finalization, or fake boss combat was added. No production mount or human-play result is claimed.
 
-## Intent and authority boundary
+## Versioned Ragnarok site phase model
 
-The default nonfixture `NativePoiSite` now emits only neutral `soh.native_poi.intent.v2` identity/revision fields: contract ID/version, intent ID, source ID, object ID, action ID, claim ID, and observed projection revision. It does not send costs, rewards, cooldowns, claim policy, state deltas, unlocks, `catalog_source`, A3 approval references, client fixture flags, or receipts. The v1 authority-bearing contract is retired and points to v2.
+`data/survival/world_content/site_phase_transformations.v1.json` pins the A1 authored plan and current art. It defines A0-projected boundaries: ordinary `<264h`, day 12 `[264,288)`, day 13 `[288,312)`, day 14 `[312,336)`, terminal at `336h`. A8 validates the projection against those boundaries; it does not advance elapsed time. The projection includes A0-owned world/POI/site-instance/run/epoch/revision/phase/effect/environment identity. Missing, malformed, foreign, or stale projections fail closed. New runs may reset the phase revision only with a newer owner-supplied run epoch and a fresh ordinary projection.
 
-All fake economics/readiness values are isolated under `tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json`; the Godot test authority is guarded as fixture-only and cannot serve as A0, A3, SaveService, or a live receipt. A0 must resolve canonical A1 state plus an exact A3-approved binding and independently commit any authorized costs, rewards, generation, active cooldown, site state, and durable owner receipt. Missing approval is fail-closed.
+- Quarry: data-authored phase cues and reversible east/west collision changes; day 12/day 14 leave the west local lane open, day 13 leaves the east lane open. Temporary collision never closes the authored return corridor. Owner-projected Quarry choices remain distinct from phase overlays.
+- Orchard: phase cues only; the existing unknown-depth water and fixed boardwalk collision remain unchanged. A8 does not infer tide/weather.
+- South Crown Mill: phase cues only; A8 does not repair the wheel, change the owner-projected site state, grant salvage, or close the retreat path.
+- At terminal phase, A8 disables mutating site/endpoint interactions while keeping physical retreat available. A0 remains responsible for run expiry/finalization.
 
-The real GDScript contract test now exercises the default scene's exact neutral field set and adversarial rejection for forged `provisional_test_only`, forged `catalog_source`, extra cost fields, stale/foreign projection, no approval, interrupted receipt, and replay after serialized fixture reload. These are source-level GDScript tests; without Godot they have not been executed as runtime behavior.
+`native_poi_phase_context.gd` validates the A0 projection. `native_poi_phase_layer.gd` applies source-atlas cues and the authored non-damaging local Quarry blockers only when the matching A0 site-effect ID is present. It owns no clock, save state, reward, boss, damage, or run result.
 
-## A1 atlas comparison and exact disposition
+## Physical endpoint contract and two economies
 
-A8 retains its complete pinned A1 PR #20 texture set at `939720d50a0b822ff9042d4104dc69ba78ffe0f8`; comparison target is current A1 head `5aed8e8647c896e9a79ea812735ec237342462c4`. `data/survival/world_content/a1_atlas_compatibility.v1.json` plus `test_a1_atlas_compatibility.py` compare decoded RGBA bytes for every used site frame against current A1 coordinates. Exact crops match for all 23 used terrain frames and 25 used prop frames, although 23 used prop rectangles moved between the A8 and current A1 atlases.
+`data/survival/world_content/physical_ragnarok_endpoints.v1.json` and `native_poi_physical_endpoint.gd` author physical deposit, fixed-vendor, recycler, and evacuation sockets. The native test layout coordinates are **harness-only**, not world cells. Existing canonical anchors are referenced at Waystation `[408,200]`, Amberwood Mill `[120,440]`, and Saffron Drydock `[900,420]`; every new socket has status `A1_REVIEW_REQUIRED_SOCKET_NOT_CANONICAL`.
 
-Decision: preserve the complete A8 base pin, current coordinates, source-sized props, and exact A8 original Gold; do not wholesale-copy or repin the newer atlas. Current A1 5aed8e86 changed all four Orchard mud crops while preserving the used site crops, so A8 refreshes only those four mud tiles plus the north-south boardwalk tile in its 80×16 local derivative strip. The 80 shore-transition masks and two unrelated notes-crate props remain unadopted. `surface_affordances.v1.json` records mud/snow/stone/plank/water classes, unknown water depth and weather inputs, local exposure routes, and non-simulation boundaries. Orchard and Mill water are now visible and physically blocked except at their fixed boardwalks; Orchard's sluice deadfall opens only through owner projection. Shell/interior sizes, canonical cells/identity, existing walls and doorways, and the original ten dungeons remain unchanged.
+Endpoint intents carry the A0 run/site/phase context, canonical source, endpoint/action ID, observed phase revision and physical approach. They contain no price, yield, item/currency delta, receipt, save patch, or run result. A missing A0 phase projection emits no intent. Current A3/A0 endpoint authorization is absent and must fail closed; a neutral request is not authorization.
 
-## D055–D061 boundaries preserved (source: docs branch `f12469f397e132d1c810e832db28fa304222df4a`)
+The data records proposal-only technical wallet slots `wallet.ragnarok.unbanked` and `profile.ragnarok.secured`, with separate localizable display-name keys. A0 alone resets run-local wallet state; secure deposits/spending require A3 validation plus an A0 atomic SaveService transaction. Candidate IDs are not an A3/A0 schema approval. Prices, yields, caps and drop rates remain null. `ragnarok_site_tuning.v1.json` has editable, explicitly unapproved visual-only values; A3/A5/A0-owned gameplay values remain null rather than being guessed by A8.
 
-- **D055:** the run lasts 14 real-calendar days including offline time. A8 introduces no duration logic.
-- **D056:** only A0 owner authority resets run-local gameplay; general achievements and historic run records remain. A8 has no local reset API.
-- **D057:** quests reset without forcing a completion order. A8 adds no quest order.
-- **D058:** broad random valid safe-spawn behavior stays with A0; A8's interior entrance spawn is only a local scene entry point.
-- **D059:** sheltered offline hunger alone bottoms at 1 HP, not death. A8 adds no hunger, shelter survival, or offline consequence.
-- **D060:** online/offline chronology is one continuous world timeline, but no unapproved rate or consequence is inferred. A8 adds no clock or elapsed-time simulation.
-- **D061:** home discovery requires real, detectable, unexpired player traces. A8's material labels emit no footprints and perform no discovery or targeting.
+## Six source-grounded territory model
 
-## Quarry evidence and direct A3 request
+`data/survival/world_content/ragnarok_six_territories.v1.json` contains exactly six distinct elder/stone/milestone identities anchored to the current A1 plan and route graph:
 
-`data/survival/world_content/quarry_economics_evidence.v2.json` supersedes the dimensionally invalid v1 candidate. It cites exact A3 source hashes and the current A3 source graph (without treating generic records/recipe sinks as Quarry authorization). Inventory deltas remain item-separated; any optional scalar comparison requires A3-approved opportunity weights. Unknown binding, source allocation, prices, costs, yield, active cooldown, capability grant and route/risk valuation remain `null`.
+1. South Quarry — `poi_crown_south_quarry`, `r_ashen_crown`, `[30,280]`, `sp_poi_crown_south_quarry`.
+2. High Meridian Observatory — `poi_frost_observatory`, `r_frost_crown`, `[720,180]`, `sp_poi_frost_observatory`.
+3. Glasswind Light — `poi_glasswind_light`, `r_glasswind_coast`, `[930,120]`, `sp_poi_glasswind_light`.
+4. The Old Forge — `poi_ember_old_forge`, `r_ember_steppe`, `[580,320]`, `sp_poi_ember_old_forge`.
+5. Canopy Temple — `poi_verdant_canopy_temple`, `r_verdant_fold`, `[640,600]`, `sp_poi_verdant_canopy_temple`.
+6. Tide-Locked Grotto — `poi_pearl_grotto`, `r_pearl_mangroves`, `[900,660]`, `sp_poi_pearl_grotto`.
 
-A3 decision requested: approve one explicit Quarry binding/source/action with item-vector terms, source allocation, active-time cadence and capability consequences, or maintain rejection and identify the missing evidence. Route length alone is not a strategic case. No cross-unit oak/stone subtraction or invented hazard/loot is proposed. Current inspected A3 PR #19 head `4bfba38d87bb2b6529745bf4a3caf2ba0ca07947` still reports `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`.
+Each preserves A1's ordinary identity, purpose, materials, band and entry capabilities, then adds a distinct environmental counterplay, proposed approach/retreat routes, and a late-source identity with amount/cooldown unset. The five routes beyond the local Quarry slice are explicitly A1/native-collision proposals, not live routes. The six entries are **not** six playable bosses or new POIs; A5 combat and A3 stone/reward authorization are not implemented by A8. Shared links reference existing Refuge, Waystation, Amberwood Mill and Saffron Drydock anchors; they do not claim those systems are mounted.
 
-## A0 production request
+## Two vertical slices and current completion boundary
 
-The focused owner insertion request is `A0_QUARRY_REACHABLE_WORLD_INSERTION_SPEC.v1.md`; the three-site machine-readable mount/transition handoff is `a0_mount_transition_package.v1.json`, with full notes in `A0_SITE_MOUNT_TRANSITION_PACKAGE.v1.md`. It records exact canonical anchors/shell roots, approved scene paths, the 960×608 local interiors, the current 448×256 A0 candidate-host mismatch, and explicit A0/A1/A3 seams. Only compact shells can mount in the overworld; A1 routes do not prove current A0 world bounds make any of these cells reachable.
+- The ordinary physical baseline preserves Quarry/Orchard/Mill identity and includes a source-grounded Ashen Waystation cache opportunity. `ordinary_waystation_opportunity.v1.json` pins A1's cache cell `[406,203]`, stand `[406,202]`, 17-cell approach, 29-cell retreat, hero body/offset, static obstacles, and the A3 binding `a1_waystation_roadside_cache_v3`. A3's source binding describes 3 `iron_scrap` and 2 `knowledge_spares` on an 1800 active-second cooldown with `cap_salvage`; these are cited owner terms only, not included in the A8 request or granted in this branch. The source status is `A3_V5_IMPLEMENTED_NATIVE_FIXTURE_PENDING_A0_MOUNT`. The new native shadow test walks the A1-sized actor through the source cells, collision, retreat and revisit and expects only a neutral intent. It is **not yet Godot-run**, and the A0 production receipt/save grant is not integrated.
+- The transformed slice is the **same** Quarry identity with A0-supplied phase and site-effect projections, explicit cue/collision changes, a maintained retreat, and a neutral endpoint contract. Native acceptance is pending. The Quarry's late rare source/deposit is **not authorized** by current A3/A0, so no treasure or currency credit is claimed.
 
-A0 must own live world reachability and physical transitions, canonical instance identity, A1/A3 resolution, projection, atomic SaveService changes, durable receipt, and separate-process restart/idempotency. A0 PR #21 current inspected head is `32bced6d612958838cdf337b437685316c6d9009` (OPEN); it still does not mount these A8 sites or prove their SaveService/restart path.
+Neither slice is production-mounted. No actor teleport or injected completion is treated as physical gameplay acceptance. The Waystation's authored A1 status remains `INTERACTION_SPEC_AUTHORED_NOT_NATIVE`; the separate A8 physics harness does not mount it into canonical geography.
 
-## Evidence status — separate categories
+## Contracts and authoring artifacts
 
-- **A8 source/static:** `python3 tools/survival/world_content/author_site.py --check` passed; all 23 Python world-content tests passed, including current-head A1 pixel evidence, adopted surface crops, and A0 mount geometry; `gdformat` and `gdlint` passed for changed GDScript. This establishes source/data checks only.
-- **Godot native:** HOLD. A8 workflow run `41070305231` on head `7122586fe6de47eb9f1a9ec165d4cb89c92597f4` imported resources and executed native physics, transitions, surface/reset checks, and the 720p/2K/4K capture step, but the aggregate step failed. Because those steps use `continue-on-error`, their displayed conclusions do not reveal individual outcomes; the exact logs and artifact download both returned EOF. The workflow now writes and annotates an explicit outcome report for the next exact-head run. Separately, a local Godot 4.7 source build is still running; no local runtime result is available yet. No A8 runtime pass or rendered-image acceptance is claimed.
-- **A0 production:** HOLD. A0 mount/reachability, live actor transitions, existing SaveService integration, durable receipts, and separate-process restart remain unproven.
-- **A3 economics:** HOLD. No Quarry/Orchard/Mill binding, cost, yield, cooldown, capability grant, or source allocation is authorized.
-- **Human play:** HOLD. No human playthrough establishes a recognizable strategic choice, safe retreat, or revisit acceptance.
+- `interaction_contract.v3.json`: neutral site intents now include the A0-owned run/site/phase identity and observed physical approach. `interaction_contract.v2.json` is historical/superseded; v1 is retired.
+- `transition_contract.v2.json`: entry/exit requests carry owner run/site/phase identity; A0 still owns scene changes and return persistence. v1 is historical/superseded.
+- `a8_a0_mount_transition_package.v2.json`: refreshed A0 review package pinned to current A0/A1/A3 heads. Production mount remains unclaimed; old v1 package is marked historical because its owner pins were stale.
+- `native_poi_ragnarok_test.gd`: boundary/projection rejection, physical Quarry route/retreat, unknown-water non-stranding, fail-closed endpoint intents, and the source-grounded Waystation walk/retreat/revisit shadow test. `native_poi_contract_test.gd` and transition/surface tests were updated to require owner phase context.
 
-The old-head failure `41024526858` / job `123959371999` belongs to `5ccf7b3…`; CT summarized import success followed by a native physics/interaction preload/parser failure in that old test. Direct log retrieval ended with EOF, so do not infer a precise cause or apply it to current code.
+## Evidence status (R0–R5)
 
-## Owner boundary
+| Gate | Scope | Current status |
+|---|---|---|
+| **R0 — authentic baseline and source compatibility** | Shell/schema hardening, source identity, existing Quarry/Orchard/Mill assets and A1 frame compatibility. | **Partial.** Python authoring checks pass. The per-frame A1 atlas compatibility suite passed 7 tests against the repository's pinned source frames; current full A1 atlas/terrain/props hashes match the recorded current A1 hashes. Godot shell/native tests are not run yet. |
+| **R1 — A0-owned phase transform** | Versioned ordinary→day12/day13/day14/terminal projection, same site/run identity, physical reversible Quarry lanes, cue-only Orchard/Mill. | **Authored; native pending.** No local clock. Godot parser/type/runtime and movement/collision evidence still required. |
+| **R2 — six territory authoring model** | Six unique A1 anchors, ordinary identity, elder/stone identity, counterplay and route/retreat proposal. | **Static data pass; not playable.** Five of six route proposals require A1/native approval; no A5 boss or A3 stone grant. |
+| **R3 — physical endpoints and two-economy intents** | Walk-up deposit/vendor/recycler/evacuation sockets; neutral run/site/phase request; no local transaction; source-grounded ordinary Waystation cache request. | **Authored; native pending.** The Waystation cell/stand/path/obstacles and A3 binding are pinned, but the shadow harness has not run in Godot and A0 production mounting is pending. Ragnarok socket approval and A0/A3 authorization are absent. |
+| **R4 — production owner integration** | A0 mount/transitions/save/restart, A1 geography/socket approval, A3 source/economy binding, AVFX Gold parity. | **HOLD / not integrated.** No owner code was edited or mounted by A8. |
+| **R5 — rendered visual and human-play acceptance** | Inspect actual frames at target display sizes and conduct human physical traversal/return/revisit. | **NOT CLAIMED.** No current rendered capture or human play occurred. |
 
-A8 supplies isolated scenes/data, neutral intent/projection proposal, test fixtures, A1 pixel-compatibility evidence, state-linked cues, and the dimensioned A3 decision candidate. A0 alone owns production mounting, transitions, SaveService persistence, reload and receipts. A3 alone authorizes costs, rewards, cooldowns, source bindings and capability grants. A1 alone owns canonical world geometry and identity. Human/native acceptance remains pending. No merge requested or performed.
+### Checks executed in this continuation
+
+- `python3 tools/survival/world_content/author_site.py --check` — **PASS** (4 site files; references resolved).
+- `python3 -m unittest discover -s tests/survival/world_content -p 'test_*.py'` — **PASS, 28 tests**.
+- `python3 -m unittest discover -s tests/survival/world_content -p 'test_a1_atlas_compatibility.py'` — **PASS, 7 tests** (exact frame/crop checks).
+- `python3 -m unittest discover -s tests/survival/world_content -p 'test_ragnarok_authoring_contracts.py'` — **PASS, 5 tests**.
+- `gdformat` and `gdlint` — **PASS** for the changed GDScript/test files.
+- Godot 4.7 binary download from GitHub release assets failed with EOF in this sandbox. Therefore **no Godot import, native GDScript execution, native physics pass, or rendered capture is claimed**. The CI workflow now includes the new Ragnarok native test; run it on the updated PR head before claiming R1/R3 native pass.
+
+## Current next actions
+
+1. Obtain exact-head Godot CI results for the changed scripts and the new `native_poi_ragnarok_test.gd`; fix parser/type/runtime/physics errors before treating them as accepted.
+2. Inspect the actual rendered frames once a renderer is available; source-atlas equality is not rendered visual acceptance.
+3. Keep the six-route model and endpoint socket coordinates proposal-only until A1 reviews them.
+4. Continue A0/A1/A3/AVFX owner handoffs without changing their protected code; maintain fail-closed handling for missing authority.
+5. Do not report production mounting, authorized Ragnarok rewards/currency, boss combat, full two-slice gameplay acceptance, or human play until those separate gates pass.

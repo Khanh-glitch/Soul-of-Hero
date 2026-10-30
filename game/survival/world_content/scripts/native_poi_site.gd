@@ -1,3 +1,4 @@
+# gdlint: disable=max-public-methods
 class_name NativePoiSite
 extends Node2D
 
@@ -15,8 +16,11 @@ const SURFACE_SCRIPT := preload(
 	"res://game/survival/world_content/scripts/native_poi_surface_contract.gd"
 )
 const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
-const CONTRACT_ID := "soh.native_poi.intent.v2"
-const CONTRACT_VERSION := 2
+const PHASE_LAYER_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/native_poi_phase_layer.gd"
+)
+const CONTRACT_ID := "soh.native_poi.intent.v3"
+const CONTRACT_VERSION := 3
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
 @export_file("*.json") var definition_path := ""
@@ -47,6 +51,10 @@ var _choice_index := 0
 var _interaction_area: Area2D
 var _exit_area: Area2D
 var _art: Node2D
+var _phase_layer: Node2D
+var _phase_disabled_choice_blockers: Array[String] = []
+var _phase_intents_enabled := false
+var _transition_sequence := 0
 
 
 func _ready() -> void:
@@ -57,6 +65,7 @@ func _ready() -> void:
 	_environment_projection = SURFACE_SCRIPT.unknown_environment(get_source_id())
 	if not definition.has("visual_layout") and bool(definition.get("test_only", false)):
 		_build_physics()
+		_install_phase_layer()
 		return
 	_art = ART_SCRIPT.new() as Node2D
 	_art.name = "SourceBackedWorldArt"
@@ -67,9 +76,11 @@ func _ready() -> void:
 		_art.queue_free()
 		_art = null
 		_build_physics()
+		_install_phase_layer()
 		return
 	_art.call("set_environment_projection", _environment_projection)
 	_build_physics()
+	_install_phase_layer()
 
 
 func _load_definition() -> bool:
@@ -87,6 +98,55 @@ func _load_definition() -> bool:
 		and definition.has("choices")
 		and definition.has("actions")
 	)
+
+
+func _install_phase_layer() -> void:
+	_phase_layer = PHASE_LAYER_SCRIPT.new() as Node2D
+	_phase_layer.name = "A8OwnerProjectedPhaseLayer"
+	add_child(_phase_layer)
+	if not bool(_phase_layer.call("configure", self)):
+		push_error("NativePoiSite could not configure its A0 phase boundary: %s" % site_id)
+
+
+func apply_run_phase_projection(owner_projection: Dictionary) -> bool:
+	if not is_instance_valid(_phase_layer):
+		return false
+	return bool(_phase_layer.call("apply_projection", owner_projection))
+
+
+func has_valid_run_phase_context() -> bool:
+	return is_instance_valid(_phase_layer) and bool(_phase_layer.call("has_valid_context"))
+
+
+func get_run_phase_context() -> Dictionary:
+	if not has_valid_run_phase_context():
+		return {}
+	return _phase_layer.call("get_context")
+
+
+func get_current_phase_id() -> String:
+	if not has_valid_run_phase_context():
+		return ""
+	return str(_phase_layer.call("get_current_phase_id"))
+
+
+func set_phase_intents_enabled(enabled: bool) -> void:
+	_phase_intents_enabled = enabled
+
+
+func get_phase_intents_enabled() -> bool:
+	return _phase_intents_enabled
+
+
+func set_phase_choice_blocker_overrides(disabled_option_ids: Array) -> void:
+	var next_overrides: Array[String] = []
+	for value: Variant in disabled_option_ids:
+		if typeof(value) == TYPE_STRING and str(value) not in next_overrides:
+			next_overrides.append(str(value))
+	if next_overrides == _phase_disabled_choice_blockers:
+		return
+	_phase_disabled_choice_blockers = next_overrides
+	_rebuild_choice_blockers()
 
 
 # gdlint: disable=max-returns
@@ -186,6 +246,11 @@ func is_at_exit(actor: Node2D) -> bool:
 
 
 func try_exit(actor: Node2D) -> bool:
+	if not has_valid_run_phase_context():
+		player_feedback.emit(
+			"The run authority is unavailable; the doorway cannot change scenes yet."
+		)
+		return false
 	if not actor is CharacterBody2D or not is_at_exit(actor):
 		player_feedback.emit("Follow the marked doorway to return outside.")
 		return false
@@ -197,19 +262,26 @@ func try_exit(actor: Node2D) -> bool:
 	var canonical_cell: Vector2i = VECTOR_UTIL.from_int_pair(
 		definition.get("source", {}).get("canonical_cell", [0, 0])
 	)
+	_transition_sequence += 1
+	var run_context := get_run_phase_context()
 	var request := {
-		"contract_id": "soh.native_poi.transition.v1",
-		"contract_version": 1,
-		"transition_id": "%s|exit|%d" % [get_source_id(), Time.get_ticks_usec()],
+		"contract_id": "soh.native_poi.transition.v2",
+		"contract_version": 2,
+		"transition_id":
+		(
+			"%s|%s|%d|exit|%d"
+			% [get_source_id(), run_context.run_id, run_context.run_epoch, _transition_sequence]
+		),
 		"direction": "exit",
-		"world_id": str(definition.get("source", {}).get("world_id", "")),
 		"poi_id": get_source_id(),
 		"canonical_cell": canonical_cell,
 		"from_scene": str(transition.get("worksite_scene", "")),
 		"to_scene": str(transition.get("shell_scene", "")),
 		"actor_local_position": to_local(actor.global_position),
+		"actor_facing": _get_actor_facing(actor),
 		"return_anchor": anchor,
 	}
+	request.merge(run_context, true)
 	transition_requested.emit(request)
 	return true
 
@@ -309,6 +381,9 @@ func cycle_choice(direction: int) -> void:
 
 # gdlint: disable=max-returns
 func try_interact(actor: Node2D, action_index: int = -1) -> bool:
+	if not _phase_intents_enabled or not has_valid_run_phase_context():
+		player_feedback.emit("The run owner has not supplied a valid active phase.")
+		return false
 	if not actor is CharacterBody2D:
 		player_feedback.emit("Move to the marked work side first.")
 		return false
@@ -344,7 +419,7 @@ func try_interact(actor: Node2D, action_index: int = -1) -> bool:
 		return false
 	if not _action_is_available(selected):
 		return false
-	var intent := _make_intent(selected)
+	var intent := _make_intent(selected, actor)
 	_pending = intent
 	intent_requested.emit(intent.duplicate(true))
 	return true
@@ -406,6 +481,19 @@ func _format_duration(seconds: float) -> String:
 	return "%d:%02d" % [minutes, whole_seconds % 60]
 
 
+func _has_meaningful_state_value(site_state: Dictionary, state_key: String) -> bool:
+	if not site_state.has(state_key):
+		return false
+	var value: Variant = site_state[state_key]
+	if value == null:
+		return false
+	if value is bool:
+		return bool(value)
+	if value is String:
+		return not value.strip_edges().is_empty()
+	return false
+
+
 func _action_is_available(action: Dictionary) -> bool:
 	for capability: String in action.get("requires_capabilities", []):
 		if not projection.get("capabilities", []).has(capability):
@@ -419,11 +507,7 @@ func _action_is_available(action: Dictionary) -> bool:
 			return false
 	var site_state: Dictionary = projection.get("site_state", {})
 	for state_key: String in action.get("requires_state", []):
-		if (
-			not site_state.has(state_key)
-			or site_state[state_key] == false
-			or site_state[state_key] == ""
-		):
+		if not _has_meaningful_state_value(site_state, state_key):
 			player_feedback.emit("The site has not reached that condition yet.")
 			return false
 	var state_value_requirements: Dictionary = action.get("requires_state_values", {})
@@ -453,17 +537,37 @@ func _action_is_available(action: Dictionary) -> bool:
 	return true
 
 
-func _make_intent(action: Dictionary) -> Dictionary:
-	# This request carries neutral identity only. A0 must resolve the A1 source,
-	# current generation, all economics and the durable receipt from owner data;
-	# no scene-authored fixture amount or client flag crosses this boundary.
+func _make_intent(action: Dictionary, actor: CharacterBody2D = null) -> Dictionary:
+	# A8 sends canonical identity, A0-owned run context, and observed physical
+	# approach only. A0 and A3 independently resolve every transaction field.
 	var object_id := str(action.get("object_id", action.get("action_id", "")))
 	var action_id := str(action.get("action_id", ""))
 	var source_id := get_source_id()
 	var generation := int(projection.get("claim_generation", {}).get(object_id, 0))
 	var claim_id := "%s/%s/%s/g%d" % [source_id, object_id, action_id, generation]
-	var stable := "%s|%s|%s|%s" % [source_id, object_id, action_id, claim_id]
-	return {
+	var context := get_run_phase_context()
+	if context.is_empty():
+		return {}
+	var actor_position := (
+		to_local(actor.global_position) if is_instance_valid(actor) else Vector2.ZERO
+	)
+	var actor_facing := _get_actor_facing(actor) if is_instance_valid(actor) else Vector2.ZERO
+	var stable := (
+		"%s|%s|%s|%s|%s|%s|%d|%s|%d|%d"
+		% [
+			source_id,
+			object_id,
+			action_id,
+			claim_id,
+			context.run_id,
+			context.site_instance_id,
+			context.run_epoch,
+			context.phase_id,
+			context.observed_phase_projection_revision,
+			int(projection.get("projection_revision", -1))
+		]
+	)
+	var intent := {
 		"contract_id": CONTRACT_ID,
 		"contract_version": CONTRACT_VERSION,
 		"intent_id": stable,
@@ -471,16 +575,22 @@ func _make_intent(action: Dictionary) -> Dictionary:
 		"object_id": object_id,
 		"action_id": action_id,
 		"claim_id": claim_id,
-		"observed_projection_revision": int(projection.get("projection_revision", -1))
+		"observed_projection_revision": int(projection.get("projection_revision", -1)),
+		"actor_local_position": actor_position,
+		"actor_facing": actor_facing
 	}
+	intent.merge(context, true)
+	return intent
 
 
 func _build_physics() -> void:
-	for rect_data: Array in definition.get("walls", []):
+	var wall_rects: Array = definition.get("walls", [])
+	for wall_index: int in range(wall_rects.size()):
+		var rect_data: Array = wall_rects[wall_index]
 		_add_solid_rect(
 			Vector2(float(rect_data[0]), float(rect_data[1])),
 			Vector2(float(rect_data[2]), float(rect_data[3])),
-			"Wall"
+			"PerimeterWall_%02d" % wall_index
 		)
 	_build_surface_blockers()
 	_build_choice_blockers()
@@ -581,6 +691,8 @@ func _refresh_surface_blockers() -> void:
 
 func _build_choice_blockers() -> void:
 	for option_id: String in definition.get("choice_blockers", {}):
+		if option_id in _phase_disabled_choice_blockers:
+			continue
 		var expected_route := "east_braced" if option_id == "brace_oak" else "west_chocked"
 		if str(projection.get("site_state", {}).get("quarry_route", "")) == expected_route:
 			continue

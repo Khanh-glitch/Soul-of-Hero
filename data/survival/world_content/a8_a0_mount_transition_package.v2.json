@@ -1,0 +1,60 @@
+{
+  "schema": "soh.a8.a0_mount_transition_package.v2",
+  "package_status": "A8_OWNER_CONTRACT_REFRESH_READY_FOR_A0_REVIEW_NOT_MOUNTED",
+  "source_pins": {
+    "a8_pr26_base_head": "54c66b89b839d773f93c023afb13f0f9295ec9a",
+    "a0_pr21_head": "5b932fd4bc6ae5966cd9662f262f70aa384c2f99",
+    "a1_pr20_head": "61cd8d3730cef91fe061ac9cd7cfee9f6e013193",
+    "a1_world_plan_sha256": "fc5412822a12b4bed7be0954d9bc64e0abbca890e6a0e6ec0891610d7a198001",
+    "a1_route_graph_sha256": "8e49506889149cde043ed69cf5007b219c9ba9464cb7d3eeb25f0eef108d24a9",
+    "a3_pr19_head": "a5d11141b12be16cc8d63957d0409169dbb79213",
+    "a3_quarry_authorization_status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
+    "a8_changes_on_this_branch": "UNCOMMITTED_UNTESTED_UNTIL_NATIVE_CI"
+  },
+  "world_id": "world:soh_continent_v1",
+  "a1_authored_world_extent_cells": [1024, 768],
+  "production_world_extent_mount_status": "A0_REVIEW_REQUIRED_NOT_ASSERTED_BY_A8",
+  "contracts": {
+    "physical_interaction": "data/survival/world_content/interaction_contract.v3.json",
+    "shell_transition": "data/survival/world_content/transition_contract.v2.json",
+    "run_phase_projection": "soh.a0.run_phase_projection.v1",
+    "physical_endpoint_intent": "soh.a8.physical_intent.v1"
+  },
+  "owner_seam": {
+    "a0_owns": ["active clock and run phase", "run/site instance IDs", "scene mount and transitions", "SaveService", "durable reload/idempotency", "owner receipts", "environment projection", "death, evacuation and run finalization"],
+    "a1_owns": ["canonical cells", "global geography", "world routes", "source transforms", "approval of endpoint socket placements"],
+    "a3_owns": ["source/action authorization", "costs and rewards", "currency custody and prices", "vendor stock", "recycling plans", "cooldowns and capability effects"],
+    "avfx_owns": ["exact Gold source and production timeline"],
+    "a8_owns": ["local physical site scenes", "source-art presentation", "collision and approach", "neutral intents only"],
+    "a8_has_save_or_currency_authority": false
+  },
+  "existing_a8_sites": [
+    {"poi_id": "poi_crown_south_quarry", "region_id": "r_ashen_crown", "canonical_cell": [30, 280], "a1_route_id": "sp_poi_crown_south_quarry", "scene": "res://game/survival/world_content/scenes/south_quarry.tscn"},
+    {"poi_id": "poi_crown_south_orchard", "region_id": "r_ashen_crown", "canonical_cell": [140, 360], "a1_route_id": "sp_poi_crown_south_orchard", "scene": "res://game/survival/world_content/scenes/south_orchard_ruin.tscn"},
+    {"poi_id": "poi_crown_south_mill", "region_id": "r_ashen_crown", "canonical_cell": [120, 300], "a1_route_id": "sp_poi_crown_south_mill", "scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn"}
+  ],
+  "ragnarok_owner_contract": {
+    "phase_boundaries_hours": [264, 288, 312, 336],
+    "phase_source": "A0 projection only; A8 has no tick/clock/save service",
+    "site_phase_data": "data/survival/world_content/site_phase_transformations.v1.json",
+    "six_territory_model": "data/survival/world_content/ragnarok_six_territories.v1.json",
+    "physical_endpoints": "data/survival/world_content/physical_ragnarok_endpoints.v1.json",
+    "A3_authorized_Ragnarok_currency_or_rewards": false,
+    "A8_boss_combat_or_stone_grant": false
+  },
+  "production_mount_gates": [
+    "A0 approve/adapt v3 action intent, v2 transition request, and run-phase projection through A0-owned APIs.",
+    "A0 supplies durable run_id, run_epoch, site_instance_id and monotonic phase projection revision; A8 does not synthesize these in production.",
+    "A0 independently validates actor/world transform, physical approach, stale phase, source identity and duplicate request before any scene transition or SaveService mutation.",
+    "A1 confirms that the host world map is the current 1024x768 authored geography and approves physical bank/vendor/recycler/evacuation socket placement; A8 does not add POIs or move anchors.",
+    "A3 publishes source-bound authorization and wallet/vendor/recycler contracts before any endpoint can credit, debit, consume, or grant.",
+    "AVFX exact Gold and A5 combat contracts remain external; no A8 shadow implementation substitutes for them.",
+    "A0 two-process SaveService restart, idempotency, new-run reset and physical revisit tests are required after production mount."
+  ],
+  "current_evidence_status": {
+    "owner_independent_native_code": "PENDING_TESTS",
+    "rendered_visuals": "PENDING_CAPTURE_AND_HUMAN_REVIEW",
+    "a0_a1_a3_avfx_production_integration": "NOT_CLAIMED",
+    "human_play": "NOT_CLAIMED"
+  }
+}

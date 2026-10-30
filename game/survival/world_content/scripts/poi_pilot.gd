@@ -1,6 +1,9 @@
 extends Node2D
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+const PHASE_FIXTURE := preload(
+	"res://tests/survival/world_content/a8_run_phase_projection_fixture.gd"
+)
 
 ## Isolated S2 harness. It is not mounted in the release overworld and its
 ## authority fixture is explicitly not SaveService, inventory, or A3 economy.
@@ -124,6 +127,7 @@ func _mount_site(index: int) -> void:
 		_shell.name = "CompactPOIShell_%d" % (_site_index + 1)
 		_active_scene = _shell
 		add_child(_shell)
+		_shell.apply_run_phase_projection(PHASE_FIXTURE.project(_shell.definition))
 		_shell.transition_requested.connect(_on_transition_requested)
 		_shell.player_feedback.connect(_on_player_feedback)
 		_probe.global_position = (
@@ -151,6 +155,7 @@ func _mount_worksite(scene_path: String, spawn_override: Vector2) -> void:
 	_site.player_feedback.connect(_on_player_feedback)
 	_site.transition_requested.connect(_on_transition_requested)
 	_site.set_projection(_authority.project_state(_site.get_source_id()))
+	_site.apply_run_phase_projection(PHASE_FIXTURE.project(_site.definition))
 	_probe.global_position = (
 		spawn_override if spawn_override != Vector2.ZERO else _site.get_spawn_position()
 	)
@@ -178,13 +183,30 @@ func _update_site_header(definition: Dictionary) -> void:
 	_details.text = "%s  |  %s" % [canonical, str(definition.get("return_hook", ""))]
 
 
+# gdlint: disable=max-returns
 func _on_transition_requested(request: Dictionary) -> void:
 	if (
-		str(request.get("contract_id", "")) != "soh.native_poi.transition.v1"
-		or int(request.get("contract_version", 0)) != 1
+		str(request.get("contract_id", "")) != "soh.native_poi.transition.v2"
+		or int(request.get("contract_version", 0)) != 2
 	):
 		_feedback.text = "The doorway request was not understood."
 		return
+	var active_context: Dictionary = {}
+	if is_instance_valid(_shell):
+		active_context = _shell.get_run_phase_context()
+	elif is_instance_valid(_site):
+		active_context = _site.get_run_phase_context()
+	for context_key: String in [
+		"world_id",
+		"run_id",
+		"run_epoch",
+		"phase_id",
+		"observed_phase_projection_revision",
+		"site_instance_id"
+	]:
+		if request.get(context_key, null) != active_context.get(context_key, null):
+			_feedback.text = "The doorway request no longer matches the owner-projected run."
+			return
 	var destination := str(request.get("to_scene", ""))
 	if str(request.get("direction", "")) == "enter" and is_instance_valid(_shell):
 		if str(request.get("poi_id", "")) != _shell.get_source_id():
@@ -221,6 +243,7 @@ func _on_transition_requested(request: Dictionary) -> void:
 		_shell = packed_shell.instantiate() as NativePoiShell
 		_active_scene = _shell
 		add_child(_shell)
+		_shell.apply_run_phase_projection(PHASE_FIXTURE.project(_shell.definition))
 		_shell.transition_requested.connect(_on_transition_requested)
 		_shell.player_feedback.connect(_on_player_feedback)
 		var shell_return_position := VECTOR_UTIL.from_pair(

@@ -13,8 +13,8 @@ DATA = ROOT / "data/survival/world_content/sites"
 SCENES = ROOT / "game/survival/world_content/scenes"
 FIXTURE_CATALOG = ROOT / "data/survival/world_content/catalog_candidates.fixture.json"
 FIXTURE_ACTION_CATALOG = ROOT / "tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json"
-CONTRACT_FILE = ROOT / "data/survival/world_content/interaction_contract.v2.json"
-TRANSITION_CONTRACT_FILE = ROOT / "data/survival/world_content/transition_contract.v1.json"
+CONTRACT_FILE = ROOT / "data/survival/world_content/interaction_contract.v3.json"
+TRANSITION_CONTRACT_FILE = ROOT / "data/survival/world_content/transition_contract.v2.json"
 WORKSITE_TEMPLATE = "res://game/survival/world_content/scenes/native_poi_template.tscn"
 SHELL_TEMPLATE = "res://game/survival/world_content/scenes/native_poi_shell_template.tscn"
 CANONICAL = {
@@ -145,8 +145,8 @@ def validate(data: dict, action_catalog: dict) -> list[str]:
     if poi_id in CANONICAL:
         if data.get("scene_role") != "local_worksite":
             errors.append("canonical 960x600 scene must be marked scene_role=local_worksite")
-        if transition.get("contract_id") != "soh.native_poi.transition.v1" or transition.get("contract_version") != 1:
-            errors.append("canonical local_transition must use soh.native_poi.transition.v1")
+        if transition.get("contract_id") != "soh.native_poi.transition.v2" or transition.get("contract_version") != 2:
+            errors.append("canonical local_transition must use soh.native_poi.transition.v2")
         interior_entry = transition.get("interior_entry", [])
         if not transition.get("shell_scene") or not isinstance(interior_entry, list) or len(interior_entry) != 2:
             errors.append("canonical local_transition needs a shell scene and interior_entry")
@@ -369,13 +369,13 @@ def main() -> int:
         return 2
     action_catalog = load_json(FIXTURE_ACTION_CATALOG)
     contract = load_json(CONTRACT_FILE)
-    if contract.get("contract_id") != "soh.native_poi.intent.v2" or contract.get("contract_version") != 2:
+    if contract.get("contract_id") != "soh.native_poi.intent.v3" or contract.get("contract_version") != 3:
         print("ERROR: unsupported neutral-identity interaction contract", file=sys.stderr)
         return 2
     transition_contract = load_json(TRANSITION_CONTRACT_FILE)
     if (
-        transition_contract.get("contract_id") != "soh.native_poi.transition.v1"
-        or transition_contract.get("contract_version") != 1
+        transition_contract.get("contract_id") != "soh.native_poi.transition.v2"
+        or transition_contract.get("contract_version") != 2
     ):
         print("ERROR: unsupported local transition contract", file=sys.stderr)
         return 2

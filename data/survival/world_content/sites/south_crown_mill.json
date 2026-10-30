@@ -247,8 +247,8 @@
   ],
   "scene_role": "local_worksite",
   "local_transition": {
-    "contract_id": "soh.native_poi.transition.v1",
-    "contract_version": 1,
+    "contract_id": "soh.native_poi.transition.v2",
+    "contract_version": 2,
     "worksite_scene": "res://game/survival/world_content/scenes/south_crown_mill.tscn",
     "shell_scene": "res://game/survival/world_content/scenes/south_crown_mill_overworld.tscn",
     "interior_entry": [
@@ -628,7 +628,28 @@
       {
         "family": "water",
         "width": 2,
-        "points": [[18, 18], [24, 18], [31, 18], [38, 18], [46, 18]]
+        "points": [
+          [
+            18,
+            18
+          ],
+          [
+            24,
+            18
+          ],
+          [
+            31,
+            18
+          ],
+          [
+            38,
+            18
+          ],
+          [
+            46,
+            18
+          ]
+        ]
       }
     ],
     "state_paths": {

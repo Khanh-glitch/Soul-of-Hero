@@ -8,8 +8,11 @@ signal player_feedback(message: String)
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
-const TRANSITION_CONTRACT_ID := "soh.native_poi.transition.v1"
-const TRANSITION_CONTRACT_VERSION := 1
+const PHASE_CONTEXT_SCRIPT := preload(
+	"res://game/survival/world_content/scripts/native_poi_phase_context.gd"
+)
+const TRANSITION_CONTRACT_ID := "soh.native_poi.transition.v2"
+const TRANSITION_CONTRACT_VERSION := 2
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
 const SHELL_BOUNDS := Vector2(128.0, 128.0)
@@ -18,14 +21,22 @@ const DOORWAY_FACING := Vector2.UP
 @export_file("*.json") var definition_path := ""
 
 var definition: Dictionary = {}
+var definition_error := ""
 var _entry_area: Area2D
 var _art: Node2D
+var _run_phase_context: NativePoiPhaseContext
+var _transition_sequence := 0
 
 
 func _ready() -> void:
 	if not _load_definition():
-		push_error("NativePoiShell has no valid site definition: %s" % definition_path)
+		push_error(
+			"NativePoiShell rejected site definition (%s): %s" % [definition_error, definition_path]
+		)
 		return
+	_run_phase_context = PHASE_CONTEXT_SCRIPT.new() as NativePoiPhaseContext
+	if not _run_phase_context.configure(definition):
+		push_error("NativePoiShell could not configure its A0 run boundary: %s" % get_source_id())
 	_art = ART_SCRIPT.new() as Node2D
 	_art.name = "CanonicalFootprintArt"
 	add_child(_art)
@@ -38,19 +49,93 @@ func _ready() -> void:
 
 
 func _load_definition() -> bool:
+	definition_error = ""
 	if definition_path.is_empty() or not FileAccess.file_exists(definition_path):
+		definition_error = "definition_file_missing"
 		return false
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(definition_path))
-	if not parsed is Dictionary:
+	var parser := JSON.new()
+	var parse_result := parser.parse(FileAccess.get_file_as_string(definition_path))
+	if parse_result != OK:
+		definition_error = "invalid_json:%s" % parser.get_error_message()
 		return false
-	definition = parsed
-	var shell: Dictionary = definition.get("overworld_shell", {})
-	return (
-		definition.get("scene_role", "") == "local_worksite"
-		and shell.get("bounds_px", []) == [128, 128]
-		and shell.get("action_socket", []) == [64, 64]
-		and definition.get("source", {}).has("poi_id")
-	)
+	definition_error = validate_definition(parser.data)
+	if not definition_error.is_empty():
+		return false
+	definition = parser.data
+	return true
+
+
+static func validate_definition(candidate: Variant) -> String:
+	if not candidate is Dictionary:
+		return "json_root_not_object"
+	var schema_version: Variant = candidate.get("schema_version", null)
+	if (
+		(typeof(schema_version) != TYPE_INT and typeof(schema_version) != TYPE_FLOAT)
+		or float(schema_version) != 1.0
+	):
+		return "unsupported_schema_version"
+	if str(candidate.get("scene_role", "")) != "local_worksite":
+		return "wrong_scene_role"
+	var source: Variant = candidate.get("source", null)
+	if not source is Dictionary or typeof(source.get("poi_id", null)) != TYPE_STRING:
+		return "source_identity_missing"
+	var poi_id: String = source.get("poi_id", "")
+	if poi_id.is_empty():
+		return "source_identity_missing"
+	var source_cell := VECTOR_UTIL.from_int_pair(source.get("canonical_cell", []), Vector2i(-1, -1))
+	if source_cell.x < 0 or source_cell.y < 0:
+		return "source_canonical_cell_invalid"
+	var shell: Variant = candidate.get("overworld_shell", null)
+	if not shell is Dictionary:
+		return "overworld_shell_missing"
+	var bounds := VECTOR_UTIL.from_int_pair(shell.get("bounds_px", []), Vector2i(-1, -1))
+	if bounds != Vector2i(128, 128):
+		return "shell_bounds_invalid"
+	var action_socket := VECTOR_UTIL.from_int_pair(shell.get("action_socket", []), Vector2i(-1, -1))
+	if action_socket != Vector2i(64, 64):
+		return "action_socket_invalid"
+	var shell_cell := VECTOR_UTIL.from_int_pair(shell.get("canonical_cell", []), Vector2i(-1, -1))
+	if shell_cell != source_cell:
+		return "canonical_cell_mismatch"
+	var rotation: Variant = shell.get("rotation_degrees", null)
+	var scale := VECTOR_UTIL.from_int_pair(shell.get("scale", []), Vector2i(-1, -1))
+	if (
+		(typeof(rotation) != TYPE_INT and typeof(rotation) != TYPE_FLOAT)
+		or float(rotation) != 0.0
+		or scale != Vector2i.ONE
+	):
+		return "noncanonical_transform"
+	var transition: Variant = candidate.get("local_transition", null)
+	if not transition is Dictionary:
+		return "local_transition_missing"
+	var shell_scene: Variant = shell.get("scene", null)
+	var transition_shell: Variant = transition.get("shell_scene", null)
+	if (
+		typeof(shell_scene) != TYPE_STRING
+		or shell_scene.is_empty()
+		or shell_scene != transition_shell
+	):
+		return "shell_scene_reference_mismatch"
+	if not ResourceLoader.exists(shell_scene, "PackedScene"):
+		return "shell_scene_resource_missing"
+	var worksite_scene: Variant = transition.get("worksite_scene", null)
+	if typeof(worksite_scene) != TYPE_STRING or worksite_scene.is_empty():
+		return "worksite_scene_reference_missing"
+	if not ResourceLoader.exists(worksite_scene, "PackedScene"):
+		return "worksite_scene_resource_missing"
+	var return_anchor: Variant = transition.get("return_anchor", null)
+	if not return_anchor is Dictionary:
+		return "return_anchor_missing"
+	if (
+		str(return_anchor.get("poi_id", "")) != poi_id
+		or (
+			VECTOR_UTIL.from_int_pair(return_anchor.get("canonical_cell", []), Vector2i(-1, -1))
+			!= source_cell
+		)
+		or str(return_anchor.get("shell_scene", "")) != shell_scene
+	):
+		return "return_anchor_identity_mismatch"
+	return ""
 
 
 func get_source_id() -> String:
@@ -73,6 +158,14 @@ func get_canonical_cell() -> Vector2i:
 	return VECTOR_UTIL.from_int_pair(definition.get("source", {}).get("canonical_cell", [0, 0]))
 
 
+func apply_run_phase_projection(owner_projection: Dictionary) -> bool:
+	return _run_phase_context != null and _run_phase_context.apply_projection(owner_projection)
+
+
+func get_run_phase_context() -> Dictionary:
+	return _run_phase_context.get_run_context() if _run_phase_context != null else {}
+
+
 func get_context_hint(actor: Node2D) -> String:
 	if _is_at_door(actor):
 		return "G · Enter %s" % str(definition.get("display_name", "the worksite"))
@@ -88,6 +181,13 @@ func _is_at_door(actor: Node2D) -> bool:
 
 
 func try_enter(actor: Node2D) -> bool:
+	if (
+		_run_phase_context == null
+		or not _run_phase_context.is_initialized()
+		or not _run_phase_context.permits_mutating_intents()
+	):
+		player_feedback.emit("The run owner has not supplied a valid active phase.")
+		return false
 	if not actor is CharacterBody2D:
 		player_feedback.emit("Move through the marked entrance first.")
 		return false
@@ -99,21 +199,28 @@ func try_enter(actor: Node2D) -> bool:
 		return false
 	var shell: Dictionary = definition.get("overworld_shell", {})
 	var transition: Dictionary = definition.get("local_transition", {})
+	var run_context := _run_phase_context.get_run_context()
+	_transition_sequence += 1
 	var request := {
 		"contract_id": TRANSITION_CONTRACT_ID,
 		"contract_version": TRANSITION_CONTRACT_VERSION,
-		"transition_id": "%s|enter|%d" % [get_source_id(), Time.get_ticks_usec()],
+		"transition_id":
+		(
+			"%s|%s|%d|enter|%d"
+			% [get_source_id(), run_context.run_id, run_context.run_epoch, _transition_sequence]
+		),
 		"direction": "enter",
-		"world_id": str(definition.get("source", {}).get("world_id", "")),
 		"poi_id": get_source_id(),
 		"canonical_cell": get_canonical_cell(),
 		"from_scene": str(shell.get("scene", "")),
 		"to_scene": str(transition.get("worksite_scene", "")),
 		"actor_local_position": to_local(actor.global_position),
+		"actor_facing": _get_actor_facing(actor),
 		"interior_spawn":
 		VECTOR_UTIL.from_pair(transition.get("interior_entry", []), Vector2(64, 548)),
 		"return_anchor": transition.get("return_anchor", {}).duplicate(true),
 	}
+	request.merge(run_context, true)
 	transition_requested.emit(request)
 	return true
 

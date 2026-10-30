@@ -9,16 +9,24 @@ const ITEM_CATALOG_PATH := "res://data/survival/world_content/catalog_candidates
 const ACTION_CATALOG_PATH := (
 	"res://tests/fixtures/survival/world_content/" + "a8_native_poi_action_catalog.fixture.json"
 )
-const CONTRACT_PATH := "res://data/survival/world_content/interaction_contract.v2.json"
+const CONTRACT_PATH := "res://data/survival/world_content/interaction_contract.v3.json"
 const ALLOWED_INTENT_FIELDS := [
 	"contract_id",
 	"contract_version",
 	"intent_id",
+	"world_id",
+	"run_id",
+	"run_epoch",
+	"phase_id",
+	"observed_phase_projection_revision",
 	"source_id",
+	"site_instance_id",
 	"object_id",
 	"action_id",
 	"claim_id",
-	"observed_projection_revision"
+	"observed_projection_revision",
+	"actor_local_position",
+	"actor_facing"
 ]
 
 var interrupt_next_commit := false
@@ -127,6 +135,19 @@ func project_state(site_id: String) -> Dictionary:
 
 
 # gdlint: disable=max-returns
+func _has_meaningful_state_value(site_state: Dictionary, state_key: String) -> bool:
+	if not site_state.has(state_key):
+		return false
+	var value: Variant = site_state[state_key]
+	if value == null:
+		return false
+	if value is bool:
+		return bool(value)
+	if value is String:
+		return not value.strip_edges().is_empty()
+	return false
+
+
 func submit_intent(intent: Dictionary) -> Dictionary:
 	var intent_id := str(intent.get("intent_id", ""))
 	if not bool(_fixture_action_catalog.get("fixture_only", false)):
@@ -138,25 +159,47 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 		if not ALLOWED_INTENT_FIELDS.has(str(field)):
 			return _reject(intent_id, "Non-neutral client field is forbidden: %s" % str(field))
 	if (
-		str(intent.get("contract_id", "")) != "soh.native_poi.intent.v2"
-		or int(intent.get("contract_version", 0)) != 2
+		str(intent.get("contract_id", "")) != "soh.native_poi.intent.v3"
+		or int(intent.get("contract_version", 0)) != 3
 	):
-		return _reject(intent_id, "Unsupported interaction contract; v1 is retired.")
+		return _reject(intent_id, "Unsupported interaction contract; v3 is required.")
 	var source_id := str(intent.get("source_id", ""))
 	var object_id := str(intent.get("object_id", ""))
 	var action_id := str(intent.get("action_id", ""))
 	var claim_id := str(intent.get("claim_id", ""))
-	var expected_id := "%s|%s|%s|%s" % [source_id, object_id, action_id, claim_id]
+	var run_id := str(intent.get("run_id", ""))
+	var site_instance_id := str(intent.get("site_instance_id", ""))
+	var phase_id := str(intent.get("phase_id", ""))
+	var expected_id := (
+		"%s|%s|%s|%s|%s|%s|%d|%s|%d|%d"
+		% [
+			source_id,
+			object_id,
+			action_id,
+			claim_id,
+			run_id,
+			site_instance_id,
+			int(intent.get("run_epoch", -1)),
+			phase_id,
+			int(intent.get("observed_phase_projection_revision", -1)),
+			int(intent.get("observed_projection_revision", -1))
+		]
+	)
 	if (
 		source_id.is_empty()
 		or object_id.is_empty()
 		or action_id.is_empty()
 		or claim_id.is_empty()
+		or run_id.is_empty()
+		or site_instance_id.is_empty()
+		or phase_id.is_empty()
+		or typeof(intent.get("run_epoch", null)) != TYPE_INT
+		or typeof(intent.get("observed_phase_projection_revision", null)) != TYPE_INT
+		or typeof(intent.get("actor_local_position", null)) != TYPE_VECTOR2
+		or typeof(intent.get("actor_facing", null)) != TYPE_VECTOR2
 		or intent_id != expected_id
 	):
-		return _reject(
-			intent_id, "Invalid or unstable neutral source/object/action/claim identity."
-		)
+		return _reject(intent_id, "Invalid neutral identity, A0 run context, or physical approach.")
 	var observed_revision: Variant = intent.get("observed_projection_revision", null)
 	if typeof(observed_revision) != TYPE_INT:
 		return _reject(intent_id, "Observed owner revision must be an integer.")
@@ -196,11 +239,7 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 			return _reject(intent_id, "Required capability is not owned.")
 	var site_state: Dictionary = _snapshot.get("site_state", {}).get(source_id, {})
 	for state_key: String in action.get("required_state", []):
-		if (
-			not site_state.has(state_key)
-			or site_state[state_key] == false
-			or site_state[state_key] == ""
-		):
+		if not _has_meaningful_state_value(site_state, state_key):
 			return _reject(intent_id, "The owner state does not meet this action prerequisite.")
 	var required_values: Dictionary = action.get("required_state_values", {})
 	for state_key: String in required_values:

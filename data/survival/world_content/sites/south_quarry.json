@@ -163,8 +163,8 @@
   "visual_notes": "Split limestone benches, timber brace line, two distinct approach ramps; no generic ruin dressing.",
   "scene_role": "local_worksite",
   "local_transition": {
-    "contract_id": "soh.native_poi.transition.v1",
-    "contract_version": 1,
+    "contract_id": "soh.native_poi.transition.v2",
+    "contract_version": 2,
     "worksite_scene": "res://game/survival/world_content/scenes/south_quarry.tscn",
     "shell_scene": "res://game/survival/world_content/scenes/south_quarry_overworld.tscn",
     "interior_entry": [

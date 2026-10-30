@@ -3,8 +3,8 @@
   "contract_version": 1,
   "status": "SUPERSEDED_UNAPPROVED_NEVER_USE",
   "superseded_by": {
-    "contract_id": "soh.native_poi.intent.v2",
-    "path": "data/survival/world_content/interaction_contract.v2.json"
+    "contract_id": "soh.native_poi.intent.v3",
+    "path": "data/survival/world_content/interaction_contract.v3.json"
   },
   "reason": "The v1 payload carried client-authored costs, rewards, cooldowns, state deltas, catalog_source and provisional_test_only. No A0 production mount adopted v1. A8 explicitly retires it before integration.",
   "legacy_unsafe_fields": [

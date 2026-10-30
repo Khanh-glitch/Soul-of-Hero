@@ -24,8 +24,13 @@ func _capture() -> void:
 		await process_frame
 	var timer := create_timer(1.0)
 	await timer.timeout
-	var image := get_root().get_texture().get_image()
-	if image.is_empty():
+	var viewport_texture := get_root().get_texture()
+	if viewport_texture == null:
+		push_error("The active display driver did not provide a native viewport texture")
+		quit(3)
+		return
+	var image := viewport_texture.get_image()
+	if image == null or image.is_empty():
 		push_error("Godot produced an empty native viewport capture")
 		quit(3)
 		return
