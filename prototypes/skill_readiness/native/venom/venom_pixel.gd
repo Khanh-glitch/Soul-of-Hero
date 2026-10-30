@@ -480,6 +480,8 @@ class Field extends RefCounted:
 				if v <= 0.0:
 					continue
 				var c: int
+				var sx: float = float(x) * sc + sd
+				var sy: float = float(y) * sc
 				if v < 1.0 * rk:
 					c = int(m["outline"])
 				else:
@@ -488,8 +490,6 @@ class Field extends RefCounted:
 					if v < 2.0 * rk:
 						c = int(m["rimLit"]) if lit > 0.25 else int(m["rim"])
 					else:
-						var sx: float = float(x) * sc + sd
-						var sy: float = float(y) * sc
 						var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
 								- 128.0) * 0.05
 						var n: float = float(RNG.nz1(sx + fx + wp * 9.0,

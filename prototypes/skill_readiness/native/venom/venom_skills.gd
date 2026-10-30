@@ -21,6 +21,7 @@ const S3V = preload("res://prototypes/skill_readiness/native/venom/venom_s3_verd
 const S3G = preload("res://prototypes/skill_readiness/native/venom/venom_s3_garden.gd")
 const S3R = preload("res://prototypes/skill_readiness/native/venom/venom_s3_cascade.gd")
 const S3X = preload("res://prototypes/skill_readiness/native/venom/venom_s3_vat.gd")
+const S4 = preload("res://prototypes/skill_readiness/native/venom/venom_s4.gd")
 const S3O = preload("res://prototypes/skill_readiness/native/venom/venom_s3_rot.gd")
 const R17 = preload("res://prototypes/skill_readiness/native/venom/venom_r17.gd")
 const R18 = preload("res://prototypes/skill_readiness/native/venom/venom_r18.gd")
