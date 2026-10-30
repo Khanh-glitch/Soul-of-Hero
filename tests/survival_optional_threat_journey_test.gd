@@ -23,6 +23,8 @@ func _body() -> void:
 	var build := ow.get(&"survival_build") as SurvivalBuildSystem
 	var world := ow.get(&"world") as OverworldWorld
 	var start := nav.cell_of(hero.global_position)
+	var home_room: String = build.room_topology.room_at(start)
+	_expect(not home_room.is_empty(), "journey starts inside the original player-built room")
 	var reach := nav.reachable_from(start)
 	var endpoint_data := nav.endpoints(world.data)
 	var encounter_script := load("res://game/survival/optional_skeleton_encounter.gd") as Script
@@ -115,9 +117,12 @@ func _body() -> void:
 	_set_direction(Vector2.ZERO)
 	var retreat_start := hero.global_position
 	var back := _route(nav.cell_of(hero.global_position), start, nav, hero)
-	var retreated := not back.is_empty() and await _walk_path(hero, back)
-	print("OPTIONAL_THREAT_TRACE retreat_start=%s path=%d end=%s hp=%s dead=%s walked=%s" % [str(retreat_start), back.size(), str(hero.global_position), str(hero.get("health")), str(hero.get("dead")), str(retreated)])
-	_expect(retreated and not bool(hero.get("dead")), "ordinary movement retreats alive to the original home")
+	var walked_back := not back.is_empty() and await _walk_path(hero, back)
+	# Home is a room, not a single exact foot pixel. The path helper's last-cell
+	# tolerance can stop against furniture even after the Hero has entered it.
+	var retreated := not home_room.is_empty() and build.room_topology.room_at(nav.cell_of(hero.global_position)) == home_room and not bool(hero.get("dead"))
+	print("OPTIONAL_THREAT_TRACE retreat_start=%s path=%d end=%s hp=%s dead=%s walked=%s same_room=%s" % [str(retreat_start), back.size(), str(hero.global_position), str(hero.get("health")), str(hero.get("dead")), str(walked_back), str(retreated)])
+	_expect(retreated, "ordinary movement retreats alive into the original built room")
 	_expect((_save().call(&"inventory_totals") as Dictionary) == before, "retreat does not duplicate or lose carried possessions")
 	if not retreated:
 		_body_complete = true
@@ -194,8 +199,10 @@ func _body() -> void:
 	await _click_window(root.get_final_transform() * (camera.get_canvas_transform() * bag.global_position))
 	_expect((_save().call(&"inventory_totals") as Dictionary) == before and not ((_survival().call(&"document") as Dictionary).get("death_bags", {}) as Dictionary).has(bag_id), "pointer recovers exact carried possessions from the same bag")
 	var return_home := _route(nav.cell_of(hero.global_position), start, nav, hero)
-	var home_again := not return_home.is_empty() and await _walk_path(hero, return_home)
-	_expect(home_again and not bool(hero.get("dead")), "ordinary movement returns to the original home")
+	if not return_home.is_empty():
+		await _walk_path(hero, return_home)
+	var home_again := not home_room.is_empty() and build.room_topology.room_at(nav.cell_of(hero.global_position)) == home_room and not bool(hero.get("dead"))
+	_expect(home_again, "ordinary movement returns to the original built room")
 	if not home_again:
 		_body_complete = true
 		return
