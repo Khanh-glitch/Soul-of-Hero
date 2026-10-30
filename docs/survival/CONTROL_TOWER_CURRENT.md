@@ -1,3 +1,5 @@
+> **2026-10-30 HISTORICAL EVIDENCE / SUPERSEDED CLAUSES:** This document remains useful as source/research/implementation history, but `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `DECISIONS.md` D062–D074 OVERRIDE ANY contrary persistent-home, optional-only replay, forced exact-ten-dungeon layout, no season-wipe, no secured currency, no Ragnarok, or no physical trading-machine assumptions. Do not dispatch gameplay based on conflicting older prose. Its native acceptance claims (if any) are valid only for their pinned SHA, not as product approval.
+
 # SOUL OF HERO — CONTROL TOWER / ACTIVE MULTI-AGENT OPERATIONS
 **Canonical cross-chat coordinator state, checked 2026-10-29 (Asia/Ho_Chi_Minh).** This file is a durable bridge across conversations, **not an automatically updating background monitor**. Any new reviewer/ChatGPT session MUST re-fetch live GitHub PR/issues/CI, read this file and the underlying Atlas/CT/decision documents, reconcile changes, then append an evidence-based checkpoint. Never treat this snapshot as eternally current.
 

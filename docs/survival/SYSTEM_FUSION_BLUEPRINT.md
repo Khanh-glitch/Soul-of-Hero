@@ -1,3 +1,5 @@
+> **2026-10-30 HISTORICAL EVIDENCE / SUPERSEDED CLAUSES:** This document remains useful as source/research/implementation history, but `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `DECISIONS.md` D062–D074 OVERRIDE ANY contrary persistent-home, optional-only replay, forced exact-ten-dungeon layout, no season-wipe, no secured currency, no Ragnarok, or no physical trading-machine assumptions. Do not dispatch gameplay based on conflicting older prose. Its native acceptance claims (if any) are valid only for their pinned SHA, not as product approval.
+
 # Soul of Hero — Systemic Fusion Architecture v1.0 (approved through F0–F5 design gates)
 
 **2026-10-29. DESIGN APPROVED; GAMEPLAY NOT YET IMPLEMENTED.** Read the immutable user-source atlas (SHA-256 `b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157`) and its 108-index `SOURCE_COVERAGE_TRACE.json` before changing any subsystem. The 2019–2020 client is the principal survival *behavior* reference; 2021–2026 mechanisms are explicitly separate optional design extensions. The goal is near-complete behavioral fusion, not illegal proprietary source/asset copying.

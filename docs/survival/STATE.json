@@ -8,8 +8,8 @@
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
   "updated_date": "2026-10-30",
-  "phase": "SURV_020_WAYSTATION_ROUTE_VERIFIED_HEADLESS_PLAYER_GATES_OPEN",
-  "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
+  "phase": "SURV_010_MERGED_SURV_020_A0_V5_ROUTE_RENDERED_129_CHECKS_WALKER_WEDGE",
+  "scope": "CURRENT PRODUCT AUTHORITY: max 14 real-day season or voluntary earlier restart, full run-local reset, account achievements/results/SECURED Ragnarok currency; final72h six bosses/stones, loot-to-repeat-deposit, independent physical evacuation, stable world with safe random spawn, authentic Gold; actual implementation separately gated",
   "code_claims": {
     "survival_system_integrated": false,
     "freeform_construction_integrated": false,
@@ -74,93 +74,19 @@
       "name": "Complete roofed room, dynamic collision, storage, bed and respawn",
       "status": "in_progress",
       "evidence": [
-        "Storage-safety increment only: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40849106485 at 77c639331d8d4b0c472e86e7538275e6778aa697 — Godot 4.7 Xvfb, SURVIVAL FOUNDATION PASSED - 132 checks, engine exit 0",
-        "docs/survival/tasks/SURV-020_WORK_ORDER.md",
-        "Native topology increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794 at 4afe3d94cea92be9cc2355f3fb8362ab358907f4; foundation 132 and topology 50 checks; not full acceptance",
-        "Native door increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097 at 30cb746e4f1881c86abefc6cdd229ee0c2ef6011; foundation 132 and topology/door 62 checks; not full acceptance",
-        "Native incremental door/roof/modal fixture: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40871270822 at 15965c26 — Godot 4.7 Xvfb, foundation 132 and topology/door/roof/modal 94 checks; not SURV-020 acceptance",
-        "Continuation draft https://github.com/Khanh-glitch/Soul-of-Hero/pull/21; stale PR #11 does not contain this branch",
-        "Native bed/death/partial token guards: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480211 at 62b6ab5e507982a3651604ed924fd47e9dbd5056 — foundation gate, topology 94, bed 95; not full SURV-020 acceptance",
-        "Overworld native AppFlow and regression suite: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40885480215 at 62b6ab5e507982a3651604ed924fd47e9dbd5056; not a full shelter playthrough",
-        "E-01 trusted-code fixture composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40892629650 at 568a432 — actual pinned A3 adapter + A0 SaveService, authority 108 / bed 96 / topology 94, success; not production composition",
-        "One-process disk-boundary interruptions: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893023725 at 8d69353 — 154 fault/reload checks, authority 108, bed 96, topology 94, success; not OS kill/power-loss evidence",
-        "Real A3 specimen consumption and unique craft/collection: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40893272031 at 7c2f5a7 — authority 124 / fault 154 / bed 96 / topology 94 passed with test-only clock.",
-        "Focused GUI accept and world mouse bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40894149050 at d561311 — authority 124 / fault 154 / bed 97 / topology 94 passed; fixture sets GUI focus, not a human playthrough. Earlier GUI mouse input failed in run 40893616929 and remains to diagnose.",
-        "GUI pointer trace with no focus, actual paused button and native world bag input: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40897582308 at 4e0ecb2 — bed 102, topology 94, authority 124, interruption 154 passed; injected native input, not human playtest.",
-        "E-02 station placement increment: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40899320774 at db0e72b — station 30, authority 124, interruption 154, bed 102, topology 94 passed; actual production clock and A3 wiring absent.",
-        "Station replacement and GUI world separation https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900018933 at 5ceca96 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed.",
-        "Receipt-bound station revision https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900172565 at b6dd082 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed with engine shutdown resource warnings. Overworld run 40900172653 failed its occlusion/frame performance assertion; cause unproven.",
-        "GUI trace disconnect: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885475 at 5882aa4 — station 32 / authority 124 / interruption 154 / bed 103 / topology 94 passed.",
-        "Overworld follow-up https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40900885519 at 5882aa4 passed static/native/visual including perf; prior failure cause not established.",
-        "Production clock and A3 composition fixture: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40904441440 at 9f5ad36, session 21.",
-        "Actual panel injected input and real A3: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905802870 at 88e10ce, session 22.",
-        "Modal/focus, disabled/broken station and same-process enqueue faults: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959562 at 142d0ac, session 55; not a fresh-save journey.",
-        "Unchanged performance gate failed again +98%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40905959492 at 142d0ac; PERF_VARIABILITY_UNEXPLAINED.",
-        "Mounted resource interaction with teleported physics-disabled Hero and cleared inventory, production composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40906471143 at 07b9c8f, session 57; not normal input or approved A1 source provenance.",
-        "Immediate pause partial-step discard: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40907113917 at 39cbf48, session 59.",
-        "Synthetic foreign modal protection: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40907861606 at 0cb51c0, session 60; not real A6.",
-        "Canonical station-kind intent: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40908404398 at 318604a, session 61.",
-        "Physical workbench capacity/FIFO/refunds, additional fixture fibre: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40908536498 at 56342af, session 67; not normal-input journey.",
-        "Paid same-cell replacement job isolation: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40909702058 at 2e3eff9.",
-        "Actual host receipt replay/stale: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40909792544 at 48fdbc6, session 74.",
-        "Overquantum in-process trusted-clock fault: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40910842731 at 5ef3668, session 78.",
-        "World interaction reach and teleported injected pointer: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40911620325 at 1cef716, session 81; not normal-input navigation.",
-        "Knight always-available far/near interaction probe and teleported world click: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912938059 at f759924, session 83; not a normal-input navigation journey.",
-        "First partial fresh-save normal-input movement, scrap click and reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832863 at c8ab791, 4 checks; no fixture inventory or actor teleport; not full journey or A1 provenance approval.",
-        "Overworld gate failed again +104% with direct timing evidence: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40912937999 at f759924; PERF_VARIABILITY_UNEXPLAINED.",
-        "Fresh-save input scrap and oak → GUI hand queue → active kit escrow → reload: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40914953517 at b797b9b, 11 checks, no fixture grants/teleport; not collected station or full journey.",
-        "Additional unchanged perf failure +47%: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40913832746 at c8ab791; PERF_VARIABILITY_UNEXPLAINED.",
-        "Real-input kit GUI collection passed but paid placement failed: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40916909329 at 16ca551; production build-blocker and synthetic cursor issues addressed at 394d1ca, native verification pending 40918666020.",
-        "Fresh-save automated input gathers scrap/oak, manufactures and GUI-collects kit, pays and reloads physical bench: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40918666020 at 394d1ca, 17 partial journey checks; shutdown leak/resource warnings, source approval and full journey open.",
-        "Normal-input cloth 1/25 failure with horizontal overflow traced: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923336131 at 366184f; c6c135a layout fix and exact receipt assertions native pending.",
-        "Pinned A6 composition: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40923995445 at 1643118; original modal probe and isolated A6 tests pass, actual workspace six held-input assertions fail, bed 103 checks pass but step log gate fails ALSA; 071fcd9 fixes driver and traces event delivery, pending.",
-        "A1 two-POI out-of-bounds and owner seam: docs/survival/handoffs/A0_A1_TWO_POI_NATIVE_GEOGRAPHY_BLOCKER_20261030.md; exact canonical slices are not mounted/playable.",
-        "A6 workspace test intermittent: run 40924148636 at d8d13bb 25/25 vs run 40924373575 at c6c135a 7/25 failures; both bed 103/103 but strict step fails ALSA.",
-        "Actual A6 V3 + A0 composed Godot 4.7 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924666418 at 071fcd9: original modal probe passes, actual workspace 29, unchanged bed 103, A6 suites 39/31/74/7/39 pass; injected inputs, no production A6 mount, not full product acceptance.",
-        "Full bag+chest fixture https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924148719 at d8d13bb: 28 rollback, HUD, retry and reload checks pass; overall run fails old normal cloth scroll.",
-        "Existing-overlay extension d7953e1: run 40925373707 fails six release-rearm assertions; bed 103 passes, workspace shutdown leak warnings; 4550d75 awaits delivered release events, native pending.",
-        "Web survival-specific CI-only browser fixture 3fc15cd / bridge revision 89b9c05; native Web export and Chromium result pending, not a human journey.",
-        "Fresh-save real automated-input cloth/one receipt/reload https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924373477 at c6c135a: 28/28, session83/authority124/station32/capacity28/bed103/topology94; 4 ObjectDB and 2 resource shutdown warnings; not complete B0 or human.",
-        "Refreshed modal composition https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40925821285 at 4550d75: actual workspace+codex/death 32 checks, original probe, bed103 and isolated A6 suites pass; injected inputs, no A6 production mount.",
-        "Unchanged +45% performance gate fails +109% https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40924373480 at c6c135a; PERF_VARIABILITY_UNEXPLAINED.",
-        "Survival Web fixture https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40925652747 at 3fc15cd: export succeeds but browser ready probe times out; bridge/diagnostics revisions pending.",
-        "Web diagnostic https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40926311459 at 52cb2f5: actual fixture boot logs Economy session unavailable and WebAssembly null function; 688793c stripped-source identity authorization, Web bridge disable and build breadcrumbs pending native/Web verification.",
-        "A6 composition https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40927100707 at 688793c passes 32/bed103 with shutdown warnings; Web 40927100751 fails CI instrumentation assertion before export, fixed in 2a60d11 pending run 40927588129.",
-        "Survival Web fixture https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40927588129 at 2a60d11: export plus Chromium real world, 91 nodes, economy panel and held-move/rearm passed; temporary CI entry, no harvest/craft/persistence, not full Web or human acceptance; exact prior crash root unproven.",
-        "Post-Web-identity native suite https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40927100809 at 688793c: A3 authority124, interruption154, session83, normal input28, capacity28, bed103, topology94, station32; not hostile-code security or full Web journey.",
-        "Unchanged overworld gate https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40927100788 at 688793c passes +7%; does not explain preceding +109% failure, PERF_VARIABILITY_UNEXPLAINED.",
-        "2026-10-30 continuation work order docs/survival/tasks/A0_SURV020_POST_49D50A3_CONTINUATION_20261030.md; independent review integration 1a27829, reviewed branch 49d50a3, B0 NOT ACCEPTED.",
-        "Native canonical seam prerequisite https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40931599594 at ef423ad: ordinary input Hero Refuge→(368,200), collides at x369; live collider x383 and legacy nav x383 solid/x384 outside. No mounted POIs; narrow A1/CT connector decision required.",
-        "Fixture-funded real Hero last-wall rejection/no receipt/retry and physical exit passed 21 at d1a35c7: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933650574; not complete anti-softlock.",
-        "Real A3 ready output with full bag, repeat/reload and single successful retry passed in 116-check session at d1a35c7: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933650444; fixture-funded.",
-        "Native UI fixtures at bff1e86 captured 720/2K/4K, layout assertions passed https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40933846794; only downscaled lossy review copies inspected, not 1:1 original/human.",
-        "Fixture-funded Hero exit/paid door interaction and actual escape passed 26 at 18a0a0d: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40934855391; includes fixture-controlled ten-gate protected placement and normal-input28; not comprehensive anti-softlock.",
-        "Exact native bed verbose rerun 103 passed without a shutdown warning at 89c5d7c: https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40934745057; earlier 7 ObjectDB/3 resource warnings remain unexplained.",
-        "Fresh-input home continuation bf1000a https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40935490153 failed 31 checks because the current 5x5 site was illegal; did gather 40 oak and three scrap after the 28-check production journey without grants or teleport. No home or functional bed/chest claim.",
-        "Ordinary-input home continuation at e72cb1b https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40935847497 failed 35 checks: gathered 40 oak/3 scrap, walked to production-legal site (47,208), failed first wall with script error; no home claimed.",
-        "Single fresh-save ordinary-input home continuation https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40936610856 at 7c8772b passed 56: real kit/bench/weave/two cloth then 40 oak/3 scrap, shape-aware walk, 15 paid walls/door/bed/chest and room; reload checked live nodes, not authoritative structure records. No human or B0 claim.",
-        "Fresh normal-input home use at b2a2a5b https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937017205 failed 1/62: activated bed, chest cloth deposit/withdraw and authoritative saved records/spawn/cloth passed, intended door click failed; no exit/return claim.",
-        "Fresh-input door trace 05199ad https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937411048 failed 1/62: closed door collider blocked closer approach and nearest-origin click reactivated the adjacent bed, not the door; agency concern, no exit claim.",
-        "44d4b60 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910016 failed 1/66: actual clicked in-reach door succeeded despite nearer bed, clicked far door stayed closed, bed/chest/saved custody passed; exit-cell assertion failed, physical full exit unproven.",
-        "Fresh ordinary-input home 7d1da20 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40938272060 passed 66: paid room/door/bed/chest, bed activation, chest cloth deposit/withdraw, authoritative records/anchor/cloth reload, pointed-door reach and actual physical exit (47,205)/return. Automated, not human; reconstructed scene and full B0 remain open.",
-        "Shared Knight pointed-door regression at 44d4b60: native https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910011, A6 https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909942, overworld +8% https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909927 and limited Web https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937910118 passed; general Original main baseline comparison https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40937909940 failed. PR21 draft mergeStateStatus DIRTY.",
-        "Fresh ordinary-input home + separate oak expedition/return f66f72f https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40938668918 passed 75: actual home/door/bed/chest, harvest two oak, return, stash oak plus crafted two cloth, reload exact chest custody. Reconstructed-scene and genuine threat/death unproven; no human/B0 claim.",
-        "Fresh journey and scene reconstruction 0914edf https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40939080582 passed 81: paid home, activated bed, chest cloth/oak source return, fresh production world reconstructs same room/structures/anchor/chest, real input recovers both stacks and reload preserves exactly bag custody. Automated not human, genuine threat/death and canonical POIs remain open.",
-        "06e00e5: 81 home passes 40939424247; topology 14/94 fails 40939424391 and A6 bed 4/33 fails 40939424339 after d13f960. Fixture safety hypothesis under native test; no waiver. Continuation order docs/survival/tasks/A0_SURV020_COHESIVE_PHASE_20261030.md.",
-        "A0 recovery/pinned A1 visual + physical input + full SaveDiff checkpoint: docs/survival/handoffs/A0_PR21_RECOVERY_VISUAL_PHYSICAL_SAVE_20261030.md (partial, B0 HOLD)."
+        "USER_REPORTED: agent started working on SURV-020; no SURV-020 code commit or runtime test verified at this checkpoint",
+        "docs/survival/tasks/SURV-020_WORK_ORDER.md"
       ],
-      "next": "Resolve owner-approved A1/A3 physical identity and visual/clock seams, preserve original persistence assertions, and prove real Home/source/stash/restart plus fair death/recovery; B0 remains HOLD.",
+      "next": "A0+A2 to deliver real Godot-native enclosed room/per-room roof fade/bed respawn/reload proof; update evidence only after pushed code and CI",
       "assignment": {
-        "status": "PRODUCTION_CLOCK_AND_A3_COMPOSITION_NATIVE_TESTED_FULL_E02_AND_SURV020_OPEN",
+        "status": "USER_REPORTED_ACTIVE_NOT_CODE_VERIFIED",
         "task_id": "SURV-020",
-        "owner": "A0",
+        "owner": "A0+A2",
         "assigned_date": "2026-10-29",
         "prompt_document": "docs/survival/tasks/SURV-020_WORK_ORDER.md",
-        "branch": "arena/dea2428e-soul-of-hero",
-        "review": "Independent review on control-tower base: docs/survival/reviews/A0_SURV020_PR21_D561_E01_AUTHORITY_GUI_REVIEW_20261029.md; E-01 trusted-fixture accepted, E-02 and full SURV-020 held.",
-        "user_reported": "PR21 DRAFT, B0 HOLD. Guarded default-off production Waystation candidate and A0 research UI/monotonic clock added; all new native and product gates pending. Docs tab04 checkpoints verified; no complete normal route.",
-        "continuation_work_order": "docs/survival/tasks/SURV-020_GUI_E02_CONTINUATION_20261029.md",
-        "sustained_work_order": "docs/survival/tasks/A0_SURV020_E02_FULL_PRODUCTION_JOURNEY_SUSTAINED_20261029.md (integration branch)"
+        "branch": "NOT_YET_VERIFIED",
+        "review": "NEXT_REQUIRES_ACTUAL_COMMIT_AND_NATIVE_TEST",
+        "user_reported": "Agent is working now; do not assume actual worktree/branch visibility"
       }
     },
     {
@@ -194,30 +120,30 @@
   ],
   "next_action": {
     "task_id": "SURV-020",
-    "owner": "A0",
+    "owner": "A0+A2",
     "entrypoints": [
       "game/survival/survival_build_system.gd",
       "game/survival/survival_service.gd",
-      "docs/survival/CONTRACTS.md",
-      "tests/survival_foundation_test.gd"
+      "game/survival/survival_structure.gd",
+      "docs/survival/tasks/SURV-020_WORK_ORDER.md"
     ],
-    "first_test": "NEXT_ATOMIC_ACTION: get A3 owner-approved physical cache identity and V5 native/migration fixes; rerun genuine Home→cache→stash→separate OS reload without removing strict assertions.",
-    "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
-    "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has.",
-    "description": "Resolve A1 no-reparent foot sorting/clock mapping and rendered visual/Gold gates; keep guarded candidate default off and threat unmounted until safe. Complete full B0 with fair death/same-bag recovery, real player choices and intact ten dungeons. See docs/survival/handoffs/A0_PR21_RECOVERY_VISUAL_PHYSICAL_SAVE_20261030.md.",
-    "last_verified_code": "1c5d4413 threat 41008848008 failed 2/125: two real deaths/bag recoveries/home/real kill/receipt, no rearm, stable score 200 and unchanged progression after real cooldown; unexpected extra soul_ember 1 failed exact custody, no disk reload. Same-SHA foundation/overworld/A6 passed, perf +17%, general failed. e9662df3 endpoint walk passed 25; 2b209b0c exact connector passed 33. Historic +120% perf failure unexplained.",
-    "working_code": "Guarded exact-pinned A1 visual treatment mounted in real controller, headless 18 checks, no rendered review. Physical locker/ledger/deadfall/return work via injected input; V3 physical cache identity mismatch, 6/33 failures; A3 V5 still unsafe and unmounted.",
-    "docs_sync": "Tab04 readback index 332683; tab12 readback 189542 for the edb08b5f V5 route checkpoint.",
-    "mergeability": "PR21 pushed 4c0418e5; DRAFT/MERGEABLE/UNSTABLE; last checks queued, no merge.",
-    "a6_latest": "PR24 63d3fae5 avatar private staging/driver/revision fix; native, licensing, production composition unverified; previous 8bc0af5a failed composition; A6 remains UI-only owner.",
-    "persistence_diagnosis": "Reload now returns the entire committed document exactly (0 VALUE / 0 TYPE) after integer-slot restoration; raw disk still encodes whole numbers as JSON floats, which is the correct serialization.",
-    "threat": "Prior 41022975254 proved score 0→200→400 after failed first-hit save. New unmounted candidate reserves before enemy exposure; real-input 3-process test pending; pre-hit restart can consume encounter, fairness HOLD.",
-    "head": "291511195dc6c7c5b501b28687f9f164a3457607",
-    "next_atomic_action": "Rendered Xvfb run of survival_normal_entry_roadside_v5_test (Home->Campaign->Overworld->roadside->home->2nd process) on exact HEAD, and answer A3 PR19 comment 6522130262 for the soh.economy.tool_use.v1 plan; then wire the atomic harvest+wear commit. Do not invent tool multipliers or prices.",
-    "verified_headless": "A3 V5 pin+migration; Waystation authority 50; migration 54; roadside authority 11; identity 9; art 18; controller route 33 + restart 19 exact; roadside route 30 + restart 29 exact; real V3->V5 restart 17; foundation 144; station 32; capacity 34; hero exit 32; interruption 154; precision 14; diff 6; A3 authority 124.",
-    "not_verified": "Rendered/visual acceptance, Home menu chain (headless blocked by GUI starter-kit check present at base), A6 avatars, Gold, death/same-bag recovery, human pacing, tool use (A3 plan absent), hosted CI (all queued)."
+    "first_test": "Build enclosed two-room house, enter door, fade only occupied room's roof, activate bed, die/respawn, reload; preserve SURV-010 125 checks",
+    "parallel_start": "Other agents only on owned branches; no overwrite of in-flight A0/A2 work",
+    "design_gate": "Full Godot 4.7 native visual/physics/respawn evidence and regression CI required; user-reported working != Verified"
   },
   "blockers": [
+    {
+      "id": "GOLD-ZIP",
+      "scope": "Gold full-fidelity port only",
+      "status": "not_in_audited_git_tree",
+      "details": "Two SHA-locked archives must be supplied/verified at native port stage; general gameplay work not blocked"
+    },
+    {
+      "id": "BUILD-ART",
+      "scope": "final production building art only",
+      "status": "needs_asset_selection_and_license",
+      "details": "Cainos and existing packs need 2D modular fit review; use clearly labeled placeholders for mechanics"
+    },
     {
       "id": "A3_TOOL_PLAN",
       "owner": "A3",
@@ -228,13 +154,13 @@
       "id": "RENDERED_RUN",
       "owner": "A0/environment",
       "state": "PARTIAL_RENDERED",
-      "detail": "Rendered Xvfb matrix at 8ce3add8: controller and roadside legs PASS; normal-entry-roadside reaches 129 checks and normal-entry 111 checks through menu -> Home -> real overworld -> gather/reserve/place -> shelter/chest -> all three A1 crates with exact A3 items and canonical receipts, failing only the synthetic return/cache walk. The stall is a walker wedge: Hero vel=(-90,0) with motion=(-0.000977,0), ten perpendicular nudges move it zero pixels at (343,223)->(342,222) and (407,203)->(406,202). Job logs/artifact ZIPs are blob-hosted and unreachable; failed checks are published as PR21 comments by the workflow."
+      "detail": "Rendered Xvfb candidate matrix at 8ce3add8: controller and roadside legs PASS; normal-entry-roadside reaches 129 checks and normal-entry 111 checks through menu -> Home -> real overworld -> gather/reserve/place -> shelter/chest -> all three A1 crates with exact A3 items and canonical receipts, failing only the synthetic return/cache walk. The stall is a walker wedge: Hero vel=(-90,0) with motion=(-0.000977,0); ten perpendicular nudges move zero pixels at (343,223)->(342,222) and (407,203)->(406,202). Runner logs and artifact ZIPs are blob-hosted and unreachable from this sandbox; failed checks are published as PR21 comments by the workflow."
     },
     {
       "id": "A1_VISUAL_LOCK",
       "owner": "A1",
       "state": "OWNER_NEEDS_FIX",
-      "detail": "PR20 09c20061 first_hour_visual_payload_lock.v1.json names source_commit ad39bde6 while describing newer props/atlas/treatment bytes, and none of its three payload_hashes matches a committed payload at 09c20061 (actual: props 8d4acf40, atlas 83d69373, treatment 39f1a9a9). Cache cells are unchanged so a remount stays compatible, but A0 keeps the ad39bde6 byte-pinned mount until A1 republishes a verifiable lock."
+      "detail": "PR20 09c20061 first_hour_visual_payload_lock.v1.json names source_commit ad39bde6 while describing newer props/atlas/treatment bytes, and none of its three payload_hashes matches a committed payload at 09c20061 (actual: props 8d4acf40, atlas 83d69373, treatment 39f1a9a9). Cache cells are unchanged so a remount stays compatible; A0 keeps the ad39bde6 byte-pinned mount (PR20 comment 6524971216)."
     }
   ],
   "cross_agent_rules": {
@@ -255,10 +181,10 @@
   "evidence": {
     "bootstrap_ci": "passed_at_9816c8c8bfef8a78153a519fcbe8a40066b909c5_run_40827332506",
     "native_gameplay": "not_run",
-    "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
+    "web_gameplay": "not_run",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "new CT continuation + pilot pending tab04 append/readback",
+    "docs_sync": "Docs tab 04 needs follow-through for SURV-020 assignment; readback in this turn pending",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -275,71 +201,14 @@
       "result": "SURVIVAL FOUNDATION PASSED - 125 checks; 12/12 cases; engine exit 0",
       "not_claimed": "no human playthrough, no balance verdict, no Web playtest of survival, no roofed room/bed/respawn/crafting/core"
     },
-    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison': sword smoke 3/89 and Chapter 2 campaign-entry XP 20/949 fail identically in baseline runs 40815939433 and 40845406212 and current run 40863794019; not fixed or caused by this survival increment. Other jobs on current run: import/headless success; Xvfb captures pending at checkpoint.",
-    "surv_020": "IN_PROGRESS: storage safety increment natively passed 132 checks at 77c639331d8d4b0c472e86e7538275e6778aa697, run 40849106485; rooms, roofs, doors, beds, respawn, visual and Web shelter evidence remain unimplemented",
+    "pre_existing_red": "Godot 4.7 Runtime Validation 'Original main baseline comparison' fails 3/89 smoke checks (sword combo, hot-tuned light damage) identically at c1925d8d and after this work; pre-existing, not caused by the survival slice and not fixed by it",
     "pr10": {
       "state": "MERGED",
       "merge_commit": "2709b9f6bd0d1cc7a5b242e617184ddab0431470",
       "url": "https://github.com/Khanh-glitch/Soul-of-Hero/pull/10",
       "surv010_native": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40845406213"
     },
-    "surv020_status": "IN_PROGRESS: storage increment passed native test; shelter not verified",
-    "surv_020_topology": {
-      "status": "PARTIAL_NATIVE_PASS_NOT_SURV_020_VERIFIED",
-      "commit": "4afe3d94cea92be9cc2355f3fb8362ab358907f4",
-      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40862246794",
-      "result": "Godot 4.7 Xvfb: foundation 132, topology 50 checks, exit 0; far buildings 66 flood cells, local breach 34; no native roof screenshots",
-      "limitations": "door physical open/close, navigation, per-room roof, bed, respawn and full playable scenario not implemented; large components fail closed; cache indexes structure set per topology change; full sweep logical request replay remains unproven"
-    },
-    "surv_020_door": {
-      "status": "PARTIAL_NATIVE_PASS_NOT_COMPLETE",
-      "commit": "30cb746e4f1881c86abefc6cdd229ee0c2ef6011",
-      "run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/40863794097",
-      "result": "Godot 4.7 Xvfb foundation 132 and topology/door/storage 62 checks; collision tested with Hero CharacterBody2D.test_move, not input-driven walk",
-      "limitations": "roof, bed, respawn, non-player actor clearance, dynamic navigation, screenshots, Web shelter and full scenario unverified"
-    },
-    "surv020_cohesive_54aacfa": {
-      "commit": "54aacfa41d65fb3d4535e82443616a4c96eb7171",
-      "native": "40989573125 topology95 exit32 bed104 A3authority124 interruption154 station32 capacity28 normal28 session116; 40989573050 A6 workspace32 bed104; 40989573115 home81",
-      "overworld": "40989573138 unchanged +45% gate passed +6%",
-      "general": "40989573078 failed original-main baseline comparison",
-      "status": "PARTIAL_AUTOMATED_PASS_SURV020_B0_NOT_ACCEPTED",
-      "next_increment": "unique-only chest interaction and Dummy UI audio source changes committed with native result pending"
-    },
-    "surv020_d775348": {
-      "commit": "d775348923687096b62afa64b4c373e26438a3b0",
-      "bed": "FAIL 1/111 in native 40990189939 and A6 40990189966, new combined reload assertion; stale prior fixture facade suspected, not established",
-      "home": "PASS 81 40990190004",
-      "a6_workspace": "PASS 35 40990189966, no workspace leak diagnostic reported; bed still 7 objects/3 audio resources",
-      "overworld": "PASS +23% 40990189872",
-      "web": "PASS limited fixture 40990189891",
-      "general": "FAIL original-main baseline"
-    },
-    "surv020_03a39f3f": {
-      "commit": "03a39f3f747d9216e638e98eac3e48bf98574997",
-      "native": "PASS 40990690188: exit32 topology95 bed113 A3authority124 interruption154 station32 capacity28 normal28 session116",
-      "a6": "PASS 40990690168 workspace35 composed bed113, original probe and isolated suites; no diagnostic annotations in this run but historic leaks remain unexplained",
-      "home": "PASS 40990690211 fresh ordinary-input 81, not threat/death or human",
-      "overworld": "PASS 40990690174 unchanged +45% gate, +15%; historical variability unresolved",
-      "general": "FAIL 40990690225 original-main baseline; rendered job in progress at checkpoint",
-      "product_review": "docs/survival/reviews/A0_SURV020_PLAYER_EXPERIENCE_REVIEW_20261030.md",
-      "status": "PARTIAL_AUTOMATED_PASS_SURV020_B0_NOT_ACCEPTED"
-    },
-    "a1_connector_96447d7": {
-      "head": "96447d7a2549372c70db29f36c470d91e4171268",
-      "handoff": "docs/survival/handoffs/A0_A1_CONNECTOR_CONTRACT_REVIEW_20261030.md",
-      "source": "compiler and validator passed read-only at exact A1 SHA; independent comparison confirms 45 collision/47 dressing/13 props; legacy protected world metadata unchanged",
-      "native": "40991448243 Python+isolated reader pass; connector native and anti-vacuity FAIL (<12 checks), root cause unknown, shell -e hides log tail; new target anchor 408,200 does not prove required locker stand 408,199",
-      "scope": "45-cell legacy ridge carve awaits explicit CT decision; no A0 production carve/mount; one static chunk, no streaming",
-      "pin_caveat": "A0 Knight .tscn matches pin but A0 knight.gd changed; test production controller"
-    },
-    "a1_connector_f1f3a2f1": {
-      "head": "f1f3a2f1a6fa9299219e06261c98fd93f03e66e2",
-      "native": "40992089240 Python and isolated reader pass; connector Xvfb outbound Waystation anchor and Relay on foot, camera/nav checks passed, failed 1/17 return target 368,200 foot (5910.002,3216.357); root cause not yet known",
-      "stand_geometry": "analytic, not native: centered Hero 12x16 overlaps locker at 408,198 by 12x1 px at required 408,199; exact interaction stand requires physics test and owner-compatible resolution",
-      "status": "NO_PRODUCTION_MOUNT; CT RIDGE DECISION REQUIRED"
-    },
-    "ct_20261030_authority": "CT_RIDGE_ISOLATED_PILOT_APPROVED exact 46/48/14; CT_THREAT_A0_NARROW_IMPLEMENTATION_APPROVED one optional skeleton; no new worker, no default production mount or merge"
+    "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,
@@ -580,5 +449,9 @@
     "ledger": "docs/survival/RESEARCH_LOG.md",
     "preexisting_repo_list_is_exhaustive": false,
     "does_not_claim_new_repositories_were_discovered": true
-  }
+  },
+  "current_product_contract": "docs/survival/CURRENT_PRODUCT_CONTRACT.md",
+  "current_agent_brief": "docs/survival/AGENT_CURRENT_DESIGN_BRIEF.md",
+  "effective_decisions": "D051-D074 latest canonical supersessions; historic older contradictions non-authoritative",
+  "design_record_status": "DESIGN_AUTHORIZED_NOT_ENGINEERING_VERIFIED"
 }

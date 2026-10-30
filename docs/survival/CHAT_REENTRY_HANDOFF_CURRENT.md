@@ -1,3 +1,5 @@
+> **2026-10-30 HISTORICAL EVIDENCE / SUPERSEDED CLAUSES:** This document remains useful as source/research/implementation history, but `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `DECISIONS.md` D062–D074 OVERRIDE ANY contrary persistent-home, optional-only replay, forced exact-ten-dungeon layout, no season-wipe, no secured currency, no Ragnarok, or no physical trading-machine assumptions. Do not dispatch gameplay based on conflicting older prose. Its native acceptance claims (if any) are valid only for their pinned SHA, not as product approval.
+
 # SOUL OF HERO — CHAT REENTRY HANDOFF / SELF-SUFFICIENT RESTORATION PACKET
 **Created:** 2026-10-29. **Type:** coordinator-to-NEW-coordinator-chat, NOT a narrow agent task prompt. **Read this packet alongside the canonical live sources; never interpret it as proof of gameplay acceptance or up-to-the-minute Git status.** This file is an ordered executable recovery guide, not an assertion that the receiving AI recalls the old conversation.
 

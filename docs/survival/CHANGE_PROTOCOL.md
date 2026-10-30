@@ -1,5 +1,8 @@
 # Cross-chat, cross-agent and crash recovery protocol
 
+**Effective product authority 2026-10-30:** Always read `CURRENT_PRODUCT_CONTRACT.md` + D062–D074 + `AGENT_CURRENT_DESIGN_BRIEF.md` first. Older text is traceable provenance only where superseded; NEVER dispatch on obsolete permanent-home/ten-dungeon/no-bank assumptions. Contract changes must update authoritative docs in the same commit and announce the supersession to affected owner agents.
+
+
 ## One reliable source of truth
 
 **Git commits + this branch's docs + issue #9**, NOT the AI's internal memory. All session claims are reconstructable from code, git SHA and test reports. Store only project decisions/technical state; NEVER store passwords, private tokens, personal secrets or customer data in repository.
