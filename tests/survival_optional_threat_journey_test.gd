@@ -69,7 +69,7 @@ func _body() -> void:
 		return
 	_expect(build.validate_cell(site) == "encounter_exclusion" and encounter.get_node_or_null("OptionalEncounterWarning") != null, "validated encounter reserves building and presents a warning")
 	var enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
-	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one existing skeleton spawned without score rewards")
+	_expect(enemy != null and int(enemy.get("score_reward")) == 0, "one existing skeleton spawned without a kill bonus")
 	var session := root.get_node("GameSession")
 	var score_before := int(session.get("score"))
 	var safe_health := int(hero.get("health"))
@@ -257,21 +257,60 @@ func _body() -> void:
 		_expect(restored and restored_encounter.get_node_or_null("BoundedSkeleton") == null and bool(_save().call(&"is_transaction_applied", "survival.encounter.optional_skeleton.first_hit.v1")), "same consumed encounter stays non-spawning after disk and world reconstruction")
 	_body_complete = true
 
+# Route a few real-input steps toward a live enemy when direct pursuit stalls.
+# Replan against current shapes each time; do not control or reposition the AI.
+func _reengage_detour(hero: CharacterBody2D, nav: OverworldTraversability, enemy: CharacterBody2D) -> void:
+	if not is_instance_valid(enemy) or enemy.is_queued_for_deletion():
+		return
+	var origin := nav.cell_of(hero.global_position)
+	var target := nav.cell_of(enemy.global_position)
+	var options: Array[Vector2i] = []
+	for radius in [2, 3, 4]:
+		for offset: Vector2i in [Vector2i(radius, 0), Vector2i(-radius, 0), Vector2i(0, radius), Vector2i(0, -radius), Vector2i(radius, radius), Vector2i(-radius, radius), Vector2i(radius, -radius), Vector2i(-radius, -radius)]:
+			options.append(target + offset)
+	options.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return Vector2(a - origin).length_squared() < Vector2(b - origin).length_squared())
+	for destination: Vector2i in options:
+		if destination == origin or not _shape_clear(destination, nav, hero, {}):
+			continue
+		var route := _route(origin, destination, nav, hero)
+		if route.is_empty():
+			continue
+		var segment: Array[Vector2i] = []
+		for i in mini(route.size(), 4):
+			segment.append(route[i])
+		print("OPTIONAL_THREAT_ENGAGE detour hero=%s enemy=%s destination=%s steps=%d" % [str(hero.global_position), str(enemy.global_position), str(destination), segment.size()])
+		await _walk_path(hero, segment)
+		return
+	print("OPTIONAL_THREAT_ENGAGE detour_unavailable hero=%s enemy=%s" % [str(hero.global_position), str(enemy.global_position)])
+
 # Use real movement to re-engage after knockback. A leashed enemy may despawn;
 # in that case physically retreat beyond its safe spawn radius and wait for the
 # real cooldown rather than teleporting, changing the enemy or inflicting hits.
 func _engage_until_death(hero: CharacterBody2D, encounter: Node2D, nav: OverworldTraversability, home_cell: Vector2i, max_msec: int) -> void:
 	var deadline := Time.get_ticks_msec() + max_msec
 	var last_phase := ""
+	var progress_at := Time.get_ticks_msec()
+	var progress_position := hero.global_position
 	while not bool(hero.get("dead")) and Time.get_ticks_msec() < deadline:
 		var live := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 		var phase := "engage" if is_instance_valid(live) and not live.is_queued_for_deletion() else "cooldown"
 		if phase != last_phase:
 			print("OPTIONAL_THREAT_ENGAGE phase=%s pos=%s hp=%s distance=%s" % [phase, str(hero.global_position), str(hero.get("health")), str(hero.global_position.distance_to(encounter.global_position))])
 			last_phase = phase
+			progress_at = Time.get_ticks_msec()
+			progress_position = hero.global_position
 		if phase == "engage":
 			var delta := live.global_position - hero.global_position
 			_set_direction(delta if delta.length() > 28.0 else Vector2.ZERO)
+			if Time.get_ticks_msec() - progress_at >= 4000:
+				if delta.length() > 28.0 and hero.global_position.distance_to(progress_position) < 6.0:
+					# A live target across a prop cannot be approached by a straight
+					# input vector. Replan locally, still walking the actual Hero.
+					_set_direction(Vector2.ZERO)
+					await _reengage_detour(hero, nav, live)
+				progress_at = Time.get_ticks_msec()
+				progress_position = hero.global_position
 		elif hero.global_position.distance_to(encounter.global_position) < 350.0:
 			# A straight vector to home can press the real Hero forever into a
 			# blocker, preventing the 350px spawn-safety condition. Follow the
