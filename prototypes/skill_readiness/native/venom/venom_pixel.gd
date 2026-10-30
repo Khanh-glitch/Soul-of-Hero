@@ -519,6 +519,14 @@ class Field extends RefCounted:
 		var dep: float = float(o.get("dep", m.get("dep", 1.0))) * rk
 		var sdl: int = L.dl
 		L.dl = int(o.get("dl", m.get("dl", 16)))
+		# Hoisted material constants (were Dictionary lookups per pixel).
+		var c_outline: int = int(m["outline"])
+		var c_rim: int = int(m["rim"])
+		var c_rimlit: int = int(m["rimLit"])
+		var c_hi: int = int(m["hi"])
+		var c_sh: int = int(m["sh"])
+		var c_vein: int = int(m["vein"])
+		var vw_v: float = float(m.get("vw", 0.0))
 		# Fast path (bit-identical): opaque non-additive full-density writes go
 		# straight to the packed bytes; assigned back once (copy-on-write).
 		var fast: bool = L.dl >= 16 and not L.add and L.a == 255 and not L.cov
@@ -539,12 +547,12 @@ class Field extends RefCounted:
 				var sx: float = float(x) * sc + sd
 				var sy: float = float(y) * sc
 				if v < 1.0 * rk:
-					c = int(m["outline"])
+					c = c_outline
 				else:
 					var lit: float = -((h[i + 1] - h[i - 1]) * -0.7
 							+ (h[i + W] - h[i - W]) * -0.7) * 0.5
 					if v < 2.0 * rk:
-						c = int(m["rimLit"]) if lit > 0.25 else int(m["rim"])
+						c = c_rimlit if lit > 0.25 else c_rim
 					else:
 						var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
 								- 128.0) * 0.05
@@ -561,13 +569,13 @@ class Field extends RefCounted:
 						c = int(ramp[kk])
 						if v < hi_w:
 							if lit > hi_t:
-								c = int(m["hi"])
+								c = c_hi
 							elif lit < -hi_t:
-								c = int(m["sh"])
+								c = c_sh
 					if float(m.get("vw", 0.0)) > 0.0:
 						var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
-						if absf(float(n2) - 128.0) < float(m["vw"]) and v > 3.0 * rk:
-							c = int(m["vein"])
+						if absf(float(n2) - 128.0) < vw_v and v > 3.0 * rk:
+							c = c_vein
 				if fast:
 					var o2: int = i * 4
 					lb[o2] = c & 255
@@ -582,6 +590,8 @@ class Field extends RefCounted:
 
 
 	func vapor(L, m: Dictionary, t: float, o: Dictionary = {}) -> void:
+		var dep_rk: float = float(m["dep"]) * self.k
+		var c_rim_v: int = int(m["rim"])
 		if self.x1 < 0:
 			return
 		var W: int = self.W
@@ -609,7 +619,7 @@ class Field extends RefCounted:
 						- 128.0) * 0.05
 				var n: float = float(RNG.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
 				var n2: float = float(RNG.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
-				var d: float = (M.clampf(v / (float(m["dep"]) * rk), 0.0, 1.0) * 0.55
+				var d: float = (M.clampf(v / dep_rk, 0.0, 1.0) * 0.55
 						+ n * 0.55 + (n2 - 0.5) * 0.25)
 				if d < 0.28:
 					continue
@@ -623,5 +633,5 @@ class Field extends RefCounted:
 					kk = nR - 1
 				L.dl = M.js_round(M.clampf((float(m.get("dl", 16)) - 4.0 + d * 8.0) * dens,
 						0.0, 16.0))
-				L.raw_px(x, y, int(m["rim"]) if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
+				L.raw_px(x, y, c_rim_v if (v < 1.2 * rk and d > 0.45) else int(ramp[kk]))
 		L.dl = sdl
