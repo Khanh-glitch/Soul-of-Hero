@@ -435,3 +435,41 @@ Profile, from the code paths (not measured here; no local Godot):
 - Consequence: the 007, 008, 013, 015, 016 and 020 divergences are native-port defects, not oracle or original-source differences. Their first-divergence ticks can now be checked against the original per tick on the host.
 - 021 wall-clock: the original completes its 890-tick timeline in seconds under V8. The native GDScript port takes about 595 s for the full cast. The gap is in the native raster path (interpreted per-pixel GDScript), not the algorithm. The fix is native optimisation, not timeout changes.
 - View A (original GOLD composite, CPU replica of the GLSL composite) rendered for 006 and 010 at data-derived checkpoints to `/home/user/gold93_evidence/venomwright_{006,010}/A_original_gold_composite/` (outside the repo). Views B–E need the Godot captures, which are not downloadable from this sandbox.
+
+## Venomwright 007 / 008 progress (2026-10-30, commits 3139a19 → 5bd8967)
+
+### 008 Brine Serpents: PASS in candidate lane, registered
+- Root cause (found by reading the original `s2.ts` serpents loop against `venom_s4.gd`):
+  1. Lunge completion: original `s.tgt = tg[(s.si++) % 3]` reads the OLD `si`; the native
+     port incremented first and read the NEW value, so the next target was off by one.
+     This moved the serpent path, which changed the rupture chain positions and the
+     event-93 shock cue (x 296.488 vs 296.059) and produced one extra poison hit.
+  2. Rise-phase bottom clamp: original `clamp(s.y, 10, w.H - 8)`; native used `w.H - 10`.
+- `Chain.move` `sqrt` → `M.hypot` (`3139a19`) had no effect on 008 by itself (tick 125 unchanged).
+- Fixed in `5023485`. Candidate run `41000928886`, job `123884876907`: `GOLD93_VENOM_DIFFERENTIAL: PASS`,
+  first_divergent_tick -1, cues 121/121, hits 32/32, ticks 330, sampled 82.
+- Registered in `5bd8967`: `v008_source_native.gd`, `MODULE_PATHS` and `SOURCE_NATIVE_IDS`.
+  Lifecycle host count is now 16. Host lifecycle for 008 is not yet CI-verified (see pending runs).
+- Parity index: `venomwright:008` record added (evidence above).
+
+### 007 Hatchery Fall: still FAILS at tick 90 raster (narrowed, not resolved)
+- Run `41000632538` (`dc7e1e2`, enemy dump) job `123883948816`, ticks 89–92:
+  enemy x,y equal to the Node reference (within %.8f) for every enemy; `fx`, `pt`, `n` counts equal.
+  The first raster divergence is therefore not in enemy positions or particle counts.
+- Hatchling state verified by code reading (not yet by a CI dump): `ph` (hash, Math.imul path),
+  `hd` update (`angDiff` = fmod), `z` decay, `recoil`/`cd`, the `release()` function and its
+  `drops`/`shards` args (including `land: 3`), the cocoon pulse `**2` and the `glowAdd` decay,
+  and particle `bounce`/`seed` defaults all match the original.
+- Remaining candidates: per-object draw order and raster for the spawn tick + 1 (Flash, drops with
+  glow, Hatchling `up`, helpers `wormBody`/`ball`/`shard` in `venom_draw.gd` when called from
+  Hatchling). Next step needs a per-object raster hash dump on both sides for ticks 89–90.
+  The annotation feed truncates after about 8 lines, so the dump should be compact.
+
+### Pending at the time of writing
+- Runtime `41000928853` (`5023485`) and `41002034379` (`5bd8967`) are queued behind the runner backlog.
+  They contain the host lifecycle, 021 wall-clock, and 13/15/16 differential results.
+- 013, 015 and 016 still lack per-tick detail in annotations. 020 still fails at tick 180.
+- Not done this round: 021 wall-clock fix (profile says cloud and ground-loop draw dominate;
+  pure table lookups in `RNG.nz1`/`nz2` mean the reorder is only a constant-factor win),
+  006/010 views B–E and Lab darkening control, ARCANA 001, private vault retrieval (see the
+  vault section above; access not re-attempted this round).
