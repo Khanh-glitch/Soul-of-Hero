@@ -216,7 +216,7 @@ if (mode === 'hashes') {
 } else if (mode === 'blockhash') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, g) => {
-    if (t !== 89 && t !== 90) return;
+    if (t !== maxTick - 1 && t !== maxTick) return;
     const buf = Buffer.from(g.gfx.s.d.buffer, g.gfx.s.d.byteOffset, g.gfx.s.d.byteLength);
     const blks: string[] = [];
     for (let by = 0; by < 10; by++) for (let bx = 0; bx < 12; bx++) {
