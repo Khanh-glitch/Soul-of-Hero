@@ -1,0 +1,141 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://game/survival/ui/return/a6_run_card.gd" id="1_script"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
+
+[sub_resource type="StyleBoxFlat" id="ShellNormal"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.075, 0.062, 0.082, 0.82)
+border_width_left = 2
+border_color = Color(0.62, 0.46, 0.29, 0.62)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="ShellHover"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.13, 0.1, 0.13, 0.9)
+border_width_left = 2
+border_color = Color(0.86, 0.64, 0.36, 0.85)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="ShellPressed"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.2, 0.12, 0.1, 0.92)
+border_width_left = 2
+border_color = Color(1, 0.76, 0.42, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+
+[sub_resource type="StyleBoxFlat" id="ShellFocus"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 0.83, 0.45, 0.95)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="ShellDisabled"]
+content_margin_left = 10.0
+content_margin_top = 7.0
+content_margin_right = 10.0
+content_margin_bottom = 8.0
+bg_color = Color(0.06, 0.05, 0.07, 0.7)
+border_width_left = 2
+border_color = Color(0.4, 0.32, 0.24, 0.5)
+
+[node name="A6RunCard" type="Button"]
+custom_minimum_size = Vector2(228, 64)
+offset_right = 228.0
+offset_bottom = 64.0
+theme = ExtResource("2_theme")
+theme_override_styles/normal = SubResource("ShellNormal")
+theme_override_styles/hover = SubResource("ShellHover")
+theme_override_styles/pressed = SubResource("ShellPressed")
+theme_override_styles/focus = SubResource("ShellFocus")
+theme_override_styles/disabled = SubResource("ShellDisabled")
+flat = false
+script = ExtResource("1_script")
+
+[node name="Content" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 7
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Stack" type="VBoxContainer" parent="Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="Head" type="HBoxContainer" parent="Content/Stack"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 4
+
+[node name="Kicker" type="Label" parent="Content/Stack/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"KickerLabel"
+text = "MÙA 01"
+
+[node name="Filler" type="Control" parent="Content/Stack/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="More" type="Label" parent="Content/Stack/Head"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"MutedLabel"
+text = "›"
+
+[node name="Countdown" type="Label" parent="Content/Stack"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"NumberLabel"
+text = "—"
+
+[node name="RemainingBar" type="ProgressBar" parent="Content/Stack"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 3)
+layout_mode = 2
+mouse_filter = 2
+max_value = 100.0
+value = 100.0
+show_percentage = false
+
+[node name="EndNote" type="Label" parent="Content/Stack"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"MutedLabel"
+text = ""

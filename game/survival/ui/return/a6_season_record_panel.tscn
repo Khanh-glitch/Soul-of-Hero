@@ -1,0 +1,98 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/survival/ui/return/a6_season_record_panel.gd" id="1_script"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
+
+[node name="A6SeasonRecordPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(460, 0)
+offset_right = 460.0
+offset_bottom = 320.0
+mouse_filter = 0
+theme = ExtResource("2_theme")
+theme_type_variation = &"ElevatedPanel"
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Head" type="HBoxContainer" parent="Body"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="Body/Head"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"TitleLabel"
+text = "SỔ MÙA"
+
+[node name="Close" type="Button" parent="Body/Head"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Đóng sổ mùa"
+theme_override_font_sizes/font_size = 12
+text = "Đóng"
+flat = true
+
+[node name="NowLine" type="Label" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = ""
+
+[node name="Separator" type="HSeparator" parent="Body"]
+layout_mode = 2
+
+[node name="RunsKicker" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "CÁC MÙA ĐÃ QUA"
+
+[node name="RunScroll" type="ScrollContainer" parent="Body"]
+custom_minimum_size = Vector2(0, 92)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Runs" type="VBoxContainer" parent="Body/RunScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="RunList" type="VBoxContainer" parent="Body/RunScroll/Runs"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="RunsEmpty" type="Label" parent="Body/RunScroll/Runs"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Chưa có mùa nào khép lại"
+
+[node name="AchievementsKicker" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"KickerLabel"
+text = "THÀNH TỰU"
+
+[node name="Achievements" type="VBoxContainer" parent="Body"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AchievementList" type="VBoxContainer" parent="Body/Achievements"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AchievementsEmpty" type="Label" parent="Body/Achievements"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Chưa có thành tựu nào"
+
+[node name="Footnote" type="Label" parent="Body"]
+layout_mode = 2
+theme_type_variation = &"MutedLabel"
+text = "Thành tựu chỉ để ghi nhớ, không mang sức mạnh sang mùa sau."
+autowrap_mode = 3

@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://game/survival/ui/return/a6_survival_return_layer.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://game/survival/ui/return/a6_run_card.tscn" id="2_card"]
+[ext_resource type="PackedScene" path="res://game/survival/ui/return/a6_guidance_panel.tscn" id="3_guidance"]
+[ext_resource type="PackedScene" path="res://game/survival/ui/return/a6_return_digest.tscn" id="4_digest"]
+[ext_resource type="PackedScene" path="res://game/survival/ui/return/a6_season_record_panel.tscn" id="5_record"]
+[ext_resource type="PackedScene" path="res://game/survival/ui/return/a6_site_cue_chip.tscn" id="6_cue"]
+
+[node name="A6SurvivalReturnLayer" type="CanvasLayer"]
+process_mode = 3
+layer = 5
+script = ExtResource("1_script")
+
+[node name="Root" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RunCard" parent="Root" instance=ExtResource("2_card")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 228.0
+offset_bottom = 64.0
+
+[node name="GuidancePanel" parent="Root" instance=ExtResource("3_guidance")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 296.0
+offset_bottom = 96.0
+
+[node name="ReturnDigest" parent="Root" instance=ExtResource("4_digest")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 316.0
+offset_bottom = 120.0
+
+[node name="SeasonRecord" parent="Root" instance=ExtResource("5_record")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 460.0
+offset_bottom = 320.0
+
+[node name="SiteCueChip" parent="Root" instance=ExtResource("6_cue")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_right = 220.0
+offset_bottom = 34.0

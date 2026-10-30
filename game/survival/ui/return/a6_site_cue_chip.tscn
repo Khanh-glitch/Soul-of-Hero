@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://game/survival/ui/return/a6_site_cue_chip.gd" id="1_script"]
+[ext_resource type="Theme" path="res://game/ui/theme/living_arsenal_theme.tres" id="2_theme"]
+
+[node name="A6SiteCueChip" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 0)
+offset_right = 220.0
+offset_bottom = 34.0
+mouse_filter = 1
+theme = ExtResource("2_theme")
+theme_type_variation = &"PromptPanel"
+script = ExtResource("1_script")
+
+[node name="Body" type="VBoxContainer" parent="."]
+layout_mode = 2
+mouse_filter = 1
+theme_override_constants/separation = 0
+
+[node name="TrailLine" type="Label" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"PromptLabel"
+text = ""
+
+[node name="ThreatLine" type="Label" parent="Body"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"PromptLabel"
+text = ""

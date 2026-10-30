@@ -411,6 +411,25 @@ jobs:
           echo "2160p capture exit: ${result}"
           exit "${result}"
 
+      - name: Render the survival return UI previews (720p / 1440p / 2160p)
+        run: |
+          set -uo pipefail
+          for res in 1280x720 2560x1440 3840x2160; do
+            mkdir -p ".artifacts/captures-${res}"
+            export SOUL_OF_HERO_SAVE_PATH="user://a6_ui_preview_${res}.json"
+            timeout --signal=TERM --kill-after=20s 300s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
+              env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+              godot --path . --resolution "${res}" --rendering-driver opengl3 -- \
+              --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" --capture-tag=return_${res} \
+              2>&1 | tee ".artifacts/capture-return-${res}.log"
+            status=${PIPESTATUS[0]}
+            echo "return UI capture ${res} exit: ${status}"
+            if [ "${status}" -ne 0 ]; then
+              echo "::error::return UI capture failed at ${res} (a headless engine exits 2 on purpose)"
+              exit "${status}"
+            fi
+          done
+
       - name: Assert every capture has the resolution it claims
         run: |
           python3 - <<'PY'
@@ -458,3 +477,50 @@ jobs:
         with:
           name: a6-capture-logs
           path: .artifacts/capture-*.log
+
+  survival-return-ui:
+    name: Survival return UI (season, guidance, digest, record)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install the official Godot 4.7-stable binary (SHA-256 verified)
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/godot"
+          ARCHIVE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64.zip"
+          curl -L --fail --retry 3 --max-time 900 -o "$ARCHIVE" \
+            "https://github.com/godotengine/godot-builds/releases/download/4.7-stable/Godot_v4.7-stable_linux.x86_64.zip"
+          echo "${GODOT_ARCHIVE_SHA256}  ${ARCHIVE}" | sha256sum -c -
+          unzip -q -o "$ARCHIVE" -d "$RUNNER_TEMP/godot"
+          ENGINE="$RUNNER_TEMP/godot/Godot_v4.7-stable_linux.x86_64"
+          chmod +x "$ENGINE"
+          ln -sf "$ENGINE" "$RUNNER_TEMP/godot/godot"
+          echo "$RUNNER_TEMP/godot" >> "$GITHUB_PATH"
+          "$ENGINE" --version | tee "$RUNNER_TEMP/godot-version.txt"
+
+      - name: Run the return UI native gate
+        run: |
+          set -euo pipefail
+          mkdir -p .artifacts
+          bash tools/run_a6_return_ui_gate.sh "$RUNNER_TEMP/godot/godot" 2>&1 | tee .artifacts/a6-return-ui-gate.log
+          grep -q "A6 RETURN UI NATIVE PASSED" .artifacts/a6-return-ui-gate.log
+          echo "A6 RETURN UI GATE PASSED" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: The capture harness refuses to fake a render without a display
+        run: |
+          set -euo pipefail
+          set +e
+          godot --headless --path . res://tests/survival/ui/a6_return_ui_capture.tscn > .artifacts/headless-capture.log 2>&1
+          status=$?
+          set -e
+          cat .artifacts/headless-capture.log
+          test "$status" -eq 2
+          grep -q "RENDERER REQUIRED" .artifacts/headless-capture.log
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a6-return-ui-logs
+          path: .artifacts/*.log
