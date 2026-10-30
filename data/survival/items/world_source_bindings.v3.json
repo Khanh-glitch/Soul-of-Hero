@@ -22,7 +22,9 @@
       "data/survival/world/novice_bootstrap_contract.json": "b98466943b2f49fe6c4b74b728b642851db15e611cf7af372b2d05bcdd6f049a"
     },
     "items_sha256": "0dd502bb439a11657c10074e51a55d144ae6b9eb622afa55967207380ba85a2d",
-    "note": "A3 owns this pinned copy. A1 world data is not modified. If A1 changes the slice, this binding must be re-reviewed and re-pinned; the runtime does not silently accept a different reward."
+    "note": "A3 owns this pinned copy. A1 world data is not modified. If A1 changes the slice, this binding must be re-reviewed and re-pinned; the runtime does not silently accept a different reward.",
+    "current_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "current_head_note": "All six pinned A1 files are byte-identical at current PR #20 head 939720d5; no repin required."
   },
   "identity_rule": {
     "fields": [
@@ -478,7 +480,8 @@
     "commit": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
     "file": "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
     "sha256": "6a87f4734227a68f279bb2eb45b06059c8fc07ab023f1abd46cd36d5f2be6f0a",
-    "note": "A1 supplies physical si:* instances and stand cells but no rates/yields/timers. A3 binds crate 01 as renewable notes (1/1800) and crates 02/03 as ONE-TIME early salvage (max_claims=1). No A1 file is edited."
+    "note": "A1 supplies physical si:* instances and stand cells but no rates/yields/timers. A3 binds crate 01 as renewable notes (1/1800) and crates 02/03 as ONE-TIME early salvage (max_claims=1). No A1 file is edited.",
+    "current_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8"
   },
   "quarry_authorization_ref": "docs/survival/economy/A8_QUARRY_AUTHORIZATION_V4.json"
 }

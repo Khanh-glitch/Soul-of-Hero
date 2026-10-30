@@ -1,5 +1,7 @@
 # A3 Git/Docs Handoff — SURV-030A
 
+> **V5 update:** code SHA `692128aaf36597712653258905ff6cedb6110766`. One-time A1 crates 02/03, explicit basic-tool research pricing, corrected no-Core scrap-smelting chain, V5 pacing lower-bound model, and `UNWIRED_A0` tool host contract. Canonical cache/notes/deadfall/relay rates unchanged. 47 Python tests + validator PASS locally; native Godot/two-process evidence PENDING (runs 41036542096 / 41036550568 queued; local headless engine build in progress). See `WORLD_SOURCE_HANDOFF_V3.md` (V5 checkpoint) and `verification/v5/`. PR #19 remains OPEN / NOT APPROVED FOR MERGE.
+
 > **V3 update:** source-authoritative A1 world loot + complete source→research→output chain. See `WORLD_SOURCE_HANDOFF_V3.md` for the exact A0 mount step, canonical locker/cache/relay contracts, host receipt schema and pinned external reuse. Native cases 21–23 and Python binding oracles added; production world integration remains A0-pending.
 
 - Issue: #13

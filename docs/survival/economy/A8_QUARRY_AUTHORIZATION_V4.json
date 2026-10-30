@@ -1,14 +1,15 @@
 {
   "schema": "soh.economy.a8_quarry_authorization.v4",
   "status": "REJECTED_PENDING_EVIDENCE_FAIL_CLOSED",
-  "a3_head": "e7ef01e4",
+  "a3_head": "692128aa",
   "a8_pin": {
     "pr": 26,
-    "commit": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
+    "commit": "c8b4bc881d6744bac0f0826a639624ee1434e534"
   },
   "a1_pin": {
     "pr": 20,
-    "commit": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b"
+    "commit": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
+    "current_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8"
   },
   "decision": "A3 does NOT authorize brace_east_shelf, chock_west_ramp, or extract_outcrop. No cost, yield, cooldown, source mapping, or capability grant is approved. The world adapter has no Quarry binding and rejects Quarry intents fail-closed.",
   "actions": {

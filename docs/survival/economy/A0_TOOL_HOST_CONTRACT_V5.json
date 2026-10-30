@@ -4,31 +4,41 @@
   "a3_scope": "catalog policy and read-only plan only; no second inventory/save authority",
   "a0_pin": {
     "pr": 21,
-    "commit": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+    "commit": "69070a1138730536050053c5aa47334b7b2c3836",
     "evidence": [
       "game/survival/survival_service.gd harvest(node_id: String, kind: String, now_unix: int = -1) has no tool parameter",
       "game/survival/survival_resource_node.gd interact(player) calls harvest(node_id, resource_kind) with no tool instance",
-      "stone_pick/iron_pick/salvage_hammer appear in A3 catalog and unique-ownership guard, but no A0 harvest/obstacle/action consumes or checks them"
-    ]
+      "stone_pick/iron_pick/salvage_hammer appear in A3 catalog and unique-ownership guard, but no A0 harvest/obstacle/action consumes or checks them",
+      "current PR #21 head 69070a11 re-checked: harvest signature still has no tool parameter"
+    ],
+    "previous_reviewed_commit": "9269739ebd35ed8ab83987b6bf53f560a59954af"
   },
   "tools": {
     "stone_pick": {
       "current_a0_effect": "NONE",
-      "intended_resource_kinds": ["stone_outcrop", "iron_vein"],
+      "intended_resource_kinds": [
+        "stone_outcrop",
+        "iron_vein"
+      ],
       "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
       "condition_cost_per_swing": 1,
       "max_condition": 100
     },
     "iron_pick": {
       "current_a0_effect": "NONE",
-      "intended_resource_kinds": ["iron_vein", "scrap_pile"],
+      "intended_resource_kinds": [
+        "iron_vein",
+        "scrap_pile"
+      ],
       "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
       "condition_cost_per_swing": 1,
       "max_condition": 100
     },
     "salvage_hammer": {
       "current_a0_effect": "NONE",
-      "intended_resource_kinds": ["scrap_pile"],
+      "intended_resource_kinds": [
+        "scrap_pile"
+      ],
       "intended_effect": "access gate only; no yield multiplier until A0/A1 balance evidence",
       "condition_cost_per_swing": 1,
       "max_condition": 100
