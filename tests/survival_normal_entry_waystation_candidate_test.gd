@@ -25,20 +25,36 @@ func _walk_to(hero: CharacterBody2D, nav: OverworldTraversability, cell: Vector2
 ## ordinary movement, then refine into the exact destination cell and trace it.
 func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: Vector2i, label: String) -> bool:
 	var start := nav.cell_of(hero.global_position)
-	var path := _route(start, destination, nav, hero)
-	_expect(start == destination or not path.is_empty(), label + " live-shape route exists")
-	if start != destination and path.is_empty():
-		print("A0_STAND_ROUTE_MISSING %s start=%s target=%s" % [label, str(start), str(destination)])
-		return false
-	var walked := await _walk_path(hero, path)
-	var deadline := Time.get_ticks_msec() + 2500
 	var target := Vector2(destination.x * 16 + 8, destination.y * 16 + 15)
-	while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < deadline:
-		_set_direction(target - hero.global_position)
-		await physics_frame
-	_set_direction(Vector2.ZERO)
-	var arrived := walked and nav.cell_of(hero.global_position) == destination
-	print("A0_STAND_TRACE %s start=%s target=%s actual=%s cell=%s walked=%s arrived=%s" % [label, str(start), str(destination), str(hero.global_position), str(nav.cell_of(hero.global_position)), str(walked), str(arrived)])
+	var walked := false
+	var attempts := 0
+	var planned_ok := start == destination
+	while attempts < 4 and nav.cell_of(hero.global_position) != destination and not bool(hero.get(&"dead")):
+		attempts += 1
+		var here := nav.cell_of(hero.global_position)
+		var path := _route(here, destination, nav, hero)
+		if here != destination and path.is_empty():
+			print("A0_STAND_ROUTE_MISSING %s start=%s target=%s attempt=%d" % [label, str(here), str(destination), attempts])
+			break
+		planned_ok = true
+		walked = await _walk_path(hero, path)
+		var deadline := Time.get_ticks_msec() + 2500
+		while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < deadline:
+			_set_direction(target - hero.global_position)
+			await physics_frame
+		_set_direction(Vector2.ZERO)
+		if not walked:
+			# A stale shape or a body wedged on a prop edge is ordinary terrain for a
+			# player: replan from where the Hero actually stands and keep walking.
+			print("A0_STAND_REPLAN %s cell=%s attempt=%d dead=%s" % [label, str(nav.cell_of(hero.global_position)), attempts, str(bool(hero.get(&"dead")))])
+			await physics_frame
+			await physics_frame
+	_expect(planned_ok, label + " live-shape route exists")
+	var arrived := nav.cell_of(hero.global_position) == destination
+	print("A0_STAND_TRACE %s start=%s target=%s actual=%s cell=%s walked=%s arrived=%s attempts=%d dead=%s health=%d" % [label, str(start), str(destination), str(hero.global_position), str(nav.cell_of(hero.global_position)), str(walked), str(arrived), attempts, str(bool(hero.get(&"dead"))), int(hero.get(&"health"))])
+	if bool(hero.get(&"dead")):
+		_expect(false, "ordinary journey does not kill the Hero before " + label)
+		return false
 	_expect(arrived, label)
 	return arrived
 
