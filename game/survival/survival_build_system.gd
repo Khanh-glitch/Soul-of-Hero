@@ -44,6 +44,9 @@ var world: OverworldWorld
 var player: Node2D
 var camera: Camera2D
 var state: OverworldState
+## Optional composition guard. Negative means ordinary legacy world; a bounded
+## annex pilot sets the first excluded column before accepting placement input.
+var annex_disabled_from_x := -1
 
 var _structures_root: Node2D
 var _preview: Sprite2D
@@ -488,6 +491,8 @@ func _validate_footprint_cell(cell: Vector2i) -> String:
 		return "no_world"
 	if cell.x < 0 or cell.y < 0 or cell.x >= world.width or cell.y >= world.height:
 		return "outside_world"
+	if annex_disabled_from_x >= 0 and cell.x >= annex_disabled_from_x:
+		return "annex_build_not_enabled"
 	if world.is_solid_cell(cell.x, cell.y):
 		return "solid_terrain"
 	if world.is_water_cell(cell.x, cell.y):

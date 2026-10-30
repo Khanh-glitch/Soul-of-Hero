@@ -111,13 +111,28 @@ func is_world_ready() -> bool:
 	return build_stage == BuildStage.READY
 
 
+# The ordinary scene always uses the pinned legacy sources. A derived scene may
+# override these hooks for an isolated, explicitly opted-in composition test;
+# payloads and saves cannot select alternate world files.
+func _world_source_paths() -> Dictionary:
+	return {"world": WORLD_DATA_PATH, "layers": LAYERS_PATH, "props": PROPS_PATH}
+
+
+func _mount_world_extensions() -> void:
+	pass
+
+
 func _build_world() -> void:
 	if build_stage != BuildStage.IDLE:
 		return
 	build_stage = BuildStage.LOADING_DATA
-	world_data = _load_json(WORLD_DATA_PATH)
+	var sources := _world_source_paths()
+	var world_path := String(sources.get("world", ""))
+	var layers_path := String(sources.get("layers", ""))
+	var props_path := String(sources.get("props", ""))
+	world_data = _load_json(world_path)
 	if world_data.is_empty():
-		_fail("world document missing at %s" % WORLD_DATA_PATH)
+		_fail("world document missing at %s" % world_path)
 		return
 	var landmark_names: Array = world_data.get("landmarks", [])
 	if landmark_names.size() != 10:
@@ -129,9 +144,10 @@ func _build_world() -> void:
 	world = WORLD_SCRIPT.new() as OverworldWorld
 	world.name = "World"
 	add_child(world)
-	if not world.build(world_data, LAYERS_PATH, PROPS_PATH, entities):
+	if not world.build(world_data, layers_path, props_path, entities):
 		_fail("world layers failed to paint")
 		return
+	_mount_world_extensions()
 
 	build_stage = BuildStage.SPAWNING_PLAYER
 	state = OverworldState.new()

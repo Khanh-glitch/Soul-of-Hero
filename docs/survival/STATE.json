@@ -200,7 +200,7 @@
       "docs/survival/CONTRACTS.md",
       "tests/survival_foundation_test.gd"
     ],
-    "first_test": "A1 f1f3a2f1 isolated native run reached Waystation anchor and Relay, but failed return at 368,200. Investigate actual mouth alignment vs 2px driving deadband; analytical 12x1px locker obstacle overlap at required stand 408,199 requires Godot live-shape verification and owner decision. Obtain CT ridge/rollback approval before any mount; keep independent storage/threat work. B0 NOT ACCEPTED; PR21 HOLD.",
+    "first_test": "Run exact A1 90c1d8 46/48/14 isolated A0 controller pilot, required locker stand, actual input and reload; diagnose CI, then develop authorized bounded optional skeleton encounter with actual combat/death/bed/bag journey. Same-SHA regression gates; B0 NOT ACCEPTED PR21 HOLD.",
     "parallel_start": "A1 owns world planning, A3 economy data; A6 works on isolated UI paths only and must not modify the A0 construction build strip. A7 is a distributed QA workstream; S6 is optional and nonblocking.",
     "design_gate": "Every SURV-020 claim needs a green native run recorded here, exactly as SURV-010 now has."
   },
@@ -239,7 +239,7 @@
     "web_gameplay": "survival_specific_fixture_boot_and_input_pass_40927588129_at_2a60d11_not_full_journey",
     "gold_visual_parity": "not_run",
     "historical_mechanic_research": "source_audited_doc_05_and_git_atlas_2019_2020_not_runtime",
-    "docs_sync": "tab04 112d8276 connector review appended/readback index 114196; new A1 native return and analytic geometry pending sync",
+    "docs_sync": "new CT continuation + pilot pending tab04 append/readback",
     "historical_source_audit_ci": "success_40830754794_at_bb86778666012081cdf411b6d791b8798c374281; handoff validator only",
     "source_archive_integrity": "PASS SHA256 b958de0fc413cc200b35b0938760228c2ebd3a8ef4aa2f52c1051c52cca59157",
     "atlas_ci": "PASS run_40838554299 sha_d64c299866e3220ff97f43226eed63932d67b596; docs validator only",
@@ -319,7 +319,8 @@
       "native": "40992089240 Python and isolated reader pass; connector Xvfb outbound Waystation anchor and Relay on foot, camera/nav checks passed, failed 1/17 return target 368,200 foot (5910.002,3216.357); root cause not yet known",
       "stand_geometry": "analytic, not native: centered Hero 12x16 overlaps locker at 408,198 by 12x1 px at required 408,199; exact interaction stand requires physics test and owner-compatible resolution",
       "status": "NO_PRODUCTION_MOUNT; CT RIDGE DECISION REQUIRED"
-    }
+    },
+    "ct_20261030_authority": "CT_RIDGE_ISOLATED_PILOT_APPROVED exact 46/48/14; CT_THREAT_A0_NARROW_IMPLEMENTATION_APPROVED one optional skeleton; no new worker, no default production mount or merge"
   },
   "design_authority": {
     "user_delegated_binary_gates": true,

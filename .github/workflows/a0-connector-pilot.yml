@@ -1,0 +1,67 @@
+name: A0 canonical connector controlled pilot
+on:
+  push:
+    branches: [arena/dea2428e-soul-of-hero]
+    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'tests/survival_connector_pilot_test.gd', 'tests/fixtures/a0_connector*', '.github/workflows/a0-connector-pilot.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  native-pilot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      A1_SHA: 90c1d8bf37b65009686532a29e166329150f2367
+      LIBGL_ALWAYS_SOFTWARE: 1
+      GODOT_SILENCE_ROOT_WARNING: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: 90c1d8bf37b65009686532a29e166329150f2367
+          path: .a1-connector-source
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Verify exact legacy and canonical source pins; derive one chunk
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C .a1-connector-source rev-parse HEAD)" = "$A1_SHA"
+          for f in data/overworld/hollow_marches.json data/overworld/hollow_marches_layers.json data/overworld/hollow_marches_props.json game/characters/knight/knight.tscn; do
+            cmp "$f" ".a1-connector-source/$f"
+          done
+          mkdir -p artifacts/a0-connector/slices artifacts/ud_import artifacts/ud_pilot
+          (cd .a1-connector-source && python tools/survival/worldgen/compile_connector.py --out "$GITHUB_WORKSPACE/artifacts/a0-connector" && python tools/survival/worldgen/validate_connector.py --out "$GITHUB_WORKSPACE/artifacts/a0-connector")
+          cp .a1-connector-source/data/survival/world/vertical_slice/poi_crown_{waystation,relay_shed}.slice.json artifacts/a0-connector/slices/
+          python - <<'PY'
+          import json
+          p=json.load(open('artifacts/a0-connector/connector_validation_report.json'))
+          assert p['ok'] and p['collision_cells']==46 and p['dressed_cells']==48 and p['suppressed_props']==14 and p['imported_chunks']==1 and not p['native_playable'], p
+          PY
+          rm -rf .a1-connector-source
+      - uses: chickensoft-games/setup-godot@v2
+        with:
+          version: 4.7.0
+          use-dotnet: false
+          include-templates: false
+      - name: Import exact A0 project
+        run: timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/connector-import.log 2>&1
+      - name: Actual A0 controller, Hero and authored obstacle pilot
+        shell: bash
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=15s 1500s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_pilot --resolution 960x540 --windowed --script res://tests/survival_connector_pilot_test.gd > artifacts/connector-pilot.log 2>&1
+          rc=$?
+          cat artifacts/connector-pilot.log
+          echo "::notice::A0 connector exit=$rc $(grep -E 'A0_CONNECTOR_|A0 CONNECTOR|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/connector-pilot.log | tail -20 | tr '\n' '~')"
+          bash tools/ci/gate_log.sh artifacts/connector-pilot.log 'A0 connector pilot' 'A0 CONNECTOR PILOT PASSED'
+          gate=$?
+          [ "$rc" -eq 0 ] && [ "$gate" -eq 0 ]
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a0-connector-pilot-logs
+          path: artifacts/connector*.log
+          if-no-files-found: warn
