@@ -105,6 +105,25 @@ func _run_from_menu() -> void:
 	_expect(ready and ow.get(&"player") != null and ow.get(&"survival_build") != null, "normal entry builds one production Hero and survival world")
 	if not ready:
 		return
+	var world_hero := ow.get(&"player") as CharacterBody2D
+	_expect(world_hero.has_method(&"get_facing_direction"), "production Hero exposes stable facing to world interaction owners")
+	if world_hero.has_method(&"get_facing_direction"):
+		Input.action_press(&"move_left")
+		for _frame in range(5):
+			await physics_frame
+		Input.action_release(&"move_left")
+		for _frame in range(5):
+			await physics_frame
+		var retained_left: Variant = world_hero.call(&"get_facing_direction")
+		_expect(retained_left is Vector2 and (retained_left as Vector2).dot(Vector2.LEFT) > 0.99, "actual movement leaves an accurate stationary left-facing direction")
+		Input.action_press(&"move_down")
+		for _frame in range(5):
+			await physics_frame
+		Input.action_release(&"move_down")
+		for _frame in range(5):
+			await physics_frame
+		var retained_down: Variant = world_hero.call(&"get_facing_direction")
+		_expect(retained_down is Vector2 and (retained_down as Vector2).dot(Vector2.DOWN) > 0.99, "actual movement changes stationary facing instead of using an UP fallback")
 	# Existing test makes the full paid home, craft, storage and same-process
 	# reload journey using normal injected input. Its reconstruction intentionally
 	# destroys the route host and boots a fresh test-hosted world; the independent

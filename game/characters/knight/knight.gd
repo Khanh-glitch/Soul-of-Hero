@@ -928,6 +928,13 @@ func _clear_target_indicator() -> void:
 	_target_indicator_target = null
 
 
+## Expose the actual retained movement/combat facing to world interactables.
+## Velocity becomes zero when the player stops, but facing must remain stable;
+## the caller still owns its own range, line-of-sight and authority checks.
+func get_facing_direction() -> Vector2:
+	return facing_direction
+
+
 ## Shared with the overworld build/retreat path. These wrappers gate gameplay
 ## reads only; they do not consume events intended for the visible UI.
 func gameplay_input_allowed(action: StringName) -> bool:
