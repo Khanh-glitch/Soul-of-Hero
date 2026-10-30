@@ -61,7 +61,25 @@ func _real_hit(ow: Node, encounter: Node2D, arm_fault: bool) -> bool:
 		path = _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
 		if not path.is_empty():
 			break
-	if path.is_empty() or not await _walk_path(hero, path):
+	if path.is_empty():
+		return false
+	var reached := await _walk_path(hero, path)
+	if not reached and is_instance_valid(enemy) and not bool(hero.get("dead")):
+		# The moving autonomous enemy can invalidate the static path after the
+		# initial shape query. Re-plan from the actual foot position; do not
+		# resize either actor, remove blockers or synthesize the hit.
+		for offset: Vector2i in [Vector2i(3, 0), Vector2i(0, -3), Vector2i(0, 3), Vector2i(-3, 0), Vector2i(5, 0), Vector2i(-5, 0)]:
+			var reroute := _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
+			if reroute.is_empty():
+				continue
+			reached = await _walk_path(hero, reroute)
+			if reached or not is_instance_valid(enemy) or bool(hero.get("dead")):
+				break
+	# When the enemy itself obstructs the last path cell, an actual Hero who
+	# has already approached it can continue using the live pursuit loop below.
+	# The original genuine first-hit, interrupted receipt and restart assertions
+	# remain unchanged; proximity alone is never counted as a hit.
+	if not reached and (not is_instance_valid(enemy) or hero.global_position.distance_to(enemy.global_position) > 80.0):
 		return false
 	var deadline := Time.get_ticks_msec() + 30000
 	var fault_armed := false
