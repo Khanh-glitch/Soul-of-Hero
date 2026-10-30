@@ -270,9 +270,11 @@ jobs:
           log=artifacts/a1-corridor/godot-corridor.log
           [ -f "$log" ] || { echo "::error::no corridor fixture log"; exit 1; }
           checks=$(grep -cE '^CORRIDOR (PASS|FAIL): ' "$log" || true)
-          echo "corridor fixture assertions reported: ${checks}"
-          if [ "${checks:-0}" -lt 25 ] || ! grep -q 'A1 CORRIDOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log" || ! grep -q 'adverse proof: full-tile container' "$log" || ! grep -q 'three physical roadside containers mounted' "$log"; then
-            echo "::error::corridor fixture gate failed (checks=${checks}, need >=25 + adverse container + three instances); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
+          revisits=$(grep -cE '^CORRIDOR PASS: revisit si:r_ashen_crown:roadside_supply:0[123] walked' "$log" || true)
+          revisit_caps=$(grep -c 'player-scale native capture si_r_ashen_crown_roadside_supply_0' "$log" || true)
+          echo "corridor fixture assertions reported: ${checks}; revisits=${revisits}; revisit captures=${revisit_caps}"
+          if [ "${checks:-0}" -lt 21 ] || [ "${revisits:-0}" -lt 3 ] || [ "${revisit_caps:-0}" -lt 3 ] || ! grep -q 'A1 CORRIDOR NATIVE FIXTURE PASSED' "$log" || ! grep -q 'production integration still A0-owned' "$log" || ! grep -q 'adverse proof: full-tile container' "$log" || ! grep -q 'three physical roadside containers mounted' "$log"; then
+            echo "::error::corridor fixture gate failed (checks=${checks}, revisits=${revisits}, captures=${revisit_caps}; need >=21 + three live-obstacle revisits + adverse container + three instances); log tail: $(tail -c 1800 "$log" | paste -sd' ' -)"
             exit 1
           fi
       - name: Upload connector native fixture evidence
