@@ -11,26 +11,26 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
-      A6_SHA: bed3fc81ced4505eac6cfc3ddec5c07aeef8019e
-      A1_SHA: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
-      A3_SHA: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+      A6_SHA: 8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e
+      A1_SHA: 7fd000e1c017830a088749b965e651fafb501b98
+      A3_SHA: c363c7e7599db064f6f8fb2ff02d1fb2b0c76665
       GODOT_SILENCE_ROOT_WARNING: 1
       LIBGL_ALWAYS_SOFTWARE: 1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
         with:
-          ref: bed3fc81ced4505eac6cfc3ddec5c07aeef8019e
+          ref: 8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e
           path: .a6-source
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: 2951bf8559b2e289ce99fd4d394d44c46fdd91b1
+          ref: 7fd000e1c017830a088749b965e651fafb501b98
           path: .a1-source
           persist-credentials: false
       - uses: actions/checkout@v4
         with:
-          ref: 18e7afcbd576bbd9bfbcc509b2ee13216186a522
+          ref: c363c7e7599db064f6f8fb2ff02d1fb2b0c76665
           path: .a3-source
           persist-credentials: false
       - name: Compose A6-owned files and read-only source inputs temporarily
