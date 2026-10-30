@@ -126,22 +126,44 @@ jobs:
           grep -q "RENDERER REQUIRED" .artifacts/headless-capture.log
           echo "headless capture refused with exit 2, as designed" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Show the software renderer that will draw the frames
+        run: |
+          set -uo pipefail
+          echo "DISPLAY=${DISPLAY:-unset}"
+          xvfb-run --auto-servernum -s "-screen 0 1280x720x24" glxinfo -B 2>&1 | head -14 \
+            | tee -a "$GITHUB_STEP_SUMMARY" || true
+
       - name: Render the four return cards at three resolutions
         run: |
           set -uo pipefail
           for res in 1280x720 2560x1440 3840x2160; do
             mkdir -p ".artifacts/captures-${res}"
             export SOUL_OF_HERO_SAVE_PATH="user://a6_render_${res}.json"
-            timeout --signal=TERM --kill-after=20s 600s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
+            log=".artifacts/render-${res}.log"
+            verbose=""
+            # The 720p pass is the diagnostic one: verbose, and capped at 1200
+            # rendered frames so a stall after startup still ends with a log
+            # instead of a bare timeout.
+            if [ "${res}" = "1280x720" ]; then verbose="--verbose --quit-after 1200"; fi
+            # 240 s per resolution: the whole capture is a handful of frames, so a
+            # longer wait means something is stuck, not slow. The previous attempt
+            # sat on the job-level 600 s timeout and told us nothing.
+            timeout --signal=TERM --kill-after=20s 240s xvfb-run --auto-servernum -s "-screen 0 ${res}x24" \
               env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-              godot --path . --resolution "${res}" --rendering-driver opengl3 -- \
+              godot --path . --resolution "${res}" --rendering-driver opengl3 --audio-driver Dummy ${verbose} -- \
               --a6-ui-capture --capture-dir="$PWD/.artifacts/captures-${res}" \
               --capture-tag="${A6_CAPTURE_TAG}" \
-              2>&1 | tee ".artifacts/render-${res}.log"
+              2>&1 | tee "${log}"
             status=${PIPESTATUS[0]}
             echo "return UI render ${res} exit: ${status}" | tee -a "$GITHUB_STEP_SUMMARY"
             if [ "${status}" -ne 0 ]; then
-              echo "::error::return UI render failed at ${res}"
+              {
+                echo "### render ${res} failed (exit ${status})"
+                echo '```'
+                tail -60 "${log}"
+                echo '```'
+              } >> "$GITHUB_STEP_SUMMARY"
+              echo "::error::return UI render failed at ${res} (exit ${status})"
               exit "${status}"
             fi
           done
