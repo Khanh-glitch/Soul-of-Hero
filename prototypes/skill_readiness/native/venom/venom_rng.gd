@@ -103,6 +103,18 @@ static func _mk_noise(cells: int, seed: int) -> PackedByteArray:
 
 static var NZ1: PackedByteArray = _mk_noise(8, 11)
 static var NZ2: PackedByteArray = _mk_noise(16, 29)
+# Float mirrors (byte / 255.0, same division the call sites perform) so hot
+# raster loops skip the int->float conversion + division per pixel.
+static var NZ1F: PackedFloat64Array = _mk_noise_f(NZ1)
+static var NZ2F: PackedFloat64Array = _mk_noise_f(NZ2)
+
+
+static func _mk_noise_f(src: PackedByteArray) -> PackedFloat64Array:
+	var out := PackedFloat64Array()
+	out.resize(src.size())
+	for i in range(src.size()):
+		out[i] = float(src[i]) / 255.0
+	return out
 
 
 static func nz1(x: float, y: float) -> int:

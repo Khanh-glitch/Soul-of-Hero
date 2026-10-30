@@ -379,8 +379,8 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 	ramp_i.resize(maxi(ramp_n, 1))
 	for ri2 in range(ramp_n):
 		ramp_i[ri2] = int(ramp[ri2])
-	var nz2t = RNG.NZ2
-	var nz1t = RNG.NZ1
+	var nz2t = RNG.NZ2F
+	var nz1t = RNG.NZ1F
 	var bayer = M.BAYER
 	for dy in range(-ri, ri + 1):
 		var gy: int = gcy + dy
@@ -407,11 +407,11 @@ static func puff(L, cx: float, cy: float, r: float, ramp: Array, dl: float,
 			# `keep` depends only on n2, so evaluate n2 and the Bayer discard
 			# BEFORE nz1: discarded pixels never need n (pure table lookups,
 			# no RNG stream, so output is bit-identical).
-			var n2: float = float(nz2t[row_n2 | col_n2x[ci2]]) / 255.0
+			var n2: float = nz2t[row_n2 | col_n2x[ci2]]
 			var keep: float = dl * (1 - q * q * 0.75) + (n2 - 0.5) * 4
 			if bayer[b_row | col_bx[ci2]] >= keep:
 				continue
-			var n: float = float(nz1t[((int(floor(row_n1y)) & 63) << 6) | (int(floor(col_n1x[ci2])) & 63)]) / 255.0
+			var n: float = nz1t[((int(floor(row_n1y)) & 63) << 6) | (int(floor(col_n1x[ci2])) & 63)]
 			var s: float = col_sx[ci2] + s_row \
 					+ (n - 0.5) * 0.9 + (n2 - 0.5) * 0.3 - q * 0.3
 			var idx: int = 0 if s < -0.45 else (1 if s < -0.05 else (2 if s < 0.38 else 3))

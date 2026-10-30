@@ -554,10 +554,9 @@ class Field extends RefCounted:
 					if v < 2.0 * rk:
 						c = c_rimlit if lit > 0.25 else c_rim
 					else:
-						var wp: float = (float(RNG.nz2(sx * 1.9 - fy * 0.6, sy * 1.9 + fx * 0.6))
+						var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.9 + fx * 0.6)) & 63) << 6) | (int(floor(sx * 1.9 - fy * 0.6)) & 63)])
 								- 128.0) * 0.05
-						var n: float = float(RNG.nz1(sx + fx + wp * 9.0,
-								sy + fy + wp * 9.0)) / 255.0
+						var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 9.0)) & 63) << 6) | (int(floor(sx + fx + wp * 9.0)) & 63)]
 						var dn: float = M.clampf((v - 2.0 * rk) / dep, 0.0, 1.0)
 						var q: float = (1.0 - dn) * (1.0 - amp) + n * amp
 						var kk: int = int(floor(q * float(nR)
@@ -573,7 +572,7 @@ class Field extends RefCounted:
 							elif lit < -hi_t:
 								c = c_sh
 					if float(m.get("vw", 0.0)) > 0.0:
-						var n2: int = RNG.nz2(sx * 1.3 + fx * 1.5, sy * 1.3 + fy * 1.5 + 5.0)
+						var n2: int = RNG.NZ2[((int(floor(sy * 1.3 + fy * 1.5 + 5.0)) & 63) << 6) | (int(floor(sx * 1.3 + fx * 1.5)) & 63)]
 						if absf(float(n2) - 128.0) < vw_v and v > 3.0 * rk:
 							c = c_vein
 				if fast:
@@ -615,10 +614,10 @@ class Field extends RefCounted:
 					continue
 				var sx: float = float(x) * sc + sd
 				var sy: float = float(y) * sc
-				var wp: float = (float(RNG.nz2(sx * 1.7 + fy * 0.5, sy * 1.7 - fx * 0.5))
+				var wp: float = (float(RNG.NZ2[((int(floor(sy * 1.7 - fx * 0.5)) & 63) << 6) | (int(floor(sx * 1.7 + fy * 0.5)) & 63)])
 						- 128.0) * 0.05
-				var n: float = float(RNG.nz1(sx + fx + wp * 8.0, sy + fy + wp * 8.0)) / 255.0
-				var n2: float = float(RNG.nz2(sx * 2.1 - fx * 0.7, sy * 2.1 - fy * 0.7)) / 255.0
+				var n: float = RNG.NZ1F[((int(floor(sy + fy + wp * 8.0)) & 63) << 6) | (int(floor(sx + fx + wp * 8.0)) & 63)]
+				var n2: float = RNG.NZ2F[((int(floor(sy * 2.1 - fy * 0.7)) & 63) << 6) | (int(floor(sx * 2.1 - fx * 0.7)) & 63)]
 				var d: float = (M.clampf(v / dep_rk, 0.0, 1.0) * 0.55
 						+ n * 0.55 + (n2 - 0.5) * 0.25)
 				if d < 0.28:

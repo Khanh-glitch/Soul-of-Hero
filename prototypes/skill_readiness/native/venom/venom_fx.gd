@@ -724,7 +724,7 @@ class GroundDecal extends Fx:
 				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
 					c = pw if ph < 2.5 else M.mix(cb, pw, 0.5)
-			L.dot(x + _dxs[i], y + _dys[i], c)
+			L.raw_px(int(floor((x + _dxs[i]) * L.k + 0.5)), int(floor((y + _dys[i]) * L.k + 0.5)), c)
 
 	func lit(g, _w) -> void:
 		var rem: float = life - age
@@ -738,7 +738,7 @@ class GroundDecal extends Fx:
 			if _dgs[i] >= 0:
 				var ph: float = fmod(fmod(t - float(_dgs[i]), 44.0) + 44.0, 44.0)
 				if ph < 7:
-					L.dot(x + _dxs[i], y + _dys[i], glowCol)
+					L.raw_px(int(floor((x + _dxs[i]) * L.k + 0.5)), int(floor((y + _dys[i]) * L.k + 0.5)), glowCol)
 			i += 2
 		L.add = false
 		L.a = 255
