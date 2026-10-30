@@ -52,6 +52,13 @@ jobs:
           timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_art_candidate --script res://tests/survival_a1_world_art_candidate_test.gd > artifacts/candidate-art.log 2>&1
           cat artifacts/candidate-art.log
           bash tools/ci/gate_log.sh artifacts/candidate-art.log 'A1 visual candidate' 'A0 A1 WORLD ART CANDIDATE PASSED'
+      - name: Verify exact physical cache owner identity seam
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_identity_candidate
+          timeout 60s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_identity_candidate --script res://tests/survival_waystation_identity_probe.gd > artifacts/candidate-identity.log 2>&1
+          cat artifacts/candidate-identity.log
+          bash tools/ci/gate_log.sh artifacts/candidate-identity.log 'physical identity probe' 'A0 WAYSTATION IDENTITY PROBE PASSED'
       - name: Ordinary physical journey and independent process
         shell: bash
         run: |
