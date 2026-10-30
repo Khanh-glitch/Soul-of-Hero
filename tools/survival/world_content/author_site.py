@@ -12,7 +12,8 @@ ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "data/survival/world_content/sites"
 SCENES = ROOT / "game/survival/world_content/scenes"
 FIXTURE_CATALOG = ROOT / "data/survival/world_content/catalog_candidates.fixture.json"
-CONTRACT_FILE = ROOT / "data/survival/world_content/interaction_contract.v1.json"
+FIXTURE_ACTION_CATALOG = ROOT / "tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json"
+CONTRACT_FILE = ROOT / "data/survival/world_content/interaction_contract.v2.json"
 TRANSITION_CONTRACT_FILE = ROOT / "data/survival/world_content/transition_contract.v1.json"
 WORKSITE_TEMPLATE = "res://game/survival/world_content/scenes/native_poi_template.tscn"
 SHELL_TEMPLATE = "res://game/survival/world_content/scenes/native_poi_shell_template.tscn"
@@ -29,7 +30,7 @@ def load_json(path: Path) -> dict:
         return json.load(handle)
 
 
-def validate(data: dict, fixture_catalog: dict) -> list[str]:
+def validate(data: dict, action_catalog: dict) -> list[str]:
     errors: list[str] = []
     if not isinstance(data, dict):
         return ["site source must be a JSON object"]
@@ -93,42 +94,35 @@ def validate(data: dict, fixture_catalog: dict) -> list[str]:
         else:
             entries.append(entry)
     action_ids: set[str] = set()
-    candidate_items = fixture_catalog.get("items", {}) if isinstance(fixture_catalog, dict) else {}
-    forbidden = set(fixture_catalog.get("blocked_item_ids", [])) if isinstance(fixture_catalog, dict) else set()
+    action_table = action_catalog.get("actions", {}) if isinstance(action_catalog, dict) else {}
+    fixture_actions = action_table.get(poi_id, {}) if isinstance(action_table, dict) else {}
+    forbidden_source_fields = {
+        "costs", "rewards", "cooldown_seconds", "claim_policy", "catalog_source",
+        "provisional_test_only", "unlock_actions", "unlock_after_state_seconds",
+        "a3_approval_ref", "approved_binding_ref",
+    }
     for entry in entries:
         action_id = entry.get("action_id", "")
         if not action_id or action_id in action_ids:
             errors.append(f"missing or duplicate action_id {action_id!r}")
         action_ids.add(action_id)
-        policy = entry.get("claim_policy")
-        if policy not in ("once", "replenishable"):
-            errors.append(f"unsupported claim_policy on {action_id}")
-        if policy == "replenishable":
-            try:
-                if float(entry.get("cooldown_seconds", 0)) <= 0:
-                    errors.append(f"replenishable action {action_id} needs a finite recovery interval")
-            except (TypeError, ValueError):
-                errors.append(f"replenishable action {action_id} needs a numeric recovery interval")
-        state_values = entry.get("requires_state_values", {})
-        if not isinstance(state_values, dict):
-            errors.append(f"{action_id} requires_state_values must be a JSON object")
-        elif any(not isinstance(values, list) or not values for values in state_values.values()):
-            errors.append(f"{action_id} state-value requirements must be non-empty arrays")
-        for group_name in ("costs", "rewards"):
-            item_group = entry.get(group_name, {})
-            if not isinstance(item_group, dict):
-                errors.append(f"{action_id} {group_name} must be a JSON object")
-                continue
-            for item_id, count in item_group.items():
-                if item_id not in candidate_items:
-                    errors.append(f"{action_id} {group_name} uses unknown candidate item {item_id}")
-                if item_id in forbidden:
-                    errors.append(f"blocked reward/cost is referenced: {item_id}")
-                try:
-                    if int(count) <= 0:
-                        errors.append(f"{action_id} {group_name} amount for {item_id} must be positive")
-                except (TypeError, ValueError):
-                    errors.append(f"{action_id} {group_name} amount for {item_id} must be an integer")
+        for field in forbidden_source_fields:
+            if field in entry:
+                errors.append(f"{action_id} source JSON may not author transaction field {field}")
+        object_id = entry.get("object_id")
+        if not isinstance(object_id, str) or not object_id:
+            errors.append(f"{action_id} must have an explicit neutral object_id")
+        fixture_action = fixture_actions.get(action_id) if isinstance(fixture_actions, dict) else None
+        if not isinstance(fixture_action, dict):
+            errors.append(f"{action_id} has no isolated test-fixture behavior record")
+        elif fixture_action.get("object_id") != object_id:
+            errors.append(f"{action_id} object_id differs from its test-fixture record")
+    if set(action_ids) != set(fixture_actions):
+        errors.append(
+            f"fixture action identities must exactly match site identities; "
+            f"site_only={sorted(set(action_ids)-set(fixture_actions))}, "
+            f"fixture_only={sorted(set(fixture_actions)-set(action_ids))}"
+        )
 
     walls = data.get("walls", [])
     if not isinstance(walls, list):
@@ -247,6 +241,50 @@ def validate(data: dict, fixture_catalog: dict) -> list[str]:
     return errors
 
 
+def validate_fixture_action_catalog(action_catalog: dict, item_catalog: dict) -> list[str]:
+    errors: list[str] = []
+    if not isinstance(action_catalog, dict) or action_catalog.get("schema") != "soh.a8.test_only_action_catalog.v1":
+        return ["test action catalog has an unsupported schema"]
+    if action_catalog.get("fixture_only") is not True:
+        errors.append("test action catalog must remain fixture_only=true")
+    if action_catalog.get("a3_approved_bindings") != {}:
+        errors.append("A8 fixture action catalog must not claim or contain A3 approvals")
+    items = item_catalog.get("items", {}) if isinstance(item_catalog, dict) else {}
+    blocked = set(item_catalog.get("blocked_item_ids", [])) if isinstance(item_catalog, dict) else set()
+    all_actions = action_catalog.get("actions", {})
+    if not isinstance(all_actions, dict):
+        return errors + ["test action catalog actions must be an object"]
+    for poi_id, actions in all_actions.items():
+        if not isinstance(actions, dict):
+            errors.append(f"fixture actions for {poi_id} must be an object")
+            continue
+        for action_id, behavior in actions.items():
+            if not isinstance(behavior, dict):
+                errors.append(f"fixture behavior {poi_id}/{action_id} must be an object")
+                continue
+            if behavior.get("claim_policy") not in ("once", "replenishable"):
+                errors.append(f"fixture behavior {poi_id}/{action_id} has unsupported claim policy")
+            try:
+                cooldown = float(behavior.get("cooldown_seconds", 0))
+            except (TypeError, ValueError):
+                cooldown = -1
+            if behavior.get("claim_policy") == "replenishable" and cooldown <= 0:
+                errors.append(f"fixture replenishable action {poi_id}/{action_id} needs positive test timer")
+            for group in ("costs", "rewards"):
+                values = behavior.get(group, {})
+                if not isinstance(values, dict):
+                    errors.append(f"fixture {poi_id}/{action_id} {group} must be an object")
+                    continue
+                for item_id, amount in values.items():
+                    if item_id not in items:
+                        errors.append(f"fixture {poi_id}/{action_id} uses unknown candidate item {item_id}")
+                    if item_id in blocked:
+                        errors.append(f"fixture {poi_id}/{action_id} references blocked item {item_id}")
+                    if isinstance(amount, bool) or not isinstance(amount, int) or amount <= 0:
+                        errors.append(f"fixture {poi_id}/{action_id} {group}.{item_id} must be a positive integer")
+    return errors
+
+
 def wrapper_text(site: dict, source_filename: str, kind: str = "worksite") -> str:
     file_stem = re.sub(r"[^a-z0-9_]+", "_", site["site_id"].lower()).strip("_")
     node_name = "POI_" + "".join(part.title() for part in file_stem.split("_"))
@@ -326,12 +364,13 @@ def main() -> int:
     parser.add_argument("--write", action="store_true", help="write wrappers for --site")
     args = parser.parse_args()
     fixture_catalog = load_json(FIXTURE_CATALOG)
-    if not fixture_catalog.get("fixture_only"):
-        print("ERROR: candidate catalog must remain explicitly fixture-only", file=sys.stderr)
+    if fixture_catalog.get("fixture_only") is not True:
+        print("ERROR: candidate item catalog must remain explicitly fixture-only", file=sys.stderr)
         return 2
+    action_catalog = load_json(FIXTURE_ACTION_CATALOG)
     contract = load_json(CONTRACT_FILE)
-    if contract.get("contract_id") != "soh.native_poi.intent.v1" or contract.get("contract_version") != 1:
-        print("ERROR: unsupported shared interaction contract", file=sys.stderr)
+    if contract.get("contract_id") != "soh.native_poi.intent.v2" or contract.get("contract_version") != 2:
+        print("ERROR: unsupported neutral-identity interaction contract", file=sys.stderr)
         return 2
     transition_contract = load_json(TRANSITION_CONTRACT_FILE)
     if (
@@ -345,7 +384,7 @@ def main() -> int:
         return 2
     selected = [DATA / f"{args.site}.json"] if args.site else sorted(DATA.glob("*.json"))
 
-    problems: list[str] = []
+    problems: list[str] = validate_fixture_action_catalog(action_catalog, fixture_catalog)
     for template_path in (WORKSITE_TEMPLATE, SHELL_TEMPLATE):
         resource_path = ROOT / template_path.removeprefix("res://")
         if not resource_path.is_file():
@@ -359,7 +398,7 @@ def main() -> int:
         except (OSError, json.JSONDecodeError) as error:
             problems.append(f"{path.name}: invalid site JSON: {error}")
             continue
-        problems.extend(f"{path.name}: {message}" for message in validate(data, fixture_catalog))
+        problems.extend(f"{path.name}: {message}" for message in validate(data, action_catalog))
         scene_path = SCENES / (path.stem + ".tscn")
         shell_metadata = data.get("overworld_shell", {})
         transition_metadata = data.get("local_transition", {})

@@ -113,32 +113,22 @@
       "option_id": "brace_oak",
       "label": "Brace the east shelf",
       "requires_state": [],
-      "costs": {
-        "oak_wood": 2
-      },
-      "rewards": {},
       "set_state": {
         "quarry_route": "east_braced"
       },
-      "claim_policy": "once",
-      "catalog_source": "data/survival/items/items.json#items.oak_wood @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
-      "choice_group": "quarry_route"
+      "choice_group": "quarry_route",
+      "object_id": "brace_east_shelf"
     },
     {
       "action_id": "chock_west_ramp",
       "option_id": "chock_stone",
       "label": "Chock the west ramp",
       "requires_state": [],
-      "costs": {
-        "stone_chunk": 2
-      },
-      "rewards": {},
       "set_state": {
         "quarry_route": "west_chocked"
       },
-      "claim_policy": "once",
-      "catalog_source": "data/survival/items/items.json#items.stone_chunk @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
-      "choice_group": "quarry_route"
+      "choice_group": "quarry_route",
+      "object_id": "chock_west_ramp"
     },
     {
       "action_id": "leave_seam_unworked",
@@ -147,13 +137,9 @@
       "choice_group": "quarry_route",
       "label": "Leave the unstable seam untouched",
       "requires_state": [],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "quarry_route": "left_unworked"
-      },
-      "claim_policy": "once",
-      "catalog_source": "world-state-only; safe retreat, no material transaction"
+      }
     }
   ],
   "actions": [
@@ -164,14 +150,7 @@
       "requires_state": [
         "quarry_route"
       ],
-      "costs": {},
-      "rewards": {
-        "stone_chunk": 2
-      },
       "set_state": {},
-      "claim_policy": "replenishable",
-      "cooldown_seconds": 45,
-      "catalog_source": "data/survival/items/sources.json#sources.live_stone_chunk @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; poi_id=null; not Quarry-authorized)",
       "requires_state_values": {
         "quarry_route": [
           "east_braced",
@@ -757,6 +736,14 @@
           30
         ],
         "id": "timber_stack"
+      },
+      {
+        "frame": "cairn_warning",
+        "cell": [
+          32,
+          18
+        ],
+        "id": "unstable_seam_warning"
       }
     ],
     "state_props": [
@@ -780,6 +767,9 @@
             ],
             "id": "east_timber_chock"
           }
+        ],
+        "hide_ids": [
+          "unstable_seam_warning"
         ]
       },
       {
@@ -795,27 +785,22 @@
             "id": "west_ramp_chock"
           },
           {
-            "frame": "log_pile",
+            "frame": "rock_a",
             "cell": [
               23,
               20
             ],
-            "id": "west_stone_counterweight"
+            "id": "west_ramp_stone_chock"
           }
+        ],
+        "hide_ids": [
+          "unstable_seam_warning"
         ]
       },
       {
         "key": "quarry_route",
         "equals": "left_unworked",
         "props": [
-          {
-            "frame": "cairn_warning",
-            "cell": [
-              32,
-              18
-            ],
-            "id": "unstable_seam_warning"
-          },
           {
             "frame": "cairn_warning",
             "cell": [

@@ -32,6 +32,7 @@ func _run() -> void:
 	_vector_pair_compatibility()
 	await _scene_and_data_contracts()
 	await _interaction_eligibility_and_choice()
+	await _intent_boundary_adversarial_tests()
 	await _physical_access_and_retreat_basic()
 	await _authority_failures_and_retry()
 	await _candidate_claims_capacity_and_reload()
@@ -98,6 +99,28 @@ func _scene_and_data_contracts() -> void:
 		)
 		if site.definition.has("visual_layout"):
 			_assert_site_art(site)
+			match site.get_source_id():
+				"poi_crown_south_quarry":
+					_check(
+						site.has_node(
+							"SourceBackedWorldArt/A8_SourceSized_Props/unstable_seam_warning"
+						),
+						"Quarry warns visibly while both routes remain unworked"
+					)
+				"poi_crown_south_orchard":
+					_check(
+						site.has_node(
+							"SourceBackedWorldArt/A8_SourceSized_Props/sluice_blocking_deadfall"
+						),
+						"Orchard shows the fallen sluice before the flow state changes"
+					)
+				"poi_crown_south_mill":
+					_check(
+						site.has_node(
+							"SourceBackedWorldArt/A8_SourceSized_Props/seized_race_warning"
+						),
+						"Mill shows the stopped-wheel cue before repair"
+					)
 		site.queue_free()
 		await process_frame
 
@@ -171,12 +194,19 @@ func _interaction_eligibility_and_choice() -> void:
 		)
 		_check(intent.action_id == "chock_west_ramp", "selected route choice survives in identity")
 		_check(
+			intent.contract_id == "soh.native_poi.intent.v2" and intent.contract_version == 2,
+			"neutral identity uses the unapproved v2 boundary"
+		)
+		_check(
 			(
-				intent.contract_id == "soh.native_poi.intent.v1"
-				and intent.contract_version == 1
-				and intent.provisional_test_only
+				intent.keys().size() == 8
+				and not intent.has("costs")
+				and not intent.has("rewards")
+				and not intent.has("cooldown_seconds")
+				and not intent.has("catalog_source")
+				and not intent.has("provisional_test_only")
 			),
-			"versioned intent remains explicitly fixture-only"
+			"default scene emits only the eight neutral identity/revision fields"
 		)
 		var result: Dictionary = authority.submit_intent(intent)
 		_check(result.status == "committed", "fixture accepts affordable candidate route")
@@ -198,6 +228,10 @@ func _interaction_eligibility_and_choice() -> void:
 		_check(
 			site.get_site_state().get("quarry_route", "") == "west_chocked",
 			"environmental projection only changes after owner commit"
+		)
+		_check(
+			not site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/unstable_seam_warning"),
+			"committed west route removes the unstable-seam cue without changing route collision"
 		)
 		_check(
 			site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/west_ramp_chock"),
@@ -270,6 +304,90 @@ func _interaction_eligibility_and_choice() -> void:
 	_cleanup(leave_pair)
 
 
+func _intent_boundary_adversarial_tests() -> void:
+	var pair := await _make_site(0)
+	var site: NativePoiSite = pair.site
+	var fixture: PoiAuthorityFixture = pair.authority
+	var neutral: Dictionary = site._make_intent(site.definition.choices[0])
+	var expected_fields := [
+		"contract_id",
+		"contract_version",
+		"intent_id",
+		"source_id",
+		"object_id",
+		"action_id",
+		"claim_id",
+		"observed_projection_revision"
+	]
+	_check(
+		neutral.size() == expected_fields.size(),
+		"default canonical scene emits exactly the neutral v2 field set"
+	)
+	for field: String in expected_fields:
+		_check(neutral.has(field), "neutral action request includes %s" % field)
+	for forbidden: String in [
+		"costs",
+		"rewards",
+		"cooldown_seconds",
+		"claim_policy",
+		"state_delta",
+		"unlock_actions",
+		"catalog_source",
+		"provisional_test_only",
+		"a3_approval_ref"
+	]:
+		_check(not neutral.has(forbidden), "default scene cannot transmit %s" % forbidden)
+
+	var forged_flag := neutral.duplicate(true)
+	forged_flag["provisional_test_only"] = true
+	_check(
+		fixture.submit_intent(forged_flag).status == "rejected",
+		"forged client provisional_test_only flag is rejected as an unknown field"
+	)
+	var forged_source := neutral.duplicate(true)
+	forged_source["catalog_source"] = "A3-approved forged path"
+	_check(
+		fixture.submit_intent(forged_source).status == "rejected",
+		"forged client catalog_source is rejected as an unknown field"
+	)
+	var injected_cost := neutral.duplicate(true)
+	injected_cost["costs"] = {"oak_wood": 0}
+	_check(
+		fixture.submit_intent(injected_cost).status == "rejected",
+		"even a zero or forged amount cannot be added to the neutral v2 request"
+	)
+
+	var no_approval := FIXTURE_SCRIPT.new()
+	no_approval.configure_unapproved_production_probe()
+	_check(
+		no_approval.submit_intent(neutral).status == "rejected",
+		"production probe fails closed when the A3-approved site/action binding is absent"
+	)
+	_check(
+		no_approval.snapshot().inventory.oak_wood == 2,
+		"no-approval rejection has no debit or receipt side effect"
+	)
+
+	var stale := neutral.duplicate(true)
+	fixture.set_capabilities(["cap_salvage"])
+	_check(
+		fixture.submit_intent(stale).status == "rejected",
+		"owner fixture rejects a valid identity carrying a stale observed projection revision"
+	)
+	var fresh := site._make_intent(site.definition.choices[0])
+	fresh.observed_projection_revision = int(fixture.snapshot().projection_revision)
+	var accepted := fixture.submit_intent(fresh)
+	_check(
+		accepted.status == "committed",
+		"fixture positive control resolves only its own catalog after a fresh owner revision"
+	)
+	_check(
+		fixture.snapshot().inventory.oak_wood == 0,
+		"fake fixture debit is resolved from fixture catalog, not request payload"
+	)
+	_cleanup(pair)
+
+
 func _physical_access_and_retreat_basic() -> void:
 	for index: int in [0, 1]:
 		var pair := await _make_site(index)
@@ -326,7 +444,7 @@ func _authority_failures_and_retry() -> void:
 	var broke_authority := FIXTURE_SCRIPT.new()
 	broke_authority.configure(before)
 	var broken_result := broke_authority.submit_intent(
-		_make_expected_quarry_intent(site, "brace_east_shelf", {"oak_wood": 2}, "east_braced")
+		_make_expected_quarry_intent(site, "brace_east_shelf")
 	)
 	_check(
 		broken_result.status == "rejected",
@@ -352,6 +470,10 @@ func _authority_failures_and_retry() -> void:
 		),
 		"interrupt is returned to engine"
 	)
+	_check(
+		site.get_site_state().is_empty(),
+		"interrupted receipt cannot change projected site state or show false success"
+	)
 	_check(site.try_interact(actor), "same physical action can be retried after interruption")
 	var retried: Dictionary = submitted[1]
 	_check(
@@ -364,9 +486,23 @@ func _authority_failures_and_retry() -> void:
 	site.receive_authoritative_result(
 		retried.intent_id, committed, authority.project_state(site.get_source_id())
 	)
-	var duplicate := authority.submit_intent(original)
-	_check(duplicate.status == "rejected", "duplicate claim is rejected by authority")
-	_check(authority.snapshot().inventory.oak_wood == 0, "duplicate cannot debit twice")
+	var saved_once: Variant = JSON.parse_string(JSON.stringify(authority.snapshot()))
+	var replay_fixture := FIXTURE_SCRIPT.new()
+	replay_fixture.configure(saved_once if saved_once is Dictionary else {})
+	var replay := original.duplicate(true)
+	replay.observed_projection_revision = int(replay_fixture.snapshot().projection_revision)
+	var duplicate: Dictionary = replay_fixture.submit_intent(replay)
+	_check(
+		(
+			duplicate.status == "rejected"
+			and str(duplicate.get("reason", "")).contains("already committed")
+		),
+		"current-revision replay reaches the reloaded once-only claim ledger"
+	)
+	_check(
+		replay_fixture.snapshot().inventory.oak_wood == 0,
+		"replayed claim cannot debit a second time after JSON reload"
+	)
 	var invalid_claim: Dictionary = original.duplicate(true)
 	invalid_claim.source_id = "forged_site"
 	_check(
@@ -425,9 +561,17 @@ func _candidate_claims_capacity_and_reload() -> void:
 		),
 		"serialized owner projection preserves canonical identity and monotonic revision"
 	)
+	var replayed_candidate := candidate.duplicate(true)
+	replayed_candidate.observed_projection_revision = int(
+		reload_fixture.snapshot().projection_revision
+	)
+	var replay_result: Dictionary = reload_fixture.submit_intent(replayed_candidate)
 	_check(
-		reload_fixture.submit_intent(candidate).status == "rejected",
-		"saved claim ledger rejects a duplicate after fixture reload"
+		(
+			replay_result.status == "rejected"
+			and str(replay_result.get("reason", "")).contains("Stale or foreign claim identity")
+		),
+		"reloaded generation rejects a stale resource claim before any second grant"
 	)
 	_check(
 		reloaded_projection.claim_generation.sluice_reeds == 1,
@@ -448,11 +592,15 @@ func _candidate_claims_capacity_and_reload() -> void:
 		"scene denies a locally premature retry using the accepted owner projection"
 	)
 	var too_soon: Dictionary = reload_fixture.submit_intent(
-		_clone_claim_with_generation(candidate, 1)
+		_clone_claim_with_generation(
+			candidate, 1, int(reload_fixture.snapshot().projection_revision)
+		)
 	)
 	_check(too_soon.status == "rejected", "reload preserves candidate cooldown")
 	reload_fixture.advance_time(31.0)
-	var next_cycle: Dictionary = _clone_claim_with_generation(candidate, 1)
+	var next_cycle: Dictionary = _clone_claim_with_generation(
+		candidate, 1, int(reload_fixture.snapshot().projection_revision)
+	)
 	var next_result: Dictionary = reload_fixture.submit_intent(next_cycle)
 	_check(
 		next_result.status == "committed",
@@ -483,6 +631,10 @@ func _candidate_claims_capacity_and_reload() -> void:
 		leave_intent.intent_id,
 		leave_result,
 		orchard_authority.project_state(orchard_site.get_source_id())
+	)
+	_check(
+		orchard_site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/sluice_blocking_deadfall"),
+		"leaving the channel untouched keeps the obstructing log visible"
 	)
 	orchard_site.cycle_choice(-1)
 	_check(
@@ -520,6 +672,12 @@ func _candidate_claims_capacity_and_reload() -> void:
 	_check(
 		cultivated_site.has_node("SourceBackedWorldArt/A8_SourceSized_Props/flowing_channel_reeds"),
 		"accepted irrigation projects a distinct source-backed return-route prop"
+	)
+	_check(
+		not cultivated_site.has_node(
+			"SourceBackedWorldArt/A8_SourceSized_Props/sluice_blocking_deadfall"
+		),
+		"owner-projected flow removes the fallen-sluice blocker cue on revisit"
 	)
 	_check(
 		not cultivated_site.try_interact(cultivator, 1),
@@ -774,39 +932,22 @@ func _make_site(index: int) -> Dictionary:
 	return {"site": site, "actor": actor, "authority": fixture}
 
 
-func _make_expected_quarry_intent(
-	site: NativePoiSite, action_id: String, costs: Dictionary, state_value: String
+func _make_expected_quarry_intent(site: NativePoiSite, action_id: String) -> Dictionary:
+	for group_name: String in ["choices", "actions"]:
+		for entry: Dictionary in site.definition.get(group_name, []):
+			if str(entry.get("action_id", "")) == action_id:
+				return site._make_intent(entry)
+	return {}
+
+
+func _clone_claim_with_generation(
+	intent: Dictionary, generation: int, projection_revision: int
 ) -> Dictionary:
-	var object_id := action_id
-	var claim_id := "%s/%s/%s" % [site.get_source_id(), object_id, action_id]
-	return {
-		"contract_id": "soh.native_poi.intent.v1",
-		"contract_version": 1,
-		"intent_id": "%s|%s|%s|%s" % [site.get_source_id(), object_id, action_id, claim_id],
-		"source_id": site.get_source_id(),
-		"object_id": object_id,
-		"action_id": action_id,
-		"claim_id": claim_id,
-		"claim_policy": "once",
-		"cooldown_seconds": 0.0,
-		"requires_capabilities": [],
-		"required_state": [],
-		"required_state_values": {},
-		"costs": costs,
-		"rewards": {},
-		"state_delta": {"quarry_route": state_value},
-		"unlock_actions": {},
-		"choice_group": "quarry_route",
-		"catalog_source": "fixture candidate",
-		"provisional_test_only": true
-	}
-
-
-func _clone_claim_with_generation(intent: Dictionary, generation: int) -> Dictionary:
 	var copy := intent.duplicate(true)
 	var base := "%s/%s/%s" % [copy.source_id, copy.object_id, copy.action_id]
 	copy.claim_id = "%s/g%d" % [base, generation]
 	copy.intent_id = "%s|%s|%s|%s" % [copy.source_id, copy.object_id, copy.action_id, copy.claim_id]
+	copy.observed_projection_revision = projection_revision
 	return copy
 
 

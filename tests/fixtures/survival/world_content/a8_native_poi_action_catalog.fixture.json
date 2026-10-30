@@ -1,0 +1,290 @@
+{
+  "schema": "soh.a8.test_only_action_catalog.v1",
+  "fixture_only": true,
+  "status": "S2 TEST DATA ONLY. Fictional transaction parameters are resolved inside PoiAuthorityFixture from this test-only catalog. Not A3 authorization, not production economics, never a production mount.",
+  "source_policy": "Production NativePoiSite definitions contain neutral action identities only. Test costs, rewards and timers live here and are consulted only by the explicit Godot test authority fixture.",
+  "a3_approved_bindings": {},
+  "actions": {
+    "test_salt_lookout": {
+      "secure_ridge_step": {
+        "object_id": "ridge_stones",
+        "claim_policy": "once",
+        "costs": {
+          "stone_chunk": 1
+        },
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "lookout_access": "stable"
+        },
+        "unlock_actions": {},
+        "choice_group": "lookout_access",
+        "unlock_after_state_seconds": 0
+      },
+      "leave_ridge_loose": {
+        "object_id": "ridge_stones",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "lookout_access": "loose"
+        },
+        "unlock_actions": {},
+        "choice_group": "lookout_access",
+        "unlock_after_state_seconds": 0
+      },
+      "collect_salt_stone": {
+        "object_id": "salt_stone",
+        "claim_policy": "replenishable",
+        "costs": {},
+        "rewards": {
+          "stone_chunk": 1
+        },
+        "cooldown_seconds": 45,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {},
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 0
+      }
+    },
+    "poi_crown_south_mill": {
+      "repair_waterwheel": {
+        "object_id": "repair_waterwheel",
+        "claim_policy": "once",
+        "costs": {
+          "oak_wood": 1,
+          "iron_scrap": 1
+        },
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "mill_wheel": "turning",
+          "mill_route": "open"
+        },
+        "unlock_actions": {},
+        "choice_group": "mill_wheel",
+        "unlock_after_state_seconds": 0
+      },
+      "leave_wheel": {
+        "object_id": "leave_wheel",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "mill_wheel": "seized"
+        },
+        "unlock_actions": {},
+        "choice_group": "mill_wheel",
+        "unlock_after_state_seconds": 0
+      },
+      "observe_race": {
+        "object_id": "mill_race_marks",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "mill_race_observed": true
+        },
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 0
+      },
+      "recover_fastener": {
+        "object_id": "mill_scrap_pile",
+        "claim_policy": "replenishable",
+        "costs": {},
+        "rewards": {
+          "iron_scrap": 1
+        },
+        "cooldown_seconds": 90,
+        "requires_capabilities": [
+          "cap_salvage"
+        ],
+        "required_state": [
+          "mill_wheel"
+        ],
+        "required_state_values": {
+          "mill_wheel": [
+            "turning"
+          ]
+        },
+        "state_delta": {},
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 0
+      }
+    },
+    "poi_crown_south_orchard": {
+      "clear_irrigation": {
+        "object_id": "clear_irrigation",
+        "claim_policy": "once",
+        "costs": {
+          "stone_chunk": 1
+        },
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "orchard_channel": "flowing"
+        },
+        "unlock_actions": {
+          "read_water_marks": 20.0
+        },
+        "choice_group": "orchard_channel",
+        "unlock_after_state_seconds": 0
+      },
+      "leave_for_safety": {
+        "object_id": "leave_for_safety",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "orchard_channel": "untouched"
+        },
+        "unlock_actions": {},
+        "choice_group": "orchard_channel",
+        "unlock_after_state_seconds": 0
+      },
+      "gather_reeds": {
+        "object_id": "sluice_reeds",
+        "claim_policy": "replenishable",
+        "costs": {},
+        "rewards": {
+          "reed_fibre": 1
+        },
+        "cooldown_seconds": 30,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {},
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 0
+      },
+      "read_water_marks": {
+        "object_id": "old_graft_marks",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [
+          "orchard_channel"
+        ],
+        "required_state_values": {},
+        "state_delta": {
+          "graft_marks_read": true
+        },
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 20.0
+      }
+    },
+    "poi_crown_south_quarry": {
+      "brace_east_shelf": {
+        "object_id": "brace_east_shelf",
+        "claim_policy": "once",
+        "costs": {
+          "oak_wood": 2
+        },
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "quarry_route": "east_braced"
+        },
+        "unlock_actions": {},
+        "choice_group": "quarry_route",
+        "unlock_after_state_seconds": 0
+      },
+      "chock_west_ramp": {
+        "object_id": "chock_west_ramp",
+        "claim_policy": "once",
+        "costs": {
+          "stone_chunk": 2
+        },
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "quarry_route": "west_chocked"
+        },
+        "unlock_actions": {},
+        "choice_group": "quarry_route",
+        "unlock_after_state_seconds": 0
+      },
+      "leave_seam_unworked": {
+        "object_id": "south_seam",
+        "claim_policy": "once",
+        "costs": {},
+        "rewards": {},
+        "cooldown_seconds": 0,
+        "requires_capabilities": [],
+        "required_state": [],
+        "required_state_values": {},
+        "state_delta": {
+          "quarry_route": "left_unworked"
+        },
+        "unlock_actions": {},
+        "choice_group": "quarry_route",
+        "unlock_after_state_seconds": 0
+      },
+      "extract_outcrop": {
+        "object_id": "south_seam_outcrop",
+        "claim_policy": "replenishable",
+        "costs": {},
+        "rewards": {
+          "stone_chunk": 2
+        },
+        "cooldown_seconds": 45,
+        "requires_capabilities": [],
+        "required_state": [
+          "quarry_route"
+        ],
+        "required_state_values": {
+          "quarry_route": [
+            "east_braced",
+            "west_chocked"
+          ]
+        },
+        "state_delta": {},
+        "unlock_actions": {},
+        "choice_group": "",
+        "unlock_after_state_seconds": 0
+      }
+    }
+  }
+}

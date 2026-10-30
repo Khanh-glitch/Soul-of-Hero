@@ -214,10 +214,15 @@ func _build_props() -> void:
 	_props_root.z_index = -1
 	add_child(_props_root)
 	var props: Array = _layout.get("props", []).duplicate(true)
+	var hidden_ids: Array[String] = []
 	for variant: Dictionary in _layout.get("state_props", []):
 		if str(_site_state.get(str(variant.get("key", "")), "")) == str(variant.get("equals", "")):
 			props.append_array(variant.get("props", []))
+			for hidden_id: String in variant.get("hide_ids", []):
+				hidden_ids.append(hidden_id)
 	for prop: Dictionary in props:
+		if hidden_ids.has(str(prop.get("id", ""))):
+			continue
 		var sprite := _make_sprite(prop)
 		if sprite != null:
 			_props_root.add_child(sprite)

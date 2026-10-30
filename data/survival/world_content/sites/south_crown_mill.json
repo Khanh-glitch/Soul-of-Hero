@@ -151,18 +151,12 @@
         "cap_salvage"
       ],
       "requires_state": [],
-      "costs": {
-        "oak_wood": 1,
-        "iron_scrap": 1
-      },
-      "rewards": {},
       "set_state": {
         "mill_wheel": "turning",
         "mill_route": "open"
       },
-      "claim_policy": "once",
-      "catalog_source": "data/survival/items/items.json#items.oak_wood @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
-      "choice_group": "mill_wheel"
+      "choice_group": "mill_wheel",
+      "object_id": "repair_waterwheel"
     },
     {
       "action_id": "leave_wheel",
@@ -170,14 +164,11 @@
       "label": "Leave the wheel seized",
       "requires_capabilities": [],
       "requires_state": [],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "mill_wheel": "seized"
       },
-      "claim_policy": "once",
-      "catalog_source": "world-state-only; no item transaction",
-      "choice_group": "mill_wheel"
+      "choice_group": "mill_wheel",
+      "object_id": "leave_wheel"
     }
   ],
   "actions": [
@@ -191,13 +182,9 @@
       ],
       "requires_capabilities": [],
       "requires_state": [],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "mill_race_observed": true
       },
-      "claim_policy": "once",
-      "catalog_source": "world-state-only; no item transaction",
       "socket_position": [
         528,
         452
@@ -213,14 +200,7 @@
       "requires_state": [
         "mill_wheel"
       ],
-      "costs": {},
-      "rewards": {
-        "iron_scrap": 1
-      },
       "set_state": {},
-      "claim_policy": "replenishable",
-      "cooldown_seconds": 90,
-      "catalog_source": "data/survival/items/sources.json#sources.live_iron_scrap @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; poi_id=null; not Mill-authorized)",
       "stand_position": [
         678,
         278
@@ -759,6 +739,14 @@
           24
         ],
         "id": "maintenance_stone"
+      },
+      {
+        "frame": "cairn_warning",
+        "cell": [
+          31,
+          20
+        ],
+        "id": "seized_race_warning"
       }
     ],
     "state_props": [
@@ -782,20 +770,9 @@
             ],
             "id": "repaired_race_bearing"
           }
-        ]
-      },
-      {
-        "key": "mill_wheel",
-        "equals": "seized",
-        "props": [
-          {
-            "frame": "cairn_warning",
-            "cell": [
-              31,
-              20
-            ],
-            "id": "seized_race_warning"
-          }
+        ],
+        "hide_ids": [
+          "seized_race_warning"
         ]
       }
     ],

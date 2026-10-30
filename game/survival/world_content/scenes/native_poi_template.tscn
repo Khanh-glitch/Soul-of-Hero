@@ -4,4 +4,3 @@
 
 [node name="NativePOI" type="Node2D"]
 script = ExtResource("1_poi")
-test_harness_only = true

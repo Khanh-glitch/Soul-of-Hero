@@ -12,12 +12,11 @@ signal transition_requested(request: Dictionary)
 
 const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
 const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
-const CONTRACT_ID := "soh.native_poi.intent.v1"
-const CONTRACT_VERSION := 1
+const CONTRACT_ID := "soh.native_poi.intent.v2"
+const CONTRACT_VERSION := 2
 const WORLD_LAYER := 1
 const PLAYER_LAYER := 2
 @export_file("*.json") var definition_path := ""
-@export var test_harness_only := false
 
 var definition: Dictionary = {}
 var site_id := ""
@@ -359,8 +358,8 @@ func _get_actor_facing(actor: CharacterBody2D) -> Vector2:
 
 
 func _cooldown_remaining(action: Dictionary) -> float:
-	if str(action.get("claim_policy", "once")) != "replenishable":
-		return 0.0
+	# A8 only displays the owner-projected remaining time. It never authors the
+	# interval or sends it with the action request.
 	var object_id := str(action.get("object_id", action.get("action_id", "")))
 	var ready_at := float(projection.get("resource_ready_at", {}).get(object_id, 0.0))
 	return maxf(0.0, ready_at - float(projection.get("clock_seconds", 0.0)))
@@ -399,7 +398,7 @@ func _action_is_available(action: Dictionary) -> bool:
 			return false
 	var action_id := str(action.get("action_id", ""))
 	if (
-		float(action.get("unlock_after_state_seconds", 0.0)) > 0.0
+		bool(action.get("owner_ready_required", false))
 		and not projection.get("ready_actions", []).has(action_id)
 	):
 		player_feedback.emit("The water is moving; come back after the grafts have taken root.")
@@ -420,13 +419,14 @@ func _action_is_available(action: Dictionary) -> bool:
 
 
 func _make_intent(action: Dictionary) -> Dictionary:
+	# This request carries neutral identity only. A0 must resolve the A1 source,
+	# current generation, all economics and the durable receipt from owner data;
+	# no scene-authored fixture amount or client flag crosses this boundary.
 	var object_id := str(action.get("object_id", action.get("action_id", "")))
 	var action_id := str(action.get("action_id", ""))
 	var source_id := get_source_id()
 	var generation := int(projection.get("claim_generation", {}).get(object_id, 0))
-	var claim_id := "%s/%s/%s" % [source_id, object_id, action_id]
-	if str(action.get("claim_policy", "once")) == "replenishable":
-		claim_id += "/g%d" % generation
+	var claim_id := "%s/%s/%s/g%d" % [source_id, object_id, action_id, generation]
 	var stable := "%s|%s|%s|%s" % [source_id, object_id, action_id, claim_id]
 	return {
 		"contract_id": CONTRACT_ID,
@@ -436,18 +436,7 @@ func _make_intent(action: Dictionary) -> Dictionary:
 		"object_id": object_id,
 		"action_id": action_id,
 		"claim_id": claim_id,
-		"claim_policy": str(action.get("claim_policy", "once")),
-		"cooldown_seconds": float(action.get("cooldown_seconds", 0.0)),
-		"requires_capabilities": action.get("requires_capabilities", []).duplicate(),
-		"required_state": action.get("requires_state", []).duplicate(),
-		"required_state_values": action.get("requires_state_values", {}).duplicate(true),
-		"costs": action.get("costs", {}).duplicate(true),
-		"rewards": action.get("rewards", {}).duplicate(true),
-		"state_delta": action.get("set_state", {}).duplicate(true),
-		"unlock_actions": action.get("unlock_actions", {}).duplicate(true),
-		"choice_group": str(action.get("choice_group", "")),
-		"catalog_source": str(action.get("catalog_source", "")),
-		"provisional_test_only": test_harness_only
+		"observed_projection_revision": int(projection.get("projection_revision", -1))
 	}
 
 

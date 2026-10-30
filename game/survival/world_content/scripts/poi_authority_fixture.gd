@@ -2,26 +2,57 @@ class_name PoiAuthorityFixture
 extends Node
 
 ## TEST FIXTURE ONLY. Never install as an autoload or use as a production economy.
-## Its contract intentionally mirrors the boundary A0 must implement: input intent,
-## owner validation, atomic commit/reject, owner projection. All inventory here is fake.
+## Every fake action cost/reward/timer is resolved from tests/fixtures, never from
+## the NativePoiSite request. This is not A0, A3, SaveService, or a live receipt.
 
-const CATALOG_PATH := "res://data/survival/world_content/catalog_candidates.fixture.json"
-const CONTRACT_PATH := "res://data/survival/world_content/interaction_contract.v1.json"
+const ITEM_CATALOG_PATH := "res://data/survival/world_content/catalog_candidates.fixture.json"
+const ACTION_CATALOG_PATH := (
+	"res://tests/fixtures/survival/world_content/" + "a8_native_poi_action_catalog.fixture.json"
+)
+const CONTRACT_PATH := "res://data/survival/world_content/interaction_contract.v2.json"
+const ALLOWED_INTENT_FIELDS := [
+	"contract_id",
+	"contract_version",
+	"intent_id",
+	"source_id",
+	"object_id",
+	"action_id",
+	"claim_id",
+	"observed_projection_revision"
+]
 
 var interrupt_next_commit := false
 var force_bag_full := false
-var _fixture_catalog: Dictionary = {}
+var _fixture_items: Dictionary = {}
+var _fixture_action_catalog: Dictionary = {}
 var _snapshot: Dictionary = {}
 var _required_intent_fields: Array[String] = []
+var _require_a3_approval := false
 
 
 func configure(seed_snapshot: Dictionary = {}) -> void:
-	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(CATALOG_PATH))
-	_fixture_catalog = parsed.get("items", {}) if parsed is Dictionary else {}
-	var contract: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTRACT_PATH))
+	_require_a3_approval = false
+	var item_document: Variant = JSON.parse_string(FileAccess.get_file_as_string(ITEM_CATALOG_PATH))
+	_fixture_items = item_document.get("items", {}) if item_document is Dictionary else {}
+	var action_document: Variant = JSON.parse_string(
+		FileAccess.get_file_as_string(ACTION_CATALOG_PATH)
+	)
+	_fixture_action_catalog = action_document if action_document is Dictionary else {}
+	var fixture_bindings: Variant = _fixture_action_catalog.get("a3_approved_bindings", {})
+	if (
+		_fixture_action_catalog.get("schema") != "soh.a8.test_only_action_catalog.v1"
+		or not _fixture_action_catalog.get("fixture_only", false)
+		or not fixture_bindings is Dictionary
+		or not fixture_bindings.is_empty()
+	):
+		push_error(
+			"PoiAuthorityFixture requires the explicit fixture-only catalog with no A3 bindings"
+		)
+		_fixture_action_catalog = {}
+	var contract_document: Variant = JSON.parse_string(FileAccess.get_file_as_string(CONTRACT_PATH))
 	_required_intent_fields.clear()
-	if contract is Dictionary:
-		for field: String in contract.get("intent_required_fields", []):
+	if contract_document is Dictionary:
+		for field: String in contract_document.get("intent_required_fields", []):
 			_required_intent_fields.append(field)
 	if seed_snapshot.is_empty():
 		_snapshot = {
@@ -41,6 +72,13 @@ func configure(seed_snapshot: Dictionary = {}) -> void:
 		_snapshot = seed_snapshot.duplicate(true)
 	if not _snapshot.has("projection_revision"):
 		_snapshot["projection_revision"] = 0
+
+
+func configure_unapproved_production_probe(seed_snapshot: Dictionary = {}) -> void:
+	# Negative test mode only. It models the current no-A3-binding condition; it
+	# never commits and is not an A0 implementation.
+	configure(seed_snapshot)
+	_require_a3_approval = true
 
 
 func has_capability(capability: String) -> bool:
@@ -91,16 +129,19 @@ func project_state(site_id: String) -> Dictionary:
 # gdlint: disable=max-returns
 func submit_intent(intent: Dictionary) -> Dictionary:
 	var intent_id := str(intent.get("intent_id", ""))
+	if not bool(_fixture_action_catalog.get("fixture_only", false)):
+		return _reject(intent_id, "The test-only action catalog is missing its fixture guard.")
 	for field: String in _required_intent_fields:
 		if not intent.has(field):
-			return _reject(intent_id, "Intent is missing contract field: %s" % field)
+			return _reject(intent_id, "Intent is missing neutral identity field: %s" % field)
+	for field: Variant in intent.keys():
+		if not ALLOWED_INTENT_FIELDS.has(str(field)):
+			return _reject(intent_id, "Non-neutral client field is forbidden: %s" % str(field))
 	if (
-		str(intent.get("contract_id", "")) != "soh.native_poi.intent.v1"
-		or int(intent.get("contract_version", 0)) != 1
+		str(intent.get("contract_id", "")) != "soh.native_poi.intent.v2"
+		or int(intent.get("contract_version", 0)) != 2
 	):
-		return _reject(intent_id, "Unsupported interaction contract version.")
-	if not bool(intent.get("provisional_test_only", false)):
-		return _reject(intent_id, "The test authority refuses non-fixture intents.")
+		return _reject(intent_id, "Unsupported interaction contract; v1 is retired.")
 	var source_id := str(intent.get("source_id", ""))
 	var object_id := str(intent.get("object_id", ""))
 	var action_id := str(intent.get("action_id", ""))
@@ -113,44 +154,71 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 		or claim_id.is_empty()
 		or intent_id != expected_id
 	):
-		return _reject(intent_id, "Invalid or unstable source/object/action/claim identity.")
+		return _reject(
+			intent_id, "Invalid or unstable neutral source/object/action/claim identity."
+		)
+	var observed_revision: Variant = intent.get("observed_projection_revision", null)
+	if typeof(observed_revision) != TYPE_INT:
+		return _reject(intent_id, "Observed owner revision must be an integer.")
+	if int(observed_revision) != int(_snapshot.get("projection_revision", 0)):
+		return _reject(intent_id, "Stale owner revision; refresh the neutral action request.")
+	if _require_a3_approval:
+		var approvals: Dictionary = _fixture_action_catalog.get("a3_approved_bindings", {})
+		if not approvals.has("%s|%s" % [source_id, action_id]):
+			return _reject(
+				intent_id, "No A3-approved production binding exists for this site/action."
+			)
+		return _reject(intent_id, "This test fixture cannot commit production-authorized actions.")
+	var site_actions: Dictionary = _fixture_action_catalog.get("actions", {}).get(source_id, {})
+	var action_value: Variant = site_actions.get(action_id, null)
+	if not action_value is Dictionary:
+		return _reject(intent_id, "The fixture catalog has no exact source/action entry.")
+	var action: Dictionary = action_value
+	if str(action.get("object_id", "")) != object_id:
+		return _reject(
+			intent_id, "Object identity does not match the test-only source/action binding."
+		)
+	var claim_policy := str(action.get("claim_policy", ""))
+	if claim_policy != "once" and claim_policy != "replenishable":
+		return _reject(intent_id, "Fixture action policy is invalid; no transaction was made.")
+	var generation: Dictionary = _snapshot.get("claim_generation", {}).get(source_id, {})
+	var expected_claim := (
+		"%s/%s/%s/g%d" % [source_id, object_id, action_id, int(generation.get(object_id, 0))]
+	)
+	if claim_id != expected_claim:
+		return _reject(
+			intent_id, "Stale or foreign claim identity; use the owner-projected generation."
+		)
 	if _snapshot.get("claims", []).has(claim_id):
 		return _reject(intent_id, "This claim was already committed.")
-	for capability: String in intent.get("requires_capabilities", []):
+	for capability: String in action.get("requires_capabilities", []):
 		if not has_capability(capability):
 			return _reject(intent_id, "Required capability is not owned.")
 	var site_state: Dictionary = _snapshot.get("site_state", {}).get(source_id, {})
-	for state_key: String in intent.get("required_state", []):
+	for state_key: String in action.get("required_state", []):
 		if (
 			not site_state.has(state_key)
 			or site_state[state_key] == false
 			or site_state[state_key] == ""
 		):
 			return _reject(intent_id, "The owner state does not meet this action prerequisite.")
-	var required_values: Dictionary = intent.get("required_state_values", {})
+	var required_values: Dictionary = action.get("required_state_values", {})
 	for state_key: String in required_values:
 		if not required_values[state_key].has(site_state.get(state_key, null)):
 			return _reject(intent_id, "The owner state does not meet the safe route requirement.")
-	var group := str(intent.get("choice_group", ""))
+	var group := str(action.get("choice_group", ""))
 	if not group.is_empty() and site_state.has(group):
 		return _reject(intent_id, "A different site choice has already been committed.")
-	var generation: Dictionary = _snapshot.get("claim_generation", {}).get(source_id, {})
-	if str(intent.get("claim_policy", "once")) == "replenishable":
+	if claim_policy == "replenishable":
 		var wait_until := float(
 			_snapshot.get("cooldown_until", {}).get(source_id, {}).get(object_id, 0.0)
 		)
 		if float(_snapshot.get("clock_seconds", 0.0)) < wait_until:
 			return _reject(intent_id, "The work face is spent; return when it has recovered.")
-		var expected_claim := (
-			"%s/%s/%s/g%d" % [source_id, object_id, action_id, int(generation.get(object_id, 0))]
-		)
-		if claim_id != expected_claim:
-			return _reject(intent_id, "Stale resource cycle; request a fresh owner projection.")
-
-	var costs: Dictionary = intent.get("costs", {})
-	var rewards: Dictionary = intent.get("rewards", {})
+	var costs: Dictionary = action.get("costs", {})
+	var rewards: Dictionary = action.get("rewards", {})
 	for item_id: String in costs.keys() + rewards.keys():
-		if not _fixture_catalog.has(item_id):
+		if not _fixture_items.has(item_id):
 			return _reject(
 				intent_id,
 				"Item ID is absent from the S2 candidate fixture; no grant or debit was made."
@@ -161,8 +229,10 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 			return _reject(intent_id, "Not enough material; nothing was spent.")
 	if force_bag_full or _would_exceed_bag(rewards):
 		return _reject(intent_id, "No room to carry the material; nothing was changed.")
+	if claim_policy == "replenishable" and float(action.get("cooldown_seconds", 0.0)) <= 0.0:
+		return _reject(intent_id, "Fixture replenishable action lacks a test-only interval.")
 
-	# Crash injection is before the single atomic owner commit. Retrying the same
+	# Crash injection is before the single fixture commit. Retrying the same
 	# identity is safe because neither debit nor claim nor world-state was written.
 	if interrupt_next_commit:
 		interrupt_next_commit = false
@@ -182,8 +252,8 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 		)
 	var site_states: Dictionary = _snapshot.get("site_state", {})
 	var next_site_state: Dictionary = site_states.get(source_id, {}).duplicate(true)
-	for key: String in intent.get("state_delta", {}):
-		next_site_state[key] = intent.state_delta[key]
+	for key: String in action.get("state_delta", {}):
+		next_site_state[key] = action.state_delta[key]
 	site_states[source_id] = next_site_state
 	_snapshot["site_state"] = site_states
 	var claims: Array = _snapshot.get("claims", [])
@@ -191,12 +261,12 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 	_snapshot["claims"] = claims
 	var generations: Dictionary = _snapshot.get("claim_generation", {})
 	var next_generation: Dictionary = generations.get(source_id, {}).duplicate(true)
-	if str(intent.get("claim_policy", "once")) == "replenishable":
+	if claim_policy == "replenishable":
 		next_generation[object_id] = int(next_generation.get(object_id, 0)) + 1
 		var cooldowns: Dictionary = _snapshot.get("cooldown_until", {})
 		var site_cooldowns: Dictionary = cooldowns.get(source_id, {}).duplicate(true)
 		site_cooldowns[object_id] = (
-			float(_snapshot.clock_seconds) + float(intent.get("cooldown_seconds", 0.0))
+			float(_snapshot.clock_seconds) + float(action.get("cooldown_seconds", 0.0))
 		)
 		cooldowns[source_id] = site_cooldowns
 		_snapshot["cooldown_until"] = cooldowns
@@ -204,9 +274,9 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 	_snapshot["claim_generation"] = generations
 	var unlocks: Dictionary = _snapshot.get("unlock_at", {})
 	var site_unlocks: Dictionary = unlocks.get(source_id, {}).duplicate(true)
-	for action_id: String in intent.get("unlock_actions", {}):
-		site_unlocks[action_id] = (
-			float(_snapshot.get("clock_seconds", 0.0)) + float(intent.unlock_actions[action_id])
+	for unlock_id: String in action.get("unlock_actions", {}):
+		site_unlocks[unlock_id] = (
+			float(_snapshot.get("clock_seconds", 0.0)) + float(action.unlock_actions[unlock_id])
 		)
 	unlocks[source_id] = site_unlocks
 	_snapshot["unlock_at"] = unlocks
@@ -214,7 +284,7 @@ func submit_intent(intent: Dictionary) -> Dictionary:
 	return {
 		"intent_id": intent_id,
 		"status": "committed",
-		"feedback": "The world changed. (S2 transaction fixture; not a live-game receipt.)"
+		"feedback": "The world changed. (S2 test fixture; not a live-game receipt.)"
 	}
 
 

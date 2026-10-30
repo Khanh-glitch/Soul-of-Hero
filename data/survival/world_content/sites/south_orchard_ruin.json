@@ -168,33 +168,22 @@
       "option_id": "water",
       "label": "Clear the fallen sluice",
       "requires_state": [],
-      "costs": {
-        "stone_chunk": 1
-      },
-      "rewards": {},
       "set_state": {
         "orchard_channel": "flowing"
       },
-      "claim_policy": "once",
-      "catalog_source": "data/survival/items/items.json#items.stone_chunk @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; fixture-only cost; no action-price approval)",
       "choice_group": "orchard_channel",
-      "unlock_actions": {
-        "read_water_marks": 20.0
-      }
+      "object_id": "clear_irrigation"
     },
     {
       "action_id": "leave_for_safety",
       "option_id": "leave",
-      "label": "Leave the sluice undisturbed",
+      "label": "Leave the channel blocked",
       "requires_state": [],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "orchard_channel": "untouched"
       },
-      "claim_policy": "once",
-      "catalog_source": "world-state-only; no item transaction",
-      "choice_group": "orchard_channel"
+      "choice_group": "orchard_channel",
+      "object_id": "leave_for_safety"
     }
   ],
   "actions": [
@@ -203,14 +192,7 @@
       "object_id": "sluice_reeds",
       "label": "Cut the bank reeds",
       "requires_state": [],
-      "costs": {},
-      "rewards": {
-        "reed_fibre": 1
-      },
-      "set_state": {},
-      "claim_policy": "replenishable",
-      "cooldown_seconds": 30,
-      "catalog_source": "data/survival/items/sources.json#sources.live_reed_fibre @ c23292be095903c67e3d6e6e4fbd310b6649da12 (SOH_PROPOSAL; poi_id=null; not Orchard-authorized)"
+      "set_state": {}
     },
     {
       "action_id": "read_water_marks",
@@ -219,15 +201,10 @@
       "requires_state": [
         "orchard_channel"
       ],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "graft_marks_read": true
       },
-      "claim_policy": "once",
-      "cooldown_seconds": 0,
-      "catalog_source": "world-state-only; no item transaction",
-      "unlock_after_state_seconds": 20.0
+      "owner_ready_required": true
     }
   ],
   "return_hook": "After the sluice is cleared, the water line reaches old graft marks; returning reveals how to revive the lower terrace. No honey or rare-herb grant is authored.",
@@ -783,6 +760,14 @@
           21
         ],
         "id": "wild_edge_east"
+      },
+      {
+        "frame": "deadfall",
+        "cell": [
+          30,
+          17
+        ],
+        "id": "sluice_blocking_deadfall"
       }
     ],
     "state_props": [
@@ -798,6 +783,9 @@
             ],
             "id": "flowing_channel_reeds"
           }
+        ],
+        "hide_ids": [
+          "sluice_blocking_deadfall"
         ]
       },
       {

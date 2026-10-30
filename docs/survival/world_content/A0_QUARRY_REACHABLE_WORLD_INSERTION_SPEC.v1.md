@@ -4,7 +4,7 @@
 
 ## Canonical identity and exact transform
 
-Use A1 PR #20 head `939720d50a0b822ff9042d4104dc69ba78ffe0f8` as the current read-only source pin. The canonical site is:
+Current source comparison was performed against A1 PR #20 head `ad39bde6780c92169032246898c145c568f36e6e`; A8's geometry remains an A1 read-only consumer. Canonical site:
 
 - `world_id`: `world:soh_continent_v1`
 - `poi_id`: `poi_crown_south_quarry`
@@ -18,25 +18,26 @@ Mount **only** `res://game/survival/world_content/scenes/south_quarry_overworld.
 
 ## Reachability is a required A0 integration result
 
-The current A0 Waystation host/geometry is explicitly bounded to 448×256 px (28×16 tiles). Cell `[30,280]` is outside that host. A8's isolated shell and native harness do not make it reachable in the production game. A0 must therefore connect the shell to the actual navigable world/streaming graph; do not treat an off-screen scene instance or a hand-authored screenshot as reachability evidence.
+The current A0 Waystation host/geometry was bounded to 448×256 px (28×16 tiles); cell `[30,280]` lies outside that host. A8's isolated shell and native harness do not make it reachable in the production game. A0 must connect the shell to the actual navigable world/streaming graph; an off-screen instance or hand-authored screenshot is not reachability evidence.
 
-A1's route graph supplies the intended foot spur from `node_refuge` cell `[56,218]` to the Quarry cell `[30,280]`, with no capability requirement and `early` risk. At 16 px/cell its authored straight segment is about 67.23 cells / 1,075.7 px; this is the A1 graph polyline length, **not** measured player travel time. Before enabling entry, A0 must demonstrate a continuous reachable route (including streamed chunk membership), valid walk/collision along the route, camera/world limits that follow the player to the site, and a return path to the existing reachable region. If the current host cannot provide that route, the site remains unmounted/inaccessible rather than being teleported into the world.
+A1's route graph supplies the intended foot spur from `node_refuge` cell `[56,218]` to Quarry cell `[30,280]`, with no capability requirement and `early` risk. At 16 px/cell its authored straight segment is about 67.23 cells / 1,075.7 px; this is A1 graph geometry, **not** measured player travel time. Before enabling entry, A0 must demonstrate a continuous reachable route (including streamed chunk membership), valid walk/collision, camera/world limits following the player to the site, and a return path to the existing reachable region. If the current host cannot provide that route, leave the site unmounted/inaccessible rather than teleporting into the world.
 
-## Entry, exit, and owner projection
+## Entry, exit, and neutral action request
 
-1. Place the player in the A1 world at the shell exterior. Physical portal center is local `[64,108]`; the actor approaches from the south and faces north to enter. The shell has a real south doorway and collision walls on the other sides.
-2. On the doorway request, validate the live actor, `world_id`, `poi_id`, canonical cell, shell scene, destination, and transition identity at A0's existing transition owner. Load the 960×608 worksite and set the local actor to `[480,548]`. Keep the owner-saved global world position/scene identity separate from the local spawn.
-3. Load the owner projection before enabling state-dependent UI/collision. The A8 proposal requires canonical `source_id`, monotonic `projection_revision`, site state, claim generation, capability/readiness fields, and owner clock. A8's `PoiAuthorityFixture` is test-only and is not A0's adapter or SaveService.
-4. To exit, require physical arrival at `[480,560]`, facing south. The return anchor is the same shell at `[64,108]`, retaining `world_id`, `poi_id`, and `[30,280]`. A0 restores the actual world actor/global position and persists it with the existing SaveService; it does not create a second Quarry instance.
-5. On revisit/reload, A0 projects the same canonical instance. For a committed east brace, the east collision blocker is absent and the west blocker remains; for a west chock, the reverse is true. A stale or foreign projection must never reopen an old branch.
+1. Place the player in the A1 world at the shell exterior. Physical portal center is local `[64,108]`; approach from the south and face north to enter.
+2. At the existing A0 transition owner, validate the live actor, `world_id`, `poi_id`, canonical cell, shell scene, destination, and transition identity. Load the 960×608 worksite and set the local actor to `[480,548]`. Keep owner-saved global world position/scene identity separate from local spawn.
+3. Before enabling state-dependent UI/collision, load the A0 owner projection. A8 proposes projection identity/revision, site state, claim generation, capability/readiness fields, and owner clock. `PoiAuthorityFixture` is test-only and not A0's adapter or SaveService.
+4. A8's current scene request is `soh.native_poi.intent.v2`: `contract_id`, `contract_version`, `intent_id`, `source_id`, `object_id`, `action_id`, `claim_id`, and `observed_projection_revision` only. It carries **no** amount, reward, cooldown, claim policy, state delta, unlock, catalog source, client approval/provisional flag, or receipt. The neutral identity does not authorize an action. A0 must independently resolve canonical A1 identity/state and the exact A3-approved binding; reject unknown/extra fields and all actions with no current binding.
+5. To exit, require physical arrival at `[480,560]`, facing south. Return to the same shell at `[64,108]`, retaining world/POI/cell. A0 restores the actual world actor/global position and persists through existing SaveService; do not create a second Quarry instance.
+6. On revisit/reload, A0 projects the same canonical instance. For an accepted east brace, remove only the east collision blocker and keep the west blocker; for an accepted west chock, do the reverse. A stale/foreign projection must not reopen a prior branch.
 
 ## Acceptance evidence A0 must add
 
 - A0-owned scene mount at the exact shell transform and route graph inclusion, without changes to A1 geometry or this A8 PR.
-- Native walk to the exterior at `[30,280]` from the current player route, shell doorway entry, worksite stand, both route choices, retreat, transition return, and revisit. Include collision/camera/chunk-streaming evidence; also test no-route/missing-world fail-closed behavior.
-- SaveService-backed restart of the same world/POI/cell instance, with monotonic owner projection revision and no duplicate claim/reward. A8's serialized fixture test is only adapter-contract evidence.
-- A3-approved source/action binding before any cost, yield, cooldown, capability grant, or reward is enabled. Current A3 decision is `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`; no production Quarry grant is authorized.
+- Native walk to exterior cell `[30,280]`, shell doorway entry, worksite stand, both route alternatives, retreat, transition return and revisit. Include collision/camera/chunk-streaming evidence; test no-route/missing-world fail-closed behavior.
+- SaveService-backed separate-process restart of the same world/POI/cell instance, monotonic owner projection revision and no duplicate claim/reward. A8's serialized fixture test is only adapter-contract evidence.
+- Exact A3-approved source/action binding before any cost, yield, cooldown, capability grant or reward is enabled. Current A3 Quarry decision remains `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`; no production Quarry grant is authorized.
 
 ## Ownership boundary
 
-A0 alone changes production mount, world transition, world identity, Hero relocation, and SaveService. A1 alone changes canonical world geometry/routes. A3 alone approves economics and source bindings. A8 supplies the isolated native site/shell, source-backed local art, fail-closed intent/projection proposal, test fixtures, and the insertion evidence above. This document requests review; it is not production authorization.
+A0 alone changes production mount, world transition, world identity, Hero relocation, and SaveService. A1 alone changes canonical world geometry/routes. A3 alone approves economics and source bindings. A8 supplies the isolated native site/shell, source-backed local art, neutral intent/projection proposal, test fixtures, and insertion evidence. This document requests review; it is not production authorization.

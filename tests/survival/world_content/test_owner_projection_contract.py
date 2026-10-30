@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[3]
 class OwnerProjectionContractTests(unittest.TestCase):
     def test_projection_identity_revision_and_owner_clock_are_required(self) -> None:
         contract = json.loads(
-            (ROOT / "data/survival/world_content/interaction_contract.v1.json").read_text(
+            (ROOT / "data/survival/world_content/interaction_contract.v2.json").read_text(
                 encoding="utf-8"
             )
         )
@@ -29,6 +29,16 @@ class OwnerProjectionContractTests(unittest.TestCase):
                 "clock_seconds",
             }.issubset(required)
         )
+        self.assertEqual(contract["contract_id"], "soh.native_poi.intent.v2")
+        self.assertEqual(contract["intent_required_fields"], contract["intent_allowed_fields"])
+        self.assertEqual(len(contract["intent_allowed_fields"]), 8)
+        self.assertTrue(any("no a3-approved" in rule.lower() for rule in contract["request_rules"]))
+        retired = json.loads(
+            (ROOT / "data/survival/world_content/interaction_contract.v1.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        self.assertEqual(retired["status"], "SUPERSEDED_UNAPPROVED_NEVER_USE")
         proposal = contract["owner_projection_contract"]
         self.assertEqual(proposal["contract_id"], "soh.native_poi.owner_projection.v1")
         self.assertIn("A0 approval required", proposal["status"])
@@ -43,6 +53,42 @@ class OwnerProjectionContractTests(unittest.TestCase):
         self.assertIn('result.get("intent_id", "")', source)
         self.assertIn("_projection_payload_matches", source)
         self.assertIn("_projection_revision", source)
+
+    def test_site_sources_cannot_author_prices_and_fixture_catalog_has_no_approval(self) -> None:
+        forbidden = {
+            "costs", "rewards", "cooldown_seconds", "claim_policy", "catalog_source",
+            "provisional_test_only", "unlock_actions", "unlock_after_state_seconds",
+        }
+        sites = sorted((ROOT / "data/survival/world_content/sites").glob("*.json"))
+        action_catalog = json.loads(
+            (ROOT / "tests/fixtures/survival/world_content/a8_native_poi_action_catalog.fixture.json")
+            .read_text(encoding="utf-8")
+        )
+        item_catalog = json.loads(
+            (ROOT / "data/survival/world_content/catalog_candidates.fixture.json")
+            .read_text(encoding="utf-8")
+        )
+        self.assertEqual(action_catalog["schema"], "soh.a8.test_only_action_catalog.v1")
+        self.assertIs(action_catalog["fixture_only"], True)
+        self.assertEqual(action_catalog["a3_approved_bindings"], {})
+        fixture_source = (
+            ROOT / "game/survival/world_content/scripts/poi_authority_fixture.gd"
+        ).read_text(encoding="utf-8")
+        self.assertIn("tests/fixtures/survival/world_content/", fixture_source)
+        self.assertIn('not _fixture_action_catalog.get("fixture_only", false)', fixture_source)
+        for path in sites:
+            site = json.loads(path.read_text(encoding="utf-8"))
+            poi_id = site["source"]["poi_id"]
+            entries = site.get("choices", []) + site.get("actions", [])
+            for entry in entries:
+                self.assertFalse(forbidden.intersection(entry), (path.name, entry))
+                self.assertIn(entry["action_id"], action_catalog["actions"][poi_id])
+        quarry = action_catalog["actions"]["poi_crown_south_quarry"]
+        self.assertEqual(quarry["brace_east_shelf"]["costs"], {"oak_wood": 2})
+        self.assertEqual(quarry["chock_west_ramp"]["costs"], {"stone_chunk": 2})
+        self.assertEqual(quarry["extract_outcrop"]["rewards"], {"stone_chunk": 2})
+        self.assertEqual(quarry["extract_outcrop"]["cooldown_seconds"], 45)
+        self.assertIs(item_catalog["fixture_only"], True)
 
     def test_revision_counter_and_inventory_are_explicitly_test_fixture_only(self) -> None:
         fixture = (

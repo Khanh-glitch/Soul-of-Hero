@@ -1833,6 +1833,13 @@
         "reason": "The 76px-tall landmark otherwise clips 12px beyond the shell; keep the full source frame visible above the doorway-clear zone."
       }
     ],
-    "rejected_inherited_art": "Previous A8-local atlas pin 2f6edd3f is superseded by A1 PR #20 head 939720d5: refreshed both original SOH texture sheets and all frame coordinates; no foreign asset imports."
+    "rejected_inherited_art": "A8 retains its complete source-correct atlas pin at A1 PR #20 939720d5. Current A1 PR #20 head ad39bde6 adds 80 land-transition masks and two notes-crate props; the consumer compatibility evidence verifies every frame used by these three sites against current A1 pixels. No current A8 renderer composes the new neighbor-aware masks; they remain candidates pending an edge compositor and native human visual review. The notes crates are unrelated and not adopted."
+  },
+  "current_a1_compatibility": {
+    "source_pr": 20,
+    "current_head": "ad39bde6780c92169032246898c145c568f36e6e",
+    "decision": "MAINTAIN_EXISTING_A8_PIN_FOR_THIS_CLOSEOUT",
+    "evidence": "data/survival/world_content/a1_atlas_compatibility.v1.json",
+    "summary": "All 23 terrain frame names/families and 25 prop frames used by the three site interiors and shells have source-pixel-identical crops at current A1 coordinates. The newer atlas adds 80 land-to-land edge masks and two notes-crate props; no blind coordinate repin was made."
   }
 }

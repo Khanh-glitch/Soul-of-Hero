@@ -81,7 +81,11 @@ class ArtManifestTests(unittest.TestCase):
                 self._assert_cell_inside(prop["cell"], width // 16, height // 16, path.name)
                 if prop["frame"] == "wall_stub":
                     self._assert_prop_overlaps_geometry(prop, self.prop_frames, data["walls"], path.name)
+            base_prop_ids = {prop.get("id") for prop in layout.get("props", [])}
             for variant in layout.get("state_props", []):
+                hidden = variant.get("hide_ids", [])
+                self.assertEqual(len(hidden), len(set(hidden)), (path.name, variant))
+                self.assertTrue(set(hidden) <= base_prop_ids, (path.name, variant))
                 for prop in variant.get("props", []):
                     self.assertIn(prop["frame"], self.prop_frames, (path.name, prop))
                     self._assert_cell_inside(prop["cell"], width // 16, height // 16, path.name)

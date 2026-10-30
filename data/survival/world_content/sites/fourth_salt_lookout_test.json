@@ -7,7 +7,7 @@
   },
   "test_only": true,
   "site_id": "fourth_salt_lookout_test",
-  "display_name": "Saltwind Lookout \u00b7 authoring fixture",
+  "display_name": "Saltwind Lookout · authoring fixture",
   "template_id": "worksite",
   "visual_profile": "salt_lookout",
   "world_bounds": [
@@ -84,17 +84,11 @@
       "object_id": "ridge_stones",
       "option_id": "secure",
       "choice_group": "lookout_access",
-      "label": "Set the loose ridge stones \u00b7 1 Stone Chunk",
+      "label": "Set the loose ridge stones",
       "requires_state": [],
-      "costs": {
-        "stone_chunk": 1
-      },
-      "rewards": {},
       "set_state": {
         "lookout_access": "stable"
-      },
-      "claim_policy": "once",
-      "catalog_source": "candidate id only; fixture catalog, not A3 authorization"
+      }
     },
     {
       "action_id": "leave_ridge_loose",
@@ -103,29 +97,18 @@
       "choice_group": "lookout_access",
       "label": "Leave the ridge loose",
       "requires_state": [],
-      "costs": {},
-      "rewards": {},
       "set_state": {
         "lookout_access": "loose"
-      },
-      "claim_policy": "once",
-      "catalog_source": "world-state-only; no item transaction"
+      }
     }
   ],
   "actions": [
     {
       "action_id": "collect_salt_stone",
       "object_id": "salt_stone",
-      "label": "Take one salt stone \u00b7 1 Stone Chunk",
+      "label": "Take one salt stone",
       "requires_state": [],
-      "costs": {},
-      "rewards": {
-        "stone_chunk": 1
-      },
-      "set_state": {},
-      "claim_policy": "replenishable",
-      "cooldown_seconds": 45,
-      "catalog_source": "candidate ID only; fixture catalog, not A3 authorization"
+      "set_state": {}
     }
   ],
   "return_hook": "A fourth visual/content type authored entirely from data on the same interaction engine; this fixture is not a canonical world addition.",
