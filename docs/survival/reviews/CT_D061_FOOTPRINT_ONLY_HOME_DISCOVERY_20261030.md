@@ -14,3 +14,5 @@ Home targeting is NOT an arbitrary time-based raid: monsters need a real, detect
 
 Native regression expectations: fresh home with no surviving trail gets no targeted intrusion; one detected connected trail permits one real pursuit; rain or age can erase trail; nearby monsters cleared removes pursuers; offline and equivalent online elapsed intervals yield logically compatible detection; no ghost mobs from unloaded region; no loot dupe on restart.
 No Arena dispatch or production claim. This supplement reconciles D061 with D055–D060 and CT system goals.
+## Important event-ordering example
+A player leaves a trace, then logs out. A nearby monster might detect that trace BEFORE it fades, follow it and arrive later, even though the trace is gone by the time the player returns. Therefore offline settlement must evaluate discovery and trail decay in chronological order, rather than checking only the final presence of tracks at login. Conversely, a monster that never detected a valid trace cannot retroactively discover the home after that trace disappears. Example timing values, if shown, are illustrative and not user-locked.
