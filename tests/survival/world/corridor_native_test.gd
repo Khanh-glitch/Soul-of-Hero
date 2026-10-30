@@ -302,14 +302,11 @@ func _run() -> void:
 			continue
 		var sc: Array = inst.stand_cell
 		var stand := Vector2i(int(sc[0]), int(sc[1]))
-		var out_cells: Array = route.get("outbound_cells", [])
-		var path: Array = []
-		for idx: int in range(out_cells.size()):
-			path.append(out_cells[idx])
-			var pc: Array = out_cells[idx]
-			if int(pc[0]) == stand.x and int(pc[1]) == stand.y:
-				break
-		if path.is_empty() or path[-1] != [stand.x, stand.y]:
+		# Revisit from the Hero's actual returned position, not by replaying an
+		# outbound prefix. JSON cells may be floats, and the previous strict
+		# Array equality against an int literal rejected valid reachable stands.
+		var path: Array = _revisit_path(nav.cell_of(hero.global_position), stand)
+		if path.is_empty():
 			_expect(false, "revisit path exists for " + String(inst.instance_id))
 			continue
 		var revisited := await _drive_cells("revisit " + String(inst.instance_id), path)
