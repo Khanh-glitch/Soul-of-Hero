@@ -34,11 +34,20 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s  %s\n' \
-            3a96960fd1a531241df3d63613585d15e119194520410ff769790c4ee64b55b7 game/survival/economy/a0_economy_adapter.gd \
-            4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c game/survival/economy/vendor/a3_economy_service.gd \
-            689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe game/survival/economy/world_source_adapter.gd \
-            b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353 data/survival/items/world_source_bindings.v3.json \
-            28ff818a406de7d53d2c0e3e2fd7295baef0fcec9c086ceb0206d5a2251fdb87 data/survival/items/sources.json | sha256sum -c -
+            2261047e99f9b85e3e3e3b4999e93afba62cbb9923b33743546d181d9f0c96a3 game/survival/economy/a0_economy_adapter.gd \
+            acbe03b0253f85a868d9ffdd115c8f33772f3789844fa604afd83344ce2933a7 game/survival/economy/vendor/a3_economy_service.gd \
+            8bab244159e17acc34d51a22ab05112090e4f08f146511aa5c61683c7d999a47 game/survival/economy/world_source_adapter.gd \
+            7b9670f4971d2f161138e0754cbbe66dfe2a239bf0d15d3079a766d729dd230b data/survival/items/world_source_bindings.v3.json \
+            bc88143efb61f2202ae37c96373e07a1643cc29b7fc9a38abc84e4958fe2b984 data/survival/items/sources.json \
+            cc3c11659fc191529fb56e6a50a1bd27a29f091e2857e2f4d7b7e7d993e15a4a data/survival/items/items.json \
+            4dbf48da0dbb841bedd3333f0def33f328af4ed55c0e1f919b4a19cc3385539c data/survival/recipes/recipes.json \
+            6cca178ac00a99e4d2acfa441869331d325d9bb4d7d1637709b0692db5d512b2 data/survival/recipes/research.json \
+            aa05487252b8064729252994954eb73007fe525d2201f8aa725065dd0ee01851 data/survival/recipes/stations.json \
+            689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe game/survival/economy/vendor/a3_world_source_c23292be.gd \
+            b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353 data/survival/connector/a0_legacy/world_source_bindings.c23292be.v3.json \
+            3ad267e47a4d1d47980887fbf9b8d1547323c0b695b3696e499d2a246d2f387f data/survival/world/art/compiled/crown_roadside_visual_treatment.presentation.v1.json \
+            617fc36d866653d67eb1b890ddcf5501b8660d87031ae04fefdb73941393326e data/survival/world/art/atlas.v1.json \
+            ff88e06852af61c50019f85c3de2c54409a953624b952c1e11f538e8ccdd1279 assets/environment/survival_world/props.png | sha256sum -c -
           cp tools/survival/web_probe.gd game/survival/web_probe_ci.gd
           cp tools/survival/web_probe.tscn game/survival/web_probe_ci.tscn
           python3 - <<'PY'

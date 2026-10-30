@@ -1,5 +1,5 @@
 extends SceneTree
-## Adversarial FIXTURE test of pinned A3 V3 + actual A0 SaveService. This does
+## Adversarial FIXTURE test of pinned A3 V5 + actual A0 SaveService. This does
 ## not prove player input, physical reach, production mount or OS restart.
 const SaveDiff = preload("res://tests/fixtures/a0_save_diff.gd")
 const SchemaOracle = preload("res://tests/fixtures/a0_waystation_schema_oracle.gd")
@@ -15,6 +15,7 @@ var fixture_index := 0
 var fixture_sequence := 0
 var fixture_seconds := 0
 var discovered := true
+var identity := {}
 
 func _initialize() -> void:
 	_run.call_deferred()
@@ -25,9 +26,11 @@ func _expect(ok: bool, label: String) -> void:
 	print("  %s  %s" % ["ok  " if ok else "FAIL", label])
 
 func _host(poi: String) -> Dictionary:
-	return {"contract": "soh.economy.world_host.v1", "poi_id": poi, "hero_cell": [cell.x, cell.y],
+	var receipt := {"contract": "soh.economy.world_host.v1", "poi_id": poi, "hero_cell": [cell.x, cell.y],
 		"discovered": discovered, "session_index": fixture_index, "session_id": fixture_session,
 		"sequence": fixture_sequence, "active_seconds": fixture_seconds, "world_revision": "fixture"}
+	receipt.merge(identity, true)
+	return receipt
 
 func _generic_world_edit(doc: Dictionary) -> bool:
 	doc["world_slice"] = {"capabilities": ["cap_salvage"]}
@@ -43,10 +46,10 @@ func _run() -> void:
 	_expect((save.call(&"get_snapshot") as Dictionary) == old, "rejected generic edit leaves no receipt or mutation")
 	adapter = Adapter.new()
 	port = save.call(&"create_pinned_economy_port", adapter)
-	_expect(port != null, "production A0 shim and exact A3 V3 SHA bind real facade")
+	_expect(port != null, "production A0 shim and exact A3 V5 SHA bind real facade")
 	if port == null:
 		_finish(); return
-	_expect(bool(adapter.call(&"configure", port)), "A3 V3 catalogs and canonical bindings configure")
+	_expect(bool(adapter.call(&"configure", port)), "A3 V5 catalogs and canonical bindings configure")
 	adapter.call(&"configure_world_host", Callable(self, "_host"))
 	var locker := {"poi_id": "poi_crown_waystation", "action_id": "pry_locker"}
 	var cache := {"poi_id": "poi_crown_waystation", "action_id": "cache_restock", "instance_id": "node_waystation_cache"}
@@ -62,6 +65,11 @@ func _run() -> void:
 	r = adapter.call(&"world_action", locker, "fixture.locker")
 	_expect(bool(r.get("ok", false)) and (save.call(&"inventory_totals") as Dictionary) == totals, "locker grants capability and zero items")
 	cell = Vector2i(406, 202)
+	var before_forgery: Dictionary = save.call(&"get_snapshot")
+	identity = {"world_instance_id": "si:r_ashen_crown:waystation_cache:99"}
+	r = adapter.call(&"world_action", cache, "fixture.foreign.identity")
+	_expect(not bool(r.get("ok", true)) and str(r.get("reason", "")) == "world_host_identity_mismatch:world_instance_id" and (save.call(&"get_snapshot") as Dictionary) == before_forgery, "foreign host identity is rejected before any reward or receipt")
+	identity = {"world_instance_id": "si:r_ashen_crown:waystation_cache:01", "interaction_node_id": "node_waystation_cache", "source_class_id": "sc_waystation_timed_cache_v1", "region_id": "r_ashen_crown", "canonical_poi_id": "poi_crown_waystation"}
 	r = adapter.call(&"world_action", cache, "fixture.cache")
 	totals = save.call(&"inventory_totals")
 	_expect(bool(r.get("ok", false)) and int(totals.get("iron_scrap", 0)) == 3 and int(totals.get("knowledge_spares", 0)) == 2, "A3 commits canonical cache reward")

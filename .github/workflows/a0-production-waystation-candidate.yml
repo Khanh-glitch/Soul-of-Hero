@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        route: [controller, normal-entry]
+        route: [controller, normal-entry, roadside]
     env:
       LIBGL_ALWAYS_SOFTWARE: 1
       GODOT_SILENCE_ROOT_WARNING: 1
@@ -35,6 +35,7 @@ jobs:
               assert hashlib.sha256((d/'slices'/name).read_bytes()).hexdigest() == pin, name
           print('A1 exact connector candidate bytes verified; native_playable remains false')
           PY
+          python3 tests/validate_a3_v5_composition.py
       - uses: chickensoft-games/setup-godot@v2
         with:
           version: 4.7.0
@@ -52,6 +53,36 @@ jobs:
           timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_art_candidate --script res://tests/survival_a1_world_art_candidate_test.gd > artifacts/candidate-art.log 2>&1
           cat artifacts/candidate-art.log
           bash tools/ci/gate_log.sh artifacts/candidate-art.log 'A1 visual candidate' 'A0 A1 WORLD ART CANDIDATE PASSED'
+      - name: V3 to V5 SaveService migration and simulated interruption
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_a3_v5_migration
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v5_migration --script res://tests/survival_a3_v5_migration_test.gd -- --survival-save-fault-test > artifacts/a3-v5-migration.log 2>&1
+          cat artifacts/a3-v5-migration.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-migration.log 'A3 V5 migration' 'A0 A3 V5 MIGRATION PASSED'
+      - name: Actual V3 producer then V5 migration in a second process
+        if: matrix.route == 'controller'
+        run: |
+          set -euo pipefail
+          git fetch --no-tags --depth=1 origin fa0c119c544d306c31ff749803cb362363885dcf
+          mkdir -p "$RUNNER_TEMP/a0-v3" artifacts/ud_a3_v3_real
+          git archive fa0c119c544d306c31ff749803cb362363885dcf | tar -x -C "$RUNNER_TEMP/a0-v3"
+          cp tests/fixtures/a3_v3_migration_producer.gd "$RUNNER_TEMP/a0-v3/tests/fixtures/a3_v3_migration_producer.gd"
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path "$RUNNER_TEMP/a0-v3" --user-data-dir artifacts/ud_a3_v3_real --import > artifacts/a3-v3-import.log 2>&1
+          bash tools/ci/gate_log.sh artifacts/a3-v3-import.log 'V3 project import' 'Godot Engine'
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path "$RUNNER_TEMP/a0-v3" --user-data-dir artifacts/ud_a3_v3_real --script res://tests/fixtures/a3_v3_migration_producer.gd > artifacts/a3-v3-producer.log 2>&1
+          cat artifacts/a3-v3-producer.log
+          bash tools/ci/gate_log.sh artifacts/a3-v3-producer.log 'V3 producer' 'A0 REAL V3 MIGRATION PRODUCER PASSED'
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v3_real --script res://tests/survival_a3_v5_real_legacy_restart_test.gd > artifacts/a3-v5-migration-restart.log 2>&1
+          cat artifacts/a3-v5-migration-restart.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-migration-restart.log 'V5 independent migration' 'A0 REAL V3 TO V5 RESTART PASSED'
+      - name: V5 roadside full-bag and replay authority fixture
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_a3_v5_roadside
+          timeout 120s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_a3_v5_roadside --script res://tests/survival_a3_v5_roadside_authority_test.gd > artifacts/a3-v5-roadside-authority.log 2>&1
+          cat artifacts/a3-v5-roadside-authority.log
+          bash tools/ci/gate_log.sh artifacts/a3-v5-roadside-authority.log 'A3 V5 roadside fixture' 'A0 A3 V5 ROADSIDE AUTHORITY PASSED'
       - name: Verify exact physical cache owner identity seam
         if: matrix.route == 'controller'
         run: |
@@ -65,6 +96,10 @@ jobs:
           set -uo pipefail
           if [ '${{ matrix.route }}' = controller ]; then
             script=res://tests/survival_production_waystation_candidate_test.gd
+            marker='A0 WAYSTATION INPUT RESTART PASSED'
+            restart=--restart
+          elif [ '${{ matrix.route }}' = roadside ]; then
+            script=res://tests/survival_roadside_v5_input_test.gd
             marker='A0 WAYSTATION INPUT RESTART PASSED'
             restart=--restart
           else

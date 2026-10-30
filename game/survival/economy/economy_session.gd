@@ -5,6 +5,7 @@ extends Node
 ## hostile same-process reflection sandbox. Uncommitted active work is discarded
 ## on reload/exit. A4 attestation is deliberately not configured.
 
+const V5_PINS = preload("res://game/survival/economy/a0_v5_source_pins.gd")
 const ADAPTER = preload("res://game/survival/economy/a0_economy_adapter.gd")
 const WAYSTATION_HOST = preload("res://game/survival/waystation_host.gd")
 const CONTRACT := "soh.economy.active_tick.v1"
@@ -46,6 +47,10 @@ func configure(save: Node, survival: Node, world: Node, build: Node, hero: Node2
 	_world = world
 	_build = build
 	_hero = hero
+	var pin_error: String = V5_PINS.verify()
+	if not pin_error.is_empty():
+		push_error("A3 economy composition refused: " + pin_error)
+		return false
 	_adapter = ADAPTER.new()
 	_port = _save.call(&"create_pinned_economy_port", _adapter)
 	if _port == null or not bool(_adapter.call(&"configure", _port, Callable(self, "_resolve_station"))):
@@ -298,11 +303,15 @@ func _world_snapshot(poi_id: String) -> Dictionary:
 	if discovered:
 		var current_request: Dictionary = host.call(&"request_for", _world_active_point)
 		discovered = String(current_request.get("poi_id", "")) == poi_id
-	return {"contract": "soh.economy.world_host.v1", "poi_id": poi_id,
+	var receipt := {"contract": "soh.economy.world_host.v1", "poi_id": poi_id,
 		"discovered": discovered, "hero_cell": [cell.x, cell.y],
 		"session_id": _session_id, "session_index": _session_index,
 		"sequence": _world_sequence, "active_seconds": _world_seconds,
 		"world_revision": "a1-waystation-2951bf85"}
+	if discovered:
+		var identity: Dictionary = host.call(&"identity_for", _world_active_point)
+		receipt.merge(identity)
+	return receipt
 
 
 func _flush_world_clock() -> void:

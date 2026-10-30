@@ -20,6 +20,7 @@ signal hero_shards_changed(hero_id: StringName, amount: int)
 signal hero_identity_unlocked(hero_id: StringName)
 
 const UNIQUE_OWNERSHIP_GUARD := preload("res://game/survival/economy/unique_ownership_guard.gd")
+const A0_WORLD_V5_MIGRATION := preload("res://game/survival/economy/a0_world_slice_v5_migration.gd")
 const ECONOMY_SAVE_FACADE := preload("res://game/survival/economy/economy_save_facade.gd")
 # Exported tokenized GDScript may not retain source_code. The production port
 # still binds to these exact preloaded Script resources and their base identity;
@@ -29,11 +30,11 @@ const PRODUCTION_ECONOMY_BASE := preload("res://game/survival/economy/vendor/a3_
 # Immutable, first-party A3 integration fixture. Production composition must
 # explicitly review/re-pin future adapter revisions; a caller label is never
 # evidence of authority.
-const PINNED_A3_SCRIPT_SHA256 := "4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c"
+const PINNED_A3_SCRIPT_SHA256 := "acbe03b0253f85a868d9ffdd115c8f33772f3789844fa604afd83344ce2933a7"
 # The independently pinned 86dc2195 regression adapter remains supported.
 const PINNED_A3_FIXTURE_SHA256 := "b1ee9792b4460e956ec6c59437269078e4f6767f76d35145e680dcc03ba3806c"
 const PINNED_A0_ADAPTER_SHA256 := "2b539f3320828c2fa850b6057c735e032153d5a1e8fa1b8ade63d2e3380ed2ce"
-const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "3a96960fd1a531241df3d63613585d15e119194520410ff769790c4ee64b55b7"
+const PINNED_A0_PRODUCTION_ADAPTER_SHA256 := "2261047e99f9b85e3e3e3b4999e93afba62cbb9923b33743546d181d9f0c96a3"
 
 const CURRENT_SCHEMA_VERSION := 4
 const CURRENT_HERO_SOUL_RULES_VERSION := 4
@@ -195,17 +196,22 @@ func load_save() -> bool:
 		if bool(primary.get("was_migrated", false)):
 			var source_version := int(primary.get("source_version", 0))
 			if not _preserve_pre_migration_backup(_save_path):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_backup_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Could not preserve the pre-v2 save; migration was not committed.")
 				return false
 			if not _commit_snapshot(primary_snapshot, false, _disk_commit_capability):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_migration_commit_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared the current schema in memory, but could not commit the migrated save.")
 				return false
 			_accept_loaded_data(primary_snapshot, "")
 			save_migrated.emit(source_version, CURRENT_SCHEMA_VERSION, _migration_backup_path)
 			return true
-		if bool(primary.get("hero_soul_rules_migrated", false)) \
+		if bool(primary.get("world_slice_migrated", false)) \
+				or bool(primary.get("hero_soul_rules_migrated", false)) \
 				or bool(primary.get("hero_soul_selection_migrated", false)) \
 				or bool(primary.get("skill_economy_migrated", false)) \
 				or bool(primary.get("stat_economy_migrated", false)) \
@@ -214,6 +220,8 @@ func load_save() -> bool:
 			# the untouched profile to the ordinary backup, then persist the
 			# normalized inventory so a future load cannot reinterpret rarity 5.
 			if not _commit_snapshot(primary_snapshot, true, _disk_commit_capability):
+				if bool(primary.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_save_path, "world_slice_migration_commit_failed")
 				_accept_loaded_data(primary_snapshot, "")
 				_push_failure("Prepared a rules migration in memory, but could not commit the upgraded profile.")
 				return false
@@ -229,12 +237,16 @@ func load_save() -> bool:
 		var recovered: Dictionary = backup.get("data", {}).duplicate(true)
 		if bool(backup.get("was_migrated", false)):
 			if not _preserve_pre_migration_backup(_backup_path):
+				if bool(backup.get("world_slice_migrated", false)):
+					return _quarantine_economy_save(_backup_path, "world_slice_backup_failed")
 				_accept_loaded_data(recovered, "backup")
 				_push_failure("Recovered an old backup in memory, but could not preserve its pre-v2 generation.")
 				return false
 		_accept_loaded_data(recovered, "backup")
 		# Never rotate a corrupt primary over the known-good backup.
 		if not _commit_snapshot(recovered, false, _disk_commit_capability):
+			if bool(backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_backup_path, "world_slice_migration_commit_failed")
 			_push_failure("Recovered the backup in memory, but could not repair the primary save.")
 		if bool(backup.get("was_migrated", false)):
 			save_migrated.emit(int(backup.get("source_version", 0)), CURRENT_SCHEMA_VERSION, _migration_backup_path)
@@ -246,11 +258,15 @@ func load_save() -> bool:
 	if bool(migration_backup.get("ok", false)):
 		var migration_recovery: Dictionary = migration_backup.get("data", {}).duplicate(true)
 		if not _preserve_pre_migration_backup(_migration_backup_path):
+			if bool(migration_backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_migration_backup_path, "world_slice_backup_failed")
 			_accept_loaded_data(migration_recovery, "migration_backup")
 			_push_failure("Loaded the permanent migration backup in memory, but could not prepare rollback storage.")
 			return false
 		_accept_loaded_data(migration_recovery, "migration_backup")
 		if not _commit_snapshot(migration_recovery, false, _disk_commit_capability):
+			if bool(migration_backup.get("world_slice_migrated", false)):
+				return _quarantine_economy_save(_migration_backup_path, "world_slice_migration_commit_failed")
 			_push_failure("Recovered the permanent migration backup in memory, but could not repair the primary save.")
 		if bool(migration_backup.get("was_migrated", false)):
 			save_migrated.emit(
@@ -281,7 +297,7 @@ func _quarantine_economy_save(path: String, reason: String) -> bool:
 	_economy_quarantine_path = path
 	_data = _default_data()
 	_is_loaded = true
-	var message := "Save ownership requires recovery (%s); original bytes were not modified." % reason
+	var message := "Save ownership requires recovery (%s); profile writes are disabled." % reason
 	push_warning(message)
 	save_failed.emit(message)
 	return false
@@ -2556,6 +2572,9 @@ func _prepare_document(raw_document: Dictionary) -> Dictionary:
 		version += 1
 		migrated["schema_version"] = version
 
+	var world_upgrade: Dictionary = A0_WORLD_V5_MIGRATION.migrate(migrated)
+	if not bool(world_upgrade.get("ok", false)):
+		return {"ok": false, "error": "world_slice_migration:" + str(world_upgrade.get("error", "invalid")), "economy_quarantine": true}
 	var auxiliary_equipment_migrated := _migrate_auxiliary_equipment_in_place(migrated)
 	var hero_soul_rules_migrated := _migrate_hero_soul_rules_in_place(migrated)
 	var skill_economy_migrated := _migrate_skill_economy_in_place(migrated)
@@ -2580,6 +2599,7 @@ func _prepare_document(raw_document: Dictionary) -> Dictionary:
 	return {
 		"ok": true,
 		"data": normalized,
+		"world_slice_migrated": bool(world_upgrade.get("changed", false)),
 		"hero_soul_rules_migrated": hero_soul_rules_migrated,
 		"auxiliary_equipment_migrated": auxiliary_equipment_migrated,
 		"skill_economy_migrated": skill_economy_migrated,
@@ -4734,10 +4754,14 @@ func _import_legacy_default_save() -> bool:
 		return load_save()
 	var snapshot: Dictionary = imported.get("data", {}).duplicate(true)
 	if not _preserve_pre_migration_backup(source_path):
+		if bool(imported.get("world_slice_migrated", false)):
+			return _quarantine_economy_save(source_path, "world_slice_backup_failed")
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but its migration backup could not be created.")
 		return false
 	if not _commit_snapshot(snapshot, false, _disk_commit_capability):
+		if bool(imported.get("world_slice_migrated", false)):
+			return _quarantine_economy_save(source_path, "world_slice_migration_commit_failed")
 		_accept_loaded_data(snapshot, "")
 		_push_failure("The legacy save was prepared in memory, but the v2 profile could not be committed.")
 		return false
