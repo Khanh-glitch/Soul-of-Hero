@@ -236,13 +236,11 @@ if (mode === 'hashes') {
 } else if (mode === 'hatchstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
-    if (t !== 263 && t !== 264) return;
-    const hs: string[] = [];
+    if (![120, 150, 180, 210, 240, 263, 264].includes(t)) return;
     for (const f of w.fx as any[]) {
-      if (f.idx === undefined) continue;
-      hs.push(`h${f.idx} x=${f.x.toFixed(9)} y=${f.y.toFixed(9)} z=${f.z.toFixed(9)} hd=${f.hd.toFixed(9)} vx=${f.vx.toFixed(9)} vy=${f.vy.toFixed(9)}`);
+      if (f.idx !== 0 && f.idx !== 2) continue;
+      console.log(`GOLD93_HATCH t=${t} h${f.idx} x=${f.x.toFixed(9)} y=${f.y.toFixed(9)} hd=${f.hd.toFixed(9)} vx=${f.vx.toFixed(9)} vy=${f.vy.toFixed(9)}`);
     }
-    for (let i = 0; i < hs.length; i += 4) console.log(`GOLD93_HATCH t=${t} ${hs.slice(i, i + 4).join(' | ')}`);
   });
 } else if (mode === 'flowstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
