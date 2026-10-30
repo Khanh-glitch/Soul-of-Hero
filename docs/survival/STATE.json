@@ -222,13 +222,19 @@
       "id": "A3_TOOL_PLAN",
       "owner": "A3",
       "state": "UNWIRED_A0",
-      "detail": "No soh.economy.tool_use.v1 implementation in 4bfba38d; asked in PR19 comment 6522130262."
+      "detail": "No soh.economy.tool_use.v1 implementation in 4bfba38d; asked in PR19 comment 6522130262. The owner contract also still pins A0 at the stale 69070a11."
     },
     {
       "id": "RENDERED_RUN",
       "owner": "A0/environment",
-      "state": "OPEN",
-      "detail": "No display/GL in this sandbox; normal menu chain and all visuals need an Xvfb run."
+      "state": "PARTIAL",
+      "detail": "godot-runtime-validation run 41068109389 at 4348c5d8: import/headless success and Xvfb rendered gameplay captures success; only the original-main baseline comparison fails, reproducing 3/89 smoke and 20/949 campaign-entry failures that already exist on main. The survival normal-entry journeys still need the candidate matrix to finish (run 41069877541). Job logs/artifact ZIPs are blob-hosted and unreachable from this sandbox; failed checks are now emitted as ::error annotations."
+    },
+    {
+      "id": "A1_VISUAL_LOCK",
+      "owner": "A1",
+      "state": "OWNER_NEEDS_FIX",
+      "detail": "PR20 09c20061 first_hour_visual_payload_lock.v1.json names source_commit ad39bde6 while describing newer props/atlas/treatment bytes, and none of its three payload_hashes matches a committed payload at 09c20061 (actual: props 8d4acf40, atlas 83d69373, treatment 39f1a9a9). Cache cells are unchanged so a remount stays compatible, but A0 keeps the ad39bde6 byte-pinned mount until A1 republishes a verifiable lock."
     }
   ],
   "cross_agent_rules": {
