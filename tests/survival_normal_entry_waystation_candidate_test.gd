@@ -37,7 +37,7 @@ func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: V
 			print("A0_STAND_ROUTE_MISSING %s start=%s target=%s attempt=%d" % [label, str(here), str(destination), attempts])
 			break
 		planned_ok = true
-		walked = await _walk_path(hero, path)
+		walked = await _walk_axis(hero, path)
 		var deadline := Time.get_ticks_msec() + 2500
 		while walked and nav.cell_of(hero.global_position) != destination and Time.get_ticks_msec() < deadline:
 			_set_direction(target - hero.global_position)
@@ -57,6 +57,29 @@ func _leg_to(hero: CharacterBody2D, nav: OverworldTraversability, destination: V
 		return false
 	_expect(arrived, label)
 	return arrived
+
+## Cardinal, one-axis-at-a-time stepping. The inherited helper aims diagonally at
+## the next cell centre, which a wide body can wedge on a solid corner; a player
+## simply steps right, then up. Same cells, same ordinary input.
+func _walk_axis(hero: CharacterBody2D, path: Array[Vector2i]) -> bool:
+	for cell: Vector2i in path:
+		var point := Vector2(cell.x * 16 + 8, cell.y * 16 + 15)
+		var deadline := Time.get_ticks_msec() + 3500
+		while hero.global_position.distance_to(point) > 4.5 and Time.get_ticks_msec() < deadline and not bool(hero.get(&"dead")):
+			var delta := point - hero.global_position
+			var direction := Vector2.ZERO
+			if absf(delta.x) > 2.0 and absf(delta.x) >= absf(delta.y):
+				direction = Vector2(signf(delta.x), 0.0)
+			elif absf(delta.y) > 2.0:
+				direction = Vector2(0.0, signf(delta.y))
+			_set_direction(direction)
+			await physics_frame
+		if hero.global_position.distance_to(point) > 4.5:
+			_set_direction(Vector2.ZERO)
+			print("A0_AXIS_FAIL actor=%s target=%s" % [str(hero.global_position), str(cell)])
+			return false
+	_set_direction(Vector2.ZERO)
+	return true
 
 func _use(ow: Node, hero: CharacterBody2D, point: Node2D) -> void:
 	var end := Time.get_ticks_msec() + 2500
