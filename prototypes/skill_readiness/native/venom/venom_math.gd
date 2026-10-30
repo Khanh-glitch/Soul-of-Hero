@@ -68,6 +68,13 @@ static func hex(s: String) -> int:
 
 
 static func mix(a: int, b: int, t: float) -> int:
+	# ORIGINAL mix (pixel.ts): clamps -- t<=0 returns a, t>=1 returns b.
+	# Extrapolating past b (e.g. Cocoon seams at seam*0.8+glow=1.1) was the
+	# 007 tick-90 raster divergence.
+	if t <= 0.0:
+		return a
+	if t >= 1.0:
+		return b
 	var ar: int = a & 255
 	var ag: int = (a >> 8) & 255
 	var ab: int = (a >> 16) & 255

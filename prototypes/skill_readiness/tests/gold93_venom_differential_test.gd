@@ -432,7 +432,7 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 			_dump_summon_state(w, n)
 		if sid == 7 and (n == 89 or n == 90):
 			var co = w.fx[0]
-			print("GOLD93_COCOON t=%d x=%.9f y=%.9f z=%.9f open=%.9f pulseY=%.9f glow=%.9f age=%.9f rup=%s" % [n, float(co.x), float(co.y), float(co.z), float(co.open), float(co.pulseY), float(co.glowAdd), float(co.age), str(co.ruptured)])
+			print("GOLD93_COCOON t=%d x=%.9f y=%.9f z=%.9f open=%.9f pulseY=%.9f glow=%.9f age=%.9f trans=%.9f shake=%.9f grow=%.9f vis=%.9f rup=%s" % [n, float(co.x), float(co.y), float(co.z), float(co.open), float(co.pulseY), float(co.glowAdd), float(co.age), float(co.trans), float(co.shake), float(co.grow), float(co.vis), str(co.ruptured)])
 		if sid == 20 and (n == 179 or n == 180):
 			for f in w.fx:
 				if String(_fx(f, "kind", "")) == "flow":
