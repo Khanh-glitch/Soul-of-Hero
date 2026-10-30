@@ -189,6 +189,10 @@ func _physics_process(_delta: float) -> void:
 			var elapsed := now - _world_last_usec
 			if elapsed >= 0 and elapsed <= 250000:
 				_world_remainder_usec += elapsed
+			else:
+				# A suspension-like gap cannot carry an earlier partial second
+				# across the interruption into later active play.
+				_world_remainder_usec = 0
 		_world_last_usec = now
 		if _world_remainder_usec >= 1000000:
 			_world_remainder_usec -= 1000000
@@ -240,6 +244,8 @@ func _physics_process(_delta: float) -> void:
 			var elapsed := now - last
 			if elapsed >= 0 and elapsed <= 250000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
 				record["remainder_usec"] = int(record.get("remainder_usec", 0)) + elapsed
+			elif elapsed < 0 or elapsed > 250000:
+				record["remainder_usec"] = 0
 		record["last_usec"] = now
 		var remainder := int(record.get("remainder_usec", 0))
 		if remainder >= 1000000 and int(record.ticks) - int(record.ack) < MAX_UNCOMMITTED_TICKS:
