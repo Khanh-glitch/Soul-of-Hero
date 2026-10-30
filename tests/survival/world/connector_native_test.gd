@@ -168,8 +168,26 @@ func _drive(label: String, goal: Vector2i) -> bool:
 			crossed_border = true
 		var target := _foot(cell)
 		var deadline := Time.get_ticks_msec() + 4000
-		while hero.global_position.distance_to(target) > 3.0 and Time.get_ticks_msec() < deadline:
-			_set_direction(target - hero.global_position)
+		while hero.global_position.distance_to(target) > 1.5 and Time.get_ticks_msec() < deadline:
+			# Axis-priority steering: a 12x16 body can catch on a solid corner if a
+			# diagonal approach lets its foot drift across the row boundary. Align
+			# the perpendicular axis first, then advance along the route edge.
+			var cur := nav.cell_of(hero.global_position)
+			var diff := target - hero.global_position
+			var dir := Vector2.ZERO
+			if cell.x != cur.x:
+				if absf(diff.y) > 0.5:
+					dir.y = signf(diff.y)
+				else:
+					dir.x = signf(diff.x)
+			elif cell.y != cur.y:
+				if absf(diff.x) > 0.5:
+					dir.x = signf(diff.x)
+				else:
+					dir.y = signf(diff.y)
+			else:
+				dir = diff.normalized()
+			_set_direction(dir * 10.0)
 			await physics_frame
 		_set_direction(Vector2.ZERO)
 		if hero.global_position.distance_to(target) > 5.0:
