@@ -425,3 +425,22 @@ Evidence that the product seam itself works: `A0_STAND_TRACE ... walks to roadsi
 The single remaining failure is a **walker wedge, not an economy or input defect**. At the stall point the traced Hero has `vel=(-90.0, 0.0)` (input applied, physics on, game unpaused) while `motion=(-0.000977, 0.0)` — the body is pressed into a corner where the planned straight line to the next cell centre is blocked, although the planner tests each cell centre with the Hero's real shape. Ten perpendicular nudges move it zero pixels. The same wedge appears in both legs at the same westbound ridge: `(343,223)→(342,222)` and `(407,203)→(406,202)`. A human would step around it; the harness's escape attempt does not, so this is an A0 harness pathing defect to fix next, not a player-reachable blocker to hide.
 
 Fixes delivered in this stretch, all pushed to the draft PR: the clipped starter-kit recipe row is wheeled into view before the click (the real cause of the old "GUI reservation" failure), `placeholder_build.png.import` is tracked so a clean checkout can load it, both normal-entry continuations open the paid home door with ordinary pointer input before leaving the room, stand walks assert route existence and trace start/target/actual with dead/health, and stalled walks replan from the real cell with a bounded unstick.
+
+## 2026-10-31 — The normal-menu route now completes on the rendered runner; A0 owns the A3 profile/run boundary
+
+Exact-head evidence, `arena/dea2428e-soul-of-hero`:
+
+| leg (rendered Xvfb, run `41109447902` @ `1a03c70`) | result |
+| --- | --- |
+| `native (normal-entry)` first process | **PASSED 130 checks** — menu → Home → real overworld → gather → reserve → workbench → room/door/chest → all three A1 crates → home |
+| `native (normal-entry)` second process | 12 failures, **all JSON int→float type noise** (`A0_SAVE_DIFF … types=88/162/20/89`), no custody difference |
+| `native (controller)` / `native (roadside)` | success |
+| `native (normal-entry-roadside)` | success |
+
+**The two-process restart comparison was comparing raw GDScript values against JSON-decoded ones.** Godot 4.7 `JSON.parse_string` returns every number as a double, so `3` (int, live snapshot) vs `3.0` (decoded baseline) is unequal under `==`, and `Dictionary` equality is type-strict. `_json_typed()` now puts both sides through one `JSON.stringify` → `parse_string` round trip before a strict compare, while every value-level custody assertion is kept: each baseline receipt must still exist and be value-identical, a new receipt may only be `operation == world_time`, the clock may only move forward, and the world slice must be equal with `clock` removed. A local check confirmed the round trip also *detects* a changed clock value, so the fix cannot mask a real loss.
+
+**New A0-owned surface: `game/survival/economy/a0_profile_port.gd`.** A3 V7 (D062–D067) fails closed with `A0_PROFILE_BOUNDARY_ABSENT` until A0 provides `soh.economy.a0_profile_port.v1`, and A0 owns RunLifecycle and the single wallet. The port keeps `profile.secured_ragnarok_currency` in the SAME SaveService document (no side file, no autoload, no second wallet), refuses `apply_profile_delta` outside an A0 commit boundary, opens exactly one `transact_once` per deposit proposal (`soh.a3.meta_deposit.<proposal_id>`), stores a durable run record with A3's creator-locked 1209600 s window, and derives endpoint/source authority from the A3 policy directory, the pinned A1 bindings and the real hero stand cell — a hero cell is only reported when the Hero is genuinely on an authored stand, and standing alone never substitutes for discovery.
+
+Local native evidence (`tests/survival_a0_profile_port_test.gd`, headless source-built Godot 4.7): **44 checks** in the first process and **15 checks** in a second OS process on the same disk profile — same run id, exact balance 10, both real receipts, the refused proposal still absent, replays still refused. Deliberately corrupting the audit JSON (`balance 11`, `receipts 3`) makes the restart leg fail on exactly the two custody comparisons.
+
+**Not proven:** CI is not failing, it is starved. Every run since 19:14 UTC is `queued` because five AVFX/A8 Gold jobs started 16:55–19:09 hold all runner slots; this sandbox cannot cancel runs (403) and has no X11/GL, so the rendered oracle is unavailable locally. Rendered 720p/1440p/2160p, Gold parity, A6 bodies, human play and B0 acceptance remain HOLD.
