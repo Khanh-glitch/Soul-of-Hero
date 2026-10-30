@@ -10,9 +10,9 @@
     "work_order_commit": "b19b5ef305229b7b3ee8477f15ca2ac9f679e2b2",
     "avatar_policy_commit": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
     "world_id": "world:soh_continent_v1",
-    "a1_source_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a1_source_commit": "e16285ffbbf80829f07e056264751954cd16571a",
     "a3_source_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522",
-    "a0_source_commit": "35d33355b524675b13ef4c0b650e36e4a274f90c",
+    "a0_source_commit": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
     "a6_source_commit": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
     "integration_base_commit": "86831332324428c7623ad431a577d101b7af5c9c",
     "fixture_policy": "S2_ONLY_NOT_A3_PRICE_OR_REWARD_AUTHORIZATION"

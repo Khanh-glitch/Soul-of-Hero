@@ -7,7 +7,7 @@
       "commit": "86831332324428c7623ad431a577d101b7af5c9c"
     },
     "a1_pr20": {
-      "head": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+      "head": "e16285ffbbf80829f07e056264751954cd16571a",
       "source": "data/survival/world/world_plan.v1.json"
     },
     "a3_pr19": {
@@ -16,7 +16,7 @@
       "sources": "data/survival/items/sources.json"
     },
     "a0_pr21": {
-      "head": "35d33355b524675b13ef4c0b650e36e4a274f90c",
+      "head": "7315f8e83fa6c9c1ec9e2a00d9c0e4fd05b8e450",
       "owner": "SaveService + SurvivalService + production overworld mount"
     },
     "a6_pr24": {
@@ -31,7 +31,10 @@
     "world_id": "world:soh_continent_v1",
     "poi_id": "poi_crown_south_quarry",
     "region_id": "r_ashen_crown",
-    "cell": [30, 280],
+    "cell": [
+      30,
+      280
+    ],
     "footprint_radius_tiles": 4,
     "a1_status": "AUTHORED_PLAN_NOT_NATIVE_INTEGRATED",
     "physical_instance_id": null,
@@ -110,7 +113,10 @@
       "failure_semantics": "Reject with unchanged owner projection; interrupted pre-commit retry reuses the same owner-derived claim identity; no local Boolean may suppress a later valid claim."
     },
     "a3": {
-      "required_item_ids": ["oak_wood", "stone_chunk"],
+      "required_item_ids": [
+        "oak_wood",
+        "stone_chunk"
+      ],
       "required_source_mapping": {
         "stone_chunk": "live_stone_chunk -> poi_crown_south_quarry, subject to A3 approval"
       },
