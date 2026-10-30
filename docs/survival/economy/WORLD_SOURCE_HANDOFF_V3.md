@@ -1,6 +1,6 @@
 # A3 world-source handoff — V5 checkpoint
 
-Code SHA: `692128aaf36597712653258905ff6cedb6110766` on `arena/7a12b27e-soul-of-hero` / PR #19. Status: **A3-owned adapter + native fixtures authored; local Python/validator/model/syntax PASS; native Godot and two-OS-process restart evidence PENDING**. This is not an A0 production mount, not A1 geometry acceptance, not A4 Gold parity, and not human playtest approval.
+Feature code SHA: `692128aaf36597712653258905ff6cedb6110766`; native-fix follow-up SHA is recorded in PR #19 after push. Branch `arena/7a12b27e-soul-of-hero` / PR #19. Status: **A3-owned adapter + native fixtures PASS locally on a built Godot 4.7 engine; two-OS-process restart PASS; Python/validator/model PASS; hosted exact-SHA CI queued**. This is not an A0 production mount, not A1 geometry acceptance, not A4 Gold parity, and not human playtest approval.
 
 ## What the player can do in the A3 contract
 
@@ -95,25 +95,27 @@ A7 BLK-5 remains open by design. No guessed 1-item price or filler POI grant is 
 
 ## Verification
 
-Local at code SHA `692128aa`:
+Local native-fix checkpoint (exact pushed SHA in PR #19):
 
+- Native Godot `4.7.stable.custom_build` from official MIT source `5b4e0cb0fd279832bbdd69fed5354d4e5ad26f88`: adapter **556 checks / 26 cases PASS** (`native_adapter.txt`), including canonical A1 sources, one-time crates, no-Core chain, capacity/failed-save rollback, replay after generation advance, and research override negatives.
+- Two-OS-process restart: phase 1 **7 checks PASS**, phase 2 **14 checks PASS** (`native_restart_phase1.txt`, `native_restart_phase2.txt`). Fresh session baseline credits no offline time; 1799+1 active seconds unlock exactly one additional canonical reward.
+- Native save-growth micro-measure: `bytes_before=4686 bytes_after=13077 delta=8391 transactions=30`.
 - 47 Python tests OK, including V5 one-time crate, research override, tool-contract, and pacing negatives.
 - Validator PASS: 56 items / 36 recipes / 5 techs / 40 sources / 7 stations / 5 bindings / 3 actions; 0 errors/cycles; `NOT_HUMAN_PLAYTESTED`; `A0_A1_A4_PENDING`.
 - Conservation fixture `simulate_economy.py` PASS; immutable historical fixture preserved.
-- Product progression model remains `SIMULATION_ONLY`; V5 pacing model is `MODEL_ONLY`.
-- tree-sitter GDScript parse: 0 ERROR nodes in service, adapter, adapter test, restart test (syntax only, not native execution).
+- Product progression model remains `SIMULATION_ONLY`; V5 pacing model is `MODEL_ONLY` and explicitly `ORDER_INVARIANT_LOWER_BOUND_NOT_PLAYTEST` (both route orders sum the same lower bounds).
 - Logs: `verification/v5/`.
 
-Native Godot: runs `41036542096` (push) and `41036550568` (pull_request) for `692128aa` are **queued** at this checkpoint. A local headless Godot 4.7 engine is being built from official MIT-licensed source `5b4e0cb0fd279832bbdd69fed5354d4e5ad26f88` to execute the adapter/restart suites while hosted runners are blocked. **No native PASS is claimed until an exact-SHA run completes green.**
+Hosted Godot: exact-SHA runs for the native-fix commit are queued/pending in GitHub Actions. Local native PASS is real engine execution, but it is not a hosted CI annotation and not a production A0 mount. **No hosted PASS is claimed until an exact-SHA run completes green.**
 
 ## R0–R5
 
 - **R0 primary source:** A1/A0/A8 pins re-read; A0 current head still lacks tool wiring; A1 pinned files byte-identical at `939720d5`.
 - **R1 patch forensics:** V5 diff limited to A3 allowed paths; no A0/A1/A4/A6 production edits; stale `9f617946` placeholder removed.
 - **R2 adversarial oracles:** one-time exhaustion, max_claims drift, renewable-rate drift, research override default, UI spoof, replay/conflict, cooldown/quantum/session negatives authored.
-- **R3 real Godot + visual:** native execution pending; local engine build in progress; no visual/player-journey claim.
+- **R3 real Godot + visual:** local native Godot 4.7 adapter/restart PASS; hosted exact-SHA CI pending; no visual/player-journey claim.
 - **R4 systemic/14-day value:** pacing lower-bound model and source/sink graph updated; long-session disk benchmark and human systemic value remain unproven.
-- **R5 binary verdicts:** `ACCEPTED_SCOPED_ENGINEERING` only after native green; currently `SOURCE/CONTRACT_PASS_SCOPED`, `PLAYER-PROGRESSION_NOT_PROVEN`, `NATIVE_PENDING`, `A0_MOUNT_HOLD`, `TOOL_EFFECT_UNWIRED`.
+- **R5 binary verdicts:** `ACCEPTED_SCOPED_ENGINEERING` for A3 adapter/native fixtures only; `PLAYER-PROGRESSION_NOT_PROVEN`, `HOSTED_CI_PENDING`, `A0_MOUNT_HOLD`, `TOOL_EFFECT_UNWIRED`. Not B0 product PASS.
 
 ## NEXT_ATOMIC_ACTION
 

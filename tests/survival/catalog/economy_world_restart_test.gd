@@ -3,6 +3,7 @@ extends SceneTree
 ## separate Godot invocations: A3_RESTART_PHASE=1 writes, A3_RESTART_PHASE=2
 ## reloads in a fresh process/session. This is a native SaveService fixture, not
 ## an A0 production mount and not a human playtest.
+const SaveServiceClass = preload("res://game/autoload/save_service.gd")
 const Economy = preload("res://game/survival/economy/economy_service.gd")
 const SAVE_PATH := "user://tests/a3_world_restart_shared.json"
 const EXPECTED_PATH := "user://tests/a3_world_restart_expected.json"
@@ -48,10 +49,15 @@ func _run() -> void:
 		quit(1); return
 	save = get_root().get_node_or_null("SaveService")
 	if save == null:
-		save = SaveService.new()
+		save = SaveServiceClass.new()
 		save.name = "SaveService"
 		get_root().add_child(save)
-	_expect(bool(save.call(&"configure_storage", SAVE_PATH, phase == "1")), "configure shared save phase " + phase)
+	_expect(bool(save.call(&"configure_storage", SAVE_PATH, true)), "configure shared save phase " + phase)
+	if phase == "1":
+		# Phase 1 owns a fresh shared profile even when the same runtime dir is
+		# reused. Use SaveService's authoritative reset so backups cannot restore
+		# a previous phase-2 clock/receipt state.
+		_expect(bool(save.call(&"reset_to_defaults", SaveServiceClass.RESET_ALL_TOKEN)), "phase1 resets shared profile")
 	eco = Economy.new()
 	_expect(eco.configure(save, _resolve), "configure economy phase " + phase)
 	eco.configure_world_host(_world_host)
@@ -78,10 +84,10 @@ func _phase_one() -> void:
 	hero_cell = Vector2i(406, 202)
 	var claim: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "si:r_ashen_crown:waystation_cache:01"}, "restart.cache.1")
-	_expect(bool(claim.ok) and String(claim.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "phase1 canonical cache claim")
+	_expect(bool(claim.ok) and str(claim.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "phase1 canonical cache claim")
 	_expect(_count("iron_scrap") == 3 and _count("knowledge_spares") == 2, "phase1 canonical quantities")
 	var expected := {"scrap": _count("iron_scrap"), "spares": _count("knowledge_spares"),
-		"transaction_key": String(claim.transaction_key), "session_index": session_index}
+		"transaction_key": str(claim.transaction_key), "session_index": session_index}
 	var file := FileAccess.open(EXPECTED_PATH, FileAccess.WRITE)
 	_expect(file != null, "phase1 writes expected marker")
 	if file != null:
@@ -103,11 +109,15 @@ func _phase_two() -> void:
 	_expect(_count("iron_scrap") == int(expected.get("scrap", -1)) and _count("knowledge_spares") == int(expected.get("spares", -1)), "phase2 reload conserves inventory exactly")
 	var replay: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "si:r_ashen_crown:waystation_cache:01"}, "restart.cache.1")
-	_expect(bool(replay.ok) and String(replay.result) == "ALREADY_APPLIED", "phase2 same event id is idempotent across OS restart")
-	_expect(String(replay.transaction_key) == String(expected.get("transaction_key", "")), "phase2 replay returns original canonical key")
+	_expect(bool(replay.ok) and str(replay.result) == "ALREADY_APPLIED", "phase2 same event id is idempotent across OS restart")
+	_expect(str(replay.transaction_key) == str(expected.get("transaction_key", "")), "phase2 replay returns original canonical key")
+	# A0 baselines a fresh physical session before judging cooldown. The baseline
+	# itself must not credit the new host counter as offline elapsed time.
+	var baseline: Dictionary = eco.advance_world_time("poi_crown_waystation", "restart.baseline")
+	_expect(bool(baseline.ok), "phase2 baselines fresh session without offline credit")
 	var early: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "node_waystation_cache"}, "restart.cache.early")
-	_expect(not bool(early.ok) and String(early.reason) == "COOLDOWN", "phase2 node alias cannot reclaim before cooldown")
+	_expect(not bool(early.ok) and str(early.reason) == "COOLDOWN", "phase2 node alias cannot reclaim before cooldown")
 	_expect(int(early.get("remaining_active_seconds", 0)) == 1800, "phase2 no offline credit: full 1800 active seconds remain")
 	active_seconds = 1799
 	sequence = 1
@@ -122,5 +132,5 @@ func _phase_two() -> void:
 	_expect(bool(ready.ok), "phase2 advances final active second")
 	var claim2: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "si:r_ashen_crown:waystation_cache:01"}, "restart.cache.2")
-	_expect(bool(claim2.ok) and String(claim2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "phase2 generation 2 after real active time")
+	_expect(bool(claim2.ok) and str(claim2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "phase2 generation 2 after real active time")
 	_expect(_count("iron_scrap") == 6 and _count("knowledge_spares") == 4, "phase2 exactly one additional canonical reward")

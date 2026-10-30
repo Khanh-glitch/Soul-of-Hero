@@ -1,5 +1,6 @@
-tree-sitter GDScript syntax only; not native Godot execution
-game/survival/economy/economy_service.gd ERROR_nodes 0
-game/survival/economy/world_source_adapter.gd ERROR_nodes 0
-tests/survival/catalog/economy_adapter_test.gd ERROR_nodes 0
-tests/survival/catalog/economy_world_restart_test.gd ERROR_nodes 0
+game/survival/economy/economy_service.gd: ERROR/MISSING=0
+game/survival/economy/world_source_adapter.gd: ERROR/MISSING=0
+tests/survival/catalog/economy_adapter_test.gd: ERROR/MISSING=0
+tests/survival/catalog/economy_world_restart_test.gd: ERROR/MISSING=0
+TOTAL_ERROR_NODES=0
+NOTE: syntax-only tree-sitter check; native execution evidence is native_adapter.txt / native_restart_phase*.txt.

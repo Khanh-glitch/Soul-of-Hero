@@ -165,9 +165,9 @@ func _state_error(raw: Variant) -> String:
 		if not record is Dictionary:
 			return "invalid_instance_record"
 		var r: Dictionary = record
-		if String(r.get("instance_id", "")) != String(id):
+		if str(r.get("instance_id", "")) != str(id):
 			return "instance_id_mismatch"
-		if not String(id).begins_with(TOKEN_PREFIX):
+		if not str(id).begins_with(TOKEN_PREFIX):
 			return "invalid_instance_token_id"
 		for field in ["item_id", "location", "origin"]:
 			if not r.has(field) or not r[field] is String:
@@ -186,7 +186,7 @@ func _state_error(raw: Variant) -> String:
 		if not job is Dictionary:
 			return "invalid_job_record"
 		var j: Dictionary = job
-		if String(j.get("job_id", "")) != String(id):
+		if str(j.get("job_id", "")) != str(id):
 			return "job_id_mismatch"
 		for field in ["reserved", "reserved_instances", "outputs", "output_instances", "reserved_fuel"]:
 			if not j.has(field) or not j[field] is Dictionary:
@@ -194,20 +194,20 @@ func _state_error(raw: Variant) -> String:
 		for field in ["kind", "target", "station_id", "station_kind", "status"]:
 			if not j.has(field) or not j[field] is String:
 				return "invalid_job_field:" + field
-		if not String(j.get("status", "")) in ["queued","running","paused","ready","collected","cancelled"]:
+		if not str(j.get("status", "")) in ["queued","running","paused","ready","collected","cancelled"]:
 			return "invalid_job_status"
 		for field in ["elapsed", "duration", "tier"]:
 			if not j.has(field) or not _is_uint(j[field], 1000000):
 				return "invalid_job_number:" + field
 		for field in ["reserved", "reserved_fuel", "outputs"]:
 			for qid: Variant in (j[field] as Dictionary).keys():
-				if String(qid).begins_with(TOKEN_PREFIX) or not _is_uint(j[field][qid], 1000000):
+				if str(qid).begins_with(TOKEN_PREFIX) or not _is_uint(j[field][qid], 1000000):
 					return "invalid_job_quantity:" + field
 				if int(j[field][qid]) <= 0:
 					return "invalid_job_quantity:" + field
 		for field in ["reserved_instances", "output_instances"]:
 			for qid: Variant in (j[field] as Dictionary).keys():
-				if not String(qid).begins_with(TOKEN_PREFIX) or not j[field][qid] is Dictionary:
+				if not str(qid).begins_with(TOKEN_PREFIX) or not j[field][qid] is Dictionary:
 					return "invalid_job_instance:" + field
 	if schema == SCHEMA:
 		var time_error := _time_state_error(state.get("time", {}))
@@ -227,12 +227,12 @@ func _time_state_error(raw: Variant) -> String:
 	var seq: Variant = t.get("sequence", null)
 	var initial := (lsi is int or lsi is float) and (seq is int or seq is float) \
 		and int(lsi) == -1 and int(seq) == -1 \
-		and String(t.get("session_id", "x")).is_empty() and (t.get("stations", {}) as Dictionary).is_empty()
+		and str(t.get("session_id", "x")).is_empty() and (t.get("stations", {}) as Dictionary).is_empty()
 	if not initial:
 		for field in ["latest_session_index", "sequence"]:
 			if not _is_uint(t[field], 1000000000000):
 				return "invalid_time_number:" + field
-		if String(t["session_id"]).is_empty():
+		if str(t["session_id"]).is_empty():
 			return "invalid_time_session"
 	for sid: Variant in (t.get("stations", {}) as Dictionary).keys():
 		var b: Variant = t["stations"][sid]
@@ -254,7 +254,7 @@ func known(recipe_id: String) -> bool:
 	var r := recipe(recipe_id)
 	if r.is_empty():
 		return false
-	if String(r.get("knowledge", "")) == "starter":
+	if str(r.get("knowledge", "")) == "starter":
 		return true
 	var snapshot: Dictionary = _save.call(&"get_snapshot")
 	var survival: Dictionary = snapshot.get("survival", {})
@@ -311,17 +311,17 @@ func world_projection(poi_id: String) -> Dictionary:
 	var sources: Array[Dictionary] = []
 	for raw: Variant in world_bindings().get("bindings", []):
 		var b: Dictionary = raw
-		if String(b.get("poi_id", "")) != poi_id:
+		if str(b.get("poi_id", "")) != poi_id:
 			continue
-		var next_ready := int(poi.get(String(b.get("next_ready_field", "")), 0))
-		var claim_count := int(poi.get(String(b.get("claim_index_field", "")), 0))
+		var next_ready := int(poi.get(str(b.get("next_ready_field", "")), 0))
+		var claim_count := int(poi.get(str(b.get("claim_index_field", "")), 0))
 		var max_claims := int(b.get("max_claims", 0))
 		var exhausted := max_claims > 0 and claim_count >= max_claims
 		var entry := WorldSources.source_identity(b)
 		entry.merge({
-			"binding_id": String(b.get("binding_id", "")),
-			"identity": String(b.get("identity", "")),
-			"action_id": String(b.get("action_id", "")),
+			"binding_id": str(b.get("binding_id", "")),
+			"identity": str(b.get("identity", "")),
+			"action_id": str(b.get("action_id", "")),
 			"claim_count": claim_count,
 			"max_claims": max_claims,
 			"exhausted": exhausted,
@@ -335,12 +335,12 @@ func world_projection(poi_id: String) -> Dictionary:
 	var actions: Array[Dictionary] = []
 	for raw: Variant in world_bindings().get("world_actions", []):
 		var a: Dictionary = raw
-		if String(a.get("poi_id", "")) != poi_id:
+		if str(a.get("poi_id", "")) != poi_id:
 			continue
-		var flag := String(a.get("one_time_flag", ""))
+		var flag := str(a.get("one_time_flag", ""))
 		var done := not flag.is_empty() and bool(poi.get(flag, false))
-		actions.append({"action_id": String(a.get("action_id", "")),
-			"reward_right_id": String(a.get("reward_right_id", "")),
+		actions.append({"action_id": str(a.get("action_id", "")),
+			"reward_right_id": str(a.get("reward_right_id", "")),
 			"one_time": bool(a.get("one_time", false)), "already_applied": done,
 			"requires_capabilities": (a.get("requires_capabilities", []) as Array).duplicate(true),
 			"consumes_items": (a.get("consumes_items", []) as Array).duplicate(true),
@@ -367,12 +367,12 @@ func _advance_world_clock(world: Dictionary, host: Dictionary) -> String:
 	var host_seconds := int(host.active_seconds)
 	var latest := int(clock.get("latest_session_index", -1))
 	if latest == -1:
-		clock = {"latest_session_index": index, "session_id": String(host.session_id), "sequence": int(host.sequence),
+		clock = {"latest_session_index": index, "session_id": str(host.session_id), "sequence": int(host.sequence),
 			"active_seconds": 0, "host_active_seconds": host_seconds}
 	elif index < latest:
 		return "stale_world_session"
 	elif index == latest:
-		if String(host.session_id) != String(clock.get("session_id", "")):
+		if str(host.session_id) != str(clock.get("session_id", "")):
 			return "world_session_conflict"
 		if int(host.sequence) < int(clock.get("sequence", -1)):
 			return "stale_world_sequence"
@@ -385,7 +385,7 @@ func _advance_world_clock(world: Dictionary, host: Dictionary) -> String:
 		clock["host_active_seconds"] = host_seconds
 		clock["sequence"] = int(host.sequence)
 	else:
-		clock = {"latest_session_index": index, "session_id": String(host.session_id), "sequence": int(host.sequence),
+		clock = {"latest_session_index": index, "session_id": str(host.session_id), "sequence": int(host.sequence),
 			"active_seconds": int(clock.get("active_seconds", 0)), "host_active_seconds": host_seconds}
 	world["clock"] = clock
 	return ""
@@ -396,29 +396,29 @@ func _candidate_bag_totals(candidate: Dictionary) -> Dictionary:
 		var record: Variant = _bag_stacks(candidate)[key]
 		if not record is Dictionary:
 			continue
-		var id := _stack_base_id(String(key), record)
+		var id := _stack_base_id(str(key), record)
 		if id.begins_with(TOKEN_PREFIX):
 			continue
 		totals[id] = int(totals.get(id, 0)) + int(record.get("quantity", 0))
 	return totals
 
 func _add_source_reward(candidate: Dictionary, reward: Dictionary, context: Dictionary) -> bool:
-	var item_id := String(reward.get("item_id", ""))
+	var item_id := str(reward.get("item_id", ""))
 	var definition := item(item_id)
-	if definition.is_empty() or String(definition.get("storage", "")) != "stack":
+	if definition.is_empty() or str(definition.get("storage", "")) != "stack":
 		return false
-	var kind := String(definition.get("kind", "material"))
+	var kind := str(definition.get("kind", "material"))
 	if kind == "station_kit":
 		kind = "material"
-	var metadata := {"source": "survival_economy", "display_name": String(definition.get("label", item_id)),
-		"source_id": String(reward.get("source_id", "")), "provenance": (reward.get("provenance", []) as Array).duplicate(true)}
+	var metadata := {"source": "survival_economy", "display_name": str(definition.get("label", item_id)),
+		"source_id": str(reward.get("source_id", "")), "provenance": (reward.get("provenance", []) as Array).duplicate(true)}
 	metadata.merge(context, true)
 	return bool(_save.call(&"add_items_to_candidate", candidate, item_id, kind, int(reward.get("quantity", 0)), metadata))
 
 func _world_plan(world: Dictionary, request: Dictionary) -> Dictionary:
-	var poi_id := String(request.get("poi_id", ""))
-	var action_id := String(request.get("action_id", ""))
-	var instance_id := String(request.get("instance_id", ""))
+	var poi_id := str(request.get("poi_id", ""))
+	var action_id := str(request.get("action_id", ""))
+	var instance_id := str(request.get("instance_id", ""))
 	var poi: Dictionary = (world.get("pois", {}) as Dictionary).get(poi_id, {})
 	if poi.is_empty():
 		return {"reason": "unknown_world_poi"}
@@ -426,13 +426,13 @@ func _world_plan(world: Dictionary, request: Dictionary) -> Dictionary:
 		var binding := WorldSources.binding_for(world_bindings(), poi_id, action_id, instance_id)
 		if binding.is_empty():
 			return {"reason": "unknown_source_instance"}
-		var generation := int(poi.get(String(binding.get("claim_index_field", "")), 0)) + 1
+		var generation := int(poi.get(str(binding.get("claim_index_field", "")), 0)) + 1
 		return {"kind": "source", "binding": binding, "generation": generation,
-			"key": WorldSources.transaction_key(String(binding.transaction_key_template), generation)}
+			"key": WorldSources.transaction_key(str(binding.transaction_key_template), generation)}
 	var action := WorldSources.action_for(world_bindings(), poi_id, action_id)
 	if action.is_empty():
 		return {"reason": "unknown_world_action"}
-	return {"kind": "action", "action": action, "generation": 1, "key": String(action.transaction_key_template)}
+	return {"kind": "action", "action": action, "generation": 1, "key": str(action.transaction_key_template)}
 
 ## A0 calls this from the pausable world clock (or immediately before an
 ## interaction) so cooldowns accrue only while gameplay is active.
@@ -457,10 +457,10 @@ func advance_world_time(poi_id: String, event_id: String) -> Dictionary:
 ## the authoritative host, never from the caller.
 func world_action(request: Dictionary, event_id: String) -> Dictionary:
 	for key: Variant in request.keys():
-		if not String(key) in ["poi_id", "action_id", "instance_id"]:
-			return _fail("invalid_world_request_field:" + String(key))
-	var poi_id := String(request.get("poi_id", ""))
-	var action_id := String(request.get("action_id", ""))
+		if not str(key) in ["poi_id", "action_id", "instance_id"]:
+			return _fail("invalid_world_request_field:" + str(key))
+	var poi_id := str(request.get("poi_id", ""))
+	var action_id := str(request.get("action_id", ""))
 	if poi_id.is_empty() or action_id.is_empty():
 		return _fail("invalid_world_request")
 	# The signed payload is the REQUEST ONLY. The canonical A1 transaction key
@@ -470,21 +470,22 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 	# event_id_conflict instead of ALREADY_APPLIED.
 	var payload := {"request": request.duplicate(true), "receipt_metadata": {
 		"poi_id": poi_id, "action_id": action_id,
-		"instance_id": String(request.get("instance_id", ""))}}
+		"instance_id": str(request.get("instance_id", ""))}}
 	var event_key := _event_key("world_action", event_id)
 	var signature := JSON.stringify(payload).sha256_text()
 	if _save != null and bool(_save.call(&"is_transaction_applied", event_key)):
 		if _receipt_signature(event_key, signature):
 			var snapshot: Dictionary = _save.call(&"get_snapshot")
-			var meta: Dictionary = (snapshot.get("applied_transactions", {}) as Dictionary).get(event_key, {})
+			var receipt: Dictionary = (snapshot.get("applied_transactions", {}) as Dictionary).get(event_key, {})
+			var meta: Dictionary = receipt.get("metadata", {})
 			return _ok({"duplicate": true, "result": "ALREADY_APPLIED",
-				"transaction_key": String(meta.get("a1_transaction_key", ""))})
+				"transaction_key": str(meta.get("a1_transaction_key", ""))})
 		return _fail("event_id_conflict")
 	var snapshot: Dictionary = _save.call(&"get_snapshot") if _save != null else {}
 	var preflight := _world_plan(_world_read(snapshot), request)
 	if preflight.has("reason"):
-		return _fail(String(preflight.reason))
-	var canonical_key := String(preflight.key)
+		return _fail(str(preflight.reason))
+	var canonical_key := str(preflight.key)
 	var outcome := _transact("world_action", event_id, payload,
 		func(candidate: Dictionary, _state: Dictionary, result: Dictionary) -> bool:
 			var host := _world_host_receipt(poi_id)
@@ -497,8 +498,8 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			if not clock_error.is_empty():
 				result["reason"] = clock_error; return false
 			var plan := _world_plan(world, request)
-			if plan.has("reason") or String(plan.key) != canonical_key:
-				result["reason"] = String(plan.get("reason", "stale_world_generation")); return false
+			if plan.has("reason") or str(plan.key) != canonical_key:
+				result["reason"] = str(plan.get("reason", "stale_world_generation")); return false
 			var poi: Dictionary = world["pois"][poi_id]
 			var active := int(world["clock"].active_seconds)
 			var definition: Dictionary = plan.get("binding", plan.get("action", {}))
@@ -508,8 +509,8 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			if not WorldSources.cell_matches(host.hero_cell, definition.get("stand_cells", [])):
 				result["reason"] = "OUT_OF_RANGE"; return false
 			for cap: Variant in definition.get("requires_capabilities", []):
-				if not (world["capabilities"] as Array).has(String(cap)):
-					result["reason"] = "MISSING_CAPABILITY:" + String(cap); return false
+				if not (world["capabilities"] as Array).has(str(cap)):
+					result["reason"] = "MISSING_CAPABILITY:" + str(cap); return false
 			var receipts: Dictionary = poi.get("reward_receipts", {})
 			if receipts.has(canonical_key):
 				result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
@@ -517,17 +518,17 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			var costs: Array = []
 			var grants: Array = []
 			var state_writes: Dictionary = {}
-			if String(plan.kind) == "source":
+			if str(plan.kind) == "source":
 				var max_claims := int(definition.get("max_claims", 0))
-				var claimed := int(poi.get(String(definition.claim_index_field), 0))
+				var claimed := int(poi.get(str(definition.claim_index_field), 0))
 				if max_claims > 0 and claimed >= max_claims:
 					result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
-				var next_ready := int(poi.get(String(definition.next_ready_field), 0))
+				var next_ready := int(poi.get(str(definition.next_ready_field), 0))
 				if active < next_ready:
 					result["reason"] = "COOLDOWN"; result["remaining_active_seconds"] = next_ready - active; return false
 				rewards = definition.get("rewards", [])
 			else:
-				if bool(definition.get("one_time", false)) and bool(poi.get(String(definition.get("one_time_flag", "")), false)):
+				if bool(definition.get("one_time", false)) and bool(poi.get(str(definition.get("one_time_flag", "")), false)):
 					result["reason"] = "ALREADY_APPLIED"; result["already_applied"] = true; return false
 				costs = definition.get("consumes_items", [])
 				rewards = definition.get("reward_items", [])
@@ -536,37 +537,37 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			var totals := _candidate_bag_totals(candidate)
 			for cost: Variant in costs:
 				var c: Dictionary = cost
-				if int(totals.get(String(c.item_id), 0)) < int(c.quantity):
-					result["reason"] = "MISSING_ITEM:" + String(c.item_id); return false
-			var context := {"binding_id": String(definition.get("binding_id", definition.get("reward_right_id", ""))),
-				"instance_id": String(request.get("instance_id", "")), "a1_transaction_key": canonical_key}
+				if int(totals.get(str(c.item_id), 0)) < int(c.quantity):
+					result["reason"] = "MISSING_ITEM:" + str(c.item_id); return false
+			var context := {"binding_id": str(definition.get("binding_id", definition.get("reward_right_id", ""))),
+				"instance_id": str(request.get("instance_id", "")), "a1_transaction_key": canonical_key}
 			var trial: Dictionary = candidate.duplicate(true)
 			for reward: Variant in rewards:
 				if not _add_source_reward(trial, reward, context):
 					result["reason"] = "inventory_full"; return false
 			for cost: Variant in costs:
 				var c: Dictionary = cost
-				if not _remove(candidate, String(c.item_id), int(c.quantity)):
-					result["reason"] = "MISSING_ITEM:" + String(c.item_id); return false
+				if not _remove(candidate, str(c.item_id), int(c.quantity)):
+					result["reason"] = "MISSING_ITEM:" + str(c.item_id); return false
 			var granted_items := {}
 			for reward: Variant in rewards:
 				var r: Dictionary = reward
 				if not _add_source_reward(candidate, r, context):
 					result["reason"] = "inventory_full"; return false
-				granted_items[String(r.item_id)] = int(granted_items.get(String(r.item_id), 0)) + int(r.quantity)
+				granted_items[str(r.item_id)] = int(granted_items.get(str(r.item_id), 0)) + int(r.quantity)
 			var granted_caps: Array[String] = []
 			for cap: Variant in grants:
-				if not (world["capabilities"] as Array).has(String(cap)):
-					world["capabilities"].append(String(cap))
-					granted_caps.append(String(cap))
+				if not (world["capabilities"] as Array).has(str(cap)):
+					world["capabilities"].append(str(cap))
+					granted_caps.append(str(cap))
 			for field: Variant in state_writes.keys():
-				poi[String(field)] = state_writes[field]
-			if String(plan.kind) == "source":
-				poi[String(definition.claim_index_field)] = int(plan.generation)
-				poi[String(definition.next_ready_field)] = active + int(definition.cooldown_active_seconds)
+				poi[str(field)] = state_writes[field]
+			if str(plan.kind) == "source":
+				poi[str(definition.claim_index_field)] = int(plan.generation)
+				poi[str(definition.next_ready_field)] = active + int(definition.cooldown_active_seconds)
 			poi["discovered"] = true
 			poi["last_transaction_key"] = canonical_key
-			receipts[canonical_key] = String(definition.get("reward_right_id", ""))
+			receipts[canonical_key] = str(definition.get("reward_right_id", ""))
 			poi["reward_receipts"] = receipts
 			candidate[WORLD_ROOT] = world
 			result["result"] = "SUCCESS"
@@ -576,11 +577,11 @@ func world_action(request: Dictionary, event_id: String) -> Dictionary:
 			result["granted_capabilities"] = granted_caps
 			result["state_patch"] = state_writes.duplicate(true)
 			result["active_seconds"] = active
-			result["receipt_metadata"] = {"a1_transaction_key": String(plan.key),
-				"reward_right_id": String(definition.get("reward_right_id", "")),
-				"binding_id": String(definition.get("binding_id", ""))}
+			result["receipt_metadata"] = {"a1_transaction_key": str(plan.key),
+				"reward_right_id": str(definition.get("reward_right_id", "")),
+				"binding_id": str(definition.get("binding_id", ""))}
 			return true)
-	if bool(outcome.get("duplicate", false)) or String(outcome.get("reason", "")) == "ALREADY_APPLIED":
+	if bool(outcome.get("duplicate", false)) or str(outcome.get("reason", "")) == "ALREADY_APPLIED":
 		return _ok({"duplicate": true, "result": "ALREADY_APPLIED", "transaction_key": canonical_key})
 	return outcome
 
@@ -595,14 +596,14 @@ func _storage_stacks(candidate: Dictionary) -> Dictionary:
 	return stacks if stacks is Dictionary else {}
 
 func _stack_base_id(stack_key: String, record: Dictionary) -> String:
-	return String(record.get("item_id", stack_key))
+	return str(record.get("item_id", stack_key))
 
 func _token_stack_keys(stacks: Dictionary, token_id: String) -> Array[String]:
 	var keys: Array[String] = []
 	for key: Variant in stacks.keys():
 		var record: Variant = stacks[key]
-		if record is Dictionary and _stack_base_id(String(key), record) == token_id:
-			keys.append(String(key))
+		if record is Dictionary and _stack_base_id(str(key), record) == token_id:
+			keys.append(str(key))
 	keys.sort()
 	return keys
 
@@ -612,12 +613,12 @@ func _token_error(candidate: Dictionary, state: Dictionary, instance_id: String)
 	if not instances.has(instance_id):
 		return "orphan_token"
 	var record: Dictionary = instances[instance_id]
-	if String(record.get("instance_id", "")) != instance_id:
+	if str(record.get("instance_id", "")) != instance_id:
 		return "instance_id_mismatch"
-	var definition := item(String(record.get("item_id", "")))
-	if definition.is_empty() or String(definition.get("storage", "")) != "instance":
+	var definition := item(str(record.get("item_id", "")))
+	if definition.is_empty() or str(definition.get("storage", "")) != "instance":
 		return "invalid_instance_item"
-	if String(record.get("location", "")) != "bag":
+	if str(record.get("location", "")) != "bag":
 		return "instance_not_in_bag"
 	var stacks := _bag_stacks(candidate)
 	var keys := _token_stack_keys(stacks, instance_id)
@@ -628,7 +629,7 @@ func _token_error(candidate: Dictionary, state: Dictionary, instance_id: String)
 	var stack: Dictionary = stacks[instance_id]
 	if int(stack.get("quantity", 0)) != 1:
 		return "token_quantity_not_one"
-	if String(stack.get("kind", "")) != "key_item":
+	if str(stack.get("kind", "")) != "key_item":
 		return "token_kind_not_key_item"
 	return ""
 
@@ -658,31 +659,31 @@ func _ownership_audit(candidate: Dictionary, state: Dictionary) -> Dictionary:
 		if not record is Dictionary:
 			errors.append("invalid_bag_stack")
 			continue
-		var id := _stack_base_id(String(key), record)
+		var id := _stack_base_id(str(key), record)
 		if id.begins_with(TOKEN_PREFIX):
 			var err := _token_error(candidate, state, id)
 			if not err.is_empty():
 				errors.append(id + ":" + err)
 	for key: Variant in storage.keys():
 		var record: Variant = storage[key]
-		if record is Dictionary and _stack_base_id(String(key), record).begins_with(TOKEN_PREFIX):
-			errors.append(String(key) + ":unique_token_outside_bag")
+		if record is Dictionary and _stack_base_id(str(key), record).begins_with(TOKEN_PREFIX):
+			errors.append(str(key) + ":unique_token_outside_bag")
 	for id: Variant in instances.keys():
 		var record: Dictionary = instances[id]
-		var location := String(record.get("location", ""))
+		var location := str(record.get("location", ""))
 		if location == "bag":
-			var err := _token_error(candidate, state, String(id))
+			var err := _token_error(candidate, state, str(id))
 			if not err.is_empty():
-				errors.append(String(id) + ":" + err)
-		elif _has_token_anywhere(candidate, String(id)):
-			errors.append(String(id) + ":escrow_or_terminal_record_has_token")
+				errors.append(str(id) + ":" + err)
+		elif _has_token_anywhere(candidate, str(id)):
+			errors.append(str(id) + ":escrow_or_terminal_record_has_token")
 	for job: Variant in (state.get("jobs", {}) as Dictionary).values():
 		for field in ["reserved_instances", "output_instances"]:
 			for id: Variant in (job.get(field, {}) as Dictionary).keys():
 				if not instances.has(id):
-					errors.append(String(id) + ":job_reference_missing_instance")
-				elif _has_token_anywhere(candidate, String(id)):
-					errors.append(String(id) + ":job_instance_also_has_token")
+					errors.append(str(id) + ":job_reference_missing_instance")
+				elif _has_token_anywhere(candidate, str(id)):
+					errors.append(str(id) + ":job_instance_also_has_token")
 	return {"ok": errors.is_empty(), "errors": errors}
 
 func inventory_totals() -> Dictionary:
@@ -695,12 +696,12 @@ func inventory_totals() -> Dictionary:
 		var record: Variant = stacks[key]
 		if not record is Dictionary:
 			continue
-		var id := _stack_base_id(String(key), record)
+		var id := _stack_base_id(str(key), record)
 		var quantity := int(record.get("quantity", 0))
 		if id.begins_with(TOKEN_PREFIX):
 			if not _token_error(candidate, state, id).is_empty():
 				continue
-			id = String(instances[id].get("item_id", ""))
+			id = str(instances[id].get("item_id", ""))
 		totals[id] = int(totals.get(id, 0)) + quantity
 	return totals
 
@@ -711,12 +712,12 @@ func owned_instances(item_id := "") -> Array[Dictionary]:
 	var candidate: Dictionary = _save.call(&"get_snapshot")
 	var state := _state(candidate)
 	for id: Variant in (state.get("instances", {}) as Dictionary).keys():
-		if not _token_error(candidate, state, String(id)).is_empty():
+		if not _token_error(candidate, state, str(id)).is_empty():
 			continue
 		var record: Dictionary = state["instances"][id]
-		if item_id.is_empty() or String(record.get("item_id", "")) == item_id:
+		if item_id.is_empty() or str(record.get("item_id", "")) == item_id:
 			result.append(record.duplicate(true))
-	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return String(a["instance_id"]) < String(b["instance_id"]))
+	result.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return str(a["instance_id"]) < str(b["instance_id"]))
 	return result
 
 func _ok(extra: Dictionary = {}) -> Dictionary:
@@ -736,10 +737,10 @@ func _receipt_signature(key: String, signature: String) -> bool:
 	var receipts: Dictionary = snapshot.get("applied_transactions", {})
 	if receipts.has(key):
 		var metadata: Dictionary = receipts[key].get("metadata", {})
-		if String(metadata.get("payload_sha256", "")) == signature:
+		if str(metadata.get("payload_sha256", "")) == signature:
 			return true
 	var commands: Dictionary = document().get("commands", {})
-	return String(commands.get(key, "")) == signature
+	return str(commands.get(key, "")) == signature
 
 ## Payload binding prevents a reused event id from authorizing different args.
 ## New payload signatures live in SaveService transaction metadata; the legacy
@@ -793,7 +794,7 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 		# ready-refund, and output-bearing jobs are never silently discarded.
 		for job_id: Variant in (state.get("jobs", {}) as Dictionary).keys():
 			var old_job: Dictionary = state["jobs"][job_id]
-			if String(old_job.get("status", "")) in ["collected", "cancelled"] \
+			if str(old_job.get("status", "")) in ["collected", "cancelled"] \
 					and (old_job.get("outputs", {}) as Dictionary).is_empty() \
 					and (old_job.get("output_instances", {}) as Dictionary).is_empty():
 				state["jobs"].erase(job_id)
@@ -807,7 +808,17 @@ func _transact(operation: String, event_id: String, payload: Dictionary, mutator
 		return true
 	, receipt_metadata))
 	if not applied:
-		return _fail(String(result.get("reason", "commit_failed")))
+		# SaveService returns false for both mutator rejection and durable write
+		# failure. Mutator rejections set a specific reason; an unset/default
+		# reason at this point is an authoritative commit/I/O failure.
+		var reason := str(result.get("reason", "commit_failed"))
+		if reason == "rejected" or reason.is_empty():
+			reason = "save_failed"
+		var failure := _fail(reason)
+		for field in ["remaining_active_seconds", "already_applied", "errors"]:
+			if result.has(field):
+				failure[field] = result[field]
+		return failure
 	result["ok"] = true
 	result["duplicate"] = false
 	return result
@@ -820,34 +831,34 @@ func _add(candidate: Dictionary, item_id: String, quantity: int, kind := "materi
 		if quantity != 1 or kind != "key_item" or not _token_stack_keys(_bag_stacks(candidate), item_id).is_empty():
 			return false
 	return bool(_save.call(&"add_items_to_candidate", candidate, item_id, kind, quantity,
-		{"source": "survival_economy", "display_name": String(item(item_id).get("label", item_id))}))
+		{"source": "survival_economy", "display_name": str(item(item_id).get("label", item_id))}))
 
 func _add_outputs(candidate: Dictionary, outputs: Dictionary) -> bool:
 	for id: Variant in outputs.keys():
-		var definition := item(String(id))
+		var definition := item(str(id))
 		if definition.is_empty():
 			return false
-		if String(definition.get("storage", "")) == "instance":
+		if str(definition.get("storage", "")) == "instance":
 			if int(outputs[id]) != 1:
 				return false
 			continue
-		if String(definition.get("storage", "")) != "stack":
+		if str(definition.get("storage", "")) != "stack":
 			return false
-		var kind := String(definition.get("kind", "material"))
+		var kind := str(definition.get("kind", "material"))
 		if kind == "station_kit":
 			kind = "material"
-		if not _add(candidate, String(id), int(outputs[id]), kind):
+		if not _add(candidate, str(id), int(outputs[id]), kind):
 			return false
 	return true
 
 func _take_inputs(candidate: Dictionary, state: Dictionary, inputs: Dictionary, reserved: Dictionary) -> bool:
 	for id: Variant in inputs.keys():
 		var amount := int(inputs[id])
-		if amount <= 0 or item(String(id)).is_empty():
+		if amount <= 0 or item(str(id)).is_empty():
 			return false
-		if String(item(String(id)).get("storage", "")) == "instance" or String(id).begins_with(TOKEN_PREFIX):
+		if str(item(str(id)).get("storage", "")) == "instance" or str(id).begins_with(TOKEN_PREFIX):
 			return false
-		if not _remove(candidate, String(id), amount):
+		if not _remove(candidate, str(id), amount):
 			return false
 		reserved[id] = amount
 	return true
@@ -869,11 +880,11 @@ func _station(station_id: String, required_kind: String, tier: int) -> Dictionar
 	if not value is Dictionary:
 		return {}
 	var station: Dictionary = value
-	if not bool(station.get("ok", false)) or String(station.get("station_id", "")) != station_id:
+	if not bool(station.get("ok", false)) or str(station.get("station_id", "")) != station_id:
 		return {}
-	if String(station.get("kind", "")) != required_kind or int(station.get("tier", 0)) < tier:
+	if str(station.get("kind", "")) != required_kind or int(station.get("tier", 0)) < tier:
 		return {}
-	if String(station.get("station_revision", "")).is_empty():
+	if str(station.get("station_revision", "")).is_empty():
 		return {}
 	if not bool(station.get("operational", false)) or int(station.get("condition", 0)) <= 0:
 		return {}
@@ -889,9 +900,9 @@ func _station_operational(station_id: String) -> Dictionary:
 	if not value is Dictionary:
 		return {}
 	var station: Dictionary = value
-	if not bool(station.get("ok", false)) or String(station.get("station_id", "")) != station_id:
+	if not bool(station.get("ok", false)) or str(station.get("station_id", "")) != station_id:
 		return {}
-	if String(station.get("station_revision", "")).is_empty():
+	if str(station.get("station_revision", "")).is_empty():
 		return {}
 	if not bool(station.get("operational", false)) or int(station.get("condition", 0)) <= 0:
 		return {}
@@ -899,7 +910,7 @@ func _station_operational(station_id: String) -> Dictionary:
 
 func _prerequisites(candidate: Dictionary, state: Dictionary, required: Array) -> bool:
 	for id: Variant in required:
-		if not (state.get("technologies", {}) as Dictionary).has(String(id)):
+		if not (state.get("technologies", {}) as Dictionary).has(str(id)):
 			return false
 	return true
 
@@ -919,17 +930,17 @@ func _valid_recipe_outputs(r: Dictionary) -> bool:
 	if outputs.is_empty():
 		return false
 	for id: Variant in outputs.keys():
-		var definition := item(String(id))
+		var definition := item(str(id))
 		if definition.is_empty() or int(outputs[id]) <= 0:
 			return false
-		if String(definition.get("storage", "")) == "instance" and int(outputs[id]) != 1:
+		if str(definition.get("storage", "")) == "instance" and int(outputs[id]) != 1:
 			return false
 	return true
 
 func _queue_count(state: Dictionary, station_id: String) -> int:
 	var count := 0
 	for job: Variant in (state.get("jobs", {}) as Dictionary).values():
-		if String(job.get("station_id", "")) == station_id and String(job.get("status", "")) in UNRESOLVED_JOB_STATES:
+		if str(job.get("station_id", "")) == station_id and str(job.get("status", "")) in UNRESOLVED_JOB_STATES:
 			count += 1
 	return count
 
@@ -944,7 +955,7 @@ func _capture_time_baseline(state: Dictionary, station_id: String) -> void:
 	if index > int(time.latest_session_index):
 		time = {"latest_session_index": index, "session_id": receipt.session_id,
 			"sequence": int(receipt.sequence), "stations": {}}
-	elif index != int(time.latest_session_index) or String(receipt.session_id) != String(time.session_id):
+	elif index != int(time.latest_session_index) or str(receipt.session_id) != str(time.session_id):
 		return
 	if int(receipt.sequence) < int(time.sequence):
 		return
@@ -966,7 +977,7 @@ func enqueue(recipe_id: String, station_id: String, event_id: String) -> Diction
 				result["reason"] = "recipe_not_learned"; return false
 			if not _prerequisites(candidate, state, r.get("required_technologies", [])):
 				result["reason"] = "technology_missing"; return false
-			var station := _station(station_id, String(r["station"]), int(r["min_tier"]))
+			var station := _station(station_id, str(r["station"]), int(r["min_tier"]))
 			if station.is_empty():
 				result["reason"] = "station_unavailable"; return false
 			if _queue_count(state, station_id) >= int(station.get("queue_capacity", 1)):
@@ -979,7 +990,7 @@ func enqueue(recipe_id: String, station_id: String, event_id: String) -> Diction
 			state["counter"] = int(state["counter"]) + 1
 			var id := "job_%06d" % int(state["counter"])
 			state["jobs"][id] = {"job_id": id, "kind": "craft", "target": recipe_id,
-				"station_id": station_id, "station_kind": String(r["station"]), "tier": int(r["min_tier"]),
+				"station_id": station_id, "station_kind": str(r["station"]), "tier": int(r["min_tier"]),
 				"status": "queued", "elapsed": 0, "duration": maxi(1, int(r["duration_ticks"])),
 				"reserved": reserved, "reserved_fuel": fuel_reserved, "reserved_instances": {}, "outputs": {}, "output_instances": {}}
 			_capture_time_baseline(state, station_id)
@@ -993,22 +1004,22 @@ func _host_time_receipt(station_id: String) -> Dictionary:
 	if not value is Dictionary:
 		return {}
 	var r: Dictionary = value
-	if String(r.get("contract", "")) != TIME_CONTRACT or String(r.get("station_id", "")) != station_id:
+	if str(r.get("contract", "")) != TIME_CONTRACT or str(r.get("station_id", "")) != station_id:
 		return {}
-	if String(r.get("session_id", "")).is_empty() or String(r.get("station_revision", "")).is_empty():
+	if str(r.get("session_id", "")).is_empty() or str(r.get("station_revision", "")).is_empty():
 		return {}
 	for field in ["session_index", "sequence", "active_ticks"]:
 		if not r.has(field) or not r[field] is int or int(r[field]) < 0:
 			return {}
 	if int(r.session_index) > 1000000000 or int(r.sequence) > 1000000000000 or int(r.active_ticks) > 1000000000000:
 		return {}
-	if String(r.session_id).length() > 96 or String(r.station_revision).length() > 128 or station_id.length() > 64:
+	if str(r.session_id).length() > 96 or str(r.station_revision).length() > 128 or station_id.length() > 64:
 		return {}
 	return {
 		"contract": TIME_CONTRACT, "station_id": station_id,
-		"session_id": String(r.session_id), "session_index": int(r.session_index),
+		"session_id": str(r.session_id), "session_index": int(r.session_index),
 		"sequence": int(r.sequence), "active_ticks": int(r.active_ticks),
-		"station_revision": String(r.station_revision),
+		"station_revision": str(r.station_revision),
 	}
 
 func _verified_time_receipt(station_id: String, request: Variant) -> Dictionary:
@@ -1040,13 +1051,13 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
 			var verified := _verified_time_receipt(station_id, request)
 			if not bool(verified.ok):
-				result["reason"] = String(verified.reason); return false
+				result["reason"] = str(verified.reason); return false
 			var receipt: Dictionary = verified.receipt
 			var time: Dictionary = state.get("time", _empty_time())
 			var index := int(receipt.session_index)
 			if index < int(time.latest_session_index):
 				result["reason"] = "stale_session"; return false
-			if index == int(time.latest_session_index) and String(receipt.session_id) != String(time.session_id):
+			if index == int(time.latest_session_index) and str(receipt.session_id) != str(time.session_id):
 				result["reason"] = "session_conflict"; return false
 			if index > int(time.latest_session_index):
 				time = {"latest_session_index": index, "session_id": receipt.session_id, "sequence": -1, "stations": {}}
@@ -1055,19 +1066,19 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 			var stations: Dictionary = time.stations
 			var baseline: Dictionary = stations.get(station_id, {})
 			var station := _station_operational(station_id)
-			if not station.is_empty() and String(station.get("station_revision", "")) != String(receipt.station_revision):
+			if not station.is_empty() and str(station.get("station_revision", "")) != str(receipt.station_revision):
 				result["reason"] = "station_revision_mismatch"; return false
 			# Kind/tier are checked per job below; an empty resolver means removed/off.
 			var applied := 0
 			var completed: Array[String] = []
 			var paused := false
-			var revision_changed := not baseline.is_empty() and String(baseline.get("station_revision", "")) != String(receipt.station_revision)
+			var revision_changed := not baseline.is_empty() and str(baseline.get("station_revision", "")) != str(receipt.station_revision)
 			if baseline.is_empty():
 				stations[station_id] = {"active_ticks": int(receipt.active_ticks), "station_revision": receipt.station_revision}
 				result["baseline_established"] = true
 				if station.is_empty():
 					for job: Variant in state["jobs"].values():
-						if String(job.get("station_id", "")) == station_id and String(job.get("status", "")) in ["queued","running"]:
+						if str(job.get("station_id", "")) == station_id and str(job.get("status", "")) in ["queued","running"]:
 							job["status"] = "paused"
 					paused = true
 					result["paused"] = true
@@ -1077,7 +1088,7 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 					result["reason"] = "clock_regressed"; return false
 				if revision_changed or station.is_empty():
 					for job: Variant in state["jobs"].values():
-						if String(job.get("station_id", "")) == station_id and String(job.get("status", "")) in ["queued","running"]:
+						if str(job.get("station_id", "")) == station_id and str(job.get("status", "")) in ["queued","running"]:
 							job["status"] = "paused"
 					stations[station_id] = {"active_ticks": int(receipt.active_ticks), "station_revision": receipt.station_revision}
 					paused = true
@@ -1092,9 +1103,9 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 					var remaining := delta
 					for id: Variant in ids:
 						var job: Dictionary = state["jobs"][id]
-						if String(job.get("station_id", "")) != station_id or String(job.get("status", "")) not in ["queued","running","paused"]:
+						if str(job.get("station_id", "")) != station_id or str(job.get("status", "")) not in ["queued","running","paused"]:
 							continue
-						var job_station := _station(station_id, String(job.get("station_kind", "")), int(job.get("tier", 0)))
+						var job_station := _station(station_id, str(job.get("station_kind", "")), int(job.get("tier", 0)))
 						if job_station.is_empty():
 							job["status"] = "paused"
 							continue
@@ -1106,7 +1117,7 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 						if int(job["elapsed"]) >= int(job["duration"]):
 							if not _finish_job(candidate, state, job):
 								result["reason"] = "invalid_job_output"; return false
-							completed.append(String(id))
+							completed.append(str(id))
 						if remaining <= 0:
 							break
 					stations[station_id] = {"active_ticks": int(receipt.active_ticks), "station_revision": receipt.station_revision}
@@ -1120,8 +1131,8 @@ func advance(station_id: String, request: Variant, event_id: String) -> Dictiona
 func _prune_time_stations(stations: Dictionary, state: Dictionary, current_station: String) -> Dictionary:
 	var keep := {current_station: true}
 	for job: Variant in (state.get("jobs", {}) as Dictionary).values():
-		if String(job.get("status", "")) in UNRESOLVED_JOB_STATES:
-			keep[String(job.get("station_id", ""))] = true
+		if str(job.get("status", "")) in UNRESOLVED_JOB_STATES:
+			keep[str(job.get("station_id", ""))] = true
 	var result := {}
 	var keys: Array = stations.keys()
 	keys.sort()
@@ -1137,15 +1148,15 @@ func _prune_time_stations(stations: Dictionary, state: Dictionary, current_stati
 
 func _finish_job(candidate: Dictionary, state: Dictionary, job: Dictionary) -> bool:
 	job["reserved_fuel"] = {}
-	if String(job["kind"]) == "technology":
-		state["technologies"][String(job["target"])] = {"source": "research"}
-	elif String(job["kind"]) == "research":
-		_learn(candidate, String(job["target"]), "research:" + String(job["job_id"]))
+	if str(job["kind"]) == "technology":
+		state["technologies"][str(job["target"])] = {"source": "research"}
+	elif str(job["kind"]) == "research":
+		_learn(candidate, str(job["target"]), "research:" + str(job["job_id"]))
 		for old_id: Variant in (job.get("reserved_instances", {}) as Dictionary).keys():
 			state["instances"][old_id]["location"] = "consumed_by_research"
 			state["instances"][old_id]["revision"] = int(state["instances"][old_id]["revision"]) + 1
 	else:
-		var r := recipe(String(job["target"]))
+		var r := recipe(str(job["target"]))
 		if not _valid_recipe_outputs(r):
 			return false
 		if r.has("consumes_specimen"):
@@ -1154,11 +1165,11 @@ func _finish_job(candidate: Dictionary, state: Dictionary, job: Dictionary) -> b
 				state["instances"][old_id]["revision"] = int(state["instances"][old_id]["revision"]) + 1
 		job["outputs"] = (r["outputs"] as Dictionary).duplicate(true)
 		for id: Variant in (job.get("outputs", {}) as Dictionary).keys():
-			if String(item(String(id)).get("storage", "")) == "instance":
+			if str(item(str(id)).get("storage", "")) == "instance":
 				if int(job["outputs"][id]) != 1:
 					return false
-				var record := _new_instance(state, String(id), "job_output")
-				job["output_instances"][String(record["instance_id"])] = record
+				var record := _new_instance(state, str(id), "job_output")
+				job["output_instances"][str(record["instance_id"])] = record
 	job["status"] = "ready"
 	job["reserved"] = {}
 	job["reserved_instances"] = {}
@@ -1167,7 +1178,7 @@ func _finish_job(candidate: Dictionary, state: Dictionary, job: Dictionary) -> b
 func _new_instance(state: Dictionary, item_id: String, location: String) -> Dictionary:
 	var definition := item(item_id)
 	state["counter"] = int(state["counter"]) + 1
-	var id := TOKEN_PREFIX + "%012d_%s" % [int(state["counter"]), String(definition.get("kind", "item")).md5_text().left(8)]
+	var id := TOKEN_PREFIX + "%012d_%s" % [int(state["counter"]), str(definition.get("kind", "item")).md5_text().left(8)]
 	var record := {"instance_id": id, "item_id": item_id, "location": location,
 		"condition": int(definition.get("max_condition", 100)),
 		"max_condition": int(definition.get("max_condition", 100)),
@@ -1178,7 +1189,7 @@ func _new_instance(state: Dictionary, item_id: String, location: String) -> Dict
 
 func grant_instance(item_id: String, source_event: String, uses := -1, condition := -1) -> Dictionary:
 	var definition := item(item_id)
-	if definition.is_empty() or String(definition.get("storage", "")) != "instance":
+	if definition.is_empty() or str(definition.get("storage", "")) != "instance":
 		return _fail("not_an_instance_item")
 	return _transact("grant", source_event, {"item": item_id, "uses": uses, "condition": condition},
 		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
@@ -1187,7 +1198,7 @@ func grant_instance(item_id: String, source_event: String, uses := -1, condition
 				record["uses"] = mini(uses, int(record["max_uses"]))
 			if condition >= 0:
 				record["condition"] = mini(condition, int(record["max_condition"]))
-			if not _add(candidate, String(record["instance_id"]), 1, "key_item"):
+			if not _add(candidate, str(record["instance_id"]), 1, "key_item"):
 				state["instances"].erase(record["instance_id"])
 				result["reason"] = "inventory_full"; return false
 			result["instance_id"] = record["instance_id"]
@@ -1197,18 +1208,18 @@ func collect(job_id: String, event_id: String) -> Dictionary:
 	return _transact("collect", event_id, {"job": job_id},
 		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
 			var job: Dictionary = state["jobs"].get(job_id, {})
-			if job.is_empty() or String(job["status"]) != "ready":
+			if job.is_empty() or str(job["status"]) != "ready":
 				result["reason"] = "nothing_to_collect"; return false
 			var trial: Dictionary = candidate.duplicate(true)
 			if not _add_outputs(trial, job.get("outputs", {})):
 				result["reason"] = "inventory_full"; return false
 			for id: Variant in (job.get("output_instances", {}) as Dictionary).keys():
-				if not _add(trial, String(id), 1, "key_item"):
+				if not _add(trial, str(id), 1, "key_item"):
 					result["reason"] = "inventory_full"; return false
 			if not _add_outputs(candidate, job.get("outputs", {})):
 				result["reason"] = "inventory_full"; return false
 			for id: Variant in (job.get("output_instances", {}) as Dictionary).keys():
-				if not _add(candidate, String(id), 1, "key_item"):
+				if not _add(candidate, str(id), 1, "key_item"):
 					result["reason"] = "inventory_full"; return false
 				state["instances"][id]["location"] = "bag"
 			# Receipt remains in SaveService; collected job escrow is compacted.
@@ -1220,7 +1231,7 @@ func cancel(job_id: String, event_id: String) -> Dictionary:
 	return _transact("cancel", event_id, {"job": job_id},
 		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
 			var job: Dictionary = state["jobs"].get(job_id, {})
-			if job.is_empty() or String(job["status"]) not in ["queued","running","paused"]:
+			if job.is_empty() or str(job["status"]) not in ["queued","running","paused"]:
 				result["reason"] = "cannot_cancel"; return false
 			job["outputs"] = (job.get("reserved", {}) as Dictionary).duplicate(true)
 			job["output_instances"] = (job.get("reserved_instances", {}) as Dictionary).duplicate(true)
@@ -1242,7 +1253,7 @@ func research_technology(technology_id: String, station_id: String, event_id: St
 			if not _prerequisites(candidate, state, t["prerequisites"]):
 				result["reason"] = "technology_missing"; return false
 			for job: Variant in state["jobs"].values():
-				if String(job["target"]) == technology_id and String(job["status"]) in ["queued","running","paused","ready"]:
+				if str(job["target"]) == technology_id and str(job["status"]) in ["queued","running","paused","ready"]:
 					result["reason"] = "research_pending"; return false
 			var station := _station(station_id, "research", int(t["min_tier"]))
 			if station.is_empty():
@@ -1273,7 +1284,7 @@ func research_recipe(recipe_id: String, station_id: String, method: String, even
 			if known(recipe_id):
 				result["reason"] = "already_known"; return false
 			for job: Variant in state["jobs"].values():
-				if String(job["target"]) == recipe_id and String(job["kind"]) == "research" and String(job["status"]) in ["queued","running","paused","ready"]:
+				if str(job["target"]) == recipe_id and str(job["kind"]) == "research" and str(job["status"]) in ["queued","running","paused","ready"]:
 					result["reason"] = "research_pending"; return false
 			var station := _station(station_id, "research", 1)
 			if station.is_empty():
@@ -1286,8 +1297,8 @@ func research_recipe(recipe_id: String, station_id: String, method: String, even
 			if method == "blueprint":
 				var plan_id := ""
 				for id: Variant in catalog["items"].keys():
-					if String(catalog["items"][id].get("unlocks_recipe", "")) == recipe_id:
-						plan_id = String(id)
+					if str(catalog["items"][id].get("unlocks_recipe", "")) == recipe_id:
+						plan_id = str(id)
 				if plan_id.is_empty():
 					result["reason"] = "no_blueprint_for_recipe"; return false
 				costs[plan_id] = 1
@@ -1295,15 +1306,15 @@ func research_recipe(recipe_id: String, station_id: String, method: String, even
 				var outputs: Dictionary = r.get("outputs", {})
 				if outputs.size() != 1:
 					result["reason"] = "invalid_research_output"; return false
-				var expected := String(outputs.keys()[0])
+				var expected := str(outputs.keys()[0])
 				var specimen := _require_bag_instance(candidate, state, specimen_id, result)
 				if specimen.is_empty():
 					return false
-				if String(specimen.get("item_id", "")) != expected:
+				if str(specimen.get("item_id", "")) != expected:
 					result["reason"] = "specimen_item_mismatch"; return false
 				if not _remove(candidate, specimen_id, 1):
 					result["reason"] = "specimen_not_owned"; return false
-				specimen["location"] = "research:" + String(event_id)
+				specimen["location"] = "research:" + str(event_id)
 				reserved_instances[specimen_id] = specimen
 				costs["knowledge_spares"] = 5
 			elif method == "targeted":
@@ -1333,7 +1344,7 @@ func dismantle_stack(item_id: String, amount: int, station_id: String, event_id:
 		return _fail("not_dismantlable")
 	return _transact("dismantle", event_id, {"item": item_id, "quantity": amount, "station": station_id},
 		func(candidate: Dictionary, state: Dictionary, result: Dictionary) -> bool:
-			if _station(station_id, String(salvage["station"]), int(salvage["min_tier"])).is_empty():
+			if _station(station_id, str(salvage["station"]), int(salvage["min_tier"])).is_empty():
 				result["reason"] = "station_unavailable"; return false
 			var outputs := {}
 			for id: Variant in (salvage["outputs"] as Dictionary).keys():
@@ -1351,10 +1362,10 @@ func dismantle_instance(instance_id: String, station_id: String, event_id: Strin
 			var record := _require_bag_instance(candidate, state, instance_id, result)
 			if record.is_empty():
 				return false
-			var salvage: Dictionary = item(String(record["item_id"])).get("salvage", {})
+			var salvage: Dictionary = item(str(record["item_id"])).get("salvage", {})
 			if salvage.is_empty():
 				result["reason"] = "not_dismantlable"; return false
-			if _station(station_id, String(salvage["station"]), int(salvage["min_tier"])).is_empty():
+			if _station(station_id, str(salvage["station"]), int(salvage["min_tier"])).is_empty():
 				result["reason"] = "station_unavailable"; return false
 			var trial: Dictionary = candidate.duplicate(true)
 			if not _remove(trial, instance_id, 1) or not _add_outputs(trial, salvage["outputs"]):
@@ -1371,8 +1382,8 @@ func repair(instance_id: String, station_id: String, event_id: String) -> Dictio
 			var record := _require_bag_instance(candidate, state, instance_id, result)
 			if record.is_empty():
 				return false
-			var definition := item(String(record["item_id"]))
-			if String(definition.get("repair_policy", "")) != "material_repair":
+			var definition := item(str(record["item_id"]))
+			if str(definition.get("repair_policy", "")) != "material_repair":
 				result["reason"] = "core_requires_reconstruction"; return false
 			var missing := int(record["max_condition"]) - int(record["condition"])
 			if missing <= 0:
@@ -1389,7 +1400,7 @@ func repair(instance_id: String, station_id: String, event_id: String) -> Dictio
 
 func reconstruct_core(recipe_id: String, specimen_id: String, station_id: String, event_id: String) -> Dictionary:
 	var r := recipe(recipe_id)
-	if r.is_empty() or String(r.get("category", "")) != "reconstruction":
+	if r.is_empty() or str(r.get("category", "")) != "reconstruction":
 		return _fail("not_a_reconstruction")
 	if not _valid_recipe_outputs(r):
 		return _fail("invalid_recipe_outputs")
@@ -1400,9 +1411,9 @@ func reconstruct_core(recipe_id: String, specimen_id: String, station_id: String
 			var record := _require_bag_instance(candidate, state, specimen_id, result)
 			if record.is_empty():
 				return false
-			if String(record["item_id"]) != String(r["consumes_specimen"]):
+			if str(record["item_id"]) != str(r["consumes_specimen"]):
 				result["reason"] = "specimen_item_mismatch"; return false
-			var station := _station(station_id, String(r["station"]), int(r["min_tier"]))
+			var station := _station(station_id, str(r["station"]), int(r["min_tier"]))
 			if station.is_empty():
 				result["reason"] = "station_unavailable"; return false
 			if _queue_count(state, station_id) >= int(station.get("queue_capacity", 1)):
@@ -1416,7 +1427,7 @@ func reconstruct_core(recipe_id: String, specimen_id: String, station_id: String
 			state["counter"] = int(state["counter"]) + 1
 			var id := "job_%06d" % int(state["counter"])
 			state["jobs"][id] = {"job_id": id, "kind": "craft", "target": recipe_id,
-				"station_id": station_id, "station_kind": String(r["station"]), "tier": int(r["min_tier"]),
+				"station_id": station_id, "station_kind": str(r["station"]), "tier": int(r["min_tier"]),
 				"status": "queued", "elapsed": 0, "duration": int(r["duration_ticks"]),
 				"reserved": reserved, "reserved_fuel": fuel_reserved, "reserved_instances": {specimen_id: record}, "outputs": {}, "output_instances": {}}
 			_capture_time_baseline(state, station_id)
@@ -1424,7 +1435,7 @@ func reconstruct_core(recipe_id: String, specimen_id: String, station_id: String
 			return true)
 
 func _skill_binding(definition: Dictionary) -> Dictionary:
-	if String(definition.get("skill_readiness", "")) != "A4_VERIFIED":
+	if str(definition.get("skill_readiness", "")) != "A4_VERIFIED":
 		return {}
 	var binding: Variant = definition.get("verified_skill_binding", {})
 	return binding if binding is Dictionary else {}
@@ -1436,24 +1447,24 @@ func _valid_skill_attestation(attestation: Variant, definition: Dictionary, inst
 	var binding := _skill_binding(definition)
 	if binding.is_empty():
 		return false
-	if String(a.get("contract", "")) != SKILL_CONTRACT or String(a.get("verification_status", "")) != "A4_VERIFIED":
+	if str(a.get("contract", "")) != SKILL_CONTRACT or str(a.get("verification_status", "")) != "A4_VERIFIED":
 		return false
-	if not bool(a.get("ready", false)) or String(a.get("gameplay_boundary", "")) != "authoritative_commit":
+	if not bool(a.get("ready", false)) or str(a.get("gameplay_boundary", "")) != "authoritative_commit":
 		return false
-	if String(a.get("cast_id", "")) != cast_id or String(a.get("instance_id", "")) != instance_id:
+	if str(a.get("cast_id", "")) != cast_id or str(a.get("instance_id", "")) != instance_id:
 		return false
 	if not (a.get("expected_revision", null) is int) or int(a["expected_revision"]) != expected_revision:
 		return false
-	if String(a.get("context_sha256", "")) != context_sha256:
+	if str(a.get("context_sha256", "")) != context_sha256:
 		return false
 	for field in ["abstract_skill_id", "original_skill_id", "skill_version", "source_sha256", "verification_evidence_id"]:
-		if String(a.get(field, "")).is_empty() or String(a.get(field, "")) != String(binding.get(field, "")):
+		if str(a.get(field, "")).is_empty() or str(a.get(field, "")) != str(binding.get(field, "")):
 			return false
-	if String(a.get("gameplay_commit_token", "")).is_empty():
+	if str(a.get("gameplay_commit_token", "")).is_empty():
 		return false
-	if String(a.get("core_item_id", "")) != String(definition.get("id", "")):
+	if str(a.get("core_item_id", "")) != str(definition.get("id", "")):
 		return false
-	var sha := String(a.get("source_sha256", ""))
+	var sha := str(a.get("source_sha256", ""))
 	if sha.length() != 64:
 		return false
 	for i in range(sha.length()):
@@ -1473,8 +1484,8 @@ func commit_cast(instance_id: String, cast_id: String, expected_revision: int, c
 				result["reason"] = "stale_revision"; return false
 			if int(record["uses"]) <= 0 or int(record["condition"]) <= 0:
 				result["reason"] = "core_depleted"; return false
-			var definition := item(String(record["item_id"]))
-			if String(definition.get("kind", "")) != "skill_core":
+			var definition := item(str(record["item_id"]))
+			if str(definition.get("kind", "")) != "skill_core":
 				result["reason"] = "not_a_skill_core"; return false
 			var binding := _skill_binding(definition)
 			if binding.is_empty() or not _skill_attestor.is_valid():

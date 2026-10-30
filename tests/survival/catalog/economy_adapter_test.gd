@@ -3,6 +3,7 @@ extends SceneTree
 ## Station/time/skill producers are explicit NATIVE FIXTURE contracts. They are
 ## not A0 production placement, not an authoritative wall-clock, and not A4 Gold
 ## verification. Production catalog Cores remain BLOCKED_PENDING_A4.
+const SaveServiceClass = preload("res://game/autoload/save_service.gd")
 const Economy = preload("res://game/survival/economy/economy_service.gd")
 const WorldSources = preload("res://game/survival/economy/world_source_adapter.gd")
 const Survival = preload("res://game/survival/survival_service.gd")
@@ -80,7 +81,7 @@ func _host_time(station_id: String) -> Dictionary:
 	return {"contract": TIME_CONTRACT, "station_id": station_id,
 		"session_id": clock_session_id, "session_index": clock_session_index,
 		"sequence": clock_sequence, "active_ticks": int(clock_station_ticks.get(station_id, 0)),
-		"station_revision": String(clock_revisions.get(station_id, "rev-1"))}
+		"station_revision": str(clock_revisions.get(station_id, "rev-1"))}
 
 func _tick(station_id: String, ticks: int, event_id: String) -> Dictionary:
 	clock_station_ticks[station_id] = int(clock_station_ticks.get(station_id, 0)) + ticks
@@ -100,7 +101,7 @@ func _reload(new_session := true) -> void:
 	eco.configure_world_host(_world_host)
 
 func _give(id: String, amount: int) -> void:
-	var kind := String(eco.item(id).get("kind", "material"))
+	var kind := str(eco.item(id).get("kind", "material"))
 	if kind in ["station_kit", "equipment", "skill_core"]:
 		kind = "material"
 	_expect(bool(save.call(&"grant_inventory_item", id, kind, amount, "fixture.%d.%s.%d" % [case_id, id, Time.get_ticks_usec()])), "fixture grant " + id)
@@ -117,11 +118,11 @@ func _finish_job(job_id: String, station := "bench") -> void:
 		return
 	for i in range(4):
 		var js: Dictionary = eco.jobs()
-		if not js.has(job_id) or String(js[job_id].status) == "ready":
+		if not js.has(job_id) or str(js[job_id].status) == "ready":
 			break
 		var advanced: Dictionary = _tick(station, 600, "tick.%d.%s.%d" % [case_id, job_id, i])
 		if not bool(advanced.ok):
-			_expect(false, "advance production: " + String(advanced.get("reason", "")))
+			_expect(false, "advance production: " + str(advanced.get("reason", "")))
 			return
 	var collected: Dictionary = eco.collect(job_id, "collect.%d.%s" % [case_id, job_id])
 	_expect(bool(collected.ok), "collect output")
@@ -309,7 +310,7 @@ func _run() -> void:
 	var fresh: Array[Dictionary] = eco.owned_instances("core_venom")
 	_expect(fresh.size() == 1, "new Core identity, old shell consumed")
 	if fresh.size() == 1:
-		_expect(String(fresh[0].instance_id) != shell_id, "reconstruction creates a new token")
+		_expect(str(fresh[0].instance_id) != shell_id, "reconstruction creates a new token")
 		_expect(int(fresh[0].uses) == 12, "reconstruction is manufacture, not free repair")
 	# 09 lossy dismantling and full-inventory refusal.
 	_begin("lossy recycling / no repair-recycle profit")
@@ -344,7 +345,7 @@ func _run() -> void:
 	var paused: Dictionary = eco.enqueue("burn_charcoal", "furnace", "pause.job")
 	stations["furnace"]["operational"] = false
 	_expect(bool(_tick("furnace", 100, "pause.tick").ok), "disabled station receipt accepted without progress")
-	_expect(String(eco.jobs()[paused.job_id].status) == "paused", "job paused without output")
+	_expect(str(eco.jobs()[paused.job_id].status) == "paused", "job paused without output")
 	_reload()
 	stations["furnace"]["operational"] = true
 	_finish_job(paused.job_id, "furnace")
@@ -439,7 +440,7 @@ func _run() -> void:
 	_expect(not bool(eco.advance("furnace", _host_time("furnace"), "no.host").ok), "missing time host fails closed")
 	eco.configure_time_host(_host_time)
 	var no_elapsed: Dictionary = eco.advance("furnace", _host_time("furnace"), "no.elapsed")
-	_expect(not bool(no_elapsed.ok) and String(no_elapsed.reason) == "no_elapsed_time", "new event id with no elapsed clock rejected")
+	_expect(not bool(no_elapsed.ok) and str(no_elapsed.reason) == "no_elapsed_time", "new event id with no elapsed clock rejected")
 	_expect(bool(_tick("furnace", 4, "time.partial").ok), "trusted partial tick accepted")
 	var receipt: Dictionary = _host_time("furnace")
 	_expect(bool(eco.advance("furnace", receipt, "time.partial").get("duplicate", false)), "duplicate tick event idempotent")
@@ -464,7 +465,7 @@ func _run() -> void:
 	_reload()
 	var first_after_reload: Dictionary = _tick("furnace", 600, "reload.time.first")
 	_expect(bool(first_after_reload.ok) and int(first_after_reload.get("applied_ticks", -1)) == 0, "new session establishes baseline without offline catch-up")
-	_expect(String(eco.jobs()[rj.job_id].status) != "ready", "no instant finish after reload")
+	_expect(str(eco.jobs()[rj.job_id].status) != "ready", "no instant finish after reload")
 	_finish_job(rj.job_id, "furnace")
 	_expect(_count("charcoal") == 4, "post-reload active time only")
 	# 18 station removal, power, revision, mixed kinds, queue fairness, cancel/resume.
@@ -475,14 +476,14 @@ func _run() -> void:
 	_expect(bool(_tick("multi", 4, "station.partial").ok), "station partial progress")
 	stations["multi"]["operational"] = false
 	_expect(bool(_tick("multi", 100, "station.off").ok), "power-off receipt accepted")
-	_expect(String(eco.jobs()[s1.job_id].status) == "paused", "power-off pauses job")
+	_expect(str(eco.jobs()[s1.job_id].status) == "paused", "power-off pauses job")
 	_expect(int(eco.jobs()[s1.job_id].elapsed) == 4, "disabled time not accrued")
 	stations["multi"]["operational"] = true
 	_expect(bool(_tick("multi", 1, "station.on").ok), "power-on receipt accepted")
 	_expect(int(eco.jobs()[s1.job_id].elapsed) == 5, "only new active tick accrued")
 	stations.erase("multi")
 	_expect(bool(_tick("multi", 100, "station.removed").ok), "removed station receipt accepted without progress")
-	_expect(String(eco.jobs()[s1.job_id].status) == "paused", "removed station pauses job")
+	_expect(str(eco.jobs()[s1.job_id].status) == "paused", "removed station pauses job")
 	_expect(bool(eco.cancel(s1.job_id, "station.cancel.removed").ok), "removed station job cancellable")
 	_expect(bool(eco.collect(s1.job_id, "station.collect.removed").ok), "removed station escrow recoverable")
 	_expect(_count("oak_wood") == 8, "removed station refund exact")
@@ -492,7 +493,7 @@ func _run() -> void:
 	stations["multi"]["station_revision"] = "rev-2"
 	clock_revisions["multi"] = "rev-2"
 	_expect(bool(_tick("multi", 10, "station.rev.changed").ok), "station revision change accepted")
-	_expect(String(eco.jobs()[s2.job_id].status) == "paused", "revision change pauses old job")
+	_expect(str(eco.jobs()[s2.job_id].status) == "paused", "revision change pauses old job")
 	_expect(bool(_tick("multi", 600, "station.rev.resume").ok), "revision baseline resumes")
 	_expect(bool(eco.collect(s2.job_id, "station.rev.collect").ok), "revision job collectible")
 	stations["multi"]["kind"] = "workbench"
@@ -507,7 +508,7 @@ func _run() -> void:
 	var q2: Dictionary = eco.enqueue("burn_charcoal", "multi", "queue.2")
 	_expect(bool(q2.ok), "second queue slot used")
 	_expect(bool(_tick("multi", 10, "queue.fairness").ok), "bounded queue tick accepted")
-	_expect(String(eco.jobs()[q1.job_id].status) == "ready", "first job finishes before second")
+	_expect(str(eco.jobs()[q1.job_id].status) == "ready", "first job finishes before second")
 	_expect(int(eco.jobs()[q2.job_id].elapsed) > 0, "remaining time advances second job fairly")
 	_finish_job(q1.job_id, "multi")
 	_finish_job(q2.job_id, "multi")
@@ -601,16 +602,16 @@ func _move(poi_id: String, cell: Vector2i) -> void:
 
 func _craft(recipe_id: String, station_id: String, event_id: String) -> void:
 	var job: Dictionary = eco.enqueue(recipe_id, station_id, event_id)
-	_expect(bool(job.get("ok", false)), "enqueue " + recipe_id + ": " + String(job.get("reason", "")))
+	_expect(bool(job.get("ok", false)), "enqueue " + recipe_id + ": " + str(job.get("reason", "")))
 	if bool(job.get("ok", false)):
-		_finish_job(String(job.job_id), station_id)
+		_finish_job(str(job.job_id), station_id)
 
 func _begin_live(label: String) -> void:
 	case_id += 1
 	print("[case %02d] %s" % [case_id, label])
 	var root_save := get_root().get_node_or_null("SaveService")
 	if root_save == null:
-		root_save = SaveService.new()
+		root_save = SaveServiceClass.new()
 		root_save.name = "SaveService"
 		get_root().add_child(root_save)
 	save = root_save
@@ -644,59 +645,61 @@ func _begin_live(label: String) -> void:
 func _harvest(node_id: String, kind: String, hits: int, stamp: int) -> void:
 	for i in range(hits):
 		var result: Dictionary = survival.call(&"harvest", node_id, kind, stamp + i)
-		_expect(bool(result.get("ok", false)), "live harvest %s %d: %s" % [node_id, i, String(result.get("reason", ""))])
+		_expect(bool(result.get("ok", false)), "live harvest %s %d: %s" % [node_id, i, str(result.get("reason", ""))])
 
 func _case_21_canonical_world_sources() -> void:
 	_begin("canonical A1 locker / ledger / cache / deadfall / relay")
 	var before := _count("iron_scrap")
 	_move("poi_crown_waystation", Vector2i(408, 199))
 	var locker: Dictionary = _world_act("pry_locker", "", "w21.locker")
-	_expect(bool(locker.ok) and String(locker.result) == "SUCCESS", "locker succeeds")
+	_expect(bool(locker.ok) and str(locker.result) == "SUCCESS", "locker succeeds")
 	_expect((locker.granted_items as Dictionary).is_empty(), "locker grants ZERO physical items")
 	_expect((locker.granted_capabilities as Array).has("cap_salvage"), "locker grants cap_salvage")
 	_expect(_count("iron_scrap") == before and _count("knowledge_spares") == 0, "locker does not mint materials")
 	_expect(eco.has_capability("cap_salvage"), "capability projection")
 	var locker_dup: Dictionary = _world_act("pry_locker", "", "w21.locker")
-	_expect(bool(locker_dup.ok) and String(locker_dup.result) == "ALREADY_APPLIED", "same-event locker replay is idempotent")
+	_expect(bool(locker_dup.ok) and str(locker_dup.result) == "ALREADY_APPLIED", "same-event locker replay is idempotent")
 	var locker_new_event: Dictionary = _world_act("pry_locker", "", "w21.locker.again")
-	_expect(bool(locker_new_event.ok) and String(locker_new_event.result) == "ALREADY_APPLIED", "one-time locker cannot be re-granted")
+	_expect(bool(locker_new_event.ok) and str(locker_new_event.result) == "ALREADY_APPLIED", "one-time locker cannot be re-granted")
 	_move("poi_crown_waystation", Vector2i(410, 202))
 	var ledger: Dictionary = _world_act("seal_ledger", "", "w21.ledger")
 	_expect(bool(ledger.ok) and (ledger.granted_items as Dictionary).is_empty(), "ledger grants capability only")
 	_expect(eco.has_capability("cap_seal_1"), "ledger grants cap_seal_1")
-	# Relay before timber: real material cost, no partial consumption.
+	# Relay before timber: real material cost, no partial consumption. Give the
+	# exact scrap leg first so the negative isolates missing oak, not missing scrap.
 	_move("poi_crown_relay_shed", Vector2i(442, 234))
+	_give("iron_scrap", 2)
 	var scrap_before_relay := _count("iron_scrap")
 	var relay_missing: Dictionary = _world_act("hand_crank_bypass", "", "w21.relay.missing")
-	_expect(not bool(relay_missing.ok) and String(relay_missing.reason) == "MISSING_ITEM:oak_wood", "relay rejects missing timber")
+	_expect(not bool(relay_missing.ok) and str(relay_missing.reason) == "MISSING_ITEM:oak_wood", "relay rejects missing timber")
 	_expect(_count("iron_scrap") == scrap_before_relay and not eco.has_capability("cap_power_1"), "missing-cost relay is atomic")
 	# Outside renewable cache owns the canonical materials.
 	_move("poi_crown_waystation", Vector2i(406, 202))
 	var cache1: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.1")
-	_expect(bool(cache1.ok) and String(cache1.result) == "SUCCESS", "cache claim 1 by canonical si:* world instance")
+	_expect(bool(cache1.ok) and str(cache1.result) == "SUCCESS", "cache claim 1 by canonical si:* world instance")
 	_expect(int((cache1.granted_items as Dictionary).get("iron_scrap", 0)) == 3, "cache grants canonical 3 scrap")
 	_expect(int((cache1.granted_items as Dictionary).get("knowledge_spares", 0)) == 2, "cache grants canonical 2 spares")
-	_expect(String(cache1.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "canonical A1 transaction key")
+	_expect(str(cache1.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "canonical A1 transaction key")
 	var projection: Dictionary = eco.world_projection("poi_crown_waystation")
 	var cache_projection: Dictionary = {}
 	for raw: Variant in projection.get("sources", []):
-		if String((raw as Dictionary).instance_id) == "si:r_ashen_crown:waystation_cache:01":
+		if str((raw as Dictionary).instance_id) == "si:r_ashen_crown:waystation_cache:01":
 			cache_projection = raw
 	_expect(int(cache_projection.get("claim_count", 0)) == 1 and not bool(cache_projection.get("ready", true)), "cache cooldown projected read-only")
-	_expect(String(cache_projection.get("interaction_node_id", "")) == "node_waystation_cache", "projection exposes pinned node alias")
+	_expect(str(cache_projection.get("interaction_node_id", "")) == "node_waystation_cache", "projection exposes pinned node alias")
 	var alias_early: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.alias")
-	_expect(not bool(alias_early.ok) and String(alias_early.reason) == "COOLDOWN", "node_* alias resolves to the same physical cache, not a second source")
+	_expect(not bool(alias_early.ok) and str(alias_early.reason) == "COOLDOWN", "node_* alias resolves to the same physical cache, not a second source")
 	var early: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.early")
-	_expect(not bool(early.ok) and String(early.reason) == "COOLDOWN", "cache rejects before active-time cooldown")
+	_expect(not bool(early.ok) and str(early.reason) == "COOLDOWN", "cache rejects before active-time cooldown")
 	_world_tick(1799, "w21.time.1799")
 	var still: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.still")
 	_expect(not bool(still.ok) and int(still.get("remaining_active_seconds", 0)) == 1, "cooldown uses cumulative ACTIVE seconds")
 	_world_tick(1, "w21.time.1")
 	var cache2: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.2")
-	_expect(bool(cache2.ok) and String(cache2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "cache generation 2 after 1800 active seconds via node alias")
+	_expect(bool(cache2.ok) and str(cache2.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:2", "cache generation 2 after 1800 active seconds via node alias")
 	var replay_after_generation: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w21.cache.1")
-	_expect(bool(replay_after_generation.ok) and String(replay_after_generation.result) == "ALREADY_APPLIED", "same event_id replay stays idempotent after generation advances")
-	_expect(String(replay_after_generation.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "replay returns the original canonical key, not the current generation")
+	_expect(bool(replay_after_generation.ok) and str(replay_after_generation.result) == "ALREADY_APPLIED", "same event_id replay stays idempotent after generation advances")
+	_expect(str(replay_after_generation.transaction_key) == "a1slice:poi_crown_waystation:cache_restock:1", "replay returns the original canonical key, not the current generation")
 	# Offline / new session must not credit wall-clock time.
 	world_session_index += 1
 	world_session_id = "fixture-world-2"
@@ -704,7 +707,7 @@ func _case_21_canonical_world_sources() -> void:
 	world_sequence = 0
 	_world_tick(0, "w21.newsession")
 	var offline: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.offline")
-	_expect(not bool(offline.ok) and String(offline.reason) == "COOLDOWN", "new session does not skip cooldown")
+	_expect(not bool(offline.ok) and str(offline.reason) == "COOLDOWN", "new session does not skip cooldown")
 	_world_tick(1800, "w21.time.session2")
 	var cache3: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.3")
 	_expect(bool(cache3.ok), "cooldown persists across sessions and completes with active time")
@@ -728,7 +731,7 @@ func _case_21_canonical_world_sources() -> void:
 	_expect(eco.has_capability("cap_salvage") and eco.has_capability("cap_seal_1") and eco.has_capability("cap_power_1"), "capabilities survive reload")
 	_move("poi_crown_waystation", Vector2i(406, 202))
 	var after_reload: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w21.cache.3")
-	_expect(bool(after_reload.ok) and String(after_reload.result) == "ALREADY_APPLIED", "canonical receipt survives reload")
+	_expect(bool(after_reload.ok) and str(after_reload.result) == "ALREADY_APPLIED", "canonical receipt survives reload")
 
 func _case_22_world_atomicity_and_failed_save() -> void:
 	_begin("world claim capacity / failed-save atomicity")
@@ -740,7 +743,7 @@ func _case_22_world_atomicity_and_failed_save() -> void:
 		var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
 		var stacks := {}
 		for i in range(30):
-			stacks["a3_fill_%02d" % i] = {"item_id": "oak_wood", "kind": "material", "quantity": 999,
+			stacks["a3_fill_%02d" % i] = {"item_id": "oak_wood", "kind": "material", "quantity": 50,
 				"metadata": {"source": "native_fixture_capacity"}}
 		inventory["item_stacks"] = stacks
 		candidate["inventory"] = inventory
@@ -749,7 +752,7 @@ func _case_22_world_atomicity_and_failed_save() -> void:
 	_move("poi_crown_waystation", Vector2i(406, 202))
 	var full_before := JSON.stringify(_snapshot())
 	var full: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w22.full")
-	_expect(not bool(full.ok) and String(full.reason) == "inventory_full", "full bag rejects whole claim")
+	_expect(not bool(full.ok) and str(full.reason) == "inventory_full", "full bag rejects whole claim")
 	_expect(JSON.stringify(_snapshot()) == full_before, "capacity failure changes no inventory, cooldown or receipt")
 	var clear := func(candidate: Dictionary) -> bool:
 		var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
@@ -763,13 +766,13 @@ func _case_22_world_atomicity_and_failed_save() -> void:
 	_expect(DirAccess.make_dir_recursive_absolute(tmp_abs) == OK, "fixture creates .tmp write obstruction")
 	var fail_before := JSON.stringify(_snapshot())
 	var failed: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w22.failedsave")
-	_expect(not bool(failed.ok) and String(failed.reason) == "save_failed", "failed authoritative save rejects claim")
+	_expect(not bool(failed.ok) and str(failed.reason) == "save_failed", "failed authoritative save rejects claim")
 	_expect(JSON.stringify(_snapshot()) == fail_before, "failed save leaves inventory/world/receipt unchanged")
 	DirAccess.remove_absolute(tmp_abs)
 	var retry: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w22.retry")
 	_expect(bool(retry.ok) and int((retry.granted_items as Dictionary).get("iron_scrap", 0)) == 3, "retry after I/O repair grants exactly once")
 	var retry_dup: Dictionary = _world_act("cache_restock", "node_waystation_cache", "w22.retry")
-	_expect(bool(retry_dup.ok) and String(retry_dup.result) == "ALREADY_APPLIED", "retry receipt is idempotent")
+	_expect(bool(retry_dup.ok) and str(retry_dup.result) == "ALREADY_APPLIED", "retry receipt is idempotent")
 
 func _case_23_source_to_research_to_output_chain() -> void:
 	_begin_live("no-Core multi-source -> paid stations -> basic-tool research -> iron_pick -> reload")
@@ -840,28 +843,28 @@ func _case_23_source_to_research_to_output_chain() -> void:
 	# Basic-tool targeted research uses the explicit A3 recipe override (3 spares
 	# + 1 note). Advanced targeted research still defaults to 6 spares + 2 notes.
 	var research: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w23.research.pick")
-	_expect(bool(research.ok), "basic-tool targeted research enqueued: " + String(research.get("reason", "")))
+	_expect(bool(research.ok), "basic-tool targeted research enqueued: " + str(research.get("reason", "")))
 	if bool(research.ok):
-		_finish_job(String(research.job_id), "lab")
+		_finish_job(str(research.job_id), "lab")
 	_expect(eco.known("iron_pick"), "iron_pick recipe permanently learned")
 	var repeat: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w23.research.pick.again")
-	_expect(not bool(repeat.ok) and String(repeat.reason) == "already_known", "learned knowledge is not consumed/repeated")
+	_expect(not bool(repeat.ok) and str(repeat.reason) == "already_known", "learned knowledge is not consumed/repeated")
 	_craft("iron_pick", "bench", "w23.craft.pick")
 	var picks := 0
 	for raw: Variant in (eco.document().get("instances", {}) as Dictionary).values():
-		if String((raw as Dictionary).get("item_id", "")) == "iron_pick":
+		if str((raw as Dictionary).get("item_id", "")) == "iron_pick":
 			picks += 1
 	_expect(picks == 1, "one physical iron_pick output")
 	_expect(_count("iron_scrap") == 4 and _count("knowledge_spares") == 4 and _count("research_notes") == 1 and _count("oak_wood") == 5 and _count("stone_chunk") == 4 and _count("reed_fibre") == 1 and _count("binding_cloth") == 1 and _count("iron_ingot") == 0, "exact leftover inventory after paid chain")
 	_expect(_count("core_ember") == 0 and _count("core_frost") == 0 and _count("core_venom") == 0, "no Skill Core was required or granted")
-	var learned_before := eco.known("iron_pick")
+	var learned_before: bool = eco.known("iron_pick")
 	var world_before: Dictionary = eco.world_document()
 	_reload()
 	_expect(eco.known("iron_pick") == learned_before, "recipe knowledge survives reload")
 	_expect(eco.has_capability("cap_power_1") and bool((eco.world_document().get("pois", {}) as Dictionary).has("poi_crown_relay_shed")), "world capabilities/state survive reload")
 	var picks_after := 0
 	for raw: Variant in (eco.document().get("instances", {}) as Dictionary).values():
-		if String((raw as Dictionary).get("item_id", "")) == "iron_pick":
+		if str((raw as Dictionary).get("item_id", "")) == "iron_pick":
 			picks_after += 1
 	_expect(picks_after == 1, "physical output survives reload without duplication")
 	_expect(int((world_before.get("clock", {}) as Dictionary).get("active_seconds", -1)) == int((eco.world_document().get("clock", {}) as Dictionary).get("active_seconds", -2)), "cumulative active world clock survives reload")
@@ -884,18 +887,18 @@ func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
 	_expect(bool(first.ok), "first cache claim")
 	var before := JSON.stringify(_snapshot())
 	# Caller cannot inject UI authorization flags or rewards.
-	var spoof_request := eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
+	var spoof_request: Dictionary = eco.world_action({"poi_id": "poi_crown_waystation", "action_id": "cache_restock",
 		"instance_id": "si:r_ashen_crown:waystation_cache:01", "ready": true, "rewards": {"core_ember": 1}}, "w24.ui.spoof")
-	_expect(not bool(spoof_request.ok) and String(spoof_request.reason).begins_with("invalid_world_request_field"), "UI flags/rewards cannot authorize a claim")
+	_expect(not bool(spoof_request.ok) and str(spoof_request.reason).begins_with("invalid_world_request_field"), "UI flags/rewards cannot authorize a claim")
 	_expect(JSON.stringify(_snapshot()) == before, "UI spoof changes no state")
 	# Same event id with a different physical request is a conflict, not a replay.
 	var conflict: Dictionary = _world_act("cache_restock", "node_waystation_approach_deadfall", "w24.cache.1")
-	_expect(not bool(conflict.ok) and String(conflict.reason) == "event_id_conflict", "event id cannot be reused for a different source")
+	_expect(not bool(conflict.ok) and str(conflict.reason) == "event_id_conflict", "event id cannot be reused for a different source")
 	# Active-time quantum spoof: a huge jump is rejected without consuming cooldown.
 	world_active_seconds += 3601
 	world_sequence += 1
 	var quantum: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.quantum")
-	_expect(not bool(quantum.ok) and String(quantum.reason) == "world_time_quantum_exceeded", "host time quantum spoof rejected")
+	_expect(not bool(quantum.ok) and str(quantum.reason) == "world_time_quantum_exceeded", "host time quantum spoof rejected")
 	_expect(JSON.stringify(_snapshot()) == before, "quantum spoof leaves save unchanged")
 	world_active_seconds -= 3601
 	world_sequence -= 1
@@ -904,11 +907,11 @@ func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
 	var after_tick := JSON.stringify(_snapshot())
 	world_sequence -= 1
 	var stale_seq: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.staleseq")
-	_expect(not bool(stale_seq.ok) and String(stale_seq.reason) == "stale_world_sequence", "stale host sequence rejected")
+	_expect(not bool(stale_seq.ok) and str(stale_seq.reason) == "stale_world_sequence", "stale host sequence rejected")
 	world_sequence += 1
 	world_active_seconds -= 1
 	var regress: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.regress")
-	_expect(not bool(regress.ok) and String(regress.reason) == "world_clock_regressed", "host clock regression rejected")
+	_expect(not bool(regress.ok) and str(regress.reason) == "world_clock_regressed", "host clock regression rejected")
 	world_active_seconds += 1
 	_expect(JSON.stringify(_snapshot()) == after_tick, "clock attacks conserve the committed snapshot")
 	# A new session may baseline a large host counter, but it cannot credit that
@@ -920,13 +923,13 @@ func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
 	var baseline: Dictionary = eco.advance_world_time("poi_crown_waystation", "w24.newsession.baseline")
 	_expect(bool(baseline.ok), "new session baselines host counter")
 	var offline: Dictionary = _world_act("cache_restock", "si:r_ashen_crown:waystation_cache:01", "w24.newsession.claim")
-	_expect(not bool(offline.ok) and String(offline.reason) == "COOLDOWN", "spoofed session counter does not skip cooldown")
+	_expect(not bool(offline.ok) and str(offline.reason) == "COOLDOWN", "spoofed session counter does not skip cooldown")
 	# Partial relay cost must not consume the affordable material.
 	_move("poi_crown_relay_shed", Vector2i(442, 234))
 	_give("iron_scrap", 2)
 	var scrap_before := _count("iron_scrap")
 	var partial: Dictionary = _world_act("hand_crank_bypass", "", "w24.relay.partial")
-	_expect(not bool(partial.ok) and String(partial.reason) == "MISSING_ITEM:oak_wood", "relay rejects partial cost")
+	_expect(not bool(partial.ok) and str(partial.reason) == "MISSING_ITEM:oak_wood", "relay rejects partial cost")
 	_expect(_count("iron_scrap") == scrap_before and not eco.has_capability("cap_power_1"), "partial cost consumes nothing and grants no capability")
 	# Permanent knowledge is not revoked by a failed craft or world attack.
 	_station("lab", "research")
@@ -934,7 +937,7 @@ func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
 	var research: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w24.research")
 	_expect(bool(research.ok), "research enqueued for conservation check")
 	if bool(research.ok):
-		_finish_job(String(research.job_id), "lab")
+		_finish_job(str(research.job_id), "lab")
 	_expect(eco.known("iron_pick"), "knowledge learned")
 	var failed_craft: Dictionary = eco.enqueue("iron_pick", "bench", "w24.craft.missing")
 	_expect(not bool(failed_craft.ok), "craft without inputs fails")
@@ -943,17 +946,17 @@ func _case_24_world_adversarial_clock_identity_and_conservation() -> void:
 func _case_25_quarry_fail_closed_and_hidden_projection() -> void:
 	_begin("A8 Quarry fail-closed + undiscovered projection privacy")
 	var hidden: Dictionary = eco.world_projection("poi_crown_waystation")
-	_expect(String(hidden.get("visibility", "")) == "HIDDEN" and (hidden.get("sources", []) as Array).is_empty(), "undiscovered POI hides private source/reward metadata")
+	_expect(str(hidden.get("visibility", "")) == "HIDDEN" and (hidden.get("sources", []) as Array).is_empty(), "undiscovered POI hides private source/reward metadata")
 	var quarry: Dictionary = eco.world_action({"poi_id": "poi_crown_south_quarry", "action_id": "brace_east_shelf"}, "w25.quarry.brace")
-	_expect(not bool(quarry.ok) and String(quarry.reason) == "unknown_world_poi", "unauthorized Quarry POI is rejected")
+	_expect(not bool(quarry.ok) and str(quarry.reason) == "unknown_world_poi", "unauthorized Quarry POI is rejected")
 	var quarry_cost: Dictionary = eco.world_action({"poi_id": "poi_crown_south_quarry", "action_id": "extract_outcrop", "cost_quantity": 1, "reward_quantity": 2}, "w25.quarry.extract")
-	_expect(not bool(quarry_cost.ok) and String(quarry_cost.reason).begins_with("invalid_world_request_field"), "caller cannot price/authorize Quarry through request fields")
+	_expect(not bool(quarry_cost.ok) and str(quarry_cost.reason).begins_with("invalid_world_request_field"), "caller cannot price/authorize Quarry through request fields")
 	var quarry_projection: Dictionary = eco.world_projection("poi_crown_south_quarry")
 	_expect(quarry_projection.is_empty(), "Quarry has no read-only economy projection until authorized")
 	_move("poi_crown_waystation", Vector2i(408, 199))
 	_expect(bool(_world_act("pry_locker", "", "w25.locker").ok), "locker discovers Waystation")
 	var discovered: Dictionary = eco.world_projection("poi_crown_waystation")
-	_expect(String(discovered.get("visibility", "")) == "DISCOVERED" and not (discovered.get("sources", []) as Array).is_empty(), "discovered POI exposes actionable read-only sources")
+	_expect(str(discovered.get("visibility", "")) == "DISCOVERED" and not (discovered.get("sources", []) as Array).is_empty(), "discovered POI exposes actionable read-only sources")
 
 func _case_26_one_time_crates_and_basic_tool_research_policy() -> void:
 	_begin("one-time A1 crates, exhausted projection, and basic-tool research override")
@@ -962,34 +965,41 @@ func _case_26_one_time_crates_and_basic_tool_research_policy() -> void:
 	_expect(bool(first.ok), "one-time crate 02 first claim succeeds")
 	var before := JSON.stringify(_snapshot())
 	var again: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w26.crate02.again")
-	_expect(bool(again.ok) and String(again.result) == "ALREADY_APPLIED", "new event cannot reclaim one-time crate 02")
+	_expect(bool(again.ok) and str(again.result) == "ALREADY_APPLIED", "new event cannot reclaim one-time crate 02")
 	_expect(JSON.stringify(_snapshot()) == before, "exhausted one-time claim changes no inventory/cooldown/receipt")
 	var replay: Dictionary = _world_act("salvage_roadside_supplies_02", "si:r_ashen_crown:roadside_supply:02", "w26.crate02.first")
-	_expect(bool(replay.ok) and String(replay.result) == "ALREADY_APPLIED", "same-event one-time replay remains idempotent")
+	_expect(bool(replay.ok) and str(replay.result) == "ALREADY_APPLIED", "same-event one-time replay remains idempotent")
 	_move("poi_crown_waystation", Vector2i(408, 199))
 	_expect(bool(_world_act("pry_locker", "", "w26.locker").ok), "discover Waystation for projection")
 	var projection: Dictionary = eco.world_projection("poi_crown_waystation")
 	var crate_entry := {}
 	for raw: Variant in (projection.get("sources", []) as Array):
-		if String((raw as Dictionary).get("binding_id", "")) == "a1_roadside_salvage_02_v5":
+		if str((raw as Dictionary).get("binding_id", "")) == "a1_roadside_salvage_02_v5":
 			crate_entry = raw
 	_expect(int(crate_entry.get("max_claims", 0)) == 1 and bool(crate_entry.get("exhausted", false)) and not bool(crate_entry.get("ready", true)), "A6 projection marks one-time crate exhausted, not cooling down")
 	# Basic iron_pick research is cheaper than advanced targeted research, but it
 	# still pays real spares/notes and still requires a physical research station.
+	# Clear the one-time crate loot so the cost negative is exact.
+	var clear_research_bag := func(candidate: Dictionary) -> bool:
+		var inventory: Dictionary = candidate.get("inventory", {}).duplicate(true)
+		inventory["item_stacks"] = {}
+		candidate["inventory"] = inventory
+		return true
+	_expect(bool(save.call(&"transact_once", "w26.clear.research", clear_research_bag)), "fixture clears crate loot before research cost test")
 	_station("lab", "research")
 	_give("knowledge_spares", 2); _give("research_notes", 1)
 	var poor: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w26.research.poor")
-	_expect(not bool(poor.ok) and String(poor.reason) == "insufficient_inputs", "basic-tool research rejects 2 spares + 1 note")
+	_expect(not bool(poor.ok) and str(poor.reason) == "insufficient_inputs", "basic-tool research rejects 2 spares + 1 note")
 	_give("knowledge_spares", 1)
 	var paid: Dictionary = eco.research_recipe("iron_pick", "lab", "targeted", "w26.research.paid")
 	_expect(bool(paid.ok), "basic-tool research accepts exactly 3 spares + 1 note")
 	if bool(paid.ok):
-		_finish_job(String(paid.job_id), "lab")
+		_finish_job(str(paid.job_id), "lab")
 	_expect(_count("knowledge_spares") == 0 and _count("research_notes") == 0, "basic-tool research consumes the override cost exactly")
 	# A recipe without an override keeps the advanced default 6 spares + 2 notes.
 	_give("knowledge_spares", 5); _give("research_notes", 2)
 	var advanced_poor: Dictionary = eco.research_recipe("salvage_hammer", "lab", "targeted", "w26.research.advanced.poor")
-	_expect(not bool(advanced_poor.ok) and String(advanced_poor.reason) == "insufficient_inputs", "advanced targeted research still rejects 5 spares + 2 notes")
+	_expect(not bool(advanced_poor.ok) and str(advanced_poor.reason) == "insufficient_inputs", "advanced targeted research still rejects 5 spares + 2 notes")
 	_give("knowledge_spares", 1)
 	var advanced: Dictionary = eco.research_recipe("salvage_hammer", "lab", "targeted", "w26.research.advanced")
 	_expect(bool(advanced.ok), "advanced targeted research still requires 6 spares + 2 notes")

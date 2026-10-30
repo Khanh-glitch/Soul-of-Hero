@@ -47,6 +47,6 @@ test_all_scenarios_still_run_without_free_locker_materials (test_world_source_bi
 test_model_locker_grants_zero_items_and_cache_owns_spares (test_world_source_bindings.WorldSourceProgressionRegression.test_model_locker_grants_zero_items_and_cache_owns_spares) ... ok
 
 ----------------------------------------------------------------------
-Ran 47 tests in 7.118s
+Ran 47 tests in 4.523s
 
 OK
