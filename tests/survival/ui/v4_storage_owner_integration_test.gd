@@ -1,7 +1,9 @@
 extends SceneTree
-## Composition test: A6 emits a normalized request, then the actual A0
-## ChestInventoryPanel validates context and performs transfers through the real
-## A0 SurvivalService + SaveService. The test host does not mutate inventory.
+## Fixture-funded composition test, NOT request-correlated end-to-end storage.
+## A6's live projection is read-only. The test calls the shape adapter locally,
+## then its harness clicks the real A0 ChestInventoryPanel controls using only
+## item/direction/amount; request ID, revision, sequence and stack key never
+## reach A0's transaction endpoint. A0 SaveService remains the sole owner.
 const OVERWORLD_PATH := "res://game/overworld/chapter1_overworld.tscn"
 const PANEL_PATH := "res://game/survival/chest_inventory_panel.gd"
 const VIEW := preload("res://game/survival/ui/survival_view_adapter.gd")
@@ -194,7 +196,7 @@ func _run() -> void:
 		and deposit.get("revision", "") == "owner-current"
 		and deposit.get("sequence", -1) == 0
 		and deposit.get("stack_key", "") == STONE,
-		"A6 forwards exact request correlation, owner revision/sequence and stack key to the A0 host"
+		"A6 locally validates a future DTO; this test does not forward its correlation fields to A0"
 	)
 	var before_command: Dictionary = (save.call(&"get_snapshot") as Dictionary).duplicate(true)
 	_expect(
@@ -210,11 +212,11 @@ func _run() -> void:
 	)
 	_expect(
 		_submit_owner_panel(deposit),
-		"actual A0 chest-panel deposit commits the requested exact quantity"
+		"fixture harness clicks A0's real deposit controls with item/direction/amount only"
 	)
 	_expect(
 		bool(save.call(&"is_transaction_applied", deposit_receipt_id)),
-		"only A0 SaveService's durable transaction ledger confirms the transfer receipt"
+		"A0 SaveService records its own durable panel receipt; it is not correlated to A6 request_id"
 	)
 	var after_deposit := VIEW.storage(save, survival, container_id)
 	_expect(
@@ -241,7 +243,7 @@ func _run() -> void:
 			and int(_save_count(save, STONE)) == 5
 			and int(_survival_count(survival, container_id, STONE)) == 4
 		),
-		"actual A0 chest-panel withdrawal commits exact quantity"
+		"fixture harness clicks A0's real withdrawal controls with item/direction/amount only"
 	)
 	_expect(
 		bool(save.call(&"is_transaction_applied", withdraw_receipt_id)),

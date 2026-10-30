@@ -3,7 +3,7 @@ extends RefCounted
 ## SpriteFrames. It never reads input, changes equipment, selects a player
 ## identity, writes save state, or substitutes a missing action/direction.
 
-const ACTIONS := ["idle", "walk", "run", "attack", "run_attack"]
+const ACTIONS := ["idle", "walk", "run", "attack", "walk_attack", "run_attack", "hurt", "death"]
 const DIRECTIONS := ["front", "side_left", "side_right", "back"]
 const MANIFEST_PATH := "res://game/survival/ui/avatar_art_manifest.json"
 const APPEARANCE_ADAPTER := preload("res://game/survival/ui/avatar_appearance_adapter.gd")
@@ -187,7 +187,15 @@ static func build_sprite_frames(action_sheets: Dictionary) -> Dictionary:
 					Vector2(frame_index * frame_size.x, int(row_value) * frame_size.y),
 					Vector2(frame_size.x, frame_size.y)
 				)
-			output.add_frame(animation_name, atlas_frame)
+				output.add_frame(animation_name, atlas_frame)
+			if bool(spec.get("repeat_last_frame", false)):
+				var final_frame := AtlasTexture.new()
+				final_frame.atlas = texture
+				final_frame.region = Rect2(
+					Vector2((int(count_value) - 1) * frame_size.x, int(row_value) * frame_size.y),
+					Vector2(frame_size.x, frame_size.y)
+				)
+				output.add_frame(animation_name, final_frame)
 	return {"status": "READY", "sprite_frames": output, "reason": ""}
 
 
@@ -212,7 +220,9 @@ static func present(
 		return false
 	sprite.sprite_frames = frames
 	sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	if sprite.animation != animation_name or not sprite.is_playing():
+	if sprite.animation != animation_name:
+		sprite.play(animation_name)
+	elif frames.get_animation_loop(animation_name) and not sprite.is_playing():
 		sprite.play(animation_name)
 	return true
 

@@ -1,31 +1,38 @@
-# A6 canonical avatar source and presentation gate
+# A6 canonical avatar source and presentation gate — updated 2026-10-30
 
-**Locked authority:** D051/D052, user correction dated 2026-10-30. This note records implementation evidence and blocks false visual acceptance; it does not approve production mount or source redistribution.
+**Locked authority:** D046 and D051–D054. This note supersedes the earlier same-day statements that the Craftpix terms had not been reviewed. The page was checked directly on 2026-10-30; see `CRAFTPIX_AVATAR_LICENSE_AND_PRIVATE_STAGING_20261030.md` for the exact URLs/sections and boundaries.
 
-## Canonical identities
+## Canonical identities and provenance
 
-| A0 player identity | User-verified source | User-provided Drive file | Base sheet source member | Arena checkout |
+| Owner-selected grade-zero identity | Product | Drive file | Archive SHA-256 | Verified sheets |
 |---|---|---|---|---|
-| Bald, unarmored male | Craftpix 555940, `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | Downloaded from the user-provided Drive folder; 6,439,805 bytes, MD5 `b4910c4dd86a5193e5e0640751a20abd`, SHA-256 `b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795`; all 350 PNG members CRC-clean. Idle/walk/run direction sheets inspected from extracted temporary previews. No runtime asset imported or source sprite included in Git. |
-| Bald, unarmored female | Craftpix 419402, `craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip` | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png`, 768×256, four directions | Downloaded from the user-provided Drive folder; 6,419,098 bytes, MD5 `cf6ffa60ef922e4703dc6b27c3b5bac2`, SHA-256 `f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad`; all 316 PNG members CRC-clean. Idle/walk/run direction sheets inspected from extracted temporary previews. No runtime asset imported or source sprite included in Git. |
+| Bald/unarmored male | CraftPix 555940 | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795` | Idle 768×256/12 frames per direction except 4 back frames; walk 384×256/6; run 512×256/8; hurt 320×256/5; death 448×256/7; sword attack 512×256/8; walk attack 384×256/6; run attack 512×256/8. |
+| Bald/unarmored female | CraftPix 419402 | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad` | Same frame grids/timing as male; source bytes and exact dimensions are checked by the private staging script. |
 
-The connected Drive handoff made actual source bytes available in this session. Each archive's `License.txt` contains only `https://craftpix.net/file-licenses/`; the terms/attribution and permission to redistribute in this repository were **not** independently verified. The source ZIPs and extracted inspection previews were kept out of the project/Git. This verifies archive identity, PNG integrity and appearance content, but not license clearance, runtime import, or production animation. Do not redistribute raw source art in this public repository.
+All source sheets use 64×64 cells and four rows, ordered front, side-left, side-right, back. Source Tiled metadata reports 150 ms steps (6.666667 fps); death includes a 300 ms final pose and the pipeline repeats its last frame to preserve the hold. Idle/walk/run/hurt/death are unarmed body actions. Sword attack clips are source-provided combat art; they are not dedicated Skill-Core cast, gun-fire, mining, or craft animation. D046 permits using existing clips to communicate actions but A0 retains real input/action authority and Gold VFX ownership.
 
-## Equipment appearance state
+## Rights finding and redistribution boundary
 
-The owner-supplied appearance tuple is selected gender × authoritative equipped armor grade:
+The official CraftPix File Licenses page §2.1.1–2.1.3 supports Freebie use in personal/commercial projects, adaptation, and distribution of games containing the art; attribution is not required. The two exact product pages identify each as Free Download/Freebie. §2.2.1 bars resale/redistribution of raw or slightly modified source art and user-accessible save/export of the art; §3.1.1 bars AI/ML training, development, testing, validation, or improvement. This evidence supports use as embedded game art, not a public raw PNG/ZIP source drop or a user-facing sprite exporter.
 
-- Grade 0: selected bald, unarmored base body.
-- Grade 1: same gender identity with matching armor-grade-1 appearance.
-- Grade 2: same gender identity with matching armor-grade-2 appearance.
-- Unequip returns to grade 0. Save/reload/death/respawn must resolve from the persisted owner equipment state, not from A6-local flags.
+## Private native staging and A6 bridge
 
-`game/survival/ui/avatar_appearance_adapter.gd` is a read-only resolver for a versioned A0 owner projection and now refuses to load any texture unless `license_review.status` is `VERIFIED_GAME_USE`. The checked-in `avatar_art_manifest.json` carries exact source IDs, SHA-256 hashes and expected source members, but records the license as `NOT_VERIFIED` and has no runtime sheets. `avatar_sprite_pipeline.gd` selects only the matching A0 gender/grade record, builds directional frames from explicit sheets, and never substitutes a missing action or direction. `tests/survival/ui/avatar_appearance_test.gd` and `avatar_sprite_pipeline_test.gd` cover identity, provenance, hash/license gates, rejected substitutions and synthetic frame selection. The new native pipeline test is included in V4 CI but has not run on the current A6 SHA yet. This is an implemented adapter/source seam, not proof of a mounted playable character.
+`tools/stage_a6_avatar_art.py` verifies the two archive SHA-256 locks, reads the exact selected sheet members (thereby verifying their ZIP member CRCs), decodes each PNG alpha grid to verify nonempty frame columns/row order and the idle feet baseline, and checks the corresponding Tiled timing metadata. It extracts only the selected PNG sheets plus a local manifest into `private_art/a6_avatar/`, which `.gitignore` excludes. Original ZIPs stay outside the repository. The tracked manifest intentionally contains no runtime texture paths or source images; a clean checkout remains fail-closed until a private local staging step.
 
-## Exact unresolved art blocker
+`a0_avatar_presentation_driver.gd` reads the exact owner actor's velocity, facing, player-state enum, and current action only. It changes no physics, input, weapon, VFX, equipment, or save data. The separate `tests/survival/ui/a6_avatar_native_capture.gd` harness hides the Knight texture only for the throwaway test process, attaches the canonical art at the A0 visual anchor, and keeps the pinned A0 `CharacterBody2D`, collision, camera, world, HUD, SaveService, and effects. The input identity snapshot in that screenshot harness is an explicit preview projection, not proof that A0 has shipped character selection or identity persistence.
 
-Source-byte inspection confirms the two bald/unarmored canonical sets and their four-direction idle, walk and run sheets. It does **not** establish compatible male and female grade-1/grade-2 armor sprites, armor layers, or a validated runtime compositing method. Targeted Drive filename searches found no assets named for armor, humans or heroes; the only five character-named results include the canonical bases plus the explicitly rejected 180537 Swordsman, Orc and Vampire packs. This is not a broad archive-content audit, so it is not evidence that all other packs lack compatible armor. No armor candidate has been selected or inspected; grades 1/2 remain `SOURCE_BLOCKED` until a real approved source is found and tested. The 180537 `Swordsman_lvl1/lvl2/lvl3` is a different character and is not the matching pair—especially not female armor. The Knight protagonist is also not a permitted fallback.
+Run (only after installing native Godot 4.7 and having the private Drive ZIPs locally):
 
-## Owner integration contract
+```sh
+python3 tools/stage_a6_avatar_art.py --male-zip /private/path/male.zip --female-zip /private/path/female.zip
+python3 tools/run_a6_avatar_native_preview.py --godot godot
+```
 
-A0 owns player selection, equipment truth, persistence, SaveService, death and respawn. A3 may own item instance/equipment semantics as its approved source contract specifies. A6 only maps an already validated owner appearance projection to art. A0 must verify that changing armor and reloading or recovering the character preserves the selected identity and correct tier, then run the real native host. No production merge or full-game acceptance follows from source-manifest tests alone.
+The runner checks out A0 SHA `5387bed6260cb7b9bd4d8229ee759dee08a0d918` into a temporary detached clone, overlays only A6-owned scripts/tests and ignored local art, runs Godot import, and captures a 720p/2K/4K set. Native screenshots go under ignored `.artifacts/a6-avatar/`; they require subsequent human visual review. The runner does not alter the A0 source or mount into production.
+
+## Remaining blockers
+
+- At this review, the 2026-10-30 V3/V4 native workflows against A6 SHA `08ccb8348f2e7a75e09af47a1741c158fc46e794` remain queued. They do not stage private art and cannot validate actual avatar appearance.
+- The current execution environment has no Godot 4.7 executable; the real-asset A0 composition runner has not been run. Therefore no actual native screenshots, visual pass, player-selected identity path, Gold overlay review, or production mount is claimed.
+- Grade 1/2 still lack a sourced, inspected, coherent 4-direction armor appearance that preserves each selected gender's anatomy. The approved Drive folder inventory returned 43 archives; name-level triage identified no confirmed armor-layer pair. Character candidates were 180537 Swordsman (tiered but another identity), 208004 Vampire, 363992 Orc, 436971 Roguelike kit, and 654184 home-character pack (previously identified as house/animal/environment). None is verified as aligned male/female overlays for 555940/419402. This is the exact current blocker; not all image contents in the 43 archives were visually audited. Existing local selected-art staging contains no armor layers. The 180537 Swordsman and current Knight remain explicitly rejected substitutes.
+- A0 alone still owns actual identity choice, equipped grade, Hero physics/input, SaveService, storage, death/recovery, and production mount. A6 only presents the already owner-resolved appearance.

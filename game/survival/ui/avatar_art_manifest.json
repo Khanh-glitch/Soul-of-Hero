@@ -1,13 +1,27 @@
 {
   "schema": "soh.a6.avatar_art_sources.v1",
-  "status": "SOURCE_BYTES_INSPECTED; BASE_ART_NOT_IMPORTED; RUNTIME_APPEARANCE_BLOCKED",
+  "status": "GAME_USE_SUPPORTED; PUBLIC_RAW_SOURCE_REDISTRIBUTION_NOT_APPROVED; PRIVATE_RUNTIME_STAGING_REQUIRED",
   "authority": "D051-D054; user-provided Drive folder and file IDs; archive bytes retrieved and inspected through the enabled Google Drive connector on 2026-10-30. No source sprites are included in Git.",
   "drive_folder_id": "1pRNobw2FrKWQmelMdGpGnh3PUHPijjA0",
   "license_review": {
-    "status": "NOT_VERIFIED",
-    "archive_member": "License.txt",
-    "member_text": "https://craftpix.net/file-licenses/",
-    "note": "The ZIPs contain only a URL; license and redistribution terms were not independently reviewed. Do not include source ZIPs or sprites in the public repository."
+    "status": "VERIFIED_GAME_USE",
+    "reviewed_on": "2026-10-30",
+    "primary_url": "https://craftpix.net/file-licenses/",
+    "freebie_sections": [
+      "2.1.1",
+      "2.1.2",
+      "2.1.3",
+      "2.2.1",
+      "3.1.1"
+    ],
+    "product_urls": [
+      "https://craftpix.net/freebies/free-base-4-direction-male-character-pixel-art/",
+      "https://craftpix.net/freebies/free-base-4-direction-female-character-pixel-art/"
+    ],
+    "permissions_summary": "Freebie game use for personal/commercial projects, adaptation, and distribution of games with embedded assets is supported; attribution is not required.",
+    "distribution_boundary": "PUBLIC_RAW_SOURCE_REDISTRIBUTION_NOT_APPROVED",
+    "restrictions_summary": "Do not redistribute/resell raw or slightly modified art, or make art user-exportable; do not use assets or derivatives for AI/ML training, development, testing, validation, or improvement.",
+    "staging": "Private local selected-sheet staging only; see docs/survival/ux/CRAFTPIX_AVATAR_LICENSE_AND_PRIVATE_STAGING_20261030.md and tools/stage_a6_avatar_art.py."
   },
   "characters": {
     "male": {
@@ -24,7 +38,7 @@
         "walk",
         "run"
       ],
-      "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
+      "inspection_status": "SOURCE_BYTES_SHA_LOCKED; DIRECTION_ROWS_AND_FRAME_GRIDS_VALIDATED; PRIVATE_STAGING_REQUIRED; NO_PUBLIC_SOURCE_ART",
       "armor_grades": {
         "0": {
           "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
@@ -35,13 +49,54 @@
           ],
           "directions": 4,
           "idle_sheet": "",
-          "runtime_status": "NOT_IMPORTED",
-          "runtime_action_sheets": {}
+          "runtime_status": "NOT_IN_GIT; PRIVATE_LOCAL_STAGE_ONLY",
+          "runtime_action_sheets": {},
+          "frame_size": [
+            64,
+            64
+          ],
+          "grid": {
+            "columns": 12,
+            "rows": 4
+          },
+          "direction_rows": {
+            "front": 0,
+            "side_left": 1,
+            "side_right": 2,
+            "back": 3
+          },
+          "idle_row_frame_counts": {
+            "front": 12,
+            "side_left": 12,
+            "side_right": 12,
+            "back": 4
+          },
+          "source_members": {
+            "idle": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+            "walk": "PNG/Unarmed/Without_shadow/Unarmed_Walk_without_shadow.png",
+            "run": "PNG/Unarmed/Without_shadow/Unarmed_Run_without_shadow.png",
+            "hurt": "PNG/Unarmed/Without_shadow/Unarmed_Hurt_without_shadow.png",
+            "death": "PNG/Unarmed/Without_shadow/Unarmed_Death_without_shadow.png",
+            "attack": "PNG/Sword/Without_shadow/Sword_attack_without_shadow.png",
+            "walk_attack": "PNG/Sword/Without_shadow/Sword_Walk_Attack_without_shadow.png",
+            "run_attack": "PNG/Sword/Without_shadow/Sword_Run_Attack_without_shadow.png"
+          },
+          "fps": 6.666667
         },
         "1": null,
         "2": null
       },
-      "archive_sha256": "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
+      "archive_sha256": "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795",
+      "source_actions_validated": [
+        "idle",
+        "walk",
+        "run",
+        "hurt",
+        "death",
+        "attack",
+        "walk_attack",
+        "run_attack"
+      ]
     },
     "female": {
       "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
@@ -57,7 +112,7 @@
         "walk",
         "run"
       ],
-      "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
+      "inspection_status": "SOURCE_BYTES_SHA_LOCKED; DIRECTION_ROWS_AND_FRAME_GRIDS_VALIDATED; PRIVATE_STAGING_REQUIRED; NO_PUBLIC_SOURCE_ART",
       "armor_grades": {
         "0": {
           "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
@@ -68,19 +123,60 @@
           ],
           "directions": 4,
           "idle_sheet": "",
-          "runtime_status": "NOT_IMPORTED",
-          "runtime_action_sheets": {}
+          "runtime_status": "NOT_IN_GIT; PRIVATE_LOCAL_STAGE_ONLY",
+          "runtime_action_sheets": {},
+          "frame_size": [
+            64,
+            64
+          ],
+          "grid": {
+            "columns": 12,
+            "rows": 4
+          },
+          "direction_rows": {
+            "front": 0,
+            "side_left": 1,
+            "side_right": 2,
+            "back": 3
+          },
+          "idle_row_frame_counts": {
+            "front": 12,
+            "side_left": 12,
+            "side_right": 12,
+            "back": 4
+          },
+          "source_members": {
+            "idle": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
+            "walk": "PNG/Unarmed/Without_shadow/Unarmed_Walk_without_shadow.png",
+            "run": "PNG/Unarmed/Without_shadow/Unarmed_Run_without_shadow.png",
+            "hurt": "PNG/Unarmed/Without_shadow/Unarmed_Hurt_without_shadow.png",
+            "death": "PNG/Unarmed/Without_shadow/Unarmed_Death_without_shadow.png",
+            "attack": "PNG/Sword/Without_shadow/Sword_attack_without_shadow.png",
+            "walk_attack": "PNG/Sword/Without_shadow/Sword_Walk_Attack_without_shadow.png",
+            "run_attack": "PNG/Sword/Without_shadow/Sword_Run_Attack_without_shadow.png"
+          },
+          "fps": 6.666667
         },
         "1": null,
         "2": null
       },
-      "archive_sha256": "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
+      "archive_sha256": "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad",
+      "source_actions_validated": [
+        "idle",
+        "walk",
+        "run",
+        "hurt",
+        "death",
+        "attack",
+        "walk_attack",
+        "run_attack"
+      ]
     }
   },
   "armor_search": {
     "status": "NO_MATCHING_SOURCE_SELECTED_OR_INSPECTED",
-    "scope": "Targeted filename metadata searches only; not a full inspection of the 43 approved archives.",
-    "note": "No armor, human, or hero filename match was returned. Five character-named results included the canonical bases plus the rejected Swordsman 180537, Orc, and Vampire packs. This does not prove that compatible layers are absent from other packs."
+    "scope": "All 43 approved Drive-folder archive names triaged; selected character candidates investigated at pack level, but no complete pixel-by-pixel image audit of all 43 archives.",
+    "note": "The canonical base pair 555940/419402 is the only confirmed identity pair. Candidate names were 180537 Swordsman (tiered but different identity), 208004 Vampire, 363992 Orc, 436971 roguelike kit, and 654184 home-character pack (previously identified as home/animal/environment content). No candidate is verified as a four-direction, aligned armor-layer pair for both canonical identities. This is a compatibility/source gap, not proof that every image in every archive was visually audited."
   },
   "explicitly_rejected_substitutions": [
     {
@@ -93,15 +189,15 @@
     }
   ],
   "release_gates": [
-    "Do not include source ZIPs or sprites in the public repository; review license/attribution and redistribution permissions before any project import.",
-    "Inspect and test a compatible male/female visual for armor grade 1 and grade 2; until then those stages remain SOURCE_BLOCKED.",
-    "A0 supplies selected identity and saved equipped armor grade; the adapter never selects, equips, persists, or falls back to another character.",
-    "The base idle_sheet paths remain empty, so the current adapter correctly returns SOURCE_BLOCKED until an authorized, distributable runtime asset handoff exists.",
-    "Store runtime action sheets under the exact selected gender and armor-grade record; never share or fall back across identities or tiers."
+    "Freebie game use is supported by the official license page; do not redistribute public raw source or expose source art for user export.",
+    "Stage exact SHA-locked PNG members privately; a public clone without private staging fails closed and uses no substitute avatar.",
+    "Inspect native 720p/2K/4K A0-composed captures before claiming runtime appearance or acceptance.",
+    "Inspect and test coherent gender-preserving armor grade 1 and grade 2; until then those appearances remain SOURCE_BLOCKED.",
+    "A0 owns selected identity, Hero physics/input, equipment truth, persistence, SaveService, death and respawn; A6 reads only the owner projection."
   ],
   "runtime_presentation_pipeline": {
     "script": "res://game/survival/ui/avatar_sprite_pipeline.gd",
-    "status": "IMPLEMENTED; SOURCE_LICENSE_BLOCKED",
+    "status": "IMPLEMENTED; GAME_USE_LICENSE_VERIFIED; PRIVATE_RUNTIME_STAGING_REQUIRED",
     "directions": [
       "front",
       "side_left",
@@ -109,7 +205,22 @@
       "back"
     ],
     "runtime_action_sheets": {},
-    "note": "A6 builds directional SpriteFrames from the exact A0-selected gender and equipped-grade record. Each missing action or direction fails closed; no identity or pose fallback. Actual Craftpix sources remain absent until the external license and exact sheet row mapping are verified.",
-    "schema": "soh.a6.avatar_sprite_pipeline.v1"
+    "note": "Actual private sheets are staged by tools/stage_a6_avatar_art.py only. The base public manifest intentionally contains no asset paths. Attack clips are sword repertoire, not dedicated Skill-Core/gun/mining/crafting animations; A0 selects action state and retains Hero physics and Gold VFX.",
+    "schema": "soh.a6.avatar_sprite_pipeline.v1",
+    "source_actions": {
+      "idle": 12,
+      "walk": 6,
+      "run": 8,
+      "hurt": 5,
+      "death": 7,
+      "attack": 8,
+      "walk_attack": 6,
+      "run_attack": 8
+    },
+    "source_frame_size": [
+      64,
+      64
+    ],
+    "source_fps": 6.666667
   }
 }

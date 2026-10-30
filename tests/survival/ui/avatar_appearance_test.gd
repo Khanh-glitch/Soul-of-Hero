@@ -50,15 +50,17 @@ func _run() -> void:
 	)
 	var license_review: Dictionary = manifest.get("license_review", {})
 	_check(
-		String(license_review.get("status", "")) == "NOT_VERIFIED",
-		"manifest does not overclaim license review"
+		String(license_review.get("status", "")) == "VERIFIED_GAME_USE"
+		and String(license_review.get("distribution_boundary", "")) == "PUBLIC_RAW_SOURCE_REDISTRIBUTION_NOT_APPROVED",
+		"official Freebie terms support game use without approving public raw-art redistribution"
 	)
 	var unverified_runtime_candidate: Dictionary = manifest.duplicate(true)
 	unverified_runtime_candidate.characters.male.armor_grades["0"].idle_sheet = MANIFEST_PATH
-	var license_blocked := ADAPTER.resolve(_owner("male", 0), unverified_runtime_candidate)
+	var public_checkout_blocked := ADAPTER.resolve(_owner("male", 0), unverified_runtime_candidate)
 	_check(
-		license_blocked.status == "SOURCE_BLOCKED" and String(license_blocked.reason).contains("license"),
-		"runtime source cannot be loaded before the game-use license is verified"
+		public_checkout_blocked.status == "SOURCE_BLOCKED"
+		and String(public_checkout_blocked.reason).contains("not installed"),
+		"verified game-use terms do not pretend private runtime art exists in a public checkout"
 	)
 	_check(
 		male.armor_grades["0"].idle_sheet == "" and female.armor_grades["0"].idle_sheet == "",
@@ -76,7 +78,7 @@ func _run() -> void:
 	)
 	_check(
 		male.armor_grades["0"].runtime_action_sheets == {} and female.armor_grades["0"].runtime_action_sheets == {},
-		"unlicensed identity-specific runtime sheets remain absent"
+		"license is verified, but identity-specific private runtime sheets remain unstaged in public Git"
 	)
 	_check(
 		male.armor_grades["1"] == null and male.armor_grades["2"] == null,

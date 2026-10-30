@@ -44,8 +44,8 @@ func _run() -> void:
 		var gate: Dictionary = manifest.get("runtime_presentation_pipeline", {})
 		_check(
 			gate.get("schema", "") == "soh.a6.avatar_sprite_pipeline.v1"
-			and gate.get("status", "") == "IMPLEMENTED; SOURCE_LICENSE_BLOCKED",
-			"manifest distinguishes the versioned controller contract from unverified art licensing"
+			and gate.get("status", "") == "IMPLEMENTED; GAME_USE_LICENSE_VERIFIED; PRIVATE_RUNTIME_STAGING_REQUIRED",
+			"manifest distinguishes license-supported game use from private runtime installation"
 		)
 		_check(
 			gate.get("runtime_action_sheets", {}) == {},
@@ -74,8 +74,8 @@ func _run() -> void:
 		var blocked_sources := PIPELINE.action_sources_for_owner(owner, manifest)
 		_check(
 			blocked_sources.get("status", "") == "SOURCE_BLOCKED"
-			and String(blocked_sources.get("reason", "")).contains("license"),
-			"unverified source license blocks runtime sheets even if an identity record exists"
+			and String(blocked_sources.get("reason", "")).contains("not installed"),
+			"the public checkout blocks runtime sheets until the verified source is privately staged"
 		)
 		var blocked_owner := PIPELINE.resolve_owner_appearance(owner, manifest)
 		_check(
