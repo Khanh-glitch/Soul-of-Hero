@@ -44,7 +44,9 @@ const IRON := "iron_scrap"
 var failures: Array[String] = []
 var checks := 0
 var save_path := ""
-var _host: Node2D
+# The ordinary shell uses a Node route host; isolated tests use a Node2D.
+# Both host the same real overworld scene.
+var _host: Node
 var _deadline_msec := 0
 var _body_complete := false
 
