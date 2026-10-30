@@ -96,6 +96,20 @@ jobs:
           while IFS= read -r line; do echo "::notice::$line"; done < <(grep -E '^A0_WALK_STALL|^A0_WALKER_RIDGE' artifacts/walker-probe.log || true)
           bash tools/ci/gate_log.sh artifacts/walker-probe.log 'walker ridge probe' 'A0 WALKER RIDGE PROBE PASSED' || exit 1
           [ "$rc" -eq 0 ]
+      - name: A0 profile port (one wallet, one run, two processes)
+        if: matrix.route == 'controller'
+        run: |
+          mkdir -p artifacts/ud_profile_port
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_profile_port --script res://tests/survival_a0_profile_port_test.gd -- --keep-profile > artifacts/profile-port-first.log 2>&1
+          rc1=$?
+          cat artifacts/profile-port-first.log
+          timeout 300s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_profile_port --script res://tests/survival_a0_profile_port_test.gd -- --verify-profile > artifacts/profile-port-second.log 2>&1
+          rc2=$?
+          cat artifacts/profile-port-second.log
+          while IFS= read -r line; do echo "::error title=profile-port::$line"; done < <(grep -E '  FAIL  |SCRIPT ERROR|Parse Error' artifacts/profile-port-first.log artifacts/profile-port-second.log | head -12 || true)
+          bash tools/ci/gate_log.sh artifacts/profile-port-first.log 'A0 profile port first process' 'A0 PROFILE PORT PASSED' || exit 1
+          bash tools/ci/gate_log.sh artifacts/profile-port-second.log 'A0 profile port second process' 'A0 PROFILE PORT PASSED' || exit 1
+          [ "$rc1" -eq 0 ] && [ "$rc2" -eq 0 ]
       - name: Verify exact physical cache owner identity seam
         if: matrix.route == 'controller'
         run: |
