@@ -1,8 +1,8 @@
-# CT A3 — Ready Same-Session Arena Continuation (NOT SENT)
+# CT A3 — Archived Continuation Summary (not verbatim user-visible prompt)
 
-Authoritative user status 2026-10-30: six Arena workers idle A0/A1/A3/A6/A7/A8. Current PR #19 on arena/7a12b27e-soul-of-hero at time-bound HEAD 100b3406. DRAFT_READY is NOT USER_SENT, not product/native acceptance or merge approval.
+Authoritative user status 2026-10-30: six Arena workers idle A0/A1/A3/A6/A7/A8. Current PR #19 on arena/7a12b27e-soul-of-hero at time-bound HEAD 100b3406. At archive creation the user-visible Arena paste was not verified. User has since referred to six prompts as sent; actual paste/session delivery must be resolved from firsthand user status, not Git commits. No acceptance/merge approval.
 
-## Exact paste prompt
+## Archived short form — NOT the verbatim long user-visible WritingBlock
 
 ĐÂY LÀ LỆNH TIẾP TỤC TRONG ĐÚNG PHIÊN ARENA CŨ; không mở agent/PR khác, không self-merge. Trước khi sửa: kiểm tra git status, HEAD, current PR & CI; đọc AGENTS.md, NEW_CHAT_BOOTSTRAP.md, Atlas 1355 dòng ở phần liên quan, DECISIONS D001-D054, CONTRACTS, ACCEPTANCE, INDEPENDENT_DEEP_REVIEW_PROTOCOL và đúng owner work order. Làm tự chủ nhiều pha tới mốc lớn, không hỏi duyệt từng bước. Giữ một SaveService A0, full original Gold, hai avatar 555940/419402, gameplay exploration/home-first và cấm UI/POI rác. Báo cáo chính xác test source/native/visual/E2; commit + chứng cứ + blockers + owner handoff. 
 
@@ -10,4 +10,7 @@ Tiếp tục kết thúc V3 owner-authoritative world source→economy. Code wor
 
 ## Evidence and authority
 
-Repo https://github.com/Khanh-glitch/Soul-of-Hero, same original Arena chat and PR. Gold AVFX and S6 not part of this dispatch. Any new SHA/CI supersedes these pointers. A0 native 41018366655 FAIL, Waystation 41022547962 FAIL, other newest owner CI largely queued. Locked D051-D054, Atlas + 2019-2020 pivot, R0–R5 and S0–S5. Only user can actually send this prompt. This docs-only file does NOT notify Arena.
+Repo https://github.com/Khanh-glitch/Soul-of-Hero, same original Arena chat and PR. Gold AVFX and S6 not part of this dispatch. Any new SHA/CI supersedes these pointers. A0 native 41018366655 FAIL, Waystation 41022547962 FAIL, other newest owner CI largely queued. Locked D051-D054, Atlas + 2019-2020 pivot, R0–R5 and S0–S5. Only user can actually send Arena prompts. This docs-only file did NOT notify Arena at creation. The user-visible long prompt differed from this shorter archive; see the linked errata.
+
+## Erratum / canonical-text warning
+The user-visible six English WritingBlock prompts from the chat are materially LONGER than these archived Vietnamese short forms. Do NOT use this file to claim an exact transcript of what the user pasted. Audit and missing product gates: `docs/survival/reviews/CT_SIX_SENT_PROMPTS_RETROSPECTIVE_ERRATA_20261030.md` on this CT branch. No re-dispatch implied.
