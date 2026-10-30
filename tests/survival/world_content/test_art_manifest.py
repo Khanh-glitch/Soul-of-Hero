@@ -69,6 +69,10 @@ class ArtManifestTests(unittest.TestCase):
                 self.assertGreater(wall_height, 0, path.name)
                 self.assertLessEqual(x + wall_width, width, path.name)
                 self.assertLessEqual(y + wall_height, height, path.name)
+            if path.name == "south_quarry.json":
+                east_gate = data["choice_blockers"]["brace_oak"][0]
+                west_gate = data["choice_blockers"]["chock_stone"][0]
+                self.assertGreater(east_gate[0], west_gate[0])
             layout = data["visual_layout"]
             self.assertIn(layout["ground_family"], {name.rsplit("_", 1)[0] for name in self.terrain_frames})
             self.assertIn(layout["lighting_profile"], self.manifest["lighting_profiles"])

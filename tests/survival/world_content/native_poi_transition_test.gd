@@ -30,6 +30,7 @@ func _initialize() -> void:
 
 func _run() -> void:
 	await _physical_exterior_entry_exit_all_sites()
+	await _physical_quarry_route_choices()
 	if _failures.is_empty():
 		print("A8_NATIVE_POI_TRANSITION_PASS assertions=%d" % _assertions)
 		quit(0)
@@ -374,6 +375,88 @@ func _physical_exterior_entry_exit_all_sites() -> void:
 				revisit_site.queue_free()
 				returned_shell.queue_free()
 		_cleanup(pair)
+
+
+func _physical_quarry_route_choices() -> void:
+	for route_index: int in range(2):
+		var authority := FIXTURE_SCRIPT.new() as PoiAuthorityFixture
+		authority.configure()
+		root.add_child(authority)
+		var packed := load(SITE_SCENES[0]) as PackedScene
+		var site := packed.instantiate() as NativePoiSite
+		root.add_child(site)
+		await process_frame
+		site.set_projection(authority.project_state(site.get_source_id()))
+		var actor := ACTOR_SCRIPT.new() as WorldContentTestActor
+		actor.collision_layer = 2
+		actor.collision_mask = 1
+		var shape := CircleShape2D.new()
+		shape.radius = 10.0
+		var collision := CollisionShape2D.new()
+		collision.shape = shape
+		actor.add_child(collision)
+		root.add_child(actor)
+		var spawn := site.get_spawn_position()
+		var stand := site.get_stand_position()
+		actor.global_position = spawn
+		actor.request_test_motion(Vector2(stand.x - spawn.x, 0.0))
+		await physics_frame
+		_check(
+			actor.last_collision == null, "Quarry actor reaches the work area without a shortcut"
+		)
+		actor.request_test_motion(Vector2(0.0, stand.y - actor.global_position.y))
+		await physics_frame
+		_check(
+			actor.last_collision == null and actor.global_position.distance_to(stand) <= 30.0,
+			"Quarry actor physically reaches the ordinary interaction stand"
+		)
+		if route_index == 1:
+			site.cycle_choice(1)
+		actor.set("facing", Vector2.UP)
+		_check(
+			site.try_interact(actor), "both Quarry route preparations are available at the stand"
+		)
+		var intent: Dictionary = site._pending.duplicate(true)
+		var result: Dictionary = authority.submit_intent(intent)
+		_check(result.status == "committed", "fixture returns an owner result for the chosen route")
+		site.receive_authoritative_result(
+			intent.intent_id, result, authority.project_state(site.get_source_id())
+		)
+		var expected_route := "east_braced" if route_index == 0 else "west_chocked"
+		_check(
+			site.get_site_state().get("quarry_route", "") == expected_route,
+			"distinct Quarry preparation is owner-projected: %s" % expected_route
+		)
+		var blocker_count := 0
+		for child: Node in site.get_children():
+			if str(child.name).begins_with("ChoiceBlocker_"):
+				blocker_count += 1
+		_check(blocker_count == 1, "chosen Quarry route removes only its matching blocker")
+
+		var route_side_x := 600.0 if route_index == 0 else 360.0
+		actor.request_test_motion(Vector2(route_side_x - actor.global_position.x, 0.0))
+		await physics_frame
+		_check(actor.last_collision == null, "route approach stays walkable below the shelf")
+		actor.request_test_motion(Vector2(0.0, 280.0 - actor.global_position.y))
+		await physics_frame
+		_check(actor.last_collision == null, "route approach reaches the authored shelf height")
+		var route_crossing_x := 506.0
+		actor.request_test_motion(Vector2(route_crossing_x - actor.global_position.x, 0.0))
+		await physics_frame
+		_check(
+			(
+				actor.last_collision == null
+				and is_equal_approx(actor.global_position.x, route_crossing_x)
+			),
+			"chosen east/west Quarry passage is physically traversable"
+		)
+		var blocked_target := 420.0 if route_index == 0 else 592.0
+		actor.request_test_motion(Vector2(blocked_target - actor.global_position.x, 0.0))
+		await physics_frame
+		_check(
+			actor.last_collision != null, "unchosen Quarry passage remains a real collision blocker"
+		)
+		_cleanup({"site": site, "actor": actor, "authority": authority})
 
 
 func _assert_shell_art(shell: NativePoiShell) -> void:

@@ -16,7 +16,7 @@
 2. **South Orchard Ruin** — `poi_crown_south_orchard`, cell `[140,360]`. The sluice choice drives visible irrigation state; accepted water flow reveals the delayed graft-mark return interaction. Gathering remains low-risk in the fixture and is **not** a live A3 source grant. Honey and rare herb remain blocked.
 3. **South Crown Mill** — `poi_crown_south_mill`, cell `[120,300]`. The stopped race is inspectable from the outer side. The outer gate requires `cap_salvage`; the inner maintenance gate requires both that capability and an owner-projected `mill_wheel=turning`. Repair/leave are exclusive choices at a reachable near-side workstation. Repair projects a flowing race path and repaired-bearing/lamp props (the atlas wheel itself remains static), opens the inner physical gate and enables a separate state-gated fastener workstation. The entrance and outer inspection path remain safely retreatable.
 
-All fixture costs, yields, source quantities, and cooldowns remain proposals. The current A3 item statuses are `SOH_PROPOSAL`; A3's inspected v3 binding file contains Waystation and Relay Shed rows, **no Quarry, Orchard, or Mill binding**. Generic `live_*` IDs with `poi_id: null` do not authorize these sites. Production must not grant those items or treat fixture pricing as approved.
+All fixture costs, yields, source quantities, and cooldowns remain non-live. The latest A3 PR #19 v3 bindings contain no Quarry, Orchard, or Mill binding, and `A8_QUARRY_AUTHORIZATION_V4.json` is `REJECTED_PENDING_EVIDENCE_FAIL_CLOSED`: no Quarry route cost, outcrop reward, source mapping, cooldown, or capability grant is approved. Generic `live_*` IDs with `poi_id: null` do not authorize these sites. Production must not grant those items or treat fixture pricing as approved.
 
 ## Current owner source snapshots
 
@@ -28,13 +28,15 @@ All fixture costs, yields, source quantities, and cooldowns remain proposals. Th
 
 ## Scoped validation and evidence
 
-**Completed independent/static checks on this source revision:**
+**Completed independent/static checks on pushed commit `f54d8f17`:**
 
-- On commit `9c180ef1`, `python3 tools/survival/world_content/author_site.py --check` passed for all four site definitions and actual wrapper references; the five adversarial path/identity tests passed; all eight A8 JSON files parsed; scoped `gdformat --check`, `gdlint`, and `git diff --check` passed.
+- `python3 tools/survival/world_content/author_site.py --check` passed for all four site definitions and actual wrapper references.
+- Five adversarial path/identity tests and four atlas/layout/provenance tests passed; all nine A8 world-content JSON files parsed.
+- Scoped `gdformat --check`, `gdlint`, and `git diff --check` passed. Texture hashes match A1 PR #20's pinned atlas manifest.
 
-**Native status: `NOT_TESTED`.** No Godot executable is installed in the workspace. Required historical runs `41019182407` and `41019689728` each remained `queued` with `steps: []`. After pushing `9c180ef1`, the A8 native run `41024442152`, the runtime/capture run `41024441950`, and handoff run `41024441800` were also `queued` with no job steps. The prior A8 run `41019032228` failed at the native physics/interaction step on an older revision; its log retrieval returned EOF, so its specific assertion failure is unknown. No current-revision scene execution, native physics result, interaction pass, visual capture, or inspected 1280×720 / 2560×1440 / 3840×2160 image exists. Static checks are not native acceptance; keep status `NOT_TESTED` until the current runs execute and captures are visually reviewed.
+**Native status: `PENDING`; no native PASS is claimed.** The local workspace has no Godot executable. Current-head A8 run `41032553904`, runtime/headless/capture run `41032553840`, and handoff run `41032553871` were queued with no job steps at the last observation. Earlier A8 run `41024526858` on head `5ccf7b3f` failed in the native physics/interaction step; GitHub's signed log fetch returned EOF, so that failure's assertion remains unknown. No current-head scene execution, native physics result, interaction pass, or A8 capture has yet been reviewed. Static checks are not native acceptance; keep status pending until these runs execute and the A8 captures are visually inspected.
 
-The PR-only workflow now runs authoring and adversarial checks, imports native resources with Godot 4.7, runs the physical/interaction/transition suite, and captures the harness at all three requested resolutions. Captures must be visually inspected; file generation alone is not evidence.
+The PR-only workflow runs authoring and art-manifest checks, imports native resources with Godot 4.7, runs physical/interaction/transition suites, preserves failure logs as artifacts/step summaries, and captures the A8 harness at 1280×720, 2560×1440, and 3840×2160. Capture generation alone is not visual evidence.
 
 ## A0 production handoff boundary
 
