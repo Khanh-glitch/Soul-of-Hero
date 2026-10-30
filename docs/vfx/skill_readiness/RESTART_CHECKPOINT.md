@@ -397,3 +397,33 @@ Profile, from the code paths (not measured here; no local Godot):
 ### Not started this round (blocked by the vault)
 - 007, 008, 013, 015, 016, 020 original-TypeScript divergence capture. Stays as before.
 - ARCANA III skill 001 original PixiJS reference.
+
+### CI evidence for this round (read from check-run annotations and job conclusions)
+
+| Commit | Run | Result |
+|---|---|---|
+| `0c78212` | pilot `40990378225` | real map PASS (4 modes × 006/010, 6 frames each); headless 010 PASS; headless 006 gate failed on the unit step (freed-instance bug in the darkening controller, fixed in `2c4877b`). |
+| `0c78212` | runtime `40990378239` | host adapters 14/15 PASS. 021 FAIL on the new wall-clock bounds (see below). Runtime differential 15 and 16 still fail (known). |
+| `0c78212` | candidate `40990378276` | 7, 8, 20 fail (known). 18, 19, 21 pass. |
+| `2c4877b` | pilot `40993279908` | success: 006 PASS 93/93 rows, 25/25 hits, 30/30 cues; 010 PASS 184/184 rows, 82/82 hits, 89/89 cues; unit 24/24; real map success for all 4 modes × 2 skills. GOLD hashes unchanged. |
+| `2c4877b` | runtime `40993279898` | host adapters 14/15 success; 021 failure (wall-clock). |
+| `2c4877b` | candidate `40993279862` | 7, 8, 20 fail (known). 18, 19, 21 pass. |
+| `9456c35` | runtime `40995391922` | profile job success (diagnosis). |
+
+#### 021 wall-clock measurement (`0c78212`, host job `123851327088`)
+- identity 1.9 s; cancel 7.9 s (bound 20 s, pass); dispose after cancel 1 ms.
+- full cast 595 s (bound 180 s, FAIL); replay 593 s (bound 180 s, FAIL). The job reached its 1500 s gate limit in the Lab phase.
+- 021 authors 890 ticks. Live effects grow to about 315 by tick 645.
+
+#### 021 busy-window profile (`9456c35`, job `123867477026`, ticks 560–680)
+- Unprofiled prefix 560 ticks: 207 s (0.37 s/tick). Profiled 120 ticks: 165 s (1376 ms/tick).
+- Largest terms (total over 120 ticks): `draw.air.cloud` 59.2 s (`Cloud.air` → `DRAW.puff`, per-pixel noise each tick); `draw.gnd.fx` 36.3 s over 8520 calls (≈4.3 ms each); `draw.gnd.pool` 17.4 s over 4159 calls; `draw.lit.pool` 16.4 s; `draw.up.custom` 13.0 s over 666 calls (≈19.5 ms each); `draw.lit.cloud` 6.9 s.
+- Per tick: about 70 ground decals and about 35 pools are re-rasterised, each a per-pixel GDScript loop. Step cost is under 3% of the total.
+- Conclusion: the cost is per-pixel GDScript raster work on many persistent effects, growing with effect count. It is not a per-tick scan, a clear loop or a leak (both of those were fixed). Reaching 180 s needs about a 7× reduction in the busy phase. Candidate levers are a packed-array layout for decal and pool pixel lists, and a shared noise cache. Each must keep the raster bit-identical, checked by the 021 differential's sampled per-tick hashes. Not done.
+- Left red on purpose: the wall-clock bounds are not weakened. 021 is NOT host-castable-verified at `2c4877b`.
+
+#### Blockers still open
+- Original GOLD source (vault) for view A, 007/008/013/015/016/020 divergence capture, and ARCANA 001: blocked by the vault 403 (see `GOLD93_PRIVATE_SOURCE_ACCESS.md`).
+- Lab UI control for darkening strength: not implemented. Parameters exist on the controller.
+- Interactive demo with presentation toggles: not implemented. The real-map A/B is headless capture only.
+- 150% desktop scaling review: not done.
