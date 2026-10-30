@@ -290,6 +290,11 @@ jobs:
     name: A1 GODOT 4.7 WORLD ART NATIVE VISUAL FIXTURE (NOT PRODUCTION)
     needs: python-authoring
     runs-on: ubuntu-latest
+    # The fallback below creates Git blobs only (no commit/branch/tag). It needs
+    # contents:write because Actions artifact storage is unreachable from some
+    # review sandboxes; the tested source tree is never modified by the mirror.
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -373,3 +378,12 @@ jobs:
             artifacts/a1-world-art-corridor/
           if-no-files-found: warn
           retention-days: 14
+      - name: Mirror native evidence as Git blobs (artifact-host fallback)
+        if: always()
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python tools/ci/mirror_native_evidence.py \
+            --root artifacts/a1-world-art \
+            --root artifacts/a1-world-art-corridor
