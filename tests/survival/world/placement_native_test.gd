@@ -119,7 +119,7 @@ func _verify_asset_provenance() -> void:
 			continue
 		var image: Image = sheets[kind].duplicate()
 		image.convert(Image.FORMAT_RGBA8)
-		var crop := image.get_region(Rect2i(int(rect[0]), int(rect[1]), int(rect[2]), int(rect[3])))
+		var crop := image.get_region(Rect2(float(rect[0]), float(rect[1]), float(rect[2]), float(rect[3])))
 		crop.convert(Image.FORMAT_RGBA8)
 		if _sha_bytes(crop.get_data()) == String(row.raw_rgba_sha256):
 			matched += 1
