@@ -193,8 +193,8 @@ jobs:
       matrix:
         # Only ids with verified source parity AND a registered host adapter.
         # 008 parity verified at 5023485 (candidate job 123884876907, PASS).
-        # 007, 013, 015, 016 and 020 stay out until their parity resolves.
-        skill: [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 17, 18, 19, 21]
+        # 007, 013, 016 and 020 stay out until their parity resolves.
+        skill: [1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 14, 15, 17, 18, 19, 21]
     steps:
       - uses: actions/checkout@v4
         with:

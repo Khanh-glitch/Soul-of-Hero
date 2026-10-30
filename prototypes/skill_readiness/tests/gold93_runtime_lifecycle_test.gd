@@ -68,7 +68,7 @@ func _initialize() -> void:
 	# adapter that is not in this list cannot slip past the check.
 	var host_ids: Array = RUNTIME.MODULE_PATHS.keys()
 	host_ids.sort()
-	_check(host_ids.size() == 16, "16 verified Venomwright host adapters expected, got %d" % host_ids.size())
+	_check(host_ids.size() == 17, "17 verified Venomwright host adapters expected, got %d" % host_ids.size())
 	for id in host_ids:
 		var mod = runtime.module_for(id)
 		_check(mod != null, "host wrapper must load for " + id)

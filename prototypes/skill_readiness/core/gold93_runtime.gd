@@ -27,13 +27,15 @@ const MODULE_PATHS: Dictionary = {
 
 	# 009-012, 014, 017-019 and 021 are verified against the original TypeScript
 	# (parity/index.json, first_divergent_tick -1) and reuse the same shared adapter.
-	# 008 is verified by CI (run 41000928886 at 5023485). 007, 013, 015, 016 and 020 are NOT registered: their parity is unresolved.
+	# 008 is verified by CI (run 41000928886 at 5023485) and 015 by runtime run
+	# 41005700842 job 123913467489 at 4bf0769. 007, 013, 016 and 020 are NOT registered: their parity is unresolved.
 	"venomwright:008": "res://prototypes/skill_readiness/skills/venomwright/v008_source_native.gd",
 	"venomwright:009": "res://prototypes/skill_readiness/skills/venomwright/v009_source_native.gd",
 	"venomwright:010": "res://prototypes/skill_readiness/skills/venomwright/v010_source_native.gd",
 	"venomwright:011": "res://prototypes/skill_readiness/skills/venomwright/v011_source_native.gd",
 	"venomwright:012": "res://prototypes/skill_readiness/skills/venomwright/v012_source_native.gd",
 	"venomwright:014": "res://prototypes/skill_readiness/skills/venomwright/v014_source_native.gd",
+	"venomwright:015": "res://prototypes/skill_readiness/skills/venomwright/v015_source_native.gd",
 	"venomwright:017": "res://prototypes/skill_readiness/skills/venomwright/v017_source_native.gd",
 	"venomwright:018": "res://prototypes/skill_readiness/skills/venomwright/v018_source_native.gd",
 	"venomwright:019": "res://prototypes/skill_readiness/skills/venomwright/v019_source_native.gd",
