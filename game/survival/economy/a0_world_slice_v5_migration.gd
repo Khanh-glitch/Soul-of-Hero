@@ -104,8 +104,13 @@ static func _legacy_error(world: Dictionary, transactions: Variant, bindings: Di
 		if not event_id is String or event_id.is_empty() or str(tx_key) != "soh.a3.world_action." + event_id.sha256_text(): return "legacy_transaction_key_mismatch"
 		var request := {"poi_id": expected.poi, "action_id": expected.action}
 		if not str(expected.instance).is_empty(): request["instance_id"] = expected.instance
-		var signed := {"request": request, "receipt_metadata": {"a1_transaction_key": key, "poi_id": expected.poi, "action_id": expected.action, "instance_id": expected.instance, "reward_right_id": expected.right}}
-		if str(meta.get("payload_sha256", "")) != JSON.stringify(signed).sha256_text(): return "legacy_transaction_signature_mismatch"
+		# V3 signed only the request plus poi/action/instance; the preflight key
+		# shape is accepted too because some A3 revisions signed it eagerly.
+		var legacy := {"request": request, "receipt_metadata": {"poi_id": expected.poi, "action_id": expected.action, "instance_id": expected.instance}}
+		var shaped := {"request": request, "receipt_metadata": {"a1_transaction_key": key, "poi_id": expected.poi, "action_id": expected.action, "instance_id": expected.instance, "reward_right_id": expected.right}}
+		var signature := str(meta.get("payload_sha256", ""))
+		if signature != JSON.stringify(legacy).sha256_text() and signature != JSON.stringify(shaped).sha256_text():
+			return "legacy_transaction_signature_mismatch"
 		seen[key] += 1
 	for key: Variant in seen:
 		if int(seen[key]) != 1: return "legacy_transaction_missing_or_duplicate"

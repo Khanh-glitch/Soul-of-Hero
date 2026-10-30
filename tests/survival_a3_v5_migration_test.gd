@@ -22,8 +22,9 @@ func _read(path: String) -> Variant:
 func _legacy_receipt(doc: Dictionary, poi: String, action: String, instance: String, key: String, right: String, event: String) -> void:
 	var request := {"poi_id": poi, "action_id": action}
 	if not instance.is_empty(): request["instance_id"] = instance
+	# Exactly the V3 service's signed payload shape (no canonical key yet).
 	var meta := {"a1_transaction_key": key, "poi_id": poi, "action_id": action, "instance_id": instance, "reward_right_id": right}
-	var payload := {"request": request, "receipt_metadata": meta.duplicate(true)}
+	var payload := {"request": request, "receipt_metadata": {"poi_id": poi, "action_id": action, "instance_id": instance}}
 	meta.merge({"kind": "survival_economy", "operation": "world_action", "event_id": event, "payload_sha256": JSON.stringify(payload).sha256_text()})
 	doc.applied_transactions["soh.a3.world_action." + event.sha256_text()] = {"applied_at_unix": 1700000000, "metadata": meta}
 
