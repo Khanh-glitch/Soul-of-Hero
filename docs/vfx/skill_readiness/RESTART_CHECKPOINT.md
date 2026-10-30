@@ -427,3 +427,11 @@ Profile, from the code paths (not measured here; no local Godot):
 - Lab UI control for darkening strength: not implemented. Parameters exist on the controller.
 - Interactive demo with presentation toggles: not implemented. The real-map A/B is headless capture only.
 - 150% desktop scaling review: not done.
+
+## Original-source Node reference (added this round)
+
+- `prototypes/skill_readiness/reference/venomwright_node/` runs the ORIGINAL Venomwright TypeScript under Node 22 with `display.ts` stubbed (PixiJS/DOM only). No source is committed.
+- `results/oracle_replay.json`: all 21 immutable oracles (`venomwright_001`–`021`) reproduce exactly from the original source (0 mismatched rows; 021 replays 890 ticks in about 15 s, excluding setup). Hash-level only.
+- Consequence: the 007, 008, 013, 015, 016 and 020 divergences are native-port defects, not oracle or original-source differences. Their first-divergence ticks can now be checked against the original per tick on the host.
+- 021 wall-clock: the original completes its 890-tick timeline in seconds under V8. The native GDScript port takes about 595 s for the full cast. The gap is in the native raster path (interpreted per-pixel GDScript), not the algorithm. The fix is native optimisation, not timeout changes.
+- View A (original GOLD composite, CPU replica of the GLSL composite) rendered for 006 and 010 at data-derived checkpoints to `/home/user/gold93_evidence/venomwright_{006,010}/A_original_gold_composite/` (outside the repo). Views B–E need the Godot captures, which are not downloadable from this sandbox.

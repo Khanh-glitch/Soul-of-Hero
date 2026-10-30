@@ -1,0 +1,217 @@
+{
+  "schema": "gold93/venomwright-original-node-replay/v1",
+  "source": "original TypeScript, Node 22 + tsx 4.19.2, display.ts stubbed (DOM/PixiJS presentation only)",
+  "pass": true,
+  "results": [
+    {
+      "canonical_id": "venomwright:001",
+      "skill": 1,
+      "name": "Glassfang Hunt",
+      "rows": 65,
+      "max_tick": 245,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 1.52
+    },
+    {
+      "canonical_id": "venomwright:002",
+      "skill": 2,
+      "name": "Blooming Parasite",
+      "rows": 77,
+      "max_tick": 305,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.23
+    },
+    {
+      "canonical_id": "venomwright:003",
+      "skill": 3,
+      "name": "Leechwater Rush",
+      "rows": 63,
+      "max_tick": 235,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.19
+    },
+    {
+      "canonical_id": "venomwright:004",
+      "skill": 4,
+      "name": "Porcelain Bastion",
+      "rows": 96,
+      "max_tick": 400,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.49
+    },
+    {
+      "canonical_id": "venomwright:005",
+      "skill": 5,
+      "name": "Bellows Toad",
+      "rows": 75,
+      "max_tick": 295,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.15
+    },
+    {
+      "canonical_id": "venomwright:006",
+      "skill": 6,
+      "name": "Graft Caravan",
+      "rows": 93,
+      "max_tick": 385,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 3.0
+    },
+    {
+      "canonical_id": "venomwright:007",
+      "skill": 7,
+      "name": "Hatchery Fall",
+      "rows": 80,
+      "max_tick": 320,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.12
+    },
+    {
+      "canonical_id": "venomwright:008",
+      "skill": 8,
+      "name": "Brine Serpents",
+      "rows": 82,
+      "max_tick": 330,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.4
+    },
+    {
+      "canonical_id": "venomwright:009",
+      "skill": 9,
+      "name": "Molting Harvester",
+      "rows": 104,
+      "max_tick": 440,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.78
+    },
+    {
+      "canonical_id": "venomwright:010",
+      "skill": 10,
+      "name": "The Walking Crucible",
+      "rows": 184,
+      "max_tick": 840,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 7.53
+    },
+    {
+      "canonical_id": "venomwright:011",
+      "skill": 11,
+      "name": "Unsealed Catalyst",
+      "rows": 40,
+      "max_tick": 120,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 1.21
+    },
+    {
+      "canonical_id": "venomwright:012",
+      "skill": 12,
+      "name": "Verdigris Wake",
+      "rows": 68,
+      "max_tick": 260,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.44
+    },
+    {
+      "canonical_id": "venomwright:013",
+      "skill": 13,
+      "name": "Mercury Garden",
+      "rows": 80,
+      "max_tick": 320,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.37
+    },
+    {
+      "canonical_id": "venomwright:014",
+      "skill": 14,
+      "name": "Reaction Cascade",
+      "rows": 84,
+      "max_tick": 340,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.48
+    },
+    {
+      "canonical_id": "venomwright:015",
+      "skill": 15,
+      "name": "Breath of the Vat",
+      "rows": 79,
+      "max_tick": 315,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 3.07
+    },
+    {
+      "canonical_id": "venomwright:016",
+      "skill": 16,
+      "name": "Crystal Rot",
+      "rows": 99,
+      "max_tick": 415,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 3.11
+    },
+    {
+      "canonical_id": "venomwright:017",
+      "skill": 17,
+      "name": "Reverse Extraction",
+      "rows": 81,
+      "max_tick": 325,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 3.78
+    },
+    {
+      "canonical_id": "venomwright:018",
+      "skill": 18,
+      "name": "Bitter Rain",
+      "rows": 98,
+      "max_tick": 410,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 3.98
+    },
+    {
+      "canonical_id": "venomwright:019",
+      "skill": 19,
+      "name": "False Remedy",
+      "rows": 83,
+      "max_tick": 335,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 2.33
+    },
+    {
+      "canonical_id": "venomwright:020",
+      "skill": 20,
+      "name": "Plague Cartography",
+      "rows": 105,
+      "max_tick": 445,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 4.25
+    },
+    {
+      "canonical_id": "venomwright:021",
+      "skill": 21,
+      "name": "The Last Distillation",
+      "rows": 194,
+      "max_tick": 890,
+      "mismatched_rows": 0,
+      "first_mismatch": null,
+      "replay_seconds": 14.44
+    }
+  ]
+}
