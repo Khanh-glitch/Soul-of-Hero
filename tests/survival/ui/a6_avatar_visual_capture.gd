@@ -17,6 +17,8 @@ const HOME_ROUTE := &"home"
 const DEATH_HOLD_SECONDS := 1.6
 
 var _app_root: Node
+var _phase := "full"
+var _frames: Array[Dictionary] = []
 var _gender := "male"
 var _capture_dir := ""
 var _tag := "capture"
@@ -35,6 +37,7 @@ func _run() -> void:
 	_gender = _argument_value(args, "--avatar-gender", "male")
 	_capture_dir = _argument_value(args, "--capture-dir", "user://captures")
 	_tag = _argument_value(args, "--capture-tag", "%s" % _gender)
+	_phase = _argument_value(args, "--avatar-phase", "full")
 	var absolute_dir := _capture_dir if _capture_dir.is_absolute_path() else ProjectSettings.globalize_path(_capture_dir)
 	DirAccess.make_dir_recursive_absolute(absolute_dir)
 	print("A6 CAPTURE: dir=%s tag=%s gender=%s viewport=%s" % [
@@ -43,6 +46,10 @@ func _run() -> void:
 	await _capture("01_title")
 	if not await _wait_for_route(&"title", 15000):
 		_fail("title route")
+		return _finish()
+	if _phase == "continue":
+		await _run_continue_phase()
+		return _finish()
 	var title := _current_screen()
 	var new_game_button := title.find_child("NewGameButton", true, false) as Button if title != null else null
 	if new_game_button == null:
@@ -112,11 +119,79 @@ func _run() -> void:
 	_finish()
 
 
+## Second, independent process: the freshly booted game must restore the chosen
+## character from A0's save on Continue, and the restored avatar must animate.
+func _run_continue_phase() -> void:
+	var title := _current_screen()
+	var continue_button := title.find_child("ContinueButton", true, false) as Button if title != null else null
+	if continue_button == null:
+		_fail("ContinueButton")
+		return
+	continue_button.pressed.emit()
+	if not await _wait_for_route(HOME_ROUTE, 10000):
+		_fail("continue -> home route")
+		return
+	await _wait_frames(20)
+	var home_player := _find_avatar_host(_current_screen())
+	if home_player == null:
+		_fail("restored Home actor")
+		return
+	var home_state := _presenter_state(home_player)
+	await _capture("20_continue_home_idle")
+	Input.action_press(&"move_right")
+	await _wait_frames(12)
+	await _capture("21_continue_home_walk")
+	Input.action_release(&"move_right")
+	AppFlow.open_overworld()
+	if not await _wait_for_route(OVERWORLD_ROUTE, 20000):
+		_fail("continue -> overworld route")
+		return
+	await _wait_frames(40)
+	_knight = _find_player()
+	if _knight == null:
+		_fail("restored overworld player")
+		return
+	var player_state := _presenter_state(_knight)
+	await _capture("22_continue_overworld_idle")
+	Input.action_press(&"move_up")
+	await _wait_frames(12)
+	await _capture("23_continue_overworld_walk")
+	Input.action_release(&"move_up")
+	await _wait_frames(30)
+	await _capture("24_continue_overworld_idle_after_walk")
+	var restored_gender := String(player_state.get("gender", ""))
+	if restored_gender != _gender:
+		_fail("restored identity is %s, expected %s" % [restored_gender, _gender])
+	if String(player_state.get("status", "")) != "READY":
+		_fail("restored avatar is not presented (%s)" % String(player_state.get("status", "")))
+	print("A6 CAPTURE: continue phase restored %s (home=%s overworld=%s)" % [
+		restored_gender,
+		String(home_state.get("status", "")),
+		String(player_state.get("status", "")),
+	])
+
+
+func _presenter_state(host: Node) -> Dictionary:
+	var presenter := host.get_node_or_null(^"AvatarPresenter")
+	if presenter == null or not presenter.has_method(&"get_presentation_state"):
+		return {}
+	return presenter.call(&"get_presentation_state")
+
+
 func _take_damage(amount: int) -> void:
 	if _knight == null:
 		return
 	_knight.set(&"invulnerability_remaining", 0.0)
 	_knight.call(&"take_damage", amount, _knight.get(&"global_position") + Vector2(16, 0))
+
+
+func _find_avatar_host(root: Node) -> Node:
+	if root == null:
+		return null
+	for candidate: Node in root.find_children("*", "CharacterBody2D", true, false):
+		if candidate.get_node_or_null(^"AvatarPresenter") != null:
+			return candidate
+	return null
 
 
 func _find_player() -> Node:
@@ -140,6 +215,24 @@ func _capture(label: String) -> void:
 	if error != OK:
 		_fail("saved %s (%d)" % [file_name, error])
 		return
+	var evidence := {
+		"file": file_name,
+		"label": label,
+		"width": image.get_width(),
+		"height": image.get_height(),
+		"route": String(_app_root.call(&"get_current_route")) if is_instance_valid(_app_root) else "",
+	}
+	var host: Node = _knight if is_instance_valid(_knight) else _find_avatar_host(_current_screen())
+	var state := _presenter_state(host) if host != null else {}
+	if not state.is_empty():
+		evidence["avatar"] = {
+			"status": String(state.get("status", "")),
+			"gender": String(state.get("gender", "")),
+			"action": String(state.get("action", "")),
+			"direction": String(state.get("direction", "")),
+			"appearance_gate": String(state.get("appearance_gate", "")),
+		}
+	_frames.append(evidence)
 	print("A6 CAPTURE: wrote %s (%dx%d)" % [path, image.get_width(), image.get_height()])
 
 
@@ -178,6 +271,22 @@ func _fail(label: String) -> void:
 
 
 func _finish() -> void:
+	var manifest_path := _capture_dir.path_join("%s_frames.json" % _tag)
+	if not _capture_dir.is_absolute_path():
+		manifest_path = ProjectSettings.globalize_path(manifest_path)
+	var handle := FileAccess.open(manifest_path, FileAccess.WRITE)
+	if handle != null:
+		handle.store_string(JSON.stringify({
+			"schema": "soh.a6.visual_capture.v1",
+			"tag": _tag,
+			"phase": _phase,
+			"gender": _gender,
+			"engine": Engine.get_version_info().get("string", ""),
+			"frames": _frames,
+			"failures": _failures,
+		}, "  ", false))
+		handle.close()
+		print("A6 CAPTURE: manifest %s (%d frames)" % [manifest_path, _frames.size()])
 	if _failures.is_empty():
 		print("A6 VISUAL CAPTURE COMPLETE — %d frames" % _index)
 		get_tree().quit(0)

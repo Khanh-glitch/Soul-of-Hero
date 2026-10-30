@@ -300,6 +300,54 @@ jobs:
           echo "720p capture exit: ${result}"
           exit "${result}"
 
+      - name: Render the second-process Continue frames (720p, same profile)
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-phase=continue --avatar-gender=male \
+            --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=male_720p_continue \
+            2>&1 | tee .artifacts/capture-720p-continue.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "720p continue capture exit: ${result}"
+          exit "${result}"
+
+      - name: Render female journey at 720p
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720_female.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-gender=female \
+            --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=female_720p \
+            2>&1 | tee .artifacts/capture-720p-female.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "720p female capture exit: ${result}"
+          exit "${result}"
+
+      - name: Render the female second-process Continue frames
+        run: |
+          set -uo pipefail
+          export SOUL_OF_HERO_SAVE_PATH="user://a6_capture_720_female.json"
+          set +e
+          timeout --signal=TERM --kill-after=20s 420s xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
+            godot --path . --resolution 1280x720 --rendering-driver opengl3 -- \
+            --avatar-visual-capture --avatar-phase=continue --avatar-gender=female \
+            --capture-dir="$PWD/.artifacts/captures-1280x720" --capture-tag=female_720p_continue \
+            2>&1 | tee .artifacts/capture-720p-female-continue.log
+          result=${PIPESTATUS[0]}
+          set -e
+          echo "720p female continue capture exit: ${result}"
+          exit "${result}"
+
       - name: Render 2560x1440 captures
         run: |
           set -uo pipefail
@@ -333,6 +381,29 @@ jobs:
           set -e
           echo "2160p capture exit: ${result}"
           exit "${result}"
+
+      - name: Assert every capture has the resolution it claims
+        run: |
+          python3 - <<'PY'
+          import pathlib, struct, sys
+          expected = {"1280x720": (1280, 720), "2560x1440": (2560, 1440), "3840x2160": (3840, 2160)}
+          failures = []
+          count = 0
+          for folder, want in expected.items():
+              for png in sorted(pathlib.Path(".artifacts").glob(f"captures-{folder}/*.png")):
+                  data = png.read_bytes()[:24]
+                  if data[:8] != b"\x89PNG\r\n\x1a\n":
+                      failures.append(f"{png}: not a PNG")
+                      continue
+                  size = struct.unpack(">II", data[16:24])
+                  count += 1
+                  if size != want:
+                      failures.append(f"{png}: {size[0]}x{size[1]} != {want[0]}x{want[1]}")
+          print(f"checked {count} frames")
+          for failure in failures:
+              print(f"FAIL {failure}")
+          sys.exit(1 if failures or count == 0 else 0)
+          PY
 
       - name: Summarise captures
         if: always()
