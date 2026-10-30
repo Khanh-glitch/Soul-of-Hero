@@ -87,12 +87,15 @@ class AdversarialSuiteTests(unittest.TestCase):
 
 
 class BootstrapClosureTests(unittest.TestCase):
-    """BLK-4 closure probe: the cycle must disappear from data alone.
+    """The station-only spare edge stays a detector, not a blocker.
 
-    The probe does not "fix" anything in the repo. It builds an in-memory copy of
-    the model with ONE non-loot LIVE source of knowledge_spares and requires the
-    existing detector to stop reporting the cycle. That is the acceptance
-    criterion A3 can meet without touching any loot table.
+    Round 3 closed the old "first research is a bootstrap cycle" blocker: A1
+    authorizes 2 knowledge_spares per Waystation cache claim and ``research_kit``
+    is a *workbench* recipe, so the ladder starts with no station at all. The
+    detector is deliberately kept as an early warning: it fires on the
+    make_spares <-> research-station edge, and it must clear as soon as one
+    non-station source exists. That is proven here in memory, without touching
+    any loot table or rate.
     """
 
     def test_cycle_clears_when_one_non_loot_spare_source_exists(self) -> None:

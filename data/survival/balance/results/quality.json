@@ -1,0 +1,300 @@
+{
+  "checks": [
+    {
+      "check_id": "Q-01",
+      "closure_signal": "no effect-free option survives unless its label says it changes nothing, and no unmounted POI appears in a content list",
+      "evidence": [
+        {
+          "fact": "contract-only POIs",
+          "value": 106
+        },
+        {
+          "fact": "effect-free site options",
+          "value": []
+        },
+        {
+          "fact": "native POI scenes captured",
+          "value": [
+            "a8.poi_pilot.tscn",
+            "a8.south_crown_mill.tscn",
+            "a8.south_orchard_ruin.tscn",
+            "a8.south_quarry.tscn"
+          ]
+        }
+      ],
+      "owner": "A1 + A8",
+      "player_impact": "106 of 118 A1 POIs are contract-only and none of them is mounted, so no player can meet an empty POI yet; the risk is any screen that lists them as content. 0 authored site option(s) have no cost, reward or state change (deliberate 'do nothing' choices are allowed only when labelled as such).",
+      "status": "PASS",
+      "title": "No POI is presented as finished while offering nothing"
+    },
+    {
+      "check_id": "Q-02",
+      "closure_signal": "keep one owner per job and keep the debug flag off in release; mounting a fixture demo screen fails this check",
+      "evidence": [
+        {
+          "fact": "surfaces and jobs",
+          "value": {
+            "a0.hud.gd": [
+              "health"
+            ],
+            "a0.overworld_hud.gd": [
+              "provisions"
+            ],
+            "a6.player_first_hud.gd": [
+              "context",
+              "core",
+              "feedback"
+            ]
+          }
+        },
+        {
+          "fact": "jobs owned twice",
+          "value": {}
+        },
+        {
+          "fact": "developer diagnostics defaults off",
+          "value": true
+        }
+      ],
+      "owner": "A6 (+A0 mount)",
+      "player_impact": "Jobs: {'a0.hud.gd': ['health'], 'a0.overworld_hud.gd': ['provisions'], 'a6.player_first_hud.gd': ['context', 'core', 'feedback']}. No job is owned twice, so the earlier duplicate-status concern is resolved by splitting context/Core/feedback away from health/provisions. Developer provenance text is gated behind `_developer_diagnostics` defaulting off: True. The remaining risk is that the fixture demo screens are mounted as if they were the game.",
+      "status": "PASS",
+      "title": "One owner per HUD job, and developer text behind an opt-in flag"
+    },
+    {
+      "check_id": "Q-03",
+      "closure_signal": "no cost, reward or source names an item outside items.json",
+      "evidence": [
+        {
+          "fact": "sources naming unknown items",
+          "value": []
+        },
+        {
+          "fact": "site costs/rewards outside the catalog",
+          "value": []
+        },
+        {
+          "fact": "items in catalog",
+          "value": 56
+        },
+        {
+          "fact": "unmapped source rows (traceability)",
+          "value": []
+        },
+        {
+          "fact": "A0 mirror of the A3 catalog",
+          "value": {
+            "a3_rows": 36,
+            "divergent": [],
+            "identical_rows": 36,
+            "mirror_rows": 36,
+            "only_in_a3": [],
+            "only_in_mirror": [],
+            "status": "MATCH"
+          }
+        }
+      ],
+      "owner": "A3 + A8",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `MATCH` (36/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "status": "PASS",
+      "title": "Every authored cost, reward and source points at a real item"
+    },
+    {
+      "check_id": "Q-04",
+      "closure_signal": "mounted scene path contains 555940/419402 and every grade either has an installed sheet or reports SOURCE_BLOCKED",
+      "evidence": [
+        {
+          "fact": "armour grade availability",
+          "value": {
+            "female": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            },
+            "male": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            }
+          }
+        },
+        {
+          "fact": "grade-0 idle sheet installed",
+          "value": false
+        },
+        {
+          "fact": "adapter blocks instead of substituting",
+          "value": true
+        },
+        {
+          "fact": "adapter fallback to Knight/Swordsman",
+          "value": false
+        },
+        {
+          "fact": "grade-0 sheet installed for",
+          "value": []
+        },
+        {
+          "fact": "mounted player scene",
+          "value": "game/characters/knight/knight.tscn"
+        }
+      ],
+      "owner": "A0 (mount) + A6 (art import)",
+      "player_impact": "Canonical bodies are declared (555940 male / 419402 female) with armour grades 1-2 NULL and the grade-0 sheet path empty, so the adapter returns SOURCE_BLOCKED rather than a wrong body: True. It has no fallback to Knight/Swordsman: True. But the mounted body is still `game/characters/knight/knight.tscn`, so a player sees the wrong character today.",
+      "status": "FAIL",
+      "title": "Player avatar identity and armour state are correct or explicitly blocked"
+    },
+    {
+      "check_id": "Q-05",
+      "closure_signal": "every produced non-terminal item appears as a recipe/technology input, fuel, station kit or upgrade cost",
+      "evidence": [
+        {
+          "fact": "orphaned outputs",
+          "value": []
+        },
+        {
+          "fact": "terminal outputs (expected)",
+          "value": [
+            "core_ember",
+            "core_frost",
+            "core_venom",
+            "field_meal",
+            "frost_cloak",
+            "iron_pick",
+            "minor_salve",
+            "salvage_hammer",
+            "stone_pick",
+            "toxin_mask"
+          ]
+        }
+      ],
+      "owner": "A3",
+      "player_impact": "0 produced item(s) are consumed by nothing and are not terminal gear: a player can craft them and then has no use for them. 10 other outputs are terminal items (tools/cores/food) and are correctly not consumed.",
+      "status": "PASS",
+      "title": "No crafting/research output is orphaned"
+    },
+    {
+      "check_id": "Q-06",
+      "closure_signal": "a control with no host stays disabled and labelled; a mounted host makes the same control commit through A0",
+      "evidence": [
+        {
+          "fact": "action-host guards",
+          "value": 6
+        },
+        {
+          "fact": "intent emissions",
+          "value": 2
+        },
+        {
+          "fact": "workspace forwards intent",
+          "value": true
+        },
+        {
+          "fact": "adapter avoids owner calls",
+          "value": true
+        },
+        {
+          "fact": "emissions with no host guard",
+          "value": 0
+        }
+      ],
+      "owner": "A6 + A0",
+      "player_impact": "The planner guards actions on a connected host (6 guard site(s)) and the workspace forwards intent upward (True). The storage adapter normalises intent and explicitly does not call SaveService (True), so nothing is silently faked. Until A0 connects a host, the controls are unavailable rather than pretending to work.",
+      "status": "PASS",
+      "title": "Every actionable control is either backed by an owner action or plainly unavailable"
+    },
+    {
+      "check_id": "Q-07",
+      "closure_signal": "a fixture may never import SaveService; a production path must, and its receipt must be testable",
+      "evidence": [
+        {
+          "fact": "a6_journeys_are_read_only_fixtures",
+          "value": true
+        },
+        {
+          "fact": "a8_authority_is_fixture",
+          "value": true
+        },
+        {
+          "fact": "a8_fixture_never_uses_save_service",
+          "value": true
+        },
+        {
+          "fact": "a8_pilot_wires_fixture",
+          "value": true
+        },
+        {
+          "fact": "no_verified_claim_inside_a_fixture_path",
+          "value": true
+        },
+        {
+          "fact": "overclaim tokens found",
+          "value": []
+        }
+      ],
+      "owner": "A8 + A6",
+      "player_impact": "Every scene that demonstrates a loot or save outcome declares itself a fixture, keeps its state in memory and never calls SaveService. That is correct labelling, not working persistence: a reader must not mistake it for a committed save.",
+      "status": "PASS",
+      "title": "Save/loot claims are honest about fixture authority"
+    }
+  ],
+  "counts": {
+    "FAIL": 1,
+    "PASS": 6
+  },
+  "failures": [
+    {
+      "check_id": "Q-04",
+      "closure_signal": "mounted scene path contains 555940/419402 and every grade either has an installed sheet or reports SOURCE_BLOCKED",
+      "evidence": [
+        {
+          "fact": "armour grade availability",
+          "value": {
+            "female": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            },
+            "male": {
+              "0": "PRESENT",
+              "1": "NULL_SOURCE_BLOCKED",
+              "2": "NULL_SOURCE_BLOCKED"
+            }
+          }
+        },
+        {
+          "fact": "grade-0 idle sheet installed",
+          "value": false
+        },
+        {
+          "fact": "adapter blocks instead of substituting",
+          "value": true
+        },
+        {
+          "fact": "adapter fallback to Knight/Swordsman",
+          "value": false
+        },
+        {
+          "fact": "grade-0 sheet installed for",
+          "value": []
+        },
+        {
+          "fact": "mounted player scene",
+          "value": "game/characters/knight/knight.tscn"
+        }
+      ],
+      "owner": "A0 (mount) + A6 (art import)",
+      "player_impact": "Canonical bodies are declared (555940 male / 419402 female) with armour grades 1-2 NULL and the grade-0 sheet path empty, so the adapter returns SOURCE_BLOCKED rather than a wrong body: True. It has no fallback to Knight/Swordsman: True. But the mounted body is still `game/characters/knight/knight.tscn`, so a player sees the wrong character today.",
+      "status": "FAIL",
+      "title": "Player avatar identity and armour state are correct or explicitly blocked"
+    }
+  ],
+  "read_this_first": "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the feature runs.",
+  "schema": "soh.balance.quality.v1",
+  "snapshot_heads": {
+    "a0": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+    "a1": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a6": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "a8": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1"
+  }
+}

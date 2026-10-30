@@ -66,11 +66,11 @@ static func placement(survival: Object, piece_id: String, reason: String, known_
 ## A3 catalogs use `knowledge: starter|recipe`; saved formula ownership is a
 ## separate host projection. Never treat a physical Core instance as knowledge.
 static func recipe_status(knowledge: String, formula_learned: Variant) -> String:
-	if knowledge == "starter": return "Starter catalog"
-	if not formula_learned is bool: return "Knowledge state unavailable"
+	if knowledge == "starter": return "Available"
+	if not formula_learned is bool: return ""
 	if formula_learned: return "Formula learned"
 	if knowledge == "recipe": return "Research required"
-	return "Knowledge unavailable"
+	return ""
 
 ## Maps A3's dictionary-shaped recipe catalog into the A6-only view DTO. The
 ## caller must derive `formula_learned`, visible ingredient counts, station/queue
@@ -206,8 +206,8 @@ static func _string_array(value: Variant) -> Array[String]:
 
 static func core_status(uses: int, maximum: int) -> String:
 	if maximum <= 0 or uses < 0 or uses > maximum:
-		return "Uses unavailable"
-	return "Exhausted · 0/%d uses" % maximum if uses == 0 else "%d/%d uses remaining" % [uses, maximum]
+		return ""
+	return "Exhausted · 0/%d uses" % maximum if uses == 0 else "%d/%d uses" % [uses, maximum]
 
 ## A3's physical instance vocabulary is `instance_id`, `item_id`, `uses` /
 ## `max_uses`, integer condition / max_condition, location and revision. This

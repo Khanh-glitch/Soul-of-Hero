@@ -168,3 +168,46 @@ def _a1_container_vocabulary(model) -> List[str]:
     world = model.world
     walk(world() if callable(world) else world, "world")
     return sorted(set(found))
+
+
+def binding_adoption(model, contract: Dict[str, object]) -> Dict[str, object]:
+    """Compare A1's authorized source bindings with A3's own source rows.
+
+    This is the precise join the earlier "0 of 16" claim never made: A1's
+    vertical-slice contract already says *which* A3 source pays *what* at *which*
+    instance*, with a transaction key. The question is therefore not "does a POI
+    exist" but "has A3 adopted the binding".
+    """
+    rows: List[Dict[str, object]] = []
+    for binding in contract.get("bindings", []) or []:  # type: ignore[union-attr]
+        source_id = str(binding.get("source_id"))
+        source = model.sources.get(source_id, {})
+        declared = source.get("poi_id")
+        rows.append(
+            {
+                "source_id": source_id,
+                "item_id": binding.get("item_id"),
+                "a1_authorized_poi": binding.get("poi_id"),
+                "a1_authorized_yield": binding.get("yield_per_claim"),
+                "a1_renewable": binding.get("renewable"),
+                "a1_cooldown_seconds": binding.get("cooldown_active_seconds"),
+                "a3_declared_poi": declared,
+                "a3_declared_acquisition": source.get("acquisition"),
+                "a3_declared_yield": source.get("yield_per_claim"),
+                "a3_status": source.get("integration_status"),
+                "adopted": str(declared) == str(binding.get("poi_id")),
+                "yield_agrees": source.get("yield_per_claim") in (None, binding.get("yield_per_claim")),
+                "binding_request": binding.get("binding_request"),
+            }
+        )
+    adopted = [row for row in rows if row["adopted"]]
+    return {
+        "rows": rows,
+        "authorized_bindings": len(rows),
+        "adopted_by_a3": len(adopted),
+        "pending_rebind": [row for row in rows if not row["adopted"]],
+        "summary": (
+            f"{len(adopted)}/{len(rows)} A1-authorized source bindings are adopted by A3. "
+            "Each pending row is a one-field poi_id edit, not a new rate."
+        ),
+    }

@@ -151,12 +151,21 @@ def build_facts(
     index = manifest.get("index", {})
     art_rows = list(index.get("avatar_or_character_art", []))  # type: ignore[union-attr]
     production_art = [row for row in art_rows if str(row["path"]).startswith("game/")]
+    # A declaration inside a manifest is not a mount. Only a scene/script/asset
+    # reference counts as "production", so the two are counted separately.
+    def _is_runtime_ref(path: str) -> bool:
+        return str(path).endswith((".gd", ".tscn", ".tres", ".png", ".import", ".res"))
+
     canonical_hits = {
-        token: [row for row in production_art if token in json.dumps(row)]
+        token: [row for row in production_art if token in json.dumps(row) and _is_runtime_ref(row["path"])]
         for token in ("555940", "419402", "180537")
     }
     facts["canonical_avatar_production_refs"] = {
         token: len(rows) for token, rows in canonical_hits.items()
+    }
+    facts["canonical_avatar_declaration_refs"] = {
+        token: len([row for row in production_art if token in json.dumps(row) and not _is_runtime_ref(row["path"])])
+        for token in ("555940", "419402", "180537")
     }
     facts["canonical_avatar_doc_refs"] = {
         token: len([r for r in art_rows if token in json.dumps(r)]) for token in ("555940", "419402", "180537")
@@ -219,11 +228,20 @@ def build_facts(
 
     # --- authored actions with no production host
     facts["loot_tables_in_data"] = sorted(loot_tables)
+    # A loot table named by a script/scene is a host; the same name inside a data
+    # mirror only means the catalog was copied. Keep the two apart so a duplicated
+    # data file can never be mistaken for a mounted container.
+    code_texts = {
+        key: text for key, text in texts.items() if key.endswith((".gd", ".tscn", ".tres"))
+    }
+    data_texts = {
+        key: text for key, text in texts.items() if key.endswith(".json")
+    }
     facts["loot_tables_in_production_code"] = sorted(
-        table
-        for table in loot_tables
-        for text in texts.values()
-        if table in text
+        table for table in loot_tables for text in code_texts.values() if table in text
+    )
+    facts["loot_tables_in_data_mirrors"] = sorted(
+        {table for table in loot_tables for text in data_texts.values() if table in text}
     )
     facts["stations_in_data"] = sorted(station_ids)
     facts["stations_in_production_code"] = sorted(

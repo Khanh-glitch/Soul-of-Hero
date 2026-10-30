@@ -1,6 +1,10 @@
 {
- "a0_head": "9d287f3337af3874720d9444e8c258e26162f24c",
- "a6_head": "8bc561dfbf86469b24429e20c6a5bff298acf307",
+ "a0_head": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+ "a1_head": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+ "a6_head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+ "a8_head": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+ "a8_note": "A8 native POI scenes live on the PR26 branch; the A8 task branch carries docs only. Both heads are recorded so a reader cannot mistake the doc branch for the scene branch.",
+ "a8_task_head": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
  "files": [
   {
    "key": "a0.home_map_screen.gd",
@@ -73,10 +77,38 @@
    "source_path": "game/survival/chest_inventory_panel.gd"
   },
   {
+   "key": "a0.save_service.gd",
+   "owner": "a0",
+   "sha256": "940a8cc666138102488f2189f7b6071a49917566cbd8ccc1cfbabcb3d960801d",
+   "size_bytes": 212046,
+   "source_path": "game/autoload/save_service.gd"
+  },
+  {
+   "key": "a0.sources.json",
+   "owner": "a0",
+   "sha256": "7c2cddcdbdb8f2dbb96564abf91fed7ff598a1c750d052302bef685bd112a602",
+   "size_bytes": 18227,
+   "source_path": "data/survival/items/sources.json"
+  },
+  {
+   "key": "a0.survival_service.gd",
+   "owner": "a0",
+   "sha256": "4a4a2962a14d990e4470a41a602ff4fed7afc03d8aad5a88baf029a57722ca5d",
+   "size_bytes": 40226,
+   "source_path": "game/survival/survival_service.gd"
+  },
+  {
+   "key": "a0.survival_resource_node.gd",
+   "owner": "a0",
+   "sha256": "db84497dca6874fa68277a3d0529f30b1ae23eb193701fa48ff1ad2d46cacddf",
+   "size_bytes": 6141,
+   "source_path": "game/survival/survival_resource_node.gd"
+  },
+  {
    "key": "a6.player_first_hud.gd",
    "owner": "a6",
-   "sha256": "0855751db0ae85fb21b22cbf451a6bc9a49a0e6a28a9ab923004756a4e38bbe2",
-   "size_bytes": 14964,
+   "sha256": "3ed644a1d352bf30e38589ddeeca1e50193f88b7db1807607569f24ff8e5b0b1",
+   "size_bytes": 13649,
    "source_path": "game/survival/ui/player_first_hud.gd"
   },
   {
@@ -96,8 +128,8 @@
   {
    "key": "a6.expedition_planner.gd",
    "owner": "a6",
-   "sha256": "1405380d15b9564a916725259f3f68b964720b8848345b819ce7bd4508ad9778",
-   "size_bytes": 32334,
+   "sha256": "20d9ed8804e8d2e9a5bd4a69fe3afc16994269e44da771f7db889a9904c985df",
+   "size_bytes": 30741,
    "source_path": "game/survival/ui/expedition_planner.gd"
   },
   {
@@ -110,15 +142,15 @@
   {
    "key": "a6.survival_journal.gd",
    "owner": "a6",
-   "sha256": "cda1cdfd544253bc194e72cc6e362cb0f8209c659304dddd6e429ec3bf87a1d7",
-   "size_bytes": 12139,
+   "sha256": "d6e7e22263d7034fc899122498fa013773d6a35a45b2d2f447a1a8cdcc9d8ab1",
+   "size_bytes": 11975,
    "source_path": "game/survival/ui/survival_journal.gd"
   },
   {
    "key": "a6.survival_view_adapter.gd",
    "owner": "a6",
-   "sha256": "dd620f714d1b717344ea60d0e99c34507219e28e6adcb927b249aded854fe3fe",
-   "size_bytes": 16718,
+   "sha256": "eaddcc11c46f9c645b4f7f463dfd5c864eb33e2a354310138cab2ddd6b2d325e",
+   "size_bytes": 16638,
    "source_path": "game/survival/ui/survival_view_adapter.gd"
   },
   {
@@ -127,21 +159,162 @@
    "sha256": "21982e4698dc2fff9f88fbc3c9233d3054dcd2cf44c0ccd262bcf6b8c90959ad",
    "size_bytes": 2420,
    "source_path": "game/survival/ui/a0_storage_command_adapter.gd"
+  },
+  {
+   "key": "a6.avatar_appearance_adapter.gd",
+   "owner": "a6",
+   "sha256": "845a105ad9a5b9e5a8450e5227f4043bdebe10a8e70a95cf36ae6895d753eb76",
+   "size_bytes": 2936,
+   "source_path": "game/survival/ui/avatar_appearance_adapter.gd"
+  },
+  {
+   "key": "a6.avatar_art_manifest.json",
+   "owner": "a6",
+   "sha256": "e5e2cb7a8b568f917990b5583c752b33cae3e45e85e93e589c36232927e97eba",
+   "size_bytes": 2441,
+   "source_path": "game/survival/ui/avatar_art_manifest.json"
+  },
+  {
+   "key": "a8.south_quarry.tscn",
+   "owner": "a8",
+   "sha256": "40e3f7817b3c1d6f7143285e9a5e8edf625dc7d61a83947aa6fb7b63b5b76bac",
+   "size_bytes": 312,
+   "source_path": "game/survival/world_content/scenes/south_quarry.tscn"
+  },
+  {
+   "key": "a8.south_orchard_ruin.tscn",
+   "owner": "a8",
+   "sha256": "3f083035029d67a531c8e527234e63482e78ec579f7df16f4e391302ea07b786",
+   "size_bytes": 314,
+   "source_path": "game/survival/world_content/scenes/south_orchard_ruin.tscn"
+  },
+  {
+   "key": "a8.south_crown_mill.tscn",
+   "owner": "a8",
+   "sha256": "1324c45ebfb6b47ef117edb0b0db0ee96a3ad4d0deb53bd6f0e7bd2d73897d94",
+   "size_bytes": 308,
+   "source_path": "game/survival/world_content/scenes/south_crown_mill.tscn"
+  },
+  {
+   "key": "a8.poi_pilot.tscn",
+   "owner": "a8",
+   "sha256": "754890682c469bbef90a37e4b80f7b66771b2f764803f110468681b860294dd7",
+   "size_bytes": 225,
+   "source_path": "game/survival/world_content/scenes/poi_pilot.tscn"
+  },
+  {
+   "key": "a8.native_poi_site.gd",
+   "owner": "a8",
+   "sha256": "76dc7273f6e17ca8e7a0efcee1a488c2ca6f8e89321739374cbe501bd68fcbb3",
+   "size_bytes": 24657,
+   "source_path": "game/survival/world_content/scripts/native_poi_site.gd"
+  },
+  {
+   "key": "a8.poi_authority_fixture.gd",
+   "owner": "a8",
+   "sha256": "d265cc984788ddd06744766d953db3ed00b84ff500363db5e1f5f1432d966187",
+   "size_bytes": 9221,
+   "source_path": "game/survival/world_content/scripts/poi_authority_fixture.gd"
+  },
+  {
+   "key": "a8.poi_pilot.gd",
+   "owner": "a8",
+   "sha256": "07de3267d50d7313aff5be0a882c30798c3d7f92646e5bf60a93d9319820194a",
+   "size_bytes": 7178,
+   "source_path": "game/survival/world_content/scripts/poi_pilot.gd"
+  },
+  {
+   "key": "a8.south_quarry.json",
+   "owner": "a8",
+   "sha256": "dcc7bbf61675707d89acedfbaa0dcc80c1f61e65e120c5d455317db13c4875e1",
+   "size_bytes": 3814,
+   "source_path": "data/survival/world_content/sites/south_quarry.json"
+  },
+  {
+   "key": "a8.south_orchard_ruin.json",
+   "owner": "a8",
+   "sha256": "7bf9bd4552bf36649452add049ed6f865e57473cc05016345877d91241a03808",
+   "size_bytes": 3832,
+   "source_path": "data/survival/world_content/sites/south_orchard_ruin.json"
+  },
+  {
+   "key": "a8.south_crown_mill.json",
+   "owner": "a8",
+   "sha256": "9c9af244ad79d13cf443235a5ed2141b867f05ed3d9e9cf3e8a1c90a10197c5f",
+   "size_bytes": 4543,
+   "source_path": "data/survival/world_content/sites/south_crown_mill.json"
+  },
+  {
+   "key": "a8.interaction_contract.v1.json",
+   "owner": "a8",
+   "sha256": "825d7faaf68fa416b71a3b112e4770f02af9718b4abc66210f98100bb6bee24b",
+   "size_bytes": 2864,
+   "source_path": "data/survival/world_content/interaction_contract.v1.json"
+  },
+  {
+   "key": "a1.handoff_contracts.json",
+   "owner": "a1",
+   "sha256": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1",
+   "size_bytes": 16126,
+   "source_path": "data/survival/world/vertical_slice/handoff_contracts.json"
+  },
+  {
+   "key": "a1.poi_crown_waystation.v1.json",
+   "owner": "a1",
+   "sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+   "size_bytes": 5885,
+   "source_path": "data/survival/world/poi_authoring/poi_crown_waystation.v1.json"
   }
  ],
  "index": {
   "avatar_or_character_art": [
    {
-    "line": 12,
-    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
-    "pattern": "419402",
-    "text": "3. Create character-choice UI for exactly the two LOCKED original Male/Female Adventurer ZIP avatars only if true original bytes and source rights are accessible; don't use Craftpix 555940/419402 subs"
+    "line": 9,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "555940",
+    "text": "| Bald, unarmored male | Craftpix 555940, `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` | `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_with"
    },
    {
-    "line": 12,
+    "line": 10,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "419402",
+    "text": "| Bald, unarmored female | Craftpix 419402, `craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip` | `1o5hRVbPZjZxcPGwP5coPDHZARbAej75o` | `PNG/Unarmed/Without_shadow/Unarmed_Idle_"
+   },
+   {
+    "line": 27,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "180537",
+    "text": "The source verification currently available in the Arena package establishes only the unarmored idle sheet from each of the two ZIPs. It does **not** establish compatible male and female grade-1/grade"
+   },
+   {
+    "line": 6,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "- Exactly two canonical starting player identities: bald, unarmored male, Craftpix 555940, Drive file `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`; bald, unarmored female, Craftpix 419402, Drive file `1o5hRVbP"
+   },
+   {
+    "line": 6,
     "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
     "pattern": "555940",
-    "text": "3. Create character-choice UI for exactly the two LOCKED original Male/Female Adventurer ZIP avatars only if true original bytes and source rights are accessible; don't use Craftpix 555940/419402 subs"
+    "text": "- Exactly two canonical starting player identities: bald, unarmored male, Craftpix 555940, Drive file `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`; bald, unarmored female, Craftpix 419402, Drive file `1o5hRVbP"
+   },
+   {
+    "line": 8,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "180537",
+    "text": "- Armor art: grade 1 and grade 2 male/female matching files have not been verified in this workspace. Craftpix 180537 Swordsman tiers are a different character and are not acceptable fallback. Adapter"
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "4. Use the exact private source ZIPs only through authorized project asset handoff. Current source record names are `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` and `craftp"
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "555940",
+    "text": "4. Use the exact private source ZIPs only through authorized project asset handoff. Current source record names are `craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip` and `craftp"
    },
    {
     "line": 6,
@@ -172,6 +345,24 @@
     "path": "docs/survival/ux/V3_SUSTAINED_PRODUCT_ACCEPTANCE.md",
     "pattern": "game/characters/knight",
     "text": "At the pinned A0 source, `chapter1_overworld.gd` checks visible `gameplay_modal` roots before its build-toggle/slot/place polling and prevents its Escape retreat path from running through a visible mo"
+   },
+   {
+    "line": 97,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "419402",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
+    "line": 97,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "555940",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
+    "line": 101,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "180537",
+    "text": "`avatar_appearance_adapter.gd` accepts only an A0-authoritative gender/equipped-grade snapshot and fails closed with `SOURCE_BLOCKED` unless that exact identity/tier asset is installed. No armor art i"
    },
    {
     "line": 13,
@@ -286,6 +477,48 @@
     "path": "game/overworld/chapter1_overworld.gd",
     "pattern": "game/characters/knight",
     "text": "const KNIGHT_SCENE: PackedScene = preload(\"res://game/characters/knight/knight.tscn\")"
+   },
+   {
+    "line": 7,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"source_pack\": \"craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip\","
+   },
+   {
+    "line": 8,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"craftpix_id\": \"555940\","
+   },
+   {
+    "line": 13,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "555940",
+    "text": "\"source_pack\": \"craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip\","
+   },
+   {
+    "line": 24,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"source_pack\": \"craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip\","
+   },
+   {
+    "line": 25,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"craftpix_id\": \"419402\","
+   },
+   {
+    "line": 30,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "419402",
+    "text": "\"source_pack\": \"craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip\","
+   },
+   {
+    "line": 43,
+    "path": "game/survival/ui/avatar_art_manifest.json",
+    "pattern": "180537",
+    "text": "\"craftpix_id\": \"180537\","
    }
   ],
   "survival_ui_mounts": [
@@ -294,6 +527,12 @@
     "path": "docs/survival/ux/ASSET_AND_RESEARCH.md",
     "pattern": "survival/ui/",
     "text": "The V2 pass still imports no inventory system and no third-party artwork. Tiny icons are generated as 24\u00d724 logical-pixel `Image`/`ImageTexture` silhouettes in `game/survival/ui/pixel_ui.gd`; the angu"
+   },
+   {
+    "line": 23,
+    "path": "docs/survival/ux/AVATAR_SOURCE_AND_PRESENTATION_GATE_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "`game/survival/ui/avatar_appearance_adapter.gd` is a read-only resolver for a versioned A0 owner projection. The checked-in `avatar_art_manifest.json` carries the exact source IDs and expected source "
    },
    {
     "line": 5,
@@ -308,10 +547,28 @@
     "text": "godot --path . res://tests/survival/ui/planner_demo.tscn"
    },
    {
-    "line": 7,
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "expedition_workspace",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "player_first_hud",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
     "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
     "pattern": "survival/ui/",
-    "text": "Stop producing isolated demo shells. Deliver an owner-authority-compatible, visually inspected integration package in A6-owned paths only: game/survival/ui/**, tests/survival/ui/**, docs/survival/ux/*"
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
+   },
+   {
+    "line": 28,
+    "path": "docs/survival/ux/CT_A6_PRE_FULL_PLAYTEST_LIVE_HOST_HANDOFF_20261030.md",
+    "pattern": "survival_journal",
+    "text": "A0 can integrate this package only after making an owner-authored host adapter and live journey. Preserve the existing A0 region/provisions/counter/prompt/death UI. Mount `res://game/survival/ui/playe"
    },
    {
     "line": 13,
@@ -524,6 +781,12 @@
     "text": "- `player_first_hud_test.gd`: bad schema/provenance, monotonic/stale revisions, malformed needs, full bag, discovered-vs-hidden POI sanitization, station queue, death-bag capacity rejection, fixture l"
    },
    {
+    "line": 97,
+    "path": "docs/survival/ux/V4_PLAYER_FIRST_HUD_HANDOFF_20261030.md",
+    "pattern": "survival/ui/",
+    "text": "The latest user-locked decision and source correction supersede any earlier avatar art assumptions. The canonical bald/unarmored male is Craftpix 555940 (Drive `1CuSQ3pr75U1l1Ep8FIDexQlMr8fO3qGb`); th"
+   },
+   {
     "line": 10,
     "path": "game/survival/ui/acceptance_journeys.gd",
     "pattern": "survival/ui/",
@@ -534,6 +797,12 @@
     "path": "game/survival/ui/acceptance_journeys.gd",
     "pattern": "survival/ui/",
     "text": "const PIXEL_PANEL := preload(\"res://game/survival/ui/pixel_panel.gd\")"
+   },
+   {
+    "line": 5,
+    "path": "game/survival/ui/avatar_appearance_adapter.gd",
+    "pattern": "survival/ui/",
+    "text": "const MANIFEST_PATH := \"res://game/survival/ui/avatar_art_manifest.json\""
    },
    {
     "line": 11,
@@ -742,6 +1011,12 @@
   "game/survival/ui/survival_journal.tscn": [
    "game/survival/ui/expedition_workspace.gd"
   ],
+  "game/survival/world_content/scenes/native_poi_template.tscn": [
+   "game/survival/world_content/scenes/fourth_salt_lookout_test.tscn",
+   "game/survival/world_content/scenes/south_crown_mill.tscn",
+   "game/survival/world_content/scenes/south_orchard_ruin.tscn",
+   "game/survival/world_content/scenes/south_quarry.tscn"
+  ],
   "game/tutorial/level_one_tutorial.tscn": [
    "game/main.tscn"
   ],
@@ -936,7 +1211,8 @@
  "schema": "soh.balance.product_snapshot.v1",
  "sources": {
   "a0_ref": "refs/a0",
-  "a6_ref": "refs/a6"
+  "a6_ref": "refs/a6",
+  "a8_ref": "refs/x2d7"
  },
  "ui_scenes": [
   "game/app/app_root.tscn",
@@ -987,6 +1263,12 @@
   "game/survival/ui/expedition_planner.tscn",
   "game/survival/ui/expedition_workspace.tscn",
   "game/survival/ui/survival_journal.tscn",
+  "game/survival/world_content/scenes/fourth_salt_lookout_test.tscn",
+  "game/survival/world_content/scenes/native_poi_template.tscn",
+  "game/survival/world_content/scenes/poi_pilot.tscn",
+  "game/survival/world_content/scenes/south_crown_mill.tscn",
+  "game/survival/world_content/scenes/south_orchard_ruin.tscn",
+  "game/survival/world_content/scenes/south_quarry.tscn",
   "game/tutorial/level_one_tutorial.tscn",
   "game/ui/HUD.tscn",
   "game/ui/completion_choice.tscn",

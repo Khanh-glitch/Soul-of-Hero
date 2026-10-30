@@ -2,15 +2,17 @@
   "artifacts": {
     "access.json": "f828793506b565894c94c8040d5be89ded8426186617634816567a938ccdf4ac",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
-    "blockers.json": "734aa4ee178dbe7be8a07bd35ee2193e0e1c7096ae9ee59225f5e1e18ddda8d4",
+    "blockers.json": "0909591ab31124ad68dc080253b3eba1df5592ec2b109833b5e74855d643a6ed",
     "findings.json": "2e71ac9b7f656a3f9d6883fe77d8c6d172bbcba2dbdbd0c09cfe1b494c4256d1",
+    "gate.json": "e8648ef93e54b4bb2dc48ee5275e65ca7738645d44b285324d1c3068a5ffa800",
     "opportunity.json": "3b20600aba2a07361e80279aa404d28c3daaa23f212dca10ccf0e7c0742d1b72",
-    "product.json": "837d030f45a746c2be9eadbd5b4754e7d40efee0a33532385f5dba4d3ececf6d",
+    "product.json": "ce17b5b8a4bc2cdae922d31361e6e93f9b5c2b5ddb01a9c3ab6699fb7c1a5302",
     "provenance.json": "af65b6d585453668fcaecf58318429c8692658bdc824ef6cf6e1a8605446d95e",
+    "quality.json": "6574207ac21f0d4b7dd412f6d55053749085f2ca84673843d8c7e2debc32f7e0",
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
-    "summary.json": "57b53b3bdb1ef25f09bc4961bf8a4f90ba3a2ca0bf4ed895572d2a1e331f6c17"
+    "summary.json": "6bc621e8220b30c73f02c589cc2b26500307e52d10d1e19c73d6054a154f7f0e"
   },
-  "combined_sha256": "b410bd505e871fc106ceb1a476be5b23c5946a4039016c3ad4d6ad9227a89d5a",
+  "combined_sha256": "7eb00ef2d1361167f522d84078d56f5a137dc136d139a1f718ab64cf4ba85688",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }

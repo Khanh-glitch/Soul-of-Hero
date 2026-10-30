@@ -55,7 +55,7 @@
         },
         {
           "fact": "files scanned",
-          "value": 18
+          "value": 37
         },
         {
           "fact": "opened() signal",
@@ -70,7 +70,7 @@
         }
       ],
       "owner": "A0 (mount) + A3 (table binding)",
-      "player_impact": "None of the 18 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
+      "player_impact": "None of the 37 pinned production files references any of the 2 authored loot tables. The only openable container in those files is the dungeon RewardChest, whose signal is `opened(score_reward, contained_sigil)` \u2014 it grants score and a sigil, not survival items. Scope: pinned bytes only; a container implemented outside these files would not be visible here.",
       "status": "FAIL",
       "title": "Something the player can open hands out authored loot"
     },
@@ -190,7 +190,7 @@
         }
       ],
       "owner": "A6",
-      "player_impact": "93 player-visible strings still carry developer vocabulary (BLOCKED_PENDING, FIXTURE, NO OWNER SNAPSHOT, NOT NATIVE, NOT_NATIVE, OWNER_PROJECTION, PREVIEW  \u00b7, PROJECTION, schema): fixture/provenance labels and raw identifiers. Today these live in the unmounted A6 HUD, so no player sees them yet \u2014 but mounting that HUD as-is would put debug text on screen.",
+      "player_impact": "104 player-visible strings still carry developer vocabulary (BLOCKED_PENDING, FIXTURE, NOT NATIVE, NOT_NATIVE, OWNER_PROJECTION, PROJECTION, schema): fixture/provenance labels and raw identifiers. Today these live in the unmounted A6 HUD, so no player sees them yet \u2014 but mounting that HUD as-is would put debug text on screen.",
       "status": "FAIL",
       "title": "No developer/debug text on a survival player surface"
     },
@@ -219,34 +219,39 @@
           "text": "IRREVERSIBLE ON SUCCESSFUL RESEARCH COMPLETION\\nExact specimen: %s\\nMethod: specimen \u00b7 target: craft_core_ember\\nCost: 5 knowledge_spares \u00b7 "
         },
         {
-          "file": "a6.expedition_planner.gd",
-          "line": 641,
-          "text": "Not verified"
+          "file": "a6.avatar_appearance_adapter.gd",
+          "line": 24,
+          "text": "Verified avatar art manifest is missing."
         },
         {
-          "file": "a6.survival_journal.gd",
-          "line": 280,
-          "text": "Not verified"
+          "file": "a6.avatar_appearance_adapter.gd",
+          "line": 31,
+          "text": "No verified art for this player identity."
         },
         {
-          "file": "a6.survival_view_adapter.gd",
-          "line": 133,
-          "text": "Consumes %s only if the A3 research owner validates the exact specimen instance and commits successfully."
+          "file": "a6.avatar_appearance_adapter.gd",
+          "line": 37,
+          "text": "Character appearance sources are incomplete."
         },
         {
-          "file": "a6.survival_view_adapter.gd",
-          "line": 216,
-          "text": "Not verified"
+          "file": "a6.avatar_appearance_adapter.gd",
+          "line": 40,
+          "text": "Matching armor appearance is not verified."
         },
         {
-          "file": "a6.survival_view_adapter.gd",
-          "line": 241,
-          "text": "Not verified"
+          "file": "a6.avatar_art_manifest.json",
+          "line": 3,
+          "text": "SOURCE_VERIFIED_BY_USER; ART_NOT_PRESENT_IN_ARENA"
+        },
+        {
+          "file": "a6.avatar_art_manifest.json",
+          "line": 44,
+          "text": "Three tiers of a different Swordsman character; not verified as matching male and female armor art."
         }
       ],
       "owner": "A6",
-      "player_impact": "Every completion word found is either a warning to the player or explicitly qualified. The risk here is not a fake screen today but the fixture acceptance journeys (A6 acceptance_journeys.gd) being presented as the real loop: they run on fixture data and say so.",
-      "status": "PASS",
+      "player_impact": "3 completion word(s) appear without a qualifier. Honest BLOCKED/fixture wording elsewhere is the reason this is not a failure.",
+      "status": "WARN",
       "title": "No surface claims success that has not happened"
     },
     {
@@ -257,8 +262,7 @@
           "fact": "status surfaces",
           "value": [
             "a0.hud.gd",
-            "a0.overworld_hud.gd",
-            "a6.player_first_hud.gd"
+            "a0.overworld_hud.gd"
           ]
         },
         {
@@ -271,7 +275,7 @@
         }
       ],
       "owner": "A0 + A6",
-      "player_impact": "3 surfaces render player status (a0.hud.gd, a0.overworld_hud.gd, a6.player_first_hud.gd) and the survival navigation signals overlap ({'a6.expedition_planner.gd': 2, 'a6.survival_journal.gd': 2, 'a6.expedition_workspace.gd': 0}). A0's HUD and A6's survival HUD are two implementations of one job; shipping both would be exactly the duplicate-UI failure D052 names.",
+      "player_impact": "2 surfaces render player status (a0.hud.gd, a0.overworld_hud.gd) and the survival navigation signals overlap ({'a6.expedition_planner.gd': 2, 'a6.survival_journal.gd': 2, 'a6.expedition_workspace.gd': 0}). A0's HUD and A6's survival HUD are two implementations of one job; shipping both would be exactly the duplicate-UI failure D052 names.",
       "status": "WARN",
       "title": "One owner per player-facing HUD job"
     },
@@ -327,13 +331,13 @@
     ],
     "mounted_player_scene": "game/characters/knight/knight.tscn",
     "survival_ui_scenes_mounted": [],
-    "visible_debug_tokens": 93
+    "visible_debug_tokens": 104
   },
   "schema": "soh.balance.product.v1",
   "snapshot": {
-    "a0_head": "9d287f3337af3874720d9444e8c258e26162f24c",
-    "a6_head": "8bc561dfbf86469b24429e20c6a5bff298acf307",
-    "files_verified": 18,
+    "a0_head": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+    "a6_head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "files_verified": 37,
     "manifest": "data/survival/balance/snapshot/product_manifest.json"
   },
   "unknown_evidence": [
@@ -342,7 +346,7 @@
   ],
   "verdict_counts": {
     "FAIL": 4,
-    "PASS": 2,
-    "WARN": 1
+    "PASS": 1,
+    "WARN": 2
   }
 }

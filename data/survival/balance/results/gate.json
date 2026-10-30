@@ -1,0 +1,1289 @@
+{
+  "a8_sites": [
+    {
+      "actions": [
+        {
+          "a3_authorization_absent": false,
+          "action_id": "observe_race",
+          "catalog_source": "world-state-only; no item transaction",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {},
+          "group": "actions",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": false,
+          "action_id": "recover_fastener",
+          "catalog_source": "data/survival/survival_catalog.json#resources.scrap_pile",
+          "claim_policy": "replenishable",
+          "cooldown_seconds": 90,
+          "costs": {},
+          "group": "actions",
+          "rewards": {
+            "iron_scrap": 1
+          }
+        },
+        {
+          "a3_authorization_absent": true,
+          "action_id": "repair_waterwheel",
+          "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {
+            "iron_scrap": 1,
+            "oak_wood": 1
+          },
+          "group": "choices",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": false,
+          "action_id": "leave_wheel",
+          "catalog_source": "world-state-only; no item transaction",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {},
+          "group": "choices",
+          "rewards": {}
+        }
+      ],
+      "has_approach_stand": true,
+      "has_spawn": true,
+      "key": "a8.south_crown_mill.json",
+      "poi_id": "poi_crown_south_mill",
+      "site_id": "crown_south_mill",
+      "wall_segments": 14
+    },
+    {
+      "actions": [
+        {
+          "a3_authorization_absent": false,
+          "action_id": "gather_reeds",
+          "catalog_source": "data/survival/survival_catalog.json#resources.reed_clump",
+          "claim_policy": "replenishable",
+          "cooldown_seconds": 30,
+          "costs": {},
+          "group": "actions",
+          "rewards": {
+            "reed_fibre": 1
+          }
+        },
+        {
+          "a3_authorization_absent": false,
+          "action_id": "read_water_marks",
+          "catalog_source": "world-state-only; no item transaction",
+          "claim_policy": "once",
+          "cooldown_seconds": 0,
+          "costs": {},
+          "group": "actions",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": true,
+          "action_id": "clear_irrigation",
+          "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {
+            "stone_chunk": 1
+          },
+          "group": "choices",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": false,
+          "action_id": "leave_for_safety",
+          "catalog_source": "world-state-only; no item transaction",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {},
+          "group": "choices",
+          "rewards": {}
+        }
+      ],
+      "has_approach_stand": true,
+      "has_spawn": true,
+      "key": "a8.south_orchard_ruin.json",
+      "poi_id": "poi_crown_south_orchard",
+      "site_id": "crown_south_orchard",
+      "wall_segments": 10
+    },
+    {
+      "actions": [
+        {
+          "a3_authorization_absent": false,
+          "action_id": "extract_outcrop",
+          "catalog_source": "data/survival/survival_catalog.json#resources.stone_outcrop",
+          "claim_policy": "replenishable",
+          "cooldown_seconds": 45,
+          "costs": {},
+          "group": "actions",
+          "rewards": {
+            "stone_chunk": 2
+          }
+        },
+        {
+          "a3_authorization_absent": true,
+          "action_id": "brace_east_shelf",
+          "catalog_source": "data/survival/survival_catalog.json#items.oak_wood (candidate item ID only; A3 cost authorization absent)",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {
+            "oak_wood": 2
+          },
+          "group": "choices",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": true,
+          "action_id": "chock_west_ramp",
+          "catalog_source": "data/survival/survival_catalog.json#items.stone_chunk (candidate item ID only; A3 cost authorization absent)",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {
+            "stone_chunk": 2
+          },
+          "group": "choices",
+          "rewards": {}
+        },
+        {
+          "a3_authorization_absent": false,
+          "action_id": "leave_seam_unworked",
+          "catalog_source": "world-state-only; safe retreat, no material transaction",
+          "claim_policy": "once",
+          "cooldown_seconds": null,
+          "costs": {},
+          "group": "choices",
+          "rewards": {}
+        }
+      ],
+      "has_approach_stand": true,
+      "has_spawn": true,
+      "key": "a8.south_quarry.json",
+      "poi_id": "poi_crown_south_quarry",
+      "site_id": "crown_south_quarry",
+      "wall_segments": 6
+    }
+  ],
+  "authority_a8": {
+    "fixture_declares_test_only": true,
+    "fixture_keeps_state_in_memory": true,
+    "fixture_uses_save_service": false,
+    "harness_only_by_default": true,
+    "intent_contract_id": "soh.native_poi.intent.v1",
+    "pilot_installs_fixture": true,
+    "site_emits_intent": true
+  },
+  "binding_adoption": {
+    "adopted_by_a3": 0,
+    "authorized_bindings": 3,
+    "pending_rebind": [
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 3,
+        "a1_cooldown_seconds": 1800,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "loot",
+        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_yield": 3,
+        "a3_status": "PROPOSED_A1",
+        "adopted": false,
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "item_id": "iron_scrap",
+        "source_id": "road_scrap",
+        "yield_agrees": true
+      },
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 2,
+        "a1_cooldown_seconds": 1800,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "loot",
+        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_yield": 2,
+        "a3_status": "PROPOSED_A1",
+        "adopted": false,
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "item_id": "knowledge_spares",
+        "source_id": "road_supplies",
+        "yield_agrees": true
+      },
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 2,
+        "a1_cooldown_seconds": 300,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "harvest",
+        "a3_declared_poi": null,
+        "a3_declared_yield": 2,
+        "a3_status": "LIVE_SURV_010",
+        "adopted": false,
+        "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
+        "item_id": "oak_wood",
+        "source_id": "live_oak_wood",
+        "yield_agrees": true
+      }
+    ],
+    "rows": [
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 3,
+        "a1_cooldown_seconds": 1800,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "loot",
+        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_yield": 3,
+        "a3_status": "PROPOSED_A1",
+        "adopted": false,
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "item_id": "iron_scrap",
+        "source_id": "road_scrap",
+        "yield_agrees": true
+      },
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 2,
+        "a1_cooldown_seconds": 1800,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "loot",
+        "a3_declared_poi": "poi:roadside_cache",
+        "a3_declared_yield": 2,
+        "a3_status": "PROPOSED_A1",
+        "adopted": false,
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "item_id": "knowledge_spares",
+        "source_id": "road_supplies",
+        "yield_agrees": true
+      },
+      {
+        "a1_authorized_poi": "poi_crown_waystation",
+        "a1_authorized_yield": 2,
+        "a1_cooldown_seconds": 300,
+        "a1_renewable": true,
+        "a3_declared_acquisition": "harvest",
+        "a3_declared_poi": null,
+        "a3_declared_yield": 2,
+        "a3_status": "LIVE_SURV_010",
+        "adopted": false,
+        "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
+        "item_id": "oak_wood",
+        "source_id": "live_oak_wood",
+        "yield_agrees": true
+      }
+    ],
+    "summary": "0/3 A1-authorized source bindings are adopted by A3. Each pending row is a one-field poi_id edit, not a new rate."
+  },
+  "blocked_link_count": 14,
+  "blocked_links": [
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "a8_quarry",
+      "level": "S0_ABSENT",
+      "link": "L1_ENTRY",
+      "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
+      "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "owner": "A0"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "a8_quarry",
+      "level": "S2_FIXTURE_ONLY",
+      "link": "L2_ROUTE",
+      "missing": "walkable inside the scene, but the scene is not placed in the A1 world graph",
+      "next_action": "A1 places the scene at its anchor; A0 mounts it.",
+      "owner": "A1 + A8"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "a8_quarry",
+      "level": "S2_FIXTURE_ONLY",
+      "link": "L3_INTERACTION",
+      "missing": "the interaction exists only in a test-harness scene",
+      "next_action": "A0 hosts the scene behind the real gameplay input gate.",
+      "owner": "A8"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "waystation_cache",
+      "level": "S0_ABSENT",
+      "link": "L1_ENTRY",
+      "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
+      "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "owner": "A0"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "waystation_cache",
+      "level": "S1_AUTHORED_ONLY",
+      "link": "L2_ROUTE",
+      "missing": "the route is authored geometry; nothing native draws or collides it yet",
+      "next_action": "A0 mounts the A1 slice chunk; A1 confirms traversal with the native world probe.",
+      "owner": "A1"
+    },
+    {
+      "blocker_id": "BLK-1",
+      "chain_id": "waystation_cache",
+      "level": "S1_AUTHORED_ONLY",
+      "link": "L3_INTERACTION",
+      "missing": "the action exists only in authored data; no scene places the cache node",
+      "next_action": "A0 spawns the cache node at its authored cell and binds the interact input.",
+      "owner": "A1"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "chain_id": "a8_quarry",
+      "level": "S0_ABSENT",
+      "link": "L4_AUTHORIZATION",
+      "missing": "the site pays fixed quantities it declares itself; A3 never authorized them",
+      "next_action": "A3 authorizes each cost/reward, or A8 defers to the authored table (roadside_cache already pays these items).",
+      "owner": "A3 + A8"
+    },
+    {
+      "blocker_id": "BLK-2",
+      "chain_id": "waystation_cache",
+      "level": "S1_AUTHORED_ONLY",
+      "link": "L4_AUTHORIZATION",
+      "missing": "A1 authorizes the reward and its quantity, but A3's source rows still name the provisional class id 'poi:roadside_cache', so the adopted binding count is 0",
+      "next_action": "A3 adopts the A1 rebind for the two rows (road_scrap, road_supplies): point poi_id at poi_crown_waystation and keep A1's 3/2 yields. This is a binding edit, not a rate change.",
+      "owner": "A3 + A1"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "a8_quarry",
+      "level": "S3_OWNER_SEAM_UNWIRED",
+      "link": "L5_COMMIT",
+      "missing": "a fake authority commits the reward; SaveService is never called",
+      "next_action": "A0 swaps the fixture for a SaveService adapter; the fixture stays in tests.",
+      "owner": "A0 + A8"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "a8_quarry",
+      "level": "S0_ABSENT",
+      "link": "L6_RELOAD",
+      "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
+      "next_action": "after L5, run the two-process test.",
+      "owner": "A0"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "a8_quarry",
+      "level": "S2_FIXTURE_ONLY",
+      "link": "L7_NO_DUPLICATE",
+      "missing": "claims are deduplicated inside the fixture only",
+      "next_action": "key the production transaction on (site, action, claim generation).",
+      "owner": "A8 + A0"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "waystation_cache",
+      "level": "S3_OWNER_SEAM_UNWIRED",
+      "link": "L5_COMMIT",
+      "missing": "the owner API and the contract key exist, but no mounted path calls them, so the reward has never been committed by a player action",
+      "next_action": "A0 wires the cache claim to transact_once with the contract's transaction key.",
+      "owner": "A0"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "waystation_cache",
+      "level": "S3_OWNER_SEAM_UNWIRED",
+      "link": "L6_RELOAD",
+      "missing": "no evidence anywhere restarts the OS process; A0's existing reload check reuses one process, which cannot prove durable restore",
+      "next_action": "A0 adds the two-process test below; S4 requires both runs green.",
+      "owner": "A0"
+    },
+    {
+      "blocker_id": "BLK-4",
+      "chain_id": "waystation_cache",
+      "level": "S3_OWNER_SEAM_UNWIRED",
+      "link": "L7_NO_DUPLICATE",
+      "missing": "the pieces exist on both sides but are not joined, so nothing is protected at runtime yet",
+      "next_action": "A0 keys the claim on the contract transaction key and asserts ALREADY_APPLIED on replay.",
+      "owner": "A0 + A1"
+    }
+  ],
+  "chains": [
+    {
+      "blocked_links": 7,
+      "blocking_next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "chain_id": "waystation_cache",
+      "chain_level": "S0_ABSENT",
+      "chain_meaning": "the link does not exist",
+      "description": "A1 vertical-slice cache claim at poi_crown_waystation",
+      "links": [
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "home destinations",
+              "value": [
+                "bestiary",
+                "campaign",
+                "hero_roster",
+                "modes",
+                "settings",
+                "storage"
+              ]
+            },
+            {
+              "fact": "survival-like keys",
+              "value": []
+            },
+            {
+              "fact": "app root ships test-only entry flags",
+              "value": true
+            }
+          ],
+          "level": "S0_ABSENT",
+          "link": "L1_ENTRY",
+          "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
+          "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+          "owner": "A0",
+          "rank": 0,
+          "requirement": "A normal player, with no test flag, can reach the survival world from the home screen.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "authored safe routes to the waystation",
+              "value": []
+            },
+            {
+              "fact": "slice node ids for the cache",
+              "value": [
+                "node_waystation_cache"
+              ]
+            },
+            {
+              "fact": "world geography is native",
+              "value": false
+            }
+          ],
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L2_ROUTE",
+          "missing": "the route is authored geometry; nothing native draws or collides it yet",
+          "next_action": "A0 mounts the A1 slice chunk; A1 confirms traversal with the native world probe.",
+          "owner": "A1",
+          "rank": 1,
+          "requirement": "A physically walkable route connects the entry point to the interaction stand.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "cache action",
+              "value": {
+                "action_id": "cache_restock",
+                "consumes": {},
+                "cooldown_seconds_proposal": 1800,
+                "effects": [
+                  "restock:waystation_cache"
+                ],
+                "one_time": false,
+                "requires_capabilities": [
+                  "cap_salvage"
+                ]
+              }
+            },
+            {
+              "fact": "requires capability",
+              "value": [
+                "cap_salvage"
+              ]
+            },
+            {
+              "fact": "cooldown (active seconds)",
+              "value": 1800
+            },
+            {
+              "fact": "spec native_playable",
+              "value": false
+            }
+          ],
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L3_INTERACTION",
+          "missing": "the action exists only in authored data; no scene places the cache node",
+          "next_action": "A0 spawns the cache node at its authored cell and binds the interact input.",
+          "owner": "A1",
+          "rank": 1,
+          "requirement": "The interaction is a real input on a placed object with player-facing text.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-2",
+          "evidence": [
+            {
+              "fact": "A1-authorized bindings",
+              "value": [
+                {
+                  "cooldown": 1800,
+                  "item_id": "iron_scrap",
+                  "renewable": true,
+                  "source_id": "road_scrap",
+                  "yield": 3
+                },
+                {
+                  "cooldown": 1800,
+                  "item_id": "knowledge_spares",
+                  "renewable": true,
+                  "source_id": "road_supplies",
+                  "yield": 2
+                }
+              ]
+            },
+            {
+              "fact": "reward right",
+              "value": "rr_waystation_cache_claim"
+            },
+            {
+              "fact": "A3 source rows already pointing at the waystation",
+              "value": []
+            },
+            {
+              "fact": "atomic ownership statement",
+              "value": "A0 SaveService transaction is the sole commit boundary; A3 provides item/source catalog and candidate-document helpers but must not write a side journal or grant rewards outside the A0 mutator"
+            }
+          ],
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L4_AUTHORIZATION",
+          "missing": "A1 authorizes the reward and its quantity, but A3's source rows still name the provisional class id 'poi:roadside_cache', so the adopted binding count is 0",
+          "next_action": "A3 adopts the A1 rebind for the two rows (road_scrap, road_supplies): point poi_id at poi_crown_waystation and keep A1's 3/2 yields. This is a binding edit, not a rate change.",
+          "owner": "A3 + A1",
+          "rank": 1,
+          "requirement": "Every cost and reward is an A3 item, authorized once by the owning contract.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "SaveService.transact_once exists",
+              "value": true
+            },
+            {
+              "fact": "receipt persisted in the save document",
+              "value": true
+            },
+            {
+              "fact": "A1 names the save service and its hash",
+              "value": [
+                "origin/arena/dea2428e-soul-of-hero@b3722585:game/survival/save_service.gd",
+                "5748dc9f2fdaf58ca254cd8111ed4132d45409dd6934f6699f878037747a73d0"
+              ]
+            },
+            {
+              "fact": "transaction key in the contract",
+              "value": "a1slice:poi_crown_waystation:cache_restock:1"
+            },
+            {
+              "fact": "any POI/A6 path calls transact_once",
+              "value": false
+            }
+          ],
+          "level": "S3_OWNER_SEAM_UNWIRED",
+          "link": "L5_COMMIT",
+          "missing": "the owner API and the contract key exist, but no mounted path calls them, so the reward has never been committed by a player action",
+          "next_action": "A0 wires the cache claim to transact_once with the contract's transaction key.",
+          "owner": "A0",
+          "rank": 3,
+          "requirement": "The reward is committed through SaveService.transact_once with a receipt.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "receipts live inside the committed document",
+              "value": true
+            },
+            {
+              "fact": "documented reload behaviour",
+              "value": "cooldown is SaveService-keyed; reload does not duplicate restock"
+            },
+            {
+              "fact": "two-process restart evidence",
+              "value": false
+            }
+          ],
+          "level": "S3_OWNER_SEAM_UNWIRED",
+          "link": "L6_RELOAD",
+          "missing": "no evidence anywhere restarts the OS process; A0's existing reload check reuses one process, which cannot prove durable restore",
+          "next_action": "A0 adds the two-process test below; S4 requires both runs green.",
+          "owner": "A0",
+          "rank": 3,
+          "requirement": "The committed state survives a save/reload in a fresh OS process.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "SaveService rejects an applied key",
+              "value": true
+            },
+            {
+              "fact": "contract duplicate payload",
+              "value": {
+                "granted_items": {},
+                "receipt": "rr_waystation_cache_claim",
+                "result": "ALREADY_APPLIED",
+                "schema": "soh.world.slice.reward_grant.v1",
+                "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+              }
+            },
+            {
+              "fact": "contract request payload",
+              "value": {
+                "active_tick": 600,
+                "poi_id": "poi_crown_waystation",
+                "reward_right_id": "rr_waystation_cache_claim",
+                "schema": "soh.world.slice.reward_grant.v1",
+                "session_id": "slice-session-1",
+                "source_bindings": [
+                  {
+                    "item_id": "iron_scrap",
+                    "quantity": 3,
+                    "source_id": "road_scrap"
+                  },
+                  {
+                    "item_id": "knowledge_spares",
+                    "quantity": 2,
+                    "source_id": "road_supplies"
+                  }
+                ],
+                "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+              }
+            },
+            {
+              "fact": "one-time rights carry transaction keys",
+              "value": [
+                "a1slice:poi_crown_relay_shed:hand_crank_bypass:1",
+                "a1slice:poi_crown_waystation:pry_locker:1",
+                "a1slice:poi_crown_waystation:seal_ledger:1"
+              ]
+            }
+          ],
+          "level": "S3_OWNER_SEAM_UNWIRED",
+          "link": "L7_NO_DUPLICATE",
+          "missing": "the pieces exist on both sides but are not joined, so nothing is protected at runtime yet",
+          "next_action": "A0 keys the claim on the contract transaction key and asserts ALREADY_APPLIED on replay.",
+          "owner": "A0 + A1",
+          "rank": 3,
+          "requirement": "Replaying, reloading or re-entering cannot grant the reward twice.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": false,
+          "blocker_id": "",
+          "evidence": [
+            {
+              "fact": "reward outcomes",
+              "value": [
+                {
+                  "item_id": "iron_scrap",
+                  "sinks": [
+                    "recipe:furnace_kit",
+                    "recipe:make_spares",
+                    "recipe:smelt_iron",
+                    "recipe:workbench_kit",
+                    "technology:tech_smelting"
+                  ],
+                  "useful": true
+                },
+                {
+                  "item_id": "knowledge_spares",
+                  "sinks": [
+                    "produced_by:make_spares",
+                    "produced_by:study_axe_insignia",
+                    "produced_by:study_predator_jaw",
+                    "recipe:core_blank",
+                    "recipe:make_notes",
+                    "recipe:rebuild_core_ember",
+                    "recipe:rebuild_core_frost",
+                    "recipe:rebuild_core_venom",
+                    "recipe:research_kit",
+                    "technology:tech_precision",
+                    "technology:tech_smelting"
+                  ],
+                  "useful": true
+                }
+              ]
+            }
+          ],
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L8_OUTCOME",
+          "missing": "",
+          "next_action": "A3 confirms the sinks are reachable in the first hour (research_kit is the natural one).",
+          "owner": "A3",
+          "rank": 1,
+          "requirement": "The reward feeds an authored sink (recipe, technology or station kit).",
+          "statically_verifiable": true
+        }
+      ],
+      "weakest_link": "L1_ENTRY"
+    },
+    {
+      "blocked_links": 7,
+      "blocking_next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+      "chain_id": "a8_quarry",
+      "chain_level": "S0_ABSENT",
+      "chain_meaning": "the link does not exist",
+      "description": "A8 native South Quarry PackedScene",
+      "links": [
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "home destinations",
+              "value": [
+                "bestiary",
+                "campaign",
+                "hero_roster",
+                "modes",
+                "settings",
+                "storage"
+              ]
+            },
+            {
+              "fact": "survival-like keys",
+              "value": []
+            },
+            {
+              "fact": "app root ships test-only entry flags",
+              "value": true
+            }
+          ],
+          "level": "S0_ABSENT",
+          "link": "L1_ENTRY",
+          "missing": "no home-screen destination reaches a survival/world/POI scene; the only entries into a world are test flags, which is exactly the 'looks integrated but is not' failure",
+          "next_action": "A0 adds ONE home destination that hosts the existing world layer, then runs the composition workflow with normal input (no test flag).",
+          "owner": "A0",
+          "rank": 0,
+          "requirement": "A normal player, with no test flag, can reach the survival world from the home screen.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "site",
+              "value": "crown_south_quarry"
+            },
+            {
+              "fact": "A1 poi anchor",
+              "value": "poi_crown_south_quarry"
+            },
+            {
+              "fact": "spawn / approach stand / wall segments",
+              "value": [
+                true,
+                true,
+                6
+              ]
+            }
+          ],
+          "level": "S2_FIXTURE_ONLY",
+          "link": "L2_ROUTE",
+          "missing": "walkable inside the scene, but the scene is not placed in the A1 world graph",
+          "next_action": "A1 places the scene at its anchor; A0 mounts it.",
+          "owner": "A1 + A8",
+          "rank": 2,
+          "requirement": "A physically walkable route connects the entry point to the interaction stand.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-1",
+          "evidence": [
+            {
+              "fact": "emits versioned intent",
+              "value": true
+            },
+            {
+              "fact": "intent contract",
+              "value": "soh.native_poi.intent.v1"
+            },
+            {
+              "fact": "harness-only by default",
+              "value": true
+            },
+            {
+              "fact": "actions",
+              "value": [
+                "extract_outcrop",
+                "brace_east_shelf",
+                "chock_west_ramp",
+                "leave_seam_unworked"
+              ]
+            }
+          ],
+          "level": "S2_FIXTURE_ONLY",
+          "link": "L3_INTERACTION",
+          "missing": "the interaction exists only in a test-harness scene",
+          "next_action": "A0 hosts the scene behind the real gameplay input gate.",
+          "owner": "A8",
+          "rank": 2,
+          "requirement": "The interaction is a real input on a placed object with player-facing text.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-2",
+          "evidence": [
+            {
+              "fact": "actions without A3 authorization",
+              "value": [
+                "brace_east_shelf",
+                "chock_west_ramp"
+              ]
+            },
+            {
+              "fact": "loot tables used by these sites",
+              "value": []
+            },
+            {
+              "fact": "note",
+              "value": "site declares 'A3 cost authorization absent' in its own catalog_source"
+            }
+          ],
+          "level": "S0_ABSENT",
+          "link": "L4_AUTHORIZATION",
+          "missing": "the site pays fixed quantities it declares itself; A3 never authorized them",
+          "next_action": "A3 authorizes each cost/reward, or A8 defers to the authored table (roadside_cache already pays these items).",
+          "owner": "A3 + A8",
+          "rank": 0,
+          "requirement": "Every cost and reward is an A3 item, authorized once by the owning contract.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "pilot installs the fake authority",
+              "value": true
+            },
+            {
+              "fact": "fixture declares itself test-only",
+              "value": true
+            },
+            {
+              "fact": "fixture keeps state in memory",
+              "value": true
+            },
+            {
+              "fact": "SaveService.transact_once exists",
+              "value": true
+            }
+          ],
+          "level": "S3_OWNER_SEAM_UNWIRED",
+          "link": "L5_COMMIT",
+          "missing": "a fake authority commits the reward; SaveService is never called",
+          "next_action": "A0 swaps the fixture for a SaveService adapter; the fixture stays in tests.",
+          "owner": "A0 + A8",
+          "rank": 3,
+          "requirement": "The reward is committed through SaveService.transact_once with a receipt.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "fixture persists to disk",
+              "value": false
+            },
+            {
+              "fact": "two-process evidence",
+              "value": false
+            }
+          ],
+          "level": "S0_ABSENT",
+          "link": "L6_RELOAD",
+          "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
+          "next_action": "after L5, run the two-process test.",
+          "owner": "A0",
+          "rank": 0,
+          "requirement": "The committed state survives a save/reload in a fresh OS process.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": true,
+          "blocker_id": "BLK-4",
+          "evidence": [
+            {
+              "fact": "claim policies",
+              "value": [
+                "once",
+                "replenishable"
+              ]
+            },
+            {
+              "fact": "cooldowns",
+              "value": [
+                45
+              ]
+            },
+            {
+              "fact": "fixture claim generation tracked",
+              "value": true
+            }
+          ],
+          "level": "S2_FIXTURE_ONLY",
+          "link": "L7_NO_DUPLICATE",
+          "missing": "claims are deduplicated inside the fixture only",
+          "next_action": "key the production transaction on (site, action, claim generation).",
+          "owner": "A8 + A0",
+          "rank": 2,
+          "requirement": "Replaying, reloading or re-entering cannot grant the reward twice.",
+          "statically_verifiable": true
+        },
+        {
+          "blocked": false,
+          "blocker_id": "",
+          "evidence": [
+            {
+              "fact": "reward outcomes",
+              "value": [
+                {
+                  "item_id": "stone_chunk",
+                  "sinks": [
+                    "recipe:advanced_furnace_kit",
+                    "recipe:furnace_kit",
+                    "recipe:stone_pick"
+                  ],
+                  "useful": true
+                }
+              ]
+            }
+          ],
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L8_OUTCOME",
+          "missing": "",
+          "next_action": "keep rewards feeding an authored sink.",
+          "owner": "A3",
+          "rank": 1,
+          "requirement": "The reward feeds an authored sink (recipe, technology or station kit).",
+          "statically_verifiable": true
+        }
+      ],
+      "weakest_link": "L1_ENTRY"
+    }
+  ],
+  "commit_seam": {
+    "any_poi_calls_transact_once": false,
+    "receipt_recorded": true,
+    "replay_rejected": true,
+    "survival_service_uses_transact_once": true,
+    "transact_once_exists": true,
+    "two_process_reload_test": false
+  },
+  "contract": {
+    "a0_activation_contract_present": true,
+    "a0_payload_examples": [
+      "action_rejected",
+      "action_request",
+      "action_success",
+      "activate_request",
+      "activate_response",
+      "save_state_example"
+    ],
+    "a0_save_service_ref": "origin/arena/dea2428e-soul-of-hero@b3722585:game/survival/save_service.gd",
+    "a0_save_service_sha256": "5748dc9f2fdaf58ca254cd8111ed4132d45409dd6934f6699f878037747a73d0",
+    "atomic_ownership": "A0 SaveService transaction is the sole commit boundary; A3 provides item/source catalog and candidate-document helpers but must not write a side journal or grant rewards outside the A0 mutator",
+    "bindings": [
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "iron_scrap",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_scrap",
+        "yield_per_claim": 3
+      },
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "knowledge_spares",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_supplies",
+        "yield_per_claim": 2
+      },
+      {
+        "binding_request": "A1_APPROACH_NODE_USES_EXISTING_LIVE_SOURCE",
+        "cooldown_active_seconds": 300,
+        "item_id": "oak_wood",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_approach_deadfall",
+        "source_id": "live_oak_wood",
+        "yield_per_claim": 2
+      }
+    ],
+    "cache_duplicate": {
+      "granted_items": {},
+      "receipt": "rr_waystation_cache_claim",
+      "result": "ALREADY_APPLIED",
+      "schema": "soh.world.slice.reward_grant.v1",
+      "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+    },
+    "cache_request": {
+      "active_tick": 600,
+      "poi_id": "poi_crown_waystation",
+      "reward_right_id": "rr_waystation_cache_claim",
+      "schema": "soh.world.slice.reward_grant.v1",
+      "session_id": "slice-session-1",
+      "source_bindings": [
+        {
+          "item_id": "iron_scrap",
+          "quantity": 3,
+          "source_id": "road_scrap"
+        },
+        {
+          "item_id": "knowledge_spares",
+          "quantity": 2,
+          "source_id": "road_supplies"
+        }
+      ],
+      "transaction_key": "a1slice:poi_crown_waystation:cache_restock:1"
+    },
+    "items_pinned_by_a3": true,
+    "native_playable": false,
+    "rights": [
+      {
+        "action_id": "pry_locker",
+        "consumes_items": {},
+        "grants_capabilities": [
+          "cap_salvage"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_waystation",
+        "reward_right_id": "rr_waystation_salvage_tool",
+        "transaction_key": "a1slice:poi_crown_waystation:pry_locker:1"
+      },
+      {
+        "action_id": "seal_ledger",
+        "consumes_items": {},
+        "grants_capabilities": [
+          "cap_seal_1"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_waystation",
+        "reward_right_id": "rr_waystation_seal_ledger",
+        "transaction_key": "a1slice:poi_crown_waystation:seal_ledger:1"
+      },
+      {
+        "action_id": "hand_crank_bypass",
+        "consumes_items": {
+          "iron_scrap": 2,
+          "oak_wood": 1
+        },
+        "grants_capabilities": [
+          "cap_power_1"
+        ],
+        "item_rewards": [],
+        "poi_id": "poi_crown_relay_shed",
+        "reward_right_id": "rr_relay_power_bypass",
+        "transaction_key": "a1slice:poi_crown_relay_shed:hand_crank_bypass:1"
+      }
+    ],
+    "slice_renewable_cache": [
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "iron_scrap",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_scrap",
+        "yield_per_claim": 3
+      },
+      {
+        "binding_request": "REBIND_FROM_PROVISIONAL_poi:roadside_cache_TO_A1_WAYSTATION_CACHE",
+        "cooldown_active_seconds": 1800,
+        "item_id": "knowledge_spares",
+        "poi_id": "poi_crown_waystation",
+        "renewable": true,
+        "slice_node_id": "node_waystation_cache",
+        "source_id": "road_supplies",
+        "yield_per_claim": 2
+      }
+    ]
+  },
+  "entry": {
+    "app_root_direct_game_scene": true,
+    "app_root_has_test_only_entries": true,
+    "home_keys": [
+      "bestiary",
+      "campaign",
+      "hero_roster",
+      "modes",
+      "settings",
+      "storage"
+    ],
+    "survival_keys": []
+  },
+  "headline": "Best real chain is waystation_cache at S0_ABSENT; no chain reaches a committed, reloadable, non-duplicating player action.",
+  "native_commands_for_owner": {
+    "a0_slice_mount": [
+      "# owner adds one scene that hosts the A1 slice nodes, then:",
+      "xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_slice --resolution 1280x720 --windowed --script res://tests/survival_slice_cache_claim_test.gd"
+    ],
+    "a0_survival_runtime": [
+      "godot --headless --path . --user-data-dir artifacts/ud_import --import",
+      "godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --script res://tests/survival_foundation_test.gd"
+    ],
+    "a6_composition": [
+      "xvfb-run -a godot --verbose --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_a6 --resolution 960x540 --windowed --script res://tests/survival_a6_modal_composition_test.gd"
+    ],
+    "a8_native_capture": [
+      "xvfb-run -a godot --path . --resolution \"1280x720\" --rendering-method gl_compatibility --script tools/survival/world_content/capture_native_pilot.gd -- --width=1280 --height=720 --output=.artifacts/a8-world-content/pilot-1280x720.png"
+    ],
+    "a8_native_contract": [
+      "godot --headless --path . --editor --quit",
+      "godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd"
+    ],
+    "process_restart_reload": [
+      "# the ONLY acceptable reload proof is two processes on one user-data dir:",
+      "godot --headless --path . --user-data-dir artifacts/ud_loot --script res://tests/survival_slice_claim_commit.gd",
+      "godot --headless --path . --user-data-dir artifacts/ud_loot --script res://tests/survival_slice_reload_no_duplicate.gd"
+    ]
+  },
+  "overall_level": "S0_ABSENT",
+  "overall_meaning": "the link does not exist",
+  "owner_assertions_for_S4": [
+    "entry: reaches the site with no test flag and no console error",
+    "cost: the exact authorized items are removed once",
+    "reward: the exact authorized items are added once",
+    "receipt: transact_once returned true and recorded exactly one key",
+    "reload: a second process reads the committed state",
+    "no duplicate: replaying the action leaves inventory unchanged",
+    "outcome: the reward is consumed by the named sink"
+  ],
+  "s_levels": [
+    {
+      "level": "S0_ABSENT",
+      "meaning": "the link does not exist"
+    },
+    {
+      "level": "S1_AUTHORED_ONLY",
+      "meaning": "only authored data/contracts describe it"
+    },
+    {
+      "level": "S2_FIXTURE_ONLY",
+      "meaning": "a native scene demonstrates it with fake state"
+    },
+    {
+      "level": "S3_OWNER_SEAM_UNWIRED",
+      "meaning": "the production owner API exists but is not joined for this action"
+    },
+    {
+      "level": "S4_NATIVE_COMMITTED",
+      "meaning": "native normal-input commit + reload proven by the owner"
+    },
+    {
+      "level": "S5_FULL_NORMAL_INPUT",
+      "meaning": "S4 + fresh OS process restart + inspected visual evidence"
+    }
+  ],
+  "schema": "soh.balance.integration_gate.v2",
+  "snapshot_heads": {
+    "a0": "77e434a7046760d4660f8579c9ad0563b023e3c2",
+    "a1": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
+    "a6": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+    "a8": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+    "a8_task": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6"
+  },
+  "static_ceiling": "S3_OWNER_SEAM_UNWIRED",
+  "waystation_spec": {
+    "actions": [
+      {
+        "action_id": "pry_locker",
+        "consumes": {},
+        "cooldown_seconds_proposal": null,
+        "effects": [
+          "grant:cap_salvage",
+          "flag:waystation_locker_opened"
+        ],
+        "one_time": true,
+        "requires_capabilities": []
+      },
+      {
+        "action_id": "seal_ledger",
+        "consumes": {},
+        "cooldown_seconds_proposal": null,
+        "effects": [
+          "grant:cap_seal_1",
+          "flag:waystation_seal_recorded"
+        ],
+        "one_time": true,
+        "requires_capabilities": [
+          "cap_salvage"
+        ]
+      },
+      {
+        "action_id": "cache_restock",
+        "consumes": {},
+        "cooldown_seconds_proposal": 1800,
+        "effects": [
+          "restock:waystation_cache"
+        ],
+        "one_time": false,
+        "requires_capabilities": [
+          "cap_salvage"
+        ]
+      }
+    ],
+    "content_readiness": "INTERACTION_SPEC_AUTHORED_NOT_NATIVE",
+    "native_playable": false,
+    "rewards": [
+      {
+        "a3_item_hints": [
+          "iron_scrap",
+          "knowledge_spares"
+        ],
+        "capability_grants": [
+          "cap_salvage"
+        ],
+        "policy": "ONE_TIME",
+        "reward_id": "locker_reward"
+      },
+      {
+        "a3_item_hints": [],
+        "capability_grants": [
+          "cap_seal_1"
+        ],
+        "policy": "ONE_TIME",
+        "reward_id": "ledger_reward"
+      },
+      {
+        "a3_item_hints": [
+          "iron_scrap"
+        ],
+        "capability_grants": [],
+        "policy": "RENEWABLE_COOLDOWN",
+        "reward_id": "cache_reward"
+      }
+    ]
+  },
+  "what_static_cannot_claim": [
+    "S4/S5 require a native Godot run with normal input by the owning agent.",
+    "A7 runs no Godot here; nothing above S3 is reported and no native PASS is implied."
+  ]
+}

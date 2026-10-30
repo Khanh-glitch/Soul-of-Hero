@@ -265,19 +265,19 @@ func _refresh_detail() -> void:
 		_detail.add_child(_label(String(item.get("name", "Unknown")), 15))
 		_detail.add_child(_label("Quantity  ×%d" % int(item.get("count", 0)), 11))
 		if String(item.get("kind", "")) == "core" or item.has("uses"):
-			_detail.add_child(_label("PHYSICAL SPECIMEN  /  %s" % String(item.get("instance_id", item.get("stack_key", "instance unavailable"))), 9, PIXEL_UI.GOLD))
+			_detail.add_child(_label("UNIQUE PHYSICAL CORE", 9, PIXEL_UI.GOLD))
 		if bool(item.get("protected", false)):
-			_detail.add_child(_label("UNIQUE INSTANCE  /  generic chest transfer is not supported", 9, CORAL))
+			_detail.add_child(_label("Unique item · cannot be moved here.", 9, CORAL))
 		if item.has("condition"):
 			var condition_text := "%s" % item.condition
 			if item.has("max_condition"): condition_text = "%s / %s" % [item.condition, item.max_condition]
 			_detail.add_child(_label("Condition  %s" % condition_text, 10, CORAL if item.condition is int and int(item.condition) < 35 else MUTED))
 		if item.has("uses") and item.has("max_uses"):
-			_detail.add_child(_label(ADAPTER.core_status(int(item.uses), int(item.max_uses)), 11, TEAL if int(item.uses) > 0 else CORAL))
+			var charges := ADAPTER.core_status(int(item.uses), int(item.max_uses))
+			if not charges.is_empty(): _detail.add_child(_label(charges, 11, TEAL if int(item.uses) > 0 else CORAL))
 		if String(item.get("kind", "")) == "core" or item.has("uses"):
 			var equipped: Variant = item.get("equipped", null)
 			_detail.add_child(_label("Physical state  %s" % ADAPTER.core_ownership_state(item, equipped), 10, TEAL if equipped is bool and bool(equipped) else MUTED))
-			_detail.add_child(_label("Cast readiness  %s" % String(item.get("readiness", "Not verified")), 9, MUTED))
 		if item.has("formula_learned"):
 			_detail.add_child(_label("Permanent formula  %s" % ("Learned" if bool(item.formula_learned) else "Not learned"), 10, TEAL if bool(item.formula_learned) else MUTED))
 		else:

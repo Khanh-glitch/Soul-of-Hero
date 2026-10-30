@@ -11,14 +11,14 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from . import access, adversarial, routes, sensitivity
+from . import access, adversarial, gate as gate_module, quality as quality_module, routes, sensitivity
 from .checks import collect, codes_in
 from .findings import Assertion, Finding, severity_counts, sort_findings
 from .geo import RouteNetwork, travel_seconds
 from .hypotheses import load_hypotheses, patterns as pattern_payloads
 from . import blockers as blocker_module
 from . import product as product_module
-from .identity import loot_identity_map
+from .identity import binding_adoption, loot_identity_map
 from .loot import claims_needed, sink_coverage, sink_demand, tables_from_model
 from .model import Model
 from .provenance import (
@@ -40,6 +40,8 @@ ARTIFACTS = (
     "adversarial.json",
     "summary.json",
     "product.json",
+    "gate.json",
+    "quality.json",
     "blockers.json",
 )
 
@@ -295,12 +297,41 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         },
     }
 
+    # ------------------------------------------------------- integration gate
+    gate_payload = gate_module.build(model, product_texts, product_facts, product_manifest)
+    adoption = binding_adoption(model, gate_payload["contract"])
+    gate_payload["binding_adoption"] = adoption
+    artifacts["gate.json"] = gate_payload
+
+    # --------------------------------------------------------- quality checks
+    quality_checks = quality_module.run_all(model, product_texts, product_facts, product_manifest)
+    quality_counts = _counts(check["status"] for check in quality_checks)
+    artifacts["quality.json"] = {
+        "schema": "soh.balance.quality.v1",
+        "read_this_first": (
+            "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a "
+            "static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the "
+            "feature runs."
+        ),
+        "counts": quality_counts,
+        "checks": quality_checks,
+        "failures": [check for check in quality_checks if check["status"] == "FAIL"],
+        "snapshot_heads": {
+            "a0": product_manifest.get("a0_head"),
+            "a1": product_manifest.get("a1_head"),
+            "a6": product_manifest.get("a6_head"),
+            "a8": product_manifest.get("a8_head"),
+        },
+    }
+
     # -------------------------------------------------- consolidated blockers
     blocker_payload = blocker_module.build(
         [finding.as_dict() for finding in all_findings],
         product_checks,
-        identity_map,
+        {**identity_map, "binding_adoption": adoption},
         product_facts,
+        gate_payload=gate_payload,
+        quality_payload=artifacts["quality.json"],
     )
     artifacts["blockers.json"] = blocker_payload
 
@@ -316,6 +347,8 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         road=road,
         product_checks=product_checks,
         blocker_payload=blocker_payload,
+        gate_payload=gate_payload,
+        quality_payload=artifacts["quality.json"],
     )
     artifacts["summary.json"] = {
         "schema": "soh.balance.summary.v1",
@@ -343,6 +376,10 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             "resource_nodes_authored_not_crates": len(model.resource_nodes),
             "findings_by_severity": severity_counts(all_findings),
             "player_facing_blockers": len(blocker_payload["blockers"]),
+            "closed_by_measurement": blocker_payload["counts"]["closed_blockers"],
+            "integration_gate_level": gate_payload["overall_level"],
+            "binding_adoption": adoption["summary"],
+            "quality_checks": quality_counts,
             "observation_reduction": blocker_payload["reduction"],
             "product_checks": _counts(check["status"] for check in product_checks),
             "mounted_survival_ui_scenes": len(product_facts["survival_ui_scenes_mounted"]),
@@ -451,6 +488,8 @@ def _assertions(
     road,
     product_checks=None,
     blocker_payload=None,
+    gate_payload=None,
+    quality_payload=None,
 ) -> List[Assertion]:
     assertions: List[Assertion] = []
     counts = {}
@@ -601,6 +640,64 @@ def _assertions(
             and any(check["check_id"] == "PROD-01" and check["status"] == "FAIL" for check in checks),
             "the product audit runs on sha256-pinned copies and reproduces the missing survival entry point",
             ["product"],
+        )
+    )
+    gate_payload = gate_payload or {}
+    chains = gate_payload.get("chains") or []
+    assertions.append(
+        Assertion(
+            "A16_integration_gate_reports_only_static_levels",
+            bool(chains)
+            and all(
+                link["level"] in {level["level"] for level in gate_payload["s_levels"]}
+                and link["statically_verifiable"] == (link["rank"] <= 3)
+                for chain in chains
+                for link in chain["links"]
+            ),
+            "both chains report a level per link and never claim beyond S3 from static evidence",
+            ["gate", "delivery"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A17_no_chain_reaches_a_committed_player_action",
+            all(chain["chain_level"] != "S4_NATIVE_COMMITTED" for chain in chains)
+            and (gate_payload.get("commit_seam") or {}).get("any_poi_calls_transact_once") is False,
+            "no mounted path commits through SaveService, so no chain is claimed past S3",
+            ["gate", "commit"],
+        )
+    )
+    adoption = gate_payload.get("binding_adoption") or {}
+    assertions.append(
+        Assertion(
+            "A18_first_hour_binding_needs_no_rate_change",
+            adoption.get("authorized_bindings") == 3
+            and all(row["yield_agrees"] for row in adoption.get("rows", []) if row.get("yield_agrees") is not None)
+            and all(
+                row["a1_authorized_yield"] == row["a3_declared_yield"]
+                for row in adoption.get("rows", [])
+                if row.get("a3_declared_yield") is not None
+            ),
+            "A1's authorized cache yields already equal A3's rows (3 / 2 / 2); only the poi_id needs adopting",
+            ["gate", "bindings"],
+        )
+    )
+    quality_checks = (quality_payload or {}).get("checks") or []
+    assertions.append(
+        Assertion(
+            "A19_quality_suite_flags_exactly_the_avatar_defect",
+            len(quality_checks) == 7
+            and [check["check_id"] for check in quality_checks if check["status"] == "FAIL"] == ["Q-04"],
+            "of the seven half-built-feature checks only the avatar identity/armour check fails",
+            ["quality"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A20_closed_blockers_stay_closed_with_evidence",
+            all(row.get("disposition") and row.get("evidence") for row in (blocker_payload or {}).get("closed", [])),
+            "the bootstrap-cycle and debug-UI blockers are recorded closed with the measurement that closed them",
+            ["blockers", "delivery"],
         )
     )
     return assertions
