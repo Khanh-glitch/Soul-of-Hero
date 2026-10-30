@@ -35,7 +35,10 @@ func _init() -> void:
 		u.reseed(seed)
 		var exp: Array = data["rng_seed_%d" % seed]
 		for i in range(exp.size()):
-			_check(u.rand() == float(exp[i]), "rng seed %d step %d bit-exact" % [seed, i])
+			var got: float = u.rand()
+			if got != float(exp[i]):
+				print("GOLD93_ARCANA_RNG seed=%d step=%d got=%0.17f exp=%0.17f" % [seed, i, got, float(exp[i])])
+			_check(got == float(exp[i]), "rng seed %d step %d bit-exact" % [seed, i])
 	var ts: Array = [0.0, 0.1, 0.25, 0.5, 0.75, 0.9, 1.0]
 	for name in data["ease"].keys():
 		var exp2: Array = data["ease"][name]
