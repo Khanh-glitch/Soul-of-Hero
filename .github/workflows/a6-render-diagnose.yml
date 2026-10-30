@@ -81,42 +81,54 @@ jobs:
           tail -25 q3.txt
           if [ $s -ne 0 ]; then tail -8 q3.txt | sed 's/^/::error::/'; exit 1; fi
 
-      - name: Q4 capture scene with a frame cap
+      - name: Q4 capture, no frame cap, report the harness verdict
         run: |
           set +e
-          mkdir -p /tmp/cap4
-          timeout 180 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
+          rm -rf /tmp/cap4; mkdir -p /tmp/cap4
+          timeout 200 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-            godot --path . --quit-after 60 --verbose --rendering-driver opengl3 --audio-driver Dummy \
+            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
             res://tests/survival/ui/a6_return_ui_capture.tscn -- \
             --a6-ui-capture --capture-dir=/tmp/cap4 --capture-tag=probe \
             > q4.txt 2>&1
           s=$?
           echo "exit=$s" >> q4.txt
           ls -la /tmp/cap4 >> q4.txt 2>&1
-          tail -30 q4.txt
-          if [ $s -ne 0 ]; then tail -8 q4.txt | sed 's/^/::error::/'; exit 1; fi
+          # Publish the harness's own words: this is what says whether the capture
+          # finished, overflowed text, or refused a state.
+          grep -E "A6 UI CAPTURE" q4.txt | tail -12 | sed 's/^/::error::/' || true
+          grep -E "ERROR|SCRIPT ERROR" q4.txt | tail -6 | sed 's/^/::error::/' || true
+          tail -6 q4.txt | sed 's/^/::error::/' || true
+          exit $s
 
-      - name: Q5 full capture, no frame cap
+      - name: Q5 what the manifest says about the 720p run
+        if: always()
         run: |
           set +e
-          mkdir -p /tmp/cap5
-          timeout 240 xvfb-run --auto-servernum -s "-screen 0 1280x720x24" \
-            env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
-            godot --path . --rendering-driver opengl3 --audio-driver Dummy \
-            res://tests/survival/ui/a6_return_ui_capture.tscn -- \
-            --a6-ui-capture --capture-dir=/tmp/cap5 --capture-tag=probe \
-            > q5.txt 2>&1
-          s=$?
-          echo "exit=$s" >> q5.txt
-          ls -la /tmp/cap5 >> q5.txt 2>&1
-          tail -20 q5.txt
-          if [ $s -ne 0 ]; then tail -8 q5.txt | sed 's/^/::error::/'; exit 1; fi
+          python3 - <<'PY' | sed 's/^/::error::/'
+          import json, pathlib
+          m = pathlib.Path("/tmp/cap4/probe_manifest_1280x720.json")
+          if not m.is_file():
+              print("no manifest")
+              raise SystemExit(0)
+          d = json.loads(m.read_text())
+          print("renderer", d.get("renderer"), "resolution", d.get("resolution"), "window", d.get("window"))
+          print("saved", d.get("saved_count"), "overflows", d.get("overflows"))
+          print("state_errors", d.get("state_errors"))
+          for f in d.get("frames", []):
+              print(f.get("state"), f.get("width"), f.get("height"), "saved", f.get("saved"),
+                    "blank?", not f.get("non_blank"), "state_ok", f.get("state_ok"),
+                    "texts", len(f.get("texts", [])))
+              for t in f.get("texts", []):
+                  if t.get("overflow") or not t.get("inside_screen"):
+                      print("   OVERFLOW", repr(t.get("text"))[:60], t.get("rect"))
+          PY
 
-      - name: Q6 capture at 2560x1440
+      - name: Q6 1440p capture
+        if: always()
         run: |
           set +e
-          mkdir -p /tmp/cap6
+          rm -rf /tmp/cap6; mkdir -p /tmp/cap6
           timeout 240 xvfb-run --auto-servernum -s "-screen 0 2560x1440x24" \
             env LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe \
             godot --path . --resolution 2560x1440 --rendering-driver opengl3 --audio-driver Dummy \
@@ -125,6 +137,6 @@ jobs:
             > q6.txt 2>&1
           s=$?
           echo "exit=$s" >> q6.txt
-          ls -la /tmp/cap6 >> q6.txt 2>&1
-          tail -20 q6.txt
-          if [ $s -ne 0 ]; then tail -8 q6.txt | sed 's/^/::error::/'; exit 1; fi
+          grep -E "A6 UI CAPTURE" q6.txt | tail -8 | sed 's/^/::error::/' || true
+          ls /tmp/cap6 | sed 's/^/::error::/' || true
+          exit $s
