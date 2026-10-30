@@ -213,6 +213,19 @@ if (mode === 'hashes') {
     g.render();
     if (want.has(t)) log.forEach((line, i) => console.log(`GOLD93_OBJ t=${t} i=${i} ${line}`));
   }
+} else if (mode === 'blockhash') {
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, g) => {
+    if (t !== 89 && t !== 90) return;
+    const buf = Buffer.from(g.gfx.s.d.buffer, g.gfx.s.d.byteOffset, g.gfx.s.d.byteLength);
+    const blks: string[] = [];
+    for (let by = 0; by < 10; by++) for (let bx = 0; bx < 12; bx++) {
+      const h = createHash('sha256');
+      for (let row = 0; row < 68; row++) { const off = ((by * 68 + row) * 1200 + bx * 100) * 4; h.update(buf.subarray(off, off + 400)); }
+      blks.push(h.digest('hex').slice(0, 6));
+    }
+    for (let i = 0, p = 0; i < blks.length; i += 15, p++) console.log(`GOLD93_BLK t=${t} p=${p} ${blks.slice(i, i + 15).join(' ')}`);
+  });
 } else if (mode === 'cocoonstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {

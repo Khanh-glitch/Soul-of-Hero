@@ -409,6 +409,23 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 				part += 1
 				i0 += 10
 			w.objhash_on = false
+		if sid == 7 and (n == 89 or n == 90):
+			# 12x10 block grid (100x68 px each) scene hashes, chunked per line.
+			var blks: Array = []
+			for by in range(10):
+				for bx in range(12):
+					var ctx := HashingContext.new()
+					ctx.start(HashingContext.HASH_SHA256)
+					for row in range(68):
+						var off: int = ((by * 68 + row) * 1200 + bx * 100) * 4
+						ctx.update(g["s"].bytes.slice(off, off + 400))
+					blks.append(ctx.finish().hex_encode().substr(0, 6))
+			var bi: int = 0
+			var bp: int = 0
+			while bi < blks.size():
+				print("GOLD93_BLK t=%d p=%d %s" % [n, bp, " ".join(blks.slice(bi, mini(bi + 15, blks.size())))])
+				bp += 1
+				bi += 15
 		if _dump_tick == n:
 			_dump_rasters(g, sid, n)
 		if sid == 7 and n <= 92:
