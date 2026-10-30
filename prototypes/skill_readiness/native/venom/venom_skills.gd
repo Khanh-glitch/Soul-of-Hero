@@ -115,6 +115,8 @@ static func run_factory(skill_id: int):
 			return func(c): return S1.toad(c)
 		6:
 			return func(c): return S2.caravan(c)
+		8:
+			return func(c): return S4.serpents(c)
 		9:
 			return func(c): return S2H.harvester(c)
 		10:
