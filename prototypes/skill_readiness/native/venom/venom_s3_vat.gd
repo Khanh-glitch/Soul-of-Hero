@@ -104,9 +104,9 @@ static func _vat_body(c, g) -> void:
 		if tm > 4.4 and erupted < 4 and tm > 4.4 + float(erupted) * 0.3:
 			erupted += 1
 			var pf2: Dictionary = A.puffs[int(floor(c.rng.next() * float(A.puffs.size())))]
-			var q: Vector2 = A.pos(pf2, A.age)
-			var X: float = q.x
-			var Y: float = q.y
+			var q: Array = A.pos(pf2, A.age)
+			var X: float = q[0]
+			var Y: float = q[1]
 			LIB.ring_at(c, X, Y, 30.0, 0.26, 41.75,
 					{"kind": "burst", "knock": 130.0, "stag": 0.4, "h": er, "max": 4,
 					"cols": [int(M.P["w"]), int(M.P["c2"]), int(M.P["e2"])], "w": 3.0})

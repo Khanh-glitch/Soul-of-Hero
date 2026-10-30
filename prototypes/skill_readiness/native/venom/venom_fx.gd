@@ -738,10 +738,13 @@ class Cloud extends Fx:
 		life = life_
 		seed = seed_
 
-	func pos(p: Dictionary, t: float) -> Vector2:
+	## Returns [x, y] as 64-bit floats. A Godot `Vector2` stores float32, which
+	## rounds every puff centre by up to ~1e-5 px and flips raster pixels that
+	## the ORIGINAL (IEEE double) never flips. Keep positions in doubles.
+	func pos(p: Dictionary, t: float) -> Array:
 		var a: float = float(p["ph"]) + t * float(p["sp"])
-		return Vector2(x + (float(p["x"]) + V8M.v8_cos(a) * float(p["orb"])) * shrink,
-				y + (float(p["y"]) + V8M.v8_sin(a) * float(p["orb"]) * float(p.get("sq", 0.6))) * shrink)
+		return [x + (float(p["x"]) + V8M.v8_cos(a) * float(p["orb"])) * shrink,
+				y + (float(p["y"]) + V8M.v8_sin(a) * float(p["orb"]) * float(p.get("sq", 0.6))) * shrink]
 
 	func upd(w, dt: float) -> void:
 		x += vx * dt
@@ -770,9 +773,9 @@ class Cloud extends Fx:
 	func covers(cx: float, cy: float, pad: float = 0.0) -> bool:
 		var t: float = age
 		for p in puffs:
-			var q: Vector2 = pos(p, t)
-			var ddx: float = cx - q.x
-			var ddy: float = cy - q.y
+			var q: Array = pos(p, t)
+			var ddx: float = cx - q[0]
+			var ddy: float = cy - q[1]
 			if sqrt(ddx * ddx + ddy * ddy) < float(p["r"]) * shrink * 0.85 * fade + pad:
 				return true
 		return false
@@ -794,8 +797,8 @@ class Cloud extends Fx:
 					* (0.4 + 0.6 * f) * minf(1.0, age * 2.2 + 0.2)
 			if rr < 1.5:
 				continue
-			var q: Vector2 = o["q"]
-			DRAW.puff(L, q.x, q.y - heightOff, rr, ramp, dens * f * fade, g.t, seed + int(o["i"]))
+			var q: Array = o["q"]
+			DRAW.puff(L, q[0], q[1] - heightOff, rr, ramp, dens * f * fade, g.t, seed + int(o["i"]))
 
 	func lit(g, _w) -> void:
 		var rem: float = life - age

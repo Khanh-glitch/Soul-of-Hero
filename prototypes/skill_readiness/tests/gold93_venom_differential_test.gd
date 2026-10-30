@@ -387,6 +387,8 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		w.draw(g)
 		if _dump_tick == n:
 			_dump_rasters(g, sid, n)
+		if sid == 7 and n <= 92:
+			_dump_summon_state(w, n)
 		if want.has(n):
 			var exp: Dictionary = want[n]
 			var got := {
@@ -505,6 +507,17 @@ func _trace_fx(w, tick: int) -> void:
 ## are read through this helper instead of the usual two-argument form.
 func _fx(o, key: String, fallback):
 	return o.get(key) if key in o else fallback
+
+
+## Diagnostic (read-only): hatchling positions per tick, one line per tick, in
+## the exact format the Node reference prints as `GOLD93_STATE`. Used to find
+## the first tick and hatchling where native state leaves the original.
+func _dump_summon_state(w, tick: int) -> void:
+	var parts: Array = []
+	for f in w.fx:
+		if "idx" in f and String(_fx(f, "kind", "")) == "summon":
+			parts.append("h%d=%.9f,%.9f" % [int(_fx(f, "idx", -1)), float(_fx(f, "x", 0.0)), float(_fx(f, "y", 0.0))])
+	print("GOLD93_STATE t=%d %s" % [tick, " ".join(parts)])
 
 
 func _mismatch(exp: Dictionary, got: Dictionary) -> String:

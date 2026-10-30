@@ -186,6 +186,17 @@ if (mode === 'hashes') {
   manifest.rules = Object.fromEntries(cps.map(c => [c.name, { tick: c.tick, rule: c.rule }]));
   writeFileSync(join(outDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
   console.log(JSON.stringify(manifest.rules));
+} else if (mode === 'state') {
+  // Per-tick hatchling (kind 'summon') positions, in the exact text format the
+  // native differential prints as GOLD93_STATE, so the two logs can be diffed.
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, _g, w) => {
+    const parts: string[] = [];
+    for (const f of w.fx as any[]) {
+      if (f.kind === 'summon' && f.idx !== undefined) parts.push(`h${f.idx}=${f.x.toFixed(9)},${f.y.toFixed(9)}`);
+    }
+    console.log(`GOLD93_STATE t=${t} ${parts.join(' ')}`);
+  });
 } else {
   console.error('usage: reference.ts hashes|render ...'); process.exit(2);
 }

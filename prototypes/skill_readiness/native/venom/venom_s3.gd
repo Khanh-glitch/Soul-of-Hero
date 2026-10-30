@@ -417,7 +417,7 @@ static func _hatchery(c, g) -> void:
 			h.hd += M.ang_diff(h.hd, V8M.v8_atan2(h.vy, h.vx)) * 0.25 \
 					* (0 if h.recoil > 0 else 1)
 			h.x = M.clampf(h.x, 6, w.W - 6)
-			h.y = M.clampf(h.y, 8, w.H - 8)
+			h.y = M.clampf(h.y, 8, w.H - 6)
 			if phase == 1 and M.hypot(h.x - cx, h.y - cy + 4) < 7:
 				h.absorb = true
 				h.dead = true
