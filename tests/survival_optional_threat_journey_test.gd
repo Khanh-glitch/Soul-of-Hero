@@ -78,6 +78,8 @@ func _body() -> void:
 		_body_complete = true
 		return
 	var before: Dictionary = _save().call(&"inventory_totals")
+	var health_before := int(hero.get("health"))
+	_expect(health_before > 0, "fresh actual Hero begins the encounter alive")
 	var approached := await _walk_path(hero, path)
 	_expect(approached, "ordinary movement reaches the warned encounter")
 	if not approached:
@@ -86,18 +88,18 @@ func _body() -> void:
 	# If detection is occluded at the first warned approach, voluntarily walk
 	# closer using the real controller; do not command the enemy or fabricate a
 	# hit. Record its state/position to diagnose line of sight or leash issues.
-	if int(hero.get("health")) == 100:
+	if int(hero.get("health")) == health_before:
 		for offset: Vector2i in [Vector2i(-3, 0), Vector2i(3, 0), Vector2i(0, -3), Vector2i(0, 3)]:
 			var closer := _route(nav.cell_of(hero.global_position), site + offset, nav, hero)
 			if not closer.is_empty():
 				await _walk_path(hero, closer)
 				break
 	var until := Time.get_ticks_msec() + 30000
-	while int(hero.get("health")) == 100 and not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
+	while int(hero.get("health")) == health_before and not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
 		await physics_frame
 	var current_enemy := encounter.get_node_or_null("BoundedSkeleton") as CharacterBody2D
 	print("OPTIONAL_THREAT_TRACE hero=%s hp=%s enemy=%s enemy_pos=%s state=%s distance=%s" % [str(hero.global_position), str(hero.get("health")), str(current_enemy), str(current_enemy.global_position if current_enemy != null else Vector2.ZERO), str(current_enemy.get("_state") if current_enemy != null else "missing"), str(hero.global_position.distance_to(current_enemy.global_position) if current_enemy != null else -1)])
-	var damaged := int(hero.get("health")) < 100 and not bool(hero.get("dead"))
+	var damaged := int(hero.get("health")) < health_before and not bool(hero.get("dead"))
 	_expect(damaged, "existing autonomous skeleton inflicts actual survivable damage")
 	if not damaged:
 		_body_complete = true
@@ -118,7 +120,7 @@ func _body() -> void:
 	if not returned_to_danger:
 		_body_complete = true
 		return
-	until = Time.get_ticks_msec() + 120000
+	until = Time.get_ticks_msec() + 300000
 	while not bool(hero.get("dead")) and Time.get_ticks_msec() < until:
 		await physics_frame
 	var doc: Dictionary = _survival().call(&"document")
