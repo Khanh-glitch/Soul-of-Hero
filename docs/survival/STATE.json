@@ -227,8 +227,8 @@
     {
       "id": "RENDERED_RUN",
       "owner": "A0/environment",
-      "state": "PARTIAL",
-      "detail": "godot-runtime-validation run 41068109389 at 4348c5d8: import/headless success and Xvfb rendered gameplay captures success; only the original-main baseline comparison fails, reproducing 3/89 smoke and 20/949 campaign-entry failures that already exist on main. The survival normal-entry journeys still need the candidate matrix to finish (run 41069877541). Job logs/artifact ZIPs are blob-hosted and unreachable from this sandbox; failed checks are now emitted as ::error annotations."
+      "state": "PARTIAL_RENDERED",
+      "detail": "Rendered Xvfb matrix at 8ce3add8: controller and roadside legs PASS; normal-entry-roadside reaches 129 checks and normal-entry 111 checks through menu -> Home -> real overworld -> gather/reserve/place -> shelter/chest -> all three A1 crates with exact A3 items and canonical receipts, failing only the synthetic return/cache walk. The stall is a walker wedge: Hero vel=(-90,0) with motion=(-0.000977,0), ten perpendicular nudges move it zero pixels at (343,223)->(342,222) and (407,203)->(406,202). Job logs/artifact ZIPs are blob-hosted and unreachable; failed checks are published as PR21 comments by the workflow."
     },
     {
       "id": "A1_VISUAL_LOCK",
