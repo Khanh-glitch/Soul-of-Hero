@@ -10,7 +10,6 @@ extends SceneTree
 ## Run from the ROOT project (not the isolated reader project):
 ##   godot --headless --path . --script res://tests/survival/world/connector_native_test.gd -- --connector-root=artifacts/a1-connector
 
-const KNIGHT: PackedScene = preload("res://game/characters/knight/knight.tscn")
 const WAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_waystation.slice.json"
 const RELAY_SLICE := "res://data/survival/world/vertical_slice/poi_crown_relay_shed.slice.json"
 const MOVE_ACTIONS: Array[String] = ["move_left", "move_right", "move_up", "move_down"]
@@ -233,7 +232,12 @@ func _run() -> void:
 	await physics_frame
 	await physics_frame
 
-	hero = KNIGHT.instantiate() as CharacterBody2D
+	var knight_scene := load("res://game/characters/knight/knight.tscn") as PackedScene
+	_expect(knight_scene != null, "Knight scene loads after autoload boot")
+	if knight_scene == null:
+		quit(1)
+		return
+	hero = knight_scene.instantiate() as CharacterBody2D
 	entities.add_child(hero)
 	print("CONNECTOR TRACE knight_added")
 	var body_shape := hero.get_node("BodyShape") as CollisionShape2D

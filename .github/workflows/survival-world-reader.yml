@@ -185,8 +185,9 @@ jobs:
       - name: Run live-shape Refuge -> Waystation -> Relay -> Refuge fixture
         run: |
           mkdir -p artifacts/ud_connector_native
-          timeout --signal=TERM --kill-after=15s 360s godot --headless \
-            --path . --user-data-dir artifacts/ud_connector_native \
+          timeout --signal=TERM --kill-after=15s 360s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 \
+            godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy \
+            --user-data-dir artifacts/ud_connector_native --resolution 960x540 --windowed \
             --script res://tests/survival/world/connector_native_test.gd -- \
             --connector-root="$GITHUB_WORKSPACE/artifacts/a1-connector" \
             --report=artifacts/a1-connector/connector_native_report.json \
