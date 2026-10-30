@@ -1,3 +1,5 @@
+> **CURRENT AUTHORITY / API IMPACT 2026-10-30:** `CURRENT_PRODUCT_CONTRACT.md` and D062–D074 supersede conflicting historical contracts here. A0 MUST distinguish run-scoped gameplay and immutable profile.secured_ragnarok_currency; unique final-72h POI chest source IDs, bank transactions and season-finalize receipts are single-save-authority, durable and idempotent. A3 owns loot, price/stock economic truth; A1/A8 own geography/POI physical interactions, A4 Gold, A6 UI read-only, A7 verification. Early player abandonment and true evacuation end run; ordinary death/app close/deposit do not. Ten old dungeon routes remain legacy preservation tests, not mandatory survival placement.
+
 # Integration & data contracts (initial architectural RFC)
 
 **Status:** DRAFT interface contract. The contract text below is unchanged and still
@@ -37,7 +39,7 @@ No final IDs or balance numbers are invented here. Actual names may change, but 
 1. **Atomicity:** placement/crafting/research must validate all costs, capacity, world-state and collision, then commit removal + creation as a single transaction (or reject without side effects).
 2. **Idempotency:** deterministic operation ID per action; replay/reload never creates duplicate loot, free blueprints or repeated purchases.
 3. **Capacity:** inventory full -> refund/leave loot in source without silent loss; multiple containers have stable IDs and contents.
-4. **Authored terrain safety:** no blocked dungeon gate, dead-end spawn or sealed route; building placement rules prevent blocking critical 10-dungeon routing and chosen spawn/camp exits.
+4. **Authored terrain safety:** no blocked dungeon gate, dead-end spawn or sealed route; building placement rules prevent blocking actual mounted critical paths and safe chosen spawn/camp exits; legacy dungeon routes have separate regression tests.
 5. **Room safety:** player inside room -> roof fades for that room only; visibility logic does not change collision/hit authority.
 6. **Core safety:** a valid gameplay cast decrements once, cancels/interrupts follow explicit policies; failure to render VFX does NOT secretly consume without logging/handling.
 7. **Source fidelity:** source-locked Gold cannot be marked ready until complete original full-cycle plus native same-seed proof, real map/enemy interaction, cleanup and perf.

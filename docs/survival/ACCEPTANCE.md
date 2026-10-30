@@ -1,10 +1,12 @@
+> **2026-10-30 CANONICAL ACCEPTANCE OVERRIDE:** `CURRENT_PRODUCT_CONTRACT.md` + D062–D074 are authoritative over older no-wipe/ten-mandatory-dungeon/no-wallet text in this checklist. THE FIRST FULL USER E2 PLAYTEST REQUIRES: meaningful quiet melee-first survival; earned Core Gold use and research; physical house/return/offline farm/forge; geo/POI hazard; trace-only house threats; physical cart/logistics; real weather; Ragnarok last72h six awakenings and distinct boss territories; physical rare chest currency, death/loss, repeatable bank, fixed vendor+disassembly; 1–6 stone milestones, valuable physical evacuation and separate capstone, safe manual early restart, 336h offline boundary, clean second run with retained secured wallet and no inherited Core/recipe/home. These are PRODUCT REQUIREMENTS, NOT claimed passes. **
+
 # Survival RPG end-to-end acceptance — authoritative checklist
 
 **Status:** TARGET, not a claim of implementation or passing tests.
 
 A production-quality playable vertical slice must exercise the complete route in a fresh save, at normal input, in engine, and later the browser. Do not pass by injecting fake state in CI.
 
-- [ ] New player spawns on intact Chapter-1 approach, sees legible routes and first resource nodes.
+- [ ] New player spawns on one of many geographically distributed SAFE RANDOM cells in the stable authored world, sees legible routes and accessible first resource nodes.
 - [ ] Harvest tree and rock using tools; harvest changes physical node state, creates real inventory items, follows respawn rules.
 - [ ] Place modular foundation, walls, door, room roof and interior storage with preview/grid validation; costs paid once; cannot block mandatory paths/spawn.
 - [ ] Navigate into building, roof fades by room, player can interact with chest and bed; all collision, z-order and occlusion correct.
@@ -15,7 +17,7 @@ A production-quality playable vertical slice must exercise the complete route in
 - [ ] Research/recycle a Core at a research station; recipe unlock persisted permanently; crafting fresh Core uses specific resources.
 - [ ] Environmental zone hazard/strong monsters genuinely deter early exploration; player can prepare resist gear, new route or skillful workaround.
 - [ ] Player dies and respawns at placed anchor; carried loot recovery and owned structures work.
-- [ ] Enter and return from real L01–L10 dungeon route without breaking other Hero/combat systems.
+- [ ] Enter and return from actually SELECTED canonical survival POI/dungeon route without breaking retained legacy L01–L10 source/regression harness; ten old dungeons are NOT all mandatory world placements.
 - [ ] Save, quit, reload in multiple interruption points; structures, roof, chests, ingredients, knowledge, Core uses, crops and harvestables are unchanged as intended.
 - [ ] Collision/topology/regression, native screenshots and Web fresh-user journey (not `?ci_gameplay=1` shortcut) pass; no hidden fatal errors.
 - [ ] Asset licenses for release art recorded; native visual human-readability review performed; measure load/memory/frame time across representative regions.

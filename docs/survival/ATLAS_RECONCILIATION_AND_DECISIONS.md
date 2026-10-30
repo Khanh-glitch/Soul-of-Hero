@@ -1,3 +1,5 @@
+> **2026-10-30 HISTORICAL EVIDENCE / SUPERSEDED CLAUSES:** This document remains useful as source/research/implementation history, but `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `DECISIONS.md` D062–D074 OVERRIDE ANY contrary persistent-home, optional-only replay, forced exact-ten-dungeon layout, no season-wipe, no secured currency, no Ragnarok, or no physical trading-machine assumptions. Do not dispatch gameplay based on conflicting older prose. Its native acceptance claims (if any) are valid only for their pinned SHA, not as product approval.
+
 # SOH — Atlas Reconciliation, Hard Decisions & Neglected Mechanics
 Date 2026-10-29. Scope: Compare immutable 1355-line user research atlas against previous `START_HERE.md`, `CONTRACTS.md`, `DECISIONS.md`, `LAST_DAY_RULES_2019_2020_RESEARCH_ATLAS.md`, `ACCEPTANCE.md`, source repo. This file reports actual coverage gaps, user-approved design gate rulings and action owners. **Not code implementation.**
 

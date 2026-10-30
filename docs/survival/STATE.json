@@ -7,9 +7,9 @@
   "immutable_fork_sha": "c1925d8d17a78da22c64b2c0fc249711eed536ac",
   "audited_gold_branch": "feature/gold-93-skill-readiness-20261028",
   "audited_gold_sha": "6c58ecf6f7c2350ee49f3a82e3cef42bf80afaf7",
-  "updated_date": "2026-10-29",
+  "updated_date": "2026-10-30",
   "phase": "SURV_010_MERGED_SURV_020_USER_REPORTED_IN_PROGRESS",
-  "scope": "Offline open-world survival RPG; preserve dungeon/Gold; full-world plan upfront, 10 Chapter 1 dungeons in opening quarter",
+  "scope": "CURRENT PRODUCT AUTHORITY: max 14 real-day season or voluntary earlier restart, full run-local reset, account achievements/results/SECURED Ragnarok currency; final72h six bosses/stones, loot-to-repeat-deposit, independent physical evacuation, stable world with safe random spawn, authentic Gold; actual implementation separately gated",
   "code_claims": {
     "survival_system_integrated": false,
     "freeform_construction_integrated": false,
@@ -431,5 +431,9 @@
     "ledger": "docs/survival/RESEARCH_LOG.md",
     "preexisting_repo_list_is_exhaustive": false,
     "does_not_claim_new_repositories_were_discovered": true
-  }
+  },
+  "current_product_contract": "docs/survival/CURRENT_PRODUCT_CONTRACT.md",
+  "current_agent_brief": "docs/survival/AGENT_CURRENT_DESIGN_BRIEF.md",
+  "effective_decisions": "D051-D074 latest canonical supersessions; historic older contradictions non-authoritative",
+  "design_record_status": "DESIGN_AUTHORIZED_NOT_ENGINEERING_VERIFIED"
 }

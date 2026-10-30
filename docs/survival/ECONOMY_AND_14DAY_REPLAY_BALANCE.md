@@ -1,3 +1,5 @@
+> **2026-10-30 HISTORICAL EVIDENCE / SUPERSEDED CLAUSES:** This document remains useful as source/research/implementation history, but `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `DECISIONS.md` D062–D074 OVERRIDE ANY contrary persistent-home, optional-only replay, forced exact-ten-dungeon layout, no season-wipe, no secured currency, no Ragnarok, or no physical trading-machine assumptions. Do not dispatch gameplay based on conflicting older prose. Its native acceptance claims (if any) are valid only for their pinned SHA, not as product approval.
+
 # SOH — Quantitative Economy, Exploration Depth and Replay Calibration
 
 Status: **DESIGN GATE APPROVED, NUMBERS BELOW ARE SOH TEST TARGETS, NOT ORIGINAL 2019 GAME MEASUREMENTS.** Original atlas §46–48 supplies formulas and 2019–2026 dated examples. Never use its 2026 quota (40m / 28m, 30 chests, 80 electronics, 49 regions etc.) as historic 2019 facts, nor inject into SOH by default.

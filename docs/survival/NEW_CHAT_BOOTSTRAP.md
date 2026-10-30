@@ -1,4 +1,7 @@
 # SOUL OF HERO — NEW CHAT BOOTSTRAP / DRIFT-PROOF TAKEOVER
+
+**OVERRIDE FIRST: `docs/survival/CURRENT_PRODUCT_CONTRACT.md` and `docs/survival/AGENT_CURRENT_DESIGN_BRIEF.md` are mandatory new entry points; later D062–D074 replace older D028/D055/D056 descriptions. Do NOT execute older permanent-home, forced-ten-dungeon or no-wallet design claims.**
+
 **Canonical startup instruction for each NEW ChatGPT conversation, corrected 2026-10-29 to forbid context-dependent handoffs.** Last authored 2026-10-29. **THIS DOCUMENT IS AN ENTRY POINT, NOT A COMPLETE SUBSTITUTE FOR THE ORIGINAL SOURCES OR LIVE STATUS.** The live GitHub project and authorized Google Docs are the durable memory, not the chat assistant's recollection. No automatic background monitoring or guaranteed model-memory continuity.
 
 ## One critical mandate
@@ -42,10 +45,10 @@ Repository `Khanh-glitch/Soul-of-Hero`; integration branch `feature/survival-rpg
 
 ## 3. Non-negotiable product/gameplay contract
 - Preserve the ten real Chapter 1 dungeon entrances grouped in approximately the first quarter of a fully planned continent. World/biome resources, roads, expedition routes, settlements, weather and POI access must form causal gameplay; no empty filler or meaningless random decoration.
-- Real freeform player construction, rooms/roof per room/doors/collision/storage/bed/respawn and persistent home with opt-in replayable expeditions.
+- Real freeform player construction, rooms/roof per room/doors/collision/storage/bed/respawn and run-local physical home; max 14d season; optional early restart, Ragnarok cash/evacuation.
 - Survival ecology → salvaging/refining/fuel/production → blueprint and permanent recipe research → manufacturing/repair/farming/stations/transport → rare physical **limited-use Skill Core** and actual Hero ability → POI keyed access/power/hazard/boss/rewards/terrain responses. No second SaveService.
 - Original **Gold** VFX source fidelity, exact animation/timing, target AND terrain/environment effects, intentional screen/map brightness management for legibility, sharp pixel 2K/4K. Do not redraw "similar" particles, do not pronounce all 93 skills native-ready on a catalog count.
-- Deep, interconnected mechanics and exciting exploration that lasts roughly a 14-day-like journey without artificial grinding, forced PvP wipes or a 3D-shooter clone. SOH must uniquely reward top-down tactical Hero+Core+terrain readability and visual spectacle.
+- Deep, interconnected mechanics and exciting exploration that lasts roughly a 14-day-like journey without artificial grinding, compulsory PvP or a 3D-shooter clone; seasonal wipe is USER-CHOSEN. SOH must uniquely reward top-down tactical Hero+Core+terrain readability and visual spectacle.
 - User delegates F0–F5 detailed design decisions subject to rigorous reproducible acceptance. An admitted WIP is not a failure; an unverified feature is not a PASS.
 
 ## 4. Independent audit per report: mandatory R0–R5 procedure
