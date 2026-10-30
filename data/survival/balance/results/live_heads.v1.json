@@ -1,0 +1,681 @@
+{
+  "counts": {
+    "CHANGED": 8,
+    "MISSING_AT_LIVE_HEAD": 57,
+    "SAME": 10
+  },
+  "files": [
+    {
+      "key": "a0.home_map_screen.gd",
+      "live_sha256": "6c593a97b8fcd791d42f26583a0f44c19e81a88e266c1888e287458c341e78ef",
+      "owner": "a0",
+      "pinned_sha256": "6c593a97b8fcd791d42f26583a0f44c19e81a88e266c1888e287458c341e78ef",
+      "source_path": "game/ui/screens/home/home_map_screen.gd",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.app_root.gd",
+      "live_sha256": "c8eca81412851fc8aa395a56eedc3ac32d770ce6172fbcbc90c4f20b110e0cae",
+      "owner": "a0",
+      "pinned_sha256": "8619b14c52fe7d322bdd7197fee22e1cb3324efa72e1eb6aa8260c88ebc8880b",
+      "source_path": "game/app/app_root.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.main.tscn",
+      "live_sha256": "139ff870365de59cfc5cdf406049cf4ba4d1008d1be4857e60f10a3559c5d210",
+      "owner": "a0",
+      "pinned_sha256": "139ff870365de59cfc5cdf406049cf4ba4d1008d1be4857e60f10a3559c5d210",
+      "source_path": "game/main.tscn",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.project.godot",
+      "live_sha256": "6d607b77469fb70d15877a7869d60d05c952dc3801e7e673e9595d39e7ac51e0",
+      "owner": "a0",
+      "pinned_sha256": "6d607b77469fb70d15877a7869d60d05c952dc3801e7e673e9595d39e7ac51e0",
+      "source_path": "project.godot",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.knight.tscn",
+      "live_sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195",
+      "owner": "a0",
+      "pinned_sha256": "2b29011bf361ac7e5cdde97c1fc454c69684dcb6c08e1c23186c05910a52e195",
+      "source_path": "game/characters/knight/knight.tscn",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.chapter1_overworld.tscn",
+      "live_sha256": "ba575d77020f1ea129687f056a77331f10df4bf3103b02d0e2e730c45bdc5e1e",
+      "owner": "a0",
+      "pinned_sha256": "ba575d77020f1ea129687f056a77331f10df4bf3103b02d0e2e730c45bdc5e1e",
+      "source_path": "game/overworld/chapter1_overworld.tscn",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.chapter1_overworld.gd",
+      "live_sha256": "f2e3d29fe091473453d4eb062bac350f10109e89525ae3c502c787e25abb9f24",
+      "owner": "a0",
+      "pinned_sha256": "6b6acc1cc0c09694e0ec758e27aab632c23db2f4684c77d7179e24262cebc552",
+      "source_path": "game/overworld/chapter1_overworld.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.chest.gd",
+      "live_sha256": "64546d57516f0eee068c1eba0638c9b1f6ce1cd818e5283277514b573933a997",
+      "owner": "a0",
+      "pinned_sha256": "64546d57516f0eee068c1eba0638c9b1f6ce1cd818e5283277514b573933a997",
+      "source_path": "game/world/interactables/chest.gd",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.hud.gd",
+      "live_sha256": "66f085e42031048c5920e426de79344ea08bc310b6f70f85494fec8bc076b33b",
+      "owner": "a0",
+      "pinned_sha256": "404580bd203648a51ca7770531704c4d839a2b176b626e46dbba9c1e8fa70c35",
+      "source_path": "game/ui/hud.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.overworld_hud.gd",
+      "live_sha256": "64b5ce141ca09df0b67517846e88f2e437f20e3e1bbe7ec2d64fe58ff24a7183",
+      "owner": "a0",
+      "pinned_sha256": "2ab49ba5f6ea26136de1bbed7e2a63ccfaed3e0a253cf277a88707bc3c4123a7",
+      "source_path": "game/overworld/overworld_hud.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.chest_inventory_panel.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "ce2ac1397c048ab64db997944365916626ca450db8e6700274894ba05ffd7519",
+      "source_path": "game/survival/chest_inventory_panel.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.save_service.gd",
+      "live_sha256": "a964ef29e6c798a60a3f4814e6bc93d99bdae4a3e364d65b58d79e8a79927ca9",
+      "owner": "a0",
+      "pinned_sha256": "be6f687393c9c3501e16cdc11d388269dfe3c3cf6880def291a7b37abef5770a",
+      "source_path": "game/autoload/save_service.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.sources.json",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "28ff818a406de7d53d2c0e3e2fd7295baef0fcec9c086ceb0206d5a2251fdb87",
+      "source_path": "data/survival/items/sources.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_service.gd",
+      "live_sha256": "3a1e27f93fd51c9f6f6fa86a8b5cee3df5b9e37093cbe1534dc6f6440705ab42",
+      "owner": "a0",
+      "pinned_sha256": "4a4a2962a14d990e4470a41a602ff4fed7afc03d8aad5a88baf029a57722ca5d",
+      "source_path": "game/survival/survival_service.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.survival_resource_node.gd",
+      "live_sha256": "408d77f29b9c2d3c6fcc098adddcb511025e59804fbcba220a607f6cd700e7c1",
+      "owner": "a0",
+      "pinned_sha256": "db84497dca6874fa68277a3d0529f30b1ae23eb193701fa48ff1ad2d46cacddf",
+      "source_path": "game/survival/survival_resource_node.gd",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.app_flow.gd",
+      "live_sha256": "0a787ddd8147c54d33718a81dce172c376b10a6d5a00130b51352ba3126d6114",
+      "owner": "a0",
+      "pinned_sha256": "0a787ddd8147c54d33718a81dce172c376b10a6d5a00130b51352ba3126d6114",
+      "source_path": "game/app/app_flow.gd",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.campaign_tab.gd",
+      "live_sha256": "1e7faf23aacbc77e8b86382e8424847d4daa3cd128d777c60b5f6baee56f2609",
+      "owner": "a0",
+      "pinned_sha256": "1e7faf23aacbc77e8b86382e8424847d4daa3cd128d777c60b5f6baee56f2609",
+      "source_path": "game/ui/screens/hub/tabs/campaign_tab.gd",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.campaign_tab.tscn",
+      "live_sha256": "065ddfb9a06b1cdc904c570f4742cfa64d84c091515f1887c8306e891c2e1103",
+      "owner": "a0",
+      "pinned_sha256": "065ddfb9a06b1cdc904c570f4742cfa64d84c091515f1887c8306e891c2e1103",
+      "source_path": "game/ui/screens/hub/tabs/campaign_tab.tscn",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.home_map_screen.tscn",
+      "live_sha256": "20c1d6e4b70ceb9000430ea4b7beacaca2d43e95197c810f41314dbe894b199f",
+      "owner": "a0",
+      "pinned_sha256": "20c1d6e4b70ceb9000430ea4b7beacaca2d43e95197c810f41314dbe894b199f",
+      "source_path": "game/ui/screens/home/home_map_screen.tscn",
+      "state": "SAME"
+    },
+    {
+      "key": "a0.survival_normal_entry_home_restart_test.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "a4e768acea35759b5f28acc0061517805246a40cda0dc81fe9c61ae9b982f5af",
+      "source_path": "tests/survival_normal_entry_home_restart_test.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_normal_home_journey_test.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "c16c34ea396af673b03105ea821c5069ad0d14e3887a99d4a706af022bf11c62",
+      "source_path": "tests/survival_normal_home_journey_test.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.a0-normal-entry-home-restart.yml",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "955443e2d194c549e80bdc762762d76f56dc48b608cbb2e77042dc4bc00296bf",
+      "source_path": ".github/workflows/a0-normal-entry-home-restart.yml",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_waystation_authority_test.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "5c1821beb8b408e241feefc4dd1aae4d1331c114fca04d6917cc6438330395ba",
+      "source_path": "tests/survival_waystation_authority_test.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_waystation_input_restart_test.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "898d69d18ccfec1fdc3c5b78e483af1c9d73276dd374c669a530ef699bd1587e",
+      "source_path": "tests/survival_waystation_input_restart_test.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.a0-waystation-input-restart.yml",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "6f24e7f25a2958ee3834210cc484391393c20eb2e8841828c3931255b58ff455",
+      "source_path": ".github/workflows/a0-waystation-input-restart.yml",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_catalog.json",
+      "live_sha256": "42c64cf7f37b2e6fdfa1d6d19c71f2bcd9455a42e8e8033241e663d2ece66974",
+      "owner": "a0",
+      "pinned_sha256": "c7118fb83718ede9b183b0771eac7ca482b52755fa0bf016d63b0099001b91c8",
+      "source_path": "data/survival/survival_catalog.json",
+      "state": "CHANGED"
+    },
+    {
+      "key": "a0.unique_ownership_guard.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "8445256e4ded547cec4ac873c18fd4900f3db9390093aebbe3366e7033a713b3",
+      "source_path": "game/survival/economy/unique_ownership_guard.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.waystation_host.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "c6bb450c72a58fa464e2f28292c125ea5c7a286a5a54d79ccc7d93d8a5227c96",
+      "source_path": "game/survival/waystation_host.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.waystation_geometry.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "68e31df558e0be1c63294b07270411ee0d4470486c90e44be4e7d41324c5c833",
+      "source_path": "game/survival/waystation_geometry.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.waystation_interactable.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "e6e4addfeae616d4b4a869e674631818fbf27b16997fb4092d5bac4152224adb",
+      "source_path": "game/survival/waystation_interactable.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.world_source_adapter.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "689a9b89dba4d756387b6b5c5f09b54d90ff0a787395f5e2fb523da496836efe",
+      "source_path": "game/survival/economy/world_source_adapter.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.a3_economy_service.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "4f9165468cf98b557984c63168b84ace4dae264ef56e659ca7fe42c06802e82c",
+      "source_path": "game/survival/economy/vendor/a3_economy_service.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.economy_session.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "b7243cd8acb1fdae55ca2cc163b36f167d9c80977e7554598d732087325138ea",
+      "source_path": "game/survival/economy/economy_session.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.world_source_bindings.v3.json",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353",
+      "source_path": "data/survival/items/world_source_bindings.v3.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.annex_world.v1.json",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "8883a224f05372f7ad3afa5317da82268e624acfc76f9891ba9fc24a22f6e1c6",
+      "source_path": "data/survival/connector/a0_candidate/annex_world.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.poi_crown_waystation.slice.json",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+      "source_path": "data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.survival_save_precision_test.gd",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "88e80b77db273be6d92110b670becb080e45671c7aed3a871f58e8b6c7780df2",
+      "source_path": "tests/survival_save_precision_test.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a0.a0-save-precision.yml",
+      "live_sha256": null,
+      "owner": "a0",
+      "pinned_sha256": "5e5f6b283980e5f36732ca14a73afb60345c616e986ed1e98a9d83f9adff4e59",
+      "source_path": ".github/workflows/a0-save-precision.yml",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.player_first_hud.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "3ed644a1d352bf30e38589ddeeca1e50193f88b7db1807607569f24ff8e5b0b1",
+      "source_path": "game/survival/ui/player_first_hud.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.acceptance_journeys.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "a2042c8ceb822b74362036cf04cce68b96aa08105d7380a17cb4c28e2044f1d6",
+      "source_path": "game/survival/ui/acceptance_journeys.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.expedition_workspace.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "8573a48b84f753b997186c8b3c04580f77fe2e0387545a96f737b35e2bfc8222",
+      "source_path": "game/survival/ui/expedition_workspace.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.expedition_planner.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "1a641543d7b4b63803dd44d836ead6fe66b0929b89ccd26b0efc43a3a8301946",
+      "source_path": "game/survival/ui/expedition_planner.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.expedition_map.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "a09969ae293144f944f23d0b3dc2c4fcc5eb9faa87cd6625ffb65fa6e107b4f3",
+      "source_path": "game/survival/ui/expedition_map.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.survival_journal.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "d6e7e22263d7034fc899122498fa013773d6a35a45b2d2f447a1a8cdcc9d8ab1",
+      "source_path": "game/survival/ui/survival_journal.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.survival_view_adapter.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "b237e684794d916ed431a46af044f7b9f8f1a895f71fe1840f9d834a6ab728e6",
+      "source_path": "game/survival/ui/survival_view_adapter.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.a0_storage_command_adapter.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "928b650de125aeaa387ed33df1b58195851967b14833f54b67ab0cfa7b2a69f0",
+      "source_path": "game/survival/ui/a0_storage_command_adapter.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.avatar_appearance_adapter.gd",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "763536255bed5e8ec4aee3c0c6145a9dc9f9a1b43000bf7fe055b00d72a6b55a",
+      "source_path": "game/survival/ui/avatar_appearance_adapter.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a6.avatar_art_manifest.json",
+      "live_sha256": null,
+      "owner": "a6",
+      "pinned_sha256": "4da27829955fbf22d54d00c40a26cf7a7272d8cbb34b07f11263ff7912f9e717",
+      "source_path": "game/survival/ui/avatar_art_manifest.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_quarry.tscn",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "67ebc90c07c9ae82a03e42fc37e52b547e8318a9e8c71b70ea4485b40229d6d6",
+      "source_path": "game/survival/world_content/scenes/south_quarry.tscn",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_orchard_ruin.tscn",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "3b7830dff98c5721002a2057505202eb0a3270ca9afaf9cf4a557694d058c002",
+      "source_path": "game/survival/world_content/scenes/south_orchard_ruin.tscn",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_crown_mill.tscn",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "ae824d3c8b17414b3b3ab1b9766246d6ec4afd1630f58b640665270caea5daa3",
+      "source_path": "game/survival/world_content/scenes/south_crown_mill.tscn",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.poi_pilot.tscn",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "754890682c469bbef90a37e4b80f7b66771b2f764803f110468681b860294dd7",
+      "source_path": "game/survival/world_content/scenes/poi_pilot.tscn",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.native_poi_site.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "e1924102c4e534a113d9d44190d0447fc1244d613de6ca8044666ef2e868d9df",
+      "source_path": "game/survival/world_content/scripts/native_poi_site.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.native_poi_shell.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "08dac59ae448c6d6997915fca20df97fc29f4299808cb60af07e8b35a41e8dfc",
+      "source_path": "game/survival/world_content/scripts/native_poi_shell.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.poi_authority_fixture.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "d265cc984788ddd06744766d953db3ed00b84ff500363db5e1f5f1432d966187",
+      "source_path": "game/survival/world_content/scripts/poi_authority_fixture.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.poi_pilot.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "99f45c310c225117f507c708bf6a4ef8b0696fb357ed5e920322befbd80ed0ae",
+      "source_path": "game/survival/world_content/scripts/poi_pilot.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_quarry.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "241c6b371e6594e8127e4c3b58f8d2d3d66c4dc2c0b94c0795bfe3aca23dc783",
+      "source_path": "data/survival/world_content/sites/south_quarry.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_orchard_ruin.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "2df9d81122a74bd5375f1d4edd94d2c84a2a567708285e79e14b93f5ea7cb2a1",
+      "source_path": "data/survival/world_content/sites/south_orchard_ruin.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.south_crown_mill.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "cb3764057c53b1d63def5bde7c046795789c58213fa5dabc20fb6c647876b2be",
+      "source_path": "data/survival/world_content/sites/south_crown_mill.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.interaction_contract.v1.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "825d7faaf68fa416b71a3b112e4770f02af9718b4abc66210f98100bb6bee24b",
+      "source_path": "data/survival/world_content/interaction_contract.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.quarry_integration_candidate.v1.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "c2dec0dfb9ca42422b4124e63b836f886ff32568fe859ba658127f59828ff1f4",
+      "source_path": "data/survival/world_content/quarry_integration_candidate.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.native_poi_vectors.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "a33bad3ccf1430c24ba83f9e79538c6e118d81a3a82d381cc001ec5cc85dd3ff",
+      "source_path": "game/survival/world_content/scripts/native_poi_vectors.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.native_poi_art.gd",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "212db7aab4cec916306ed46b6e8c33f3c9bbd14b759a593cc428ecce7830c236",
+      "source_path": "game/survival/world_content/scripts/native_poi_art.gd",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.a8_art_manifest.v1.json",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "55f9084e3a1d005eb199f49f35ff2761bd97ec4698ecd3fc3b700523851c061e",
+      "source_path": "data/survival/world_content/a8_art_manifest.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a8.a8-world-content-native.yml",
+      "live_sha256": null,
+      "owner": "a8",
+      "pinned_sha256": "738d23bc5fece35794ad273b2157d6e2d3990354df92071f3fc872b3abe07bd2",
+      "source_path": ".github/workflows/a8-world-content-native.yml",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.handoff_contracts.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "c4f0a453c8143bfae9db88b269cd5406d6e4ae1c8b80ad2c0e70f865de7f97a1",
+      "source_path": "data/survival/world/vertical_slice/handoff_contracts.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.poi_crown_waystation.v1.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "8f2e437a9c4200f737e1b048be70030e4affde37012f1f05421efe7a2e8064cf",
+      "source_path": "data/survival/world/poi_authoring/poi_crown_waystation.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.crown_roadside.corridor.v1.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "9d3909b0625bdf6239a760fdf2ac982d0ede0314491cab315d7268d42ddc232f",
+      "source_path": "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.poi_crown_waystation.slice.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "3a4981fd3e24580e2e7c2ee5d0929f76c432d785e142b67a222c6480af01e16f",
+      "source_path": "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.a8_shell_visuals.v1.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "96ef8ada5eb78a7b025f6018ddaf0a2a8464639a0b7574cae58b956eff01dfd8",
+      "source_path": "data/survival/world/art/a8_shell_visuals.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.a8_site_transforms.v1.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "3db1350b05b1657826caea7ab625e6a2b4513ef6f59072bbc53dbc728c72f66e",
+      "source_path": "data/survival/world/corridor/a8_site_transforms.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a1.crown_roadside_sources.v1.json",
+      "live_sha256": null,
+      "owner": "a1",
+      "pinned_sha256": "6a87f4734227a68f279bb2eb45b06059c8fc07ab023f1abd46cd36d5f2be6f0a",
+      "source_path": "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a3.sources.json",
+      "live_sha256": null,
+      "owner": "a3",
+      "pinned_sha256": "941da92cdbe244f62a31862af8a8ab0ef549c6504cfbd6ef47cc591c50c58caf",
+      "source_path": "data/survival/items/sources.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a3.items.json",
+      "live_sha256": null,
+      "owner": "a3",
+      "pinned_sha256": "0dd502bb439a11657c10074e51a55d144ae6b9eb622afa55967207380ba85a2d",
+      "source_path": "data/survival/items/items.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    },
+    {
+      "key": "a3.world_source_bindings.v3.json",
+      "live_sha256": null,
+      "owner": "a3",
+      "pinned_sha256": "622a277fd00cdbbf1d1a8ba505a2d2755b18b64e8ee4c6cce620429bdbda5dfb",
+      "source_path": "data/survival/items/world_source_bindings.v3.json",
+      "state": "MISSING_AT_LIVE_HEAD"
+    }
+  ],
+  "interpretation": "MISSING_AT_LIVE_HEAD means the captured path is absent from the owner's live head. That can be a deletion, a rename, or a rewritten/rebased branch; this tool does not guess which, and A7 will not re-point a pin at a path it has not seen the bytes of.",
+  "owners": [
+    {
+      "file_counts": {
+        "CHANGED": 8,
+        "MISSING_AT_LIVE_HEAD": 20,
+        "SAME": 10
+      },
+      "history": "DIVERGED",
+      "live_head": "86831332324428c7623ad431a577d101b7af5c9c",
+      "owner": "a0",
+      "pinned_head": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+      "ref": "refs/a0",
+      "stale": true
+    },
+    {
+      "file_counts": {
+        "CHANGED": 0,
+        "MISSING_AT_LIVE_HEAD": 7,
+        "SAME": 0
+      },
+      "history": "DIVERGED",
+      "live_head": "ed20e4dd0866822193e6aca7d56cbd8eb30372de",
+      "owner": "a1",
+      "pinned_head": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+      "ref": "refs/a1",
+      "stale": true
+    },
+    {
+      "file_counts": {
+        "CHANGED": 0,
+        "MISSING_AT_LIVE_HEAD": 3,
+        "SAME": 0
+      },
+      "history": "DIVERGED",
+      "live_head": "5b33d5f4faa1b53872f3949ff01b442e59df1a26",
+      "owner": "a3",
+      "pinned_head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
+      "ref": "refs/a3",
+      "stale": true
+    },
+    {
+      "file_counts": {
+        "CHANGED": 0,
+        "MISSING_AT_LIVE_HEAD": 10,
+        "SAME": 0
+      },
+      "history": "DIVERGED",
+      "live_head": "1ee7e43da22adb4b9ce1647efbcb1b07988ceaf7",
+      "owner": "a6",
+      "pinned_head": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
+      "ref": "refs/a6",
+      "stale": true
+    },
+    {
+      "file_counts": {
+        "CHANGED": 0,
+        "MISSING_AT_LIVE_HEAD": 17,
+        "SAME": 0
+      },
+      "history": "DIVERGED",
+      "live_head": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
+      "owner": "a8",
+      "pinned_head": "c8b4bc881d6744bac0f0826a639624ee1434e534",
+      "ref": "refs/a8",
+      "stale": true
+    }
+  ],
+  "reproduce": "python3 tools/survival/balance/refresh_live_heads.py --write",
+  "rule": "A pinned snapshot is not a live branch. PIN_BRANCH_DIVERGED means the pinned head is not an ancestor of the owner's head, so every static number in this gate describes the composition capture and must be re-measured on a new composition before it can be called current.",
+  "schema": "soh.balance.live_heads.v1",
+  "verdict": "PIN_BRANCH_DIVERGED"
+}

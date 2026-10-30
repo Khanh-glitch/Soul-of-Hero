@@ -173,3 +173,76 @@ Commands and the exact owner action per rung: `docs/survival/balance/NATIVE_ROUT
   reward nobody had committed). Both are pinned by `test_adversary.py`.
 * Nothing in this repository claims a native or human result. `A30` asserts that a source fix is
   not a native pass; `A27` asserts S4 stays a five-clause conjunction that fails at this pin.
+
+## 12. Round 7 — D055–D061, and the pin nobody checked
+
+Round 7 asks a different question from rounds 5 and 6. Rounds 5–6 asked *which link is missing* and
+*would the gate notice a link that only looked present*. Round 7 asks **does this composition
+implement the new player rules at all, and is the artifact this gate reads still describing a branch
+anybody is working on.**
+
+### 12.1 The D series is not acceptable, and no row is close
+
+`tools/survival/balance/decisions_matrix.py` judges D055–D061 against a scoped requirement table and
+writes `results/decisions.v1.json` plus `results/DECISIONS_MATRIX.md`. Verdict:
+**`D_SERIES_NOT_ACCEPTABLE`** — 0 implemented, 1 partial, 6 absent.
+
+| Decision | State | What is actually there | What is not |
+|---|---|---|---|
+| `D055` 14-day season | `ABSENT` 0/3 | a combat `run_id` and a level `reset_run()` | a persisted run key, `1209600 s`, any season end or start |
+| `D056` reset scope | `ABSENT` 0/3 | — | `profile.achievements`, `run_history`, a season reset entry |
+| `D057` guide chain | `ABSENT` 0/2 | the word "quest" in two comments | quest state, a run-scoped quest receipt |
+| `D058` random starts | `ABSENT` 0/2 | real A1 terrain with `is_free` / `reachable_from` | a start selector, an eligible-cell set |
+| `D059` shelter floor | `ABSENT` 0/4 | nothing | satiety, HP, an HP floor, `last_seen_at`, offline settlement |
+| `D060` world clock | `PARTIAL` 3/4 | a persisted world clock, a bounded job queue, committed fuel | an absolute anchor, so no offline interval can settle |
+| `D061` footprint discovery | `ABSENT` 0/2 | building-placement footprints and a tutorial flag | trail state, decay, detection memory |
+
+Three repairs made this table defensible rather than merely long:
+
+1. **Scope, not vocabulary.** `run_id` exists all over the combat layer and `reset_run()` resets a
+   level, so a requirement counts only inside the durable namespace that owns it. Before this the
+   matrix read `IMPLEMENTED` on two rows that implement nothing.
+2. **A guard can only subtract.** "No monster stores a home coordinate" is a forbidden construct, so
+   it is reported clean/violated and never as progress. Counting it as satisfied made `D061` look a
+   third implemented for doing nothing.
+3. **Eight near-misses, each opened and rejected.** `footprint` in `survival_build_system.gd` is a
+   build-placement tile footprint; `clock_seconds` appears only inside the error string
+   `invalid_world_clock_seconds`; `pursuit_execution` is a tutorial flag; `MAX_TICK_QUANTUM = 600`
+   bounds one tick and cannot settle an 18 h absence. Every row is re-verified against the tree on
+   every run, so the ledger cannot rot into fiction.
+
+### 12.2 The pinned bytes are a composition capture, not the live branches
+
+`tools/survival/balance/refresh_live_heads.py` compares all 75 captured files with the same path on
+each owner's live ref. Verdict: **`PIN_BRANCH_DIVERGED`** — 10 same, 8 changed, 57 absent at the live
+head; all five owners are `DIVERGED`, meaning the pinned head is not an ancestor of the live head.
+
+The pinned heads (`A0 9269739e`, `A1 939720d5`, `A6 08ccb834`, `A8 c8b4bc88`) are reachable only from
+the arena composition branches; the owners' own refs have been rewritten since. `A1`'s live branch
+carries 3 files under `data/survival/` and none of the seven world-authoring files this gate reads.
+So the honest answer to "refresh your stale matrix" is: **the matrix cannot be refreshed onto the
+live heads, because the two lines do not share history and the paths no longer exist there.**
+Re-pinning requires a new composition. Until then every static number here describes `05e0328d`'s
+copy of the owners' work, and `results/live_heads.v1.json` says so on every run.
+
+### 12.3 The probes are now two families, both audited
+
+| Family | Directory | Extends | Contract |
+|---|---|---|---|
+| `A_JOURNEY` | `tests/survival/balance_native/` | A0's shipped normal-entry journey | 3 probes, the original five bans |
+| `D_CONTRACT` | `tests/survival/balance_native_decisions/` | `d_harness.gd` | 6 probes, the same five bans plus three staging bans |
+
+The D probes may not instantiate a scene, define a local class, or load anything outside
+`res://game/`; the harness is the single door (`_mount_world()`, exactly one `add_child`, of
+`res://game/overworld/chapter1_overworld.tscn`) and is audited itself. `d059` no longer calls
+`begin_overworld_death()` to manufacture the death it should observe: its bag clause is marked
+`NOT_MEASURED_HERE` and delegated to the real-journey probe. Each D probe also declares the symbols
+it *expects to be absent*; 24 are confirmed absent against the pinned bytes, and a symbol that
+appears turns the row into a stale expectation rather than a quiet pass.
+
+### 12.4 What is still not proven
+
+Nothing native. The D-suite is `CONTRACT_ONLY`; every D row is a statement about source bytes. A
+local Godot 4.7 build was attempted inside the A7 sandbox (source from `codeload`, `scons` in a venv,
+`x11=no wayland=no`) and is recorded in §13 — a build that does not link is `NATIVE_BLOCKED_ENVIRONMENT`,
+not a result.
