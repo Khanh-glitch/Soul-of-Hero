@@ -155,3 +155,10 @@ Never erase prior entries. Append the actual SHA and test outcome of subsequent 
 - Reviewed A8's existing six Elder and four endpoint IDs without creating another territory system. Added `a1_world_placement_contract.v1.json` with six canonical-location decisions, three safe-perimeter corrections, four relocated world socket/stand pairs, explicit hazard/production limits, and A0/A8/A3/A7 routing.
 - Added `compile_placement_review.py` (10 bounded source windows, 557 forward cells, zero ordinary-path hazards), `placement_native_test.gd` (real 12×16 Hero, ordinary Input forward/return, swept corner/edge probes, native captures), Python provenance/placement tests and CI anti-vacuity gate. Native exact-head result pending at intake.
 - Next runnable action: push source contract/tests, run Godot 4.7/Xvfb placement job on exact SHA, inspect captures and publish native report/artifact. No production mount, economy, boss, SaveService or Gold change.
+
+## 2026-10-30 — A1 native placement evidence and final handoff package
+
+- Godot 4.7/Xvfb run [41105179623](https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41105179623), WorldArt job `124239110476`, exact source `90b6828791dddea4b42ab63a74490d420a952d7e`: **70 checks / 0 failures / 20 captures / 10 reviews**. All six territory forward/return paths and all four endpoint forward/return paths passed; swept corner/edge probes were non-vacuous.
+- Direct Godot PNG decoding closed the earlier harness-only crop mismatch: **181 matched / 0 mismatches**. Whole-file, payload-subset and raw-RGBA domains remain separately documented; no A0 repin.
+- Preserved native report and all 20 captures under `docs/survival/world/evidence/placement/`; contact sheet visually reviewed. Safe Ember/Verdant/Pearl perimeter stops and clear Waystation/drydock stands confirmed. Marker art remains non-final for vendor/recycler/evacuation.
+- Final documentation/evidence commit will be followed by an exact-head CI rerun before handoff is called closed. Production continent, A0 mount, A8 interaction, A3 economy, Gold and human playtest remain outside scope.

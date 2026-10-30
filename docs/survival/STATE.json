@@ -215,10 +215,10 @@
     {
       "id": "SURV-050A-A8-PLACEMENT",
       "name": "A1 first-hour hash reconciliation and review of A8 existing six Elder/four endpoint placements",
-      "status": "in_progress",
+      "status": "verified",
       "assigned_branch": "arena/e385312a-soul-of-hero",
       "work_order": "docs/survival/tasks/A1_WORLD_INTEGRATION_HASH_AND_A8_PLACEMENT_WORK_ORDER.md",
-      "verification_scope": "source_contract_and_python_tests_complete_native_godot_pending",
+      "verification_scope": "native_source_windows_and_connector_fixture_only_not_production",
       "evidence": [
         "data/survival/world/art/first_hour_asset_provenance.v1.json",
         "data/survival/world/a1_world_placement_contract.v1.json",
@@ -226,7 +226,15 @@
         "tests/survival/world/placement_native_test.gd",
         "docs/survival/world/A1_WORLD_INTEGRATION_HANDOFF.md"
       ],
-      "next": "Run exact-head Godot/Xvfb placement fixture; inspect native captures; attach A0/A8/A3/A7 handoff without production repin"
+      "next": "A0/A8/A3/A7 consume approved IDs and socket/stand cells; no blind A0 repin or production acceptance",
+      "native_evidence": {
+        "run_id": 41105179623,
+        "head_sha": "90b6828791dddea4b42ab63a74490d420a952d7e",
+        "checks": 70,
+        "failures": 0,
+        "captures": 20,
+        "crop_matches": 181
+      }
     }
   ],
   "next_action": {
@@ -303,11 +311,16 @@
     },
     "surv020_status": "USER_REPORTED_STARTED; no commit, native test or independent agent execution verification",
     "a1_world_integration": {
-      "status": "SOURCE_VERIFIED_NATIVE_PENDING",
+      "status": "NATIVE_SOURCE_WINDOWS_VERIFIED",
       "first_hour_crops": "181/181 raw RGBA match ad39bde6; 145 terrain + 36 props; 8 moved rects only",
       "placement_contract": "data/survival/world/a1_world_placement_contract.v1.json",
       "production_native_playable": false,
-      "a0_repin": "NO_BLIND_REPIN"
+      "a0_repin": "NO_BLIND_REPIN",
+      "native_run": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41105179623",
+      "native_checks": 70,
+      "native_failures": 0,
+      "native_captures": 20,
+      "native_crop_matches": 181
     }
   },
   "design_authority": {

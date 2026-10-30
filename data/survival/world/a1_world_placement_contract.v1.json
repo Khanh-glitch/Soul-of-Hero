@@ -1,6 +1,6 @@
 {
   "schema": "soh.world.a1_placement_review.v1",
-  "status": "GEOGRAPHY_REVIEW_WITH_NATIVE_FIXTURE_PENDING",
+  "status": "GEOGRAPHY_REVIEW_NATIVE_SOURCE_WINDOWS_PASS",
   "authority": "A1 geography review of existing A8 proposals; not a competing six-territory system",
   "source_pins": {
     "a1_review_base_commit": "7d2b017c8a90b7d5e24ff85f065ff1b18548cd29",
@@ -401,5 +401,22 @@
     "A8": "Keep existing elder/endpoint IDs. Replace fixture-only world assumptions with approved socket/stand offsets; provide distinct vendor/recycler/drydock visuals; do not emit rewards.",
     "A3": "Use canonical POI/source IDs for later authorized economy. No quantity, price, chest yield or wallet mutation is approved here.",
     "A7": "Independently compose these source windows with real Hero shape, forward/return and corner probes; do not infer production continent access from this fixture."
+  },
+  "native_evidence": {
+    "captured_on_sha": "90b6828791dddea4b42ab63a74490d420a952d7e",
+    "run_id": 41105179623,
+    "run_url": "https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41105179623",
+    "job_id": 124239110476,
+    "checks": 70,
+    "failures": 0,
+    "captures": 20,
+    "reviews": 10,
+    "godot_crop_hashes": {
+      "matched": 181,
+      "mismatches": 0
+    },
+    "report": "docs/survival/world/evidence/placement/placement_native_report.json",
+    "contact_sheet": "docs/survival/world/evidence/placement/placement_goals_contact.png",
+    "scope": "REAL_GODOT_HERO_SHAPE_SOURCE_WINDOWS_NOT_PRODUCTION_MOUNT"
   }
 }
