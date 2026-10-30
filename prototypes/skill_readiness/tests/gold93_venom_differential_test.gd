@@ -394,6 +394,11 @@ func _run_seed(sid: int, oracle: Dictionary, canonical: String) -> bool:
 		# unresolved raster skills (compact GOLD93_OBJ lines; identical format
 		# from the Node reference `objhash` mode, tick list passed as argv 6).
 		w.objhash_on = OBJ_TICKS.has(sid) and n in OBJ_TICKS[sid]
+		if sid == 16 and (n == 191 or n == 192):
+			var fi: int = 0
+			for f in w.fx:
+				print("GOLD93_FXL t=%d %d kind=%s age=%0.17f x=%0.17f y=%0.17f sz=%0.17f life=%0.17f dead=%s" % [n, fi, String(f.get("kind")), float(f.get("age")), float(f.get("x")), float(f.get("y")), float(f.get("sz")) if f.get("sz") != null else -1.0, float(f.get("life")) if f.get("life") != null else -1.0, str(bool(f.get("dead")))])
+				fi += 1
 		if sid == 7:
 			w.hatch_trace = n >= 110 and n <= 210
 		if w.objhash_on:
