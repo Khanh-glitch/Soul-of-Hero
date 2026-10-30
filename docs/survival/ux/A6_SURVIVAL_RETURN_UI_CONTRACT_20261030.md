@@ -317,10 +317,20 @@ never drawn anywhere.
 
 `tests/survival/ui/a6_return_ui_capture.tscn` renders four states — `digest`,
 `guidance`, `history`, `empty` — at 1280x720, 2560x1440 and 3840x2160 under
-`xvfb-run` with `LIBGL_ALWAYS_SOFTWARE=1` and llvmpipe. The window is resized from
-inside the scene (`--capture-size=WxH`) rather than with `--resolution`: asking the
-command line for the same 1280x720 the project already overrides wedged the windowed
-run before the first frame. It:
+`xvfb-run` with `LIBGL_ALWAYS_SOFTWARE=1` and llvmpipe. Two details are load-bearing
+and were both found the hard way:
+
+* the capture scene is passed **positionally** (`godot --path .
+  res://tests/survival/ui/a6_return_ui_capture.tscn -- …`). Launching the project's
+  main scene and waiting for it to hand over is what wedged the windowed engine for
+  four hosted runs — the last log line was the startup banner, before `_ready`, which
+  is also why the in-engine watchdog never spoke;
+* a plain `--quit-after` boot runs first, and the window size is asserted from
+  inside the scene (`--capture-size=WxH`) so the request and the framebuffer are
+  compared in one place. 720p passes no `--resolution` at all, because the project
+  already overrides the window to exactly that size.
+
+It:
 
 * refuses to run on a headless binary (`RENDERER REQUIRED`, exit 2);
 * writes a per-resolution manifest with the renderer, the window size, each
@@ -333,6 +343,12 @@ run before the first frame. It:
   not a preview;
 * names files by the **framebuffer** size, not the stretch-unit viewport, and
   fails if those disagree with the requested window;
+* carries a 120 s in-engine watchdog that prints `TIMEOUT` and exits 3, so a wedge
+  is a verdict rather than a bare outer-timeout kill;
+* can be built with no framebuffer at all (`--a6-ui-fixture-audit`): the same four
+  fixtures are checked for card identity and every string's box, so a drifted
+  preview fails in two seconds in the local gate instead of after a hosted run.
+  Both paths share one `_fixtures()` list;
 * tags every file `return_preview_` and declares `"data": "preview_fixture"` and
   `"backdrop": "layer_only"`.
 
@@ -356,7 +372,9 @@ nothing about the CraftPix avatars.
 bash tools/run_a6_return_ui_gate.sh /path/to/godot
 → import exit 0
 → no save/mint/unlock call in game/survival/ui/return/
-→ A6 RETURN UI NATIVE PASSED (204 checks)
+→ A6 RETURN UI NATIVE PASSED (205 checks)
+→ A6 UI FIXTURE: digest ok (29 strings) / guidance (21) / history (30) / empty (4)
+→ A6 UI FIXTURE AUDIT OK (4 states, no framebuffer needed)
 → A6 RETURN UI GATE PASSED
 ```
 
@@ -433,7 +451,64 @@ nine wrong ones are rejected — `headless` in the manifest, an engine
 (stuck framebuffer), an overflowing string, a missing state, a header-only PNG,
 and corrupted pixel data (bad IDAT CRC).
 
-**Status of the twelve real frames:** produced by
-`.github/workflows/a6-return-ui-render.yml` on a hosted runner; this document is
-updated with the run id and the human inspection verdict when that job is green,
-and not before.
+### 7.1 The twelve real frames — run `41098936639`
+
+| | |
+| --- | --- |
+| workflow | `A6 return UI renderer captures` (`.github/workflows/a6-return-ui-render.yml`) |
+| run | `41098936639`, head `ced422c5`, event `push` |
+| job | `Render and verify twelve frames (Xvfb, llvmpipe)` — **success** |
+| frames | `return_preview_{digest,guidance,history,empty}_{1280x720,2560x1440,3840x2160}.png` — 12/12 |
+| artifacts | `a6-return-ui-frames-41098936639` (563 749 B), `a6-return-ui-render-logs-41098936639` (20 684 B) |
+| link | <https://github.com/Khanh-glitch/Soul-of-Hero/actions/runs/41098936639> |
+
+What the job itself asserted, step by step: a headless binary refuses to pose as a
+renderer (`RENDERER REQUIRED`, exit 2); the four fixtures keep their cards and text
+boxes with no framebuffer; a cold windowed boot completes; all three resolutions
+render; the verifier accepts every file individually — exact pixel size, valid PNG
+chunk structure with a full inflate, non-blank, `state_ok`, at least three audited
+text boxes, every string inside the viewport, no string overflowing its own box,
+and four byte-distinct frames per resolution; a separate step re-counts four PNGs
+per folder and twelve in total at the three exact sizes; and the final gate refuses
+the job unless the log says `RETURN UI CAPTURES VERIFIED (12 frames, 3
+resolutions)`.
+
+Why the earlier attempts died at exit 124: the job launched the project's **main
+scene** and waited for it to hand the frame over. Under Xvfb the windowed engine
+stopped before `_ready` — the last log line was the startup banner — so neither the
+capture code nor its 120 s watchdog ever ran. Passing the capture scene
+positionally, the way the diagnosis probe did when it produced four frames, fixed
+it. Two lesser bugs were fixed on the way: GitHub runs `run:` blocks with `bash -e`,
+so a `timeout` exit killed the step before it could print the log tail (three runs
+reported nothing but a bare 124), and `upload-artifact@v4` silently skips
+dot-directories, so `.artifacts/…` uploaded nothing until `include-hidden-files` was
+set.
+
+### 7.2 What this evidence is, and is not
+
+Five separate lines, deliberately not merged:
+
+1. **Source correctness — PASS.** 205 native checks locally, including the D056
+   isolation matrix (mismatched run id, mismatched run number, unverified ledger,
+   in-process season 01 → 02, cross-process reload, reused digest id, old
+   acknowledgement, impossible cue chronology). Three mutations of that logic each
+   fail the suite.
+2. **Real rendered frames — PASS for the render job.** Twelve PNGs from the actual
+   Godot renderer at three resolutions, verified file by file. These are
+   `preview_fixture` + `layer_only`: the projections are synthetic and the layer is
+   drawn without the A0 HUD.
+3. **CraftPix avatar visual acceptance — HOLD.** `A6 native avatar validation`
+   remains red on its two private-staging jobs (licensed art is staged from a
+   private folder on the runner; the public-clone and return-UI jobs pass). Nothing
+   in this work weakens that gate, and no avatar visual claim is made.
+4. **A0 production mounting — NOT TESTED.** No real `SaveService`, `AppFlow`,
+   Title/actor/chest or Gold/HUD composition is exercised here.
+5. **D055–D061 owner projections — DEPENDENT.** See §8.
+
+**Pixel-level review, stated honestly:** the twelve PNGs are attached to the run
+above, but artifact downloads are blocked from the environment this change was
+authored in (the blob host is unreachable there), so the frames could not be opened
+and eyeballed *there*. Wrapping, clipping, focus, hierarchy and pixel clarity were
+therefore checked mechanically (per-string rectangles, overflow verdicts, screen
+containment, byte-distinct states) rather than by eye. The human visual pass on the
+attached files is still open and is listed as such rather than claimed.
