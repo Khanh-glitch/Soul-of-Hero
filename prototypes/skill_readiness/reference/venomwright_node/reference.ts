@@ -233,6 +233,17 @@ if (mode === 'hashes') {
     const co: any = w.fx[0];
     console.log(`GOLD93_COCOON t=${t} x=${co.x.toFixed(9)} y=${co.y.toFixed(9)} z=${co.z.toFixed(9)} open=${co.open.toFixed(9)} pulseY=${co.pulseY.toFixed(9)} glow=${co.glowAdd.toFixed(9)} age=${co.age.toFixed(9)} trans=${co.trans.toFixed(9)} shake=${co.shake.toFixed(9)} grow=${co.grow.toFixed(9)} vis=${co.vis.toFixed(9)} rup=${JSON.stringify(co.ruptured)}`);
   });
+} else if (mode === 'hatchstate') {
+  const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
+  run(id, castTick, maxTick, (t, _g, w) => {
+    if (t !== 263 && t !== 264) return;
+    const hs: string[] = [];
+    for (const f of w.fx as any[]) {
+      if (f.idx === undefined) continue;
+      hs.push(`h${f.idx} x=${f.x.toFixed(9)} y=${f.y.toFixed(9)} z=${f.z.toFixed(9)} hd=${f.hd.toFixed(9)} vx=${f.vx.toFixed(9)} vy=${f.vy.toFixed(9)}`);
+    }
+    for (let i = 0; i < hs.length; i += 4) console.log(`GOLD93_HATCH t=${t} ${hs.slice(i, i + 4).join(' | ')}`);
+  });
 } else if (mode === 'flowstate') {
   const id = Number(a1), castTick = Number(a2), maxTick = Number(a3);
   run(id, castTick, maxTick, (t, _g, w) => {
