@@ -10,6 +10,8 @@ jobs:
   native:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      XDG_DATA_HOME: ${{ github.workspace }}/artifacts/xdg_ambiguous
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -22,8 +24,8 @@ jobs:
         run: |
           set -uo pipefail
           mkdir -p artifacts/ud_import artifacts/ud_ambiguous
-          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/ambiguous-import.log 2>&1 || exit $?
-          timeout 120s godot --headless --path . --user-data-dir artifacts/ud_ambiguous --script res://tests/survival_save_ambiguous_write_test.gd -- --survival-save-fault-test > artifacts/ambiguous.log 2>&1
+          timeout 180s godot --headless --path . --import > artifacts/ambiguous-import.log 2>&1 || exit $?
+          timeout 120s godot --headless --path . --script res://tests/survival_save_ambiguous_write_test.gd -- --survival-save-fault-test > artifacts/ambiguous.log 2>&1
           rc=$?
           cat artifacts/ambiguous.log
           echo "::notice::ambiguous-write exit=$rc $(grep -E 'AMBIGUOUS_WRITE_TRACE|A0 AMBIGUOUS WRITE|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/ambiguous.log | tail -15 | tr '\n' '~')"

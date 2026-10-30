@@ -10,6 +10,8 @@ jobs:
   native-save:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    env:
+      XDG_DATA_HOME: ${{ github.workspace }}/artifacts/xdg_precision
     steps:
       - uses: actions/checkout@v4
       - uses: chickensoft-games/setup-godot@v2
@@ -19,8 +21,8 @@ jobs:
           include-templates: false
       - name: Import
         run: |
-          mkdir -p artifacts/ud_precision
-          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --import > artifacts/precision-import.log 2>&1
+          mkdir -p "$XDG_DATA_HOME"
+          timeout 180s godot --headless --path . --import > artifacts/precision-import.log 2>&1
       - name: Pre- and post-rename faults and independent process
         shell: bash
         run: |
@@ -29,7 +31,7 @@ jobs:
             args=(--survival-save-fault-test)
             if [ "$mode" = restart ]; then args+=(--restart); fi
             set +e
-            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_precision_test.gd -- "${args[@]}" > "artifacts/precision-${mode}.log" 2>&1
+            timeout 180s godot --headless --path . --script res://tests/survival_save_precision_test.gd -- "${args[@]}" > "artifacts/precision-${mode}.log" 2>&1
             rc=$?
             set -e
             cat "artifacts/precision-${mode}.log"
@@ -45,14 +47,14 @@ jobs:
             flags=(--survival-save-fault-test)
             if [ "$boundary" = after_primary_renamed ]; then flags+=(--after-rename); fi
             set +e
-            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" > "artifacts/precision-crash-${boundary}.log" 2>&1
+            timeout 180s godot --headless --path . --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" > "artifacts/precision-crash-${boundary}.log" 2>&1
             rc=$?
             set -e
             cat "artifacts/precision-crash-${boundary}.log"
             echo "::notice::SIGKILL $boundary exit=$rc"
             [ "$rc" -eq 137 ]
-            grep -Fx "$boundary" "artifacts/ud_precision/tests/ready_${boundary}.txt"
-            timeout 180s godot --headless --path . --user-data-dir artifacts/ud_precision --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" --restart > "artifacts/precision-recovery-${boundary}.log" 2>&1
+            grep -Fx "$boundary" "$XDG_DATA_HOME/godot/app_userdata/SOUL OF HERO/tests/ready_${boundary}.txt"
+            timeout 180s godot --headless --path . --script res://tests/survival_save_crash_process_test.gd -- "${flags[@]}" --restart > "artifacts/precision-recovery-${boundary}.log" 2>&1
             cat "artifacts/precision-recovery-${boundary}.log"
             echo "::notice::SIGKILL recovery $boundary $(grep -E 'A0 SAVE CRASH|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/precision-recovery-${boundary}.log" | tr '\n' '~')"
             bash tools/ci/gate_log.sh "artifacts/precision-recovery-${boundary}.log" "A0 crash recovery $boundary" 'A0 SAVE CRASH PASSED'
