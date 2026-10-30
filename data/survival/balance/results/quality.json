@@ -87,19 +87,23 @@
           "fact": "A0 mirror of the A3 catalog",
           "value": {
             "a3_rows": 36,
-            "divergent": [],
-            "identical_rows": 36,
+            "divergent": [
+              "road_notes",
+              "road_scrap",
+              "road_supplies"
+            ],
+            "identical_rows": 33,
             "mirror_rows": 36,
             "only_in_a3": [],
             "only_in_mirror": [],
-            "status": "MATCH"
+            "status": "DRIFT"
           }
         }
       ],
       "owner": "A3 + A8",
-      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `MATCH` (36/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (33/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
       "scope": "STATIC_READ_OF_PINNED_BYTES",
-      "status": "PASS",
+      "status": "FAIL",
       "title": "Every authored cost, reward and source points at a real item"
     },
     {
@@ -268,10 +272,53 @@
     }
   ],
   "counts": {
-    "FAIL": 1,
-    "PASS": 6
+    "FAIL": 2,
+    "PASS": 5
   },
   "failures": [
+    {
+      "check_id": "Q-03",
+      "closure_signal": "no cost, reward or source names an item outside items.json",
+      "evidence": [
+        {
+          "fact": "sources naming unknown items",
+          "value": []
+        },
+        {
+          "fact": "site costs/rewards outside the catalog",
+          "value": []
+        },
+        {
+          "fact": "items in catalog",
+          "value": 56
+        },
+        {
+          "fact": "unmapped source rows (traceability)",
+          "value": []
+        },
+        {
+          "fact": "A0 mirror of the A3 catalog",
+          "value": {
+            "a3_rows": 36,
+            "divergent": [
+              "road_notes",
+              "road_scrap",
+              "road_supplies"
+            ],
+            "identical_rows": 33,
+            "mirror_rows": 36,
+            "only_in_a3": [],
+            "only_in_mirror": [],
+            "status": "DRIFT"
+          }
+        }
+      ],
+      "owner": "A3 + A8",
+      "player_impact": "0 A3 source record(s) name an item that is not in the catalog; 0 A8 site cost/reward(s) name a non-catalog item; A0's mirrored copy of the A3 catalog is `DRIFT` (33/36 rows identical). A player would see a reward that cannot be stored, or a cost that one owner can pay and another cannot.",
+      "scope": "STATIC_READ_OF_PINNED_BYTES",
+      "status": "FAIL",
+      "title": "Every authored cost, reward and source points at a real item"
+    },
     {
       "check_id": "Q-04",
       "closure_signal": "mounted scene is canonical AND every claimed sheet exists in the tree AND no substitute code path",
@@ -344,9 +391,9 @@
   "read_this_first": "Seven checks for the ways a half-built feature is mistaken for real gameplay. Every verdict is a static read of pinned bytes; a PASS means the pinned bytes do not show the defect, not that the feature runs.",
   "schema": "soh.balance.quality.v1",
   "snapshot_heads": {
-    "a0": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-    "a1": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
-    "a6": "8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e",
-    "a8": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
+    "a0": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+    "a1": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "a6": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
+    "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
   }
 }

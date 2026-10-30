@@ -3635,11 +3635,17 @@ a0	tests/survival_foundation_test.gd
 a0	tests/survival_full_capacity_test.gd
 a0	tests/survival_hero_exit_test.gd
 a0	tests/survival_normal_entry_home_restart_test.gd
+a0	tests/survival_normal_entry_waystation_candidate_test.gd
 a0	tests/survival_normal_home_journey_test.gd
 a0	tests/survival_normal_input_gather_test.gd
 a0	tests/survival_optional_threat_fault_test.gd
 a0	tests/survival_optional_threat_journey_test.gd
+a0	tests/survival_optional_threat_reservation_restart_test.gd
+a0	tests/survival_production_waystation_candidate_test.gd
+a0	tests/survival_research_clock_ui_test.gd
 a0	tests/survival_room_topology_test.gd
+a0	tests/survival_save_ambiguous_write_test.gd
+a0	tests/survival_save_crash_process_test.gd
 a0	tests/survival_save_diff_test.gd
 a0	tests/survival_save_interruption_test.gd
 a0	tests/survival_save_precision_test.gd
@@ -6381,6 +6387,7 @@ a6	game/meta/progression/progression_pacing_rules.gd
 a6	game/survival/ui/a0_storage_command_adapter.gd
 a6	game/survival/ui/acceptance_journeys.gd
 a6	game/survival/ui/avatar_appearance_adapter.gd
+a6	game/survival/ui/avatar_sprite_pipeline.gd
 a6	game/survival/ui/expedition_map.gd
 a6	game/survival/ui/expedition_planner.gd
 a6	game/survival/ui/expedition_planner.tscn
@@ -6645,6 +6652,7 @@ a6	tests/startup_profile_choice_test.gd
 a6	tests/survival/ui/a0_modal_gameplay_input_regression.gd
 a6	tests/survival/ui/a0_modal_gameplay_input_regression.tscn
 a6	tests/survival/ui/avatar_appearance_test.gd
+a6	tests/survival/ui/avatar_sprite_pipeline_test.gd
 a6	tests/survival/ui/demo.gd
 a6	tests/survival/ui/demo.tscn
 a6	tests/survival/ui/fixture_host_v1.gd

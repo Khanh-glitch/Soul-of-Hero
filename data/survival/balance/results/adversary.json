@@ -1,0 +1,130 @@
+{
+  "holes": [],
+  "probe_count": 15,
+  "probes": [
+    {
+      "defends": "claim C (content mounted)",
+      "detail": "mount_state=SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
+      "probe": "comment_mention",
+      "rejected": true,
+      "technique": "string_or_comment",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "claim C (content mounted)",
+      "detail": "excluded=['a0.survival_waystation_authority_test.gd', 'a0.survival_waystation_input_restart_test.gd']",
+      "probe": "test_only_reference",
+      "rejected": true,
+      "technique": "test_only_class",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "claim C (reachable by normal input)",
+      "detail": "mount_state=SOURCE_PRESENT_BEHIND_DISABLED_FLAG enabled=False",
+      "probe": "disabled_guard",
+      "rejected": true,
+      "technique": "disabled_guard",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "the commit seam",
+      "detail": "provenance=MOUNTED_SURVIVAL_SYSTEM_CALLER callers=11",
+      "probe": "fixture_committer",
+      "rejected": true,
+      "technique": "test_only_class",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "claim C (A8 site mounted)",
+      "detail": "sites=[]",
+      "probe": "unreachable_scene",
+      "rejected": true,
+      "technique": "unreachable_scene",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "the A3 authorization seam",
+      "detail": "verdict=HOST_ACTION_UNRESOLVED unresolved=1",
+      "probe": "alias_identity",
+      "rejected": true,
+      "technique": "alias_identity",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "cross-owner catalog drift",
+      "detail": "verdict=HOST_ACTION_UNRESOLVED a3_only=['cache_restock@si:r_ashen_crown:waystation_cache:01', 'salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01']",
+      "probe": "stale_catalog",
+      "rejected": true,
+      "technique": "stale_catalog",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "avatar identity",
+      "detail": "Q-04=FAIL",
+      "probe": "phantom_sheet",
+      "rejected": true,
+      "technique": "phantom_sheet",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "S4 authorised commit",
+      "detail": "the fixture evidence id is excluded from the S4 conjunction by construction",
+      "probe": "injected_clock",
+      "rejected": true,
+      "technique": "injected_clock",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "player-facing success claims",
+      "detail": "Q-07=FAIL",
+      "probe": "claim_without_receipt",
+      "rejected": true,
+      "technique": "claim_without_receipt",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "native evidence",
+      "detail": "state=STALE_HEAD",
+      "probe": "wrong_sha_run",
+      "rejected": true,
+      "technique": "wrong_sha_run",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "native evidence",
+      "detail": "state=NOT_TESTED",
+      "probe": "empty_artifact",
+      "rejected": true,
+      "technique": "empty_artifact",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "native evidence",
+      "detail": "state=FAILED",
+      "probe": "failed_step",
+      "rejected": true,
+      "technique": "failed_step",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "physical interaction authority",
+      "detail": "host requires parent==world, stand cell and <=24px of the authored point",
+      "probe": "mocked_reach",
+      "rejected": true,
+      "technique": "mocked_reach",
+      "verdict": "REJECTED_AS_REQUIRED"
+    },
+    {
+      "defends": "every oracle that needs A3's catalog",
+      "detail": "a respelled snapshot key raises 'A3 catalog not pinned' instead of yielding an empty catalog",
+      "probe": "respelled_catalog_key",
+      "rejected": true,
+      "technique": "snapshot_key_typo",
+      "verdict": "REJECTED_AS_REQUIRED"
+    }
+  ],
+  "proves": "that the gate rejects a named list of disguises with real code paths, not that no disguise exists. Every probe is a live attempt against the analysing functions; a future spoof that works will show up here as GATE_HOLE rather than as a green gate.",
+  "rejected": 15,
+  "schema": "soh.balance.adversary.v1",
+  "verdict": "NO_KNOWN_SPOOF_SURVIVES"
+}

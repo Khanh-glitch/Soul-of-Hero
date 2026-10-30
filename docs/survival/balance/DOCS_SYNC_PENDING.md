@@ -1,90 +1,96 @@
-# DOCS_SYNC_PENDING — Issue #16 status comment (A7 checkpoint 5)
+# DOCS_SYNC_PENDING — Issue #16 status comment (A7 checkpoint 6)
 
 **State:** `DOCS_SYNC_PENDING`.
 **Blocker (verbatim, re-probed this round):** `gh issue comment 16` → `Resource not accessible by
-integration, Locations: [{Line:1 Column:49}]`. The session's GitHub integration can open pull requests
-but has **no issue-write permission**. Permission blocker, not a content blocker: the text below is final.
+integration, Locations: [{Line:1 Column:49}]`. This session's GitHub integration can open and
+update pull requests but has **no issue-write permission**. Permission blocker, not a content
+blocker: the text below is final.
 
-**Google Docs:** tab 04 (`t.h4haqfdoyzzn`, `04 · Nhật ký LIVE & bàn giao`) — checkpoint 5 entry is
-appended after checkpoints 1–4.
+**Google Docs:** tab 04 (`t.h4haqfdoyzzn`, `04 · Nhật ký LIVE & bàn giao`) — checkpoint 6 is
+appended after checkpoints 1–5.
 
-**Action required:** someone with issue-write access posts the text below on Issue #16, then deletes this
-file. Git — PR #25, `ACCEPTANCE_SCOREBOARD.md`, `PLAYER_BLOCKERS.md` — stays authoritative meanwhile.
+**Action required:** someone with issue-write access posts the text below on Issue #16, then
+deletes this file. Git — PR #25, `ACCEPTANCE_SCOREBOARD.md`, `PLAYER_BLOCKERS.md`,
+`B0_ACCEPTANCE_MATRIX.md` — stays authoritative meanwhile.
 
 ---
 
 ## Text to post on Issue #16
 
-A7 checkpoint 5 — the gate is now a **gatekeeper of integrated player value**, not a findings
-generator. Five blockers (was five, but different ones), each with one owner, one smallest safe
-correction and one test that flips `FAIL`→`PASS`. Branch `arena/353cf120-soul-of-hero`, PR #25
-updated (**not** self-merged). No gameplay file, loot table, rate, price or owner code was touched.
+A7 checkpoint 6 — **the gate was challenged and it failed once, in two different ways.** Branch
+`arena/353cf120-soul-of-hero`, PR #25 updated (**not** self-merged). No gameplay file, loot table,
+rate, price or owner code touched.
 
-### 1. Repin against current heads
+### 1. Repin
 
-| Owner | Head | Note |
-|---|---|---|
-| A0 | `51f2cce8` | PR #21; **new**: one-line float-precision fix in the authoritative save writer |
-| A1 | `2f6edd3f` | handoff contract: 3 `iron_scrap` + 2 `knowledge_spares` / 1800 s, key `a1slice:poi_crown_waystation:cache_restock:1` |
-| A3 | `100b3406` | **adopted** A1's 2/2 instance rebinds; yields unchanged (3 / 2) |
-| A6 | `8bc0af5a` | manifest now states `BASE_ART_NOT_IMPORTED`; adapter returns `SOURCE_BLOCKED` |
-| A8 | `5ccf7b3f` | native POI sites; contract step fails; no artifact produced |
-| A8 task | `9332cb9b` | `feature/surv-a8-reuse-audit-010a` — the reuse audit, **unmerged** and not treated as A8 head |
+A0 `9269739e` · A1 `939720d5` · A3 `c5e80922` · A6 `08ccb834` · A8 `c8b4bc88` — 75 sha256-pinned
+files. Every native state is `STALE_HEAD`; 33 workflow runs recorded (18 queued, 15 completed, all
+15 failed). Nothing that ran on an older sha is quoted as current.
 
-**52 files** sha256-pinned (+ `tree_index.txt`). Roadside loot ids are read as a separate class from
-region ids and physical instance ids: A1 publishes both `si:r_ashen_crown:waystation_cache:01` and
-`node_waystation_cache` for one object and A3 binds the interaction node id, so the vocabularies meet
-at a named seam instead of being aliased.
+### 2. What the challenge found
 
-### 2. Three A7 self-corrections (recorded, tested, not deleted)
+**Hole 1 — reachability by comment.** `gate.entry_content()` counted a scene name that appeared
+inside a `;` comment as an instanced scene, so an unmounted A8 site could read as `SOURCE_PRESENT`.
+Fixed: only live `instance=` / `path=` / `preload(` lines count, comments stripped. The spoof is
+now permanent as adversary probe `comment_mention`.
 
-1. **`CORR-6`** — "the first-research bootstrap cycle is closed" was **conditional**, not true. Every
-   spare recipe needs a research station, the `research_kit` that builds one costs 3 spares, and the
-   only non-circular seed is `road_supplies` (2/claim, 1800 s) looted from the cache that is mounted
-   nowhere. With the cache mounted, two claims do reach the kit — exactly as round 4 said, but only then.
-2. **`CORR-7`** — claim **C** would have produced a **false positive this round**: pinning A0's own test
-   harness made `node_waystation_cache` appear in the snapshot. `entry_content` now reads production
-   paths only (`tests/`, `.github/`, `tools/` excluded) and reports the excluded references openly.
-3. **`CORR-8`** — "A6 points the manifest at an invented sheet" is not what the bytes say. A6 declares
-   `BASE_ART_NOT_IMPORTED`, `idle_sheet: ""`, `runtime_status: NOT_IMPORTED` and its adapter returns
-   `SOURCE_BLOCKED`. It is honest; the defect is that the locked identity was never imported.
+**Hole 2 — a red check filed as closed.** `PROD-04` (developer text on a player surface) could be
+`FAIL` while the same payload mapped it to the closed bucket, so the failure was silently dropped;
+and the vocabulary list included the wire key `"schema"`, so `intent.get("schema")` counted as
+player prose. Fixed: display-sink literals are separated from unbound ones (2 vs 105 hits), the
+verdict is `FAIL` only when the surface is actually mounted and `WARN` when latent, and `"schema"`
+is off the list. Recorded as `CORR-13`.
 
-### 3. New: four independent oracles (answers come from outside the graded file)
+**Hole 3 — a catalog that loaded empty.** The test fixture resolved A3's binding table by guessing
+`a3.world_source_bindings.v3.json` while the writer stored `a3.world_source_bindings_v3.json`. The
+miss produced an empty catalog, and an empty catalog answers "no binding exists" to every question.
+Every oracle that needed A3 was quietly vacuous in the test path. Fixed: catalogs resolve through
+the manifest's `source_path`; a missing one raises. Guarded by `A32` and adversary probe
+`respelled_catalog_key`.
 
-| Oracle | Verdict | Why it matters |
-|---|---|---|
-| `engine_api` vs the engine's own class list | `UNKNOWN_ENGINE_STATIC`, **15** sites | all 15 are `Vector2.from_array(...)`; `Vector2` has exactly one static method (`from_angle`). A8's import step is green and its contract step is red — the audit is the only thing separating "parsed" from "works". |
-| `save_fidelity` vs Godot's `JSON.stringify` contract | `ROUND_TRIP_EXACT`, 1 authoritative writer, 0 lossy | explains both failed whole-document comparisons (`inventory`, `survival document`, `custody after reload`, `disk unchanged after interrupted write`): the old writer printed floats with `14 - floor(log10|x|)` decimals. |
-| `knowledge_gate` over the real recipe/source graph | `SEEDED_ONLY_BY_LOOT` | the first-hour ladder is circular until the cache is mounted. |
-| `authorization` vs A3's pinned bytes | `NO_UNBACKED_AUTHORIZATION`, 1 claim, 0 rejected | an `AUTHORIZED_BY_A3` marker carries no weight on its own. |
+### 3. What the gate now says, with the numbers
 
-### 4. The five blockers
+* **15/15 spoof probes rejected** (`adversary.json`) — `NO_KNOWN_SPOOF_SURVIVES`.
+* **33 assertions, 255 tests**, all holding.
+* Claim **C** is `SOURCE_PRESENT_BEHIND_DISABLED_FLAG`, `reachable_by_normal_input = false`: A0
+  `9269739e` really does mount the Waystation host and A1's slice geometry, behind
+  `survival/a0_waystation_candidate`, which the shipped `project.godot` never declares.
+* **BLK-2 is a one-file re-vendor, not an A3 change.** A0's host sends
+  `si:r_ashen_crown:waystation_cache:01`; A3 `c5e80922` authorises exactly that row
+  (`a1_waystation_roadside_cache_v3`); A0's vendored table still says `node_waystation_cache`, and
+  A0's lookup is exact string equality. A3's re-canonicalisation also reopened `Q-03`: A0's mirror
+  of `sources.json` diverges on `road_notes`, `road_scrap`, `road_supplies` (33/36 rows identical).
+* **BLK-3 is `SOURCE_FIXED_PENDING_NATIVE`**, not an open source defect: 0 unknown engine statics at
+  `c8b4bc88` (it was 15 at `5ccf7b3f`), and no native run has exercised the replacement.
 
-| # | Blocker | Owner | Class | Smallest safe correction | Flips to PASS |
-|---|---|---|---|---|---|
-| BLK-1 | the A1 cache and A8 site are in **no** world a player can reach (0 production instance refs; claim C `ABSENT`) | A0 (+A1 cell, +A8 scene) | missing production mount | place the existing node in the production overworld; no data edit, no rate change | `test_blk1_needs_a_production_path_not_a_test_harness` |
-| BLK-2 | 15 × `Vector2.from_array` in A8 scenes | A8 | native runtime failure | mechanical `Vector2(x, y)` conversion | `test_a8_call_sites_disappear_after_the_conversion` |
-| BLK-3 | precision fix is in the tree, **unproven natively**; the workflow triggers only on A0's branch | A0 | source-of-truth defect, unproven | dispatch `a0-save-precision` on the pinned sha; no code change needed | `test_whole_document_reload_is_impossible_to_prove_without_full_precision` |
-| BLK-4 | the only A3-authorised reward proof is a fixture that fails its own reload checks; `S4` is **0 of 5 clauses** | A0 (+A3) | fixture-only success | make the player-input half run and pass on the sha | `test_blk4_needs_all_five_s4_clauses` |
-| BLK-5 | mounted body is the Knight; the D051-locked art is not imported | A6 (+A0) | player-facing visual defect | import one grade-0 idle sheet, point the manifest at the installed file | `test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical` |
+### 4. Phase 3 — the first-hour probe that cannot lie
 
-Closed by owner source this round: A0's stale A3 mirror (`Q-03` now `MATCH` over 36/36), A3's binding
-adoption (3/3), and the region-vs-instance id question. Closed earlier and still closed: the
-developer-facing duplicate HUD.
+Two Godot 4.7 probes ship under `tests/survival/balance_native/`, subclassing A0's own
+menu → Home → paid-shelter chain. They teleport nothing, inject no node, force no death, grant no
+item, and take every coordinate from A0's own host (`matches_interaction()` decides the stand
+cell). On today's heads the first one exits **2 (blocked)** at `L2_MOUNT`, and the death one exits
+**2** because the composed overworld mounts nothing that can kill a player.
 
-**`S4` stays false and is asserted to stay false** (`A27`): it is a conjunction of exact sha, normal
-entry, independent second process, authorised commit and negative replay. CI at this pin is 33 runs,
-**18 queued / 15 completed — all 15 failing**; nothing above `S3` is claimed anywhere.
+A7 has no Godot binary, so neither has been run: the artifact says
+`PROBES_STATICALLY_SOUND_NOT_EXECUTED` / `NATIVE_UNEXECUTED`, and `A33` fails if that label is
+changed. What is proved is the part A7 can prove: each probe extends the shipped chain, contains no
+fabricating construct, and names only symbols present in the pinned bytes.
 
-### 5. Verification
+### 5. Smallest next action per owner
 
-`run_analysis.py` → 27/27 assertions hold. `run_analysis.py --check` → artifacts match the pins.
-`run_tests.py` → **231 tests, all green** (30 integration-gate, 16 oracle, 13 quality detectors).
-Unchanged anchors: 4-Spares `E[T] = 3.525289745`, route 1541.72 tiles, 118 POIs / 0 loot-bearing,
-13/16 chain links blocked. Labels: `NATIVE_NOT_TESTED`, `HUMAN_NOT_TESTED`, `NO_GAMEPLAY_EDIT`.
+* **A0 (one line):** declare `survival/a0_waystation_candidate=true` in `project.godot`, then run
+  `tests/survival/balance_native/first_hour_route_probe.gd` unchanged.
+* **A0 (one file):** re-vendor `data/survival/items/world_source_bindings.v3.json` from A3
+  `c5e80922` and re-sync `data/survival/items/sources.json`; that closes BLK-2 and Q-03 together.
+* **A8:** run `a8-world-content-native.yml` on `c8b4bc88`; the source defect is already gone.
+* **A6:** import one grade-0 idle sheet for one gender, and drop the two fixture labels at
+  `acceptance_journeys.gd:241,340` before that viewer is ever mounted.
+* **A5/A0:** give the overworld one authored hazard that calls `begin_overworld_death()`, so death
+  recovery stops being `RUNTIME_UNKNOWN`.
 
-### 6. Next smallest owner action
+### 6. Standing limits
 
-A8 converts 15 mechanical call sites → BLK-2 closes on its own workflow. A0 then places one existing
-node and adds one caller keyed on the A1 transaction key → BLK-1 and BLK-4. Both are smaller than any
-new system, and neither needs a new reward, a new POI or a rate change.
+No native run, no rendered frame and no human review backs any claim here. S4 stays 0 of 5 clauses
+and S5 is not grantable by A7. The matrix at
+`docs/survival/balance/B0_ACCEPTANCE_MATRIX.md` is regenerated from the same payloads, so it cannot
+drift from the gate.

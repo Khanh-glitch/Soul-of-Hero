@@ -100,17 +100,20 @@ class EngineApiOracleTests(unittest.TestCase):
         texts, _manifest = _texts()
         gd = {key: text for key, text in texts.items() if key.endswith(".gd")}
         before = oracle.api_audit(gd)
-        self.assertEqual(before["verdict"], "UNKNOWN_ENGINE_STATIC")
-        self.assertTrue(before["unknown_call_count"] > 0)
-        # Every flagged call at this pin is the same invented static method.
-        self.assertEqual(
-            sorted({row["call"] for row in before["unknown_calls"]}),
-            ["Vector2.from_array"],
-        )
+        # A8 c8b4bc88 removed the invented static from source: BLK-3 is
+        # SOURCE_FIXED_NATIVE_PENDING, not an open source defect. The detector must
+        # still be able to see the old shape, so it is re-injected synthetically.
+        self.assertEqual(before["verdict"], "ENGINE_API_CONSISTENT")
+        self.assertEqual(before["unknown_call_count"], 0)
+        legacy = {key: text for key, text in gd.items()}
+        legacy["a8.legacy_conversion.gd"] = "func _p(raw: Array) -> Vector2:\n\treturn Vector2.from_array(raw)\n"
+        flagged = oracle.api_audit(legacy)
+        self.assertEqual(flagged["verdict"], "UNKNOWN_ENGINE_STATIC")
+        self.assertEqual(sorted({row["call"] for row in flagged["unknown_calls"]}), ["Vector2.from_array"])
 
         # A8's smallest safe correction, applied mechanically: the array becomes a
         # two-element constructor. Nothing else about the scenes changes.
-        converted = {key: _convert_from_array(text) for key, text in gd.items()}
+        converted = {key: _convert_from_array(text) for key, text in legacy.items()}
         after = oracle.api_audit(converted)
         self.assertEqual(after["verdict"], "ENGINE_API_CONSISTENT")
         self.assertEqual(after["unknown_call_count"], 0)
@@ -118,7 +121,7 @@ class EngineApiOracleTests(unittest.TestCase):
         # static calls is unchanged.
         self.assertEqual(
             after["static_call_count"] - after["unknown_call_count"],
-            before["static_call_count"] - before["unknown_call_count"],
+            flagged["static_call_count"] - flagged["unknown_call_count"],
         )
 
     def test_a_renamed_helper_does_not_hide_the_call(self) -> None:
@@ -128,6 +131,59 @@ class EngineApiOracleTests(unittest.TestCase):
         )
         self.assertEqual(audit["unknown_call_count"], 1)
         self.assertEqual(audit["unknown_calls"][0]["line"], 2)
+
+
+class InstanceIdentityOracleTests(unittest.TestCase):
+    """The host's own request, replayed against the table A0 actually loads."""
+
+    def test_the_alias_cannot_stand_in_for_the_world_instance(self) -> None:
+        identity = support.oracle_payload()["instance_identity"]
+        self.assertEqual(identity["verdict"], "HOST_ACTION_UNRESOLVED")
+        # Both catalogs must be loaded before either can be compared; an empty
+        # table used to make this oracle agree with itself.
+        self.assertGreater(identity["a0_binding_count"], 0)
+        self.assertGreater(identity["a3_binding_count"], 0)
+        cache = next(
+            row for row in identity["unresolved_host_requests"] if row["action_id"] == "cache_restock"
+        )
+        self.assertEqual(cache["instance_id"], "si:r_ashen_crown:waystation_cache:01")
+        self.assertFalse(cache["resolved_in_a0_catalog"])
+        # A3 does authorize it: the gap is A0's stale vendored copy, which is why
+        # BLK-2 is an A0 re-vendor, not an A3 change.
+        self.assertTrue(cache["resolved_in_a3_catalog"])
+        self.assertIn("cache_restock@node_waystation_cache", identity["a0_only_bindings"])
+        self.assertIn("cache_restock@si:r_ashen_crown:waystation_cache:01", identity["a3_only_bindings"])
+        # The fixture that "proved" the reward sends the alias, which the host never
+        # sends, so that fixture cannot have exercised the host's request.
+        self.assertEqual(identity["fixture_ids_absent_from_host"], ["node_waystation_cache"])
+
+    def test_the_catalog_is_resolved_by_upstream_path_not_by_key_spelling(self) -> None:
+        # Regression: the fixture loader once guessed the dotted key while the
+        # writer stored an underscored one, and every authorization question was
+        # answered from an empty table. Resolution now goes through source_path.
+        a3 = product.a3_texts(support.REPO_ROOT)
+        self.assertEqual(set(a3), set(product.A3_CATALOG_SOURCES))
+        bindings = json.loads(a3["a3.world_source_bindings.v3.json"])["bindings"]
+        self.assertGreater(len(bindings), 0)
+        manifest = json.loads((support.REPO_ROOT / product.MANIFEST_PATH).read_text(encoding="utf-8"))
+        respelled = dict(manifest)
+        respelled["files"] = [
+            {**entry, "key": str(entry["key"]).replace("world_source_bindings.v3.json", "world_source_bindings_v3.json")}
+            if str(entry.get("source_path", "")).endswith("world_source_bindings.v3.json")
+            else entry
+            for entry in manifest["files"]
+        ]
+        with self.assertRaises(ValueError) as raised:
+            product.a3_texts_from(support.REPO_ROOT, respelled)
+        self.assertIn("A3 catalog not pinned", str(raised.exception))
+
+    def test_an_action_without_an_instance_is_marked_as_such(self) -> None:
+        identity = support.oracle_payload()["instance_identity"]
+        for row in identity["instance_requests"]:
+            if row["instance_id"]:
+                self.assertNotIn("via", row)
+            else:
+                self.assertEqual(row["via"], "action_for")
 
 
 class SaveFidelityOracleTests(unittest.TestCase):

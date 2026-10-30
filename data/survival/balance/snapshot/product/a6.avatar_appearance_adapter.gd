@@ -29,6 +29,9 @@ static func resolve(owner_snapshot: Dictionary, manifest: Dictionary = {}) -> Di
 		if not parsed is Dictionary:
 			return _blocked(gender, int(grade), "Avatar art manifest is invalid.")
 		art = parsed
+	var license_value: Variant = art.get("license_review", {})
+	if not license_value is Dictionary or license_value.get("status", "") != "VERIFIED_GAME_USE":
+		return _blocked(gender, int(grade), "Avatar source license is not verified for game use.")
 	var people: Variant = art.get("characters", {})
 	if not people is Dictionary or not people.has(gender):
 		return _blocked(gender, int(grade), "No verified art for this player identity.")

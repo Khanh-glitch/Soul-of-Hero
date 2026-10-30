@@ -6,6 +6,8 @@ extends Node2D
 signal transition_requested(request: Dictionary)
 signal player_feedback(message: String)
 
+const VECTOR_UTIL := preload("res://game/survival/world_content/scripts/native_poi_vectors.gd")
+const ART_SCRIPT := preload("res://game/survival/world_content/scripts/native_poi_art.gd")
 const TRANSITION_CONTRACT_ID := "soh.native_poi.transition.v1"
 const TRANSITION_CONTRACT_VERSION := 1
 const WORLD_LAYER := 1
@@ -13,29 +15,26 @@ const PLAYER_LAYER := 2
 const SHELL_BOUNDS := Vector2(128.0, 128.0)
 const DOORWAY_CENTER := Vector2(64.0, 108.0)
 const DOORWAY_FACING := Vector2.UP
-const PROP_FRAMES: Dictionary = {
-	"rock_a": Rect2(2, 424, 26, 20),
-	"rock_d": Rect2(296, 400, 30, 22),
-	"cart": Rect2(170, 396, 38, 26),
-	"barrel": Rect2(30, 424, 16, 20),
-	"camp_crate": Rect2(175, 428, 18, 16),
-	"fence": Rect2(139, 426, 34, 18),
-}
-
 @export_file("*.json") var definition_path := ""
 
 var definition: Dictionary = {}
 var _entry_area: Area2D
-var _props_atlas: Texture2D
+var _art: Node2D
 
 
 func _ready() -> void:
 	if not _load_definition():
 		push_error("NativePoiShell has no valid site definition: %s" % definition_path)
 		return
-	_props_atlas = load("res://assets/environment/overworld/overworld_props.png") as Texture2D
+	_art = ART_SCRIPT.new() as Node2D
+	_art.name = "CanonicalFootprintArt"
+	add_child(_art)
+	if not _art.call("configure", definition, true):
+		push_error("NativePoiShell source-cleared art failed to load: %s" % get_source_id())
+		remove_child(_art)
+		_art.queue_free()
+		_art = null
 	_build_physics()
-	queue_redraw()
 
 
 func _load_definition() -> bool:
@@ -59,16 +58,19 @@ func get_source_id() -> String:
 
 
 func get_entry_position() -> Vector2:
-	return Vector2.from_array(definition.get("overworld_shell", {}).get("entry_portal", [64, 108]))
+	return VECTOR_UTIL.from_pair(
+		definition.get("overworld_shell", {}).get("entry_portal", [64, 108])
+	)
 
 
 func get_action_socket() -> Vector2:
-	return Vector2.from_array(definition.get("overworld_shell", {}).get("action_socket", [64, 64]))
+	return VECTOR_UTIL.from_pair(
+		definition.get("overworld_shell", {}).get("action_socket", [64, 64])
+	)
 
 
 func get_canonical_cell() -> Vector2i:
-	var cell: Array = definition.get("source", {}).get("canonical_cell", [0, 0])
-	return Vector2i(int(cell[0]), int(cell[1]))
+	return VECTOR_UTIL.from_int_pair(definition.get("source", {}).get("canonical_cell", [0, 0]))
 
 
 func get_context_hint(actor: Node2D) -> String:
@@ -108,7 +110,8 @@ func try_enter(actor: Node2D) -> bool:
 		"from_scene": str(shell.get("scene", "")),
 		"to_scene": str(transition.get("worksite_scene", "")),
 		"actor_local_position": to_local(actor.global_position),
-		"interior_spawn": Vector2.from_array(transition.get("interior_entry", [])),
+		"interior_spawn":
+		VECTOR_UTIL.from_pair(transition.get("interior_entry", []), Vector2(64, 548)),
 		"return_anchor": transition.get("return_anchor", {}).duplicate(true),
 	}
 	transition_requested.emit(request)
@@ -138,6 +141,16 @@ func _build_physics() -> void:
 	_add_solid_rect(Vector2(120, 0), Vector2(8, 120), "ShellWallEast")
 	_add_solid_rect(Vector2(0, 120), Vector2(44, 8), "ShellWallSouthWest")
 	_add_solid_rect(Vector2(84, 120), Vector2(44, 8), "ShellWallSouthEast")
+	var obstacles: Array = definition.get("overworld_shell", {}).get("obstacles_px", [])
+	for index: int in range(obstacles.size()):
+		var obstacle: Variant = obstacles[index]
+		if not obstacle is Array or obstacle.size() != 4:
+			continue
+		var position := VECTOR_UTIL.from_int_pair([obstacle[0], obstacle[1]], Vector2i(-1, -1))
+		var size := VECTOR_UTIL.from_int_pair([obstacle[2], obstacle[3]], Vector2i.ZERO)
+		if position.x < 0 or position.y < 0 or size.x <= 0 or size.y <= 0:
+			continue
+		_add_solid_rect(Vector2(position), Vector2(size), "ShellPropObstacle_%d" % index)
 	_entry_area = Area2D.new()
 	_entry_area.name = "PhysicalEntryPortal"
 	_entry_area.collision_layer = 0
@@ -163,106 +176,3 @@ func _add_solid_rect(at: Vector2, size: Vector2, label: String) -> void:
 	body.add_child(collision)
 	body.position = at + size * 0.5
 	add_child(body)
-
-
-func _draw() -> void:
-	if definition.is_empty():
-		return
-	var shell: Dictionary = definition.get("overworld_shell", {})
-	var palette: Dictionary = definition.get("palette", {})
-	var bounds := Rect2(Vector2.ZERO, SHELL_BOUNDS)
-	var ground := Color.from_string(str(palette.get("ground", "#343b37")), Color.DARK_SLATE_GRAY)
-	var soil := Color.from_string(str(palette.get("ground_alt", "#454c43")), ground.lightened(0.12))
-	var stone := Color.from_string(str(palette.get("stone", "#918a76")), Color.GRAY)
-	var accent := Color.from_string(str(palette.get("accent", "#d7ad69")), Color.GOLD)
-	var ink := Color.from_string(str(palette.get("ink", "#1b2420")), Color.BLACK)
-	var water := Color.from_string(str(palette.get("water", "#63b7c7")), Color.CYAN)
-	draw_rect(bounds, ground)
-	for y: int in range(10, 118, 16):
-		for x: int in range(10 + (y / 16 % 2) * 8, 118, 24):
-			draw_rect(Rect2(Vector2(x, y), Vector2(10, 2)), soil.darkened(0.15))
-	_draw_footpath(stone, ink)
-	match str(shell.get("profile", "")):
-		"quarry":
-			_draw_quarry_shell(stone, accent, ink)
-		"orchard":
-			_draw_orchard_shell(stone, accent, ink, water)
-		"mill":
-			_draw_mill_shell(stone, accent, ink, water)
-	_draw_door(stone, accent, ink)
-
-
-func _draw_footpath(stone: Color, ink: Color) -> void:
-	draw_rect(Rect2(54, 76, 20, 40), ink)
-	draw_rect(Rect2(56, 76, 16, 38), stone.darkened(0.2))
-	draw_rect(Rect2(60, 108, 8, 12), Color("#d4c49b"))
-
-
-func _draw_door(stone: Color, accent: Color, ink: Color) -> void:
-	draw_rect(Rect2(40, 34, 48, 46), ink)
-	draw_rect(Rect2(44, 34, 40, 42), stone.darkened(0.28))
-	draw_rect(Rect2(50, 42, 28, 36), accent.darkened(0.35))
-	draw_rect(Rect2(54, 46, 20, 32), ink)
-	draw_rect(Rect2(60, 59, 4, 4), accent)
-	draw_rect(Rect2(54, 82, 20, 4), ink)
-
-
-func _draw_quarry_shell(stone: Color, accent: Color, ink: Color) -> void:
-	draw_rect(Rect2(30, 28, 68, 58), ink)
-	draw_rect(Rect2(34, 30, 60, 52), stone.darkened(0.1))
-	draw_rect(Rect2(38, 38, 52, 36), stone.lightened(0.12))
-	_draw_prop("rock_a", Rect2(8, 42, 26, 20), Color.WHITE)
-	_draw_prop("rock_d", Rect2(94, 50, 30, 22), Color.WHITE)
-	draw_line(Vector2(30, 28), Vector2(48, 20), accent, 3.0)
-	draw_line(Vector2(48, 20), Vector2(66, 28), accent, 3.0)
-	draw_line(Vector2(66, 28), Vector2(84, 20), accent, 3.0)
-	draw_line(Vector2(84, 20), Vector2(98, 28), accent, 3.0)
-	draw_rect(Rect2(18, 74, 12, 18), ink)
-	draw_rect(Rect2(20, 76, 8, 14), accent.darkened(0.25))
-	draw_line(Vector2(22, 78), Vector2(26, 86), ink, 2.0)
-
-
-func _draw_orchard_shell(stone: Color, accent: Color, ink: Color, water: Color) -> void:
-	draw_rect(Rect2(28, 24, 72, 66), ink)
-	draw_rect(Rect2(32, 26, 64, 60), Color("#536b43"))
-	for bed: Rect2 in [
-		Rect2(34, 34, 22, 18), Rect2(72, 34, 20, 18), Rect2(34, 62, 22, 16), Rect2(72, 62, 20, 16)
-	]:
-		draw_rect(bed, stone.darkened(0.18))
-		draw_rect(bed.grow(-3), Color("#667c4b"))
-		draw_circle(bed.position + bed.size * 0.5, 4.0, Color("#9bb46b"))
-	draw_line(Vector2(46, 54), Vector2(82, 54), water, 3.0)
-	draw_line(Vector2(46, 54), Vector2(46, 69), water, 2.0)
-	draw_line(Vector2(82, 54), Vector2(82, 69), water, 2.0)
-	draw_line(Vector2(30, 26), Vector2(98, 26), accent.darkened(0.15), 3.0)
-	draw_line(Vector2(32, 24), Vector2(32, 34), accent, 2.0)
-	draw_line(Vector2(96, 24), Vector2(96, 34), accent, 2.0)
-	draw_circle(Vector2(20, 38), 10.0, Color("#6a8b4d"))
-	draw_circle(Vector2(108, 42), 9.0, Color("#789958"))
-	draw_rect(Rect2(18, 48, 4, 15), stone.darkened(0.15))
-	draw_rect(Rect2(106, 51, 4, 15), stone.darkened(0.15))
-	draw_rect(Rect2(18, 76, 12, 10), ink)
-	draw_rect(Rect2(20, 78, 8, 6), accent)
-
-
-func _draw_mill_shell(stone: Color, accent: Color, ink: Color, water: Color) -> void:
-	draw_rect(Rect2(28, 22, 72, 68), ink)
-	draw_rect(Rect2(32, 26, 64, 60), stone.darkened(0.2))
-	draw_rect(Rect2(36, 32, 56, 46), Color("#705a3e"))
-	draw_rect(Rect2(42, 38, 44, 36), stone.darkened(0.12))
-	draw_line(Vector2(30, 28), Vector2(64, 16), accent, 4.0)
-	draw_line(Vector2(64, 16), Vector2(98, 28), accent, 4.0)
-	draw_line(Vector2(44, 38), Vector2(84, 70), ink, 3.0)
-	draw_line(Vector2(84, 38), Vector2(44, 70), ink, 3.0)
-	draw_circle(Vector2(64, 54), 14.0, accent.darkened(0.15))
-	draw_circle(Vector2(64, 54), 5.0, ink)
-	draw_line(Vector2(64, 70), Vector2(64, 82), water, 3.0)
-	draw_line(Vector2(52, 82), Vector2(76, 82), water, 3.0)
-	_draw_prop("cart", Rect2(12, 54, 38, 26), Color.WHITE)
-	_draw_prop("barrel", Rect2(98, 72, 16, 20), Color.WHITE)
-
-
-func _draw_prop(frame_name: String, destination: Rect2, tint: Color) -> void:
-	if _props_atlas == null or not PROP_FRAMES.has(frame_name):
-		return
-	draw_texture_rect_region(_props_atlas, destination, PROP_FRAMES[frame_name], tint, false, true)

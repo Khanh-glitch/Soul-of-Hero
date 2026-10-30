@@ -34,11 +34,11 @@ CODE_TO_BLOCKER: Dict[str, str] = {
     "CAPACITY_TRUNCATED": "BLK-1",
     "SOURCE_POI_UNRESOLVED": "BLK-1",
     "SOURCE_REGION_UNRESOLVED": "BLK-1",
-    "SOURCE_ID_DIVERGENCE": "CLOSED-R5",
-    "PROVISIONAL_BINDING": "CLOSED-R5",
+    "SOURCE_ID_DIVERGENCE": "BLK-2",
+    "PROVISIONAL_BINDING": "BLK-2",
     "QUANTITY_OWNERSHIP_UNRESOLVED": "BLK-4",
-    "ITEM_OVEROWNED": "CLOSED-R5",
-    "ZERO_RESTOCK_NOT_RENEWABLE": "CLOSED-R5",
+    "ITEM_OVEROWNED": "CLOSED-R6",
+    "ZERO_RESTOCK_NOT_RENEWABLE": "CLOSED-R6",
     "REPEATED_ONE_TIME_CLAIM_BLOCKED": "BLK-4",
     "UNIQUE_INSTANCE_DUPLICATION_BLOCKED": "BLK-4",
     "BOOTSTRAP_DEPENDENCY_CYCLE": "BLK-1",
@@ -52,26 +52,38 @@ CODE_TO_BLOCKER: Dict[str, str] = {
 
 CHECK_TO_BLOCKER: Dict[str, str] = {
     "PROD-01": "BLK-1",
-    "PROD-02": "BLK-1",
+    "PROD-02": "BLK-2",
     "PROD-03": "BLK-5",
-    "PROD-04": "CLOSED-R5",
-    "PROD-05": "CLOSED-R5",
-    "PROD-06": "CLOSED-R5",
-    "PROD-07": "CLOSED-R5",
-    "Q-01": "CLOSED-R5",
-    "Q-02": "CLOSED-R5",
-    "Q-03": "CLOSED-R5",
+    # Not a closed bucket: a WARN that nothing mounts yet is traceability, and it
+    # re-promotes itself to a blocker the moment A6's UI is mounted.
+    "PROD-04": "NONE",
+    "PROD-05": "CLOSED-R6",
+    "PROD-06": "CLOSED-R6",
+    "PROD-07": "CLOSED-R6",
+    "Q-01": "CLOSED-R6",
+    "Q-02": "CLOSED-R6",
+    "Q-03": "BLK-2",
     "Q-04": "BLK-5",
-    "Q-05": "CLOSED-R5",
+    "Q-05": "CLOSED-R6",
     "Q-06": "BLK-5",
     "Q-07": "BLK-4",
 }
 
-# Each blocker is one of the owner's own failure classes, not an A7 opinion.
+# How far a blocker has actually moved. The distinction that round 6 adds: a
+# source fix is not a native pass, and a guarded candidate is not a mount.
+FIX_STATES = (
+    "SOURCE_ABSENT",
+    "SOURCE_PRESENT_BEHIND_GUARD",
+    "SOURCE_PRESENT_UNRESOLVED",
+    "SOURCE_FIXED_PENDING_NATIVE",
+    "RUNTIME_UNKNOWN",
+    "NATIVE_VERIFIED",
+)
+
 EVIDENCE_CLASS = {
     "BLK-1": "MISSING_PRODUCTION_MOUNT",
-    "BLK-2": "NATIVE_RUNTIME_FAILURE",
-    "BLK-3": "SOURCE_OF_TRUTH_DEFECT",
+    "BLK-2": "CROSS_OWNER_IDENTITY_MISMATCH",
+    "BLK-3": "SOURCE_FIXED_NATIVE_PENDING",
     "BLK-4": "FIXTURE_ONLY_SUCCESS",
     "BLK-5": "PLAYER_FACING_VISUAL_DEFECT",
 }
@@ -87,9 +99,9 @@ CLASSES_NOT_USED = (
     {
         "class": "REGION_VS_INSTANCE_ID_CONFUSION",
         "why_not": (
-            "Closed by owner source this round: A1 publishes both ids for the same object "
-            "(instance_id si:r_ashen_crown:waystation_cache:01, interaction_node_id node_waystation_cache) and "
-            "A3 binds the interaction node id, so the two vocabularies meet at a named seam."
+            "Now a live blocker, not a naming quibble: A3 moved the canonical id to "
+            "si:r_ashen_crown:waystation_cache:01 while A0 still vendors the alias node_waystation_cache, and A0's "
+            "own host sends the si id. Recorded as BLK-2 with the exact unresolved request."
         ),
     },
 )
@@ -97,331 +109,333 @@ CLASSES_NOT_USED = (
 BLOCKERS: Sequence[Dict[str, object]] = (
     {
         "blocker_id": "BLK-1",
-        "title": "The A1 cache and A8 site are placed in no world a player can reach",
-        "owner": "A0 (mount) with A1 (cell + instance identity) and A8 (scene)",
+        "title": "The only Waystation in production code is a candidate behind a project setting the shipped game does not enable",
+        "owner": "A0",
         "evidence_class": EVIDENCE_CLASS["BLK-1"],
+        "fix_state": "SOURCE_PRESENT_BEHIND_GUARD",
         "player_impact": (
-            "The menu route into A0's overworld works in source, and A1's corridor authors exactly four physical "
-            "bodies, but none of them is placed in that world: no production A0 file names "
-            "poi_crown_waystation, node_waystation_cache or any A8 site scene. The consequence is sharper than "
-            "'nothing to loot' - knowledge_spares has exactly one non-circular source in the whole catalog (that "
-            "cache), because every spare recipe needs a research station, so a player can harvest stone and wood "
-            "all hour and still never begin research."
+            "A0 9269739e now builds a real physical host: five interaction points with stand cells, a range check, "
+            "and A1's actual slice geometry mounted from byte-identical A1 939720d5 bytes. But the whole branch "
+            "hangs on ProjectSettings survival/a0_waystation_candidate, and the shipped project.godot does not "
+            "contain that key. Godot's fallback is false, so a normal player never enters the branch: the first "
+            "useful reward in the game is unreachable by ordinary play even though the code exists."
         ),
         "verified_by": (
-            "gate claim C over production paths only (tests/.github/tools excluded and reported separately), "
-            "plus A1's own corridor status SOURCE_AND_ISOLATED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION and "
-            "production_native_playable=false, plus oracle.knowledge_gate"
+            "gate entry_content.guard, read from the pinned project.godot and chapter1_overworld.gd, plus the "
+            "byte comparison of A0's vendored slice against A1's current slice"
         ),
-        "owner_commands": [
-            '# A0, on the host with the Godot 4.7 binary and a display (xvfb is fine):',
-            'godot --headless --path . --user-data-dir artifacts/ud_entry --import',
-            'xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --user-data-dir artifacts/ud_entry \\',
-            '  --script res://tests/survival_normal_entry_home_restart_test.gd',
-            '# expected once mounted: the log names node_waystation_cache as present in the world',
-        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
-            "print(d['entry_content']['a1_instance_references_in_a0_surface'], d['entry_content']['mounted'])\"",
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
-            "k=d['knowledge_gate'];print(k['verdict'], k['non_circular_spare_recipes'], "
-            "list(k['spare_loot_sources']))\"",
-            "git show refs/a1:data/survival/world/corridor/crown_roadside.corridor.v1.json | "
-            "python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['status'], "
-            "d['production_native_playable'])\"",
+            "print(d['entry_claims']['C_content_is_mounted']['state'], d['entry_content']['guard'])\"",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product_manifest.json'));"
+            "print([f['sha256'][:12] for f in d['files'] if f['path'].endswith('poi_crown_waystation.slice.json')])\"",
+        ],
+        "owner_commands": [
+            "# A0: prove the guarded branch boots at all, on the pinned sha",
+            "godot --headless --path . --user-data-dir artifacts/ud_entry --import",
+            "xvfb-run -a godot --path . --resolution 1280x720 --script res://tests/survival_normal_entry_home_restart_test.gd",
+            "# and prove the CANDIDATE branch specifically (currently never executed by CI).",
+            "# Godot 4 has no CLI switch for a project setting, so the branch is proved one",
+            "# of two ways: put the key in project.godot (the fix) and run the same script, or",
+            "# run A7's probe with --force-branch, which sets it in memory and labels the run",
+            "# SOURCE_PRESENT_BEHIND_GUARD rather than acceptance:",
+            "xvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch",
         ],
         "minimal_safe_correction": (
-            "A0 places the existing A1 instance node_waystation_cache at poi_crown_waystation inside the one "
-            "production overworld the route already reaches. No new system, no data edit, no rate change: A1 "
-            "supplies the cell and identity, A3 already prices the reward."
+            "A0 decides the guard's default. Either set survival/a0_waystation_candidate=true in project.godot "
+            "once the interaction is proven, or mount the host unconditionally and keep the flag for the annex "
+            "geometry only. One line, no new system."
         ),
-        "closure_probe": (
-            "gate claim C is SOURCE_PRESENT from a production path and both chains lose their L2/L3 blocker"
-        ),
+        "closure_probe": "claim C is MOUNTED_BY_DEFAULT and guard.enabled_by_default is true",
         "closure_test": "tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk1_needs_a_production_path_not_a_test_harness",
-        "native_required_for_closure": False,
-        "not_proven_after_closure": "that the mounted node boots, is walkable and is interactable (native run)",
+        "native_required_for_closure": True,
+        "not_proven_after_closure": "that the branch boots and the points are interactable (native run)",
     },
     {
         "blocker_id": "BLK-2",
-        "title": "A8's scene scripts call Vector2.from_array, which no Godot release exposes",
-        "owner": "A8",
+        "title": "The Waystation cache cannot resolve its own reward: A0 sends the si: instance id, A0's vendored catalog still holds the alias",
+        "owner": "A0 (re-vendor) with A3 (canonical id)",
         "evidence_class": EVIDENCE_CLASS["BLK-2"],
+        "fix_state": "SOURCE_PRESENT_UNRESOLVED",
         "player_impact": (
-            "Every A8 scene position, portal, socket and interior spawn is read through "
-            "Vector2.from_array(...) - 15 live call sites across native_poi_site.gd, native_poi_shell.gd and "
-            "poi_pilot.gd. Godot's Vector2 has exactly one static method (from_angle), so these calls cannot "
-            "resolve; the scenes cannot position anything, and A8's own contract step fails while the "
-            "import-only step above it passes and uploads no artifact."
+            "A0 9269739e's host sends {poi_crown_waystation, cache_restock, "
+            "si:r_ashen_crown:waystation_cache:01}. Its own lookup is exact string equality over those three "
+            "fields, and the catalog it ships still says node_waystation_cache, because A0 vendors a pre-V4 copy "
+            "of A3 (b1d291d0) while A3 c5e80922 is 622a277f. The result is deterministic: the first useful "
+            "reward in the game fails with unknown_source_instance, and the only test that ever 'paid' 3 scrap + "
+            "2 spares used the alias directly, so it never touched the host path."
         ),
         "verified_by": (
-            "oracle.engine_api against the engine's own class documentation, plus A8 run 41019689728 at "
-            "2d7f10d3: import succeeded, 'Run native physics, intent and persistence contracts' failed, no "
-            "artifacts produced"
+            "oracle.instance_identity: the shipped host's POINTS table replayed against the catalog A0 actually "
+            "loads, with A3's canonical table alongside; plus Q-03 mirror drift naming the same three rows"
         ),
-        "owner_commands": [
-            '# A8, same engine: the audit is the oracle, the native step is the proof',
-            'godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd',
-            'godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd',
-            '# both must exit 0 and upload .artifacts/a8-world-content/ on the pinned sha',
-        ],
         "reproduce": [
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
-            "print(d['engine_api']['unknown_call_count']);[print(r['file'],r['line'],r['call']) "
-            "for r in d['engine_api']['unknown_calls'][:5]]\"",
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/engine_api.v1.json'));"
-            "print(sorted(d['static_methods']['Vector2']))\"",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))"
+            "['instance_identity'];print(d['verdict']);[print(x['point'],x['instance_id']) for x in "
+            "d['unresolved_host_requests']]\"",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))"
+            "['instance_identity'];print('fixture ids absent from host:', d['fixture_ids_absent_from_host'])\"",
+        ],
+        "owner_commands": [
+            "# A0: the reward path, replayed without Godot (the runtime does the same string comparison)",
+            "python3 tools/survival/balance/run_analysis.py",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))"
+            "['instance_identity'];print(d['a3_only_bindings'])\"",
+            "# then the native check that should now pay. Godot has no CLI switch for a",
+            "# project setting, so either ship the key in project.godot or run A7's probe",
+            "# with --force-branch (in-memory, classed SOURCE_PRESENT_BEHIND_GUARD):",
+            "xvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch",
         ],
         "minimal_safe_correction": (
-            "A8 replaces each call with the array form that exists - Vector2(arr[0], arr[1]) on a two-element "
-            "array, or Vector2i(...) where the value is a cell. Mechanical, 15 sites, no design change."
+            "A0 re-vendors A3 c5e80922's world_source_bindings.v3.json byte-for-byte (three bindings, si ids, "
+            "instance_id + interaction_node_id + identity), and changes its authority test to send the host's "
+            "request instead of the alias. No quantity, cooldown or price changes."
         ),
-        "closure_probe": "oracle engine_api unknown_call_count is 0 and A8's contract step passes on the pinned sha",
-        "closure_test": "tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion",
-        "native_required_for_closure": True,
-        "not_proven_after_closure": "that the repaired scenes reach the player's world (BLK-1)",
+        "closure_probe": "oracle.instance_identity is IDENTITY_CONSISTENT and no host request is unresolved",
+        "closure_test": "tests/survival/balance/test_oracle.py::InstanceIdentityOracleTests::test_the_alias_cannot_stand_in_for_the_world_instance",
+        "native_required_for_closure": False,
+        "not_proven_after_closure": "that the transaction commits durably (BLK-4)",
     },
     {
         "blocker_id": "BLK-3",
-        "title": "The float-precision fix is in A0's tree but no native run on the pinned sha has exercised it",
-        "owner": "A0",
+        "title": "A8's 15 invented Vector2.from_array calls are fixed in source, and still unproven natively",
+        "owner": "A8",
         "evidence_class": EVIDENCE_CLASS["BLK-3"],
+        "fix_state": "SOURCE_FIXED_PENDING_NATIVE",
         "player_impact": (
-            "At this pin the authoritative writer is correct - JSON.stringify(snapshot, \"\\t\", false, true) at "
-            "save_service.gd:2459 - so the oracle now reads ROUND_TRIP_EXACT. But the only native word on the "
-            "defect is two failed runs on the older tree, where whole-document equality broke while every "
-            "targeted integer comparison passed, and the workflow that proves the fix triggers only on A0's own "
-            "branch. Until a green a0-save-precision run is cited on the pinned sha, a player's profile still "
-            "has no evidence that it reloads exactly as written."
+            "At the previous pin the native POI scenes read every position through Vector2.from_array, which no "
+            "Godot release exposes. A8 c8b4bc88 replaced them with native_poi_vectors.gd and the audited call "
+            "count is now zero. That is a real fix and it is not a native pass: A8's contract step has never "
+            "been green on this sha, and the last failing log died at a preload of poi_authority_fixture.gd."
         ),
         "verified_by": (
-            "oracle.save_fidelity over the pinned writer (ROUND_TRIP_EXACT, one authoritative writer) plus the "
-            "failure labels recorded verbatim from 41018366655 and 41022547962"
+            "oracle.engine_api over the pinned c8b4bc88 sources (0 unknown calls) plus the recorded CI outcomes "
+            "for a8-world-content-native.yml on this sha (none green)"
         ),
-        "owner_commands": [
-            "# A0: the workflow only triggers on A0's branch, so dispatch or push it there",
-            'godot --headless --path . --user-data-dir artifacts/ud_precision --import',
-            'godot --headless --path . --user-data-dir artifacts/ud_precision \\',
-            '  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test',
-            'godot --headless --path . --user-data-dir artifacts/ud_precision \\',
-            '  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test --restart',
-            "# both logs must print 'A0 SAVE PRECISION PASSED'",
-        ],
         "reproduce": [
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));"
-            "f=d['save_fidelity'];print(f['verdict'], f['authoritative_writer_count']);"
-            "[print(w['file'],w['line'],w['full_precision']) for w in f['writers'] if w['authoritative']]\"",
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
-            "print(d['native_states']['a0_save_precision']['state'])\"",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))"
+            "['engine_api'];print(d['verdict'], d['unknown_call_count'], d['static_call_count'])\"",
+            "git grep -n 'from_array' refs/a8 -- '*.gd' | head",
+        ],
+        "owner_commands": [
+            "# A8: the fix exists; these two native steps are what would close it",
+            "godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd",
+            "godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd",
         ],
         "minimal_safe_correction": (
-            "A0 dispatches a0-save-precision on the pinned sha (its trigger is branch-locked to A0's own branch) "
-            "and cites the green run. No code change is needed any more; the fix is already in the tree."
+            "A8 lands those two native steps green on a pushed sha and uploads the artifact. No code change is "
+            "implied by this blocker any more."
         ),
-        "closure_probe": (
-            "oracle save_fidelity is ROUND_TRIP_EXACT and a0_save_precision is VERIFIED on the pinned sha"
-        ),
-        "closure_test": "tests/survival/balance/test_oracle.py::SaveFidelityOracleTests::test_whole_document_reload_is_impossible_to_prove_without_full_precision",
+        "closure_probe": "a8_native_poi_contract is VERIFIED on the pinned sha",
+        "closure_test": "tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion",
         "native_required_for_closure": True,
-        "not_proven_after_closure": "durability across a real OS restart or power loss (a simulated boundary is not that)",
+        "not_proven_after_closure": "that the scenes are reachable in A0's world (BLK-1)",
     },
     {
         "blocker_id": "BLK-4",
-        "title": "The only A3-authorized cache reward is proved by a fixture, and its reload checks fail",
-        "owner": "A0 (player-input path) with A3 (event identity)",
+        "title": "No native proof anywhere on the current sha: the only paid receipt is a fixture that bypasses the host",
+        "owner": "A0",
         "evidence_class": EVIDENCE_CLASS["BLK-4"],
+        "fix_state": "RUNTIME_UNKNOWN",
         "player_impact": (
-            "The single run that has ever paid 3 iron_scrap + 2 knowledge_spares is survival_waystation_authority_test.gd, "
-            "whose own header says it 'does not prove player input, physical reach, production mount or OS restart' "
-            "and which funds its own inventory and advances its own clock. It fails two of its own whole-snapshot "
-            "checks (41022547962). The player-input half of the same workflow was skipped, so real input has never "
-            "produced a receipt, and the S4 conjunction is 0 of 5 clauses at this pin."
+            "Every required native assertion resolves STALE_HEAD at this pin: entry, second process, real input, "
+            "save precision and negative replay. S4 is 0 of 5 clauses. The one run that has ever paid the cache "
+            "reward funds its own inventory, advances its own clock and sends an instance id the shipped host "
+            "never sends, so it proves the transaction helper and nothing about a player."
         ),
-        "verified_by": (
-            "evidence.s4_clauses (exact sha + normal entry + independent process + authorized commit + negative "
-            "replay) and the skipped step in run 41022547962"
-        ),
-        "owner_commands": [
-            '# A0: the fixture half is the only thing that has ever produced a receipt',
-            'godot --headless --path . --user-data-dir artifacts/ud_authority \\',
-            '  --script res://tests/survival_waystation_authority_test.gd -- --survival-save-fault-test',
-            '# the player-input half has never run; this is the command that would prove it',
-            'xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\',
-            '  --script res://tests/survival_waystation_input_restart_test.gd',
-            'xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\',
-            '  --script res://tests/survival_waystation_input_restart_test.gd -- --restart',
-        ],
+        "verified_by": "evidence.s4_clauses over the recorded runs plus oracle.instance_identity's fixture check",
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
-            "print(d['s4']['s4_granted']);[print(k,v['state']) for k,v in d['s4']['clauses'].items()]\"",
+            "print({k:v['state'] for k,v in d['native_states'].items()})\"",
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));"
-            "print(d['commit_seam']['static_state'], d['commit_seam']['mounted_caller_count'])\"",
+            "print(d['s4']['s4_granted'], {k:v['state'] for k,v in d['s4']['clauses'].items()})\"",
+        ],
+        "owner_commands": [
+            "# A0: one ordinary-input run on the sha, then the separate-process half",
+            "xvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\",
+            "  --script res://tests/survival_normal_entry_home_restart_test.gd",
+            "xvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\",
+            "  --script res://tests/survival_normal_entry_home_restart_test.gd -- --verify-separate-process",
         ],
         "minimal_safe_correction": (
-            "A0 makes the player-input half run and pass on the pinned sha - the same event earning the same "
-            "receipt through real input, with the second process refusing a replay. No new reward, no new key."
+            "A0 runs the two halves on the pinned sha and cites the green runs. Nothing else in A7's scope can "
+            "move this: S4 is owner-native evidence only."
         ),
         "closure_probe": "gate s4_granted is true: all five clauses hold on the pinned sha",
         "closure_test": "tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses",
         "native_required_for_closure": True,
-        "not_proven_after_closure": "that the reward is useful (BLK-1) or repeatable by a human (S5)",
+        "not_proven_after_closure": "that a human finds the route and enjoys it (S5)",
     },
     {
         "blocker_id": "BLK-5",
-        "title": "The player body is still the Knight; the locked avatar art is not imported",
+        "title": "The player body is still the Knight; the D051 bald male/female art is still not imported",
         "owner": "A6 (import + adapter) with A0 (mount)",
         "evidence_class": EVIDENCE_CLASS["BLK-5"],
+        "fix_state": "SOURCE_ABSENT",
         "player_impact": (
-            "The mounted body is game/characters/knight/knight.tscn. A6 is honest about the replacement: its "
-            "manifest says BASE_ART_NOT_IMPORTED, runtime_status NOT_IMPORTED and idle_sheet \"\" for the "
-            "authorised identities (Craftpix 555940 male, 419402 female), and the adapter returns SOURCE_BLOCKED "
-            "instead of substituting another character. So nothing is faked - and nothing is visible either."
+            "chapter1_overworld.gd still preloads game/characters/knight/knight.tscn and instantiates it as the "
+            "player. A6 08ccb834 added a sprite pipeline, but its manifest still declares BASE_ART_NOT_IMPORTED "
+            "with grade-0 idle_sheet empty for both 555940 and 419402, so there is nothing to mount. A player "
+            "would control a Knight in a game whose locked identity is a bald human adventurer. A second A6 "
+            "item rides along: acceptance_journeys.gd:241 and :340 hand fixture vocabulary to a Label, so "
+            "mounting that viewer as-is would put 'READ-ONLY SCENARIO FIXTURE' on screen (PROD-04 WARN today; "
+            "it becomes FAIL the moment the viewer is mounted)."
         ),
         "verified_by": "quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)",
-        "owner_commands": [
-            '# A6 + A0: import the authorised grade-0 sheet, then mount the body and look at it',
-            'godot --headless --path . --import',
-            'godot --path . --resolution 1280x720   # open the overworld and inspect the avatar',
-            '# rendered-frame inspection is S5 work: it cannot be closed from this repository',
-        ],
         "reproduce": [
             "python3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));"
-            "print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['static_verdict'])\"",
-            "python3 -c \"import json;d=json.load(open('data/survival/balance/results/product.json'));"
-            "print(d['player_surface_facts']['mounted_player_scene'])\"",
+            "print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['status'])\"",
+            "python3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product/a6.avatar_art_manifest.json'));"
+            "print(d['status']);print({g:c['armor_grades']['0']['idle_sheet'] for g,c in d['characters'].items()})\"",
+        ],
+        "owner_commands": [
+            "# A6 + A0: the acceptance is a rendered body, not a string",
+            "godot --headless --path . --import",
+            "godot --path . --resolution 1280x720",
+            "# spawn from normal entry, then die, reload and respawn: the body must stay 555940/419402",
         ],
         "minimal_safe_correction": (
-            "A6 imports the grade-0 idle sheet for ONE gender from the authorised archive, points the manifest at "
-            "the installed file, and A0 mounts that scene. Grades 1-2 stay SOURCE_BLOCKED; no Knight/Swordsman "
-            "substitution."
+            "Two A6 edits, neither of which needs A0: import the grade-0 idle sheet for ONE gender from the "
+            "authorised archive and point the manifest at the installed file; and drop the two fixture labels "
+            "from acceptance_journeys.gd before that viewer is mounted. A0 then mounts the scene behind the "
+            "existing avatar seam. Grades 1-2 stay SOURCE_BLOCKED; no Knight substitution."
         ),
-        "closure_probe": "Q-04 static verdict REFERENCE_CONSISTENT with the canonical body mounted",
+        "closure_probe": "Q-04 PASS with the canonical body mounted and every claimed sheet present",
         "closure_test": "tests/survival/balance/test_quality.py::QualityClosureTests::test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical",
         "native_required_for_closure": False,
-        "not_proven_after_closure": "directional animation, armour swap and rendered frames (S5, human)",
+        "not_proven_after_closure": "4-direction animation, armour swap and rendered frames (S5, human)",
     },
 )
 
 CLOSED: Sequence[Dict[str, object]] = (
     {
+        "blocker_id": "BLK-ENGINE-API",
+        "was": "A8's scenes call Vector2.from_array, which no Godot release exposes (15 sites)",
+        "disposition": "CLOSED_IN_SOURCE_RECLASSIFIED_BLK-3",
+        "closed_at": "A8 c8b4bc88",
+        "why": (
+            "A8 added native_poi_vectors.gd with from_pair/from_int_pair and replaced every call. The oracle now "
+            "reports ENGINE_API_CONSISTENT with 0 unknown calls over the pinned sources. It is not a native pass, "
+            "so the residual moved to BLK-3 as SOURCE_FIXED_PENDING_NATIVE."
+        ),
+        "evidence": {"engine_api": "ENGINE_API_CONSISTENT", "unknown_calls": 0, "historical_pin": "5ccf7b3f: 15"},
+        "residual": "the native contract/transition steps have never been green on this sha.",
+        "still_needs_owner": "A8 runs its own two native steps.",
+    },
+    {
         "blocker_id": "BLK-MIRROR",
-        "was": "A0 shipped a stale copy of A3's source catalog (34/36 rows, 2 drifted)",
-        "disposition": "CLOSED_BY_OWNER_SOURCE",
-        "closed_at": "A0 2faf005b, re-checked against A3 100b3406",
+        "was": "A0 shipped a stale copy of A3's source catalog (Q-03 drift)",
+        "disposition": "REOPENED_AS_BLK-2",
+        "closed_at": "A3 c5e80922",
         "why": (
-            "Q-03 now reports MATCH over all 36 rows: A0's mirrored data/survival/items/sources.json carries the "
-            "adopted A1 binding for road_scrap and road_supplies. No quantity changed, because A1 and A3 already "
-            "agreed on 3 and 2."
+            "Round 5 closed this at A3 100b3406 where both copies matched. A3's V4 canonicalised the instance id "
+            "to si:*, so A0's copy drifted again in exactly the three waystation rows - and this time the drift "
+            "breaks the interaction. Reopened as BLK-2 rather than logged as a repeated finding."
         ),
-        "evidence": {"q03": "PASS", "mirror_rows": 36, "divergent": []},
-        "residual": "the mirror is still a copy; drift can return on the next A3 edit, which is why Q-03 stays.",
-        "still_needs_owner": "nothing for this item.",
-    },
-    {
-        "blocker_id": "BLK-BINDING",
-        "was": "A1 authorizes the first-hour cache but A3 had not adopted the binding",
-        "disposition": "CLOSED_BY_OWNER_SOURCE",
-        "closed_at": "A3 100b3406 built on c23292be; re-checked against A1 2f6edd3f",
-        "why": (
-            "A3 adopted both instance rebinds and keeps A1's own yields (3 iron_scrap, 2 knowledge_spares) and the "
-            "1800 active-second window. The third binding is a live-source reuse, satisfied as authored. A7 "
-            "requested no rate change at any point."
-        ),
-        "evidence": {"rebind_required": 2, "rebind_adopted": 2, "yields_changed": False, "cooldown": 1800},
-        "residual": "the reward still has nowhere to be paid - now BLK-1/BLK-4.",
-        "still_needs_owner": "nothing from A3 for this item.",
-    },
-    {
-        "blocker_id": "BLK-INSTANCE-ID",
-        "was": "A1's physical instance id (si:r_ashen_crown:waystation_cache:01) and A3's node_waystation_cache might not meet",
-        "disposition": "CLOSED_BY_OWNER_SOURCE",
-        "closed_at": "A1 2f6edd3f, A3 100b3406",
-        "why": (
-            "A1 publishes both ids for one object - instance_id for the physical body and interaction_node_id for "
-            "the interaction - and A3 binds the interaction node id. The vocabularies meet at a named seam instead "
-            "of being silently aliased, which was the actual risk."
-        ),
-        "evidence": {"a1_instance": "si:r_ashen_crown:waystation_cache:01", "a1_interaction_node": "node_waystation_cache", "a3_instance": "node_waystation_cache"},
-        "residual": "A1 still declares production_native_playable=false for the corridor (BLK-1).",
-        "still_needs_owner": "nothing for the id contract.",
-    },
-    {
-        "blocker_id": "BLK-DEBUG-UI",
-        "was": "The only survival UI is developer-facing and duplicates A0's HUD",
-        "disposition": "CLOSED_NOT_PLAYER_FACING_AT_THIS_PIN",
-        "closed_at": "round 3, re-verified at A6 8bc0af5a",
-        "why": (
-            "No production scene mounts the survival UI, the developer vocabulary sits behind "
-            "_developer_diagnostics (default false), and the three HUD scripts own disjoint jobs."
-        ),
-        "evidence": {"survival_ui_mounted": False, "hud_jobs": ["a0.hud=health", "a0.overworld_hud=provisions", "a6=context/core/feedback"]},
-        "residual": "PROD-04 keeps its file-level FAIL as hygiene, not as a player blocker.",
-        "still_needs_owner": "A6 keeps the panel opt-in when it mounts.",
+        "evidence": {"q03": "FAIL", "divergent": ["road_notes", "road_scrap", "road_supplies"], "identical_rows": 33},
+        "residual": "until A0 re-vendors, the cache action cannot be authorized.",
+        "still_needs_owner": "A0 re-vendors A3's catalog bytes.",
     },
 )
 
 CORRECTIONS: Sequence[Dict[str, object]] = (
     {
-        "id": "CORR-6",
-        "round4_claim": "The first-research bootstrap cycle is CLOSED_MEASURED_FALSE: 2 spares per claim, 3 needed, so two claims reach it.",
-        "status": "TRUE ONLY ONCE THE CACHE IS MOUNTED",
+        "id": "CORR-9",
+        "round4_claim": "BLK-2: A8 has 15 Vector2.from_array source errors and the scenes cannot position anything.",
+        "status": "STALE AT THE PIN, FIXED AT THE LIVE HEAD",
         "what_is_actually_true": (
-            "Walking the catalog: every recipe that yields knowledge_spares (make_spares, study_predator_jaw, "
-            "study_axe_insignia) requires a research station, and the research station costs a research_kit that "
-            "needs 3 spares. The only non-circular seed is road_supplies from the A1 cache, which is mounted "
-            "nowhere. At this pin the cycle is real."
+            "True of A8 5ccf7b3f, which round 5 pinned. A8 c8b4bc88 replaced all of them; the pinned sources now "
+            "contain the string only inside a comment explaining why the constructor does not exist."
         ),
-        "what_remains_true": "with the cache mounted, two claims (one 1800 s restock) do reach the kit, as round 4 said.",
-        "fix_in_this_round": "the closure is now expressed as a conditional and computed by oracle.knowledge_gate, not asserted.",
+        "what_remains_true": "no native evidence exists for the fixed code, so nothing is S4.",
+        "fix_in_this_round": "classified SOURCE_FIXED_PENDING_NATIVE by comparing the pin, not by re-running the old claim.",
     },
     {
-        "id": "CORR-7",
-        "round4_claim": "Claim C (content mounted) reads every pinned A0 byte.",
-        "status": "WOULD HAVE PRODUCED A FALSE POSITIVE",
+        "id": "CORR-10",
+        "round4_claim": "Claim C: the A1 cache and A8 site are in no world a player can reach (ABSENT).",
+        "status": "WRONG AT THE LIVE HEAD, RIGHT AT THE OLD PIN",
         "what_is_actually_true": (
-            "Round 5 pins A0's own test harness, which names node_waystation_cache. Counting test references as a "
-            "production mount flipped claim C to SOURCE_PRESENT in this round's first run - the exact defect the "
-            "claim exists to catch, produced by A7's own pinning change."
+            "A0 9269739e mounts A1's real slice geometry and a five-point interaction host. The content is in "
+            "production code. It is also behind a ProjectSettings key absent from project.godot, so the player "
+            "still cannot reach it."
         ),
-        "what_remains_true": "no production A0 file names the instance; the mount is still absent.",
-        "fix_in_this_round": "entry_content now reads production paths only and reports the excluded test references separately.",
+        "what_remains_true": "no normal-input journey reaches the cache today.",
+        "fix_in_this_round": "claim C gained MOUNTED_BY_DEFAULT / SOURCE_PRESENT_BEHIND_DISABLED_FLAG / ABSENT.",
     },
     {
-        "id": "CORR-8",
-        "round4_claim": "A6 'points the manifest at an invented sheet' was the central avatar risk.",
-        "status": "NOT WHAT THE BYTES SAY",
+        "id": "CORR-11",
+        "round4_claim": "The A1/A3 instance-id seam is closed: both ids are published for one object.",
+        "status": "TRUE AS NAMING, FALSE AS RUNTIME",
         "what_is_actually_true": (
-            "A6 declares BASE_ART_NOT_IMPORTED, idle_sheet \"\" and runtime_status NOT_IMPORTED, and its adapter "
-            "returns SOURCE_BLOCKED. It is not spoofing anything; the defect is that the locked identity is not "
-            "imported at all."
+            "A3 publishes both, but only the si:* id is in the binding table, and A0's host sends the si:* id "
+            "while A0's vendored table still keys the alias. Exact-string lookup therefore fails. The seam exists "
+            "and does not connect."
         ),
-        "what_remains_true": "the mounted body is still the Knight, so a player sees the wrong character.",
-        "fix_in_this_round": "BLK-5 states the honest condition and Q-04 keeps grading the real mount.",
+        "what_remains_true": "no quantity, price or cooldown is wrong; this is identity, not balance.",
+        "fix_in_this_round": "oracle.instance_identity replays the shipped request against the loaded catalog.",
+    },
+    {
+        "id": "CORR-12",
+        "round4_claim": "The A0 authority fixture proves an A3-authorized reward commits.",
+        "status": "IT PROVES THE TRANSACTION HELPER, NOT THE ROUTE",
+        "what_is_actually_true": (
+            "The fixture hardcodes instance_id node_waystation_cache, an id the shipped host never sends, and "
+            "funds its own inventory and clock. It cannot observe the mismatch it hides."
+        ),
+        "what_remains_true": "the A3 transaction machinery does commit and does refuse replays.",
+        "fix_in_this_round": "the oracle compares fixture instance ids against the host's request set.",
+    },
+    {
+        "id": "CORR-13",
+        "round4_claim": (
+            "PROD-04 can FAIL while the same payload records it as closed - 'a broad FAIL kept as a hygiene "
+            "warning'."
+        ),
+        "status": "A CHECK CANNOT BE BOTH FAILING AND CLOSED, AND TWO OF ITS HITS WERE NOT TEXT AT ALL",
+        "what_is_actually_true": (
+            "Two defects, both in A7's own tooling. (1) 'schema' sat in the debug-vocabulary list, so a wire key "
+            "(intent.get('schema'), 'schema': INTENT_SCHEMA) was counted as player prose. (2) Every string "
+            "literal in an A6 file counted as player-visible, including logs and test summaries, so 107 hits "
+            "hid the 2 that are actually handed to a Label. PROD-04 also mapped to the closed bucket, which "
+            "silently dropped a red check."
+        ),
+        "what_remains_true": (
+            "The two real hits are real: game/survival/ui/acceptance_journeys.gd:241 shows 'A6 READ-ONLY "
+            "SCENARIO FIXTURE - NOT LIVE GAMEPLAY' on a Label, and :340 shows 'Fixture progress only ...'. They "
+            "are latent, not live, because no shipped scene mounts A6's survival UI."
+        ),
+        "fix_in_this_round": (
+            "PROD-04 now splits display-sink literals from unbound ones, reports FAIL only when the surface is "
+            "mounted and WARN when it is latent, and maps to traceability rather than a closed bucket. 'schema' "
+            "is off the token list."
+        ),
     },
 )
 
 OPEN_CONDITIONS = {
-    "BLK-1": "no production A0 path names the A1 cache instance, so claim C is not SOURCE_PRESENT",
-    "BLK-2": "oracle.engine_api reports at least one call to a static method the engine class does not expose",
-    "BLK-3": "the pinned writer is lossy, or no green a0-save-precision run is cited on the pinned sha",
+    "BLK-1": "claim C is not MOUNTED_BY_DEFAULT, or the guard is not enabled by the shipped project",
+    "BLK-2": "a host request does not resolve in the catalog A0 loads, or A0's catalog diverges from A3's",
+    "BLK-3": "the pinned sources still contain an unknown engine static call, or no native run verifies A8",
     "BLK-4": "gate.s4 is not granted: at least one of the five native clauses does not hold on the pinned sha",
-    "BLK-5": "quality Q-04 is not REFERENCE_CONSISTENT for the canonical mounted body",
+    "BLK-5": "quality Q-04 is not PASS for the canonical mounted body",
 }
 
 
 def _is_open(blocker_id: str, evidence: Dict[str, object]) -> bool:
     if blocker_id == "BLK-1":
-        return not bool(evidence.get("content_mounted"))
+        return str(evidence.get("mount_state")) != "MOUNTED_BY_DEFAULT"
     if blocker_id == "BLK-2":
-        return int(evidence.get("unknown_engine_calls") or 0) > 0
+        return str(evidence.get("identity_verdict")) != "IDENTITY_CONSISTENT" or bool(
+            evidence.get("unresolved_host_requests")
+        )
     if blocker_id == "BLK-3":
-        return str(evidence.get("verdict")) != "ROUND_TRIP_EXACT" or str(
-            evidence.get("save_precision_native_state")
+        return int(evidence.get("unknown_engine_calls") or 0) > 0 or str(
+            evidence.get("a8_native_state")
         ) != "VERIFIED"
     if blocker_id == "BLK-4":
         return evidence.get("s4_granted") is not True
     if blocker_id == "BLK-5":
-        return str(evidence.get("q04")) != "REFERENCE_CONSISTENT"
+        return str(evidence.get("q04")) != "PASS"
     return True
 
 
@@ -438,6 +452,7 @@ def build(
     oracle_payload = oracle_payload or {}
     quality_payload = quality_payload or {}
     checks_by_id = {str(check["check_id"]): check for check in product_checks}
+    product_by_id = dict(checks_by_id)
     quality_by_id = {str(check["check_id"]): check for check in quality_payload.get("checks", []) or []}
 
     per_blocker: Dict[str, List[Dict[str, object]]] = {row["blocker_id"]: [] for row in BLOCKERS}  # type: ignore[index]
@@ -477,12 +492,19 @@ def build(
     oracle_api = oracle_payload.get("engine_api") or {}
     oracle_fid = oracle_payload.get("save_fidelity") or {}
     oracle_know = oracle_payload.get("knowledge_gate") or {}
+    oracle_identity = oracle_payload.get("instance_identity") or {}
+    a8_ledger = [
+        row
+        for row in (gate_payload.get("native_outcome_ledger") or [])
+        if str(row.get("workflow")) == "a8-world-content-native.yml"
+    ]
     evidence = {
         "BLK-1": {
+            "mount_state": content.get("mount_state"),
+            "guard": content.get("guard"),
             "production_instance_refs": content.get("a1_instance_references_in_a0_surface"),
             "production_a8_refs": content.get("a8_instance_references_in_a0_surface"),
             "non_production_refs_excluded": sorted((content.get("non_production_references") or {}).keys()),
-            "content_mounted": content.get("mounted"),
             "claim_C": (gate_payload.get("entry_claims") or {}).get("C_content_is_mounted", {}).get("state"),
             "knowledge_gate": oracle_know.get("verdict"),
             "non_circular_spare_recipes": oracle_know.get("non_circular_spare_recipes"),
@@ -490,25 +512,22 @@ def build(
             "claims_needed_for_first_station": oracle_know.get("claims_needed_for_first_station"),
         },
         "BLK-2": {
-            "unknown_engine_calls": oracle_api.get("unknown_call_count"),
-            "sample": oracle_api.get("unknown_calls", [])[:5] if oracle_api.get("unknown_calls") else [],
-            "static_calls_checked": oracle_api.get("static_call_count"),
-            "audited_types": oracle_api.get("audited_types"),
-            "a8_last_run": next(
-                (row for row in (gate_payload.get("native_outcome_ledger") or []) if str(row.get("workflow")) == "a8-world-content-native.yml"),
-                None,
-            ),
+            "identity_verdict": oracle_identity.get("verdict"),
+            "host_instance_ids": oracle_identity.get("host_instance_ids"),
+            "unresolved_host_requests": oracle_identity.get("unresolved_host_requests"),
+            "a3_only_bindings": oracle_identity.get("a3_only_bindings"),
+            "divergent_bindings": [row.get("identity") for row in (oracle_identity.get("divergent_bindings") or [])],
+            "fixture_ids_absent_from_host": oracle_identity.get("fixture_ids_absent_from_host"),
+            "q03": (quality_by_id.get("Q-03") or {}).get("status"),
         },
         "BLK-3": {
-            "verdict": oracle_fid.get("verdict"),
-            "authoritative_writers": oracle_fid.get("authoritative_writer_count"),
-            "lossy_writers": oracle_fid.get("lossy_writers"),
-            "formula": oracle_fid.get("formula"),
-            "save_precision_native_state": (native_states.get("a0_save_precision") or {}).get("state"),
-            "failing_native_labels": [
+            "unknown_engine_calls": oracle_api.get("unknown_call_count"),
+            "static_calls_checked": oracle_api.get("static_call_count"),
+            "audited_types": oracle_api.get("audited_types"),
+            "a8_native_state": (native_states.get("a8_native_poi_contract") or {}).get("state"),
+            "a8_completed_runs": [
                 {"run_id": row.get("run_id"), "head_sha": row.get("head_sha"), "failed": row.get("failed_checks")}
-                for row in (gate_payload.get("native_outcome_ledger") or [])
-                if row.get("failed_checks")
+                for row in a8_ledger
             ],
         },
         "BLK-4": {
@@ -517,9 +536,15 @@ def build(
             "s4_granted": s4.get("s4_granted"),
             "s4_clauses": {k: v.get("state") for k, v in (s4.get("clauses") or {}).items()},
             "native_states": {k: v.get("state") for k, v in native_states.items()},
+            "save_fidelity": oracle_fid.get("verdict"),
+            "failing_native_labels": [
+                {"run_id": row.get("run_id"), "head_sha": row.get("head_sha"), "failed": row.get("failed_checks")}
+                for row in (gate_payload.get("native_outcome_ledger") or [])
+                if row.get("failed_checks")
+            ],
         },
         "BLK-5": {
-            "q04": (quality_by_id.get("Q-04") or {}).get("static_verdict"),
+            "q04": (quality_by_id.get("Q-04") or {}).get("status"),
             "visual_state": (quality_by_id.get("Q-04") or {}).get("visual_state"),
             "mounted_player_scene": product_facts.get("mounted_player_scene"),
             "canonical_avatar_production_refs": product_facts.get("canonical_avatar_production_refs"),
@@ -542,6 +567,17 @@ def build(
             for obs in per_blocker[blocker_id]
             if obs.get("kind") in ("product_check", "quality_check") and obs.get("status") == "FAIL"
         ]
+        # A check can also fail for a blocker that no finding maps to (Q-03 maps to
+        # BLK-2 by identity, not by a source_id finding), so carry the mapping too.
+        merged["mapped_failing_checks"] = sorted(
+            row_id
+            for row_id in (
+                list((quality_by_id or {}).keys()) + list((product_by_id or {}).keys())
+            )
+            if CHECK_TO_BLOCKER.get(row_id) == blocker_id
+            and ((quality_by_id.get(row_id) or {}).get("status") == "FAIL"
+                 or (product_by_id.get(row_id) or {}).get("status") == "FAIL")
+        )
         # A blocker is open because its own condition is false, not because some
         # unrelated check is red. Each condition is the closure probe above.
         merged["open_condition"] = OPEN_CONDITIONS[blocker_id]
@@ -553,17 +589,21 @@ def build(
         "product_checks": len(product_checks),
         "quality_checks": len(quality_payload.get("checks", []) or []),
         "player_facing_blockers": len(blockers),
-        "closed_blockers": len(CLOSED),
+        # Named honestly: these are earlier A7 claims that are now closed, not
+        # blockers that closed. A blocker that closes is counted below.
+        "closed_earlier_claims": len(CLOSED),
+        "closed_blockers": sum(1 for row in blockers if row["status"] == "CLOSED"),
         "corrections_recorded": len(CORRECTIONS),
         "traceability_only": sum(1 for row in triage if row["blocker_id"] == "NONE"),
         "closed_or_traceability": sum(1 for row in triage if row["blocker_id"] in ("NONE", "CLOSED-R4")),
     }
     payload: Dict[str, object] = {
-        "schema": "soh.balance.blockers.v5",
+        "schema": "soh.balance.blockers.v6",
         "read_this_first": (
             "Five player-facing blockers, each with one owner, one smallest safe correction and a test that "
             "flips FAIL to PASS. A blocker closes only when the source condition holds AND the native evidence "
-            "it needs is VERIFIED on the pinned sha. Three earlier A7 claims are corrected rather than dropped."
+            "it needs is VERIFIED on the pinned sha. Five earlier A7 claims are corrected rather than dropped, "
+            "including two defects in A7's own tooling."
         ),
         "counts": counts,
         "blockers": blockers,
@@ -573,7 +613,7 @@ def build(
         "triage": triage,
         "reduction": (
             f"{counts['raw_observations']} observations -> {counts['player_facing_blockers']} blockers "
-            f"({counts['closed_blockers']} closed, {counts['corrections_recorded']} A7 self-corrections, "
+            f"({counts['closed_earlier_claims']} earlier claims closed, {counts['corrections_recorded']} A7 self-corrections, "
             f"{counts['traceability_only']} observations traceability only)"
         ),
     }
@@ -583,7 +623,7 @@ def build(
 
 def as_markdown(payload: Dict[str, object]) -> str:
     lines: List[str] = []
-    lines.append("# Player-facing blockers (A7, consolidated v5)\n")
+    lines.append("# Player-facing blockers (A7, consolidated v6)\n")
     lines.append(
         "_Generated from `data/survival/balance/results/blockers.json` by "
         "`tools/survival/balance/run_analysis.py`. Do not edit by hand._\n"

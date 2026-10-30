@@ -87,9 +87,18 @@ class GateShapeTests(unittest.TestCase):
         self.assertTrue(all(step["line"] for step in route["steps"]), route["steps"])
         # B is not claimed: no native run exists on the pinned commit.
         self.assertNotEqual(claims["B_route_runs_in_native_godot"]["level"], "S4_NATIVE_VERIFIED")
-        # C is absent: neither the A1 cache nor an A8 site is in that world.
-        self.assertEqual(claims["C_content_is_mounted"]["state"], "ABSENT")
-        self.assertEqual(claims["C_content_is_mounted"]["evidence"]["a1_instance_references_in_a0_surface"], [])
+        # C is present in source but behind a project setting the shipped
+        # project.godot does not declare, so a normal player still cannot reach it.
+        # The claim may never read SOURCE_PRESENT while that is true.
+        claim_c = claims["C_content_is_mounted"]
+        self.assertIn(
+            claim_c["state"],
+            {"ABSENT", "SOURCE_PRESENT_BEHIND_DISABLED_FLAG", "MOUNTED_BY_DEFAULT"},
+        )
+        self.assertNotEqual(claim_c["state"], "MOUNTED_BY_DEFAULT")
+        self.assertFalse(claim_c["reachable_by_normal_input"])
+        self.assertTrue(claim_c["evidence"]["guard"]["guarded"])
+        self.assertFalse(claim_c["evidence"]["guard"]["declared_in_project"])
         # D is partial at best: no A1-contract-keyed claim exists.
         self.assertEqual(claims["D_useful_reward_claimable"]["state"], "PARTIAL")
 
@@ -364,16 +373,27 @@ class GateClosureTests(unittest.TestCase):
         before = _build(texts, facts, manifest)
         self.assertTrue(_link(before, "waystation_cache", "L2_ROUTE")["blocked"])
 
-        texts = dict(texts)
-        texts["a0.chapter1_overworld.tscn"] += (
+        # The smallest correction that actually ships: the mount is already in
+        # chapter1_overworld.gd, so the missing half is the project setting. Both
+        # halves are required, and either one alone must leave the link blocked.
+        half = dict(texts)
+        half["a0.chapter1_overworld.tscn"] += (
             '\n[node name="WaystationCache" parent="." instance=ExtResource("9_cache")]\n'
             'node_id = "node_waystation_cache"\n'
+        )
+        self.assertTrue(_link(_build(half, facts, manifest), "waystation_cache", "L2_ROUTE")["blocked"],
+                        "a scene reference alone is not a mounted player path")
+
+        texts = dict(half)
+        texts["a0.project.godot"] = texts.get("a0.project.godot", "") + (
+            "\n[survival]\nsurvival/a0_waystation_candidate=true\n"
         )
         after = _build(texts, facts, manifest)
         link = _link(after, "waystation_cache", "L2_ROUTE")
         self.assertFalse(link["blocked"])
         self.assertEqual(link["source_state"], "PRODUCTION_SEAM")
-        self.assertEqual(after["entry_claims"]["C_content_is_mounted"]["state"], "SOURCE_PRESENT")
+        self.assertEqual(after["entry_claims"]["C_content_is_mounted"]["state"], "MOUNTED_BY_DEFAULT")
+        self.assertTrue(after["entry_claims"]["C_content_is_mounted"]["reachable_by_normal_input"])
 
     def test_blk1_needs_a_production_path_not_a_test_harness(self) -> None:
         # The genuine round-5 false positive: A0's own test harness names the node.

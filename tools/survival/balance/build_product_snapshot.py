@@ -36,6 +36,9 @@ CAPTURE = {
         "project.godot",
         "game/characters/knight/knight.tscn",
         "game/overworld/chapter1_overworld.tscn",
+        # The scene alone cannot answer "is the mount behind a guard?": the
+        # ProjectSettings branch lives in the script.
+        "game/overworld/chapter1_overworld.gd",
         "game/world/interactables/chest.gd",
         "game/ui/hud.gd",
         "game/overworld/overworld_hud.gd",
@@ -68,6 +71,22 @@ CAPTURE = {
         # The world-slice custody guard is what stops a generic transaction from
         # manufacturing world rights, so it belongs to the commit seam.
         "game/survival/economy/unique_ownership_guard.gd",
+        # Round 6: the production Waystation host and the A3 binding table A0
+        # actually loads. These decide whether a physical interaction can ever be
+        # authorized, so they are read, not summarized.
+        "game/survival/waystation_host.gd",
+        "game/survival/waystation_geometry.gd",
+        "game/survival/waystation_interactable.gd",
+        "game/survival/economy/world_source_adapter.gd",
+        "game/survival/economy/vendor/a3_economy_service.gd",
+        "game/survival/economy/economy_session.gd",
+        "data/survival/items/world_source_bindings.v3.json",
+        "data/survival/connector/a0_candidate/annex_world.v1.json",
+        "data/survival/connector/a0_candidate/slices/poi_crown_waystation.slice.json",
+        # A0's own save-precision proof, and the workflow whose trigger is
+        # branch-locked to A0.
+        "tests/survival_save_precision_test.gd",
+        ".github/workflows/a0-save-precision.yml",
     ],
     "a6": [
         "game/survival/ui/player_first_hud.gd",
@@ -96,6 +115,12 @@ CAPTURE = {
         "data/survival/world_content/interaction_contract.v1.json",
         # A8's explicit integration candidate: which actions still need A3 pricing
         "data/survival/world_content/quarry_integration_candidate.v1.json",
+        # Round 6: the current vectors helper and the pinned art manifest decide
+        # whether the former Vector2.from_array sites are genuinely fixed.
+        "game/survival/world_content/scripts/native_poi_vectors.gd",
+        "game/survival/world_content/scripts/native_poi_art.gd",
+        "data/survival/world_content/a8_art_manifest.v1.json",
+        ".github/workflows/a8-world-content-native.yml",
     ],
     "a1": [
         # The vertical-slice handoff contract is where A1 states instance ids, reward
@@ -105,8 +130,20 @@ CAPTURE = {
         # A1's own statement of whether the first-hour corridor is production
         # playable, and which mount it is waiting for.
         "data/survival/world/corridor/crown_roadside.corridor.v1.json",
+        # Round 6: A1's own slice bytes, which A0 vendors and mounts. Byte identity
+        # between the two is the only proof that the mounted body is current.
+        "data/survival/world/vertical_slice/poi_crown_waystation.slice.json",
+        "data/survival/world/art/a8_shell_visuals.v1.json",
+        "data/survival/world/corridor/a8_site_transforms.v1.json",
+        "data/survival/world/authoring/corridor/crown_roadside_sources.v1.json",
     ],
-    "a3": [],  # A3 authored data already comes from the data snapshots; nothing to copy here
+    # Round 6: A3's canonical catalog is graded against A0's vendored copy, so both
+    # sides are captured and compared byte-for-byte instead of trusting a summary.
+    "a3": [
+        "data/survival/items/sources.json",
+        "data/survival/items/items.json",
+        "data/survival/items/world_source_bindings.v3.json",
+    ],
 }
 
 # Tree-wide facts that cannot be captured as whole files without bloating the repo.
@@ -194,11 +231,12 @@ def main() -> int:
     )
     parser.add_argument("--a8-task", default="", help="optional A8 task-branch ref, recorded for provenance only")
     parser.add_argument("--a1", default="refs/a1", help="git ref holding the A1 world/contract tree")
+    parser.add_argument("--a3", default="refs/a3", help="git ref holding the A3 item/source catalog")
     args = parser.parse_args()
 
     SNAPSHOT_DIR.mkdir(parents=True, exist_ok=True)
     entries: list[dict] = []
-    refs = {"a0": args.a0, "a6": args.a6, "a8": args.a8, "a1": args.a1}
+    refs = {"a0": args.a0, "a6": args.a6, "a8": args.a8, "a1": args.a1, "a3": args.a3}
     for owner, paths in CAPTURE.items():
         if not paths:
             continue
@@ -278,11 +316,12 @@ def main() -> int:
             "owners": list(TREE_OWNERS),
             "suffixes": list(TREE_SUFFIXES),
         },
-        "sources": {"a0_ref": args.a0, "a6_ref": args.a6, "a8_ref": args.a8},
+        "sources": {"a0_ref": args.a0, "a6_ref": args.a6, "a8_ref": args.a8, "a1_ref": args.a1, "a3_ref": args.a3},
         "a0_head": subprocess.run(["git", "rev-parse", args.a0], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
         "a6_head": subprocess.run(["git", "rev-parse", args.a6], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
         "a8_head": subprocess.run(["git", "rev-parse", args.a8], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
         "a1_head": subprocess.run(["git", "rev-parse", args.a1], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
+        "a3_head": subprocess.run(["git", "rev-parse", args.a3], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip(),
         "a8_task_head": (
             subprocess.run(["git", "rev-parse", args.a8_task], cwd=ROOT, check=True, capture_output=True, text=True).stdout.strip()
             if args.a8_task

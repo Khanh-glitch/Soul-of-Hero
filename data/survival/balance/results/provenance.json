@@ -177,8 +177,8 @@
       "exists": true,
       "key": "a3.sources",
       "owner": "A3",
-      "sha256": "28ff818a406de7d53d2c0e3e2fd7295baef0fcec9c086ceb0206d5a2251fdb87",
-      "upstream_commit": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+      "sha256": "941da92cdbe244f62a31862af8a8ab0ef549c6504cfbd6ef47cc591c50c58caf",
+      "upstream_commit": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
       "upstream_path": "data/survival/items/sources.json",
       "upstream_ref": "arena_a3",
       "verified": true
@@ -237,8 +237,8 @@
       "exists": true,
       "key": "a3.world_source_bindings_v3",
       "owner": "A3",
-      "sha256": "b1d291d035c9e543e69281da268b378c8e1bb498be561b2f15e67c840792b353",
-      "upstream_commit": "100b3406ef4e09e3b7ccc8b5910dffc6b6d0dfcd",
+      "sha256": "622a277fd00cdbbf1d1a8ba505a2d2755b18b64e8ee4c6cce620429bdbda5dfb",
+      "upstream_commit": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
       "upstream_path": "data/survival/items/world_source_bindings.v3.json",
       "upstream_ref": "arena_a3",
       "verified": true

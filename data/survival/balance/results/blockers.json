@@ -1,39 +1,50 @@
 {
   "blockers": [
     {
-      "blocked_gate_links": 6,
+      "blocked_gate_links": 5,
       "blocker_id": "BLK-1",
-      "closure_probe": "gate claim C is SOURCE_PRESENT from a production path and both chains lose their L2/L3 blocker",
+      "closure_probe": "claim C is MOUNTED_BY_DEFAULT and guard.enabled_by_default is true",
       "closure_test": "tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk1_needs_a_production_path_not_a_test_harness",
       "evidence": {
-        "claim_C": "ABSENT",
+        "claim_C": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
         "claims_needed_for_first_station": 2,
-        "content_mounted": false,
+        "guard": {
+          "declared_in_project": false,
+          "enabled_by_default": false,
+          "guarded": true,
+          "setting": "survival/a0_waystation_candidate",
+          "why": "ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the key, so an absent key is a disabled guard, not a neutral default."
+        },
         "knowledge_gate": "SEEDED_ONLY_BY_LOOT",
+        "mount_state": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
         "non_circular_spare_recipes": [],
         "non_production_refs_excluded": [
           "a0.survival_waystation_authority_test.gd",
           "a0.survival_waystation_input_restart_test.gd"
         ],
         "production_a8_refs": [],
-        "production_instance_refs": [],
+        "production_instance_refs": [
+          "a0.economy_session.gd:290",
+          "a0.economy_session.gd:311",
+          "a0.waystation_host.gd:6"
+        ],
         "spare_loot_sources": [
           "road_supplies"
         ]
       },
       "evidence_class": "MISSING_PRODUCTION_MOUNT",
       "failing_checks": [
-        "PROD-01",
-        "PROD-02"
+        "PROD-01"
       ],
+      "fix_state": "SOURCE_PRESENT_BEHIND_GUARD",
       "gate_links": [
         {
           "blocker_id": "BLK-1",
           "chain_id": "a8_quarry",
           "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "route exists in source; native run is QUEUED",
-          "native_state": "QUEUED",
+          "missing": "route exists in source; native run is STALE_HEAD",
+          "native_state": "STALE_HEAD",
           "next_action": "A0 lands the queued native entry workflow green.",
           "owner": "A0"
         },
@@ -62,8 +73,8 @@
           "chain_id": "waystation_cache",
           "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "the route exists in source, but the native run that would prove it executes is QUEUED",
-          "native_state": "QUEUED",
+          "missing": "the route exists in source, but the native run that would prove it executes is STALE_HEAD",
+          "native_state": "STALE_HEAD",
           "next_action": "A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
           "owner": "A0"
         },
@@ -72,26 +83,19 @@
           "chain_id": "waystation_cache",
           "level": "S1_AUTHORED_ONLY",
           "link": "L2_ROUTE",
-          "missing": "the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet",
+          "missing": "the host is behind `survival/a0_waystation_candidate`, which the shipped project.godot does not set, so a normal player never takes that branch",
           "native_state": "NOT_TESTED",
           "next_action": "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry scene into the existing overworld route; A1 supplies the cell, A8 supplies the scene.",
           "owner": "A0 + A1 + A8"
-        },
-        {
-          "blocker_id": "BLK-1",
-          "chain_id": "waystation_cache",
-          "level": "S1_AUTHORED_ONLY",
-          "link": "L3_INTERACTION",
-          "missing": "the action exists only in authored data; no mounted scene places the cache node",
-          "native_state": "NOT_TESTED",
-          "next_action": "the same mount as L2 also places the interaction node and its input.",
-          "owner": "A1"
         }
       ],
-      "minimal_safe_correction": "A0 places the existing A1 instance node_waystation_cache at poi_crown_waystation inside the one production overworld the route already reaches. No new system, no data edit, no rate change: A1 supplies the cell and identity, A3 already prices the reward.",
-      "native_required_for_closure": false,
-      "not_proven_after_closure": "that the mounted node boots, is walkable and is interactable (native run)",
-      "observation_count": 36,
+      "mapped_failing_checks": [
+        "PROD-01"
+      ],
+      "minimal_safe_correction": "A0 decides the guard's default. Either set survival/a0_waystation_candidate=true in project.godot once the interaction is proven, or mount the host unconditionally and keep the flag for the annex geometry only. One line, no new system.",
+      "native_required_for_closure": true,
+      "not_proven_after_closure": "that the branch boots and the points are interactable (native run)",
+      "observation_count": 34,
       "observations": [
         {
           "code": "BOOTSTRAP_DEPENDENCY_CYCLE",
@@ -201,11 +205,6 @@
         {
           "code": "SOURCE_REGION_UNRESOLVED",
           "kind": "finding",
-          "subject": "road_notes"
-        },
-        {
-          "code": "SOURCE_REGION_UNRESOLVED",
-          "kind": "finding",
           "subject": "road_seed"
         },
         {
@@ -268,49 +267,224 @@
           "kind": "product_check",
           "status": "FAIL",
           "title": "Player can reach the survival / exploration loop"
+        }
+      ],
+      "open_condition": "claim C is not MOUNTED_BY_DEFAULT, or the guard is not enabled by the shipped project",
+      "owner": "A0",
+      "owner_commands": [
+        "# A0: prove the guarded branch boots at all, on the pinned sha",
+        "godot --headless --path . --user-data-dir artifacts/ud_entry --import",
+        "xvfb-run -a godot --path . --resolution 1280x720 --script res://tests/survival_normal_entry_home_restart_test.gd",
+        "# and prove the CANDIDATE branch specifically (currently never executed by CI).",
+        "# Godot 4 has no CLI switch for a project setting, so the branch is proved one",
+        "# of two ways: put the key in project.godot (the fix) and run the same script, or",
+        "# run A7's probe with --force-branch, which sets it in memory and labels the run",
+        "# SOURCE_PRESENT_BEHIND_GUARD rather than acceptance:",
+        "xvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch"
+      ],
+      "player_impact": "A0 9269739e now builds a real physical host: five interaction points with stand cells, a range check, and A1's actual slice geometry mounted from byte-identical A1 939720d5 bytes. But the whole branch hangs on ProjectSettings survival/a0_waystation_candidate, and the shipped project.godot does not contain that key. Godot's fallback is false, so a normal player never enters the branch: the first useful reward in the game is unreachable by ordinary play even though the code exists.",
+      "reproduce": [
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['entry_claims']['C_content_is_mounted']['state'], d['entry_content']['guard'])\"",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product_manifest.json'));print([f['sha256'][:12] for f in d['files'] if f['path'].endswith('poi_crown_waystation.slice.json')])\""
+      ],
+      "status": "OPEN",
+      "title": "The only Waystation in production code is a candidate behind a project setting the shipped game does not enable",
+      "verified_by": "gate entry_content.guard, read from the pinned project.godot and chapter1_overworld.gd, plus the byte comparison of A0's vendored slice against A1's current slice"
+    },
+    {
+      "blocked_gate_links": 1,
+      "blocker_id": "BLK-2",
+      "closure_probe": "oracle.instance_identity is IDENTITY_CONSISTENT and no host request is unresolved",
+      "closure_test": "tests/survival/balance/test_oracle.py::InstanceIdentityOracleTests::test_the_alias_cannot_stand_in_for_the_world_instance",
+      "evidence": {
+        "a3_only_bindings": [
+          "cache_restock@si:r_ashen_crown:waystation_cache:01",
+          "salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01"
+        ],
+        "divergent_bindings": [
+          "node_waystation_approach_deadfall"
+        ],
+        "fixture_ids_absent_from_host": [
+          "node_waystation_cache"
+        ],
+        "host_instance_ids": [
+          "node_waystation_approach_deadfall",
+          "si:r_ashen_crown:waystation_cache:01"
+        ],
+        "identity_verdict": "HOST_ACTION_UNRESOLVED",
+        "q03": "FAIL",
+        "unresolved_host_requests": [
+          {
+            "a0_binding_id": null,
+            "a3_binding_id": "a1_waystation_roadside_cache_v3",
+            "action_id": "cache_restock",
+            "instance_id": "si:r_ashen_crown:waystation_cache:01",
+            "poi_id": "poi_crown_waystation",
+            "point": "cache",
+            "resolved_in_a0_catalog": false,
+            "resolved_in_a3_catalog": true
+          }
+        ]
+      },
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
+      "failing_checks": [
+        "PROD-02",
+        "Q-03"
+      ],
+      "fix_state": "SOURCE_PRESENT_UNRESOLVED",
+      "gate_links": [
+        {
+          "blocker_id": "BLK-2",
+          "chain_id": "waystation_cache",
+          "level": "S1_AUTHORED_ONLY",
+          "link": "L3_INTERACTION",
+          "missing": "the action exists only in authored data; no mounted scene places the cache node",
+          "native_state": "NOT_TESTED",
+          "next_action": "the same mount as L2 also places the interaction node and its input.",
+          "owner": "A1 + A0"
+        }
+      ],
+      "mapped_failing_checks": [
+        "PROD-02",
+        "Q-03"
+      ],
+      "minimal_safe_correction": "A0 re-vendors A3 c5e80922's world_source_bindings.v3.json byte-for-byte (three bindings, si ids, instance_id + interaction_node_id + identity), and changes its authority test to send the host's request instead of the alias. No quantity, cooldown or price changes.",
+      "native_required_for_closure": false,
+      "not_proven_after_closure": "that the transaction commits durably (BLK-4)",
+      "observation_count": 14,
+      "observations": [
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "ancient_catalyst"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "clay"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "iron_ore"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "moonleaf"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "reed_fibre"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "reed_fibre"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "stone_chunk"
+        },
+        {
+          "code": "SOURCE_ID_DIVERGENCE",
+          "kind": "finding",
+          "subject": "sulfur"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "catalyst_vault"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_ember"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_frost"
+        },
+        {
+          "code": "PROVISIONAL_BINDING",
+          "kind": "finding",
+          "subject": "specimen_venom"
         },
         {
           "id": "PROD-02",
           "kind": "product_check",
           "status": "FAIL",
           "title": "Something the player can open hands out authored loot"
+        },
+        {
+          "id": "Q-03",
+          "kind": "quality_check",
+          "status": "FAIL",
+          "title": "Every authored cost, reward and source points at a real item"
         }
       ],
-      "open_condition": "no production A0 path names the A1 cache instance, so claim C is not SOURCE_PRESENT",
-      "owner": "A0 (mount) with A1 (cell + instance identity) and A8 (scene)",
+      "open_condition": "a host request does not resolve in the catalog A0 loads, or A0's catalog diverges from A3's",
+      "owner": "A0 (re-vendor) with A3 (canonical id)",
       "owner_commands": [
-        "# A0, on the host with the Godot 4.7 binary and a display (xvfb is fine):",
-        "godot --headless --path . --user-data-dir artifacts/ud_entry --import",
-        "xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --user-data-dir artifacts/ud_entry \\",
-        "  --script res://tests/survival_normal_entry_home_restart_test.gd",
-        "# expected once mounted: the log names node_waystation_cache as present in the world"
+        "# A0: the reward path, replayed without Godot (the runtime does the same string comparison)",
+        "python3 tools/survival/balance/run_analysis.py",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print(d['a3_only_bindings'])\"",
+        "# then the native check that should now pay. Godot has no CLI switch for a",
+        "# project setting, so either ship the key in project.godot or run A7's probe",
+        "# with --force-branch (in-memory, classed SOURCE_PRESENT_BEHIND_GUARD):",
+        "xvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch"
       ],
-      "player_impact": "The menu route into A0's overworld works in source, and A1's corridor authors exactly four physical bodies, but none of them is placed in that world: no production A0 file names poi_crown_waystation, node_waystation_cache or any A8 site scene. The consequence is sharper than 'nothing to loot' - knowledge_spares has exactly one non-circular source in the whole catalog (that cache), because every spare recipe needs a research station, so a player can harvest stone and wood all hour and still never begin research.",
+      "player_impact": "A0 9269739e's host sends {poi_crown_waystation, cache_restock, si:r_ashen_crown:waystation_cache:01}. Its own lookup is exact string equality over those three fields, and the catalog it ships still says node_waystation_cache, because A0 vendors a pre-V4 copy of A3 (b1d291d0) while A3 c5e80922 is 622a277f. The result is deterministic: the first useful reward in the game fails with unknown_source_instance, and the only test that ever 'paid' 3 scrap + 2 spares used the alias directly, so it never touched the host path.",
       "reproduce": [
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['entry_content']['a1_instance_references_in_a0_surface'], d['entry_content']['mounted'])\"",
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));k=d['knowledge_gate'];print(k['verdict'], k['non_circular_spare_recipes'], list(k['spare_loot_sources']))\"",
-        "git show refs/a1:data/survival/world/corridor/crown_roadside.corridor.v1.json | python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['status'], d['production_native_playable'])\""
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print(d['verdict']);[print(x['point'],x['instance_id']) for x in d['unresolved_host_requests']]\"",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print('fixture ids absent from host:', d['fixture_ids_absent_from_host'])\""
       ],
       "status": "OPEN",
-      "title": "The A1 cache and A8 site are placed in no world a player can reach",
-      "verified_by": "gate claim C over production paths only (tests/.github/tools excluded and reported separately), plus A1's own corridor status SOURCE_AND_ISOLATED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION and production_native_playable=false, plus oracle.knowledge_gate"
+      "title": "The Waystation cache cannot resolve its own reward: A0 sends the si: instance id, A0's vendored catalog still holds the alias",
+      "verified_by": "oracle.instance_identity: the shipped host's POINTS table replayed against the catalog A0 actually loads, with A3's canonical table alongside; plus Q-03 mirror drift naming the same three rows"
     },
     {
       "blocked_gate_links": 0,
-      "blocker_id": "BLK-2",
-      "closure_probe": "oracle engine_api unknown_call_count is 0 and A8's contract step passes on the pinned sha",
+      "blocker_id": "BLK-3",
+      "closure_probe": "a8_native_poi_contract is VERIFIED on the pinned sha",
       "closure_test": "tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion",
       "evidence": {
-        "a8_last_run": {
-          "conclusion": "failure",
-          "failed_checks": [],
-          "failed_steps": [
-            "Run native physics, intent and persistence contracts"
-          ],
-          "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
-          "run_id": 41015986080,
-          "workflow": "a8-world-content-native.yml"
-        },
+        "a8_completed_runs": [
+          {
+            "failed": [],
+            "head_sha": "f9ed82b91e8d1eed52f109247ae511c4f862ffd1",
+            "run_id": 41015986080
+          },
+          {
+            "failed": [],
+            "head_sha": "c0ae902542a31c37bdfdc8f72d452cbf430e6747",
+            "run_id": 41019032228
+          },
+          {
+            "failed": [],
+            "head_sha": "2ad531f9e099cc3a29709da176e7a34b05a9a15b",
+            "run_id": 41019182407
+          },
+          {
+            "failed": [],
+            "head_sha": "2d7f10d355cb57692a321f3ca633550d31385157",
+            "run_id": 41019689728
+          },
+          {
+            "failed": [],
+            "head_sha": "9c180ef115bc53b1aa48e39a46a1a8fa7426c602",
+            "run_id": 41024442152
+          },
+          {
+            "failed": [],
+            "head_sha": "5ccf7b3f9824daa138b5d98106b74a2899c7592b",
+            "run_id": 41024526858
+          }
+        ],
+        "a8_native_state": "STALE_HEAD",
         "audited_types": [
           "Color",
           "JSON",
@@ -318,73 +492,41 @@
           "Vector2i",
           "Vector3"
         ],
-        "sample": [
-          {
-            "call": "Vector2.from_array",
-            "file": "a8.native_poi_shell.gd",
-            "is_engine_static": false,
-            "line": 62
-          },
-          {
-            "call": "Vector2.from_array",
-            "file": "a8.native_poi_shell.gd",
-            "is_engine_static": false,
-            "line": 66
-          },
-          {
-            "call": "Vector2.from_array",
-            "file": "a8.native_poi_shell.gd",
-            "is_engine_static": false,
-            "line": 111
-          },
-          {
-            "call": "Vector2.from_array",
-            "file": "a8.native_poi_site.gd",
-            "is_engine_static": false,
-            "line": 107
-          },
-          {
-            "call": "Vector2.from_array",
-            "file": "a8.native_poi_site.gd",
-            "is_engine_static": false,
-            "line": 111
-          }
-        ],
-        "static_calls_checked": 42,
-        "unknown_engine_calls": 15
+        "static_calls_checked": 23,
+        "unknown_engine_calls": 0
       },
-      "evidence_class": "NATIVE_RUNTIME_FAILURE",
+      "evidence_class": "SOURCE_FIXED_NATIVE_PENDING",
       "failing_checks": [],
+      "fix_state": "SOURCE_FIXED_PENDING_NATIVE",
       "gate_links": [],
-      "minimal_safe_correction": "A8 replaces each call with the array form that exists - Vector2(arr[0], arr[1]) on a two-element array, or Vector2i(...) where the value is a cell. Mechanical, 15 sites, no design change.",
+      "mapped_failing_checks": [],
+      "minimal_safe_correction": "A8 lands those two native steps green on a pushed sha and uploads the artifact. No code change is implied by this blocker any more.",
       "native_required_for_closure": true,
-      "not_proven_after_closure": "that the repaired scenes reach the player's world (BLK-1)",
+      "not_proven_after_closure": "that the scenes are reachable in A0's world (BLK-1)",
       "observation_count": 0,
       "observations": [],
-      "open_condition": "oracle.engine_api reports at least one call to a static method the engine class does not expose",
+      "open_condition": "the pinned sources still contain an unknown engine static call, or no native run verifies A8",
       "owner": "A8",
       "owner_commands": [
-        "# A8, same engine: the audit is the oracle, the native step is the proof",
+        "# A8: the fix exists; these two native steps are what would close it",
         "godot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd",
-        "godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd",
-        "# both must exit 0 and upload .artifacts/a8-world-content/ on the pinned sha"
+        "godot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd"
       ],
-      "player_impact": "Every A8 scene position, portal, socket and interior spawn is read through Vector2.from_array(...) - 15 live call sites across native_poi_site.gd, native_poi_shell.gd and poi_pilot.gd. Godot's Vector2 has exactly one static method (from_angle), so these calls cannot resolve; the scenes cannot position anything, and A8's own contract step fails while the import-only step above it passes and uploads no artifact.",
+      "player_impact": "At the previous pin the native POI scenes read every position through Vector2.from_array, which no Godot release exposes. A8 c8b4bc88 replaced them with native_poi_vectors.gd and the audited call count is now zero. That is a real fix and it is not a native pass: A8's contract step has never been green on this sha, and the last failing log died at a preload of poi_authority_fixture.gd.",
       "reproduce": [
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));print(d['engine_api']['unknown_call_count']);[print(r['file'],r['line'],r['call']) for r in d['engine_api']['unknown_calls'][:5]]\"",
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/engine_api.v1.json'));print(sorted(d['static_methods']['Vector2']))\""
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['engine_api'];print(d['verdict'], d['unknown_call_count'], d['static_call_count'])\"",
+        "git grep -n 'from_array' refs/a8 -- '*.gd' | head"
       ],
       "status": "OPEN",
-      "title": "A8's scene scripts call Vector2.from_array, which no Godot release exposes",
-      "verified_by": "oracle.engine_api against the engine's own class documentation, plus A8 run 41019689728 at 2d7f10d3: import succeeded, 'Run native physics, intent and persistence contracts' failed, no artifacts produced"
+      "title": "A8's 15 invented Vector2.from_array calls are fixed in source, and still unproven natively",
+      "verified_by": "oracle.engine_api over the pinned c8b4bc88 sources (0 unknown calls) plus the recorded CI outcomes for a8-world-content-native.yml on this sha (none green)"
     },
     {
-      "blocked_gate_links": 0,
-      "blocker_id": "BLK-3",
-      "closure_probe": "oracle save_fidelity is ROUND_TRIP_EXACT and a0_save_precision is VERIFIED on the pinned sha",
-      "closure_test": "tests/survival/balance/test_oracle.py::SaveFidelityOracleTests::test_whole_document_reload_is_impossible_to_prove_without_full_precision",
+      "blocked_gate_links": 6,
+      "blocker_id": "BLK-4",
+      "closure_probe": "gate s4_granted is true: all five clauses hold on the pinned sha",
+      "closure_test": "tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses",
       "evidence": {
-        "authoritative_writers": 1,
         "failing_native_labels": [
           {
             "failed": [
@@ -446,54 +588,15 @@
             "run_id": 41022975283
           }
         ],
-        "formula": "decimals = max(1, 14 - floor(log10(abs(value)))) when full_precision is false",
-        "lossy_writers": [],
-        "save_precision_native_state": "QUEUED",
-        "verdict": "ROUND_TRIP_EXACT"
-      },
-      "evidence_class": "SOURCE_OF_TRUTH_DEFECT",
-      "failing_checks": [],
-      "gate_links": [],
-      "minimal_safe_correction": "A0 dispatches a0-save-precision on the pinned sha (its trigger is branch-locked to A0's own branch) and cites the green run. No code change is needed any more; the fix is already in the tree.",
-      "native_required_for_closure": true,
-      "not_proven_after_closure": "durability across a real OS restart or power loss (a simulated boundary is not that)",
-      "observation_count": 0,
-      "observations": [],
-      "open_condition": "the pinned writer is lossy, or no green a0-save-precision run is cited on the pinned sha",
-      "owner": "A0",
-      "owner_commands": [
-        "# A0: the workflow only triggers on A0's branch, so dispatch or push it there",
-        "godot --headless --path . --user-data-dir artifacts/ud_precision --import",
-        "godot --headless --path . --user-data-dir artifacts/ud_precision \\",
-        "  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test",
-        "godot --headless --path . --user-data-dir artifacts/ud_precision \\",
-        "  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test --restart",
-        "# both logs must print 'A0 SAVE PRECISION PASSED'"
-      ],
-      "player_impact": "At this pin the authoritative writer is correct - JSON.stringify(snapshot, \"\\t\", false, true) at save_service.gd:2459 - so the oracle now reads ROUND_TRIP_EXACT. But the only native word on the defect is two failed runs on the older tree, where whole-document equality broke while every targeted integer comparison passed, and the workflow that proves the fix triggers only on A0's own branch. Until a green a0-save-precision run is cited on the pinned sha, a player's profile still has no evidence that it reloads exactly as written.",
-      "reproduce": [
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));f=d['save_fidelity'];print(f['verdict'], f['authoritative_writer_count']);[print(w['file'],w['line'],w['full_precision']) for w in f['writers'] if w['authoritative']]\"",
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['native_states']['a0_save_precision']['state'])\""
-      ],
-      "status": "OPEN",
-      "title": "The float-precision fix is in A0's tree but no native run on the pinned sha has exercised it",
-      "verified_by": "oracle.save_fidelity over the pinned writer (ROUND_TRIP_EXACT, one authoritative writer) plus the failure labels recorded verbatim from 41018366655 and 41022547962"
-    },
-    {
-      "blocked_gate_links": 6,
-      "blocker_id": "BLK-4",
-      "closure_probe": "gate s4_granted is true: all five clauses hold on the pinned sha",
-      "closure_test": "tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses",
-      "evidence": {
-        "mounted_caller_count": 8,
+        "mounted_caller_count": 11,
         "native_states": {
-          "a0_normal_entry_home": "QUEUED",
-          "a0_replay_negative": "QUEUED",
-          "a0_runtime_validation": "QUEUED",
-          "a0_save_precision": "QUEUED",
-          "a0_second_process_restart": "QUEUED",
-          "a0_waystation_player_input": "QUEUED",
-          "a3_authority_fixture": "QUEUED",
+          "a0_normal_entry_home": "STALE_HEAD",
+          "a0_replay_negative": "STALE_HEAD",
+          "a0_runtime_validation": "STALE_HEAD",
+          "a0_save_precision": "STALE_HEAD",
+          "a0_second_process_restart": "STALE_HEAD",
+          "a0_waystation_player_input": "STALE_HEAD",
+          "a3_authority_fixture": "STALE_HEAD",
           "a8_native_poi_contract": "STALE_HEAD"
         },
         "s4_clauses": {
@@ -504,10 +607,12 @@
           "C5_negative_replay": "NOT_HOLDS"
         },
         "s4_granted": false,
+        "save_fidelity": "ROUND_TRIP_EXACT",
         "static_seam_state": "MOUNTED_SURVIVAL_SYSTEM_CALLER"
       },
       "evidence_class": "FIXTURE_ONLY_SUCCESS",
       "failing_checks": [],
+      "fix_state": "RUNTIME_UNKNOWN",
       "gate_links": [
         {
           "blocker_id": "BLK-4",
@@ -515,7 +620,7 @@
           "level": "S2_SCENE_FIXTURE",
           "link": "L5_COMMIT",
           "missing": "a fake authority commits the reward; SaveService is never called on this path",
-          "native_state": "QUEUED",
+          "native_state": "STALE_HEAD",
           "next_action": "A0/A8 swap the fixture for a SaveService adapter and key the claim on the instance id.",
           "owner": "A0 + A8"
         },
@@ -525,7 +630,7 @@
           "level": "S0_ABSENT",
           "link": "L6_RELOAD",
           "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
-          "native_state": "QUEUED",
+          "native_state": "STALE_HEAD",
           "next_action": "after L5.",
           "owner": "A0"
         },
@@ -544,8 +649,8 @@
           "chain_id": "waystation_cache",
           "level": "S3_PRODUCTION_SEAM",
           "link": "L5_COMMIT",
-          "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers)",
-          "native_state": "QUEUED",
+          "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (5 survival callers, 0 A1-contract callers)",
+          "native_state": "STALE_HEAD",
           "next_action": "A0 adds ONE caller keyed on A1's transaction key ('a1slice:poi_crown_waystation:cache_restock:1') that pays the A1 binding through add_items_to_candidate inside transact_once.",
           "owner": "A0"
         },
@@ -554,8 +659,8 @@
           "chain_id": "waystation_cache",
           "level": "S3_PRODUCTION_SEAM",
           "link": "L6_RELOAD",
-          "missing": "a real two-process reload test exists in source, but its native run is QUEUED",
-          "native_state": "QUEUED",
+          "missing": "a real two-process reload test exists in source, but its native run is STALE_HEAD",
+          "native_state": "STALE_HEAD",
           "next_action": "the queued native-entry-restart job must go green; static text cannot substitute.",
           "owner": "A0"
         },
@@ -565,14 +670,15 @@
           "level": "S3_PRODUCTION_SEAM",
           "link": "L7_NO_DUPLICATE",
           "missing": "the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay",
-          "native_state": "QUEUED",
+          "native_state": "STALE_HEAD",
           "next_action": "the same native run asserts applied_transactions equality across processes.",
           "owner": "A0 + A1"
         }
       ],
-      "minimal_safe_correction": "A0 makes the player-input half run and pass on the pinned sha - the same event earning the same receipt through real input, with the second process refusing a replay. No new reward, no new key.",
+      "mapped_failing_checks": [],
+      "minimal_safe_correction": "A0 runs the two halves on the pinned sha and cites the green runs. Nothing else in A7's scope can move this: S4 is owner-native evidence only.",
       "native_required_for_closure": true,
-      "not_proven_after_closure": "that the reward is useful (BLK-1) or repeatable by a human (S5)",
+      "not_proven_after_closure": "that a human finds the route and enjoys it (S5)",
       "observation_count": 2,
       "observations": [
         {
@@ -588,30 +694,27 @@
         }
       ],
       "open_condition": "gate.s4 is not granted: at least one of the five native clauses does not hold on the pinned sha",
-      "owner": "A0 (player-input path) with A3 (event identity)",
+      "owner": "A0",
       "owner_commands": [
-        "# A0: the fixture half is the only thing that has ever produced a receipt",
-        "godot --headless --path . --user-data-dir artifacts/ud_authority \\",
-        "  --script res://tests/survival_waystation_authority_test.gd -- --survival-save-fault-test",
-        "# the player-input half has never run; this is the command that would prove it",
-        "xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\",
-        "  --script res://tests/survival_waystation_input_restart_test.gd",
-        "xvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\",
-        "  --script res://tests/survival_waystation_input_restart_test.gd -- --restart"
+        "# A0: one ordinary-input run on the sha, then the separate-process half",
+        "xvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\",
+        "  --script res://tests/survival_normal_entry_home_restart_test.gd",
+        "xvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\",
+        "  --script res://tests/survival_normal_entry_home_restart_test.gd -- --verify-separate-process"
       ],
-      "player_impact": "The single run that has ever paid 3 iron_scrap + 2 knowledge_spares is survival_waystation_authority_test.gd, whose own header says it 'does not prove player input, physical reach, production mount or OS restart' and which funds its own inventory and advances its own clock. It fails two of its own whole-snapshot checks (41022547962). The player-input half of the same workflow was skipped, so real input has never produced a receipt, and the S4 conjunction is 0 of 5 clauses at this pin.",
+      "player_impact": "Every required native assertion resolves STALE_HEAD at this pin: entry, second process, real input, save precision and negative replay. S4 is 0 of 5 clauses. The one run that has ever paid the cache reward funds its own inventory, advances its own clock and sends an instance id the shipped host never sends, so it proves the transaction helper and nothing about a player.",
       "reproduce": [
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['s4']['s4_granted']);[print(k,v['state']) for k,v in d['s4']['clauses'].items()]\"",
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['commit_seam']['static_state'], d['commit_seam']['mounted_caller_count'])\""
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print({k:v['state'] for k,v in d['native_states'].items()})\"",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['s4']['s4_granted'], {k:v['state'] for k,v in d['s4']['clauses'].items()})\""
       ],
       "status": "OPEN",
-      "title": "The only A3-authorized cache reward is proved by a fixture, and its reload checks fail",
-      "verified_by": "evidence.s4_clauses (exact sha + normal entry + independent process + authorized commit + negative replay) and the skipped step in run 41022547962"
+      "title": "No native proof anywhere on the current sha: the only paid receipt is a fixture that bypasses the host",
+      "verified_by": "evidence.s4_clauses over the recorded runs plus oracle.instance_identity's fixture check"
     },
     {
       "blocked_gate_links": 1,
       "blocker_id": "BLK-5",
-      "closure_probe": "Q-04 static verdict REFERENCE_CONSISTENT with the canonical body mounted",
+      "closure_probe": "Q-04 PASS with the canonical body mounted and every claimed sheet present",
       "closure_test": "tests/survival/balance/test_quality.py::QualityClosureTests::test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical",
       "evidence": {
         "canonical_avatar_production_refs": {
@@ -620,7 +723,7 @@
           "555940": 0
         },
         "mounted_player_scene": "game/characters/knight/knight.tscn",
-        "q04": "WRONG_MOUNTED_IDENTITY",
+        "q04": "FAIL",
         "visual_state": "NOT_TESTED"
       },
       "evidence_class": "PLAYER_FACING_VISUAL_DEFECT",
@@ -628,6 +731,7 @@
         "PROD-03",
         "Q-04"
       ],
+      "fix_state": "SOURCE_ABSENT",
       "gate_links": [
         {
           "blocker_id": "BLK-5",
@@ -640,9 +744,13 @@
           "owner": "A3"
         }
       ],
-      "minimal_safe_correction": "A6 imports the grade-0 idle sheet for ONE gender from the authorised archive, points the manifest at the installed file, and A0 mounts that scene. Grades 1-2 stay SOURCE_BLOCKED; no Knight/Swordsman substitution.",
+      "mapped_failing_checks": [
+        "PROD-03",
+        "Q-04"
+      ],
+      "minimal_safe_correction": "Two A6 edits, neither of which needs A0: import the grade-0 idle sheet for ONE gender from the authorised archive and point the manifest at the installed file; and drop the two fixture labels from acceptance_journeys.gd before that viewer is mounted. A0 then mounts the scene behind the existing avatar seam. Grades 1-2 stay SOURCE_BLOCKED; no Knight substitution.",
       "native_required_for_closure": false,
-      "not_proven_after_closure": "directional animation, armour swap and rendered frames (S5, human)",
+      "not_proven_after_closure": "4-direction animation, armour swap and rendered frames (S5, human)",
       "observation_count": 3,
       "observations": [
         {
@@ -664,21 +772,21 @@
           "title": "Every actionable control is either backed by an owner action or plainly unavailable"
         }
       ],
-      "open_condition": "quality Q-04 is not REFERENCE_CONSISTENT for the canonical mounted body",
+      "open_condition": "quality Q-04 is not PASS for the canonical mounted body",
       "owner": "A6 (import + adapter) with A0 (mount)",
       "owner_commands": [
-        "# A6 + A0: import the authorised grade-0 sheet, then mount the body and look at it",
+        "# A6 + A0: the acceptance is a rendered body, not a string",
         "godot --headless --path . --import",
-        "godot --path . --resolution 1280x720   # open the overworld and inspect the avatar",
-        "# rendered-frame inspection is S5 work: it cannot be closed from this repository"
+        "godot --path . --resolution 1280x720",
+        "# spawn from normal entry, then die, reload and respawn: the body must stay 555940/419402"
       ],
-      "player_impact": "The mounted body is game/characters/knight/knight.tscn. A6 is honest about the replacement: its manifest says BASE_ART_NOT_IMPORTED, runtime_status NOT_IMPORTED and idle_sheet \"\" for the authorised identities (Craftpix 555940 male, 419402 female), and the adapter returns SOURCE_BLOCKED instead of substituting another character. So nothing is faked - and nothing is visible either.",
+      "player_impact": "chapter1_overworld.gd still preloads game/characters/knight/knight.tscn and instantiates it as the player. A6 08ccb834 added a sprite pipeline, but its manifest still declares BASE_ART_NOT_IMPORTED with grade-0 idle_sheet empty for both 555940 and 419402, so there is nothing to mount. A player would control a Knight in a game whose locked identity is a bald human adventurer. A second A6 item rides along: acceptance_journeys.gd:241 and :340 hand fixture vocabulary to a Label, so mounting that viewer as-is would put 'READ-ONLY SCENARIO FIXTURE' on screen (PROD-04 WARN today; it becomes FAIL the moment the viewer is mounted).",
       "reproduce": [
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['static_verdict'])\"",
-        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/product.json'));print(d['player_surface_facts']['mounted_player_scene'])\""
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['status'])\"",
+        "python3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product/a6.avatar_art_manifest.json'));print(d['status']);print({g:c['armor_grades']['0']['idle_sheet'] for g,c in d['characters'].items()})\""
       ],
       "status": "OPEN",
-      "title": "The player body is still the Knight; the locked avatar art is not imported",
+      "title": "The player body is still the Knight; the D051 bald male/female art is still not imported",
       "verified_by": "quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)"
     }
   ],
@@ -689,111 +797,100 @@
     },
     {
       "class": "REGION_VS_INSTANCE_ID_CONFUSION",
-      "why_not": "Closed by owner source this round: A1 publishes both ids for the same object (instance_id si:r_ashen_crown:waystation_cache:01, interaction_node_id node_waystation_cache) and A3 binds the interaction node id, so the two vocabularies meet at a named seam."
+      "why_not": "Now a live blocker, not a naming quibble: A3 moved the canonical id to si:r_ashen_crown:waystation_cache:01 while A0 still vendors the alias node_waystation_cache, and A0's own host sends the si id. Recorded as BLK-2 with the exact unresolved request."
     }
   ],
   "closed": [
     {
+      "blocker_id": "BLK-ENGINE-API",
+      "closed_at": "A8 c8b4bc88",
+      "disposition": "CLOSED_IN_SOURCE_RECLASSIFIED_BLK-3",
+      "evidence": {
+        "engine_api": "ENGINE_API_CONSISTENT",
+        "historical_pin": "5ccf7b3f: 15",
+        "unknown_calls": 0
+      },
+      "residual": "the native contract/transition steps have never been green on this sha.",
+      "still_needs_owner": "A8 runs its own two native steps.",
+      "was": "A8's scenes call Vector2.from_array, which no Godot release exposes (15 sites)",
+      "why": "A8 added native_poi_vectors.gd with from_pair/from_int_pair and replaced every call. The oracle now reports ENGINE_API_CONSISTENT with 0 unknown calls over the pinned sources. It is not a native pass, so the residual moved to BLK-3 as SOURCE_FIXED_PENDING_NATIVE."
+    },
+    {
       "blocker_id": "BLK-MIRROR",
-      "closed_at": "A0 2faf005b, re-checked against A3 100b3406",
-      "disposition": "CLOSED_BY_OWNER_SOURCE",
+      "closed_at": "A3 c5e80922",
+      "disposition": "REOPENED_AS_BLK-2",
       "evidence": {
-        "divergent": [],
-        "mirror_rows": 36,
-        "q03": "PASS"
-      },
-      "residual": "the mirror is still a copy; drift can return on the next A3 edit, which is why Q-03 stays.",
-      "still_needs_owner": "nothing for this item.",
-      "was": "A0 shipped a stale copy of A3's source catalog (34/36 rows, 2 drifted)",
-      "why": "Q-03 now reports MATCH over all 36 rows: A0's mirrored data/survival/items/sources.json carries the adopted A1 binding for road_scrap and road_supplies. No quantity changed, because A1 and A3 already agreed on 3 and 2."
-    },
-    {
-      "blocker_id": "BLK-BINDING",
-      "closed_at": "A3 100b3406 built on c23292be; re-checked against A1 2f6edd3f",
-      "disposition": "CLOSED_BY_OWNER_SOURCE",
-      "evidence": {
-        "cooldown": 1800,
-        "rebind_adopted": 2,
-        "rebind_required": 2,
-        "yields_changed": false
-      },
-      "residual": "the reward still has nowhere to be paid - now BLK-1/BLK-4.",
-      "still_needs_owner": "nothing from A3 for this item.",
-      "was": "A1 authorizes the first-hour cache but A3 had not adopted the binding",
-      "why": "A3 adopted both instance rebinds and keeps A1's own yields (3 iron_scrap, 2 knowledge_spares) and the 1800 active-second window. The third binding is a live-source reuse, satisfied as authored. A7 requested no rate change at any point."
-    },
-    {
-      "blocker_id": "BLK-INSTANCE-ID",
-      "closed_at": "A1 2f6edd3f, A3 100b3406",
-      "disposition": "CLOSED_BY_OWNER_SOURCE",
-      "evidence": {
-        "a1_instance": "si:r_ashen_crown:waystation_cache:01",
-        "a1_interaction_node": "node_waystation_cache",
-        "a3_instance": "node_waystation_cache"
-      },
-      "residual": "A1 still declares production_native_playable=false for the corridor (BLK-1).",
-      "still_needs_owner": "nothing for the id contract.",
-      "was": "A1's physical instance id (si:r_ashen_crown:waystation_cache:01) and A3's node_waystation_cache might not meet",
-      "why": "A1 publishes both ids for one object - instance_id for the physical body and interaction_node_id for the interaction - and A3 binds the interaction node id. The vocabularies meet at a named seam instead of being silently aliased, which was the actual risk."
-    },
-    {
-      "blocker_id": "BLK-DEBUG-UI",
-      "closed_at": "round 3, re-verified at A6 8bc0af5a",
-      "disposition": "CLOSED_NOT_PLAYER_FACING_AT_THIS_PIN",
-      "evidence": {
-        "hud_jobs": [
-          "a0.hud=health",
-          "a0.overworld_hud=provisions",
-          "a6=context/core/feedback"
+        "divergent": [
+          "road_notes",
+          "road_scrap",
+          "road_supplies"
         ],
-        "survival_ui_mounted": false
+        "identical_rows": 33,
+        "q03": "FAIL"
       },
-      "residual": "PROD-04 keeps its file-level FAIL as hygiene, not as a player blocker.",
-      "still_needs_owner": "A6 keeps the panel opt-in when it mounts.",
-      "was": "The only survival UI is developer-facing and duplicates A0's HUD",
-      "why": "No production scene mounts the survival UI, the developer vocabulary sits behind _developer_diagnostics (default false), and the three HUD scripts own disjoint jobs."
+      "residual": "until A0 re-vendors, the cache action cannot be authorized.",
+      "still_needs_owner": "A0 re-vendors A3's catalog bytes.",
+      "was": "A0 shipped a stale copy of A3's source catalog (Q-03 drift)",
+      "why": "Round 5 closed this at A3 100b3406 where both copies matched. A3's V4 canonicalised the instance id to si:*, so A0's copy drifted again in exactly the three waystation rows - and this time the drift breaks the interaction. Reopened as BLK-2 rather than logged as a repeated finding."
     }
   ],
   "corrections": [
     {
-      "fix_in_this_round": "the closure is now expressed as a conditional and computed by oracle.knowledge_gate, not asserted.",
-      "id": "CORR-6",
-      "round4_claim": "The first-research bootstrap cycle is CLOSED_MEASURED_FALSE: 2 spares per claim, 3 needed, so two claims reach it.",
-      "status": "TRUE ONLY ONCE THE CACHE IS MOUNTED",
-      "what_is_actually_true": "Walking the catalog: every recipe that yields knowledge_spares (make_spares, study_predator_jaw, study_axe_insignia) requires a research station, and the research station costs a research_kit that needs 3 spares. The only non-circular seed is road_supplies from the A1 cache, which is mounted nowhere. At this pin the cycle is real.",
-      "what_remains_true": "with the cache mounted, two claims (one 1800 s restock) do reach the kit, as round 4 said."
+      "fix_in_this_round": "classified SOURCE_FIXED_PENDING_NATIVE by comparing the pin, not by re-running the old claim.",
+      "id": "CORR-9",
+      "round4_claim": "BLK-2: A8 has 15 Vector2.from_array source errors and the scenes cannot position anything.",
+      "status": "STALE AT THE PIN, FIXED AT THE LIVE HEAD",
+      "what_is_actually_true": "True of A8 5ccf7b3f, which round 5 pinned. A8 c8b4bc88 replaced all of them; the pinned sources now contain the string only inside a comment explaining why the constructor does not exist.",
+      "what_remains_true": "no native evidence exists for the fixed code, so nothing is S4."
     },
     {
-      "fix_in_this_round": "entry_content now reads production paths only and reports the excluded test references separately.",
-      "id": "CORR-7",
-      "round4_claim": "Claim C (content mounted) reads every pinned A0 byte.",
-      "status": "WOULD HAVE PRODUCED A FALSE POSITIVE",
-      "what_is_actually_true": "Round 5 pins A0's own test harness, which names node_waystation_cache. Counting test references as a production mount flipped claim C to SOURCE_PRESENT in this round's first run - the exact defect the claim exists to catch, produced by A7's own pinning change.",
-      "what_remains_true": "no production A0 file names the instance; the mount is still absent."
+      "fix_in_this_round": "claim C gained MOUNTED_BY_DEFAULT / SOURCE_PRESENT_BEHIND_DISABLED_FLAG / ABSENT.",
+      "id": "CORR-10",
+      "round4_claim": "Claim C: the A1 cache and A8 site are in no world a player can reach (ABSENT).",
+      "status": "WRONG AT THE LIVE HEAD, RIGHT AT THE OLD PIN",
+      "what_is_actually_true": "A0 9269739e mounts A1's real slice geometry and a five-point interaction host. The content is in production code. It is also behind a ProjectSettings key absent from project.godot, so the player still cannot reach it.",
+      "what_remains_true": "no normal-input journey reaches the cache today."
     },
     {
-      "fix_in_this_round": "BLK-5 states the honest condition and Q-04 keeps grading the real mount.",
-      "id": "CORR-8",
-      "round4_claim": "A6 'points the manifest at an invented sheet' was the central avatar risk.",
-      "status": "NOT WHAT THE BYTES SAY",
-      "what_is_actually_true": "A6 declares BASE_ART_NOT_IMPORTED, idle_sheet \"\" and runtime_status NOT_IMPORTED, and its adapter returns SOURCE_BLOCKED. It is not spoofing anything; the defect is that the locked identity is not imported at all.",
-      "what_remains_true": "the mounted body is still the Knight, so a player sees the wrong character."
+      "fix_in_this_round": "oracle.instance_identity replays the shipped request against the loaded catalog.",
+      "id": "CORR-11",
+      "round4_claim": "The A1/A3 instance-id seam is closed: both ids are published for one object.",
+      "status": "TRUE AS NAMING, FALSE AS RUNTIME",
+      "what_is_actually_true": "A3 publishes both, but only the si:* id is in the binding table, and A0's host sends the si:* id while A0's vendored table still keys the alias. Exact-string lookup therefore fails. The seam exists and does not connect.",
+      "what_remains_true": "no quantity, price or cooldown is wrong; this is identity, not balance."
+    },
+    {
+      "fix_in_this_round": "the oracle compares fixture instance ids against the host's request set.",
+      "id": "CORR-12",
+      "round4_claim": "The A0 authority fixture proves an A3-authorized reward commits.",
+      "status": "IT PROVES THE TRANSACTION HELPER, NOT THE ROUTE",
+      "what_is_actually_true": "The fixture hardcodes instance_id node_waystation_cache, an id the shipped host never sends, and funds its own inventory and clock. It cannot observe the mismatch it hides.",
+      "what_remains_true": "the A3 transaction machinery does commit and does refuse replays."
+    },
+    {
+      "fix_in_this_round": "PROD-04 now splits display-sink literals from unbound ones, reports FAIL only when the surface is mounted and WARN when it is latent, and maps to traceability rather than a closed bucket. 'schema' is off the token list.",
+      "id": "CORR-13",
+      "round4_claim": "PROD-04 can FAIL while the same payload records it as closed - 'a broad FAIL kept as a hygiene warning'.",
+      "status": "A CHECK CANNOT BE BOTH FAILING AND CLOSED, AND TWO OF ITS HITS WERE NOT TEXT AT ALL",
+      "what_is_actually_true": "Two defects, both in A7's own tooling. (1) 'schema' sat in the debug-vocabulary list, so a wire key (intent.get('schema'), 'schema': INTENT_SCHEMA) was counted as player prose. (2) Every string literal in an A6 file counted as player-visible, including logs and test summaries, so 107 hits hid the 2 that are actually handed to a Label. PROD-04 also mapped to the closed bucket, which silently dropped a red check.",
+      "what_remains_true": "The two real hits are real: game/survival/ui/acceptance_journeys.gd:241 shows 'A6 READ-ONLY SCENARIO FIXTURE - NOT LIVE GAMEPLAY' on a Label, and :340 shows 'Fixture progress only ...'. They are latent, not live, because no shipped scene mounts A6's survival UI."
     }
   ],
   "counts": {
-    "closed_blockers": 4,
+    "closed_blockers": 0,
+    "closed_earlier_claims": 2,
     "closed_or_traceability": 6,
-    "corrections_recorded": 3,
+    "corrections_recorded": 5,
     "player_facing_blockers": 5,
     "product_checks": 7,
     "quality_checks": 7,
-    "raw_observations": 55,
+    "raw_observations": 54,
     "traceability_only": 6
   },
-  "markdown": "# Player-facing blockers (A7, consolidated v5)\n\n_Generated from `data/survival/balance/results/blockers.json` by `tools/survival/balance/run_analysis.py`. Do not edit by hand._\n\n**55 observations -> 5 blockers (4 closed, 3 A7 self-corrections, 6 observations traceability only).** Proof levels are the gate's `S0`\u2013`S5`. Source text can reach `S3`; `S4` requires a green native run on the pinned commit, which no owner has yet. Nothing below was executed by A7.\n\n| # | Blocker | Owner | Class | Closure probe |\n|---|---|---|---|---|\n| BLK-1 | The A1 cache and A8 site are placed in no world a player can reach | A0 (mount) with A1 (cell + instance identity) and A8 (scene) | MISSING_PRODUCTION_MOUNT | `gate claim C is SOURCE_PRESENT from a production path and both chains lose their L2/L3 blocker` |\n| BLK-2 | A8's scene scripts call Vector2.from_array, which no Godot release exposes | A8 | NATIVE_RUNTIME_FAILURE | `oracle engine_api unknown_call_count is 0 and A8's contract step passes on the pinned sha` |\n| BLK-3 | The float-precision fix is in A0's tree but no native run on the pinned sha has exercised it | A0 | SOURCE_OF_TRUTH_DEFECT | `oracle save_fidelity is ROUND_TRIP_EXACT and a0_save_precision is VERIFIED on the pinned sha` |\n| BLK-4 | The only A3-authorized cache reward is proved by a fixture, and its reload checks fail | A0 (player-input path) with A3 (event identity) | FIXTURE_ONLY_SUCCESS | `gate s4_granted is true: all five clauses hold on the pinned sha` |\n| BLK-5 | The player body is still the Knight; the locked avatar art is not imported | A6 (import + adapter) with A0 (mount) | PLAYER_FACING_VISUAL_DEFECT | `Q-04 static verdict REFERENCE_CONSISTENT with the canonical body mounted` |\n\n## BLK-1 \u2014 The A1 cache and A8 site are placed in no world a player can reach\n\n**Player impact.** The menu route into A0's overworld works in source, and A1's corridor authors exactly four physical bodies, but none of them is placed in that world: no production A0 file names poi_crown_waystation, node_waystation_cache or any A8 site scene. The consequence is sharper than 'nothing to loot' - knowledge_spares has exactly one non-circular source in the whole catalog (that cache), because every spare recipe needs a research station, so a player can harvest stone and wood all hour and still never begin research.\n\n**Owner.** A0 (mount) with A1 (cell + instance identity) and A8 (scene)  \n**Evidence class.** MISSING_PRODUCTION_MOUNT  \n**Verified by.** gate claim C over production paths only (tests/.github/tools excluded and reported separately), plus A1's own corridor status SOURCE_AND_ISOLATED_NATIVE_FIXTURE_SCOPE_NOT_PRODUCTION and production_native_playable=false, plus oracle.knowledge_gate  \n**Native run required to close.** False\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0, on the host with the Godot 4.7 binary and a display (xvfb is fine):\ngodot --headless --path . --user-data-dir artifacts/ud_entry --import\nxvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --user-data-dir artifacts/ud_entry \\\n  --script res://tests/survival_normal_entry_home_restart_test.gd\n# expected once mounted: the log names node_waystation_cache as present in the world\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['entry_content']['a1_instance_references_in_a0_surface'], d['entry_content']['mounted'])\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));k=d['knowledge_gate'];print(k['verdict'], k['non_circular_spare_recipes'], list(k['spare_loot_sources']))\"\n```\n```bash\ngit show refs/a1:data/survival/world/corridor/crown_roadside.corridor.v1.json | python3 -c \"import json,sys;d=json.load(sys.stdin);print(d['status'], d['production_native_playable'])\"\n```\n\n**Minimal safe correction.** A0 places the existing A1 instance node_waystation_cache at poi_crown_waystation inside the one production overworld the route already reaches. No new system, no data edit, no rate change: A1 supplies the cell and identity, A3 already prices the reward.\n\n**Test that proves closure.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk1_needs_a_production_path_not_a_test_harness`\n\n**Still NOT_TESTED after closure.** that the mounted node boots, is walkable and is interactable (native run)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L1_ENTRY | `S3_PRODUCTION_SEAM` | QUEUED | `S3_PRODUCTION_SEAM` | route exists in source; native run is QUEUED |\n| a8_quarry | L2_ROUTE | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | walkable inside its own harness scene only; not placed in the reachable world and it declares physical_instance_id = null |\n| a8_quarry | L3_INTERACTION | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | the interaction only runs inside a test-harness scene |\n| waystation_cache | L1_ENTRY | `S3_PRODUCTION_SEAM` | QUEUED | `S3_PRODUCTION_SEAM` | the route exists in source, but the native run that would prove it executes is QUEUED |\n| waystation_cache | L2_ROUTE | `S1_AUTHORED_ONLY` | NOT_TESTED | `S1_AUTHORED_ONLY` | the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet |\n| waystation_cache | L3_INTERACTION | `S1_AUTHORED_ONLY` | NOT_TESTED | `S1_AUTHORED_ONLY` | the action exists only in authored data; no mounted scene places the cache node |\n\n**Evidence.**\n\n- `claim_C` = `ABSENT`\n- `claims_needed_for_first_station` = `2`\n- `content_mounted` = `False`\n- `knowledge_gate` = `SEEDED_ONLY_BY_LOOT`\n- `non_circular_spare_recipes` = `[]`\n- `non_production_refs_excluded` = `['a0.survival_waystation_authority_test.gd', 'a0.survival_waystation_input_restart_test.gd']`\n- `production_a8_refs` = `[]`\n- `production_instance_refs` = `[]`\n- `spare_loot_sources` = `['road_supplies']`\n\n## BLK-2 \u2014 A8's scene scripts call Vector2.from_array, which no Godot release exposes\n\n**Player impact.** Every A8 scene position, portal, socket and interior spawn is read through Vector2.from_array(...) - 15 live call sites across native_poi_site.gd, native_poi_shell.gd and poi_pilot.gd. Godot's Vector2 has exactly one static method (from_angle), so these calls cannot resolve; the scenes cannot position anything, and A8's own contract step fails while the import-only step above it passes and uploads no artifact.\n\n**Owner.** A8  \n**Evidence class.** NATIVE_RUNTIME_FAILURE  \n**Verified by.** oracle.engine_api against the engine's own class documentation, plus A8 run 41019689728 at 2d7f10d3: import succeeded, 'Run native physics, intent and persistence contracts' failed, no artifacts produced  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A8, same engine: the audit is the oracle, the native step is the proof\ngodot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd\ngodot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd\n# both must exit 0 and upload .artifacts/a8-world-content/ on the pinned sha\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));print(d['engine_api']['unknown_call_count']);[print(r['file'],r['line'],r['call']) for r in d['engine_api']['unknown_calls'][:5]]\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/engine_api.v1.json'));print(sorted(d['static_methods']['Vector2']))\"\n```\n\n**Minimal safe correction.** A8 replaces each call with the array form that exists - Vector2(arr[0], arr[1]) on a two-element array, or Vector2i(...) where the value is a cell. Mechanical, 15 sites, no design change.\n\n**Test that proves closure.** `tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion`\n\n**Still NOT_TESTED after closure.** that the repaired scenes reach the player's world (BLK-1)\n\n**Evidence.**\n\n- `a8_last_run` = `{'run_id': 41015986080, 'workflow': 'a8-world-content-native.yml', 'head_sha': 'f9ed82b91e8d1eed52f109247ae511c4f862ffd1', 'conclusion': 'failure', 'failed_checks': [], 'failed_steps': ['Run native physics, intent and persistence contracts']}`\n- `audited_types` = `['Color', 'JSON', 'Vector2', 'Vector2i', 'Vector3']`\n- `sample` = `[{'file': 'a8.native_poi_shell.gd', 'line': 62, 'call': 'Vector2.from_array', 'is_engine_static': False}, {'file': 'a8.native_poi_shell.gd', 'line': 66, 'call': 'Vector2.from_array', 'is_engine_static': False}, {'file': 'a8.native_poi_shell.gd', 'line': 111, 'call': 'Vector2.from_array', 'is_engine_static': False}, {'file': 'a8.native_poi_site.gd', 'line': 107, 'call': 'Vector2.from_array', 'is_engine_static': False}, {'file': 'a8.native_poi_site.gd', 'line': 111, 'call': 'Vector2.from_array', 'is_engine_static': False}]`\n- `static_calls_checked` = `42`\n- `unknown_engine_calls` = `15`\n\n## BLK-3 \u2014 The float-precision fix is in A0's tree but no native run on the pinned sha has exercised it\n\n**Player impact.** At this pin the authoritative writer is correct - JSON.stringify(snapshot, \"\\t\", false, true) at save_service.gd:2459 - so the oracle now reads ROUND_TRIP_EXACT. But the only native word on the defect is two failed runs on the older tree, where whole-document equality broke while every targeted integer comparison passed, and the workflow that proves the fix triggers only on A0's own branch. Until a green a0-save-precision run is cited on the pinned sha, a player's profile still has no evidence that it reloads exactly as written.\n\n**Owner.** A0  \n**Evidence class.** SOURCE_OF_TRUTH_DEFECT  \n**Verified by.** oracle.save_fidelity over the pinned writer (ROUND_TRIP_EXACT, one authoritative writer) plus the failure labels recorded verbatim from 41018366655 and 41022547962  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0: the workflow only triggers on A0's branch, so dispatch or push it there\ngodot --headless --path . --user-data-dir artifacts/ud_precision --import\ngodot --headless --path . --user-data-dir artifacts/ud_precision \\\n  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test\ngodot --headless --path . --user-data-dir artifacts/ud_precision \\\n  --script res://tests/survival_save_precision_test.gd -- --survival-save-fault-test --restart\n# both logs must print 'A0 SAVE PRECISION PASSED'\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'));f=d['save_fidelity'];print(f['verdict'], f['authoritative_writer_count']);[print(w['file'],w['line'],w['full_precision']) for w in f['writers'] if w['authoritative']]\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['native_states']['a0_save_precision']['state'])\"\n```\n\n**Minimal safe correction.** A0 dispatches a0-save-precision on the pinned sha (its trigger is branch-locked to A0's own branch) and cites the green run. No code change is needed any more; the fix is already in the tree.\n\n**Test that proves closure.** `tests/survival/balance/test_oracle.py::SaveFidelityOracleTests::test_whole_document_reload_is_impossible_to_prove_without_full_precision`\n\n**Still NOT_TESTED after closure.** durability across a real OS restart or power loss (a simulated boundary is not that)\n\n**Evidence.**\n\n- `authoritative_writers` = `1`\n- `failing_native_labels` = `[{'run_id': 41018366655, 'head_sha': 'a3d0255ab09ba59ec5f9212243619f69d85d2948', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022220148, 'head_sha': '122294f2237c1836d6f04561e090fe6aa6c6c0cf', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022547918, 'head_sha': 'f61afa23132ec5890834fa2cd0476d0edc8a51b1', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022975300, 'head_sha': '594730ea15a3e6db8d620fb89aef94e97fd6db11', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022220324, 'head_sha': '122294f2237c1836d6f04561e090fe6aa6c6c0cf', 'failed': ['same-process disk reload preserves custody and rights']}, {'run_id': 41022547962, 'head_sha': 'f61afa23132ec5890834fa2cd0476d0edc8a51b1', 'failed': ['interrupted candidate leaves disk unchanged', 'same-process disk reload preserves custody and rights']}, {'run_id': 41022975283, 'head_sha': '594730ea15a3e6db8d620fb89aef94e97fd6db11', 'failed': ['interrupted candidate leaves disk unchanged', 'same-process disk reload preserves custody and rights']}]`\n- `formula` = `decimals = max(1, 14 - floor(log10(abs(value)))) when full_precision is false`\n- `lossy_writers` = `[]`\n- `save_precision_native_state` = `QUEUED`\n- `verdict` = `ROUND_TRIP_EXACT`\n\n## BLK-4 \u2014 The only A3-authorized cache reward is proved by a fixture, and its reload checks fail\n\n**Player impact.** The single run that has ever paid 3 iron_scrap + 2 knowledge_spares is survival_waystation_authority_test.gd, whose own header says it 'does not prove player input, physical reach, production mount or OS restart' and which funds its own inventory and advances its own clock. It fails two of its own whole-snapshot checks (41022547962). The player-input half of the same workflow was skipped, so real input has never produced a receipt, and the S4 conjunction is 0 of 5 clauses at this pin.\n\n**Owner.** A0 (player-input path) with A3 (event identity)  \n**Evidence class.** FIXTURE_ONLY_SUCCESS  \n**Verified by.** evidence.s4_clauses (exact sha + normal entry + independent process + authorized commit + negative replay) and the skipped step in run 41022547962  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0: the fixture half is the only thing that has ever produced a receipt\ngodot --headless --path . --user-data-dir artifacts/ud_authority \\\n  --script res://tests/survival_waystation_authority_test.gd -- --survival-save-fault-test\n# the player-input half has never run; this is the command that would prove it\nxvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\\n  --script res://tests/survival_waystation_input_restart_test.gd\nxvfb-run -a godot --path . --user-data-dir artifacts/ud_waystation --resolution 960x540 \\\n  --script res://tests/survival_waystation_input_restart_test.gd -- --restart\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['s4']['s4_granted']);[print(k,v['state']) for k,v in d['s4']['clauses'].items()]\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['commit_seam']['static_state'], d['commit_seam']['mounted_caller_count'])\"\n```\n\n**Minimal safe correction.** A0 makes the player-input half run and pass on the pinned sha - the same event earning the same receipt through real input, with the second process refusing a replay. No new reward, no new key.\n\n**Test that proves closure.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses`\n\n**Still NOT_TESTED after closure.** that the reward is useful (BLK-1) or repeatable by a human (S5)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L5_COMMIT | `S2_SCENE_FIXTURE` | QUEUED | `S2_SCENE_FIXTURE` | a fake authority commits the reward; SaveService is never called on this path |\n| a8_quarry | L6_RELOAD | `S0_ABSENT` | QUEUED | `S0_ABSENT` | site state lives only in fixture memory, so reload cannot preserve anything |\n| a8_quarry | L7_NO_DUPLICATE | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | claims are deduplicated inside the fixture only |\n| waystation_cache | L5_COMMIT | `S3_PRODUCTION_SEAM` | QUEUED | `S3_PRODUCTION_SEAM` | survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers) |\n| waystation_cache | L6_RELOAD | `S3_PRODUCTION_SEAM` | QUEUED | `S3_PRODUCTION_SEAM` | a real two-process reload test exists in source, but its native run is QUEUED |\n| waystation_cache | L7_NO_DUPLICATE | `S3_PRODUCTION_SEAM` | QUEUED | `S3_PRODUCTION_SEAM` | the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay |\n\n**Evidence.**\n\n- `mounted_caller_count` = `8`\n- `native_states` = `{'a0_normal_entry_home': 'QUEUED', 'a0_second_process_restart': 'QUEUED', 'a0_waystation_player_input': 'QUEUED', 'a0_replay_negative': 'QUEUED', 'a3_authority_fixture': 'QUEUED', 'a0_save_precision': 'QUEUED', 'a8_native_poi_contract': 'STALE_HEAD', 'a0_runtime_validation': 'QUEUED'}`\n- `s4_clauses` = `{'C1_exact_source_identity': 'NOT_HOLDS', 'C2_normal_entry': 'NOT_HOLDS', 'C3_independent_process': 'NOT_HOLDS', 'C4_authorised_commit': 'NOT_HOLDS', 'C5_negative_replay': 'NOT_HOLDS'}`\n- `s4_granted` = `False`\n- `static_seam_state` = `MOUNTED_SURVIVAL_SYSTEM_CALLER`\n\n## BLK-5 \u2014 The player body is still the Knight; the locked avatar art is not imported\n\n**Player impact.** The mounted body is game/characters/knight/knight.tscn. A6 is honest about the replacement: its manifest says BASE_ART_NOT_IMPORTED, runtime_status NOT_IMPORTED and idle_sheet \"\" for the authorised identities (Craftpix 555940 male, 419402 female), and the adapter returns SOURCE_BLOCKED instead of substituting another character. So nothing is faked - and nothing is visible either.\n\n**Owner.** A6 (import + adapter) with A0 (mount)  \n**Evidence class.** PLAYER_FACING_VISUAL_DEFECT  \n**Verified by.** quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)  \n**Native run required to close.** False\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A6 + A0: import the authorised grade-0 sheet, then mount the body and look at it\ngodot --headless --path . --import\ngodot --path . --resolution 1280x720   # open the overworld and inspect the avatar\n# rendered-frame inspection is S5 work: it cannot be closed from this repository\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['static_verdict'])\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/product.json'));print(d['player_surface_facts']['mounted_player_scene'])\"\n```\n\n**Minimal safe correction.** A6 imports the grade-0 idle sheet for ONE gender from the authorised archive, points the manifest at the installed file, and A0 mounts that scene. Grades 1-2 stay SOURCE_BLOCKED; no Knight/Swordsman substitution.\n\n**Test that proves closure.** `tests/survival/balance/test_quality.py::QualityClosureTests::test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical`\n\n**Still NOT_TESTED after closure.** directional animation, armour swap and rendered frames (S5, human)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L4_AUTHORIZATION | `S0_ABSENT` | NOT_TESTED | `S0_ABSENT` | A8's two route actions have an item id but no authorized quantity, so neither can be paid |\n\n**Evidence.**\n\n- `canonical_avatar_production_refs` = `{'555940': 0, '419402': 0, '180537': 0}`\n- `mounted_player_scene` = `game/characters/knight/knight.tscn`\n- `q04` = `WRONG_MOUNTED_IDENTITY`\n- `visual_state` = `NOT_TESTED`\n\n## Closed, kept for traceability\n\n### BLK-MIRROR \u2014 was: _A0 shipped a stale copy of A3's source catalog (34/36 rows, 2 drifted)_\n\n**Disposition.** `CLOSED_BY_OWNER_SOURCE` at A0 2faf005b, re-checked against A3 100b3406\n\n**Why.** Q-03 now reports MATCH over all 36 rows: A0's mirrored data/survival/items/sources.json carries the adopted A1 binding for road_scrap and road_supplies. No quantity changed, because A1 and A3 already agreed on 3 and 2.\n\n**Residual.** the mirror is still a copy; drift can return on the next A3 edit, which is why Q-03 stays.\n\n**Still with the owner.** nothing for this item.\n\n**Evidence.**\n\n- `divergent` = `[]`\n- `mirror_rows` = `36`\n- `q03` = `PASS`\n\n### BLK-BINDING \u2014 was: _A1 authorizes the first-hour cache but A3 had not adopted the binding_\n\n**Disposition.** `CLOSED_BY_OWNER_SOURCE` at A3 100b3406 built on c23292be; re-checked against A1 2f6edd3f\n\n**Why.** A3 adopted both instance rebinds and keeps A1's own yields (3 iron_scrap, 2 knowledge_spares) and the 1800 active-second window. The third binding is a live-source reuse, satisfied as authored. A7 requested no rate change at any point.\n\n**Residual.** the reward still has nowhere to be paid - now BLK-1/BLK-4.\n\n**Still with the owner.** nothing from A3 for this item.\n\n**Evidence.**\n\n- `cooldown` = `1800`\n- `rebind_adopted` = `2`\n- `rebind_required` = `2`\n- `yields_changed` = `False`\n\n### BLK-INSTANCE-ID \u2014 was: _A1's physical instance id (si:r_ashen_crown:waystation_cache:01) and A3's node_waystation_cache might not meet_\n\n**Disposition.** `CLOSED_BY_OWNER_SOURCE` at A1 2f6edd3f, A3 100b3406\n\n**Why.** A1 publishes both ids for one object - instance_id for the physical body and interaction_node_id for the interaction - and A3 binds the interaction node id. The vocabularies meet at a named seam instead of being silently aliased, which was the actual risk.\n\n**Residual.** A1 still declares production_native_playable=false for the corridor (BLK-1).\n\n**Still with the owner.** nothing for the id contract.\n\n**Evidence.**\n\n- `a1_instance` = `si:r_ashen_crown:waystation_cache:01`\n- `a1_interaction_node` = `node_waystation_cache`\n- `a3_instance` = `node_waystation_cache`\n\n### BLK-DEBUG-UI \u2014 was: _The only survival UI is developer-facing and duplicates A0's HUD_\n\n**Disposition.** `CLOSED_NOT_PLAYER_FACING_AT_THIS_PIN` at round 3, re-verified at A6 8bc0af5a\n\n**Why.** No production scene mounts the survival UI, the developer vocabulary sits behind _developer_diagnostics (default false), and the three HUD scripts own disjoint jobs.\n\n**Residual.** PROD-04 keeps its file-level FAIL as hygiene, not as a player blocker.\n\n**Still with the owner.** A6 keeps the panel opt-in when it mounts.\n\n**Evidence.**\n\n- `hud_jobs` = `['a0.hud=health', 'a0.overworld_hud=provisions', 'a6=context/core/feedback']`\n- `survival_ui_mounted` = `False`\n\n## A7 self-corrections\n\n### CORR-6 \u2014 `TRUE ONLY ONCE THE CACHE IS MOUNTED`\n\n**A7's earlier claim.** The first-research bootstrap cycle is CLOSED_MEASURED_FALSE: 2 spares per claim, 3 needed, so two claims reach it.\n\n**What is actually true.** Walking the catalog: every recipe that yields knowledge_spares (make_spares, study_predator_jaw, study_axe_insignia) requires a research station, and the research station costs a research_kit that needs 3 spares. The only non-circular seed is road_supplies from the A1 cache, which is mounted nowhere. At this pin the cycle is real.\n\n**What remains true.** with the cache mounted, two claims (one 1800 s restock) do reach the kit, as round 4 said.\n\n**Fix in this round.** the closure is now expressed as a conditional and computed by oracle.knowledge_gate, not asserted.\n\n### CORR-7 \u2014 `WOULD HAVE PRODUCED A FALSE POSITIVE`\n\n**A7's earlier claim.** Claim C (content mounted) reads every pinned A0 byte.\n\n**What is actually true.** Round 5 pins A0's own test harness, which names node_waystation_cache. Counting test references as a production mount flipped claim C to SOURCE_PRESENT in this round's first run - the exact defect the claim exists to catch, produced by A7's own pinning change.\n\n**What remains true.** no production A0 file names the instance; the mount is still absent.\n\n**Fix in this round.** entry_content now reads production paths only and reports the excluded test references separately.\n\n### CORR-8 \u2014 `NOT WHAT THE BYTES SAY`\n\n**A7's earlier claim.** A6 'points the manifest at an invented sheet' was the central avatar risk.\n\n**What is actually true.** A6 declares BASE_ART_NOT_IMPORTED, idle_sheet \"\" and runtime_status NOT_IMPORTED, and its adapter returns SOURCE_BLOCKED. It is not spoofing anything; the defect is that the locked identity is not imported at all.\n\n**What remains true.** the mounted body is still the Knight, so a player sees the wrong character.\n\n**Fix in this round.** BLK-5 states the honest condition and Q-04 keeps grading the real mount.\n",
-  "read_this_first": "Five player-facing blockers, each with one owner, one smallest safe correction and a test that flips FAIL to PASS. A blocker closes only when the source condition holds AND the native evidence it needs is VERIFIED on the pinned sha. Three earlier A7 claims are corrected rather than dropped.",
-  "reduction": "55 observations -> 5 blockers (4 closed, 3 A7 self-corrections, 6 observations traceability only)",
-  "schema": "soh.balance.blockers.v5",
+  "markdown": "# Player-facing blockers (A7, consolidated v6)\n\n_Generated from `data/survival/balance/results/blockers.json` by `tools/survival/balance/run_analysis.py`. Do not edit by hand._\n\n**54 observations -> 5 blockers (2 earlier claims closed, 5 A7 self-corrections, 6 observations traceability only).** Proof levels are the gate's `S0`\u2013`S5`. Source text can reach `S3`; `S4` requires a green native run on the pinned commit, which no owner has yet. Nothing below was executed by A7.\n\n| # | Blocker | Owner | Class | Closure probe |\n|---|---|---|---|---|\n| BLK-1 | The only Waystation in production code is a candidate behind a project setting the shipped game does not enable | A0 | MISSING_PRODUCTION_MOUNT | `claim C is MOUNTED_BY_DEFAULT and guard.enabled_by_default is true` |\n| BLK-2 | The Waystation cache cannot resolve its own reward: A0 sends the si: instance id, A0's vendored catalog still holds the alias | A0 (re-vendor) with A3 (canonical id) | CROSS_OWNER_IDENTITY_MISMATCH | `oracle.instance_identity is IDENTITY_CONSISTENT and no host request is unresolved` |\n| BLK-3 | A8's 15 invented Vector2.from_array calls are fixed in source, and still unproven natively | A8 | SOURCE_FIXED_NATIVE_PENDING | `a8_native_poi_contract is VERIFIED on the pinned sha` |\n| BLK-4 | No native proof anywhere on the current sha: the only paid receipt is a fixture that bypasses the host | A0 | FIXTURE_ONLY_SUCCESS | `gate s4_granted is true: all five clauses hold on the pinned sha` |\n| BLK-5 | The player body is still the Knight; the D051 bald male/female art is still not imported | A6 (import + adapter) with A0 (mount) | PLAYER_FACING_VISUAL_DEFECT | `Q-04 PASS with the canonical body mounted and every claimed sheet present` |\n\n## BLK-1 \u2014 The only Waystation in production code is a candidate behind a project setting the shipped game does not enable\n\n**Player impact.** A0 9269739e now builds a real physical host: five interaction points with stand cells, a range check, and A1's actual slice geometry mounted from byte-identical A1 939720d5 bytes. But the whole branch hangs on ProjectSettings survival/a0_waystation_candidate, and the shipped project.godot does not contain that key. Godot's fallback is false, so a normal player never enters the branch: the first useful reward in the game is unreachable by ordinary play even though the code exists.\n\n**Owner.** A0  \n**Evidence class.** MISSING_PRODUCTION_MOUNT  \n**Verified by.** gate entry_content.guard, read from the pinned project.godot and chapter1_overworld.gd, plus the byte comparison of A0's vendored slice against A1's current slice  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0: prove the guarded branch boots at all, on the pinned sha\ngodot --headless --path . --user-data-dir artifacts/ud_entry --import\nxvfb-run -a godot --path . --resolution 1280x720 --script res://tests/survival_normal_entry_home_restart_test.gd\n# and prove the CANDIDATE branch specifically (currently never executed by CI).\n# Godot 4 has no CLI switch for a project setting, so the branch is proved one\n# of two ways: put the key in project.godot (the fix) and run the same script, or\n# run A7's probe with --force-branch, which sets it in memory and labels the run\n# SOURCE_PRESENT_BEHIND_GUARD rather than acceptance:\nxvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['entry_claims']['C_content_is_mounted']['state'], d['entry_content']['guard'])\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product_manifest.json'));print([f['sha256'][:12] for f in d['files'] if f['path'].endswith('poi_crown_waystation.slice.json')])\"\n```\n\n**Minimal safe correction.** A0 decides the guard's default. Either set survival/a0_waystation_candidate=true in project.godot once the interaction is proven, or mount the host unconditionally and keep the flag for the annex geometry only. One line, no new system.\n\n**Test that proves closure.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk1_needs_a_production_path_not_a_test_harness`\n\n**Still NOT_TESTED after closure.** that the branch boots and the points are interactable (native run)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L1_ENTRY | `S3_PRODUCTION_SEAM` | STALE_HEAD | `S3_PRODUCTION_SEAM` | route exists in source; native run is STALE_HEAD |\n| a8_quarry | L2_ROUTE | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | walkable inside its own harness scene only; not placed in the reachable world and it declares physical_instance_id = null |\n| a8_quarry | L3_INTERACTION | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | the interaction only runs inside a test-harness scene |\n| waystation_cache | L1_ENTRY | `S3_PRODUCTION_SEAM` | STALE_HEAD | `S3_PRODUCTION_SEAM` | the route exists in source, but the native run that would prove it executes is STALE_HEAD |\n| waystation_cache | L2_ROUTE | `S1_AUTHORED_ONLY` | NOT_TESTED | `S1_AUTHORED_ONLY` | the host is behind `survival/a0_waystation_candidate`, which the shipped project.godot does not set, so a normal player never takes that branch |\n\n**Evidence.**\n\n- `claim_C` = `SOURCE_PRESENT_BEHIND_DISABLED_FLAG`\n- `claims_needed_for_first_station` = `2`\n- `guard` = `{'setting': 'survival/a0_waystation_candidate', 'guarded': True, 'declared_in_project': False, 'enabled_by_default': False, 'why': 'ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the key, so an absent key is a disabled guard, not a neutral default.'}`\n- `knowledge_gate` = `SEEDED_ONLY_BY_LOOT`\n- `mount_state` = `SOURCE_PRESENT_BEHIND_DISABLED_FLAG`\n- `non_circular_spare_recipes` = `[]`\n- `non_production_refs_excluded` = `['a0.survival_waystation_authority_test.gd', 'a0.survival_waystation_input_restart_test.gd']`\n- `production_a8_refs` = `[]`\n- `production_instance_refs` = `['a0.economy_session.gd:290', 'a0.economy_session.gd:311', 'a0.waystation_host.gd:6']`\n- `spare_loot_sources` = `['road_supplies']`\n\n## BLK-2 \u2014 The Waystation cache cannot resolve its own reward: A0 sends the si: instance id, A0's vendored catalog still holds the alias\n\n**Player impact.** A0 9269739e's host sends {poi_crown_waystation, cache_restock, si:r_ashen_crown:waystation_cache:01}. Its own lookup is exact string equality over those three fields, and the catalog it ships still says node_waystation_cache, because A0 vendors a pre-V4 copy of A3 (b1d291d0) while A3 c5e80922 is 622a277f. The result is deterministic: the first useful reward in the game fails with unknown_source_instance, and the only test that ever 'paid' 3 scrap + 2 spares used the alias directly, so it never touched the host path.\n\n**Owner.** A0 (re-vendor) with A3 (canonical id)  \n**Evidence class.** CROSS_OWNER_IDENTITY_MISMATCH  \n**Verified by.** oracle.instance_identity: the shipped host's POINTS table replayed against the catalog A0 actually loads, with A3's canonical table alongside; plus Q-03 mirror drift naming the same three rows  \n**Native run required to close.** False\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0: the reward path, replayed without Godot (the runtime does the same string comparison)\npython3 tools/survival/balance/run_analysis.py\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print(d['a3_only_bindings'])\"\n# then the native check that should now pay. Godot has no CLI switch for a\n# project setting, so either ship the key in project.godot or run A7's probe\n# with --force-branch (in-memory, classed SOURCE_PRESENT_BEHIND_GUARD):\nxvfb-run -a godot --path . --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --force-branch\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print(d['verdict']);[print(x['point'],x['instance_id']) for x in d['unresolved_host_requests']]\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['instance_identity'];print('fixture ids absent from host:', d['fixture_ids_absent_from_host'])\"\n```\n\n**Minimal safe correction.** A0 re-vendors A3 c5e80922's world_source_bindings.v3.json byte-for-byte (three bindings, si ids, instance_id + interaction_node_id + identity), and changes its authority test to send the host's request instead of the alias. No quantity, cooldown or price changes.\n\n**Test that proves closure.** `tests/survival/balance/test_oracle.py::InstanceIdentityOracleTests::test_the_alias_cannot_stand_in_for_the_world_instance`\n\n**Still NOT_TESTED after closure.** that the transaction commits durably (BLK-4)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| waystation_cache | L3_INTERACTION | `S1_AUTHORED_ONLY` | NOT_TESTED | `S1_AUTHORED_ONLY` | the action exists only in authored data; no mounted scene places the cache node |\n\n**Evidence.**\n\n- `a3_only_bindings` = `['cache_restock@si:r_ashen_crown:waystation_cache:01', 'salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01']`\n- `divergent_bindings` = `['node_waystation_approach_deadfall']`\n- `fixture_ids_absent_from_host` = `['node_waystation_cache']`\n- `host_instance_ids` = `['node_waystation_approach_deadfall', 'si:r_ashen_crown:waystation_cache:01']`\n- `identity_verdict` = `HOST_ACTION_UNRESOLVED`\n- `q03` = `FAIL`\n- `unresolved_host_requests` = `[{'point': 'cache', 'action_id': 'cache_restock', 'instance_id': 'si:r_ashen_crown:waystation_cache:01', 'poi_id': 'poi_crown_waystation', 'resolved_in_a0_catalog': False, 'resolved_in_a3_catalog': True, 'a0_binding_id': None, 'a3_binding_id': 'a1_waystation_roadside_cache_v3'}]`\n\n## BLK-3 \u2014 A8's 15 invented Vector2.from_array calls are fixed in source, and still unproven natively\n\n**Player impact.** At the previous pin the native POI scenes read every position through Vector2.from_array, which no Godot release exposes. A8 c8b4bc88 replaced them with native_poi_vectors.gd and the audited call count is now zero. That is a real fix and it is not a native pass: A8's contract step has never been green on this sha, and the last failing log died at a preload of poi_authority_fixture.gd.\n\n**Owner.** A8  \n**Evidence class.** SOURCE_FIXED_NATIVE_PENDING  \n**Verified by.** oracle.engine_api over the pinned c8b4bc88 sources (0 unknown calls) plus the recorded CI outcomes for a8-world-content-native.yml on this sha (none green)  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A8: the fix exists; these two native steps are what would close it\ngodot --headless --path . --script tests/survival/world_content/native_poi_contract_test.gd\ngodot --headless --path . --script tests/survival/world_content/native_poi_transition_test.gd\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/oracle.json'))['engine_api'];print(d['verdict'], d['unknown_call_count'], d['static_call_count'])\"\n```\n```bash\ngit grep -n 'from_array' refs/a8 -- '*.gd' | head\n```\n\n**Minimal safe correction.** A8 lands those two native steps green on a pushed sha and uploads the artifact. No code change is implied by this blocker any more.\n\n**Test that proves closure.** `tests/survival/balance/test_oracle.py::EngineApiOracleTests::test_a8_call_sites_disappear_after_the_conversion`\n\n**Still NOT_TESTED after closure.** that the scenes are reachable in A0's world (BLK-1)\n\n**Evidence.**\n\n- `a8_completed_runs` = `[{'run_id': 41015986080, 'head_sha': 'f9ed82b91e8d1eed52f109247ae511c4f862ffd1', 'failed': []}, {'run_id': 41019032228, 'head_sha': 'c0ae902542a31c37bdfdc8f72d452cbf430e6747', 'failed': []}, {'run_id': 41019182407, 'head_sha': '2ad531f9e099cc3a29709da176e7a34b05a9a15b', 'failed': []}, {'run_id': 41019689728, 'head_sha': '2d7f10d355cb57692a321f3ca633550d31385157', 'failed': []}, {'run_id': 41024442152, 'head_sha': '9c180ef115bc53b1aa48e39a46a1a8fa7426c602', 'failed': []}, {'run_id': 41024526858, 'head_sha': '5ccf7b3f9824daa138b5d98106b74a2899c7592b', 'failed': []}]`\n- `a8_native_state` = `STALE_HEAD`\n- `audited_types` = `['Color', 'JSON', 'Vector2', 'Vector2i', 'Vector3']`\n- `static_calls_checked` = `23`\n- `unknown_engine_calls` = `0`\n\n## BLK-4 \u2014 No native proof anywhere on the current sha: the only paid receipt is a fixture that bypasses the host\n\n**Player impact.** Every required native assertion resolves STALE_HEAD at this pin: entry, second process, real input, save precision and negative replay. S4 is 0 of 5 clauses. The one run that has ever paid the cache reward funds its own inventory, advances its own clock and sends an instance id the shipped host never sends, so it proves the transaction helper and nothing about a player.\n\n**Owner.** A0  \n**Evidence class.** FIXTURE_ONLY_SUCCESS  \n**Verified by.** evidence.s4_clauses over the recorded runs plus oracle.instance_identity's fixture check  \n**Native run required to close.** True\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A0: one ordinary-input run on the sha, then the separate-process half\nxvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\\n  --script res://tests/survival_normal_entry_home_restart_test.gd\nxvfb-run -a godot --path . --user-data-dir artifacts/ud_entry --resolution 1280x720 \\\n  --script res://tests/survival_normal_entry_home_restart_test.gd -- --verify-separate-process\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print({k:v['state'] for k,v in d['native_states'].items()})\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/gate.json'));print(d['s4']['s4_granted'], {k:v['state'] for k,v in d['s4']['clauses'].items()})\"\n```\n\n**Minimal safe correction.** A0 runs the two halves on the pinned sha and cites the green runs. Nothing else in A7's scope can move this: S4 is owner-native evidence only.\n\n**Test that proves closure.** `tests/survival/balance/test_integration_gate.py::GateClosureTests::test_blk4_needs_all_five_s4_clauses`\n\n**Still NOT_TESTED after closure.** that a human finds the route and enjoys it (S5)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L5_COMMIT | `S2_SCENE_FIXTURE` | STALE_HEAD | `S2_SCENE_FIXTURE` | a fake authority commits the reward; SaveService is never called on this path |\n| a8_quarry | L6_RELOAD | `S0_ABSENT` | STALE_HEAD | `S0_ABSENT` | site state lives only in fixture memory, so reload cannot preserve anything |\n| a8_quarry | L7_NO_DUPLICATE | `S2_SCENE_FIXTURE` | NOT_TESTED | `S2_SCENE_FIXTURE` | claims are deduplicated inside the fixture only |\n| waystation_cache | L5_COMMIT | `S3_PRODUCTION_SEAM` | STALE_HEAD | `S3_PRODUCTION_SEAM` | survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (5 survival callers, 0 A1-contract callers) |\n| waystation_cache | L6_RELOAD | `S3_PRODUCTION_SEAM` | STALE_HEAD | `S3_PRODUCTION_SEAM` | a real two-process reload test exists in source, but its native run is STALE_HEAD |\n| waystation_cache | L7_NO_DUPLICATE | `S3_PRODUCTION_SEAM` | STALE_HEAD | `S3_PRODUCTION_SEAM` | the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay |\n\n**Evidence.**\n\n- `failing_native_labels` = `[{'run_id': 41018366655, 'head_sha': 'a3d0255ab09ba59ec5f9212243619f69d85d2948', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022220148, 'head_sha': '122294f2237c1836d6f04561e090fe6aa6c6c0cf', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022547918, 'head_sha': 'f61afa23132ec5890834fa2cd0476d0edc8a51b1', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022975300, 'head_sha': '594730ea15a3e6db8d620fb89aef94e97fd6db11', 'failed': ['separate process restores exact ordinary and unique inventory', 'separate process restores exact structures, chests and permanent knowledge', 'world reconstruction does not duplicate carried items']}, {'run_id': 41022220324, 'head_sha': '122294f2237c1836d6f04561e090fe6aa6c6c0cf', 'failed': ['same-process disk reload preserves custody and rights']}, {'run_id': 41022547962, 'head_sha': 'f61afa23132ec5890834fa2cd0476d0edc8a51b1', 'failed': ['interrupted candidate leaves disk unchanged', 'same-process disk reload preserves custody and rights']}, {'run_id': 41022975283, 'head_sha': '594730ea15a3e6db8d620fb89aef94e97fd6db11', 'failed': ['interrupted candidate leaves disk unchanged', 'same-process disk reload preserves custody and rights']}]`\n- `mounted_caller_count` = `11`\n- `native_states` = `{'a0_normal_entry_home': 'STALE_HEAD', 'a0_second_process_restart': 'STALE_HEAD', 'a0_waystation_player_input': 'STALE_HEAD', 'a0_replay_negative': 'STALE_HEAD', 'a3_authority_fixture': 'STALE_HEAD', 'a0_save_precision': 'STALE_HEAD', 'a8_native_poi_contract': 'STALE_HEAD', 'a0_runtime_validation': 'STALE_HEAD'}`\n- `s4_clauses` = `{'C1_exact_source_identity': 'NOT_HOLDS', 'C2_normal_entry': 'NOT_HOLDS', 'C3_independent_process': 'NOT_HOLDS', 'C4_authorised_commit': 'NOT_HOLDS', 'C5_negative_replay': 'NOT_HOLDS'}`\n- `s4_granted` = `False`\n- `save_fidelity` = `ROUND_TRIP_EXACT`\n- `static_seam_state` = `MOUNTED_SURVIVAL_SYSTEM_CALLER`\n\n## BLK-5 \u2014 The player body is still the Knight; the D051 bald male/female art is still not imported\n\n**Player impact.** chapter1_overworld.gd still preloads game/characters/knight/knight.tscn and instantiates it as the player. A6 08ccb834 added a sprite pipeline, but its manifest still declares BASE_ART_NOT_IMPORTED with grade-0 idle_sheet empty for both 555940 and 419402, so there is nothing to mount. A player would control a Knight in a game whose locked identity is a bald human adventurer. A second A6 item rides along: acceptance_journeys.gd:241 and :340 hand fixture vocabulary to a Label, so mounting that viewer as-is would put 'READ-ONLY SCENARIO FIXTURE' on screen (PROD-04 WARN today; it becomes FAIL the moment the viewer is mounted).\n\n**Owner.** A6 (import + adapter) with A0 (mount)  \n**Evidence class.** PLAYER_FACING_VISUAL_DEFECT  \n**Verified by.** quality Q-04 over the pinned tree (mounted scene identity, claimed sheets, adapter fallback)  \n**Native run required to close.** False\n\n**Run it natively (owner-side, exact command).**\n\n```bash\n# A6 + A0: the acceptance is a rendered body, not a string\ngodot --headless --path . --import\ngodot --path . --resolution 1280x720\n# spawn from normal entry, then die, reload and respawn: the body must stay 555940/419402\n```\n\n**Reproduce the static finding.**\n\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/results/quality.json'));print([c for c in d['checks'] if c['check_id']=='Q-04'][0]['status'])\"\n```\n```bash\npython3 -c \"import json;d=json.load(open('data/survival/balance/snapshot/product/a6.avatar_art_manifest.json'));print(d['status']);print({g:c['armor_grades']['0']['idle_sheet'] for g,c in d['characters'].items()})\"\n```\n\n**Minimal safe correction.** Two A6 edits, neither of which needs A0: import the grade-0 idle sheet for ONE gender from the authorised archive and point the manifest at the installed file; and drop the two fixture labels from acceptance_journeys.gd before that viewer is mounted. A0 then mounts the scene behind the existing avatar seam. Grades 1-2 stay SOURCE_BLOCKED; no Knight substitution.\n\n**Test that proves closure.** `tests/survival/balance/test_quality.py::QualityClosureTests::test_blk5_closes_when_the_mounted_body_and_grade0_sheet_are_canonical`\n\n**Still NOT_TESTED after closure.** 4-direction animation, armour swap and rendered frames (S5, human)\n\n**Blocked gate links.**\n\n| Chain | Link | Source state | Native | Level | Missing |\n|---|---|---|---|---|---|\n| a8_quarry | L4_AUTHORIZATION | `S0_ABSENT` | NOT_TESTED | `S0_ABSENT` | A8's two route actions have an item id but no authorized quantity, so neither can be paid |\n\n**Evidence.**\n\n- `canonical_avatar_production_refs` = `{'555940': 0, '419402': 0, '180537': 0}`\n- `mounted_player_scene` = `game/characters/knight/knight.tscn`\n- `q04` = `FAIL`\n- `visual_state` = `NOT_TESTED`\n\n## Closed, kept for traceability\n\n### BLK-ENGINE-API \u2014 was: _A8's scenes call Vector2.from_array, which no Godot release exposes (15 sites)_\n\n**Disposition.** `CLOSED_IN_SOURCE_RECLASSIFIED_BLK-3` at A8 c8b4bc88\n\n**Why.** A8 added native_poi_vectors.gd with from_pair/from_int_pair and replaced every call. The oracle now reports ENGINE_API_CONSISTENT with 0 unknown calls over the pinned sources. It is not a native pass, so the residual moved to BLK-3 as SOURCE_FIXED_PENDING_NATIVE.\n\n**Residual.** the native contract/transition steps have never been green on this sha.\n\n**Still with the owner.** A8 runs its own two native steps.\n\n**Evidence.**\n\n- `engine_api` = `ENGINE_API_CONSISTENT`\n- `historical_pin` = `5ccf7b3f: 15`\n- `unknown_calls` = `0`\n\n### BLK-MIRROR \u2014 was: _A0 shipped a stale copy of A3's source catalog (Q-03 drift)_\n\n**Disposition.** `REOPENED_AS_BLK-2` at A3 c5e80922\n\n**Why.** Round 5 closed this at A3 100b3406 where both copies matched. A3's V4 canonicalised the instance id to si:*, so A0's copy drifted again in exactly the three waystation rows - and this time the drift breaks the interaction. Reopened as BLK-2 rather than logged as a repeated finding.\n\n**Residual.** until A0 re-vendors, the cache action cannot be authorized.\n\n**Still with the owner.** A0 re-vendors A3's catalog bytes.\n\n**Evidence.**\n\n- `divergent` = `['road_notes', 'road_scrap', 'road_supplies']`\n- `identical_rows` = `33`\n- `q03` = `FAIL`\n\n## A7 self-corrections\n\n### CORR-9 \u2014 `STALE AT THE PIN, FIXED AT THE LIVE HEAD`\n\n**A7's earlier claim.** BLK-2: A8 has 15 Vector2.from_array source errors and the scenes cannot position anything.\n\n**What is actually true.** True of A8 5ccf7b3f, which round 5 pinned. A8 c8b4bc88 replaced all of them; the pinned sources now contain the string only inside a comment explaining why the constructor does not exist.\n\n**What remains true.** no native evidence exists for the fixed code, so nothing is S4.\n\n**Fix in this round.** classified SOURCE_FIXED_PENDING_NATIVE by comparing the pin, not by re-running the old claim.\n\n### CORR-10 \u2014 `WRONG AT THE LIVE HEAD, RIGHT AT THE OLD PIN`\n\n**A7's earlier claim.** Claim C: the A1 cache and A8 site are in no world a player can reach (ABSENT).\n\n**What is actually true.** A0 9269739e mounts A1's real slice geometry and a five-point interaction host. The content is in production code. It is also behind a ProjectSettings key absent from project.godot, so the player still cannot reach it.\n\n**What remains true.** no normal-input journey reaches the cache today.\n\n**Fix in this round.** claim C gained MOUNTED_BY_DEFAULT / SOURCE_PRESENT_BEHIND_DISABLED_FLAG / ABSENT.\n\n### CORR-11 \u2014 `TRUE AS NAMING, FALSE AS RUNTIME`\n\n**A7's earlier claim.** The A1/A3 instance-id seam is closed: both ids are published for one object.\n\n**What is actually true.** A3 publishes both, but only the si:* id is in the binding table, and A0's host sends the si:* id while A0's vendored table still keys the alias. Exact-string lookup therefore fails. The seam exists and does not connect.\n\n**What remains true.** no quantity, price or cooldown is wrong; this is identity, not balance.\n\n**Fix in this round.** oracle.instance_identity replays the shipped request against the loaded catalog.\n\n### CORR-12 \u2014 `IT PROVES THE TRANSACTION HELPER, NOT THE ROUTE`\n\n**A7's earlier claim.** The A0 authority fixture proves an A3-authorized reward commits.\n\n**What is actually true.** The fixture hardcodes instance_id node_waystation_cache, an id the shipped host never sends, and funds its own inventory and clock. It cannot observe the mismatch it hides.\n\n**What remains true.** the A3 transaction machinery does commit and does refuse replays.\n\n**Fix in this round.** the oracle compares fixture instance ids against the host's request set.\n\n### CORR-13 \u2014 `A CHECK CANNOT BE BOTH FAILING AND CLOSED, AND TWO OF ITS HITS WERE NOT TEXT AT ALL`\n\n**A7's earlier claim.** PROD-04 can FAIL while the same payload records it as closed - 'a broad FAIL kept as a hygiene warning'.\n\n**What is actually true.** Two defects, both in A7's own tooling. (1) 'schema' sat in the debug-vocabulary list, so a wire key (intent.get('schema'), 'schema': INTENT_SCHEMA) was counted as player prose. (2) Every string literal in an A6 file counted as player-visible, including logs and test summaries, so 107 hits hid the 2 that are actually handed to a Label. PROD-04 also mapped to the closed bucket, which silently dropped a red check.\n\n**What remains true.** The two real hits are real: game/survival/ui/acceptance_journeys.gd:241 shows 'A6 READ-ONLY SCENARIO FIXTURE - NOT LIVE GAMEPLAY' on a Label, and :340 shows 'Fixture progress only ...'. They are latent, not live, because no shipped scene mounts A6's survival UI.\n\n**Fix in this round.** PROD-04 now splits display-sink literals from unbound ones, reports FAIL only when the surface is mounted and WARN when it is latent, and maps to traceability rather than a closed bucket. 'schema' is off the token list.\n",
+  "read_this_first": "Five player-facing blockers, each with one owner, one smallest safe correction and a test that flips FAIL to PASS. A blocker closes only when the source condition holds AND the native evidence it needs is VERIFIED on the pinned sha. Five earlier A7 claims are corrected rather than dropped, including two defects in A7's own tooling.",
+  "reduction": "54 observations -> 5 blockers (2 earlier claims closed, 5 A7 self-corrections, 6 observations traceability only)",
+  "schema": "soh.balance.blockers.v6",
   "triage": [
     {
       "blocker_id": "BLK-1",
@@ -936,14 +1033,14 @@
       "subject": "vault_catalyst:venom:60"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "CLOSED-R6",
       "code": "ITEM_OVEROWNED",
       "evidence_class": "CLOSED_OR_TRACEABILITY",
       "severity": "MINOR",
       "subject": "iron_scrap"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "CLOSED-R6",
       "code": "ITEM_OVEROWNED",
       "evidence_class": "CLOSED_OR_TRACEABILITY",
       "severity": "MINOR",
@@ -964,58 +1061,58 @@
       "subject": "venom_cache"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "ancient_catalyst"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "clay"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "iron_ore"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "moonleaf"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "reed_fibre"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "reed_fibre"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "stone_chunk"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "SOURCE_ID_DIVERGENCE",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "MINOR",
       "subject": "sulfur"
     },
@@ -1046,13 +1143,6 @@
       "evidence_class": "MISSING_PRODUCTION_MOUNT",
       "severity": "MINOR",
       "subject": "road_grain_seed"
-    },
-    {
-      "blocker_id": "BLK-1",
-      "code": "SOURCE_REGION_UNRESOLVED",
-      "evidence_class": "MISSING_PRODUCTION_MOUNT",
-      "severity": "MINOR",
-      "subject": "road_notes"
     },
     {
       "blocker_id": "BLK-1",
@@ -1118,30 +1208,30 @@
       "subject": "venom_cache"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "PROVISIONAL_BINDING",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "INFO",
       "subject": "catalyst_vault"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "PROVISIONAL_BINDING",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "INFO",
       "subject": "specimen_ember"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "PROVISIONAL_BINDING",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "INFO",
       "subject": "specimen_frost"
     },
     {
-      "blocker_id": "CLOSED-R5",
+      "blocker_id": "BLK-2",
       "code": "PROVISIONAL_BINDING",
-      "evidence_class": "CLOSED_OR_TRACEABILITY",
+      "evidence_class": "CROSS_OWNER_IDENTITY_MISMATCH",
       "severity": "INFO",
       "subject": "specimen_venom"
     },

@@ -249,11 +249,27 @@ def entry_content(
     a1_hits = _content_hits(haystacks, a1_ids)
     a8_hits = _content_hits(haystacks, a8_ids)
     overworld = texts.get("a0.chapter1_overworld.tscn", "")
-    site_scenes_in_overworld = sorted(
-        name
-        for name in ("south_quarry.tscn", "south_crown_mill.tscn", "south_orchard_ruin.tscn")
-        if name in overworld
+    # Round 6 hole: this used a plain substring test, so a name inside a `;`
+    # comment counted as an instanced scene. Only a live ExtResource instance
+    # line (or a script preload on a non-comment line) can mount a scene.
+    site_scenes_in_overworld = _instanced_scenes(
+        overworld, ("south_quarry.tscn", "south_crown_mill.tscn", "south_orchard_ruin.tscn")
     )
+    # Round 6: a production reference is not the same thing as a reachable mount.
+    # A0 guards the Waystation behind a ProjectSettings key. If the key is absent
+    # from the shipped project, a normal player can never take that branch, so the
+    # gate must not call the content mounted just because the code exists.
+    harness = overworld + "\n" + texts.get("a0.chapter1_overworld.gd", "")
+    guard = _project_guard(texts, harness)
+    present = bool(a1_hits or a8_hits or site_scenes_in_overworld)
+    if not present:
+        state = "ABSENT"
+    elif guard["guarded"] and not guard["enabled_by_default"]:
+        state = "SOURCE_PRESENT_BEHIND_DISABLED_FLAG"
+    elif guard["guarded"]:
+        state = "MOUNTED_BY_DEFAULT"
+    else:
+        state = "MOUNTED_BY_DEFAULT"
     return {
         "claim": "the A1 cache and A8 POI are mounted inside the world the route reaches",
         "a1_instance_references_in_a0_surface": a1_hits,
@@ -261,12 +277,75 @@ def entry_content(
         "a8_site_scenes_in_overworld": site_scenes_in_overworld,
         "non_production_references": excluded,
         "production_surface_files": len(allowed),
-        "mounted": bool(a1_hits or a8_hits or site_scenes_in_overworld),
+        "mount_state": state,
+        "guard": guard,
+        # `mounted` keeps the old name for downstream readers, but it now means
+        # "a normal player reaches it", not "a production file mentions it".
+        "mounted": state == "MOUNTED_BY_DEFAULT",
+        "guard_only": state == "SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
         "note": (
             "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 "
             "site scenes are placed in it."
+            if state == "ABSENT"
+            else (
+                "The production code path exists but is behind "
+                f"`{guard['setting']}`, which the shipped project does not enable, so a normal player cannot "
+                "reach it. Recorded as a guarded candidate, never as a mount."
+                if state == "SOURCE_PRESENT_BEHIND_DISABLED_FLAG"
+                else "A production path places the content and no guard disables it for a normal player."
+            )
         ),
     }
+
+
+GUARD_SENTINEL = "survival/a0_waystation_candidate"
+
+
+def _project_guard(texts: Dict[str, str], overworld: str) -> Dict[str, object]:
+    """Does the mount sit behind a project setting, and is that setting on?
+
+    The answer is read from the shipped ``project.godot`` (not from a test, not
+    from the code comment): a guard that is absent from the project file is off,
+    because ``ProjectSettings.get_setting(key, false)`` falls back to false.
+    """
+    project = texts.get("a0.project.godot", "")
+    guarded = GUARD_SENTINEL in overworld or "get_setting(" in overworld and "candidate" in overworld.lower()
+    enabled = False
+    for line in project.splitlines():
+        stripped = line.strip()
+        if stripped.startswith(GUARD_SENTINEL + "="):
+            value = stripped.split("=", 1)[1].strip().strip('"')
+            enabled = value.lower() in ("true", "1")
+    return {
+        "setting": GUARD_SENTINEL,
+        "guarded": bool(guarded),
+        "declared_in_project": f"{GUARD_SENTINEL}=" in project,
+        "enabled_by_default": enabled,
+        "why": (
+            "ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the "
+            "key, so an absent key is a disabled guard, not a neutral default."
+        ),
+    }
+
+
+def _instanced_scenes(scene_text: str, names: Sequence[str]) -> List[str]:
+    """Scenes actually instanced by a scene file, comments excluded.
+
+    `[node ... instance=ExtResource("x")]` needs the resource table to resolve, so
+    the check is conservative: a name counts only when it appears on a live
+    `instance=`/`path=`/`preload(` line and not after a `;` comment marker.
+    """
+    hits: List[str] = []
+    for raw in scene_text.splitlines():
+        line = raw.split(";", 1)[0]
+        if not line.strip():
+            continue
+        if "instance=" not in line and "path=" not in line and "preload(" not in line:
+            continue
+        for name in names:
+            if name in line:
+                hits.append(name)
+    return sorted(set(hits))
 
 
 def _content_hits(texts: Dict[str, str], needles: Sequence[str]) -> List[str]:
@@ -614,7 +693,9 @@ def waystation_chain(
     entry: Dict[str, object],
     content: Dict[str, object],
     seam: Dict[str, object],
+    identity: Optional[Dict[str, object]] = None,
 ) -> Dict[str, object]:
+    identity = identity or {}
     contract = slice_contract(texts)
     spec = waystation_spec(texts)
     bindings = contract["slice_renewable_cache"]
@@ -643,7 +724,9 @@ def waystation_chain(
             next_action="A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
         )
     )
-    content_state = "PRODUCTION_SEAM" if content["mounted"] else "AUTHORED_ONLY"
+    content_state = (
+        "PRODUCTION_SEAM" if content["mounted"] else "AUTHORED_ONLY" if content.get("guard_only") else "ABSENT"
+    )
     links.append(
         _link(
             "L2_ROUTE",
@@ -656,12 +739,19 @@ def waystation_chain(
                 {"fact": "A8 instance ids on the A0 surface", "value": content["a8_instance_references_in_a0_surface"]},
                 {"fact": "A8 site scenes inside the overworld", "value": content["a8_site_scenes_in_overworld"]},
                 {"fact": "A1 slice nodes", "value": [row["slice_node_id"] for row in bindings]},
+                {"fact": "mount state", "value": content.get("mount_state")},
+                {"fact": "project guard", "value": content.get("guard")},
             ],
             missing=(
                 ""
                 if content["mounted"]
-                else "the reachable overworld contains no A1 city node and no A8 site scene, so there is no "
-                "walkable route to the interaction yet"
+                else (
+                    "the host is behind `" + str((content.get("guard") or {}).get("setting")) + "`, which the "
+                    "shipped project.godot does not set, so a normal player never takes that branch"
+                    if content.get("guard_only")
+                    else "the reachable overworld contains no A1 city node and no A8 site scene, so there is no "
+                    "walkable route to the interaction yet"
+                )
             ),
             next_action=(
                 "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry "
@@ -671,15 +761,19 @@ def waystation_chain(
     )
 
     cache_action = next((row for row in spec["actions"] if row["action_id"] == "cache_restock"), {})
+    unresolved = identity.get("unresolved_host_requests") or []
     links.append(
         _link(
             "L3_INTERACTION",
-            "A1",
-            "BLK-1",
+            "A1 + A0",
+            "BLK-2",
             "AUTHORED_ONLY",
             None,
             [
                 {"fact": "cache action", "value": cache_action},
+                {"fact": "host request resolves in the loaded catalog", "value": not unresolved},
+                {"fact": "unresolved host requests", "value": unresolved},
+                {"fact": "identity verdict", "value": identity.get("verdict")},
                 {"fact": "spec native_playable", "value": spec.get("native_playable")},
             ],
             missing="the action exists only in authored data; no mounted scene places the cache node",
@@ -1024,7 +1118,10 @@ def build(
     seam = a0_commit_seam(texts, paths, mount)
 
     chains = [
-        waystation_chain(model, texts, paths, facts, mount, native, entry, content, seam),
+        waystation_chain(
+            model, texts, paths, facts, mount, native, entry, content, seam,
+            identity=(oracle or {}).get("instance_identity"),
+        ),
         quarry_chain(model, texts, paths, facts, mount, native, entry, content),
     ]
     native_states = dict(native)
@@ -1046,8 +1143,15 @@ def build(
             "evidence": native["a0_normal_entry_home"],
         },
         "C_content_is_mounted": {
-            "state": "SOURCE_PRESENT" if content["mounted"] else "ABSENT",
-            "level": "S3_PRODUCTION_SEAM" if content["mounted"] else "S0_ABSENT",
+            "state": content["mount_state"],
+            "level": (
+                "S3_PRODUCTION_SEAM"
+                if content["mounted"]
+                else "S1_AUTHORED_ONLY"
+                if content["guard_only"]
+                else "S0_ABSENT"
+            ),
+            "reachable_by_normal_input": bool(content["mounted"]),
             "evidence": content,
         },
         "D_useful_reward_claimable": {

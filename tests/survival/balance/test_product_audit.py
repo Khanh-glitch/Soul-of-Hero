@@ -55,9 +55,20 @@ class PinnedSurfaceTests(unittest.TestCase):
         self.checks = {c["check_id"]: c for c in product.run_checks(self.facts)}
 
     def test_snapshot_hashes_are_verified_on_load(self) -> None:
-        # load_snapshot raises on any byte drift; reaching here means all 18 matched.
+        # load_snapshot raises on any byte drift, so reaching here means every
+        # pinned file matched. The count is derived, not a magic number: what
+        # matters is that the manifest describes exactly the files on disk.
         _texts, manifest = product.load_snapshot(ROOT)
-        self.assertEqual(len(manifest["files"]), 52)
+        keys = [entry["key"] for entry in manifest["files"]]
+        self.assertEqual(len(keys), len(set(keys)))
+        on_disk = sorted(
+            path.name
+            for path in (ROOT / product.SNAPSHOT_DIR).iterdir()
+            # tree_index.txt is the derived path index, not a pinned product file.
+            if path.is_file() and path.name != "tree_index.txt"
+        )
+        self.assertEqual(sorted(keys), on_disk)
+        self.assertGreaterEqual(len(keys), 52)
         self.assertEqual(manifest["tree_index"]["lines"] > 6000, True)
         self.assertEqual(manifest["schema"], "soh.balance.product_snapshot.v1")
 
@@ -96,11 +107,33 @@ class PinnedSurfaceTests(unittest.TestCase):
         self.assertGreater(docs["555940"], 0)
         self.assertGreater(docs["419402"], 0)
 
-    def test_debug_vocabulary_is_present_on_visible_strings(self) -> None:
-        tokens = {row["token"] for row in self.facts["visible_debug_tokens"]}
-        for expected in ("FIXTURE", "BLOCKED_PENDING", "PROJECTION"):
-            self.assertIn(expected, tokens)
-        self.assertEqual(self.checks["PROD-04"]["status"], "FAIL")
+    def test_prod04_becomes_a_failure_when_a_survival_ui_is_mounted(self) -> None:
+        facts = copy.deepcopy(self.facts)
+        facts["survival_ui_scenes_mounted"] = ["res://game/survival/ui/acceptance_journeys.tscn"]
+        checks = {row["check_id"]: row for row in product.run_checks(facts)}
+        self.assertEqual(checks["PROD-04"]["status"], "FAIL")
+
+    def test_debug_vocabulary_reaches_exactly_two_labels_and_nothing_else(self) -> None:
+        displayed = self.facts["visible_debug_tokens"]
+        self.assertEqual(
+            sorted((row["file"], row["line"]) for row in displayed),
+            [("a6.acceptance_journeys.gd", 241), ("a6.acceptance_journeys.gd", 340)],
+        )
+        self.assertTrue(all(row["display_sink"] for row in displayed))
+        # Nothing mounts A6's survival UI, so the labels are latent: WARN, not FAIL.
+        self.assertEqual(self.checks["PROD-04"]["status"], "WARN")
+        self.assertIn("not mounted", self.checks["PROD-04"]["player_impact"])
+        # Every other hit is still counted, just not called player-visible.
+        self.assertGreater(len(self.facts["unbound_debug_tokens"]), 50)
+
+    def test_a_protocol_key_is_not_player_text(self) -> None:
+        # Regression: "schema" used to be in the vocabulary list, so
+        # intent.get("schema") was reported as debug text on screen.
+        texts = self.facts.get("_schema_probe")
+        self.assertNotIn("schema", product.DEBUG_TOKENS)
+        for row in self.facts["debug_tokens_all"]:
+            self.assertNotEqual(row["token"], "schema")
+
 
     def test_survival_ui_is_a_closed_island(self) -> None:
         self.assertEqual(self.facts["survival_ui_scenes_mounted"], [])
@@ -190,13 +223,14 @@ class HeadlineFactsTests(unittest.TestCase):
     def test_no_survival_ui_scene_is_mounted(self) -> None:
         self.assertEqual(self.facts["survival_ui_scenes_mounted"], [])
 
-    def test_debug_literals_exist_but_are_not_a_player_surface_defect(self) -> None:
-        # The raw file-level hits stay on the record, and PROD-04 keeps its broad
-        # FAIL as a hygiene warning. What the reclassification rests on is Q-02:
-        # no mounted production scene shows that vocabulary to a player.
+    def test_debug_literals_are_latent_because_no_survival_ui_is_mounted(self) -> None:
+        # The two displayed labels are real; what keeps them out of a player's eyes
+        # is that A6's survival UI is mounted by no shipped scene. Q-02 confirms the
+        # same thing from a different direction.
         self.assertTrue(self.facts["visible_debug_tokens"])
         self.assertEqual(self.checks["Q-02"]["status"], "PASS")
         self.assertEqual(self.facts["survival_ui_scenes_mounted"], [])
+
 
     def test_visual_readiness_is_not_granted_statically(self) -> None:
         self.assertEqual(self.checks["Q-04"]["status"], "FAIL")
@@ -219,7 +253,10 @@ class BlockerConsolidationTests(unittest.TestCase):
     def test_at_most_five_blockers(self) -> None:
         self.assertLessEqual(len(self.payload["blockers"]), 5)
         self.assertEqual(len(self.payload["blockers"]), 5)
-        self.assertEqual(self.payload["counts"]["closed_blockers"], 4)
+        statuses = [row["status"] for row in self.payload["blockers"]]
+        self.assertEqual(statuses.count("CLOSED"), self.payload["counts"]["closed_blockers"])
+        self.assertEqual(statuses.count("OPEN"), self.payload["counts"]["player_facing_blockers"])
+        self.assertEqual(len(statuses), 5)
 
     def test_every_blocker_is_owned_actionable_and_closable(self) -> None:
         for row in self.payload["blockers"]:
@@ -229,13 +266,11 @@ class BlockerConsolidationTests(unittest.TestCase):
                 self.assertTrue(row["minimal_safe_correction"])
                 self.assertTrue(row["closure_test"])
                 self.assertTrue(row["reproduce"])
-                self.assertIn(row["evidence_class"], {
-                    "MISSING_PRODUCTION_MOUNT",
-                    "NATIVE_RUNTIME_FAILURE",
-                    "SOURCE_OF_TRUTH_DEFECT",
-                    "PLAYER_FACING_VISUAL_DEFECT",
-                    "FIXTURE_ONLY_SUCCESS",
-                })
+                # The allowed classes live in one place; a test that hard-coded its
+                # own copy would keep passing while the tool used a new class.
+                self.assertIn(row["evidence_class"], set(blocker_module.EVIDENCE_CLASS.values()))
+                self.assertTrue(row["evidence_class"].isupper())
+                self.assertEqual(row["evidence_class"], blocker_module.EVIDENCE_CLASS[row["blocker_id"]])
                 self.assertTrue(row["closure_probe"])
                 self.assertTrue(row["not_proven_after_closure"])
 
@@ -271,7 +306,7 @@ class BlockerConsolidationTests(unittest.TestCase):
                 # the class must say which kind of defect it is.
                 self.assertIn(
                     row["evidence_class"],
-                    {"FIXTURE_ONLY_SUCCESS", "NATIVE_RUNTIME_FAILURE", "SOURCE_OF_TRUTH_DEFECT", "UNAUTHORIZED_COST"},
+                    set(blocker_module.EVIDENCE_CLASS.values()),
                     row["blocker_id"],
                 )
 
@@ -355,7 +390,7 @@ class ProductClosureTests(unittest.TestCase):
 
     def test_blk5_closes_when_debug_text_and_duplication_are_gone(self) -> None:
         facts = copy.deepcopy(self.facts)
-        self.assertEqual(self._status(facts, "PROD-04"), "FAIL")
+        self.assertEqual(self._status(facts, "PROD-04"), "WARN")
         self.assertEqual(self._status(facts, "PROD-06"), "WARN")
         facts["visible_debug_tokens"] = []
         facts["dashboards"] = ["a0.hud.gd"]

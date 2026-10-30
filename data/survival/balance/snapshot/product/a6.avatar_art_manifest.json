@@ -19,20 +19,29 @@
       "png_member_count": 350,
       "png_crc_failures": 0,
       "base_description": "Bald, unarmored male; preserve this identity in all equipment appearances.",
-      "inspected_actions": ["idle", "walk", "run"],
+      "inspected_actions": [
+        "idle",
+        "walk",
+        "run"
+      ],
       "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
       "armor_grades": {
         "0": {
           "source_pack": "craftpix-net-555940-free-base-4-direction-male-character-pixel-art.zip",
           "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
-          "dimensions": [768, 256],
+          "dimensions": [
+            768,
+            256
+          ],
           "directions": 4,
           "idle_sheet": "",
-          "runtime_status": "NOT_IMPORTED"
+          "runtime_status": "NOT_IMPORTED",
+          "runtime_action_sheets": {}
         },
         "1": null,
         "2": null
-      }
+      },
+      "archive_sha256": "b5579a3cc6006ef8c9d55c9ca0388575d75c987382b6cb504e2c7519e6c1e795"
     },
     "female": {
       "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
@@ -43,20 +52,29 @@
       "png_member_count": 316,
       "png_crc_failures": 0,
       "base_description": "Bald, unarmored female; preserve this identity in all equipment appearances.",
-      "inspected_actions": ["idle", "walk", "run"],
+      "inspected_actions": [
+        "idle",
+        "walk",
+        "run"
+      ],
       "inspection_status": "TEMPORARY_PREVIEWS_VISUALLY_INSPECTED; NO_PROJECT_IMPORT",
       "armor_grades": {
         "0": {
           "source_pack": "craftpix-net-419402-free-base-4-direction-female-character-pixel-art.zip",
           "source_member": "PNG/Unarmed/Without_shadow/Unarmed_Idle_without_shadow.png",
-          "dimensions": [768, 256],
+          "dimensions": [
+            768,
+            256
+          ],
           "directions": 4,
           "idle_sheet": "",
-          "runtime_status": "NOT_IMPORTED"
+          "runtime_status": "NOT_IMPORTED",
+          "runtime_action_sheets": {}
         },
         "1": null,
         "2": null
-      }
+      },
+      "archive_sha256": "f704e7852273d5f0111435ae86975fa981354d699dff1f594934f6a32d9821ad"
     }
   },
   "armor_search": {
@@ -78,6 +96,20 @@
     "Do not include source ZIPs or sprites in the public repository; review license/attribution and redistribution permissions before any project import.",
     "Inspect and test a compatible male/female visual for armor grade 1 and grade 2; until then those stages remain SOURCE_BLOCKED.",
     "A0 supplies selected identity and saved equipped armor grade; the adapter never selects, equips, persists, or falls back to another character.",
-    "The base idle_sheet paths remain empty, so the current adapter correctly returns SOURCE_BLOCKED until an authorized, distributable runtime asset handoff exists."
-  ]
+    "The base idle_sheet paths remain empty, so the current adapter correctly returns SOURCE_BLOCKED until an authorized, distributable runtime asset handoff exists.",
+    "Store runtime action sheets under the exact selected gender and armor-grade record; never share or fall back across identities or tiers."
+  ],
+  "runtime_presentation_pipeline": {
+    "script": "res://game/survival/ui/avatar_sprite_pipeline.gd",
+    "status": "IMPLEMENTED; SOURCE_LICENSE_BLOCKED",
+    "directions": [
+      "front",
+      "side_left",
+      "side_right",
+      "back"
+    ],
+    "runtime_action_sheets": {},
+    "note": "A6 builds directional SpriteFrames from the exact A0-selected gender and equipped-grade record. Each missing action or direction fails closed; no identity or pose fallback. Actual Craftpix sources remain absent until the external license and exact sheet row mapping are verified.",
+    "schema": "soh.a6.avatar_sprite_pipeline.v1"
+  }
 }

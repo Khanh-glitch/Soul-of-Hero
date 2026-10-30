@@ -23,106 +23,152 @@
       "Vector3"
     ],
     "proves": "that no audited built-in class is called through a method it does not expose. It does not prove the surrounding code runs, only that these calls cannot be the reason it fails.",
-    "static_call_count": 42,
-    "unknown_call_count": 15,
-    "unknown_calls": [
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_shell.gd",
-        "is_engine_static": false,
-        "line": 62
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_shell.gd",
-        "is_engine_static": false,
-        "line": 66
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_shell.gd",
-        "is_engine_static": false,
-        "line": 111
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 107
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 111
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 115
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 119
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 203
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 206
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 254
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 257
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 413
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 534
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.native_poi_site.gd",
-        "is_engine_static": false,
-        "line": 571
-      },
-      {
-        "call": "Vector2.from_array",
-        "file": "a8.poi_pilot.gd",
-        "is_engine_static": false,
-        "line": 224
-      }
-    ],
-    "verdict": "UNKNOWN_ENGINE_STATIC"
+    "static_call_count": 23,
+    "unknown_call_count": 0,
+    "unknown_calls": [],
+    "verdict": "ENGINE_API_CONSISTENT"
   },
   "holds": {
     "authorization_backed_by_a3": true,
     "float_round_trip_guaranteed": true,
-    "no_unknown_engine_static": false
+    "host_request_resolves_in_the_loaded_catalog": false,
+    "no_unknown_engine_static": true
+  },
+  "instance_identity": {
+    "a0_binding_count": 2,
+    "a0_only_bindings": [
+      "cache_restock@node_waystation_cache"
+    ],
+    "a3_binding_count": 3,
+    "a3_only_bindings": [
+      "cache_restock@si:r_ashen_crown:waystation_cache:01",
+      "salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01"
+    ],
+    "divergent_bindings": [
+      {
+        "action_id": "gather_deadfall",
+        "fields": {
+          "canonical_poi_id": {
+            "a0": null,
+            "a3": "poi_crown_waystation"
+          },
+          "context_poi_id": {
+            "a0": null,
+            "a3": "poi_crown_waystation"
+          },
+          "identity_note": {
+            "a0": null,
+            "a3": "A1 vertical-slice interaction node; no separate si:* world instance is authored for deadfall at this pin."
+          },
+          "interaction_node_id": {
+            "a0": null,
+            "a3": "node_waystation_approach_deadfall"
+          }
+        },
+        "identity": "node_waystation_approach_deadfall"
+      }
+    ],
+    "fixture_ids_absent_from_host": [
+      "node_waystation_cache"
+    ],
+    "fixture_instance_ids": [
+      "node_waystation_cache"
+    ],
+    "host_instance_ids": [
+      "node_waystation_approach_deadfall",
+      "si:r_ashen_crown:waystation_cache:01"
+    ],
+    "host_requests": [
+      {
+        "action_id": "pry_locker",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "locker"
+      },
+      {
+        "action_id": "cache_restock",
+        "instance_id": "si:r_ashen_crown:waystation_cache:01",
+        "poi_id": "poi_crown_waystation",
+        "point": "cache"
+      },
+      {
+        "action_id": "seal_ledger",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "ledger"
+      },
+      {
+        "action_id": "gather_deadfall",
+        "instance_id": "node_waystation_approach_deadfall",
+        "poi_id": "poi_crown_waystation",
+        "point": "deadfall"
+      },
+      {
+        "action_id": "hand_crank_bypass",
+        "instance_id": "",
+        "poi_id": "poi_crown_relay_shed",
+        "point": "crank"
+      }
+    ],
+    "instance_requests": [
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "pry_locker",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "locker",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      },
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "seal_ledger",
+        "instance_id": "",
+        "poi_id": "poi_crown_waystation",
+        "point": "ledger",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      },
+      {
+        "a0_binding_id": "a1_waystation_approach_deadfall_v3",
+        "a3_binding_id": "a1_waystation_approach_deadfall_v3",
+        "action_id": "gather_deadfall",
+        "instance_id": "node_waystation_approach_deadfall",
+        "poi_id": "poi_crown_waystation",
+        "point": "deadfall",
+        "resolved_in_a0_catalog": true,
+        "resolved_in_a3_catalog": true
+      },
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": null,
+        "action_id": "hand_crank_bypass",
+        "instance_id": "",
+        "poi_id": "poi_crown_relay_shed",
+        "point": "crank",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": false,
+        "via": "action_for"
+      }
+    ],
+    "rule": "A binding authorizes a physical interaction only when poi_id + action_id + instance_id match exactly. An alias is an alias: it cannot stand in for the world instance at runtime.",
+    "unresolved_host_requests": [
+      {
+        "a0_binding_id": null,
+        "a3_binding_id": "a1_waystation_roadside_cache_v3",
+        "action_id": "cache_restock",
+        "instance_id": "si:r_ashen_crown:waystation_cache:01",
+        "poi_id": "poi_crown_waystation",
+        "point": "cache",
+        "resolved_in_a0_catalog": false,
+        "resolved_in_a3_catalog": true
+      }
+    ],
+    "verdict": "HOST_ACTION_UNRESOLVED"
   },
   "knowledge_gate": {
     "circular_spare_recipes": [
@@ -194,7 +240,7 @@
     "station_piece": "station_research",
     "verdict": "SEEDED_ONLY_BY_LOOT"
   },
-  "read_this_first": "Four checks that take their answer from outside the file under review: the engine's own class list, Godot's JSON contract, the recipe/source graph, and A3's pinned catalog.",
+  "read_this_first": "Five checks that take their answer from outside the file under review: the engine's own class list, Godot's JSON contract, the recipe/source graph, A3's pinned catalog, and a replay of the shipped host request against the binding table A0 actually loads.",
   "save_fidelity": {
     "authoritative_writer_count": 1,
     "formula": "decimals = max(1, 14 - floor(log10(abs(value)))) when full_precision is false",
@@ -203,6 +249,22 @@
     "proves": "whether a float written by the save writer is guaranteed to reload bit-identically. It cannot say which field drifted in a native run; it only says the writer allows drift.",
     "verdict": "ROUND_TRIP_EXACT",
     "writers": [
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.a3_economy_service.gd",
+        "full_precision": false,
+        "line": 713,
+        "text": "var signature := JSON.stringify(payload).sha256_text()"
+      },
+      {
+        "argument_count": 1,
+        "authoritative": false,
+        "file": "a0.a3_economy_service.gd",
+        "full_precision": false,
+        "line": 1423,
+        "text": "var context_sha256 := JSON.stringify(cast_context).sha256_text()"
+      },
       {
         "argument_count": 1,
         "authoritative": false,
@@ -236,27 +298,27 @@
         "text": "return JSON.stringify(signature)"
       },
       {
-        "argument_count": 1,
+        "argument_count": 4,
         "authoritative": false,
         "file": "a0.survival_normal_entry_home_restart_test.gd",
-        "full_precision": false,
-        "line": 146,
-        "text": "file.store_string(JSON.stringify(audit))"
+        "full_precision": true,
+        "line": 155,
+        "text": "file.store_string(JSON.stringify(audit, \"\\t\", true, true))"
       },
       {
-        "argument_count": 1,
+        "argument_count": 4,
         "authoritative": false,
         "file": "a0.survival_waystation_input_restart_test.gd",
-        "full_precision": false,
-        "line": 65,
-        "text": "file.store_string(JSON.stringify(record)); file.close()"
+        "full_precision": true,
+        "line": 77,
+        "text": "file.store_string(JSON.stringify(record, \"\\t\", true, true)); file.close()"
       },
       {
         "argument_count": 2,
         "authoritative": false,
         "file": "a8.poi_pilot.gd",
         "full_precision": false,
-        "line": 237,
+        "line": 239,
         "text": "print(\"S2 fixture authority: \", JSON.stringify({\"intent\": intent, \"result\": result}))"
       }
     ]

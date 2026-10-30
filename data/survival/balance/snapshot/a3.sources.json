@@ -363,7 +363,7 @@
       "region_id": "r_ashen_crown",
       "poi_id": "poi_crown_waystation",
       "source_class": "roadside_cache",
-      "instance_id": "node_waystation_cache",
+      "instance_id": "si:r_ashen_crown:waystation_cache:01",
       "world_binding_id": "a1_waystation_roadside_cache_v3",
       "yield_per_claim": 2,
       "replenishment_seconds": 1800,
@@ -380,18 +380,20 @@
       "id": "road_notes",
       "item_id": "research_notes",
       "acquisition": "loot",
-      "region_id": "opening_marches",
-      "poi_id": "poi:roadside_cache",
+      "region_id": "r_ashen_crown",
+      "poi_id": "poi_crown_waystation",
       "yield_per_claim": 1,
       "replenishment_seconds": 1800,
       "risk": "low",
       "requirements": [],
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "provenance": [
         "SYS-03",
         "SYS-04"
       ],
-      "balance_status": "SOH_PROPOSAL"
+      "balance_status": "SOH_PROPOSAL",
+      "instance_id": "si:r_ashen_crown:roadside_supply:01",
+      "world_binding_id": "a1_roadside_notes_01_v4"
     },
     "road_scrap": {
       "id": "road_scrap",
@@ -400,7 +402,7 @@
       "region_id": "r_ashen_crown",
       "poi_id": "poi_crown_waystation",
       "source_class": "roadside_cache",
-      "instance_id": "node_waystation_cache",
+      "instance_id": "si:r_ashen_crown:waystation_cache:01",
       "world_binding_id": "a1_waystation_roadside_cache_v3",
       "yield_per_claim": 3,
       "replenishment_seconds": 1800,
@@ -705,7 +707,7 @@
       "balance_status": "SOH_PROPOSAL"
     }
   },
-  "world_contract_status": "A1_TWO_POI_SLICE_PINNED_A3_BOUND_PENDING_A0_MOUNT",
+  "world_contract_status": "A1_TWO_POI_SLICE_AND_ONE_ROADSIDE_NOTES_CRATE_PINNED_A3_BOUND_PENDING_A0_MOUNT",
   "live_harvest_authority": "res://game/survival/survival_service.gd",
-  "note": "road_scrap/road_supplies are bound to the canonical A1 Waystation outside cache (3 scrap + 2 spares / 1800 active seconds); the locker is capability-only. Other PROPOSED_A1 sources remain requirements, not spawned loot. Existing reward sources do not imply renewable world nodes. See world_source_bindings.v3.json."
+  "note": "road_scrap/road_supplies are bound to the canonical A1 Waystation outside cache (3 scrap + 2 spares / 1800 active seconds); the locker is capability-only. road_notes is bound to exactly one A1 roadside crate si:r_ashen_crown:roadside_supply:01 (1 note / 1800 active seconds) as an A3 gate approval recorded in world_source_bindings.v3.json; source balance_status remains SOH_PROPOSAL until human playtest. Other PROPOSED_A1 sources remain requirements, not spawned loot. Existing reward sources do not imply renewable world nodes."
 }

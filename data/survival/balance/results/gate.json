@@ -42,21 +42,21 @@
     },
     "source_pins": {
       "a0_pr21": {
-        "head": "122294f2237c1836d6f04561e090fe6aa6c6c0cf",
+        "head": "5387bed6260cb7b9bd4d8229ee759dee08a0d918",
         "owner": "SaveService + SurvivalService + production overworld mount"
       },
       "a1_pr20": {
-        "head": "7fd000e1c017830a088749b965e651fafb501b98",
+        "head": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
         "source": "data/survival/world/world_plan.v1.json"
       },
       "a3_pr19": {
-        "head": "c23292be095903c67e3d6e6e4fbd310b6649da12",
+        "head": "c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
         "items": "data/survival/items/items.json",
         "sources": "data/survival/items/sources.json",
         "world_source_bindings_v3": "data/survival/items/world_source_bindings.v3.json"
       },
       "a6_pr24": {
-        "head": "bed3fc81ced4505eac6cfc3ddec5c07aeef8019e",
+        "head": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
         "owner": "player input and presentation"
       },
       "a8_audit_snapshot": "9332cb9ba25da3026ede0cad578a90f0e4b5a2b6",
@@ -200,7 +200,7 @@
       "key": "a8.south_orchard_ruin.json",
       "poi_id": "poi_crown_south_orchard",
       "site_id": "crown_south_orchard",
-      "wall_segments": 11
+      "wall_segments": 19
     },
     {
       "actions": [
@@ -264,7 +264,7 @@
     "fixture_declares_test_only": true,
     "fixture_keeps_state_in_memory": true,
     "fixture_uses_save_service": false,
-    "harness_only_by_default": true,
+    "harness_only_by_default": false,
     "intent_contract_id": "soh.native_poi.intent.v1",
     "pilot_installs_fixture": true,
     "site_emits_intent": true
@@ -338,8 +338,8 @@
       "chain_id": "a8_quarry",
       "level": "S3_PRODUCTION_SEAM",
       "link": "L1_ENTRY",
-      "missing": "route exists in source; native run is QUEUED",
-      "native_state": "QUEUED",
+      "missing": "route exists in source; native run is STALE_HEAD",
+      "native_state": "STALE_HEAD",
       "next_action": "A0 lands the queued native entry workflow green.",
       "owner": "A0"
     },
@@ -368,8 +368,8 @@
       "chain_id": "waystation_cache",
       "level": "S3_PRODUCTION_SEAM",
       "link": "L1_ENTRY",
-      "missing": "the route exists in source, but the native run that would prove it executes is QUEUED",
-      "native_state": "QUEUED",
+      "missing": "the route exists in source, but the native run that would prove it executes is STALE_HEAD",
+      "native_state": "STALE_HEAD",
       "next_action": "A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
       "owner": "A0"
     },
@@ -378,20 +378,20 @@
       "chain_id": "waystation_cache",
       "level": "S1_AUTHORED_ONLY",
       "link": "L2_ROUTE",
-      "missing": "the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet",
+      "missing": "the host is behind `survival/a0_waystation_candidate`, which the shipped project.godot does not set, so a normal player never takes that branch",
       "native_state": "NOT_TESTED",
       "next_action": "A0 places ONE A1 slice node (node_waystation_cache at poi_crown_waystation) or the A8 quarry scene into the existing overworld route; A1 supplies the cell, A8 supplies the scene.",
       "owner": "A0 + A1 + A8"
     },
     {
-      "blocker_id": "BLK-1",
+      "blocker_id": "BLK-2",
       "chain_id": "waystation_cache",
       "level": "S1_AUTHORED_ONLY",
       "link": "L3_INTERACTION",
       "missing": "the action exists only in authored data; no mounted scene places the cache node",
       "native_state": "NOT_TESTED",
       "next_action": "the same mount as L2 also places the interaction node and its input.",
-      "owner": "A1"
+      "owner": "A1 + A0"
     },
     {
       "blocker_id": "BLK-4",
@@ -399,7 +399,7 @@
       "level": "S2_SCENE_FIXTURE",
       "link": "L5_COMMIT",
       "missing": "a fake authority commits the reward; SaveService is never called on this path",
-      "native_state": "QUEUED",
+      "native_state": "STALE_HEAD",
       "next_action": "A0/A8 swap the fixture for a SaveService adapter and key the claim on the instance id.",
       "owner": "A0 + A8"
     },
@@ -409,7 +409,7 @@
       "level": "S0_ABSENT",
       "link": "L6_RELOAD",
       "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
-      "native_state": "QUEUED",
+      "native_state": "STALE_HEAD",
       "next_action": "after L5.",
       "owner": "A0"
     },
@@ -428,8 +428,8 @@
       "chain_id": "waystation_cache",
       "level": "S3_PRODUCTION_SEAM",
       "link": "L5_COMMIT",
-      "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers)",
-      "native_state": "QUEUED",
+      "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (5 survival callers, 0 A1-contract callers)",
+      "native_state": "STALE_HEAD",
       "next_action": "A0 adds ONE caller keyed on A1's transaction key ('a1slice:poi_crown_waystation:cache_restock:1') that pays the A1 binding through add_items_to_candidate inside transact_once.",
       "owner": "A0"
     },
@@ -438,8 +438,8 @@
       "chain_id": "waystation_cache",
       "level": "S3_PRODUCTION_SEAM",
       "link": "L6_RELOAD",
-      "missing": "a real two-process reload test exists in source, but its native run is QUEUED",
-      "native_state": "QUEUED",
+      "missing": "a real two-process reload test exists in source, but its native run is STALE_HEAD",
+      "native_state": "STALE_HEAD",
       "next_action": "the queued native-entry-restart job must go green; static text cannot substitute.",
       "owner": "A0"
     },
@@ -449,7 +449,7 @@
       "level": "S3_PRODUCTION_SEAM",
       "link": "L7_NO_DUPLICATE",
       "missing": "the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay",
-      "native_state": "QUEUED",
+      "native_state": "STALE_HEAD",
       "next_action": "the same native run asserts applied_transactions equality across processes.",
       "owner": "A0 + A1"
     },
@@ -514,18 +514,18 @@
             {
               "fact": "native entry run",
               "value": {
-                "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-                "run_id": 41029607430,
-                "state": "QUEUED"
+                "head_sha": null,
+                "run_id": null,
+                "state": "STALE_HEAD"
               }
             }
           ],
           "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "the route exists in source, but the native run that would prove it executes is QUEUED",
+          "missing": "the route exists in source, but the native run that would prove it executes is STALE_HEAD",
           "native_evidence_id": "a0_normal_entry_home",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "A0 lands the queued a0-normal-entry-home-restart workflow green on this commit.",
           "owner": "A0",
           "rank": 3,
@@ -539,7 +539,11 @@
           "evidence": [
             {
               "fact": "A1 instance ids on the A0 surface",
-              "value": []
+              "value": [
+                "a0.economy_session.gd:290",
+                "a0.economy_session.gd:311",
+                "a0.waystation_host.gd:6"
+              ]
             },
             {
               "fact": "A8 instance ids on the A0 surface",
@@ -555,11 +559,25 @@
                 "node_waystation_cache",
                 "node_waystation_cache"
               ]
+            },
+            {
+              "fact": "mount state",
+              "value": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG"
+            },
+            {
+              "fact": "project guard",
+              "value": {
+                "declared_in_project": false,
+                "enabled_by_default": false,
+                "guarded": true,
+                "setting": "survival/a0_waystation_candidate",
+                "why": "ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the key, so an absent key is a disabled guard, not a neutral default."
+              }
             }
           ],
           "level": "S1_AUTHORED_ONLY",
           "link": "L2_ROUTE",
-          "missing": "the reachable overworld contains no A1 city node and no A8 site scene, so there is no walkable route to the interaction yet",
+          "missing": "the host is behind `survival/a0_waystation_candidate`, which the shipped project.godot does not set, so a normal player never takes that branch",
           "native_evidence_id": null,
           "native_run_id": null,
           "native_state": "NOT_TESTED",
@@ -572,7 +590,7 @@
         },
         {
           "blocked": true,
-          "blocker_id": "BLK-1",
+          "blocker_id": "BLK-2",
           "evidence": [
             {
               "fact": "cache action",
@@ -590,6 +608,29 @@
               }
             },
             {
+              "fact": "host request resolves in the loaded catalog",
+              "value": false
+            },
+            {
+              "fact": "unresolved host requests",
+              "value": [
+                {
+                  "a0_binding_id": null,
+                  "a3_binding_id": "a1_waystation_roadside_cache_v3",
+                  "action_id": "cache_restock",
+                  "instance_id": "si:r_ashen_crown:waystation_cache:01",
+                  "poi_id": "poi_crown_waystation",
+                  "point": "cache",
+                  "resolved_in_a0_catalog": false,
+                  "resolved_in_a3_catalog": true
+                }
+              ]
+            },
+            {
+              "fact": "identity verdict",
+              "value": "HOST_ACTION_UNRESOLVED"
+            },
+            {
               "fact": "spec native_playable",
               "value": false
             }
@@ -601,7 +642,7 @@
           "native_run_id": null,
           "native_state": "NOT_TESTED",
           "next_action": "the same mount as L2 also places the interaction node and its input.",
-          "owner": "A1",
+          "owner": "A1 + A0",
           "rank": 1,
           "requirement": "The interaction is real input on a placed object with player-facing text.",
           "source_state": "AUTHORED_ONLY",
@@ -668,6 +709,19 @@
             {
               "fact": "mounted committers",
               "value": [
+                {
+                  "arguments": ".call(&\"transact_once\", key, func(candidate: Dictionary) -> bool:",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_UNCLASSIFIED_CALLER",
+                  "context": [],
+                  "function": "_transact",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 723,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/economy/vendor/a3_economy_service.gd"
+                },
                 {
                   "arguments": ".call(",
                   "authorisation": [
@@ -766,6 +820,36 @@
                   "path": "game/survival/survival_service.gd"
                 },
                 {
+                  "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION"
+                  ],
+                  "function": "begin_overworld_death",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 461,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd"
+                },
+                {
+                  "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
+                  "authorisation": [],
+                  "authorisation_refs": [],
+                  "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+                  "context": [
+                    "SURVIVAL_DOCUMENT_MUTATION"
+                  ],
+                  "function": "finish_overworld_death",
+                  "function_referenced": true,
+                  "kind": "call_method",
+                  "line": 508,
+                  "mount_state": "MOUNTED",
+                  "path": "game/survival/survival_service.gd"
+                },
+                {
                   "arguments": ".call(",
                   "authorisation": [],
                   "authorisation_refs": [],
@@ -802,6 +886,18 @@
             {
               "fact": "rejected call sites",
               "value": [
+                {
+                  "arguments": "has_method(&\"transact_once\") \\",
+                  "authorisation_refs": [],
+                  "context": [
+                    "SURVIVAL_ITEM_GRANT"
+                  ],
+                  "function": "configure",
+                  "kind": "has_method",
+                  "line": 37,
+                  "path": "game/survival/economy/vendor/a3_economy_service.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+                },
                 {
                   "arguments": "has_method(&\"transact_once\"):",
                   "authorisation_refs": [
@@ -866,46 +962,25 @@
                   "reason": "CAPABILITY_PROBE_NOT_A_CALL"
                 },
                 {
-                  "arguments": ".call(",
+                  "arguments": "has_method(&\"transact_once\"):",
                   "authorisation_refs": [],
-                  "context": [
-                    "SURVIVAL_DOCUMENT_MUTATION"
-                  ],
-                  "function": "place_structure",
-                  "function_referenced": false,
-                  "kind": "call_method",
-                  "line": 377,
-                  "mount_state": "MOUNTED",
-                  "path": "game/survival/survival_service.gd",
-                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+                  "context": [],
+                  "function": "_grant_discovery_reward",
+                  "kind": "has_method",
+                  "line": 1018,
+                  "path": "game/overworld/chapter1_overworld.gd",
+                  "reason": "CAPABILITY_PROBE_NOT_A_CALL"
                 },
                 {
-                  "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+                  "arguments": ".call(&\"transact_once\", \"overworld:discovery:%s\" % String(discovery_id), func(candidate: Dictionary) -> bool:",
                   "authorisation_refs": [],
-                  "context": [
-                    "SURVIVAL_DOCUMENT_MUTATION"
-                  ],
-                  "function": "begin_overworld_death",
-                  "function_referenced": false,
+                  "context": [],
+                  "function": "_grant_discovery_reward",
                   "kind": "call_method",
-                  "line": 461,
-                  "mount_state": "MOUNTED",
-                  "path": "game/survival/survival_service.gd",
-                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
-                },
-                {
-                  "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
-                  "authorisation_refs": [],
-                  "context": [
-                    "SURVIVAL_DOCUMENT_MUTATION"
-                  ],
-                  "function": "finish_overworld_death",
-                  "function_referenced": false,
-                  "kind": "call_method",
-                  "line": 508,
-                  "mount_state": "MOUNTED",
-                  "path": "game/survival/survival_service.gd",
-                  "reason": "UNREFERENCED_IN_PINNED_SURFACE"
+                  "line": 1023,
+                  "mount_state": "NOT_MOUNTED",
+                  "path": "game/overworld/chapter1_overworld.gd",
+                  "reason": "NOT_MOUNTED_NOT_MOUNTED"
                 }
               ]
             },
@@ -916,10 +991,10 @@
           ],
           "level": "S3_PRODUCTION_SEAM",
           "link": "L5_COMMIT",
-          "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (3 survival callers, 0 A1-contract callers)",
+          "missing": "survival commits are live (harvest/structures/death) and campaign rewards are live, but no caller is keyed on an A1 contract key: the Waystation cache has no claim path, and A8's POI still commits through an in-memory fixture (5 survival callers, 0 A1-contract callers)",
           "native_evidence_id": "a0_second_process_restart",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "A0 adds ONE caller keyed on A1's transaction key ('a1slice:poi_crown_waystation:cache_restock:1') that pays the A1 binding through add_items_to_candidate inside transact_once.",
           "owner": "A0",
           "rank": 3,
@@ -938,9 +1013,9 @@
             {
               "fact": "native state",
               "value": {
-                "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-                "run_id": 41029607430,
-                "state": "QUEUED"
+                "head_sha": null,
+                "run_id": null,
+                "state": "STALE_HEAD"
               }
             },
             {
@@ -950,10 +1025,10 @@
           ],
           "level": "S3_PRODUCTION_SEAM",
           "link": "L6_RELOAD",
-          "missing": "a real two-process reload test exists in source, but its native run is QUEUED",
+          "missing": "a real two-process reload test exists in source, but its native run is STALE_HEAD",
           "native_evidence_id": "a0_second_process_restart",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "the queued native-entry-restart job must go green; static text cannot substitute.",
           "owner": "A0",
           "rank": 3,
@@ -992,8 +1067,8 @@
           "link": "L7_NO_DUPLICATE",
           "missing": "the guard exists and A1 defines the duplicate outcome, but no native run proves a second process refuses the replay",
           "native_evidence_id": "a0_second_process_restart",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "the same native run asserts applied_transactions equality across processes.",
           "owner": "A0 + A1",
           "rank": 3,
@@ -1074,10 +1149,10 @@
           ],
           "level": "S3_PRODUCTION_SEAM",
           "link": "L1_ENTRY",
-          "missing": "route exists in source; native run is QUEUED",
+          "missing": "route exists in source; native run is STALE_HEAD",
           "native_evidence_id": "a0_normal_entry_home",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "A0 lands the queued native entry workflow green.",
           "owner": "A0",
           "rank": 3,
@@ -1133,7 +1208,7 @@
             },
             {
               "fact": "harness only",
-              "value": true
+              "value": false
             },
             {
               "fact": "actions",
@@ -1259,8 +1334,8 @@
           "link": "L5_COMMIT",
           "missing": "a fake authority commits the reward; SaveService is never called on this path",
           "native_evidence_id": "a0_second_process_restart",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "A0/A8 swap the fixture for a SaveService adapter and key the claim on the instance id.",
           "owner": "A0 + A8",
           "rank": 2,
@@ -1281,8 +1356,8 @@
           "link": "L6_RELOAD",
           "missing": "site state lives only in fixture memory, so reload cannot preserve anything",
           "native_evidence_id": "a0_second_process_restart",
-          "native_run_id": 41029607430,
-          "native_state": "QUEUED",
+          "native_run_id": null,
+          "native_state": "STALE_HEAD",
           "next_action": "after L5.",
           "owner": "A0",
           "rank": 0,
@@ -1367,10 +1442,24 @@
     },
     "classifications": [
       "MOUNTED_CAMPAIGN_CALLER",
-      "MOUNTED_SURVIVAL_SYSTEM_CALLER"
+      "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+      "MOUNTED_UNCLASSIFIED_CALLER"
     ],
-    "mounted_caller_count": 8,
+    "mounted_caller_count": 11,
     "mounted_callers": [
+      {
+        "arguments": ".call(&\"transact_once\", key, func(candidate: Dictionary) -> bool:",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_UNCLASSIFIED_CALLER",
+        "context": [],
+        "function": "_transact",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 723,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/economy/vendor/a3_economy_service.gd"
+      },
       {
         "arguments": ".call(",
         "authorisation": [
@@ -1469,6 +1558,36 @@
         "path": "game/survival/survival_service.gd"
       },
       {
+        "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "begin_overworld_death",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 461,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
+        "authorisation": [],
+        "authorisation_refs": [],
+        "classification": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
+        "context": [
+          "SURVIVAL_DOCUMENT_MUTATION"
+        ],
+        "function": "finish_overworld_death",
+        "function_referenced": true,
+        "kind": "call_method",
+        "line": 508,
+        "mount_state": "MOUNTED",
+        "path": "game/survival/survival_service.gd"
+      },
+      {
         "arguments": ".call(",
         "authorisation": [],
         "authorisation_refs": [],
@@ -1501,8 +1620,20 @@
         "path": "game/survival/survival_service.gd"
       }
     ],
-    "raw_token_occurrences": 67,
+    "raw_token_occurrences": 74,
     "rejected": [
+      {
+        "arguments": "has_method(&\"transact_once\") \\",
+        "authorisation_refs": [],
+        "context": [
+          "SURVIVAL_ITEM_GRANT"
+        ],
+        "function": "configure",
+        "kind": "has_method",
+        "line": 37,
+        "path": "game/survival/economy/vendor/a3_economy_service.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
       {
         "arguments": "has_method(&\"transact_once\"):",
         "authorisation_refs": [
@@ -1567,6 +1698,27 @@
         "reason": "CAPABILITY_PROBE_NOT_A_CALL"
       },
       {
+        "arguments": "has_method(&\"transact_once\"):",
+        "authorisation_refs": [],
+        "context": [],
+        "function": "_grant_discovery_reward",
+        "kind": "has_method",
+        "line": 1018,
+        "path": "game/overworld/chapter1_overworld.gd",
+        "reason": "CAPABILITY_PROBE_NOT_A_CALL"
+      },
+      {
+        "arguments": ".call(&\"transact_once\", \"overworld:discovery:%s\" % String(discovery_id), func(candidate: Dictionary) -> bool:",
+        "authorisation_refs": [],
+        "context": [],
+        "function": "_grant_discovery_reward",
+        "kind": "call_method",
+        "line": 1023,
+        "mount_state": "NOT_MOUNTED",
+        "path": "game/overworld/chapter1_overworld.gd",
+        "reason": "NOT_MOUNTED_NOT_MOUNTED"
+      },
+      {
         "arguments": ".call(",
         "authorisation_refs": [],
         "context": [
@@ -1576,34 +1728,6 @@
         "function_referenced": false,
         "kind": "call_method",
         "line": 377,
-        "mount_state": "MOUNTED",
-        "path": "game/survival/survival_service.gd",
-        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
-      },
-      {
-        "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
-        "authorisation_refs": [],
-        "context": [
-          "SURVIVAL_DOCUMENT_MUTATION"
-        ],
-        "function": "begin_overworld_death",
-        "function_referenced": false,
-        "kind": "call_method",
-        "line": 461,
-        "mount_state": "MOUNTED",
-        "path": "game/survival/survival_service.gd",
-        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
-      },
-      {
-        "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
-        "authorisation_refs": [],
-        "context": [
-          "SURVIVAL_DOCUMENT_MUTATION"
-        ],
-        "function": "finish_overworld_death",
-        "function_referenced": false,
-        "kind": "call_method",
-        "line": 508,
         "mount_state": "MOUNTED",
         "path": "game/survival/survival_service.gd",
         "reason": "UNREFERENCED_IN_PINNED_SURFACE"
@@ -1717,7 +1841,7 @@
         "reason": "NON_PRODUCTION_PATH"
       }
     ],
-    "rejected_count": 15,
+    "rejected_count": 16,
     "static_state": "MOUNTED_SURVIVAL_SYSTEM_CALLER",
     "two_process_reload_test_in_source": true,
     "two_process_test_file": "tests/survival_normal_entry_home_restart_test.gd",
@@ -1732,34 +1856,6 @@
         "function_referenced": false,
         "kind": "call_method",
         "line": 377,
-        "mount_state": "MOUNTED",
-        "path": "game/survival/survival_service.gd",
-        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
-      },
-      {
-        "arguments": ".call(&\"transact_once\", \"survival.death.%d\" % serial,",
-        "authorisation_refs": [],
-        "context": [
-          "SURVIVAL_DOCUMENT_MUTATION"
-        ],
-        "function": "begin_overworld_death",
-        "function_referenced": false,
-        "kind": "call_method",
-        "line": 461,
-        "mount_state": "MOUNTED",
-        "path": "game/survival/survival_service.gd",
-        "reason": "UNREFERENCED_IN_PINNED_SURFACE"
-      },
-      {
-        "arguments": ".call(&\"transact_once\", \"survival.respawn.\" + pending,",
-        "authorisation_refs": [],
-        "context": [
-          "SURVIVAL_DOCUMENT_MUTATION"
-        ],
-        "function": "finish_overworld_death",
-        "function_referenced": false,
-        "kind": "call_method",
-        "line": 508,
         "mount_state": "MOUNTED",
         "path": "game/survival/survival_service.gd",
         "reason": "UNREFERENCED_IN_PINNED_SURFACE"
@@ -2038,8 +2134,14 @@
     "B_route_runs_in_native_godot": {
       "evidence": {
         "evidence_id": "a0_normal_entry_home",
-        "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+        "head_sha": null,
         "other_commit_runs": [
+          {
+            "conclusion": "",
+            "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+            "run_id": 41029607430,
+            "status": "queued"
+          },
           {
             "conclusion": "",
             "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2079,18 +2181,31 @@
         ],
         "phrase_found": false,
         "proves": "a normal menu route reaches the overworld in native Godot",
-        "run_id": 41029607430,
-        "state": "QUEUED"
+        "run_id": null,
+        "state": "STALE_HEAD"
       },
       "level": "NOT_CLAIMED",
-      "state": "QUEUED"
+      "state": "STALE_HEAD"
     },
     "C_content_is_mounted": {
       "evidence": {
-        "a1_instance_references_in_a0_surface": [],
+        "a1_instance_references_in_a0_surface": [
+          "a0.economy_session.gd:290",
+          "a0.economy_session.gd:311",
+          "a0.waystation_host.gd:6"
+        ],
         "a8_instance_references_in_a0_surface": [],
         "a8_site_scenes_in_overworld": [],
         "claim": "the A1 cache and A8 POI are mounted inside the world the route reaches",
+        "guard": {
+          "declared_in_project": false,
+          "enabled_by_default": false,
+          "guarded": true,
+          "setting": "survival/a0_waystation_candidate",
+          "why": "ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the key, so an absent key is a disabled guard, not a neutral default."
+        },
+        "guard_only": true,
+        "mount_state": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
         "mounted": false,
         "non_production_references": {
           "a0.survival_waystation_authority_test.gd": [
@@ -2102,25 +2217,26 @@
             "a0.survival_waystation_authority_test.gd:93"
           ],
           "a0.survival_waystation_input_restart_test.gd": [
-            "a0.survival_waystation_input_restart_test.gd:104",
-            "a0.survival_waystation_input_restart_test.gd:105"
+            "a0.survival_waystation_input_restart_test.gd:116",
+            "a0.survival_waystation_input_restart_test.gd:117"
           ]
         },
-        "note": "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 site scenes are placed in it.",
-        "production_surface_files": 20
+        "note": "The production code path exists but is behind `survival/a0_waystation_candidate`, which the shipped project does not enable, so a normal player cannot reach it. Recorded as a guarded candidate, never as a mount.",
+        "production_surface_files": 30
       },
-      "level": "S0_ABSENT",
-      "state": "ABSENT"
+      "level": "S1_AUTHORED_ONLY",
+      "reachable_by_normal_input": false,
+      "state": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG"
     },
     "D_useful_reward_claimable": {
       "evidence": {
         "knowledge_gate": "SEEDED_ONLY_BY_LOOT",
-        "mounted_caller_count": 8,
+        "mounted_caller_count": 11,
         "s4_clauses": {
           "C1_exact_source_identity": {
             "pinned": {
-              "a0": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-              "a8": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
+              "a0": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+              "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
             },
             "proves": "every run cited below executed on the pinned head sha, not on an ancestor",
             "state": "NOT_HOLDS",
@@ -2130,7 +2246,7 @@
             "evidence": [
               {
                 "evidence_id": "a0_normal_entry_home",
-                "state": "QUEUED"
+                "state": "STALE_HEAD"
               }
             ],
             "proves": "a normal player-facing route reaches the world",
@@ -2140,7 +2256,7 @@
             "evidence": [
               {
                 "evidence_id": "a0_second_process_restart",
-                "state": "QUEUED"
+                "state": "STALE_HEAD"
               }
             ],
             "proves": "a separate Godot process restored the durable state",
@@ -2150,7 +2266,7 @@
             "evidence": [
               {
                 "evidence_id": "a0_waystation_player_input",
-                "state": "QUEUED"
+                "state": "STALE_HEAD"
               }
             ],
             "proves": "real input produced one A3-authorized receipt",
@@ -2160,7 +2276,7 @@
             "evidence": [
               {
                 "evidence_id": "a0_replay_negative",
-                "state": "QUEUED"
+                "state": "STALE_HEAD"
               }
             ],
             "proves": "repeating the event granted nothing",
@@ -2175,10 +2291,23 @@
     }
   },
   "entry_content": {
-    "a1_instance_references_in_a0_surface": [],
+    "a1_instance_references_in_a0_surface": [
+      "a0.economy_session.gd:290",
+      "a0.economy_session.gd:311",
+      "a0.waystation_host.gd:6"
+    ],
     "a8_instance_references_in_a0_surface": [],
     "a8_site_scenes_in_overworld": [],
     "claim": "the A1 cache and A8 POI are mounted inside the world the route reaches",
+    "guard": {
+      "declared_in_project": false,
+      "enabled_by_default": false,
+      "guarded": true,
+      "setting": "survival/a0_waystation_candidate",
+      "why": "ProjectSettings.get_setting(key, false) returns false when the shipped project.godot omits the key, so an absent key is a disabled guard, not a neutral default."
+    },
+    "guard_only": true,
+    "mount_state": "SOURCE_PRESENT_BEHIND_DISABLED_FLAG",
     "mounted": false,
     "non_production_references": {
       "a0.survival_waystation_authority_test.gd": [
@@ -2190,12 +2319,12 @@
         "a0.survival_waystation_authority_test.gd:93"
       ],
       "a0.survival_waystation_input_restart_test.gd": [
-        "a0.survival_waystation_input_restart_test.gd:104",
-        "a0.survival_waystation_input_restart_test.gd:105"
+        "a0.survival_waystation_input_restart_test.gd:116",
+        "a0.survival_waystation_input_restart_test.gd:117"
       ]
     },
-    "note": "Zero references: the route reaches A0's own overworld, and neither the A1 slice nodes nor the A8 site scenes are placed in it.",
-    "production_surface_files": 20
+    "note": "The production code path exists but is behind `survival/a0_waystation_candidate`, which the shipped project does not enable, so a normal player cannot reach it. Recorded as a guarded candidate, never as a mount.",
+    "production_surface_files": 30
   },
   "evidence": {
     "run_states": [
@@ -2208,6 +2337,11 @@
   "headline": "Normal menu entry to A0's world exists in source; the A1 cache and A8 scene are not mounted in it; the only committed rewards are campaign progression; no native run has verified any of it.",
   "mount_graph": {
     "gate_files": {
+      "a0.a3_economy_service.gd": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/survival/economy/vendor/a3_economy_service.gd"
+      },
       "a0.app_flow.gd": {
         "mount_state": "MOUNTED",
         "note": "reachable from project.godot autoloads or the shipped app scene",
@@ -2228,6 +2362,11 @@
         "note": "pinned but not reachable from any shipped scene or autoload",
         "path": "game/ui/screens/hub/tabs/campaign_tab.tscn"
       },
+      "a0.chapter1_overworld.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/overworld/chapter1_overworld.gd"
+      },
       "a0.chapter1_overworld.tscn": {
         "mount_state": "NOT_MOUNTED",
         "note": "pinned but not reachable from any shipped scene or autoload",
@@ -2242,6 +2381,11 @@
         "mount_state": "NOT_MOUNTED",
         "note": "pinned but not reachable from any shipped scene or autoload",
         "path": "game/survival/chest_inventory_panel.gd"
+      },
+      "a0.economy_session.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/economy/economy_session.gd"
       },
       "a0.home_map_screen.gd": {
         "mount_state": "NOT_MOUNTED",
@@ -2293,6 +2437,11 @@
         "note": "pinned but not reachable from any shipped scene or autoload",
         "path": "game/survival/survival_resource_node.gd"
       },
+      "a0.survival_save_precision_test.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "tests/survival_save_precision_test.gd"
+      },
       "a0.survival_service.gd": {
         "mount_state": "MOUNTED",
         "note": "reachable from project.godot autoloads or the shipped app scene",
@@ -2312,6 +2461,26 @@
         "mount_state": "MOUNTED",
         "note": "reachable from project.godot autoloads or the shipped app scene",
         "path": "game/survival/economy/unique_ownership_guard.gd"
+      },
+      "a0.waystation_geometry.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/waystation_geometry.gd"
+      },
+      "a0.waystation_host.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/waystation_host.gd"
+      },
+      "a0.waystation_interactable.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/waystation_interactable.gd"
+      },
+      "a0.world_source_adapter.gd": {
+        "mount_state": "MOUNTED",
+        "note": "reachable from project.godot autoloads or the shipped app scene",
+        "path": "game/survival/economy/world_source_adapter.gd"
       },
       "a6.a0_storage_command_adapter.gd": {
         "mount_state": "NOT_MOUNTED",
@@ -2358,6 +2527,11 @@
         "note": "pinned but not reachable from any shipped scene or autoload",
         "path": "game/survival/ui/survival_view_adapter.gd"
       },
+      "a8.native_poi_art.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scripts/native_poi_art.gd"
+      },
       "a8.native_poi_shell.gd": {
         "mount_state": "NOT_MOUNTED",
         "note": "pinned but not reachable from any shipped scene or autoload",
@@ -2367,6 +2541,11 @@
         "mount_state": "NOT_MOUNTED",
         "note": "pinned but not reachable from any shipped scene or autoload",
         "path": "game/survival/world_content/scripts/native_poi_site.gd"
+      },
+      "a8.native_poi_vectors.gd": {
+        "mount_state": "NOT_MOUNTED",
+        "note": "pinned but not reachable from any shipped scene or autoload",
+        "path": "game/survival/world_content/scripts/native_poi_vectors.gd"
       },
       "a8.poi_authority_fixture.gd": {
         "mount_state": "NOT_MOUNTED",
@@ -2399,13 +2578,15 @@
         "path": "game/survival/world_content/scenes/south_quarry.tscn"
       }
     },
-    "pinned_files": 52,
+    "pinned_files": 75,
     "reachable": [
       "game/app/app_flow.gd",
       "game/autoload/save_service.gd",
       "game/characters/knight/knight.tscn",
       "game/main.tscn",
       "game/survival/economy/unique_ownership_guard.gd",
+      "game/survival/economy/vendor/a3_economy_service.gd",
+      "game/survival/economy/world_source_adapter.gd",
       "game/survival/survival_service.gd"
     ]
   },
@@ -2618,8 +2799,14 @@
   "native_states": {
     "a0_normal_entry_home": {
       "evidence_id": "a0_normal_entry_home",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607430,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2659,13 +2846,19 @@
       ],
       "phrase_found": false,
       "proves": "a normal menu route reaches the overworld in native Godot",
-      "run_id": 41029607430,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a0_replay_negative": {
       "evidence_id": "a0_replay_negative",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607304,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2699,17 +2892,23 @@
       ],
       "phrase_found": false,
       "proves": "replaying the same event after a second process existed grants nothing",
-      "run_id": 41029607304,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a0_runtime_validation": {
       "evidence_id": "a0_runtime_validation",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
         {
           "conclusion": "",
           "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
           "run_id": 41030089218,
+          "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607641,
           "status": "queued"
         },
         {
@@ -2739,29 +2938,41 @@
       ],
       "phrase_found": false,
       "proves": "the survival runtime scripts parse and run headless",
-      "run_id": 41029607641,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a0_save_precision": {
       "evidence_id": "a0_save_precision",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
         {
           "conclusion": "",
           "head_sha": "55c2cc8db59d6a79f97e94d2b1b561bd063cca94",
           "run_id": 41030089074,
           "status": "queued"
+        },
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607557,
+          "status": "queued"
         }
       ],
       "phrase_found": false,
       "proves": "the authoritative writer guarantees a float-exact round trip on the pinned sha, including a pre/post-rename fault and an independent process. The workflow only triggers on the owner's branch, so a green run has to be cited from it explicitly",
-      "run_id": 41029607557,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a0_second_process_restart": {
       "evidence_id": "a0_second_process_restart",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607430,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2801,13 +3012,19 @@
       ],
       "phrase_found": false,
       "proves": "an independent second Godot process restores the same save with no duplicates; the step itself must pass, because a WORKFLOW-level success says nothing about which process printed what",
-      "run_id": 41029607430,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a0_waystation_player_input": {
       "evidence_id": "a0_waystation_player_input",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607304,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2841,13 +3058,19 @@
       ],
       "phrase_found": false,
       "proves": "real Hero input in the connector earns an A3-authorized receipt which survives a second process",
-      "run_id": 41029607304,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a3_authority_fixture": {
       "evidence_id": "a3_authority_fixture",
-      "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "",
+          "head_sha": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
+          "run_id": 41029607304,
+          "status": "queued"
+        },
         {
           "conclusion": "",
           "head_sha": "8a0dbd4943b9a909373f32c578d3d242000dae8d",
@@ -2881,14 +3104,19 @@
       ],
       "phrase_found": false,
       "proves": "the V3 economy plausibly commits and refuses replays against the real SaveService. It is a FIXTURE: it funds its own inventory and advances its own clock, so it can never exceed S2",
-      "run_id": 41029607304,
-      "state": "QUEUED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     },
     "a8_native_poi_contract": {
       "evidence_id": "a8_native_poi_contract",
-      "head_sha": "5ccf7b3f9824daa138b5d98106b74a2899c7592b",
-      "note": "the step that would prove this was not captured: 'Run native physics, intent and persistence contracts'",
+      "head_sha": null,
       "other_commit_runs": [
+        {
+          "conclusion": "failure",
+          "head_sha": "5ccf7b3f9824daa138b5d98106b74a2899c7592b",
+          "run_id": 41024526858,
+          "status": "completed"
+        },
         {
           "conclusion": "failure",
           "head_sha": "9c180ef115bc53b1aa48e39a46a1a8fa7426c602",
@@ -2922,9 +3150,8 @@
       ],
       "phrase_found": false,
       "proves": "the native POI scene loads and its intent contract runs",
-      "run_id": 41024526858,
-      "state": "STALE_HEAD",
-      "step_state": "NOT_RECORDED"
+      "run_id": null,
+      "state": "STALE_HEAD"
     }
   },
   "oracle": {
@@ -2952,106 +3179,152 @@
         "Vector3"
       ],
       "proves": "that no audited built-in class is called through a method it does not expose. It does not prove the surrounding code runs, only that these calls cannot be the reason it fails.",
-      "static_call_count": 42,
-      "unknown_call_count": 15,
-      "unknown_calls": [
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_shell.gd",
-          "is_engine_static": false,
-          "line": 62
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_shell.gd",
-          "is_engine_static": false,
-          "line": 66
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_shell.gd",
-          "is_engine_static": false,
-          "line": 111
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 107
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 111
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 115
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 119
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 203
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 206
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 254
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 257
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 413
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 534
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.native_poi_site.gd",
-          "is_engine_static": false,
-          "line": 571
-        },
-        {
-          "call": "Vector2.from_array",
-          "file": "a8.poi_pilot.gd",
-          "is_engine_static": false,
-          "line": 224
-        }
-      ],
-      "verdict": "UNKNOWN_ENGINE_STATIC"
+      "static_call_count": 23,
+      "unknown_call_count": 0,
+      "unknown_calls": [],
+      "verdict": "ENGINE_API_CONSISTENT"
     },
     "holds": {
       "authorization_backed_by_a3": true,
       "float_round_trip_guaranteed": true,
-      "no_unknown_engine_static": false
+      "host_request_resolves_in_the_loaded_catalog": false,
+      "no_unknown_engine_static": true
+    },
+    "instance_identity": {
+      "a0_binding_count": 2,
+      "a0_only_bindings": [
+        "cache_restock@node_waystation_cache"
+      ],
+      "a3_binding_count": 3,
+      "a3_only_bindings": [
+        "cache_restock@si:r_ashen_crown:waystation_cache:01",
+        "salvage_roadside_notes@si:r_ashen_crown:roadside_supply:01"
+      ],
+      "divergent_bindings": [
+        {
+          "action_id": "gather_deadfall",
+          "fields": {
+            "canonical_poi_id": {
+              "a0": null,
+              "a3": "poi_crown_waystation"
+            },
+            "context_poi_id": {
+              "a0": null,
+              "a3": "poi_crown_waystation"
+            },
+            "identity_note": {
+              "a0": null,
+              "a3": "A1 vertical-slice interaction node; no separate si:* world instance is authored for deadfall at this pin."
+            },
+            "interaction_node_id": {
+              "a0": null,
+              "a3": "node_waystation_approach_deadfall"
+            }
+          },
+          "identity": "node_waystation_approach_deadfall"
+        }
+      ],
+      "fixture_ids_absent_from_host": [
+        "node_waystation_cache"
+      ],
+      "fixture_instance_ids": [
+        "node_waystation_cache"
+      ],
+      "host_instance_ids": [
+        "node_waystation_approach_deadfall",
+        "si:r_ashen_crown:waystation_cache:01"
+      ],
+      "host_requests": [
+        {
+          "action_id": "pry_locker",
+          "instance_id": "",
+          "poi_id": "poi_crown_waystation",
+          "point": "locker"
+        },
+        {
+          "action_id": "cache_restock",
+          "instance_id": "si:r_ashen_crown:waystation_cache:01",
+          "poi_id": "poi_crown_waystation",
+          "point": "cache"
+        },
+        {
+          "action_id": "seal_ledger",
+          "instance_id": "",
+          "poi_id": "poi_crown_waystation",
+          "point": "ledger"
+        },
+        {
+          "action_id": "gather_deadfall",
+          "instance_id": "node_waystation_approach_deadfall",
+          "poi_id": "poi_crown_waystation",
+          "point": "deadfall"
+        },
+        {
+          "action_id": "hand_crank_bypass",
+          "instance_id": "",
+          "poi_id": "poi_crown_relay_shed",
+          "point": "crank"
+        }
+      ],
+      "instance_requests": [
+        {
+          "a0_binding_id": null,
+          "a3_binding_id": null,
+          "action_id": "pry_locker",
+          "instance_id": "",
+          "poi_id": "poi_crown_waystation",
+          "point": "locker",
+          "resolved_in_a0_catalog": false,
+          "resolved_in_a3_catalog": false,
+          "via": "action_for"
+        },
+        {
+          "a0_binding_id": null,
+          "a3_binding_id": null,
+          "action_id": "seal_ledger",
+          "instance_id": "",
+          "poi_id": "poi_crown_waystation",
+          "point": "ledger",
+          "resolved_in_a0_catalog": false,
+          "resolved_in_a3_catalog": false,
+          "via": "action_for"
+        },
+        {
+          "a0_binding_id": "a1_waystation_approach_deadfall_v3",
+          "a3_binding_id": "a1_waystation_approach_deadfall_v3",
+          "action_id": "gather_deadfall",
+          "instance_id": "node_waystation_approach_deadfall",
+          "poi_id": "poi_crown_waystation",
+          "point": "deadfall",
+          "resolved_in_a0_catalog": true,
+          "resolved_in_a3_catalog": true
+        },
+        {
+          "a0_binding_id": null,
+          "a3_binding_id": null,
+          "action_id": "hand_crank_bypass",
+          "instance_id": "",
+          "poi_id": "poi_crown_relay_shed",
+          "point": "crank",
+          "resolved_in_a0_catalog": false,
+          "resolved_in_a3_catalog": false,
+          "via": "action_for"
+        }
+      ],
+      "rule": "A binding authorizes a physical interaction only when poi_id + action_id + instance_id match exactly. An alias is an alias: it cannot stand in for the world instance at runtime.",
+      "unresolved_host_requests": [
+        {
+          "a0_binding_id": null,
+          "a3_binding_id": "a1_waystation_roadside_cache_v3",
+          "action_id": "cache_restock",
+          "instance_id": "si:r_ashen_crown:waystation_cache:01",
+          "poi_id": "poi_crown_waystation",
+          "point": "cache",
+          "resolved_in_a0_catalog": false,
+          "resolved_in_a3_catalog": true
+        }
+      ],
+      "verdict": "HOST_ACTION_UNRESOLVED"
     },
     "knowledge_gate": {
       "circular_spare_recipes": [
@@ -3123,7 +3396,7 @@
       "station_piece": "station_research",
       "verdict": "SEEDED_ONLY_BY_LOOT"
     },
-    "read_this_first": "Four checks that take their answer from outside the file under review: the engine's own class list, Godot's JSON contract, the recipe/source graph, and A3's pinned catalog.",
+    "read_this_first": "Five checks that take their answer from outside the file under review: the engine's own class list, Godot's JSON contract, the recipe/source graph, A3's pinned catalog, and a replay of the shipped host request against the binding table A0 actually loads.",
     "save_fidelity": {
       "authoritative_writer_count": 1,
       "formula": "decimals = max(1, 14 - floor(log10(abs(value)))) when full_precision is false",
@@ -3132,6 +3405,22 @@
       "proves": "whether a float written by the save writer is guaranteed to reload bit-identically. It cannot say which field drifted in a native run; it only says the writer allows drift.",
       "verdict": "ROUND_TRIP_EXACT",
       "writers": [
+        {
+          "argument_count": 1,
+          "authoritative": false,
+          "file": "a0.a3_economy_service.gd",
+          "full_precision": false,
+          "line": 713,
+          "text": "var signature := JSON.stringify(payload).sha256_text()"
+        },
+        {
+          "argument_count": 1,
+          "authoritative": false,
+          "file": "a0.a3_economy_service.gd",
+          "full_precision": false,
+          "line": 1423,
+          "text": "var context_sha256 := JSON.stringify(cast_context).sha256_text()"
+        },
         {
           "argument_count": 1,
           "authoritative": false,
@@ -3165,27 +3454,27 @@
           "text": "return JSON.stringify(signature)"
         },
         {
-          "argument_count": 1,
+          "argument_count": 4,
           "authoritative": false,
           "file": "a0.survival_normal_entry_home_restart_test.gd",
-          "full_precision": false,
-          "line": 146,
-          "text": "file.store_string(JSON.stringify(audit))"
+          "full_precision": true,
+          "line": 155,
+          "text": "file.store_string(JSON.stringify(audit, \"\\t\", true, true))"
         },
         {
-          "argument_count": 1,
+          "argument_count": 4,
           "authoritative": false,
           "file": "a0.survival_waystation_input_restart_test.gd",
-          "full_precision": false,
-          "line": 65,
-          "text": "file.store_string(JSON.stringify(record)); file.close()"
+          "full_precision": true,
+          "line": 77,
+          "text": "file.store_string(JSON.stringify(record, \"\\t\", true, true)); file.close()"
         },
         {
           "argument_count": 2,
           "authoritative": false,
           "file": "a8.poi_pilot.gd",
           "full_precision": false,
-          "line": 237,
+          "line": 239,
           "text": "print(\"S2 fixture authority: \", JSON.stringify({\"intent\": intent, \"result\": result}))"
         }
       ]
@@ -3205,8 +3494,8 @@
     "clauses": {
       "C1_exact_source_identity": {
         "pinned": {
-          "a0": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-          "a8": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
+          "a0": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+          "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
         },
         "proves": "every run cited below executed on the pinned head sha, not on an ancestor",
         "state": "NOT_HOLDS",
@@ -3216,7 +3505,7 @@
         "evidence": [
           {
             "evidence_id": "a0_normal_entry_home",
-            "state": "QUEUED"
+            "state": "STALE_HEAD"
           }
         ],
         "proves": "a normal player-facing route reaches the world",
@@ -3226,7 +3515,7 @@
         "evidence": [
           {
             "evidence_id": "a0_second_process_restart",
-            "state": "QUEUED"
+            "state": "STALE_HEAD"
           }
         ],
         "proves": "a separate Godot process restored the durable state",
@@ -3236,7 +3525,7 @@
         "evidence": [
           {
             "evidence_id": "a0_waystation_player_input",
-            "state": "QUEUED"
+            "state": "STALE_HEAD"
           }
         ],
         "proves": "real input produced one A3-authorized receipt",
@@ -3246,7 +3535,7 @@
         "evidence": [
           {
             "evidence_id": "a0_replay_negative",
-            "state": "QUEUED"
+            "state": "STALE_HEAD"
           }
         ],
         "proves": "repeating the event granted nothing",
@@ -3291,10 +3580,10 @@
   ],
   "schema": "soh.balance.integration_gate.v3",
   "snapshot_heads": {
-    "a0": "51f2cce8d09f55e474935f71e7ed76d77bd81ae0",
-    "a1": "2f6edd3f1c45916fb1fd85b167c3f635bf11cc3b",
-    "a6": "8bc0af5a1f5f499736ecc0cf202c249d00d3cb3e",
-    "a8": "5ccf7b3f9824daa138b5d98106b74a2899c7592b"
+    "a0": "9269739ebd35ed8ab83987b6bf53f560a59954af",
+    "a1": "939720d50a0b822ff9042d4104dc69ba78ffe0f8",
+    "a6": "08ccb8348f2e7a75e09af47a1741c158fc46e794",
+    "a8": "c8b4bc881d6744bac0f0826a639624ee1434e534"
   },
   "static_ceiling": "S3_PRODUCTION_SEAM",
   "waystation_spec": {

@@ -11,9 +11,11 @@ import json
 from pathlib import Path
 from typing import Any, Dict, List
 
-from . import access, adversarial, evidence as evidence_module
+from . import access, adversary as adversary_module, adversarial, evidence as evidence_module
 from . import gate as gate_module
 from . import oracle as oracle_module
+from . import probes as probes_module
+from . import product as product_module
 from . import quality as quality_module
 from . import routes, sensitivity
 from .checks import collect, codes_in
@@ -21,6 +23,7 @@ from .findings import Assertion, Finding, severity_counts, sort_findings
 from .geo import RouteNetwork, travel_seconds
 from .hypotheses import load_hypotheses, patterns as pattern_payloads
 from . import blockers as blocker_module
+from . import matrix as matrix_module
 from . import product as product_module
 from .identity import binding_adoption, loot_identity_map
 from .loot import claims_needed, sink_coverage, sink_demand, tables_from_model
@@ -47,11 +50,15 @@ ARTIFACTS = (
     "gate.json",
     "quality.json",
     "oracle.json",
+    "adversary.json",
     "blockers.json",
+    "matrix.json",
+    "native_probes.json",
 )
 
 # Generated human-readable companion of blockers.json (owned doc path).
 BLOCKERS_DOC = Path("docs/survival/balance/PLAYER_BLOCKERS.md")
+MATRIX_DOC = Path("docs/survival/balance/B0_ACCEPTANCE_MATRIX.md")
 
 
 def _dump(path: Path, payload: Dict[str, Any]) -> str:
@@ -61,13 +68,8 @@ def _dump(path: Path, payload: Dict[str, Any]) -> str:
 
 
 def _a3_texts(data_dir: Path) -> Dict[str, str]:
-    """A3's pinned catalog, keyed the same way the oracle expects it."""
-    out: Dict[str, str] = {}
-    for name in ("sources.json", "world_source_bindings.v3.json"):
-        path = Path(data_dir) / "snapshot" / f"a3.{name}"
-        if path.exists():
-            out[f"a3.{name}"] = path.read_text(encoding="utf-8")
-    return out
+    """A3's pinned catalog, resolved by upstream path through the manifest."""
+    return product_module.a3_texts(Path(data_dir).resolve().parents[2])
 
 
 def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> Dict[str, Any]:
@@ -316,13 +318,21 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
     evidence_payload = evidence_module.load()
     # Independent oracles first: the gate consumes their verdicts instead of
     # trusting a marker inside the file it is grading.
+    a3_catalog_texts = _a3_texts(data_dir)
     oracle_payload = oracle_module.audit(
         product_texts,
-        _a3_texts(data_dir),
+        a3_catalog_texts,
         model,
         json.loads(product_texts.get("a0.survival_catalog.json", "{}") or "{}"),
     )
     artifacts["oracle.json"] = oracle_payload
+    a3_loaded = (
+        set(a3_catalog_texts) == set(product_module.A3_CATALOG_SOURCES)
+        and len(json.loads(a3_catalog_texts["a3.world_source_bindings.v3.json"]).get("bindings") or []) > 0
+    )
+    # Attack the gate before trusting it: each probe is a live spoof attempt.
+    adversary_payload = adversary_module.run(product_texts, product_manifest, product_facts, model)
+    artifacts["adversary.json"] = adversary_payload
     gate_payload = gate_module.build(
         model,
         product_texts,
@@ -370,6 +380,26 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         oracle_payload=oracle_payload,
     )
     artifacts["blockers.json"] = blocker_payload
+    # The native probes are the Phase-3 counterfactual. They are audited, not
+    # claimed: A7 has no Godot binary, so the artifact says NATIVE_UNEXECUTED.
+    artifacts["native_probes.json"] = probes_module.run(product_texts, Path(data_dir).resolve().parents[2])
+    # The living matrix is derived from the gate, the oracles, the adversary run and
+    # the blockers - never hand-written - so it cannot drift from them silently.
+    matrix_payload = matrix_module.build(
+        gate={**gate_payload, "quality": artifacts["quality.json"]},
+        oracle=oracle_payload,
+        adversary=adversary_payload,
+        blockers=blocker_payload,
+        probes=artifacts["native_probes.json"],
+        heads={
+            "a0": product_manifest.get("a0_head"),
+            "a1": product_manifest.get("a1_head"),
+            "a3": product_manifest.get("a3_head"),
+            "a6": product_manifest.get("a6_head"),
+            "a8": product_manifest.get("a8_head"),
+        },
+    )
+    artifacts["matrix.json"] = matrix_payload
 
     # --------------------------------------------------------------- summary
     assertions = _assertions(
@@ -386,6 +416,8 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
         gate_payload=gate_payload,
         quality_payload=artifacts["quality.json"],
         oracle_payload=oracle_payload,
+        a3_catalog_loaded=a3_loaded,
+        native_probes_payload=artifacts["native_probes.json"],
     )
     artifacts["summary.json"] = {
         "schema": "soh.balance.summary.v1",
@@ -413,7 +445,7 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             "resource_nodes_authored_not_crates": len(model.resource_nodes),
             "findings_by_severity": severity_counts(all_findings),
             "player_facing_blockers": len(blocker_payload["blockers"]),
-            "closed_by_measurement": blocker_payload["counts"]["closed_blockers"],
+            "closed_by_measurement": blocker_payload["counts"]["closed_earlier_claims"],
             "integration_gate_levels": {
                 chain["chain_id"]: chain["chain_level"] for chain in gate_payload["chains"]
             },
@@ -426,7 +458,11 @@ def build(data_dir: Path = DEFAULT_DATA_DIR, include_upstream: bool = False) -> 
             "canonical_avatar_production_refs": product_facts["canonical_avatar_production_refs"],
             "adversarial_cases_passed": f"{sum(1 for case in cases if case.passed)}/{len(cases)}",
         },
-        "assertions": [assertion.as_dict() for assertion in assertions],
+        # Sorted so reading the artifact never depends on the order the checks
+        # happened to be appended in.
+        "assertions": [
+            assertion.as_dict() for assertion in sorted(assertions, key=lambda row: row.assertion_id)
+        ],
         "assertions_all_hold": all(assertion.holds for assertion in assertions),
         "explicit_non_claims": [
             "This is not a playtest and not native gameplay acceptance.",
@@ -531,6 +567,8 @@ def _assertions(
     gate_payload=None,
     quality_payload=None,
     oracle_payload=None,
+    a3_catalog_loaded: bool = False,
+    native_probes_payload=None,
 ) -> List[Assertion]:
     assertions: List[Assertion] = []
     oracle_payload = oracle_payload or {}
@@ -715,8 +753,12 @@ def _assertions(
             }
             and claims["A_route_exists_in_source"]["state"] == "SOURCE_PRESENT"
             and claims["B_route_runs_in_native_godot"]["level"] != "S4_NATIVE_VERIFIED"
-            and claims["C_content_is_mounted"]["state"] == "ABSENT",
-            "the normal menu route exists in source, its native run is unverified, and no content is mounted in it",
+            and claims["C_content_is_mounted"]["state"]
+            in ("ABSENT", "SOURCE_PRESENT_BEHIND_DISABLED_FLAG", "MOUNTED_BY_DEFAULT")
+            and claims["C_content_is_mounted"]["reachable_by_normal_input"]
+            == (claims["C_content_is_mounted"]["state"] == "MOUNTED_BY_DEFAULT"),
+            "the normal menu route exists in source, its native run is unverified, and content is only counted "
+            "as mounted when a normal player can reach it",
             ["gate", "entry"],
         )
     )
@@ -761,10 +803,11 @@ def _assertions(
     quality_checks = (quality_payload or {}).get("checks") or []
     assertions.append(
         Assertion(
-            "A21_quality_fails_only_the_avatar_check",
+            "A21_quality_fails_only_where_an_owner_has_not_acted",
             [row["check_id"] for row in (quality_payload.get("checks") or []) if row["status"] == "FAIL"]
-            == ["Q-04"],
-            "of seven checks only the avatar identity check (Q-04) fails; A0 re-synced the stale catalog mirror",
+            == ["Q-03", "Q-04"],
+            "two checks fail and both name an owner action: Q-03 because A0's vendored catalog drifted when A3 "
+            "canonicalised the instance id, Q-04 because the canonical avatar is still not imported",
             ["quality"],
         )
     )
@@ -824,6 +867,90 @@ def _assertions(
             ["oracle", "authorization"],
         )
     )
+    identity = oracle_payload.get("instance_identity") or {}
+    content = gate_payload.get("entry_content") or {}
+    guard = content.get("guard") or {}
+    assertions.append(
+        Assertion(
+            "A28_a_guarded_mount_is_never_called_mounted",
+            (bool(guard.get("enabled_by_default")) == (content.get("mount_state") == "MOUNTED_BY_DEFAULT"))
+            and (not guard.get("declared_in_project") or guard.get("enabled_by_default") is not None),
+            "a production path behind a project setting the shipped game does not enable is recorded as a "
+            "guarded candidate, never as a mount a player can reach",
+            ["gate", "entry"],
+        )
+    )
+    unresolved = identity.get("unresolved_host_requests") or []
+    assertions.append(
+        Assertion(
+            "A29_the_shipped_host_request_is_replayed_against_the_loaded_catalog",
+            identity.get("verdict") in ("IDENTITY_CONSISTENT", "HOST_ACTION_UNRESOLVED", "CATALOG_DIVERGED_BUT_HOST_RESOLVES")
+            and identity.get("host_instance_ids")
+            and (identity.get("verdict") != "HOST_ACTION_UNRESOLVED" or bool(unresolved)),
+            "every instance-bearing interaction the host can send is resolved with the runtime's own exact-match "
+            "rule; an unresolved request is reported instead of assumed to work",
+            ["oracle", "identity"],
+        )
+    )
+    blocker_rows = {row["blocker_id"]: row for row in (blocker_payload or {}).get("blockers", [])}
+    api_payload = oracle_payload.get("engine_api") or {}
+    blk3 = blocker_rows.get("BLK-3") or {}
+    assertions.append(
+        Assertion(
+            "A30_a_source_fix_is_not_a_native_pass",
+            (
+                api_payload.get("unknown_call_count") != 0
+                or blk3.get("fix_state") == "SOURCE_FIXED_PENDING_NATIVE"
+            )
+            and blk3.get("status") == "OPEN",
+            "when the engine-API defect is gone from source but no native run verifies it, the blocker is "
+            "SOURCE_FIXED_PENDING_NATIVE and stays open",
+            ["blockers", "native"],
+        )
+    )
+    identity_payload = oracle_payload.get("instance_identity") or {}
+    a0_catalog = int(identity_payload.get("a0_binding_count") or 0)
+    a3_catalog = int(identity_payload.get("a3_binding_count") or 0)
+    drift_rows = (
+        list(identity_payload.get("a0_only_bindings") or [])
+        + list(identity_payload.get("a3_only_bindings") or [])
+        + [str(row.get("identity", "")) for row in identity_payload.get("divergent_bindings") or []]
+    )
+    assertions.append(
+        Assertion(
+            "A31_both_catalogs_are_actually_loaded_and_drift_is_enumerated",
+            a0_catalog > 0
+            and a3_catalog > 0
+            and all(str(row).strip() for row in drift_rows)
+            and len(drift_rows) == len(set(drift_rows)),
+            "A0's vendored table and A3's canonical table are both non-empty and every differing row is "
+            "named individually; an empty catalog can no longer read as agreement",
+            ["oracle", "identity"],
+        )
+    )
+    assertions.append(
+        Assertion(
+            "A32_the_a3_catalog_is_resolved_by_upstream_path",
+            a3_catalog_loaded,
+            "A3's catalog is found through the manifest's source_path, so a snapshot-key spelling change "
+            "cannot silently empty the authorization table",
+            ["oracle", "identity"],
+        )
+    )
+    probe_payload = native_probes_payload or {}
+    assertions.append(
+        Assertion(
+            "A33_the_native_probes_are_audited_and_never_claimed_as_run",
+            probe_payload.get("verdict") == "PROBES_STATICALLY_SOUND_NOT_EXECUTED"
+            and probe_payload.get("executed") is False
+            and probe_payload.get("evidence_class") == "NATIVE_UNEXECUTED"
+            and all(row.get("extends_shipped_chain") for row in probe_payload.get("probes") or [])
+            and not any(row.get("requires_missing") for row in probe_payload.get("probes") or []),
+            "Phase-3 probes extend the shipped chain, name only symbols the owners ship, and are labelled "
+            "NATIVE_UNEXECUTED rather than passed",
+            ["oracle", "native"],
+        )
+    )
     s4_payload = gate_payload.get("s4") or {}
     assertions.append(
         Assertion(
@@ -858,6 +985,10 @@ def write(artifacts: Dict[str, Any], results_dir: Path = RESULTS_DIR) -> Dict[st
         doc = Path(__file__).resolve().parents[4] / BLOCKERS_DOC
         doc.parent.mkdir(parents=True, exist_ok=True)
         doc.write_text(markdown, encoding="utf-8")
+    matrix_markdown = matrix_module.as_markdown(artifacts.get("matrix.json") or {})
+    matrix_doc = Path(__file__).resolve().parents[4] / MATRIX_DOC
+    matrix_doc.parent.mkdir(parents=True, exist_ok=True)
+    matrix_doc.write_text(matrix_markdown, encoding="utf-8")
     return digests
 
 

@@ -281,6 +281,165 @@ def authorization_claims(
     }
 
 
+# --------------------------------------------------------------- identity replay
+_POINTS_BLOCK = re.compile(r"const POINTS\s*:?=\s*\{", re.M)
+
+
+def _balanced(text: str, start: int) -> str:
+    """Return the {...} body that opens at `start`, honouring nested braces."""
+    depth, index = 0, start
+    while index < len(text):
+        char = text[index]
+        if char == "{":
+            depth += 1
+        elif char == "}":
+            depth -= 1
+            if depth == 0:
+                return text[start + 1 : index]
+        index += 1
+    return ""
+
+
+def _host_points(host_text: str) -> List[Dict[str, str]]:
+    """Every entry of A0's POINTS table, parsed field by field.
+
+    A single flat regex cannot read this table: the fields are ordered differently
+    per row and one row overrides `poi`. Parsing the balanced block is boring and
+    correct; the alternative produced an empty instance_id and a false PASS.
+    """
+    block = _POINTS_BLOCK.search(host_text)
+    if not block:
+        return []
+    body = _balanced(host_text, block.end() - 1)
+    entries: List[Dict[str, str]] = []
+    index = 0
+    while index < len(body):
+        match = re.compile(r'"([a-z_]+)"\s*:\s*\{').search(body, index)
+        if not match:
+            break
+        inner = _balanced(body, match.end() - 1)
+        action = re.search(r'"action"\s*:\s*"([^"]*)"', inner)
+        instance = re.search(r'"instance"\s*:\s*"([^"]*)"', inner)
+        poi = re.search(r'"poi"\s*:\s*"?([A-Za-z_]+)"?', inner)
+        if action:
+            entries.append(
+                {
+                    "point": match.group(1),
+                    "action_id": action.group(1),
+                    "instance_id": instance.group(1) if instance else "",
+                    "poi_id": ("poi_" + poi.group(1).replace("RELAY_POI", "crown_relay_shed"))
+                    if poi
+                    else "poi_crown_waystation",
+                }
+            )
+        index = match.end() + len(inner)
+    return entries
+_TEST_INSTANCE = re.compile(r'"instance_id"\s*:\s*"([^"]*)"')
+
+
+def _json_of(texts: Dict[str, str], key: str) -> Dict[str, object]:
+    try:
+        value = json.loads(texts.get(key, "") or "{}")
+    except Exception:
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _bindings(doc: Dict[str, object]) -> Dict[tuple, Dict[str, object]]:
+    table: Dict[tuple, Dict[str, object]] = {}
+    for raw in (doc or {}).get("bindings", []) or []:
+        row = raw if isinstance(raw, dict) else {}
+        key = (str(row.get("poi_id", "")), str(row.get("action_id", "")), str(row.get("instance_id", "")))
+        table[key] = row
+    return table
+
+
+def host_requests(host_text: str) -> List[Dict[str, object]]:
+    """The exact requests the shipped host will send, read from its POINTS table."""
+    return _host_points(host_text)
+
+
+def instance_identity(texts: Dict[str, str], a3_texts: Dict[str, str]) -> Dict[str, object]:
+    """Replay the shipped host request against the catalog A0 actually loads.
+
+    A binding is authorized only when the *exact* identity string the host sends
+    resolves in the table the owner ships. A0's own lookup is exact equality on
+    ``poi_id`` + ``action_id`` + ``instance_id``, so this oracle is not stricter
+    than the runtime: it is the runtime, replayed without Godot.
+    """
+    host = texts.get("a0.waystation_host.gd", "")
+    a0_doc = _json_of(texts, "a0.world_source_bindings.v3.json")
+    a3_doc = _json_of(a3_texts, "a3.world_source_bindings.v3.json")
+    a0 = _bindings(a0_doc)
+    a3 = _bindings(a3_doc)
+    requests = host_requests(host)
+    resolved: List[Dict[str, object]] = []
+    unresolved: List[Dict[str, object]] = []
+    for request in requests:
+        key = (str(request["poi_id"]), str(request["action_id"]), str(request["instance_id"]))
+        in_a0 = a0.get(key)
+        in_a3 = a3.get(key)
+        row = {
+            **request,
+            "resolved_in_a0_catalog": bool(in_a0),
+            "resolved_in_a3_catalog": bool(in_a3),
+            "a0_binding_id": (in_a0 or {}).get("binding_id"),
+            "a3_binding_id": (in_a3 or {}).get("binding_id"),
+        }
+        if request["instance_id"]:
+            (resolved if in_a0 else unresolved).append(row)
+        else:
+            # Actions without an instance resolve through `action_for`, recorded
+            # separately so an instance claim is never implied.
+            row["via"] = "action_for"
+            resolved.append(row)
+
+    a0_keys, a3_keys = set(a0), set(a3)
+    only_a3 = sorted(a3_keys - a0_keys)
+    only_a0 = sorted(a0_keys - a3_keys)
+    divergent = []
+    for key in sorted(a0_keys & a3_keys):
+        fields = {
+            name: {"a0": a0[key].get(name), "a3": a3[key].get(name)}
+            for name in sorted(set(a0[key]) | set(a3[key]))
+            if a0[key].get(name) != a3[key].get(name)
+        }
+        if fields:
+            divergent.append({"identity": key[2], "action_id": key[1], "fields": fields})
+
+    # The fixture that "proved" the reward pays hardcodes its own instance id. If
+    # that id differs from the host's, the fixture cannot have exercised the host.
+    test_text = texts.get("a0.survival_waystation_authority_test.gd", "")
+    test_instances = sorted(set(_TEST_INSTANCE.findall(test_text)))
+    host_instances = sorted({row["instance_id"] for row in requests if row["instance_id"]})
+    fixture_mismatch = [i for i in test_instances if i and i not in host_instances]
+
+    if unresolved:
+        verdict = "HOST_ACTION_UNRESOLVED"
+    elif only_a3 or divergent or only_a0:
+        verdict = "CATALOG_DIVERGED_BUT_HOST_RESOLVES"
+    else:
+        verdict = "IDENTITY_CONSISTENT"
+    return {
+        "verdict": verdict,
+        "host_requests": requests,
+        "instance_requests": resolved,
+        "unresolved_host_requests": unresolved,
+        "a0_binding_count": len(a0),
+        "a3_binding_count": len(a3),
+        "a3_only_bindings": [f"{k[1]}@{k[2]}" for k in only_a3],
+        "a0_only_bindings": [f"{k[1]}@{k[2]}" for k in only_a0],
+        "divergent_bindings": divergent,
+        "fixture_instance_ids": test_instances,
+        "host_instance_ids": host_instances,
+        "fixture_ids_absent_from_host": fixture_mismatch,
+        "rule": (
+            "A binding authorizes a physical interaction only when poi_id + action_id + instance_id match "
+            "exactly. An alias is an alias: it cannot stand in for the world instance at runtime."
+        ),
+    }
+
+
 def _walk_rows(payload, depth: int = 0) -> Iterable[Dict[str, object]]:
     if depth > 6:
         return
@@ -320,19 +479,23 @@ def audit(
     fidelity = save_fidelity(texts)
     knowledge = knowledge_gate(model, catalog)
     authorization = authorization_claims(texts, a3_texts)
+    identity = instance_identity(texts, a3_texts)
     return {
         "schema": "soh.balance.oracle.v1",
         "read_this_first": (
-            "Four checks that take their answer from outside the file under review: the engine's own "
-            "class list, Godot's JSON contract, the recipe/source graph, and A3's pinned catalog."
+            "Five checks that take their answer from outside the file under review: the engine's own class "
+            "list, Godot's JSON contract, the recipe/source graph, A3's pinned catalog, and a replay of the "
+            "shipped host request against the binding table A0 actually loads."
         ),
         "engine_api": api,
         "save_fidelity": fidelity,
         "knowledge_gate": knowledge,
         "authorization": authorization,
+        "instance_identity": identity,
         "holds": {
             "no_unknown_engine_static": api["verdict"] == "ENGINE_API_CONSISTENT",
             "float_round_trip_guaranteed": fidelity["verdict"] == "ROUND_TRIP_EXACT",
             "authorization_backed_by_a3": authorization["verdict"] == "NO_UNBACKED_AUTHORIZATION",
+            "host_request_resolves_in_the_loaded_catalog": identity["verdict"] != "HOST_ACTION_UNRESOLVED",
         },
     }

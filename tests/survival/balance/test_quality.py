@@ -43,11 +43,13 @@ class QualityPinTests(unittest.TestCase):
             ["Q-01", "Q-02", "Q-03", "Q-04", "Q-05", "Q-06", "Q-07"],
         )
 
-    def test_one_check_fails_at_this_pin(self) -> None:
+    def test_two_checks_fail_at_this_pin(self) -> None:
         failing = [check["check_id"] for check in self.checks if check["status"] == "FAIL"]
-        # Q-03 (A0's stale mirror of A3's catalog) is genuinely closed: the pinned
-        # bytes match on all 36 rows. Only the avatar check remains red.
-        self.assertEqual(failing, ["Q-04"])
+        # Round 6: A3 c5e80922 recanonicalised three source rows to the si: identity
+        # and A0's mirror still carries the old names, so Q-03 reopened on its own
+        # evidence rather than by a test edit. Q-04 (Knight mounted instead of the
+        # D051 avatar) was never closed.
+        self.assertEqual(failing, ["Q-03", "Q-04"])
 
     def test_every_verdict_names_an_owner_and_a_closure_signal(self) -> None:
         for check in self.checks:
@@ -123,14 +125,17 @@ class QualityClosureTests(unittest.TestCase):
         self.assertEqual(self._status(checks, "Q-04"), "FAIL")
 
     # ---------------------------------------------------------------- Q-03
-    def test_q03_is_match_at_this_pin_and_still_detects_drift(self) -> None:
-        # Round 5: A0 re-synced the mirror, so the pin is MATCH. The check keeps its
-        # teeth because the drift injection below still turns it red.
+    def test_q03_reports_the_three_rows_a3_recanonicalised(self) -> None:
+        # Live owner change, not a test edit: A3 moved these rows to the si:
+        # identity and A0's vendored mirror did not follow, so the pin is DRIFT and
+        # the check names the rows instead of summarising them.
         checks = quality.run_all(self.model, self.texts, self.facts, self.manifest)
-        self.assertEqual(self._status(checks, "Q-03"), "PASS")
+        self.assertEqual(self._status(checks, "Q-03"), "FAIL")
         drift = quality.mirror_drift(self.model, self.texts)
-        self.assertEqual(drift["status"], "MATCH")
-        self.assertEqual(drift["divergent"], [])
+        self.assertEqual(drift["status"], "DRIFT")
+        self.assertEqual(drift["divergent"], ["road_notes", "road_scrap", "road_supplies"])
+        self.assertEqual(drift["identical_rows"], 33)
+        self.assertEqual(drift["mirror_rows"], drift["a3_rows"])
 
         texts = dict(self.texts)
         mirror = json.loads(texts["a0.sources.json"])

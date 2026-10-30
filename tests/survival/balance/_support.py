@@ -35,13 +35,11 @@ def oracle_payload():
         from sohbalance import product
 
         texts, _manifest = product.load_snapshot(REPO_ROOT)
-        a3 = {}
-        for name in ("sources.json", "world_source_bindings.v3.json"):
-            path = DATA_DIR / "snapshot" / f"a3.{name}"
-            if path.exists():
-                a3[f"a3.{name}"] = path.read_text(encoding="utf-8")
         _CACHE["oracle"] = oracle_module.audit(
-            texts, a3, model(), json.loads(texts.get("a0.survival_catalog.json", "{}") or "{}")
+            texts,
+            product.a3_texts(REPO_ROOT),
+            model(),
+            json.loads(texts.get("a0.survival_catalog.json", "{}") or "{}"),
         )
     return _CACHE["oracle"]
 

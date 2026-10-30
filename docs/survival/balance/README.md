@@ -13,9 +13,16 @@ It changes no loot table, no rate, no world file and no other agent's code.
 
 ## Read this first
 
-**[`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md)** — five owned blockers (entry point, loot identity/host, avatar
-sources, research bootstrap, developer-facing survival UI), each with the smallest safe correction and a test
-that flips from FAIL to PASS. Generated from `results/blockers.json`; 57 raw observations collapse into it.
+**[`PLAYER_BLOCKERS.md`](PLAYER_BLOCKERS.md)** — five owned blockers (guarded mount, cross-owner identity,
+unproven save fix, fixture-only success, avatar), each with the smallest safe correction and a test that flips
+from FAIL to PASS. Generated from `results/blockers.json`; 54 raw observations collapse into it.
+
+**[`B0_ACCEPTANCE_MATRIX.md`](B0_ACCEPTANCE_MATRIX.md)** — the living matrix: six gaps, each with the exact SHA,
+the owner, the minimum fix and the proof level it would reach. Generated from `results/matrix.json`.
+
+**[`NATIVE_ROUTE_PLAN.md`](NATIVE_ROUTE_PLAN.md)** — the Godot 4.7 probes for the first-hour route and for
+death recovery, with the exact commands, the exit-code contract, and what each probe refuses to fake.
+Audited `NATIVE_UNEXECUTED`; A7 has no engine binary.
 
 ```bash
 python3 tools/survival/balance/run_analysis.py --print-blockers
@@ -70,7 +77,8 @@ data/survival/balance/
   snapshot/*.json                # verbatim read-only copies of A1/A3 authored data
   hypotheses.v1.json             # the ONLY place a non-authored number may appear
   results/                       # generated: provenance, findings, access, opportunity, sensitivity,
-                                 # adversarial, summary, digest
+                                 # adversarial, gate, quality, oracle, adversary, blockers, matrix,
+                                 # native_probes, summary
 tools/survival/balance/
   run_analysis.py                # CLI
   run_tests.py                   # test runner
@@ -78,6 +86,12 @@ tools/survival/balance/
     provenance.py   snapshot hashes, upstream drift, cross-owner pin comparison
     model.py        typed read-only view over the snapshots
     findings.py     finding codes / severities / assertions
+    gate.py         integration gate: 4 claims, 2 chains, S4 as a conjunction
+    oracle.py       answers from outside the judged file (engine API, JSON contract, A3 bytes)
+    adversary.py    15 named spoof probes run against the gate's own functions
+    blockers.py     five owned blockers + the triage of every observation
+    matrix.py       the living B0 acceptance matrix
+    probes.py       static audit of the Godot probes A7 cannot execute
     geo.py          authored polylines, capability-gated routing, travel time
     loot.py         exact loot mathematics (distribution, expectation, hitting time, sinks)
     access.py       source<->POI<->region bindings, ownership integrity, craft ladders, hazards

@@ -308,14 +308,6 @@
       "detail": "A3 region 'opening_marches' is not an A1 region_id",
       "owner": "A3",
       "severity": "MINOR",
-      "subject": "road_notes"
-    },
-    {
-      "code": "SOURCE_REGION_UNRESOLVED",
-      "code_meaning": "source region id does not resolve to an A1 region",
-      "detail": "A3 region 'opening_marches' is not an A1 region_id",
-      "owner": "A3",
-      "severity": "MINOR",
       "subject": "road_seed"
     },
     {
@@ -467,6 +459,6 @@
     "BLOCKER": 0,
     "INFO": 9,
     "MAJOR": 20,
-    "MINOR": 26
+    "MINOR": 25
   }
 }

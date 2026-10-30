@@ -442,7 +442,6 @@
         "purple_seal",
         "reaper_essence",
         "reed_fibre",
-        "research_notes",
         "soul_ember",
         "stone_chunk",
         "sulfur",
@@ -1060,12 +1059,12 @@
         "target_name": "roadside_cache"
       },
       {
-        "declared_poi_id": "poi:roadside_cache",
-        "declared_region_id": "opening_marches",
+        "declared_poi_id": "poi_crown_waystation",
+        "declared_region_id": "r_ashen_crown",
         "item_id": "research_notes",
         "source_id": "road_notes",
-        "target_kind": "CLASS_NAMESPACE",
-        "target_name": "roadside_cache"
+        "target_kind": "INSTANCE_PREFIX",
+        "target_name": "crown_waystation"
       },
       {
         "declared_poi_id": "poi_crown_waystation",
@@ -1231,14 +1230,13 @@
       "poi:roadside_cache": {
         "declared_poi_id": "poi:roadside_cache",
         "physical_instances_in_a1": 0,
-        "record_count": 3,
+        "record_count": 2,
         "regions": [
           "opening_marches"
         ],
         "resolves_to_a1_instance": false,
         "source_ids": [
           "road_grain_seed",
-          "road_notes",
           "road_seed"
         ],
         "target_kind": "CLASS_NAMESPACE",
@@ -1331,12 +1329,13 @@
       "poi_crown_waystation": {
         "declared_poi_id": "poi_crown_waystation",
         "physical_instances_in_a1": 1,
-        "record_count": 2,
+        "record_count": 3,
         "regions": [
           "r_ashen_crown"
         ],
         "resolves_to_a1_instance": true,
         "source_ids": [
+          "road_notes",
           "road_scrap",
           "road_supplies"
         ],
@@ -1376,7 +1375,7 @@
       "venom_cache"
     ],
     "loot_sources_with_resolved_a1_poi": 0,
-    "loot_sources_with_resolved_a1_region": 2
+    "loot_sources_with_resolved_a1_region": 3
   },
   "mitigation_craft_chain": [
     {
@@ -4078,11 +4077,11 @@
     {
       "a1_poi_id": null,
       "a1_poi_resolved": false,
-      "a1_region_resolved": false,
+      "a1_region_resolved": true,
       "a3_poi_reference": null,
-      "a3_region_reference": "opening_marches",
+      "a3_region_reference": "r_ashen_crown",
       "acquisition": "loot",
-      "integration_status": "PROPOSED_A1",
+      "integration_status": "A1_PINNED_A3_BOUND",
       "item_id": "research_notes",
       "requirements": [],
       "source_id": "road_notes"

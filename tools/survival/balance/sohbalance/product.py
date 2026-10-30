@@ -32,6 +32,11 @@ SNAPSHOT_DIR = Path("data/survival/balance/snapshot/product")
 MANIFEST_PATH = Path("data/survival/balance/snapshot/product_manifest.json")
 
 # Tokens that must never reach a release player surface (D052).
+#: A line that hands its string to something a player reads.
+_DISPLAY_SINK = re.compile(
+    r"_label\(|_button\(|_row\(|_status\s*=|Label\.new\(|RichTextLabel|\.text\s*=|show_prompt\(|set_text\("
+)
+
 DEBUG_TOKENS = (
     "FIXTURE",
     "NOT_NATIVE",
@@ -43,8 +48,10 @@ DEBUG_TOKENS = (
     "PREVIEW  ·",
     "NO OWNER SNAPSHOT",
     "PROJECTION",
-    "schema",
 )
+# "schema" was on this list until round 6 and had to come off: it is a wire key
+# (`intent.get("schema", "")`, `"schema": INTENT_SCHEMA`), never prose a player can
+# read. A token list that flags a protocol field trains the reader to ignore it.
 
 # Qualifiers that make a completion word honest ("not verified", "blocked", ...).
 QUALIFIERS = (
@@ -101,6 +108,45 @@ def load_tree(manifest: Dict[str, object]) -> Dict[str, set]:
     for owner, path in manifest.get("_tree", []) or []:
         tree.setdefault(str(owner), set()).add(str(path))
     return tree
+
+
+# A3 catalog files the oracles consume, identified by the upstream path the
+# manifest records — never by the spelling of the snapshot key. A previous loader
+# guessed `a3.world_source_bindings.v3.json` while the writer stored
+# `a3.world_source_bindings_v3.json`, and the miss silently produced an EMPTY A3
+# catalog: a false "no binding exists" verdict from a filename typo. Resolving by
+# `source_path` makes that class of vacuity impossible to reintroduce.
+A3_CATALOG_SOURCES = {
+    "a3.sources.json": "data/survival/items/sources.json",
+    "a3.world_source_bindings.v3.json": "data/survival/items/world_source_bindings.v3.json",
+}
+
+
+def a3_texts(root: Path) -> Dict[str, str]:
+    """A3's pinned catalog, keyed the way the oracles expect, or raise.
+
+    Raises rather than returning an empty dict: a missing catalog must stop the
+    analysis, not quietly turn every authorization question into "no".
+    """
+    return a3_texts_from(root, json.loads((root / MANIFEST_PATH).read_text(encoding="utf-8")))
+
+
+def a3_texts_from(root: Path, manifest: Dict[str, object]) -> Dict[str, str]:
+    """Same contract as :func:`a3_texts` against a manifest already in memory."""
+    by_source = {
+        str(entry.get("source_path")): str(entry.get("key")) for entry in manifest.get("files", [])
+    }
+    out: Dict[str, str] = {}
+    missing: List[str] = []
+    for logical, source_path in A3_CATALOG_SOURCES.items():
+        key = by_source.get(source_path)
+        if key is None or not (root / SNAPSHOT_DIR / key).exists():
+            missing.append(source_path)
+            continue
+        out[logical] = (root / SNAPSHOT_DIR / key).read_text(encoding="utf-8")
+    if missing:
+        raise ValueError(f"A3 catalog not pinned: {', '.join(missing)}")
+    return out
 
 
 def path_index(manifest: Dict[str, object]) -> Dict[str, str]:
@@ -197,8 +243,14 @@ def build_facts(
         {str(row["path"]) for row in production_art if re.search(r"armor|armour", json.dumps(row), re.IGNORECASE)}
     )
 
-    # --- player-visible debug text
-    visible: List[Dict[str, object]] = []
+    # --- developer vocabulary in A6's strings, split by whether it can be shown
+    #
+    # A string literal is not a player surface. Round 5 treated every literal in an
+    # A6 file as player-visible, so a wire key and a console-only summary both
+    # counted exactly like a label. Round 6 separates them: `display_sink` means the
+    # literal is handed to a Text/Label/button/prompt constructor on that line.
+    # Everything else is kept as `unbound` traceability, not as a defect claim.
+    all_hits: List[Dict[str, object]] = []
     for key, text in sorted(texts.items()):
         if not key.startswith("a6."):
             continue  # A6 owns the survival-facing HUD/journal/planner surfaces
@@ -208,15 +260,18 @@ def build_facts(
             for literal in _string_literals(line):
                 for token in DEBUG_TOKENS:
                     if token.lower() in literal.lower():
-                        visible.append(
+                        all_hits.append(
                             {
                                 "file": key,
                                 "line": number,
                                 "token": token,
                                 "text": literal[:120],
+                                "display_sink": bool(_DISPLAY_SINK.search(line)),
                             }
                         )
-    facts["visible_debug_tokens"] = visible
+    facts["debug_tokens_all"] = all_hits
+    facts["visible_debug_tokens"] = [row for row in all_hits if row["display_sink"]]
+    facts["unbound_debug_tokens"] = [row for row in all_hits if not row["display_sink"]]
 
     # --- completion claims on a player surface
     claims: List[Dict[str, object]] = []
@@ -388,20 +443,37 @@ def run_checks(facts: Dict[str, object]) -> List[Dict[str, object]]:
 
     # PROD-04 ------------------------------------------------------ debug text
     visible = list(facts["visible_debug_tokens"])  # type: ignore[arg-type]
+    unbound = list(facts.get("unbound_debug_tokens") or [])
     tokens = sorted({row["token"] for row in visible})
+    # Reachability decides the verdict, not the literal alone: a label in a script
+    # no shipped scene mounts cannot be "on a player surface" today. It is reported
+    # as WARN (latent) with the exact mounting step that would make it a FAIL.
+    on_screen = bool(visible) and bool(mounted_ui)
+    status = "FAIL" if on_screen else ("WARN" if visible else "PASS")
+    if on_screen:
+        reason = (
+            f"{len(visible)} displayed strings still carry developer vocabulary ({', '.join(tokens)}) in a "
+            f"surface the shipped scenes mount ({len(mounted_ui)} mounted survival UI scene(s))."
+        )
+    elif visible:
+        reason = (
+            f"{len(visible)} displayed strings carry developer vocabulary ({', '.join(tokens)}), and "
+            "A6's survival UI is not mounted by any shipped scene, so no player reads them today. They ship "
+            "the moment that UI is mounted: strip them first. "
+            f"A further {len(unbound)} literals carry the same words outside a display sink (wire keys, logs, "
+            "test summaries) and are counted for traceability, not as a defect."
+        )
+    else:
+        reason = (
+            f"No developer vocabulary reaches a display sink. {len(unbound)} literals carry such words "
+            "outside a display sink (wire keys, logs, summaries)."
+        )
     checks.append(
         _check(
             "PROD-04",
             "No developer/debug text on a survival player surface",
-            "FAIL" if visible else "PASS",
-            (
-                f"{len(visible)} player-visible strings still carry developer vocabulary "
-                f"({', '.join(tokens)}): fixture/provenance labels and raw identifiers. Today these live in "
-                "the unmounted A6 HUD, so no player sees them yet — but mounting that HUD as-is would put "
-                "debug text on screen."
-            )
-            if visible
-            else "No debug vocabulary found in player-visible strings.",
+            status,
+            reason,
             visible[:12],
             "move provenance/fixture vocabulary behind an opt-in debug panel and keep only player words in the default HUD; PROD-04 = PASS when zero such literals remain on visible label paths",
             "A6",

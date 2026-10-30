@@ -133,7 +133,7 @@
     },
     {
       "assertion_id": "A17_entry_claim_A_is_separated_from_B_C_D",
-      "detail": "the normal menu route exists in source, its native run is unverified, and no content is mounted in it",
+      "detail": "the normal menu route exists in source, its native run is unverified, and content is only counted as mounted when a normal player can reach it",
       "holds": true,
       "tags": [
         "gate",
@@ -168,8 +168,8 @@
       ]
     },
     {
-      "assertion_id": "A21_quality_fails_only_the_avatar_check",
-      "detail": "of seven checks only the avatar identity check (Q-04) fails; A0 re-synced the stale catalog mirror",
+      "assertion_id": "A21_quality_fails_only_where_an_owner_has_not_acted",
+      "detail": "two checks fail and both name an owner action: Q-03 because A0's vendored catalog drifted when A3 canonicalised the instance id, Q-04 because the canonical avatar is still not imported",
       "holds": true,
       "tags": [
         "quality"
@@ -228,6 +228,60 @@
         "gate",
         "native"
       ]
+    },
+    {
+      "assertion_id": "A28_a_guarded_mount_is_never_called_mounted",
+      "detail": "a production path behind a project setting the shipped game does not enable is recorded as a guarded candidate, never as a mount a player can reach",
+      "holds": true,
+      "tags": [
+        "gate",
+        "entry"
+      ]
+    },
+    {
+      "assertion_id": "A29_the_shipped_host_request_is_replayed_against_the_loaded_catalog",
+      "detail": "every instance-bearing interaction the host can send is resolved with the runtime's own exact-match rule; an unresolved request is reported instead of assumed to work",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A30_a_source_fix_is_not_a_native_pass",
+      "detail": "when the engine-API defect is gone from source but no native run verifies it, the blocker is SOURCE_FIXED_PENDING_NATIVE and stays open",
+      "holds": true,
+      "tags": [
+        "blockers",
+        "native"
+      ]
+    },
+    {
+      "assertion_id": "A31_both_catalogs_are_actually_loaded_and_drift_is_enumerated",
+      "detail": "A0's vendored table and A3's canonical table are both non-empty and every differing row is named individually; an empty catalog can no longer read as agreement",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A32_the_a3_catalog_is_resolved_by_upstream_path",
+      "detail": "A3's catalog is found through the manifest's source_path, so a snapshot-key spelling change cannot silently empty the authorization table",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "identity"
+      ]
+    },
+    {
+      "assertion_id": "A33_the_native_probes_are_audited_and_never_claimed_as_run",
+      "detail": "Phase-3 probes extend the shipped chain, name only symbols the owners ship, and are labelled NATIVE_UNEXECUTED rather than passed",
+      "holds": true,
+      "tags": [
+        "oracle",
+        "native"
+      ]
     }
   ],
   "assertions_all_hold": true,
@@ -249,12 +303,12 @@
       "419402": 0,
       "555940": 0
     },
-    "closed_by_measurement": 4,
+    "closed_by_measurement": 2,
     "findings_by_severity": {
       "BLOCKER": 0,
       "INFO": 9,
       "MAJOR": 20,
-      "MINOR": 26
+      "MINOR": 25
     },
     "integration_gate_levels": {
       "a8_quarry": "S0_ABSENT",
@@ -264,7 +318,7 @@
     "loot_tables_that_can_emit_a_core": 0,
     "mounted_survival_ui_scenes": 0,
     "native_verified": false,
-    "observation_reduction": "55 observations -> 5 blockers (4 closed, 3 A7 self-corrections, 6 observations traceability only)",
+    "observation_reduction": "54 observations -> 5 blockers (2 earlier claims closed, 5 A7 self-corrections, 6 observations traceability only)",
     "player_facing_blockers": 5,
     "poi_playability": {
       "AUTHORED_SPEC_NATIVE_NOT_INTEGRATED": 2,
@@ -274,20 +328,20 @@
     "pois_authored": 118,
     "pois_loot_bearing_in_authored_contract": 0,
     "product_checks": {
-      "FAIL": 4,
+      "FAIL": 3,
       "PASS": 1,
-      "WARN": 2
+      "WARN": 3
     },
     "quality_checks": {
-      "FAIL": 1,
-      "PASS": 6
+      "FAIL": 2,
+      "PASS": 5
     },
     "resource_nodes_authored_not_crates": 178
   },
   "schema": "soh.balance.summary.v1",
   "source_basis": {
     "a1_commit": "2951bf8559b2e289ce99fd4d394d44c46fdd91b1",
-    "a3_commit": "100b3406ef4e09e3b7ccc8b5910dffc6b6d0dfcd,18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12",
+    "a3_commit": "18e7afcbd576bbd9bfbcc509b2ee13216186a522,c23292be095903c67e3d6e6e4fbd310b6649da12,c5e80922132ca9cf89ea15c480e1a4be465ba0b7",
     "hypothesis_file": "data/survival/balance/hypotheses.v1.json"
   },
   "status": "ANALYSIS_COMPLETE_NOT_NATIVE_NOT_HUMAN",

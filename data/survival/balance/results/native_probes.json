@@ -1,0 +1,78 @@
+{
+  "defects": [],
+  "evidence_class": "NATIVE_UNEXECUTED",
+  "executed": false,
+  "exit_codes": {
+    "0": "every check passed",
+    "1": "a real check failed",
+    "2": "blocked before the first player action; never a pass"
+  },
+  "probe_count": 2,
+  "probes": [
+    {
+      "a0_action": "A0/A5: mount one authored hazard or hostile with contact damage that calls begin_overworld_death(). SurvivalService has no environmental damage path at this pin, so death is fixture-only today.",
+      "board": "B0_NOT_MET",
+      "claim": "B_route_runs_in_native_godot",
+      "closes": [
+        "BLK-4"
+      ],
+      "expected_today": "BLOCKED_NO_MOUNTED_THREAT",
+      "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/bed_death_bag_probe.gd",
+      "forbidden": [],
+      "question": "is there a mounted threat that can kill a player, and does the same bag survive a restart?",
+      "requires_found": [
+        "begin_overworld_death",
+        "counters",
+        "death_bags",
+        "pending_death",
+        "recover_death_bag",
+        "structures"
+      ],
+      "requires_missing": [],
+      "sound": true
+    },
+    {
+      "a0_action": "A0 only: declare survival/a0_waystation_candidate=true in project.godot and re-vendor A3's world_source_bindings.v3.json so the host's si: instance resolves. No A7 edit is needed.",
+      "board": "B0_NOT_MET",
+      "claim": "D_useful_reward_claimable",
+      "closes": [
+        "BLK-1",
+        "BLK-2"
+      ],
+      "expected_today": "BLOCKED_L2_MOUNT",
+      "extends": "res://tests/survival_normal_entry_home_restart_test.gd",
+      "extends_shipped_chain": true,
+      "file": "/home/user/Soul-of-Hero/tests/survival/balance_native/first_hour_route_probe.gd",
+      "forbidden": [],
+      "question": "can a player walk to A1's Waystation and keep what A3 authorises?",
+      "requires_found": [
+        "WaystationRuntime",
+        "cache_restock",
+        "cap_salvage",
+        "interact_point",
+        "matches_interaction",
+        "player_interactable",
+        "prompt_text",
+        "pry_locker",
+        "request_for",
+        "reward_receipts",
+        "si:r_ashen_crown:waystation_cache:01",
+        "survival/a0_waystation_candidate",
+        "world_slice"
+      ],
+      "requires_missing": [],
+      "sound": true
+    }
+  ],
+  "proves": "that each probe extends the shipped chain, contains none of the constructs that would fabricate its own result, and names only symbols that exist in the pinned owner bytes. It does NOT prove the probes pass: A7 has no Godot binary, so they are NATIVE_UNEXECUTED until an owner CI run or an A7 runner with Godot 4.7 executes them.",
+  "run_commands": [
+    "godot --headless --path . --user-data-dir artifacts/ud_b0 --import",
+    "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/first_hour_route_probe.gd",
+    "xvfb-run -a godot --path . --user-data-dir artifacts/ud_b0 --resolution 1280x720 --script res://tests/survival/balance_native/first_hour_route_probe.gd -- --verify-separate-process"
+  ],
+  "schema": "soh.balance.native_probes.v1",
+  "undeclared": [],
+  "verdict": "PROBES_STATICALLY_SOUND_NOT_EXECUTED"
+}

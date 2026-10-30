@@ -1,19 +1,22 @@
 {
   "artifacts": {
-    "access.json": "a53fe9d27c05b5de6ee06042c9035109369d69bc8d21baf119e7e1280386e5c2",
+    "access.json": "1eaa25b96e46ea11defab04d51226913528c79ba9e7779d06e3e7021f4dc810a",
     "adversarial.json": "a3f2985f0d2055533b8da01627abf899de4623aebd20f0f5e14c3ee20a3b7628",
-    "blockers.json": "0bc238044768365c9463d699f28ae3315acfd6a4c8a5c97a02afb935abbc3ddd",
-    "findings.json": "8f782aa47482bda09b4e6888f9a4fca45ee1c9c48410733011440a6e2c05afe2",
-    "gate.json": "113460fc545f3610fa5f97f5aa48c021a2c42145e667c019e787727a7492bbe9",
+    "adversary.json": "2f65f9a66098836e08731fec8d866dfd2d388d2bb7f6cc538dfdd72117d09d8a",
+    "blockers.json": "60a135c31a7c5eb90eef6e62db89027b60163401465cd439886a09b4fdb00eae",
+    "findings.json": "12e78380f8798748a5656d5ffa5074aafa40f30c8078c0ab93079b8305ad121b",
+    "gate.json": "ad3628d5e088260d378a532f13d4d8fb5fc66bae3fa87f717a6340961b3504a6",
+    "matrix.json": "f73c83804f8c337647e480e3097911b882fbb768877f7f4f38d5dbccbfe2c2ea",
+    "native_probes.json": "51fe388786e6984c64b81bfc2530a14b765b1fc2ec1acc94de6dc53a6cc29797",
     "opportunity.json": "e189d633e99212e8a331b6ad64c1cba71dfd27cc1004ea6587759fcc27a58a31",
-    "oracle.json": "a352d9cfc797129b47ab2317f1ef9d7a5fceb8f96a32d7a4433483a636ad4906",
-    "product.json": "a49e1588a6b48668bb017541dc94be79f3a8d00c1058d196f887774841e98efa",
-    "provenance.json": "c4f4d2dfdc6a40130d5589effefbcc9ccfd398013271b6309fdb039fc4cc5fb6",
-    "quality.json": "942e30d078792378af7281fd6eb5df73a2e54e4970bcf2190aace35ebbc67c68",
+    "oracle.json": "98e5a2903aeefa6349d1edf01f62e940ec374a71f09fdf93d43d56b7741b1603",
+    "product.json": "fc148349021c5d5dbf7bfd288823841feb7f09546da3d33b921666ebdb08c405",
+    "provenance.json": "33ee9e624b9f204566997cc3662c86c4d066cc0c9688df7aa30fb413346b2674",
+    "quality.json": "53111410457a67bb688ef707213259fea6e94f8fd53c02b092d1c8760a5ea1b2",
     "sensitivity.json": "23f12f7f3ac31affb7b0b077fbf262cf10165cfe4e44b2a54cd058dd846650a0",
-    "summary.json": "34f915fbf3a5b6311acb0225e6f76eb1bcf6836a02e6d722110558fd433fb35a"
+    "summary.json": "023cf2f840658776820a8e9416b82b6acfe935669aaf12edd4fe41c1e1b4f394"
   },
-  "combined_sha256": "e32005f73a41c2ebfbfc6639f6ef6d24ffe08fcefb26370ec8ea50384014f8e9",
+  "combined_sha256": "8641032057bff0e3ebe6191120469c85e8de8b35a74c0256e53f828741780531",
   "determinism": "same inputs -> same bytes; sorted keys, no timestamps",
   "schema": "soh.balance.digest.v1"
 }
