@@ -27,7 +27,8 @@ const MODULE_PATHS: Dictionary = {
 
 	# 009-012, 014, 017-019 and 021 are verified against the original TypeScript
 	# (parity/index.json, first_divergent_tick -1) and reuse the same shared adapter.
-	# 007, 008, 013, 015, 016 and 020 are NOT registered: their parity is unresolved.
+	# 008 is verified by CI (run 41000928886 at 5023485). 007, 013, 015, 016 and 020 are NOT registered: their parity is unresolved.
+	"venomwright:008": "res://prototypes/skill_readiness/skills/venomwright/v008_source_native.gd",
 	"venomwright:009": "res://prototypes/skill_readiness/skills/venomwright/v009_source_native.gd",
 	"venomwright:010": "res://prototypes/skill_readiness/skills/venomwright/v010_source_native.gd",
 	"venomwright:011": "res://prototypes/skill_readiness/skills/venomwright/v011_source_native.gd",
@@ -60,6 +61,7 @@ const SOURCE_NATIVE_IDS: Dictionary = {
 	"venomwright:004": 4,
 	"venomwright:005": 5,
 	"venomwright:006": 6,
+	"venomwright:008": 8,
 	"venomwright:009": 9,
 	"venomwright:010": 10,
 	"venomwright:011": 11,

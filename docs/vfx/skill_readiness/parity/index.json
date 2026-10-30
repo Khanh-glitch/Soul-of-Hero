@@ -333,6 +333,23 @@
 			"skill": 19,
 			"status": "PASS"
 		},
+		"venomwright:008": {
+			"compared_ticks": 82,
+			"cue_mismatch": "",
+			"cues_native": 121,
+			"cues_original": 121,
+			"evidence": "CI run 41000928886 job 123884876907 (candidate lane, original-source differential) at commit 5023485; fixes: serpent lunge target index (JS s.si++ reads the old si) and bottom clamp H-8",
+			"first_divergent_tick": -1,
+			"first_mismatch": "",
+			"hit_mismatch": "",
+			"hits_native": 32,
+			"hits_original": 32,
+			"recorded_utc": "2026-10-30",
+			"seed": 7,
+			"skill": 8,
+			"status": "PASS",
+			"ticks": 330
+		},
 		"venomwright:021": {
 			"cue_mismatch": "",
 			"cues_native": 192,
