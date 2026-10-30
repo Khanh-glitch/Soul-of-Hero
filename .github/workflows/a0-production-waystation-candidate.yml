@@ -6,6 +6,7 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+  pull-requests: write
 jobs:
   native:
     runs-on: ubuntu-latest
@@ -134,3 +135,25 @@ jobs:
           name: a0-candidate-${{ matrix.route }}-logs
           path: artifacts/candidate-*.log
           if-no-files-found: warn
+      # Runner logs and artifact ZIPs live in a blob store some A0 sandboxes
+      # cannot read, so a failing route also publishes its own check list into
+      # PR #21 where every participant can read it.
+      - name: Publish failing journey checks to the pull request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -uo pipefail
+          note="artifacts/candidate-journey-note.md"
+          {
+            echo "A0 candidate matrix leg \`${{ matrix.route }}\` failed at \`${{ github.sha }}\`."
+            for f in artifacts/candidate-first.log artifacts/candidate-restart.log; do
+              [ -f "$f" ] || continue
+              echo
+              echo "**$f**"
+              echo '```'
+              grep -E '^  (ok|FAIL)|PASSED|FAILED|SCRIPT ERROR|Parse Error|^ERROR: ' "$f" | tail -60
+              echo '```'
+            done
+          } > "$note"
+          gh pr comment 21 --repo "$GITHUB_REPOSITORY" --body-file "$note" || echo 'diagnostic comment could not be published'
