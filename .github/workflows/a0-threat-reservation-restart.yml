@@ -2,7 +2,7 @@ name: A0 unmounted threat pre-effect reservation
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/**', 'game/autoload/**', 'tests/survival_optional_threat*.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-threat-reservation-restart.yml']
+    paths: ['tools/ci/godot_isolated.sh', 'game/overworld/**', 'game/survival/**', 'game/characters/**', 'game/autoload/**', 'tests/survival_optional_threat*.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-threat-reservation-restart.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,7 +20,7 @@ jobs:
       - name: Import
         run: |
           mkdir -p artifacts/ud_import artifacts/ud_reservation
-          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/reservation-import.log 2>&1
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/reservation-import.log 2>&1
       - name: Fail pre-spawn write, real hit, and rebuild in three OS processes
         shell: bash
         run: |
@@ -29,7 +29,7 @@ jobs:
           for phase in first hit check; do
             args=(--survival-save-fault-test)
             if [ "$phase" != first ]; then args+=("--$phase"); fi
-            timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_reservation --resolution 960x540 --windowed --script res://tests/survival_optional_threat_reservation_restart_test.gd -- "${args[@]}" > "artifacts/reservation-$phase.log" 2>&1
+            timeout --signal=TERM --kill-after=15s 1200s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_reservation --resolution 960x540 --windowed --script res://tests/survival_optional_threat_reservation_restart_test.gd -- "${args[@]}" > "artifacts/reservation-$phase.log" 2>&1
             rc=$?
             cat "artifacts/reservation-$phase.log"
             echo "::notice::reservation $phase exit=$rc $(grep -E 'RESERVATION RESTART|FAULT_TRACE|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/reservation-$phase.log" | tail -20 | tr '\n' '~')"

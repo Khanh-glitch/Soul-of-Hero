@@ -2,7 +2,7 @@ name: A0 research UI and active clock
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['game/survival/**', 'game/overworld/**', 'game/autoload/**', 'data/survival/**', 'tests/survival_research_clock_ui_test.gd', 'tests/survival_economy_session_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-research-clock-ui.yml']
+    paths: ['tools/ci/godot_isolated.sh', 'game/survival/**', 'game/overworld/**', 'game/autoload/**', 'data/survival/**', 'tests/survival_research_clock_ui_test.gd', 'tests/survival_economy_session_test.gd', 'tests/survival_normal_home_journey_test.gd', 'tests/survival_normal_input_gather_test.gd', 'tests/survival_foundation_test.gd', '.github/workflows/a0-research-clock-ui.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -20,12 +20,12 @@ jobs:
       - name: Import
         run: |
           mkdir -p artifacts/ud_import artifacts/ud_research
-          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/research-import.log 2>&1
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/research-import.log 2>&1
       - name: Paid fixture station, physical pointer and 30Hz/120Hz clock
         shell: bash
         run: |
           set +e
-          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_research --resolution 960x540 --windowed --script res://tests/survival_research_clock_ui_test.gd > artifacts/research-clock.log 2>&1
+          timeout --signal=TERM --kill-after=15s 900s xvfb-run -a env LIBGL_ALWAYS_SOFTWARE=1 bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_research --resolution 960x540 --windowed --script res://tests/survival_research_clock_ui_test.gd > artifacts/research-clock.log 2>&1
           rc=$?
           cat artifacts/research-clock.log
           echo "::notice::research exit=$rc $(grep -E 'A0 RESEARCH|RESEARCH_CLOCK_TRACE|  FAIL  |SCRIPT ERROR|Parse Error' artifacts/research-clock.log | tail -20 | tr '\n' '~')"

@@ -2,7 +2,7 @@ name: A0 guarded production Waystation candidate
 on:
   push:
     branches: [arena/dea2428e-soul-of-hero]
-    paths: ['game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
+    paths: ['tools/ci/godot_isolated.sh', 'game/overworld/**', 'game/survival/**', 'game/characters/knight/**', 'game/autoload/save_service.gd', 'data/survival/**', 'tests/survival_*', 'tests/fixtures/a0_save_diff.gd', '.github/workflows/a0-production-waystation-candidate.yml']
   workflow_dispatch:
 permissions:
   contents: read
@@ -43,7 +43,7 @@ jobs:
       - name: Import exact production project
         run: |
           mkdir -p artifacts/ud_candidate artifacts/ud_import
-          timeout 180s godot --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/candidate-import.log 2>&1
+          timeout 180s bash tools/ci/godot_isolated.sh --headless --path . --user-data-dir artifacts/ud_import --import > artifacts/candidate-import.log 2>&1
           bash tools/ci/gate_log.sh artifacts/candidate-import.log 'candidate import' 'Godot Engine'
       - name: Ordinary physical journey and independent process
         shell: bash
@@ -62,7 +62,7 @@ jobs:
           for mode in first restart; do
             args=()
             if [ "$mode" = restart ]; then args=(-- "$restart"); fi
-            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_candidate --resolution 960x540 --windowed --script "$script" "${args[@]}" > "artifacts/candidate-$mode.log" 2>&1
+            timeout --signal=TERM --kill-after=15s 1800s xvfb-run -a bash tools/ci/godot_isolated.sh --path . --rendering-method gl_compatibility --rendering-driver opengl3 --audio-driver Dummy --user-data-dir artifacts/ud_candidate --resolution 960x540 --windowed --script "$script" "${args[@]}" > "artifacts/candidate-$mode.log" 2>&1
             rc=$?
             cat "artifacts/candidate-$mode.log"
             echo "::notice::Candidate ${{ matrix.route }} $mode exit=$rc $(grep -E 'PASSED|FAILED|  FAIL  |SCRIPT ERROR|Parse Error' "artifacts/candidate-$mode.log" | tail -15 | tr '\n' '~')"
