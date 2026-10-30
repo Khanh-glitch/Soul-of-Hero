@@ -332,7 +332,7 @@ func get_value(path: Array[String], fallback: Variant = null) -> Variant:
 func get_player_appearance_projection() -> Dictionary:
 	var avatar := get_player_avatar()
 	var gender := String(avatar.get("gender", ""))
-	var grade := int(avatar.get("equipment_grade", PLAYER_AVATAR_GRADE_ZERO))
+	var grade := get_player_equipment_grade_request()
 	var revision := String(avatar.get("revision", 0))
 	return {
 		"schema": PLAYER_AVATAR_APPEARANCE_SCHEMA,
@@ -343,6 +343,27 @@ func get_player_appearance_projection() -> Dictionary:
 		"source_revision": revision,
 		"revision": "player_avatar:%s:g%d:r%s" % [gender, grade, revision],
 	}
+
+
+## A0 owns what the player is wearing. This maps the equipped Vessel/Boots/Trace
+## loadout to the appearance grade presentation must attempt. It is a request,
+## not a claim: the art pipeline re-verifies that a licensed appearance record
+## exists for the grade, and grade 1/2 remain source-blocked until it does.
+func get_player_equipment_grade_request() -> int:
+	_ensure_loaded()
+	var raw: Variant = _data.get("auxiliary_loadout", {})
+	if not raw is Dictionary:
+		return PLAYER_AVATAR_GRADE_ZERO
+	var loadout: Dictionary = raw
+	var equipped := 0
+	for slot_id: String in ["soul_vessel", "soul_boots", "soul_trace"]:
+		if not String(loadout.get(slot_id, "")).strip_edges().is_empty():
+			equipped += 1
+	if equipped >= 3:
+		return 2
+	if equipped >= 1:
+		return 1
+	return PLAYER_AVATAR_GRADE_ZERO
 
 
 func get_player_avatar() -> Dictionary:

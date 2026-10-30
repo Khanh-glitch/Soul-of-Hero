@@ -67,8 +67,23 @@ func _run_from_menu() -> void:
 	if new_game == null or not new_game.is_visible_in_tree() or new_game.disabled:
 		return
 	await _click_window(root.get_final_transform() * new_game.get_global_rect().get_center())
+	# A0's New Game now takes one authored identity step before Home: the player
+	# picks the CraftPix base character that every later screen reads back.
+	var identity_open := await _wait_route(_app, &"avatar_choice", 30000)
+	_expect(identity_open, "pointer chooses New Game and reaches the identity step")
+	if not identity_open:
+		return
+	await process_frame
+	var identity_choice := _app.find_child("MaleButton", true, false) as Button
+	_expect(
+		identity_choice != null and identity_choice.is_visible_in_tree() and not identity_choice.disabled,
+		"the authored male identity is offered to the player"
+	)
+	if identity_choice == null or not identity_choice.is_visible_in_tree() or identity_choice.disabled:
+		return
+	await _click_window(root.get_final_transform() * identity_choice.get_global_rect().get_center())
 	var home_open := await _wait_route(_app, &"home", 30000)
-	_expect(home_open, "pointer chooses New Game and opens the actual Home map")
+	_expect(home_open, "the chosen identity opens the actual Home map")
 	if not home_open:
 		return
 	await process_frame

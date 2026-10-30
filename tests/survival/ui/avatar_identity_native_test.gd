@@ -16,7 +16,6 @@ extends Node
 ##   --avatar-identity-test --avatar-phase=full|verify
 ##   [--avatar-gender=male|female] [--avatar-expectation=auto|ready|blocked]
 
-const KNIGHT_SCENE_PATH := "res://game/characters/knight/knight.tscn"
 const PRIVATE_MANIFEST_PATH := "res://private_art/a6_avatar/avatar_art_private_runtime.json"
 const SOURCE_FRAME_COUNT_IDLE := 12
 const ATTACK_INPUT := &"attack"
@@ -128,7 +127,7 @@ func _check_home_avatar() -> void:
 	_expect(home != null, "Home is mounted")
 	if home == null:
 		return
-	var home_player := home.find_child("HomeActor", true, false) as CharacterBody2D
+	var home_player := _find_avatar_host(home)
 	_expect(home_player != null, "Home owns the authored player actor")
 	if home_player == null:
 		return
@@ -152,16 +151,15 @@ func _check_home_avatar() -> void:
 
 
 func _check_knight_avatar() -> void:
-	var container := Node2D.new()
-	container.name = "AvatarNativeTestStage"
-	add_child(container)
-	var packed: PackedScene = load(KNIGHT_SCENE_PATH)
-	_expect(packed != null, "production Knight scene loads")
-	if packed == null:
+	# The real Chapter 1 overworld instantiates the production Knight scene, so
+	# physics, input, combat, death and respawn here are the shipping ones.
+	AppFlow.open_overworld()
+	_expect(await _wait_for_route(&"overworld", 20000), "the overworld route loads the production player")
+	await _wait_frames(20)
+	_knight = _find_player()
+	_expect(_knight != null, "the overworld owns a live player actor")
+	if _knight == null:
 		return
-	_knight = packed.instantiate() as CharacterBody2D
-	container.add_child(_knight)
-	await _wait_frames(6)
 	_presenter = _knight.get_node_or_null(^"AvatarPresenter")
 	_expect(_presenter != null, "production Knight carries the avatar presenter")
 	if _presenter == null:
@@ -190,7 +188,17 @@ func _check_locomotion_clips() -> void:
 	var right_direction := String(_presenter.call(&"get_presented_direction"))
 	var right_action := String(_presenter.call(&"get_presented_action"))
 	_expect(right_direction == "side_right", "moving right presents the side_right row (%s)" % right_direction)
-	_expect(right_action in ["walk", "run"], "moving right presents locomotion (%s)" % right_action)
+	var measured_speed := (_knight as CharacterBody2D).velocity.length()
+	var expected_action := "idle"
+	if measured_speed > 6.0:
+		expected_action = "run" if measured_speed >= 120.0 else "walk"
+	_expect(
+		right_action == expected_action,
+		"locomotion clip follows real movement (speed %.1f -> %s, got %s)" % [
+			measured_speed, expected_action, right_action,
+		]
+	)
+	_expect(right_action != "death" and right_action != "hurt", "movement never shows a combat clip")
 	Input.action_release(RIGHT_INPUT)
 	Input.action_press(UP_INPUT)
 	await _wait_frames(10)
@@ -326,6 +334,23 @@ func _wait_for_route(route_id: StringName, timeout_msec := 4000) -> bool:
 func _wait_frames(count: int) -> void:
 	for _index in range(count):
 		await get_tree().process_frame
+
+
+## The Home map names its instanced actor "Player"; the overworld keeps the
+## authored "Knight" node. Both carry the presenter, so discover by contract.
+func _find_avatar_host(root: Node) -> CharacterBody2D:
+	for candidate: Node in root.find_children("*", "CharacterBody2D", true, false):
+		if candidate.get_node_or_null(^"AvatarPresenter") != null:
+			return candidate as CharacterBody2D
+	return null
+
+
+func _find_player() -> Node:
+	var players := get_tree().get_nodes_in_group(&"player")
+	for candidate: Node in players:
+		if candidate.get_node_or_null(^"AvatarPresenter") != null:
+			return candidate
+	return null
 
 
 func _current_screen() -> Node:

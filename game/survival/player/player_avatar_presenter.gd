@@ -53,6 +53,8 @@ var _last_direction := "front"
 var _last_host_animation := &""
 var _last_host_frame := -1
 var _pipeline_ready := false
+var _appearance_gate := ""
+var _requested_grade := 0
 
 
 func _ready() -> void:
@@ -99,6 +101,8 @@ func refresh() -> void:
 		_status = STATUS_NO_IDENTITY
 		_gender = ""
 		_armor_grade = 0
+		_requested_grade = 0
+		_appearance_gate = ""
 		_reason = "No player identity has been chosen yet."
 		_action = "idle"
 		_direction = _last_direction
@@ -106,7 +110,20 @@ func refresh() -> void:
 		_emit_state()
 		return
 	var manifest := _load_manifest()
+	var requested_grade := int(projection.get("armor_grade", 0))
 	var resolved: Dictionary = PIPELINE.resolve_owner_appearance(projection, manifest)
+	if String(resolved.get("status", "")) != "READY" and requested_grade > 0:
+		# Equipment appearance art for grade 1/2 is still source-blocked. Keep the
+		# same chosen character visible at its verified base appearance and record
+		# the gate explicitly instead of claiming the armored look shipped or
+		# swapping in an unrelated character.
+		var baseline := projection.duplicate(true)
+		baseline["armor_grade"] = 0
+		baseline["revision"] = "%s:baseline" % String(projection.get("revision", ""))
+		var baseline_resolved: Dictionary = PIPELINE.resolve_owner_appearance(baseline, manifest)
+		if String(baseline_resolved.get("status", "")) == "READY":
+			resolved = baseline_resolved
+			_appearance_gate = "GRADE_%d_APPEARANCE_SOURCE_BLOCKED" % requested_grade
 	if String(resolved.get("status", "")) != "READY":
 		_apply_blocked(
 			STATUS_SOURCE_BLOCKED,
@@ -120,6 +137,7 @@ func refresh() -> void:
 	_status = STATUS_READY
 	_gender = gender
 	_armor_grade = int(resolved.get("armor_grade", 0))
+	_requested_grade = requested_grade
 	_reason = ""
 	_mount_avatar_sprite()
 	_host_sprite.visible = false
@@ -137,6 +155,8 @@ func get_presentation_state() -> Dictionary:
 		"status": _status,
 		"gender": _gender,
 		"armor_grade": _armor_grade,
+		"requested_armor_grade": _requested_grade,
+		"appearance_gate": _appearance_gate,
 		"reason": _reason,
 		"action": _action,
 		"direction": _direction,
